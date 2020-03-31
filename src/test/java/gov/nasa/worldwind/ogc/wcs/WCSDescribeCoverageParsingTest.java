@@ -23,7 +23,7 @@ public class WCSDescribeCoverageParsingTest
     @Test
     public void testParsing001()
     {
-        WCS100DescribeCoverage caps = new WCS100DescribeCoverage("testData/WCS/WCSDescribeCoverage001.xml");
+        WCS100DescribeCoverage caps = new WCS100DescribeCoverage("WCS/WCSDescribeCoverage001.xml");
 
         try
         {
@@ -158,7 +158,7 @@ public class WCSDescribeCoverageParsingTest
     @Test
     public void testParsing002()
     {
-        WCS100DescribeCoverage caps = new WCS100DescribeCoverage("testData/WCS/WCSDescribeCoverage002.xml");
+        WCS100DescribeCoverage caps = new WCS100DescribeCoverage("WCS/WCSDescribeCoverage002.xml");
 
         try
         {

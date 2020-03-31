@@ -14,16 +14,18 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 
+import static gov.nasa.worldwind.ogc.kml.KMLTest.*;
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class ShapefileTest
 {
-    private static final String STATE_BOUNDS_PATH = "testData/shapefiles/state_bounds.shp";
-    private static final String WORLD_BORDERS_PATH = "testData/shapefiles/TM_WORLD_BORDERS-0.3.shp";
-    private static final String SPRINGFIELD_URBAN_GROWTH_PATH = "testData/shapefiles/SPR_UGB.shp";
+    private static final String STATE_BOUNDS_PATH = "shapefiles/state_bounds.shp";
+    private static final String WORLD_BORDERS_PATH = "shapefiles/TM_WORLD_BORDERS-0.3.shp";
+    private static final String SPRINGFIELD_URBAN_GROWTH_PATH = "shapefiles/SPR_UGB.shp";
 
     //////////////////////////////////////////////////////////
     // Test Basic Reading
@@ -32,7 +34,7 @@ public class ShapefileTest
     @Test
     public void testOpenFile()
     {
-        Shapefile shapefile = new Shapefile(new File(STATE_BOUNDS_PATH));
+        Shapefile shapefile = new Shapefile(testResourceFile(STATE_BOUNDS_PATH));
         assertEquals("Shape type is not as expected", Shapefile.SHAPE_POLYLINE, shapefile.getShapeType());
 
         while (shapefile.hasNext())
@@ -46,7 +48,7 @@ public class ShapefileTest
     @Test
     public void testOpenPath()
     {
-        Shapefile shapefile = new Shapefile(STATE_BOUNDS_PATH);
+        Shapefile shapefile = new Shapefile(testResourceFile(STATE_BOUNDS_PATH));
         assertEquals("Shape type is not as expected", Shapefile.SHAPE_POLYLINE, shapefile.getShapeType());
 
         while (shapefile.hasNext())
@@ -88,7 +90,7 @@ public class ShapefileTest
     @Test
     public void testOpenSingleInputStream() throws Exception
     {
-        Shapefile shapefile = new Shapefile(WWIO.openStream(STATE_BOUNDS_PATH));
+        Shapefile shapefile = new Shapefile(testResourceStream(STATE_BOUNDS_PATH));
         assertEquals("Shape type is not as expected", Shapefile.SHAPE_POLYLINE, shapefile.getShapeType());
 
         while (shapefile.hasNext())
@@ -103,10 +105,10 @@ public class ShapefileTest
     public void testOpenMultipleInputStreams() throws Exception
     {
         Shapefile shapefile = new Shapefile(
-            WWIO.openStream(STATE_BOUNDS_PATH),
-            WWIO.openStream(WWIO.replaceSuffix(STATE_BOUNDS_PATH, ".shx")),
-            WWIO.openStream(WWIO.replaceSuffix(STATE_BOUNDS_PATH, ".dbf")),
-            WWIO.openStream(WWIO.replaceSuffix(STATE_BOUNDS_PATH, ".prj")));
+            testResourceStream(STATE_BOUNDS_PATH),
+            testResourceStream(WWIO.replaceSuffix(STATE_BOUNDS_PATH, ".shx")),
+            testResourceStream(WWIO.replaceSuffix(STATE_BOUNDS_PATH, ".dbf")),
+            testResourceStream(WWIO.replaceSuffix(STATE_BOUNDS_PATH, ".prj")));
         assertEquals("Shape type is not as expected", shapefile.getShapeType(), Shapefile.SHAPE_POLYLINE);
 
         while (shapefile.hasNext())
@@ -124,7 +126,7 @@ public class ShapefileTest
     @Test
     public void testUTMCoordinates()
     {
-        Shapefile shapefile = new Shapefile(SPRINGFIELD_URBAN_GROWTH_PATH);
+        Shapefile shapefile = new Shapefile(testResourceFile(SPRINGFIELD_URBAN_GROWTH_PATH));
         assertEquals("Shape type is not as expected", Shapefile.SHAPE_POLYGON, shapefile.getShapeType());
         assertShapefileAppearsNormal(shapefile);
         shapefile.close();
@@ -133,7 +135,7 @@ public class ShapefileTest
     @Test
     public void testGeographicCoordinates()
     {
-        Shapefile shapefile = new Shapefile(WORLD_BORDERS_PATH);
+        Shapefile shapefile = new Shapefile(testResourceFile(WORLD_BORDERS_PATH));
         assertEquals("Shape type is not as expected", Shapefile.SHAPE_POLYGON, shapefile.getShapeType());
         assertShapefileAppearsNormal(shapefile);
         shapefile.close();
@@ -162,9 +164,9 @@ public class ShapefileTest
     //////////////////////////////////////////////////////////
 
     @Test
-    public void testExpectedValuesForStateBounds()
+    public void testExpectedValuesForStateBounds() throws URISyntaxException
     {
-        Shapefile shapefile = new Shapefile(STATE_BOUNDS_PATH);
+        Shapefile shapefile = new Shapefile(testResourceFile(STATE_BOUNDS_PATH));
         assertEquals("Version not as expected", 1000, shapefile.getVersion());
         assertEquals("Length not as expected", 2750692, shapefile.getLength());
         assertEquals("Shape type not as expected", Shapefile.SHAPE_POLYLINE, shapefile.getShapeType());

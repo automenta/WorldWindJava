@@ -23,7 +23,7 @@ public class WCSCapabilitiesParsingTest
     @Test
     public void testParsing001()
     {
-        WCS100Capabilities caps = new WCS100Capabilities("testData/WCS/WCSCapabilities003.xml");
+        WCS100Capabilities caps = new WCS100Capabilities("WCS/WCSCapabilities003.xml");
 
         try
         {
@@ -167,7 +167,7 @@ public class WCSCapabilitiesParsingTest
     @Test
     public void testParsing002()
     {
-        WCS100Capabilities caps = new WCS100Capabilities("testData/WCS/WCSCapabilities002.xml");
+        WCS100Capabilities caps = new WCS100Capabilities("WCS/WCSCapabilities002.xml");
 
         try
         {
@@ -325,7 +325,7 @@ public class WCSCapabilitiesParsingTest
     @Test
     public void testParsing003()
     {
-        WCSCapabilities caps = new WCSCapabilities("testData/WCS/WCSCapabilities001.xml");
+        WCSCapabilities caps = new WCSCapabilities("WCS/WCSCapabilities001.xml");
 
         try
         {

@@ -16,6 +16,7 @@ import org.junit.runners.JUnit4;
 import java.io.*;
 import java.net.URL;
 
+import static gov.nasa.worldwind.ogc.kml.KMLTest.testResourceFile;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
@@ -121,8 +122,8 @@ public class OGLUtilTest
     @Test
     public void testJpgStream() throws IOException
     {
-        File f = new File(JPG_FILE);
-        InputStream s = new FileInputStream(f);
+        //File f = new File(JPG_FILE);
+        InputStream s = new FileInputStream(testResourceFile(JPG_FILE));
 
         TextureData td = OGLUtil.newTextureData(this.glProfile, s, false);
 
@@ -145,7 +146,7 @@ public class OGLUtilTest
     @Test
     public void testIndexedColorPng() throws IOException
     {
-        URL url = new File("./testData/32x32-icon-nasa-indexed-color.png").toURI().toURL();
+        URL url = new File("./32x32-icon-nasa-indexed-color.png").toURI().toURL();
 
         TextureData td = OGLUtil.newTextureData(this.glProfile, url, false);
         assertEquals(td.getPixelFormat(), GL.GL_RGBA);
@@ -155,7 +156,7 @@ public class OGLUtilTest
     @Test
     public void testInterlacedPng() throws IOException
     {
-        URL url = new File("./testData/32x32-icon-nasa-interlaced.png").toURI().toURL();
+        URL url = new File("./32x32-icon-nasa-interlaced.png").toURI().toURL();
 
         TextureData td = OGLUtil.newTextureData(this.glProfile, url, false);
 

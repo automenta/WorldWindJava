@@ -26,8 +26,8 @@ public class WCSElevationModelCreationTest
     public void test001()
     {
         WCSElevationModel elevationModel = this.createWCSElevationModel(
-            new WCS100Capabilities("testData/WCS/WCSCapabilities003.xml"),
-            new WCS100DescribeCoverage("testData/WCS/WCSDescribeCoverage001.xml"));
+            new WCS100Capabilities("WCS/WCSCapabilities003.xml"),
+            new WCS100DescribeCoverage("WCS/WCSDescribeCoverage001.xml"));
 
         assertEquals("Incorrect number of levels", 5, elevationModel.getLevels().getNumLevels());
         double bestResolution = elevationModel.getBestResolution(Sector.FULL_SPHERE) * 180.0 / Math.PI;
@@ -49,8 +49,8 @@ public class WCSElevationModelCreationTest
     public void testRestoreState()
     {
         WCSElevationModel origElevationModel = this.createWCSElevationModel(
-            new WCS100Capabilities("testData/WCS/WCSCapabilities003.xml"),
-            new WCS100DescribeCoverage("testData/WCS/WCSDescribeCoverage001.xml"));
+            new WCS100Capabilities("WCS/WCSCapabilities003.xml"),
+            new WCS100DescribeCoverage("WCS/WCSDescribeCoverage001.xml"));
 
         String restorableState = origElevationModel.getRestorableState();
 

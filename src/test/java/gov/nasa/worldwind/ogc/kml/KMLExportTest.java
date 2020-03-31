@@ -23,6 +23,7 @@ import javax.xml.validation.*;
 import java.io.*;
 import java.util.*;
 
+import static gov.nasa.worldwind.ogc.kml.KMLTest.testResourceFile;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -102,7 +103,7 @@ public class KMLExportTest
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testKmlNotSupported() throws XMLStreamException, IOException
+    public void testKmlNotSupported() throws IOException
     {
         Pyramid pyramid = new Pyramid(Position.ZERO, 100, 100);
         pyramid.export(KMLConstants.KML_MIME_TYPE, new StringWriter());
@@ -118,10 +119,10 @@ public class KMLExportTest
 
             // Load the KML GX schema, which extends the OGC KML schema. This allows us to validate documents that use
             // the gx extensions.
-            Source schemaFile = new StreamSource(new File("testData/schemas/kml22gx.xsd"));
-            Schema schema = factory.newSchema(schemaFile);
 
-            Validator validator = schema.newValidator();
+            Validator validator = factory.newSchema(
+                new StreamSource(testResourceFile("schemas/kml22gx.xsd")))
+                    .newValidator();
             validator.validate(source);
 
             return true;

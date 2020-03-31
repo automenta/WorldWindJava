@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -704,7 +704,7 @@ public class KMLTest
     @Test
     public void testGoogleTutorialExample01()
     {
-        KMLRoot root = this.openAndParseFile("testData/KML/GoogleTutorialExample01.kml");
+        KMLRoot root = this.openAndParseFile("KML/GoogleTutorialExample01.kml");
 
         KMLAbstractFeature feature = root.getFeature();
         assertTrue("Root feature is not as expected", feature instanceof KMLPlacemark);
@@ -726,7 +726,7 @@ public class KMLTest
     @Test
     public void testGoogleTutorialExample02()
     {
-        KMLRoot root = this.openAndParseFile("testData/KML/GoogleTutorialExample02.kml");
+        KMLRoot root = this.openAndParseFile("KML/GoogleTutorialExample02.kml");
 
         KMLAbstractFeature document = root.getFeature();
         assertTrue("Root feature is not as expected", document instanceof KMLDocument);
@@ -759,7 +759,7 @@ public class KMLTest
     @Test
     public void testGoogleTutorialExample03()
     {
-        KMLRoot root = this.openAndParseFile("testData/KML/GoogleTutorialExample03.kml");
+        KMLRoot root = this.openAndParseFile("KML/GoogleTutorialExample03.kml");
 
         KMLAbstractFeature document = root.getFeature();
         assertTrue("Root feature is not as expected", document instanceof KMLDocument);
@@ -788,7 +788,7 @@ public class KMLTest
     @Test
     public void testGoogleTutorialExample04()
     {
-        KMLRoot root = this.openAndParseFile("testData/KML/GoogleTutorialExample04.kml");
+        KMLRoot root = this.openAndParseFile("KML/GoogleTutorialExample04.kml");
 
         KMLAbstractFeature document = root.getFeature();
         assertTrue("Root feature is not as expected", document instanceof KMLFolder);
@@ -821,7 +821,7 @@ public class KMLTest
     @Test
     public void testStyleReference()
     {
-        KMLRoot root = this.openAndParseFile("testData/KML/StyleReferences.kml");
+        KMLRoot root = this.openAndParseFile("KML/StyleReferences.kml");
 
         KMLAbstractFeature document = root.getFeature();
         assertTrue("Root feature is not as expected", document instanceof KMLDocument);
@@ -858,8 +858,8 @@ public class KMLTest
     {
         try
         {
-            File file = new File("testData/KML/kmztest01.kmz");
-            KMLRoot root = KMLRoot.create(new URL("file:///" + file.getAbsolutePath().replace(" ", "%20")));
+            //File file = new File("KML/kmztest01.kmz");
+            KMLRoot root = new KMLRoot(testResourceFile("KML/kmztest01.kmz"));
             root.parse();
 
             String[] fileNames = new String[]
@@ -975,16 +975,12 @@ public class KMLTest
 
         try
         {
-            root = new KMLRoot(new File(sourceDoc));
-            root.setNotificationListener(new XMLParserNotificationListener()
-            {
-                public void notify(XMLParserNotification notificationEvent)
-                {
-                    if (parserMessage.length() != 0)
-                        parserMessage.append(", ");
+            root = KMLRoot.create(testResourceStream(sourceDoc));
+            root.setNotificationListener(notificationEvent -> {
+                if (parserMessage.length() != 0)
+                    parserMessage.append(", ");
 
-                    parserMessage.append(notificationEvent.toString());
-                }
+                parserMessage.append(notificationEvent.toString());
             });
             root.parse();
 
@@ -999,4 +995,24 @@ public class KMLTest
 
         return root;
     }
+
+    public static InputStream testResourceStream(String sourceDoc)
+    {
+        return KMLTest.class.getClassLoader().getResourceAsStream(sourceDoc);
+    }
+    public static URL testResourceURL(String sourceDoc)
+    {
+        return KMLTest.class.getClassLoader().getResource(sourceDoc);
+    }
+    public static File testResourceFile(String sourceDoc) {
+        try
+        {
+            return new File(testResourceURL(sourceDoc).toURI());
+        }
+        catch (URISyntaxException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

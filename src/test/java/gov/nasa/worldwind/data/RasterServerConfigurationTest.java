@@ -22,7 +22,7 @@ public class RasterServerConfigurationTest
     @Test
     public void testParsing001()
     {
-        RasterServerConfiguration config = new RasterServerConfiguration("testData/RasterServerConfiguration.xml");
+        RasterServerConfiguration config = new RasterServerConfiguration("RasterServerConfiguration.xml");
 
         try
         {

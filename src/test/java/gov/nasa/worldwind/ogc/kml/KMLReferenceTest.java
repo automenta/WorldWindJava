@@ -13,6 +13,7 @@ import org.junit.runners.JUnit4;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 
+import static gov.nasa.worldwind.ogc.kml.KMLTest.testResourceFile;
 import static org.junit.Assert.*;
 
 /**
@@ -28,7 +29,7 @@ public class KMLReferenceTest
     {
         try
         {
-            this.root = KMLRoot.createAndParse("testData/KML/StyleMap.kml");
+            this.root = new KMLRoot(testResourceFile("KML/StyleMap.kml"));
         }
         catch (Exception e)
         {
@@ -45,27 +46,27 @@ public class KMLReferenceTest
     @Test
     public void testReferenceToLocalKMLFile()
     {
-        Object o = this.root.resolveReference("testData/KML/PointPlacemark.kml");
+        Object o = this.root.resolveReference("KML/PointPlacemark.kml");
         assertTrue("Cannot resolve reference to local KML file", o instanceof KMLRoot);
 
-        o = this.root.resolveLocalReference("testData/KML/PointPlacemark.kml", null);
+        o = this.root.resolveLocalReference("KML/PointPlacemark.kml", null);
         assertTrue("Cannot resolve reference to local KML file", o instanceof KMLRoot);
     }
 
     @Test
     public void testReferenceToLocalKMZFile()
     {
-        Object o = this.root.resolveReference("testData/KML/PointPlacemarkLocalImage.kmz");
+        Object o = this.root.resolveReference("KML/PointPlacemarkLocalImage.kmz");
         assertTrue("Cannot resolve reference to local KML file", o instanceof KMLRoot);
 
-        o = this.root.resolveLocalReference("testData/KML/PointPlacemarkLocalImage.kmz", null);
+        o = this.root.resolveLocalReference("KML/PointPlacemarkLocalImage.kmz", null);
         assertTrue("Cannot resolve reference to local KML file", o instanceof KMLRoot);
     }
 
     @Test
     public void testReferenceToLocalImage()
     {
-        String path = "testData/KML/etna.jpg";
+        String path = "KML/etna.jpg";
         Object o = this.root.resolveReference(path);
         assertEquals("Cannot resolve reference to local image file", path, o);
 
@@ -88,17 +89,17 @@ public class KMLReferenceTest
     @Test
     public void testReferenceToElementInLocalFile()
     {
-        Object o = this.root.resolveReference("testData/KML/StyleReferences.kml#transBluePoly");
+        Object o = this.root.resolveReference("KML/StyleReferences.kml#transBluePoly");
         assertTrue("Cannot resolve reference to element in local KML file", o instanceof KMLStyle);
 
-        o = this.root.resolveLocalReference("testData/KML/StyleReferences.kml", "transBluePoly");
+        o = this.root.resolveLocalReference("KML/StyleReferences.kml", "transBluePoly");
         assertTrue("Cannot resolve reference to element in local KML file", o instanceof KMLStyle);
     }
 
     @Test
     public void testKMZReference() throws IOException, XMLStreamException
     {
-        KMLRoot root = KMLRoot.createAndParse("testData/KML/PointPlacemarkLocalImage.kmz");
+        KMLRoot root = new KMLRoot(testResourceFile("KML/PointPlacemarkLocalImage.kmz"));
 
         Object o = root.resolveReference("icon21.png");
         assertNotNull("Cannot resolve reference to file KMZ archive", o);

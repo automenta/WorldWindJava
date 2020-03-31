@@ -23,7 +23,7 @@ public class MilStd2525IconRetrieverTest
     // TODO: test unframed icons
 
     // This path should correspond to the location of the appropriate symbology source icons on your system
-    private final static String LOCAL_SYMBOLS_ZIP = "jar:file:testData/milstd2525-symbols.zip!";
+    private final static String LOCAL_SYMBOLS_ZIP = "jar:file:milstd2525-symbols.zip!";
 
     //////////////////////////////////////////////////////////
     // Test parsing of the Symbol Code.
