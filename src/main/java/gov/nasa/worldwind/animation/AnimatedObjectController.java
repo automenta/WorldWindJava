@@ -45,13 +45,9 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
             }
             if (globe != null) {
                 if (started) {
-                    animObjects.forEach((ao) -> {
-                        ao.stepAnimation(wwd.getView().getGlobe());
-                    });
+                    animObjects.forEach((ao) -> ao.stepAnimation(wwd.getView().getGlobe()));
                 } else {
-                    animObjects.forEach((ao) -> {
-                        ao.startAnimation(wwd.getView().getGlobe());
-                    });
+                    animObjects.forEach((ao) -> ao.startAnimation(wwd.getView().getGlobe()));
                     started = true;
                 }
             }

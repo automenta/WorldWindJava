@@ -33,7 +33,7 @@ import gov.nasa.worldwind.util.Logging;
 public class BasicDataRasterReaderFactory implements DataRasterReaderFactory
 {
     /** The default list of readers. */
-    protected DataRasterReader[] readers = new DataRasterReader[]
+    protected final DataRasterReader[] readers = new DataRasterReader[]
         {
             // NOTE: Update the javadoc above if this list changes.
             new RPFRasterReader(),

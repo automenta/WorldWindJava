@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class GXPlaylist extends KMLAbstractObject
 {
-    protected List<GXAbstractTourPrimitive> tourPrimitives = new ArrayList<GXAbstractTourPrimitive>();
+    protected final List<GXAbstractTourPrimitive> tourPrimitives = new ArrayList<>();
 
     public GXPlaylist(String namespaceURI)
     {

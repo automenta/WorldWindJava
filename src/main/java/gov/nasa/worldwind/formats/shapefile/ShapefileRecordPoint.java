@@ -8,7 +8,6 @@ package gov.nasa.worldwind.formats.shapefile;
 import gov.nasa.worldwind.util.VecBuffer;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -145,10 +144,9 @@ public class ShapefileRecordPoint extends ShapefileRecord
      * @param xmlWriter XML writer to receive the generated KML.
      *
      * @throws XMLStreamException If an exception occurs while writing the KML
-     * @throws IOException        if an exception occurs while exporting the data.
      */
     @Override
-    public void exportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    public void exportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException
     {
         xmlWriter.writeStartElement("Placemark");
         xmlWriter.writeStartElement("name");

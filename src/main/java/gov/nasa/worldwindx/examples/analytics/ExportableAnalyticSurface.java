@@ -190,9 +190,8 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
      *
      * @throws javax.xml.stream.XMLStreamException
      *                             If an exception occurs while writing the KML
-     * @throws java.io.IOException if an exception occurs while exporting the data.
      */
-    protected void exportAsKML(Object output) throws IOException, XMLStreamException
+    protected void exportAsKML(Object output) throws XMLStreamException
     {
         XMLStreamWriter xmlWriter = null;
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
@@ -300,7 +299,7 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
 
         if (this.surfaceAttributes.drawInterior && this.values != null)
         {
-            ArrayList<Color> colorGrid = new ArrayList<Color>(this.width * this.height);
+            ArrayList<Color> colorGrid = new ArrayList<>(this.width * this.height);
             for (GridPointAttributes gridPoint : this.values)
             {
                 colorGrid.add(gridPoint.getColor());

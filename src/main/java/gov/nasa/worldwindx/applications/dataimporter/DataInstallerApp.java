@@ -30,10 +30,10 @@ public class DataInstallerApp {
 
     public static class AppPanel extends JPanel {
 
-        protected WorldWindow wwd;
-        protected StatusBar statusBar;
-        protected ToolTipController toolTipController;
-        protected HighlightController highlightController;
+        protected final WorldWindow wwd;
+        protected final StatusBar statusBar;
+        protected final ToolTipController toolTipController;
+        protected final HighlightController highlightController;
 
         public AppPanel() {
             super(new BorderLayout());
@@ -131,9 +131,7 @@ public class DataInstallerApp {
             final AppFrame frame = (AppFrame) appFrameClass.getConstructor().newInstance();
             frame.setTitle(appName);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            java.awt.EventQueue.invokeLater(() -> {
-                frame.setVisible(true);
-            });
+            java.awt.EventQueue.invokeLater(() -> frame.setVisible(true));
 
             return frame;
         } catch (Exception e) {

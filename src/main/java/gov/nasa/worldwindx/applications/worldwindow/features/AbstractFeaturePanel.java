@@ -16,7 +16,7 @@ import javax.swing.*;
  */
 public abstract class AbstractFeaturePanel extends AbstractFeature implements FeaturePanel
 {
-    protected JPanel panel;
+    protected final JPanel panel;
 
     public AbstractFeaturePanel(String s, String featureID, JPanel panel, Registry registry)
     {

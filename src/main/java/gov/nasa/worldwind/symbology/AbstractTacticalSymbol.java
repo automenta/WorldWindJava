@@ -32,8 +32,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 {
     protected static class IconSource
     {
-        protected IconRetriever retriever;
-        protected String symbolId;
+        protected final IconRetriever retriever;
+        protected final String symbolId;
         protected AVList retrieverParams;
 
         public IconSource(IconRetriever retriever, String symbolId, AVList retrieverParams)
@@ -76,10 +76,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
             IconSource that = (IconSource) o;
 
-            if (this.retriever != null ? !this.retriever.equals(that.retriever)
-                : that.retriever != null)
+            if (!Objects.equals(this.retriever, that.retriever))
                 return false;
-            if (this.symbolId != null ? !this.symbolId.equals(that.symbolId) : that.symbolId != null)
+            if (!Objects.equals(this.symbolId, that.symbolId))
                 return false;
 
             if (this.retrieverParams != null && that.retrieverParams != null)
@@ -200,7 +199,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
                     return false;
 
                 final IconRequestTask that = (IconRequestTask) o;
-                return this.texture != null ? this.texture.equals(that.texture) : that.texture == null;
+                return Objects.equals(this.texture, that.texture);
             }
 
             public int hashCode()
@@ -497,7 +496,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected static final int DEFAULT_LABEL_LINES = 5;
 
     /** The attributes used if attributes are not specified. */
-    protected static TacticalSymbolAttributes defaultAttrs;
+    protected static final TacticalSymbolAttributes defaultAttrs;
 
     static
     {
@@ -558,12 +557,12 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * #setModifier(String, Object)}. Initialized to a new AVListImpl, and populated during construction from values in
      * the string identifier and the modifiers list.
      */
-    protected AVList modifiers = new AVListImpl();
+    protected final AVList modifiers = new AVListImpl();
     /**
      * Modifiers active this frame. This list is determined by copying {@link #modifiers}, and applying changings in
      * {@link #applyImplicitModifiers(gov.nasa.worldwind.avlist.AVList)}.
      */
-    protected AVList activeModifiers = new AVListImpl();
+    protected final AVList activeModifiers = new AVListImpl();
     /**
      * Indicates this symbol's normal (as opposed to highlight) attributes. May be <code>null</code>, indicating that
      * the default attributes are used. Initially <code>null</code>.
@@ -578,7 +577,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * Indicates this symbol's currently active attributes. Updated in {@link #determineActiveAttributes}. Initialized
      * to a new BasicTacticalSymbolAttributes.
      */
-    protected TacticalSymbolAttributes activeAttrs = new BasicTacticalSymbolAttributes();
+    protected final TacticalSymbolAttributes activeAttrs = new BasicTacticalSymbolAttributes();
     protected Offset offset;
     protected Offset iconOffset;
     protected Size iconSize;
@@ -609,15 +608,15 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     /** Indicates that one or more glyphs have not been resolved. */
     protected boolean unresolvedGlyph;
 
-    protected List<IconAtlasElement> currentGlyphs = new ArrayList<IconAtlasElement>();
-    protected List<Label> currentLabels = new ArrayList<Label>();
-    protected List<Line> currentLines = new ArrayList<Line>();
+    protected final List<IconAtlasElement> currentGlyphs = new ArrayList<>();
+    protected final List<Label> currentLabels = new ArrayList<>();
+    protected final List<Line> currentLines = new ArrayList<>();
 
     protected WWTexture iconTexture;
     protected WWTexture activeIconTexture;
     protected TextureAtlas glyphAtlas;
-    protected Map<String, IconAtlasElement> glyphMap = new HashMap<String, IconAtlasElement>();
-    protected long maxTimeSinceLastUsed = DEFAULT_MAX_TIME_SINCE_LAST_USED;
+    protected final Map<String, IconAtlasElement> glyphMap = new HashMap<>();
+    protected final long maxTimeSinceLastUsed = DEFAULT_MAX_TIME_SINCE_LAST_USED;
 
     /** Unit format used to format location and altitude for text modifiers. */
     protected UnitsFormat unitsFormat = DEFAULT_UNITS_FORMAT;
@@ -629,13 +628,13 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * used in {@link #beginDrawing(gov.nasa.worldwind.render.DrawContext, int)} and {@link
      * #endDrawing(gov.nasa.worldwind.render.DrawContext)}.
      */
-    protected OGLStackHandler BEogsh = new OGLStackHandler();
+    protected final OGLStackHandler BEogsh = new OGLStackHandler();
     /**
      * Support for setting up and restoring picking state, and resolving the picked object. Initialized to a new
      * PickSupport, and used in {@link #pick(gov.nasa.worldwind.render.DrawContext, java.awt.Point,
      * gov.nasa.worldwind.symbology.AbstractTacticalSymbol.OrderedSymbol)}.
      */
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     /**
      * Dragging support properties.
      */
@@ -1803,7 +1802,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             if (entry.getValue().lastUsed + this.maxTimeSinceLastUsed < now)
             {
                 if (deadKeys == null)
-                    deadKeys = new ArrayList<String>();
+                    deadKeys = new ArrayList<>();
                 deadKeys.add(entry.getKey());
             }
         }
@@ -2003,7 +2002,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         if (!dc.isPickingMode())
         {
-            while (nextItem != null && nextItem instanceof OrderedSymbol)
+            while (nextItem instanceof OrderedSymbol)
             {
                 OrderedSymbol ts = (OrderedSymbol) nextItem;
                 if (!ts.isEnableBatchRendering())
@@ -2017,7 +2016,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
         else if (this.isEnableBatchPicking())
         {
-            while (nextItem != null && nextItem instanceof OrderedSymbol)
+            while (nextItem instanceof OrderedSymbol)
             {
                 OrderedSymbol ts = (OrderedSymbol) nextItem;
                 if (!ts.isEnableBatchRendering() || !ts.isEnableBatchPicking())
@@ -2344,8 +2343,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected void drawLines(DrawContext dc, OrderedSymbol osym)
     {
         // Use either the currently specified opacity or the default if no opacity is specified.
-        Double opacity = this.getActiveAttributes().getOpacity() != null ? this.getActiveAttributes().getOpacity()
-            : BasicTacticalSymbolAttributes.DEFAULT_OPACITY;
+        float opacity = (float) (this.getActiveAttributes().getOpacity() != null ? this.getActiveAttributes().getOpacity()
+                    : BasicTacticalSymbolAttributes.DEFAULT_OPACITY);
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
@@ -2355,14 +2354,14 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
             // Apply an offset to move the line away from terrain.
             double depth = osym.screenPoint.z - (8d * 0.00048875809d);
-            depth = depth < 0d ? 0d : (depth > 1d ? 1d : depth);
+            depth = depth < 0d ? 0d : (Math.min(depth, 1d));
             gl.glDepthRange(depth, depth);
 
             // Set the current color to black with the current opacity value as the alpha component. Blending is set to
             // pre-multiplied alpha mode, but we can just specify 0 for the RGB components because multiplying them by
             // the alpha component has no effect.
             if (!dc.isPickingMode())
-                gl.glColor4f(0f, 0f, 0f, opacity.floatValue());
+                gl.glColor4f(0f, 0f, 0f, opacity);
 
             for (Line lm : this.currentLines)
             {
@@ -2389,8 +2388,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
             // Restore the current color to that specified in doDrawOrderedRenderable.
             if (!dc.isPickingMode())
-                gl.glColor4f(opacity.floatValue(), opacity.floatValue(), opacity.floatValue(),
-                    opacity.floatValue());
+                gl.glColor4f(opacity, opacity, opacity, opacity);
         }
     }
 

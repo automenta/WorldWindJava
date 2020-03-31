@@ -9,6 +9,7 @@ package gov.nasa.worldwind.util.tree;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * Basic implementation of {@link FrameAttributes} set.
@@ -334,37 +335,31 @@ public class BasicFrameAttributes implements FrameAttributes
 
         if (this.backgroundOpacity != that.backgroundOpacity)
             return false;
-        if (this.frameColor1 != null ? !this.frameColor1.equals(that.frameColor1) : that.frameColor1 != null)
+        if (!Objects.equals(this.frameColor1, that.frameColor1))
             return false;
-        if (this.frameColor2 != null ? !this.frameColor2.equals(that.frameColor2) : that.frameColor2 != null)
+        if (!Objects.equals(this.frameColor2, that.frameColor2))
             return false;
-        if (this.titleBarColor1 != null ? !this.titleBarColor1.equals(that.titleBarColor1)
-            : that.titleBarColor1 != null)
+        if (!Objects.equals(this.titleBarColor1, that.titleBarColor1))
             return false;
-        if (this.titleBarColor2 != null ? !this.titleBarColor2.equals(that.titleBarColor2)
-            : that.titleBarColor2 != null)
+        if (!Objects.equals(this.titleBarColor2, that.titleBarColor2))
             return false;
-        if (this.scrollBarColor1 != null ? !this.scrollBarColor1.equals(that.scrollBarColor1)
-            : that.scrollBarColor1 != null)
+        if (!Objects.equals(this.scrollBarColor1, that.scrollBarColor1))
             return false;
-        if (this.scrollBarColor2 != null ? !this.scrollBarColor2.equals(that.scrollBarColor2)
-            : that.scrollBarColor2 != null)
+        if (!Objects.equals(this.scrollBarColor2, that.scrollBarColor2))
             return false;
-        if (this.minimizeButtonColor != null ? !this.minimizeButtonColor.equals(that.minimizeButtonColor)
-            : that.minimizeButtonColor != null)
+        if (!Objects.equals(this.minimizeButtonColor, that.minimizeButtonColor))
             return false;
         if (this.foregroundOpacity != that.foregroundOpacity)
             return false;
-        if (this.foregroundColor != null ? !this.foregroundColor.equals(that.foregroundColor)
-            : that.foregroundColor != null)
+        if (!Objects.equals(this.foregroundColor, that.foregroundColor))
             return false;
-        if (this.font != null ? !this.font.equals(that.font) : that.font != null)
+        if (!Objects.equals(this.font, that.font))
             return false;
-        if (this.textColor != null ? !this.textColor.equals(that.textColor) : that.textColor != null)
+        if (!Objects.equals(this.textColor, that.textColor))
             return false;
         if (this.iconSpace != that.iconSpace)
             return false;
-        if (this.iconSize != null ? !this.iconSize.equals(that.iconSize) : that.iconSize != null)
+        if (!Objects.equals(this.iconSize, that.iconSize))
             return false;
         //noinspection RedundantIfStatement
         if (this.cornerRadius != that.cornerRadius)

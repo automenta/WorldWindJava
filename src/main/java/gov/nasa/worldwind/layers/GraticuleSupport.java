@@ -39,9 +39,9 @@ public class GraticuleSupport
 
             Pair pair = (Pair) o;
 
-            if (a != null ? !a.equals(pair.a) : pair.a != null)
+            if (!Objects.equals(a, pair.a))
                 return false;
-            return b != null ? b.equals(pair.b) : pair.b == null;
+            return Objects.equals(b, pair.b);
         }
 
         @Override
@@ -53,9 +53,9 @@ public class GraticuleSupport
         }
     }
 
-    private final Collection<Pair> renderables = new HashSet<Pair>(); // a set to avoid duplicates in multi-pass (2D globes)
-    private final Map<String, GraticuleRenderingParams> namedParams = new HashMap<String, GraticuleRenderingParams>();
-    private final Map<String, ShapeAttributes> namedShapeAttributes = new HashMap<String, ShapeAttributes>();
+    private final Collection<Pair> renderables = new HashSet<>(); // a set to avoid duplicates in multi-pass (2D globes)
+    private final Map<String, GraticuleRenderingParams> namedParams = new HashMap<>();
+    private final Map<String, ShapeAttributes> namedShapeAttributes = new HashMap<>();
     private AVList defaultParams;
     private final GeographicTextRenderer textRenderer = new GeographicTextRenderer();
 
@@ -104,14 +104,14 @@ public class GraticuleSupport
         this.namedShapeAttributes.clear();
 
         // Render lines and collect text labels
-        Collection<GeographicText> text = new ArrayList<GeographicText>();
+        Collection<GeographicText> text = new ArrayList<>();
         for (Pair pair : this.renderables)
         {
             Object renderable = pair.a;
-            String paramsKey = (pair.b != null && pair.b instanceof String) ? (String) pair.b : null;
+            String paramsKey = (pair.b instanceof String) ? (String) pair.b : null;
             GraticuleRenderingParams renderingParams = paramsKey != null ? this.namedParams.get(paramsKey) : null;
 
-            if (renderable != null && renderable instanceof Path)
+            if (renderable instanceof Path)
             {
                 if (renderingParams == null || renderingParams.isDrawLines())
                 {
@@ -119,7 +119,7 @@ public class GraticuleSupport
                     ((Path) renderable).render(dc);
                 }
             }
-            else if (renderable != null && renderable instanceof GeographicText)
+            else if (renderable instanceof GeographicText)
             {
                 if (renderingParams == null || renderingParams.isDrawLabels())
                 {
@@ -224,7 +224,7 @@ public class GraticuleSupport
         {
             // Apply "label" properties to the GeographicText.
             Object o = params.getValue(GraticuleRenderingParams.KEY_LABEL_COLOR);
-            if (o != null && o instanceof Color)
+            if (o instanceof Color)
             {
                 Color color = applyOpacity((Color) o, opacity);
                 float[] compArray = new float[4];
@@ -235,7 +235,7 @@ public class GraticuleSupport
             }
 
             o = params.getValue(GraticuleRenderingParams.KEY_LABEL_FONT);
-            if (o != null && o instanceof Font)
+            if (o instanceof Font)
             {
                 text.setFont((Font) o);
             }
@@ -270,7 +270,7 @@ public class GraticuleSupport
         {
             // Apply "line" properties.
             Object o = params.getValue(GraticuleRenderingParams.KEY_LINE_COLOR);
-            if (o != null && o instanceof Color)
+            if (o instanceof Color)
             {
                 attrs.setOutlineMaterial(new Material(applyOpacity((Color) o, opacity)));
                 attrs.setOutlineOpacity(opacity);

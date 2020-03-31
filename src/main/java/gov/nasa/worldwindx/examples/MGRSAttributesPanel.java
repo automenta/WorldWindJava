@@ -35,7 +35,7 @@ public class MGRSAttributesPanel extends JPanel
     private JButton loadStateButton;
     private JPanel cardPanel;
     private CardLayout cardLayout;
-    private final Map<String, Component> graticuleAttribPanelMap = new HashMap<String, Component>();
+    private final Map<String, Component> graticuleAttribPanelMap = new HashMap<>();
     // Helper properties.
     private boolean ignoreLayerEvents = false;
     private boolean ignoreUIEvents = false;
@@ -70,11 +70,7 @@ public class MGRSAttributesPanel extends JPanel
         }
 
         this.layer = mgrsGraticuleLayer;
-        this.layer.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
-                onLayerPropertyChanged(event);
-            }
-        });
+        this.layer.addPropertyChangeListener(this::onLayerPropertyChanged);
         init();
     }
 
@@ -107,11 +103,11 @@ public class MGRSAttributesPanel extends JPanel
         }
 
         JDialog dialog;
-        if (component != null && component instanceof Dialog)
+        if (component instanceof Dialog)
         {
             dialog = new JDialog((Dialog) component);
         }
-        else if (component != null && component instanceof Frame)
+        else if (component instanceof Frame)
         {
             dialog = new JDialog((Frame) component);
         }
@@ -401,32 +397,16 @@ public class MGRSAttributesPanel extends JPanel
         this.itemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ListCellRenderer originalRenderer = this.itemList.getCellRenderer();
         this.itemList.setCellRenderer(new GraticuleTypeListRenderer(originalRenderer, null));
-        this.itemList.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent event) {
-                onListSelectionChanged(event);
-            }
-        });
+        this.itemList.addListSelectionListener(this::onListSelectionChanged);
         this.saveStateButton = new JButton("Save State");
-        this.saveStateButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                onSaveStatePressed(event);
-            }
-        });
+        this.saveStateButton.addActionListener(this::onSaveStatePressed);
         this.loadStateButton = new JButton("Load State");
-        this.loadStateButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                onLoadStatePressed(event);
-            }
-        });
+        this.loadStateButton.addActionListener(this::onLoadStatePressed);
 
         this.maxResolutionComboBox = new JComboBox(MGRS_GRATICULE_TYPES);
         originalRenderer = this.maxResolutionComboBox.getRenderer();
         this.maxResolutionComboBox.setRenderer(new GraticuleTypeListRenderer(originalRenderer, null));
-        this.maxResolutionComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                onMaxResolutionChanged(event);
-            }
-        });
+        this.maxResolutionComboBox.addActionListener(this::onMaxResolutionChanged);
 
         this.cardLayout = new CardLayout();
         this.cardPanel = new JPanel();
@@ -448,11 +428,7 @@ public class MGRSAttributesPanel extends JPanel
         }
 
         GraticuleAttributesPanel panel = new GraticuleAttributesPanel();
-        panel.addPropertyChangeListener(new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
-                onPanelStateChanged(event, graticuleType);
-            }
-        });
+        panel.addPropertyChangeListener(event -> onPanelStateChanged(event, graticuleType));
 
         return panel;
     }
@@ -558,7 +534,7 @@ public class MGRSAttributesPanel extends JPanel
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
         {
             Component c = this.delegate.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (c != null && c instanceof JLabel)
+            if (c instanceof JLabel)
             {
                 JLabel label = (JLabel) c;
                 Font font = label.getFont();
@@ -570,7 +546,7 @@ public class MGRSAttributesPanel extends JPanel
                 {
                     label.setIcon(this.icon);
                 }
-                if (value != null && value instanceof String)
+                if (value instanceof String)
                 {
                     String graticuleType = (String) value;
                     String labelText = getGraticuleLabel(graticuleType);

@@ -390,7 +390,7 @@ public class SurfaceEllipse extends AbstractSurfaceShape
 
     protected void doMoveTo(Globe globe, Position oldReferencePosition, Position newReferencePosition)
     {
-        List<LatLon> locations = new ArrayList<LatLon>(1);
+        List<LatLon> locations = new ArrayList<>(1);
         locations.add(this.getCenter());
         List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldReferencePosition, newReferencePosition,
             locations);
@@ -439,7 +439,7 @@ public class SurfaceEllipse extends AbstractSurfaceShape
         if (drawLocations == null)
             return null;
 
-        ArrayList<List<LatLon>> geom = new ArrayList<List<LatLon>>();
+        ArrayList<List<LatLon>> geom = new ArrayList<>();
         geom.add(drawLocations);
 
         return geom;

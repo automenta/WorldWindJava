@@ -70,7 +70,7 @@ public class WMSLayerAttribution extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OGCOnlineResource)
+                if (o instanceof OGCOnlineResource)
                     this.setOnlineResource((OGCOnlineResource) o);
             }
         }
@@ -80,7 +80,7 @@ public class WMSLayerAttribution extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLogoURL)
+                if (o instanceof WMSLogoURL)
                     this.setLogoURL((WMSLogoURL) o);
             }
         }

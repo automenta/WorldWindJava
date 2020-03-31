@@ -32,7 +32,7 @@ import java.util.*;
  */
 public class BasicRasterServer extends WWObjectImpl implements RasterServer
 {
-    protected java.util.List<DataRaster> dataRasterList = new java.util.ArrayList<DataRaster>();
+    protected final java.util.List<DataRaster> dataRasterList = new java.util.ArrayList<>();
 
     protected DataRasterReaderFactory readerFactory;
 
@@ -407,7 +407,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
         }
 
         Object o = reqParams.getValue(AVKey.SECTOR);
-        if (null == o || !(o instanceof Sector))
+        if (!(o instanceof Sector))
         {
             String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR);
             Logging.logger().severe(message);

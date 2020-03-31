@@ -96,7 +96,7 @@ public class JSONDoc implements Closeable
         return new BasicJSONEventParserContext(parser);
     }
 
-    protected JSONEventParser createRootObjectParser() throws IOException
+    protected JSONEventParser createRootObjectParser()
     {
         return new BasicJSONEventParser();
     }

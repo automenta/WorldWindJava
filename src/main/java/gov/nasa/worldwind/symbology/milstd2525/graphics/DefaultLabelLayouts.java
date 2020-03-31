@@ -25,7 +25,7 @@ import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacticalGraphicSy
 public class DefaultLabelLayouts
 {
     /** Map to hold layouts. */
-    protected Map<String, List<LabelLayout>> layouts = new HashMap<String, List<LabelLayout>>();
+    protected final Map<String, List<LabelLayout>> layouts = new HashMap<>();
 
     /** Create the map and populate it with the default layouts. */
     public DefaultLabelLayouts()
@@ -61,7 +61,7 @@ public class DefaultLabelLayouts
             this.createLayout(SymbologyConstants.UNIQUE_DESIGNATION, Offset.CENTER, Offset.CENTER));
 
         // Most pentagon shaped graphics support the same modifiers around the pentagon.
-        List<LabelLayout> layout = new ArrayList<LabelLayout>();
+        List<LabelLayout> layout = new ArrayList<>();
         this.addLayout(layout, SymbologyConstants.UNIQUE_DESIGNATION,
             Offset.fromFraction(1.1, 1.0),
             Offset.fromFraction(0.0, 1.0));
@@ -128,7 +128,7 @@ public class DefaultLabelLayouts
 
         // C2GM.GNL.PNT.ACTPNT supports all the normal pentagon graphic modifiers, and also supports H1 in the
         // middle of the pentagon.
-        layout = new ArrayList<LabelLayout>(layout);
+        layout = new ArrayList<>(layout);
         this.addLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
             Offset.TOP_CENTER,
             Offset.BOTTOM_CENTER,
@@ -138,7 +138,7 @@ public class DefaultLabelLayouts
 
         // CSS.PNT.AEP supports all the normal pentagon graphic modifiers, and also supports T1 in the
         // middle of the pentagon.
-        layout = new ArrayList<LabelLayout>(layout);
+        layout = new ArrayList<>(layout);
         this.addLayout(layout, SymbologyConstants.UNIQUE_DESIGNATION,
             Offset.fromFraction(1.1, 1.0),
             Offset.fromFraction(0.0, 1.0),
@@ -150,7 +150,7 @@ public class DefaultLabelLayouts
         this.layouts.put(CSS_PNT_AEP, layout);
 
         // The Chemical and Biological release graphics support the same modifiers.
-        layout = new ArrayList<LabelLayout>();
+        layout = new ArrayList<>();
         this.addLayout(layout, SymbologyConstants.LOCATION,
             Offset.fromFraction(0.5, -0.1),
             Offset.TOP_CENTER);
@@ -173,7 +173,7 @@ public class DefaultLabelLayouts
         this.layouts.put(MOBSU_CBRN_REEVNT_CML, layout);
 
         // The Nuclear graphic is mostly the same as chem/bio, but also supports the quantity modifier.
-        layout = new ArrayList<LabelLayout>(layout);
+        layout = new ArrayList<>(layout);
         this.addLayout(layout, SymbologyConstants.QUANTITY,
             Offset.TOP_CENTER,
             Offset.BOTTOM_CENTER);
@@ -205,7 +205,7 @@ public class DefaultLabelLayouts
 
         // FSUPP.PNT.TGT.PTGT is also cross shaped. In addition T in the upper right quad, it supports H and H1 in
         // the lower quads.
-        layout = new ArrayList<LabelLayout>(layout);
+        layout = new ArrayList<>(layout);
         this.addLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
             Offset.fromFraction(0.75, 0.25),
             Offset.fromFraction(0.0, 1.0),
@@ -235,7 +235,7 @@ public class DefaultLabelLayouts
         LabelLayout layout = new LabelLayout(key);
         layout.add(offset, hotspot);
 
-        return Arrays.asList(layout);
+        return Collections.singletonList(layout);
     }
 
     /**

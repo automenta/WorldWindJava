@@ -22,7 +22,7 @@ import gov.nasa.worldwind.util.Logging;
 @Deprecated
 public class AirspaceLayer extends AbstractLayer
 {
-    private final java.util.Collection<Airspace> airspaces = new java.util.concurrent.ConcurrentLinkedQueue<Airspace>();
+    private final java.util.Collection<Airspace> airspaces = new java.util.concurrent.ConcurrentLinkedQueue<>();
     private Iterable<Airspace> airspacesOverride;
 
     /** Creates a new <code>Airspace</code> with an empty collection of Airspaces. */

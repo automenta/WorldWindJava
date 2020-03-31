@@ -26,11 +26,11 @@ public class LayerPanel extends JPanel
     public static final ImageIcon DOWN_ARROW =
         new ImageIcon(LayerPanel.class.getResource("/images/down_arrow_16x16.png"));
 
-    protected Layer layer; // the layer represented by this instance
+    protected final Layer layer; // the layer represented by this instance
 
-    protected JCheckBox checkBox; // the checkbox of this instance
-    protected JButton upButton;
-    protected JButton downButton;
+    protected final JCheckBox checkBox; // the checkbox of this instance
+    protected final JButton upButton;
+    protected final JButton downButton;
 
     public LayerPanel(final WorldWindow wwd, final Layer layer)
     {
@@ -44,22 +44,10 @@ public class LayerPanel extends JPanel
         this.add(this.checkBox, BorderLayout.CENTER);
 
         this.upButton = new JButton(UP_ARROW);
-        this.upButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                moveLayer(wwd, layer, -1);
-            }
-        });
+        this.upButton.addActionListener(actionEvent -> moveLayer(wwd, layer, -1));
 
         this.downButton = new JButton(DOWN_ARROW);
-        this.downButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                moveLayer(wwd, layer, +1);
-            }
-        });
+        this.downButton.addActionListener(actionEvent -> moveLayer(wwd, layer, +1));
 
         // The buttons shouldn't look like actual JButtons.
         this.upButton.setBorderPainted(false);
@@ -149,9 +137,9 @@ public class LayerPanel extends JPanel
     {
         // This action handles layer selection and de-selection.
 
-        protected WorldWindow wwd;
-        protected Layer layer;
-        protected boolean selected;
+        protected final WorldWindow wwd;
+        protected final Layer layer;
+        protected final boolean selected;
 
         public SelectLayerAction(WorldWindow wwd, Layer layer, boolean selected)
         {

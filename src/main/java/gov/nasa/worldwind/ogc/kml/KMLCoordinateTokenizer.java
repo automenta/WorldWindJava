@@ -40,9 +40,9 @@ import java.util.*;
 public class KMLCoordinateTokenizer
 {
     protected int i;
-    protected char[] buffer;
+    protected final char[] buffer;
 
-    protected List<String> words = new ArrayList<String>(3);
+    protected final List<String> words = new ArrayList<>(3);
 
     protected StringBuilder nextWord = new StringBuilder();
 
@@ -121,10 +121,10 @@ public class KMLCoordinateTokenizer
     protected Position makePosition()
     {
         if (this.words.size() > 2)
-            return Position.fromDegrees(Double.valueOf(this.words.get(1)), Double.valueOf(this.words.get(0)),
-                Double.valueOf(this.words.get(2)));
+            return Position.fromDegrees(Double.parseDouble(this.words.get(1)), Double.parseDouble(this.words.get(0)),
+                Double.parseDouble(this.words.get(2)));
         else if (this.words.size() == 2)
-            return Position.fromDegrees(Double.valueOf(this.words.get(1)), Double.valueOf(this.words.get(0)));
+            return Position.fromDegrees(Double.parseDouble(this.words.get(1)), Double.parseDouble(this.words.get(0)));
         return null;
     }
 

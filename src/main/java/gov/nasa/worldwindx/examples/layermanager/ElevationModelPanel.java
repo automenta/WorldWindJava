@@ -22,11 +22,11 @@ import java.awt.event.*;
  */
 public class ElevationModelPanel extends JPanel
 {
-    protected ElevationModel elevationModel;
+    protected final ElevationModel elevationModel;
 
-    protected JCheckBox checkBox;
-    protected JButton upButton;
-    protected JButton downButton;
+    protected final JCheckBox checkBox;
+    protected final JButton upButton;
+    protected final JButton downButton;
 
     public ElevationModelPanel(final WorldWindow wwd, final ElevationModelManagerPanel emPanel,
                                final ElevationModel elevationModel)
@@ -40,23 +40,15 @@ public class ElevationModelPanel extends JPanel
         this.add(this.checkBox, BorderLayout.CENTER);
 
         this.upButton = new JButton(LayerPanel.UP_ARROW);
-        this.upButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                moveElevationModel(wwd, elevationModel, -1);
-                emPanel.update(wwd);
-            }
+        this.upButton.addActionListener(actionEvent -> {
+            moveElevationModel(wwd, elevationModel, -1);
+            emPanel.update(wwd);
         });
 
         this.downButton = new JButton(LayerPanel.DOWN_ARROW);
-        this.downButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                moveElevationModel(wwd, elevationModel, +1);
-                emPanel.update(wwd);
-            }
+        this.downButton.addActionListener(actionEvent -> {
+            moveElevationModel(wwd, elevationModel, +1);
+            emPanel.update(wwd);
         });
 
         // The buttons shouldn't look like actual JButtons.
@@ -144,9 +136,9 @@ public class ElevationModelPanel extends JPanel
     {
         // This action handles elevation model selection and de-selection.
 
-        protected WorldWindow wwd;
-        protected ElevationModel elevationModel;
-        protected boolean selected;
+        protected final WorldWindow wwd;
+        protected final ElevationModel elevationModel;
+        protected final boolean selected;
 
         public SelectModelAction(WorldWindow wwd, ElevationModel elevationModel, boolean selected)
         {

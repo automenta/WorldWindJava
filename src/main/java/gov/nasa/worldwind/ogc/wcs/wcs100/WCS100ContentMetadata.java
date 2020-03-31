@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class WCS100ContentMetadata extends AbstractXMLEventParser
 {
-    protected List<WCS100CoverageOfferingBrief> coverageOfferings = new ArrayList<WCS100CoverageOfferingBrief>(1);
+    protected final List<WCS100CoverageOfferingBrief> coverageOfferings = new ArrayList<>(1);
 
     public WCS100ContentMetadata(String namespaceURI)
     {
@@ -39,7 +39,7 @@ public class WCS100ContentMetadata extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WCS100CoverageOfferingBrief)
+                if (o instanceof WCS100CoverageOfferingBrief)
                     this.coverageOfferings.add((WCS100CoverageOfferingBrief) o);
             }
         }

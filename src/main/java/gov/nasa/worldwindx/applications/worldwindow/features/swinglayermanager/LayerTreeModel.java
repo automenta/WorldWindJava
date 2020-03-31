@@ -240,7 +240,7 @@ public class LayerTreeModel extends DefaultTreeModel
         if (groupNode == null)
             groupNode = getRootNode();
 
-        List<LayerTreeNode> instances = new ArrayList<LayerTreeNode>();
+        List<LayerTreeNode> instances = new ArrayList<>();
 
         Enumeration treeNodes = groupNode.depthFirstEnumeration();
         while (treeNodes.hasMoreElements())

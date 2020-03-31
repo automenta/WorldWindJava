@@ -185,7 +185,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
         if (this.keepFullyVisible)
         {
             // Compute the eventual screen position
-            double xx = x - size.x / 2 + offset[0];
+            double xx = x - size.x / 2.0 + offset[0];
             double yy = y + offset[1];
 
             // See if it extends the annotation beyond the window edges, adjust the screen point if it does
@@ -196,7 +196,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
                 x += dE;
 
             if (xx < vp.x + xMargin)
-                x = vp.x + this.xMargin + size.x / 2;
+                x = vp.x + this.xMargin + size.x / 2.0;
 
             if (dN < 0)
                 y += dN;

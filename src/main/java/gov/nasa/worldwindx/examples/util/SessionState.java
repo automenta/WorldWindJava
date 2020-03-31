@@ -23,8 +23,8 @@ public class SessionState
 {
     protected static class LayerStateFilename
     {
-        protected String className;
-        protected int index;
+        protected final String className;
+        protected final int index;
 
         public LayerStateFilename(String className, int index)
         {
@@ -36,19 +36,14 @@ public class SessionState
     protected static final String VIEW_STATE_PATH = "SessionState/ViewState.xml";
     protected static final String LAYER_STATE_PATH = "SessionState/LayerState";
     protected static final String LAYER_STATE_FILENAME_DELIMITER = "-";
-    protected static final Comparator<String> LAYER_STATE_FILENAME_COMPARATOR = new Comparator<String>()
-    {
-        @Override
-        public int compare(String a, String b)
-        {
-            LayerStateFilename fna = parseLayerStateFilename(a);
-            LayerStateFilename fnb = parseLayerStateFilename(b);
+    protected static final Comparator<String> LAYER_STATE_FILENAME_COMPARATOR = (a, b) -> {
+        LayerStateFilename fna = parseLayerStateFilename(a);
+        LayerStateFilename fnb = parseLayerStateFilename(b);
 
-            if (fna == null || fnb == null)
-                return fnb != null ? -1 : (fna != null ? 1 : 0);
-            else
-                return fna.index < fnb.index ? -1 : (fna.index > fnb.index ? 1 : 0);
-        }
+        if (fna == null || fnb == null)
+            return fnb != null ? -1 : (fna != null ? 1 : 0);
+        else
+            return Integer.compare(fna.index, fnb.index);
     };
 
     protected String sessionKey;

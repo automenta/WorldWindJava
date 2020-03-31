@@ -10,7 +10,7 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * @author Patrick Murris
@@ -167,21 +167,19 @@ public class VPFSymbolAttributes extends BasicShapeAttributes
                 return false;
             if (Double.compare(this.offset, that.offset) != 0)
                 return false;
-            if (this.append != null ? !this.append.equals(that.append) : that.append != null)
+            if (!Objects.equals(this.append, that.append))
                 return false;
-            if (this.attributeName != null ? !this.attributeName.equals(that.attributeName)
-                : that.attributeName != null)
+            if (!Objects.equals(this.attributeName, that.attributeName))
                 return false;
-            if (this.backgroundColor != null ? !this.backgroundColor.equals(that.backgroundColor)
-                : that.backgroundColor != null)
+            if (!Objects.equals(this.backgroundColor, that.backgroundColor))
                 return false;
-            if (this.color != null ? !this.color.equals(that.color) : that.color != null)
+            if (!Objects.equals(this.color, that.color))
                 return false;
-            if (this.font != null ? !this.font.equals(that.font) : that.font != null)
+            if (!Objects.equals(this.font, that.font))
                 return false;
-            if (this.offsetAngle != null ? !this.offsetAngle.equals(that.offsetAngle) : that.offsetAngle != null)
+            if (!Objects.equals(this.offsetAngle, that.offsetAngle))
                 return false;
-            if (this.prepend != null ? !this.prepend.equals(that.prepend) : that.prepend != null)
+            if (!Objects.equals(this.prepend, that.prepend))
                 return false;
 
             return true;
@@ -398,19 +396,17 @@ public class VPFSymbolAttributes extends BasicShapeAttributes
             return false;
         if (this.mipMapIconImage != that.mipMapIconImage)
             return false;
-        if (this.description != null ? !this.description.equals(that.description) : that.description != null)
+        if (!Objects.equals(this.description, that.description))
             return false;
         if (this.featureType != that.featureType)
             return false;
-        if (this.iconImageSource != null ? !this.iconImageSource.equals(that.iconImageSource)
-            : that.iconImageSource != null)
+        if (!Objects.equals(this.iconImageSource, that.iconImageSource))
             return false;
         if (!Arrays.equals(this.labelAttributes, that.labelAttributes))
             return false;
-        if (this.orientationAttributeName != null ? !this.orientationAttributeName.equals(that.orientationAttributeName)
-            : that.orientationAttributeName != null)
+        if (!Objects.equals(this.orientationAttributeName, that.orientationAttributeName))
             return false;
-        if (this.symbolKey != null ? !this.symbolKey.equals(that.symbolKey) : that.symbolKey != null)
+        if (!Objects.equals(this.symbolKey, that.symbolKey))
             return false;
 
         return true;

@@ -51,7 +51,7 @@ public class DirectionOfAttackAviation extends DirectionOfAttack
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_OFF_LNE_DIRATK_AVN);
+        return Collections.singletonList(TacGrpSidc.C2GM_OFF_LNE_DIRATK_AVN);
     }
 
     /**
@@ -196,7 +196,7 @@ public class DirectionOfAttackAviation extends DirectionOfAttack
         // 4) The bow tie.
         this.paths = new Path[4];
 
-        List<Position> curvePositions = new ArrayList<Position>();
+        List<Position> curvePositions = new ArrayList<>();
 
         Globe globe = dc.getGlobe();
         Vec4 p1 = globe.computePointFromLocation(this.startPosition);

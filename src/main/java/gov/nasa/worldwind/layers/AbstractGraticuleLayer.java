@@ -46,7 +46,7 @@ public class AbstractGraticuleLayer extends AbstractLayer
     public static final String LINE_STYLE_DOTTED = GraticuleRenderingParams.VALUE_LINE_STYLE_DOTTED;
 
     protected ArrayList<GridElement> gridElements;
-    protected GraticuleSupport graticuleSupport = new GraticuleSupport();
+    protected final GraticuleSupport graticuleSupport = new GraticuleSupport();
     protected double terrainConformance = 50;
     protected Globe globe;
 
@@ -702,12 +702,12 @@ public class AbstractGraticuleLayer extends AbstractLayer
         {
             OrbitView view = (OrbitView) dc.getView();
             Position centerPos = view.getCenterPosition();
-            Double pixelSizeDegrees = Angle.fromRadians(view.computePixelSizeAtDistance(view.getZoom())
+            double pixelSizeDegrees = Angle.fromRadians(view.computePixelSizeAtDistance(view.getZoom())
                 / dc.getGlobe().getEquatorialRadius()).degrees;
-            Double labelOffsetDegrees = pixelSizeDegrees * view.getViewport().getWidth() / 4;
+            double labelOffsetDegrees = pixelSizeDegrees * view.getViewport().getWidth() / 4;
             labelPos = LatLon.fromDegrees(centerPos.getLatitude().degrees - labelOffsetDegrees,
                 centerPos.getLongitude().degrees - labelOffsetDegrees);
-            Double labelLatDegrees = labelPos.getLatitude().normalizedLatitude().degrees;
+            double labelLatDegrees = labelPos.getLatitude().normalizedLatitude().degrees;
             labelLatDegrees = Math.min(Math.max(labelLatDegrees, -70), 70);
             labelPos = new LatLon(Angle.fromDegrees(labelLatDegrees), labelPos.getLongitude().normalizedLongitude());
         }
@@ -726,7 +726,7 @@ public class AbstractGraticuleLayer extends AbstractLayer
         return path;
     }
 
-    protected class GridElement
+    protected static class GridElement
     {
         public final static String TYPE_LINE = "GridElement_Line";
         public final static String TYPE_LINE_NORTH = "GridElement_LineNorth";
@@ -906,7 +906,7 @@ public class AbstractGraticuleLayer extends AbstractLayer
         if (p2.getLongitude().degrees == longitude.degrees)
             return p2;
         LatLon pos = null;
-        Double deltaLon = getDeltaLongitude(p1, p2.getLongitude()).degrees;
+        double deltaLon = getDeltaLongitude(p1, p2.getLongitude()).degrees;
         if (getDeltaLongitude(p1, longitude).degrees < deltaLon
             && getDeltaLongitude(p2, longitude).degrees < deltaLon)
         {

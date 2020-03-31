@@ -184,8 +184,8 @@ public class PointPlacemark extends WWObjectImpl
     protected String labelText;
     protected PointPlacemarkAttributes normalAttrs;
     protected PointPlacemarkAttributes highlightAttrs;
-    protected PointPlacemarkAttributes activeAttributes = new PointPlacemarkAttributes(); // re-determined each frame
-    protected Map<String, WWTexture> textures = new HashMap<String, WWTexture>(); // holds the textures created
+    protected final PointPlacemarkAttributes activeAttributes = new PointPlacemarkAttributes(); // re-determined each frame
+    protected final Map<String, WWTexture> textures = new HashMap<>(); // holds the textures created
     protected WWTexture activeTexture; // determined each frame
 
     protected boolean highlighted;
@@ -215,7 +215,7 @@ public class PointPlacemark extends WWObjectImpl
     protected double dy;
     protected Layer pickLayer; // shape's layer when ordered renderable was created
 
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
 
     /**
      * Construct a point placemark.
@@ -896,7 +896,7 @@ public class PointPlacemark extends WWObjectImpl
 
         if (!dc.isPickingMode())
         {
-            while (nextItem != null && nextItem instanceof OrderedPlacemark)
+            while (nextItem instanceof OrderedPlacemark)
             {
                 OrderedPlacemark opm = (OrderedPlacemark) nextItem;
                 if (!opm.isEnableBatchRendering())
@@ -910,7 +910,7 @@ public class PointPlacemark extends WWObjectImpl
         }
         else if (this.isEnableBatchPicking())
         {
-            while (nextItem != null && nextItem instanceof OrderedPlacemark)
+            while (nextItem instanceof OrderedPlacemark)
             {
                 OrderedPlacemark opm = (OrderedPlacemark) nextItem;
                 if (!opm.isEnableBatchRendering() || !opm.isEnableBatchPicking())
@@ -991,7 +991,7 @@ public class PointPlacemark extends WWObjectImpl
 
             // Adjust depth of image to bring it slightly forward
             double depth = opm.screenPoint.z - (8d * 0.00048875809d);
-            depth = depth < 0d ? 0d : (depth > 1d ? 1d : depth);
+            depth = depth < 0d ? 0d : (Math.min(depth, 1d));
             gl.glDepthFunc(GL.GL_LESS);
             gl.glDepthRange(depth, depth);
 
@@ -1285,7 +1285,7 @@ public class PointPlacemark extends WWObjectImpl
 
             // Adjust depth of point to bring it slightly forward
             double depth = opm.screenPoint.z - (8d * 0.00048875809d);
-            depth = depth < 0d ? 0d : (depth > 1d ? 1d : depth);
+            depth = depth < 0d ? 0d : (Math.min(depth, 1d));
             gl.glDepthFunc(GL.GL_LESS);
             gl.glDepthRange(depth, depth);
 

@@ -19,9 +19,9 @@ import java.util.*;
  */
 public class VPFSurfaceLine extends SurfacePolyline // TODO: consolidate with SurfacePolylines
 {
-    protected Sector sector;
-    protected VecBufferSequence buffer;
-    protected LatLon referenceLocation;
+    protected final Sector sector;
+    protected final VecBufferSequence buffer;
+    protected final LatLon referenceLocation;
 
     public VPFSurfaceLine(VPFFeature feature, VPFPrimitiveData primitiveData)
     {
@@ -38,7 +38,7 @@ public class VPFSurfaceLine extends SurfacePolyline // TODO: consolidate with Su
         if (this.sector == null || this.sector.equals(Sector.EMPTY_SECTOR))
             return null;
 
-        return Arrays.asList(this.sector);
+        return Collections.singletonList(this.sector);
     }
 
     public Iterable<? extends LatLon> getLocations()

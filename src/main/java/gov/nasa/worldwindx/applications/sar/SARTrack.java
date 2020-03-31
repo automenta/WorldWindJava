@@ -15,6 +15,7 @@ import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwindx.applications.sar.tracks.*;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.awt.*;
 import java.beans.*;
 import java.io.*;
@@ -65,7 +66,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position>
     private ArrayList<SARPosition> positions;
     private final PropertyChangeSupport propChangeSupport = new PropertyChangeSupport(this);
 
-    public static SARTrack fromFile(String filePath) throws IOException
+    public static SARTrack fromFile(String filePath)
     {
         if (filePath == null)
         {
@@ -156,7 +157,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position>
     public SARTrack(String name)
     {
         this.name = name;
-        this.positions = new ArrayList<SARPosition>();
+        this.positions = new ArrayList<>();
     }
 
     public File getFile()
@@ -287,7 +288,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position>
 
     public Iterator<Position> iterator()
     {
-        return new Iterator<Position>()
+        return new Iterator<>()
         {
             private final Iterator<SARPosition> iter = SARTrack.this.positions.iterator();
 
@@ -371,7 +372,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position>
         writer.close();
     }
 
-    private static void writeGPX(SARTrack track, String filePath) throws IOException
+    private static void writeGPX(SARTrack track, String filePath)
     {
         try
         {
@@ -380,11 +381,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position>
             writer.writeTrack(trk);
             writer.close();
         }
-        catch (ParserConfigurationException e)
-        {
-            throw new IllegalArgumentException(e);
-        }
-        catch (javax.xml.transform.TransformerException e)
+        catch (ParserConfigurationException | TransformerException e)
         {
             throw new IllegalArgumentException(e);
         }
@@ -400,7 +397,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position>
 
     private static SARTrack makeTrackFromTrackPointIterator(TrackPointIterator tpi)
     {
-        ArrayList<SARPosition> positions = new ArrayList<SARPosition>();
+        ArrayList<SARPosition> positions = new ArrayList<>();
         while (tpi.hasNext())
         {
             TrackPoint tp = tpi.next();
@@ -423,7 +420,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position>
     private static class TrackWrapper implements Track, TrackSegment
     {
         private final SARTrack sarTrack;
-        private final ArrayList<TrackSegment> segments = new ArrayList<TrackSegment>();
+        private final ArrayList<TrackSegment> segments = new ArrayList<>();
 
         public TrackWrapper(SARTrack sarTrack)
         {
@@ -448,7 +445,7 @@ public class SARTrack extends WWObjectImpl implements Iterable<Position>
 
         public java.util.List<TrackPoint> getPoints()
         {
-            ArrayList<TrackPoint> trkPoints = new ArrayList<TrackPoint>();
+            ArrayList<TrackPoint> trkPoints = new ArrayList<>();
             for (SARPosition sarPos : this.sarTrack.positions)
             {
                 trkPoints.add(sarPos != null ? new TrackPointWrapper(sarPos) : null);

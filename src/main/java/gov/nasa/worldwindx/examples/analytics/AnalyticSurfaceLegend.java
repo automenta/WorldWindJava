@@ -166,7 +166,7 @@ public class AnalyticSurfaceLegend implements Renderable
         }
 
         ArrayList<AnalyticSurfaceLegend.LabelAttributes> labels
-            = new ArrayList<AnalyticSurfaceLegend.LabelAttributes>();
+            = new ArrayList<>();
 
         int numLabels = 5;
         Font font = Font.decode("Arial-BOLD-12");
@@ -265,8 +265,8 @@ public class AnalyticSurfaceLegend implements Renderable
         Point location = this.getScreenLocation(dc);
         if (location != null)
         {
-            x += location.getX() - this.screenImage.getImageWidth(dc) / 2;
-            y += location.getY() - this.screenImage.getImageHeight(dc) / 2;
+            x += location.getX() - this.screenImage.getImageWidth(dc) / 2.0;
+            y += location.getY() - this.screenImage.getImageHeight(dc) / 2.0;
         }
 
         Point2D offset = attr.getOffset();
@@ -352,7 +352,7 @@ public class AnalyticSurfaceLegend implements Renderable
     protected Iterable<? extends Renderable> createColorGradientLegendLabels(int width, int height,
         double minValue, double maxValue, Iterable<? extends LabelAttributes> labels, LabelAttributes titleLabel)
     {
-        ArrayList<Renderable> list = new ArrayList<Renderable>();
+        ArrayList<Renderable> list = new ArrayList<>();
 
         if (labels != null)
         {

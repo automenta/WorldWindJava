@@ -15,7 +15,7 @@ import gov.nasa.worldwind.util.PropertyAccessor;
 public class MoveToPositionAnimator extends PositionAnimator
 {
 
-    protected double positionMinEpsilon = 1e-9;
+    protected final double positionMinEpsilon = 1e-9;
     protected double smoothing = .9;
     protected boolean useSmoothing = true;
 

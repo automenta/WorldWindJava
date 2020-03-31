@@ -56,7 +56,7 @@ public class KMZInputStream extends XMLDoc
         }
 
         this.zipStream = new ZipInputStream(sourceStream);
-        this.files = new HashMap<String, File>();
+        this.files = new HashMap<>();
         this.moveToNextEntry();
     }
 

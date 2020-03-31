@@ -50,7 +50,7 @@ public class AbsentResourceList
     }
 
     /** The map of absent resources. */
-    protected BasicSessionCache possiblyAbsent = new BasicSessionCache(1000);
+    protected final BasicSessionCache possiblyAbsent = new BasicSessionCache(1000);
 
     /**
      * Construct an absent-resource list with default values for max tries (3), check interval (10 seconds) and

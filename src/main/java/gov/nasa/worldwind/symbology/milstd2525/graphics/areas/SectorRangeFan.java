@@ -90,7 +90,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.FSUPP_ARS_WPNRF_SCR);
+        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_WPNRF_SCR);
     }
 
     /**
@@ -338,7 +338,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
             }
             else if (value instanceof Double)
             {
-                this.setRadii(Arrays.asList((Double) value));
+                this.setRadii(Collections.singletonList((Double) value));
             }
         }
         else if (SymbologyConstants.AZIMUTH.equals(modifier))
@@ -351,7 +351,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
             }
             else if (value instanceof Angle)
             {
-                this.setAzimuths(Arrays.asList((Angle) value));
+                this.setAzimuths(Collections.singletonList((Angle) value));
             }
         }
         else if (SymbologyConstants.ALTITUDE_DEPTH.equals(modifier))
@@ -364,7 +364,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
             }
             else if (value != null)
             {
-                this.setAltitudes(Arrays.asList(value.toString()));
+                this.setAltitudes(Collections.singletonList(value.toString()));
             }
         }
         else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String)
@@ -523,7 +523,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
     /** {@inheritDoc} */
     public Iterable<? extends Position> getPositions()
     {
-        return Arrays.asList(this.position);
+        return Collections.singletonList(this.position);
     }
 
     /** {@inheritDoc} */
@@ -613,7 +613,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
      */
     protected void createShapes(DrawContext dc)
     {
-        this.paths = new ArrayList<Path>();
+        this.paths = new ArrayList<>();
 
         Iterator<Double> radii = this.getRadii().iterator();
         Iterator<? extends Angle> azimuths = this.getAzimuths().iterator();
@@ -636,7 +636,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
             leftAzimuth = this.normalizeAzimuth(leftAzimuth);
             rightAzimuth = this.normalizeAzimuth(rightAzimuth);
 
-            List<Position> positions = new ArrayList<Position>();
+            List<Position> positions = new ArrayList<>();
 
             // Create an arc to complete the left side of the previous fan, if this fan is larger. If this fan is smaller
             // this will add a single point to the position list at the range of the previous radius.
@@ -681,7 +681,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
         Position center = this.getPosition();
 
         // Create the line par of the arrow.
-        List<Position> positions = new ArrayList<Position>();
+        List<Position> positions = new ArrayList<>();
         positions.add(center);
         this.createArc(dc, finalRadius * this.getCenterOfSectorLength(), centerAzimuth, centerAzimuth,
             positions);

@@ -29,7 +29,7 @@ public class RectangularTarget extends AbstractRectangularGraphic
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.FSUPP_ARS_ARATGT_RTGTGT);
+        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_ARATGT_RTGTGT);
     }
 
     /**
@@ -126,7 +126,7 @@ public class RectangularTarget extends AbstractRectangularGraphic
     /** {@inheritDoc} */
     public Iterable<? extends Position> getPositions()
     {
-        return Arrays.asList(new Position(this.quad.getCenter(), 0));
+        return Collections.singletonList(new Position(this.quad.getCenter(), 0));
     }
 
     /** Create labels for the graphic. */

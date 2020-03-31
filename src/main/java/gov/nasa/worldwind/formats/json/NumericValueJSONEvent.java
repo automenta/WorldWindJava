@@ -5,8 +5,6 @@
  */
 package gov.nasa.worldwind.formats.json;
 
-import java.io.IOException;
-
 /**
  * @author dcollins
  * @version $Id: NumericValueJSONEvent.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -16,7 +14,7 @@ public class NumericValueJSONEvent implements JSONEvent
     protected final String fieldName;
     protected final double numericValue;
 
-    public NumericValueJSONEvent(String fieldName, double value) throws IOException
+    public NumericValueJSONEvent(String fieldName, double value)
     {
         this.fieldName = fieldName;
         this.numericValue = value;

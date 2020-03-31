@@ -28,23 +28,18 @@ public abstract class AbstractOpenResourceFeature extends AbstractFeature implem
 
     protected Thread runOpenThread(final Object source)
     {
-        this.loadingThread = new Thread()
-        {
-            @Override
-            public void run()
-            {
-                getController().getNetworkActivitySignal().addNetworkUser(AbstractOpenResourceFeature.this);
+        this.loadingThread = new Thread(() -> {
+            getController().getNetworkActivitySignal().addNetworkUser(AbstractOpenResourceFeature.this);
 
-                try
-                {
-                    new SimpleImporter(source, getController()).startImport();
-                }
-                finally
-                {
-                    controller.getNetworkActivitySignal().removeNetworkUser(AbstractOpenResourceFeature.this);
-                }
+            try
+            {
+                new SimpleImporter(source, getController()).startImport();
             }
-        };
+            finally
+            {
+                controller.getNetworkActivitySignal().removeNetworkUser(AbstractOpenResourceFeature.this);
+            }
+        });
 
         this.loadingThread.start();
 

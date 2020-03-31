@@ -27,7 +27,7 @@ public class ScalebarHint
     private final RenderableLayer layer = new RenderableLayer();
     private final MarkerRenderer markerRenderer = new MarkerRenderer();
     private final RenderableMarker marker;
-    MarkerAttributes markerAttributes;
+    final MarkerAttributes markerAttributes;
     private boolean enabled = true;
 
     public ScalebarHint()
@@ -51,23 +51,19 @@ public class ScalebarHint
         this.wwd.getModel().getLayers().add(this.layer);
         
         // Add scalebar select listener to handle rollover
-        this.wwd.addSelectListener(new SelectListener()
-        {
-            public void selected(SelectEvent event)
+        this.wwd.addSelectListener(event -> {
+            if (!enabled || event.getTopObject() == null || !(event.getTopObject() instanceof ScalebarLayer))
             {
-                if (!enabled || event.getTopObject() == null || !(event.getTopObject() instanceof ScalebarLayer))
-                {
-                    layer.setEnabled(false);
-                    return;
-                }
-
-                if (!event.getEventAction().equals(SelectEvent.ROLLOVER))
-                    return;
-
-                marker.setPosition(event.getTopPickedObject().getPosition());
-                layer.setEnabled(true);
-                wwd.redraw();
+                layer.setEnabled(false);
+                return;
             }
+
+            if (!event.getEventAction().equals(SelectEvent.ROLLOVER))
+                return;
+
+            marker.setPosition(event.getTopPickedObject().getPosition());
+            layer.setEnabled(true);
+            wwd.redraw();
         });
     }
 
@@ -99,7 +95,7 @@ public class ScalebarHint
         {
             if (this.markerList == null)
             {
-                this.markerList = new ArrayList<Marker>();
+                this.markerList = new ArrayList<>();
                 this.markerList.add(this);
             }
             markerRenderer.render(dc, this.markerList);

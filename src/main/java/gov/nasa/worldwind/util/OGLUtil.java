@@ -523,14 +523,8 @@ public class OGLUtil
      */
     public static TextureData newTextureData(GLProfile glp, URL url, boolean useMipMaps) throws IOException
     {
-        InputStream stream = new BufferedInputStream(url.openStream());
-        try
-        {
+        try (InputStream stream = url.openStream()) {
             return newTextureData(glp, stream, useMipMaps);
-        }
-        finally
-        {
-            stream.close();
         }
     }
 
@@ -549,11 +543,10 @@ public class OGLUtil
      */
     public static TextureData newTextureData(GLProfile glp, InputStream stream, boolean useMipMaps) throws IOException
     {
-        // Wrap stream in BufferedInputStream so that DDS detection will work. This is a work around for JOGL issue 4764639/4892246.
-        if (!(stream instanceof BufferedInputStream))
-        {
-            stream = new BufferedInputStream(stream);
-        }
+//        // Wrap stream in BufferedInputStream so that DDS detection will work. This is a work around for JOGL issue 4764639/4892246.
+//        if (!(stream instanceof BufferedInputStream)) {
+//            stream = new BufferedInputStream(stream);
+//        }
 
         String fileSuffix = ImageType.Util.getFileSuffix(stream);
         boolean ddsFormat = fileSuffix != null && fileSuffix.equalsIgnoreCase(ImageType.T_DDS);

@@ -27,7 +27,7 @@ public class MunitionFlightPath extends FireSupportLine
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.FSUPP_LNE_C2LNE_MFP);
+        return Collections.singletonList(TacGrpSidc.FSUPP_LNE_C2LNE_MFP);
     }
 
     /**

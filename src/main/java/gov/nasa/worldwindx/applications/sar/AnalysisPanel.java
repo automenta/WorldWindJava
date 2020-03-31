@@ -129,23 +129,19 @@ public class AnalysisPanel extends JPanel implements Restorable
         }
     };
 
-    private final RenderingListener renderingListener = new RenderingListener()
-    {
-        public void stageChanged(RenderingEvent event)
+    private final RenderingListener renderingListener = event -> {
+        if (crosshairNeedsUpdate && event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP))
         {
-            if (crosshairNeedsUpdate && event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP))
-            {
-                doUpdateCrosshair();
-            }
+            doUpdateCrosshair();
         }
     };
 
-    private class ViewState
+    private static class ViewState
     {
-        public Angle pitch;
-        public Angle relativeHeading;
-        public double zoom;
-        public LatLon relativeCenterLocation;
+        public final Angle pitch;
+        public final Angle relativeHeading;
+        public final double zoom;
+        public final LatLon relativeCenterLocation;
 
         public ViewState(OrbitView view, Angle referenceHeading, Position referencePosition)
         {
@@ -382,8 +378,7 @@ public class AnalysisPanel extends JPanel implements Restorable
                         // New eye lat/lon will follow the ground position.
                         LatLon newEyeLatLon = eyePos.add(groundPos.subtract(view.getCenterPosition()));
                         // Eye elevation will not change unless it is below the ground position elevation.
-                        double newEyeElev = eyePos.getElevation() < groundPos.getElevation() ?
-                            groundPos.getElevation() : eyePos.getElevation();
+                        double newEyeElev = Math.max(eyePos.getElevation(), groundPos.getElevation());
 
                         Position newEyePos = new Position(newEyeLatLon, newEyeElev);
                         view.setOrientation(newEyePos, groundPos);

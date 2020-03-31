@@ -81,7 +81,7 @@ public abstract class AbstractElevationsFeature extends AbstractFeature implemen
 
     public List<ElevationModel> getElevationModels()
     {
-        return this.elevationModels != null ? this.elevationModels : new ArrayList<ElevationModel>();
+        return this.elevationModels != null ? this.elevationModels : new ArrayList<>();
     }
 
     protected void handleInterrupt()
@@ -159,29 +159,21 @@ public abstract class AbstractElevationsFeature extends AbstractFeature implemen
     protected void createModels()
     {
         if (this.elevationModels == null)
-            this.elevationModels = new ArrayList<ElevationModel>();
+            this.elevationModels = new ArrayList<>();
 
-        this.createModelsThread = new Thread(new Runnable()
-        {
-            public void run()
+        this.createModelsThread = new Thread(() -> {
+            try
             {
-                try
-                {
-                    doCreateModels();
-                }
-                finally
-                {
-                    handleInterrupt();
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            controller.getNetworkActivitySignal().removeNetworkUser(AbstractElevationsFeature.this);
-                            createModelsThread = null;
-                            controller.redraw();
-                        }
-                    });
-                }
+                doCreateModels();
+            }
+            finally
+            {
+                handleInterrupt();
+                SwingUtilities.invokeLater(() -> {
+                    controller.getNetworkActivitySignal().removeNetworkUser(AbstractElevationsFeature.this);
+                    createModelsThread = null;
+                    controller.redraw();
+                });
             }
         });
         this.createModelsThread.setPriority(Thread.MIN_PRIORITY);
@@ -196,7 +188,7 @@ public abstract class AbstractElevationsFeature extends AbstractFeature implemen
         this.doAddModel(em);
 
         if (this.elevationModels == null)
-            this.elevationModels = new ArrayList<ElevationModel>();
+            this.elevationModels = new ArrayList<>();
 
         if (!this.getElevationModels().contains(em))
             this.getElevationModels().add(em);
@@ -224,11 +216,7 @@ public abstract class AbstractElevationsFeature extends AbstractFeature implemen
 
             return new WMSCapabilities(request);
         }
-        catch (URISyntaxException e)
-        {
-            e.printStackTrace();
-        }
-        catch (MalformedURLException e)
+        catch (URISyntaxException | MalformedURLException e)
         {
             e.printStackTrace();
         }

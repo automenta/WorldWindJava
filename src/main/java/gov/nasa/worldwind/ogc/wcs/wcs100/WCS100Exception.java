@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class WCS100Exception extends AbstractXMLEventParser
 {
-    protected List<String> formats = new ArrayList<String>(1);
+    protected final List<String> formats = new ArrayList<>(1);
 
     public WCS100Exception(String namespaceURI)
     {

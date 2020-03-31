@@ -121,7 +121,7 @@ class BaselineTiff
     @Override
     public String toString()
     {
-        StringBuffer sb = new StringBuffer("{ ");
+        StringBuilder sb = new StringBuilder("{ ");
         sb.append("width=").append(this.width).append(", ");
         sb.append("height=").append(this.height).append(", ");
         sb.append("samplesPerPixel=").append(this.samplesPerPixel).append(", ");
@@ -132,9 +132,9 @@ class BaselineTiff
         sb.append("sampleFormat=( ");
         if (null != this.sampleFormat)
         {
-            for (int i = 0; i < this.sampleFormat.length; i++)
+            for (int value : this.sampleFormat)
             {
-                sb.append(this.sampleFormat[i]).append(" ");
+                sb.append(value).append(" ");
             }
         }
         else
@@ -144,9 +144,9 @@ class BaselineTiff
         sb.append("bitsPerSample=( ");
         if (null != this.bitsPerSample)
         {
-            for (int i = 0; i < this.bitsPerSample.length; i++)
+            for (int value : this.bitsPerSample)
             {
-                sb.append(this.bitsPerSample[i]).append(" ");
+                sb.append(value).append(" ");
             }
         }
         else

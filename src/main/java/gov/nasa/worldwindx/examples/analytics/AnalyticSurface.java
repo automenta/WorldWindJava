@@ -764,7 +764,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      */
     public static Iterable<? extends GridPointAttributes> createDefaultValues(int count)
     {
-        ArrayList<GridPointAttributes> list = new ArrayList<GridPointAttributes>(count);
+        ArrayList<GridPointAttributes> list = new ArrayList<>(count);
         Collections.fill(list, DEFAULT_GRID_POINT_ATTRIBUTES);
         return list;
     }
@@ -795,7 +795,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
         }
 
         ArrayList<AnalyticSurface.GridPointAttributes> attributesList
-            = new ArrayList<AnalyticSurface.GridPointAttributes>();
+            = new ArrayList<>();
 
         for (int i = 0; i < values.length(); i++)
         {
@@ -1014,7 +1014,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
             this.getAltitudeMode() == WorldWind.ABSOLUTE)
         {
             Object gsk = dc.getGlobe().getStateKey(dc);
-            return this.globeStateKey != null ? !this.globeStateKey.equals(gsk) : gsk != null;
+            return !Objects.equals(this.globeStateKey, gsk);
         }
 
         return false;
@@ -1302,7 +1302,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
 
     protected static class AnalyticSurfaceObject extends AbstractSurfaceObject
     {
-        protected AnalyticSurface analyticSurface;
+        protected final AnalyticSurface analyticSurface;
 
         public AnalyticSurfaceObject(AnalyticSurface analyticSurface)
         {
@@ -1324,7 +1324,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
                 throw new IllegalArgumentException(message);
             }
 
-            return Arrays.asList(this.analyticSurface.sector);
+            return Collections.singletonList(this.analyticSurface.sector);
         }
 
         protected void drawGeographic(DrawContext dc, SurfaceTileDrawContext sdc)

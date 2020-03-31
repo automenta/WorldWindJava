@@ -23,7 +23,7 @@ import java.util.*;
 public class AbstractRectangularGraphic extends AbstractMilStd2525TacticalGraphic implements TacticalQuad, PreRenderable
 {
     protected Iterable<? extends Position> positions;
-    protected SurfaceQuad quad;
+    protected final SurfaceQuad quad;
 
     protected boolean shapeInvalid;
 

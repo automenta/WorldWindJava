@@ -144,7 +144,7 @@ public class KMLGroundOverlay extends KMLAbstractOverlay implements KMLRenderabl
         double altitude = this.getAltitude() != null ? this.getAltitude() : 0.0;
 
         // Positions are specified either as a kml:LatLonBox or a gx:LatLonQuad
-        List<Position> corners = new ArrayList<Position>(4);
+        List<Position> corners = new ArrayList<>(4);
         KMLLatLonBox box = this.getLatLonBox();
         if (box != null)
         {

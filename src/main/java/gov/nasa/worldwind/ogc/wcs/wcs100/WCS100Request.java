@@ -23,7 +23,7 @@ public class WCS100Request extends AbstractXMLEventParser
             "GetCapabilities", "DescribeCoverage", "GetCoverage"
         };
 
-    protected List<WCS100RequestDescription> requests = new ArrayList<WCS100RequestDescription>(2);
+    protected final List<WCS100RequestDescription> requests = new ArrayList<>(2);
 
     public WCS100Request(String namespaceURI)
     {
@@ -56,7 +56,7 @@ public class WCS100Request extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WCS100RequestDescription)
+                if (o instanceof WCS100RequestDescription)
                 {
                     ((WCS100RequestDescription) o).setRequestName(requestName);
                     this.requests.add((WCS100RequestDescription) o);

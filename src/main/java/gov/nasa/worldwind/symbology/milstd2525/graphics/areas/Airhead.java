@@ -35,7 +35,7 @@ public class Airhead extends BasicArea
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_SPL_ARA_AHD);
+        return Collections.singletonList(TacGrpSidc.C2GM_SPL_ARA_AHD);
     }
 
     /**

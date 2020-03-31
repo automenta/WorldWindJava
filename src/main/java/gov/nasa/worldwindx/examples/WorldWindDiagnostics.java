@@ -65,16 +65,16 @@ public class WorldWindDiagnostics {
         public void init(GLAutoDrawable glAutoDrawable) {
             StringBuilder sb = new StringBuilder();
 
-            sb.append(gov.nasa.worldwind.Version.getVersion() + "\n");
+            sb.append(gov.nasa.worldwind.Version.getVersion()).append("\n");
 
             sb.append("\nSystem Properties\n");
-            sb.append("Processors: " + Runtime.getRuntime().availableProcessors() + "\n");
-            sb.append("Free memory: " + Runtime.getRuntime().freeMemory() + " bytes\n");
-            sb.append("Max memory: " + Runtime.getRuntime().maxMemory() + " bytes\n");
-            sb.append("Total memory: " + Runtime.getRuntime().totalMemory() + " bytes\n");
+            sb.append("Processors: ").append(Runtime.getRuntime().availableProcessors()).append("\n");
+            sb.append("Free memory: ").append(Runtime.getRuntime().freeMemory()).append(" bytes\n");
+            sb.append("Max memory: ").append(Runtime.getRuntime().maxMemory()).append(" bytes\n");
+            sb.append("Total memory: ").append(Runtime.getRuntime().totalMemory()).append(" bytes\n");
 
             for (Map.Entry prop : System.getProperties().entrySet()) {
-                sb.append(prop.getKey() + " = " + prop.getValue() + "\n");
+                sb.append(prop.getKey()).append(" = ").append(prop.getValue()).append("\n");
             }
 
             GL gl = glAutoDrawable.getGL();
@@ -82,13 +82,13 @@ public class WorldWindDiagnostics {
             sb.append("\nOpenGL Values\n");
 
             String oglVersion = gl.glGetString(GL.GL_VERSION);
-            sb.append("OpenGL version: " + oglVersion + "\n");
+            sb.append("OpenGL version: ").append(oglVersion).append("\n");
 
             String oglVendor = gl.glGetString(GL.GL_VENDOR);
-            sb.append("OpenGL vendor: " + oglVendor + "\n");
+            sb.append("OpenGL vendor: ").append(oglVendor).append("\n");
 
             String oglRenderer = gl.glGetString(GL.GL_RENDERER);
-            sb.append("OpenGL renderer: " + oglRenderer + "\n");
+            sb.append("OpenGL renderer: ").append(oglRenderer).append("\n");
 
             int[] intVals = new int[2];
             for (Attr attr : attrs) {
@@ -106,7 +106,7 @@ public class WorldWindDiagnostics {
             String[] extensions = extensionString.split(" ");
             sb.append("Extensions\n");
             for (String ext : extensions) {
-                sb.append("    " + ext + "\n");
+                sb.append("    ").append(ext).append("\n");
             }
 
             sb.append("\nJOGL Values\n");
@@ -116,17 +116,17 @@ public class WorldWindDiagnostics {
 
                 Package p = getClass().getClassLoader().getDefinedPackage(pkgName);
                 if (p == null) {
-                    sb.append("WARNING: Package.getPackage(" + pkgName + ") is null\n");
+                    sb.append("WARNING: Package.getPackage(").append(pkgName).append(") is null\n");
                 } else {
-                    sb.append(p + "\n");
-                    sb.append("Specification Title = " + p.getSpecificationTitle() + "\n");
-                    sb.append("Specification Vendor = " + p.getSpecificationVendor() + "\n");
-                    sb.append("Specification Version = " + p.getSpecificationVersion() + "\n");
-                    sb.append("Implementation Vendor = " + p.getImplementationVendor() + "\n");
-                    sb.append("Implementation Version = " + p.getImplementationVersion() + "\n");
+                    sb.append(p).append("\n");
+                    sb.append("Specification Title = ").append(p.getSpecificationTitle()).append("\n");
+                    sb.append("Specification Vendor = ").append(p.getSpecificationVendor()).append("\n");
+                    sb.append("Specification Version = ").append(p.getSpecificationVersion()).append("\n");
+                    sb.append("Implementation Vendor = ").append(p.getImplementationVendor()).append("\n");
+                    sb.append("Implementation Version = ").append(p.getImplementationVersion()).append("\n");
                 }
             } catch (ClassNotFoundException e) {
-                sb.append("Unable to load " + pkgName + "\n");
+                sb.append("Unable to load ").append(pkgName).append("\n");
             }
 
             this.outputArea.setText(sb.toString());

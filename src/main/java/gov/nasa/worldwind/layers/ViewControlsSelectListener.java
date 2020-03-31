@@ -16,7 +16,6 @@ import gov.nasa.worldwind.view.orbit.OrbitView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
  * Controller for onscreen view controls displayed by {@link ViewControlsLayer}.
@@ -72,13 +71,9 @@ public class ViewControlsSelectListener implements SelectListener
         this.viewControlsLayer = layer;
 
         // Setup repeat timer
-        this.repeatTimer = new Timer(DEFAULT_TIMER_DELAY, new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                if (pressedControl != null)
-                    updateView(pressedControl, pressedControlType);
-            }
+        this.repeatTimer = new Timer(DEFAULT_TIMER_DELAY, event -> {
+            if (pressedControl != null)
+                updateView(pressedControl, pressedControlType);
         });
         this.repeatTimer.start();
     }
@@ -365,88 +360,87 @@ public class ViewControlsSelectListener implements SelectListener
         view.stopAnimations();
         view.stopMovement();
 
-        if (controlType.equals(AVKey.VIEW_PAN))
+        switch (controlType)
         {
-            resetOrbitView(view);
-            // Go some distance in the control mouse direction
-            Angle heading = computePanHeading(view, control);
-            Angle distance = computePanAmount(this.wwd.getModel().getGlobe(), view, control, panStep);
-            LatLon newViewCenter = LatLon.greatCircleEndPosition(view.getCenterPosition(),
-                heading, distance);
-            // Turn around if passing by a pole - TODO: better handling of the pole crossing situation
-            if (this.isPathCrossingAPole(newViewCenter, view.getCenterPosition()))
-                view.setHeading(Angle.POS180.subtract(view.getHeading()));
-            // Set new center pos
-            view.setCenterPosition(new Position(newViewCenter, view.getCenterPosition().getElevation()));
-        }
-        else if (controlType.equals(AVKey.VIEW_LOOK))
-        {
-            setupFirstPersonView(view);
-            Angle heading = computeLookHeading(view, control, headingStep);
-            Angle pitch = computeLookPitch(view, control, pitchStep);
-            // Check whether the view will still point at terrain
-            Vec4 surfacePoint = computeSurfacePoint(view, heading, pitch);
-            if (surfacePoint != null)
+            case AVKey.VIEW_PAN:
             {
-                // Change view state
-                final Position eyePos = view.getEyePosition();// Save current eye position
-                view.setHeading(heading);
-                view.setPitch(pitch);
-                view.setZoom(0);
-                view.setCenterPosition(eyePos); // Set center at the eye position
+                resetOrbitView(view);
+                // Go some distance in the control mouse direction
+                Angle heading = computePanHeading(view, control);
+                Angle distance = computePanAmount(this.wwd.getModel().getGlobe(), view, control, panStep);
+                LatLon newViewCenter = LatLon.greatCircleEndPosition(view.getCenterPosition(),
+                    heading, distance);
+                // Turn around if passing by a pole - TODO: better handling of the pole crossing situation
+                if (this.isPathCrossingAPole(newViewCenter, view.getCenterPosition()))
+                    view.setHeading(Angle.POS180.subtract(view.getHeading()));
+                // Set new center pos
+                view.setCenterPosition(new Position(newViewCenter, view.getCenterPosition().getElevation()));
+                break;
             }
-        }
-        else if (controlType.equals(AVKey.VIEW_ZOOM_IN))
-        {
-            resetOrbitView(view);
-            view.setZoom(computeNewZoom(view, -zoomStep));
-        }
-        else if (controlType.equals(AVKey.VIEW_ZOOM_OUT))
-        {
-            resetOrbitView(view);
-            view.setZoom(computeNewZoom(view, zoomStep));
-        }
-        else if (controlType.equals(AVKey.VIEW_HEADING_LEFT))
-        {
-            resetOrbitView(view);
-            view.setHeading(view.getHeading().addDegrees(headingStep));
-        }
-        else if (controlType.equals(AVKey.VIEW_HEADING_RIGHT))
-        {
-            resetOrbitView(view);
-            view.setHeading(view.getHeading().addDegrees(-headingStep));
-        }
-        else if (controlType.equals(AVKey.VIEW_PITCH_UP))
-        {
-            resetOrbitView(view);
-            if (view.getPitch().degrees >= pitchStep)
-                view.setPitch(view.getPitch().addDegrees(-pitchStep));
-        }
-        else if (controlType.equals(AVKey.VIEW_PITCH_DOWN))
-        {
-            resetOrbitView(view);
-            if (view.getPitch().degrees <= 90 - pitchStep)
-                view.setPitch(view.getPitch().addDegrees(pitchStep));
-        }
-        else if (controlType.equals(AVKey.VIEW_FOV_NARROW))
-        {
-            if (view.getFieldOfView().degrees / fovStep >= 4)
-                view.setFieldOfView(view.getFieldOfView().divide(fovStep));
-        }
-        else if (controlType.equals(AVKey.VIEW_FOV_WIDE))
-        {
-            if (view.getFieldOfView().degrees * fovStep < 120)
-                view.setFieldOfView(view.getFieldOfView().multiply(fovStep));
-        }
-        else if (controlType.equals(AVKey.VERTICAL_EXAGGERATION_UP))
-        {
-            SceneController sc = this.wwd.getSceneController();
-            sc.setVerticalExaggeration(sc.getVerticalExaggeration() + this.veStep);
-        }
-        else if (controlType.equals(AVKey.VERTICAL_EXAGGERATION_DOWN))
-        {
-            SceneController sc = this.wwd.getSceneController();
-            sc.setVerticalExaggeration(Math.max(1d, sc.getVerticalExaggeration() - this.veStep));
+            case AVKey.VIEW_LOOK:
+            {
+                setupFirstPersonView(view);
+                Angle heading = computeLookHeading(view, control, headingStep);
+                Angle pitch = computeLookPitch(view, control, pitchStep);
+                // Check whether the view will still point at terrain
+                Vec4 surfacePoint = computeSurfacePoint(view, heading, pitch);
+                if (surfacePoint != null)
+                {
+                    // Change view state
+                    final Position eyePos = view.getEyePosition();// Save current eye position
+                    view.setHeading(heading);
+                    view.setPitch(pitch);
+                    view.setZoom(0);
+                    view.setCenterPosition(eyePos); // Set center at the eye position
+                }
+                break;
+            }
+            case AVKey.VIEW_ZOOM_IN:
+                resetOrbitView(view);
+                view.setZoom(computeNewZoom(view, -zoomStep));
+                break;
+            case AVKey.VIEW_ZOOM_OUT:
+                resetOrbitView(view);
+                view.setZoom(computeNewZoom(view, zoomStep));
+                break;
+            case AVKey.VIEW_HEADING_LEFT:
+                resetOrbitView(view);
+                view.setHeading(view.getHeading().addDegrees(headingStep));
+                break;
+            case AVKey.VIEW_HEADING_RIGHT:
+                resetOrbitView(view);
+                view.setHeading(view.getHeading().addDegrees(-headingStep));
+                break;
+            case AVKey.VIEW_PITCH_UP:
+                resetOrbitView(view);
+                if (view.getPitch().degrees >= pitchStep)
+                    view.setPitch(view.getPitch().addDegrees(-pitchStep));
+                break;
+            case AVKey.VIEW_PITCH_DOWN:
+                resetOrbitView(view);
+                if (view.getPitch().degrees <= 90 - pitchStep)
+                    view.setPitch(view.getPitch().addDegrees(pitchStep));
+                break;
+            case AVKey.VIEW_FOV_NARROW:
+                if (view.getFieldOfView().degrees / fovStep >= 4)
+                    view.setFieldOfView(view.getFieldOfView().divide(fovStep));
+                break;
+            case AVKey.VIEW_FOV_WIDE:
+                if (view.getFieldOfView().degrees * fovStep < 120)
+                    view.setFieldOfView(view.getFieldOfView().multiply(fovStep));
+                break;
+            case AVKey.VERTICAL_EXAGGERATION_UP:
+            {
+                SceneController sc = this.wwd.getSceneController();
+                sc.setVerticalExaggeration(sc.getVerticalExaggeration() + this.veStep);
+                break;
+            }
+            case AVKey.VERTICAL_EXAGGERATION_DOWN:
+            {
+                SceneController sc = this.wwd.getSceneController();
+                sc.setVerticalExaggeration(Math.max(1d, sc.getVerticalExaggeration() - this.veStep));
+                break;
+            }
         }
         view.firePropertyChange(AVKey.VIEW, null, view);
     }

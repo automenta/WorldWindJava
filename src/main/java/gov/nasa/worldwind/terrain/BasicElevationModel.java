@@ -59,8 +59,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     protected String elevationDataByteOrder = AVKey.LITTLE_ENDIAN;
     protected double detailHint = 0.0;
     protected final Object fileLock = new Object();
-    protected java.util.concurrent.ConcurrentHashMap<TileKey, ElevationTile> levelZeroTiles =
-        new java.util.concurrent.ConcurrentHashMap<TileKey, ElevationTile>();
+    protected final java.util.concurrent.ConcurrentHashMap<TileKey, ElevationTile> levelZeroTiles =
+        new java.util.concurrent.ConcurrentHashMap<>();
     protected MemoryCache memoryCache;
     protected int extremesLevel = -1;
     protected boolean extremesCachingEnabled = true;
@@ -467,7 +467,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             final RequestTask that = (RequestTask) o;
 
             //noinspection RedundantIfStatement
-            if (this.tileKey != null ? !this.tileKey.equals(that.tileKey) : that.tileKey != null)
+            if (!Objects.equals(this.tileKey, that.tileKey))
                 return false;
 
             return true;
@@ -1520,7 +1520,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
                 return;
 
             // The level the extremes were taken from is encoded as the last element in the file name
-            String[] tokens = extremesFileName.substring(0, extremesFileName.lastIndexOf(".")).split("_");
+            String[] tokens = extremesFileName.substring(0, extremesFileName.lastIndexOf('.')).split("_");
             this.extremesLevel = Integer.parseInt(tokens[tokens.length - 1]);
             if (this.extremesLevel < 0)
             {
@@ -1535,14 +1535,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             bufferParams.setValue(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN); // Extremes are always saved in JVM byte order
             this.extremes = BufferWrapper.wrap(WWIO.readStreamToBuffer(is, true),
                 bufferParams); // Read extremes to a direct ByteBuffer.
-        }
-        catch (FileNotFoundException e)
-        {
-            Logging.logger().log(java.util.logging.Level.WARNING,
-                Logging.getMessage("BasicElevationModel.ExceptionReadingExtremeElevations", extremesFileName), e);
-            this.extremes = null;
-            this.extremesLevel = -1;
-            this.extremesLookupCache = null;
         }
         catch (IOException e)
         {
@@ -1710,7 +1702,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             for (int i = 0; i < 4; i++)
             {
                 int k = this.computeElevationIndex(corners[i]);
-                indices[i] = k < 0 ? 0 : k > this.elevations.length() - 1 ? this.elevations.length() - 1 : k;
+                indices[i] = k < 0 ? 0 : Math.min(k, this.elevations.length() - 1);
             }
 
             int sw = indices[0];
@@ -1751,19 +1743,15 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         final int seRow = Tile.computeRow(delta.getLatitude(), sector.getMinLatitude(), origin.getLatitude());
         final int seCol = Tile.computeColumn(delta.getLongitude(), sector.getMaxLongitude(), origin.getLongitude());
 
-        java.util.TreeSet<ElevationTile> tiles = new java.util.TreeSet<ElevationTile>(new Comparator<ElevationTile>()
-        {
-            public int compare(ElevationTile t1, ElevationTile t2)
-            {
-                if (t2.getLevelNumber() == t1.getLevelNumber()
-                    && t2.getRow() == t1.getRow() && t2.getColumn() == t1.getColumn())
-                    return 0;
+        java.util.TreeSet<ElevationTile> tiles = new java.util.TreeSet<>((t1, t2) -> {
+            if (t2.getLevelNumber() == t1.getLevelNumber()
+                && t2.getRow() == t1.getRow() && t2.getColumn() == t1.getColumn())
+                return 0;
 
-                // Higher-res levels compare lower than lower-res
-                return t1.getLevelNumber() > t2.getLevelNumber() ? -1 : 1;
-            }
+            // Higher-res levels compare lower than lower-res
+            return t1.getLevelNumber() > t2.getLevelNumber() ? -1 : 1;
         });
-        ArrayList<TileKey> requested = new ArrayList<TileKey>();
+        ArrayList<TileKey> requested = new ArrayList<>();
 
         boolean missingTargetTiles = false;
         boolean missingLevelZeroTiles = false;
@@ -2080,13 +2068,9 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             return;
 
         // Synchronize changes to this ElevationModel with the Event Dispatch Thread.        
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                BasicElevationModel.this.setExpiryTime(expiryTime);
-                BasicElevationModel.this.firePropertyChange(AVKey.ELEVATION_MODEL, null, BasicElevationModel.this);
-            }
+        SwingUtilities.invokeLater(() -> {
+            BasicElevationModel.this.setExpiryTime(expiryTime);
+            BasicElevationModel.this.firePropertyChange(AVKey.ELEVATION_MODEL, null, BasicElevationModel.this);
         });
     }
 
@@ -2110,14 +2094,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     /** Starts retrieving non-tile resources associated with this model in a non-rendering thread. */
     protected void startResourceRetrieval()
     {
-        Thread t = new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                retrieveResources();
-            }
-        });
+        Thread t = new Thread(this::retrieveResources);
         t.setName("Capabilities retrieval for " + this.getName());
         t.start();
     }
@@ -2213,7 +2190,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         WWXML.checkAndAppendTextElement(params, AVKey.IMAGE_FORMAT, context, "ImageFormat");
 
         Object o = params.getValue(AVKey.AVAILABLE_IMAGE_FORMATS);
-        if (o != null && o instanceof String[])
+        if (o instanceof String[])
         {
             String[] strings = (String[]) o;
             if (strings.length > 0)

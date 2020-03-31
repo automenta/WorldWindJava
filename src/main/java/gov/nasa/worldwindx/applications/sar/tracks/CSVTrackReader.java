@@ -25,11 +25,11 @@ public class CSVTrackReader extends AbstractTrackReader
         return "Comma Separated Value (*.csv)";
     }
 
-    protected Track[] doRead(InputStream inputStream) throws IOException
+    protected Track[] doRead(InputStream inputStream)
     {
         CSVReader reader = new CSVReader();
         reader.readStream(inputStream, null); // un-named stream
-        return this.asArray(reader.getTracks());
+        return AbstractTrackReader.asArray(reader.getTracks());
     }
 
     protected boolean acceptFilePath(String filePath)

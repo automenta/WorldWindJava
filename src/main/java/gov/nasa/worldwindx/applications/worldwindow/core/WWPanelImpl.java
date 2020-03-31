@@ -9,7 +9,6 @@ package gov.nasa.worldwindx.applications.worldwindow.core;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.event.RenderingExceptionListener;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwindx.applications.worldwindow.features.AbstractFeature;
@@ -33,18 +32,14 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel
 
         this.panel = new JPanel(new BorderLayout());
         this.wwd = new WorldWindowGLCanvas();
-        this.wwd.addRenderingExceptionListener(new RenderingExceptionListener()
-        {
-            public void exceptionThrown(Throwable t)
+        this.wwd.addRenderingExceptionListener(t -> {
+            if (t instanceof WWAbsentRequirementException)
             {
-                if (t instanceof WWAbsentRequirementException)
-                {
-                    String msg = "This computer is not capable of running ";
-                    msg += Configuration.getStringValue(Constants.APPLICATION_DISPLAY_NAME);
-                    msg += ".";
-                    Util.getLogger().severe(msg);
-                    System.exit(-1);
-                }
+                String msg = "This computer is not capable of running ";
+                msg += Configuration.getStringValue(Constants.APPLICATION_DISPLAY_NAME);
+                msg += ".";
+                Util.getLogger().severe(msg);
+                System.exit(-1);
             }
         });
 
@@ -106,7 +101,7 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel
         LayerList layers = this.wwd.getModel().getLayers();
         for (Layer l : layers)
         {
-            if (l.getName().indexOf(targetLayerName) != -1)
+            if (l.getName().contains(targetLayerName))
             {
                 targetPosition = layers.indexOf(l);
                 break;
@@ -131,7 +126,7 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel
         LayerList layers = this.wwd.getModel().getLayers();
         for (Layer l : layers)
         {
-            if (l.getName().indexOf(targetLayerName) != -1)
+            if (l.getName().contains(targetLayerName))
                 targetPosition = layers.indexOf(l);
         }
         layers.add(targetPosition + 1, layer);

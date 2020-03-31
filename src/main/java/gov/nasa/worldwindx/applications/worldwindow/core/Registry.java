@@ -20,7 +20,7 @@ import java.util.logging.Level;
  */
 public class Registry
 {
-    private final ConcurrentHashMap<String, Object> registeredObjects = new ConcurrentHashMap<String, Object>();
+    private final ConcurrentHashMap<String, Object> registeredObjects = new ConcurrentHashMap<>();
 
     /**
      * @param className the full name, including package names, of the component to create
@@ -58,7 +58,7 @@ public class Registry
     }
 
     public Object createRegistryObject(Object classOrName)
-        throws ClassNotFoundException, IllegalAccessException, InstantiationException
+        throws ClassNotFoundException
     {
         if (classOrName == null)
         {
@@ -89,19 +89,7 @@ public class Registry
             // Create self-registering object, else non-self-registering object
             return c.getConstructor(this.getClass()).newInstance(this);
         }
-        catch (NoSuchMethodException e)
-        {
-            return createObject(className);
-        }
-        catch (InstantiationException e)
-        {
-            return createObject(className);
-        }
-        catch (IllegalAccessException e)
-        {
-            return createObject(className);
-        }
-        catch (InvocationTargetException e)
+        catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e)
         {
             return createObject(className);
         }
@@ -120,7 +108,7 @@ public class Registry
     }
 
     public Object createAndRegisterObject(String objectID, Object classOrName)
-        throws IllegalAccessException, InstantiationException, ClassNotFoundException
+        throws ClassNotFoundException
     {
         if (WWUtil.isEmpty(objectID))
         {
@@ -161,7 +149,7 @@ public class Registry
 
     public Object[] getObjectsOfType(String className)
     {
-        ArrayList<Object> list = new ArrayList<Object>();
+        ArrayList<Object> list = new ArrayList<>();
 
         try
         {

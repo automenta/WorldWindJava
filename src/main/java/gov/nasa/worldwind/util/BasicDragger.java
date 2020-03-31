@@ -135,15 +135,14 @@ public class BasicDragger implements SelectListener
             if (this.dragging)
             {
                 this.dragContext.setDragState(AVKey.DRAG_CHANGE);
-                this.fireDrag((DragSelectEvent) event);
             }
             else
             {
                 this.dragContext.setDragState(AVKey.DRAG_BEGIN);
                 this.dragContext.setInitialPoint(((DragSelectEvent) event).getPreviousPickPoint());
                 this.dragging = true;
-                this.fireDrag((DragSelectEvent) event);
             }
+            this.fireDrag((DragSelectEvent) event);
         }
 
         event.consume();

@@ -20,7 +20,7 @@ import java.util.*;
 public class StringListXMLEventParser extends AbstractXMLEventParser implements Iterable<String>
 {
     protected QName elementName;
-    protected List<String> strings = new ArrayList<String>();
+    protected final List<String> strings = new ArrayList<>();
 
     public StringListXMLEventParser()
     {

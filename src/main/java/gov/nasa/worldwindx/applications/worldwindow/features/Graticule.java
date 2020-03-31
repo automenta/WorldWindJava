@@ -9,7 +9,6 @@ package gov.nasa.worldwindx.applications.worldwindow.features;
 import gov.nasa.worldwindx.applications.worldwindow.core.*;
 
 import java.awt.event.*;
-import java.beans.*;
 
 /**
  * @author tag
@@ -34,22 +33,18 @@ public class Graticule extends AbstractFeature
         for (Feature r : getGraticules())
         {
             if (r != null)
-                r.addPropertyChangeListener(new PropertyChangeListener()
-                {
-                    public void propertyChange(PropertyChangeEvent event)
+                r.addPropertyChangeListener(event -> {
+                    if (event.getPropertyName().equals(Constants.ON_STATE))
                     {
-                        if (event.getPropertyName().equals(Constants.ON_STATE))
+                        if ((Boolean) event.getNewValue())
                         {
-                            if ((Boolean) event.getNewValue())
-                            {
-                                lastOneOn = ((Feature) event.getSource());
+                            lastOneOn = ((Feature) event.getSource());
 
-                                Feature[] rs = getGraticules();
-                                for (Feature r : rs)
-                                {
-                                    if (r != null && r != lastOneOn)
-                                        r.turnOn(false);
-                                }
+                            Feature[] rs = getGraticules();
+                            for (Feature r1 : rs)
+                            {
+                                if (r1 != null && r1 != lastOneOn)
+                                    r1.turnOn(false);
                             }
                         }
                     }

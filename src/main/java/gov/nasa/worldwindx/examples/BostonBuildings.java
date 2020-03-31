@@ -28,13 +28,8 @@ public class BostonBuildings extends ApplicationTemplate {
 
             // Specify an attribute delegate to assign random attributes to each shapefile record.
             final RandomShapeAttributes randomAttrs = new RandomShapeAttributes();
-            factory.setAttributeDelegate(new ShapefileRenderable.AttributeDelegate() {
-                @Override
-                public void assignAttributes(ShapefileRecord shapefileRecord,
-                        ShapefileRenderable.Record renderableRecord) {
-                    renderableRecord.setAttributes(randomAttrs.nextAttributes().asShapeAttributes());
-                }
-            });
+            factory.setAttributeDelegate(
+                (shapefileRecord, renderableRecord) -> renderableRecord.setAttributes(randomAttrs.nextAttributes().asShapeAttributes()));
 
 //            try {
 //                // 42.3636, -71.1
@@ -60,12 +55,7 @@ public class BostonBuildings extends ApplicationTemplate {
                     layer.setName(WWIO.getFilename(layer.getName()));
 
                     // Add the layer to the WorldWindow's layer list on the Event Dispatch Thread.
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            AppFrame.this.getWwd().getModel().getLayers().add(layer);
-                        }
-                    });
+                    SwingUtilities.invokeLater(() -> AppFrame.this.getWwd().getModel().getLayers().add(layer));
                 }
 
                 @Override

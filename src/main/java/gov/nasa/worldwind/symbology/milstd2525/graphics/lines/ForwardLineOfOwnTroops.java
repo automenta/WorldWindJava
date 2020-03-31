@@ -48,7 +48,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_GNL_LNE_FLOT);
+        return Collections.singletonList(TacGrpSidc.C2GM_GNL_LNE_FLOT);
     }
 
     /**
@@ -198,7 +198,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine
     protected List<Position> generateWavePositions(Iterator<? extends Position> iterator, double radius,
         boolean reverse)
     {
-        List<Position> wavePositions = new ArrayList<Position>();
+        List<Position> wavePositions = new ArrayList<>();
 
         int intervals = this.getIntervals();
         int sign = reverse ? -1 : 1;
@@ -276,7 +276,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine
         /** Wavelength, as a geographic angle. */
         protected Angle interval;
 
-        protected double tolerance = 0.25;
+        protected final double tolerance = 0.25;
 
         /** Current position. */
         protected Position thisPosition;

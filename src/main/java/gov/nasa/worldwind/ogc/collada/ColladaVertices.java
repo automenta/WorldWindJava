@@ -17,7 +17,7 @@ import java.util.*;
 public class ColladaVertices extends ColladaAbstractObject
 {
     /** Inputs to the vertices element. */
-    protected List<ColladaInput> inputs = new ArrayList<ColladaInput>();
+    protected final List<ColladaInput> inputs = new ArrayList<>();
 
     /**
      * Construct an instance.

@@ -761,7 +761,7 @@ public class BasicOrbitView extends BasicView implements OrbitView
             far = Math.max(far, eyePoint.distanceTo3(p));
             p = this.globe.computePointFromPosition(Angle.ZERO, Angle.NEG180, 0); // W
             far = Math.max(far, eyePoint.distanceTo3(p));
-            return far < MINIMUM_FAR_DISTANCE ? MINIMUM_FAR_DISTANCE : far;
+            return Math.max(far, MINIMUM_FAR_DISTANCE);
         }
         else
         {

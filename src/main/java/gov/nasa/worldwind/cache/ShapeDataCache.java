@@ -236,9 +236,9 @@ public class ShapeDataCache implements Iterable<ShapeDataCache.ShapeDataCacheEnt
 
     // usually only 1, but few at most
     /** This cache's map of entries. Typically one entry per open window. */
-    protected HashMap<GlobeStateKey, ShapeDataCacheEntry> entries = new HashMap<GlobeStateKey, ShapeDataCacheEntry>(1);
+    protected final HashMap<GlobeStateKey, ShapeDataCacheEntry> entries = new HashMap<>(1);
     /** The maximum number of milliseconds an entry may remain in the cache without being used. */
-    protected long maxTimeSinceLastUsed;
+    protected final long maxTimeSinceLastUsed;
 
     /**
      * Construct a cache with a specified entry lifetime.

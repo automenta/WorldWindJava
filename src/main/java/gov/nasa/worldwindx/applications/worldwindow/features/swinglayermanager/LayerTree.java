@@ -46,7 +46,7 @@ public class LayerTree extends JTree
         private static final ImageIcon EARTH_ICON =
             new ImageIcon(LayerNodeTreeCellRenderer.class.getResource("/images/16x16-icon-earth.png"));
 
-        protected JCheckBox checkBox;
+        protected final JCheckBox checkBox;
         protected JLabel layerTitle = new JLabel(EARTH_ICON);
 
         public CellPanel()
@@ -181,25 +181,17 @@ public class LayerTree extends JTree
             this.tree = (LayerTree) tree;
             this.renderer = new LayerNodeTreeCellRenderer();
 
-            this.renderer.getLeafRenderer().checkBox.addItemListener(new ItemListener()
-            {
-                public void itemStateChanged(ItemEvent itemEvent)
-                {
-                    currentValue.setSelected(itemEvent.getStateChange() == ItemEvent.SELECTED);
-                    if (LayerNodeTreeCellEditor.this.stopCellEditing())
-                        fireEditingStopped();
-                }
+            this.renderer.getLeafRenderer().checkBox.addItemListener(itemEvent -> {
+                currentValue.setSelected(itemEvent.getStateChange() == ItemEvent.SELECTED);
+                if (LayerNodeTreeCellEditor.this.stopCellEditing())
+                    fireEditingStopped();
             });
 
-            this.renderer.getGroupRenderer().checkBox.addItemListener(new ItemListener()
-            {
-                public void itemStateChanged(ItemEvent itemEvent)
-                {
-                    boolean selected = itemEvent.getStateChange() == ItemEvent.SELECTED;
-                    currentValue.setSelected(selected);
-                    if (LayerNodeTreeCellEditor.this.stopCellEditing())
-                        fireEditingStopped();
-                }
+            this.renderer.getGroupRenderer().checkBox.addItemListener(itemEvent -> {
+                boolean selected = itemEvent.getStateChange() == ItemEvent.SELECTED;
+                currentValue.setSelected(selected);
+                if (LayerNodeTreeCellEditor.this.stopCellEditing())
+                    fireEditingStopped();
             });
         }
 

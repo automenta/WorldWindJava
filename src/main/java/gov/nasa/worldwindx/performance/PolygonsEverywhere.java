@@ -39,7 +39,7 @@ public class PolygonsEverywhere extends ApplicationTemplate
             double dLat = 1 / intervals;
             double dLon = 1 / intervals;
 
-            ArrayList<Position> positions = new ArrayList<Position>();
+            ArrayList<Position> positions = new ArrayList<>();
 
             RenderableLayer layer = new RenderableLayer();
             layer.setPickEnabled(false);

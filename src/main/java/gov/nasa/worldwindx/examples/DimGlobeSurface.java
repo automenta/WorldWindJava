@@ -12,7 +12,6 @@ import gov.nasa.worldwind.render.SurfaceImage;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.image.*;
 
@@ -31,7 +30,7 @@ public class DimGlobeSurface extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected SurfaceImage surfaceImage;
+        protected final SurfaceImage surfaceImage;
         protected JSlider opacitySlider;
 
         public AppFrame()
@@ -80,14 +79,10 @@ public class DimGlobeSurface extends ApplicationTemplate
         {
             this.opacitySlider = new JSlider(JSlider.HORIZONTAL, 0, 100, (int) (this.surfaceImage.getOpacity() * 100));
             this.opacitySlider.setToolTipText("Filter opacity");
-            this.opacitySlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
-                {
-                    double value = opacitySlider.getValue();
-                    surfaceImage.setOpacity(value / 100);
-                    getWwd().redraw();
-                }
+            this.opacitySlider.addChangeListener(event -> {
+                double value = opacitySlider.getValue();
+                surfaceImage.setOpacity(value / 100);
+                getWwd().redraw();
             });
         }
     }

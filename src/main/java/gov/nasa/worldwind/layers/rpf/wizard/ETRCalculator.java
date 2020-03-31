@@ -49,7 +49,7 @@ public class ETRCalculator
 
     public void setStepsNeededForEstimate(int stepsNeededForEstimate)
     {
-        this.stepsNeededForEstimate = stepsNeededForEstimate < 1 ? 1 : stepsNeededForEstimate;
+        this.stepsNeededForEstimate = Math.max(stepsNeededForEstimate, 1);
     }
 
     public long getStartTime()

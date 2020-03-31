@@ -483,7 +483,7 @@ public class WMSBasicElevationModel extends BasicElevationModel
     protected static class CompositionRetrievalPostProcessor extends AbstractRetrievalPostProcessor
     {
         // Note: Requested data is never marked as absent because the caller may want to continually re-try retrieval
-        protected File outFile;
+        protected final File outFile;
 
         public CompositionRetrievalPostProcessor(File outFile)
         {

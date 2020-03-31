@@ -5,15 +5,17 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
+import java.util.Objects;
+
 /**
  * @author dcollins
  * @version $Id: VPFFeatureClassSchema.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class VPFFeatureClassSchema
 {
-    protected String className;
-    protected VPFFeatureType type;
-    protected String featureTableName;
+    protected final String className;
+    protected final VPFFeatureType type;
+    protected final String featureTableName;
 
     public VPFFeatureClassSchema(String className, VPFFeatureType type, String featureTableName)
     {
@@ -46,13 +48,12 @@ public class VPFFeatureClassSchema
 
         VPFFeatureClassSchema that = (VPFFeatureClassSchema) o;
 
-        if (this.className != null ? !this.className.equals(that.className) : that.className != null)
+        if (!Objects.equals(this.className, that.className))
             return false;
-        if (this.featureTableName != null ? !this.featureTableName.equals(that.featureTableName)
-            : that.featureTableName != null)
+        if (!Objects.equals(this.featureTableName, that.featureTableName))
             return false;
         //noinspection RedundantIfStatement
-        if (this.type != null ? !this.type.equals(that.type) : that.type != null)
+        if (!Objects.equals(this.type, that.type))
             return false;
 
         return true;

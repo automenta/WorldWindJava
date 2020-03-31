@@ -17,10 +17,10 @@ public class BasicMemoryCache implements MemoryCache
 {
     protected static class CacheEntry implements Comparable<CacheEntry>
     {
-        Object key;
-        Object clientObject;
+        final Object key;
+        final Object clientObject;
         protected long lastUsed;
-        protected long clientObjectSize;
+        protected final long clientObjectSize;
 
         CacheEntry(Object key, Object clientObject, long clientObjectSize)
         {
@@ -39,7 +39,7 @@ public class BasicMemoryCache implements MemoryCache
                 throw new IllegalArgumentException(msg);
             }
 
-            return this.lastUsed < that.lastUsed ? -1 : this.lastUsed == that.lastUsed ? 0 : 1;
+            return Long.compare(this.lastUsed, that.lastUsed);
         }
 
         public String toString()
@@ -48,10 +48,10 @@ public class BasicMemoryCache implements MemoryCache
         }
     }
 
-    protected java.util.concurrent.ConcurrentHashMap<Object, CacheEntry> entries;
-    protected java.util.concurrent.CopyOnWriteArrayList<MemoryCache.CacheListener> listeners;
-    protected AtomicLong capacity = new AtomicLong();
-    protected AtomicLong currentUsedCapacity = new AtomicLong();
+    protected final java.util.concurrent.ConcurrentHashMap<Object, CacheEntry> entries;
+    protected final java.util.concurrent.CopyOnWriteArrayList<MemoryCache.CacheListener> listeners;
+    protected final AtomicLong capacity = new AtomicLong();
+    protected final AtomicLong currentUsedCapacity = new AtomicLong();
     protected Long lowWater;
     protected String name = "";
 
@@ -65,8 +65,8 @@ public class BasicMemoryCache implements MemoryCache
      */
     public BasicMemoryCache(long loWater, long capacity)
     {
-        this.entries = new java.util.concurrent.ConcurrentHashMap<Object, CacheEntry>();
-        this.listeners = new java.util.concurrent.CopyOnWriteArrayList<MemoryCache.CacheListener>();
+        this.entries = new java.util.concurrent.ConcurrentHashMap<>();
+        this.listeners = new java.util.concurrent.CopyOnWriteArrayList<>();
         this.capacity.set(capacity);
         this.lowWater = loWater;
         this.currentUsedCapacity.set(0);

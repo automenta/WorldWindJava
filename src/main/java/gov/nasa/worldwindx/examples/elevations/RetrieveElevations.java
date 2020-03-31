@@ -13,7 +13,6 @@ import gov.nasa.worldwindx.examples.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -34,7 +33,7 @@ public class RetrieveElevations extends ApplicationTemplate
 
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected ElevationsDemoController controller;
+        protected final ElevationsDemoController controller;
         protected LayerPanel layerPanel;
 
         public AppFrame()
@@ -86,26 +85,22 @@ public class RetrieveElevations extends ApplicationTemplate
                     int MIN_VE = 1;
                     int MAX_VE = 8;
                     int curVe = (int) this.getWwd().getSceneController().getVerticalExaggeration();
-                    curVe = curVe < MIN_VE ? MIN_VE : (curVe > MAX_VE ? MAX_VE : curVe);
+                    curVe = curVe < MIN_VE ? MIN_VE : (Math.min(curVe, MAX_VE));
                     JSlider slider = new JSlider(MIN_VE, MAX_VE, curVe);
                     slider.setMajorTickSpacing(1);
                     slider.setPaintTicks(true);
                     slider.setSnapToTicks(true);
-                    Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+                    Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
                     labelTable.put(1, new JLabel("1x"));
                     labelTable.put(2, new JLabel("2x"));
                     labelTable.put(4, new JLabel("4x"));
                     labelTable.put(8, new JLabel("8x"));
                     slider.setLabelTable(labelTable);
                     slider.setPaintLabels(true);
-                    slider.addChangeListener(new ChangeListener()
-                    {
-                        public void stateChanged(ChangeEvent e)
-                        {
-                            double ve = ((JSlider) e.getSource()).getValue();
-                            ActionEvent ae = new ActionEvent(ve, 0, ACTION_COMMAND_VERTICAL_EXAGGERATION);
-                            controller.actionPerformed(ae);
-                        }
+                    slider.addChangeListener(e -> {
+                        double ve = ((JSlider) e.getSource()).getValue();
+                        ActionEvent ae = new ActionEvent(ve, 0, ACTION_COMMAND_VERTICAL_EXAGGERATION);
+                        controller.actionPerformed(ae);
                     });
                     vePanel.add(slider, BorderLayout.SOUTH);
                 }
@@ -124,7 +119,7 @@ public class RetrieveElevations extends ApplicationTemplate
     {
         protected RetrieveElevations.AppFrame frame;
         // WorldWind stuff.
-        protected WorldWindow wwd;
+        protected final WorldWindow wwd;
 
         public ElevationsDemoController(WorldWindow wwd)
         {
@@ -166,7 +161,7 @@ public class RetrieveElevations extends ApplicationTemplate
 
         public void doActionOnButton2()
         {
-            ArrayList<LatLon> latlons = new ArrayList<LatLon>();
+            ArrayList<LatLon> latlons = new ArrayList<>();
 
             latlons.add(LatLon.fromDegrees(45.50d, -123.3d));
             latlons.add(LatLon.fromDegrees(45.52d, -123.3d));
@@ -185,7 +180,7 @@ public class RetrieveElevations extends ApplicationTemplate
             double resolutionAchieved = this.wwd.getModel().getGlobe().getElevationModel().getElevations(
                 sector, latlons, targetResolution, elevations);
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             for (double e : elevations)
             {
                 sb.append("\n").append(e);
@@ -198,7 +193,7 @@ public class RetrieveElevations extends ApplicationTemplate
 
         public void doActionOnButton3()
         {
-            ArrayList<LatLon> latlons = new ArrayList<LatLon>();
+            ArrayList<LatLon> latlons = new ArrayList<>();
 
             latlons.add(LatLon.fromDegrees(45.50d, -123.3d));
             latlons.add(LatLon.fromDegrees(45.52d, -123.3d));
@@ -209,7 +204,7 @@ public class RetrieveElevations extends ApplicationTemplate
 
             ElevationModel model = this.wwd.getModel().getGlobe().getElevationModel();
 
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             for (LatLon ll : latlons)
             {
                 double e = model.getElevation(ll.getLatitude(), ll.getLongitude());

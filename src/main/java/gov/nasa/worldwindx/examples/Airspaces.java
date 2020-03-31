@@ -40,7 +40,7 @@ public class Airspaces extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected RandomShapeAttributes randomAttrs = new RandomShapeAttributes();
+        protected final RandomShapeAttributes randomAttrs = new RandomShapeAttributes();
         protected Airspace lastHighlightAirspace;
         protected AirspaceAttributes lastAttrs;
 

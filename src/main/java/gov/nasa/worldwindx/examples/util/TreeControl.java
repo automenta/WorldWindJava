@@ -22,7 +22,7 @@ public class TreeControl extends ApplicationTemplate
 
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        HotSpotController controller;
+        final HotSpotController controller;
 
         public AppFrame()
         {

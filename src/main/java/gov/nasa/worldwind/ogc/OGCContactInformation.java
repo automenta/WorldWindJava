@@ -99,7 +99,7 @@ public class OGCContactInformation extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OGCAddress)
+                if (o instanceof OGCAddress)
                     this.setContactAddress((OGCAddress) o);
             }
         }

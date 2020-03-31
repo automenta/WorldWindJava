@@ -12,6 +12,8 @@ import gov.nasa.worldwind.globes.projections.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
 
+import java.util.Objects;
+
 /**
  * Defines a globe represented as a projection onto a plane. The projection type is modifiable. The default projection
  * is Mercator. New projections may be added by extending this class and overriding {@link
@@ -64,9 +66,9 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D
 
     private class FlatStateKey extends StateKey
     {
-        protected GeographicProjection projection;
+        protected final GeographicProjection projection;
         protected double verticalExaggeration;
-        protected int offset;
+        protected final int offset;
 
         public FlatStateKey(DrawContext dc)
         {
@@ -99,8 +101,7 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D
             if (Double.compare(that.verticalExaggeration, verticalExaggeration) != 0)
                 return false;
             //noinspection RedundantIfStatement
-            if (projection != null ? !projection.equals(that.projection)
-                : that.projection != null)
+            if (!Objects.equals(projection, that.projection))
                 return false;
 
             return true;
@@ -152,25 +153,12 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D
             throw new IllegalArgumentException(message);
         }
 
-        if (projection.equals(PROJECTION_LAT_LON))
+        switch (projection)
         {
-            this.setProjection(new ProjectionEquirectangular());
-        }
-        else if (projection.equals(PROJECTION_MERCATOR))
-        {
-            this.setProjection(new ProjectionMercator());
-        }
-        else if (projection.equals(PROJECTION_SINUSOIDAL))
-        {
-            this.setProjection(new ProjectionSinusoidal());
-        }
-        else if (projection.equals(PROJECTION_MODIFIED_SINUSOIDAL))
-        {
-            this.setProjection(new ProjectionModifiedSinusoidal());
-        }
-        else
-        {
-            this.setProjection(new ProjectionEquirectangular());
+            case PROJECTION_MERCATOR -> this.setProjection(new ProjectionMercator());
+            case PROJECTION_SINUSOIDAL -> this.setProjection(new ProjectionSinusoidal());
+            case PROJECTION_MODIFIED_SINUSOIDAL -> this.setProjection(new ProjectionModifiedSinusoidal());
+            default -> this.setProjection(new ProjectionEquirectangular());
         }
     }
 

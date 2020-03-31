@@ -62,7 +62,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
     protected boolean linkControlFetched = false;
     protected KMLNetworkLinkControl networkLinkControl;
 
-    protected AbsentResourceList absentResourceList = new AbsentResourceList();
+    protected final AbsentResourceList absentResourceList = new AbsentResourceList();
 
     /**
      * Creates a KML root for an untyped source. The source must be either a {@link File}, a {@link URL}, a {@link
@@ -506,14 +506,10 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
         }
         else
         {
-            this.parserContext.setNotificationListener(new XMLParserNotificationListener()
-            {
-                public void notify(XMLParserNotification notification)
-                {
-                    // Set up so the user sees the notification coming from the root rather than the parser
-                    notification.setSource(KMLRoot.this);
-                    listener.notify(notification);
-                }
+            this.parserContext.setNotificationListener(notification -> {
+                // Set up so the user sees the notification coming from the root rather than the parser
+                notification.setSource(KMLRoot.this);
+                listener.notify(notification);
             });
         }
     }
@@ -1290,7 +1286,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
         return this.propertyChangeSupport;
     }
     
-    private void setChildPositions(Collection<? extends Object> children, Position position) {
+    private void setChildPositions(Collection<?> children, Position position) {
         children.forEach((v) -> {
             if (v instanceof KMLMutable) {
                 ((KMLMutable) v).setPosition(position);
@@ -1317,7 +1313,7 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
         setChildPositions(this.getFields().getValues(), position);
     }
 
-    private void setChildScales(Collection<? extends Object> children, Vec4 scale) {
+    private void setChildScales(Collection<?> children, Vec4 scale) {
         children.forEach((v) -> {
             if (v instanceof KMLMutable) {
                 ((KMLMutable) v).setScale(scale);

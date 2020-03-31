@@ -28,7 +28,7 @@ public class ColladaLibrary<T> extends ColladaAbstractObject
      */
     protected String elementName;
     /** Elements in the library. */
-    protected List<T> elements = new ArrayList<T>();
+    protected final List<T> elements = new ArrayList<>();
 
     /**
      * Construct an instance.

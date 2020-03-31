@@ -15,7 +15,6 @@ import gov.nasa.worldwind.terrain.HighResolutionTerrain;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 import javax.swing.Timer;
-import java.awt.event.*;
 import java.util.*;
 
 /**
@@ -27,16 +26,16 @@ public class PolygonIntersection extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected HighResolutionTerrain terrain; // Use this class to test against high-resolution terrain
-        protected Polygon polygon; // the polygon to intersect
-        protected RenderableLayer layer; // layer to display the polygon and the intersection
+        protected final HighResolutionTerrain terrain; // Use this class to test against high-resolution terrain
+        protected final Polygon polygon; // the polygon to intersect
+        protected final RenderableLayer layer; // layer to display the polygon and the intersection
 
         public AppFrame()
         {
             super(true, true, false);
 
             // Create the polygon boundary and then the polygon.
-            List<Position> positions = new ArrayList<Position>();
+            List<Position> positions = new ArrayList<>();
             positions.add(Position.fromDegrees(40.4, -120.6, 10e3));
             positions.add(Position.fromDegrees(40.4, -120.4, 10e3));
             positions.add(Position.fromDegrees(40.6, -120.4, 10e3));
@@ -61,23 +60,18 @@ public class PolygonIntersection extends ApplicationTemplate
 
             // Perform the intersection test within a timer callback. Intersection calculations would normally be done
             // on a separate, non-EDT thread, however.
-            Timer timer = new Timer(3000, new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
-                {
-                    Position pA = Position.fromDegrees(40.5, -120.5, 0);
-                    Position pB = new Position(pA, 20e3);
-                    drawLine(pA,  pB);
-                    performIntersection();
-                }
+            Timer timer = new Timer(3000, actionEvent -> {
+                Position pA = Position.fromDegrees(40.5, -120.5, 0);
+                Position pB = new Position(pA, 20e3);
+                drawLine(pA,  pB);
+                performIntersection();
             });
             timer.start();
         }
 
         protected void performIntersection()
         {
-            try
-            {
+
                 // Create the line to intersect with the shape.
                 Position referencePosition = Position.fromDegrees(40.5, -120.5, 0);
                 Vec4 referencePoint = terrain.getSurfacePoint(referencePosition);
@@ -97,11 +91,7 @@ public class PolygonIntersection extends ApplicationTemplate
                         drawIntersection(intersection);
                     }
                 }
-            }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
+
         }
 
         protected void drawLine(Position pA, Position pB)

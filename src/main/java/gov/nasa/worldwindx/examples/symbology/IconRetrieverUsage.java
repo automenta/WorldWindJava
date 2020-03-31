@@ -32,7 +32,7 @@ public class IconRetrieverUsage
 
     private static class AppFrame extends javax.swing.JFrame
     {
-        protected IconRetriever iconRetriever;
+        protected final IconRetriever iconRetriever;
 
         public AppFrame()
         {
@@ -45,49 +45,41 @@ public class IconRetrieverUsage
 
             // Retrieve icons on a background thread. Icons may be retrieved from the network or a local disk.
             // This operation should not run on the UI thread.
-            WorldWind.getTaskService().addTask(new Runnable()
-            {
-                public void run()
-                {
-                    AVList params = new AVListImpl();
+            WorldWind.getTaskService().addTask(() -> {
+                AVList params = new AVListImpl();
 
-                    // Create an icon with the default parameters.
-                    BufferedImage image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
-                    addLater(image, "Full symbol");
+                // Create an icon with the default parameters.
+                BufferedImage image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
+                addLater(image, "Full symbol");
 
-                    // Create a unframed icon.
-                    params.setValue(SymbologyConstants.SHOW_FRAME, false);
-                    image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
-                    addLater(image, "No frame");
+                // Create a unframed icon.
+                params.setValue(SymbologyConstants.SHOW_FRAME, false);
+                image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
+                addLater(image, "No frame");
 
-                    // Create a framed icon with no fill.
-                    params.setValue(SymbologyConstants.SHOW_FRAME, true);
-                    params.setValue(SymbologyConstants.SHOW_FILL, false);
-                    image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
-                    addLater(image, "No fill");
+                // Create a framed icon with no fill.
+                params.setValue(SymbologyConstants.SHOW_FRAME, true);
+                params.setValue(SymbologyConstants.SHOW_FILL, false);
+                image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
+                addLater(image, "No fill");
 
-                    // Create an icon with a custom color.
-                    params.setValue(AVKey.COLOR, Color.GREEN);
-                    params.setValue(SymbologyConstants.SHOW_FRAME, true);
-                    params.setValue(SymbologyConstants.SHOW_FILL, true);
-                    image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
-                    addLater(image, "Custom color");
-                }
+                // Create an icon with a custom color.
+                params.setValue(AVKey.COLOR, Color.GREEN);
+                params.setValue(SymbologyConstants.SHOW_FRAME, true);
+                params.setValue(SymbologyConstants.SHOW_FILL, true);
+                image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
+                addLater(image, "Custom color");
             });
         }
 
         protected void addLater(final BufferedImage image, final String text)
         {
             // Add labels to the frame on the Event Dispatch Thread.
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    JLabel label = new JLabel(new ImageIcon(image));
-                    label.setText(text);
-                    getContentPane().add(label);
-                    pack();
-                }
+            SwingUtilities.invokeLater(() -> {
+                JLabel label = new JLabel(new ImageIcon(image));
+                label.setText(text);
+                getContentPane().add(label);
+                pack();
             });
         }
     }
@@ -99,17 +91,13 @@ public class IconRetrieverUsage
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Icon Retriever");
         }
 
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                // Create an AppFrame and immediately make it visible. As per Swing convention, this
-                // is done within an invokeLater call so that it executes on an AWT thread.
-                JFrame appFrame = new AppFrame();
-                appFrame.setTitle("WorldWind Icon Retriever");
-                appFrame.setVisible(true);
-                appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            }
+        SwingUtilities.invokeLater(() -> {
+            // Create an AppFrame and immediately make it visible. As per Swing convention, this
+            // is done within an invokeLater call so that it executes on an AWT thread.
+            JFrame appFrame = new AppFrame();
+            appFrame.setTitle("WorldWind Icon Retriever");
+            appFrame.setVisible(true);
+            appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         });
     }
 }

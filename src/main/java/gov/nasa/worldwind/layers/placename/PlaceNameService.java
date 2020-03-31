@@ -10,6 +10,7 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * @author Paul Collins
@@ -181,22 +182,21 @@ public class PlaceNameService
 
         final PlaceNameService other = (PlaceNameService) o;
 
-        if (this.service != null ? !this.service.equals(other.service) : other.service != null)
+        if (!Objects.equals(this.service, other.service))
             return false;
-        if (this.dataset != null ? !this.dataset.equals(other.dataset) : other.dataset != null)
+        if (!Objects.equals(this.dataset, other.dataset))
             return false;
-        if (this.fileCachePath != null ? !this.fileCachePath.equals(other.fileCachePath) : other.fileCachePath != null)
+        if (!Objects.equals(this.fileCachePath, other.fileCachePath))
             return false;
-        if (this.maskingSector != null ? !this.maskingSector.equals(other.maskingSector) : other.maskingSector != null)
+        if (!Objects.equals(this.maskingSector, other.maskingSector))
             return false;
-        if (this.tileDelta != null ? !this.tileDelta.equals(other.tileDelta) : other.tileDelta != null)
+        if (!Objects.equals(this.tileDelta, other.tileDelta))
             return false;
-        if (this.font != null ? !this.font.equals(other.font) : other.font != null)
+        if (!Objects.equals(this.font, other.font))
             return false;
-        if (this.color != null ? !this.color.equals(other.color) : other.color != null)
+        if (!Objects.equals(this.color, other.color))
             return false;
-        if (this.backgroundColor != null ? !this.backgroundColor.equals(other.backgroundColor)
-            : other.backgroundColor != null)
+        if (!Objects.equals(this.backgroundColor, other.backgroundColor))
             return false;
         if (this.minDisplayDistance != other.minDisplayDistance)
             return false;

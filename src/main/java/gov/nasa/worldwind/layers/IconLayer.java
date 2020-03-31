@@ -25,14 +25,14 @@ import java.util.*;
  */
 public class IconLayer extends AbstractLayer
 {
-    protected final BasicQuadTree<WWIcon> icons = new BasicQuadTree<WWIcon>(8, Sector.FULL_SPHERE, null, false);
+    protected final BasicQuadTree<WWIcon> icons = new BasicQuadTree<>(8, Sector.FULL_SPHERE, null, false);
     protected Iterable<WWIcon> iconsOverride;
-    protected IconRenderer iconRenderer = new IconRenderer();
+    protected final IconRenderer iconRenderer = new IconRenderer();
     private Pedestal pedestal;
     private boolean regionCulling = true;
 
     // These fields enable the render pass to use the same non-culled icons computed by the pick pass.
-    protected HashMap<GlobeStateKey, Set<WWIcon>> lastActiveIconsLists = new HashMap<GlobeStateKey, Set<WWIcon>>(1);
+    protected final HashMap<GlobeStateKey, Set<WWIcon>> lastActiveIconsLists = new HashMap<>(1);
     protected long frameId;
 
     /** Creates a new <code>IconLayer</code> with an empty collection of Icons. */
@@ -220,7 +220,7 @@ public class IconLayer extends AbstractLayer
         if (sgList == null || sgList.size() == 0)
             return Collections.emptyList();
 
-        lastActiveIcons = this.icons.getItemsInRegions(sgList, new HashSet<WWIcon>());
+        lastActiveIcons = this.icons.getItemsInRegions(sgList, new HashSet<>());
         this.lastActiveIconsLists.put(dc.getGlobe().getGlobeStateKey(), lastActiveIcons);
         this.frameId = dc.getFrameTimeStamp();
 

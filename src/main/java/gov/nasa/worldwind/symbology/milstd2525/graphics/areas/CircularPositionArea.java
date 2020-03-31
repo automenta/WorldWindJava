@@ -27,7 +27,7 @@ public class CircularPositionArea extends AbstractCircularGraphic
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.FSUPP_ARS_C2ARS_PAA_CIRCLR);
+        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_C2ARS_PAA_CIRCLR);
     }
 
     /**

@@ -49,7 +49,7 @@ public class Position extends LatLon {
     // A class that makes it easier to pass around position lists.
     public static class PositionList {
 
-        public List<? extends Position> list;
+        public final List<? extends Position> list;
 
         public PositionList(List<? extends Position> list) {
             this.list = list;
@@ -238,7 +238,7 @@ public class Position extends LatLon {
             throw new IllegalArgumentException(msg);
         }
 
-        ArrayList<Position> newPositions = new ArrayList<Position>();
+        ArrayList<Position> newPositions = new ArrayList<>();
 
         double elevDelta = newPosition.getElevation() - oldPosition.getElevation();
 
@@ -274,7 +274,7 @@ public class Position extends LatLon {
             throw new IllegalArgumentException(msg);
         }
 
-        ArrayList<Position> newPositions = new ArrayList<Position>();
+        ArrayList<Position> newPositions = new ArrayList<>();
 
         double elevDelta = newPosition.getElevation() - oldPosition.getElevation();
         Vec4 oldPoint = globe.computePointFromPosition(oldPosition);

@@ -142,7 +142,7 @@ public class DDSDecompressor
             }
             else if (mipMapCount > 0)
             {
-                ArrayList<BufferedImage> list = new ArrayList<BufferedImage>();
+                ArrayList<BufferedImage> list = new ArrayList<>();
 
                 int mmLength = header.getLinearSize();
                 int mmOffset = DDSConstants.DDS_DATA_OFFSET;

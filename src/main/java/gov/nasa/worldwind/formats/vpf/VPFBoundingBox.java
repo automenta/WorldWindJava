@@ -62,10 +62,10 @@ public class VPFBoundingBox
         }
 
         return new VPFBoundingBox(
-            (this.xmin < boundingBox.xmin) ? this.xmin : boundingBox.xmin,
-            (this.ymin < boundingBox.ymin) ? this.ymin : boundingBox.ymin,
-            (this.xmax > boundingBox.xmax) ? this.xmax : boundingBox.xmax,
-            (this.ymax > boundingBox.ymax) ? this.ymax : boundingBox.ymax);
+            Math.min(this.xmin, boundingBox.xmin),
+            Math.min(this.ymin, boundingBox.ymin),
+            Math.max(this.xmax, boundingBox.xmax),
+            Math.max(this.ymax, boundingBox.ymax));
     }
 
     public String toString()

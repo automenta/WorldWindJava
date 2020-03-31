@@ -40,9 +40,9 @@ public abstract class RigidShape extends AbstractShape
     protected static class ShapeData extends AbstractShapeData
     {
         /** Holds the computed tessellation of the shape in model coordinates. */
-        protected List<Geometry> meshes = new ArrayList<Geometry>();
+        protected List<Geometry> meshes = new ArrayList<>();
         /** The GPU-resource cache keys to use for this entry's VBOs (one for eack LOD), if VBOs are used. */
-        protected Map<Integer, Object> vboCacheKeys = new HashMap<Integer, Object>();
+        protected final Map<Integer, Object> vboCacheKeys = new HashMap<>();
 
         /** Indicates whether the index buffer needs to be filled because a new buffer is used or some other reason. */
         protected boolean refillIndexBuffer = true; // set to true if the index buffer needs to be refilled
@@ -116,13 +116,13 @@ public abstract class RigidShape extends AbstractShape
         return (ShapeData) this.getCurrentData();
     }
 
-    public class Offsets
+    public static class Offsets
     {
-        protected Map<Integer, float[]> offsets;
+        protected final Map<Integer, float[]> offsets;
 
         public Offsets()
         {
-            offsets = new HashMap<Integer, float[]>();
+            offsets = new HashMap<>();
 
             // set default values to zero offset
             float[] zeroOffset = {0.0f, 0.0f};
@@ -158,11 +158,11 @@ public abstract class RigidShape extends AbstractShape
     protected Angle skewNorthSouth = Angle.POS90;
     protected Angle skewEastWest = Angle.POS90;
 
-    protected boolean renderExtent = false;
+    protected final boolean renderExtent = false;
 
     // Geometry
     protected double detailHint = 0;
-    protected GeometryBuilder geometryBuilder = new GeometryBuilder();
+    protected final GeometryBuilder geometryBuilder = new GeometryBuilder();
 
     // Key values for Level of Detail-related key-value pairs
     protected static final String GEOMETRY_CACHE_KEY = Geometry.class.getName();
@@ -170,17 +170,17 @@ public abstract class RigidShape extends AbstractShape
     protected static final String GEOMETRY_CACHE_NAME = "Airspace Geometry"; // use same cache as Airspaces
 
     /** The image source of the shape's texture. */
-    protected Map<Integer, Object> imageSources = new HashMap<Integer, Object>();
+    protected final Map<Integer, Object> imageSources = new HashMap<>();
     // image sources for the textures for each piece of geometry
     /** The {@link WWTexture} created for the image source, if any. */
-    protected Map<Integer, WWTexture> textures = new HashMap<Integer, WWTexture>();
+    protected final Map<Integer, WWTexture> textures = new HashMap<>();
     // optional textures for each piece of geometry
 
     // texture coordinate offsets for each piece
     //protected Map<Integer, Offsets> offsets = new HashMap<Integer, Offsets>();
-    protected Map<Integer, OffsetsList> offsets = new HashMap<Integer, OffsetsList>();
+    protected Map<Integer, OffsetsList> offsets = new HashMap<>();
     // texture coordinates for each piece       // TODO: is this necessary?
-    protected Map<Integer, FloatBuffer> offsetTextureCoords = new HashMap<Integer, FloatBuffer>();
+    protected Map<Integer, FloatBuffer> offsetTextureCoords = new HashMap<>();
 
     // Fields used in intersection calculations
     /** The terrain used in the most recent intersection calculations. */
@@ -286,11 +286,11 @@ public abstract class RigidShape extends AbstractShape
         if (imageSource != null)
         {
             WWTexture newTexture = null;
-            for (Integer key : imageSources.keySet())
+            for (Map.Entry<Integer, Object> entry : imageSources.entrySet())
             {
-                if (imageSource.equals(imageSources.get(key)))
+                if (imageSource.equals(entry.getValue()))
                 {
-                    newTexture = textures.get(key);
+                    newTexture = textures.get(entry.getKey());
                     break;
                 }
             }
@@ -935,7 +935,7 @@ public abstract class RigidShape extends AbstractShape
         Matrix matrix = computeRenderMatrix(dc);
 
         // create a list of vertices representing the extrema of the unit sphere
-        Vector<Vec4> extrema = new Vector<Vec4>(4);
+        Vector<Vec4> extrema = new Vector<>(4);
         // transform the extrema by the render matrix to get their final positions
         Vec4 point = matrix.transformBy3(matrix, -1, 1, -1);   // far upper left
         extrema.add(point);
@@ -975,7 +975,7 @@ public abstract class RigidShape extends AbstractShape
         Matrix matrix = computeRenderMatrix(globe, verticalExaggeration);
 
         // create a list of vertices representing the extrema of the unit sphere
-        Vector<Vec4> extrema = new Vector<Vec4>(4);
+        Vector<Vec4> extrema = new Vector<>(4);
         // transform the extrema by the render matrix to get their final positions
         Vec4 point = matrix.transformBy3(matrix, -1, 1, -1);   // far upper left
         extrema.add(point);
@@ -1513,12 +1513,11 @@ public abstract class RigidShape extends AbstractShape
      * @return a list of intersections identifying where the line intersects the shape, or null if the line does not
      *         intersect the shape.
      *
-     * @throws InterruptedException if the operation is interrupted.
      * @see Terrain
      */
-    public List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException
+    public List<Intersection> intersect(Line line, Terrain terrain)
     {
-        List<Intersection> shapeIntersections = new ArrayList<Intersection>();
+        List<Intersection> shapeIntersections = new ArrayList<>();
         List<Intersection> faceIntersections;
 
         for (int i = 0; i < getFaceCount(); i++)
@@ -1530,7 +1529,7 @@ public abstract class RigidShape extends AbstractShape
         return shapeIntersections;
     }
 
-    public List<Intersection> intersect(Line line, Terrain terrain, int index) throws InterruptedException
+    public List<Intersection> intersect(Line line, Terrain terrain, int index)
     {
         Position refPos = this.getReferencePosition();
         if (refPos == null)
@@ -1562,11 +1561,11 @@ public abstract class RigidShape extends AbstractShape
         final Line localLine = new Line(line.getOrigin().subtract3(highResShapeData.getReferencePoint()),
             line.getDirection());
 
-        List<Intersection> shapeIntersections = new ArrayList<Intersection>();
+        List<Intersection> shapeIntersections = new ArrayList<>();
 
         for (int i = 0; i < getFaceCount(); i++)
         {
-            List<Intersection> intersections = new ArrayList<Intersection>();
+            List<Intersection> intersections = new ArrayList<>();
             this.intersect(localLine, highResShapeData, intersections, index);
 
             if (intersections.size() == 0)
@@ -1593,7 +1592,6 @@ public abstract class RigidShape extends AbstractShape
     }
 
     protected void intersect(Line line, ShapeData shapeData, List<Intersection> intersections, int index)
-        throws InterruptedException
     {
 
         IntBuffer indices = (IntBuffer) shapeData.getMesh(index).getBuffer(Geometry.ELEMENT);
@@ -1621,9 +1619,8 @@ public abstract class RigidShape extends AbstractShape
      * @return a list of intersections identifying where the line intersects this shape face, or null if the line does
      *         not intersect this face.
      *
-     * @throws InterruptedException if the operation is interrupted.
      */
-    public List<Intersection> intersectFace(Line line, int index, Matrix renderMatrix) throws InterruptedException
+    public List<Intersection> intersectFace(Line line, int index, Matrix renderMatrix)
     {
         final Line localLine = new Line(line.getOrigin().subtract3(this.getCurrentShapeData().getReferencePoint()),
             line.getDirection());

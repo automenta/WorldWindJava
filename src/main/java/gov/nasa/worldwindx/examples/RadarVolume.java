@@ -15,7 +15,6 @@ import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.*;
 import java.util.List;
 
@@ -471,21 +470,6 @@ public class RadarVolume extends AbstractShape
                             this.setTriangleNormals(triFlags, triIndices);
 
                             kk = lrv * 3;
-                            triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
-                            triFlags[0] = this.obstructionFlags[kk / 3];
-                            triIndices[0] = kk;
-
-                            kk = ulv * 3;
-                            triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
-                            triFlags[1] = this.obstructionFlags[kk / 3];
-                            triIndices[1] = kk;
-
-                            kk = urv * 3;
-                            triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
-                            triFlags[2] = this.obstructionFlags[kk / 3];
-                            triIndices[2] = kk;
-
-                            this.setTriangleNormals(triFlags, triIndices);
                         }
                         else
                         {
@@ -507,22 +491,19 @@ public class RadarVolume extends AbstractShape
                             this.setTriangleNormals(triFlags, triIndices);
 
                             kk = llv * 3;
-                            triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
-                            triFlags[0] = this.obstructionFlags[kk / 3];
-                            triIndices[0] = kk;
-
-                            kk = ulv * 3;
-                            triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
-                            triFlags[1] = this.obstructionFlags[kk / 3];
-                            triIndices[1] = kk;
-
-                            kk = urv * 3;
-                            triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
-                            triFlags[2] = this.obstructionFlags[kk / 3];
-                            triIndices[2] = kk;
-
-                            this.setTriangleNormals(triFlags, triIndices);
                         }
+                        triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
+                        triFlags[0] = this.obstructionFlags[kk / 3];
+                        triIndices[0] = kk;
+                        kk = ulv * 3;
+                        triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
+                        triFlags[1] = this.obstructionFlags[kk / 3];
+                        triIndices[1] = kk;
+                        kk = urv * 3;
+                        triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
+                        triFlags[2] = this.obstructionFlags[kk / 3];
+                        triIndices[2] = kk;
+                        this.setTriangleNormals(triFlags, triIndices);
                     }
                     else if (ul && !ur && ll && lr) // case 5
                     {
@@ -644,10 +625,6 @@ public class RadarVolume extends AbstractShape
                             triIndices[1] = kk;
 
                             kk = (llv - gridSize) * 3;
-                            triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
-                            triIndices[2] = kk;
-
-                            this.setTriangleNormals(null, triIndices);
                         }
                         else
                         {
@@ -674,11 +651,10 @@ public class RadarVolume extends AbstractShape
                             triIndices[1] = kk;
 
                             kk = (lrv - gridSize) * 3;
-                            triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
-                            triIndices[2] = kk;
-
-                            this.setTriangleNormals(null, triIndices);
                         }
+                        triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
+                        triIndices[2] = kk;
+                        this.setTriangleNormals(null, triIndices);
                     }
                     else if (ul && !ur && ll && !lr) // case 3
                     {
@@ -941,10 +917,6 @@ public class RadarVolume extends AbstractShape
                             triIndices[1] = kk;
 
                             kk = (llv - gridSize) * 3;
-                            triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
-                            triIndices[2] = kk;
-
-                            this.setTriangleNormals(null, triIndices);
                         }
                         else
                         {
@@ -972,11 +944,10 @@ public class RadarVolume extends AbstractShape
                             triIndices[1] = kk;
 
                             kk = (lrv - gridSize) * 3;
-                            triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
-                            triIndices[2] = kk;
-
-                            this.setTriangleNormals(null, triIndices);
                         }
+                        triVerts.put(vs.get(kk)).put(vs.get(kk + 1)).put(vs.get(kk + 2));
+                        triIndices[2] = kk;
+                        this.setTriangleNormals(null, triIndices);
                     }
                 }
             }
@@ -1188,7 +1159,7 @@ public class RadarVolume extends AbstractShape
     }
 
     @Override
-    public List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException
+    public List<Intersection> intersect(Line line, Terrain terrain)
     {
         return null;
     }
@@ -1200,7 +1171,7 @@ public class RadarVolume extends AbstractShape
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void doExportAsKML(XMLStreamWriter xmlWriter)
     {
         throw new UnsupportedOperationException("KML output not supported for RadarVolume");
     }

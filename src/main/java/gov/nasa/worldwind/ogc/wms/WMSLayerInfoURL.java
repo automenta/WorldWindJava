@@ -68,7 +68,7 @@ public class WMSLayerInfoURL extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OGCOnlineResource)
+                if (o instanceof OGCOnlineResource)
                     this.setOnlineResource((OGCOnlineResource) o);
             }
         }

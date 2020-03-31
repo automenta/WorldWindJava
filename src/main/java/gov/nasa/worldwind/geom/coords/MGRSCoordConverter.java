@@ -146,7 +146,7 @@ class MGRSCoordConverter
         {LETTER_W, 7000000.0, 72.0, 64.0, 6000000.0},
         {LETTER_X, 7900000.0, 84.5, 72.0, 6000000.0}};
 
-    private class MGRSComponents
+    private static class MGRSComponents
     {
         private final int zone;
         private final int latitudeBand;
@@ -981,7 +981,6 @@ class MGRSCoordConverter
         double divisor;
         long east;
         long north;
-        long error_code = MGRS_NO_ERROR;
 
         if (Zone != 0)
             MGRSString = String.format("%02d", Zone);
@@ -1003,8 +1002,8 @@ class MGRSCoordConverter
         east = (long) (Easting / divisor);
 
         // Here we need to only use the number requesting in the precision
-        Integer iEast = (int) east;
-        String sEast = iEast.toString();
+        int iEast = (int) east;
+        String sEast = Integer.toString(iEast);
         if (sEast.length() > Precision)
             sEast = sEast.substring(0, (int) Precision - 1);
         else
@@ -1023,8 +1022,8 @@ class MGRSCoordConverter
             Northing = 99999.0;
         north = (long) (Northing / divisor);
 
-        Integer iNorth = (int) north;
-        String sNorth = iNorth.toString();
+        int iNorth = (int) north;
+        String sNorth = Integer.toString(iNorth);
         if (sNorth.length() > Precision)
             sNorth = sNorth.substring(0, (int) Precision - 1);
         else
@@ -1038,7 +1037,7 @@ class MGRSCoordConverter
         }
         MGRSString = MGRSString + " " + sNorth;
 
-        return (error_code);
+        return MGRS_NO_ERROR;
     }
 
     /**

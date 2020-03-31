@@ -12,7 +12,6 @@ import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.tree.*;
 
 import javax.swing.*;
-import java.beans.*;
 
 /**
  * A <code>LayerTreeNode</code> that represents a KML feature hierarchy defined by a <code>{@link
@@ -53,34 +52,24 @@ public class KMLLayerTreeNode extends LayerTreeNode
         this.addChildFeatures();
 
         // Add a listener to refresh the tree model when the KML document is updated or a network link is retrieved.
-        this.kmlRoot.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            public void propertyChange(final PropertyChangeEvent event)
-            {
-                String name = (event != null) ? event.getPropertyName() : null;
-                Object newValue = (event != null) ? event.getNewValue() : null;
-                KMLAbstractFeature rootFeature = KMLLayerTreeNode.this.kmlRoot.getFeature();
+        this.kmlRoot.addPropertyChangeListener(event -> {
+            String name = (event != null) ? event.getPropertyName() : null;
+            Object newValue = (event != null) ? event.getNewValue() : null;
+            KMLAbstractFeature rootFeature = KMLLayerTreeNode.this.kmlRoot.getFeature();
 
-                // Update the document if an update is received, or if this node represents a network link that has been
-                // resolved.
-                if (AVKey.UPDATED.equals(name)
-                    || (AVKey.RETRIEVAL_STATE_SUCCESSFUL.equals(name) && rootFeature == newValue))
+            // Update the document if an update is received, or if this node represents a network link that has been
+            // resolved.
+            if (AVKey.UPDATED.equals(name)
+                || (AVKey.RETRIEVAL_STATE_SUCCESSFUL.equals(name) && rootFeature == newValue))
+            {
+                // Ensure that the node list is manipulated on the EDT
+                if (SwingUtilities.isEventDispatchThread())
                 {
-                    // Ensure that the node list is manipulated on the EDT
-                    if (SwingUtilities.isEventDispatchThread())
-                    {
-                        KMLLayerTreeNode.this.refresh();
-                    }
-                    else
-                    {
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            public void run()
-                            {
-                                KMLLayerTreeNode.this.refresh();
-                            }
-                        });
-                    }
+                    KMLLayerTreeNode.this.refresh();
+                }
+                else
+                {
+                    SwingUtilities.invokeLater(KMLLayerTreeNode.this::refresh);
                 }
             }
         });

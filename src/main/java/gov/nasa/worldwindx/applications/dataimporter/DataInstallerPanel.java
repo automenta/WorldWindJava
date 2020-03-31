@@ -11,7 +11,6 @@ import gov.nasa.worldwind.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.beans.*;
 
 /**
  * This panel holds the data installation panel and the installed-data display panel in a tabbed pane. In addition to
@@ -22,9 +21,9 @@ import java.beans.*;
  */
 public class DataInstallerPanel extends JPanel
 {
-    protected FileSetPanel fileSetPanel; // data available on disk
-    protected FileStorePanel fileStorePanel; // data currently installed
-    protected WorldWindow wwd;
+    protected final FileSetPanel fileSetPanel; // data available on disk
+    protected final FileStorePanel fileStorePanel; // data currently installed
+    protected final WorldWindow wwd;
 
     public DataInstallerPanel(final WorldWindow wwd)
     {
@@ -45,25 +44,15 @@ public class DataInstallerPanel extends JPanel
 
         this.add(tabbedPane, BorderLayout.CENTER);
 
-        this.fileSetPanel.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            @Override
-            public void propertyChange(PropertyChangeEvent event)
-            {
-                // Forward the event to this instance's listeners.
-                firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
-            }
+        this.fileSetPanel.addPropertyChangeListener(event -> {
+            // Forward the event to this instance's listeners.
+            firePropertyChange(event.getPropertyName(), event.getOldValue(), event.getNewValue());
         });
 
-        this.fileSetPanel.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent)
-            {
-                // Update the installed-data panel when a new data set is installed.
-                if (propertyChangeEvent.getPropertyName().equals(DataInstaller.INSTALL_COMPLETE))
-                    fileStorePanel.update(WorldWind.getDataFileStore());
-            }
+        this.fileSetPanel.addPropertyChangeListener(propertyChangeEvent -> {
+            // Update the installed-data panel when a new data set is installed.
+            if (propertyChangeEvent.getPropertyName().equals(DataInstaller.INSTALL_COMPLETE))
+                fileStorePanel.update(WorldWind.getDataFileStore());
         });
     }
 }

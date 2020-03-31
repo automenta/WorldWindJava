@@ -41,7 +41,7 @@ public class ShapeClipping extends ApplicationTemplate
     {
         protected ShapeEditor editor;
         protected ShapeAttributes lastAttrs;
-        protected ShapeClippingPanel clippingPanel;
+        protected final ShapeClippingPanel clippingPanel;
 
         public AppFrame()
         {
@@ -65,14 +65,7 @@ public class ShapeClipping extends ApplicationTemplate
                     {
                         if (!SwingUtilities.isEventDispatchThread())
                         {
-                            SwingUtilities.invokeLater(new Runnable()
-                            {
-                                @Override
-                                public void run()
-                                {
-                                    completion(result);
-                                }
-                            });
+                            SwingUtilities.invokeLater(() -> completion(result));
                             return;
                         }
 

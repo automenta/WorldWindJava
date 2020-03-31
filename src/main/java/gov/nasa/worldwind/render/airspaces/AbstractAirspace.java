@@ -56,7 +56,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
     protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
 
     /** The attributes used if attributes are not specified. */
-    protected static AirspaceAttributes defaultAttributes;
+    protected static final AirspaceAttributes defaultAttributes;
 
     static
     {
@@ -73,7 +73,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
     protected DraggableSupport draggableSupport = null;
     protected AirspaceAttributes attributes;
     protected AirspaceAttributes highlightAttributes;
-    protected AirspaceAttributes activeAttributes = new BasicAirspaceAttributes(); // re-determined each frame
+    protected final AirspaceAttributes activeAttributes = new BasicAirspaceAttributes(); // re-determined each frame
     protected double lowerAltitude = 0.0;
     protected double upperAltitude = 1.0;
     protected boolean lowerTerrainConforming = false;
@@ -82,7 +82,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
     protected String upperAltitudeDatum = AVKey.ABOVE_MEAN_SEA_LEVEL;
     protected LatLon groundReference;
     protected boolean enableLevelOfDetail = true;
-    protected Collection<DetailLevel> detailLevels = new TreeSet<DetailLevel>();
+    protected final Collection<DetailLevel> detailLevels = new TreeSet<>();
     // Rendering properties.
     protected boolean enableBatchRendering = true;
     protected boolean enableBatchPicking = true;
@@ -97,17 +97,17 @@ public abstract class AbstractAirspace extends WWObjectImpl
     // Geometry computation and rendering support.
     protected AirspaceInfo currentInfo;
     protected Layer pickLayer;
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     protected GeometryBuilder geometryBuilder = new GeometryBuilder();
     // Geometry update support.
     protected long expiryTime = -1L;
     protected long minExpiryTime = 2000L;
     protected long maxExpiryTime = 6000L;
-    protected static Random rand = new Random();
+    protected static final Random rand = new Random();
     // Elevation lookup map.
-    protected Map<LatLon, Double> elevationMap = new HashMap<LatLon, Double>();
+    protected final Map<LatLon, Double> elevationMap = new HashMap<>();
     // Implements the the interface used by the draw context's outlined-shape renderer.
-    protected OutlinedShape outlineShapeRenderer = new OutlinedShape()
+    protected final OutlinedShape outlineShapeRenderer = new OutlinedShape()
     {
         public boolean isDrawOutline(DrawContext dc, Object shape)
         {
@@ -150,11 +150,11 @@ public abstract class AbstractAirspace extends WWObjectImpl
     protected static class AirspaceInfo
     {
         // The extent depends on the state of the globe used to compute it, and the vertical exaggeration.
-        protected Extent extent;
+        protected final Extent extent;
         protected double eyeDistance;
-        protected List<Vec4> minimalGeometry;
-        protected double verticalExaggeration;
-        protected Object globeStateKey;
+        protected final List<Vec4> minimalGeometry;
+        protected final double verticalExaggeration;
+        protected final Object globeStateKey;
 
         public AirspaceInfo(DrawContext dc, Extent extent, List<Vec4> minimalGeometry)
         {
@@ -182,7 +182,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
     }
 
     // usually only 1, but few at most
-    protected HashMap<GlobeStateKey, AirspaceInfo> airspaceInfo = new HashMap<GlobeStateKey, AirspaceInfo>(2);
+    protected final HashMap<GlobeStateKey, AirspaceInfo> airspaceInfo = new HashMap<>(2);
 
     public AbstractAirspace(AirspaceAttributes attributes)
     {
@@ -1316,7 +1316,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
         }
 
         Object o = geom.getValue(EXPIRY_TIME);
-        if (o != null && o instanceof Long && dc.getFrameTimeStamp() > (Long) o)
+        if (o instanceof Long && dc.getFrameTimeStamp() > (Long) o)
             return true;
 
         o = geom.getValue(GLOBE_KEY);

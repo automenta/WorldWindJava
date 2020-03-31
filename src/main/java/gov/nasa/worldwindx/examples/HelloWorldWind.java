@@ -40,14 +40,10 @@ public class HelloWorldWind
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Hello WorldWind");
         }
 
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                // Create an AppFrame and immediately make it visible. As per Swing convention, this
-                // is done within an invokeLater call so that it executes on an AWT thread.
-                new AppFrame().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            // Create an AppFrame and immediately make it visible. As per Swing convention, this
+            // is done within an invokeLater call so that it executes on an AWT thread.
+            new AppFrame().setVisible(true);
         });
     }
 }

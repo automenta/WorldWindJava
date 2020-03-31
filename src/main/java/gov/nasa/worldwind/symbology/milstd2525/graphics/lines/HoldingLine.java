@@ -242,7 +242,7 @@ public class HoldingLine extends AbstractMilStd2525TacticalGraphic
         Vec4 ptCorner2 = pt2.add3(offset);
 
         // Create list to hold the path positions, and start populating.
-        List<Position> positions = new ArrayList<Position>();
+        List<Position> positions = new ArrayList<>();
         int intervals = this.getIntervals();
 
         positions.add(this.position1); // Line starts at Pt. 1.

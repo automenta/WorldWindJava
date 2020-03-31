@@ -23,12 +23,12 @@ import java.util.logging.Level;
 public class LocalRasterServerRetriever extends WWObjectImpl implements Retriever
 {
     //    protected AVList params;
-    protected RetrievalPostProcessor postProcessor;
+    protected final RetrievalPostProcessor postProcessor;
 
     protected RasterServer server = null;
     protected volatile String state = RETRIEVER_STATE_NOT_STARTED;
     protected volatile int contentLength = 0;
-    protected AtomicInteger contentLengthRead = new AtomicInteger(0);
+    protected final AtomicInteger contentLengthRead = new AtomicInteger(0);
     protected ByteBuffer byteBuffer;
     protected int staleRequestLimit = -1;
     protected long submitTime;
@@ -70,8 +70,8 @@ public class LocalRasterServerRetriever extends WWObjectImpl implements Retrieve
 
     public String getName()
     {
-        Object o = this.getStringValue(AVKey.DISPLAY_NAME);
-        return (WWUtil.isEmpty(o)) ? null : (String) o;
+        String o = this.getStringValue(AVKey.DISPLAY_NAME);
+        return (WWUtil.isEmpty(o)) ? null : o;
     }
 
     public String getState()
@@ -155,7 +155,7 @@ public class LocalRasterServerRetriever extends WWObjectImpl implements Retrieve
         this.staleRequestLimit = staleRequestLimit;
     }
 
-    public Retriever call() throws Exception
+    public Retriever call()
     {
         try
         {

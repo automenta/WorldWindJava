@@ -18,7 +18,7 @@ import java.util.Iterator;
 public class GpxReader // TODO: I18N, proper exception handling, remove stack-trace prints
 {
     private final javax.xml.parsers.SAXParser parser;
-    private final java.util.List<Track> tracks = new java.util.ArrayList<Track>();
+    private final java.util.List<Track> tracks = new java.util.ArrayList<>();
 
     public GpxReader() throws javax.xml.parsers.ParserConfigurationException, org.xml.sax.SAXException
     {
@@ -80,7 +80,7 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
 
     public Iterator<Position> getTrackPositionIterator()
     {
-        return new Iterator<Position>()
+        return new Iterator<>()
         {
             private final TrackPointIterator trackPoints = new TrackPointIteratorImpl(GpxReader.this.tracks);
 
@@ -137,7 +137,6 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
 
         @Override
         public void startElement(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
-            throws org.xml.sax.SAXException
         {
             if (this.firstElement)
             {
@@ -166,7 +165,7 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
         }
 
         @Override
-        public void endElement(String uri, String lname, String qname) throws org.xml.sax.SAXException
+        public void endElement(String uri, String lname, String qname)
         {
             if (this.currentElement != null)
             {
@@ -178,7 +177,7 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
         }
 
         @Override
-        public void characters(char[] data, int start, int length) throws org.xml.sax.SAXException
+        public void characters(char[] data, int start, int length)
         {
             if (this.currentElement != null)
                 this.currentElement.characters(data, start, length);

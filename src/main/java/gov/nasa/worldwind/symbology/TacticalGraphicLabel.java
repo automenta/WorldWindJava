@@ -168,9 +168,9 @@ public class TacticalGraphicLabel
     protected int lineHeight;
 
     /** Stack handler used for beginDrawing/endDrawing state. */
-    protected OGLStackHandler BEogsh = new OGLStackHandler();
+    protected final OGLStackHandler BEogsh = new OGLStackHandler();
     /** Support object used during picking. */
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     /** Active layer. */
     protected Layer pickLayer;
 
@@ -1283,7 +1283,7 @@ public class TacticalGraphicLabel
 
         if (!dc.isPickingMode())
         {
-            while (nextItem != null && nextItem instanceof OrderedLabel)
+            while (nextItem instanceof OrderedLabel)
             {
                 OrderedLabel nextLabel = (OrderedLabel) nextItem;
                 if (!nextLabel.isEnableBatchRendering())
@@ -1297,7 +1297,7 @@ public class TacticalGraphicLabel
         }
         else if (this.isEnableBatchPicking())
         {
-            while (nextItem != null && nextItem instanceof OrderedLabel)
+            while (nextItem instanceof OrderedLabel)
             {
                 OrderedLabel nextLabel = (OrderedLabel) nextItem;
                 if (!nextLabel.isEnableBatchRendering() || !nextLabel.isEnableBatchPicking())
@@ -1333,7 +1333,7 @@ public class TacticalGraphicLabel
 
         if (!dc.isPickingMode())
         {
-            while (nextItem != null && nextItem instanceof OrderedLabel)
+            while (nextItem instanceof OrderedLabel)
             {
                 OrderedLabel nextLabel = (OrderedLabel) nextItem;
                 if (!nextLabel.isEnableBatchRendering())

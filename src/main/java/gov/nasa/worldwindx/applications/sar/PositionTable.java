@@ -29,19 +29,15 @@ public class PositionTable extends JTable
     private String elevationUnit;
     private String angleFormat;
 
-    private final PropertyChangeListener propertyListener = new PropertyChangeListener()
-    {
-        public void propertyChange(PropertyChangeEvent propertyChangeEvent)
+    private final PropertyChangeListener propertyListener = propertyChangeEvent -> {
+        Object newValue = propertyChangeEvent.getNewValue();
+        if (newValue instanceof Integer)
         {
-            Object newValue = propertyChangeEvent.getNewValue();
-            if (newValue != null && newValue instanceof Integer)
-            {
-                updateTableRow((Integer) newValue);
-            }
-            else
-            {
-                updateTableData();
-            }
+            updateTableRow((Integer) newValue);
+        }
+        else
+        {
+            updateTableData();
         }
     };
 
@@ -185,15 +181,15 @@ public class PositionTable extends JTable
 
     private class MyTableModel extends AbstractTableModel
     {
-        String[] columnNames = new String[] {
+        final String[] columnNames = new String[] {
             "#", "Latitude", "Longitude", "Altitude"
         };
 
-        Class[] columnTypes = new Class[] {
+        final Class[] columnTypes = new Class[] {
             Integer.class, String.class, String.class, Double.class
         };
 
-        boolean[] columnEditable = new boolean[] {
+        final boolean[] columnEditable = new boolean[] {
             false, true, true, true
         };
 
@@ -358,7 +354,7 @@ public class PositionTable extends JTable
                 return null;
 
             Component c = this.delegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (c == null || !(c instanceof JLabel))
+            if (!(c instanceof JLabel))
                 return c;
 
             JLabel label = (JLabel) c;
@@ -391,7 +387,7 @@ public class PositionTable extends JTable
                 return null;
 
             Component c = this.delegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (c == null || !(c instanceof JLabel))
+            if (!(c instanceof JLabel))
                 return c;
 
             JLabel label = (JLabel) c;
@@ -495,15 +491,16 @@ public class PositionTable extends JTable
             return text;
         }
 
-        protected String createEditorText(Object value) throws Exception
+        protected String createEditorText(Object value)
         {
             return value.toString();
         }
     }
 
-    private class AngleCellEditor extends GeneralCellEditor
+    private static class AngleCellEditor extends GeneralCellEditor
     {
-        double min, max;
+        final double min;
+        final double max;
 
         public AngleCellEditor(PositionTable table, double min, double max)
         {
@@ -513,7 +510,7 @@ public class PositionTable extends JTable
             ((JTextField) getComponent()).setHorizontalAlignment(JTextField.RIGHT);
         }
 
-        protected Object validateEditorText(String text) throws Exception
+        protected Object validateEditorText(String text)
         {
             Angle angle = this.getTable().toAngle(text);
             if (angle == null)
@@ -523,7 +520,7 @@ public class PositionTable extends JTable
             return text;
         }
 
-        protected String createEditorText(Object value) throws Exception
+        protected String createEditorText(Object value)
         {
             String text = this.getTable().makeAngleDescription((Double) value);
             text = text.replaceAll("[D|d|\u00B0|'|\u2019|\"|\u201d]", " ").replaceAll("\\s+", " ");
@@ -545,7 +542,7 @@ public class PositionTable extends JTable
             return number.doubleValue();
         }
 
-        protected String createEditorText(Object value) throws Exception
+        protected String createEditorText(Object value)
         {
             return this.getTable().makeElevationDescription((Double) value);
         }

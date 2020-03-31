@@ -62,29 +62,25 @@ public class WorldFile
         final String imageSuffix = WWIO.getSuffix(dataFile.getPath());
         final String base = WWIO.replaceSuffix(dataFile.getName(), "").trim();
 
-        return dir.listFiles(new FilenameFilter()
-        {
-            public boolean accept(File dir, String name)
+        return dir.listFiles((dir1, name) -> {
+            int length = base.length() + 4;
+            name = name.trim();
+            if (!name.startsWith(base) || name.length() != length)
+                return false;
+
+            if (name.toLowerCase().endsWith("w"))
             {
-                int length = base.length() + 4;
-                name = name.trim();
-                if (!name.startsWith(base) || name.length() != length)
-                    return false;
-
-                if (name.toLowerCase().endsWith("w"))
+                // Match world file to the corresponding image file: certain chars of suffixes must match
+                String nameSuffix = WWIO.getSuffix(name);
+                if (imageSuffix != null && nameSuffix != null)
                 {
-                    // Match world file to the corresponding image file: certain chars of suffixes must match
-                    String nameSuffix = WWIO.getSuffix(name);
-                    if (imageSuffix != null && nameSuffix != null)
-                    {
-                        if (nameSuffix.substring(0, 1).equalsIgnoreCase(imageSuffix.substring(0, 1))
-                            && imageSuffix.toLowerCase().endsWith(nameSuffix.substring(1, 2)))
-                            return true;
-                    }
+                    if (nameSuffix.substring(0, 1).equalsIgnoreCase(imageSuffix.substring(0, 1))
+                        && imageSuffix.toLowerCase().endsWith(nameSuffix.substring(1, 2)))
+                        return true;
                 }
-
-                return name.toLowerCase().endsWith(".hdr") || name.toLowerCase().endsWith(".prj");
             }
+
+            return name.toLowerCase().endsWith(".hdr") || name.toLowerCase().endsWith(".prj");
         });
     }
 
@@ -143,7 +139,7 @@ public class WorldFile
 
         int[] size;
         Object o = values.getValue(WORLD_FILE_IMAGE_SIZE);
-        if (o != null && (o instanceof int[]))
+        if ((o instanceof int[]))
         {
             size = (int[]) o;
         }
@@ -207,10 +203,10 @@ public class WorldFile
     protected static void scanWorldFile(File file, AVList values) throws FileNotFoundException
     {
         Scanner scanner = new Scanner(file);
-        scanner.useLocale(Locale.US);
 
-        try
+        try (scanner)
         {
+            scanner.useLocale(Locale.US);
             for (int i = 0; i < 6; i++)
             {
                 if (scanner.hasNextDouble())
@@ -245,20 +241,15 @@ public class WorldFile
                 }
             }
         }
-        finally
-        {
-            if (null != scanner)
-                scanner.close();
-        }
     }
 
     protected static void scanHdrFile(File file, AVList values) throws FileNotFoundException
     {
         Scanner scanner = new Scanner(file);
-        scanner.useLocale(Locale.US);
 
-        try
+        try (scanner)
         {
+            scanner.useLocale(Locale.US);
             while (scanner.hasNext())
             {
                 String key = scanner.next().toUpperCase();
@@ -377,11 +368,6 @@ public class WorldFile
                 }
             }
         }
-        finally
-        {
-            if (null != scanner)
-                scanner.close();
-        }
     }
 
     /**
@@ -414,10 +400,10 @@ public class WorldFile
         double[] values = new double[6];
 
         Scanner scanner = new Scanner(worldFile);
-        scanner.useLocale(Locale.US);
 
-        try
+        try (scanner)
         {
+            scanner.useLocale(Locale.US);
 
             for (int i = 0; i < 6; i++)
             {
@@ -432,10 +418,6 @@ public class WorldFile
                     throw new IllegalStateException(message);
                 }
             }
-        }
-        finally
-        {
-            scanner.close();
         }
 
         return values;
@@ -457,25 +439,25 @@ public class WorldFile
         double yPixelSize;
 
         Object o = values.getValue(WORLD_FILE_X_LOCATION);
-        if (o != null && o instanceof Double)
+        if (o instanceof Double)
             xLocation = (Double) o;
         else
             return false;
 
         o = values.getValue(WORLD_FILE_Y_LOCATION);
-        if (o != null && o instanceof Double)
+        if (o instanceof Double)
             yLocation = (Double) o;
         else
             return false;
 
         o = values.getValue(WORLD_FILE_X_PIXEL_SIZE);
-        if (o != null && o instanceof Double)
+        if (o instanceof Double)
             xPixelSize = (Double) o;
         else
             return false;
 
         o = values.getValue(WORLD_FILE_Y_PIXEL_SIZE);
-        if (o != null && o instanceof Double)
+        if (o instanceof Double)
             yPixelSize = (Double) o;
         else
             return false;
@@ -786,9 +768,9 @@ public class WorldFile
     }
 
     /** Pattern matching the geographic coordinate system keyword in an OGC coordinate system well-known text. */
-    protected static final Pattern GEOGCS_WKT_PATTERN = Pattern.compile("\\{*GEOGCS[\\[\\(](.*)[\\]\\)]\\}*");
+    protected static final Pattern GEOGCS_WKT_PATTERN = Pattern.compile("\\{*GEOGCS[\\[(](.*)[])]}*");
     /** Pattern matching the projected coordinate system keyword in an OGC coordinate system well-known text. */
-    protected static final Pattern PROJCS_WKT_PATTERN = Pattern.compile("\\{*PROJCS[\\[\\(](.*)[\\]\\)]\\}*");
+    protected static final Pattern PROJCS_WKT_PATTERN = Pattern.compile("\\{*PROJCS[\\[(](.*)[])]}*");
     /** Pattern matching the UTM name in an projected coordinate system's well-known text. */
     protected static final Pattern UTM_NAME_WKT_PATTERN = Pattern.compile(".*UTM.*ZONE.*?(\\d+).*?([\\w\\s]+).*?");
 
@@ -963,7 +945,7 @@ public class WorldFile
 
         // Translate the property WORLD_FILE_IMAGE_SIZE to separate properties WIDTH and HEIGHT.
         Object o = params.getValue(WorldFile.WORLD_FILE_IMAGE_SIZE);
-        if (o != null && o instanceof int[])
+        if (o instanceof int[])
         {
             int[] size = (int[]) o;
 

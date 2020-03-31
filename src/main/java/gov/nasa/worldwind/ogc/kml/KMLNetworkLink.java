@@ -36,12 +36,12 @@ import java.util.concurrent.atomic.*;
 public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChangeListener
 {
     /** Indicates the network resource referenced by this <code>KMLNetworkLink</code>. Initially <code>null</code>. */
-    protected AtomicReference<KMLRoot> networkResource = new AtomicReference<KMLRoot>();
+    protected final AtomicReference<KMLRoot> networkResource = new AtomicReference<>();
     /**
      * Time, in milliseconds since the Epoch, at which this <code>KMLNetworkLink's</code> network resource was last
      * retrieved. Initially <code>-1</code>, indicating that the network resource has not been retrieved.
      */
-    protected AtomicLong networkResourceRetrievalTime = new AtomicLong(-1);
+    protected final AtomicLong networkResourceRetrievalTime = new AtomicLong(-1);
 
     protected AtomicLong firstRetrievalTime;
 
@@ -246,15 +246,11 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
             kmlRoot.addPropertyChangeListener(this);
 
             // Apply any updates contained in the new root's optional network link control.
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    if (kmlRoot.getNetworkLinkControl() != null
-                        && kmlRoot.getNetworkLinkControl().getUpdate() != null
-                        && !kmlRoot.getNetworkLinkControl().getUpdate().isUpdatesApplied())
-                        kmlRoot.getNetworkLinkControl().getUpdate().applyOperations();
-                }
+            SwingUtilities.invokeLater(() -> {
+                if (kmlRoot.getNetworkLinkControl() != null
+                    && kmlRoot.getNetworkLinkControl().getUpdate() != null
+                    && !kmlRoot.getNetworkLinkControl().getUpdate().isUpdatesApplied())
+                    kmlRoot.getNetworkLinkControl().getUpdate().applyOperations();
             });
         }
     }

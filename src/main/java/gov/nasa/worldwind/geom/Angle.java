@@ -83,14 +83,14 @@ public class Angle implements Comparable<Angle>
     {
         degrees = degrees < -90 ? -90 : degrees > 90 ? 90 : degrees;
         double radians = DEGREES_TO_RADIANS * degrees;
-        radians = radians < -PIOver2 ? -PIOver2 : radians > PIOver2 ? PIOver2 : radians;
+        radians = radians < -PIOver2 ? -PIOver2 : Math.min(radians, PIOver2);
 
         return new Angle(degrees, radians);
     }
 
     public static Angle fromRadiansLatitude(double radians)
     {
-        radians = radians < -PIOver2 ? -PIOver2 : radians > PIOver2 ? PIOver2 : radians;
+        radians = radians < -PIOver2 ? -PIOver2 : Math.min(radians, PIOver2);
         double degrees = RADIANS_TO_DEGREES * radians;
         degrees = degrees < -90 ? -90 : degrees > 90 ? 90 : degrees;
 
@@ -101,14 +101,14 @@ public class Angle implements Comparable<Angle>
     {
         degrees = degrees < -180 ? -180 : degrees > 180 ? 180 : degrees;
         double radians = DEGREES_TO_RADIANS * degrees;
-        radians = radians < -Math.PI ? -Math.PI : radians > Math.PI ? Math.PI : radians;
+        radians = radians < -Math.PI ? -Math.PI : Math.min(radians, Math.PI);
 
         return new Angle(degrees, radians);
     }
 
     public static Angle fromRadiansLongitude(double radians)
     {
-        radians = radians < -Math.PI ? -Math.PI : radians > Math.PI ? Math.PI : radians;
+        radians = radians < -Math.PI ? -Math.PI : Math.min(radians, Math.PI);
         double degrees = RADIANS_TO_DEGREES * radians;
         degrees = degrees < -180 ? -180 : degrees > 180 ? 180 : degrees;
 
@@ -219,7 +219,7 @@ public class Angle implements Comparable<Angle>
             throw new IllegalArgumentException(message);
         }
         // Check for string format validity
-        String regex = "([-|\\+]?\\d{1,3}[d|D|\u00B0|\\s](\\s*\\d{1,2}['|\u2019|\\s])?"
+        String regex = "([-|+]?\\d{1,3}[d|D|\u00B0|\\s](\\s*\\d{1,2}['|\u2019|\\s])?"
             + "(\\s*\\d{1,2}[\"|\u201d|\\s])?\\s*([N|n|S|s|E|e|W|w])?\\s?)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(dmsString + " ");
@@ -658,13 +658,7 @@ public class Angle implements Comparable<Angle>
             throw new IllegalArgumentException(msg);
         }
 
-        if (this.degrees < angle.degrees)
-            return -1;
-
-        if (this.degrees > angle.degrees)
-            return 1;
-
-        return 0;
+        return Double.compare(this.degrees, angle.degrees);
     }
 
     public static double normalizedDegrees(double degrees)
@@ -923,7 +917,7 @@ public class Angle implements Comparable<Angle>
      *
      * @return the memory footprint of this angle in bytes.
      */
-    public long getSizeInBytes()
+    public static long getSizeInBytes()
     {
         return Double.SIZE / 8;
     }

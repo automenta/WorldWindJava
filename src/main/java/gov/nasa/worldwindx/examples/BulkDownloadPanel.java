@@ -7,7 +7,6 @@ package gov.nasa.worldwindx.examples;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.cache.BasicDataFileStore;
-import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.Layer;
@@ -19,7 +18,6 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -34,9 +32,9 @@ import java.util.ArrayList;
 public class BulkDownloadPanel extends JPanel
 {
     @SuppressWarnings( {"FieldCanBeLocal"})
-    protected WorldWindow wwd;
+    protected final WorldWindow wwd;
     protected Sector currentSector;
-    protected ArrayList<BulkRetrievablePanel> retrievables;
+    protected final ArrayList<BulkRetrievablePanel> retrievables;
 
     protected JButton selectButton;
     protected JLabel sectorLabel;
@@ -44,14 +42,14 @@ public class BulkDownloadPanel extends JPanel
     protected JPanel monitorPanel;
     protected BasicDataFileStore cache;
 
-    protected SectorSelector selector;
+    protected final SectorSelector selector;
 
     public BulkDownloadPanel(WorldWindow wwd)
     {
         this.wwd = wwd;
 
         // Init retievable list
-        this.retrievables = new ArrayList<BulkRetrievablePanel>();
+        this.retrievables = new ArrayList<>();
         // Layers
         for (Layer layer : this.wwd.getModel().getLayers())
         {
@@ -71,13 +69,7 @@ public class BulkDownloadPanel extends JPanel
         this.selector.setInteriorColor(new Color(1f, 1f, 1f, 0.1f));
         this.selector.setBorderColor(new Color(1f, 0f, 0f, 0.5f));
         this.selector.setBorderWidth(3);
-        this.selector.addPropertyChangeListener(SectorSelector.SECTOR_PROPERTY, new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent evt)
-            {
-                updateSector();
-            }
-        });
+        this.selector.addPropertyChangeListener(SectorSelector.SECTOR_PROPERTY, evt -> updateSector());
 
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
@@ -145,19 +137,15 @@ public class BulkDownloadPanel extends JPanel
             {
                 BulkRetrievable retrievable = panel.retrievable;
                 BulkRetrievalThread thread = retrievable.makeLocal(this.currentSector, 0, this.cache,
-                    new BulkRetrievalListener()
-                    {
-                        public void eventOccurred(BulkRetrievalEvent event)
-                        {
-                            // This is how you'd include a retrieval listener. Uncomment below to monitor downloads.
-                            // Be aware that the method is not invoked on the event dispatch thread, so any interaction
-                            // with AWT or Swing must be within a SwingUtilities.invokeLater() runnable.
+                    event1 -> {
+                        // This is how you'd include a retrieval listener. Uncomment below to monitor downloads.
+                        // Be aware that the method is not invoked on the event dispatch thread, so any interaction
+                        // with AWT or Swing must be within a SwingUtilities.invokeLater() runnable.
 
-                            //System.out.printf("%s: item %s\n",
-                            //    event.getEventType().equals(BulkRetrievalEvent.RETRIEVAL_SUCCEEDED) ? "Succeeded"
-                            //: event.getEventType().equals(BulkRetrievalEvent.RETRIEVAL_FAILED) ? "Failed"
-                            //    : "Unknown event type", event.getItem());
-                        }
+                        //System.out.printf("%s: item %s\n",
+                        //    event.getEventType().equals(BulkRetrievalEvent.RETRIEVAL_SUCCEEDED) ? "Succeeded"
+                        //: event.getEventType().equals(BulkRetrievalEvent.RETRIEVAL_FAILED) ? "Failed"
+                        //    : "Unknown event type", event.getItem());
                     });
 
                 if (thread != null)
@@ -246,23 +234,19 @@ public class BulkDownloadPanel extends JPanel
         locationPanel.add(locationButton, BorderLayout.EAST);
         this.add(locationPanel);
 
-        locationButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
+        locationButton.addActionListener(e -> {
+            JFileChooser fc = new JFileChooser();
+            fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            fc.setMultiSelectionEnabled(false);
+            int status = fc.showOpenDialog(locationPanel);
+            if (status == JFileChooser.APPROVE_OPTION)
             {
-                JFileChooser fc = new JFileChooser();
-                fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                fc.setMultiSelectionEnabled(false);
-                int status = fc.showOpenDialog(locationPanel);
-                if (status == JFileChooser.APPROVE_OPTION)
+                File file = fc.getSelectedFile();
+                if (file != null)
                 {
-                    File file = fc.getSelectedFile();
-                    if (file != null)
-                    {
-                        locationName.setText(file.getPath());
-                        cache = new BasicDataFileStore(file);
-                        updateRetrievablePanels(selector.getSector());
-                    }
+                    locationName.setText(file.getPath());
+                    cache = new BasicDataFileStore(file);
+                    updateRetrievablePanels(selector.getSector());
                 }
             }
         });
@@ -272,13 +256,7 @@ public class BulkDownloadPanel extends JPanel
         sectorPanel.setBorder(BorderFactory.createEmptyBorder(border, border, border, border));
         selectButton = new JButton("Select sector");
         selectButton.setToolTipText("Press Select then press and drag button 1 on globe");
-        selectButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                selectButtonActionPerformed(event);
-            }
-        });
+        selectButton.addActionListener(this::selectButtonActionPerformed);
         sectorPanel.add(selectButton);
         sectorLabel = new JLabel("-");
         sectorLabel.setPreferredSize(new Dimension(350, 16));
@@ -303,13 +281,7 @@ public class BulkDownloadPanel extends JPanel
         startPanel.setBorder(BorderFactory.createEmptyBorder(border, border, border, border));
         startButton = new JButton("Start download");
         startButton.setEnabled(false);
-        startButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                startButtonActionPerformed(event);
-            }
-        });
+        startButton.addActionListener(this::startButtonActionPerformed);
         startPanel.add(startButton);
         this.add(startPanel);
 
@@ -340,7 +312,7 @@ public class BulkDownloadPanel extends JPanel
 
     public static String makeSizeDescription(long size)
     {
-        double sizeInMegaBytes = size / 1024 / 1024;
+        double sizeInMegaBytes = size / 1024.0 / 1024;
         if (sizeInMegaBytes < 1024)
             return String.format("%,.1f MB", sizeInMegaBytes);
         else if (sizeInMegaBytes < 1024 * 1024)
@@ -350,7 +322,7 @@ public class BulkDownloadPanel extends JPanel
 
     public class BulkRetrievablePanel extends JPanel
     {
-        protected BulkRetrievable retrievable;
+        protected final BulkRetrievable retrievable;
         protected JCheckBox selectCheckBox;
         protected JLabel descriptionLabel;
         protected Thread updateThread;
@@ -370,13 +342,9 @@ public class BulkDownloadPanel extends JPanel
 
             // Check + name
             this.selectCheckBox = new JCheckBox(this.retrievable.getName());
-            this.selectCheckBox.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
-                {
-                    if (((JCheckBox) e.getSource()).isSelected() && sector != null)
-                        updateDescription(sector);
-                }
+            this.selectCheckBox.addActionListener(e -> {
+                if (((JCheckBox) e.getSource()).isSelected() && sector != null)
+                    updateDescription(sector);
             });
             this.add(this.selectCheckBox, BorderLayout.WEST);
             // Description (size...)
@@ -396,13 +364,7 @@ public class BulkDownloadPanel extends JPanel
                 return;
             }
 
-            this.updateThread = new Thread(new Runnable()
-            {
-                public void run()
-                {
-                    doUpdateDescription(sector);
-                }
-            });
+            this.updateThread = new Thread(() -> doUpdateDescription(sector));
             this.updateThread.setDaemon(true);
             this.updateThread.start();
         }
@@ -415,33 +377,15 @@ public class BulkDownloadPanel extends JPanel
                 {
                     long size = retrievable.getEstimatedMissingDataSize(sector, 0, cache);
                     final String formattedSize = BulkDownloadPanel.makeSizeDescription(size);
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            descriptionLabel.setText(formattedSize);
-                        }
-                    });
+                    SwingUtilities.invokeLater(() -> descriptionLabel.setText(formattedSize));
                 }
                 catch (Exception e)
                 {
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            descriptionLabel.setText("-");
-                        }
-                    });
+                    SwingUtilities.invokeLater(() -> descriptionLabel.setText("-"));
                 }
             }
             else
-                SwingUtilities.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        descriptionLabel.setText("-");
-                    }
-                });
+                SwingUtilities.invokeLater(() -> descriptionLabel.setText("-"));
         }
 
         public String toString()
@@ -450,11 +394,11 @@ public class BulkDownloadPanel extends JPanel
         }
     }
 
-    public class DownloadMonitorPanel extends JPanel
+    public static class DownloadMonitorPanel extends JPanel
     {
-        protected BulkRetrievalThread thread;
-        protected Progress progress;
-        protected Timer updateTimer;
+        protected final BulkRetrievalThread thread;
+        protected final Progress progress;
+        protected final Timer updateTimer;
 
         protected JLabel descriptionLabel;
         protected JProgressBar progressBar;
@@ -467,13 +411,7 @@ public class BulkDownloadPanel extends JPanel
 
             this.initComponents();
 
-            this.updateTimer = new Timer(1000, new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
-                {
-                    updateStatus();
-                }
-            });
+            this.updateTimer = new Timer(1000, event -> updateStatus());
             this.updateTimer.start();
         }
 
@@ -551,13 +489,7 @@ public class BulkDownloadPanel extends JPanel
             progressPanel.add(Box.createHorizontalStrut(8));
             cancelButton = new JButton("Cancel");
             cancelButton.setBackground(Color.RED);
-            cancelButton.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
-                {
-                    cancelButtonActionPerformed(event);
-                }
-            });
+            cancelButton.addActionListener(this::cancelButtonActionPerformed);
             progressPanel.add(cancelButton);
             this.add(progressPanel);
         }

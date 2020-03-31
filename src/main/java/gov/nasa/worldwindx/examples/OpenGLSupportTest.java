@@ -53,7 +53,7 @@ public class OpenGLSupportTest implements GLEventListener
             status = 4;
         }
 
-        if (caps.getDoubleBuffered() == false)
+        if (!caps.getDoubleBuffered())
         {
             System.out.println("Device canvas is not double buffered.");
             status = 5;

@@ -75,10 +75,8 @@ public class GCPSReader
         if (file == null || !file.exists() || !file.canRead())
             return false;
 
-        java.io.FileReader fileReader = null;
-        try
+        try (java.io.FileReader fileReader = new java.io.FileReader(file))
         {
-            fileReader = new java.io.FileReader(file);
             RasterControlPointList controlPoints = new RasterControlPointList();
             return this.doCanRead(fileReader, controlPoints);
         }
@@ -86,18 +84,7 @@ public class GCPSReader
         {
             return false;
         }
-        finally
-        {
-            //noinspection EmptyCatchBlock
-            try
-            {
-                if (fileReader != null)
-                    fileReader.close();
-            }
-            catch (java.io.IOException e)
-            {
-            }
-        }
+        //noinspection EmptyCatchBlock
     }
 
     public boolean canRead(String path)

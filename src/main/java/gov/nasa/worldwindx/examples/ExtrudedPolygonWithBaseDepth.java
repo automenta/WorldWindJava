@@ -48,7 +48,7 @@ public class ExtrudedPolygonWithBaseDepth extends ApplicationTemplate
             capAttributes.setDrawInterior(true);
 
             // Create a path, set some of its properties and set its attributes.
-            ArrayList<Position> pathPositions = new ArrayList<Position>();
+            ArrayList<Position> pathPositions = new ArrayList<>();
             pathPositions.add(Position.fromDegrees(43.84344, -114.63673, 20));
             pathPositions.add(Position.fromDegrees(43.84343, -114.63468, 20));
             pathPositions.add(Position.fromDegrees(43.84316, -114.63468, 20));

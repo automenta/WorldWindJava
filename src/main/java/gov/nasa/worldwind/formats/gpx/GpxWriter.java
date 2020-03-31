@@ -17,7 +17,7 @@ public class GpxWriter
     private final org.w3c.dom.Document doc;
     private final javax.xml.transform.Result result;
 
-    public GpxWriter(String path) throws java.io.IOException, javax.xml.parsers.ParserConfigurationException
+    public GpxWriter(String path) throws javax.xml.parsers.ParserConfigurationException
     {
         if (path == null)
         {
@@ -32,7 +32,7 @@ public class GpxWriter
         createGpxDocument(this.doc);
     }
 
-    public GpxWriter(java.io.OutputStream stream) throws java.io.IOException, javax.xml.parsers.ParserConfigurationException
+    public GpxWriter(java.io.OutputStream stream) throws javax.xml.parsers.ParserConfigurationException
     {
         if (stream == null)
         {

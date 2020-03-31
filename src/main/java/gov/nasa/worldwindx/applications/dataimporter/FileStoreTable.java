@@ -62,7 +62,7 @@ public class FileStoreTable extends JTable
         if (rows.length == 0)
             return Collections.emptyList();
 
-        ArrayList<FileStoreDataSet> selected = new ArrayList<FileStoreDataSet>();
+        ArrayList<FileStoreDataSet> selected = new ArrayList<>();
         for (int i : rows)
         {
             int modelRow = this.convertRowIndexToModel(i);

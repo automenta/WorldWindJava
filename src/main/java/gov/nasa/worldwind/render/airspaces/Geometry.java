@@ -12,7 +12,7 @@ import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.globes.*;
 
 import java.nio.*;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * @author dcollins
@@ -55,11 +55,11 @@ public class Geometry extends AVListImpl implements Cacheable
 
             CacheKey that = (CacheKey) o;
 
-            if (this.globeStateKey != null ? !this.globeStateKey.equals(that.globeStateKey) : that.globeStateKey != null)
+            if (!Objects.equals(this.globeStateKey, that.globeStateKey))
                 return false;
-            if (this.cls != null ? !this.cls.equals(that.cls) : that.cls != null)
+            if (!Objects.equals(this.cls, that.cls))
                 return false;
-            if (this.key != null ? !this.key.equals(that.key) : that.key != null)
+            if (!Objects.equals(this.key, that.key))
                 return false;
             //noinspection RedundantIfStatement
             if (!Arrays.deepEquals(this.params, that.params))

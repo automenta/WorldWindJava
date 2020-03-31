@@ -24,7 +24,7 @@ public class KMLTraversalContext
      * The <code>Deque</code> as this KML traversal context's Region stack. The region stack is used to implement
      * Regions inheritance of from a KML containers to their descendant KML features.
      */
-    protected Deque<KMLRegion> regionStack = new ArrayDeque<KMLRegion>();
+    protected final Deque<KMLRegion> regionStack = new ArrayDeque<>();
     /**
      * Indicates this KML traversal context's detail hint. Modifies the default relationship of KML scene resolution to
      * screen resolution as viewing distance changes. Values greater than 0 increase the resolution. Values less than 0

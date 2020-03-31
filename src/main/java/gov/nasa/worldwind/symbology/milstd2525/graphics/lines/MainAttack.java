@@ -27,7 +27,7 @@ public class MainAttack extends AbstractAxisArrow
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_GRD_MANATK);
+        return Collections.singletonList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_GRD_MANATK);
     }
 
     public MainAttack(String sidc)

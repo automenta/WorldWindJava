@@ -13,6 +13,7 @@ import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * An {@link Annotation} represent a text label and its rendering attributes. Annotations must be attached either to a
@@ -129,15 +130,15 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
     protected String text;
     protected AnnotationAttributes attributes;
     // Child annotation properties.
-    protected java.util.List<Annotation> childList;
+    protected final java.util.List<Annotation> childList;
     protected AnnotationLayoutManager layoutManager;
     // Picking components.
     protected PickSupport pickSupport;
     protected Object delegateOwner;
     // Properties used or computed in each rendering pass.
     protected static java.nio.DoubleBuffer vertexBuffer;
-    protected java.util.Map<Object, String> wrappedTextMap;
-    protected java.util.Map<Object, java.awt.Rectangle> textBoundsMap;
+    protected final java.util.Map<Object, String> wrappedTextMap;
+    protected final java.util.Map<Object, java.awt.Rectangle> textBoundsMap;
     protected double minActiveAltitude = -Double.MAX_VALUE;
     protected double maxActiveAltitude = Double.MAX_VALUE;
 
@@ -146,11 +147,11 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         this.alwaysOnTop = false;
         this.pickEnabled = true;
         this.attributes = new AnnotationAttributes();
-        this.childList = new java.util.ArrayList<Annotation>();
+        this.childList = new java.util.ArrayList<>();
         this.layoutManager = new AnnotationNullLayout();
         // Cached text computations.
-        this.wrappedTextMap = new java.util.HashMap<Object, String>();
-        this.textBoundsMap = new java.util.HashMap<Object, java.awt.Rectangle>();
+        this.wrappedTextMap = new java.util.HashMap<>();
+        this.textBoundsMap = new java.util.HashMap<>();
     }
 
     public boolean isAlwaysOnTop()
@@ -450,7 +451,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         gl.glTranslated(x, y, 0);
         gl.glScaled(finalScale, finalScale, 1);
         gl.glTranslated(offset.x, offset.y, 0);
-        gl.glTranslated(-width / 2, 0, 0);
+        gl.glTranslated(-width / 2.0, 0, 0);
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -1155,8 +1156,8 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
             return (this.width == that.width)
                 && (this.height == that.height)
                 && (this.align.equals(that.align))
-                && (this.text != null ? this.text.equals(that.text) : that.text == null)
-                && (this.font != null ? this.font.equals(that.font) : that.font == null);
+                && (Objects.equals(this.text, that.text))
+                && (Objects.equals(this.font, that.font));
         }
 
         public int hashCode()

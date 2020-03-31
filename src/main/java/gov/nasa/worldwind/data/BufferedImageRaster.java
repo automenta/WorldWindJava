@@ -413,7 +413,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
             int width = (Integer) params.getValue(AVKey.WIDTH);
             if (width != image.getWidth())
             {
-                String msg = Logging.getMessage("generic.InvalidWidth", "" + width + "!=" + image.getWidth());
+                String msg = Logging.getMessage("generic.InvalidWidth", width + "!=" + image.getWidth());
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
             }
@@ -428,7 +428,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
             int height = (Integer) params.getValue(AVKey.HEIGHT);
             if (height != image.getHeight())
             {
-                String msg = Logging.getMessage("generic.InvalidHeight", "" + height + "!=" + image.getHeight());
+                String msg = Logging.getMessage("generic.InvalidHeight", height + "!=" + image.getHeight());
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
             }
@@ -472,7 +472,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
             int width = (Integer) params.getValue(AVKey.WIDTH);
             if (width != image.getWidth())
             {
-                String msg = Logging.getMessage("generic.InvalidWidth", "" + width + "!=" + image.getWidth());
+                String msg = Logging.getMessage("generic.InvalidWidth", width + "!=" + image.getWidth());
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
             }
@@ -483,7 +483,7 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
             int height = (Integer) params.getValue(AVKey.HEIGHT);
             if (height != image.getHeight())
             {
-                String msg = Logging.getMessage("generic.InvalidHeight", "" + height + "!=" + image.getHeight());
+                String msg = Logging.getMessage("generic.InvalidHeight", height + "!=" + image.getHeight());
                 Logging.logger().finest(msg);
                 throw new IllegalArgumentException(msg);
             }

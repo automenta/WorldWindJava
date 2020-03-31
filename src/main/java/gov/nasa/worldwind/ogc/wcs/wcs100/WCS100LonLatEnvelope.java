@@ -20,8 +20,8 @@ import java.util.*;
  */
 public class WCS100LonLatEnvelope extends AbstractXMLEventParser
 {
-    List<GMLPos> positions = new ArrayList<GMLPos>(2);
-    List<String> timePositions = new ArrayList<String>(2);
+    final List<GMLPos> positions = new ArrayList<>(2);
+    final List<String> timePositions = new ArrayList<>(2);
 
     public WCS100LonLatEnvelope(String namespaceURI)
     {
@@ -47,7 +47,7 @@ public class WCS100LonLatEnvelope extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof GMLPos)
+                if (o instanceof GMLPos)
                     this.positions.add((GMLPos) o);
             }
         }

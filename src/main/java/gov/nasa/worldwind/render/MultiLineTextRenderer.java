@@ -555,7 +555,7 @@ public class MultiLineTextRenderer
         }
 
         String[] lines = text.split("\n");
-        StringBuffer wrappedText = new StringBuffer();
+        StringBuilder wrappedText = new StringBuilder();
         // Wrap each line
         for (int i = 0; i < lines.length; i++)
         {
@@ -600,14 +600,14 @@ public class MultiLineTextRenderer
     // Wrap one line to fit the given width
     protected String wrapLine(String text, int width)
     {
-        StringBuffer wrappedText = new StringBuffer();
+        StringBuilder wrappedText = new StringBuilder();
         // Single line - trim leading and trailing spaces
         String source = text.trim();
         Rectangle2D lineBounds = this.textRenderer.getBounds(source);
         if (lineBounds.getWidth() > width)
         {
             // Split single line to fit preferred width
-            StringBuffer line = new StringBuffer();
+            StringBuilder line = new StringBuilder();
             int start = 0;
             int end = source.indexOf(' ', start + 1);
             while (start < source.length())
@@ -631,13 +631,12 @@ public class MultiLineTextRenderer
                         wrappedText.append(line);
                         wrappedText.append('\n');
                         line.delete(0, line.length());
-                        line.append(word.trim());  // get read of leading space(s)
                     }
                     else
                     {
                         // Line is empty, force at least one word
-                        line.append(word.trim());
                     }
+                    line.append(word.trim());  // get read of leading space(s)
                 }
                 // Move forward in source string
                 start = end;
@@ -662,8 +661,8 @@ public class MultiLineTextRenderer
     // and <font color="#ffffff"></font>.
     //****************************************************************************
 
-    protected static Pattern SGMLPattern = Pattern.compile("<[^\\s].*?>"); // Find sgml tags
-    protected static Pattern SGMLOrSpacePattern = Pattern.compile("(<[^\\s].*?>)|(\\s)"); // Find sgml tags or spaces
+    protected static final Pattern SGMLPattern = Pattern.compile("<[^\\s].*?>"); // Find sgml tags
+    protected static final Pattern SGMLOrSpacePattern = Pattern.compile("(<[^\\s].*?>)|(\\s)"); // Find sgml tags or spaces
 
     /**
      * Return true if the text contains some sgml tags.
@@ -895,7 +894,7 @@ public class MultiLineTextRenderer
         // Save passed draw state in case we need to trim text later
         DrawState savedState = new DrawState(ds);
 
-        StringBuffer wrappedText = new StringBuffer();
+        StringBuilder wrappedText = new StringBuilder();
         String[] lines = text.split("\n");
         for (String line : lines)
         {
@@ -911,7 +910,7 @@ public class MultiLineTextRenderer
 
     protected String trimTextHTML(String text, double height, DrawState ds)
     {
-        StringBuffer wrappedText = new StringBuffer();
+        StringBuilder wrappedText = new StringBuilder();
         double currentHeight = 0;
         String[] lines = text.split("\n");
         for (String line : lines)
@@ -946,7 +945,7 @@ public class MultiLineTextRenderer
 
         // The line needs to be wrapped
         double spaceWidth, wordWidth, lineWidth = 0;
-        StringBuffer wrappedText = new StringBuffer();
+        StringBuilder wrappedText = new StringBuilder();
         WordIteratorHTML wi = new WordIteratorHTML(line);
         while (wi.hasNext())
         {
@@ -1234,14 +1233,14 @@ public class MultiLineTextRenderer
      */
     public static class WordIteratorHTML implements Iterator<String>
     {
-        protected ArrayList<String> words;
+        protected final ArrayList<String> words;
         protected int nextWord = -1;
-        protected static Pattern SGMLOrSpacePattern = Pattern.compile("(<[^\\s].*?>)|(\\s)");
+        protected static final Pattern SGMLOrSpacePattern = Pattern.compile("(<[^\\s].*?>)|(\\s)");
 
         public WordIteratorHTML(String text)
         {
             Matcher matcher = SGMLOrSpacePattern.matcher(text);
-            this.words = new ArrayList<String>();
+            this.words = new ArrayList<>();
 
             int start = 0;
             while (matcher.find())
@@ -1291,7 +1290,7 @@ public class MultiLineTextRenderer
         protected class DrawAttributes
         {
             protected final Font font;
-            protected String hyperlink;
+            protected final String hyperlink;
             protected final Color color;
 
             public DrawAttributes(Font font, String hyperlink, Color color)
@@ -1302,10 +1301,10 @@ public class MultiLineTextRenderer
             }
         }
 
-        protected ArrayList<DrawAttributes> stack = new ArrayList<DrawAttributes>();
-        protected TextRendererCache renderers;
+        protected final ArrayList<DrawAttributes> stack = new ArrayList<>();
+        protected final TextRendererCache renderers;
         public TextRenderer textRenderer;
-        protected Pattern SGMLPattern = Pattern.compile("(<[^\\s].*?>)");
+        protected final Pattern SGMLPattern = Pattern.compile("(<[^\\s].*?>)");
 
         public DrawState(TextRendererCache renderers, Font font, String hyperlink, Color color)
         {

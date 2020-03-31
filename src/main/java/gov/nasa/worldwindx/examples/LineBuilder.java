@@ -245,9 +245,7 @@ public class LineBuilder extends AVListImpl {
             this.wwd = wwd;
             this.lineBuilder = lineBuilder;
             this.makePanel(new Dimension(200, 400));
-            lineBuilder.addPropertyChangeListener((PropertyChangeEvent propertyChangeEvent) -> {
-                fillPointsPanel();
-            });
+            lineBuilder.addPropertyChangeListener((PropertyChangeEvent propertyChangeEvent) -> fillPointsPanel());
         }
 
         private void makePanel(Dimension size) {

@@ -46,7 +46,7 @@ public class KMLPolygon extends KMLAbstractGeometry
     protected void addInnerBoundary(KMLLinearRing o)
     {
         if (this.innerBoundaries == null)
-            this.innerBoundaries = new ArrayList<KMLLinearRing>();
+            this.innerBoundaries = new ArrayList<>();
 
         this.innerBoundaries.add(o);
     }

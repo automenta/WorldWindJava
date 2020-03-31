@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 abstract class GDALAbstractFileFilter implements java.io.FileFilter
 {
-    protected HashSet<String> listFolders = new HashSet<String>();
+    protected final HashSet<String> listFolders = new HashSet<>();
     protected final String searchPattern;
 
     protected GDALAbstractFileFilter(String searchPattern)
@@ -32,8 +32,6 @@ abstract class GDALAbstractFileFilter implements java.io.FileFilter
         }
 
         this.searchPattern = searchPattern;
-
-        listFolders.clear();
     }
 
     protected boolean isHidden(String path)

@@ -193,8 +193,8 @@ public class GLUTessellatorSupport
         protected int numIndices;
         protected int currentType;
         protected List<Integer> currentPrim;
-        protected List<List<Integer>> prims = new ArrayList<List<Integer>>();
-        protected List<Integer> primTypes = new ArrayList<Integer>();
+        protected final List<List<Integer>> prims = new ArrayList<>();
+        protected final List<Integer> primTypes = new ArrayList<>();
 
         public List<List<Integer>> getPrims()
         {
@@ -214,7 +214,7 @@ public class GLUTessellatorSupport
         public void begin(int type)
         {
             this.currentType = type;
-            this.currentPrim = new ArrayList<Integer>();
+            this.currentPrim = new ArrayList<>();
         }
 
         public void vertex(Object vertexData)
@@ -255,14 +255,14 @@ public class GLUTessellatorSupport
     /** Provides the callback class used to capture triangle and line primitive indices determined by the tessellator. */
     public static class CollectPrimitivesCallback extends GLUtessellatorCallbackAdapter
     {
-        protected List<Integer> triangles = new ArrayList<Integer>();
-        protected List<Integer> lines = new ArrayList<Integer>();
+        protected final List<Integer> triangles = new ArrayList<>();
+        protected final List<Integer> lines = new ArrayList<>();
         protected IntBuffer triangleBuffer = IntBuffer.allocate(0);
         protected IntBuffer lineBuffer = IntBuffer.allocate(0);
         protected int error = 0;
         protected int index = 0;
-        protected VertexData[] vertices = {null, null, null};
-        protected boolean[] edgeFlags = {true, true, true};
+        protected final VertexData[] vertices = {null, null, null};
+        protected final boolean[] edgeFlags = {true, true, true};
         protected boolean edgeFlag = true;
 
         public CollectPrimitivesCallback()

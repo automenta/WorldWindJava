@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MilStd2525GraphicFactory implements TacticalGraphicFactory
 {
     /** Map to associate MIL-STD-2525C function codes with implementation classes. */
-    protected Map<String, Class> classMap = new ConcurrentHashMap<String, Class>();
+    protected final Map<String, Class> classMap = new ConcurrentHashMap<>();
 
     /** Create a new factory. */
     public MilStd2525GraphicFactory()
@@ -190,7 +190,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
      */
     public TacticalPoint createPoint(String sidc, Position position, AVList params)
     {
-        TacticalGraphic graphic = this.createGraphic(sidc, Arrays.asList(position), params);
+        TacticalGraphic graphic = this.createGraphic(sidc, Collections.singletonList(position), params);
         if (graphic instanceof TacticalPoint)
         {
             return (TacticalPoint) graphic;

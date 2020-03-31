@@ -52,7 +52,7 @@ public class Polygon extends AbstractShape
     protected static class ShapeData extends AbstractShapeData implements Iterable<BoundaryInfo>
     {
         /** This class holds the per-globe data for this shape. */
-        protected List<BoundaryInfo> boundaries = new ArrayList<BoundaryInfo>();
+        protected final List<BoundaryInfo> boundaries = new ArrayList<>();
         /** The rotation matrix for this shape data. */
         protected Matrix rotationMatrix; // will vary among globes
         /**
@@ -94,7 +94,7 @@ public class Polygon extends AbstractShape
             if (shape.boundaries.size() < 1)
             {
                 // add a placeholder for the outer boundary
-                this.boundaries.add(new BoundaryInfo(new ArrayList<Position>()));
+                this.boundaries.add(new BoundaryInfo(new ArrayList<>()));
                 return;
             }
 
@@ -160,7 +160,7 @@ public class Polygon extends AbstractShape
     protected static class BoundaryInfo
     {
         /** The shape's boundary positions. */
-        protected List<? extends Position> positions;
+        protected final List<? extends Position> positions;
         /** The shape's computed vertices, arranged in one array. */
         protected Vec4[] vertices; // TODO: eliminate need for this; use the vertex buffer instead
         /** The shape's computed vertices, arranged in a buffer. */
@@ -181,7 +181,7 @@ public class Polygon extends AbstractShape
      * This static hash map holds the vertex indices that define the shape's visual outline. The contents depend only on
      * the number of locations in the source polygon, so they can be reused by all shapes with the same location count.
      */
-    protected static HashMap<Integer, IntBuffer> edgeIndexBuffers = new HashMap<Integer, IntBuffer>();
+    protected static HashMap<Integer, IntBuffer> edgeIndexBuffers = new HashMap<>();
 
     /** Indicates the number of vertices that must be present in order for VBOs to be used to render this shape. */
     protected static final int VBO_THRESHOLD = Configuration.getIntegerValue(AVKey.VBO_THRESHOLD, 30);
@@ -212,8 +212,8 @@ public class Polygon extends AbstractShape
     /** Construct a polygon with an empty outer boundary. */
     public Polygon()
     {
-        this.boundaries = new ArrayList<List<? extends Position>>();
-        this.boundaries.add(new ArrayList<Position>()); // placeholder for outer boundary
+        this.boundaries = new ArrayList<>();
+        this.boundaries.add(new ArrayList<>()); // placeholder for outer boundary
     }
 
     /**
@@ -366,7 +366,7 @@ public class Polygon extends AbstractShape
      */
     protected List<? extends Position> fillBoundary(Iterable<? extends Position> corners)
     {
-        ArrayList<Position> list = new ArrayList<Position>();
+        ArrayList<Position> list = new ArrayList<>();
 
         for (Position corner : corners)
         {
@@ -1325,10 +1325,9 @@ public class Polygon extends AbstractShape
      * @return a list of intersections identifying where the line intersects the polygon, or null if the line does not
      * intersect the polygon.
      *
-     * @throws InterruptedException if the operation is interrupted.
      * @see Terrain
      */
-    public List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException
+    public List<Intersection> intersect(Line line, Terrain terrain)
     {
         Position refPos = this.getReferencePosition();
         if (refPos == null)
@@ -1357,7 +1356,7 @@ public class Polygon extends AbstractShape
 
         final Line localLine = new Line(line.getOrigin().subtract3(highResShapeData.getReferencePoint()),
             line.getDirection());
-        List<Intersection> intersections = new ArrayList<Intersection>();
+        List<Intersection> intersections = new ArrayList<>();
 
         this.intersect(localLine, highResShapeData, intersections);
 
@@ -1401,7 +1400,6 @@ public class Polygon extends AbstractShape
     }
 
     protected void intersect(Line line, ShapeData shapeData, List<Intersection> intersections)
-        throws InterruptedException
     {
         if (shapeData.cb.getPrims() == null)
             return;
@@ -1441,7 +1439,7 @@ public class Polygon extends AbstractShape
         if (oldPosition == null)
             return;
 
-        List<List<? extends Position>> newBoundaries = new ArrayList<List<? extends Position>>(this.boundaries.size());
+        List<List<? extends Position>> newBoundaries = new ArrayList<>(this.boundaries.size());
 
         for (List<? extends Position> boundary : this.boundaries)
         {
@@ -1492,7 +1490,7 @@ public class Polygon extends AbstractShape
         if (oldPosition == null)
             return;
 
-        List<List<? extends Position>> newBoundaries = new ArrayList<List<? extends Position>>(this.boundaries.size());
+        List<List<? extends Position>> newBoundaries = new ArrayList<>(this.boundaries.size());
 
         for (List<? extends Position> boundary : this.boundaries)
         {
@@ -1510,7 +1508,7 @@ public class Polygon extends AbstractShape
     }
 
     /** {@inheritDoc} */
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException
     {
         // Write geometry
         xmlWriter.writeStartElement("Polygon");
@@ -1534,10 +1532,9 @@ public class Polygon extends AbstractShape
      *
      * @param xmlWriter XML writer to receive the output.
      *
-     * @throws IOException        If an exception occurs writing the XML stream.
      * @throws XMLStreamException If an exception occurs writing the XML stream.
      */
-    protected void writeKMLBoundaries(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void writeKMLBoundaries(XMLStreamWriter xmlWriter) throws XMLStreamException
     {
         // Outer boundary
         Iterable<? extends LatLon> outerBoundary = this.getOuterBoundary();

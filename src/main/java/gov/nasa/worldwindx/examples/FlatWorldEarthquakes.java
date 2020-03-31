@@ -20,7 +20,6 @@ import gov.nasa.worldwind.view.orbit.BasicOrbitView;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.nio.DoubleBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -81,13 +80,9 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
             controls.add(makeEarthquakesPanel());
 
             // Add select listener for earthquake picking
-            this.getWwd().addSelectListener(new SelectListener()
-            {
-                public void selected(SelectEvent event)
-                {
-                    if (event.getEventAction().equals(SelectEvent.ROLLOVER))
-                        highlight(event.getTopObject());
-                }
+            this.getWwd().addSelectListener(event -> {
+                if (event.getEventAction().equals(SelectEvent.ROLLOVER))
+                    highlight(event.getTopObject());
             });
 
             // Add click-and-go select listener for earthquakes
@@ -95,26 +90,22 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
                 this.getWwd(), EqAnnotation.class, 1000e3));
 
             // Add updater timer
-            this.updater = new Timer(1000, new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+            this.updater = new Timer(1000, event -> {
+                long now = System.currentTimeMillis();
+                long elapsed = now - updateTime;
+                if (elapsed >= UPDATE_INTERVAL)
                 {
-                    long now = System.currentTimeMillis();
-                    long elapsed = now - updateTime;
-                    if (elapsed >= UPDATE_INTERVAL)
-                    {
-                        updateTime = now;
-                        downloadButton.setText("Update");
-                        startEarthquakeDownload();
-                    }
-                    else
-                    {
-                        // Display remaining time in button text
-                        long remaining = UPDATE_INTERVAL - elapsed;
-                        int min = (int) Math.floor((double) remaining / MILLISECONDS_PER_MINUTE);
-                        int sec = (int) ((remaining - min * MILLISECONDS_PER_MINUTE) / 1000);
-                        downloadButton.setText(String.format("Update (in %1$02d:%2$02d)", min, sec));
-                    }
+                    updateTime = now;
+                    downloadButton.setText("Update");
+                    startEarthquakeDownload();
+                }
+                else
+                {
+                    // Display remaining time in button text
+                    long remaining = UPDATE_INTERVAL - elapsed;
+                    int min = (int) Math.floor((double) remaining / MILLISECONDS_PER_MINUTE);
+                    int sec = (int) ((remaining - min * MILLISECONDS_PER_MINUTE) / 1000);
+                    downloadButton.setText(String.format("Update (in %1$02d:%2$02d)", min, sec));
                 }
             });
             this.updater.start();
@@ -132,7 +123,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
                 this.tooltipAnnotation.getAttributes().setVisible(false);
             }
 
-            if (o != null && o instanceof EqAnnotation)
+            if (o instanceof EqAnnotation)
             {
                 this.mouseEq = (EqAnnotation) o;
                 this.mouseEq.getAttributes().setHighlighted(true);
@@ -237,20 +228,16 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
             JPanel zoomPanel = new JPanel(new GridLayout(0, 1, 0, 0));
             zoomPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
             JButton btZoom = new JButton("Zoom on latest");
-            btZoom.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+            btZoom.addActionListener(event -> {
+                if (latestEq != null)
                 {
-                    if (latestEq != null)
-                    {
-                        Position targetPos = latestEq.getPosition();
-                        BasicOrbitView view = (BasicOrbitView) getWwd().getView();
-                        view.addPanToAnimator(
-                            // The elevation component of 'targetPos' here is not the surface elevation,
-                            // so we ignore it when specifying the view center position.
-                            new Position(targetPos, 0),
-                            Angle.ZERO, Angle.ZERO, 1000e3);
-                    }
+                    Position targetPos = latestEq.getPosition();
+                    BasicOrbitView view = (BasicOrbitView) getWwd().getView();
+                    view.addPanToAnimator(
+                        // The elevation component of 'targetPos' here is not the surface elevation,
+                        // so we ignore it when specifying the view center position.
+                        new Position(targetPos, 0),
+                        Angle.ZERO, Angle.ZERO, 1000e3);
                 }
             });
             zoomPanel.add(btZoom);
@@ -260,21 +247,17 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
             JPanel viewPanel = new JPanel(new GridLayout(0, 1, 0, 0));
             viewPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
             JButton btReset = new JButton("Reset Global View");
-            btReset.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
-                {
-                    Double lat = Configuration.getDoubleValue(AVKey.INITIAL_LATITUDE);
-                    Double lon = Configuration.getDoubleValue(AVKey.INITIAL_LONGITUDE);
-                    Double elevation = Configuration.getDoubleValue(AVKey.INITIAL_ALTITUDE);
-                    Position targetPos = Position.fromDegrees(lat, lon, 0);
-                    BasicOrbitView view = (BasicOrbitView) getWwd().getView();
-                    view.addPanToAnimator(
-                        // The elevation component of 'targetPos' here is not the surface elevation,
-                        // so we ignore it when specifying the view center position.
-                        new Position(targetPos, 0),
-                        Angle.ZERO, Angle.ZERO, elevation);
-                }
+            btReset.addActionListener(event -> {
+                Double lat = Configuration.getDoubleValue(AVKey.INITIAL_LATITUDE);
+                Double lon = Configuration.getDoubleValue(AVKey.INITIAL_LONGITUDE);
+                Double elevation = Configuration.getDoubleValue(AVKey.INITIAL_ALTITUDE);
+                Position targetPos = Position.fromDegrees(lat, lon, 0);
+                BasicOrbitView view = (BasicOrbitView) getWwd().getView();
+                view.addPanToAnimator(
+                    // The elevation component of 'targetPos' here is not the surface elevation,
+                    // so we ignore it when specifying the view center position.
+                    new Position(targetPos, 0),
+                    Angle.ZERO, Angle.ZERO, elevation);
             });
             viewPanel.add(btReset);
             controlPanel.add(viewPanel);
@@ -283,13 +266,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
             JPanel downloadPanel = new JPanel(new GridLayout(0, 1, 0, 0));
             downloadPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
             this.downloadButton = new JButton("Update");
-            this.downloadButton.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
-                {
-                    startEarthquakeDownload();
-                }
-            });
+            this.downloadButton.addActionListener(event -> startEarthquakeDownload());
             this.downloadButton.setEnabled(false);
             downloadPanel.add(this.downloadButton);
             controlPanel.add(downloadPanel);
@@ -308,13 +285,8 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
             magnitudePanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
             magnitudePanel.add(new JLabel("Min Magnitude:"));
             magnitudeCombo = new JComboBox(new String[] {"2.5", "3", "4", "5", "6", "7"});
-            magnitudeCombo.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
-                {
-                    applyMagnitudeFilter(Double.parseDouble((String) magnitudeCombo.getSelectedItem()));
-                }
-            });
+            magnitudeCombo.addActionListener(
+                event -> applyMagnitudeFilter(Double.parseDouble((String) magnitudeCombo.getSelectedItem())));
             magnitudePanel.add(magnitudeCombo);
             controlPanel.add(magnitudePanel);
 
@@ -324,18 +296,14 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
             blinkPanel.add(new JLabel("Latest:"));
             final JCheckBox jcb = new JCheckBox("Animate");
             jcb.setSelected(true);
-            jcb.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+            jcb.addActionListener(event -> {
+                if (jcb.isSelected())
                 {
-                    if (jcb.isSelected())
-                    {
-                        setBlinker(latestEq);
-                    }
-                    else
-                    {
-                        setBlinker(null);
-                    }
+                    setBlinker(latestEq);
+                }
+                else
+                {
+                    setBlinker(null);
                 }
             });
             blinkPanel.add(jcb);
@@ -360,13 +328,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
 
         private void startEarthquakeDownload()
         {
-            WorldWind.getScheduledTaskService().addTask(new Runnable()
-            {
-                public void run()
-                {
-                    downloadEarthquakes(USGS_EARTHQUAKE_FEED_URL);
-                }
-            });
+            WorldWind.getScheduledTaskService().addTask(() -> downloadEarthquakes(USGS_EARTHQUAKE_FEED_URL));
         }
 
         private void downloadEarthquakes(String earthquakeFeedUrl)
@@ -520,7 +482,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
             this.getWwd().redraw();
         }
 
-        private class EqAnnotation extends GlobeAnnotation
+        private static class EqAnnotation extends GlobeAnnotation
         {
             public EqAnnotation(Position position, AnnotationAttributes defaults)
             {
@@ -554,7 +516,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
                 if (this.shapeBuffer == null)
                     this.shapeBuffer = FrameFactory.createShapeBuffer(AVKey.SHAPE_ELLIPSE, size, size, 0, null);
                 GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
-                gl.glTranslated(-size / 2, -size / 2, 0);
+                gl.glTranslatef(-size / 2f, -size / 2f, 0);
                 FrameFactory.drawBuffer(dc, GL.GL_TRIANGLE_FAN, this.shapeBuffer);
             }
         }
@@ -574,15 +536,11 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
                 this.annotation = ea;
                 this.initialScale = this.annotation.getAttributes().getScale();
                 this.initialOpacity = this.annotation.getAttributes().getOpacity();
-                this.timer = new Timer(delay, new ActionListener()
-                {
-                    public void actionPerformed(ActionEvent event)
-                    {
-                        annotation.getAttributes().setScale(initialScale * (1f + 7f * ((float) step / (float) steps)));
-                        annotation.getAttributes().setOpacity(initialOpacity * (1f - ((float) step / (float) steps)));
-                        step = step == steps ? 0 : step + 1;
-                        getWwd().redraw();
-                    }
+                this.timer = new Timer(delay, event -> {
+                    annotation.getAttributes().setScale(initialScale * (1f + 7f * ((float) step / (float) steps)));
+                    annotation.getAttributes().setOpacity(initialOpacity * (1f - ((float) step / (float) steps)));
+                    step = step == steps ? 0 : step + 1;
+                    getWwd().redraw();
                 });
                 start();
             }

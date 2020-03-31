@@ -10,14 +10,10 @@ import gov.nasa.worldwind.exception.NoItemException;
 import gov.nasa.worldwind.poi.*;
 import gov.nasa.worldwindx.applications.worldwindow.core.*;
 import gov.nasa.worldwindx.applications.worldwindow.util.Util;
-import org.xml.sax.SAXException;
 
 import javax.swing.*;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 
 /**
  * @author tag
@@ -86,40 +82,30 @@ public class GazetteerPanel extends AbstractFeature implements FeaturePanel
         p.add(label, BorderLayout.WEST);
         p.add(field, BorderLayout.CENTER);
 
-        field.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                performGazeteerAction(actionEvent);
-            }
-        });
+        field.addActionListener(this::performGazeteerAction);
     }
 
     private void performGazeteerAction(final ActionEvent e)
     {
-        EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
+        EventQueue.invokeLater(() -> {
+            try
             {
-                try
-                {
-                    handleEntryAction(e);
-                }
-                catch (NoItemException e)
-                {
-                    controller.showMessageDialog("No search string was specified", "No Search String",
-                        JOptionPane.ERROR_MESSAGE);
-                }
-                catch (Exception e)
-                {
-                    controller.showMessageDialog("Location not found", "Location Unknown", JOptionPane.ERROR_MESSAGE);
-                }
+                handleEntryAction(e);
+            }
+            catch (NoItemException e1)
+            {
+                controller.showMessageDialog("No search string was specified", "No Search String",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+            catch (Exception e1)
+            {
+                controller.showMessageDialog("Location not found", "Location Unknown", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
 
-    private void handleEntryAction(ActionEvent actionEvent) throws IOException, ParserConfigurationException,
-        XPathExpressionException, SAXException, NoItemException
+    private void handleEntryAction(ActionEvent actionEvent) throws
+        NoItemException
     {
         if (this.getGazetteer() == null)
         {

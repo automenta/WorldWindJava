@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class KMLResourceMap extends KMLAbstractObject
 {
-    protected List<KMLAlias> aliases = new ArrayList<KMLAlias>();
+    protected final List<KMLAlias> aliases = new ArrayList<>();
 
     public KMLResourceMap(String namespaceURI)
     {

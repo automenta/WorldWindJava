@@ -64,7 +64,7 @@ public class VeryManyPaths extends ApplicationTemplate
         protected Path makePath(Position startPosition, Angle heading, Angle length, int numPositions)
         {
             double dLength = length.radians / (numPositions - 1);
-            List<Position> positions = new ArrayList<Position>(numPositions);
+            List<Position> positions = new ArrayList<>(numPositions);
 
             for (int i = 0; i < numPositions - 1; i++)
             {

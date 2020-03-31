@@ -28,8 +28,8 @@ public class SimpleImporter {
 
     protected static final AtomicInteger nextLayerNumber = new AtomicInteger(0);
 
-    protected Object source;
-    protected Controller controller;
+    protected final Object source;
+    protected final Controller controller;
 
     public SimpleImporter(Object source, Controller controller) {
         this.source = source;

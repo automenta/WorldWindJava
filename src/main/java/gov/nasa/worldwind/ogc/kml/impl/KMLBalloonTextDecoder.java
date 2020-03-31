@@ -30,7 +30,7 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder
      * Keep a cache of entities that have been resolved so that we don't have to re-resolve them every time the decoded
      * text is requested.
      */
-    protected Map<String, String> entityCache = new HashMap<String, String>();
+    protected final Map<String, String> entityCache = new HashMap<>();
 
     /** Feature to use as context for entity replacements. */
     protected KMLAbstractFeature feature;
@@ -85,7 +85,7 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder
 
         this.isUnresolved = false;
 
-        Pattern p = Pattern.compile("\\$\\[(.*?)\\]");
+        Pattern p = Pattern.compile("\\$\\[(.*?)]");
         Matcher m = p.matcher(textToDecode);
         StringBuffer sb = new StringBuffer();
         while (m.find())

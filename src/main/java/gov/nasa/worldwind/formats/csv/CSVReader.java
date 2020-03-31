@@ -18,9 +18,9 @@ import java.util.*;
  */
 public class CSVReader implements Track, TrackSegment
 {
-    private final List<Track> tracks = new ArrayList<Track>();
-    private final List<TrackSegment> segments = new ArrayList<TrackSegment>();
-    private final List<TrackPoint> points = new ArrayList<TrackPoint>();
+    private final List<Track> tracks = new ArrayList<>();
+    private final List<TrackSegment> segments = new ArrayList<>();
+    private final List<TrackPoint> points = new ArrayList<>();
     private String name;
 //    private int lineNumber = 0;
 
@@ -82,9 +82,8 @@ public class CSVReader implements Track, TrackSegment
      * @param stream The stream to read from.
      * @param name The name of the stream.
      * @throws IllegalArgumentException if <code>stream</code> is null
-     * @throws java.io.IOException If there are issues reading the stream.
      */
-    public void readStream(InputStream stream, String name) throws IOException
+    public void readStream(InputStream stream, String name)
     {
         if (stream == null)
         {
@@ -104,7 +103,7 @@ public class CSVReader implements Track, TrackSegment
 
     public Iterator<Position> getTrackPositionIterator()
     {
-        return new Iterator<Position>()
+        return new Iterator<>()
         {
             private final TrackPointIterator trackPoints = new TrackPointIteratorImpl(CSVReader.this.tracks);
 

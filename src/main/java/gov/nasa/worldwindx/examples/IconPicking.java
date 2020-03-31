@@ -64,19 +64,14 @@ public class IconPicking extends ApplicationTemplate
 
             ApplicationTemplate.insertAfterPlacenames(this.getWwd(), layer);
 
-            this.getWwd().addSelectListener(new SelectListener()
-            {
-                @Override
-                public void selected(SelectEvent event)
+            this.getWwd().addSelectListener(event -> {
+                if (event.getEventAction().equals(SelectEvent.ROLLOVER))
                 {
-                    if (event.getEventAction().equals(SelectEvent.ROLLOVER))
+                    PickedObjectList pol = event.getObjects();
+                    System.out.println(" Picked Objects Size " + pol.size());
+                    for (PickedObject po : pol)
                     {
-                        PickedObjectList pol = event.getObjects();
-                        System.out.println(" Picked Objects Size " + pol.size());
-                        for (PickedObject po : pol)
-                        {
-                            System.out.println(" Class " + po.getObject().getClass().getName() + "  isTerrian=" + po.isTerrain());
-                        }
+                        System.out.println(" Class " + po.getObject().getClass().getName() + "  isTerrian=" + po.isTerrain());
                     }
                 }
             });

@@ -23,7 +23,7 @@ import java.util.*;
  */
 public class Dummy extends AbstractMilStd2525TacticalGraphic
 {
-    protected Path path;
+    protected final Path path;
 
     /**
      * Indicates the graphics supported by this class.
@@ -32,7 +32,7 @@ public class Dummy extends AbstractMilStd2525TacticalGraphic
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_DCPN_DMY);
+        return Collections.singletonList(TacGrpSidc.C2GM_DCPN_DMY);
     }
 
     public Dummy(String sidc)

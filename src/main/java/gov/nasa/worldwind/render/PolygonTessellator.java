@@ -49,11 +49,11 @@ public class PolygonTessellator
     }
 
     protected boolean enabled = true;
-    protected GLUtessellator tess;
+    protected final GLUtessellator tess;
     protected IntBuffer interiorIndices;
     protected IntBuffer boundaryIndices;
     protected boolean isBoundaryEdge;
-    protected double[] vertexCoord = new double[3];
+    protected final double[] vertexCoord = new double[3];
 
     public PolygonTessellator()
     {

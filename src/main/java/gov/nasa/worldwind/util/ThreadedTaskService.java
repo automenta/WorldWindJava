@@ -34,7 +34,7 @@ public class ThreadedTaskService extends WWObjectImpl implements TaskService, Th
         this.executor = new TaskExecutor(poolSize, queueSize);
 
         // this.activeTasks holds the list of currently executing tasks
-        this.activeTasks = new ConcurrentLinkedQueue<Runnable>();
+        this.activeTasks = new ConcurrentLinkedQueue<>();
     }
 
     public void shutdown(boolean immediately)
@@ -61,17 +61,13 @@ public class ThreadedTaskService extends WWObjectImpl implements TaskService, Th
         private TaskExecutor(int poolSize, int queueSize)
         {
             super(poolSize, poolSize, THREAD_TIMEOUT, TimeUnit.SECONDS,
-                new ArrayBlockingQueue<Runnable>(queueSize),
-                new ThreadFactory()
-                {
-                    public Thread newThread(Runnable runnable)
-                    {
-                        Thread thread = new Thread(runnable);
-                        thread.setDaemon(true);
-                        thread.setPriority(Thread.MIN_PRIORITY);
-                        thread.setUncaughtExceptionHandler(ThreadedTaskService.this);
-                        return thread;
-                    }
+                new ArrayBlockingQueue<>(queueSize),
+                runnable -> {
+                    Thread thread = new Thread(runnable);
+                    thread.setDaemon(true);
+                    thread.setPriority(Thread.MIN_PRIORITY);
+                    thread.setUncaughtExceptionHandler(ThreadedTaskService.this);
+                    return thread;
                 },
                 new ThreadPoolExecutor.DiscardPolicy() // abandon task when queue is full
                 {

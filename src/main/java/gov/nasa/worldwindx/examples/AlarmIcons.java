@@ -32,7 +32,7 @@ public class AlarmIcons extends ApplicationTemplate
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
         private final UserFacingIcon icon;
-        private final ArrayList<Action> alarmTypes = new ArrayList<Action>();
+        private final ArrayList<Action> alarmTypes = new ArrayList<>();
 
         public AppFrame()
         {
@@ -126,7 +126,7 @@ public class AlarmIcons extends ApplicationTemplate
         private class PulsingAlarmAction extends AbstractAction
         {
             protected final Object bgIconPath;
-            protected int frequency;
+            protected final int frequency;
             protected int scaleIndex = 0;
             protected double[] scales = new double[] {1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3, 3.25, 3.5, 3.25, 3,
                 2.75, 2.5, 2.25, 2, 1.75, 1.5};
@@ -149,22 +149,14 @@ public class AlarmIcons extends ApplicationTemplate
             {
                 if (timer == null)
                 {
-                    timer = new Timer(frequency, new ActionListener()
-                    {
-                        public void actionPerformed(ActionEvent e)
-                        {
-                            icon.setBackgroundScale(scales[++scaleIndex % scales.length]);
-                            getWwd().redraw();
-                        }
+                    timer = new Timer(frequency, e12 -> {
+                        icon.setBackgroundScale(scales[++scaleIndex % scales.length]);
+                        getWwd().redraw();
                     });
 
-                    ((JRadioButton) e.getSource()).addItemListener(new ItemListener()
-                    {
-                        public void itemStateChanged(ItemEvent e)
-                        {
-                            if (e.getStateChange() == ItemEvent.DESELECTED)
-                                timer.stop();
-                        }
+                    ((JRadioButton) e.getSource()).addItemListener(e1 -> {
+                        if (e1.getStateChange() == ItemEvent.DESELECTED)
+                            timer.stop();
                     });
                 }
                 icon.setBackgroundImage(bgIconPath);

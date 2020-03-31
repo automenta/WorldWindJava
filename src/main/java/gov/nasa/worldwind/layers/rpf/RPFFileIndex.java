@@ -31,21 +31,9 @@ public class RPFFileIndex
         this.rpfFileTable = new Table();
         this.waveletTable = new Table();
         this.directoryTable = new Table();
-        this.rpfFileTable.setRecordFactory(new RecordFactory() {
-            public Record newRecord(long key) {
-                return new RPFFileRecord(key);
-            }
-        });
-        this.waveletTable.setRecordFactory(new RecordFactory() {
-            public Record newRecord(long key) {
-                return new WaveletRecord(key);
-            }
-        });
-        this.directoryTable.setRecordFactory(new RecordFactory() {
-            public Record newRecord(long key) {
-                return new DirectoryRecord(key);
-            }
-        });
+        this.rpfFileTable.setRecordFactory(RPFFileRecord::new);
+        this.waveletTable.setRecordFactory(WaveletRecord::new);
+        this.directoryTable.setRecordFactory(DirectoryRecord::new);
         this.properties = new IndexProperties();
     }
 
@@ -216,7 +204,7 @@ public class RPFFileIndex
 
     private static double clamp(double x, double min, double max)
     {
-        return x < min ? min : x > max ? max : x;
+        return x < min ? min : Math.min(x, max);
     }
 
     public void load(java.nio.ByteBuffer buffer) throws IOException
@@ -297,8 +285,8 @@ public class RPFFileIndex
 
         public Table()
         {
-            this.records = new ArrayList<Record>();
-            this.keyIndex = new HashMap<Long, Record>();
+            this.records = new ArrayList<>();
+            this.keyIndex = new HashMap<>();
             this.recordFactory = new DefaultRecordFactory();
         }
 
@@ -812,12 +800,12 @@ public class RPFFileIndex
 
     private static class LocationSection
     {
-        public int locationSectionLength;
-        public int componentLocationTableOffset;
-        public int numOfComponentLocationRecords;
+        public final int locationSectionLength;
+        public final int componentLocationTableOffset;
+        public final int numOfComponentLocationRecords;
 
         private final java.util.Map<Integer, ComponentLocationRecord> table =
-            new java.util.HashMap<Integer, ComponentLocationRecord>();
+            new java.util.HashMap<>();
 
         public LocationSection()
         {
@@ -828,7 +816,7 @@ public class RPFFileIndex
             this.numOfComponentLocationRecords = this.table.size();
         }
 
-        public LocationSection(java.nio.ByteBuffer buffer) throws IOException
+        public LocationSection(java.nio.ByteBuffer buffer)
         {
             int savePos = buffer.position();
 
@@ -849,7 +837,7 @@ public class RPFFileIndex
             buffer.position(savePos);
         }
 
-        public java.nio.ByteBuffer save() throws IOException
+        public java.nio.ByteBuffer save()
         {
             java.nio.ByteBuffer buffer = java.nio.ByteBuffer.allocate(this.locationSectionLength);
             buffer.putInt(this.locationSectionLength);

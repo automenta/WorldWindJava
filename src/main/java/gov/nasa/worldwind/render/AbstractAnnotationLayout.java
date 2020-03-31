@@ -16,7 +16,7 @@ import gov.nasa.worldwind.util.*;
  */
 public abstract class AbstractAnnotationLayout implements AnnotationLayoutManager
 {
-    protected OGLStackHandler stackHandler;
+    protected final OGLStackHandler stackHandler;
     protected PickSupport pickSupport;
 
     protected AbstractAnnotationLayout()

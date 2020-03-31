@@ -35,22 +35,22 @@ public class RPFBoundingRectangleSection {
             bndRectRecords.add(new RPFBoundingRectangleRecord(buffer));
     }
 
-    public class RPFBoundingRectangleRecord {
+    public static class RPFBoundingRectangleRecord {
 
         public double getMinLon() {
-            return (this.ulLon < this.llLon) ? this.ulLon : this.llLon;
+            return Math.min(this.ulLon, this.llLon);
         }
 
         public double getMinLat() {
-            return (this.llLat < this.lrLat) ? this.llLat : this.lrLat;
+            return Math.min(this.llLat, this.lrLat);
         }
 
         public double getMaxLon() {
-            return (this.urLon > this.lrLon) ? this.urLon : this.lrLon;
+            return Math.max(this.urLon, this.lrLon);
         }
 
         public double getMaxLat() {
-            return (this.ulLat > this.urLat) ? this.ulLat : this.urLat;
+            return Math.max(this.ulLat, this.urLat);
         }
 
         public RPFBoundingRectangleRecord(ByteBuffer buffer) {
@@ -100,5 +100,5 @@ public class RPFBoundingRectangleSection {
     private final int numberOfRecords;
     private final int recordLength;
     private final ArrayList<RPFBoundingRectangleRecord> bndRectRecords =
-            new ArrayList<RPFBoundingRectangleRecord>();
+        new ArrayList<>();
 }

@@ -136,7 +136,7 @@ public class BILRasterReader extends AbstractDataRasterReader
         }
 
         Object o = (params != null) ? params.getValue(AVKey.BYTE_ORDER) : null;
-        if (o == null || !(o instanceof String))
+        if (!(o instanceof String))
         {
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("WorldFile.NoByteOrderSpecified", source));
         }

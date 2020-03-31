@@ -61,7 +61,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject
 
     public static List<Layer> getListDifference(LayerList oldList, LayerList newList)
     {
-        ArrayList<Layer> deltaList = new ArrayList<Layer>();
+        ArrayList<Layer> deltaList = new ArrayList<>();
 
         for (Layer layer : newList)
         {
@@ -97,10 +97,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject
         for (int i = 1; i < lists.length; i++)
         {
             LayerList ll = lists[i];
-            for (Layer layer : ll)
-            {
-                list.add(layer);
-            }
+            list.addAll(ll);
 
             for (Layer layer : ll)
             {
@@ -364,8 +361,8 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject
 
     public void replaceAll(Collection<? extends Layer> layers)
     {
-        ArrayList<Layer> toDelete = new ArrayList<Layer>();
-        ArrayList<Layer> toKeep = new ArrayList<Layer>();
+        ArrayList<Layer> toDelete = new ArrayList<>();
+        ArrayList<Layer> toKeep = new ArrayList<>();
 
         for (Layer layer : layers)
         {
@@ -418,7 +415,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject
             throw new IllegalArgumentException(message);
         }
 
-        ArrayList<Layer> layers = new ArrayList<Layer>();
+        ArrayList<Layer> layers = new ArrayList<>();
 
         for (Layer l : this)
         {
@@ -486,13 +483,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject
 
         Layer[] array = new Layer[this.size()];
         this.toArray(array);
-        Arrays.sort(array, new Comparator<Layer>()
-        {
-            public int compare(Layer layer, Layer layer1)
-            {
-                return layer.getName().compareTo(layer1.getName());
-            }
-        });
+        Arrays.sort(array, Comparator.comparing(Layer::getName));
 
         this.clear();
         super.addAll(Arrays.asList(array));

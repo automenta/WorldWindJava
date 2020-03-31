@@ -20,8 +20,8 @@ import java.util.logging.Level;
  */
 public class WebViewTexture extends BasicWWTexture
 {
-    protected Dimension frameSize;
-    protected boolean flipVertically;
+    protected final Dimension frameSize;
+    protected final boolean flipVertically;
 
     public WebViewTexture(Dimension frameSize, boolean useMipMaps, boolean flipVertically)
     {

@@ -22,11 +22,11 @@ import java.util.*;
  */
 public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with SurfacePolygons
 {
-    protected VPFFeature feature;
-    protected VPFPrimitiveData primitiveData;
+    protected final VPFFeature feature;
+    protected final VPFPrimitiveData primitiveData;
     protected VecBufferSequence buffer;
-    protected LatLon referenceLocation;
-    protected Object interiorDisplayListCacheKey = new Object();
+    protected final LatLon referenceLocation;
+    protected final Object interiorDisplayListCacheKey = new Object();
 
     public VPFSurfaceArea(VPFFeature feature, VPFPrimitiveData primitiveData)
     {
@@ -41,13 +41,7 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
         final int numEdges = traverseAreaEdges(feature, primitiveData, null);
         final IntBuffer edgeIds = IntBuffer.wrap(new int[numEdges]);
 
-        traverseAreaEdges(feature, primitiveData, new EdgeListener()
-        {
-            public void nextEdge(int edgeId, VPFPrimitiveData.EdgeInfo edgeInfo)
-            {
-                edgeIds.put(edgeId);
-            }
-        });
+        traverseAreaEdges(feature, primitiveData, (edgeId, edgeInfo) -> edgeIds.put(edgeId));
 
         edgeIds.rewind();
 
@@ -110,7 +104,7 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
         if (s == null || s.equals(Sector.EMPTY_SECTOR))
             return null;
 
-        return Arrays.asList(s);
+        return Collections.singletonList(s);
     }
 
     public Iterable<? extends LatLon> getLocations()

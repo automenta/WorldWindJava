@@ -82,7 +82,7 @@ public class OGCRequestDescription extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OGCDCType)
+                if (o instanceof OGCDCType)
                     this.addDCPType((OGCDCType) o);
             }
         }
@@ -116,7 +116,7 @@ public class OGCRequestDescription extends AbstractXMLEventParser
     protected void addFormat(String format)
     {
         if (this.formats == null)
-            this.formats = new HashSet<String>();
+            this.formats = new HashSet<>();
 
         this.formats.add(format);
     }
@@ -137,7 +137,7 @@ public class OGCRequestDescription extends AbstractXMLEventParser
     public void addDCPType(OGCDCType dct)
     {
         if (this.dcpTypes == null)
-            this.dcpTypes = new HashSet<OGCDCType>();
+            this.dcpTypes = new HashSet<>();
 
         this.dcpTypes.add(dct);
     }

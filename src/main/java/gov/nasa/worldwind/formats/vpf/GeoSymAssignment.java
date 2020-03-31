@@ -16,9 +16,9 @@ import java.util.*;
 public class GeoSymAssignment
 {
     protected String filePath;
-    protected Map<String, GeoSymTable> tableMap = new HashMap<String, GeoSymTable>();
+    protected final Map<String, GeoSymTable> tableMap = new HashMap<>();
 
-    protected static String[] tableNames =
+    protected static final String[] tableNames =
         {
             GeoSymConstants.ATTRIBUTE_EXPRESSION_FILE,
             GeoSymConstants.CODE_VALUE_DESCRIPTION_FILE,

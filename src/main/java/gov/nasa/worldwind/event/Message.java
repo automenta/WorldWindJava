@@ -15,9 +15,9 @@ package gov.nasa.worldwind.event;
 public class Message extends WWEvent
 {
     /** Message name. */
-    protected String name;
+    protected final String name;
     /** Time at which the message was sent. */
-    protected long when;
+    protected final long when;
 
     /**
      * Create a message. The message will be timestamped with the current system time.

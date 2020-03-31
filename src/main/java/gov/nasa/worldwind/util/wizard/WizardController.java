@@ -34,14 +34,13 @@ class WizardController implements ActionListener
         if (e != null && e.getActionCommand() != null)
         {
             String actionCommand = e.getActionCommand();
-            if (actionCommand.equals(Wizard.CANCEL_BUTTON_ACTION_COMMAND))
-                cancelButtonPressed();
-            else if (actionCommand.equals(Wizard.BACK_BUTTON_ACTION_COMMAND))
-                backButtonPressed();
-            else if (actionCommand.equals(Wizard.NEXT_BUTTON_ACTION_COMMAND))
-                nextButtonPressed();
-            else if (actionCommand.equals(Wizard.DIALOG_CLOSE_ACTION_COMMAND))
-                dialogClosed();
+            switch (actionCommand)
+            {
+                case Wizard.CANCEL_BUTTON_ACTION_COMMAND -> cancelButtonPressed();
+                case Wizard.BACK_BUTTON_ACTION_COMMAND -> backButtonPressed();
+                case Wizard.NEXT_BUTTON_ACTION_COMMAND -> nextButtonPressed();
+                case Wizard.DIALOG_CLOSE_ACTION_COMMAND -> dialogClosed();
+            }
         }
     }
 
@@ -63,7 +62,7 @@ class WizardController implements ActionListener
         {
             WizardPanelDescriptor descriptor = model.getCurrentPanel();
             Object nextPanelDescriptor = descriptor.getNextPanelDescriptor();
-            if (nextPanelDescriptor != null && nextPanelDescriptor instanceof Wizard.FinishIdentifier)
+            if (nextPanelDescriptor instanceof Wizard.FinishIdentifier)
             {
                 this.wizard.close(Wizard.FINISH_RETURN_CODE);
             }

@@ -55,7 +55,7 @@ public class ExtrudedPolygons extends ApplicationTemplate
             capAttributes.setEnableLighting(true);
 
             // Create a path, set some of its properties and set its attributes.
-            ArrayList<Position> pathPositions = new ArrayList<Position>();
+            ArrayList<Position> pathPositions = new ArrayList<>();
             pathPositions.add(Position.fromDegrees(28, -106, 3e4));
             pathPositions.add(Position.fromDegrees(35, -104, 3e4));
             pathPositions.add(Position.fromDegrees(35, -107, 9e4));
@@ -75,7 +75,7 @@ public class ExtrudedPolygons extends ApplicationTemplate
             pgon.setCapAttributes(capAttributes);
             layer.addRenderable(pgon);
 
-            ArrayList<LatLon> pathLocations = new ArrayList<LatLon>();
+            ArrayList<LatLon> pathLocations = new ArrayList<>();
             pathLocations.add(LatLon.fromDegrees(28, -110));
             pathLocations.add(LatLon.fromDegrees(35, -108));
             pathLocations.add(LatLon.fromDegrees(35, -111));

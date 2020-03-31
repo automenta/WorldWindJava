@@ -306,8 +306,7 @@ public class BasicView extends WWObjectImpl implements View
     {
         Vec4 eyePoint = this.getEyePoint();
         Intersection[] intersection = this.globe.intersect(new Line(eyePoint, this.getForwardVector()), 0);
-        Position pos = this.globe.computePositionFromPoint(intersection[0].getIntersectionPoint());
-        return (pos);
+        return (this.globe.computePositionFromPoint(intersection[0].getIntersectionPoint()));
     }
 
     public Vec4 getCurrentEyePoint()
@@ -678,7 +677,7 @@ public class BasicView extends WWObjectImpl implements View
             far = computeHorizonDistance(eyePosition);
         }
 
-        return far < MINIMUM_FAR_DISTANCE ? MINIMUM_FAR_DISTANCE : far;
+        return Math.max(far, MINIMUM_FAR_DISTANCE);
     }
 
     public Matrix getProjectionMatrix()

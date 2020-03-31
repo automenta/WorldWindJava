@@ -54,7 +54,7 @@ public class WindowsWebView extends AbstractWebView
      * Count of the number of active (non-disposed) WebView instances. The WebView UI thread is started when a WebView
      * is created (if it's not already running), and terminated when there are no active instances.
      */
-    protected static AtomicInteger instances = new AtomicInteger();
+    protected static final AtomicInteger instances = new AtomicInteger();
 
     /** Flag to the indicate that the WebView has been disposed. */
     protected boolean disposed = false;
@@ -113,14 +113,7 @@ public class WindowsWebView extends AbstractWebView
 
             WindowsWebViewJNI.addWindowUpdateObserver(this.webViewWindowPtr, observerPtr);
         }
-        catch (RuntimeException e)
-        {
-            // If the WebView was not created successfully do not increment the instance counter.
-            instances.decrementAndGet();
-            this.handleWebViewCreationError();
-            throw e;
-        }
-        catch (Error e)
+        catch (RuntimeException | Error e)
         {
             // If the WebView was not created successfully do not increment the instance counter.
             instances.decrementAndGet();

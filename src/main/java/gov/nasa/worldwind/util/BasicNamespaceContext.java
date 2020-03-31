@@ -83,11 +83,7 @@ public class BasicNamespaceContext implements NamespaceContext {
             throw new IllegalArgumentException(message);
         }
 
-        if (this.urisByPrefix.containsKey(prefix)) {
-            return this.urisByPrefix.get(prefix);
-        } else {
-            return XMLConstants.NULL_NS_URI;
-        }
+        return this.urisByPrefix.getOrDefault(prefix, XMLConstants.NULL_NS_URI);
     }
 
     /**

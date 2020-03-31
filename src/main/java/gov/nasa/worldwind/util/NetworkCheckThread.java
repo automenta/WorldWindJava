@@ -22,7 +22,7 @@ public class NetworkCheckThread extends Thread
 
     protected AtomicBoolean showNetStatus;
     protected AtomicBoolean isNetAvailable;
-    protected AtomicLong netChecInterval = new AtomicLong(DEFAULT_NET_CHECK_INTERVAL);
+    protected final AtomicLong netChecInterval = new AtomicLong(DEFAULT_NET_CHECK_INTERVAL);
 
     /**
      * Constructs a new instance of this class. Once started, the thread checks network availability at a specified

@@ -22,7 +22,7 @@ import java.util.*;
 public class ColladaVisualScene extends ColladaAbstractObject implements ColladaRenderable
 {
     /** Nodes in this scene. */
-    protected List<ColladaNode> nodes = new ArrayList<ColladaNode>();
+    protected final List<ColladaNode> nodes = new ArrayList<>();
 
     /**
      * Construct an instance.
@@ -68,7 +68,7 @@ public class ColladaVisualScene extends ColladaAbstractObject implements Collada
             throw new IllegalArgumentException(message);
         }
 
-        ArrayList<Box> extents = new ArrayList<Box>();
+        ArrayList<Box> extents = new ArrayList<>();
         for (ColladaNode node : this.getNodes())
         {
             Box extent = node.getLocalExtent(tc);

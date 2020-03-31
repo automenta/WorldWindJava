@@ -165,8 +165,6 @@ class TIFFReader
                     symbol.put(symbolTable[oldCode]);
                     symbol.put(symbolTable[code][0]);
                     symbolTable[nextSymbol] = symbol.array();
-                    oldCode = code;
-                    nextSymbol++;
                 }
                 else
                 {
@@ -179,9 +177,9 @@ class TIFFReader
                     out.put(outString);
 
                     symbolTable[nextSymbol] = outString;
-                    oldCode = code;
-                    nextSymbol++;
                 }
+                oldCode = code;
+                nextSymbol++;
                 if (nextSymbol == 511)
                 {
                     bitsToRead = 10;
@@ -508,7 +506,7 @@ class TIFFReader
 //    }
 
         //Inner class for reading individual codes during decompression
-    private class CodeReader
+    private static class CodeReader
     {
         private int currentByte;
         private int currentBit;
@@ -546,7 +544,6 @@ class TIFFReader
                         int cb = byteBuffer[currentByte];
                         returnCode += (cb < 0 ? 256 + cb : cb);
                         numBitsToRead -= 8;
-                        currentByte++;
                     }
                     else
                     {
@@ -554,8 +551,8 @@ class TIFFReader
                         returnCode += ((int) byteBuffer[currentByte]) & backMask[8 - currentBit];
                         numBitsToRead -= (8 - currentBit);
                         currentBit = 0;
-                        currentByte++;
                     }
+                    currentByte++;
                 }
                 else
                 {

@@ -27,7 +27,7 @@ public class Polygon extends AbstractAirspace
     protected static final int DEFAULT_SUBDIVISIONS = 3;
     protected static final int MINIMAL_GEOMETRY_SUBDIVISIONS = 2;
 
-    private List<LatLon> locations = new ArrayList<LatLon>();
+    private List<LatLon> locations = new ArrayList<>();
     private boolean enableCaps = true;
     private int subdivisions = DEFAULT_SUBDIVISIONS;
 
@@ -61,7 +61,7 @@ public class Polygon extends AbstractAirspace
 
     private void makeDefaultDetailLevels()
     {
-        List<DetailLevel> levels = new ArrayList<DetailLevel>();
+        List<DetailLevel> levels = new ArrayList<>();
         double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
 
         DetailLevel level;
@@ -149,7 +149,7 @@ public class Polygon extends AbstractAirspace
         // edges.
         Vec4 centerPoint = Vec4.computeAveragePoint(points);
         LatLon centerLocation = globe.computePositionFromPoint(centerPoint);
-        this.makeExtremePoints(globe, verticalExaggeration, Arrays.asList(centerLocation), points);
+        this.makeExtremePoints(globe, verticalExaggeration, Collections.singletonList(centerLocation), points);
 
         return Box.computeBoundingBox(points);
     }
@@ -161,11 +161,11 @@ public class Polygon extends AbstractAirspace
         if (locations == null || locations.isEmpty())
             return null;
 
-        ArrayList<LatLon> copyOfLocations = new ArrayList<LatLon>(locations);
-        ArrayList<LatLon> tessellatedLocations = new ArrayList<LatLon>();
+        ArrayList<LatLon> copyOfLocations = new ArrayList<>(locations);
+        ArrayList<LatLon> tessellatedLocations = new ArrayList<>();
         this.makeTessellatedLocations(globe, MINIMAL_GEOMETRY_SUBDIVISIONS, copyOfLocations, tessellatedLocations);
 
-        ArrayList<Vec4> points = new ArrayList<Vec4>();
+        ArrayList<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, tessellatedLocations, points);
 
         return points;
@@ -314,11 +314,11 @@ public class Polygon extends AbstractAirspace
             DetailLevel level = this.computeDetailLevel(dc);
 
             Object o = level.getValue(SUBDIVISIONS);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 subdivisions = (Integer) o;
 
             o = level.getValue(DISABLE_TERRAIN_CONFORMANCE);
-            if (o != null && o instanceof Boolean && (Boolean) o)
+            if (o instanceof Boolean && (Boolean) o)
                 terrainConformant[0] = terrainConformant[1] = false;
         }
 
@@ -683,7 +683,7 @@ public class Polygon extends AbstractAirspace
     protected void makeTessellatedLocations(Globe globe, int subdivisions, List<LatLon> locations,
         List<LatLon> tessellatedLocations)
     {
-        ArrayList<Vec4> points = new ArrayList<Vec4>();
+        ArrayList<Vec4> points = new ArrayList<>();
         for (LatLon ll : locations)
         {
             points.add(globe.computeEllipsoidalPointFromPosition(ll.latitude, ll.longitude, 0));

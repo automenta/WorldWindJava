@@ -58,13 +58,13 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
     }
 
     /* The polygon's boundaries. */
-    protected List<Iterable<? extends LatLon>> boundaries = new ArrayList<Iterable<? extends LatLon>>();
+    protected final List<Iterable<? extends LatLon>> boundaries = new ArrayList<>();
     /** If an image source was specified, this is the WWTexture form. */
     protected WWTexture explicitTexture;
     /** This shape's texture coordinates. */
     protected float[] explicitTextureCoords;
 
-    protected Map<Object, ShapeData> shapeDataCache = new HashMap<Object, ShapeData>();
+    protected final Map<Object, ShapeData> shapeDataCache = new HashMap<>();
     protected static GLUtessellator tess;
     protected static GLUTessellatorSupport.CollectPrimitivesCallback tessCallback;
 
@@ -367,7 +367,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
 
     protected List<List<Vertex>> assembleContours(Angle maxEdgeLength)
     {
-        List<List<Vertex>> result = new ArrayList<List<Vertex>>();
+        List<List<Vertex>> result = new ArrayList<>();
 
         for (int b = 0; b < this.boundaries.size(); b++)
         {
@@ -376,7 +376,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
             int c = 0;
 
             // Merge the boundary locations with their respective texture coordinates, if any.
-            List<Vertex> contour = new ArrayList<Vertex>();
+            List<Vertex> contour = new ArrayList<>();
             for (LatLon location : locations)
             {
                 Vertex vertex = new Vertex(location);
@@ -422,7 +422,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
 
     protected void subdivideContour(List<Vertex> contour, Angle maxEdgeLength)
     {
-        List<Vertex> original = new ArrayList<Vertex>(contour.size());
+        List<Vertex> original = new ArrayList<>(contour.size());
         original.addAll(contour);
         contour.clear();
 
@@ -460,7 +460,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
 
     protected List<Vertex> clipWithPole(List<Vertex> contour, String pole, Angle maxEdgeLength)
     {
-        List<Vertex> newVertices = new ArrayList<Vertex>();
+        List<Vertex> newVertices = new ArrayList<>();
 
         Angle poleLat = AVKey.NORTH.equals(pole) ? Angle.POS90 : Angle.NEG90;
 
@@ -545,7 +545,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
 
     protected List<List<Vertex>> clipWithDateline(List<Vertex> contour)
     {
-        List<Vertex> result = new ArrayList<Vertex>();
+        List<Vertex> result = new ArrayList<>();
         Vertex prev = null;
         Angle offset = null;
         boolean applyOffset = false;
@@ -571,7 +571,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
             prev = cur;
         }
 
-        List<Vertex> mirror = new ArrayList<Vertex>();
+        List<Vertex> mirror = new ArrayList<>();
         for (Vertex cur : result)
         {
             mirror.add(new Vertex(cur.latitude, cur.longitude.subtract(offset), cur.u, cur.v));
@@ -582,7 +582,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
 
     protected ShapeData tessellateContours(List<List<Vertex>> contours)
     {
-        List<Vertex> polygonData = new ArrayList<Vertex>();
+        List<Vertex> polygonData = new ArrayList<>();
         double[] coords = {0, 0, 0};
 
         if (tess == null)
@@ -694,11 +694,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         if (this.boundaries.isEmpty())
             return null;
 
-        ArrayList<List<LatLon>> geom = new ArrayList<List<LatLon>>();
+        ArrayList<List<LatLon>> geom = new ArrayList<>();
 
         for (Iterable<? extends LatLon> boundary : this.boundaries)
         {
-            ArrayList<LatLon> drawLocations = new ArrayList<LatLon>();
+            ArrayList<LatLon> drawLocations = new ArrayList<>();
 
             this.generateIntermediateLocations(boundary, edgeIntervalsPerDegree, true, drawLocations);
 
@@ -725,7 +725,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
 
         for (int i = 0; i < this.boundaries.size(); i++)
         {
-            ArrayList<LatLon> newLocations = new ArrayList<LatLon>();
+            ArrayList<LatLon> newLocations = new ArrayList<>();
 
             for (LatLon ll : this.boundaries.get(i))
             {

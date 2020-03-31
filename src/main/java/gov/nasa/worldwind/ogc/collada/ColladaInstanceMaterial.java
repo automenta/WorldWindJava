@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class ColladaInstanceMaterial extends ColladaAbstractInstance<ColladaMaterial>
 {
-    protected List<ColladaBindVertexInput> bindVertexInputs = new ArrayList<ColladaBindVertexInput>();
+    protected final List<ColladaBindVertexInput> bindVertexInputs = new ArrayList<>();
 
     public ColladaInstanceMaterial(String ns)
     {

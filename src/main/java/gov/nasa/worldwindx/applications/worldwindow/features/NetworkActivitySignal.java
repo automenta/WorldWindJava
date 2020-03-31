@@ -11,7 +11,6 @@ import gov.nasa.worldwindx.applications.worldwindow.core.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,7 +26,7 @@ public class NetworkActivitySignal extends AbstractFeature
         boolean hasNetworkActivity();
     }
 
-    private final ArrayList<NetworkUser> networkUsers = new ArrayList<NetworkUser>();
+    private final ArrayList<NetworkUser> networkUsers = new ArrayList<>();
     private final AtomicBoolean isNetworkAvailable = new AtomicBoolean(true);
     private JLabel networkLabel = new JLabel();
     private ImageIcon busySignal;
@@ -48,58 +47,38 @@ public class NetworkActivitySignal extends AbstractFeature
         this.networkLabel = new JLabel();
         this.networkLabel.setOpaque(false);
 
-        NetworkUser downloadUser = new NetworkUser()
-        {
-            public boolean hasNetworkActivity()
-            {
-                return WorldWind.getRetrievalService().hasActiveTasks();
-            }
-        };
+        NetworkUser downloadUser = () -> WorldWind.getRetrievalService().hasActiveTasks();
         this.networkUsers.add(downloadUser);
 
-        Timer activityTimer = new Timer(500, new ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent actionEvent)
+        Timer activityTimer = new Timer(500, actionEvent -> {
+            if (!isNetworkAvailable.get())
             {
-                if (!isNetworkAvailable.get())
+                if (networkLabel.getText() == null)
                 {
-                    if (networkLabel.getText() == null)
+                    networkLabel.setIcon(null);
+                    networkLabel.setText("No network");
+                    networkLabel.setForeground(Color.RED);
+                    networkLabel.setVisible(true);
+                }
+            }
+            else
+            {
+                for (NetworkUser user : networkUsers)
+                {
+                    if (user.hasNetworkActivity())
                     {
-                        networkLabel.setIcon(null);
-                        networkLabel.setText("No network");
-                        networkLabel.setForeground(Color.RED);
-                        networkLabel.setVisible(true);
+                        runBusySignal(true);
+                        return;
                     }
                 }
-                else
-                {
-                    for (NetworkUser user : networkUsers)
-                    {
-                        if (user.hasNetworkActivity())
-                        {
-                            runBusySignal(true);
-                            return;
-                        }
-                    }
-                    runBusySignal(false);
-                }
+                runBusySignal(false);
             }
         });
         activityTimer.start();
 
-        Timer netCheckTimer = new Timer(1000, new ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent actionEvent)
-            {
-                Thread t = new Thread(new Runnable()
-                {
-                    public void run()
-                    {
-                        isNetworkAvailable.set(!WorldWind.getNetworkStatus().isNetworkUnavailable());
-                    }
-                });
-                t.start();
-            }
+        Timer netCheckTimer = new Timer(1000, actionEvent -> {
+            Thread t = new Thread(() -> isNetworkAvailable.set(!WorldWind.getNetworkStatus().isNetworkUnavailable()));
+            t.start();
         });
         netCheckTimer.start();
     }

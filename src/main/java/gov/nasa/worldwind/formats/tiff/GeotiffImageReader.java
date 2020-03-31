@@ -30,7 +30,7 @@ public class GeotiffImageReader extends ImageReader
     }
 
     @Override
-    public int getNumImages(boolean allowSearch) throws IOException
+    public int getNumImages(boolean allowSearch)
     {
         // TODO:  This should allow for multiple images that may be present. For now, we'll ignore all but first.
         return 1;
@@ -65,19 +65,19 @@ public class GeotiffImageReader extends ImageReader
     }
 
     @Override
-    public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex) throws IOException
+    public Iterator<ImageTypeSpecifier> getImageTypes(int imageIndex)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public IIOMetadata getStreamMetadata() throws IOException
+    public IIOMetadata getStreamMetadata()
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public IIOMetadata getImageMetadata(int imageIndex) throws IOException
+    public IIOMetadata getImageMetadata(int imageIndex)
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -261,10 +261,6 @@ public class GeotiffImageReader extends ImageReader
                 bankOffsets[i] = i;
             }
             int[] offsets = new int[(planarConfig == Tiff.PlanarConfiguration.CHUNKY) ? 1 : samplesPerPixel];
-            for (int i = 0; i < offsets.length; i++)
-            {
-                offsets[i] = 0;
-            }
 
             // construct the right SampleModel...
             ComponentSampleModel sampleModel;
@@ -315,7 +311,6 @@ public class GeotiffImageReader extends ImageReader
                     readGeoKeys(entry);
                     break;
                 case GeoTiff.Tag.GEO_DOUBLE_PARAMS:
-                    break;
                 case GeoTiff.Tag.GEO_ASCII_PARAMS:
                     break;
             }
@@ -585,7 +580,7 @@ public class GeotiffImageReader extends ImageReader
             GeoKey key = new GeoKey();
             key.key = keyValRec[i];
             if (keyValRec[i + 1] == 0)
-                key.value = Integer.valueOf(keyValRec[i + 3]);
+                key.value = (int) keyValRec[i + 3];
             else
             {
                 // TODO: This isn't quite right....
@@ -669,14 +664,14 @@ public class GeotiffImageReader extends ImageReader
         return bits;
     }
 
-    private class GeoKey
+    private static class GeoKey
     {
         short key;
         Object value;
     }
 
     private ImageInputStream theStream = null;
-    private final ArrayList<TiffIFDEntry[]> ifds = new ArrayList<TiffIFDEntry[]>(1);
+    private final ArrayList<TiffIFDEntry[]> ifds = new ArrayList<>(1);
 
     // Geotiff info...
     private double[] geoPixelScale = null;

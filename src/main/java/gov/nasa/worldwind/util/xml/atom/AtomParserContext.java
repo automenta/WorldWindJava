@@ -29,7 +29,7 @@ public class AtomParserContext extends BasicXMLEventParserContext
 
     public static Map<QName, XMLEventParser> getDefaultParsers()
     {
-        ConcurrentHashMap<QName, XMLEventParser> parsers = new ConcurrentHashMap<QName, XMLEventParser>();
+        ConcurrentHashMap<QName, XMLEventParser> parsers = new ConcurrentHashMap<>();
 
         String ans = AtomConstants.ATOM_NAMESPACE;
         parsers.put(new QName(ans, "author"), new AtomPerson(ans));

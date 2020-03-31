@@ -19,7 +19,7 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
 {
     public static class SourceInfo extends AVListImpl
     {
-        public Object source;
+        public final Object source;
 
         public SourceInfo(Object source, AVList params)
         {
@@ -31,8 +31,8 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
 
     private AVList params;
     private final java.util.List<SourceInfo> dataSourceList =
-        Collections.synchronizedList(new java.util.ArrayList<SourceInfo>());
-    private final java.util.List<Object> productionResults = new java.util.ArrayList<Object>();
+        Collections.synchronizedList(new java.util.ArrayList<>());
+    private final java.util.List<Object> productionResults = new java.util.ArrayList<>();
     private boolean isStopped = false;
 
     protected AVList productionParams = null;
@@ -72,7 +72,7 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
 
     public Iterable<Object> getDataSources()
     {
-        ArrayList<Object> list = new ArrayList<Object>();
+        ArrayList<Object> list = new ArrayList<>();
 
         for (SourceInfo info : this.dataSourceList)
         {
@@ -103,7 +103,7 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
     {
         for (SourceInfo info : this.dataSourceList)
         {
-            if (info.source != null ? info.source.equals(source) : (source == null))
+            if (Objects.equals(info.source, source))
                 return true;
         }
 

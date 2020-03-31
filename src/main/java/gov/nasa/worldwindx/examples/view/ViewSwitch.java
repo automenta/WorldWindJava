@@ -54,8 +54,8 @@ public class ViewSwitch extends ApplicationTemplate
             // Constructor gets the class names for the View, ViewInputHandler pair.
             public class ViewerClass
             {
-                protected String viewClassName;
-                protected String inputHandlerClassName;
+                protected final String viewClassName;
+                protected final String inputHandlerClassName;
                 protected View view;
                 protected ViewInputHandler viewInputHandler;
 
@@ -73,29 +73,29 @@ public class ViewSwitch extends ApplicationTemplate
             {
             }
 
-            public ViewerClassMap classNameList = new ViewerClassMap();
+            public final ViewerClassMap classNameList = new ViewerClassMap();
 
             // Orbit view class information
-            public ViewerClass orbitViewer = new ViewerClass(
+            public final ViewerClass orbitViewer = new ViewerClass(
                 "gov.nasa.worldwind.view.orbit.BasicOrbitView",
                 "gov.nasa.worldwind.view.orbit.OrbitViewInputHandler");
             // Fly viewer class information
-            public ViewerClass flyViewer = new ViewerClass(
+            public final ViewerClass flyViewer = new ViewerClass(
                 "gov.nasa.worldwind.view.firstperson.BasicFlyView",
                 "gov.nasa.worldwind.view.firstperson.FlyViewInputHandler");
 
             // Viewer class array used for loop that initializes the map.
-            ViewerClass[] viewerClasses =
+            final ViewerClass[] viewerClasses =
                 {
                     flyViewer,
                     orbitViewer
                 };
 
             // Viewer names for the combo box
-            String[] viewerNames = {"Fly", "Orbit"};
-            String currentName;
-            DefaultComboBoxModel viewerClassNames;
-            JComboBox viewList;
+            final String[] viewerNames = {"Fly", "Orbit"};
+            final String currentName;
+            final DefaultComboBoxModel viewerClassNames;
+            final JComboBox viewList;
 
             // The class currently being used.
             ViewerClass currentViewer = null;
@@ -232,42 +232,38 @@ public class ViewSwitch extends ApplicationTemplate
                 if (!event.getStage().equals(RenderingEvent.BEFORE_BUFFER_SWAP))
                     return;
 
-                EventQueue.invokeLater(new Runnable()
-                {
-                    public void run()
+                EventQueue.invokeLater(() -> {
+
+                    if (eventSource.getView() != null && eventSource.getView().getEyePosition() != null)
                     {
+                        Position newPos = eventSource.getView().getEyePosition();
 
-                        if (eventSource.getView() != null && eventSource.getView().getEyePosition() != null)
+                        if (newPos != null)
                         {
-                            Position newPos = eventSource.getView().getEyePosition();
+                            String las = makeAngleDescription("Lat", newPos.getLatitude());
+                            String los = makeAngleDescription("Lon", newPos.getLongitude());
+                            String heading = makeAngleDescription("Heading", eventSource.getView().getHeading());
+                            String pitch = makeAngleDescription("Pitch", eventSource.getView().getPitch());
 
-                            if (newPos != null)
-                            {
-                                String las = makeAngleDescription("Lat", newPos.getLatitude());
-                                String los = makeAngleDescription("Lon", newPos.getLongitude());
-                                String heading = makeAngleDescription("Heading", eventSource.getView().getHeading());
-                                String pitch = makeAngleDescription("Pitch", eventSource.getView().getPitch());
-
-                                latDisplay.setText(las);
-                                lonDisplay.setText(los);
-                                eleDisplay.setText(makeEyeAltitudeDescription(
-                                    newPos.getElevation()));
-                                headingDisplay.setText(heading);
-                                pitchDisplay.setText(pitch);
-                            }
-                            else
-                            {
-                                latDisplay.setText("");
-                                lonDisplay.setText(Logging.getMessage("term.OffGlobe"));
-                                eleDisplay.setText("");
-                                pitchDisplay.setText("");
-                                headingDisplay.setText("");
-                            }
+                            latDisplay.setText(las);
+                            lonDisplay.setText(los);
+                            eleDisplay.setText(makeEyeAltitudeDescription(
+                                newPos.getElevation()));
+                            headingDisplay.setText(heading);
+                            pitchDisplay.setText(pitch);
                         }
                         else
                         {
-                            eleDisplay.setText(Logging.getMessage("term.Altitude"));
+                            latDisplay.setText("");
+                            lonDisplay.setText(Logging.getMessage("term.OffGlobe"));
+                            eleDisplay.setText("");
+                            pitchDisplay.setText("");
+                            headingDisplay.setText("");
                         }
+                    }
+                    else
+                    {
+                        eleDisplay.setText(Logging.getMessage("term.Altitude"));
                     }
                 });
             }

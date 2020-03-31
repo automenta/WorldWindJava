@@ -43,15 +43,13 @@ public class GDAL
         if (gt[GDAL.GT_5_PIXEL_HEIGHT] > 0)
             gt[GDAL.GT_5_PIXEL_HEIGHT] = -gt[GDAL.GT_5_PIXEL_HEIGHT];
 
-        java.awt.geom.Point2D[] corners = new java.awt.geom.Point2D[]
+        return new Point2D[]
             {
                 getGeoPointForRasterPoint(gt, 0, height),
                 getGeoPointForRasterPoint(gt, width, height),
                 getGeoPointForRasterPoint(gt, width, 0),
                 getGeoPointForRasterPoint(gt, 0, 0)
             };
-
-        return corners;
     }
 
     public static java.awt.geom.Point2D getGeoPointForRasterPoint(double[] gt, int x, int y)
@@ -158,10 +156,10 @@ public class GDAL
 
                     if (null != point)
                     {
-                        minx = (point[0] < minx) ? point[0] : minx;
-                        maxx = (point[0] > maxx) ? point[0] : maxx;
-                        miny = (point[1] < miny) ? point[1] : miny;
-                        maxy = (point[1] > maxy) ? point[1] : maxy;
+                        minx = Math.min(point[0], minx);
+                        maxx = Math.max(point[0], maxx);
+                        miny = Math.min(point[1], miny);
+                        maxy = Math.max(point[1], maxy);
                     }
                 }
                 bbox = Sector.fromDegrees(miny, maxy, minx, maxx);
@@ -255,10 +253,10 @@ public class GDAL
                 double[] point = ct.TransformPoint(ll.getLongitude().degrees, ll.getLatitude().degrees);
                 if (null != point)
                 {
-                    minX = (point[0] < minX) ? point[0] : minX;
-                    maxX = (point[0] > maxX) ? point[0] : maxX;
-                    minY = (point[1] < minY) ? point[1] : minY;
-                    maxY = (point[1] > maxY) ? point[1] : maxY;
+                    minX = Math.min(point[0], minX);
+                    maxX = Math.max(point[0], maxX);
+                    minY = Math.min(point[1], minY);
+                    maxY = Math.max(point[1], maxY);
                 }
             }
             this.makeCorners(minY, maxY, minX, maxX);
@@ -297,7 +295,7 @@ public class GDAL
         @Override
         public String toString()
         {
-            StringBuffer sb = new StringBuffer("Area { ");
+            StringBuilder sb = new StringBuilder("Area { ");
             for (java.awt.geom.Point2D corner : this.corners)
             {
                 sb.append('(').append(corner.getX()).append(',').append(corner.getY()).append(") ");
@@ -506,7 +504,7 @@ public class GDAL
         double min = Double.MAX_VALUE;
         for (java.awt.geom.Point2D point : points)
         {
-            min = (point.getX() < min) ? point.getX() : min;
+            min = Math.min(point.getX(), min);
         }
 
         return min;
@@ -524,7 +522,7 @@ public class GDAL
         double max = -Double.MAX_VALUE;
         for (java.awt.geom.Point2D point : points)
         {
-            max = (point.getX() > max) ? point.getX() : max;
+            max = Math.max(point.getX(), max);
         }
 
         return max;
@@ -542,7 +540,7 @@ public class GDAL
         double min = Double.MAX_VALUE;
         for (java.awt.geom.Point2D point : points)
         {
-            min = (point.getY() < min) ? point.getY() : min;
+            min = Math.min(point.getY(), min);
         }
 
         return min;
@@ -560,7 +558,7 @@ public class GDAL
         double max = -Double.MAX_VALUE;
         for (java.awt.geom.Point2D point : points)
         {
-            max = (point.getY() > max) ? point.getY() : max;
+            max = Math.max(point.getY(), max);
         }
 
         return max;

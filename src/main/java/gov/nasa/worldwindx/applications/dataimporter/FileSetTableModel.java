@@ -25,14 +25,8 @@ public class FileSetTableModel extends AbstractTableModel implements PropertyCha
     protected static final String[] columnTitles =
         new String[]{"Key", "Preview", "Dataset Name", "Scale", "Type", "Files"};
 
-    protected Set<FileSet> fileSets = new TreeSet<FileSet>(new Comparator<FileSet>()
-    {
-        @Override
-        public int compare(FileSet fileSet, FileSet fileSet1)
-        {
-            return fileSet.getName().compareTo(fileSet1.getName());
-        }
-    });
+    protected final Set<FileSet> fileSets = new TreeSet<>(
+        Comparator.comparing(FileSet::getName));
 
     public FileSetTableModel(FileSetMap fileSetMap)
     {

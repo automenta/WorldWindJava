@@ -311,7 +311,7 @@ public class GeotiffWriter
                 ColorModel cm = image.getColorModel();
                 SampleModel sm = image.getSampleModel();
 
-                StringBuffer sb = new StringBuffer(Logging.getMessage("GeotiffWriter.UnsupportedType", type));
+                StringBuilder sb = new StringBuilder(Logging.getMessage("GeotiffWriter.UnsupportedType", type));
 
                 sb.append("\n");
                 sb.append("NumBands=").append(sm.getNumBands()).append("\n");
@@ -359,7 +359,7 @@ public class GeotiffWriter
 
         // write out values for the tiff tags and build up the IFD. These are supposed to be sorted; for now
         // do this manually here.
-        ArrayList<TiffIFDEntry> ifds = new ArrayList<TiffIFDEntry>(10);
+        ArrayList<TiffIFDEntry> ifds = new ArrayList<>(10);
 
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_WIDTH, Tiff.Type.LONG, 1, numCols));
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_LENGTH, Tiff.Type.LONG, 1, numRows));
@@ -461,7 +461,7 @@ public class GeotiffWriter
 
         // write out values for the tiff tags and build up the IFD. These are supposed to be sorted; for now
         // do this manually here.
-        ArrayList<TiffIFDEntry> ifds = new ArrayList<TiffIFDEntry>(10);
+        ArrayList<TiffIFDEntry> ifds = new ArrayList<>(10);
 
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_WIDTH, Tiff.Type.LONG, 1, numCols));
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_LENGTH, Tiff.Type.LONG, 1, numRows));
@@ -625,7 +625,7 @@ public class GeotiffWriter
                     ? params.getValue(AVKey.MISSING_DATA_SIGNAL)
                     : params.getValue(AVKey.MISSING_DATA_REPLACEMENT);
 
-                String value = "" + nodata + "\0";
+                String value = nodata + "\0";
                 byte[] bytes = value.getBytes();
                 this.theChannel.write(ByteBuffer.wrap(bytes));
                 ifds.add(new TiffIFDEntry(GeoTiff.Tag.GDAL_NODATA, Tiff.Type.ASCII, bytes.length, offset));
@@ -1268,7 +1268,7 @@ public class GeotiffWriter
 
         // write out values for the tiff tags and build up the IFD. These are supposed to be sorted; for now
         // do this manually here.
-        ArrayList<TiffIFDEntry> ifds = new ArrayList<TiffIFDEntry>(10);
+        ArrayList<TiffIFDEntry> ifds = new ArrayList<>(10);
 
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_WIDTH, Tiff.Type.LONG, 1, numCols));
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_LENGTH, Tiff.Type.LONG, 1, numRows));

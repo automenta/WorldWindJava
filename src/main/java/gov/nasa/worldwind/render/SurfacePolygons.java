@@ -33,7 +33,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
     protected String windingRule = AVKey.CLOCKWISE;
     protected boolean needsInteriorTessellation = true;
     protected WWTexture texture;
-    protected Object interiorDisplayListCacheKey = new Object();
+    protected final Object interiorDisplayListCacheKey = new Object();
 
     public SurfacePolygons(CompoundVecBuffer buffer)
     {
@@ -393,7 +393,7 @@ public class SurfacePolygons extends SurfacePolylines // TODO: Review
     protected List<double[]> computeDateLineCrossingPoints(VecBuffer vecBuffer)
     {
         // Shapes that include a pole will yield an odd number of points
-        List<double[]> list = new ArrayList<double[]>();
+        List<double[]> list = new ArrayList<>();
         Iterable<double[]> iterable = vecBuffer.getCoords(3);
         double[] previousPoint = null;
         for (double[] coords : iterable)

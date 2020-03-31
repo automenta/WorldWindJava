@@ -18,7 +18,6 @@ import gov.nasa.worldwind.util.Logging;
 import javax.xml.stream.*;
 import java.awt.*;
 import java.awt.image.*;
-import java.io.IOException;
 import java.nio.*;
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class AntennaModel extends AbstractShape
     protected int nPhiIntervals;
     protected WWTexture texture;
 
-    protected Interpolator2D interpolator;
+    protected final Interpolator2D interpolator;
     protected Position position = Position.ZERO;
     protected Angle azimuth;
     protected Angle elevationAngle;
@@ -414,8 +413,8 @@ public class AntennaModel extends AbstractShape
         double yMax = -Double.MAX_VALUE;
         double zMax = -Double.MAX_VALUE;
 
-        double dTheta = 180 / this.nThetaIntervals;
-        double dPhi = 360 / this.nPhiIntervals;
+        double dTheta = 180.0 / this.nThetaIntervals;
+        double dPhi = 360.0 / this.nPhiIntervals;
 
         for (int it = 0; it <= this.nThetaIntervals; it++)
         {
@@ -633,7 +632,7 @@ public class AntennaModel extends AbstractShape
     }
 
     @Override
-    public List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException
+    public List<Intersection> intersect(Line line, Terrain terrain)
     {
         return null;
     }
@@ -645,7 +644,7 @@ public class AntennaModel extends AbstractShape
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void doExportAsKML(XMLStreamWriter xmlWriter)
     {
         throw new UnsupportedOperationException("KML output not supported for AntennaModel");
     }

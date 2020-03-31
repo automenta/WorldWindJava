@@ -28,8 +28,8 @@ import java.util.*;
  */
 public class FileSetHighlighter implements ListSelectionListener, SelectListener, PropertyChangeListener
 {
-    protected FileSetPanel fileSetPanel;
-    protected WorldWindow wwd;
+    protected final FileSetPanel fileSetPanel;
+    protected final WorldWindow wwd;
 
     public FileSetHighlighter(WorldWindow wwd, FileSetPanel panel)
     {
@@ -51,7 +51,7 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         this.handleSelection(this.fileSetPanel.getSelectedFileSets());
     }
 
-    List<FileSet> currentlyHighlightedSets = new ArrayList<FileSet>();
+    final List<FileSet> currentlyHighlightedSets = new ArrayList<>();
 
     protected void handleSelection(List<FileSet> selectedFileSets)
     {
@@ -136,15 +136,15 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         Object[] sectors = fileSet.getSectorList();
 
         // Add a Path for each sector in the file set.
-        for (int i = 0; i < sectors.length; i++)
+        for (Object o : sectors)
         {
             BasicShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineMaterial(new Material(fileSet.getColor()));
             attrs.setOutlineWidth(2);
 
-            Sector sector = (Sector) sectors[i];
+            Sector sector = (Sector) o;
             List<LatLon> locations = sector.asList();
-            List<Position> positions = new ArrayList<Position>(5);
+            List<Position> positions = new ArrayList<>(5);
             for (LatLon location : locations)
             {
                 positions.add(new Position(location, 0));
@@ -217,12 +217,6 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
 
         final FileSet fileSet = (FileSet) event.getSource();
 
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                addImage(fileSet);
-            }
-        });
+        SwingUtilities.invokeLater(() -> addImage(fileSet));
     }
 }

@@ -23,7 +23,7 @@ public class DatumTransformation
     private final static double Clarke1866_EQUATORIAL_RADIUS = 6378206.4;   // ellipsoid equatorial getRadius, in meters
     private final static double Clarke1866_POLAR_RADIUS = 6356583.8;        // ellipsoid polar getRadius, in meters
     private final static double Clarke1866_ES = 0.00676865799729;           // eccentricity squared, semi-major axis
-    public static Globe CLARKE1866_GLOBE = new EllipsoidalGlobe(Clarke1866_EQUATORIAL_RADIUS, Clarke1866_POLAR_RADIUS,
+    public static final Globe CLARKE1866_GLOBE = new EllipsoidalGlobe(Clarke1866_EQUATORIAL_RADIUS, Clarke1866_POLAR_RADIUS,
         Clarke1866_ES,
         EllipsoidalGlobe.makeElevationModel(AVKey.EARTH_ELEVATION_MODEL_CONFIG_FILE,
             "config/Earth/EarthElevations2.xml"));

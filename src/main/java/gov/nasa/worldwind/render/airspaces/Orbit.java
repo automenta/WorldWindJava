@@ -111,7 +111,7 @@ public class Orbit extends AbstractAirspace
 
     private void makeDefaultDetailLevels()
     {
-        List<DetailLevel> levels = new ArrayList<DetailLevel>();
+        List<DetailLevel> levels = new ArrayList<>();
         double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
 
         DetailLevel level;
@@ -283,7 +283,7 @@ public class Orbit extends AbstractAirspace
         LatLon[] locations = gb.makeLongDiskLocations(globe, center[0], center[1], 0, radius,
             MINIMAL_GEOMETRY_ARC_SLICES, MINIMAL_GEOMETRY_LENGTH_SLICES, MINIMAL_GEOMETRY_LOOPS);
 
-        ArrayList<Vec4> points = new ArrayList<Vec4>();
+        ArrayList<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, Arrays.asList(locations), points);
 
         return points;
@@ -518,23 +518,23 @@ public class Orbit extends AbstractAirspace
             DetailLevel level = this.computeDetailLevel(dc);
 
             Object o = level.getValue(ARC_SLICES);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 arcSlices = (Integer) o;
 
             o = level.getValue(LENGTH_SLICES);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 lengthSlices = (Integer) o;
 
             o = level.getValue(STACKS);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 stacks = (Integer) o;
 
             o = level.getValue(LOOPS);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 loops = (Integer) o;
 
             o = level.getValue(DISABLE_TERRAIN_CONFORMANCE);
-            if (o != null && o instanceof Boolean && ((Boolean) o))
+            if (o instanceof Boolean && ((Boolean) o))
                 terrainConformant[0] = terrainConformant[1] = false;
         }
 

@@ -25,7 +25,8 @@ public class GeotiffMetaData extends IIOMetadata {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void mergeTree(String formatName, Node root) throws IIOInvalidTreeException {
+    public void mergeTree(String formatName, Node root)
+    {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

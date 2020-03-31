@@ -201,14 +201,7 @@ public class Placemarks extends ApplicationTemplate
 
             // Create a placemark that uses a 2525C tactical symbol. The symbol is downloaded from the internet on a
             // separate thread.
-            WorldWind.getTaskService().addTask(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    createTacticalSymbolPointPlacemark(layer);
-                }
-            });
+            WorldWind.getTaskService().addTask(() -> createTacticalSymbolPointPlacemark(layer));
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
@@ -233,41 +226,36 @@ public class Placemarks extends ApplicationTemplate
         final BufferedImage highlightImage = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
 
         // Add the placemark to WorldWind on the event dispatch thread.
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
+        SwingUtilities.invokeLater(() -> {
+            try
             {
-                try
-                {
-                    // Create the placemark
-                    PointPlacemark pp = new PointPlacemark(Position.fromDegrees(30, -102, 0));
-                    pp.setLabelText("Tactical Symbol");
-                    pp.setLineEnabled(false);
-                    pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-                    pp.setEnableLabelPicking(true);
-                    pp.setAlwaysOnTop(true); // Set this flag just to show how to force the placemark to the top
+                // Create the placemark
+                PointPlacemark pp = new PointPlacemark(Position.fromDegrees(30, -102, 0));
+                pp.setLabelText("Tactical Symbol");
+                pp.setLineEnabled(false);
+                pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+                pp.setEnableLabelPicking(true);
+                pp.setAlwaysOnTop(true); // Set this flag just to show how to force the placemark to the top
 
-                    // Create and assign the placemark attributes.
-                    PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
-                    attrs.setImage(symbolImage);
-                    attrs.setImageColor(new Color(1f, 1f, 1f, 1f));
-                    attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
-                    attrs.setScale(0.5);
-                    pp.setAttributes(attrs);
+                // Create and assign the placemark attributes.
+                PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
+                attrs.setImage(symbolImage);
+                attrs.setImageColor(new Color(1f, 1f, 1f, 1f));
+                attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
+                attrs.setScale(0.5);
+                pp.setAttributes(attrs);
 
-                    // Create and assign the placemark's highlight attributes.
-                    PointPlacemarkAttributes highlightAttributes = new PointPlacemarkAttributes(attrs);
-                    highlightAttributes.setImage(highlightImage);
-                    pp.setHighlightAttributes(highlightAttributes);
+                // Create and assign the placemark's highlight attributes.
+                PointPlacemarkAttributes highlightAttributes = new PointPlacemarkAttributes(attrs);
+                highlightAttributes.setImage(highlightImage);
+                pp.setHighlightAttributes(highlightAttributes);
 
-                    // Add the placemark to the layer.
-                    layer.addRenderable(pp);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                // Add the placemark to the layer.
+                layer.addRenderable(pp);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
             }
         });
     }

@@ -8,7 +8,6 @@ package gov.nasa.worldwind.ogc.kml;
 
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import java.util.*;
 
@@ -20,7 +19,7 @@ import java.util.*;
  */
 public class KMLSchemaData extends KMLAbstractObject
 {
-    protected List<KMLSimpleData> simpleData = new ArrayList<KMLSimpleData>();
+    protected final List<KMLSimpleData> simpleData = new ArrayList<>();
 
     /**
      * Construct an instance.
@@ -34,7 +33,6 @@ public class KMLSchemaData extends KMLAbstractObject
 
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
     {
         if (o instanceof KMLSimpleData)
             this.addSimpleData((KMLSimpleData) o);

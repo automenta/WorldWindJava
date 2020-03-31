@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class KMLSurfaceImageImpl extends SurfaceImage implements KMLRenderable
 {
-    protected KMLGroundOverlay parent;
+    protected final KMLGroundOverlay parent;
 
     protected boolean attributesResolved;
 

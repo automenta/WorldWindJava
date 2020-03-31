@@ -29,11 +29,11 @@ import java.util.*;
 public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread
 {
     protected static final long AVG_TILE_SIZE = 8 * 1024;
-    protected int MAX_TILE_COUNT_PER_REGION = 200;
+    protected final int MAX_TILE_COUNT_PER_REGION = 200;
 
     protected final PlaceNameLayer layer;
     protected ArrayList<PlaceNameLayer.Tile> missingTiles;
-    protected long pollDelay = RETRIEVAL_SERVICE_POLL_DELAY;
+    protected final long pollDelay = RETRIEVAL_SERVICE_POLL_DELAY;
 
     /**
      * Constructs a downloader to retrieve placenames not currently available in the WorldWind file cache.
@@ -87,7 +87,7 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread
         try
         {
             // Cycle though placenameservices and find missing tiles
-            this.missingTiles = new ArrayList<PlaceNameLayer.Tile>();
+            this.missingTiles = new ArrayList<>();
             ArrayList<PlaceNameLayer.Tile> allMissingTiles = this.getMissingTilesInSector(this.sector);
 
             this.progress.setTotalCount(allMissingTiles.size());
@@ -230,9 +230,9 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread
         return tileCount;
     }
 
-    protected ArrayList<PlaceNameLayer.Tile> getMissingTilesInSector(Sector sector) throws InterruptedException
+    protected ArrayList<PlaceNameLayer.Tile> getMissingTilesInSector(Sector sector)
     {
-        ArrayList<PlaceNameLayer.Tile> allMissingTiles = new ArrayList<PlaceNameLayer.Tile>();
+        ArrayList<PlaceNameLayer.Tile> allMissingTiles = new ArrayList<>();
         int serviceCount = this.layer.getPlaceNameServiceSet().getServiceCount();
         for (int i = 0; i < serviceCount; i++)
         {
@@ -240,7 +240,7 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread
             if (service.getMaxDisplayDistance() > this.resolution)
             {
                 // get tiles in sector
-                ArrayList<PlaceNameLayer.Tile> baseTiles = new ArrayList<PlaceNameLayer.Tile>();
+                ArrayList<PlaceNameLayer.Tile> baseTiles = new ArrayList<>();
 
                 PlaceNameLayer.NavigationTile navTile = this.layer.navTiles.get(i);
                 // drill down into tiles to find bottom level navTiles visible
@@ -263,7 +263,7 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread
 
     protected List<PlaceNameLayer.NavigationTile> navTilesVisible(PlaceNameLayer.NavigationTile tile, Sector sector)
     {
-        ArrayList<PlaceNameLayer.NavigationTile> navList = new ArrayList<PlaceNameLayer.NavigationTile>();
+        ArrayList<PlaceNameLayer.NavigationTile> navList = new ArrayList<>();
         if (tile.navSector.intersects(sector))
         {
             if (tile.level > 0 && !tile.hasSubTiles())

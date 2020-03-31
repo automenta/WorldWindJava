@@ -149,11 +149,11 @@ public abstract class DialogAnnotationController implements ActionListener, Sele
     protected void updateCursor(SelectEvent e)
     {
         Object topObject = e.getTopObject();
-        if (topObject != null && topObject instanceof ButtonAnnotation)
+        if (topObject instanceof ButtonAnnotation)
         {
             this.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
         }
-        else if (topObject != null && topObject instanceof DialogAnnotation)
+        else if (topObject instanceof DialogAnnotation)
         {
             if (((DialogAnnotation) topObject).isBusy())
             {
@@ -189,7 +189,7 @@ public abstract class DialogAnnotationController implements ActionListener, Sele
             return;
 
         Object topObject = e.getTopObject();
-        if (topObject != null && topObject instanceof ButtonAnnotation)
+        if (topObject instanceof ButtonAnnotation)
         {
             this.showToolTip(e, (ButtonAnnotation) topObject);
         }

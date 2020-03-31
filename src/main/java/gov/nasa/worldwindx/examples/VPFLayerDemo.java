@@ -13,7 +13,6 @@ import gov.nasa.worldwind.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 
 /**
@@ -75,13 +74,7 @@ public class VPFLayerDemo extends ApplicationTemplate
         protected void makeControlPanel()
         {
             JButton button = new JButton("Open VPF Database");
-            button.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
-                {
-                    showOpenDialog();
-                }
-            });
+            button.addActionListener(actionEvent -> showOpenDialog());
 
             Box box = Box.createHorizontalBox();
             box.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30)); // top, left, bottom, right
@@ -93,7 +86,7 @@ public class VPFLayerDemo extends ApplicationTemplate
 
     public static class VPFFileFilter extends FileFilter
     {
-        protected VPFDatabaseFilter filter;
+        protected final VPFDatabaseFilter filter;
 
         public VPFFileFilter()
         {

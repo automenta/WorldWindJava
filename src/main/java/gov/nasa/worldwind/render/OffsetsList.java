@@ -16,11 +16,11 @@ import java.util.*;
  */
 public class OffsetsList
 {
-    protected Map<Integer, float[]> offsets;
+    protected final Map<Integer, float[]> offsets;
 
     public OffsetsList()
     {
-        offsets = new HashMap<Integer, float[]>();
+        offsets = new HashMap<>();
 
         // set default values to zero offset
         float[] zeroOffset = {0.0f, 0.0f};

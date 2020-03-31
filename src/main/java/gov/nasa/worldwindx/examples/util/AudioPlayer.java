@@ -20,15 +20,9 @@ public class AudioPlayer
     private javax.sound.sampled.Clip clip;
     private String status = AVKey.STOP;
     protected long pausedMicrosecondPosition;
-    protected javax.swing.event.EventListenerList listenerList = new javax.swing.event.EventListenerList();
+    protected final javax.swing.event.EventListenerList listenerList = new javax.swing.event.EventListenerList();
     
-    protected LineListener lineListener = new LineListener()
-    {
-        public void update(LineEvent e)
-        {
-            onLineEvent(e);
-        }
-    };
+    protected final LineListener lineListener = this::onLineEvent;
 
     public AudioPlayer()
     {
@@ -187,13 +181,7 @@ public class AudioPlayer
     {
         // This event comes from the Java Sound Dispatch Thread. Synchronize access to this class by processing the
         // event on the AWT Event Thread.
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                processLineEvent(e);
-            }
-        });
+        java.awt.EventQueue.invokeLater(() -> processLineEvent(e));
     }
 
     @SuppressWarnings({"StringEquality"})

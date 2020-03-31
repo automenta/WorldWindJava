@@ -47,7 +47,7 @@ public class MinimumSafeDistanceZones extends AbstractMilStd2525TacticalGraphic 
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.MOBSU_CBRN_MSDZ);
+        return Collections.singletonList(TacGrpSidc.MOBSU_CBRN_MSDZ);
     }
 
     /**
@@ -218,7 +218,7 @@ public class MinimumSafeDistanceZones extends AbstractMilStd2525TacticalGraphic 
         if (this.positions == null)
             return;
 
-        this.rings = new ArrayList<SurfaceCircle>();
+        this.rings = new ArrayList<>();
 
         Iterator<? extends Position> iterator = this.positions.iterator();
 

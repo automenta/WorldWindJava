@@ -29,8 +29,8 @@ abstract public class OGCCapabilityInformation extends AbstractXMLEventParser
     protected QName EXTENDED_CAPABILITIES;
     protected QName USER_DEFINED_SYMBOLIZATION;
 
-    protected Set<String> exceptionFormats = new HashSet<String>();
-    protected Set<OGCRequestDescription> requestDescriptions = new HashSet<OGCRequestDescription>();
+    protected Set<String> exceptionFormats = new HashSet<>();
+    protected Set<OGCRequestDescription> requestDescriptions = new HashSet<>();
     protected Map<String, String> userDefinedSymbolization;
 
     public OGCCapabilityInformation(String namespaceURI)
@@ -72,7 +72,7 @@ abstract public class OGCCapabilityInformation extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof StringSetXMLEventParser)
+                if (o instanceof StringSetXMLEventParser)
                     this.setExceptionFormats(((StringSetXMLEventParser) o).getStrings());
             }
         }
@@ -82,7 +82,7 @@ abstract public class OGCCapabilityInformation extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OGCRequestDescription)
+                if (o instanceof OGCRequestDescription)
                     this.requestDescriptions.add((OGCRequestDescription) o);
             }
         }
@@ -116,7 +116,7 @@ abstract public class OGCCapabilityInformation extends AbstractXMLEventParser
         // Override in subclass to handle extended capabilities.
     }
 
-    protected void parseUserDefinedSymbolization(XMLEvent event) throws XMLStreamException
+    protected void parseUserDefinedSymbolization(XMLEvent event)
     {
         Iterator iter = event.asStartElement().getAttributes();
         if (iter == null)
@@ -168,7 +168,7 @@ abstract public class OGCCapabilityInformation extends AbstractXMLEventParser
     protected void addUserDefinedSymbolization(String key, String value)
     {
         if (this.userDefinedSymbolization == null)
-            this.userDefinedSymbolization = new HashMap<String, String>();
+            this.userDefinedSymbolization = new HashMap<>();
 
         this.userDefinedSymbolization.put(key, value);
     }

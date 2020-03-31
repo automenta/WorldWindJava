@@ -93,9 +93,9 @@ public class EGM96
     //    of centimeters. While retrieving the Integer*2 values on file, divide by
     //    100 and this will produce a geoid height in meters.
 
-    protected static Angle INTERVAL = Angle.fromDegrees(15d / 60d); // 15' angle delta
-    protected static int NUM_ROWS = 721;
-    protected static int NUM_COLS = 1440;
+    protected static final Angle INTERVAL = Angle.fromDegrees(15d / 60d); // 15' angle delta
+    protected static final int NUM_ROWS = 721;
+    protected static final int NUM_COLS = 1440;
 
     public double getOffset(Angle latitude, Angle longitude)
     {

@@ -34,7 +34,7 @@ public class AttackRotaryWing extends Aviation
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_ATK);
+        return Collections.singletonList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_ATK);
     }
 
     /**

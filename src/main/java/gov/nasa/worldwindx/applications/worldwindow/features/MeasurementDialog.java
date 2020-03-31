@@ -12,9 +12,7 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwindx.applications.worldwindow.core.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.*;
 
 /**
@@ -63,14 +61,10 @@ public class MeasurementDialog extends AbstractFeatureDialog
         this.tabbedPane.setTitleAt(0, "+");
         this.tabbedPane.setToolTipTextAt(0, "Create measurement");
 
-        this.tabbedPane.addChangeListener(new ChangeListener()
-        {
-            public void stateChanged(ChangeEvent changeEvent)
+        this.tabbedPane.addChangeListener(changeEvent -> {
+            if (tabbedPane.getSelectedIndex() == 0)
             {
-                if (tabbedPane.getSelectedIndex() == 0)
-                {
-                    addNewPanel(tabbedPane); // Add new panel when '+' is selected
-                }
+                addNewPanel(tabbedPane); // Add new panel when '+' is selected
             }
         });
 
@@ -90,13 +84,9 @@ public class MeasurementDialog extends AbstractFeatureDialog
         deleteButton.setOpaque(false);
         deleteButton.setBackground(new Color(0, 0, 0, 0));
         deleteButton.setBorderPainted(false);
-        deleteButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                deleteCurrentPanel();
-                controller.redraw();
-            }
+        deleteButton.addActionListener(e -> {
+            deleteCurrentPanel();
+            controller.redraw();
         });
         deleteButton.setEnabled(true);
         this.insertLeftDialogComponent(deleteButton);
@@ -159,29 +149,25 @@ public class MeasurementDialog extends AbstractFeatureDialog
         mp.setLineColor(color);
         mp.setFillColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 32));
 
-        tabPane.addTab("" + ++this.labelSequence, makeColorCircle(color), mp.getJPanel());
+        tabPane.addTab(String.valueOf(++this.labelSequence), makeColorCircle(color), mp.getJPanel());
         tabPane.setSelectedIndex(tabPane.getTabCount() - 1);
         tabPane.setToolTipTextAt(tabbedPane.getSelectedIndex(), "Select measurement");
 
-        this.controller.getWWd().addSelectListener(new SelectListener()
-        {
-            public void selected(SelectEvent event)
+        this.controller.getWWd().addSelectListener(event -> {
+            if (event.getEventAction().equals(SelectEvent.LEFT_CLICK))
             {
-                if (event.getEventAction().equals(SelectEvent.LEFT_CLICK))
+                if (mp.getShape() == null || mp.getShape() != event.getTopObject())
+                    return;
+
+                for (Component c : tabbedPane.getComponents())
                 {
-                    if (mp.getShape() == null || mp.getShape() != event.getTopObject())
-                        return;
+                    if (!(c instanceof JComponent))
+                        continue;
 
-                    for (Component c : tabbedPane.getComponents())
+                    Object o = ((JComponent) c).getClientProperty(Constants.FEATURE_OWNER_PROPERTY);
+                    if (o instanceof MeasurementPanel && o == mp)
                     {
-                        if (!(c instanceof JComponent))
-                            continue;
-
-                        Object o = ((JComponent) c).getClientProperty(Constants.FEATURE_OWNER_PROPERTY);
-                        if (o instanceof MeasurementPanel && o == mp)
-                        {
-                            tabbedPane.setSelectedComponent(c);
-                        }
+                        tabbedPane.setSelectedComponent(c);
                     }
                 }
             }

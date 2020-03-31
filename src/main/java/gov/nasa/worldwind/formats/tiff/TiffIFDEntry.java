@@ -7,7 +7,6 @@ package gov.nasa.worldwind.formats.tiff;
 
 import gov.nasa.worldwind.util.Logging;
 
-import java.io.IOException;
 import java.nio.*;
 
 /**
@@ -46,7 +45,8 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
             return valOffset;
     }
 
-    public Double getAsDouble() throws IOException {
+    public Double getAsDouble()
+    {
         Double value = null;
 
         switch (this.type) {
@@ -207,7 +207,8 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
      *
      */
 
-    public double[] getDoubles() throws IOException {
+    public double[] getDoubles()
+    {
         if (this.type != Tiff.Type.DOUBLE) {
             String message = Logging.getMessage("GeotiffReader.InvalidType", "double", this.tag, this.type);
             Logging.logger().severe(message);
@@ -229,7 +230,8 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
         return array;
     }
 
-    public float[] getFloats() throws IOException {
+    public float[] getFloats()
+    {
         if (this.type != Tiff.Type.FLOAT) {
             String message = Logging.getMessage("GeotiffReader.InvalidType", "float", this.tag, this.type);
             Logging.logger().severe(message);
@@ -283,10 +285,10 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
     }
 
     // package visibility is intended...
-    int tag;
-    int type;
-    long count;
-    long valOffset;
+    final int tag;
+    final int type;
+    final long count;
+    final long valOffset;
 
     public int compareTo(TiffIFDEntry o) {
         final int BEFORE = -1;
@@ -297,12 +299,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
             return EQUAL;
 
         if (o != null) {
-            if (this.tag < o.tag)
-                return BEFORE;
-            else if (this.tag > o.tag)
-                return AFTER;
-            else
-                return EQUAL;
+            return Integer.compare(this.tag, o.tag);
         }
 
         return AFTER;

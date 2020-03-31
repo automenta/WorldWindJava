@@ -26,7 +26,7 @@ public class ElevationPlane extends Polygon
     protected WWTexture texture;
     private double imageSize = 500; // meter
 
-    protected OGLStackHandler osh = new OGLStackHandler();
+    protected final OGLStackHandler osh = new OGLStackHandler();
 
     public ElevationPlane()
     {

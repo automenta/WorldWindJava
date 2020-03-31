@@ -153,8 +153,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
     protected final WorldWindow wwd;
     protected MeasureToolController controller;
 
-    protected ArrayList<Position> positions = new ArrayList<>();
-    protected ArrayList<Renderable> controlPoints = new ArrayList<>();
+    protected final ArrayList<Position> positions = new ArrayList<>();
+    protected final ArrayList<Renderable> controlPoints = new ArrayList<>();
     protected RenderableLayer applicationLayer;
     protected CustomRenderableLayer layer;
     protected CustomRenderableLayer controlPointsLayer;
@@ -181,7 +181,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
     protected Rectangle2D.Double shapeRectangle = null;
     protected Position shapeCenterPosition = null;
     protected Angle shapeOrientation = null;
-    protected int shapeIntervals = 64;
+    protected final int shapeIntervals = 64;
 
     protected static class CustomRenderableLayer extends RenderableLayer implements PreRenderable, Renderable {
 
@@ -1501,14 +1501,12 @@ public class MeasureTool extends AVListImpl implements Disposable {
                     continue;
                 }
 
-                if (c.equals(NORTHEAST)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHEAST);
-                } else if (c.equals(SOUTHEAST)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHEAST);
-                } else if (c.equals(SOUTHWEST)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHWEST);
-                } else if (c.equals(NORTHWEST)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHWEST);
+                switch (c)
+                {
+                    case NORTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHEAST);
+                    case SOUTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHEAST);
+                    case SOUTHWEST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHWEST);
+                    case NORTHWEST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHWEST);
                 }
             }
         }
@@ -1520,14 +1518,12 @@ public class MeasureTool extends AVListImpl implements Disposable {
                     continue;
                 }
 
-                if (c.equals(NORTHEAST)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHWEST);
-                } else if (c.equals(SOUTHEAST)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHWEST);
-                } else if (c.equals(SOUTHWEST)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHEAST);
-                } else if (c.equals(NORTHWEST)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHEAST);
+                switch (c)
+                {
+                    case NORTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHWEST);
+                    case SOUTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHWEST);
+                    case SOUTHWEST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHEAST);
+                    case NORTHWEST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHEAST);
                 }
             }
         }
@@ -1577,6 +1573,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         switch (control) {
             case NORTH:
+            case NORTH_LEADER:
                 azimuth = Angle.ZERO;
                 break;
             case EAST:
@@ -1599,9 +1596,6 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 break;
             case NORTHWEST:
                 azimuth = Angle.fromRadians(Math.atan2(-width, height));
-                break;
-            case NORTH_LEADER:
-                azimuth = Angle.ZERO;
                 break;
             default:
                 break;
@@ -1899,7 +1893,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
     // *** Control points ***
     public static class ControlPoint extends GlobeAnnotation {
 
-        MeasureTool parent;
+        final MeasureTool parent;
 
         public ControlPoint(Position position, AnnotationAttributes attributes, MeasureTool parent) {
             super("", position, attributes);
@@ -1913,7 +1907,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     protected static class ControlPointWithLeader extends ControlPoint implements PreRenderable {
 
-        protected SurfacePolyline leaderLine;
+        protected final SurfacePolyline leaderLine;
 
         public ControlPointWithLeader(Position position, AnnotationAttributes controlPointAttributes,
                 ShapeAttributes leaderAttributes, MeasureTool parent) {

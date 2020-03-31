@@ -235,12 +235,7 @@ public class WWXML
         {
             return WWXML.createDocumentBuilder(isNamespaceAware).parse(inputStream);
         }
-        catch (SAXException e)
-        {
-            String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", inputStream);
-            throw new WWRuntimeException(message, e);
-        }
-        catch (IOException e)
+        catch (SAXException | IOException e)
         {
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", inputStream);
             throw new WWRuntimeException(message, e);
@@ -912,7 +907,7 @@ public class WWXML
         if (strings == null)
             return null;
 
-        ArrayList<String> sarl = new ArrayList<String>();
+        ArrayList<String> sarl = new ArrayList<>();
         for (String s : strings)
         {
             if (!sarl.contains(s))
@@ -1068,7 +1063,7 @@ public class WWXML
         if (elements == null)
             return null;
 
-        HashMap<String, Element> styles = new HashMap<String, Element>();
+        HashMap<String, Element> styles = new HashMap<>();
         for (Element e : elements)
         {
             String name = getText(e, uniqueTag, xpath);
@@ -2112,7 +2107,7 @@ public class WWXML
                 WWXML.appendText(el, "Link", link);
 
             Object imageSource = ((ScreenCreditImage) screenCredit).getImageSource();
-            if (imageSource != null && imageSource instanceof String)
+            if (imageSource instanceof String)
             {
                 WWXML.appendText(el, "FileName", (String) imageSource);
             }
@@ -3239,7 +3234,7 @@ public class WWXML
         }
 
         Object o = params.getValue(paramKey);
-        if (o != null && o instanceof String[])
+        if (o instanceof String[])
         {
             String[] strings = (String[]) o;
             if (strings.length > 0)
@@ -3407,7 +3402,7 @@ public class WWXML
         }
 
         Object o = params.getValue(paramKey);
-        if (o != null && o instanceof Boolean)
+        if (o instanceof Boolean)
         {
             appendBoolean(context, path, (Boolean) o);
         }
@@ -3448,7 +3443,7 @@ public class WWXML
         }
 
         Object o = params.getValue(paramKey);
-        if (o != null && o instanceof LatLon)
+        if (o instanceof LatLon)
         {
             appendLatLon(context, path, (LatLon) o);
         }
@@ -3489,7 +3484,7 @@ public class WWXML
         }
 
         Object o = params.getValue(paramKey);
-        if (o != null && o instanceof Sector)
+        if (o instanceof Sector)
         {
             appendSector(context, path, (Sector) o);
         }
@@ -3531,7 +3526,7 @@ public class WWXML
         }
 
         Object o = params.getValue(paramKey);
-        if (o != null && o instanceof LevelSet.SectorResolution[])
+        if (o instanceof LevelSet.SectorResolution[])
         {
             LevelSet.SectorResolution[] srs = (LevelSet.SectorResolution[]) o;
 
@@ -3581,7 +3576,7 @@ public class WWXML
         }
 
         Object o = params.getValue(paramKey);
-        if (o != null && o instanceof Number)
+        if (o instanceof Number)
         {
             Number num = (Number) o;
             appendTimeInMillis(context, path, num.longValue());
@@ -3623,7 +3618,7 @@ public class WWXML
         }
 
         Object o = params.getValue(paramKey);
-        if (o != null && o instanceof ScreenCredit)
+        if (o instanceof ScreenCredit)
         {
             appendScreenCredit(context, path, (ScreenCredit) o);
         }
@@ -3639,11 +3634,11 @@ public class WWXML
         }
 
         gms = gms.trim();
-        int qMarkIndex = gms.indexOf("?");
+        int qMarkIndex = gms.indexOf('?');
         if (qMarkIndex < 0)
             gms += "?";
         else if (qMarkIndex != gms.length() - 1)
-            if (gms.lastIndexOf("&") != gms.length() - 1)
+            if (gms.lastIndexOf('&') != gms.length() - 1)
                 gms += "&";
 
         return gms;
@@ -3735,14 +3730,17 @@ public class WWXML
             throw new IllegalArgumentException(message);
         }
 
-        if (s.equals("Float32"))
-            return AVKey.FLOAT32;
-        else if (s.equals("Int32"))
-            return AVKey.INT32;
-        else if (s.equals("Int16"))
-            return AVKey.INT16;
-        else if (s.equals("Int8"))
-            return AVKey.INT8;
+        switch (s)
+        {
+            case "Float32":
+                return AVKey.FLOAT32;
+            case "Int32":
+                return AVKey.INT32;
+            case "Int16":
+                return AVKey.INT16;
+            case "Int8":
+                return AVKey.INT8;
+        }
 
         // Warn that the data type is unrecognized.
         String message = Logging.getMessage("generic.UnrecognizedDataType", s);
@@ -3772,14 +3770,17 @@ public class WWXML
             throw new IllegalArgumentException(message);
         }
 
-        if (dataType.equals(AVKey.FLOAT32))
-            return "Float32";
-        else if (dataType.equals(AVKey.INT32))
-            return "Int32";
-        else if (dataType.equals(AVKey.INT16))
-            return "Int16";
-        else if (dataType.equals(AVKey.INT8))
-            return "Int8";
+        switch (dataType)
+        {
+            case AVKey.FLOAT32:
+                return "Float32";
+            case AVKey.INT32:
+                return "Int32";
+            case AVKey.INT16:
+                return "Int16";
+            case AVKey.INT8:
+                return "Int8";
+        }
 
         // Warn that the data type is unrecognized.
         String message = Logging.getMessage("generic.UnrecognizedDataType", dataType);
@@ -3888,12 +3889,7 @@ public class WWXML
                     ((AVList) parent).setValue(propertyName, propertyValue);
                 continue; // This is a benign exception; not all properties have set methods.
             }
-            catch (InvocationTargetException e)
-            {
-                String message = Logging.getMessage("generic.ExceptionInvokingPropertyMethod", propertyName, e);
-                Logging.logger().warning(message);
-            }
-            catch (IllegalAccessException e)
+            catch (InvocationTargetException | IllegalAccessException e)
             {
                 String message = Logging.getMessage("generic.ExceptionInvokingPropertyMethod", propertyName, e);
                 Logging.logger().warning(message);

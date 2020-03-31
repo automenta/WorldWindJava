@@ -256,8 +256,8 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer
 
     protected static class ComposeImageTile extends TextureTile
     {
-        protected int width;
-        protected int height;
+        protected final int width;
+        protected final int height;
         protected File file;
 
         public ComposeImageTile(Sector sector, String mimeType, Level level, int width, int height)

@@ -20,7 +20,6 @@ import gov.nasa.worldwind.util.dashboard.DashboardController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.*;
 import java.util.logging.Level;
@@ -331,13 +330,9 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
             {
                 if (this.redrawTimer == null)
                 {
-                    this.redrawTimer = new Timer(redrawDelay, new ActionListener()
-                    {
-                        public void actionPerformed(ActionEvent actionEvent)
-                        {
-                            redraw();
-                            redrawTimer = null;
-                        }
+                    this.redrawTimer = new Timer(redrawDelay, actionEvent -> {
+                        redraw();
+                        redrawTimer = null;
                     });
                     redrawTimer.setRepeats(false);
                     redrawTimer.start();
@@ -500,20 +495,10 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
      */
     protected void scheduleViewStopTask(long delay)
     {
-        Runnable viewStoppedTask = new Runnable()
-        {
-            public void run()
-            {
-                // Call onMessage on the EDT with a VIEW_STOP message
-                EventQueue.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        WorldWindowGLAutoDrawable.this.onMessage(
-                            new Message(View.VIEW_STOPPED, WorldWindowGLAutoDrawable.this));
-                    }
-                });
-            }
+        Runnable viewStoppedTask = () -> {
+            // Call onMessage on the EDT with a VIEW_STOP message
+            EventQueue.invokeLater(() -> WorldWindowGLAutoDrawable.this.onMessage(
+                new Message(View.VIEW_STOPPED, WorldWindowGLAutoDrawable.this)));
         };
 
         // Cancel the previous view stop task

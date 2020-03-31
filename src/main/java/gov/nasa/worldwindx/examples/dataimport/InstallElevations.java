@@ -52,15 +52,11 @@ public class InstallElevations extends ApplicationTemplate
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
             // Install the elevations on a thread other than the event-dispatch thread to avoid freezing the UI.
-            Thread t = new Thread(new Runnable()
-            {
-                public void run()
-                {
-                    installElevations();
+            Thread t = new Thread(() -> {
+                installElevations();
 
-                    // Restore the cursor.
-                    setCursor(Cursor.getDefaultCursor());
-                }
+                // Restore the cursor.
+                setCursor(Cursor.getDefaultCursor());
             });
 
             t.start();
@@ -80,20 +76,16 @@ public class InstallElevations extends ApplicationTemplate
                 return;
 
             // Add the new elevation model to the current (default) one. Must do it on the event dispatch thread.
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    CompoundElevationModel model
-                        = (CompoundElevationModel) AppFrame.this.getWwd().getModel().getGlobe().getElevationModel();
-                    model.addElevationModel(em);
+            SwingUtilities.invokeLater(() -> {
+                CompoundElevationModel model
+                    = (CompoundElevationModel) AppFrame.this.getWwd().getModel().getGlobe().getElevationModel();
+                model.addElevationModel(em);
 
-                    // Set the view to look at the installed elevations. Get the location from the elevation model's
-                    // construction parameters.
-                    AVList params = (AVList) em.getValue(AVKey.CONSTRUCTION_PARAMETERS);
-                    Sector sector = (Sector) params.getValue(AVKey.SECTOR);
-                    ExampleUtil.goTo(getWwd(), sector);
-                }
+                // Set the view to look at the installed elevations. Get the location from the elevation model's
+                // construction parameters.
+                AVList params = (AVList) em.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+                Sector sector = (Sector) params.getValue(AVKey.SECTOR);
+                ExampleUtil.goTo(getWwd(), sector);
             });
         }
 
@@ -138,7 +130,7 @@ public class InstallElevations extends ApplicationTemplate
                 return null;
 
             Object o = results.iterator().next();
-            if (o == null || !(o instanceof Document))
+            if (!(o instanceof Document))
                 return null;
 
             // Construct an ElevationModel by passing the data configuration document to an ElevationModelFactory.

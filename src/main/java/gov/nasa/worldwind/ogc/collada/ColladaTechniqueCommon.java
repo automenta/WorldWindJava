@@ -17,7 +17,7 @@ import java.util.*;
 public class ColladaTechniqueCommon extends ColladaAbstractObject
 {
     /** Materials contained by this technique. */
-    protected List<ColladaInstanceMaterial> materials = new ArrayList<ColladaInstanceMaterial>();
+    protected final List<ColladaInstanceMaterial> materials = new ArrayList<>();
 
     /**
      * Construct an instance.

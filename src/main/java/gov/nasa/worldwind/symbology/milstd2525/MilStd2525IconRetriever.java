@@ -78,13 +78,13 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
     // Static maps and sets providing fast access to attributes about a symbol ID. These data structures are populated
     // in a static block at the bottom of this class.
-    protected static final Map<String, String> schemePathMap = new HashMap<String, String>();
-    protected static final Map<String, Color> fillColorMap = new HashMap<String, Color>();
-    protected static final Map<String, Color> frameColorMap = new HashMap<String, Color>();
-    protected static final Map<String, Color> iconColorMap = new HashMap<String, Color>();
-    protected static final Set<String> unfilledIconMap = new HashSet<String>();
-    protected static final Set<String> unframedIconMap = new HashSet<String>();
-    protected static final Set<String> emsEquipment = new HashSet<String>();
+    protected static final Map<String, String> schemePathMap = new HashMap<>();
+    protected static final Map<String, Color> fillColorMap = new HashMap<>();
+    protected static final Map<String, Color> frameColorMap = new HashMap<>();
+    protected static final Map<String, Color> iconColorMap = new HashMap<>();
+    protected static final Set<String> unfilledIconMap = new HashSet<>();
+    protected static final Set<String> unframedIconMap = new HashSet<>();
+    protected static final Set<String> emsEquipment = new HashSet<>();
 
     /**
      * Create a new retriever that will retrieve icons from the specified location. The retrieval path may be a file URL
@@ -197,7 +197,6 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
     protected BufferedImage drawCircle(SymbolCode symbolCode, AVList params, BufferedImage dest)
     {
-        Color frameColor = DEFAULT_FRAME_COLOR;
         Color fillColor = this.mustDrawFill(symbolCode, params) ? this.getFillColor(symbolCode, params)
             : DEFAULT_ICON_COLOR;
 
@@ -225,7 +224,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             // Draw the circle's border. Always draw the circle with a solid border, even if the status is not Present.
             // MIL-STD-2525C section 5.3.1.4 (pg. 18) states: "Planned status cannot be shown if the symbol is [...]
             // displayed as a dot."
-            g.setColor(frameColor);
+            g.setColor(DEFAULT_FRAME_COLOR);
             g.setStroke(new BasicStroke(CIRCLE_LINE_WIDTH));
             g.draw(circle);
         }
@@ -339,7 +338,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         {
             // When the frame is enabled, we draw the icon in either its specified custom color or the default color. In
             // this case the app-specified color override (if any) is applied to the frame, and does apply to the icon.
-            return iconColorMap.containsKey(maskedCode) ? iconColorMap.get(maskedCode) : DEFAULT_ICON_COLOR;
+            return iconColorMap.getOrDefault(maskedCode, DEFAULT_ICON_COLOR);
         }
         else if (this.mustDrawFill(symbolCode, params))
         {
@@ -352,7 +351,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         {
             // When the frame is disabled and the fill is disabled, we draw the icon in either its specified custom
             // color or the default color. In this case the app-specified color override (if any) is ignored.
-            return iconColorMap.containsKey(maskedCode) ? iconColorMap.get(maskedCode) : DEFAULT_ICON_COLOR;
+            return iconColorMap.getOrDefault(maskedCode, DEFAULT_ICON_COLOR);
         }
     }
 

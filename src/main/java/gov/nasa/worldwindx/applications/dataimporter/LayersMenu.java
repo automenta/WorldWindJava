@@ -12,7 +12,6 @@ import gov.nasa.worldwind.layers.Layer;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.beans.*;
 
 /**
  * Manages layer visibility for currently active layers.
@@ -28,20 +27,9 @@ public class LayersMenu extends JMenu
 
         this.fill(wwd);
 
-        wwd.getModel().getLayers().addPropertyChangeListener(new PropertyChangeListener()
-        {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent)
-            {
-                if (propertyChangeEvent.getPropertyName().equals(AVKey.LAYERS))
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            update(wwd);
-                        }
-                    });
-            }
+        wwd.getModel().getLayers().addPropertyChangeListener(propertyChangeEvent -> {
+            if (propertyChangeEvent.getPropertyName().equals(AVKey.LAYERS))
+                SwingUtilities.invokeLater(() -> update(wwd));
         });
     }
 
@@ -70,9 +58,9 @@ public class LayersMenu extends JMenu
 
     protected static class LayerAction extends AbstractAction
     {
-        WorldWindow wwd;
-        protected Layer layer;
-        protected boolean selected;
+        final WorldWindow wwd;
+        protected final Layer layer;
+        protected final boolean selected;
 
         public LayerAction(Layer layer, WorldWindow wwd, boolean selected)
         {

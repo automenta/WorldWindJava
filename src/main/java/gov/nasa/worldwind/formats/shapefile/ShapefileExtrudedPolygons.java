@@ -30,7 +30,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
     public static class Record extends ShapefileRenderable.Record
     {
         // Record properties.
-        protected Double height; // may be null
+        protected final Double height; // may be null
         // Data structures supporting drawing.
         protected Tile tile;
         protected IntBuffer interiorIndices;
@@ -48,7 +48,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             return this.height;
         }
 
-        public List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException
+        public List<Intersection> intersect(Line line, Terrain terrain)
         {
             if (line == null)
             {
@@ -69,7 +69,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
                 return null;
             }
 
-            ArrayList<Intersection> intersections = new ArrayList<Intersection>();
+            ArrayList<Intersection> intersections = new ArrayList<>();
             ((ShapefileExtrudedPolygons) this.shapefileRenderable).intersectTileRecord(line, terrain, this,
                 intersections);
 
@@ -81,12 +81,12 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
     {
         // Record group properties.
         public final ShapeAttributes attributes;
-        public ArrayList<Record> records = new ArrayList<Record>();
+        public final ArrayList<Record> records = new ArrayList<>();
         // Data structures supporting drawing.
         public IntBuffer indices;
-        public Range interiorIndexRange = new Range(0, 0);
-        public Range outlineIndexRange = new Range(0, 0);
-        public Object vboKey = new Object();
+        public final Range interiorIndexRange = new Range(0, 0);
+        public final Range outlineIndexRange = new Range(0, 0);
+        public final Object vboKey = new Object();
 
         public RecordGroup(ShapeAttributes attributes)
         {
@@ -100,13 +100,13 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         public final Sector sector;
         public final int level;
         // Tile records, attribute groups and child tiles.
-        public ArrayList<Record> records = new ArrayList<Record>();
-        public ArrayList<RecordGroup> attributeGroups = new ArrayList<RecordGroup>();
+        public final ArrayList<Record> records = new ArrayList<>();
+        public final ArrayList<RecordGroup> attributeGroups = new ArrayList<>();
         public Tile[] children;
         // Tile shape data.
-        public ShapeDataCache dataCache = new ShapeDataCache(60000);
+        public final ShapeDataCache dataCache = new ShapeDataCache(60000);
         public ShapeData currentData;
-        public IntersectionData intersectionData = new IntersectionData();
+        public final IntersectionData intersectionData = new IntersectionData();
 
         public Tile(Sector sector, int level)
         {
@@ -120,7 +120,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         public FloatBuffer vertices;
         public Vec4 referencePoint;
         public Matrix transformMatrix;
-        public Object vboKey = new Object();
+        public final Object vboKey = new Object();
         public boolean vboExpired;
 
         public ShapeData(DrawContext dc, long minExpiryTime, long maxExpiryTime)
@@ -181,19 +181,19 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
     protected double maxHeight;
     // Tile quadtree structures.
     protected Tile rootTile;
-    protected int tileMaxLevel = 3;
-    protected int tileMaxCapacity = 10000;
+    protected final int tileMaxLevel = 3;
+    protected final int tileMaxCapacity = 10000;
     // Data structures supporting polygon tessellation and drawing.
-    protected ArrayList<Tile> currentTiles = new ArrayList<Tile>();
-    protected PolygonTessellator tess = new PolygonTessellator();
-    protected byte[] colorByteArray = new byte[6];
-    protected float[] colorFloatArray = new float[3];
-    protected double[] matrixArray = new double[16];
+    protected final ArrayList<Tile> currentTiles = new ArrayList<>();
+    protected final PolygonTessellator tess = new PolygonTessellator();
+    protected final byte[] colorByteArray = new byte[6];
+    protected final float[] colorFloatArray = new float[3];
+    protected final double[] matrixArray = new double[16];
     // Data structures supporting picking.
     protected Layer pickLayer;
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     protected ByteBuffer pickColors;
-    protected Object pickColorsVboKey = new Object();
+    protected final Object pickColorsVboKey = new Object();
 
     /**
      * Creates a new ShapefileExtrudedPolygons with the specified shapefile. The normal attributes and the highlight
@@ -528,7 +528,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
 
     protected void invalidateAllTileGeometry()
     {
-        Queue<Tile> tileQueue = new ArrayDeque<Tile>();
+        Queue<Tile> tileQueue = new ArrayDeque<>();
         tileQueue.add(this.rootTile);
 
         while (!tileQueue.isEmpty())
@@ -731,7 +731,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         // automatically. We take care to avoid assembling groups based on any Attribute property, as those properties
         // may change without re-assembling these groups. However, changes to a record's visibility state, highlight
         // state, normal attributes reference and highlight attributes reference invalidate this grouping.
-        Map<ShapeAttributes, RecordGroup> attrMap = new IdentityHashMap<ShapeAttributes, RecordGroup>();
+        Map<ShapeAttributes, RecordGroup> attrMap = new IdentityHashMap<>();
         for (Record record : tile.records)
         {
             if (!record.isVisible()) // ignore records marked as not visible
@@ -1087,10 +1087,9 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
      *         line does not intersect any record.
      *
      * @throws IllegalArgumentException if any argument is null.
-     * @throws InterruptedException     if the operation is interrupted.
      * @see Terrain
      */
-    public List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException
+    public List<Intersection> intersect(Line line, Terrain terrain)
     {
         if (line == null)
         {
@@ -1106,7 +1105,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             throw new IllegalArgumentException(msg);
         }
 
-        ArrayList<Intersection> intersections = new ArrayList<Intersection>();
+        ArrayList<Intersection> intersections = new ArrayList<>();
         this.intersectTileOrDescendants(line, terrain, this.rootTile, intersections);
 
         return intersections.size() > 0 ? intersections : null;
@@ -1157,15 +1156,13 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         // Regenerate the tile's intersection geometry as necessary. Synchronized simultaneous read/write access to the
         // tile's intersection data between calls to intersect or Record.intersect on separate threads.
         ShapeData shapeData;
-        synchronized (record.tile)
-        {
-            shapeData = this.prepareTileIntersectionData(line, terrain, record.tile);
+        Tile rTile = record.tile;
+        synchronized (rTile) {
+            shapeData = this.prepareTileIntersectionData(line, terrain, rTile);
         }
 
         if (shapeData == null) // The line does not intersect the tile.
-        {
             return;
-        }
 
         // Intersect the line with the record. Translate the line from model coordinates to tile local coordinates,
         // then translate intersection points back into model coordinates.

@@ -15,7 +15,6 @@ import gov.nasa.worldwindx.applications.worldwindow.util.ShadedPanel;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.text.*;
 import java.util.Date;
 
@@ -88,7 +87,7 @@ public class StatusPanelImpl extends AbstractFeature implements StatusPanel, Sel
         p.setOpaque(false);
 
         Object o = this.controller.getRegisteredObject(Constants.FEATURE_GAZETTEER_PANEL);
-        if (o != null && o instanceof FeaturePanel)
+        if (o instanceof FeaturePanel)
             p.add(((FeaturePanel) o).getJPanel(), BorderLayout.WEST);
 
         return p;
@@ -136,14 +135,8 @@ public class StatusPanelImpl extends AbstractFeature implements StatusPanel, Sel
         label.setForeground(this.panelTextColor);
         label.setToolTipText("Time on this computer");
 
-        Timer timer = new Timer(1000, new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                label.setText(
-                    SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new Date()));
-            }
-        });
+        Timer timer = new Timer(1000, actionEvent -> label.setText(
+            SimpleDateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(new Date())));
         timer.start();
 
         return label;

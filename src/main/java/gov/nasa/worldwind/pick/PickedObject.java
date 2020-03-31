@@ -10,6 +10,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * @author lado
@@ -128,7 +129,7 @@ public class PickedObject extends AVListImpl
         if (isOnTop != that.isOnTop)
             return false;
         //noinspection RedundantIfStatement
-        if (userObject != null ? !userObject.equals(that.userObject) : that.userObject != null)
+        if (!Objects.equals(userObject, that.userObject))
             return false;
 
         return true;

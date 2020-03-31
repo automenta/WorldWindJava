@@ -138,7 +138,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
             : newPosition.getElevation() + DEFAULT_POLYGON_HEIGHT;
         this.getPolygon().setAltitudes(altitudes[LOWER_ALTITUDE], altitudes[UPPER_ALTITUDE]);
 
-        ArrayList<LatLon> locationList = new ArrayList<LatLon>();
+        ArrayList<LatLon> locationList = new ArrayList<>();
         locationList.add(new LatLon(newPosition));
 
         // If rubber banding is enabled, add a second entry at the same location.
@@ -194,7 +194,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
         Vec4 newPoint = controlPoint.getPoint();
         LatLon newLocation = new LatLon(wwd.getModel().getGlobe().computePositionFromPoint(newPoint));
 
-        ArrayList<LatLon> locationList = new ArrayList<LatLon>(this.getPolygon().getLocations());
+        ArrayList<LatLon> locationList = new ArrayList<>(this.getPolygon().getLocations());
         locationList.add(controlPoint.getLocationIndex(), newLocation);
         this.getPolygon().setLocations(locationList);
 
@@ -206,7 +206,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
     protected void doRemoveControlPoint(WorldWindow wwd, AirspaceControlPoint controlPoint)
     {
         int index = controlPoint.getLocationIndex();
-        List<LatLon> newLocationList = new ArrayList<LatLon>(this.getPolygon().getLocations());
+        List<LatLon> newLocationList = new ArrayList<>(this.getPolygon().getLocations());
         newLocationList.remove(index);
         this.getPolygon().setLocations(newLocationList);
 
@@ -240,7 +240,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
         LatLon change = pos.subtract(previousPos);
 
         int index = controlPoint.getLocationIndex();
-        List<LatLon> newLocationList = new ArrayList<LatLon>(this.getPolygon().getLocations());
+        List<LatLon> newLocationList = new ArrayList<>(this.getPolygon().getLocations());
         LatLon newLatLon = newLocationList.get(index).add(change);
         newLocationList.set(index, newLatLon);
         this.getPolygon().setLocations(newLocationList);

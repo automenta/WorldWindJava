@@ -230,9 +230,9 @@ public class ViewVolumeRenderer
 
     protected class OrderedViewVolume implements OrderedRenderable
     {
-        protected Matrix modelview;
-        protected Matrix projection;
-        protected Rectangle viewport;
+        protected final Matrix modelview;
+        protected final Matrix projection;
+        protected final Rectangle viewport;
 
         public OrderedViewVolume(Matrix modelview, Matrix projection, Rectangle viewport)
         {

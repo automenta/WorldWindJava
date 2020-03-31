@@ -9,6 +9,7 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.tracks.*;
 import gov.nasa.worldwind.util.Logging;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 // TODO: exception handling
@@ -18,11 +19,11 @@ import java.util.Iterator;
  */
 public class NmeaReader implements Track, TrackSegment
 {
-    private final java.util.List<Track> tracks = new java.util.ArrayList<Track>();
+    private final java.util.List<Track> tracks = new java.util.ArrayList<>();
     private final java.util.List<TrackSegment> segments =
-        new java.util.ArrayList<TrackSegment>();
+        new java.util.ArrayList<>();
     private final java.util.List<TrackPoint> points =
-        new java.util.ArrayList<TrackPoint>();
+        new java.util.ArrayList<>();
     private String name;
     private int sentenceNumber = 0;
 
@@ -89,9 +90,8 @@ public class NmeaReader implements Track, TrackSegment
      * @param stream The stream to read from.
      * @param name The name of the stream.
      * @throws IllegalArgumentException if <code>stream</code> is null
-     * @throws java.io.IOException if a read error occurs.
      */
-    public void readStream(java.io.InputStream stream, String name) throws java.io.IOException
+    public void readStream(java.io.InputStream stream, String name)
     {
         if (stream == null)
         {
@@ -111,7 +111,7 @@ public class NmeaReader implements Track, TrackSegment
 
     public Iterator<Position> getTrackPositionIterator()
     {
-        return new Iterator<Position>()
+        return new Iterator<>()
         {
             private final TrackPointIterator trackPoints = new TrackPointIteratorImpl(NmeaReader.this.tracks);
 
@@ -148,11 +148,7 @@ public class NmeaReader implements Track, TrackSegment
                 }
             } while (sentence != null);
         }
-        catch (java.io.IOException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InterruptedException e)
+        catch (IOException | InterruptedException e)
         {
             e.printStackTrace();
         }

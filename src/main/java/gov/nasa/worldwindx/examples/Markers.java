@@ -69,7 +69,7 @@ public class Markers extends ApplicationTemplate
             double minLon = -179, maxLon = 180, lonDelta = 10;
 
             int i = 0;
-            ArrayList<Marker> markers = new ArrayList<Marker>();
+            ArrayList<Marker> markers = new ArrayList<>();
             for (double lat = minLat; lat <= maxLat; lat += latDelta)
             {
                 for (double lon = minLon; lon <= maxLon; lon += lonDelta)
@@ -93,37 +93,33 @@ public class Markers extends ApplicationTemplate
             layer.setMarkers(markers);
             insertBeforePlacenames(this.getWwd(), layer);
 
-            this.getWwd().addSelectListener(new SelectListener()
-            {
-                public void selected(SelectEvent event)
+            this.getWwd().addSelectListener(event -> {
+                if (lastHighlit != null
+                    && (event.getTopObject() == null || !event.getTopObject().equals(lastHighlit)))
                 {
-                    if (lastHighlit != null
-                        && (event.getTopObject() == null || !event.getTopObject().equals(lastHighlit)))
-                    {
-                        lastHighlit.setAttributes(lastAttrs);
-                        lastHighlit = null;
-                    }
+                    lastHighlit.setAttributes(lastAttrs);
+                    lastHighlit = null;
+                }
 
-                    if (!event.getEventAction().equals(SelectEvent.ROLLOVER))
-                        return;
+                if (!event.getEventAction().equals(SelectEvent.ROLLOVER))
+                    return;
 
-                    if (event.getTopObject() == null || event.getTopPickedObject().getParentLayer() == null)
-                        return;
+                if (event.getTopObject() == null || event.getTopPickedObject().getParentLayer() == null)
+                    return;
 
-                    if (event.getTopPickedObject().getParentLayer() != layer)
-                        return;
+                if (event.getTopPickedObject().getParentLayer() != layer)
+                    return;
 
-                    if (lastHighlit == null && event.getTopObject() instanceof Marker)
-                    {
-                        lastHighlit = (Marker) event.getTopObject();
-                        lastAttrs = (BasicMarkerAttributes) lastHighlit.getAttributes();
-                        MarkerAttributes highliteAttrs = new BasicMarkerAttributes(lastAttrs);
-                        highliteAttrs.setMaterial(Material.WHITE);
-                        highliteAttrs.setOpacity(1d);
-                        highliteAttrs.setMarkerPixels(lastAttrs.getMarkerPixels() * 1.4);
-                        highliteAttrs.setMinMarkerSize(lastAttrs.getMinMarkerSize() * 1.4);
-                        lastHighlit.setAttributes(highliteAttrs);
-                    }
+                if (lastHighlit == null && event.getTopObject() instanceof Marker)
+                {
+                    lastHighlit = (Marker) event.getTopObject();
+                    lastAttrs = (BasicMarkerAttributes) lastHighlit.getAttributes();
+                    MarkerAttributes highliteAttrs = new BasicMarkerAttributes(lastAttrs);
+                    highliteAttrs.setMaterial(Material.WHITE);
+                    highliteAttrs.setOpacity(1d);
+                    highliteAttrs.setMarkerPixels(lastAttrs.getMarkerPixels() * 1.4);
+                    highliteAttrs.setMinMarkerSize(lastAttrs.getMinMarkerSize() * 1.4);
+                    lastHighlit.setAttributes(highliteAttrs);
                 }
             });
         }

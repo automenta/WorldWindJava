@@ -49,16 +49,11 @@ public class WWPanel extends JPanel
     private final WorldWindowGLCanvas wwd;
     private final StatusBar statusBar;
 
-    private final PropertyChangeListener propertyChangeListener = new PropertyChangeListener()
-    {
-        @SuppressWarnings({"StringEquality"})
-        public void propertyChange(PropertyChangeEvent propertyChangeEvent)
-        {
-            if (propertyChangeEvent.getPropertyName() == SARKey.ELEVATION_UNIT)
-                updateElevationUnit(propertyChangeEvent.getNewValue());
-            if (propertyChangeEvent.getPropertyName() == SARKey.ANGLE_FORMAT)
-                updateAngleFormat(propertyChangeEvent.getNewValue());
-        }
+    private final PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
+        if (propertyChangeEvent.getPropertyName() == SARKey.ELEVATION_UNIT)
+            updateElevationUnit(propertyChangeEvent.getNewValue());
+        if (propertyChangeEvent.getPropertyName() == SARKey.ANGLE_FORMAT)
+            updateAngleFormat(propertyChangeEvent.getNewValue());
     };
 
     private final FocusListener focusListener = new FocusListener()

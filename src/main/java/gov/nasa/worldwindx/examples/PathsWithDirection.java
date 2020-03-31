@@ -37,7 +37,7 @@ public class PathsWithDirection extends ApplicationTemplate
             attrs.setOutlineWidth(2d);
 
             // Create a path, set some of its properties and set its attributes.
-            ArrayList<Position> pathPositions = new ArrayList<Position>();
+            ArrayList<Position> pathPositions = new ArrayList<>();
             pathPositions.add(Position.fromDegrees(49.01653274909177, -122.7349081128505, 1));
             pathPositions.add(Position.fromDegrees(49.01715024535254, -122.7596194200486, 10));
             pathPositions.add(Position.fromDegrees(49.02781845803761, -122.7651733463364, 100));

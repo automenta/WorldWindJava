@@ -30,7 +30,7 @@ public class KMLFlyViewController extends KMLViewController
     protected final long MAX_LENGTH_MILLIS = 16000;
 
     /** The view to animate. */
-    protected BasicFlyView flyView;
+    protected final BasicFlyView flyView;
 
     /**
      * Create the view controller.
@@ -182,14 +182,14 @@ public class KMLFlyViewController extends KMLViewController
      * mode is relative to the surface elevation, the animator will re-compute the final eye position on each iteration
      * to ensure that the animation ends using the most accurate elevation data available.
      */
-    protected class FlyToLookAtAnimator extends FlyToFlyViewAnimator
+    protected static class FlyToLookAtAnimator extends FlyToFlyViewAnimator
     {
-        protected int altitudeMode;
-        protected OrbitView targetView;
-        protected Position lookAtPosition;
+        protected final int altitudeMode;
+        protected final OrbitView targetView;
+        protected final Position lookAtPosition;
 
-        protected PositionAnimator eyePositionAnimator;
-        protected DoubleAnimator elevationAnimator;
+        protected final PositionAnimator eyePositionAnimator;
+        protected final DoubleAnimator elevationAnimator;
 
         /**
          * Create an animator to animate the view to look at a position.

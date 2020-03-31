@@ -28,7 +28,7 @@ public class TiledElevationProducer extends TiledRasterProducer
     // Statically reference the readers used to for unknown data sources. This drastically improves the performance of
     // reading large quantities of sources. Since the readers are invoked from a single thread, they can be
     // safely re-used.
-    protected static DataRasterReader[] readers = new DataRasterReader[]
+    protected static final DataRasterReader[] readers = new DataRasterReader[]
         {
             new DTEDRasterReader(),
             new GDALDataRasterReader(),
@@ -81,9 +81,9 @@ public class TiledElevationProducer extends TiledRasterProducer
         // This code expects the string "gov.nasa.worldwind.avkey.MissingDataValue", which now corresponds to the key 
         // MISSING_DATA_REPLACEMENT.
         Object o = params.getValue(AVKey.MISSING_DATA_REPLACEMENT);
-        if (o != null && o instanceof Double)
+        if (o instanceof Double)
         {
-            Double missingDataValue = (Double) o;
+            double missingDataValue = (Double) o;
             bufferRaster.fill(missingDataValue);
             bufferRaster.setTransparentValue(missingDataValue);
         }
@@ -126,8 +126,7 @@ public class TiledElevationProducer extends TiledRasterProducer
                 return Logging.getMessage("TiledRasterProducer.UnrecognizedDataSource", raster);
             }
 
-            String s = this.validateDataSourceParams(raster, String.valueOf(raster));
-            return s;
+            return this.validateDataSourceParams(raster, String.valueOf(raster));
         }
         // For any other data source, attempt to find a reader for the data source. If the reader know's the data
         // source's raster type, then check that it's elevation data.
@@ -152,8 +151,7 @@ public class TiledElevationProducer extends TiledRasterProducer
                 return Logging.getMessage("TiledRasterProducer.ExceptionWhileReading", source, e.getMessage());
             }
 
-            String s = this.validateDataSourceParams(params, String.valueOf(source));
-            return s;
+            return this.validateDataSourceParams(params, String.valueOf(source));
         }
     }
 

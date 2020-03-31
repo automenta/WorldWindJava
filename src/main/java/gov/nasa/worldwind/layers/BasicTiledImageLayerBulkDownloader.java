@@ -320,7 +320,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread
 
         final double dLat = sector.getDeltaLat().degrees / div;
         final double dLon = sector.getDeltaLon().degrees / div;
-        ArrayList<Sector> regions = new ArrayList<Sector>(numRegions);
+        ArrayList<Sector> regions = new ArrayList<>(numRegions);
         Random rand = new Random();
         while (regions.size() < numRegions)
         {
@@ -343,7 +343,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread
         final double dLat = sector.getDeltaLat().degrees / div;
         final double dLon = sector.getDeltaLon().degrees / div;
 
-        return new Iterator<Sector>()
+        return new Iterator<>()
         {
             int row = 0;
             int col = 0;
@@ -380,7 +380,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread
     protected ArrayList<TextureTile> getMissingTilesInSector(Sector sector, int levelNumber)
         throws InterruptedException
     {
-        ArrayList<TextureTile> tiles = new ArrayList<TextureTile>();
+        ArrayList<TextureTile> tiles = new ArrayList<>();
 
         TextureTile[][] tileArray = this.layer.getTilesInSector(sector, levelNumber);
         for (TextureTile[] row : tileArray)
@@ -430,13 +430,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread
         File cacheRoot = new File(this.fileStore.getWriteLocation(), targetLevel.getPath());
         if (cacheRoot.exists())
         {
-            File[] rowDirs = cacheRoot.listFiles(new FileFilter()
-            {
-                public boolean accept(File file)
-                {
-                    return file.isDirectory();
-                }
-            });
+            File[] rowDirs = cacheRoot.listFiles(File::isDirectory);
             for (File dir : rowDirs)
             {
                 long averageSize = computeAverageTileSize(dir);
@@ -450,7 +444,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread
             }
         }
 
-        Long averageTileSize = DEFAULT_AVERAGE_FILE_SIZE;
+        long averageTileSize = DEFAULT_AVERAGE_FILE_SIZE;
         if (count > 0 && size > 0)
         {
             averageTileSize = size / count;

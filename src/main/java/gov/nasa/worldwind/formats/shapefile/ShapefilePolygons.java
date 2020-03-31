@@ -55,9 +55,9 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     {
         protected final ShapeAttributes attributes;
         protected IntBuffer indices;
-        protected Range interiorIndexRange = new Range(0, 0);
-        protected Range outlineIndexRange = new Range(0, 0);
-        protected ArrayList<RecordIndices> recordIndices = new ArrayList<RecordIndices>();
+        protected final Range interiorIndexRange = new Range(0, 0);
+        protected final Range outlineIndexRange = new Range(0, 0);
+        protected final ArrayList<RecordIndices> recordIndices = new ArrayList<>();
 
         public RecordGroup(ShapeAttributes attributes)
         {
@@ -68,7 +68,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     protected static class RecordIndices
     {
         protected final int ordinal;
-        protected Range vertexRange = new Range(0, 0);
+        protected final Range vertexRange = new Range(0, 0);
         protected IntBuffer interiorIndices;
         protected IntBuffer outlineIndices;
 
@@ -142,7 +142,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         @Override
         public List<Sector> getSectors(DrawContext dc)
         {
-            return Arrays.asList(this.sector);
+            return Collections.singletonList(this.sector);
         }
 
         @Override
@@ -204,8 +204,8 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         protected int vertexStride;
         protected int vertexCount;
         protected Vec4 vertexOffset;
-        protected ArrayList<RecordIndices> recordIndices = new ArrayList<RecordIndices>();
-        protected ArrayList<RecordGroup> attributeGroups = new ArrayList<RecordGroup>();
+        protected final ArrayList<RecordIndices> recordIndices = new ArrayList<>();
+        protected final ArrayList<RecordGroup> attributeGroups = new ArrayList<>();
         protected long attributeStateID;
 
         public ShapefileGeometry(ShapefileRenderable shape, Sector sector, double resolution)
@@ -339,25 +339,25 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
 
     // ShapefilePolygons properties.
     protected double detailHint = 0;
-    protected double detailHintOrigin = 2.8;
+    protected final double detailHintOrigin = 2.8;
     protected int outlinePickWidth = 10;
     // Properties supporting shapefile tile assembly and tessellation.
     protected BasicQuadTree<Record> recordTree;
-    protected ArrayList<ShapefileTile> topLevelTiles = new ArrayList<ShapefileTile>();
-    protected ArrayList<ShapefileTile> currentTiles = new ArrayList<ShapefileTile>();
+    protected final ArrayList<ShapefileTile> topLevelTiles = new ArrayList<>();
+    protected final ArrayList<ShapefileTile> currentTiles = new ArrayList<>();
     protected ShapefileTile currentAncestorTile;
-    protected PriorityQueue<Runnable> requestQueue = new PriorityQueue<Runnable>();
-    protected MemoryCache cache = WorldWind.getMemoryCache(ShapefileGeometry.class.getName());
+    protected final PriorityQueue<Runnable> requestQueue = new PriorityQueue<>();
+    protected final MemoryCache cache = WorldWind.getMemoryCache(ShapefileGeometry.class.getName());
     protected long recordStateID;
     // Properties supporting picking and rendering.
-    protected PickSupport pickSupport = new PickSupport();
-    protected HashMap<Integer, Color> pickColorMap = new HashMap<Integer, Color>();
-    protected SurfaceObjectTileBuilder pickTileBuilder = new SurfaceObjectTileBuilder(new Dimension(512, 512),
+    protected final PickSupport pickSupport = new PickSupport();
+    protected final HashMap<Integer, Color> pickColorMap = new HashMap<>();
+    protected final SurfaceObjectTileBuilder pickTileBuilder = new SurfaceObjectTileBuilder(new Dimension(512, 512),
         GL2.GL_RGBA8, false, false);
     protected ByteBuffer pickColors;
     protected Layer layer;
-    protected double[] matrixArray = new double[16];
-    protected double[] clipPlaneArray = new double[16];
+    protected final double[] matrixArray = new double[16];
+    protected final double[] clipPlaneArray = new double[16];
 
     /**
      * Creates a new ShapefilePolygons with the specified shapefile. The normal attributes and the highlight attributes
@@ -417,7 +417,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     {
         // Store the shapefile records in a quad tree with eight levels. This depth provides fast access to records in
         // regions much smaller than the shapefile's sector while avoiding a lot of overhead in building the quad tree.
-        this.recordTree = new BasicQuadTree<Record>(8, this.sector, null);
+        this.recordTree = new BasicQuadTree<>(8, this.sector, null);
         super.assembleRecords(shapefile);
     }
 
@@ -1024,7 +1024,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         // automatically. We take care to avoid assembling groups based on any Attribute property, as those properties
         // may change without re-assembling these groups. However, changes to a record's visibility state, highlight
         // state, normal attributes reference and highlight attributes reference invalidate this grouping.
-        Map<ShapeAttributes, RecordGroup> attrMap = new IdentityHashMap<ShapeAttributes, RecordGroup>();
+        Map<ShapeAttributes, RecordGroup> attrMap = new IdentityHashMap<>();
         for (RecordIndices ri : geom.recordIndices)
         {
             ShapefileRenderable.Record record = this.getRecord(ri.ordinal);
@@ -1391,7 +1391,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         {
             // Copy the boundary locations into a list of LatLon instances in order to utilize existing code that
             // handles locations that cross the antimeridian.
-            ArrayList<LatLon> locations = new ArrayList<LatLon>();
+            ArrayList<LatLon> locations = new ArrayList<>();
             for (int j = 0; j < boundaryCoords.getSize(); j++)
             {
                 if (boundaryEffectiveArea[j] < minEffectiveArea)

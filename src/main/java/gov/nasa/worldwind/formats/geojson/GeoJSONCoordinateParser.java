@@ -265,7 +265,7 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser
                 continue;
 
             if (list == null)
-                list = new ArrayList<Object>();
+                list = new ArrayList<>();
 
             list.add(o);
         }

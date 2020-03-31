@@ -103,7 +103,7 @@ public abstract class XMLDoc {
 
             // See if it's an already found and parsed KML file.
             Object o = WorldWind.getSessionCache().get(path);
-            if (o != null && o instanceof XMLRoot) {
+            if (o instanceof XMLRoot) {
                 return linkRef != null ? ((XMLRoot) o).getItemByID(linkRef) : o;
             }
 

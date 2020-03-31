@@ -1387,14 +1387,11 @@ public class SymbolCode extends AVListImpl
         // does nothing if the code is null or empty. If the code contains fewer characters then its assigned length,
         // then only those characters are appended.
         if (value != null && value.length() > 0)
-            sb.append(value, 0, value.length() < length ? value.length() : length);
+            sb.append(value, 0, Math.min(value.length(), length));
 
         // Append the "unused" character for each unused character position assigned to the code. We encounter unused
         // positions when the code is null or its length is less than the number of assigned character positions.
-        for (int i = (value != null ? value.length() : 0); i < length; i++)
-        {
-            sb.append(UNUSED_POSITION_CODE);
-        }
+        sb.append(UNUSED_POSITION_CODE.repeat(Math.max(0, length - (value != null ? value.length() : 0))));
     }
 
     /**

@@ -22,7 +22,7 @@ class GeoCodec
     private HashMap<Integer, GeoKeyEntry> geoKeys = null;
 
     // Collection of ModelTiePoints.
-    private final Vector<ModelTiePoint> tiePoints = new Vector<ModelTiePoint>(1);
+    private final Vector<ModelTiePoint> tiePoints = new Vector<>(1);
 
     // ModelPixelScale values...
     private double xScale;
@@ -256,7 +256,7 @@ class GeoCodec
             System.arraycopy(keys, 0, this.shortParams, 0, keys.length);
 
             int numKeys = keys[3];
-            this.geoKeys = new HashMap<Integer, GeoKeyEntry>();
+            this.geoKeys = new HashMap<>();
             int i = 0;
             for (int k = 0; k < numKeys; k++ )
             {
@@ -310,9 +310,14 @@ class GeoCodec
     * association of the pixel <i,j,k> to the model coordinate <x,y,z>.
     *
     */
-    public class ModelTiePoint
+    public static class ModelTiePoint
     {
-        public double i, j, k, x, y, z;
+        public final double i;
+        public final double j;
+        public final double k;
+        public final double x;
+        public final double y;
+        public final double z;
 
         public ModelTiePoint(double i, double j, double k, double x, double y, double z)
         {
@@ -348,12 +353,12 @@ class GeoCodec
     /*
      * A little class that we use to manage GeoKeys.
      */
-    private class GeoKeyEntry
+    private static class GeoKeyEntry
     {
-        int tag;
-        int count;
-        int offset;
-        Object array;  // a reference to one of the short/double/asciiParams arrays
+        final int tag;
+        final int count;
+        final int offset;
+        final Object array;  // a reference to one of the short/double/asciiParams arrays
 
         GeoKeyEntry(int tag, int count, int offset, Object array)
         {

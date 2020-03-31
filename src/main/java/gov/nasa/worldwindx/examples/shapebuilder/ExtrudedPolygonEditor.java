@@ -30,7 +30,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor
     public static final String MOVE_POLYGON_ACTION = "gov.nasa.worldwind.ExtrudedPolygonEditor.MovePolygonAction";
 
     protected ExtrudedPolygon polygon;
-    protected MarkerRenderer markerRenderer;
+    protected final MarkerRenderer markerRenderer;
     java.util.List<Marker> controlPoints;
 
     protected BasicMarkerAttributes vertexControlAttributes;
@@ -85,7 +85,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor
     protected void assembleControlPoints(DrawContext dc)
     {
         // Control points are re-computed each frame
-        this.controlPoints = new ArrayList<Marker>();
+        this.controlPoints = new ArrayList<>();
 
         this.assembleVertexControlPoints(dc);
         if (!dc.is2DGlobe())
@@ -223,13 +223,12 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor
                 if (topObject instanceof ControlPointMarker)
                 {
                     this.removeVertex((ControlPointMarker) topObject);
-                    e.consume();
                 }
                 else
                 {
                     this.addVertex(e.getPoint());
-                    e.consume();
                 }
+                e.consume();
             }
         }
     }
@@ -378,7 +377,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor
         Position previousPos = globe.computePositionFromPoint(previousVec);
         LatLon change = pos.subtract(previousPos);
 
-        java.util.List<LatLon> boundary = new ArrayList<LatLon>();
+        java.util.List<LatLon> boundary = new ArrayList<>();
         for (LatLon ll : this.polygon.getOuterBoundary())
         {
             boundary.add(ll);
@@ -419,7 +418,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor
         Position previousPos = this.wwd.getModel().getGlobe().computePositionFromPoint(previousPointOnLine);
         double elevationChange = pos.getElevation() - previousPos.getElevation();
 
-        java.util.List<Position> boundary = new ArrayList<Position>();
+        java.util.List<Position> boundary = new ArrayList<>();
         for (LatLon ll : this.polygon.getOuterBoundary())
         {
             boundary.add(new Position(ll, ((Position) ll).getElevation() + elevationChange));
@@ -467,7 +466,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor
         Position newPosition = this.wwd.getModel().getGlobe().computePositionFromPoint(pickPoint);
 
         // Copy the outer boundary list
-        ArrayList<Position> positionList = new ArrayList<Position>(this.controlPoints.size());
+        ArrayList<Position> positionList = new ArrayList<>(this.controlPoints.size());
         for (LatLon position : this.getPolygon().getOuterBoundary())
         {
             positionList.add((Position) position);
@@ -487,7 +486,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor
     protected void removeVertex(ControlPointMarker vertexToRemove)
     {
         ExtrudedPolygon polygon = this.getPolygon();
-        ArrayList<LatLon> locations = new ArrayList<LatLon>(this.controlPoints.size() - 1);
+        ArrayList<LatLon> locations = new ArrayList<>(this.controlPoints.size() - 1);
 
         for (LatLon latLon : polygon.getOuterBoundary())
         {
@@ -531,9 +530,9 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor
 
     protected static class ControlPointMarker extends BasicMarker
     {
-        protected int index;
-        protected String type;
-        protected Vec4 point;
+        protected final int index;
+        protected final String type;
+        protected final Vec4 point;
 
         public ControlPointMarker(String type, Position position, Vec4 point, MarkerAttributes attrs, int index)
         {

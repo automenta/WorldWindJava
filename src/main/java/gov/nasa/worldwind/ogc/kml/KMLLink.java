@@ -36,7 +36,7 @@ public class KMLLink extends KMLAbstractObject
     protected static final String DEFAULT_VIEW_FORMAT = "BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth]";
 
     /** The time, in milliseconds since the Epoch, at which the linked content was most recently updated. */
-    protected AtomicLong updateTime = new AtomicLong();
+    protected final AtomicLong updateTime = new AtomicLong();
 
     /** If this link's href does not need to be modified with a query string, this value is the resource address. */
     protected String finalHref;
@@ -416,10 +416,10 @@ public class KMLLink extends KMLAbstractObject
             {
                 Sector viewBounds = this.computeVisibleBounds(dc);
                 //noinspection ConstantConditions
-                s = s.replaceAll("\\[bboxWest\\]", Double.toString(viewBounds.getMinLongitude().degrees));
-                s = s.replaceAll("\\[bboxSouth\\]", Double.toString(viewBounds.getMinLatitude().degrees));
-                s = s.replaceAll("\\[bboxEast\\]", Double.toString(viewBounds.getMaxLongitude().degrees));
-                s = s.replaceAll("\\[bboxNorth\\]", Double.toString(viewBounds.getMaxLatitude().degrees));
+                s = s.replaceAll("\\[bboxWest]", Double.toString(viewBounds.getMinLongitude().degrees));
+                s = s.replaceAll("\\[bboxSouth]", Double.toString(viewBounds.getMinLatitude().degrees));
+                s = s.replaceAll("\\[bboxEast]", Double.toString(viewBounds.getMaxLongitude().degrees));
+                s = s.replaceAll("\\[bboxNorth]", Double.toString(viewBounds.getMaxLatitude().degrees));
 
                 View view = dc.getView();
 
@@ -428,32 +428,32 @@ public class KMLLink extends KMLAbstractObject
                 {
                     // Use the view's center position as the "look at" position.
                     Position centerPosition = view.getGlobe().computePositionFromPoint(centerPoint);
-                    s = s.replaceAll("\\[lookatLat\\]", Double.toString(centerPosition.getLatitude().degrees));
-                    s = s.replaceAll("\\[lookatLon\\]", Double.toString(centerPosition.getLongitude().degrees));
-                    s = s.replaceAll("\\[lookatAlt\\]", Double.toString(centerPosition.getAltitude()));
+                    s = s.replaceAll("\\[lookatLat]", Double.toString(centerPosition.getLatitude().degrees));
+                    s = s.replaceAll("\\[lookatLon]", Double.toString(centerPosition.getLongitude().degrees));
+                    s = s.replaceAll("\\[lookatAlt]", Double.toString(centerPosition.getAltitude()));
 
                     double range = centerPoint.distanceTo3(view.getEyePoint());
-                    s = s.replaceAll("\\[lookatRange\\]", Double.toString(range));
+                    s = s.replaceAll("\\[lookatRange]", Double.toString(range));
 
-                    s = s.replaceAll("\\[lookatHeading\\]", Double.toString(view.getHeading().degrees));
-                    s = s.replaceAll("\\[lookatTilt\\]", Double.toString(view.getPitch().degrees));
+                    s = s.replaceAll("\\[lookatHeading]", Double.toString(view.getHeading().degrees));
+                    s = s.replaceAll("\\[lookatTilt]", Double.toString(view.getPitch().degrees));
 
                     // TODO make sure that these terrain fields really should be treated the same as the fields above
-                    s = s.replaceAll("\\[lookatTerrainLat\\]", Double.toString(centerPosition.getLatitude().degrees));
-                    s = s.replaceAll("\\[lookatTerrainLon\\]", Double.toString(centerPosition.getLongitude().degrees));
-                    s = s.replaceAll("\\[lookatTerrainAlt\\]", Double.toString(centerPosition.getAltitude()));
+                    s = s.replaceAll("\\[lookatTerrainLat]", Double.toString(centerPosition.getLatitude().degrees));
+                    s = s.replaceAll("\\[lookatTerrainLon]", Double.toString(centerPosition.getLongitude().degrees));
+                    s = s.replaceAll("\\[lookatTerrainAlt]", Double.toString(centerPosition.getAltitude()));
                 }
 
                 Position eyePosition = view.getCurrentEyePosition();
-                s = s.replaceAll("\\[cameraLat\\]", Double.toString(eyePosition.getLatitude().degrees));
-                s = s.replaceAll("\\[cameraLon\\]", Double.toString(eyePosition.getLongitude().degrees));
-                s = s.replaceAll("\\[cameraAlt\\]", Double.toString(eyePosition.getAltitude()));
+                s = s.replaceAll("\\[cameraLat]", Double.toString(eyePosition.getLatitude().degrees));
+                s = s.replaceAll("\\[cameraLon]", Double.toString(eyePosition.getLongitude().degrees));
+                s = s.replaceAll("\\[cameraAlt]", Double.toString(eyePosition.getAltitude()));
 
-                s = s.replaceAll("\\[horizFOV\\]", Double.toString(view.getFieldOfView().degrees));
+                s = s.replaceAll("\\[horizFOV]", Double.toString(view.getFieldOfView().degrees));
 
                 Rectangle viewport = view.getViewport();
-                s = s.replaceAll("\\[horizPixels\\]", Integer.toString(viewport.width));
-                s = s.replaceAll("\\[vertPixels\\]", Integer.toString(viewport.height));
+                s = s.replaceAll("\\[horizPixels]", Integer.toString(viewport.width));
+                s = s.replaceAll("\\[vertPixels]", Integer.toString(viewport.height));
 
                 // TODO: Implement support for the remaining viewFormat parameters: [vertFov] [terrainEnabled].
 
@@ -474,10 +474,10 @@ public class KMLLink extends KMLAbstractObject
             String clientVersion = Configuration.getStringValue(AVKey.VERSION, Version.getVersionNumber());
 
             //noinspection ConstantConditions
-            s = s.replaceAll("\\[clientVersion\\]", clientVersion);
-            s = s.replaceAll("\\[kmlVersion\\]", KMLConstants.KML_VERSION);
-            s = s.replaceAll("\\[clientName\\]", clientName);
-            s = s.replaceAll("\\[language\\]", Locale.getDefault().getLanguage());
+            s = s.replaceAll("\\[clientVersion]", clientVersion);
+            s = s.replaceAll("\\[kmlVersion]", KMLConstants.KML_VERSION);
+            s = s.replaceAll("\\[clientName]", clientName);
+            s = s.replaceAll("\\[language]", Locale.getDefault().getLanguage());
 
             if (queryString.length() > 0 && queryString.charAt(queryString.length() - 1) != '&')
                 queryString.append('&');

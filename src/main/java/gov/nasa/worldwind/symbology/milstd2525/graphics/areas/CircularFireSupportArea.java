@@ -76,7 +76,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic
      */
     public static Set<String> getGraphicsWithTimeLabel()
     {
-        return new HashSet<String>(Arrays.asList(
+        return new HashSet<>(Arrays.asList(
             TacGrpSidc.FSUPP_ARS_C2ARS_FSA_CIRCLR,
             TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_CIRCLR,
             TacGrpSidc.FSUPP_ARS_C2ARS_DA_CIRCLR,

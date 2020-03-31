@@ -104,13 +104,13 @@ public class VPFSymbolComparator implements Comparator<VPFSymbol>
 
         double aPriority = a.getAttributes().getDisplayPriority();
         double bPriority = b.getAttributes().getDisplayPriority();
-        int i = (aPriority < bPriority) ? -1 : (aPriority > bPriority ? 1 : 0);
+        int i = Double.compare(aPriority, bPriority);
         if (i != 0)
             return i;
 
         aPriority = this.getFeatureTypePriority(a.getAttributes().getFeatureType());
         bPriority = this.getFeatureTypePriority(b.getAttributes().getFeatureType());
-        i = (aPriority < bPriority) ? -1 : (aPriority > bPriority ? 1 : 0);
+        i = Double.compare(aPriority, bPriority);
         if (i != 0)
             return i;
 

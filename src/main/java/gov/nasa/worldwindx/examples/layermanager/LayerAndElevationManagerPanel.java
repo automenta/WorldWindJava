@@ -19,8 +19,8 @@ import java.awt.*;
  */
 public class LayerAndElevationManagerPanel extends JPanel
 {
-    protected LayerManagerPanel layerManagerPanel;
-    protected ElevationModelManagerPanel elevationModelManagerPanel;
+    protected final LayerManagerPanel layerManagerPanel;
+    protected final ElevationModelManagerPanel elevationModelManagerPanel;
 
     public LayerAndElevationManagerPanel(WorldWindow wwd)
     {

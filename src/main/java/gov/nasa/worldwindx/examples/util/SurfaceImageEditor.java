@@ -144,62 +144,56 @@ public class SurfaceImageEditor implements SelectListener
             return;
         }
 
-        if (event.getEventAction().equals(SelectEvent.DRAG_END))
+        switch (event.getEventAction())
         {
-            this.active = false;
-            this.activeOperation = NONE;
-            this.previousPosition = null;
-        }
-        else if (event.getEventAction().equals(SelectEvent.ROLLOVER))
-        {
-            if (!(this.wwd instanceof Component))
-                return;
-
-            if (event.getTopObject() == null || event.getTopPickedObject().isTerrain())
-            {
-                ((Component) this.wwd).setCursor(null);
-                return;
+            case SelectEvent.DRAG_END -> {
+                this.active = false;
+                this.activeOperation = NONE;
+                this.previousPosition = null;
             }
-
-            Cursor cursor;
-            if (event.getTopObject() instanceof SurfaceImage)
-                cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-            else if (event.getTopObject() instanceof Marker)
-                cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
-            else
-                cursor = null;
-
-            ((Component) this.wwd).setCursor(cursor);
-        }
-        else if (event.getEventAction().equals(SelectEvent.LEFT_PRESS))
-        {
-            this.active = true;
-            this.previousPosition = this.wwd.getCurrentPosition();
-        }
-        else if (event.getEventAction().equals(SelectEvent.DRAG))
-        {
-            if (!this.active)
-                return;
-
-            DragSelectEvent dragEvent = (DragSelectEvent) event;
-            Object topObject = dragEvent.getTopObject();
-            if (topObject == null)
-                return;
-
-            if (topObject == this.shape || this.activeOperation == MOVING)
-            {
-                this.activeOperation = MOVING;
-                this.dragWholeShape(dragEvent, topObject);
-                this.updateAffordances();
-                event.consume();
+            case SelectEvent.ROLLOVER -> {
+                if (!(this.wwd instanceof Component))
+                    return;
+                if (event.getTopObject() == null || event.getTopPickedObject().isTerrain())
+                {
+                    ((Component) this.wwd).setCursor(null);
+                    return;
+                }
+                Cursor cursor;
+                if (event.getTopObject() instanceof SurfaceImage)
+                    cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+                else if (event.getTopObject() instanceof Marker)
+                    cursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+                else
+                    cursor = null;
+                ((Component) this.wwd).setCursor(cursor);
             }
-            else if (dragEvent.getTopPickedObject().getParentLayer() == this.controlPointLayer
-                || this.activeOperation == SIZING)
-            {
-                this.activeOperation = SIZING;
-                this.resizeShape(topObject);
-                this.updateAffordances();
-                event.consume();
+            case SelectEvent.LEFT_PRESS -> {
+                this.active = true;
+                this.previousPosition = this.wwd.getCurrentPosition();
+            }
+            case SelectEvent.DRAG -> {
+                if (!this.active)
+                    return;
+                DragSelectEvent dragEvent = (DragSelectEvent) event;
+                Object topObject = dragEvent.getTopObject();
+                if (topObject == null)
+                    return;
+                if (topObject == this.shape || this.activeOperation == MOVING)
+                {
+                    this.activeOperation = MOVING;
+                    this.dragWholeShape(dragEvent, topObject);
+                    this.updateAffordances();
+                    event.consume();
+                }
+                else if (dragEvent.getTopPickedObject().getParentLayer() == this.controlPointLayer
+                    || this.activeOperation == SIZING)
+                {
+                    this.activeOperation = SIZING;
+                    this.resizeShape(topObject);
+                    this.updateAffordances();
+                    event.consume();
+                }
             }
         }
     }
@@ -264,7 +258,7 @@ public class SurfaceImageEditor implements SelectListener
 
         this.previousPosition = p;
 
-        java.util.List<LatLon> corners = new ArrayList<LatLon>(this.shape.getCorners());
+        java.util.List<LatLon> corners = new ArrayList<>(this.shape.getCorners());
         ControlPointMarker marker = (ControlPointMarker) topObject;
         corners.set(marker.getIndex(), corners.get(marker.getIndex()).add(delta));
         this.shape.setCorners(corners);
@@ -279,13 +273,10 @@ public class SurfaceImageEditor implements SelectListener
         MarkerAttributes markerAttrs =
             new BasicMarkerAttributes(Material.BLUE, BasicMarkerShape.SPHERE, 0.7, 10, 0.1, d / 30);
 
-        ArrayList<LatLon> handlePositions = new ArrayList<LatLon>(8);
-        for (LatLon corner : corners)
-        {
-            handlePositions.add(corner);
-        }
+        ArrayList<LatLon> handlePositions = new ArrayList<>(8);
+        handlePositions.addAll(corners);
 
-        ArrayList<Marker> handles = new ArrayList<Marker>(handlePositions.size());
+        ArrayList<Marker> handles = new ArrayList<>(handlePositions.size());
         for (int i = 0; i < handlePositions.size(); i++)
         {
             handles.add(new ControlPointMarker(new Position(handlePositions.get(i), 0), markerAttrs, i));

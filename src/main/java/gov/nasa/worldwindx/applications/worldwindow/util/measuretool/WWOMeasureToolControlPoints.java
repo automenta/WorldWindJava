@@ -63,9 +63,9 @@ public class WWOMeasureToolControlPoints implements WWOMeasureTool.ControlPointL
         }
     }
 
-    protected WWOMeasureTool measureTool;
-    protected ArrayList<ControlPoint> points = new ArrayList<ControlPoint>();
-    protected AnnotationAttributes controlPointAttributes;
+    protected final WWOMeasureTool measureTool;
+    protected final ArrayList<ControlPoint> points = new ArrayList<>();
+    protected final AnnotationAttributes controlPointAttributes;
 
     public WWOMeasureToolControlPoints(WWOMeasureTool measureTool)
     {

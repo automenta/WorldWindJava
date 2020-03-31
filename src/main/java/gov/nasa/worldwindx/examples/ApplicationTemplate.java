@@ -28,7 +28,7 @@ public class ApplicationTemplate {
 
     public static class AppPanel extends JPanel {
 
-        protected WorldWindow wwd;
+        protected final WorldWindow wwd;
         protected StatusBar statusBar;
         protected ToolTipController toolTipController;
         protected HighlightController highlightController;
@@ -271,9 +271,7 @@ public class ApplicationTemplate {
             final AppFrame frame = (AppFrame) appFrameClass.getConstructor().newInstance();
             frame.setTitle(appName);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            java.awt.EventQueue.invokeLater(() -> {
-                frame.setVisible(true);
-            });
+            java.awt.EventQueue.invokeLater(() -> frame.setVisible(true));
 
             return frame;
         } catch (Exception e) {

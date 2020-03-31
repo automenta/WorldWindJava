@@ -23,9 +23,9 @@ import java.util.logging.Level;
  */
 public class FileSetPreviewImageGenerator extends AVListImpl implements Runnable
 {
-    protected FileSet fileSet;
-    protected int width;
-    protected int height;
+    protected final FileSet fileSet;
+    protected final int width;
+    protected final int height;
     protected BufferedImageRaster thumbnailRaster;
 
     public FileSetPreviewImageGenerator(final FileSet fileSet, int width, int height)
@@ -41,14 +41,9 @@ public class FileSetPreviewImageGenerator extends AVListImpl implements Runnable
         this.createImageRaster();
         this.composeImage();
 
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                if (getPreviewImage() != null)
-                    fileSet.setImage(getPreviewImage());
-            }
+        SwingUtilities.invokeLater(() -> {
+            if (getPreviewImage() != null)
+                fileSet.setImage(getPreviewImage());
         });
 
     }

@@ -40,7 +40,7 @@ public class StarsLayer extends RenderableLayer
     protected Angle longitudeOffset = Angle.ZERO;
     /** The star sphere latitudinal rotation. */
     protected Angle latitudeOffset = Angle.ZERO;
-    protected Object vboCacheKey = new Object();
+    protected final Object vboCacheKey = new Object();
 
     /** Constructs a stars layer using the default stars file, which may be specified in {@link Configuration}. */
     public StarsLayer()

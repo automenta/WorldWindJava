@@ -126,10 +126,10 @@ public class SurfaceSector extends AbstractSurfaceShape implements Exportable
         if (originalLocations == null)
             return null;
 
-        ArrayList<LatLon> drawLocations = new ArrayList<LatLon>();
+        ArrayList<LatLon> drawLocations = new ArrayList<>();
         this.generateIntermediateLocations(originalLocations, edgeIntervalsPerDegree, false, drawLocations);
 
-        ArrayList<List<LatLon>> geom = new ArrayList<List<LatLon>>();
+        ArrayList<List<LatLon>> geom = new ArrayList<>();
         geom.add(drawLocations);
 
         return geom;

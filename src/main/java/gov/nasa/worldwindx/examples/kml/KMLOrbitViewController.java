@@ -31,7 +31,7 @@ public class KMLOrbitViewController extends KMLViewController
     protected final long MAX_LENGTH_MILLIS = 16000;
 
     /** The view to animate. */
-    protected OrbitView orbitView;
+    protected final OrbitView orbitView;
 
     /**
      * Create the view controller.
@@ -222,11 +222,11 @@ public class KMLOrbitViewController extends KMLViewController
      */
     protected class EyePositionAnimator extends PositionAnimator
     {
-        protected Position endEyePosition;
-        protected int eyeAltitudeMode;
+        protected final Position endEyePosition;
+        protected final int eyeAltitudeMode;
         protected boolean useMidZoom = true;
-        protected Vec4 forward;
-        protected Angle pitch;
+        protected final Vec4 forward;
+        protected final Angle pitch;
 
         /**
          * Create a new animator.

@@ -23,8 +23,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DataInstallerProgressMonitor extends ProgressMonitor implements PropertyChangeListener
 {
-    protected DataStoreProducer producer;
-    protected AtomicInteger progress;
+    protected final DataStoreProducer producer;
+    protected final AtomicInteger progress;
     java.util.Timer progressTimer = new java.util.Timer();
 
     public DataInstallerProgressMonitor(Component parent, DataStoreProducer producer)
@@ -38,16 +38,12 @@ public class DataInstallerProgressMonitor extends ProgressMonitor implements Pro
 
         // Configure the ProgressMonitor to receive progress events from the DataStoreProducer. This stops sending
         // progress events when the user clicks the "Cancel" button, ensuring that the ProgressMonitor does not
-        PropertyChangeListener progressListener = new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent evt)
-            {
-                if (DataInstallerProgressMonitor.this.isCanceled())
-                    return;
+        PropertyChangeListener progressListener = evt -> {
+            if (DataInstallerProgressMonitor.this.isCanceled())
+                return;
 
-                if (evt.getPropertyName().equals(AVKey.PROGRESS))
-                    DataInstallerProgressMonitor.this.progress.set((int) (100 * (Double) evt.getNewValue()));
-            }
+            if (evt.getPropertyName().equals(AVKey.PROGRESS))
+                DataInstallerProgressMonitor.this.progress.set((int) (100 * (Double) evt.getNewValue()));
         };
 
         producer.addPropertyChangeListener(progressListener);

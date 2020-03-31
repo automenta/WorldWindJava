@@ -23,7 +23,7 @@ import java.awt.geom.*;
  */
 public class FrameResizeControl extends AbstractResizeHotSpot
 {
-    protected ScrollFrame frame;
+    protected final ScrollFrame frame;
 
     /**
      * Create a resize control.

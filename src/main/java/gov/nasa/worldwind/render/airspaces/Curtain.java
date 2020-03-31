@@ -27,7 +27,7 @@ import java.util.*;
  */
 public class Curtain extends AbstractAirspace
 {
-    protected List<LatLon> locations = new ArrayList<LatLon>();
+    protected final List<LatLon> locations = new ArrayList<>();
     protected String pathType = AVKey.GREAT_CIRCLE;
     protected double splitThreshold = 2000.0; // 2 km
     protected boolean applyPositionAltitude = false;
@@ -63,7 +63,7 @@ public class Curtain extends AbstractAirspace
 
     protected void makeDefaultDetailLevels()
     {
-        List<DetailLevel> levels = new ArrayList<DetailLevel>();
+        List<DetailLevel> levels = new ArrayList<>();
         double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
 
         DetailLevel level;
@@ -178,13 +178,13 @@ public class Curtain extends AbstractAirspace
     @Override
     protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration)
     {
-        ArrayList<LatLon> tessellatedLocations = new ArrayList<LatLon>();
+        ArrayList<LatLon> tessellatedLocations = new ArrayList<>();
         this.makeTessellatedLocations(globe, tessellatedLocations);
 
         if (tessellatedLocations.isEmpty())
             return null;
 
-        ArrayList<Vec4> points = new ArrayList<Vec4>();
+        ArrayList<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, tessellatedLocations, points);
 
         return points;
@@ -324,11 +324,11 @@ public class Curtain extends AbstractAirspace
             DetailLevel level = this.computeDetailLevel(dc);
 
             Object o = level.getValue(SPLIT_THRESHOLD);
-            if (o != null && o instanceof Double)
+            if (o instanceof Double)
                 splitThreshold = (Double) o;
 
             o = level.getValue(DISABLE_TERRAIN_CONFORMANCE);
-            if (o != null && o instanceof Boolean && (Boolean) o)
+            if (o instanceof Boolean && (Boolean) o)
                 terrainConformant[0] = terrainConformant[1] = false;
         }
 
@@ -493,8 +493,9 @@ public class Curtain extends AbstractAirspace
 
     protected static class SectionRenderInfo
     {
-        LatLon begin, end;
-        String pathType;
+        final LatLon begin;
+        final LatLon end;
+        final String pathType;
         int pillars;
         int firstVertex, vertexCount;
         int firstFillIndex, fillIndexCount;

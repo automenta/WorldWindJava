@@ -27,7 +27,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements java.a
     protected boolean busy;
     protected ButtonAnnotation closeButton;
     protected ImageAnnotation busyImage;
-    protected javax.swing.event.EventListenerList listenerList = new javax.swing.event.EventListenerList();
+    protected final javax.swing.event.EventListenerList listenerList = new javax.swing.event.EventListenerList();
 
     protected DialogAnnotation(Position position)
     {

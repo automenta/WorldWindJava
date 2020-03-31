@@ -22,7 +22,7 @@ public class GeoSymTable
     public GeoSymTable(GeoSymTableHeader header)
     {
         this.header = header;
-        this.indexOnId = new HashMap<Integer, Integer>();
+        this.indexOnId = new HashMap<>();
     }
 
     public GeoSymTableHeader getHeader()

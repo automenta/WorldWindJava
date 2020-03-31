@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class KMLStyleMap extends KMLAbstractStyleSelector
 {
-    protected List<KMLPair> pairs = new ArrayList<KMLPair>();
+    protected List<KMLPair> pairs = new ArrayList<>();
 
     /**
      * Construct an instance.
@@ -157,7 +157,7 @@ public class KMLStyleMap extends KMLAbstractStyleSelector
     protected void mergePairs(KMLStyleMap sourceMap)
     {
         // Make a copy of the existing list so we can modify it as we traverse the copy.
-        List<KMLPair> pairsCopy = new ArrayList<KMLPair>(this.getPairs().size());
+        List<KMLPair> pairsCopy = new ArrayList<>(this.getPairs().size());
         Collections.copy(pairsCopy, this.getPairs());
 
         for (KMLPair sourcePair : sourceMap.getPairs())

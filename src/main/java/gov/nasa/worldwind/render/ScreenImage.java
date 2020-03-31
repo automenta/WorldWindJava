@@ -32,8 +32,8 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable
 {
     protected Object imageSource;
     protected BasicWWTexture texture;
-    protected OrderedImage orderedImage = new OrderedImage();
-    protected PickSupport pickSupport = new PickSupport();
+    protected final OrderedImage orderedImage = new OrderedImage();
+    protected final PickSupport pickSupport = new PickSupport();
     protected double opacity = 1d;
     protected Double rotation;
     protected Color color = Color.WHITE;
@@ -770,10 +770,9 @@ public class ScreenImage extends WWObjectImpl implements Renderable, Exportable
      * @param output Object to receive the generated KML.
      *
      * @throws XMLStreamException If an exception occurs while writing the KML
-     * @throws IOException        if an exception occurs while exporting the data.
      * @see #export(String, Object)
      */
-    protected void exportAsKML(Object output) throws IOException, XMLStreamException
+    protected void exportAsKML(Object output) throws XMLStreamException
     {
         XMLStreamWriter xmlWriter = null;
         XMLOutputFactory factory = XMLOutputFactory.newInstance();

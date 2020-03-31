@@ -80,7 +80,7 @@ public class PickedObjectList extends ArrayList<PickedObject>
             if (po.isOnTop())
             {
                 if (list == null)
-                    list = new ArrayList<PickedObject>();
+                    list = new ArrayList<>();
                 list.add(po);
             }
         }
@@ -104,7 +104,7 @@ public class PickedObjectList extends ArrayList<PickedObject>
             if (po.isOnTop())
             {
                 if (list == null)
-                    list = new ArrayList<Object>();
+                    list = new ArrayList<>();
                 list.add(po.getObject());
             }
         }

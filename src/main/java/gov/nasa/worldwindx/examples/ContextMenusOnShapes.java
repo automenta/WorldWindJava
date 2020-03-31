@@ -62,7 +62,7 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
             }
 
             // Turn on highlight if object selected.
-            if (o != null && o instanceof PointPlacemark) {
+            if (o instanceof PointPlacemark) {
                 this.lastPickedPlacemark = (PointPlacemark) o;
                 this.lastPickedPlacemark.setHighlighted(true);
             }
@@ -100,10 +100,10 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
 
         public static final String CONTEXT_MENU_INFO = "ContextMenuInfo";
 
-        protected ContextMenuInfo ctxMenuInfo;
-        protected Component sourceComponent;
+        protected final ContextMenuInfo ctxMenuInfo;
+        protected final Component sourceComponent;
         protected JMenuItem menuTitleItem;
-        protected ArrayList<JMenuItem> menuItems = new ArrayList<>();
+        protected final ArrayList<JMenuItem> menuItems = new ArrayList<>();
 
         public ContextMenu(Component sourceComponent, ContextMenuInfo contextMenuInfo) {
             this.sourceComponent = sourceComponent;
@@ -143,8 +143,8 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
      */
     protected static class ContextMenuInfo {
 
-        protected String menuTitle;
-        protected ContextMenuItemInfo[] menuItems;
+        protected final String menuTitle;
+        protected final ContextMenuItemInfo[] menuItems;
 
         public ContextMenuInfo(String title, ContextMenuItemInfo[] menuItems) {
             this.menuTitle = title;
@@ -157,7 +157,7 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
      */
     protected static class ContextMenuItemInfo {
 
-        protected String displayString;
+        protected final String displayString;
 
         public ContextMenuItemInfo(String displayString) {
             this.displayString = displayString;
@@ -169,7 +169,7 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
      */
     public static class ContextMenuItemAction extends AbstractAction {
 
-        protected ContextMenuItemInfo itemInfo;
+        protected final ContextMenuItemInfo itemInfo;
 
         public ContextMenuItemAction(ContextMenuItemInfo itemInfo) {
             super(itemInfo.displayString);

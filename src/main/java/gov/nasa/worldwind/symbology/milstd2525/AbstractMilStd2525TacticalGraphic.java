@@ -33,12 +33,12 @@ public abstract class AbstractMilStd2525TacticalGraphic extends AbstractTactical
      * alphanumeric symbol identification code (SIDC). Calculated from the current modifiers at construction and during
      * each call to {@link #setModifier(String, Object)}. Initially <code>null</code>.
      */
-    protected SymbolCode symbolCode;
+    protected final SymbolCode symbolCode;
     /**
      * Symbol identifier with fields that do not influence the type of graphic replaced with hyphens. See {@link
      * SymbolCode#toMaskedString}.
      */
-    protected String maskedSymbolCode;
+    protected final String maskedSymbolCode;
 
     protected AbstractMilStd2525TacticalGraphic(String symbolCode)
     {

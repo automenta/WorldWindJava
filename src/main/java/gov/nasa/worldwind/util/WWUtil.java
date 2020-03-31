@@ -640,7 +640,7 @@ public class WWUtil
         // The hexadecimal representation for an RGBA color can result in a value larger than
         // Integer.MAX_VALUE (for example, 0XFFFF). Therefore we decode the string as a long,
         // then keep only the lower four bytes.
-        Long longValue;
+        long longValue;
         try
         {
             longValue = Long.parseLong(encodedString.substring(2), 16);
@@ -692,7 +692,7 @@ public class WWUtil
         // The hexadecimal representation for an RGBA color can result in a value larger than
         // Integer.MAX_VALUE (for example, 0XFFFF). Therefore we decode the string as a long,
         // then keep only the lower four bytes.
-        Long longValue;
+        long longValue;
         try
         {
             longValue = Long.parseLong(encodedString.substring(2), 16);

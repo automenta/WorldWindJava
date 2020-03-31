@@ -25,7 +25,7 @@ public class XALParserContext extends BasicXMLEventParserContext
 
     public static Map<QName, XMLEventParser> getDefaultParsers()
     {
-        ConcurrentHashMap<QName, XMLEventParser> parsers = new ConcurrentHashMap<QName, XMLEventParser>();
+        ConcurrentHashMap<QName, XMLEventParser> parsers = new ConcurrentHashMap<>();
 
         String xns = XALConstants.XAL_NAMESPACE;
         parsers.put(new QName(xns, "Address"), new XALAddress(xns));

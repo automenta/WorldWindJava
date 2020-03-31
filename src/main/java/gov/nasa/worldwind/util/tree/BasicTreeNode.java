@@ -240,7 +240,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode
     public void addChild(TreeNode child)
     {
         if (this.children == null)
-            this.children = new ArrayList<TreeNode>();
+            this.children = new ArrayList<>();
         this.addChild(this.children.size(), child);
     }
 
@@ -248,7 +248,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode
     public void addChild(int index, TreeNode child)
     {
         if (this.children == null)
-            this.children = new ArrayList<TreeNode>();
+            this.children = new ArrayList<>();
         this.children.add(index, child);
 
         this.treeSelected = null;  // Need to recompute tree selected field

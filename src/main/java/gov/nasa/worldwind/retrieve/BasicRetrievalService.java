@@ -24,8 +24,8 @@ public final class BasicRetrievalService extends WWObjectImpl
     implements RetrievalService, Thread.UncaughtExceptionHandler
 {
     // These constants are last-ditch values in case Configuration lacks defaults
-    private static final int DEFAULT_QUEUE_SIZE = 100;
-    private static final int DEFAULT_POOL_SIZE = 5;
+    private static final int DEFAULT_QUEUE_SIZE = 1024;
+    private static final int DEFAULT_POOL_SIZE = 8;
     private static final long DEFAULT_STALE_REQUEST_LIMIT = 30000; // milliseconds
     private static final int DEFAULT_TIME_PRIORITY_GRANULARITY = 500; // milliseconds
 
@@ -99,7 +99,7 @@ public final class BasicRetrievalService extends WWObjectImpl
             }
 
             // The client-specified priority is compared for requests submitted within the same granularity period.
-            return this.priority == that.priority ? 0 : this.priority < that.priority ? -1 : 1;
+            return Double.compare(this.priority, that.priority);
         }
 
         public boolean equals(Object o)
@@ -147,17 +147,13 @@ public final class BasicRetrievalService extends WWObjectImpl
 
         private RetrievalExecutor(int poolSize, int queueSize)
         {
-            super(poolSize, poolSize, THREAD_TIMEOUT, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>(queueSize),
-                new ThreadFactory()
-                {
-                    public Thread newThread(Runnable runnable)
-                    {
-                        Thread thread = new Thread(runnable);
-                        thread.setDaemon(true);
-                        thread.setPriority(Thread.MIN_PRIORITY);
-                        thread.setUncaughtExceptionHandler(BasicRetrievalService.this);
-                        return thread;
-                    }
+            super(poolSize, poolSize, THREAD_TIMEOUT, TimeUnit.SECONDS, new PriorityBlockingQueue<>(queueSize),
+                runnable -> {
+                    Thread thread = new Thread(runnable);
+                    thread.setDaemon(true);
+                    thread.setPriority(Thread.MIN_PRIORITY);
+                    thread.setUncaughtExceptionHandler(BasicRetrievalService.this);
+                    return thread;
                 }, new ThreadPoolExecutor.DiscardPolicy() // abandon task when queue is full
             {
                 // This listener is invoked only when the executor queue is a bounded queue and runs out of room.
@@ -305,7 +301,7 @@ public final class BasicRetrievalService extends WWObjectImpl
         this.executor = new RetrievalExecutor(poolSize, this.queueSize);
 
         // this.activeTasks holds the list of currently executing tasks (*not* those pending on the queue)
-        this.activeTasks = new ConcurrentLinkedQueue<RetrievalTask>();
+        this.activeTasks = new ConcurrentLinkedQueue<>();
     }
 
     public void shutdown(boolean immediately)

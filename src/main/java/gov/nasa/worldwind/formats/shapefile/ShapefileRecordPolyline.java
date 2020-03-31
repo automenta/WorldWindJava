@@ -9,7 +9,6 @@ import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.util.VecBuffer;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Locale;
 
@@ -195,10 +194,9 @@ public class ShapefileRecordPolyline extends ShapefileRecord
      *
      * @throws javax.xml.stream.XMLStreamException
      *                             If an exception occurs while writing the KML
-     * @throws java.io.IOException If an exception occurs while exporting the data.
      */
     @Override
-    public void exportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    public void exportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException
     {
         for (int i = 0; i < this.getNumberOfParts(); i++)
         {

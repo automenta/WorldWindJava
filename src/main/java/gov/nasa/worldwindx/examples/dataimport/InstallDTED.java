@@ -21,7 +21,6 @@ import org.w3c.dom.Document;
 import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.beans.*;
 import java.io.File;
 import java.util.*;
@@ -48,57 +47,43 @@ public class InstallDTED extends ApplicationTemplate
 
         public AppFrame()
         {
-            Timer timer = new Timer(3000, new ActionListener()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e)
+            Timer timer = new Timer(3000, e -> {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Choose a DTED folder");
+                fileChooser.setApproveButtonText("Choose");
+                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                fileChooser.setMultiSelectionEnabled(false);
+                int status = fileChooser.showOpenDialog(wwjPanel);
+                if (status == JFileChooser.APPROVE_OPTION)
                 {
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setDialogTitle("Choose a DTED folder");
-                    fileChooser.setApproveButtonText("Choose");
-                    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                    fileChooser.setMultiSelectionEnabled(false);
-                    int status = fileChooser.showOpenDialog(wwjPanel);
-                    if (status == JFileChooser.APPROVE_OPTION)
-                    {
-                        final File sourceDir = fileChooser.getSelectedFile();
+                    final File sourceDir = fileChooser.getSelectedFile();
 
-                        // Show the WAIT cursor because the installation may take a while.
-                        setCursor(new Cursor(Cursor.WAIT_CURSOR));
+                    // Show the WAIT cursor because the installation may take a while.
+                    setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
-                        // Install the elevations on a thread other than the event-dispatch thread to avoid freezing the UI.
-                        Thread t = new Thread(new Runnable()
-                        {
-                            public void run()
-                            {
-                                installElevations(sourceDir);
+                    // Install the elevations on a thread other than the event-dispatch thread to avoid freezing the UI.
+                    Thread t = new Thread(() -> {
+                        installElevations(sourceDir);
 
-                                // Clean up everything on the event dispatch thread.
-                                SwingUtilities.invokeLater(new Runnable()
-                                {
-                                    @Override
-                                    public void run()
-                                    {
-                                        // Restore the cursor.
-                                        setCursor(Cursor.getDefaultCursor());
+                        // Clean up everything on the event dispatch thread.
+                        SwingUtilities.invokeLater(() -> {
+                            // Restore the cursor.
+                            setCursor(Cursor.getDefaultCursor());
 
-                                        // Clean up the producer.
-                                        producer.removePropertyChangeListener(progressListener);
-                                        producer.removeAllDataSources();
-                                        producer = null;
+                            // Clean up the producer.
+                            producer.removePropertyChangeListener(progressListener);
+                            producer.removeAllDataSources();
+                            producer = null;
 
-                                        // Shut down progress monitoring.
-                                        progressMonitor.close();
-                                        progressMonitor = null;
-                                        progressTimer.cancel();
-                                        progressTimer = null;
-                                    }
-                                });
-                            }
+                            // Shut down progress monitoring.
+                            progressMonitor.close();
+                            progressMonitor = null;
+                            progressTimer.cancel();
+                            progressTimer = null;
                         });
+                    });
 
-                        t.start();
-                    }
+                    t.start();
                 }
             });
             timer.setRepeats(false);
@@ -111,7 +96,7 @@ public class InstallDTED extends ApplicationTemplate
             FileStore fileStore = WorldWind.getDataFileStore();
 
             // Install the elevations and get the resulting elevation model.
-            ArrayList<File> sources = new ArrayList<File>();
+            ArrayList<File> sources = new ArrayList<>();
             this.findDTEDFiles(sourceDir, sources);
             System.out.println("Found " + sources.size() + " DTED files.");
             final ElevationModel em = installElevations("DTED Elevations", sources, fileStore);
@@ -119,20 +104,16 @@ public class InstallDTED extends ApplicationTemplate
                 return;
 
             // Add the new elevation model to the current (default) one. Must do it on the event dispatch thread.
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    CompoundElevationModel model
-                        = (CompoundElevationModel) AppFrame.this.getWwd().getModel().getGlobe().getElevationModel();
-                    model.addElevationModel(em);
+            SwingUtilities.invokeLater(() -> {
+                CompoundElevationModel model
+                    = (CompoundElevationModel) AppFrame.this.getWwd().getModel().getGlobe().getElevationModel();
+                model.addElevationModel(em);
 
-                    // Set the view to look at the installed elevations. Get the location from the elevation model's
-                    // construction parameters.
-                    AVList params = (AVList) em.getValue(AVKey.CONSTRUCTION_PARAMETERS);
-                    Sector sector = (Sector) params.getValue(AVKey.SECTOR);
-                    ExampleUtil.goTo(getWwd(), sector);
-                }
+                // Set the view to look at the installed elevations. Get the location from the elevation model's
+                // construction parameters.
+                AVList params = (AVList) em.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+                Sector sector = (Sector) params.getValue(AVKey.SECTOR);
+                ExampleUtil.goTo(getWwd(), sector);
             });
         }
 
@@ -186,14 +167,7 @@ public class InstallDTED extends ApplicationTemplate
             {
                 // Install the elevations.
                 System.out.println("Starting production");
-                SwingUtilities.invokeLater(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        setupProgressMonitor();
-                    }
-                });
+                SwingUtilities.invokeLater(this::setupProgressMonitor);
                 this.producer.startProduction();
             }
             catch (Exception e)
@@ -212,7 +186,7 @@ public class InstallDTED extends ApplicationTemplate
                 return null;
 
             Object o = results.iterator().next();
-            if (o == null || !(o instanceof Document))
+            if (!(o instanceof Document))
                 return null;
 
             // Construct an ElevationModel by passing the data configuration document to an ElevationModelFactory.
@@ -229,16 +203,12 @@ public class InstallDTED extends ApplicationTemplate
 
             // Configure the ProgressMonitor to receive progress events from the DataStoreProducer. This stops sending
             // progress events when the user clicks the "Cancel" button, ensuring that the ProgressMonitor does not
-            this.progressListener = new PropertyChangeListener()
-            {
-                public void propertyChange(PropertyChangeEvent evt)
-                {
-                    if (progressMonitor.isCanceled())
-                        return;
+            this.progressListener = evt -> {
+                if (progressMonitor.isCanceled())
+                    return;
 
-                    if (evt.getPropertyName().equals(AVKey.PROGRESS))
-                        progress.set((int) (100 * (Double) evt.getNewValue()));
-                }
+                if (evt.getPropertyName().equals(AVKey.PROGRESS))
+                    progress.set((int) (100 * (Double) evt.getNewValue()));
             };
             this.producer.addPropertyChangeListener(this.progressListener);
             this.progressMonitor.setProgress(0);

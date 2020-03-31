@@ -376,13 +376,7 @@ public abstract class CompoundVecBuffer
      */
     public Iterable<double[]> getCoords(final int minCoordsPerVec)
     {
-        return new Iterable<double[]>()
-        {
-            public Iterator<double[]> iterator()
-            {
-                return new CompoundIterator<double[]>(new CoordIterable(minCoordsPerVec));
-            }
-        };
+        return () -> new CompoundIterator<>(new CoordIterable(minCoordsPerVec));
     }
 
     /**
@@ -397,13 +391,7 @@ public abstract class CompoundVecBuffer
      */
     public Iterable<double[]> getReverseCoords(final int minCoordsPerVec)
     {
-        return new Iterable<double[]>()
-        {
-            public Iterator<double[]> iterator()
-            {
-                return new ReverseCompoundIterator<double[]>(new CoordIterable(minCoordsPerVec));
-            }
-        };
+        return () -> new ReverseCompoundIterator<>(new CoordIterable(minCoordsPerVec));
     }
 
     /**
@@ -413,13 +401,7 @@ public abstract class CompoundVecBuffer
      */
     public Iterable<? extends Vec4> getVectors()
     {
-        return new Iterable<Vec4>()
-        {
-            public Iterator<Vec4> iterator()
-            {
-                return new CompoundIterator<Vec4>(new VectorIterable());
-            }
-        };
+        return (Iterable<Vec4>) () -> new CompoundIterator<>(new VectorIterable());
     }
 
     /**
@@ -429,13 +411,7 @@ public abstract class CompoundVecBuffer
      */
     public Iterable<? extends Vec4> getReverseVectors()
     {
-        return new Iterable<Vec4>()
-        {
-            public Iterator<Vec4> iterator()
-            {
-                return new ReverseCompoundIterator<Vec4>(new VectorIterable());
-            }
-        };
+        return (Iterable<Vec4>) () -> new ReverseCompoundIterator<>(new VectorIterable());
     }
 
     /**
@@ -445,13 +421,7 @@ public abstract class CompoundVecBuffer
      */
     public Iterable<? extends LatLon> getLocations()
     {
-        return new Iterable<LatLon>()
-        {
-            public Iterator<LatLon> iterator()
-            {
-                return new CompoundIterator<LatLon>(new LocationIterable());
-            }
-        };
+        return (Iterable<LatLon>) () -> new CompoundIterator<>(new LocationIterable());
     }
 
     /**
@@ -461,13 +431,7 @@ public abstract class CompoundVecBuffer
      */
     public Iterable<? extends LatLon> getReverseLocations()
     {
-        return new Iterable<LatLon>()
-        {
-            public Iterator<LatLon> iterator()
-            {
-                return new ReverseCompoundIterator<LatLon>(new LocationIterable());
-            }
-        };
+        return (Iterable<LatLon>) () -> new ReverseCompoundIterator<>(new LocationIterable());
     }
 
     /**
@@ -477,13 +441,7 @@ public abstract class CompoundVecBuffer
      */
     public Iterable<? extends Position> getPositions()
     {
-        return new Iterable<Position>()
-        {
-            public Iterator<Position> iterator()
-            {
-                return new CompoundIterator<Position>(new PositionIterable());
-            }
-        };
+        return (Iterable<Position>) () -> new CompoundIterator<>(new PositionIterable());
     }
 
     /**
@@ -493,13 +451,7 @@ public abstract class CompoundVecBuffer
      */
     public Iterable<? extends Position> getReversePositions()
     {
-        return new Iterable<Position>()
-        {
-            public Iterator<Position> iterator()
-            {
-                return new ReverseCompoundIterator<Position>(new PositionIterable());
-            }
-        };
+        return (Iterable<Position>) () -> new ReverseCompoundIterator<>(new PositionIterable());
     }
 
     //**************************************************************//

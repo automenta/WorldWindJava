@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class ColorAllocator
 {
-    protected static ConcurrentLinkedQueue<Color> initialColors = new ConcurrentLinkedQueue<Color>();
+    protected static final ConcurrentLinkedQueue<Color> initialColors = new ConcurrentLinkedQueue<>();
 
     static
     {

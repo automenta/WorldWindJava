@@ -357,35 +357,32 @@ public class UnitsFormat extends AVListImpl
 
         this.lengthUnits = lengthUnits;
 
-        if (lengthUnits.equals(UnitsFormat.KILOMETERS))
+        switch (lengthUnits)
         {
-            this.lengthUnitsMultiplier = WWMath.METERS_TO_KILOMETERS;
-            this.lengthUnitsSymbol = UnitsFormat.SYMBOL_KILOMETERS;
-        }
-        else if (lengthUnits.equals(UnitsFormat.MILES))
-        {
-            this.lengthUnitsMultiplier = WWMath.METERS_TO_MILES;
-            this.lengthUnitsSymbol = UnitsFormat.SYMBOL_MILES;
-        }
-        else if (lengthUnits.equals(UnitsFormat.NAUTICAL_MILES))
-        {
-            this.lengthUnitsMultiplier = WWMath.METERS_TO_NAUTICAL_MILES;
-            this.lengthUnitsSymbol = UnitsFormat.SYMBOL_NAUTICAL_MILES;
-        }
-        else if (lengthUnits.equals(UnitsFormat.YARDS))
-        {
-            this.lengthUnitsMultiplier = WWMath.METERS_TO_YARDS;
-            this.lengthUnitsSymbol = UnitsFormat.SYMBOL_YARDS;
-        }
-        else if (lengthUnits.equals(UnitsFormat.FEET))
-        {
-            this.lengthUnitsMultiplier = WWMath.METERS_TO_FEET;
-            this.lengthUnitsSymbol = UnitsFormat.SYMBOL_FEET;
-        }
-        else
-        {
-            this.lengthUnitsMultiplier = 1d;
-            this.lengthUnitsSymbol = UnitsFormat.SYMBOL_METERS;
+            case UnitsFormat.KILOMETERS -> {
+                this.lengthUnitsMultiplier = WWMath.METERS_TO_KILOMETERS;
+                this.lengthUnitsSymbol = UnitsFormat.SYMBOL_KILOMETERS;
+            }
+            case UnitsFormat.MILES -> {
+                this.lengthUnitsMultiplier = WWMath.METERS_TO_MILES;
+                this.lengthUnitsSymbol = UnitsFormat.SYMBOL_MILES;
+            }
+            case UnitsFormat.NAUTICAL_MILES -> {
+                this.lengthUnitsMultiplier = WWMath.METERS_TO_NAUTICAL_MILES;
+                this.lengthUnitsSymbol = UnitsFormat.SYMBOL_NAUTICAL_MILES;
+            }
+            case UnitsFormat.YARDS -> {
+                this.lengthUnitsMultiplier = WWMath.METERS_TO_YARDS;
+                this.lengthUnitsSymbol = UnitsFormat.SYMBOL_YARDS;
+            }
+            case UnitsFormat.FEET -> {
+                this.lengthUnitsMultiplier = WWMath.METERS_TO_FEET;
+                this.lengthUnitsSymbol = UnitsFormat.SYMBOL_FEET;
+            }
+            default -> {
+                this.lengthUnitsMultiplier = 1d;
+                this.lengthUnitsSymbol = UnitsFormat.SYMBOL_METERS;
+            }
         }
     }
 
@@ -441,35 +438,32 @@ public class UnitsFormat extends AVListImpl
 
         this.altitudeUnits = altitudeUnits;
 
-        if (altitudeUnits.equals(UnitsFormat.KILOMETERS))
+        switch (altitudeUnits)
         {
-            this.altitudeUnitsMultiplier = WWMath.METERS_TO_KILOMETERS;
-            this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_KILOMETERS;
-        }
-        else if (altitudeUnits.equals(UnitsFormat.MILES))
-        {
-            this.altitudeUnitsMultiplier = WWMath.METERS_TO_MILES;
-            this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_MILES;
-        }
-        else if (altitudeUnits.equals(UnitsFormat.NAUTICAL_MILES))
-        {
-            this.altitudeUnitsMultiplier = WWMath.METERS_TO_NAUTICAL_MILES;
-            this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_NAUTICAL_MILES;
-        }
-        else if (altitudeUnits.equals(UnitsFormat.YARDS))
-        {
-            this.altitudeUnitsMultiplier = WWMath.METERS_TO_YARDS;
-            this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_YARDS;
-        }
-        else if (altitudeUnits.equals(UnitsFormat.FEET))
-        {
-            this.altitudeUnitsMultiplier = WWMath.METERS_TO_FEET;
-            this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_FEET;
-        }
-        else
-        {
-            this.altitudeUnitsMultiplier = 1d;
-            this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_METERS;
+            case UnitsFormat.KILOMETERS -> {
+                this.altitudeUnitsMultiplier = WWMath.METERS_TO_KILOMETERS;
+                this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_KILOMETERS;
+            }
+            case UnitsFormat.MILES -> {
+                this.altitudeUnitsMultiplier = WWMath.METERS_TO_MILES;
+                this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_MILES;
+            }
+            case UnitsFormat.NAUTICAL_MILES -> {
+                this.altitudeUnitsMultiplier = WWMath.METERS_TO_NAUTICAL_MILES;
+                this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_NAUTICAL_MILES;
+            }
+            case UnitsFormat.YARDS -> {
+                this.altitudeUnitsMultiplier = WWMath.METERS_TO_YARDS;
+                this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_YARDS;
+            }
+            case UnitsFormat.FEET -> {
+                this.altitudeUnitsMultiplier = WWMath.METERS_TO_FEET;
+                this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_FEET;
+            }
+            default -> {
+                this.altitudeUnitsMultiplier = 1d;
+                this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_METERS;
+            }
         }
     }
 
@@ -514,40 +508,36 @@ public class UnitsFormat extends AVListImpl
 
         this.areaUnits = areaUnits;
 
-        if (areaUnits.equals(UnitsFormat.SQUARE_KILOMETERS))
+        switch (areaUnits)
         {
-            this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_SQUARE_KILOMETERS;
-            this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_KILOMETERS;
-        }
-        else if (areaUnits.equals(UnitsFormat.SQUARE_MILES))
-        {
-            this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_SQUARE_MILES;
-            this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_MILES;
-        }
-        else if (areaUnits.equals(UnitsFormat.HECTARE))
-        {
-            this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_HECTARES;
-            this.areaUnitsSymbol = UnitsFormat.SYMBOL_HECTARE;
-        }
-        else if (areaUnits.equals(UnitsFormat.ACRE))
-        {
-            this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_ACRES;
-            this.areaUnitsSymbol = UnitsFormat.SYMBOL_ACRE;
-        }
-        else if (areaUnits.equals(UnitsFormat.SQUARE_YARDS))
-        {
-            this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_SQUARE_YARDS;
-            this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_YARDS;
-        }
-        else if (areaUnits.equals(UnitsFormat.SQUARE_FEET))
-        {
-            this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_SQUARE_FEET;
-            this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_FEET;
-        }
-        else
-        {
-            this.areaUnitsMultiplier = 1d;
-            this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_METERS;
+            case UnitsFormat.SQUARE_KILOMETERS -> {
+                this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_SQUARE_KILOMETERS;
+                this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_KILOMETERS;
+            }
+            case UnitsFormat.SQUARE_MILES -> {
+                this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_SQUARE_MILES;
+                this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_MILES;
+            }
+            case UnitsFormat.HECTARE -> {
+                this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_HECTARES;
+                this.areaUnitsSymbol = UnitsFormat.SYMBOL_HECTARE;
+            }
+            case UnitsFormat.ACRE -> {
+                this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_ACRES;
+                this.areaUnitsSymbol = UnitsFormat.SYMBOL_ACRE;
+            }
+            case UnitsFormat.SQUARE_YARDS -> {
+                this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_SQUARE_YARDS;
+                this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_YARDS;
+            }
+            case UnitsFormat.SQUARE_FEET -> {
+                this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_SQUARE_FEET;
+                this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_FEET;
+            }
+            default -> {
+                this.areaUnitsMultiplier = 1d;
+                this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_METERS;
+            }
         }
     }
 

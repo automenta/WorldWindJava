@@ -16,7 +16,7 @@ public class SARAnnotationWriter
     private final org.w3c.dom.Document doc;
     private final javax.xml.transform.Result result;
 
-    public SARAnnotationWriter(String path) throws java.io.IOException, javax.xml.parsers.ParserConfigurationException
+    public SARAnnotationWriter(String path) throws javax.xml.parsers.ParserConfigurationException
     {
         if (path == null)
         {
@@ -31,7 +31,7 @@ public class SARAnnotationWriter
         createAnnotationsDocument(this.doc);
     }
 
-    public SARAnnotationWriter(java.io.OutputStream stream) throws java.io.IOException, javax.xml.parsers.ParserConfigurationException
+    public SARAnnotationWriter(java.io.OutputStream stream) throws javax.xml.parsers.ParserConfigurationException
     {
         if (stream == null)
         {
@@ -46,7 +46,7 @@ public class SARAnnotationWriter
         createAnnotationsDocument(this.doc);
     }
 
-    public void writeAnnotation(SARAnnotation sarAnnotation) throws javax.xml.transform.TransformerException
+    public void writeAnnotation(SARAnnotation sarAnnotation)
     {
         if (sarAnnotation == null)
         {

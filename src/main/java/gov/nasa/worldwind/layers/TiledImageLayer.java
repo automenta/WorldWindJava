@@ -38,11 +38,11 @@ public abstract class TiledImageLayer extends AbstractLayer
     protected boolean levelZeroLoaded = false;
     protected boolean retainLevelZeroTiles = false;
     protected String tileCountName;
-    protected double detailHintOrigin = 2.8;
+    protected final double detailHintOrigin = 2.8;
     protected double detailHint = 0;
     protected boolean useMipMaps = true;
     protected boolean useTransparentTextures = false;
-    protected ArrayList<String> supportedImageFormats = new ArrayList<String>();
+    protected final ArrayList<String> supportedImageFormats = new ArrayList<>();
     protected String textureFormat;
 
     // Diagnostic flags
@@ -51,10 +51,10 @@ public abstract class TiledImageLayer extends AbstractLayer
     protected boolean drawBoundingVolumes = false;
 
     // Stuff computed each frame
-    protected ArrayList<TextureTile> currentTiles = new ArrayList<TextureTile>();
+    protected final ArrayList<TextureTile> currentTiles = new ArrayList<>();
     protected TextureTile currentResourceTile;
     protected boolean atMaxResolution = false;
-    protected PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<Runnable>(200);
+    protected final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(200);
 
     abstract protected void requestTexture(DrawContext dc, TextureTile tile);
 
@@ -300,7 +300,7 @@ public abstract class TiledImageLayer extends AbstractLayer
         int nLatTiles = lastRow - firstRow + 1;
         int nLonTiles = lastCol - firstCol + 1;
 
-        this.topLevels = new ArrayList<TextureTile>(nLatTiles * nLonTiles);
+        this.topLevels = new ArrayList<>(nLatTiles * nLonTiles);
 
         Angle p1 = Tile.computeRowLatitude(firstRow, dLat, latOrigin);
         for (int row = firstRow; row <= lastRow; row++)
@@ -745,7 +745,7 @@ public abstract class TiledImageLayer extends AbstractLayer
             int la = ta.getFallbackTile() == null ? ta.getLevelNumber() : ta.getFallbackTile().getLevelNumber();
             int lb = tb.getFallbackTile() == null ? tb.getLevelNumber() : tb.getFallbackTile().getLevelNumber();
 
-            return la < lb ? -1 : la == lb ? 0 : 1;
+            return Integer.compare(la, lb);
         }
     }
 
@@ -896,7 +896,7 @@ public abstract class TiledImageLayer extends AbstractLayer
         WWXML.checkAndAppendTextElement(params, AVKey.TEXTURE_FORMAT, context, "TextureFormat");
 
         Object o = params.getValue(AVKey.AVAILABLE_IMAGE_FORMATS);
-        if (o != null && o instanceof String[])
+        if (o instanceof String[])
         {
             String[] strings = (String[]) o;
             if (strings.length > 0)
@@ -1068,7 +1068,7 @@ public abstract class TiledImageLayer extends AbstractLayer
 
     public List<String> getAvailableImageFormats()
     {
-        return new ArrayList<String>(this.supportedImageFormats);
+        return new ArrayList<>(this.supportedImageFormats);
     }
 
     public boolean isImageFormatAvailable(String imageFormat)
@@ -1342,11 +1342,7 @@ public abstract class TiledImageLayer extends AbstractLayer
 
                     this.firePropertyChange(AVKey.PROGRESS, tileCount / numTiles, ++tileCount / numTiles);
                 }
-                catch (InterruptedException e)
-                {
-                    throw e;
-                }
-                catch (InterruptedIOException e)
+                catch (InterruptedException | InterruptedIOException e)
                 {
                     throw e;
                 }
@@ -1484,7 +1480,7 @@ public abstract class TiledImageLayer extends AbstractLayer
 
     protected class CompositionRetrievalPostProcessor extends AbstractRetrievalPostProcessor
     {
-        protected TextureTile tile;
+        protected final TextureTile tile;
 
         public CompositionRetrievalPostProcessor(TextureTile tile)
         {
@@ -1505,9 +1501,8 @@ public abstract class TiledImageLayer extends AbstractLayer
             path += suffix;
 
             File f = new File(path);
-            final File outFile = f.isAbsolute() ? f : getDataFileStore().newFile(path);
 
-            return outFile;
+            return f.isAbsolute() ? f : getDataFileStore().newFile(path);
         }
 
         @Override

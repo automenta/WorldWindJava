@@ -116,7 +116,7 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer
     public double getScale()
     {
         Object o = this.getValue(AVKey.MAP_SCALE);
-        return o != null && o instanceof Double ? (Double) o : 1;
+        return o instanceof Double ? (Double) o : 1;
     }
 
     public boolean isNetworkRetrievalEnabled()

@@ -9,7 +9,6 @@ package gov.nasa.worldwind.formats.dds;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.image.*;
-import java.io.IOException;
 import java.nio.*;
 import java.util.logging.Level;
 
@@ -27,7 +26,7 @@ public class DXT1Decompressor implements DXTDecompressor
 
     }
 
-    public BufferedImage decompress(ByteBuffer buffer, int width, int height) throws IOException, IllegalArgumentException
+    public BufferedImage decompress(ByteBuffer buffer, int width, int height) throws IllegalArgumentException
     {
         if (null == buffer)
         {
@@ -49,7 +48,7 @@ public class DXT1Decompressor implements DXTDecompressor
     }
 
     protected BufferedImage decodeDxt1Buffer(ByteBuffer buffer, int width, int height)
-            throws IllegalArgumentException, IOException
+            throws IllegalArgumentException
     {
         if (null == buffer)
         {

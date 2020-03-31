@@ -967,7 +967,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon>
         if (minHeight == maxHeight)
             maxHeight = minHeight + 1; // ensure the top and bottom of the cylinder won't be coincident
 
-        List<Vec4> points = new ArrayList<Vec4>();
+        List<Vec4> points = new ArrayList<>();
         for (LatLon ll : sector)
         {
             points.add(globe.computePointFromPosition(ll, minHeight));
@@ -1582,7 +1582,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon>
      */
     public long getSizeInBytes()
     {
-        return 4 * minLatitude.getSizeInBytes();  // 4 angles
+        return 4 * Angle.getSizeInBytes();  // 4 angles
     }
 
     /**
@@ -1622,13 +1622,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon>
         if (this.getMaxLatitude().compareTo(that.getMaxLatitude()) > 0)
             return 1;
 
-        if (this.getMaxLongitude().compareTo(that.getMaxLongitude()) < 0)
-            return -1;
-
-        if (this.getMaxLongitude().compareTo(that.getMaxLongitude()) > 0)
-            return 1;
-
-        return 0;
+        return Integer.compare(this.getMaxLongitude().compareTo(that.getMaxLongitude()), 0);
     }
 
     /**
@@ -1639,7 +1633,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon>
      */
     public Iterator<LatLon> iterator()
     {
-        return new Iterator<LatLon>()
+        return new Iterator<>()
         {
             private int position = 0;
 
@@ -1688,7 +1682,7 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon>
      */
     public List<LatLon> asList()
     {
-        ArrayList<LatLon> list = new ArrayList<LatLon>(4);
+        ArrayList<LatLon> list = new ArrayList<>(4);
 
         for (LatLon ll : this)
         {

@@ -36,7 +36,7 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
     /**
      * Inputs for the geometry. Inputs provide the geometry with vertices, texture coordinates, etc.
      */
-    protected List<ColladaInput> inputs = new ArrayList<ColladaInput>();
+    protected final List<ColladaInput> inputs = new ArrayList<>();
 
     /**
      * Indicates the number of vertices per shape in the geometry.

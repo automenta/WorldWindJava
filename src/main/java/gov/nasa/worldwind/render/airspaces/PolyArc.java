@@ -27,8 +27,8 @@ public class PolyArc extends Polygon
     private Angle rightAzimuth = Angle.ZERO;
     // Geometry.
     private int slices = DEFAULT_SLICES;
-    private final ArrayList<LatLon> polyArcLocations = new ArrayList<LatLon>();
-    private final ArrayList<Boolean> edgeFlags = new ArrayList<Boolean>();
+    private final ArrayList<LatLon> polyArcLocations = new ArrayList<>();
+    private final ArrayList<Boolean> edgeFlags = new ArrayList<>();
 
     public PolyArc(List<? extends LatLon> locations, double radius, Angle leftAzimuth, Angle rightAzimuth)
     {
@@ -78,7 +78,7 @@ public class PolyArc extends Polygon
 
     private void makeDefaultDetailLevels()
     {
-        List<DetailLevel> levels = new ArrayList<DetailLevel>();
+        List<DetailLevel> levels = new ArrayList<>();
         double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
 
         DetailLevel level;
@@ -185,14 +185,14 @@ public class PolyArc extends Polygon
         if (locations == null || locations.isEmpty())
             return null;
 
-        ArrayList<LatLon> arcLocations = new ArrayList<LatLon>();
-        ArrayList<Boolean> arcFlags = new ArrayList<Boolean>();
+        ArrayList<LatLon> arcLocations = new ArrayList<>();
+        ArrayList<Boolean> arcFlags = new ArrayList<>();
         this.makePolyArcLocations(globe, locations, 8, arcLocations, arcFlags);
 
-        ArrayList<LatLon> tessellatedLocations = new ArrayList<LatLon>();
+        ArrayList<LatLon> tessellatedLocations = new ArrayList<>();
         this.makeTessellatedLocations(globe, MINIMAL_GEOMETRY_SUBDIVISIONS, arcLocations, tessellatedLocations);
 
-        ArrayList<Vec4> points = new ArrayList<Vec4>();
+        ArrayList<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, tessellatedLocations, points);
 
         return points;
@@ -201,8 +201,8 @@ public class PolyArc extends Polygon
     @Override
     protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape)
     {
-        ArrayList<LatLon> arcLocations = new ArrayList<LatLon>();
-        ArrayList<Boolean> arcFlags = new ArrayList<Boolean>();
+        ArrayList<LatLon> arcLocations = new ArrayList<>();
+        ArrayList<Boolean> arcFlags = new ArrayList<>();
         this.makePolyArcLocations(dc.getGlobe(), this.getLocationList(), this.slices, arcLocations, arcFlags);
 
         ((SurfacePolygon) shape).setOuterBoundary(arcLocations);
@@ -238,7 +238,7 @@ public class PolyArc extends Polygon
             DetailLevel level = this.computeDetailLevel(dc);
 
             Object o = level.getValue(SLICES);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 slices = (Integer) o;
         }
 

@@ -51,67 +51,72 @@ public class BasicMarkerShape
         }
 
         // String identity rather than equality is wanted here, to avoid a bunch of unnecessary string compares
-        if (shapeType == BasicMarkerShape.SPHERE)
-            return new Sphere();
-        else if (shapeType == BasicMarkerShape.CUBE)
-            return new Cube();
-        else if (shapeType == BasicMarkerShape.CONE)
-            return new Cone();
-        else if (shapeType == BasicMarkerShape.CYLINDER)
-            return new Cylinder();
-        else if (shapeType == BasicMarkerShape.HEADING_ARROW)
-            return new HeadingArrow();
-        else if (shapeType == BasicMarkerShape.HEADING_LINE)
-            return new HeadingLine();
-        else if (shapeType == BasicMarkerShape.ORIENTED_SPHERE)
-            return new CompoundShape(BasicMarkerShape.ORIENTED_SPHERE, "Oriented Sphere", new Sphere(),
-                new HeadingArrow());
-        else if (shapeType == BasicMarkerShape.ORIENTED_CUBE)
+        switch (shapeType)
         {
-            Cube cube = new Cube();
-            cube.setApplyOrientation(false);  // Heading arrow shows orientation, do not rotate shape
-            return new CompoundShape(BasicMarkerShape.ORIENTED_CUBE, "Oriented Cube", cube, new HeadingArrow(),
-                .6);
+            case BasicMarkerShape.CUBE:
+                return new Cube();
+            case BasicMarkerShape.CONE:
+                return new Cone();
+            case BasicMarkerShape.CYLINDER:
+                return new Cylinder();
+            case BasicMarkerShape.HEADING_ARROW:
+                return new HeadingArrow();
+            case BasicMarkerShape.HEADING_LINE:
+                return new HeadingLine();
+            case BasicMarkerShape.ORIENTED_SPHERE:
+                return new CompoundShape(BasicMarkerShape.ORIENTED_SPHERE, "Oriented Sphere", new Sphere(),
+                    new HeadingArrow());
+            case BasicMarkerShape.ORIENTED_CUBE:
+                Cube cube = new Cube();
+                cube.setApplyOrientation(false);  // Heading arrow shows orientation, do not rotate shape
+
+                return new CompoundShape(BasicMarkerShape.ORIENTED_CUBE, "Oriented Cube", cube, new HeadingArrow(),
+                    .6);
+            case BasicMarkerShape.ORIENTED_CONE:
+            {
+                Cone cone = new Cone();
+                cone.setApplyOrientation(false); // Heading arrow shows orientation, do not rotate shape
+
+                return new CompoundShape(BasicMarkerShape.ORIENTED_CONE, "Oriented Cone", cone, new HeadingArrow(),
+                    0.6);
+            }
+            case BasicMarkerShape.ORIENTED_CYLINDER:
+            {
+                Cylinder cylinder = new Cylinder();
+                cylinder.setApplyOrientation(false);  // Heading arrow shows orientation, do not rotate shape
+
+                return new CompoundShape(BasicMarkerShape.ORIENTED_CYLINDER, "Oriented Cylinder", cylinder,
+                    new HeadingArrow(), .6);
+            }
+            case BasicMarkerShape.ORIENTED_SPHERE_LINE:
+                return new CompoundShape(BasicMarkerShape.ORIENTED_SPHERE_LINE, "Oriented Sphere Line", new Sphere(),
+                    new HeadingLine(), 1);
+            case BasicMarkerShape.ORIENTED_CONE_LINE:
+            {
+                Cone cone = new Cone();
+                cone.setApplyOrientation(false);  // Heading arrow shows orientation, do not rotate shape
+
+                return new CompoundShape(BasicMarkerShape.ORIENTED_CONE_LINE, "Oriented Cone Line", cone,
+                    new HeadingLine(), 2);
+            }
+            case BasicMarkerShape.ORIENTED_CYLINDER_LINE:
+            {
+                Cylinder cylinder = new Cylinder();
+                cylinder.setApplyOrientation(false);  // Heading arrow shows orientation, do not rotate shape
+
+                return new CompoundShape(BasicMarkerShape.ORIENTED_CYLINDER_LINE, "Oriented Cylinder Line", cylinder,
+                    new HeadingLine(), 2);
+            }
+            default:
+                return new Sphere();
         }
-        else if (shapeType == BasicMarkerShape.ORIENTED_CONE)
-        {
-            Cone cone = new Cone();
-            cone.setApplyOrientation(false); // Heading arrow shows orientation, do not rotate shape
-            return new CompoundShape(BasicMarkerShape.ORIENTED_CONE, "Oriented Cone", cone, new HeadingArrow(), 0.6);
-        }
-        else if (shapeType == BasicMarkerShape.ORIENTED_CYLINDER)
-        {
-            Cylinder cylinder = new Cylinder();
-            cylinder.setApplyOrientation(false);  // Heading arrow shows orientation, do not rotate shape
-            return new CompoundShape(BasicMarkerShape.ORIENTED_CYLINDER, "Oriented Cylinder", cylinder,
-                new HeadingArrow(), .6);
-        }
-        else if (shapeType == BasicMarkerShape.ORIENTED_SPHERE_LINE)
-            return new CompoundShape(BasicMarkerShape.ORIENTED_SPHERE_LINE, "Oriented Sphere Line", new Sphere(),
-                new HeadingLine(), 1);
-        else if (shapeType == BasicMarkerShape.ORIENTED_CONE_LINE)
-        {
-            Cone cone = new Cone();
-            cone.setApplyOrientation(false);  // Heading arrow shows orientation, do not rotate shape
-            return new CompoundShape(BasicMarkerShape.ORIENTED_CONE_LINE, "Oriented Cone Line", cone,
-                new HeadingLine(), 2);
-        }
-        else if (shapeType == BasicMarkerShape.ORIENTED_CYLINDER_LINE)
-        {
-            Cylinder cylinder = new Cylinder();
-            cylinder.setApplyOrientation(false);  // Heading arrow shows orientation, do not rotate shape
-            return new CompoundShape(BasicMarkerShape.ORIENTED_CYLINDER_LINE, "Oriented Cylinder Line", cylinder,
-                new HeadingLine(), 2);
-        }
-        else
-            return new Sphere();
     }
 
     protected static class CompoundShape implements MarkerShape, Disposable
     {
-        protected String name;
-        protected String shapeType;
-        protected ArrayList<MarkerShape> shapes = new ArrayList<MarkerShape>(2);
+        protected final String name;
+        protected final String shapeType;
+        protected final ArrayList<MarkerShape> shapes = new ArrayList<>(2);
         protected double offset = 0;
 
         public CompoundShape(String shapeType, String name, MarkerShape shape1, MarkerShape shape2)
@@ -181,7 +186,7 @@ public class BasicMarkerShape
         protected String shapeType;
         protected GLUquadric quadric;
         protected boolean isInitialized = false;
-        protected Object displayListCacheKey = new Object();
+        protected final Object displayListCacheKey = new Object();
         /** Indicates that the shape must apply heading, pitch, and roll. */
         protected boolean applyOrientation = true;
 

@@ -10,7 +10,6 @@ import gov.nasa.worldwindx.applications.worldwindow.features.Feature;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import java.beans.*;
 import java.util.*;
 
 /**
@@ -85,15 +84,11 @@ public class AbstractMenu extends JMenu implements Menu, MenuListener, WWMenu
                             final JMenuItem menuItem = new RadioMenuItem(feature);
 
                             this.add(menuItem);
-                            feature.addPropertyChangeListener(new PropertyChangeListener()
-                            {
-                                public void propertyChange(PropertyChangeEvent event)
+                            feature.addPropertyChangeListener(event -> {
+                                if (event.getPropertyName().equals(Constants.ON_STATE))
                                 {
-                                    if (event.getPropertyName().equals(Constants.ON_STATE))
-                                    {
-                                        menuItem.setSelected((Boolean) event.getNewValue());
-                                        menuItem.repaint();
-                                    }
+                                    menuItem.setSelected((Boolean) event.getNewValue());
+                                    menuItem.repaint();
                                 }
                             });
                         }
@@ -162,12 +157,12 @@ public class AbstractMenu extends JMenu implements Menu, MenuListener, WWMenu
 
     protected List<Feature> getFeatures()
     {
-        ArrayList<Feature> featureList = new ArrayList<Feature>();
+        ArrayList<Feature> featureList = new ArrayList<>();
 
         for (int i = 0; i < this.getItemCount(); i++)
         {
             Object o = this.getItem(i) != null ? this.getItem(i).getAction() : null;
-            if (o != null && o instanceof Feature)
+            if (o instanceof Feature)
                 featureList.add((Feature) o);
         }
 

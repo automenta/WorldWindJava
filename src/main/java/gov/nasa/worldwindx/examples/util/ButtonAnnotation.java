@@ -23,7 +23,7 @@ public class ButtonAnnotation extends ImageAnnotation implements SelectListener
     protected double disabledOpacity;
     protected WWTexture pressedMaskTexture;
     // Event listeners.
-    protected javax.swing.event.EventListenerList listenerList = new javax.swing.event.EventListenerList();
+    protected final javax.swing.event.EventListenerList listenerList = new javax.swing.event.EventListenerList();
 
     public ButtonAnnotation(Object imageSource, Object pressedMaskSource)
     {

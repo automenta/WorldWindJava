@@ -57,7 +57,7 @@ public class InfiltrationLane extends AbstractMilStd2525TacticalGraphic
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_OFF_LNE_INFNLE);
+        return Collections.singletonList(TacGrpSidc.C2GM_OFF_LNE_INFNLE);
     }
 
     /**
@@ -232,8 +232,8 @@ public class InfiltrationLane extends AbstractMilStd2525TacticalGraphic
             this.getCurvature());
 
         int intervals = this.getIntervals();
-        List<Position> curvePositionsLeft = new ArrayList<Position>(intervals);
-        List<Position> curvePositionsRight = new ArrayList<Position>(intervals);
+        List<Position> curvePositionsLeft = new ArrayList<>(intervals);
+        List<Position> curvePositionsRight = new ArrayList<>(intervals);
 
         // Compute binomial coefficients for the Bezier function. Do this now so we don't have to recompute coefficients
         // for every iteration of the loop below.

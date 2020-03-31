@@ -73,7 +73,7 @@ public class SaveTrackDialog
     public SaveTrackFilter getSelectedSaveFilter()
     {
         FileFilter filter = this.fileChooser.getFileFilter();
-        return (filter != null && filter instanceof SaveTrackFilter) ? (SaveTrackFilter) filter : null;
+        return (filter instanceof SaveTrackFilter) ? (SaveTrackFilter) filter : null;
     }
 
     public int getFileFormat()

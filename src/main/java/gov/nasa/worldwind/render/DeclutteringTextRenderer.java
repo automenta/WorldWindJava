@@ -290,7 +290,7 @@ public class DeclutteringTextRenderer
         if (altitude < (dc.getGlobe().getMaxElevation() * dc.getVerticalExaggeration()))
         {
             double depth = screenPoint.z - (8d * 0.00048875809d);
-            depth = depth < 0d ? 0d : (depth > 1d ? 1d : depth);
+            depth = depth < 0d ? 0d : (Math.min(depth, 1d));
             gl.glDepthFunc(GL.GL_LESS);
             gl.glDepthRange(depth, depth);
         }

@@ -11,13 +11,13 @@ package gov.nasa.worldwind.formats.nitfs;
  */
 public class NITFSSegment
 {
-    protected java.nio.ByteBuffer buffer;
-    protected NITFSSegmentType segmentType;
-    protected int savedBufferOffset;
+    protected final java.nio.ByteBuffer buffer;
+    protected final NITFSSegmentType segmentType;
+    protected final int savedBufferOffset;
     
-    protected int headerStartOffset;
+    protected final int headerStartOffset;
     protected int headerLength;
-    protected int dataStartOffset;
+    protected final int dataStartOffset;
     protected int dataLength;
 
     public NITFSSegment(NITFSSegmentType segmentType, java.nio.ByteBuffer buffer,

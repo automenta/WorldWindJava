@@ -44,11 +44,11 @@ public class ColladaMeshShape extends AbstractGeneralShape
     public static class OrderedMeshShape implements OrderedRenderable
     {
         /** Shape to render. */
-        protected ColladaMeshShape mesh;
+        protected final ColladaMeshShape mesh;
         /** Distance from the eye to the shape's reference position. */
-        protected double eyeDistance;
+        protected final double eyeDistance;
         /** Transform applied to this instance of the mesh. */
-        protected Matrix renderMatrix;
+        protected final Matrix renderMatrix;
 
         /**
          * Create a new ordered renderable.
@@ -116,7 +116,7 @@ public class ColladaMeshShape extends AbstractGeneralShape
     protected static class Geometry
     {
         /** Collada element that defines this geometry. */
-        protected ColladaAbstractGeometry colladaGeometry;
+        protected final ColladaAbstractGeometry colladaGeometry;
 
         /** Offset (in vertices) into the coord, normal, and texcoord buffers of this coordinates for this geometry. */
         protected int offset = -1;
@@ -148,8 +148,8 @@ public class ColladaMeshShape extends AbstractGeneralShape
 
     protected static class ExtentCacheKey
     {
-        protected GlobeStateKey globeStateKey;
-        protected Matrix matrix;
+        protected final GlobeStateKey globeStateKey;
+        protected final Matrix matrix;
 
         public ExtentCacheKey(Globe globe, Matrix matrix)
         {
@@ -171,11 +171,11 @@ public class ColladaMeshShape extends AbstractGeneralShape
 
             ExtentCacheKey that = (ExtentCacheKey) o;
 
-            if (globeStateKey != null ? !globeStateKey.equals(that.globeStateKey) : that.globeStateKey != null)
+            if (!Objects.equals(globeStateKey, that.globeStateKey))
             {
                 return false;
             }
-            return matrix != null ? matrix.equals(that.matrix) : that.matrix == null;
+            return Objects.equals(matrix, that.matrix);
         }
 
         @Override
@@ -201,7 +201,7 @@ public class ColladaMeshShape extends AbstractGeneralShape
     /** Geometry objects that describe different parts of the mesh. */
     protected List<Geometry> geometries;
     /** Cache of shape extents computed for different transform matrices. */
-    protected Map<ExtentCacheKey, Extent> extentCache = new HashMap<ExtentCacheKey, Extent>();
+    protected final Map<ExtentCacheKey, Extent> extentCache = new HashMap<>();
 
     /**
      * The vertex data buffer for this shape data. The first part contains vertex coordinates, the second part contains
@@ -270,7 +270,7 @@ public class ColladaMeshShape extends AbstractGeneralShape
             throw new IllegalStateException(message);
         }
 
-        this.geometries = new ArrayList<Geometry>(geometries.size());
+        this.geometries = new ArrayList<>(geometries.size());
         for (ColladaAbstractGeometry geometry : geometries)
         {
             this.geometries.add(new Geometry(geometry));
@@ -288,7 +288,7 @@ public class ColladaMeshShape extends AbstractGeneralShape
      * @return Always returns {@code null}.
      */
     @Override
-    public List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException
+    public List<Intersection> intersect(Line line, Terrain terrain)
     {
         return null;
     }
@@ -793,7 +793,7 @@ public class ColladaMeshShape extends AbstractGeneralShape
         Matrix matrix = this.computeRenderMatrix(dc);
 
         // Compute the corners of the bounding box and transform with the active transform matrix.
-        List<Vec4> extrema = new ArrayList<Vec4>();
+        List<Vec4> extrema = new ArrayList<>();
         Vec4[] corners = box.getCorners();
         for (Vec4 corner : corners)
         {
@@ -830,7 +830,7 @@ public class ColladaMeshShape extends AbstractGeneralShape
             ColladaAbstractGeometry.COORDS_PER_VERTEX);
 
         // Compute the corners of the bounding box and transform with the active transform matrix.
-        List<Vec4> extrema = new ArrayList<Vec4>();
+        List<Vec4> extrema = new ArrayList<>();
         Vec4[] corners = box.getCorners();
         for (Vec4 corner : corners)
         {

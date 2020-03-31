@@ -16,7 +16,6 @@ import gov.nasa.worldwind.util.combine.*;
 import javax.swing.Box;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Hashtable;
@@ -33,7 +32,7 @@ public class ShapeClippingPanel extends JPanel implements ActionListener
         WATER
     }
 
-    protected WorldWindow wwd;
+    protected final WorldWindow wwd;
     protected ClipMode clipMode = ClipMode.LAND;
     protected double resolution = 5000; // 5 km
     protected Combinable clipShape;
@@ -104,27 +103,13 @@ public class ShapeClippingPanel extends JPanel implements ActionListener
 
         JRadioButton landButton = new JRadioButton("Land");
         landButton.setSelected(this.getClipMode().equals(ClipMode.LAND));
-        landButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                setClipMode(ClipMode.LAND);
-            }
-        });
+        landButton.addActionListener(e -> setClipMode(ClipMode.LAND));
         radioButtonGroup.add(landButton);
         radioButtonPanel.add(landButton);
 
         JRadioButton waterButton = new JRadioButton("Water");
         waterButton.setSelected(this.getClipMode().equals(ClipMode.WATER));
-        waterButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                setClipMode(ClipMode.WATER);
-            }
-        });
+        waterButton.addActionListener(e -> setClipMode(ClipMode.WATER));
         radioButtonGroup.add(waterButton);
         radioButtonPanel.add(waterButton);
 
@@ -132,7 +117,7 @@ public class ShapeClippingPanel extends JPanel implements ActionListener
         button.addActionListener(this);
         buttonPanel.add(button);
 
-        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
         labelTable.put(0, new JLabel("1 km"));
         labelTable.put(5000, new JLabel("5 km"));
         labelTable.put(10000, new JLabel("10 km"));
@@ -143,14 +128,7 @@ public class ShapeClippingPanel extends JPanel implements ActionListener
         resolutionSlider.setPaintTicks(true);
         resolutionSlider.setPaintLabels(true);
         resolutionSlider.setLabelTable(labelTable);
-        resolutionSlider.addChangeListener(new ChangeListener()
-        {
-            @Override
-            public void stateChanged(ChangeEvent e)
-            {
-                setResolution(((JSlider) e.getSource()).getValue());
-            }
-        });
+        resolutionSlider.addChangeListener(e -> setResolution(((JSlider) e.getSource()).getValue()));
         vbox.add(Box.createVerticalStrut(5));
         vbox.add(resolutionSlider);
     }

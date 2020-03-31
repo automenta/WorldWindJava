@@ -42,7 +42,7 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
     protected OGCServiceInformation serviceInformation;
     protected OGCCapabilityInformation capabilityInformation;
 
-    protected XMLEventReader eventReader;
+    protected final XMLEventReader eventReader;
     protected XMLEventParserContext parserContext;
 
     /**
@@ -153,7 +153,7 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OGCServiceInformation)
+                if (o instanceof OGCServiceInformation)
                     this.setServiceInformation((OGCServiceInformation) o);
             }
         }
@@ -163,7 +163,7 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OGCCapabilityInformation)
+                if (o instanceof OGCCapabilityInformation)
                     this.setCapabilityInformation((OGCCapabilityInformation) o);
             }
         }

@@ -47,7 +47,7 @@ public class LimitedAccessArea extends AbstractMilStd2525TacticalGraphic
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_GNL_ARS_LAARA);
+        return Collections.singletonList(TacGrpSidc.C2GM_GNL_ARS_LAARA);
     }
 
     public LimitedAccessArea(String symbolCode)
@@ -175,7 +175,7 @@ public class LimitedAccessArea extends AbstractMilStd2525TacticalGraphic
     /** {@inheritDoc} */
     public Iterable<? extends Position> getPositions()
     {
-        List<Position> positions = new ArrayList<Position>();
+        List<Position> positions = new ArrayList<>();
         if (this.symbolPosition != null)
             positions.add(this.symbolPosition);
         if (this.attachmentPosition != null)

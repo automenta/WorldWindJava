@@ -27,14 +27,9 @@ public class NativeLibraryLoader
         {
             System.loadLibrary(libName);
         }
-        catch (java.lang.UnsatisfiedLinkError ule)
+        catch (Throwable ule)
         {
             String message = Logging.getMessage("generic.LibraryNotLoaded", libName, ule.getMessage());
-            throw new WWRuntimeException(message);
-        }
-        catch (Throwable t)
-        {
-            String message = Logging.getMessage("generic.LibraryNotLoaded", libName, t.getMessage());
             throw new WWRuntimeException(message);
         }
     }

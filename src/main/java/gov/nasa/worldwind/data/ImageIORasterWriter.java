@@ -42,7 +42,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter
 
     protected boolean doCanWrite(DataRaster raster, String formatSuffix, java.io.File file)
     {
-        return (raster != null) && (raster instanceof BufferedImageRaster);
+        return (raster instanceof BufferedImageRaster);
     }
 
     protected void doWrite(DataRaster raster, String formatSuffix, java.io.File file) throws java.io.IOException
@@ -82,8 +82,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter
         double xLocation = sector.getMinLongitude().degrees + (xPixelSize * .5);
         double yLocation = sector.getMaxLatitude().degrees + (yPixelSize * .5);
 
-        java.io.PrintWriter out = new java.io.PrintWriter(file);
-        try
+        try (java.io.PrintWriter out = new java.io.PrintWriter(file))
         {
             out.println(xPixelSize);
             out.println(xCoeff);
@@ -94,10 +93,6 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter
             out.println(xLocation);
             //noinspection SuspiciousNameCombination
             out.println(yLocation);
-        }
-        finally
-        {
-            out.close();
         }
     }
 
@@ -139,7 +134,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter
             return new String[0];
         }
 
-        java.util.Set<String> set = new java.util.HashSet<String>();
+        java.util.Set<String> set = new java.util.HashSet<>();
         while (iter.hasNext())
         {
             javax.imageio.spi.ImageWriterSpi spi = iter.next();

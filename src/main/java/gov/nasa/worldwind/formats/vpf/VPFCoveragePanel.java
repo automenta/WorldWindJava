@@ -79,8 +79,7 @@ public class VPFCoveragePanel extends JPanel
     public void addDatabase(VPFDatabase db)
     {
         // Sort the library list alphabetically.
-        ArrayList<VPFLibrary> sortedList = new ArrayList<VPFLibrary>();
-        sortedList.addAll(db.getLibraries());
+        ArrayList<VPFLibrary> sortedList = new ArrayList<>(db.getLibraries());
         this.sortPropertyLists(sortedList, AVKey.DISPLAY_NAME);
 
         for (VPFLibrary lib : sortedList)
@@ -139,8 +138,7 @@ public class VPFCoveragePanel extends JPanel
         this.libraryTabbedPane.setToolTipTextAt(index, lib.getDescription());
 
         // Sort the coverage list alphabetically.
-        ArrayList<VPFCoverage> sortedList = new ArrayList<VPFCoverage>();
-        sortedList.addAll(lib.getCoverages());
+        ArrayList<VPFCoverage> sortedList = new ArrayList<>(lib.getCoverages());
         this.sortPropertyLists(sortedList, AVKey.DESCRIPTION);
 
         for (VPFCoverage cov : sortedList)
@@ -154,14 +152,10 @@ public class VPFCoveragePanel extends JPanel
 
     protected void sortPropertyLists(java.util.List<? extends AVList> propertyList, final String propertyName)
     {
-        Collections.sort(propertyList, new Comparator<AVList>()
-        {
-            public int compare(AVList a, AVList b)
-            {
-                String aValue = (a.getValue(propertyName) != null) ? a.getValue(propertyName).toString() : "";
-                String bValue = (b.getValue(propertyName) != null) ? b.getValue(propertyName).toString() : "";
-                return String.CASE_INSENSITIVE_ORDER.compare(aValue, bValue);
-            }
+        propertyList.sort((Comparator<AVList>) (a, b) -> {
+            String aValue = (a.getValue(propertyName) != null) ? a.getValue(propertyName).toString() : "";
+            String bValue = (b.getValue(propertyName) != null) ? b.getValue(propertyName).toString() : "";
+            return String.CASE_INSENSITIVE_ORDER.compare(aValue, bValue);
         });
     }
 
@@ -254,33 +248,29 @@ public class VPFCoveragePanel extends JPanel
     {
         // Use a TreeSet to consolidate duplicate symbol attributes and simultaneously sort the attributes.
 
-        Set<SymbolInfo> set = new TreeSet<SymbolInfo>(new Comparator<SymbolInfo>()
-        {
-            public int compare(SymbolInfo a, SymbolInfo b)
-            {
-                String aCoverageName = (a.getFeatureClass().getCoverage().getName() != null)
-                    ? a.getFeatureClass().getCoverage().getName() : "";
-                String bCoverageName = (b.getFeatureClass().getCoverage().getName() != null)
-                    ? b.getFeatureClass().getCoverage().getName() : "";
+        Set<SymbolInfo> set = new TreeSet<>((a, b) -> {
+            String aCoverageName = (a.getFeatureClass().getCoverage().getName() != null)
+                ? a.getFeatureClass().getCoverage().getName() : "";
+            String bCoverageName = (b.getFeatureClass().getCoverage().getName() != null)
+                ? b.getFeatureClass().getCoverage().getName() : "";
 
-                int i = String.CASE_INSENSITIVE_ORDER.compare(aCoverageName, bCoverageName);
-                if (i != 0)
-                    return i;
+            int i = String.CASE_INSENSITIVE_ORDER.compare(aCoverageName, bCoverageName);
+            if (i != 0)
+                return i;
 
-                String aKey = (a.getAttributes().getSymbolKey() != null) ? a.getAttributes().getSymbolKey().toString()
-                    : "";
-                String bKey = (b.getAttributes().getSymbolKey() != null) ? b.getAttributes().getSymbolKey().toString()
-                    : "";
+            String aKey = (a.getAttributes().getSymbolKey() != null) ? a.getAttributes().getSymbolKey().toString()
+                : "";
+            String bKey = (b.getAttributes().getSymbolKey() != null) ? b.getAttributes().getSymbolKey().toString()
+                : "";
 
-                i = String.CASE_INSENSITIVE_ORDER.compare(aKey, bKey);
-                if (i != 0)
-                    return i;
+            i = String.CASE_INSENSITIVE_ORDER.compare(aKey, bKey);
+            if (i != 0)
+                return i;
 
-                int aType = (a.getFeatureClass().getType() != null) ? a.getFeatureClass().getType().ordinal() : -1;
-                int bType = (b.getFeatureClass().getType() != null) ? b.getFeatureClass().getType().ordinal() : -1;
+            int aType = (a.getFeatureClass().getType() != null) ? a.getFeatureClass().getType().ordinal() : -1;
+            int bType = (b.getFeatureClass().getType() != null) ? b.getFeatureClass().getType().ordinal() : -1;
 
-                return (aType < bType) ? -1 : ((aType > bType) ? 1 : 0);
-            }
+            return Integer.compare(aType, bType);
         });
 
         for (VPFSymbol symbol : iterable)
@@ -296,8 +286,8 @@ public class VPFCoveragePanel extends JPanel
 
     protected static class SymbolInfo
     {
-        protected VPFFeatureClass featureClass;
-        protected VPFSymbolAttributes attributes;
+        protected final VPFFeatureClass featureClass;
+        protected final VPFSymbolAttributes attributes;
 
         public SymbolInfo(VPFFeatureClass featureClass, VPFSymbolAttributes attributes)
         {
@@ -347,20 +337,14 @@ public class VPFCoveragePanel extends JPanel
 
     private void startLegendUpdateTimer()
     {
-        Timer timer = new Timer(3000, new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                fillLegendPanel();
-            }
-        });
+        Timer timer = new Timer(3000, event -> fillLegendPanel());
         timer.start();
     }
 
     private class LibraryAction extends AbstractAction
     {
-        VPFDatabase db;
-        VPFLibrary library;
+        final VPFDatabase db;
+        final VPFLibrary library;
         private boolean selected;
 
         public LibraryAction(VPFDatabase db, VPFLibrary library, boolean selected)
@@ -385,8 +369,8 @@ public class VPFCoveragePanel extends JPanel
 
     private class CoverageAction extends AbstractAction implements PropertyChangeListener
     {
-        VPFDatabase db;
-        VPFCoverage coverage;
+        final VPFDatabase db;
+        final VPFCoverage coverage;
         private boolean selected;
 
         public CoverageAction(VPFDatabase db, VPFCoverage coverage, boolean selected)

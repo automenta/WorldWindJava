@@ -15,7 +15,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.*;
 import java.net.*;
-import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -27,10 +26,10 @@ public abstract class Capabilities
 {
     public static final String WMS_SERVICE_NAME = "OGC:WMS";
 
-    protected Document doc;
+    protected final Document doc;
     protected Element service;
     protected Element capability;
-    protected XPath xpath;
+    protected final XPath xpath;
     protected URL capsURL;
 
     public static Capabilities retrieve(URI uri, String service) throws Exception
@@ -61,13 +60,7 @@ public abstract class Capabilities
             CapabilitiesRequest req = new CapabilitiesRequest(uri, service);
             URL capsURL = req.getUri().toURL();
 
-            URLRetriever retriever = URLRetriever.createRetriever(capsURL, new RetrievalPostProcessor()
-            {
-                public ByteBuffer run(Retriever retriever)
-                {
-                    return retriever.getBuffer();
-                }
-            });
+            URLRetriever retriever = URLRetriever.createRetriever(capsURL, Retriever::getBuffer);
 
             if (retriever == null)
             {
@@ -259,7 +252,7 @@ public abstract class Capabilities
         if (strings == null)
             return null;
 
-        ArrayList<String> sarl = new ArrayList<String>();
+        ArrayList<String> sarl = new ArrayList<>();
         for (String s : strings)
         {
             if (!sarl.contains(s))
@@ -316,7 +309,7 @@ public abstract class Capabilities
         if (elements == null)
             return null;
 
-        HashMap<String, Element> styles = new HashMap<String, Element>();
+        HashMap<String, Element> styles = new HashMap<>();
         for (Element e : elements)
         {
             String name = this.getText(e, uniqueTag);
@@ -327,8 +320,8 @@ public abstract class Capabilities
         return styles.values().toArray(new Element[1]);
     }
 
-    private final HashMap<Element, Layer> namedLayerElements = new HashMap<Element, Layer>();
-    private final HashMap<String, Layer> namedLayers = new HashMap<String, Layer>();
+    private final HashMap<Element, Layer> namedLayerElements = new HashMap<>();
+    private final HashMap<String, Layer> namedLayers = new HashMap<>();
 
     private void fillLayerList()
     {
@@ -361,7 +354,7 @@ public abstract class Capabilities
         if (this.namedLayerElements.size() == 0)
             this.fillLayerList();
 
-        return this.namedLayerElements.keySet().toArray(new Element[this.namedLayerElements.size()]);
+        return this.namedLayerElements.keySet().toArray(new Element[0]);
     }
 
     public Element getLayerByName(String layerName)
@@ -468,7 +461,7 @@ public abstract class Capabilities
             catch (NumberFormatException e)
             {
                 String message = Logging.getMessage("generic.ConversionError",
-                    extremeMin != null ? extremeMin : "" + extremeMax != null ? extremeMax : "");
+                    extremeMin != null ? extremeMin : extremeMax != null ? extremeMax : "");
                 Logging.logger().severe(message);
             }
         }
@@ -621,7 +614,7 @@ public abstract class Capabilities
 
     protected static class Layer
     {
-        protected HashMap<Element, Style> styleElements = new HashMap<Element, Style>();
+        protected HashMap<Element, Style> styleElements = new HashMap<>();
         protected final Element element;
         protected Layer layer;
         protected String name;
@@ -703,8 +696,8 @@ public abstract class Capabilities
         if (dims == null || dims.length == 0)
             return null;
 
-        ArrayList<Element> uniqueDims = new ArrayList<Element>();
-        ArrayList<String> dimNames = new ArrayList<String>();
+        ArrayList<Element> uniqueDims = new ArrayList<>();
+        ArrayList<String> dimNames = new ArrayList<>();
         for (Element e : dims)
         {
             // Filter out dimensions with same name.
@@ -717,7 +710,7 @@ public abstract class Capabilities
             dimNames.add(name);
         }
 
-        return uniqueDims.toArray(new Element[uniqueDims.size()]);
+        return uniqueDims.toArray(new Element[0]);
     }
 
     public Element[] getLayerExtents(Element layer)
@@ -727,8 +720,8 @@ public abstract class Capabilities
         if (extents == null || extents.length == 0)
             return null;
 
-        ArrayList<Element> uniqueExtents = new ArrayList<Element>();
-        ArrayList<String> extentNames = new ArrayList<String>();
+        ArrayList<Element> uniqueExtents = new ArrayList<>();
+        ArrayList<String> extentNames = new ArrayList<>();
         for (Element e : extents)
         {
             // Filter out dimensions with same name.
@@ -741,7 +734,7 @@ public abstract class Capabilities
             extentNames.add(name);
         }
 
-        return uniqueExtents.toArray(new Element[uniqueExtents.size()]);
+        return uniqueExtents.toArray(new Element[0]);
     }
 
     public abstract BoundingBox getLayerGeographicBoundingBox(Element layer);
@@ -824,7 +817,7 @@ public abstract class Capabilities
         if (styleElements == null)
             return null;
 
-        layer.styleElements = new HashMap<Element, Style>();
+        layer.styleElements = new HashMap<>();
         for (Element se : styleElements)
         {
             Style style = new Style(se, layer);
@@ -890,7 +883,7 @@ public abstract class Capabilities
 
     // ********* Style Items ********* //
 
-    protected HashMap<Element, Style> styleElements = new HashMap<Element, Style>();
+    protected final HashMap<Element, Style> styleElements = new HashMap<>();
 
     protected static class Style
     {

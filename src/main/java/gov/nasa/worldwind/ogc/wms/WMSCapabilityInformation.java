@@ -43,13 +43,13 @@ public class WMSCapabilityInformation extends OGCCapabilityInformation
     {
         LAYER = new QName(this.getNamespaceURI(), "Layer");
 
-        this.requestNames = new ArrayList<QName>(rNames.length);
+        this.requestNames = new ArrayList<>(rNames.length);
         for (String name : rNames)
         {
             this.requestNames.add(new QName(this.getNamespaceURI(), name));
         }
 
-        this.setLayerCapabilities(new ArrayList<WMSLayerCapabilities>());
+        this.setLayerCapabilities(new ArrayList<>());
     }
 
     @Override
@@ -71,7 +71,7 @@ public class WMSCapabilityInformation extends OGCCapabilityInformation
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerCapabilities)
+                if (o instanceof WMSLayerCapabilities)
                 {
                     WMSLayerCapabilities caps = (WMSLayerCapabilities) o;
                     caps.setEnclosingCapabilityInformation(this);

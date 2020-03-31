@@ -14,7 +14,6 @@ import gov.nasa.worldwind.terrain.ZeroElevationModel;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
  * Panel to control a flat or round world projection. The panel includes a radio button to switch between flat and round
@@ -61,24 +60,16 @@ public class FlatWorldPanel extends JPanel
         JPanel radioButtonPanel = new JPanel(new GridLayout(0, 2, 0, 0));
         JRadioButton roundRadioButton = new JRadioButton("Round");
         roundRadioButton.setSelected(!isFlatGlobe());
-        roundRadioButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                projectionCombo.setEnabled(false);
-                enableFlatGlobe(false);
-            }
+        roundRadioButton.addActionListener(event -> {
+            projectionCombo.setEnabled(false);
+            enableFlatGlobe(false);
         });
         radioButtonPanel.add(roundRadioButton);
         JRadioButton flatRadioButton = new JRadioButton("Flat");
         flatRadioButton.setSelected(isFlatGlobe());
-        flatRadioButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                projectionCombo.setEnabled(true);
-                enableFlatGlobe(true);
-            }
+        flatRadioButton.addActionListener(event -> {
+            projectionCombo.setEnabled(true);
+            enableFlatGlobe(true);
         });
         radioButtonPanel.add(flatRadioButton);
         ButtonGroup group = new ButtonGroup();
@@ -96,13 +87,7 @@ public class FlatWorldPanel extends JPanel
                 "UPS South"
             });
         this.projectionCombo.setEnabled(isFlatGlobe());
-        this.projectionCombo.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                updateProjection();
-            }
-        });
+        this.projectionCombo.addActionListener(actionEvent -> updateProjection());
         comboPanel.add(this.projectionCombo);
 
         controlPanel.add(radioButtonPanel);
@@ -124,24 +109,20 @@ public class FlatWorldPanel extends JPanel
     private GeographicProjection getProjection()
     {
         String item = (String) projectionCombo.getSelectedItem();
-        if (item.equals("Mercator"))
-            return new ProjectionMercator();
-        else if (item.equals("Sinusoidal"))
-            return new ProjectionSinusoidal();
-        else if (item.equals("Modified Sin."))
-            return new ProjectionModifiedSinusoidal();
-        else if (item.equals("Transverse Mercator"))
-            return new ProjectionTransverseMercator(wwd.getView().getCurrentEyePosition().getLongitude());
-        else if (item.equals("North Polar"))
-            return new ProjectionPolarEquidistant(AVKey.NORTH);
-        else if (item.equals("South Polar"))
-            return new ProjectionPolarEquidistant(AVKey.SOUTH);
-        else if (item.equals("UPS North"))
-            return new ProjectionUPS(AVKey.NORTH);
-        else if (item.equals("UPS South"))
-            return new ProjectionUPS(AVKey.SOUTH);
+        return switch (item)
+            {
+                case "Mercator" -> new ProjectionMercator();
+                case "Sinusoidal" -> new ProjectionSinusoidal();
+                case "Modified Sin." -> new ProjectionModifiedSinusoidal();
+                case "Transverse Mercator" -> new ProjectionTransverseMercator(
+                    wwd.getView().getCurrentEyePosition().getLongitude());
+                case "North Polar" -> new ProjectionPolarEquidistant(AVKey.NORTH);
+                case "South Polar" -> new ProjectionPolarEquidistant(AVKey.SOUTH);
+                case "UPS North" -> new ProjectionUPS(AVKey.NORTH);
+                case "UPS South" -> new ProjectionUPS(AVKey.SOUTH);
+                default -> new ProjectionEquirectangular();
+            };
         // Default to lat-lon
-        return new ProjectionEquirectangular();
     }
 
     public boolean isFlatGlobe()

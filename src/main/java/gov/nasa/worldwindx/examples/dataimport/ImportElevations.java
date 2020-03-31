@@ -35,15 +35,11 @@ public class ImportElevations extends ApplicationTemplate
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
             // Import the elevations on a thread other than the event-dispatch thread to avoid freezing the UI.
-            Thread t = new Thread(new Runnable()
-            {
-                public void run()
-                {
-                    importElevations();
+            Thread t = new Thread(() -> {
+                importElevations();
 
-                    // Restore the cursor.
-                    setCursor(Cursor.getDefaultCursor());
-                }
+                // Restore the cursor.
+                setCursor(Cursor.getDefaultCursor());
             });
 
             t.start();
@@ -60,26 +56,22 @@ public class ImportElevations extends ApplicationTemplate
                 final LocalElevationModel elevationModel = new LocalElevationModel();
                 elevationModel.addElevations(sourceFile);
 
-                SwingUtilities.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        // Get the WorldWindow's current elevation model.
-                        Globe globe = AppFrame.this.getWwd().getModel().getGlobe();
-                        ElevationModel currentElevationModel = globe.getElevationModel();
+                SwingUtilities.invokeLater(() -> {
+                    // Get the WorldWindow's current elevation model.
+                    Globe globe = AppFrame.this.getWwd().getModel().getGlobe();
+                    ElevationModel currentElevationModel = globe.getElevationModel();
 
-                        // Add the new elevation model to the globe.
-                        if (currentElevationModel instanceof CompoundElevationModel)
-                            ((CompoundElevationModel) currentElevationModel).addElevationModel(elevationModel);
-                        else
-                            globe.setElevationModel(elevationModel);
+                    // Add the new elevation model to the globe.
+                    if (currentElevationModel instanceof CompoundElevationModel)
+                        ((CompoundElevationModel) currentElevationModel).addElevationModel(elevationModel);
+                    else
+                        globe.setElevationModel(elevationModel);
 
-                        // Set the view to look at the imported elevations, although they might be hard to detect. To
-                        // make them easier to detect, replace the globe's CompoundElevationModel with the new elevation
-                        // model rather than adding it.
-                        Sector modelSector = elevationModel.getSector();
-                        ExampleUtil.goTo(getWwd(), modelSector);
-                    }
+                    // Set the view to look at the imported elevations, although they might be hard to detect. To
+                    // make them easier to detect, replace the globe's CompoundElevationModel with the new elevation
+                    // model rather than adding it.
+                    Sector modelSector = elevationModel.getSector();
+                    ExampleUtil.goTo(getWwd(), modelSector);
                 });
             }
             catch (Exception e)

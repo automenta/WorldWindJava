@@ -44,7 +44,6 @@ public class Controller
     private WWOUnitsFormat unitsFormat;
 
     public void start(String appConfigurationLocation, Dimension appSize)
-        throws Exception
     {
         this.appTitle = Configuration.getStringValue(Constants.APPLICATION_DISPLAY_NAME);
         this.appSize = appSize;
@@ -59,13 +58,7 @@ public class Controller
 
         appConfig.configure(this.appConfigurationLocation);
 
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                redraw();
-            }
-        });
+        SwingUtilities.invokeLater(this::redraw);
     }
 
     public String getAppTitle()
@@ -268,13 +261,13 @@ public class Controller
     }
 
     public Object createAndRegisterObject(String objectID, Object className)
-        throws IllegalAccessException, ClassNotFoundException, InstantiationException
+        throws ClassNotFoundException
     {
         return this.registry.createAndRegisterObject(objectID, className);
     }
 
     public Object createRegistryObject(String className)
-        throws IllegalAccessException, ClassNotFoundException, InstantiationException
+        throws ClassNotFoundException
     {
         return this.registry.createRegistryObject(className);
     }
@@ -286,24 +279,12 @@ public class Controller
 
     public void showErrorDialogLater(final Exception e, final String title, final String message, final Object... args)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                showErrorDialog(e, title, message, args);
-            }
-        });
+        SwingUtilities.invokeLater(() -> showErrorDialog(e, title, message, args));
     }
 
     public void showCommunicationErrorDialogLater(final Exception e, final String message, final Object... args)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                showCommunicationErrorDialog(e, message, args);
-            }
-        });
+        SwingUtilities.invokeLater(() -> showCommunicationErrorDialog(e, message, args));
     }
 
     public void showMessageDialog(Object message, String title, int messageType)

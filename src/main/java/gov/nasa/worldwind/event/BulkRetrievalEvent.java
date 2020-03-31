@@ -18,13 +18,13 @@ import gov.nasa.worldwind.retrieve.BulkRetrievable;
 public class BulkRetrievalEvent extends WWEvent
 {
     /** Constant indicating retrieval failure. */
-    public static String RETRIEVAL_FAILED = "gov.nasa.worldwind.retrieve.BulkRetrievable.RetrievalFailed";
+    public static final String RETRIEVAL_FAILED = "gov.nasa.worldwind.retrieve.BulkRetrievable.RetrievalFailed";
 
     /** Constant indicating retrieval success. */
-    public static String RETRIEVAL_SUCCEEDED = "gov.nasa.worldwind.retrieve.BulkRetrievable.RetrievalSucceeded";
+    public static final String RETRIEVAL_SUCCEEDED = "gov.nasa.worldwind.retrieve.BulkRetrievable.RetrievalSucceeded";
 
-    protected String eventType;
-    protected String item;
+    protected final String eventType;
+    protected final String item;
 
     /**
      * Creates a new event.

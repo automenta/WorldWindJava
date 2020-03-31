@@ -136,11 +136,7 @@ public class ExportAsKMLGroundOverlay
                 kmlBuilder.close();
             }
         }
-        catch (XMLStreamException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e)
+        catch (XMLStreamException | IOException e)
         {
             e.printStackTrace();
         }

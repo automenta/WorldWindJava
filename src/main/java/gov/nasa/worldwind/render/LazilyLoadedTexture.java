@@ -17,6 +17,7 @@ import gov.nasa.worldwind.util.*;
 import java.awt.image.*;
 import java.beans.*;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * Represents a texture derived from a lazily loaded image source such as an image file or a {@link
@@ -62,7 +63,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture
     /** Indicates whether the image read from the image source has mip-map data. */
     protected boolean hasMipmapData = false;
     /** Identifies the {@link gov.nasa.worldwind.cache.FileStore} of the supporting file cache for this model. */
-    protected FileStore fileStore = WorldWind.getDataFileStore();
+    protected final FileStore fileStore = WorldWind.getDataFileStore();
     /** Provides a semaphore to synchronize access to the texture file if duplicate request tasks are active. */
     protected final Object fileLock = new Object();
 
@@ -582,7 +583,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture
 
             final RequestTask that = (RequestTask) o;
 
-            return !(this.wwTexture != null ? !this.wwTexture.equals(that.wwTexture) : that.wwTexture != null);
+            return Objects.equals(this.wwTexture, that.wwTexture);
         }
 
         public int hashCode()
@@ -653,7 +654,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture
         LazilyLoadedTexture that = (LazilyLoadedTexture) o;
 
         //noinspection RedundantIfStatement
-        if (imageSource != null ? !imageSource.equals(that.imageSource) : that.imageSource != null)
+        if (!Objects.equals(imageSource, that.imageSource))
             return false;
 
         return true;

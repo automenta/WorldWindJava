@@ -63,7 +63,7 @@ public class ViewViewVolume extends JFrame
 
     protected static class WWPanel extends JPanel
     {
-        WorldWindowGLCanvas wwd;
+        final WorldWindowGLCanvas wwd;
 
         public WWPanel(Dimension size)
         {
@@ -83,20 +83,16 @@ public class ViewViewVolume extends JFrame
 
     public static void main(String[] args)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                // Make a WorldWindow to observe
-                ViewViewVolume vvv = new ViewViewVolume();
-                vvv.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            // Make a WorldWindow to observe
+            ViewViewVolume vvv = new ViewViewVolume();
+            vvv.setVisible(true);
 
-                // Make the observer
-                ViewVolumeViewer vvViewer = new ViewVolumeViewer(vvv.wwp.wwd, new Dimension(500, 500));
-                Point p = vvv.getLocation();
-                vvViewer.setLocation(p.x + vvv.getWidth() + 20, p.y);
-                vvViewer.setVisible(true);
-            }
+            // Make the observer
+            ViewVolumeViewer vvViewer = new ViewVolumeViewer(vvv.wwp.wwd, new Dimension(500, 500));
+            Point p = vvv.getLocation();
+            vvViewer.setLocation(p.x + vvv.getWidth() + 20, p.y);
+            vvViewer.setVisible(true);
         });
     }
 }

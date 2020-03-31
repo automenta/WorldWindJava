@@ -197,7 +197,7 @@ public class RPFCrawler
     private static List<RPFFrameFileIndexSection.RPFFrameFileIndexRecord> extractRPFRecords(RPFTOCFile tocFile)
     {
         List<RPFFrameFileIndexSection.RPFFrameFileIndexRecord> rpfFiles
-            = new LinkedList<RPFFrameFileIndexSection.RPFFrameFileIndexRecord>();
+            = new LinkedList<>();
         if (tocFile != null
             && tocFile.getFrameFileIndexSection() != null
             && tocFile.getFrameFileIndexSection().getFrameFileIndexTable() != null
@@ -331,7 +331,7 @@ public class RPFCrawler
     public File[] invoke(File directory, boolean tocFileSearch)
     {
         File validDir = this.validateDirectory(directory);
-        final Collection<File> results = new ArrayList<File>();
+        final Collection<File> results = new ArrayList<>();
         this.process(validDir, new RPFCrawlerListener()
         {
             public void fileFound(File file, boolean isTOCFile)

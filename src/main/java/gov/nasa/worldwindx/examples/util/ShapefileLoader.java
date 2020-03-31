@@ -96,27 +96,27 @@ public class ShapefileLoader
             throw new IllegalArgumentException(message);
         }
 
-        Layer layer = null;
+        RenderableLayer layer = null;
 
         if (Shapefile.isPointType(shp.getShapeType()))
         {
             layer = new RenderableLayer();
-            this.addRenderablesForPoints(shp, (RenderableLayer) layer);
+            this.addRenderablesForPoints(shp, layer);
         }
         else if (Shapefile.isMultiPointType(shp.getShapeType()))
         {
             layer = new RenderableLayer();
-            this.addRenderablesForMultiPoints(shp, (RenderableLayer) layer);
+            this.addRenderablesForMultiPoints(shp, layer);
         }
         else if (Shapefile.isPolylineType(shp.getShapeType()))
         {
             layer = new RenderableLayer();
-            this.addRenderablesForPolylines(shp, (RenderableLayer) layer);
+            this.addRenderablesForPolylines(shp, layer);
         }
         else if (Shapefile.isPolygonType(shp.getShapeType()))
         {
             layer = new RenderableLayer();
-            this.addRenderablesForPolygons(shp, (RenderableLayer) layer);
+            this.addRenderablesForPolygons(shp, layer);
         }
         else
         {

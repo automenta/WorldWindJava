@@ -194,7 +194,7 @@ class RPFRetriever extends WWObjectImpl implements Retriever
         return this.responseCode;
     }
 
-    public final Retriever call() throws Exception
+    public final Retriever call()
     {
         if (interrupted())
             return this;
@@ -249,7 +249,7 @@ class RPFRetriever extends WWObjectImpl implements Retriever
         return false;
     }
 
-    private void end() throws Exception
+    private void end()
     {
         try
         {

@@ -10,6 +10,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * Defines the relationship of an image, label or other screen-space item relative to another screen-space item. An
@@ -277,14 +278,14 @@ public class Offset
 
         Offset that = (Offset) o;
 
-        if (this.x != null ? !this.x.equals(that.x) : that.x != null)
+        if (!Objects.equals(this.x, that.x))
             return false;
-        if (this.y != null ? !this.y.equals(that.y) : that.y != null)
+        if (!Objects.equals(this.y, that.y))
             return false;
-        if (this.xUnits != null ? !this.xUnits.equals(that.xUnits) : that.xUnits != null)
+        if (!Objects.equals(this.xUnits, that.xUnits))
             return false;
         //noinspection RedundantIfStatement
-        if (this.yUnits != null ? !this.yUnits.equals(that.yUnits) : that.yUnits != null)
+        if (!Objects.equals(this.yUnits, that.yUnits))
             return false;
 
         return true;

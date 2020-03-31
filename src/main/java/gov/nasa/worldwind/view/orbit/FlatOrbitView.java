@@ -33,7 +33,7 @@ public class FlatOrbitView extends BasicOrbitView
     public double computeFarClipDistance()
     {
         double far = this.computeHorizonDistance(this.getCurrentEyePoint());
-        return far < MINIMUM_FAR_DISTANCE ? MINIMUM_FAR_DISTANCE : far;
+        return Math.max(far, MINIMUM_FAR_DISTANCE);
     }
 
     protected double computeHorizonDistance(Vec4 eyePoint)

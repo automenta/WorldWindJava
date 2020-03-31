@@ -18,7 +18,7 @@ import javax.xml.stream.events.XMLEvent;
  */
 public class AngleXMLEventParser extends AbstractXMLEventParser
 {
-    protected QName elementName;
+    protected final QName elementName;
 
     public AngleXMLEventParser(QName elementName)
     {

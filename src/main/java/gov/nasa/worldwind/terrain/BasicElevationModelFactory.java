@@ -108,11 +108,10 @@ public class BasicElevationModelFactory extends BasicFactory
      *
      * @return the requested elevation model, or null if the specified element does not describe an elevation model.
      *
-     * @throws Exception if a problem occurs during creation.
      * @see #createNonCompoundModel(org.w3c.dom.Element, gov.nasa.worldwind.avlist.AVList)
      */
     @Override
-    protected ElevationModel doCreateFromElement(Element domElement, AVList params) throws Exception
+    protected ElevationModel doCreateFromElement(Element domElement, AVList params)
     {
         Element element = WWXML.getElement(domElement, ".", null);
         if (element == null)
@@ -194,30 +193,16 @@ public class BasicElevationModelFactory extends BasicFactory
 
         String serviceName = WWXML.getText(domElement, "Service/@serviceName");
 
-        if (serviceName.equals("Offline"))
+        switch (serviceName)
         {
-            em = new BasicElevationModel(domElement, params);
-        }
-        else if (serviceName.equals("WWTileService"))
-        {
-            em = new BasicElevationModel(domElement, params);
-        }
-        else if (serviceName.equals(OGCConstants.WMS_SERVICE_NAME))
-        {
-            em = new WMSBasicElevationModel(domElement, params);
-        }
-        else if (serviceName.equals(OGCConstants.WCS_SERVICE_NAME))
-        {
-            em = new WCSElevationModel(domElement, params);
-        }
-        else if (AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER.equals(serviceName))
-        {
-            em = new LocalRasterServerElevationModel(domElement, params);
-        }
-        else
-        {
-            String msg = Logging.getMessage("generic.UnrecognizedServiceName", serviceName);
-            throw new WWUnrecognizedException(msg);
+            case "Offline", "WWTileService" -> em = new BasicElevationModel(domElement, params);
+            case OGCConstants.WMS_SERVICE_NAME -> em = new WMSBasicElevationModel(domElement, params);
+            case OGCConstants.WCS_SERVICE_NAME -> em = new WCSElevationModel(domElement, params);
+            case AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER -> em = new LocalRasterServerElevationModel(domElement, params);
+            default -> {
+                String msg = Logging.getMessage("generic.UnrecognizedServiceName", serviceName);
+                throw new WWUnrecognizedException(msg);
+            }
         }
 
         return em;

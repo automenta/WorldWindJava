@@ -24,9 +24,9 @@ import java.util.*;
  */
 public class WCS100DescribeCoverage extends AbstractXMLEventParser
 {
-    protected XMLEventReader eventReader;
+    protected final XMLEventReader eventReader;
     protected XMLEventParserContext parserContext;
-    protected List<WCS100CoverageOffering> coverageOfferings = new ArrayList<WCS100CoverageOffering>(1);
+    protected final List<WCS100CoverageOffering> coverageOfferings = new ArrayList<>(1);
 
     public static WCS100DescribeCoverage retrieve(URI uri, final String coverageName) throws URISyntaxException
     {
@@ -111,7 +111,7 @@ public class WCS100DescribeCoverage extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WCS100CoverageOffering)
+                if (o instanceof WCS100CoverageOffering)
                     this.coverageOfferings.add((WCS100CoverageOffering) o);
             }
         }

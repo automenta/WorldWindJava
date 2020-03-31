@@ -33,7 +33,7 @@ import java.util.*;
 public abstract class KMLAbstractFeature extends KMLAbstractObject implements KMLRenderable
 {
     /** The style selectors specified in the KML Feature element. Is empty if no selectors were specified. */
-    protected List<KMLAbstractStyleSelector> styleSelectors = new ArrayList<KMLAbstractStyleSelector>();
+    protected final List<KMLAbstractStyleSelector> styleSelectors = new ArrayList<>();
     /**
      * The visibility flag for the feature. This field is determined from the visibility element of the KML feature
      * initially, but the client may set it directly, in which case it may then differ from the visibility field in the
@@ -421,7 +421,7 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
     {
         // Make a copy of the existing list so we can modify it as we traverse the copy.
         List<KMLAbstractStyleSelector> styleSelectorsCopy =
-            new ArrayList<KMLAbstractStyleSelector>(this.getStyleSelectors().size());
+            new ArrayList<>(this.getStyleSelectors().size());
         styleSelectorsCopy.addAll(this.getStyleSelectors());
 
         for (KMLAbstractStyleSelector sourceSelector : sourceFeature.getStyleSelectors())

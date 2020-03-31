@@ -38,7 +38,7 @@ public abstract class KMLViewController
     protected double viewAltitude = DEFAULT_VIEW_ALTITUDE;
 
     /** WorldWindow that holds the view to animate. */
-    protected WorldWindow wwd;
+    protected final WorldWindow wwd;
 
     /**
      * Convenience method to create a new view controller appropriate for the <code>WorldWindow</code>'s current
@@ -177,7 +177,7 @@ public abstract class KMLViewController
     protected void goToDefaultPlacemarkView(KMLPlacemark placemark)
     {
         View view = this.wwd.getView();
-        List<Position> positions = new ArrayList<Position>();
+        List<Position> positions = new ArrayList<>();
 
         // Find all the points in the placemark. We want to bring the entire placemark into view.
         KMLAbstractGeometry geometry = placemark.getGeometry();

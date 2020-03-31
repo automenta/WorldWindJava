@@ -36,8 +36,8 @@ public class BasicRasterServerCache extends BasicMemoryCache
     protected static final long DEFAULT_LEAST_RECENTLY_USED_TIMEOUT_NSEC = 20000000000L;
     // 20 sec = 20,000,000,000 nano-sec
 
-    protected AtomicInteger inaccessibleMemorySize = new AtomicInteger(DEFAULT_INACCESSIBLE_MEMORY_SIZE);
-    protected final ReferenceQueue<Object> queue = new ReferenceQueue<Object>();
+    protected final AtomicInteger inaccessibleMemorySize = new AtomicInteger(DEFAULT_INACCESSIBLE_MEMORY_SIZE);
+    protected final ReferenceQueue<Object> queue = new ReferenceQueue<>();
     protected Reference<Object> lowMemorySemaphore = null;
 
     protected long timeoutLeastRecentUseInNanoSeconds = DEFAULT_LEAST_RECENTLY_USED_TIMEOUT_NSEC;
@@ -91,7 +91,7 @@ public class BasicRasterServerCache extends BasicMemoryCache
         try
         {
             if (this.lowMemorySemaphore == null || null == this.lowMemorySemaphore.get())
-                this.lowMemorySemaphore = new SoftReference<Object>(new byte[this.inaccessibleMemorySize.get()],
+                this.lowMemorySemaphore = new SoftReference<>(new byte[this.inaccessibleMemorySize.get()],
                     this.queue);
         }
         catch (Throwable t)

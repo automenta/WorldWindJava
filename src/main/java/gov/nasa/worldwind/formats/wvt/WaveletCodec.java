@@ -9,7 +9,6 @@ import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.awt.image.*;
-import java.io.IOException;
 
 /**
  * @author brownrigg
@@ -174,7 +173,7 @@ public class WaveletCodec
         return image;
     }
 
-    public static java.nio.ByteBuffer save(WaveletCodec codec) throws IOException
+    public static java.nio.ByteBuffer save(WaveletCodec codec)
     {
         if (codec == null)
         {
@@ -259,7 +258,7 @@ public class WaveletCodec
         return type;
     }
 
-    public static WaveletCodec load(java.nio.ByteBuffer buffer) throws IOException
+    public static WaveletCodec load(java.nio.ByteBuffer buffer)
     {
         if (buffer == null)
         {
@@ -286,7 +285,7 @@ public class WaveletCodec
         return codec;
     }
 
-    public static WaveletCodec loadPartial(java.nio.ByteBuffer buffer, int resolution) throws IOException
+    public static WaveletCodec loadPartial(java.nio.ByteBuffer buffer, int resolution)
     {
         if (buffer == null)
         {

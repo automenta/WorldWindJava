@@ -31,7 +31,7 @@ public class TacticalGraphicUtil
      */
     public static List<Position> asPositionList(Globe globe, Vec4... points)
     {
-        List<Position> positions = new ArrayList<Position>(points.length);
+        List<Position> positions = new ArrayList<>(points.length);
         for (Vec4 point : points)
         {
             positions.add(globe.computePositionFromPoint(point));

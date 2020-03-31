@@ -52,14 +52,14 @@ public class RasterServerConfiguration extends AbstractXMLEventParser
         {
             AbstractXMLEventParser corner = (AbstractXMLEventParser) this.getField("SouthWest");
             AbstractXMLEventParser latLon = (AbstractXMLEventParser) corner.getField("LatLon");
-            Double minLat = Double.valueOf((String) latLon.getField("latitude"));
-            Double minLon = Double.valueOf((String) latLon.getField("longitude"));
+            double minLat = Double.parseDouble((String) latLon.getField("latitude"));
+            double minLon = Double.parseDouble((String) latLon.getField("longitude"));
             String units = (String) latLon.getField("units");
 
             corner = (AbstractXMLEventParser) this.getField("NorthEast");
             latLon = (AbstractXMLEventParser) corner.getField("LatLon");
-            Double maxLat = Double.valueOf((String) latLon.getField("latitude"));
-            Double maxLon = Double.valueOf((String) latLon.getField("longitude"));
+            double maxLat = Double.parseDouble((String) latLon.getField("latitude"));
+            double maxLon = Double.parseDouble((String) latLon.getField("longitude"));
 
             if (units.equals("radians"))
                 return Sector.fromRadians(minLat, maxLat, minLon, maxLon);
@@ -101,7 +101,7 @@ public class RasterServerConfiguration extends AbstractXMLEventParser
 
     protected static class Sources extends AbstractXMLEventParser
     {
-        protected ArrayList<Source> sources = new ArrayList<Source>();
+        protected final ArrayList<Source> sources = new ArrayList<>();
 
         public Sources(String namespaceURI)
         {
@@ -130,10 +130,10 @@ public class RasterServerConfiguration extends AbstractXMLEventParser
 
     protected static String namespaceURI;
 
-    protected XMLEventReader eventReader;
+    protected final XMLEventReader eventReader;
     protected XMLEventParserContext parserContext;
 
-    protected HashMap<String, String> properties = new HashMap<String, String>();
+    protected final HashMap<String, String> properties = new HashMap<>();
 
     public RasterServerConfiguration(Object docSource)
     {

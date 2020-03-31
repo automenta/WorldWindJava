@@ -62,11 +62,11 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     protected DraggableSupport draggableSupport = null;
     protected Color highlightColor = new Color(1f, 1f, 1f, 0.5f);
     protected Object delegateOwner;
-    protected LengthMeasurer measurer = new LengthMeasurer();
+    protected final LengthMeasurer measurer = new LengthMeasurer();
     protected long geomGenTimeStamp = -Long.MAX_VALUE;
     protected double geomGenVE = 1;
     protected double eyeDistance;
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     protected long frameNumber = -1; // identifies frame used to calculate these values
     protected Layer pickLayer;
     protected SurfaceShape surfaceShape;
@@ -75,10 +75,10 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     protected static class ExtentInfo
     {
         // The extent depends on the state of the globe used to compute it, and the vertical exaggeration.
-        protected Extent extent;
-        protected double verticalExaggeration;
-        protected Globe globe;
-        protected Object globeStateKey;
+        protected final Extent extent;
+        protected final double verticalExaggeration;
+        protected final Globe globe;
+        protected final Object globeStateKey;
 
         public ExtentInfo(Extent extent, DrawContext dc)
         {
@@ -95,7 +95,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         }
     }
 
-    protected HashMap<Globe, ExtentInfo> extents = new HashMap<Globe, ExtentInfo>(2); // usually only 1, but few at most
+    protected final HashMap<Globe, ExtentInfo> extents = new HashMap<>(2); // usually only 1, but few at most
 
     public Polyline()
     {
@@ -430,7 +430,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     public void setPositions(Iterable<? extends Position> inPositions)
     {
         this.reset();
-        this.positions = new ArrayList<Position>();
+        this.positions = new ArrayList<>();
         this.extents.clear();
         if (inPositions != null)
         {
@@ -461,7 +461,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     public void setPositions(Iterable<? extends LatLon> inPositions, double altitude)
     {
         this.reset();
-        this.positions = new ArrayList<Position>();
+        this.positions = new ArrayList<>();
         this.extents.clear();
         if (inPositions != null)
         {
@@ -661,7 +661,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         }
         else
         {
-            ArrayList<Position> temp = new ArrayList<Position>();
+            ArrayList<Position> temp = new ArrayList<>();
             Position firstPosition = null;
             for (Position pos : this.getPositions())
             {
@@ -944,7 +944,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     protected void makeVertices(DrawContext dc)
     {
         if (this.currentSpans == null)
-            this.currentSpans = new ArrayList<List<Vec4>>();
+            this.currentSpans = new ArrayList<>();
         else
             this.currentSpans.clear();
 
@@ -1145,7 +1145,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     protected ArrayList<Vec4> addPointToSpan(Vec4 p, ArrayList<Vec4> span)
     {
         if (span == null)
-            span = new ArrayList<Vec4>();
+            span = new ArrayList<>();
 
         span.add(p.subtract3(this.referenceCenterPoint));
 
@@ -1396,7 +1396,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         RestorableSupport.StateObject positionsStateObj = restorableSupport.getStateObject("positions");
         if (positionsStateObj != null)
         {
-            ArrayList<Position> newPositions = new ArrayList<Position>();
+            ArrayList<Position> newPositions = new ArrayList<>();
             // Get the nested "position" states beneath the base "positions".
             RestorableSupport.StateObject[] positionStateArray =
                 restorableSupport.getAllStateObjects(positionsStateObj, "position");

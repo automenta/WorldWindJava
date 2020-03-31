@@ -54,7 +54,7 @@ public class Cake extends AbstractAirspace
         }
     }
 
-    private final List<Layer> layers = new ArrayList<Layer>();
+    private final List<Layer> layers = new ArrayList<>();
 
     public Cake(Collection<Layer> layers)
     {
@@ -163,7 +163,7 @@ public class Cake extends AbstractAirspace
 
     public Position getReferencePosition()
     {
-        ArrayList<LatLon> locations = new ArrayList<LatLon>(this.layers.size());
+        ArrayList<LatLon> locations = new ArrayList<>(this.layers.size());
         for (Layer l : this.layers)
         {
             locations.add(l.getCenter());
@@ -186,7 +186,7 @@ public class Cake extends AbstractAirspace
         }
         else
         {
-            ArrayList<Box> extents = new ArrayList<Box>();
+            ArrayList<Box> extents = new ArrayList<>();
 
             for (Layer layer : cakeLayers)
             {
@@ -340,7 +340,7 @@ public class Cake extends AbstractAirspace
         if (lsos == null || lsos.length == 0)
             return;
 
-        ArrayList<Layer> layerList = new ArrayList<Layer>(lsos.length);
+        ArrayList<Layer> layerList = new ArrayList<>(lsos.length);
 
         for (RestorableSupport.StateObject lso : lsos)
         {

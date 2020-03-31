@@ -10,7 +10,6 @@ import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.*;
 import java.util.*;
 
@@ -34,7 +33,7 @@ public abstract class ShapefileRecord
     protected boolean normalizePoints;
 
     protected static final int RECORD_HEADER_LENGTH = 8;
-    protected static List<String> measureTypes = new ArrayList<String>(Arrays.asList(
+    protected static List<String> measureTypes = new ArrayList<>(Arrays.asList(
         Shapefile.SHAPE_POINT_M, Shapefile.SHAPE_POINT_Z,
         Shapefile.SHAPE_MULTI_POINT_M, Shapefile.SHAPE_MULTI_POINT_Z,
         Shapefile.SHAPE_POLYLINE_M, Shapefile.SHAPE_POLYLINE_Z,
@@ -469,7 +468,7 @@ public abstract class ShapefileRecord
         this.normalizePoints = normalizePoints;
     }
 
-    public void exportAsXML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    public void exportAsXML(XMLStreamWriter xmlWriter) throws XMLStreamException
     {
         if (xmlWriter == null)
         {
@@ -521,10 +520,9 @@ public abstract class ShapefileRecord
      *
      * @param xmlWriter Writer to receive KML.
      *
-     * @throws IOException        If an exception occurs while writing the KML
      * @throws XMLStreamException If an exception occurs while exporting the data.
      */
-    public void exportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    public void exportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException
     {
     }
 

@@ -36,12 +36,12 @@ public class CompassLayer extends AbstractLayer
     protected Vec4 locationCenter = null;
     protected Vec4 locationOffset = null;
     protected boolean showTilt = true;
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     protected long frameStampForPicking;
     protected long frameStampForDrawing;
 
     // Draw it as ordered with an eye distance of 0 so that it shows up in front of most other things.
-    protected OrderedIcon orderedImage = new OrderedIcon();
+    protected final OrderedIcon orderedImage = new OrderedIcon();
 
     protected class OrderedIcon implements OrderedRenderable
     {
@@ -340,7 +340,7 @@ public class CompassLayer extends AbstractLayer
             // into the GL projection matrix.
             java.awt.Rectangle viewport = dc.getView().getViewport();
             ogsh.pushProjectionIdentity(gl);
-            double maxwh = width > height ? width : height;
+            double maxwh = Math.max(width, height);
             if (maxwh == 0)
                 maxwh = 1;
             gl.glOrtho(0d, viewport.width, 0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
@@ -429,22 +429,13 @@ public class CompassLayer extends AbstractLayer
 
     protected double computeScale(java.awt.Rectangle viewport)
     {
-        if (this.resizeBehavior.equals(AVKey.RESIZE_SHRINK_ONLY))
-        {
-            return Math.min(1d, (this.compassToViewportScale) * viewport.width / this.getScaledIconWidth());
-        }
-        else if (this.resizeBehavior.equals(AVKey.RESIZE_STRETCH))
-        {
-            return (this.compassToViewportScale) * viewport.width / this.getScaledIconWidth();
-        }
-        else if (this.resizeBehavior.equals(AVKey.RESIZE_KEEP_FIXED_SIZE))
-        {
-            return 1d;
-        }
-        else
-        {
-            return 1d;
-        }
+        return switch (this.resizeBehavior)
+            {
+                case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1d,
+                    (this.compassToViewportScale) * viewport.width / this.getScaledIconWidth());
+                case AVKey.RESIZE_STRETCH -> (this.compassToViewportScale) * viewport.width / this.getScaledIconWidth();
+                default -> 1d;
+            };
     }
 
     protected double getScaledIconWidth()

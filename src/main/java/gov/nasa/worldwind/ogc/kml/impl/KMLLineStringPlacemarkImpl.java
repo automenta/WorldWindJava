@@ -64,12 +64,12 @@ public class KMLLineStringPlacemarkImpl extends Path implements KMLRenderable
         String altMode = lineString.getAltitudeMode();
         if (!WWUtil.isEmpty(altMode))
         {
-            if ("clampToGround".equals(altMode))
-                this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            else if ("relativeToGround".equals(altMode))
-                this.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            else if ("absolute".equals(altMode))
-                this.setAltitudeMode(WorldWind.ABSOLUTE);
+            switch (altMode)
+            {
+                case "clampToGround" -> this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+                case "relativeToGround" -> this.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
+                case "absolute" -> this.setAltitudeMode(WorldWind.ABSOLUTE);
+            }
         }
 
         // If the path is clamped to the ground and terrain conforming, draw as a great circle. Otherwise draw

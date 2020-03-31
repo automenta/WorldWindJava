@@ -47,18 +47,16 @@ public class TrackController {
     private WorldWindow wwd;
     private TracksPanel tracksPanel;
     private AnalysisPanel analysisPanel;
-    private final HashMap<SARTrack, Layer> trackLayers = new HashMap<SARTrack, Layer>();
+    private final HashMap<SARTrack, Layer> trackLayers = new HashMap<>();
     private final SARTrackBuilder trackBuilder;
     private final SARTrackExtensionTool trackExtensionTool;
 
-    private final SelectListener selectListener = new SelectListener() {
-        public void selected(SelectEvent event) {
-            if (event == null) {
-                return;
-            }
-
-            onSelected(event);
+    private final SelectListener selectListener = event -> {
+        if (event == null) {
+            return;
         }
+
+        onSelected(event);
     };
 
     public TrackController() {
@@ -113,47 +111,44 @@ public class TrackController {
 
         this.createPathTrackRepresentation(track);
 
-        track.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                if (null != propertyChangeEvent.getPropertyName()) {
-                    switch (propertyChangeEvent.getPropertyName()) {
-                        case TrackController.TRACK_REMOVE:
-                            removeTrack((SARTrack) propertyChangeEvent.getSource());
-                            break;
-                        case TrackController.TRACK_MODIFY:
-                            updateTrack((SARTrack) propertyChangeEvent.getSource());
-                            break;
-                        case TrackController.TRACK_ENABLE:
-                            enableTrack((SARTrack) propertyChangeEvent.getSource());
-                            break;
-                        case TrackController.TRACK_DISABLE:
-                            disableTrack((SARTrack) propertyChangeEvent.getSource());
-                            break;
-                        case TrackController.TRACK_CURRENT:
-                            trackCurrent((SARTrack) propertyChangeEvent.getSource());
-                            break;
-                        case TrackController.TRACK_NAME:
-                            trackName((SARTrack) propertyChangeEvent.getSource());
-                            break;
-                        case TrackController.TRACK_DIRTY_BIT:
-                            trackDirtyBit((SARTrack) propertyChangeEvent.getSource());
-                            break;
-                        case TrackController.BEGIN_TRACK_POINT_ENTRY:
-                            beginTrackPointEntry(propertyChangeEvent);
-                            break;
-                        case TrackController.END_TRACK_POINT_ENTRY:
-                            endTrackPointEntry(propertyChangeEvent);
-                            break;
-                        case TrackController.MOVE_TO_NEXT_POINT:
-                            moveToNextTrackPoint();
-                            break;
-                        case TrackController.REMOVE_LAST_POINT:
-                            removeLastTrackPoint();
-                            break;
-                        default:
-                            break;
-                    }
+        track.addPropertyChangeListener(propertyChangeEvent -> {
+            if (null != propertyChangeEvent.getPropertyName()) {
+                switch (propertyChangeEvent.getPropertyName()) {
+                    case TrackController.TRACK_REMOVE:
+                        removeTrack((SARTrack) propertyChangeEvent.getSource());
+                        break;
+                    case TrackController.TRACK_MODIFY:
+                        updateTrack((SARTrack) propertyChangeEvent.getSource());
+                        break;
+                    case TrackController.TRACK_ENABLE:
+                        enableTrack((SARTrack) propertyChangeEvent.getSource());
+                        break;
+                    case TrackController.TRACK_DISABLE:
+                        disableTrack((SARTrack) propertyChangeEvent.getSource());
+                        break;
+                    case TrackController.TRACK_CURRENT:
+                        trackCurrent((SARTrack) propertyChangeEvent.getSource());
+                        break;
+                    case TrackController.TRACK_NAME:
+                        trackName((SARTrack) propertyChangeEvent.getSource());
+                        break;
+                    case TrackController.TRACK_DIRTY_BIT:
+                        trackDirtyBit((SARTrack) propertyChangeEvent.getSource());
+                        break;
+                    case TrackController.BEGIN_TRACK_POINT_ENTRY:
+                        beginTrackPointEntry(propertyChangeEvent);
+                        break;
+                    case TrackController.END_TRACK_POINT_ENTRY:
+                        endTrackPointEntry(propertyChangeEvent);
+                        break;
+                    case TrackController.MOVE_TO_NEXT_POINT:
+                        moveToNextTrackPoint();
+                        break;
+                    case TrackController.REMOVE_LAST_POINT:
+                        removeLastTrackPoint();
+                        break;
+                    default:
+                        break;
                 }
             }
         });
@@ -341,14 +336,20 @@ public class TrackController {
     protected void onSelected(SelectEvent event) {
         SARTrack track = this.getPickedTrack(event.getTopPickedObject());
 
-        if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
-            if (track != null) {
-                this.onTrackClicked(track);
-            }
-        } else if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
-            this.onTrackRollover(track);
-        } else if (event.getEventAction().equals(SelectEvent.HOVER)) {
-            this.onTrackHover(track);
+        switch (event.getEventAction())
+        {
+            case SelectEvent.LEFT_CLICK:
+                if (track != null)
+                {
+                    this.onTrackClicked(track);
+                }
+                break;
+            case SelectEvent.ROLLOVER:
+                this.onTrackRollover(track);
+                break;
+            case SelectEvent.HOVER:
+                this.onTrackHover(track);
+                break;
         }
     }
 

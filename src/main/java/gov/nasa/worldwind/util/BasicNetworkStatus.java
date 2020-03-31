@@ -32,8 +32,8 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
     {
         protected final long tryAgainInterval;
         protected final int attemptLimit;
-        protected AtomicInteger logCount = new AtomicInteger();
-        protected AtomicLong lastLogTime = new AtomicLong();
+        protected final AtomicInteger logCount = new AtomicInteger();
+        protected final AtomicLong lastLogTime = new AtomicLong();
 
         protected HostInfo(int attemptLimit, long tryAgainInterval)
         {
@@ -55,18 +55,18 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
     }
 
     // Values exposed to the application.
-    private final CopyOnWriteArrayList<String> networkTestSites = new CopyOnWriteArrayList<String>();
+    private final CopyOnWriteArrayList<String> networkTestSites = new CopyOnWriteArrayList<>();
     private final AtomicLong tryAgainInterval = new AtomicLong(DEFAULT_TRY_AGAIN_INTERVAL);
     private final AtomicInteger attemptLimit = new AtomicInteger(DEFAULT_ATTEMPT_LIMIT);
     private boolean offlineMode;
 
     // Fields for determining and remembering overall network status.
-    protected ConcurrentHashMap<String, HostInfo> hostMap = new ConcurrentHashMap<String, HostInfo>();
-    protected AtomicLong lastUnavailableLogTime = new AtomicLong(System.currentTimeMillis());
-    protected AtomicLong lastAvailableLogTime = new AtomicLong(System.currentTimeMillis() + 1);
-    protected AtomicLong lastNetworkCheckTime = new AtomicLong(System.currentTimeMillis());
-    protected AtomicLong lastNetworkStatusReportTime = new AtomicLong(0);
-    protected AtomicBoolean lastNetworkUnavailableResult = new AtomicBoolean(false);
+    protected final ConcurrentHashMap<String, HostInfo> hostMap = new ConcurrentHashMap<>();
+    protected final AtomicLong lastUnavailableLogTime = new AtomicLong(System.currentTimeMillis());
+    protected final AtomicLong lastAvailableLogTime = new AtomicLong(System.currentTimeMillis() + 1);
+    protected final AtomicLong lastNetworkCheckTime = new AtomicLong(System.currentTimeMillis());
+    protected final AtomicLong lastNetworkStatusReportTime = new AtomicLong(0);
+    protected final AtomicBoolean lastNetworkUnavailableResult = new AtomicBoolean(false);
 
     public BasicNetworkStatus()
     {
@@ -98,11 +98,11 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
         else
         {
             String[] sites = testSites.split(",");
-            List<String> actualSites = new ArrayList<String>(sites.length);
+            List<String> actualSites = new ArrayList<>(sites.length);
 
-            for (int i = 0; i < sites.length; i++)
+            for (String s : sites)
             {
-                String site = WWUtil.removeWhiteSpace(sites[i]);
+                String site = WWUtil.removeWhiteSpace(s);
                 if (!WWUtil.isEmpty(site))
                     actualSites.add(site);
             }
@@ -164,7 +164,7 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
     /** {@inheritDoc} */
     public List<String> getNetworkTestSites()
     {
-        return new ArrayList<String>(networkTestSites);
+        return new ArrayList<>(networkTestSites);
     }
 
     /** {@inheritDoc} */
@@ -394,7 +394,7 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
         }
         finally
         {
-            if (connection != null && connection instanceof HttpURLConnection)
+            if (connection instanceof HttpURLConnection)
                 ((HttpURLConnection) connection).disconnect();
         }
 

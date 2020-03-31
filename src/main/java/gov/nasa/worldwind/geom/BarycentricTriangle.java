@@ -16,12 +16,12 @@ public class BarycentricTriangle implements BarycentricPlanarShape
 {
     // TODO: arg checking
     // TODO: account for degenerate quads
-    protected Vec4 p00;
-    protected Vec4 p10;
-    protected Vec4 p01;
+    protected final Vec4 p00;
+    protected final Vec4 p10;
+    protected final Vec4 p01;
 
-    protected Vec4 q1;
-    protected Vec4 q3;
+    protected final Vec4 q1;
+    protected final Vec4 q3;
 
     public BarycentricTriangle(Vec4 p00, Vec4 p10, Vec4 p01)
     {

@@ -15,7 +15,6 @@ import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.*;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class Wedge extends RigidShape
 
     // Geometry.
     @SuppressWarnings({"FieldCanBeLocal"})
-    protected int faceCount = 5;   // number of separate Geometry pieces that comprise this Wedge
+    protected final int faceCount = 5;   // number of separate Geometry pieces that comprise this Wedge
     // The faces are numbered as follows:
     // face 0: Wedge top
     // face 1: Wedge bottom
@@ -638,7 +637,7 @@ public class Wedge extends RigidShape
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void doExportAsKML(XMLStreamWriter xmlWriter)
     {
         String message = Logging.getMessage("generic.UnsupportedOperation", "doExportAsKML");
         Logging.logger().severe(message);

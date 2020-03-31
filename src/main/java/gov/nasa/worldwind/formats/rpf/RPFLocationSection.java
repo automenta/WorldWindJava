@@ -15,7 +15,7 @@ import gov.nasa.worldwind.formats.nitfs.*;
 public class RPFLocationSection
 {
     private final java.util.Hashtable<Integer, ComponentLocationRecord> table =
-            new java.util.Hashtable<Integer, ComponentLocationRecord>();
+        new java.util.Hashtable<>();
 
         public int getHeaderComponentLocation()
         {
@@ -227,11 +227,11 @@ public class RPFLocationSection
             return this.getLength(153);
         }
         // because of lack of "unsigned" in java, we store UINT as int, and UINT as long
-        public int      locationSectionLength;
-        public long     componentLocationTableOffset;
-        public int      numOfComponentLocationRecords;
-        public int      componentLocationRecordLength;
-        public long     componentAggregateLength;
+        public final int      locationSectionLength;
+        public final long     componentLocationTableOffset;
+        public final int      numOfComponentLocationRecords;
+        public final int      componentLocationRecordLength;
+        public final long     componentAggregateLength;
 
         public RPFLocationSection(java.nio.ByteBuffer buffer)
         {
@@ -271,7 +271,7 @@ public class RPFLocationSection
             return null;
         }
 
-        public class ComponentLocationRecord
+        public static class ComponentLocationRecord
         {
             private final int  id;
             private final long length;

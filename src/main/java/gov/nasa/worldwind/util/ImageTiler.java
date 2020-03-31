@@ -27,7 +27,7 @@ import java.util.logging.Level;
  */
 public class ImageTiler
 {
-    public static int DEFAULT_IMAGE_TILE_SIZE = 2048; // default size to make subimages
+    public static final int DEFAULT_IMAGE_TILE_SIZE = 2048; // default size to make subimages
 
     private int tileWidth = DEFAULT_IMAGE_TILE_SIZE;
     private int tileHeight = DEFAULT_IMAGE_TILE_SIZE;

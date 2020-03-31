@@ -11,7 +11,7 @@ import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * Implementation of the Weapons Free Zone graphic (2.X.2.2.3.5).
@@ -31,7 +31,7 @@ public class WeaponsFreeZone extends AviationZone
      */
     public static java.util.List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_AVN_ARS_WFZ);
+        return Collections.singletonList(TacGrpSidc.C2GM_AVN_ARS_WFZ);
     }
 
     public WeaponsFreeZone(String sidc)

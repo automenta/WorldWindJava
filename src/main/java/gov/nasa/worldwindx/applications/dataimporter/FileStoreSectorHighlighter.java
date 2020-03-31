@@ -28,8 +28,8 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
 {
     protected static final String SECTOR_LAYER = "SectorLayer";
 
-    protected FileStorePanel fileStorePanel;
-    protected WorldWindow wwd;
+    protected final FileStorePanel fileStorePanel;
+    protected final WorldWindow wwd;
 
     public FileStoreSectorHighlighter(WorldWindow wwd, FileStorePanel panel)
     {
@@ -51,7 +51,7 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
         this.handleSelection(this.fileStorePanel.getSelectedDataSets());
     }
 
-    List<FileStoreDataSet> currentlyHighlightedSets = new ArrayList<FileStoreDataSet>();
+    final List<FileStoreDataSet> currentlyHighlightedSets = new ArrayList<>();
 
     protected void handleSelection(List<FileStoreDataSet> selectedDataSets)
     {
@@ -127,7 +127,7 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
         attrs.setOutlineWidth(2);
 
         List<LatLon> locations = sector.asList();
-        List<Position> positions = new ArrayList<Position>(5);
+        List<Position> positions = new ArrayList<>(5);
         for (LatLon location : locations)
         {
             positions.add(new Position(location, 0));

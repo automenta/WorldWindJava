@@ -63,14 +63,14 @@ public class TerrainIntersections extends ApplicationTemplate {
 
         private static final Cursor WaitCursor = new Cursor(Cursor.WAIT_CURSOR);
 
-        protected HighResolutionTerrain terrain;
-        protected RenderableLayer gridLayer;
-        protected RenderableLayer intersectionsLayer;
-        protected RenderableLayer sightLinesLayer;
+        protected final HighResolutionTerrain terrain;
+        protected final RenderableLayer gridLayer;
+        protected final RenderableLayer intersectionsLayer;
+        protected final RenderableLayer sightLinesLayer;
         protected RenderableLayer tilesLayer;
         protected Thread calculationDispatchThread;
-        protected JProgressBar progressBar;
-        protected ThreadPoolExecutor threadPool;
+        protected final JProgressBar progressBar;
+        protected final ThreadPoolExecutor threadPool;
         protected List<Position> grid;
         protected int numGridPoints; // used to monitor percentage progress
         protected long startTime, endTime; // for reporting calculation duration
@@ -149,25 +149,17 @@ public class TerrainIntersections extends ApplicationTemplate {
         protected void computeAndShowIntersections(final Position curPos) {
             this.previousCurrentPosition = curPos;
 
-            SwingUtilities.invokeLater(() -> {
-                setCursor(WaitCursor);
-            });
+            SwingUtilities.invokeLater(() -> setCursor(WaitCursor));
 
             // Dispatch the calculation threads in a separate thread to avoid locking up the user interface.
-            this.calculationDispatchThread = new Thread(() -> {
-                try {
-                    performIntersectionTests(curPos);
-                } catch (InterruptedException e) {
-                    System.out.println("Operation was interrupted");
-                }
-            });
+            this.calculationDispatchThread = new Thread(() -> performIntersectionTests(curPos));
 
             this.calculationDispatchThread.start();
         }
 
         // Create containers to hold the intersection points and the lines emanating from the center.
-        protected List<Position> firstIntersectionPositions = new ArrayList<>();
-        protected List<Position[]> sightLines = new ArrayList<>(GRID_DIMENSION * GRID_DIMENSION);
+        protected final List<Position> firstIntersectionPositions = new ArrayList<>();
+        protected final List<Position[]> sightLines = new ArrayList<>(GRID_DIMENSION * GRID_DIMENSION);
 
         // Make the picked location's position and model-coordinate point available to all methods.
         protected Position referencePosition;
@@ -224,7 +216,8 @@ public class TerrainIntersections extends ApplicationTemplate {
             this.getWwd().redraw();
         }
 
-        protected void performIntersectionTests(final Position curPos) throws InterruptedException {
+        protected void performIntersectionTests(final Position curPos)
+        {
             // Clear the results lists when the user selects a new location.
             this.firstIntersectionPositions.clear();
             this.sightLines.clear();
@@ -276,9 +269,9 @@ public class TerrainIntersections extends ApplicationTemplate {
          *
          * @param gridPosition the grid position.
          *
-         * @throws InterruptedException if the operation is interrupted.
          */
-        protected void performIntersection(Position gridPosition) throws InterruptedException {
+        protected void performIntersection(Position gridPosition)
+        {
             // Intersect the line between this grid point and the selected position.
             Intersection[] intersections = this.terrain.intersect(this.referencePosition, gridPosition);
             if (intersections == null || intersections.length == 0) {
@@ -296,19 +289,20 @@ public class TerrainIntersections extends ApplicationTemplate {
             if (iPoint.distanceTo3(this.referencePoint) >= gPoint.distanceTo3(this.referencePoint)) {
                 // Intersection is beyond the grid point; the line goes from the center to the grid point.
                 this.addSightLine(this.referencePosition, gridPosition);
-                return;
+            } else
+            {
+
+                // Compute the position corresponding to the intersection.
+                Position iPosition = this.terrain.getGlobe().computePositionFromPoint(iPoint);
+
+                // The sight line goes from the user-selected position to the intersection position.
+                this.addSightLine(this.referencePosition, new Position(iPosition, 0));
+
+                // Keep track of the intersection positions.
+                this.addIntersectionPosition(iPosition);
+
+                this.updateProgress();
             }
-
-            // Compute the position corresponding to the intersection.
-            Position iPosition = this.terrain.getGlobe().computePositionFromPoint(iPoint);
-
-            // The sight line goes from the user-selected position to the intersection position.
-            this.addSightLine(this.referencePosition, new Position(iPosition, 0));
-
-            // Keep track of the intersection positions.
-            this.addIntersectionPosition(iPosition);
-
-            this.updateProgress();
         }
 
         /**
@@ -324,11 +318,11 @@ public class TerrainIntersections extends ApplicationTemplate {
 
             @Override
             public void run() {
-                try {
+//                try {
                     performIntersection(this.gridPosition);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
             }
         }
 
@@ -368,9 +362,7 @@ public class TerrainIntersections extends ApplicationTemplate {
                 });
             }
 
-            SwingUtilities.invokeLater(() -> {
-                progressBar.setValue(100);
-            });
+            SwingUtilities.invokeLater(() -> progressBar.setValue(100));
 
             long end = System.currentTimeMillis();
             System.out.printf("Pre-caching time %d milliseconds, cache usage %f, tiles %d\n", end - start,

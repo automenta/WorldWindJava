@@ -22,7 +22,7 @@ import java.util.*;
 public class ColladaAccessor extends ColladaAbstractObject
 {
     /** Parameters used by this accessor. */
-    protected List<ColladaParam> params = new ArrayList<ColladaParam>();
+    protected final List<ColladaParam> params = new ArrayList<>();
 
     /**
      * Create a new accessor.

@@ -14,7 +14,6 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.HighResolutionTerrain;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
-import java.awt.event.*;
 import java.util.*;
 
 /**
@@ -27,17 +26,17 @@ public class ExtrudedPolygonIntersection extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected HighResolutionTerrain terrain; // Use this class to test against high-resolution terrain
-        protected ExtrudedPolygon polygon; // the polygon to intersect
-        protected RenderableLayer resultsLayer; // holds the intersection geometry
-        protected RenderableLayer shapeLayer; // holds the shape
+        protected final HighResolutionTerrain terrain; // Use this class to test against high-resolution terrain
+        protected final ExtrudedPolygon polygon; // the polygon to intersect
+        protected final RenderableLayer resultsLayer; // holds the intersection geometry
+        protected final RenderableLayer shapeLayer; // holds the shape
 
         public AppFrame()
         {
             super(true, true, false);
 
             // Create the extruded polygon boundary and then the extruded polygon.
-            List<LatLon> positions = new ArrayList<LatLon>();
+            List<LatLon> positions = new ArrayList<>();
             positions.add(LatLon.fromDegrees(40.4, -120.6));
             positions.add(LatLon.fromDegrees(40.4, -120.4));
             positions.add(LatLon.fromDegrees(40.6, -120.4));
@@ -66,31 +65,26 @@ public class ExtrudedPolygonIntersection extends ApplicationTemplate
 
             // Perform the intersection test within a timer callback. Intersection calculations would normally be done
             // on a separate, non-EDT thread, however.
-            final javax.swing.Timer timer = new javax.swing.Timer(3000, new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
-                {
-                    // Intersect the sides.
-                    Position pA = Position.fromDegrees(40.5, -120.7, 5e3);
-                    Position pB = Position.fromDegrees(40.5, -120.3, 5e3);
-                    drawLine(pA, pB);
-                    performIntersection(pA, pB);
+            final javax.swing.Timer timer = new javax.swing.Timer(3000, actionEvent -> {
+                // Intersect the sides.
+                Position pA = Position.fromDegrees(40.5, -120.7, 5e3);
+                Position pB = Position.fromDegrees(40.5, -120.3, 5e3);
+                drawLine(pA, pB);
+                performIntersection(pA, pB);
 
-                    // Intersect the cap.
-                    pA = Position.fromDegrees(40.5, -120.5, 0);
-                    pB = new Position(pA, 20e3);
-                    drawLine(pA, pB);
-                    performIntersection(pA, pB);
+                // Intersect the cap.
+                pA = Position.fromDegrees(40.5, -120.5, 0);
+                pB = new Position(pA, 20e3);
+                drawLine(pA, pB);
+                performIntersection(pA, pB);
 
-                    ((javax.swing.Timer) actionEvent.getSource()).stop();
-                }
+                ((javax.swing.Timer) actionEvent.getSource()).stop();
             });
             timer.start();
         }
 
         protected void performIntersection(Position pA, Position pB)
         {
-            try
             {
                 // Create the line to intersect with the shape.
                 Vec4 refPoint = terrain.getSurfacePoint(pA);
@@ -109,10 +103,7 @@ public class ExtrudedPolygonIntersection extends ApplicationTemplate
                     }
                 }
             }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
+
         }
 
         protected void drawLine(Position pA, Position pB)

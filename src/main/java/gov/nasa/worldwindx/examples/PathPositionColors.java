@@ -35,7 +35,7 @@ public class PathPositionColors extends ApplicationTemplate
         {
             super(true, true, false);
 
-            ArrayList<Position> pathPositions = new ArrayList<Position>();
+            ArrayList<Position> pathPositions = new ArrayList<>();
             pathPositions.add(Position.fromDegrees(47.58495213398363, -122.31517238581496, 0));
             pathPositions.add(Position.fromDegrees(47.58557392961059, -122.31038095541774, 0));
             pathPositions.add(Position.fromDegrees(47.585643343225826, -122.30380786403879, 0));
@@ -114,8 +114,8 @@ public class PathPositionColors extends ApplicationTemplate
      */
     public static class ExamplePositionColors implements Path.PositionColors
     {
-        protected Color[] colors;
-        protected int pathLength;
+        protected final Color[] colors;
+        protected final int pathLength;
 
         public ExamplePositionColors(Color[] colors, int pathLength)
         {

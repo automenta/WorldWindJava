@@ -119,7 +119,7 @@ public class PartialCappedCylinder extends CappedCylinder
         LatLon[] locations = gb.makePartialDiskLocations(globe, this.getCenter(), this.getRadii()[0],
             this.getRadii()[1], MINIMAL_GEOMETRY_SLICES, MINIMAL_GEOMETRY_LOOPS, angles[0], angles[2]);
 
-        ArrayList<Vec4> points = new ArrayList<Vec4>();
+        ArrayList<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, Arrays.asList(locations), points);
 
         return points;
@@ -138,7 +138,7 @@ public class PartialCappedCylinder extends CappedCylinder
         double[] radii = this.getRadii();
         GeometryBuilder gb = this.getGeometryBuilder();
 
-        ArrayList<LatLon> locations = new ArrayList<LatLon>();
+        ArrayList<LatLon> locations = new ArrayList<>();
 
         if (radii[0] > 0) // inner radius is > 0; add inner loop
         {
@@ -239,19 +239,19 @@ public class PartialCappedCylinder extends CappedCylinder
             DetailLevel level = this.computeDetailLevel(dc);
 
             Object o = level.getValue(SLICES);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 slices = (Integer) o;
 
             o = level.getValue(STACKS);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 stacks = (Integer) o;
 
             o = level.getValue(LOOPS);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 loops = (Integer) o;
 
             o = level.getValue(DISABLE_TERRAIN_CONFORMANCE);
-            if (o != null && o instanceof Boolean && ((Boolean) o))
+            if (o instanceof Boolean && ((Boolean) o))
                 terrainConformant[0] = terrainConformant[1] = false;
         }
 

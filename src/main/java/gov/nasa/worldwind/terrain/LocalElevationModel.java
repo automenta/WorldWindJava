@@ -32,7 +32,7 @@ public class LocalElevationModel extends AbstractElevationModel
     /** The min and max elevations. */
     protected double[] extremeElevations = null;
     /** The list of elevation rasters, one per file specified. */
-    protected CopyOnWriteArrayList<LocalTile> tiles = new CopyOnWriteArrayList<LocalTile>();
+    protected final CopyOnWriteArrayList<LocalTile> tiles = new CopyOnWriteArrayList<>();
 
     public double getMinElevation()
     {
@@ -357,10 +357,9 @@ public class LocalElevationModel extends AbstractElevationModel
      * @param filename the filename associated with the raster. Used only for error reporting.
      *
      * @throws IllegalArgumentException if necessary information is missing from the raster.
-     * @throws IOException              if an exception occurs while opening or reading the specified file.
      * @throws WWRuntimeException       if an error occurs attempting to read and interpret the elevation data.
      */
-    protected void addRaster(DataRaster raster, String filename) throws IOException
+    protected void addRaster(DataRaster raster, String filename)
     {
         // Determine the sector covered by the elevations. This information is in the GeoTIFF file or auxiliary
         // files associated with the elevations file.

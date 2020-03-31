@@ -38,10 +38,10 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      * Object that provides the default offset for each point graphic. Most graphics are centered on their position, but
      * some require a different offset.
      */
-    protected static DefaultOffsets defaultOffsets = new DefaultOffsets();
+    protected static final DefaultOffsets defaultOffsets = new DefaultOffsets();
 
     /** Object that provides the default label layouts for each point graphic. */
-    protected static DefaultLabelLayouts defaultLayouts = new DefaultLabelLayouts();
+    protected static final DefaultLabelLayouts defaultLayouts = new DefaultLabelLayouts();
 
     protected static final Offset BELOW_BOTTOM_CENTER_OFFSET = Offset.fromFraction(0.5, -0.1);
     /** The default number of label lines to expect when computing the minimum size of the text layout rectangle. */
@@ -49,8 +49,8 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
 
     public static class LabelLayout
     {
-        protected String modifier;
-        protected List<OffsetPair> offsets = new ArrayList<OffsetPair>();
+        protected final String modifier;
+        protected final List<OffsetPair> offsets = new ArrayList<>();
 
         public LabelLayout(String modifier)
         {
@@ -75,8 +75,8 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
 
     public static class OffsetPair
     {
-        public Offset offset;
-        public Offset hotSpot;
+        public final Offset offset;
+        public final Offset hotSpot;
 
         public OffsetPair(Offset offset, Offset hotSpot)
         {

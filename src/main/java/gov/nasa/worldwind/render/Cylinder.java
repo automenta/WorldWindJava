@@ -15,7 +15,6 @@ import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.*;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class Cylinder extends RigidShape
 
     // Geometry.
     @SuppressWarnings({"FieldCanBeLocal"})
-    protected int faceCount = 3;   // number of separate Geometry pieces that comprise this Cylinder
+    protected final int faceCount = 3;   // number of separate Geometry pieces that comprise this Cylinder
     // The faces are numbered as follows:
     // face 0: Cylinder top
     // face 1: Cylinder bottom
@@ -510,7 +509,7 @@ public class Cylinder extends RigidShape
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void doExportAsKML(XMLStreamWriter xmlWriter)
     {
         String message = Logging.getMessage("generic.UnsupportedOperation", "doExportAsKML");
         Logging.logger().severe(message);

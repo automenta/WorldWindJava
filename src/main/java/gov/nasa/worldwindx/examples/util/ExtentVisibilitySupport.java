@@ -54,8 +54,8 @@ public class ExtentVisibilitySupport
      */
     public static class ScreenExtent
     {
-        protected Vec4 modelReferencePoint;
-        protected Rectangle screenBounds;
+        protected final Vec4 modelReferencePoint;
+        protected final Rectangle screenBounds;
 
         /**
          * Constructs a new ScreenExtent with the specified model coordinate reference point and screen coordinate
@@ -124,7 +124,7 @@ public class ExtentVisibilitySupport
         if (extentHolders == null)
             return null;
 
-        ArrayList<Extent> list = new ArrayList<Extent>();
+        ArrayList<Extent> list = new ArrayList<>();
 
         for (ExtentHolder eh : extentHolders)
         {
@@ -504,7 +504,7 @@ public class ExtentVisibilitySupport
     protected Vec4 computeCenterPoint(Globe globe, double verticalExaggeration,
         Iterable<? extends Extent> modelExtents, Iterable<? extends ScreenExtent> screenExtents)
     {
-        ArrayList<Vec4> list = new ArrayList<Vec4>();
+        ArrayList<Vec4> list = new ArrayList<>();
 
         if (modelExtents != null)
         {
@@ -788,7 +788,7 @@ public class ExtentVisibilitySupport
     protected Iterable<ScreenExtent> translateScreenExtents(Iterable<? extends ScreenExtent> screenExtents,
         Matrix oldModelview, Matrix newModelview, Matrix projection, Rectangle viewport)
     {
-        ArrayList<ScreenExtent> adjustedScreenExtents = new ArrayList<ScreenExtent>();
+        ArrayList<ScreenExtent> adjustedScreenExtents = new ArrayList<>();
 
         for (ScreenExtent se : screenExtents)
         {

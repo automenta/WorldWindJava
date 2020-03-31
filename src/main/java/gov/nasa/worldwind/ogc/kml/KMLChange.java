@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class KMLChange extends AbstractXMLEventParser implements KMLUpdateOperation
 {
-    protected List<KMLAbstractObject> objects = new ArrayList<KMLAbstractObject>();
+    protected final List<KMLAbstractObject> objects = new ArrayList<>();
 
     /**
      * Construct an instance.
@@ -62,7 +62,7 @@ public class KMLChange extends AbstractXMLEventParser implements KMLUpdateOperat
                 continue;
 
             Object o = targetRoot.getItemByID(targetId);
-            if (o == null || !(o instanceof KMLAbstractObject))
+            if (!(o instanceof KMLAbstractObject))
                 continue;
 
             KMLAbstractObject objectToChange = (KMLAbstractObject) o;

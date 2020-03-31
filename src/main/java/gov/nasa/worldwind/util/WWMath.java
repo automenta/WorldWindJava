@@ -129,7 +129,7 @@ public class WWMath
      */
     public static double clamp(double v, double min, double max)
     {
-        return v < min ? min : v > max ? max : v;
+        return v < min ? min : Math.min(v, max);
     }
 
     /**
@@ -143,7 +143,7 @@ public class WWMath
      */
     public static int clamp(int v, int min, int max)
     {
-        return v < min ? min : v > max ? max : v;
+        return v < min ? min : Math.min(v, max);
     }
 
     /**
@@ -442,7 +442,7 @@ public class WWMath
         }
 
         double distance = dc.getView().getEyePoint().distanceTo3(extent.getCenter()) - extent.getRadius();
-        return (distance < 0d) ? 0d : distance;
+        return Math.max(distance, 0d);
     }
 
     /**
@@ -862,13 +862,7 @@ public class WWMath
         // Compute an index array who's entries define the order in which the eigenValues array can be sorted in
         // ascending order.
         Integer[] indexArray = {0, 1, 2};
-        Arrays.sort(indexArray, new Comparator<Integer>()
-        {
-            public int compare(Integer a, Integer b)
-            {
-                return Double.compare(eigenValues[a], eigenValues[b]);
-            }
-        });
+        Arrays.sort(indexArray, Comparator.comparingDouble(a -> eigenValues[a]));
 
         // Return the normalized eigenvectors in order of decreasing eigenvalue. This has the effect of returning three
         // normalized orthognal vectors defining a coordinate system, which are sorted from the most prominent axis to
@@ -933,13 +927,7 @@ public class WWMath
         // Compute an index array who's entries define the order in which the eigenValues array can be sorted in
         // ascending order.
         Integer[] indexArray = {0, 1, 2};
-        Arrays.sort(indexArray, new Comparator<Integer>()
-        {
-            public int compare(Integer a, Integer b)
-            {
-                return Double.compare(eigenValues[a], eigenValues[b]);
-            }
-        });
+        Arrays.sort(indexArray, Comparator.comparingDouble(a -> eigenValues[a]));
 
         // Return the normalized eigenvectors in order of decreasing eigenvalue. This has the effect of returning three
         // normalized orthognal vectors defining a coordinate system, which are sorted from the most prominent axis to
@@ -1572,7 +1560,7 @@ public class WWMath
      */
     public static List<Point> bresenham(int x0, int y0, int x1, int y1)
     {
-        List<Point> points = new ArrayList<Point>(Math.abs(x1 - x0 + 1));
+        List<Point> points = new ArrayList<>(Math.abs(x1 - x0 + 1));
 
         boolean steep = Math.abs(y1 - y0) > Math.abs(x1 - x0);
         if (steep)

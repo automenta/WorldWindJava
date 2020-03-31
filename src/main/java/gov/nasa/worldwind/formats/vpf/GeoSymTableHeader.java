@@ -20,11 +20,11 @@ public class GeoSymTableHeader
     protected String fileName;
     protected String description;
     // Use LinkedHashMap to acheive predictable ordering of table columns.
-    protected LinkedHashMap<String, GeoSymColumn> columnMap;
+    protected final LinkedHashMap<String, GeoSymColumn> columnMap;
 
     public GeoSymTableHeader()
     {
-        this.columnMap = new LinkedHashMap<String, GeoSymColumn>();
+        this.columnMap = new LinkedHashMap<>();
     }
 
     public String getFileName()

@@ -22,7 +22,7 @@ import java.util.*;
 public class StringSetXMLEventParser extends AbstractXMLEventParser implements Iterable<String>
 {
     protected QName elementName;
-    protected Set<String> strings = new HashSet<String>();
+    protected final Set<String> strings = new HashSet<>();
 
     public StringSetXMLEventParser()
     {

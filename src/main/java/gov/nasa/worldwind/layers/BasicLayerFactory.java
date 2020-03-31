@@ -106,12 +106,9 @@ public class BasicLayerFactory extends BasicFactory
      * @return a <code>Layer</code>, <code>LayerList</code> or array of <code>LayerList</code>s, as described by the
      *         specified description.
      *
-     * @throws Exception if an exception occurs during creation. Exceptions occurring during creation of internal layers
-     *                   or layer lists are not re-thrown but are logged. The layer or layer list associated with the
-     *                   exception is not contained in the returned object.
      */
     @Override
-    protected Object doCreateFromElement(Element domElement, AVList params) throws Exception
+    protected Object doCreateFromElement(Element domElement, AVList params)
     {
         Element[] elements = WWXML.getElements(domElement, "//LayerList", null);
         if (elements != null && elements.length > 0)
@@ -145,7 +142,7 @@ public class BasicLayerFactory extends BasicFactory
      */
     protected LayerList[] createLayerLists(Element[] elements, AVList params)
     {
-        ArrayList<LayerList> layerLists = new ArrayList<LayerList>();
+        ArrayList<LayerList> layerLists = new ArrayList<>();
 
         for (Element element : elements)
         {
@@ -206,7 +203,7 @@ public class BasicLayerFactory extends BasicFactory
             }
         }
 
-        return layerLists.toArray(new LayerList[layerLists.size()]);
+        return layerLists.toArray(new LayerList[0]);
     }
 
     /**

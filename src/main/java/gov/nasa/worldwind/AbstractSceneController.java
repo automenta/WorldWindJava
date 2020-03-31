@@ -30,7 +30,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected Model model;
     protected View view;
     protected double verticalExaggeration = 1d;
-    protected DrawContext dc = new DrawContextImpl();
+    protected final DrawContext dc = new DrawContextImpl();
     /**
      * The list of picked objects at the current pick point. This list is computed during each call to repaint.
      * Initially <code>null</code>.
@@ -46,7 +46,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
      * #doResolveTopPick(gov.nasa.worldwind.render.DrawContext, java.awt.Rectangle)}. This map is used only when a pick
      * rectangle is specified. Initialized to a new HashMap.
      */
-    protected Map<Integer, PickedObject> pickableObjects = new HashMap<Integer, PickedObject>();
+    protected final Map<Integer, PickedObject> pickableObjects = new HashMap<>();
     protected long frame = 0;
     protected long timebase = System.currentTimeMillis();
     protected double framesPerSecond;
@@ -65,19 +65,19 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected boolean deepPick = false;
     protected GpuResourceCache gpuResourceCache;
     protected TextRendererCache textRendererCache = new TextRendererCache();
-    protected Set<String> perFrameStatisticsKeys = new HashSet<String>();
-    protected Collection<PerformanceStatistic> perFrameStatistics = new ArrayList<PerformanceStatistic>();
-    protected Collection<Throwable> renderingExceptions = new ArrayList<Throwable>();
+    protected final Set<String> perFrameStatisticsKeys = new HashSet<>();
+    protected final Collection<PerformanceStatistic> perFrameStatistics = new ArrayList<>();
+    protected final Collection<Throwable> renderingExceptions = new ArrayList<>();
     protected ScreenCreditController screenCreditController;
     protected GLRuntimeCapabilities glRuntimeCaps = new GLRuntimeCapabilities();
-    protected ArrayList<Point> pickPoints = new ArrayList<Point>();
+    protected final ArrayList<Point> pickPoints = new ArrayList<>();
     /**
      * Support class used to build the composite representation of surface objects as a list of SurfaceTiles. We keep a
      * reference to the tile builder instance used to build tiles because it acts as a cache key to the tiles and
      * determines when the tiles must be updated. The tile builder does not retain any references the SurfaceObjects, so
      * keeping a reference to it does not leak memory.
      */
-    protected SurfaceObjectTileBuilder surfaceObjectTileBuilder = new SurfaceObjectTileBuilder();
+    protected final SurfaceObjectTileBuilder surfaceObjectTileBuilder = new SurfaceObjectTileBuilder();
     /** The display name for the surface object tile count performance statistic. */
     protected static final String SURFACE_OBJECT_TILE_COUNT_NAME = "Surface Object Tiles";
     protected ClutterFilter clutterFilter = new BasicClutterFilter();

@@ -23,8 +23,8 @@ public class PlaceNamesPanel extends JPanel implements ItemListener
 {
     List<PlaceNameService> nameServices;
     PlaceNameLayer nameLayer;
-    WorldWindow wwd;
-    ArrayList<JCheckBox> cbList = new ArrayList<JCheckBox>();
+    final WorldWindow wwd;
+    final ArrayList<JCheckBox> cbList = new ArrayList<>();
 
     public PlaceNamesPanel(WorldWindow wwd)
     {

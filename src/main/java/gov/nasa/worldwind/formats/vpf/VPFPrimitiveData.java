@@ -22,7 +22,7 @@ public class VPFPrimitiveData
 
     public static class BasicPrimitiveInfo implements PrimitiveInfo
     {
-        protected VPFBoundingBox bounds;
+        protected final VPFBoundingBox bounds;
 
         public BasicPrimitiveInfo(VPFBoundingBox bounds)
         {
@@ -37,14 +37,14 @@ public class VPFPrimitiveData
 
     public static class EdgeInfo extends BasicPrimitiveInfo
     {
-        protected int edgeType;
-        protected int startNode;
-        protected int endNode;
-        protected int leftFace;
-        protected int rightFace;
-        protected int leftEdge;
-        protected int rightEdge;
-        protected boolean isOnTileBoundary;
+        protected final int edgeType;
+        protected final int startNode;
+        protected final int endNode;
+        protected final int leftFace;
+        protected final int rightFace;
+        protected final int leftEdge;
+        protected final int rightEdge;
+        protected final boolean isOnTileBoundary;
 
         public EdgeInfo(int edgeType, int startNode, int endNode, int leftFace, int rightFace, int leftEdge,
             int rightEdge, boolean isOnTileBoundary, VPFBoundingBox bounds)
@@ -103,8 +103,8 @@ public class VPFPrimitiveData
 
     public static class FaceInfo extends BasicPrimitiveInfo
     {
-        protected Ring outerRing;
-        protected Ring[] innerRings;
+        protected final Ring outerRing;
+        protected final Ring[] innerRings;
         protected VPFBoundingBox bounds;
 
         public FaceInfo(Ring outerRing, Ring[] innerRings, VPFBoundingBox bounds)
@@ -127,9 +127,9 @@ public class VPFPrimitiveData
 
     public static class Ring
     {
-        protected int numEdges;
-        protected int[] edgeId;
-        protected int[] edgeOrientation;
+        protected final int numEdges;
+        protected final int[] edgeId;
+        protected final int[] edgeOrientation;
 
         public Ring(int numEdges, int[] edgeId, int[] edgeOrientation)
         {
@@ -154,15 +154,15 @@ public class VPFPrimitiveData
         }
     }
 
-    protected Map<String, PrimitiveInfo[]> primitiveInfo;
-    protected Map<String, VecBufferSequence> primitiveCoords;
-    protected Map<String, CompoundStringBuilder> primitiveStrings;
+    protected final Map<String, PrimitiveInfo[]> primitiveInfo;
+    protected final Map<String, VecBufferSequence> primitiveCoords;
+    protected final Map<String, CompoundStringBuilder> primitiveStrings;
 
     public VPFPrimitiveData()
     {
-        this.primitiveInfo = new HashMap<String, PrimitiveInfo[]>();
-        this.primitiveCoords = new HashMap<String, VecBufferSequence>();
-        this.primitiveStrings = new HashMap<String, CompoundStringBuilder>();
+        this.primitiveInfo = new HashMap<>();
+        this.primitiveCoords = new HashMap<>();
+        this.primitiveStrings = new HashMap<>();
     }
 
     public PrimitiveInfo[] getPrimitiveInfo(String name)

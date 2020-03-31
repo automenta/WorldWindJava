@@ -9,8 +9,6 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.*;
 
-import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -19,7 +17,7 @@ import java.util.*;
  */
 public class SurfaceMultiPolygon extends AbstractSurfaceShape
 {
-    protected ContourList boundaries = new ContourList();
+    protected final ContourList boundaries = new ContourList();
 
     /** Constructs a new surface multi polygon with the default attributes and no locations. */
     public SurfaceMultiPolygon()
@@ -150,7 +148,7 @@ public class SurfaceMultiPolygon extends AbstractSurfaceShape
 
         for (int i = 0; i < this.boundaries.getContourCount(); i++)
         {
-            ArrayList<LatLon> newLocations = new ArrayList<LatLon>();
+            ArrayList<LatLon> newLocations = new ArrayList<>();
 
             for (LatLon ll : this.boundaries.getContour(i))
             {
@@ -190,11 +188,11 @@ public class SurfaceMultiPolygon extends AbstractSurfaceShape
         if (this.boundaries.getContourCount() == 0)
             return null;
 
-        ArrayList<List<LatLon>> geom = new ArrayList<List<LatLon>>();
+        ArrayList<List<LatLon>> geom = new ArrayList<>();
 
         for (int i = 0; i < this.boundaries.getContourCount(); i++)
         {
-            ArrayList<LatLon> locations = new ArrayList<LatLon>();
+            ArrayList<LatLon> locations = new ArrayList<>();
             this.generateIntermediateLocations(this.boundaries.getContour(i), edgeIntervalsPerDegree, true, locations);
             geom.add(locations);
         }
@@ -208,7 +206,7 @@ public class SurfaceMultiPolygon extends AbstractSurfaceShape
         if (this.boundaries.getContourCount() == 0)
             return null;
 
-        ArrayList<LatLon> combinedBoundaries = new ArrayList<LatLon>();
+        ArrayList<LatLon> combinedBoundaries = new ArrayList<>();
 
         for (int i = 0; i < this.boundaries.getContourCount(); i++)
         {
@@ -281,7 +279,7 @@ public class SurfaceMultiPolygon extends AbstractSurfaceShape
     }
 
     @Override
-    protected void exportAsKML(Object output) throws IOException, XMLStreamException
+    protected void exportAsKML(Object output)
     {
         throw new UnsupportedOperationException("KML output not supported for SurfaceMultiPolygon");
     }

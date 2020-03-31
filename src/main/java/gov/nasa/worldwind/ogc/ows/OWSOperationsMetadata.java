@@ -18,8 +18,8 @@ import java.util.*;
  */
 public class OWSOperationsMetadata extends AbstractXMLEventParser
 {
-    protected List<OWSOperation> operations = new ArrayList<OWSOperation>(2);
-    protected List<OWSConstraint> constraints = new ArrayList<OWSConstraint>(1);
+    protected final List<OWSOperation> operations = new ArrayList<>(2);
+    protected final List<OWSConstraint> constraints = new ArrayList<>(1);
 
     public OWSOperationsMetadata(String namespaceURI)
     {
@@ -77,7 +77,7 @@ public class OWSOperationsMetadata extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OWSOperation)
+                if (o instanceof OWSOperation)
                     this.operations.add((OWSOperation) o);
             }
         }
@@ -87,7 +87,7 @@ public class OWSOperationsMetadata extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OWSConstraint)
+                if (o instanceof OWSConstraint)
                     this.constraints.add((OWSConstraint) o);
             }
         }

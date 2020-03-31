@@ -30,7 +30,7 @@ public class TrackRenderer implements Disposable
     protected final Shape SPHERE = new Sphere();
     protected final Shape CONE = new Cone();
     protected final Shape CYLINDER = new Cylinder();
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
 
     private double elevation = 10d;
     private boolean overrideMarkerElevation = false;

@@ -15,7 +15,6 @@ import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.*;
 import java.util.List;
 
@@ -30,14 +29,14 @@ public class Pyramid extends RigidShape
     protected static final int DEFAULT_SUBDIVISIONS = 0;
 
     // Geometry.
-    protected int faceCount = 5;   // number of separate Geometry pieces that comprise this Pyramid
+    protected final int faceCount = 5;   // number of separate Geometry pieces that comprise this Pyramid
     // The faces are numbered as follows:
     // face 0: right triangular face
     // face 1: bottom triangular face
     // face 2: left triangular face
     // face 3: top triangular face
     // face 4: square base
-    protected int subdivisions = DEFAULT_SUBDIVISIONS;
+    protected final int subdivisions = DEFAULT_SUBDIVISIONS;
 
     /** Construct a Pyramid with default parameters */
     public Pyramid()
@@ -487,7 +486,7 @@ public class Pyramid extends RigidShape
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void doExportAsKML(XMLStreamWriter xmlWriter)
     {
         String message = Logging.getMessage("generic.UnsupportedOperation", "doExportAsKML");
         Logging.logger().severe(message);

@@ -33,8 +33,8 @@ public class FileStoreDataSet
     protected final String cacheRootPath;
 
     protected boolean fileGranularity = false; // delete only files individually out of date or all files in a directory
-    protected ArrayList<File> exclusionList = new ArrayList<File>();
-    protected ArrayList<LeafInfo> leafDirs = new ArrayList<LeafInfo>();
+    protected final ArrayList<File> exclusionList = new ArrayList<>();
+    protected final ArrayList<LeafInfo> leafDirs = new ArrayList<>();
     protected LeafInfo[] sortedLeafDirs;
 
     public FileStoreDataSet(File root, String cacheRootPath)
@@ -60,13 +60,8 @@ public class FileStoreDataSet
 
         this.sortedLeafDirs = new LeafInfo[this.leafDirs.size()];
         this.sortedLeafDirs = this.leafDirs.toArray(this.sortedLeafDirs);
-        Arrays.sort(this.sortedLeafDirs, new Comparator<LeafInfo>()
-        {
-            public int compare(LeafInfo leafA, LeafInfo leafB)
-            {
-                return leafA.lastUsed < leafB.lastUsed ? -1 : leafA.lastUsed == leafB.lastUsed ? 0 : 1;
-            }
-        });
+        Arrays.sort(this.sortedLeafDirs,
+            Comparator.comparingLong(leafA -> leafA.lastUsed));
     }
 
     public boolean isFileGranularity()
@@ -253,13 +248,7 @@ public class FileStoreDataSet
         if (!dir.isDirectory())
             return;
 
-        File[] subDirs = dir.listFiles(new FileFilter()
-        {
-            public boolean accept(File file)
-            {
-                return file.isDirectory();
-            }
-        });
+        File[] subDirs = dir.listFiles(File::isDirectory);
 
         if (subDirs.length == 0)
         {
@@ -316,7 +305,7 @@ public class FileStoreDataSet
             throw new IllegalArgumentException(message);
         }
 
-        ArrayList<FileStoreDataSet> datasets = new ArrayList<FileStoreDataSet>();
+        ArrayList<FileStoreDataSet> datasets = new ArrayList<>();
 
         File[] cacheDirs = FileStoreDataSet.listDirs(cacheRoot);
         for (File cacheDir : cacheDirs)
@@ -360,13 +349,7 @@ public class FileStoreDataSet
      */
     protected static File[] listDirs(File parent)
     {
-        return parent.listFiles(new FileFilter()
-        {
-            public boolean accept(File file)
-            {
-                return file.isDirectory();
-            }
-        });
+        return parent.listFiles(File::isDirectory);
     }
 
     /**

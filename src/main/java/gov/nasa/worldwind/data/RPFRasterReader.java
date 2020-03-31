@@ -84,14 +84,14 @@ public class RPFRasterReader extends AbstractDataRasterReader
 
         Object width = params.getValue(AVKey.WIDTH);
         Object height = params.getValue(AVKey.HEIGHT);
-        if (width == null || height == null || !(width instanceof Integer) || !(height instanceof Integer))
+        if (!(width instanceof Integer) || !(height instanceof Integer))
         {
             rpfFile = RPFImageFile.load(file);
             this.readFileSize(rpfFile, params);
         }
 
         Object sector = params.getValue(AVKey.SECTOR);
-        if (sector == null || !(sector instanceof Sector))
+        if (!(sector instanceof Sector))
             this.readFileSector(file, rpfFile, params);
 
         if (!params.hasKey(AVKey.PIXEL_FORMAT))
@@ -111,7 +111,7 @@ public class RPFRasterReader extends AbstractDataRasterReader
 
         // If the data source doesn't already have all the necessary metadata, then we attempt to read the metadata.
         Object o = (params != null) ? params.getValue(AVKey.SECTOR) : null;
-        if (o == null || !(o instanceof Sector))
+        if (!(o instanceof Sector))
         {
             AVList values = new AVListImpl();
             this.readFileSector(file, rpfFile, values);

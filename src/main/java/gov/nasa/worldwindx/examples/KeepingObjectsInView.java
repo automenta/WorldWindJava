@@ -40,8 +40,8 @@ public class KeepingObjectsInView extends ApplicationTemplate {
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
-        protected Iterable<?> objectsToTrack;
-        protected ViewController viewController;
+        protected final Iterable<?> objectsToTrack;
+        protected final ViewController viewController;
         protected RenderableLayer helpLayer;
 
         public AppFrame() {
@@ -133,9 +133,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             });
             JButton button = new JButton("Go to objects");
             button.setAlignmentX(Component.LEFT_ALIGNMENT);
-            button.addActionListener((ActionEvent event) -> {
-                viewController.gotoScene();
-            });
+            button.addActionListener((ActionEvent event) -> viewController.gotoScene());
             Box box = Box.createVerticalBox();
             box.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30)); // top, left, bottom, right
             box.add(checkBox);
@@ -231,7 +229,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
         protected static final double SMOOTHING_FACTOR = 0.96;
 
         protected boolean enabled = true;
-        protected WorldWindow wwd;
+        protected final WorldWindow wwd;
         protected ViewAnimator animator;
         protected Iterable<?> objectsToTrack;
 
@@ -368,8 +366,8 @@ public class KeepingObjectsInView extends ApplicationTemplate {
         protected static final double LOCATION_EPSILON = 1.0e-9;
         protected static final double ALTITUDE_EPSILON = 0.1;
 
-        protected OrbitView view;
-        protected ViewController viewController;
+        protected final OrbitView view;
+        protected final ViewController viewController;
         protected boolean haveTargets;
         protected Position centerPosition;
         protected double zoom;

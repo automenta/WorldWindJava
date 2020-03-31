@@ -43,7 +43,7 @@ public class FortifiedArea extends BasicArea
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_GNL_ARS_FTFDAR);
+        return Collections.singletonList(TacGrpSidc.C2GM_GNL_ARS_FTFDAR);
     }
 
     public FortifiedArea(String sidc)
@@ -142,7 +142,7 @@ public class FortifiedArea extends BasicArea
         Iterator<? extends Position> iterator = positions.iterator();
 
         Globe globe = dc.getGlobe();
-        List<Position> toothPositions = new ArrayList<Position>();
+        List<Position> toothPositions = new ArrayList<>();
 
         double waveLength = this.getWaveLength();
         if (waveLength == 0)

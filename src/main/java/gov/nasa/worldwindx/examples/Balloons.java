@@ -51,9 +51,9 @@ public class Balloons extends ApplicationTemplate {
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
-        protected HotSpotController hotSpotController;
-        protected BalloonController balloonController;
-        protected RenderableLayer layer;
+        protected final HotSpotController hotSpotController;
+        protected final BalloonController balloonController;
+        protected final RenderableLayer layer;
 
         public AppFrame() {
             super(true, true, false);

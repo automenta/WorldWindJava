@@ -62,7 +62,7 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_OFF_ARS_AFP);
+        return Collections.singletonList(TacGrpSidc.C2GM_OFF_ARS_AFP);
     }
 
     /**

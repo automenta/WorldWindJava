@@ -282,26 +282,10 @@ public class GraticuleAttributesPanel extends JPanel
             //        onLineEnableChanged(event);
             //    }
             //});
-            this.lineColorPanel.addColorChangeListener(new PropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent event) {
-                    onLineColorChanged(event);
-                }
-            });
-            this.lineWidthSlider.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent event) {
-                    onLineWidthSliderChanged(event);
-                }
-            });
-            this.lineWidthSpinner.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent event) {
-                    onLineWidthSpinnerChanged(event);
-                }
-            });
-            this.lineStyle.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    onLineStyleChanged(event);
-                }
-            });
+            this.lineColorPanel.addColorChangeListener(this::onLineColorChanged);
+            this.lineWidthSlider.addChangeListener(this::onLineWidthSliderChanged);
+            this.lineWidthSpinner.addChangeListener(this::onLineWidthSpinnerChanged);
+            this.lineStyle.addActionListener(this::onLineStyleChanged);
         }
 
         //---------- Label Properties ----------//
@@ -313,31 +297,11 @@ public class GraticuleAttributesPanel extends JPanel
             this.labelFontStyle = new JComboBox(new String[] {"Plain", "Bold", "Italic", "BoldItalic"});
             this.labelFontSize = new JComboBox(new String[] {"8", "10", "12", "14", "16", "18", "20", "24", "28", "34", "48", "64"});
 
-            this.labelEnabled.addItemListener(new ItemListener() {
-                public void itemStateChanged(ItemEvent event) {
-                    onLabelEnableChanged(event);
-                }
-            });
-            this.labelColorPanel.addColorChangeListener(new PropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent event) {
-                    onLabelColorChanged(event);
-                }
-            });
-            this.labelFontName.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    onLabelFontChanged(event);
-                }
-            });
-            this.labelFontStyle.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    onLabelFontChanged(event);
-                }
-            });
-            this.labelFontSize.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    onLabelFontChanged(event);
-                }
-            });
+            this.labelEnabled.addItemListener(this::onLabelEnableChanged);
+            this.labelColorPanel.addColorChangeListener(this::onLabelColorChanged);
+            this.labelFontName.addActionListener(this::onLabelFontChanged);
+            this.labelFontStyle.addActionListener(this::onLabelFontChanged);
+            this.labelFontSize.addActionListener(this::onLabelFontChanged);
         }
     }
 
@@ -422,10 +386,10 @@ public class GraticuleAttributesPanel extends JPanel
 
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Component c = this.delegate.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (c != null && c instanceof JLabel)
+            if (c instanceof JLabel)
             {
                 JLabel label = (JLabel) c;
-                if (value != null && value instanceof String)
+                if (value instanceof String)
                 {
                     String lineStyle = (String) value;
                     String labelText = getLineStyleLabel(lineStyle);
@@ -576,37 +540,17 @@ public class GraticuleAttributesPanel extends JPanel
                 1,    // min
                 255); // max
             this.colorChooserDialog = JColorChooser.createDialog(this, "Choose Graticule Color", true, this.colorChooser,
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent event) {
-                        onColorChooserOk(event);
-                    }
-                },
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent event) {
-                        onColorChooserCancel(event);
-                    }
-                });
+                this::onColorChooserOk,
+                this::onColorChooserCancel);
 
             this.colorLabel.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent event) {
                     onColorPressed();
                 }
             });
-            this.colorButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    onColorPressed();
-                }
-            });
-            this.colorChooser.getSelectionModel().addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent event) {
-                    onColorChooserChanged(event);
-                }
-            });
-            this.opacitySlider.addChangeListener(new ChangeListener() {
-                public void stateChanged(ChangeEvent event) {
-                    onOpacityChanged(event);
-                }
-            });
+            this.colorButton.addActionListener(event -> onColorPressed());
+            this.colorChooser.getSelectionModel().addChangeListener(this::onColorChooserChanged);
+            this.opacitySlider.addChangeListener(this::onOpacityChanged);
         }
 
         private void setColorLabel(Color color)

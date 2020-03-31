@@ -160,7 +160,7 @@ public class SegmentPlane extends WWObjectImpl
         this.borderMask = TOP | BOTTOM | LEFT | RIGHT;
         this.segmentBeginPosition = Position.ZERO;
         this.segmentEndPosition = Position.ZERO;
-        this.controlPointList = new ArrayList<ControlPoint>();
+        this.controlPointList = new ArrayList<>();
 
         this.addDefaultAttributes(PLANE_BACKGROUND);
         this.addDefaultAttributes(PLANE_GRID);

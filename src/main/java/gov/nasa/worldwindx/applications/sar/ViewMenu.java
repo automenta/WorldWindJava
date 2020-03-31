@@ -46,26 +46,14 @@ public class ViewMenu extends JMenu
         JMenuItem mi = new JMenuItem("Terrain profile...");
         mi.setMnemonic('T');
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
-        mi.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                wwd.firePropertyChange(TerrainProfilePanel.TERRAIN_PROFILE_OPEN, null, null);
-            }
-        });
+        mi.addActionListener(event -> wwd.firePropertyChange(TerrainProfilePanel.TERRAIN_PROFILE_OPEN, null, null));
         this.add(mi);
 
         // Cloud ceiling contour
         mi = new JMenuItem("Cloud Contour...");
         mi.setMnemonic('C');
         mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
-        mi.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                wwd.firePropertyChange(CloudCeilingPanel.CLOUD_CEILING_OPEN, null, null);
-            }
-        });
+        mi.addActionListener(event -> wwd.firePropertyChange(CloudCeilingPanel.CLOUD_CEILING_OPEN, null, null));
         this.add(mi);
     }
 

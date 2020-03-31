@@ -47,14 +47,10 @@ public class WCSCoveragePanel extends JPanel
     protected URI serverURI;
     protected Dimension size;
     protected Thread loadingThread;
-    protected final TreeSet<CoverageInfo> coverageInfos = new TreeSet<CoverageInfo>(new Comparator<CoverageInfo>()
-    {
-        public int compare(CoverageInfo infoA, CoverageInfo infoB)
-        {
-            String nameA = infoA.getTitle();
-            String nameB = infoB.getTitle();
-            return nameA.compareTo(nameB);
-        }
+    protected final TreeSet<CoverageInfo> coverageInfos = new TreeSet<>((infoA, infoB) -> {
+        String nameA = infoA.getTitle();
+        String nameB = infoB.getTitle();
+        return nameA.compareTo(nameB);
     });
 
     public WCSCoveragePanel(WorldWindow wwd, String server, Dimension size) throws URISyntaxException
@@ -71,13 +67,7 @@ public class WCSCoveragePanel extends JPanel
         this.makeProgressPanel();
 
         // Thread off a retrieval of the server's capabilities document and update of this panel.
-        this.loadingThread = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                load();
-            }
-        });
+        this.loadingThread = new Thread(this::load);
         this.loadingThread.setPriority(Thread.MIN_PRIORITY);
         this.loadingThread.start();
     }
@@ -125,13 +115,9 @@ public class WCSCoveragePanel extends JPanel
         }
 
         // Fill the panel with the coverage titles.
-        EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                WCSCoveragePanel.this.removeAll();
-                makeCoverageInfosPanel(coverageInfos);
-            }
+        EventQueue.invokeLater(() -> {
+            WCSCoveragePanel.this.removeAll();
+            makeCoverageInfosPanel(coverageInfos);
         });
     }
 
@@ -174,8 +160,8 @@ public class WCSCoveragePanel extends JPanel
 
     protected class CoverageInfoAction extends AbstractAction
     {
-        protected WorldWindow wwd;
-        protected CoverageInfo coverageInfo;
+        protected final WorldWindow wwd;
+        protected final CoverageInfo coverageInfo;
         protected Object component;
 
         public CoverageInfoAction(CoverageInfo info, WorldWindow wwd)
@@ -257,12 +243,7 @@ public class WCSCoveragePanel extends JPanel
             coverageDescription.parse();
             configParams.setValue(AVKey.DOCUMENT, coverageDescription);
         }
-        catch (URISyntaxException e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-        catch (XMLStreamException e)
+        catch (URISyntaxException | XMLStreamException e)
         {
             e.printStackTrace();
             return null;
@@ -324,13 +305,7 @@ public class WCSCoveragePanel extends JPanel
             controlFrame.pack();
             controlFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             controlFrame.setVisible(true);
-            java.awt.EventQueue.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    controlFrame.setVisible(true);
-                }
-            });
+            java.awt.EventQueue.invokeLater(() -> controlFrame.setVisible(true));
         }
         catch (Exception e)
         {

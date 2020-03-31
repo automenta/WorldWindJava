@@ -340,7 +340,7 @@ public abstract class BitSetQuadTreeFilter
                 throw new IllegalArgumentException(message);
             }
 
-            this.intersectingBits = outIds != null ? outIds : new ArrayList<Integer>();
+            this.intersectingBits = outIds != null ? outIds : new ArrayList<>();
 
             for (int i = 0; i < topRegions.size(); i++)
             {

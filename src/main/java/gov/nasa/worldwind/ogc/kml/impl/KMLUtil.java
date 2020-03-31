@@ -232,7 +232,7 @@ public class KMLUtil
     public static java.util.List<Position> computeAltitude(Globe globe, java.util.List<? extends Position> positions,
         String altitudeMode)
     {
-        java.util.List<Position> outPositions = new ArrayList<Position>(positions.size());
+        java.util.List<Position> outPositions = new ArrayList<>(positions.size());
         for (Position p : positions)
         {
             outPositions.add(computeAltitude(globe, p, altitudeMode));
@@ -298,7 +298,7 @@ public class KMLUtil
         }
 
         LatLon[] corners = sector.getCorners();
-        java.util.List<LatLon> transformedCorners = new ArrayList<LatLon>(corners.length);
+        java.util.List<LatLon> transformedCorners = new ArrayList<>(corners.length);
 
         // Using the four corners of the sector to compute the rotation axis avoids problems with dateline
         // spanning polygons.

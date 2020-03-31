@@ -204,6 +204,6 @@ class RPFNonpolarFrameStructure extends RPFFrameStructure
 
     private static double clamp(double x, double min, double max)
     {
-        return (x < min) ? min : ((x > max) ? max : x);
+        return (x < min) ? min : (Math.min(x, max));
     }
 }

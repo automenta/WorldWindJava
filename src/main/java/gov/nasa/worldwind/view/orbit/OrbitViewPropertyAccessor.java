@@ -83,7 +83,7 @@ public class OrbitViewPropertyAccessor extends ViewPropertyAccessor
 
     private static class ZoomAccessor implements PropertyAccessor.DoubleAccessor
     {
-        OrbitView orbitView;
+        final OrbitView orbitView;
         public ZoomAccessor(OrbitView orbitView)
         {
             this.orbitView = orbitView;

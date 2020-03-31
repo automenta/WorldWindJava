@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class VPFSymbolSupport
 {
-    protected GeoSymSupport geoSymSupport;
+    protected final GeoSymSupport geoSymSupport;
 
     public VPFSymbolSupport(String geoSymPath, String geoSymMimeType)
     {
@@ -40,7 +40,7 @@ public class VPFSymbolSupport
                 return keys;
         }
 
-        return Arrays.asList(VPFSymbolKey.UNKNOWN_SYMBOL_KEY);
+        return Collections.singletonList(VPFSymbolKey.UNKNOWN_SYMBOL_KEY);
     }
 
     public Iterable<? extends VPFSymbolAttributes> getSymbolAttributes(VPFFeatureClass featureClass, VPFSymbolKey key)
@@ -68,7 +68,7 @@ public class VPFSymbolSupport
         if (keys == null)
             return null;
 
-        ArrayList<VPFSymbolAttributes> attrList = new ArrayList<VPFSymbolAttributes>();
+        ArrayList<VPFSymbolAttributes> attrList = new ArrayList<>();
 
         for (VPFSymbolKey key : keys)
         {
@@ -130,7 +130,7 @@ public class VPFSymbolSupport
             Integer i = this.getSymbolId(featureAttributes);
             if (i != null)
             {
-                return Arrays.asList(new VPFSymbolKey(i));
+                return Collections.singletonList(new VPFSymbolKey(i));
             }
         }
 
@@ -165,7 +165,7 @@ public class VPFSymbolSupport
         for (VPFRecord row : symbolTable)
         {
             Object o = row.getValue("symbol_id");
-            if (o == null || !(o instanceof Number))
+            if (!(o instanceof Number))
                 continue;
 
             int rowSymbolId = ((Number) o).intValue();
@@ -225,13 +225,13 @@ public class VPFSymbolSupport
 
         attr.setLabelAttributes(new VPFSymbolAttributes.LabelAttributes[] {labelAttr});
 
-        return Arrays.asList(attr);
+        return Collections.singletonList(attr);
     }
 
     protected Integer getSymbolId(AVList params)
     {
         Object o = params.getValue("symbol_id");
-        return (o != null && o instanceof Number) ? ((Number) o).intValue() : null;
+        return (o instanceof Number) ? ((Number) o).intValue() : null;
     }
 
     //**************************************************************//
@@ -247,6 +247,6 @@ public class VPFSymbolSupport
         attr.setOutlineMaterial(Material.GRAY);
         attr.setIconImageSource("images/vpf_unknownsymbol-32x64.png");
 
-        return Arrays.asList(attr);
+        return Collections.singletonList(attr);
     }
 }

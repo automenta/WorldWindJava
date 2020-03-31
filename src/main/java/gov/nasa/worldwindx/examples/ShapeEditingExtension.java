@@ -36,8 +36,8 @@ public class ShapeEditingExtension extends ApplicationTemplate
      */
     public static class Arrow implements Renderable, Movable2, Highlightable, Attributable, Draggable
     {
-        protected Path shaft;
-        protected Path head;
+        protected final Path shaft;
+        protected final Path head;
         protected boolean dragEnabled = true;
         protected DraggableSupport draggableSupport = null;
 
@@ -62,11 +62,11 @@ public class ShapeEditingExtension extends ApplicationTemplate
         public void setLocations(LatLon location0, LatLon location1)
         {
             double altitude = this.getAltitude();
-            List<Position> positions = new ArrayList<Position>(2);
+            List<Position> positions = new ArrayList<>(2);
             positions.add(new Position(location0, altitude));
             positions.add(new Position(location1, altitude));
             this.shaft.setPositions(positions);
-            this.head.setPositions(new ArrayList<Position>(0)); // causes arrowhead to be rebuilt
+            this.head.setPositions(new ArrayList<>(0)); // causes arrowhead to be rebuilt
         }
 
         public LatLon[] getLocations()
@@ -163,7 +163,7 @@ public class ShapeEditingExtension extends ApplicationTemplate
             Vec4 rightHeadPoint = point0.add3(shaftVec).add3(perpendicularVec);
             LatLon rightHeadLocation = globe.computePositionFromEllipsoidalPoint(rightHeadPoint);
 
-            List<Position> newPositions = new ArrayList<Position>(2);
+            List<Position> newPositions = new ArrayList<>(2);
             newPositions.add(new Position(leftHeadLocation, this.getAltitude()));
             newPositions.add(position1);
             newPositions.add(new Position(rightHeadLocation, this.getAltitude()));
@@ -180,7 +180,7 @@ public class ShapeEditingExtension extends ApplicationTemplate
         public void moveTo(Globe globe, Position position)
         {
             this.shaft.moveTo(globe, position);
-            this.head.setPositions(new ArrayList<Position>(0));
+            this.head.setPositions(new ArrayList<>(0));
         }
 
         @Override
@@ -326,7 +326,7 @@ public class ShapeEditingExtension extends ApplicationTemplate
             if (markers == null)
             {
                 // There is only one control point. Compute its location, create it and add it to the list.
-                java.util.List<Marker> markerList = new ArrayList<Marker>(1);
+                java.util.List<Marker> markerList = new ArrayList<>(1);
                 double altitude = this.getControlPointAltitude(locations[1]);
                 Position cpPosition = new Position(locations[1], altitude);
                 markerList.add(this.makeControlPoint(cpPosition, this.getAngleControlPointAttributes(), 0, ROTATION));

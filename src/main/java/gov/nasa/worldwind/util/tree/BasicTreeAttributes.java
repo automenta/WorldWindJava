@@ -9,6 +9,7 @@ package gov.nasa.worldwind.util.tree;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * Basic implementation of {@link TreeAttributes} set.
@@ -230,22 +231,19 @@ public class BasicTreeAttributes implements TreeAttributes
 
         if (this.rootVisible != that.rootVisible)
             return false;
-        if (this.textColor != null ? !this.textColor.equals(that.textColor) : that.textColor != null)
+        if (!Objects.equals(this.textColor, that.textColor))
             return false;
-        if (this.font != null ? !this.font.equals(that.font) : that.font != null)
+        if (!Objects.equals(this.font, that.font))
             return false;
-        if (this.descriptionFont != null ? !this.descriptionFont.equals(that.descriptionFont)
-            : that.descriptionFont != null)
+        if (!Objects.equals(this.descriptionFont, that.descriptionFont))
             return false;
         if (this.rowSpacing != that.rowSpacing)
             return false;
         if (!this.iconSize.equals(that.iconSize))
             return false;
-        if (this.checkBoxColor1 != null ? !this.checkBoxColor1.equals(that.checkBoxColor1)
-            : that.checkBoxColor1 != null)
+        if (!Objects.equals(this.checkBoxColor1, that.checkBoxColor1))
             return false;
-        if (this.checkBoxColor2 != null ? !this.checkBoxColor2.equals(that.checkBoxColor2)
-            : that.checkBoxColor2 != null)
+        if (!Objects.equals(this.checkBoxColor2, that.checkBoxColor2))
             return false;
         //noinspection RedundantIfStatement
         if (this.iconSpace != that.iconSpace)

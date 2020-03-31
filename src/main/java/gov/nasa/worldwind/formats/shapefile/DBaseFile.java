@@ -24,7 +24,7 @@ public class DBaseFile extends AVListImpl
 {
     protected static final int FIXED_HEADER_LENGTH = 32;
     protected static final int FIELD_DESCRIPTOR_LENGTH = 32;
-    protected static String[] DBASE_CONTENT_TYPES =
+    protected static final String[] DBASE_CONTENT_TYPES =
         {
             "application/dbase",
             "application/dbf",

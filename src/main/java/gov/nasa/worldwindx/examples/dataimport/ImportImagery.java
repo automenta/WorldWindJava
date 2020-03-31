@@ -39,15 +39,11 @@ public class ImportImagery extends ApplicationTemplate
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
             // Import the imagery on a thread other than the event-dispatch thread to avoid freezing the UI.
-            Thread t = new Thread(new Runnable()
-            {
-                public void run()
-                {
-                    importImagery();
+            Thread t = new Thread(() -> {
+                importImagery();
 
-                    // Restore the cursor.
-                    setCursor(Cursor.getDefaultCursor());
-                }
+                // Restore the cursor.
+                setCursor(Cursor.getDefaultCursor());
             });
 
             t.start();
@@ -115,22 +111,18 @@ public class ImportImagery extends ApplicationTemplate
                 final SurfaceImage si1 = new SurfaceImage(image, sector);
 
                 // On the event-dispatch thread, add the imported data as an SurfaceImageLayer.
-                SwingUtilities.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        // Add the SurfaceImage to a layer.
-                        SurfaceImageLayer layer = new SurfaceImageLayer();
-                        layer.setName("Imported Surface Image");
-                        layer.setPickEnabled(false);
-                        layer.addRenderable(si1);
+                SwingUtilities.invokeLater(() -> {
+                    // Add the SurfaceImage to a layer.
+                    SurfaceImageLayer layer = new SurfaceImageLayer();
+                    layer.setName("Imported Surface Image");
+                    layer.setPickEnabled(false);
+                    layer.addRenderable(si1);
 
-                        // Add the layer to the model and update the application's layer panel.
-                        insertBeforeCompass(AppFrame.this.getWwd(), layer);
+                    // Add the layer to the model and update the application's layer panel.
+                    insertBeforeCompass(AppFrame.this.getWwd(), layer);
 
-                        // Set the view to look at the imported image.
-                        ExampleUtil.goTo(getWwd(), sector);
-                    }
+                    // Set the view to look at the imported image.
+                    ExampleUtil.goTo(getWwd(), sector);
                 });
             }
             catch (Exception e)

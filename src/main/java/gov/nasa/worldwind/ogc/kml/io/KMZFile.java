@@ -29,7 +29,7 @@ public class KMZFile extends XMLDoc
     protected ZipFile zipFile;
 
     /** A mapping of the files in the KMZ file to their location in the temporary directory. */
-    protected Map<String, File> files = new HashMap<String, File>();
+    protected final Map<String, File> files = new HashMap<>();
 
     /** The directory to hold files copied from the KMZ file. The directory and the files copied there are temporary. */
     protected File tempDir;

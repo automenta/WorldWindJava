@@ -22,7 +22,7 @@ public class BlockDXT3Compressor
     // Implementation based on the NVidia Texture Tools
     // http://code.google.com/p/nvidia-texture-tools/
 
-    protected BlockDXT1Compressor dxt1Compressor;
+    protected final BlockDXT1Compressor dxt1Compressor;
 
     /**
      * Creates a new DXT2/DXT3 block compressor.

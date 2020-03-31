@@ -7,6 +7,8 @@ package gov.nasa.worldwind.geom;
 
 import gov.nasa.worldwind.util.Logging;
 
+import java.util.Objects;
+
 /**
  * Represents a <code>Plane</code> in Cartesian coordinates, defined by a normal vector to the plane and a signed scalar
  * value proportional to the distance of the plane from the origin. The sign of the value is relative to the direction
@@ -458,7 +460,7 @@ public final class Plane
 
         Plane plane = (Plane) o;
 
-        return !(n != null ? !n.equals(plane.n) : plane.n != null);
+        return Objects.equals(n, plane.n);
     }
 
     @Override

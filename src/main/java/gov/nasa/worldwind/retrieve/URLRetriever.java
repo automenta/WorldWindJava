@@ -36,9 +36,9 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
 
     protected volatile String state = RETRIEVER_STATE_NOT_STARTED;
     protected volatile int contentLength = 0;
-    protected AtomicInteger contentLengthRead = new AtomicInteger(0);
+    protected final AtomicInteger contentLengthRead = new AtomicInteger(0);
     protected volatile String contentType;
-    protected AtomicLong expiration = new AtomicLong(0);
+    protected final AtomicLong expiration = new AtomicLong(0);
     protected volatile ByteBuffer byteBuffer;
     protected volatile URLConnection connection;
     protected final URL url;
@@ -249,13 +249,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
 
             WorldWind.getNetworkStatus().logAvailableHost(this.url);
         }
-        catch (UnknownHostException e)
-        {
-            this.setState(RETRIEVER_STATE_ERROR);
-            WorldWind.getNetworkStatus().logUnavailableHost(this.url);
-            throw e;
-        }
-        catch (SocketException e)
+        catch (UnknownHostException | SocketException e)
         {
             this.setState(RETRIEVER_STATE_ERROR);
             WorldWind.getNetworkStatus().logUnavailableHost(this.url);
@@ -307,10 +301,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
         try
         {
             Proxy proxy = WWIO.configureProxy();
-            if (proxy != null)
-                this.connection = this.url.openConnection(proxy);
-            else
-                this.connection = this.url.openConnection();
+            this.connection = proxy != null ? this.url.openConnection(proxy) : this.url.openConnection();
         }
         catch (java.io.IOException e)
         {
@@ -332,6 +323,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
         this.connection.setConnectTimeout(this.connectTimeout);
         this.connection.setReadTimeout(this.readTimeout);
 
+
         return connection;
     }
 
@@ -343,7 +335,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
             connection.setSSLSocketFactory(sslContext.getSocketFactory());
     }
 
-    protected void end() throws Exception
+    protected void end()
     {
         try
         {
@@ -356,7 +348,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
         {
             this.setState(RETRIEVER_STATE_ERROR);
             Logging.logger().log(Level.SEVERE,
-                Logging.getMessage("Retriever.ErrorPostProcessing", this.url.toString()), e);
+                Logging.getMessage("Retriever.ErrorPostProcessing", this.url), e);
             throw e;
         }
     }
@@ -376,7 +368,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
                 || e instanceof SocketException))
             {
                 Logging.logger().log(Level.SEVERE,
-                    Logging.getMessage("URLRetriever.ErrorReadingFromConnection", this.url.toString()), e);
+                    Logging.getMessage("URLRetriever.ErrorReadingFromConnection", this.url), e);
             }
             throw e;
         }
@@ -447,25 +439,23 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
             return readNonSpecificStreamUnknownLength(inputStream);
         }
 
-        ReadableByteChannel channel = Channels.newChannel(inputStream);
         ByteBuffer buffer = ByteBuffer.allocate(this.contentLength);
+
+        ReadableByteChannel channel = Channels.newChannel(inputStream);
 //        System.out.println(this.contentLength + " bytes to read");
 
         int numBytesRead = 0;
         while (!this.interrupted() && numBytesRead >= 0 && numBytesRead < buffer.limit())
         {
             int count = channel.read(buffer);
-            if (count > 0)
-            {
+            if (count > 0) {
                 numBytesRead += count;
                 this.contentLengthRead.getAndAdd(count);
-            }
-            if (count < 0)
+            } else if (count < 0)
                 throw new WWRuntimeException("Premature end of stream from server.");
         }
 
-        if (buffer != null)
-            buffer.flip();
+        buffer.flip();
 
         return buffer;
     }
@@ -475,16 +465,17 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
         final int pageSize = (int) Math.ceil(Math.pow(2, 15));
 
         ReadableByteChannel channel = Channels.newChannel(inputStream);
+
         ByteBuffer buffer = ByteBuffer.allocate(pageSize);
 
         int count = 0;
-        int numBytesRead = 0;
+//        int numBytesRead = 0;
         while (!this.interrupted() && count >= 0)
         {
             count = channel.read(buffer);
             if (count > 0)
             {
-                numBytesRead += count;
+//                numBytesRead += count;
                 this.contentLengthRead.getAndAdd(count);
             }
 
@@ -496,8 +487,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
             }
         }
 
-        if (buffer != null)
-            buffer.flip();
+        buffer.flip();
 
         return buffer;
     }
@@ -544,6 +534,8 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
         return buffer;
     }
 
+    private static final Pattern maxAge = Pattern.compile("max-age=(\\d+)");
+
     /**
      * Indicates the expiration time specified by either the Expires header or the max-age directive of the
      * Cache-Control header. If both are present, then Cache-Control is given priority (See section 14.9.3 of the HTTP
@@ -562,15 +554,16 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
         // Read the expiration time from either the Cache-Control header or the Expires header. Cache-Control has
         // priority if both headers are specified.
         String cacheControl = connection.getHeaderField("cache-control");
+        long nowMS = System.currentTimeMillis();
         if (cacheControl != null)
         {
-            Pattern pattern = Pattern.compile("max-age=(\\d+)");
-            Matcher matcher = pattern.matcher(cacheControl);
+
+            Matcher matcher = maxAge.matcher(cacheControl);
             if (matcher.find())
             {
                 Long maxAgeSec = WWUtil.makeLong(matcher.group(1));
                 if (maxAgeSec != null)
-                    return maxAgeSec * 1000 + System.currentTimeMillis();
+                    return maxAgeSec * 1000 + nowMS;
             }
         }
 
@@ -581,7 +574,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
         long date = connection.getDate();
 
         if (date > 0 && expiration > date)
-            return System.currentTimeMillis() + (expiration - date);
+            return nowMS + (expiration - date);
 
         return expiration;
     }

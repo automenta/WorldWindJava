@@ -49,10 +49,10 @@ public class ParallelPaths extends ApplicationTemplate
 
             // We will generate four paths parallel to the control path. Allocate lists to store the positions of these
             // paths.
-            List<Position> pathPositions1 = new ArrayList<Position>();
-            List<Position> pathPositions2 = new ArrayList<Position>();
-            List<Position> pathPositions3 = new ArrayList<Position>();
-            List<Position> pathPositions4 = new ArrayList<Position>();
+            List<Position> pathPositions1 = new ArrayList<>();
+            List<Position> pathPositions2 = new ArrayList<>();
+            List<Position> pathPositions3 = new ArrayList<>();
+            List<Position> pathPositions4 = new ArrayList<>();
 
             Globe globe = getWwd().getModel().getGlobe();
 

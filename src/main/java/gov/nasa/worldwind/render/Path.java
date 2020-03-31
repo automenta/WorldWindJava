@@ -23,7 +23,6 @@ import gov.nasa.worldwind.util.measure.LengthMeasurer;
 
 import javax.xml.stream.*;
 import java.awt.*;
-import java.io.IOException;
 import java.nio.*;
 import java.util.List;
 import java.util.*;
@@ -431,13 +430,13 @@ public class Path extends AbstractShape {
          * of color codes to a Path, where the color codes represent the range of pick colors that the Path's position
          * points are drawn in.
          */
-        protected List<PickablePositions> pickablePositions = new ArrayList<>();
+        protected final List<PickablePositions> pickablePositions = new ArrayList<>();
         /**
          * A map that associates each path with a picked object. Used to during box picking to consolidate the
          * information about what parts of each path are picked into a single picked object. Path's positions are drawn
          * in unique colors and are therefore separately pickable during box picking.
          */
-        protected Map<Object, PickedObject> pathPickedObjects = new HashMap<>();
+        protected final Map<Object, PickedObject> pathPickedObjects = new HashMap<>();
 
         /**
          * {@inheritDoc}
@@ -661,7 +660,7 @@ public class Path extends AbstractShape {
     protected double showPositionsThreshold = DEFAULT_DRAW_POSITIONS_THRESHOLD;
     protected double showPositionsScale = DEFAULT_DRAW_POSITIONS_SCALE;
     protected boolean positionsSpanDateline;
-    protected LengthMeasurer measurer = new LengthMeasurer();
+    protected final LengthMeasurer measurer = new LengthMeasurer();
 
     /**
      * Creates a path with no positions.
@@ -724,9 +723,7 @@ public class Path extends AbstractShape {
      */
     public Path(Iterable<? extends LatLon> coords, double elevation) {
         ArrayList<Position> newPositions = new ArrayList<>();
-        coords.forEach((c) -> {
-            newPositions.add(new Position(c, elevation));
-        });
+        coords.forEach((c) -> newPositions.add(new Position(c, elevation)));
         this.setPositions(newPositions);
         this.measurer.setFollowTerrain(this.followTerrain);
         this.measurer.setPathType(this.pathType);
@@ -838,9 +835,7 @@ public class Path extends AbstractShape {
     public void makeClosed() {
         if (this.positions != null && this.positions.iterator().hasNext()) {
             ArrayList<Position> newPositions = new ArrayList<>();
-            this.positions.forEach((p) -> {
-                newPositions.add(new Position(p));
-            });
+            this.positions.forEach((p) -> newPositions.add(new Position(p)));
 
             newPositions.add(new Position(newPositions.get(0)));
             this.setPositions(newPositions);
@@ -2484,7 +2479,7 @@ public class Path extends AbstractShape {
     }
 
     @Override
-    public List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException // TODO
+    public List<Intersection> intersect(Line line, Terrain terrain)  // TODO
     {
         return null;
     }
@@ -2574,7 +2569,7 @@ public class Path extends AbstractShape {
      * {@inheritDoc}
      */
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException {
+    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException {
         // Write geometry
         xmlWriter.writeStartElement("LineString");
 

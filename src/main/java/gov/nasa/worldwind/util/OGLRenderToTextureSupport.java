@@ -43,7 +43,7 @@ public class OGLRenderToTextureSupport
     protected boolean isFramebufferObjectEnabled;
     protected Texture colorTarget;
     protected java.awt.Rectangle drawRegion;
-    protected OGLStackHandler stackHandler;
+    protected final OGLStackHandler stackHandler;
     protected int framebufferObject;
 
     /** Constructs a new OGLRenderToTextureSupport, but otherwise does nothing. */

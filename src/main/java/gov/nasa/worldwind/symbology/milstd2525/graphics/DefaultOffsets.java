@@ -24,7 +24,7 @@ import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc.*;
 public class DefaultOffsets
 {
     /** Offset to align the center of the graphic with the geographic position. */
-    protected static Offset DEFAULT_OFFSET = Offset.CENTER;
+    protected static final Offset DEFAULT_OFFSET = Offset.CENTER;
 
     /** Offset to align a point 25% up from the bottom edge with the geographic position. */
     public static final Offset OFFSET_BOTTOM_QUARTER = Offset.fromFraction(0.5, 0.25);
@@ -43,7 +43,7 @@ public class DefaultOffsets
     public static final Offset OFFSET_OTH_HAZ_SML = Offset.fromFraction(0.5, 0.33);
 
     /** Map to store defaults. */
-    protected Map<String, Offset> offsets = new HashMap<String, Offset>();
+    protected final Map<String, Offset> offsets = new HashMap<>();
 
     /** Create the map and populate it with the default offsets. */
     public DefaultOffsets()

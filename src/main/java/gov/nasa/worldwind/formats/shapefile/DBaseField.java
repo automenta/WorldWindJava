@@ -104,11 +104,10 @@ public class DBaseField
             case 'D':
                 return TYPE_DATE;
             case 'F':
+            case 'N':
                 return TYPE_NUMBER;
             case 'L':
                 return TYPE_BOOLEAN;
-            case 'N':
-                return TYPE_NUMBER;
             default:
                 return null;
         }

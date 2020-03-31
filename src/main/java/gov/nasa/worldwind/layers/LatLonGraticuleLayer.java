@@ -33,9 +33,9 @@ public class LatLonGraticuleLayer extends AbstractGraticuleLayer
 
     protected static final int MIN_CELL_SIZE_PIXELS = 40; // TODO: make settable
 
-    protected GraticuleTile[][] gridTiles = new GraticuleTile[18][36]; // 10 degrees row/col
-    protected ArrayList<Double> latitudeLabels = new ArrayList<Double>();
-    protected ArrayList<Double> longitudeLabels = new ArrayList<Double>();
+    protected final GraticuleTile[][] gridTiles = new GraticuleTile[18][36]; // 10 degrees row/col
+    protected final ArrayList<Double> latitudeLabels = new ArrayList<>();
+    protected final ArrayList<Double> longitudeLabels = new ArrayList<>();
     private String angleFormat = Angle.ANGLE_FORMAT_DMS;
 
     public LatLonGraticuleLayer()
@@ -188,7 +188,7 @@ public class LatLonGraticuleLayer extends AbstractGraticuleLayer
 
     protected ArrayList<GraticuleTile> getVisibleTiles(DrawContext dc)
     {
-        ArrayList<GraticuleTile> tileList = new ArrayList<GraticuleTile>();
+        ArrayList<GraticuleTile> tileList = new ArrayList<>();
         Sector vs = dc.getVisibleSector();
         if (vs != null)
         {
@@ -468,7 +468,7 @@ public class LatLonGraticuleLayer extends AbstractGraticuleLayer
 
         private void createSubTiles()
         {
-            this.subTiles = new ArrayList<GraticuleTile>();
+            this.subTiles = new ArrayList<>();
             Sector[] sectors = this.sector.subdivide(this.divisions);
             int subDivisions = 10;
             if ((getAngleFormat().equals(Angle.ANGLE_FORMAT_DMS) || getAngleFormat().equals(Angle.ANGLE_FORMAT_DM))
@@ -483,7 +483,7 @@ public class LatLonGraticuleLayer extends AbstractGraticuleLayer
         /** Create the grid elements */
         private void createRenderables()
         {
-            this.gridElements = new ArrayList<GridElement>();
+            this.gridElements = new ArrayList<>();
 
             double step = sector.getDeltaLatDegrees() / this.divisions;
 
@@ -493,7 +493,7 @@ public class LatLonGraticuleLayer extends AbstractGraticuleLayer
             {
                 Angle longitude = Angle.fromDegrees(lon);
                 // Meridian
-                ArrayList<Position> positions = new ArrayList<Position>(2);
+                ArrayList<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(this.sector.getMinLatitude(), longitude, 0));
                 positions.add(new Position(this.sector.getMaxLatitude(), longitude, 0));
 
@@ -515,7 +515,7 @@ public class LatLonGraticuleLayer extends AbstractGraticuleLayer
             while (lat < this.sector.getMaxLatitude().degrees - step / 2)
             {
                 Angle latitude = Angle.fromDegrees(lat);
-                ArrayList<Position> positions = new ArrayList<Position>(2);
+                ArrayList<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(latitude, this.sector.getMinLongitude(), 0));
                 positions.add(new Position(latitude, this.sector.getMaxLongitude(), 0));
 
@@ -535,7 +535,7 @@ public class LatLonGraticuleLayer extends AbstractGraticuleLayer
             // Draw and label a parallel at the top of the graticule. The line is apparent only on 2D globes.
             if (this.sector.getMaxLatitude().equals(Angle.POS90))
             {
-                ArrayList<Position> positions = new ArrayList<Position>(2);
+                ArrayList<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(Angle.POS90, this.sector.getMinLongitude(), 0));
                 positions.add(new Position(Angle.POS90, this.sector.getMaxLongitude(), 0));
 

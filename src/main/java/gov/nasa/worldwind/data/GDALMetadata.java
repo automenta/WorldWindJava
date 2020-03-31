@@ -56,7 +56,7 @@ public class GDALMetadata
                 while (keys.hasMoreElements())
                 {
                     Object o = keys.nextElement();
-                    if (null != o && o instanceof String)
+                    if (o instanceof String)
                     {
                         String key = (String) o;
                         Object value = dict.get(key);
@@ -294,7 +294,7 @@ public class GDALMetadata
             destParams.setValue(AVKey.PROJECTION_EPSG_CODE, epsg);
         }
 
-        StringBuffer proj4 = new StringBuffer();
+        StringBuilder proj4 = new StringBuilder();
 
         if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(destParams.getValue(AVKey.COORDINATE_SYSTEM)))
         {

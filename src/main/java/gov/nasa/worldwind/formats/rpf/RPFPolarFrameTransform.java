@@ -529,7 +529,7 @@ class RPFPolarFrameTransform extends RPFFrameTransform
     //
     // A little helper class to eliminate some of the tedium of finding bounds of a polar sector.
     //
-    private class MinMaxLatLon
+    private static class MinMaxLatLon
     {
         double minLon, minLat, maxLon, maxLat;
 

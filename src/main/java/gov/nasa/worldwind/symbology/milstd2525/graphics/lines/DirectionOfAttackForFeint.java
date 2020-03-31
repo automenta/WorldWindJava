@@ -50,7 +50,7 @@ public class DirectionOfAttackForFeint extends DirectionOfAttack
     protected double curvature = DEFAULT_CURVATURE;
 
     /** Shape attributes for the dashed part of the graphic. */
-    protected ShapeAttributes dashedAttributes = new BasicShapeAttributes();
+    protected final ShapeAttributes dashedAttributes = new BasicShapeAttributes();
 
     /** Position of the label along the curve. */
     protected Position labelPosition;
@@ -67,7 +67,7 @@ public class DirectionOfAttackForFeint extends DirectionOfAttack
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_DCPN_DAFF);
+        return Collections.singletonList(TacGrpSidc.C2GM_DCPN_DAFF);
     }
 
     /**
@@ -171,7 +171,7 @@ public class DirectionOfAttackForFeint extends DirectionOfAttack
         int furthestPoint = 0;
         double maxDistance = -Double.MAX_VALUE;
 
-        List<Position> curvePositions = new ArrayList<Position>();
+        List<Position> curvePositions = new ArrayList<>();
         int[] coefficients = new int[controlPoints.length]; // Array to hold binomial coefficients
 
         // Invoke the Bezier curve function to compute points along the curve.

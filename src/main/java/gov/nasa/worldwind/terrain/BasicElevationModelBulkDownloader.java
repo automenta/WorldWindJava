@@ -311,13 +311,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread
         File cacheRoot = new File(this.fileStore.getWriteLocation(), targetLevel.getPath());
         if (cacheRoot.exists())
         {
-            File[] rowDirs = cacheRoot.listFiles(new FileFilter()
-            {
-                public boolean accept(File file)
-                {
-                    return file.isDirectory();
-                }
-            });
+            File[] rowDirs = cacheRoot.listFiles(File::isDirectory);
             for (File dir : rowDirs)
             {
                 long averageSize = computeAverageTileSize(dir);
@@ -331,7 +325,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread
             }
         }
 
-        Long averageTileSize = DEFAULT_AVERAGE_FILE_SIZE;
+        long averageTileSize = DEFAULT_AVERAGE_FILE_SIZE;
         if (count > 0 && size > 0)
         {
             averageTileSize = size / count;
@@ -489,7 +483,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread
 
     protected ArrayList<Tile> getMissingTilesInSector(Sector sector, int levelNumber) throws InterruptedException
     {
-        ArrayList<Tile> tiles = new ArrayList<Tile>();
+        ArrayList<Tile> tiles = new ArrayList<>();
 
         Tile[][] tileArray = getTilesInSector(sector, levelNumber);
         for (Tile[] row : tileArray)
@@ -528,7 +522,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread
 
         final double dLat = sector.getDeltaLat().degrees / div;
         final double dLon = sector.getDeltaLon().degrees / div;
-        ArrayList<Sector> regions = new ArrayList<Sector>(numRegions);
+        ArrayList<Sector> regions = new ArrayList<>(numRegions);
         Random rand = new Random();
         while (regions.size() < numRegions)
         {
@@ -557,7 +551,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread
         final double dLat = sector.getDeltaLat().degrees / div;
         final double dLon = sector.getDeltaLon().degrees / div;
 
-        return new Iterator<Sector>()
+        return new Iterator<>()
         {
             int row = 0;
             int col = 0;
@@ -569,15 +563,15 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread
 
             public Sector next()
             {
-                double maxLat = (row+1 < div) ? sector.getMinLatitude().degrees + dLat * row + dLat
-                        : sector.getMaxLatitude().degrees;
+                double maxLat = (row + 1 < div) ? sector.getMinLatitude().degrees + dLat * row + dLat
+                    : sector.getMaxLatitude().degrees;
 
-                double maxLon = (col+1 < div) ? sector.getMinLongitude().degrees + dLon * col + dLon
-                        : sector.getMaxLongitude().degrees;
+                double maxLon = (col + 1 < div) ? sector.getMinLongitude().degrees + dLon * col + dLon
+                    : sector.getMaxLongitude().degrees;
 
                 Sector s = Sector.fromDegrees(
                     sector.getMinLatitude().degrees + dLat * row, maxLat,
-                    sector.getMinLongitude().degrees + dLon * col, maxLon );
+                    sector.getMinLongitude().degrees + dLon * col, maxLon);
 
                 col++;
                 if (col >= div)

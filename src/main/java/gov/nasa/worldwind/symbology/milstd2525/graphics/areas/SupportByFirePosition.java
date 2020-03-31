@@ -31,7 +31,7 @@ public class SupportByFirePosition extends AttackByFirePosition
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_OFF_ARS_SFP);
+        return Collections.singletonList(TacGrpSidc.C2GM_OFF_ARS_SFP);
     }
 
     /**

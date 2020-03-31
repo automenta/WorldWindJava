@@ -474,7 +474,7 @@ public class BasicBalloonAttributes extends BasicShapeAttributes implements Ball
         super.restoreState(restorableSupport, context);
 
         // Map legacy restorable state values using FrameFactory constants to the new AVKey constants.
-        Map<String, String> legacySupport = new HashMap<String, String>();
+        Map<String, String> legacySupport = new HashMap<>();
         legacySupport.put("Render.FrameFactory.ShapeRectangle", AVKey.SHAPE_RECTANGLE);
         legacySupport.put("Render.FrameFactory.ShapeEllipse", AVKey.SHAPE_ELLIPSE);
         legacySupport.put("Render.FrameFactory.ShapeNone", AVKey.SHAPE_NONE);
@@ -595,32 +595,32 @@ public class BasicBalloonAttributes extends BasicShapeAttributes implements Ball
 
         BasicBalloonAttributes that = (BasicBalloonAttributes) o;
 
-        if (this.size != null ? !this.size.equals(that.size) : that.size != null)
+        if (!Objects.equals(this.size, that.size))
             return false;
-        if (this.maxSize != null ? !this.maxSize.equals(that.maxSize) : that.maxSize != null)
+        if (!Objects.equals(this.maxSize, that.maxSize))
             return false;
-        if (this.offset != null ? !this.offset.equals(that.offset) : that.offset != null)
+        if (!Objects.equals(this.offset, that.offset))
             return false;
-        if (this.insets != null ? !this.insets.equals(that.insets) : that.insets != null)
+        if (!Objects.equals(this.insets, that.insets))
             return false;
-        if (this.balloonShape != null ? !this.balloonShape.equals(that.balloonShape) : that.balloonShape != null)
+        if (!Objects.equals(this.balloonShape, that.balloonShape))
             return false;
-        if (this.leaderShape != null ? !this.leaderShape.equals(that.leaderShape) : that.leaderShape != null)
+        if (!Objects.equals(this.leaderShape, that.leaderShape))
             return false;
         if (this.leaderWidth != that.leaderWidth)
             return false;
         if (this.cornerRadius != that.cornerRadius)
             return false;
-        if (this.font != null ? !this.font.equals(that.font) : that.font != null)
+        if (!Objects.equals(this.font, that.font))
             return false;
-        if (this.textColor != null ? !this.textColor.equals(that.textColor) : that.textColor != null)
+        if (!Objects.equals(this.textColor, that.textColor))
             return false;
-        if (this.imageOffset != null ? !this.imageOffset.equals(that.imageOffset) : that.imageOffset != null)
+        if (!Objects.equals(this.imageOffset, that.imageOffset))
             return false;
         if (Double.compare(this.imageOpacity, that.imageOpacity) != 0)
             return false;
         //noinspection RedundantIfStatement
-        if (this.imageRepeat != null ? !this.imageRepeat.equals(that.imageRepeat) : that.imageRepeat != null)
+        if (!Objects.equals(this.imageRepeat, that.imageRepeat))
             return false;
 
         return true;

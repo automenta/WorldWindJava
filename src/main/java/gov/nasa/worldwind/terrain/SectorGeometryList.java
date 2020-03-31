@@ -25,8 +25,8 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
 {
     /** The spanning sector of all sector geometries contained in this list. */
     protected Sector sector;
-    protected PickSupport pickSupport = new PickSupport();
-    protected HashMap<SectorGeometry, ArrayList<Point>> pickSectors = new HashMap<SectorGeometry, ArrayList<Point>>();
+    protected final PickSupport pickSupport = new PickSupport();
+    protected final HashMap<SectorGeometry, ArrayList<Point>> pickSectors = new HashMap<>();
 
     /** Constructs an empty sector geometry list. */
     public SectorGeometryList()
@@ -216,7 +216,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
                 ArrayList<Point> sectorPickPoints;
                 if (!this.pickSectors.containsKey(sector))
                 {
-                    sectorPickPoints = new ArrayList<Point>();
+                    sectorPickPoints = new ArrayList<>();
                     this.pickSectors.put(sector, sectorPickPoints);
                 }
                 else
@@ -231,7 +231,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
 
             // Now have each sector determine the pick position for each intersecting pick point.
             this.beginSectorGeometryPicking(dc);
-            ArrayList<PickedObject> pickedObjects = new ArrayList<PickedObject>();
+            ArrayList<PickedObject> pickedObjects = new ArrayList<>();
             for (Map.Entry<SectorGeometry, ArrayList<Point>> sector : this.pickSectors.entrySet())
             {
                 ArrayList<Point> sectorPickPoints = sector.getValue();
@@ -363,9 +363,8 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
             throw new IllegalArgumentException(msg);
         }
 
-        for (int i = 0; i < this.size(); i++)
+        for (SectorGeometry sg : this)
         {
-            SectorGeometry sg = this.get(i);
             if (sg.getSector().contains(latitude, longitude))
             {
                 Vec4 point = sg.getSurfacePoint(latitude, longitude, metersOffset);
@@ -394,10 +393,10 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
             throw new IllegalArgumentException(msg);
         }
 
-        ArrayList<SectorGeometry> sglist = new ArrayList<SectorGeometry>(this);
+        ArrayList<SectorGeometry> sglist = new ArrayList<>(this);
 
         Intersection[] hits;
-        ArrayList<Intersection> list = new ArrayList<Intersection>();
+        ArrayList<Intersection> list = new ArrayList<>();
         for (SectorGeometry sg : sglist)
         {
             if (sg.getExtent().intersects(line))
@@ -413,23 +412,19 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
         list.toArray(hits);
 
         final Vec4 origin = line.getOrigin();
-        Arrays.sort(hits, new Comparator<Intersection>()
-        {
-            public int compare(Intersection i1, Intersection i2)
-            {
-                if (i1 == null && i2 == null)
-                    return 0;
-                if (i2 == null)
-                    return -1;
-                if (i1 == null)
-                    return 1;
+        Arrays.sort(hits, (i1, i2) -> {
+            if (i1 == null && i2 == null)
+                return 0;
+            if (i2 == null)
+                return -1;
+            if (i1 == null)
+                return 1;
 
-                Vec4 v1 = i1.getIntersectionPoint();
-                Vec4 v2 = i2.getIntersectionPoint();
-                double d1 = origin.distanceTo3(v1);
-                double d2 = origin.distanceTo3(v2);
-                return Double.compare(d1, d2);
-            }
+            Vec4 v1 = i1.getIntersectionPoint();
+            Vec4 v2 = i2.getIntersectionPoint();
+            double d1 = origin.distanceTo3(v1);
+            double d2 = origin.distanceTo3(v2);
+            return Double.compare(d1, d2);
         });
         return hits;
     }
@@ -457,10 +452,10 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
             throw new IllegalArgumentException(message);
         }
 
-        ArrayList<SectorGeometry> sglist = new ArrayList<SectorGeometry>(this);
+        ArrayList<SectorGeometry> sglist = new ArrayList<>(this);
 
         Intersection[] hits;
-        ArrayList<Intersection> list = new ArrayList<Intersection>();
+        ArrayList<Intersection> list = new ArrayList<>();
         for (SectorGeometry sg : sglist)
         {
             if (sector.intersects(sg.getSector()))

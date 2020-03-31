@@ -49,9 +49,9 @@ public class ObjectAnimations extends ApplicationTemplate {
 
     private static void printIdTable(AbstractXMLEventParser root) {
         Map<String, Object> colladaMap = root.getParserContext().getIdTable();
-        for (String key : colladaMap.keySet()) {
-            Object v = colladaMap.get(key);
-            System.out.println(key + ":" + v);
+        for (Map.Entry<String, Object> entry : colladaMap.entrySet()) {
+            Object v = entry.getValue();
+            System.out.println(entry.getKey() + ":" + v);
             if (v instanceof AbstractXMLEventParser) {
                 printFields("  ", (AbstractXMLEventParser) v);
             }
@@ -273,22 +273,19 @@ public class ObjectAnimations extends ApplicationTemplate {
             fpsText.getAttributes().setDefaults(fpsAttrs);
             layer.addRenderable(fpsText);
             WorldWindow wwd = this.getWwd();
-            wwd.addRenderingListener(new RenderingListener() {
-                @Override
-                public void stageChanged(RenderingEvent event) {
-                    long now = System.currentTimeMillis();
-                    if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)
-                            && event.getSource() instanceof WorldWindow && now - lastUpdate > updateInterval) {
-                        EventQueue.invokeLater(() -> {
-                            Collection<PerformanceStatistic> pfs = wwd.getPerFrameStatistics();
-                            pfs.forEach((perf) -> {
-                                if (perf.getKey().equals(PerformanceStatistic.FRAME_RATE)) {
-                                    fpsText.setText(perf.getDisplayString() + ": " + perf.getValue());
-                                }
-                            });
+            wwd.addRenderingListener(event -> {
+                long now = System.currentTimeMillis();
+                if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)
+                        && event.getSource() instanceof WorldWindow && now - lastUpdate > updateInterval) {
+                    EventQueue.invokeLater(() -> {
+                        Collection<PerformanceStatistic> pfs = wwd.getPerFrameStatistics();
+                        pfs.forEach((perf) -> {
+                            if (perf.getKey().equals(PerformanceStatistic.FRAME_RATE)) {
+                                fpsText.setText(perf.getDisplayString() + ": " + perf.getValue());
+                            }
                         });
-                        lastUpdate = now;
-                    }
+                    });
+                    lastUpdate = now;
                 }
             });
         }
@@ -329,9 +326,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             public ViewControlPanel(WorldWindow wwd) {
                 this.wwd = wwd;
                 // Add view property listener
-                this.wwd.getView().addPropertyChangeListener((PropertyChangeEvent propertyChangeEvent) -> {
-                    update();
-                });
+                this.wwd.getView().addPropertyChangeListener((PropertyChangeEvent propertyChangeEvent) -> update());
 
                 // Compose panel
                 this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -343,9 +338,7 @@ public class ObjectAnimations extends ApplicationTemplate {
                 pitchPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
                 pitchPanel.add(new JLabel("Pitch:"));
                 pitchSlider = new JSlider(0, 180, 90);
-                pitchSlider.addChangeListener((ChangeEvent changeEvent) -> {
-                    updateView();
-                });
+                pitchSlider.addChangeListener((ChangeEvent changeEvent) -> updateView());
                 pitchPanel.add(pitchSlider);
 
                 // Heading slider
@@ -353,9 +346,7 @@ public class ObjectAnimations extends ApplicationTemplate {
                 headingPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
                 headingPanel.add(new JLabel("Heading:"));
                 headingSlider = new JSlider(-180, 180, 0);
-                headingSlider.addChangeListener((ChangeEvent changeEvent) -> {
-                    updateView();
-                });
+                headingSlider.addChangeListener((ChangeEvent changeEvent) -> updateView());
                 headingPanel.add(headingSlider);
 
                 // Roll slider
@@ -363,9 +354,7 @@ public class ObjectAnimations extends ApplicationTemplate {
                 rollPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
                 rollPanel.add(new JLabel("Roll:"));
                 rollSlider = new JSlider(-180, 180, 0);
-                rollSlider.addChangeListener((ChangeEvent changeEvent) -> {
-                    updateView();
-                });
+                rollSlider.addChangeListener((ChangeEvent changeEvent) -> updateView());
                 rollPanel.add(rollSlider);
 
                 // Field of view slider
@@ -373,9 +362,7 @@ public class ObjectAnimations extends ApplicationTemplate {
                 fovPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
                 fovPanel.add(new JLabel("Field of view:"));
                 fovSlider = new JSlider(10, 120, 45);
-                fovSlider.addChangeListener((ChangeEvent changeEvent) -> {
-                    updateView();
-                });
+                fovSlider.addChangeListener((ChangeEvent changeEvent) -> updateView());
                 fovPanel.add(fovSlider);
 
                 // Assembly

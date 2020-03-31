@@ -19,7 +19,7 @@ import java.util.*;
 public class WCS100RequestDescription extends AbstractXMLEventParser
 {
     protected String requestName;
-    protected List<WCS100DCPType> dcpTypes = new ArrayList<WCS100DCPType>(2);
+    protected final List<WCS100DCPType> dcpTypes = new ArrayList<>(2);
 
     public WCS100RequestDescription(String namespaceURI)
     {
@@ -50,7 +50,7 @@ public class WCS100RequestDescription extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WCS100DCPType)
+                if (o instanceof WCS100DCPType)
                     this.dcpTypes.add((WCS100DCPType) o);
             }
         }

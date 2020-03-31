@@ -18,8 +18,8 @@ import java.util.*;
  */
 public class WCS100Values extends AbstractXMLEventParser
 {
-    protected List<WCS100SingleValue> singleValues = new ArrayList<WCS100SingleValue>(1);
-    private final List<WCS100Interval> intervals = new ArrayList<WCS100Interval>(1);
+    protected final List<WCS100SingleValue> singleValues = new ArrayList<>(1);
+    private final List<WCS100Interval> intervals = new ArrayList<>(1);
 
     public WCS100Values(String namespaceURI)
     {
@@ -60,7 +60,7 @@ public class WCS100Values extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WCS100SingleValue)
+                if (o instanceof WCS100SingleValue)
                     this.singleValues.add((WCS100SingleValue) o);
             }
         }
@@ -70,7 +70,7 @@ public class WCS100Values extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WCS100Interval)
+                if (o instanceof WCS100Interval)
                     this.intervals.add((WCS100Interval) o);
             }
         }

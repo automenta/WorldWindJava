@@ -45,7 +45,7 @@ public class Encirclement extends BasicArea
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_SPL_ARA_ENCMT);
+        return Collections.singletonList(TacGrpSidc.C2GM_SPL_ARA_ENCMT);
     }
 
     /**
@@ -168,7 +168,7 @@ public class Encirclement extends BasicArea
     protected void generateIntermediatePositions(DrawContext dc, Iterable<? extends Position> positions)
     {
         Globe globe = dc.getGlobe();
-        List<Position> wavePositions = new ArrayList<Position>();
+        List<Position> wavePositions = new ArrayList<>();
 
         double waveLength = this.getWaveLength();
         if (waveLength == 0)

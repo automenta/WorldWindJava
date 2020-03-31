@@ -44,13 +44,14 @@ public class HTTPRetriever extends URLRetriever {
         this.responseMessage = htpc.getResponseMessage();
         String contentType = connection.getContentType();
 
-        Logging.logger().log(Level.FINE, "HTTPRetriever.ResponseInfo", new Object[]{this.responseCode,
-            connection.getContentLength(), contentType != null ? contentType : "content type not returned",
+        Logging.logger().log(Level.FINE, "HTTPRetriever.response",
+            new Object[]{this.responseCode,
+            connection.getContentLength(),
+            contentType != null ? contentType : "content type not returned",
             connection.getURL()});
 
         if (this.responseCode == HttpURLConnection.HTTP_OK) {
-            ByteBuffer bb = super.doRead(connection);
-            return bb;
+            return super.doRead(connection);
         }
 
         return null;

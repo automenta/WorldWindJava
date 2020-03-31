@@ -47,7 +47,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter
 
     protected boolean doCanWrite(DataRaster raster, String formatSuffix, File file)
     {
-        return (raster != null) && (raster instanceof ByteBufferRaster);
+        return (raster instanceof ByteBufferRaster);
     }
 
     protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException
@@ -96,8 +96,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter
         double xLocation = sector.getMinLongitude().degrees;
         double yLocation = sector.getMaxLatitude().degrees;
 
-        java.io.PrintWriter out = new java.io.PrintWriter(file);
-        try
+        try (PrintWriter out = new PrintWriter(file))
         {
             out.println(xPixelSize);
             out.println(xCoeff);
@@ -108,10 +107,6 @@ public class BILRasterWriter extends AbstractDataRasterWriter
             out.println(xLocation);
             //noinspection SuspiciousNameCombination
             out.println(yLocation);
-        }
-        finally
-        {
-            out.close();
         }
     }
 
@@ -131,8 +126,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter
 
         int rowBytes = size[0] * (nBits / 8);
 
-        java.io.PrintWriter out = new java.io.PrintWriter(file);
-        try
+        try (PrintWriter out = new PrintWriter(file))
         {
             out.append("BYTEORDER      ").println(AVKey.BIG_ENDIAN.equals(byteOrder) ? "M" : "I");
             out.append("LAYOUT         ").println("BIL");
@@ -149,10 +143,6 @@ public class BILRasterWriter extends AbstractDataRasterWriter
             Object o = values.getValue(AVKey.MISSING_DATA_REPLACEMENT);
             if (o != null)
                 out.append("NODATA         ").println(o);
-        }
-        finally
-        {
-            out.close();
         }
     }
 
@@ -202,16 +192,16 @@ public class BILRasterWriter extends AbstractDataRasterWriter
         StringBuilder sb = new StringBuilder();
 
         Object o = worldFileParams.getValue(WorldFile.WORLD_FILE_IMAGE_SIZE);
-        if (o == null || !(o instanceof int[]))
+        if (!(o instanceof int[]))
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("WorldFile.NoSizeSpecified", dataSource));
 
         o = worldFileParams.getValue(AVKey.SECTOR);
-        if (o == null || !(o instanceof Sector))
+        if (!(o instanceof Sector))
             sb.append(sb.length() > 0 ? ", " : "").append(
                 Logging.getMessage("WorldFile.NoSectorSpecified", dataSource));
 
         o = worldFileParams.getValue(AVKey.BYTE_ORDER);
-        if (o == null || !(o instanceof String))
+        if (!(o instanceof String))
             sb.append(sb.length() > 0 ? ", " : "").append(
                 Logging.getMessage("WorldFile.NoByteOrderSpecified", dataSource));
 

@@ -22,7 +22,7 @@ import java.awt.event.*;
 public class TreeHotSpot extends AbstractHotSpot
 {
     /** The parent HotSpot, or null if this TreeHotSpot has no parent. */
-    protected HotSpot parent;
+    protected final HotSpot parent;
 
     /**
      * Create a hot spot.

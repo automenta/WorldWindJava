@@ -23,7 +23,7 @@ import java.util.*;
  */
 public class FileSetFinder
 {
-    FileSetMap fileSetMap = new FileSetMap();
+    final FileSetMap fileSetMap = new FileSetMap();
 
     public FileSetMap getFileSetMap()
     {
@@ -118,7 +118,7 @@ public class FileSetFinder
         // Open the data set and extract metadata needed by the data installer panel.
 
         DataRasterReaderFactory readerFactory = DataInstaller.getReaderFactory();
-        List<Sector> fileSectors = new ArrayList<Sector>(fileSet.getLength());
+        List<Sector> fileSectors = new ArrayList<>(fileSet.getLength());
 
         Sector sector = null;
         for (File file : fileSet.getFiles())
@@ -177,9 +177,9 @@ public class FileSetFinder
 
     protected static class FileSetKey
     {
-        protected String suffix;
-        protected String dataType;
-        protected File parentDirectory;
+        protected final String suffix;
+        protected final String dataType;
+        protected final File parentDirectory;
 
         public FileSetKey(File file, String dataType)
         {
@@ -198,11 +198,11 @@ public class FileSetFinder
 
             FileSetKey that = (FileSetKey) o;
 
-            if (dataType != null ? !dataType.equals(that.dataType) : that.dataType != null)
+            if (!Objects.equals(dataType, that.dataType))
                 return false;
-            if (parentDirectory != null ? !parentDirectory.equals(that.parentDirectory) : that.parentDirectory != null)
+            if (!Objects.equals(parentDirectory, that.parentDirectory))
                 return false;
-            return suffix != null ? suffix.equals(that.suffix) : that.suffix == null;
+            return Objects.equals(suffix, that.suffix);
         }
 
         @Override
@@ -221,7 +221,7 @@ public class FileSetFinder
             return fileSets;
 
         FileSetMap map = new FileSetMap();
-        List<FileSet> commonFilesets =  new ArrayList<FileSet>();
+        List<FileSet> commonFilesets = new ArrayList<>();
 
         for (FileSet fs : fileSets)
         {

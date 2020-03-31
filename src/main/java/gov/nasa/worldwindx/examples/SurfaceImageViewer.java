@@ -11,7 +11,6 @@ import gov.nasa.worldwind.terrain.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -66,7 +65,7 @@ public class SurfaceImageViewer extends ApplicationTemplate
             }
         }
 
-        Action openElevationsAction = new AbstractAction("Open Elevation File...")
+        final Action openElevationsAction = new AbstractAction("Open Elevation File...")
         {
             public void actionPerformed(ActionEvent e)
             {
@@ -78,22 +77,18 @@ public class SurfaceImageViewer extends ApplicationTemplate
                 if (imageFile == null)
                     return;
 
-                Thread t = new Thread(new Runnable()
-                {
-                    public void run()
+                Thread t = new Thread(() -> {
+                    try
                     {
-                        try
-                        {
-                            CompoundElevationModel cem
-                                = (CompoundElevationModel) getWwd().getModel().getGlobe().getElevationModel();
-                            LocalElevationModel em = new LocalElevationModel();
-                            em.addElevations(imageFile.getPath());
-                            cem.addElevationModel(em);
-                        }
-                        catch (IOException e1)
-                        {
-                            e1.printStackTrace();
-                        }
+                        CompoundElevationModel cem
+                            = (CompoundElevationModel) getWwd().getModel().getGlobe().getElevationModel();
+                        LocalElevationModel em = new LocalElevationModel();
+                        em.addElevations(imageFile.getPath());
+                        cem.addElevationModel(em);
+                    }
+                    catch (IOException e1)
+                    {
+                        e1.printStackTrace();
                     }
                 });
                 t.setPriority(Thread.MIN_PRIORITY);
@@ -101,7 +96,7 @@ public class SurfaceImageViewer extends ApplicationTemplate
             }
         };
 
-        Action openImageAction = new AbstractAction("Open Image File...")
+        final Action openImageAction = new AbstractAction("Open Image File...")
         {
             public void actionPerformed(ActionEvent actionEvent)
             {
@@ -113,24 +108,20 @@ public class SurfaceImageViewer extends ApplicationTemplate
                 if (imageFile == null)
                     return;
 
-                Thread t = new Thread(new Runnable()
-                {
-                    public void run()
+                Thread t = new Thread(() -> {
+//                    try
                     {
-                        try
-                        {
-                            statusLabel.setText("status: Loading image");
-                            // TODO: proper threading
-                            layer.addImage(imageFile.getAbsolutePath());
+                        statusLabel.setText("status: Loading image");
+                        // TODO: proper threading
+                        layer.addImage(imageFile.getAbsolutePath());
 
-                            getWwd().redraw();
-                            statusLabel.setText("status: ready");
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
+                        getWwd().redraw();
+                        statusLabel.setText("status: ready");
                     }
+//                    catch (IOException e)
+//                    {
+//                        e.printStackTrace();
+//                    }
                 });
                 t.setPriority(Thread.MIN_PRIORITY);
                 t.start();
@@ -147,14 +138,10 @@ public class SurfaceImageViewer extends ApplicationTemplate
             this.opacitySlider.setMaximum(100);
             this.opacitySlider.setValue((int) (layer.getOpacity() * 100));
             this.opacitySlider.setEnabled(true);
-            this.opacitySlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent e)
-                {
-                    int value = opacitySlider.getValue();
-                    layer.setOpacity(value / 100d);
-                    getWwd().redraw();
-                }
+            this.opacitySlider.addChangeListener(e -> {
+                int value = opacitySlider.getValue();
+                layer.setOpacity(value / 100d);
+                getWwd().redraw();
             });
             JPanel opacityPanel = new JPanel(new BorderLayout(5, 5));
             opacityPanel.setBorder(new EmptyBorder(0, 10, 0, 0));

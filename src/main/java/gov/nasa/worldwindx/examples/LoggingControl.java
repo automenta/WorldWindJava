@@ -51,7 +51,7 @@ public class LoggingControl extends ApplicationTemplate
         public void publish(LogRecord logRecord)
         {
             // Just redirect the record to ConsoleHandler for printing.
-            System.out.printf("Hey, this came from Me!\n");
+            System.out.print("Hey, this came from Me!\n");
             super.publish(logRecord);
         }
     }

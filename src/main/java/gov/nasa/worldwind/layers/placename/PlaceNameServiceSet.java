@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class PlaceNameServiceSet extends WWObjectImpl implements AVList
 {
-    private final List<PlaceNameService> serviceList = new LinkedList<PlaceNameService>();
+    private final List<PlaceNameService> serviceList = new LinkedList<>();
     private long expiryTime = 0;
 
     public PlaceNameServiceSet()
@@ -112,10 +112,10 @@ public class PlaceNameServiceSet extends WWObjectImpl implements AVList
 
     public PlaceNameService getService(String name)
     {
-        for (int i = 0; i < this.serviceList.size(); i++)
+        for (PlaceNameService placeNameService : this.serviceList)
         {
-            if (this.serviceList.get(i).getDataset().equalsIgnoreCase(name))
-                return this.serviceList.get(i);
+            if (placeNameService.getDataset().equalsIgnoreCase(name))
+                return placeNameService;
         }
 
         return null;

@@ -24,7 +24,7 @@ import java.net.*;
  */
 public class WCS100Capabilities extends AbstractXMLEventParser
 {
-    protected XMLEventReader eventReader;
+    protected final XMLEventReader eventReader;
     protected XMLEventParserContext parserContext;
 
     /**
@@ -33,13 +33,8 @@ public class WCS100Capabilities extends AbstractXMLEventParser
      * @param uri The URI of the server.
      *
      * @return The WCS capabilities document for the specified server.
-     * @throws java.lang.Exception if a general error occurs.
-     *
-     * @throws IllegalArgumentException if the specified URI is invalid.
-     * @throws gov.nasa.worldwind.exception.WWRuntimeException
-     *                                  if an error occurs retrieving the document.
      */
-    public static WCS100Capabilities retrieve(URI uri) throws Exception
+    public static WCS100Capabilities retrieve(URI uri)
     {
         try
         {

@@ -56,18 +56,14 @@ public class ScreenShots extends JFrame
     public static void main(String[] args)
     {
         // Swing components should always be instantiated on the event dispatch thread.
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                ScreenShots frame = new ScreenShots();
+        java.awt.EventQueue.invokeLater(() -> {
+            ScreenShots frame = new ScreenShots();
 
-                frame.setJMenuBar(frame.createMenuBar()); // Create menu and associate with frame
+            frame.setJMenuBar(frame.createMenuBar()); // Create menu and associate with frame
 
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.pack();
-                frame.setVisible(true);
-            }
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.pack();
+            frame.setVisible(true);
         });
     }
 }

@@ -13,7 +13,7 @@ import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 /**
  * Defines a globe modeled as an <a href="http://mathworld.wolfram.com/Ellipsoid.html" target="_blank">ellipsoid</a>.
@@ -123,12 +123,11 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe
 
             if (Double.compare(stateKey.verticalExaggeration, verticalExaggeration) != 0)
                 return false;
-            if (elevationModel != null ? !elevationModel.equals(stateKey.elevationModel) :
-                stateKey.elevationModel != null)
+            if (!Objects.equals(elevationModel, stateKey.elevationModel))
                 return false;
-            if (globe != null ? !globe.equals(stateKey.globe) : stateKey.globe != null)
+            if (!Objects.equals(globe, stateKey.globe))
                 return false;
-            if (tessellator != null ? !tessellator.equals(stateKey.tessellator) : stateKey.tessellator != null)
+            if (!Objects.equals(tessellator, stateKey.tessellator))
                 return false;
 
             return true;

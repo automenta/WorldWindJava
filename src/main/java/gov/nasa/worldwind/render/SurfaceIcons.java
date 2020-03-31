@@ -96,7 +96,7 @@ public class SurfaceIcons extends SurfaceIcon
 
     protected Iterable<? extends LatLon> computeDrawLocations(DrawContext dc, SurfaceTileDrawContext sdc)
     {
-        ArrayList<LatLon> drawList = new ArrayList<LatLon>();
+        ArrayList<LatLon> drawList = new ArrayList<>();
         double safeDistanceDegreesSquared = Math.pow(this.computeSafeRadius(dc, sdc).degrees, 2);
         for (LatLon location : this.getLocations())
         {

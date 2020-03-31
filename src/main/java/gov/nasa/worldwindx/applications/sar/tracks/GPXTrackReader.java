@@ -35,7 +35,7 @@ public class GPXTrackReader extends AbstractTrackReader
         {
             GpxReader reader = new GpxReader();
             reader.readStream(inputStream);
-            return this.asArray(reader.getTracks());
+            return AbstractTrackReader.asArray(reader.getTracks());
         }
         catch (ParserConfigurationException e)
         {

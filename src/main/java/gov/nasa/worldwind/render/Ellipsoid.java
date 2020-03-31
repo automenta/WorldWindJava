@@ -15,7 +15,6 @@ import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.*;
 
 /**
@@ -435,7 +434,7 @@ public class Ellipsoid extends RigidShape
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void doExportAsKML(XMLStreamWriter xmlWriter)
     {
         String message = Logging.getMessage("generic.UnsupportedOperation", "doExportAsKML");
         Logging.logger().severe(message);

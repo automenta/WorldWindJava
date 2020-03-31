@@ -83,9 +83,9 @@ public class AirspaceBuilder extends ApplicationTemplate {
     //**************************************************************//
     protected static class AirspaceEntry extends WWObjectImpl {
 
-        protected Airspace airspace;
-        protected AirspaceEditor editor;
-        protected AirspaceAttributes attributes;
+        protected final Airspace airspace;
+        protected final AirspaceEditor editor;
+        protected final AirspaceAttributes attributes;
         protected boolean editing = false;
         protected boolean selected = false;
         protected boolean intersecting = false;
@@ -181,11 +181,11 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
     protected static class AirspaceBuilderModel extends AbstractTableModel {
 
-        protected static String[] columnName = {"Name"};
-        protected static Class[] columnClass = {String.class};
-        protected static String[] columnAttribute = {AVKey.DISPLAY_NAME};
+        protected static final String[] columnName = {"Name"};
+        protected static final Class[] columnClass = {String.class};
+        protected static final String[] columnAttribute = {AVKey.DISPLAY_NAME};
 
-        protected ArrayList<AirspaceEntry> entryList = new ArrayList<>();
+        protected final ArrayList<AirspaceEntry> entryList = new ArrayList<>();
 
         public AirspaceBuilderModel() {
         }
@@ -275,7 +275,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         }
     }
 
-    protected static AirspaceFactory[] defaultAirspaceFactories = new AirspaceFactory[]{
+    protected static final AirspaceFactory[] defaultAirspaceFactories = new AirspaceFactory[]{
         new PolygonAirspaceFactory(),
         new SphereAirspaceFactory()
     };
@@ -598,11 +598,11 @@ public class AirspaceBuilder extends ApplicationTemplate {
     protected static class AirspaceBuilderController extends WWObjectImpl implements ActionListener, MouseListener,
             AirspaceEditListener {
 
-        protected AppFrame app;
+        protected final AppFrame app;
         protected AirspaceBuilderModel model;
         protected AirspaceBuilderPanel view;
         protected AirspaceEntry selectedEntry;
-        protected AirspaceEditorController editorController;
+        protected final AirspaceEditorController editorController;
         protected boolean enabled = true;
         protected boolean enableEdit = true;
         protected boolean resizeNewShapes;
@@ -1262,10 +1262,10 @@ public class AirspaceBuilder extends ApplicationTemplate {
     protected static class AppFrame extends ApplicationTemplate.AppFrame {
 
         // Airspace layer and editor UI components.
-        protected RenderableLayer airspaceLayer;
-        protected AirspaceBuilderModel builderModel;
-        protected AirspaceBuilderPanel builderView;
-        protected AirspaceBuilderController builderController;
+        protected final RenderableLayer airspaceLayer;
+        protected final AirspaceBuilderModel builderModel;
+        protected final AirspaceBuilderPanel builderView;
+        protected final AirspaceBuilderController builderController;
 
         public AppFrame() {
             this.airspaceLayer = new RenderableLayer();
@@ -1332,9 +1332,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
                 JMenu subMenu = new JMenu("New");
                 for (final AirspaceFactory factory : defaultAirspaceFactories) {
                     JMenuItem item = new JMenuItem(factory.toString());
-                    item.addActionListener((ActionEvent e) -> {
-                        controller.createNewEntry(factory);
-                    });
+                    item.addActionListener((ActionEvent e) -> controller.createNewEntry(factory));
                     subMenu.add(item);
                 }
                 menu.add(subMenu);

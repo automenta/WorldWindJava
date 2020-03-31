@@ -28,7 +28,7 @@ public class PerformanceStatistic implements Comparable<PerformanceStatistic>
     public static final String JVM_HEAP_USED = "gov.nasa.worldwind.perfstat.JvmHeapUsed";
     public static final String TEXTURE_CACHE = "gov.nasa.worldwind.perfstat.TextureCache";
 
-    public static final Set<String> ALL_STATISTICS_SET = new HashSet<String>(1);
+    public static final Set<String> ALL_STATISTICS_SET = new HashSet<>(1);
     static
     {
         ALL_STATISTICS_SET.add(PerformanceStatistic.ALL);
@@ -83,12 +83,12 @@ public class PerformanceStatistic implements Comparable<PerformanceStatistic>
 
         PerformanceStatistic that = (PerformanceStatistic) o;
 
-        if (displayString != null ? !displayString.equals(that.displayString) : that.displayString != null)
+        if (!Objects.equals(displayString, that.displayString))
             return false;
-        if (key != null ? !key.equals(that.key) : that.key != null)
+        if (!Objects.equals(key, that.key))
             return false;
         //noinspection RedundantIfStatement
-        if (value != null ? !value.equals(that.value) : that.value != null)
+        if (!Objects.equals(value, that.value))
             return false;
 
         return true;

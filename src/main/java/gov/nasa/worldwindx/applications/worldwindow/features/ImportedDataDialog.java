@@ -19,7 +19,6 @@ import org.w3c.dom.*;
 import javax.swing.*;
 import javax.xml.xpath.XPath;
 import java.awt.*;
-import java.awt.event.*;
 import java.beans.*;
 import java.io.File;
 import java.util.TimerTask;
@@ -76,13 +75,7 @@ public class ImportedDataDialog extends AbstractFeatureDialog implements Network
 
     protected void loadPreviouslyImportedData()
     {
-        Thread t = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                loadImportedDataFromFileStore(fileStore, dataConfigPanel);
-            }
-        });
+        Thread t = new Thread(() -> loadImportedDataFromFileStore(fileStore, dataConfigPanel));
         t.start();
     }
 
@@ -108,45 +101,36 @@ public class ImportedDataDialog extends AbstractFeatureDialog implements Network
         fc.setMultiSelectionEnabled(true);
         fc.setDialogTitle("");
 
-        this.importThread = new Thread(new Runnable()
-        {
-            public void run()
+        this.importThread = new Thread(() -> {
+            getController().getNetworkActivitySignal().addNetworkUser(ImportedDataDialog.this);
+
+            try
             {
-                getController().getNetworkActivitySignal().addNetworkUser(ImportedDataDialog.this);
+                Document dataConfig = null;
 
                 try
                 {
-                    Document dataConfig = null;
-
-                    try
-                    {
-                        // Import the file into a form usable by WorldWind components.
-                        dataConfig = importDataFromFile(ImportedDataDialog.this.dialog, file, fileStore);
-                    }
-                    catch (Exception e)
-                    {
-                        final String message = e.getMessage();
-
-                        // Show a message dialog indicating that the import failed, and why.
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            public void run()
-                            {
-                                JOptionPane.showMessageDialog(ImportedDataDialog.this.dialog, message, "Import Error",
-                                    JOptionPane.ERROR_MESSAGE);
-                            }
-                        });
-                    }
-
-                    if (dataConfig != null)
-                    {
-                        addImportedData(dataConfig, null, dataConfigPanel);
-                    }
+                    // Import the file into a form usable by WorldWind components.
+                    dataConfig = importDataFromFile(ImportedDataDialog.this.dialog, file, fileStore);
                 }
-                finally
+                catch (Exception e)
                 {
-                    controller.getNetworkActivitySignal().removeNetworkUser(ImportedDataDialog.this);
+                    final String message = e.getMessage();
+
+                    // Show a message dialog indicating that the import failed, and why.
+                    SwingUtilities.invokeLater(
+                        () -> JOptionPane.showMessageDialog(ImportedDataDialog.this.dialog, message, "Import Error",
+                            JOptionPane.ERROR_MESSAGE));
                 }
+
+                if (dataConfig != null)
+                {
+                    addImportedData(dataConfig, null, dataConfigPanel);
+                }
+            }
+            finally
+            {
+                controller.getNetworkActivitySignal().removeNetworkUser(ImportedDataDialog.this);
             }
         });
 
@@ -164,13 +148,7 @@ public class ImportedDataDialog extends AbstractFeatureDialog implements Network
         this.getJDialog().setResizable(true);
 
         JButton importButton = new JButton("Import...");
-        importButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                importFromFile();
-            }
-        });
+        importButton.addActionListener(e -> importFromFile());
         this.insertLeftDialogComponent(importButton);
 
         this.dialog.setPreferredSize(new Dimension(400, 400));
@@ -183,13 +161,7 @@ public class ImportedDataDialog extends AbstractFeatureDialog implements Network
     {
         if (!SwingUtilities.isEventDispatchThread())
         {
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    addImportedData(dataConfig, params, panel);
-                }
-            });
+            SwingUtilities.invokeLater(() -> addImportedData(dataConfig, params, panel));
         }
         else
         {
@@ -296,16 +268,12 @@ public class ImportedDataDialog extends AbstractFeatureDialog implements Network
 
         // Configure the ProgressMonitor to receive progress events from the DataStoreProducer. This stops sending
         // progress events when the user clicks the "Cancel" button, ensuring that the ProgressMonitor does not
-        PropertyChangeListener progressListener = new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent evt)
-            {
-                if (progressMonitor.isCanceled())
-                    return;
+        PropertyChangeListener progressListener = evt -> {
+            if (progressMonitor.isCanceled())
+                return;
 
-                if (evt.getPropertyName().equals(AVKey.PROGRESS))
-                    progress.set((int) (100 * (Double) evt.getNewValue()));
-            }
+            if (evt.getPropertyName().equals(AVKey.PROGRESS))
+                progress.set((int) (100 * (Double) evt.getNewValue()));
         };
         producer.addPropertyChangeListener(progressListener);
         progressMonitor.setProgress(0);
@@ -396,7 +364,7 @@ public class ImportedDataDialog extends AbstractFeatureDialog implements Network
         if (results != null && results.iterator() != null && results.iterator().hasNext())
         {
             Object o = results.iterator().next();
-            if (o != null && o instanceof Document)
+            if (o instanceof Document)
             {
                 return (Document) o;
             }

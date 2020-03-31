@@ -665,13 +665,7 @@ public class VecBuffer
      */
     public Iterable<double[]> getCoords(final int minCoordsPerVec)
     {
-        return new Iterable<double[]>()
-        {
-            public Iterator<double[]> iterator()
-            {
-                return new BasicIterator<double[]>(new CoordAccessor(minCoordsPerVec));
-            }
-        };
+        return () -> new BasicIterator<>(new CoordAccessor(minCoordsPerVec));
     }
 
     /**
@@ -686,13 +680,7 @@ public class VecBuffer
      */
     public Iterable<double[]> getReverseCoords(final int minCoordsPerVec)
     {
-        return new Iterable<double[]>()
-        {
-            public Iterator<double[]> iterator()
-            {
-                return new ReverseIterator<double[]>(new CoordAccessor(minCoordsPerVec));
-            }
-        };
+        return () -> new ReverseIterator<>(new CoordAccessor(minCoordsPerVec));
     }
 
     /**
@@ -739,13 +727,7 @@ public class VecBuffer
      */
     public Iterable<Vec4> getVectors()
     {
-        return new Iterable<Vec4>()
-        {
-            public Iterator<Vec4> iterator()
-            {
-                return new BasicIterator<Vec4>(new VectorAccessor());
-            }
-        };
+        return () -> new BasicIterator<>(new VectorAccessor());
     }
 
     /**
@@ -755,13 +737,7 @@ public class VecBuffer
      */
     public Iterable<Vec4> getReverseVectors()
     {
-        return new Iterable<Vec4>()
-        {
-            public Iterator<Vec4> iterator()
-            {
-                return new ReverseIterator<Vec4>(new VectorAccessor());
-            }
-        };
+        return () -> new ReverseIterator<>(new VectorAccessor());
     }
 
     /**
@@ -803,13 +779,7 @@ public class VecBuffer
      */
     public Iterable<LatLon> getLocations()
     {
-        return new Iterable<LatLon>()
-        {
-            public Iterator<LatLon> iterator()
-            {
-                return new BasicIterator<LatLon>(new LocationAccessor());
-            }
-        };
+        return () -> new BasicIterator<>(new LocationAccessor());
     }
 
     /**
@@ -819,13 +789,7 @@ public class VecBuffer
      */
     public Iterable<LatLon> getReverseLocations()
     {
-        return new Iterable<LatLon>()
-        {
-            public Iterator<LatLon> iterator()
-            {
-                return new ReverseIterator<LatLon>(new LocationAccessor());
-            }
-        };
+        return () -> new ReverseIterator<>(new LocationAccessor());
     }
 
     /**
@@ -866,13 +830,7 @@ public class VecBuffer
      */
     public Iterable<Position> getPositions()
     {
-        return new Iterable<Position>()
-        {
-            public Iterator<Position> iterator()
-            {
-                return new BasicIterator<Position>(new PositionAccessor());
-            }
-        };
+        return () -> new BasicIterator<>(new PositionAccessor());
     }
 
     /**
@@ -882,13 +840,7 @@ public class VecBuffer
      */
     public Iterable<Position> getReversePositions()
     {
-        return new Iterable<Position>()
-        {
-            public Iterator<Position> iterator()
-            {
-                return new ReverseIterator<Position>(new PositionAccessor());
-            }
-        };
+        return () -> new ReverseIterator<>(new PositionAccessor());
     }
 
     /**
@@ -1100,7 +1052,7 @@ public class VecBuffer
     {
         protected int position;
         protected final int size;
-        protected ElementAccessor<T> accessor;
+        protected final ElementAccessor<T> accessor;
 
         public BasicIterator(ElementAccessor<T> accessor)
         {
@@ -1137,7 +1089,7 @@ public class VecBuffer
     protected class ReverseIterator<T> implements Iterator<T>
     {
         protected int position;
-        protected ElementAccessor<T> accessor;
+        protected final ElementAccessor<T> accessor;
 
         public ReverseIterator(ElementAccessor<T> accessor)
         {

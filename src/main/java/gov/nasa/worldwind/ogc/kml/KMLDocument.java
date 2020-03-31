@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class KMLDocument extends KMLAbstractContainer
 {
-    protected List<KMLSchema> schemas = new ArrayList<KMLSchema>();
+    protected final List<KMLSchema> schemas = new ArrayList<>();
 
     /**
      * Construct an instance.
@@ -80,7 +80,7 @@ public class KMLDocument extends KMLAbstractContainer
     protected void mergeSchemas(KMLDocument sourceDocument)
     {
         // Make a copy of the existing list so we can modify it as we traverse the copy.
-        List<KMLSchema> schemaListCopy = new ArrayList<KMLSchema>(this.getSchemas().size());
+        List<KMLSchema> schemaListCopy = new ArrayList<>(this.getSchemas().size());
         Collections.copy(schemaListCopy, this.getSchemas());
 
         for (KMLSchema sourceSchema : sourceDocument.getSchemas())

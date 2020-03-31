@@ -26,8 +26,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class GliderWorldWindow extends WorldWindowGLCanvas
 {
-    protected CopyOnWriteArraySet<GliderImage> imageTable = new CopyOnWriteArraySet<GliderImage>();
-    protected LayerListener layerListener = new LayerListener();
+    protected final CopyOnWriteArraySet<GliderImage> imageTable = new CopyOnWriteArraySet<>();
+    protected final LayerListener layerListener = new LayerListener();
 
     /**
      * Adds an image to display on the globe.
@@ -35,9 +35,8 @@ public class GliderWorldWindow extends WorldWindowGLCanvas
      * @param image the image to display
      *
      * @throws IllegalArgumentException if <code>image</code> is null.
-     * @throws IOException              if the image cannot be opened.
      */
-    public void addImage(GliderImage image) throws IOException
+    public void addImage(GliderImage image)
     {
         if (image == null)
         {

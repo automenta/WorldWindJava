@@ -12,7 +12,6 @@ import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -244,9 +243,7 @@ public abstract class AbstractGeneralShape extends AbstractShape
         if (refPos == null)
             return null;
 
-        Vec4 refPt = terrain.getSurfacePoint(refPos.getLatitude(), refPos.getLongitude(), 0);
-
-        return refPt;
+        return terrain.getSurfacePoint(refPos.getLatitude(), refPos.getLongitude(), 0);
     }
 
     /**
@@ -281,7 +278,7 @@ public abstract class AbstractGeneralShape extends AbstractShape
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void doExportAsKML(XMLStreamWriter xmlWriter)
     {
         String message = Logging.getMessage("unsupportedOperation.doExportAsKML");
         Logging.logger().severe(message);

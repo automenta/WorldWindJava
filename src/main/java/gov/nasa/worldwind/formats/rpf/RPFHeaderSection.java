@@ -16,16 +16,16 @@ class RPFHeaderSection
 {
     public static final String DATA_TAG = "RPFHDR";
 
-    public boolean  endianIndicator;
-    public short    headerLength;
-    public String   filename;
-    public short    updateIndicator; // new | replacement | update
-    public String   govSpecNumber;
-    public String   govSpecDate;
-    public String   securityClass;
-    public String   securityCountryCode;
-    public String   securityReleaseMark;
-    public int      locationSectionLocation;
+    public final boolean  endianIndicator;
+    public final short    headerLength;
+    public final String   filename;
+    public final short    updateIndicator; // new | replacement | update
+    public final String   govSpecNumber;
+    public final String   govSpecDate;
+    public final String   securityClass;
+    public final String   securityCountryCode;
+    public final String   securityReleaseMark;
+    public final int      locationSectionLocation;
 
     public RPFHeaderSection(java.nio.ByteBuffer buffer)
     {

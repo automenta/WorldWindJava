@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.geom.*;
 
-import java.util.Random;
+import java.util.*;
 
 /**
  * Large images and most imagery and elevation-data sets are subdivided in order to display visible portions quickly and
@@ -215,7 +215,7 @@ public class Tile implements Comparable<Tile>, Cacheable
     {
         String path = this.getPath();
 
-        return path.contains(".") ? path.substring(0, path.lastIndexOf(".")) : path;
+        return path.contains(".") ? path.substring(0, path.lastIndexOf('.')) : path;
     }
 
     public final Sector getSector()
@@ -346,7 +346,7 @@ public class Tile implements Comparable<Tile>, Cacheable
 
         final Tile tile = (Tile) o;
 
-        return !(tileKey != null ? !tileKey.equals(tile.tileKey) : tile.tileKey != null);
+        return Objects.equals(tileKey, tile.tileKey);
     }
 
     @Override

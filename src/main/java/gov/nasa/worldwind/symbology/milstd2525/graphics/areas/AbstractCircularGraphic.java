@@ -23,7 +23,7 @@ import java.util.*;
 public abstract class AbstractCircularGraphic extends AbstractMilStd2525TacticalGraphic
     implements TacticalCircle, PreRenderable
 {
-    protected SurfaceCircle circle;
+    protected final SurfaceCircle circle;
 
     /**
      * Create a new circular area.
@@ -112,7 +112,7 @@ public abstract class AbstractCircularGraphic extends AbstractMilStd2525Tactical
     /** {@inheritDoc} */
     public Iterable<? extends Position> getPositions()
     {
-        return Arrays.asList(new Position(this.circle.getCenter(), 0));
+        return Collections.singletonList(new Position(this.circle.getCenter(), 0));
     }
 
     /** {@inheritDoc} */

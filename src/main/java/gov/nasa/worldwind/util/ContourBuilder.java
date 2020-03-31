@@ -40,8 +40,8 @@ public class ContourBuilder
         public final int x;
         public final int y;
         public final int contourMask;
-        public final Map<Direction, Double> edgeWeights = new HashMap<Direction, Double>();
-        public final Set<Direction> visitedDirections = new HashSet<Direction>(4);
+        public final Map<Direction, Double> edgeWeights = new HashMap<>();
+        public final Set<Direction> visitedDirections = new HashSet<>(4);
 
         public CellInfo(int x, int y, int contourMask)
         {
@@ -89,14 +89,14 @@ public class ContourBuilder
     protected int width;
     protected int height;
     protected double[] values;
-    protected Map<CellKey, CellInfo> contourCellMap = new HashMap<CellKey, CellInfo>();
-    protected List<CellKey> contourCellList = new ArrayList<CellKey>();
-    protected List<List<double[]>> contourList = new ArrayList<List<double[]>>();
+    protected final Map<CellKey, CellInfo> contourCellMap = new HashMap<>();
+    protected final List<CellKey> contourCellList = new ArrayList<>();
+    protected final List<List<double[]>> contourList = new ArrayList<>();
     protected List<double[]> currentContour;
 
-    protected static Map<Direction, Direction> dirRev = new HashMap<Direction, Direction>();
-    protected static Map<Integer, LinkedHashMap<Direction, Direction>> dirNext
-        = new HashMap<Integer, LinkedHashMap<Direction, Direction>>();
+    protected static final Map<Direction, Direction> dirRev = new HashMap<>();
+    protected static final Map<Integer, LinkedHashMap<Direction, Direction>> dirNext
+        = new HashMap<>();
 
     static
     {
@@ -107,76 +107,76 @@ public class ContourBuilder
 
         // Use LinkedHaspMap to store the maps in dirNext in order to preserve enumeration order. The method
         // traverseContourCells requires that the directions are enumerated in the order listed here.
-        LinkedHashMap<Direction, Direction> map = new LinkedHashMap<Direction, Direction>();
+        LinkedHashMap<Direction, Direction> map = new LinkedHashMap<>();
         map.put(Direction.SOUTH, Direction.WEST);
         map.put(Direction.WEST, Direction.SOUTH);
         dirNext.put(1, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.SOUTH, Direction.EAST);
         map.put(Direction.EAST, Direction.SOUTH);
         dirNext.put(2, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.EAST, Direction.WEST);
         map.put(Direction.WEST, Direction.EAST);
         dirNext.put(3, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.EAST);
         map.put(Direction.EAST, Direction.NORTH);
         dirNext.put(4, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.WEST);
         map.put(Direction.WEST, Direction.NORTH);
         map.put(Direction.SOUTH, Direction.EAST);
         map.put(Direction.EAST, Direction.SOUTH);
         dirNext.put(5, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.SOUTH);
         map.put(Direction.SOUTH, Direction.NORTH);
         dirNext.put(6, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.WEST);
         map.put(Direction.WEST, Direction.NORTH);
         dirNext.put(7, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.WEST);
         map.put(Direction.WEST, Direction.NORTH);
         dirNext.put(8, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.SOUTH);
         map.put(Direction.SOUTH, Direction.NORTH);
         dirNext.put(9, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.EAST);
         map.put(Direction.EAST, Direction.NORTH);
         map.put(Direction.SOUTH, Direction.WEST);
         map.put(Direction.WEST, Direction.SOUTH);
         dirNext.put(10, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.NORTH, Direction.EAST);
         map.put(Direction.EAST, Direction.NORTH);
         dirNext.put(11, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.EAST, Direction.WEST);
         map.put(Direction.WEST, Direction.EAST);
         dirNext.put(12, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.SOUTH, Direction.EAST);
         map.put(Direction.EAST, Direction.SOUTH);
         dirNext.put(13, map);
 
-        map = new LinkedHashMap<Direction, Direction>();
+        map = new LinkedHashMap<>();
         map.put(Direction.SOUTH, Direction.WEST);
         map.put(Direction.WEST, Direction.SOUTH);
         dirNext.put(14, map);
@@ -251,7 +251,7 @@ public class ContourBuilder
         this.assembleContourCells(value);
         this.traverseContourCells();
 
-        List<List<double[]>> result = new ArrayList<List<double[]>>(this.contourList); // return a copy to insulate from changes
+        List<List<double[]>> result = new ArrayList<>(this.contourList); // return a copy to insulate from changes
 
         this.clearContourCells(); // clears contourList
 
@@ -302,11 +302,11 @@ public class ContourBuilder
         double deltaLat = sector.getDeltaLatDegrees();
         double deltaLon = sector.getDeltaLonDegrees();
 
-        List<List<Position>> result = new ArrayList<List<Position>>();
+        List<List<Position>> result = new ArrayList<>();
 
         for (List<double[]> coordList : this.contourList)
         {
-            ArrayList<Position> positionList = new ArrayList<Position>();
+            ArrayList<Position> positionList = new ArrayList<>();
 
             for (double[] coord : coordList)
             {
@@ -387,7 +387,7 @@ public class ContourBuilder
 
     protected void traverseContourCells()
     {
-        List<List<double[]>> contours = new ArrayList<List<double[]>>();
+        List<List<double[]>> contours = new ArrayList<>();
 
         this.contourList.clear();
 
@@ -402,7 +402,7 @@ public class ContourBuilder
                     continue;
                 }
 
-                this.currentContour = new ArrayList<double[]>();
+                this.currentContour = new ArrayList<>();
                 this.traverseContour(cell, dir);
                 contours.add(this.currentContour);
                 this.currentContour = null;

@@ -35,8 +35,8 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         protected final int density;
         protected final Vec4 referenceCenter; // all vertices are relative to this point
         protected final float[] vertices;
-        protected Position minElevation;
-        protected Position maxElevation;
+        protected final Position minElevation;
+        protected final Position maxElevation;
 
         protected RenderInfo(int density, float[] vertices, Vec4 refCenter, Position minElev, Position maxElev)
         {
@@ -65,7 +65,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
     {
         protected final Sector sector;
         protected final int density;
-        protected Extent extent; // extent of sector in object coordinates
+        protected final Extent extent; // extent of sector in object coordinates
         protected RenderInfo ri;
 
         public RectTile(Extent extent, int density, Sector sector)
@@ -93,7 +93,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
     protected int numRows;
     protected int numCols;
     protected MemoryCache geometryCache;
-    protected ThreadLocal<Long> startTime = new ThreadLocal<Long>();
+    protected final ThreadLocal<Long> startTime = new ThreadLocal<>();
 
     /**
      * Constructs a terrain object for a specified globe.
@@ -459,23 +459,18 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
             final Position pA = positions.get(i);
             final Position pB = positions.get(i + 1);
 
-            service.submit(new Runnable()
-            {
-                @Override
-                public void run()
+            service.submit(() -> {
+                try
                 {
-                    try
+                    Intersection[] intersections = intersect(pA, pB);
+                    if (intersections != null)
                     {
-                        Intersection[] intersections = intersect(pA, pB);
-                        if (intersections != null)
-                        {
-                            callback.intersection(pA, pB, intersections);
-                        }
+                        callback.intersection(pA, pB, intersections);
                     }
-                    catch (Exception e)
-                    {
-                        callback.exception(e);
-                    }
+                }
+                catch (Exception e)
+                {
+                    callback.exception(e);
                 }
             });
         }
@@ -584,7 +579,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         if (tiles == null || tiles.size() == 0)
             return null;
 
-        List<Sector> sectors = new ArrayList<Sector>(tiles.size());
+        List<Sector> sectors = new ArrayList<>(tiles.size());
 
         for (RectTile tile : tiles)
         {
@@ -747,7 +742,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
             return null;
 
         Intersection[] hits;
-        ArrayList<Intersection> list = new ArrayList<Intersection>();
+        ArrayList<Intersection> list = new ArrayList<>();
         for (RectTile tile : tiles)
         {
             if ((hits = this.intersect(tile, line)) != null)
@@ -764,23 +759,19 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
             return hits;
 
         final Vec4 origin = line.getOrigin();
-        Arrays.sort(hits, new Comparator<Intersection>()
-        {
-            public int compare(Intersection i1, Intersection i2)
-            {
-                if (i1 == null && i2 == null)
-                    return 0;
-                if (i2 == null)
-                    return -1;
-                if (i1 == null)
-                    return 1;
+        Arrays.sort(hits, (i1, i2) -> {
+            if (i1 == null && i2 == null)
+                return 0;
+            if (i2 == null)
+                return -1;
+            if (i1 == null)
+                return 1;
 
-                Vec4 v1 = i1.getIntersectionPoint();
-                Vec4 v2 = i2.getIntersectionPoint();
-                double d1 = origin.distanceTo3(v1);
-                double d2 = origin.distanceTo3(v2);
-                return Double.compare(d1, d2);
-            }
+            Vec4 v1 = i1.getIntersectionPoint();
+            Vec4 v2 = i2.getIntersectionPoint();
+            double d1 = origin.distanceTo3(v1);
+            double d2 = origin.distanceTo3(v2);
+            return Double.compare(d1, d2);
         });
 
         return hits;
@@ -794,7 +785,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         int colB = this.computeColumn(this.sector, sector.getMaxLongitude());
 
         int n = (1 + (rowB - rowA)) * (1 + (colB - colA));
-        List<RectTile> tiles = new ArrayList<RectTile>(n);
+        List<RectTile> tiles = new ArrayList<>(n);
 
         for (int col = colA; col <= colB; col++)
         {
@@ -845,7 +836,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
                 colB = temp;
             }
 
-            List<RectTile> tiles = new ArrayList<RectTile>();
+            List<RectTile> tiles = new ArrayList<>();
 
             this.doGetIntersectingTiles(rowA, colA, rowB, colB, line, tiles);
 
@@ -1101,7 +1092,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         Angle lonMax = tile.sector.getMaxLongitude();
         Angle dLon = tile.sector.getDeltaLon().divide(density);
 
-        ArrayList<LatLon> latlons = new ArrayList<LatLon>(numVertices);
+        ArrayList<LatLon> latlons = new ArrayList<>(numVertices);
         for (int j = 0; j <= density; j++)
         {
             Angle lon = lonMin;
@@ -1320,7 +1311,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
             return null;
 
         Intersection[] hits;
-        ArrayList<Intersection> list = new ArrayList<Intersection>();
+        ArrayList<Intersection> list = new ArrayList<>();
 
         double cx = tile.ri.referenceCenter.x;
         double cy = tile.ri.referenceCenter.y;
@@ -1366,23 +1357,19 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         list.toArray(hits);
 
         final Vec4 origin = line.getOrigin();
-        Arrays.sort(hits, new Comparator<Intersection>()
-        {
-            public int compare(Intersection i1, Intersection i2)
-            {
-                if (i1 == null && i2 == null)
-                    return 0;
-                if (i2 == null)
-                    return -1;
-                if (i1 == null)
-                    return 1;
+        Arrays.sort(hits, (i1, i2) -> {
+            if (i1 == null && i2 == null)
+                return 0;
+            if (i2 == null)
+                return -1;
+            if (i1 == null)
+                return 1;
 
-                Vec4 v1 = i1.getIntersectionPoint();
-                Vec4 v2 = i2.getIntersectionPoint();
-                double d1 = origin.distanceTo3(v1);
-                double d2 = origin.distanceTo3(v2);
-                return Double.compare(d1, d2);
-            }
+            Vec4 v1 = i1.getIntersectionPoint();
+            Vec4 v2 = i2.getIntersectionPoint();
+            double d1 = origin.distanceTo3(v1);
+            double d2 = origin.distanceTo3(v2);
+            return Double.compare(d1, d2);
         });
 
         return hits;
@@ -1409,7 +1396,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         if (tile.ri == null)
             return null;
 
-        ArrayList<Vec4[]> intersections = new ArrayList<Vec4[]>();
+        ArrayList<Vec4[]> intersections = new ArrayList<>();
 
         double cx = tile.ri.referenceCenter.x;
         double cy = tile.ri.referenceCenter.y;
@@ -1503,7 +1490,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         tiles = this.eliminateLowAltitudeTiles(tiles, minAltitude);
 
         // Intersect triangles of remaining tiles with input triangle.
-        List<Vec4[]> intersections = new ArrayList<Vec4[]>();
+        List<Vec4[]> intersections = new ArrayList<>();
         for (RectTile tile : tiles)
         {
             List<Vec4[]> iSects = intersect(tile, triangleCoordinates);
@@ -1518,7 +1505,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
     protected List<RectTile> eliminateLowAltitudeTiles(List<RectTile> tiles, double minAltitude)
         throws InterruptedException
     {
-        List<RectTile> filteredTiles = new ArrayList<RectTile>();
+        List<RectTile> filteredTiles = new ArrayList<>();
 
         for (RectTile tile : tiles)
         {

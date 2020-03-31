@@ -199,7 +199,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
 
             // Adjust depth of image to bring it slightly forward
             double depth = ogpm.screenPlacePoint.z - (8d * 0.00048875809d);
-            depth = depth < 0d ? 0d : (depth > 1d ? 1d : depth);
+            depth = depth < 0d ? 0d : (Math.min(depth, 1d));
             gl.glDepthFunc(GL.GL_LESS);
             gl.glDepthRange(depth, depth);
         }

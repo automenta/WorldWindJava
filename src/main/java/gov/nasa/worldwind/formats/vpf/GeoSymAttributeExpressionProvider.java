@@ -16,11 +16,11 @@ import java.util.*;
  */
 public class GeoSymAttributeExpressionProvider
 {
-    protected Map<Integer, GeoSymAttributeExpression> expressionMap;
+    protected final Map<Integer, GeoSymAttributeExpression> expressionMap;
 
     public GeoSymAttributeExpressionProvider(GeoSymTable table)
     {
-        this.expressionMap = new HashMap<Integer, GeoSymAttributeExpression>();
+        this.expressionMap = new HashMap<>();
         this.loadExpressions(table);
     }
 
@@ -37,7 +37,7 @@ public class GeoSymAttributeExpressionProvider
         // expressions associated with each symbol ID. Sort expression rows within each group according to the
         // expression sequence number for each row.
 
-        HashMap<Integer, Set<AVList>> map = new HashMap<Integer, Set<AVList>>();
+        HashMap<Integer, Set<AVList>> map = new HashMap<>();
 
         for (AVList row : table.getRecords())
         {
@@ -50,21 +50,12 @@ public class GeoSymAttributeExpressionProvider
                 continue;
             }
 
-            Set<AVList> list = map.get(symbolId);
-            if (list == null)
-            {
-                list = new TreeSet<AVList>(new Comparator<AVList>()
-                {
-                    public int compare(AVList a, AVList b)
-                    {
-                        Integer ia = AVListImpl.getIntegerValue(a, "seq");
-                        Integer ib = AVListImpl.getIntegerValue(b, "seq");
+            Set<AVList> list = map.computeIfAbsent(symbolId, k -> new TreeSet<>((a, b) -> {
+                Integer ia = AVListImpl.getIntegerValue(a, "seq");
+                Integer ib = AVListImpl.getIntegerValue(b, "seq");
 
-                        return (ia < ib) ? -1 : (ia > ib) ? 1 : 0;
-                    }
-                });
-                map.put(symbolId, list);
-            }
+                return ia.compareTo(ib);
+            }));
 
             list.add(row);
         }
@@ -75,7 +66,7 @@ public class GeoSymAttributeExpressionProvider
 
         for (Map.Entry<Integer, Set<AVList>> entry : map.entrySet())
         {
-            LinkedList<Object> queue = new LinkedList<Object>();
+            LinkedList<Object> queue = new LinkedList<>();
 
             for (AVList row : entry.getValue())
             {
@@ -133,7 +124,7 @@ public class GeoSymAttributeExpressionProvider
 
     protected static class ComparisonParser implements ExpressionParser
     {
-        protected Queue<?> queue;
+        protected final Queue<?> queue;
 
         public ComparisonParser(Queue<?> queue)
         {
@@ -148,9 +139,9 @@ public class GeoSymAttributeExpressionProvider
 
     protected static class LogicalExpressionParser implements ExpressionParser
     {
-        protected Queue<?> queue;
-        protected ExpressionParser delegateParser;
-        protected EnumSet<LogicalOperator> operatorSet;
+        protected final Queue<?> queue;
+        protected final ExpressionParser delegateParser;
+        protected final EnumSet<LogicalOperator> operatorSet;
 
         public LogicalExpressionParser(Queue<?> queue, ExpressionParser delegateParser,
             EnumSet<LogicalOperator> operatorSet)
@@ -204,9 +195,9 @@ public class GeoSymAttributeExpressionProvider
 
     protected static class Comparison implements Expression
     {
-        protected String attributeName;
+        protected final String attributeName;
         protected ComparisonOperator operator;
-        protected String value;
+        protected final String value;
 
         public Comparison(String attributeName, ComparisonOperator op, String value)
         {
@@ -233,7 +224,7 @@ public class GeoSymAttributeExpressionProvider
 
     protected static class LogicalExpression extends ArrayList<Expression> implements Expression
     {
-        protected LogicalOperator logicalOperator;
+        protected final LogicalOperator logicalOperator;
 
         public LogicalExpression(LogicalOperator op)
         {

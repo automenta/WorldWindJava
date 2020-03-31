@@ -794,7 +794,7 @@ public interface SymbologyConstants
         ORDER_OF_BATTLE_STRATEGIC_FORCE_RELATED
     );
     /** List containing all recognized MIL-STD-2525 order of battle codes for the Tactical Graphics scheme. */
-    List<String> ORDER_OF_BATTLE_ALL_TACTICAL_GRAPHICS = Arrays.asList(
+    List<String> ORDER_OF_BATTLE_ALL_TACTICAL_GRAPHICS = Collections.singletonList(
         ORDER_OF_BATTLE_CONTROL_MARKINGS
     );
 

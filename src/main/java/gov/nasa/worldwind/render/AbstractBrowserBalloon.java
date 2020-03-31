@@ -386,7 +386,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * #DEFAULT_OUTLINE_PICK_WIDTH}</code>.
      */
     protected int outlinePickWidth = DEFAULT_OUTLINE_PICK_WIDTH;
-    protected List<BrowserControl> browserControls = new ArrayList<BrowserControl>(createDefaultBrowserControls());
+    protected final List<BrowserControl> browserControls = new ArrayList<>(createDefaultBrowserControls());
     /**
      * Indicates the object used to resolve relative resource paths in this browser balloon's HTML content. May be one
      * of the following: <code>{@link gov.nasa.worldwind.util.webview.WebResourceResolver}</code>, <code>{@link
@@ -418,14 +418,14 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     /** The screen coordinate of the last <code>SelectEvent</code> sent to this balloon's <code>select</code> method. */
     protected Point lastPickPoint;
     /** Support for setting up and restoring picking state, and resolving the picked object. */
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     /** Support for setting up and restoring OpenGL state during rendering. */
-    protected OGLStackHandler osh = new OGLStackHandler();
+    protected final OGLStackHandler osh = new OGLStackHandler();
     protected long screenBalloonPickFrame;
     protected long screenBalloonRenderFrame;
 
-    protected HashMap<GlobeStateKey, OrderedBrowserBalloon>
-        orderedRenderables = new HashMap<GlobeStateKey, OrderedBrowserBalloon>(1);
+    protected final HashMap<GlobeStateKey, OrderedBrowserBalloon>
+        orderedRenderables = new HashMap<>(1);
 
     protected AbstractBrowserBalloon(String text)
     {

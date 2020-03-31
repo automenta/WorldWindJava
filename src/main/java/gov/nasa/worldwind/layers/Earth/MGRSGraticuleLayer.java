@@ -839,7 +839,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer
 
     private ArrayList<GridZone> getVisibleZones(DrawContext dc)
     {
-        ArrayList<GridZone> zoneList = new ArrayList<GridZone>();
+        ArrayList<GridZone> zoneList = new ArrayList<>();
         Sector vs = dc.getVisibleSector();
         if (vs != null)
         {
@@ -1136,7 +1136,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer
                 UTM = UTMCoord.fromLatLon(this.sector.getMinLatitude(), this.sector.getMinLongitude(), globe);
                 double minEasting = UTM.getEasting();
                 UTM = UTMCoord.fromLatLon(this.sector.getMaxLatitude(), this.sector.getMinLongitude(), globe);
-                minEasting = UTM.getEasting() < minEasting ? UTM.getEasting() : minEasting;
+                minEasting = Math.min(UTM.getEasting(), minEasting);
                 double maxEasting = 1e6 - minEasting;
 
                 // Compensate for some distorted zones
@@ -1157,7 +1157,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer
 
         private void createSquaresUPS()
         {
-            this.squares = new ArrayList<SquareZone>();
+            this.squares = new ArrayList<>();
             double minEasting, maxEasting, minNorthing, maxNorthing;
 
             if (AVKey.NORTH.equals(this.hemisphere))
@@ -1225,15 +1225,14 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer
 
         private void createRenderables()
         {
-            this.gridElements = new ArrayList<GridElement>();
+            this.gridElements = new ArrayList<>();
 
-            ArrayList<Position> positions = new ArrayList<Position>();
+            ArrayList<Position> positions = new ArrayList<>();
 
             // left meridian segment
-            positions.clear();
             positions.add(new Position(this.sector.getMinLatitude(), this.sector.getMinLongitude(), 10e3));
             positions.add(new Position(this.sector.getMaxLatitude(), this.sector.getMinLongitude(), 10e3));
-            Object polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.LINEAR);
+            Object polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
             Sector lineSector = new Sector(this.sector.getMinLatitude(), this.sector.getMaxLatitude(),
                 this.sector.getMinLongitude(), this.sector.getMinLongitude());
             this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_WEST));
@@ -1244,7 +1243,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer
                 positions.clear();
                 positions.add(new Position(this.sector.getMinLatitude(), this.sector.getMaxLongitude(), 10e3));
                 positions.add(new Position(this.sector.getMaxLatitude(), this.sector.getMaxLongitude(), 10e3));
-                polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.LINEAR);
+                polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 lineSector = new Sector(this.sector.getMinLatitude(), this.sector.getMaxLatitude(),
                     this.sector.getMaxLongitude(), this.sector.getMaxLongitude());
                 this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_EAST));
@@ -1253,7 +1252,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer
                 positions.clear();
                 positions.add(new Position(this.sector.getMinLatitude(), this.sector.getMinLongitude(), 10e3));
                 positions.add(new Position(this.sector.getMinLatitude(), this.sector.getMaxLongitude(), 10e3));
-                polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.LINEAR);
+                polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 lineSector = new Sector(this.sector.getMinLatitude(), this.sector.getMinLatitude(),
                     this.sector.getMinLongitude(), this.sector.getMaxLongitude());
                 this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_SOUTH));
@@ -1262,7 +1261,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer
                 positions.clear();
                 positions.add(new Position(this.sector.getMaxLatitude(), this.sector.getMinLongitude(), 10e3));
                 positions.add(new Position(this.sector.getMaxLatitude(), this.sector.getMaxLongitude(), 10e3));
-                polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.LINEAR);
+                polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 lineSector = new Sector(this.sector.getMaxLatitude(), this.sector.getMaxLatitude(),
                     this.sector.getMinLongitude(), this.sector.getMaxLongitude());
                 this.gridElements.add(new GridElement(lineSector, polyline, GridElement.TYPE_LINE_NORTH));

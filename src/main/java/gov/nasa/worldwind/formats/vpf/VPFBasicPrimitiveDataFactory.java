@@ -175,7 +175,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
             // The ring table maintains an order relationship for its rows. The first record of a new face id will always
             // be defined as the outer ring. Any repeating records with an identical face value will define inner rings.
 
-            ArrayList<VPFPrimitiveData.Ring> innerRingList = new ArrayList<VPFPrimitiveData.Ring>();
+            ArrayList<VPFPrimitiveData.Ring> innerRingList = new ArrayList<>();
 
             for (ringId = ringId + 1; ringId <= ringTable.getNumRecords(); ringId++)
             {
@@ -252,13 +252,9 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
 
         // Traverse the ring again, but this time populate an entry for the primitiveID and orientation data stuctures
         // for each edge.
-        traverser.traverseRing(faceId, startEdgeId, edgeInfoArray, new VPFWingedEdgeTraverser.EdgeTraversalListener()
-        {
-            public void nextEdge(int index, int primitiveId, boolean reverseCoordinates)
-            {
-                idArray[index] = primitiveId;
-                orientationArray[index] = reverseCoordinates ? -1 : 1;
-            }
+        traverser.traverseRing(faceId, startEdgeId, edgeInfoArray, (index, primitiveId, reverseCoordinates) -> {
+            idArray[index] = primitiveId;
+            orientationArray[index] = reverseCoordinates ? -1 : 1;
         });
 
         return new VPFPrimitiveData.Ring(numEdges, idArray, orientationArray);

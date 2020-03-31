@@ -77,7 +77,7 @@ public class SphereAirspace extends AbstractAirspace
 
     private void makeDefaultDetailLevels()
     {
-        List<DetailLevel> levels = new ArrayList<DetailLevel>();
+        List<DetailLevel> levels = new ArrayList<>();
         double[] ramp = ScreenSizeDetailLevel.computeLinearScreenSizeRamp(7, 10.0, 600.0);
 
         DetailLevel level;
@@ -275,7 +275,7 @@ public class SphereAirspace extends AbstractAirspace
             throw new IllegalArgumentException(message);
         }
 
-        List<LatLon> locations = new ArrayList<LatLon>(1);
+        List<LatLon> locations = new ArrayList<>(1);
         locations.add(this.getLocation());
         List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldRef, newRef, locations);
         this.setLocation(newLocations.get(0));
@@ -394,7 +394,7 @@ public class SphereAirspace extends AbstractAirspace
             DetailLevel level = this.computeDetailLevel(dc);
 
             Object o = level.getValue(SUBDIVISIONS);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 subdivisions = (Integer) o;
 
             //o = level.getValue(DISABLE_TERRAIN_CONFORMANCE);

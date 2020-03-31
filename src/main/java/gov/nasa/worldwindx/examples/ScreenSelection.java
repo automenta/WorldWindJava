@@ -30,8 +30,8 @@ public class ScreenSelection extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected ScreenSelector screenSelector;
-        protected SelectionHighlightController selectionHighlightController;
+        protected final ScreenSelector screenSelector;
+        protected final SelectionHighlightController selectionHighlightController;
 
         public AppFrame()
         {
@@ -118,8 +118,8 @@ public class ScreenSelection extends ApplicationTemplate
      */
     protected static class SelectionHighlightController extends HighlightController implements MessageListener
     {
-        protected ScreenSelector screenSelector;
-        protected List<Highlightable> lastBoxHighlightObjects = new ArrayList<Highlightable>();
+        protected final ScreenSelector screenSelector;
+        protected final List<Highlightable> lastBoxHighlightObjects = new ArrayList<>();
 
         public SelectionHighlightController(WorldWindow wwd, ScreenSelector screenSelector)
         {

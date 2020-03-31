@@ -26,7 +26,7 @@ public class KMLParserContext extends BasicXMLEventParserContext
     protected KMLCoordinatesParser coordinatesParser;
 
     /** The key used to identify the coordinates parser in the parser context's parser map. */
-    protected static QName COORDINATES = new QName("Coordinates");
+    protected static final QName COORDINATES = new QName("Coordinates");
 
     /** The names of elements that contain merely string data and can be parsed by a generic string parser. */
     protected static final String[] StringFields = new String[]

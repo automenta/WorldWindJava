@@ -33,7 +33,7 @@ public class TerrainLineIntersector extends LineIntersector
         super(terrain, numThreads);
     }
 
-    protected void doPerformIntersection(Position position) throws InterruptedException
+    protected void doPerformIntersection(Position position)
     {
         // Intersect the line between this grid point and the selected position.
         Intersection[] intersections = this.terrain.intersect(this.referencePosition, position);
@@ -49,7 +49,7 @@ public class TerrainLineIntersector extends LineIntersector
 
         Position iPosition = this.terrain.getGlobe().computePositionFromPoint(iPoint);
 
-        List<Intersection> iList = new ArrayList<Intersection>();
+        List<Intersection> iList = new ArrayList<>();
         iList.add(new Intersection(iPoint, new Position(iPosition, 0), false, null));
 
         for (int i = 1; i < intersections.length; i++)

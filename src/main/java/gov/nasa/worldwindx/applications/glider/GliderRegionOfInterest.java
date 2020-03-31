@@ -52,7 +52,7 @@ public class GliderRegionOfInterest extends AVListImpl
             throw new IllegalArgumentException(message);
         }
 
-        this.locations = new ArrayList<LatLon>();
+        this.locations = new ArrayList<>();
         for (LatLon ll : locations)
         {
             this.locations.add(ll);
@@ -100,7 +100,7 @@ public class GliderRegionOfInterest extends AVListImpl
         }
 
         GliderRegionOfInterest oldRegion = new GliderRegionOfInterest(this);
-        this.locations = new ArrayList<LatLon>();
+        this.locations = new ArrayList<>();
         for (LatLon ll : locations)
         {
             this.locations.add(ll);
@@ -149,9 +149,9 @@ public class GliderRegionOfInterest extends AVListImpl
 
         GliderRegionOfInterest that = (GliderRegionOfInterest) o;
 
-        if (color != null ? !color.equals(that.color) : that.color != null)
+        if (!Objects.equals(color, that.color))
             return false;
-        if (locations != null ? !locations.equals(that.locations) : that.locations != null)
+        if (!Objects.equals(locations, that.locations))
             return false;
 
         return true;

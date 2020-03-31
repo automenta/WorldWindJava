@@ -58,7 +58,7 @@ public class ColladaAbstractParamContainer extends ColladaAbstractObject
             if (sid != null)
             {
                 if (this.newParams == null)
-                    this.newParams = new HashMap<String, ColladaNewParam>();
+                    this.newParams = new HashMap<>();
 
                 this.newParams.put(sid, param);
             }

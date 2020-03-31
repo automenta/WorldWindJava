@@ -29,7 +29,7 @@ public class DoseRateContourLine extends BasicArea
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.MOBSU_CBRN_DRCL);
+        return Collections.singletonList(TacGrpSidc.MOBSU_CBRN_DRCL);
     }
 
     public DoseRateContourLine(String sidc)

@@ -45,7 +45,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
     @SuppressWarnings({"FieldCanBeLocal"})
     private final double splitScale = 0.9; // TODO: Make configurable
     private boolean useMipMaps = false;
-    private final ArrayList<String> supportedImageFormats = new ArrayList<String>();
+    private final ArrayList<String> supportedImageFormats = new ArrayList<>();
 
     // Diagnostic flags
     private boolean showImageTileOutlines = false;
@@ -55,11 +55,11 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
     private boolean drawBoundingVolumes = false;
 
     // Stuff computed each frame
-    private final ArrayList<MercatorTextureTile> currentTiles = new ArrayList<MercatorTextureTile>();
+    private final ArrayList<MercatorTextureTile> currentTiles = new ArrayList<>();
     private MercatorTextureTile currentResourceTile;
     private Vec4 referencePoint;
     private boolean atMaxResolution = false;
-    private final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<Runnable>(
+    private final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(
         200);
 
     abstract protected void requestTexture(DrawContext dc, MercatorTextureTile tile);
@@ -210,7 +210,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
         int nLatTiles = lastRow - firstRow + 1;
         int nLonTiles = lastCol - firstCol + 1;
 
-        this.topLevels = new ArrayList<MercatorTextureTile>(nLatTiles
+        this.topLevels = new ArrayList<>(nLatTiles
             * nLonTiles);
 
         //Angle p1 = Tile.computeRowLatitude(firstRow, dLat);
@@ -658,7 +658,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
             int lb = tb.getFallbackTile() == null ? tb.getLevelNumber() : tb
                 .getFallbackTile().getLevelNumber();
 
-            return la < lb ? -1 : la == lb ? 0 : 1;
+            return Integer.compare(la, lb);
         }
     }
 
@@ -722,7 +722,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
 
     public List<String> getAvailableImageFormats()
     {
-        return new ArrayList<String>(this.supportedImageFormats);
+        return new ArrayList<>(this.supportedImageFormats);
     }
 
     public boolean isImageFormatAvailable(String imageFormat)
@@ -752,7 +752,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
         throws URISyntaxException
     {
         String pathBase = tile.getPath().substring(0,
-            tile.getPath().lastIndexOf("."));
+            tile.getPath().lastIndexOf('.'));
         String suffix = WWIO.makeSuffixForMimeType(mimeType);
         String path = pathBase + suffix;
         URL url = this.getDataFileStore().findFile(path, false);
@@ -1117,7 +1117,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
             }
 
             String path = tile.getPath().substring(0,
-                tile.getPath().lastIndexOf("."));
+                tile.getPath().lastIndexOf('.'));
             path += suffix;
 
             final File outFile = getDataFileStore().newFile(path);

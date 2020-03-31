@@ -365,9 +365,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         this.endButton = new JButton("Finish");
         this.endButton.setToolTipText("Press when measurement shape is complete");
         this.endButton.setOpaque(false);
-        this.endButton.addActionListener((ActionEvent actionEvent) -> {
-            getMeasureTool().setArmed(false);
-        });
+        this.endButton.addActionListener((ActionEvent actionEvent) -> getMeasureTool().setArmed(false));
         buttonPanel.add(endButton);
         this.endButton.setEnabled(false);
 

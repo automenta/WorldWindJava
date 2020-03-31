@@ -46,7 +46,7 @@ public class SurfacePolygonsEverywhere extends ApplicationTemplate
             {
                 for (double lon = minLon; lon <= maxLon; lon += delta)
                 {
-                    positions = new ArrayList<LatLon>();
+                    positions = new ArrayList<>();
                     double innerLat = lat;
                     double innerLon = lon;
 

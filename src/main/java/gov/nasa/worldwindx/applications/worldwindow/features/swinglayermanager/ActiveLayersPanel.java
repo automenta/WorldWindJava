@@ -67,20 +67,16 @@ public class ActiveLayersPanel extends AbstractFeaturePanel implements ActiveLay
         LayerList layerList = controller.getWWd().getModel().getLayers();
         fillModel(layerList);
 
-        layerList.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent event)
+        layerList.addPropertyChangeListener(event -> {
+            if (event.getSource() instanceof LayerList) // the layer list lost, gained or swapped layers
             {
-                if (event.getSource() instanceof LayerList) // the layer list lost, gained or swapped layers
-                {
-                    refresh(event);
-                    controller.redraw();
-                }
-                else if (event.getSource() instanceof Layer)
-                {
-                    jlist.repaint(); // just the state of the layer changed
-                    controller.redraw();
-                }
+                refresh(event);
+                controller.redraw();
+            }
+            else if (event.getSource() instanceof Layer)
+            {
+                jlist.repaint(); // just the state of the layer changed
+                controller.redraw();
             }
         });
 
@@ -105,13 +101,8 @@ public class ActiveLayersPanel extends AbstractFeaturePanel implements ActiveLay
     {
         JCheckBoxMenuItem showInternal = new JCheckBoxMenuItem("Show Internal Layers");
         showInternal.setSelected(false);
-        showInternal.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                setIncludeInternalLayers(((JCheckBoxMenuItem) event.getSource()).isSelected());
-            }
-        });
+        showInternal.addActionListener(
+            event -> setIncludeInternalLayers(((JCheckBoxMenuItem) event.getSource()).isSelected()));
 
         JPopupMenu pm = new JPopupMenu();
         pm.add(showInternal);
@@ -183,7 +174,7 @@ public class ActiveLayersPanel extends AbstractFeaturePanel implements ActiveLay
         if (layerList == null)
             layerList = this.controller.getWWd().getModel().getLayers();
 
-        ArrayList<Layer> newList = new ArrayList<Layer>(layerList.size());
+        ArrayList<Layer> newList = new ArrayList<>(layerList.size());
         for (int i = 0; i < this.model.size(); i++)
         {
             newList.add((Layer) this.model.get(i));
@@ -196,7 +187,7 @@ public class ActiveLayersPanel extends AbstractFeaturePanel implements ActiveLay
     protected class ReorderListener extends MouseAdapter
     {
         protected JList list;
-        protected int hotspot = new JCheckBox().getPreferredSize().width;
+        protected final int hotspot = new JCheckBox().getPreferredSize().width;
         protected int pressIndex = 0;
         protected int releaseIndex = 0;
 

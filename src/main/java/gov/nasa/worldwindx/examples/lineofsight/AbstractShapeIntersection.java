@@ -15,7 +15,6 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.HighResolutionTerrain;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
-import java.awt.event.*;
 import java.util.List;
 
 /**
@@ -31,10 +30,10 @@ public class AbstractShapeIntersection extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected HighResolutionTerrain terrain; // Use this class to test against high-resolution terrain
-        protected Cylinder shape; // the polygon to intersect
-        protected RenderableLayer resultsLayer; // holds the intersection geometry
-        protected RenderableLayer shapeLayer; // holds the shape
+        protected final HighResolutionTerrain terrain; // Use this class to test against high-resolution terrain
+        protected final Cylinder shape; // the polygon to intersect
+        protected final RenderableLayer resultsLayer; // holds the intersection geometry
+        protected final RenderableLayer shapeLayer; // holds the shape
 
         public AppFrame()
         {
@@ -64,24 +63,20 @@ public class AbstractShapeIntersection extends ApplicationTemplate
 
             // Perform the intersection test within a timer callback. Intersection calculations would normally be done
             // on a separate, non-EDT thread, however.
-            javax.swing.Timer timer = new javax.swing.Timer(5000, new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
-                {
-                    // Intersect the sides.
-                    Position pA = Position.fromDegrees(40.5, -120.7, 4e3);
-                    Position pB = Position.fromDegrees(40.5, -120.3, 4e3);
-                    drawLine(pA, pB);
-                    performIntersection(pA, pB);
+            javax.swing.Timer timer = new javax.swing.Timer(5000, actionEvent -> {
+                // Intersect the sides.
+                Position pA = Position.fromDegrees(40.5, -120.7, 4e3);
+                Position pB = Position.fromDegrees(40.5, -120.3, 4e3);
+                drawLine(pA, pB);
+                performIntersection(pA, pB);
 
-                    // Intersect the top.
-                    pA = Position.fromDegrees(40.5, -120.5, 0);
-                    pB = new Position(pA, 20e3);
-                    drawLine(pA, pB);
-                    performIntersection(pA, pB);
+                // Intersect the top.
+                pA = Position.fromDegrees(40.5, -120.5, 0);
+                pB = new Position(pA, 20e3);
+                drawLine(pA, pB);
+                performIntersection(pA, pB);
 
-                    ((javax.swing.Timer) actionEvent.getSource()).stop();
-                }
+                ((javax.swing.Timer) actionEvent.getSource()).stop();
             });
             timer.start();
         }

@@ -25,9 +25,9 @@ import java.io.*;
  */
 public class ScreenShotAction extends AbstractAction implements RenderingListener
 {
-    WorldWindow wwd;
+    final WorldWindow wwd;
     private File snapFile;
-    JFileChooser fileChooser;
+    final JFileChooser fileChooser;
 
     public ScreenShotAction(WorldWindow wwd)
     {

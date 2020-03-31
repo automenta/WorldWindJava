@@ -34,7 +34,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     protected long frameTimestamp;
     protected GLContext glContext;
     protected GLRuntimeCapabilities glRuntimeCaps;
-    protected GLU glu = new GLUgl2();
+    protected final GLU glu = new GLUgl2();
     protected View view;
     protected Model model;
     protected Globe globe;
@@ -50,9 +50,9 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
      * The list of objects intersecting the pick rectangle during the most recent pick traversal. Initialized to an
      * empty PickedObjectList.
      */
-    protected PickedObjectList objectsInPickRect = new PickedObjectList();
+    protected final PickedObjectList objectsInPickRect = new PickedObjectList();
     protected int uniquePickNumber = 0;
-    protected Color clearColor = new Color(0, 0, 0, 0);
+    protected final Color clearColor = new Color(0, 0, 0, 0);
     /** Buffer of RGB colors used to read back the framebuffer's colors and store them in client memory. */
     protected ByteBuffer pixelColors;
     /**
@@ -61,7 +61,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
      * constant time insertion, and to reduce overhead associated associated with storing integer primitives in a
      * HashSet.
      */
-    protected IntSet uniquePixelColors = new IntSet();
+    protected final IntSet uniquePixelColors = new IntSet();
     protected boolean pickingMode = false;
     protected boolean deepPickingMode = false;
     /**
@@ -78,7 +78,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     protected boolean preRenderMode = false;
     protected Point viewportCenterScreenPoint = null;
     protected Position viewportCenterPosition = null;
-    protected SurfaceTileRenderer geographicSurfaceTileRenderer = new GeographicSurfaceTileRenderer();
+    protected final SurfaceTileRenderer geographicSurfaceTileRenderer = new GeographicSurfaceTileRenderer();
     protected AnnotationRenderer annotationRenderer = new BasicAnnotationRenderer();
     protected GpuResourceCache gpuResourceCache;
     protected TextRendererCache textRendererCache;
@@ -87,19 +87,19 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     protected SectorVisibilityTree visibleSectors;
     protected Layer currentLayer;
     protected int redrawRequested = 0;
-    protected PickPointFrustumList pickFrustumList = new PickPointFrustumList();
+    protected final PickPointFrustumList pickFrustumList = new PickPointFrustumList();
     protected Collection<Throwable> renderingExceptions;
     protected Dimension pickPointFrustumDimension = new Dimension(3, 3);
     protected LightingModel standardLighting = new BasicLightingModel();
-    protected DeclutteringTextRenderer declutteringTextRenderer = new DeclutteringTextRenderer();
+    protected final DeclutteringTextRenderer declutteringTextRenderer = new DeclutteringTextRenderer();
     protected ClutterFilter clutterFilter;
 //    protected Map<String, GroupingFilter> groupingFilters;
 
     protected static class OrderedRenderableEntry
     {
-        protected OrderedRenderable or;
-        protected double distanceFromEye;
-        protected long time;
+        protected final OrderedRenderable or;
+        protected final double distanceFromEye;
+        protected final long time;
         protected int globeOffset;
         protected SectorGeometryList surfaceGeometry;
 
@@ -129,20 +129,16 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         }
     }
 
-    protected PriorityQueue<OrderedRenderableEntry> orderedRenderables =
-        new PriorityQueue<OrderedRenderableEntry>(100, new Comparator<OrderedRenderableEntry>()
-        {
-            public int compare(OrderedRenderableEntry orA, OrderedRenderableEntry orB)
-            {
-                double eA = orA.distanceFromEye;
-                double eB = orB.distanceFromEye;
+    protected final PriorityQueue<OrderedRenderableEntry> orderedRenderables =
+        new PriorityQueue<>(100, (orA, orB) -> {
+            double eA = orA.distanceFromEye;
+            double eB = orB.distanceFromEye;
 
-                return eA > eB ? -1 : eA == eB ? (orA.time < orB.time ? -1 : orA.time == orB.time ? 0 : 1) : 1;
-            }
+            return eA > eB ? -1 : eA == eB ? (Long.compare(orA.time, orB.time)) : 1;
         });
     // Use a standard Queue to store the ordered surface object renderables. Ordered surface renderables are processed
     // in the order they were submitted.
-    protected Queue<OrderedRenderable> orderedSurfaceRenderables = new ArrayDeque<OrderedRenderable>();
+    protected final Queue<OrderedRenderable> orderedSurfaceRenderables = new ArrayDeque<>();
 
     /**
      * Free internal resources held by this draw context. A GL context must be current when this method is called.
@@ -429,10 +425,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
             return;
         }
 
-        for (PickedObject po : pickedObjects)
-        {
-            this.pickedObjects.add(po);
-        }
+        this.pickedObjects.addAll(pickedObjects);
     }
 
     public void addPickedObject(PickedObject pickedObject)
@@ -794,7 +787,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
             return;
 
         // Collect all the active declutterables.
-        ArrayList<OrderedRenderableEntry> declutterableArray = new ArrayList<OrderedRenderableEntry>();
+        ArrayList<OrderedRenderableEntry> declutterableArray = new ArrayList<>();
         for (OrderedRenderableEntry ore : this.orderedRenderables)
         {
             if (ore.or instanceof Declutterable && ((Declutterable) ore.or).isEnableDecluttering())
@@ -802,15 +795,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         }
 
         // Sort the declutterables front-to-back.
-        Collections.sort(declutterableArray, new Comparator<OrderedRenderableEntry>()
-        {
-            public int compare(OrderedRenderableEntry orA, OrderedRenderableEntry orB)
-            {
-                double eA = orA.distanceFromEye;
-                double eB = orB.distanceFromEye;
+        declutterableArray.sort((orA, orB) -> {
+            double eA = orA.distanceFromEye;
+            double eB = orB.distanceFromEye;
 
-                return eA < eB ? -1 : eA == eB ? (orA.time < orB.time ? -1 : orA.time == orB.time ? 0 : 1) : 1;
-            }
+            return eA < eB ? -1 : eA == eB ? (Long.compare(orA.time, orB.time)) : 1;
         });
 
         if (declutterableArray.size() == 0)
@@ -819,7 +808,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         // Prepare the declutterable list for the filter and remove eliminated ordered renderables from the renderable
         // list. The clutter filter will add those it wants displayed back to the list, or it will add some other
         // representation.
-        List<Declutterable> declutterables = new ArrayList<Declutterable>(declutterableArray.size());
+        List<Declutterable> declutterables = new ArrayList<>(declutterableArray.size());
         for (OrderedRenderableEntry ore : declutterableArray)
         {
             declutterables.add((Declutterable) ore.or);
@@ -967,8 +956,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         SectorGeometryList sectorGeometry = this.getSurfaceGeometry();
         if (sectorGeometry != null)
         {
-            Vec4 p = sectorGeometry.getSurfacePoint(latitude, longitude);
-            return p;
+            return sectorGeometry.getSurfacePoint(latitude, longitude);
         }
 
         return null;
@@ -1030,10 +1018,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         if (this.perFrameStatistics == null || this.perFrameStatisticsKeys == null)
             return;
 
-        for (PerformanceStatistic stat : stats)
-        {
-            this.perFrameStatistics.add(stat);
-        }
+        this.perFrameStatistics.addAll(stats);
     }
 
     public long getFrameTimeStamp()
@@ -1093,7 +1078,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         return this.currentLayer;
     }
 
-    protected LinkedHashMap<ScreenCredit, Long> credits = new LinkedHashMap<ScreenCredit, Long>();
+    protected final LinkedHashMap<ScreenCredit, Long> credits = new LinkedHashMap<>();
 
     public void addScreenCredit(ScreenCredit credit)
     {
@@ -1445,7 +1430,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         return this.getTerrain().getSurfacePoint(lat, lon, offset);
     }
 
-    protected Terrain terrain = new Terrain()
+    protected final Terrain terrain = new Terrain()
     {
         public Globe getGlobe()
         {

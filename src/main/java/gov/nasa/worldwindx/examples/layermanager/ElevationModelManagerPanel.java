@@ -14,7 +14,6 @@ import gov.nasa.worldwind.terrain.CompoundElevationModel;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.beans.*;
 import java.util.List;
 import java.util.*;
 
@@ -26,8 +25,8 @@ import java.util.*;
  */
 public class ElevationModelManagerPanel extends JPanel
 {
-    protected JPanel modelNamesPanel;
-    protected List<ElevationModelPanel> modelPanels = new ArrayList<ElevationModelPanel>();
+    protected final JPanel modelNamesPanel;
+    protected final List<ElevationModelPanel> modelPanels = new ArrayList<>();
 
 
     public ElevationModelManagerPanel(final WorldWindow wwd)
@@ -49,29 +48,12 @@ public class ElevationModelManagerPanel extends JPanel
 
         // Add a property change listener that causes this panel to be updated whenever the elevation model list
         // changes.
-        wwd.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent)
-            {
-                if (propertyChangeEvent.getPropertyName().equals(AVKey.ELEVATION_MODEL))
-                    if (!SwingUtilities.isEventDispatchThread())
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            public void run()
-                            {
-                                SwingUtilities.invokeLater(new Runnable()
-                                {
-                                    public void run()
-                                    {
-                                        update(wwd);
-                                    }
-                                });
-                            }
-                        });
-                    else
-                        update(wwd);
-            }
+        wwd.addPropertyChangeListener(propertyChangeEvent -> {
+            if (propertyChangeEvent.getPropertyName().equals(AVKey.ELEVATION_MODEL))
+                if (!SwingUtilities.isEventDispatchThread())
+                    SwingUtilities.invokeLater(() -> SwingUtilities.invokeLater(() -> update(wwd)));
+                else
+                    update(wwd);
         });
     }
 

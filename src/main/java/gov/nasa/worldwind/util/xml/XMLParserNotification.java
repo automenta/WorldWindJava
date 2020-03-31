@@ -144,6 +144,6 @@ public class XMLParserNotification extends PropertyChangeEvent
             msg = Logging.getMessage(this.message, "", "", "");
         }
 
-        return this.notificationType.substring(1 + this.notificationType.lastIndexOf(".")) + ": " + msg;
+        return this.notificationType.substring(1 + this.notificationType.lastIndexOf('.')) + ": " + msg;
     }
 }

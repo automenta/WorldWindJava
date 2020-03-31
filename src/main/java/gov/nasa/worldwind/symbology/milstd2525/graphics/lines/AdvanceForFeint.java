@@ -29,7 +29,7 @@ public class AdvanceForFeint extends AbstractAxisArrow
     protected static final double DASHED_LINE_DISTANCE = 0.2;
 
     /** Shape attributes for the dashed part of the graphic. */
-    protected ShapeAttributes dashedAttributes = new BasicShapeAttributes();
+    protected final ShapeAttributes dashedAttributes = new BasicShapeAttributes();
 
     /**
      * Indicates the graphics supported by this class.
@@ -38,7 +38,7 @@ public class AdvanceForFeint extends AbstractAxisArrow
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_DCPN_AAFF);
+        return Collections.singletonList(TacGrpSidc.C2GM_DCPN_AAFF);
     }
 
     /**
@@ -96,7 +96,7 @@ public class AdvanceForFeint extends AbstractAxisArrow
             pos1,
             globe.computePositionFromPoint(ptN_prime));
 
-        this.paths[1].setPositions(new ArrayList<Position>(newPositions));
+        this.paths[1].setPositions(new ArrayList<>(newPositions));
 
         // Control point 1 specifies the tip of the dashed line, so move the tip of the other arrow toward the body of
         // the graphic.

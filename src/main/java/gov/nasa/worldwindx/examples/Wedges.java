@@ -14,7 +14,6 @@ import gov.nasa.worldwind.render.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.util.Hashtable;
 
@@ -156,20 +155,16 @@ public class Wedges extends ApplicationTemplate
                 slider.setMajorTickSpacing(10);
                 slider.setMinorTickSpacing(1);
                 slider.setPaintTicks(true);
-                Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+                Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
                 labelTable.put(-10, new JLabel("-1.0"));
                 labelTable.put(0, new JLabel("0.0"));
                 labelTable.put(10, new JLabel("1.0"));
                 slider.setLabelTable(labelTable);
                 slider.setPaintLabels(true);
-                slider.addChangeListener(new ChangeListener()
-                {
-                    public void stateChanged(ChangeEvent e)
-                    {
-                        double hint = ((JSlider) e.getSource()).getValue() / 10d;
-                        setWedgeDetailHint(hint);
-                        getWwd().redraw();
-                    }
+                slider.addChangeListener(e -> {
+                    double hint = ((JSlider) e.getSource()).getValue() / 10d;
+                    setWedgeDetailHint(hint);
+                    getWwd().redraw();
                 });
                 elevationSliderPanel.add(slider, BorderLayout.SOUTH);
             }

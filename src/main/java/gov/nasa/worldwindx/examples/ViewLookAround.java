@@ -60,9 +60,7 @@ public class ViewLookAround extends ApplicationTemplate {
             public ViewControlPanel(WorldWindow wwd) {
                 this.wwd = wwd;
                 // Add view property listener
-                this.wwd.getView().addPropertyChangeListener((PropertyChangeEvent propertyChangeEvent) -> {
-                    update();
-                });
+                this.wwd.getView().addPropertyChangeListener((PropertyChangeEvent propertyChangeEvent) -> update());
 
                 // Compose panel
                 this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -74,9 +72,7 @@ public class ViewLookAround extends ApplicationTemplate {
                 pitchPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
                 pitchPanel.add(new JLabel("Pitch:"));
                 pitchSlider = new JSlider(0, 180, 90);
-                pitchSlider.addChangeListener((ChangeEvent changeEvent) -> {
-                    updateView();
-                });
+                pitchSlider.addChangeListener((ChangeEvent changeEvent) -> updateView());
                 pitchPanel.add(pitchSlider);
 
                 // Heading slider
@@ -84,9 +80,7 @@ public class ViewLookAround extends ApplicationTemplate {
                 headingPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
                 headingPanel.add(new JLabel("Heading:"));
                 headingSlider = new JSlider(-180, 180, 0);
-                headingSlider.addChangeListener((ChangeEvent changeEvent) -> {
-                    updateView();
-                });
+                headingSlider.addChangeListener((ChangeEvent changeEvent) -> updateView());
                 headingPanel.add(headingSlider);
 
                 // Roll slider
@@ -94,9 +88,7 @@ public class ViewLookAround extends ApplicationTemplate {
                 rollPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
                 rollPanel.add(new JLabel("Roll:"));
                 rollSlider = new JSlider(-180, 180, 0);
-                rollSlider.addChangeListener((ChangeEvent changeEvent) -> {
-                    updateView();
-                });
+                rollSlider.addChangeListener((ChangeEvent changeEvent) -> updateView());
                 rollPanel.add(rollSlider);
 
                 // Field of view slider
@@ -104,9 +96,7 @@ public class ViewLookAround extends ApplicationTemplate {
                 fovPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
                 fovPanel.add(new JLabel("Field of view:"));
                 fovSlider = new JSlider(10, 120, 45);
-                fovSlider.addChangeListener((ChangeEvent changeEvent) -> {
-                    updateView();
-                });
+                fovSlider.addChangeListener((ChangeEvent changeEvent) -> updateView());
                 fovPanel.add(fovSlider);
 
                 // Assembly

@@ -12,7 +12,6 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.SurfaceQuad;
 
 import javax.swing.*;
-import java.awt.event.*;
 
 /**
  * Illustrates rotating a {@link gov.nasa.worldwind.geom.Sector} from standard position. A <code>Sector</code> is
@@ -51,16 +50,12 @@ public class RotatedSector extends ApplicationTemplate
                 insertBeforeCompass(this.getWwd(), layer);
 
                 // Rotate the quad continuously
-                Timer timer = new Timer(50, new ActionListener()
-                {
-                    public void actionPerformed(ActionEvent actionEvent)
+                Timer timer = new Timer(50, actionEvent -> {
+                    // Increment the current heading if the layer is visible
+                    if (layer.isEnabled())
                     {
-                        // Increment the current heading if the layer is visible
-                        if (layer.isEnabled())
-                        {
-                            quad.setHeading(Angle.fromDegrees((quad.getHeading().getDegrees() + 1) % 360));
-                            getWwd().redraw();
-                        }
+                        quad.setHeading(Angle.fromDegrees((quad.getHeading().getDegrees() + 1) % 360));
+                        getWwd().redraw();
                     }
                 });
                 timer.start();

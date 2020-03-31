@@ -18,8 +18,8 @@ import java.util.*;
  */
 public class OWSHTTP extends AbstractXMLEventParser
 {
-    protected List<AttributesOnlyXMLEventParser> gets = new ArrayList<AttributesOnlyXMLEventParser>(1);
-    protected List<AttributesOnlyXMLEventParser> posts = new ArrayList<AttributesOnlyXMLEventParser>(1);
+    protected final List<AttributesOnlyXMLEventParser> gets = new ArrayList<>(1);
+    protected final List<AttributesOnlyXMLEventParser> posts = new ArrayList<>(1);
 
     public OWSHTTP(String namespaceURI)
     {
@@ -31,7 +31,7 @@ public class OWSHTTP extends AbstractXMLEventParser
         if (this.gets == null)
             return null;
 
-        List<String> addresses = new ArrayList<String>(this.gets.size());
+        List<String> addresses = new ArrayList<>(this.gets.size());
         for (AttributesOnlyXMLEventParser parser : this.gets)
         {
             if (parser != null)
@@ -46,7 +46,7 @@ public class OWSHTTP extends AbstractXMLEventParser
         if (this.posts == null)
             return null;
 
-        List<String> addresses = new ArrayList<String>(this.posts.size());
+        List<String> addresses = new ArrayList<>(this.posts.size());
         for (AttributesOnlyXMLEventParser parser : this.posts)
         {
             if (parser != null)
@@ -81,7 +81,7 @@ public class OWSHTTP extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof AttributesOnlyXMLEventParser)
+                if (o instanceof AttributesOnlyXMLEventParser)
                     this.gets.add((AttributesOnlyXMLEventParser) o);
             }
         }
@@ -91,7 +91,7 @@ public class OWSHTTP extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof AttributesOnlyXMLEventParser)
+                if (o instanceof AttributesOnlyXMLEventParser)
                     this.posts.add((AttributesOnlyXMLEventParser) o);
             }
         }

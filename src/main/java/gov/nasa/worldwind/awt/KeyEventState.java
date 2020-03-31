@@ -18,9 +18,9 @@ public class KeyEventState implements KeyListener, MouseListener {
 
     protected static class InputState {
 
-        protected int eventType;
-        protected int keyOrButtonCode;
-        protected long timestamp;
+        protected final int eventType;
+        protected final int keyOrButtonCode;
+        protected final long timestamp;
 
         public InputState(int eventType, int keyOrButtonCode, long timestamp) {
             this.eventType = eventType;
@@ -41,7 +41,7 @@ public class KeyEventState implements KeyListener, MouseListener {
         }
     }
 
-    protected Map<Object, InputState> keyStateMap = new HashMap<>();
+    protected final Map<Object, InputState> keyStateMap = new HashMap<>();
     protected int modifiersEx;
     protected int mouseModifiersEx;
 
@@ -63,9 +63,8 @@ public class KeyEventState implements KeyListener, MouseListener {
             return (0);
         }
         int numKeys = 0;
-        for (Object o : this.keyStateMap.keySet()) {
+        for (InputState is : this.keyStateMap.values()) {
             //Integer key = (KeyEvent) o;
-            InputState is = this.keyStateMap.get(o);
             if (is.getEventType() == KeyEvent.KEY_PRESSED) {
                 numKeys++;
             }
@@ -79,8 +78,7 @@ public class KeyEventState implements KeyListener, MouseListener {
             return (0);
         }
         int numKeys = 0;
-        for (Object o : this.keyStateMap.keySet()) {
-            InputState is = this.keyStateMap.get(o);
+        for (InputState is : this.keyStateMap.values()) {
             if (is.getEventType() == MouseEvent.MOUSE_PRESSED) {
                 numKeys++;
             }

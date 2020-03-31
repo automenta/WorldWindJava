@@ -169,7 +169,7 @@ public abstract class AbstractTrackReader implements TrackReader
         }
     }
 
-    protected Track[] asArray(List<Track> trackList)
+    protected static Track[] asArray(List<Track> trackList)
     {
         if (trackList == null)
             return null;

@@ -183,8 +183,8 @@ public class RigidShapeEditor extends AbstractShapeEditor
     protected void assembleControlPoints(DrawContext dc)
     {
         // Control points are re-computed each frame
-        this.controlPoints = new ArrayList<RigidShape>();
-        this.controlPointRods = new ArrayList<Path>();
+        this.controlPoints = new ArrayList<>();
+        this.controlPointRods = new ArrayList<>();
 
         // Depending on the current edit mode, assemble the appropriate control points
         if (this.editMode.equalsIgnoreCase(TRANSLATION_MODE))
@@ -231,10 +231,7 @@ public class RigidShapeEditor extends AbstractShapeEditor
             // compute width
             double width1 = Math.abs(Math.sin(this.shape.getHeading().getRadians()) * this.shape.getNorthSouthRadius());
             double width2 = Math.abs(Math.cos(this.shape.getHeading().getRadians()) * this.shape.getEastWestRadius());
-            if (width1 > width2)
-                radiusScaleFactor = width1;
-            else
-                radiusScaleFactor = width2;
+            radiusScaleFactor = Math.max(width1, width2);
 
             //vert = matrix.transformBy3(matrix, 1, 0, 0).add3(refPt);   // right
             Vec4 vert = refPt.add3(rightVec.multiply3(radiusScaleFactor + 2 * radius));
@@ -255,10 +252,7 @@ public class RigidShapeEditor extends AbstractShapeEditor
             double height1 = Math.abs(
                 Math.cos(this.shape.getHeading().getRadians()) * this.shape.getNorthSouthRadius());
             double height2 = Math.abs(Math.sin(this.shape.getHeading().getRadians()) * this.shape.getEastWestRadius());
-            if (height1 > height2)
-                radiusScaleFactor = height1;
-            else
-                radiusScaleFactor = height2;
+            radiusScaleFactor = Math.max(height1, height2);
 
             //Vec4 vert = matrix.transformBy3(matrix, 0, 1, 0).add3(refPt);   // top
             vert = refPt.add3(northVec.multiply3(radiusScaleFactor + 2 * radius));
@@ -785,13 +779,12 @@ public class RigidShapeEditor extends AbstractShapeEditor
                 if (topObject instanceof ControlPointMarker)
                 {
                     this.removeVertex((ControlPointMarker) topObject);
-                    e.consume();
                 }
                 else
                 {
                     this.addVertex(e.getPoint());
-                    e.consume();
                 }
+                e.consume();
             }
         }
     }
@@ -1851,7 +1844,7 @@ public class RigidShapeEditor extends AbstractShapeEditor
 
         Line screenRay = this.wwd.getView().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
 
-        try
+//        try
         {
             double closest = 1e10;
             Integer closestFace = null;
@@ -1885,14 +1878,14 @@ public class RigidShapeEditor extends AbstractShapeEditor
                 setSelectedFace(closestFace);
             }
         }
-        catch (InterruptedException e)
-        {
-            System.out.println("Operation was interrupted");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+//        catch (InterruptedException e)
+//        {
+//            System.out.println("Operation was interrupted");
+//        }
+//        catch (Exception e)
+//        {
+//            e.printStackTrace();
+//        }
     }
 
     protected void moveControlPoint(ControlPointMarker controlPoint, Point moveToPoint)
@@ -2024,9 +2017,9 @@ public class RigidShapeEditor extends AbstractShapeEditor
 
     protected static class ControlPointMarker extends BasicMarker
     {
-        protected int index;
-        protected String type;
-        protected Vec4 point;
+        protected final int index;
+        protected final String type;
+        protected final Vec4 point;
 
         public ControlPointMarker(String type, Position position, Vec4 point, MarkerAttributes attrs, int index)
         {

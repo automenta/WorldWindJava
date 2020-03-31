@@ -15,7 +15,7 @@ import gov.nasa.worldwind.util.Logging;
 public class SARAnnotationReader
 {
     private final javax.xml.parsers.SAXParser parser;
-    private final java.util.List<SARAnnotation> sarAnnotations = new java.util.ArrayList<SARAnnotation>();
+    private final java.util.List<SARAnnotation> sarAnnotations = new java.util.ArrayList<>();
 
     public SARAnnotationReader() throws javax.xml.parsers.ParserConfigurationException, org.xml.sax.SAXException
     {
@@ -99,7 +99,6 @@ public class SARAnnotationReader
 
         @Override
         public void startElement(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
-            throws org.xml.sax.SAXException
         {
             if (this.firstElement)
             {
@@ -120,7 +119,7 @@ public class SARAnnotationReader
         }
 
         @Override
-        public void endElement(String uri, String lname, String qname) throws org.xml.sax.SAXException
+        public void endElement(String uri, String lname, String qname)
         {
             if (this.currentElement != null)
             {
@@ -137,14 +136,14 @@ public class SARAnnotationReader
         }
 
         @Override
-        public void characters(char[] data, int start, int length) throws org.xml.sax.SAXException
+        public void characters(char[] data, int start, int length)
         {
             if (this.currentElement != null)
                 this.currentElement.characters(data, start, length);
         }
     }
 
-    private class SARAnnotationElement extends ElementParser
+    private static class SARAnnotationElement extends ElementParser
     {
         private double latitutde;
         private double longitude;
@@ -167,7 +166,6 @@ public class SARAnnotationReader
 
         @Override
         public void doStartElement(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
-            throws org.xml.sax.SAXException
         {
             // don't perform validation here - no parameters are actually used
         }
@@ -177,10 +175,9 @@ public class SARAnnotationReader
          * @param lname
          * @param qname
          * @throws IllegalArgumentException if <code>lname</code> is null
-         * @throws org.xml.sax.SAXException
          */
         @Override
-        public void doEndElement(String uri, String lname, String qname) throws org.xml.sax.SAXException
+        public void doEndElement(String uri, String lname, String qname)
         {
             if (lname == null)
             {

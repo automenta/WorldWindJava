@@ -221,7 +221,7 @@ public class DataInstaller extends AVListImpl
         if (results != null && results.iterator() != null && results.iterator().hasNext())
         {
             Object o = results.iterator().next();
-            if (o != null && o instanceof Document)
+            if (o instanceof Document)
             {
                 return (Document) o;
             }
@@ -232,12 +232,11 @@ public class DataInstaller extends AVListImpl
 
     protected String askForDatasetName(String suggestedName)
     {
-        String datasetName = suggestedName;
 
         for (; ; )
         {
             Object o = JOptionPane.showInputDialog(null, "Name:", "Enter dataset name",
-                JOptionPane.QUESTION_MESSAGE, null, null, datasetName);
+                JOptionPane.QUESTION_MESSAGE, null, null, suggestedName);
 
             if (!(o instanceof String)) // user canceled the input
             {
@@ -296,7 +295,7 @@ public class DataInstaller extends AVListImpl
         String name = sb.toString();
         sb.setLength(0);
 
-        ArrayList<String> words = new ArrayList<String>();
+        ArrayList<String> words = new ArrayList<>();
 
         StringTokenizer tokens = new StringTokenizer(name, " _:/\\-=!@#$%^&()[]{}|\".,<>;`+");
         String lastWord = null;
@@ -437,26 +436,21 @@ public class DataInstaller extends AVListImpl
             return;
 
         final Layer finalLayer = layer;
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
+        SwingUtilities.invokeLater(() -> {
+            finalLayer.setEnabled(true); // BasicLayerFactory creates layer which is initially disabled
+
+            Layer existingLayer = findLayer(wwd, dataSet.getStringValue(AVKey.DISPLAY_NAME));
+            if (existingLayer != null)
+                wwd.getModel().getLayers().remove(existingLayer);
+
+            removeLayerPreview(wwd, dataSet);
+
+            ApplicationTemplate.insertBeforePlacenames(wwd, finalLayer);
+
+            final Sector sector = (Sector) finalLayer.getValue(AVKey.SECTOR);
+            if (goTo && sector != null && !sector.equals(Sector.FULL_SPHERE))
             {
-                finalLayer.setEnabled(true); // BasicLayerFactory creates layer which is initially disabled
-
-                Layer existingLayer = findLayer(wwd, dataSet.getStringValue(AVKey.DISPLAY_NAME));
-                if (existingLayer != null)
-                    wwd.getModel().getLayers().remove(existingLayer);
-
-                removeLayerPreview(wwd, dataSet);
-
-                ApplicationTemplate.insertBeforePlacenames(wwd, finalLayer);
-
-                final Sector sector = (Sector) finalLayer.getValue(AVKey.SECTOR);
-                if (goTo && sector != null && !sector.equals(Sector.FULL_SPHERE))
-                {
-                    ExampleUtil.goTo(wwd, sector);
-                }
+                ExampleUtil.goTo(wwd, sector);
             }
         });
     }
@@ -511,39 +505,34 @@ public class DataInstaller extends AVListImpl
             return;
 
         final ElevationModel em = elevationModel;
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            @Override
-            public void run()
+        SwingUtilities.invokeLater(() -> {
+            ElevationModel existingElevationModel = findElevationModel(wwd, dataSet.getStringValue(AVKey.DISPLAY_NAME));
+            if (existingElevationModel != null)
+                removeElevationModel(wwd, existingElevationModel);
+
+            ElevationModel defaultElevationModel = wwd.getModel().getGlobe().getElevationModel();
+            if (defaultElevationModel instanceof CompoundElevationModel)
             {
-                ElevationModel existingElevationModel = findElevationModel(wwd, dataSet.getStringValue(AVKey.DISPLAY_NAME));
-                if (existingElevationModel != null)
-                    removeElevationModel(wwd, existingElevationModel);
-
-                ElevationModel defaultElevationModel = wwd.getModel().getGlobe().getElevationModel();
-                if (defaultElevationModel instanceof CompoundElevationModel)
+                if (!((CompoundElevationModel) defaultElevationModel).containsElevationModel(em))
                 {
-                    if (!((CompoundElevationModel) defaultElevationModel).containsElevationModel(em))
-                    {
-                        ((CompoundElevationModel) defaultElevationModel).addElevationModel(em);
-                    }
+                    ((CompoundElevationModel) defaultElevationModel).addElevationModel(em);
                 }
-                else
-                {
-                    CompoundElevationModel cm = new CompoundElevationModel();
-                    cm.addElevationModel(defaultElevationModel);
-                    cm.addElevationModel(em);
-                    wwd.getModel().getGlobe().setElevationModel(cm);
-                }
-
-                Sector sector = (Sector) em.getValue(AVKey.SECTOR);
-                if (goTo && sector != null && !sector.equals(Sector.FULL_SPHERE))
-                {
-                    ExampleUtil.goTo(wwd, sector);
-                }
-
-                wwd.firePropertyChange(new PropertyChangeEvent(wwd, AVKey.ELEVATION_MODEL, null, em));
             }
+            else
+            {
+                CompoundElevationModel cm = new CompoundElevationModel();
+                cm.addElevationModel(defaultElevationModel);
+                cm.addElevationModel(em);
+                wwd.getModel().getGlobe().setElevationModel(cm);
+            }
+
+            Sector sector = (Sector) em.getValue(AVKey.SECTOR);
+            if (goTo && sector != null && !sector.equals(Sector.FULL_SPHERE))
+            {
+                ExampleUtil.goTo(wwd, sector);
+            }
+
+            wwd.firePropertyChange(new PropertyChangeEvent(wwd, AVKey.ELEVATION_MODEL, null, em));
         });
     }
 

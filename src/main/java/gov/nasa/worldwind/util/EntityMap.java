@@ -17,14 +17,14 @@ import java.util.regex.*;
  */
 public class EntityMap
 {
-    protected static final List<Pattern> patterns = new ArrayList<Pattern>();
+    protected static final List<Pattern> patterns = new ArrayList<>();
 
     static
     {
         patterns.add(Pattern.compile("&[^;]+;")); // ampersand followed by any number of chars followed by semicolon
     }
 
-    protected static final HashMap<String, String> map = new HashMap<String, String>();
+    protected static final HashMap<String, String> map = new HashMap<>();
 
     /**
      * Replaces all entities and character references in a specified string.
@@ -98,7 +98,7 @@ public class EntityMap
 // Mappings taken from
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/named-character-references.html#named-character-references
 
-    protected static String[] entityKeys = new String[] {
+    protected static final String[] entityKeys = new String[] {
         "&#x1fbf;",
         "&#x1ffe;",
         "&#x2d8;",

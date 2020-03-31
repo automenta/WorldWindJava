@@ -71,53 +71,50 @@ public class Navigation extends AbstractFeatureLayer
     @Override
     public void doPropertyChange(PropertyChangeEvent event)
     {
-        if (event.getPropertyName().equals(POSITION_PROPERTY))
+        switch (event.getPropertyName())
         {
-            if (event.getNewValue() != null && event.getNewValue() instanceof String)
-            {
-                this.getLayer().setPosition((String) event.getNewValue());
-                this.controller.redraw();
-            }
-        }
-        else if (event.getPropertyName().equals(ORIENTATION_PROPERTY))
-        {
-            if (event.getNewValue() != null && event.getNewValue() instanceof String)
-            {
-                this.getLayer().setLayout((String) event.getNewValue());
-                this.controller.redraw();
-            }
-        }
-        else if (event.getPropertyName().equals(PAN_CONTROLS_PROPERTY))
-        {
-            if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
-            {
-                this.getLayer().setShowPanControls((Boolean) event.getNewValue());
-                this.controller.redraw();
-            }
-        }
-        else if (event.getPropertyName().equals(ZOOM_CONTROLS_PROPERTY))
-        {
-            if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
-            {
-                this.getLayer().setShowZoomControls((Boolean) event.getNewValue());
-                this.controller.redraw();
-            }
-        }
-        else if (event.getPropertyName().equals(HEADING_CONTROLS_PROPERTY))
-        {
-            if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
-            {
-                this.getLayer().setShowHeadingControls((Boolean) event.getNewValue());
-                this.controller.redraw();
-            }
-        }
-        else if (event.getPropertyName().equals(TILT_CONTROLS_PROPERTY))
-        {
-            if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
-            {
-                this.getLayer().setShowPitchControls((Boolean) event.getNewValue());
-                this.controller.redraw();
-            }
+            case POSITION_PROPERTY:
+                if (event.getNewValue() != null && event.getNewValue() instanceof String)
+                {
+                    this.getLayer().setPosition((String) event.getNewValue());
+                    this.controller.redraw();
+                }
+                break;
+            case ORIENTATION_PROPERTY:
+                if (event.getNewValue() != null && event.getNewValue() instanceof String)
+                {
+                    this.getLayer().setLayout((String) event.getNewValue());
+                    this.controller.redraw();
+                }
+                break;
+            case PAN_CONTROLS_PROPERTY:
+                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
+                {
+                    this.getLayer().setShowPanControls((Boolean) event.getNewValue());
+                    this.controller.redraw();
+                }
+                break;
+            case ZOOM_CONTROLS_PROPERTY:
+                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
+                {
+                    this.getLayer().setShowZoomControls((Boolean) event.getNewValue());
+                    this.controller.redraw();
+                }
+                break;
+            case HEADING_CONTROLS_PROPERTY:
+                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
+                {
+                    this.getLayer().setShowHeadingControls((Boolean) event.getNewValue());
+                    this.controller.redraw();
+                }
+                break;
+            case TILT_CONTROLS_PROPERTY:
+                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
+                {
+                    this.getLayer().setShowPitchControls((Boolean) event.getNewValue());
+                    this.controller.redraw();
+                }
+                break;
         }
     }
 

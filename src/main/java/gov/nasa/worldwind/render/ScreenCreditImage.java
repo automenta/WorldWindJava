@@ -9,6 +9,7 @@ package gov.nasa.worldwind.render;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * @author tag
@@ -94,7 +95,7 @@ public class ScreenCreditImage extends ScreenImage implements ScreenCredit
 
         ScreenCreditImage that = (ScreenCreditImage) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null)
+        if (!Objects.equals(name, that.name))
             return false;
 
         return true;

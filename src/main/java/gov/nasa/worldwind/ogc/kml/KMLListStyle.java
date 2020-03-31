@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class KMLListStyle extends KMLAbstractSubStyle
 {
-    protected List<KMLItemIcon> itemIcons = new ArrayList<KMLItemIcon>();
+    protected final List<KMLItemIcon> itemIcons = new ArrayList<>();
 
     /**
      * Construct an instance.
@@ -95,7 +95,7 @@ public class KMLListStyle extends KMLAbstractSubStyle
     protected void mergeItemIcons(KMLListStyle sourceStyle)
     {
         // Make a copy of the existing list so we can modify it as we traverse the copy.
-        List<KMLItemIcon> itemIconsCopy = new ArrayList<KMLItemIcon>(this.getItemIcons().size());
+        List<KMLItemIcon> itemIconsCopy = new ArrayList<>(this.getItemIcons().size());
         Collections.copy(itemIconsCopy, this.getItemIcons());
 
         for (KMLItemIcon sourceItemIcon : sourceStyle.getItemIcons())

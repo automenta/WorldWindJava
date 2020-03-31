@@ -27,7 +27,7 @@ public class RectangularPositionArea extends AbstractRectangularGraphic
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.FSUPP_ARS_C2ARS_PAA_RTG);
+        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_C2ARS_PAA_RTG);
     }
 
     /**

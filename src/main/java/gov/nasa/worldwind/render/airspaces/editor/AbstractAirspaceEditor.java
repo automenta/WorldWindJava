@@ -29,7 +29,7 @@ public abstract class AbstractAirspaceEditor extends AbstractLayer implements Ai
     private AirspaceControlPointRenderer controlPointRenderer;
     private final EventListenerList eventListeners = new EventListenerList();
     // List of control points from the last call to draw().
-    private final ArrayList<AirspaceControlPoint> currentControlPoints = new ArrayList<AirspaceControlPoint>();
+    private final ArrayList<AirspaceControlPoint> currentControlPoints = new ArrayList<>();
 
     // Airspace altitude constants.
     protected static final int LOWER_ALTITUDE = AirspaceEditorUtil.LOWER_ALTITUDE;

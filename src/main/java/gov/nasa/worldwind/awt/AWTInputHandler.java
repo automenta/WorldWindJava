@@ -33,17 +33,13 @@ public class AWTInputHandler extends WWObjectImpl
     protected boolean isHovering = false;
     protected boolean isDragging = false;
     protected boolean forceRedrawOnMousePressed = Configuration.getBooleanValue(AVKey.REDRAW_ON_MOUSE_PRESSED, false);
-    protected javax.swing.Timer hoverTimer = new javax.swing.Timer(600, new ActionListener()
-    {
-        public void actionPerformed(ActionEvent actionEvent)
+    protected javax.swing.Timer hoverTimer = new javax.swing.Timer(600, actionEvent -> {
+        if (AWTInputHandler.this.pickMatches(AWTInputHandler.this.hoverObjects))
         {
-            if (AWTInputHandler.this.pickMatches(AWTInputHandler.this.hoverObjects))
-            {
-                AWTInputHandler.this.isHovering = true;
-                AWTInputHandler.this.callSelectListeners(new SelectEvent(AWTInputHandler.this.wwd,
-                    SelectEvent.HOVER, mousePoint, AWTInputHandler.this.hoverObjects));
-                AWTInputHandler.this.hoverTimer.stop();
-            }
+            AWTInputHandler.this.isHovering = true;
+            AWTInputHandler.this.callSelectListeners(new SelectEvent(AWTInputHandler.this.wwd,
+                SelectEvent.HOVER, mousePoint, AWTInputHandler.this.hoverObjects));
+            AWTInputHandler.this.hoverTimer.stop();
         }
     });
     // Delegate handler for View.
@@ -115,14 +111,10 @@ public class AWTInputHandler extends WWObjectImpl
         c.addMouseWheelListener(this);
         c.addFocusListener(this);
 
-        this.selectListener = new SelectListener()
-        {
-            public void selected(SelectEvent event)
+        this.selectListener = event -> {
+            if (event.getEventAction().equals(SelectEvent.ROLLOVER))
             {
-                if (event.getEventAction().equals(SelectEvent.ROLLOVER))
-                {
-                    doHover(true);
-                }
+                doHover(true);
             }
         };
         this.wwd.addSelectListener(this.selectListener);

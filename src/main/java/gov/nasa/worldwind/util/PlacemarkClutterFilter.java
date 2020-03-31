@@ -28,9 +28,9 @@ import java.util.*;
 public class PlacemarkClutterFilter implements ClutterFilter
 {
     /** Holds the rectangles of the regions already drawn. */
-    protected List<Rectangle2D> rectList = new ArrayList<Rectangle2D>();
+    protected final List<Rectangle2D> rectList = new ArrayList<>();
     /** Maintains a list of regions and the shapes associated with each region. */
-    protected Map<Rectangle2D, List<Declutterable>> shapeMap = new HashMap<Rectangle2D, List<Declutterable>>();
+    protected final Map<Rectangle2D, List<Declutterable>> shapeMap = new HashMap<>();
 
     public void apply(DrawContext dc, List<Declutterable> shapes)
     {
@@ -98,7 +98,7 @@ public class PlacemarkClutterFilter implements ClutterFilter
 
         if (shapeList == null)
         {
-            shapeList = new ArrayList<Declutterable>(1);
+            shapeList = new ArrayList<>(1);
             this.shapeMap.put(rectangle, shapeList);
             this.rectList.add(rectangle);
         }
@@ -125,7 +125,7 @@ public class PlacemarkClutterFilter implements ClutterFilter
                 if (shape instanceof PointPlacemark.OrderedPlacemark)
                 {
                     if (placemarks == null)
-                        placemarks = new ArrayList<PointPlacemark.OrderedPlacemark>();
+                        placemarks = new ArrayList<>();
                     placemarks.add((PointPlacemark.OrderedPlacemark) shape);
                 }
                 else
@@ -161,9 +161,9 @@ public class PlacemarkClutterFilter implements ClutterFilter
 
     protected static class DeclutteredLabel implements OrderedRenderable
     {
-        protected double angle;
-        protected PointPlacemark.OrderedPlacemark opm;
-        protected Rectangle2D region;
+        protected final double angle;
+        protected final PointPlacemark.OrderedPlacemark opm;
+        protected final Rectangle2D region;
         protected PickSupport pickSupport;
 
         public DeclutteredLabel(double angle, PointPlacemark.OrderedPlacemark opm, Rectangle2D region)

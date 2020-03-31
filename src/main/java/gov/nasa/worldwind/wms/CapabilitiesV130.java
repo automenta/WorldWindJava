@@ -41,8 +41,8 @@ public class CapabilitiesV130 extends Capabilities
         if (es == null)
             return null;
 
-        ArrayList<BoundingBox> bboxes = new ArrayList<BoundingBox>();
-        ArrayList<String> crses = new ArrayList<String>();
+        ArrayList<BoundingBox> bboxes = new ArrayList<>();
+        ArrayList<String> crses = new ArrayList<>();
 
         for (Element e : es)
         {
@@ -65,7 +65,7 @@ public class CapabilitiesV130 extends Capabilities
             }
         }
 
-        return bboxes.size() > 0 ? bboxes.toArray(new BoundingBox[bboxes.size()]) : null;
+        return bboxes.size() > 0 ? bboxes.toArray(new BoundingBox[0]) : null;
     }
 
     @Override

@@ -103,7 +103,7 @@ public class GDALDataRasterReader extends AbstractDataRasterReader
     }
 
     @Override
-    protected DataRaster[] doRead(Object source, AVList params) throws IOException
+    protected DataRaster[] doRead(Object source, AVList params)
     {
         GDALDataRaster raster = this.readDataRaster(source, false);
         if (null != raster && null != params)
@@ -116,7 +116,7 @@ public class GDALDataRasterReader extends AbstractDataRasterReader
     }
 
     @Override
-    protected void doReadMetadata(Object source, AVList params) throws IOException
+    protected void doReadMetadata(Object source, AVList params)
     {
         GDALDataRaster raster = this.readDataRaster(source, true);
         if (null != raster && null != params)
@@ -127,7 +127,7 @@ public class GDALDataRasterReader extends AbstractDataRasterReader
         }
     }
 
-    protected GDALDataRaster readDataRaster(Object source, boolean quickReadingMode) throws IOException
+    protected GDALDataRaster readDataRaster(Object source, boolean quickReadingMode)
     {
         if (null == source)
         {

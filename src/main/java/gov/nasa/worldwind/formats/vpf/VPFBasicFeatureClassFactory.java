@@ -50,7 +50,7 @@ public class VPFBasicFeatureClassFactory implements VPFFeatureClassFactory
         }
     }
 
-    protected VPFFeatureClass doCreateFromSchema(VPFCoverage coverage, VPFFeatureClassSchema schema) throws IOException
+    protected VPFFeatureClass doCreateFromSchema(VPFCoverage coverage, VPFFeatureClassSchema schema)
     {
         // DIGEST Part 2, Annex C.2.2.2.2.3.a: Simple feature classes.
         // A simple feature class consists of a (logically) single primitive table and a single simple feature table.

@@ -26,9 +26,9 @@ import gov.nasa.worldwind.util.*;
  */
 public class ProjectionTransverseMercator extends AbstractGeographicProjection
 {
-    protected static Angle DEFAULT_WIDTH = Angle.fromDegrees(30);
-    protected static Angle DEFAULT_CENTRAL_MERIDIAN = Angle.ZERO;
-    protected static Angle DEFAULT_CENTRAL_LATITUDE = Angle.ZERO;
+    protected static final Angle DEFAULT_WIDTH = Angle.fromDegrees(30);
+    protected static final Angle DEFAULT_CENTRAL_MERIDIAN = Angle.ZERO;
+    protected static final Angle DEFAULT_CENTRAL_LATITUDE = Angle.ZERO;
 
     protected Angle width = DEFAULT_WIDTH;
     protected Angle centralMeridian = DEFAULT_CENTRAL_MERIDIAN;

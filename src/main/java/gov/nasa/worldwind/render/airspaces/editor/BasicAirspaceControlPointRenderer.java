@@ -443,38 +443,23 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
         // shape has been flattened against the terrain. In this case the lower points may not be movable, therefore
         // the user must be able to select an upper point to raise the shape and fix the problem.
 
-        TreeSet<AirspaceControlPoint> set = new TreeSet<AirspaceControlPoint>(new Comparator<AirspaceControlPoint>()
-        {
-            public int compare(AirspaceControlPoint p1, AirspaceControlPoint p2)
-            {
-                double d1 = p1.getPoint().distanceTo3(eyePoint);
-                double d2 = p2.getPoint().distanceTo3(eyePoint);
-                int alt1 = p1.getAltitudeIndex();
-                int alt2 = p2.getAltitudeIndex();
+        TreeSet<AirspaceControlPoint> set = new TreeSet<>((p1, p2) -> {
+            double d1 = p1.getPoint().distanceTo3(eyePoint);
+            double d2 = p2.getPoint().distanceTo3(eyePoint);
+            int alt1 = p1.getAltitudeIndex();
+            int alt2 = p2.getAltitudeIndex();
 
-                if (alt2 < alt1)
-                {
-                    return -1;
-                }
-                else if (alt2 > alt1)
-                {
-                    return 1;
-                }
-                else
-                {
-                    if (d1 < d2)
-                    {
-                        return 1;
-                    }
-                    else if (d1 > d2)
-                    {
-                        return -1;
-                    }
-                    else
-                    {
-                        return 0;
-                    }
-                }
+            if (alt2 < alt1)
+            {
+                return -1;
+            }
+            else if (alt2 > alt1)
+            {
+                return 1;
+            }
+            else
+            {
+                return Double.compare(d2, d1);
             }
         });
 

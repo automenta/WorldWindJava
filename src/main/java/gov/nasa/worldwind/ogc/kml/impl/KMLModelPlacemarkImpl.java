@@ -33,12 +33,12 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
     /** Placemark that contains the model. */
     protected KMLPlacemark parent;
     /** Reference to the COLLADA root that contains the parsed COLLADA file. */
-    protected AtomicReference<ColladaRoot> colladaRoot = new AtomicReference<ColladaRoot>();
+    protected final AtomicReference<ColladaRoot> colladaRoot = new AtomicReference<>();
     /**
      * Time, in milliseconds since the Epoch, at which this placemark's model resource was last retrieved. Initially
      * <code>-1</code>, indicating that the resource has not been retrieved.
      */
-    protected AtomicLong resourceRetrievalTime = new AtomicLong(-1);
+    protected final AtomicLong resourceRetrievalTime = new AtomicLong(-1);
 
     /**
      * Map specified by the KML Model's ResourceMap element. The map relates relative references within the COLLADA file
@@ -47,7 +47,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
     protected Map<String, String> resourceMap;
 
     /** Traversal context for rendering the ColladaRoot. */
-    protected ColladaTraversalContext colladaTraversalContext = new ColladaTraversalContext();
+    protected final ColladaTraversalContext colladaTraversalContext = new ColladaTraversalContext();
 
     /**
      * Create an instance.
@@ -97,7 +97,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
      */
     protected Map<String, String> createResourceMap(KMLModel model)
     {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
 
         KMLResourceMap resourceMap = model.getResourceMap();
         if (resourceMap == null)
@@ -220,7 +220,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
      * <p>
      * {@inheritDoc}.
      */
-    public String resolveFilePath(String path) throws IOException
+    public String resolveFilePath(String path)
     {
         KMLLink link = this.model.getLink();
 

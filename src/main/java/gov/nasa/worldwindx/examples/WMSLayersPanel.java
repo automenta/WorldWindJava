@@ -52,14 +52,10 @@ public class WMSLayersPanel extends JPanel
     protected final URI serverURI;
     protected final Dimension size;
     protected final Thread loadingThread;
-    protected final TreeSet<LayerInfo> layerInfos = new TreeSet<LayerInfo>(new Comparator<LayerInfo>()
-    {
-        public int compare(LayerInfo infoA, LayerInfo infoB)
-        {
-            String nameA = infoA.getName();
-            String nameB = infoB.getName();
-            return nameA.compareTo(nameB);
-        }
+    protected final TreeSet<LayerInfo> layerInfos = new TreeSet<>((infoA, infoB) -> {
+        String nameA = infoA.getName();
+        String nameB = infoB.getName();
+        return nameA.compareTo(nameB);
     });
 
     public WMSLayersPanel(WorldWindow wwd, String server, Dimension size) throws URISyntaxException
@@ -76,13 +72,7 @@ public class WMSLayersPanel extends JPanel
         this.makeProgressPanel();
 
         // Thread off a retrieval of the server's capabilities document and update of this panel.
-        this.loadingThread = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                load();
-            }
-        });
+        this.loadingThread = new Thread(this::load);
         this.loadingThread.setPriority(Thread.MIN_PRIORITY);
         this.loadingThread.start();
     }
@@ -134,13 +124,9 @@ public class WMSLayersPanel extends JPanel
         }
 
         // Fill the panel with the layer titles.
-        EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                WMSLayersPanel.this.removeAll();
-                makeLayerInfosPanel(layerInfos);
-            }
+        EventQueue.invokeLater(() -> {
+            WMSLayersPanel.this.removeAll();
+            makeLayerInfosPanel(layerInfos);
         });
     }
 
@@ -209,8 +195,8 @@ public class WMSLayersPanel extends JPanel
 
     protected class LayerInfoAction extends AbstractAction
     {
-        protected WorldWindow wwd;
-        protected LayerInfo layerInfo;
+        protected final WorldWindow wwd;
+        protected final LayerInfo layerInfo;
         protected Object component;
 
         public LayerInfoAction(LayerInfo linfo, WorldWindow wwd)

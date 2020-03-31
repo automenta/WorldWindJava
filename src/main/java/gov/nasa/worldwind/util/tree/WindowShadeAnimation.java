@@ -20,9 +20,9 @@ import java.awt.*;
 public class WindowShadeAnimation implements Animation
 {
     /** Default animation duration, in milliseconds. */
-    public int DEFAULT_DURATION = 400;
+    public final int DEFAULT_DURATION = 400;
 
-    protected ScrollFrame frame;
+    protected final ScrollFrame frame;
     protected int startWindowHeight;
     protected int targetWindowHeight;
     /** Duration, in milliseconds, of the animation. */

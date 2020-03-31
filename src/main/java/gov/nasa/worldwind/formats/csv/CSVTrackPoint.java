@@ -67,18 +67,16 @@ public class CSVTrackPoint implements TrackPoint
 
     private double unitsToMeters(String units)
     {
-        double f;
+        // meters
+// feet
+        // fathoms
 
-        if (units.equals("M")) // meters
-            f = 1d;
-        else if (units.equals("f")) // feet
-            f = 3.2808399;
-        else if (units.equals("F")) // fathoms
-            f = 0.5468066528;
-        else
-            f = 1d;
-
-        return f;
+        return switch (units)
+            {
+                case "f" -> 3.2808399;
+                case "F" -> 0.5468066528;
+                default -> 1d;
+            };
     }
 
     public double getLatitude()

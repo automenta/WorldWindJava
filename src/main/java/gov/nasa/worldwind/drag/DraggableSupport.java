@@ -404,14 +404,12 @@ public class DraggableSupport
         if (dragObjectScreenPoint == null)
             return null;
 
-        Vec4 screenPointOffset = new Vec4(
+        return new Vec4(
             dragContext.getInitialPoint().getX() - dragObjectScreenPoint.getX(),
             dragContext.getInitialPoint().getY() - (
                 dragContext.getView().getViewport().getHeight()
                     - dragObjectScreenPoint.getY() - 1.0)
         );
-
-        return screenPointOffset;
     }
 
     /**

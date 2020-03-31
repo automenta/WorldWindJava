@@ -30,15 +30,15 @@ import java.util.ArrayList;
  */
 public class GeoSymAttributeConverter
 {
-    protected static String TYPE_POINT = "Point";
-    protected static String TYPE_LINE_PLAIN = "LinePlain";
-    protected static String TYPE_LINE_COMPLEX = "LineComplex";
-    protected static String TYPE_AREA_PLAIN = "AreaPlain";
-    protected static String TYPE_AREA_PATTERN = "AreaPattern";
+    protected static final String TYPE_POINT = "Point";
+    protected static final String TYPE_LINE_PLAIN = "LinePlain";
+    protected static final String TYPE_LINE_COMPLEX = "LineComplex";
+    protected static final String TYPE_AREA_PLAIN = "AreaPlain";
+    protected static final String TYPE_AREA_PATTERN = "AreaPattern";
 
     protected static class CGMFile
     {
-        protected File file;
+        protected final File file;
         protected String content;
         protected String type;
         protected int[] colorTable;
@@ -204,7 +204,7 @@ public class GeoSymAttributeConverter
             //String elementType = "";
             double elementLength = 0;
             double totalLength = 0;
-            ArrayList<Double> lengths = new ArrayList<Double>();
+            ArrayList<Double> lengths = new ArrayList<>();
             String[] lines = this.content.split("\n");
             // Gather pattern segments
             for (String line : lines)
@@ -322,7 +322,7 @@ public class GeoSymAttributeConverter
                 if (this.type.equals(TYPE_LINE_COMPLEX))
                 {
                     stipplePattern = String.format("#%04x", this.stipplePattern);
-                    stippleFactor = "" + this.stippleFactor;
+                    stippleFactor = String.valueOf(this.stippleFactor);
                 }
             }
 

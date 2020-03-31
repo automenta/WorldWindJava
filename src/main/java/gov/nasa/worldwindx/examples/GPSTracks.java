@@ -6,7 +6,6 @@
 package gov.nasa.worldwindx.examples;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.formats.gpx.GpxReader;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.MarkerLayer;
@@ -41,20 +40,16 @@ public class GPSTracks extends ApplicationTemplate
             MarkerLayer layer = this.buildTracksLayer();
             insertBeforeCompass(this.getWwd(), layer);
 
-            this.getWwd().addSelectListener(new SelectListener()
-            {
-                public void selected(SelectEvent event)
+            this.getWwd().addSelectListener(event -> {
+                if (event.getTopObject() != null)
                 {
-                    if (event.getTopObject() != null)
+                    if (event.getTopPickedObject().getParentLayer() instanceof MarkerLayer)
                     {
-                        if (event.getTopPickedObject().getParentLayer() instanceof MarkerLayer)
-                        {
-                            PickedObject po = event.getTopPickedObject();
-                            //noinspection RedundantCast
-                            System.out.printf("Track position %s, %s, size = %f\n",
-                                po.getValue(AVKey.PICKED_OBJECT_ID).toString(),
-                                po.getPosition(), (Double) po.getValue(AVKey.PICKED_OBJECT_SIZE));
-                        }
+                        PickedObject po = event.getTopPickedObject();
+                        //noinspection RedundantCast
+                        System.out.printf("Track position %s, %s, size = %f\n",
+                            po.getValue(AVKey.PICKED_OBJECT_ID).toString(),
+                            po.getPosition(), (Double) po.getValue(AVKey.PICKED_OBJECT_SIZE));
                     }
                 }
             });
@@ -71,7 +66,7 @@ public class GPSTracks extends ApplicationTemplate
                 BasicMarkerAttributes attrs =
                     new BasicMarkerAttributes(Material.WHITE, BasicMarkerShape.SPHERE, 1d);
 
-                ArrayList<Marker> markers = new ArrayList<Marker>();
+                ArrayList<Marker> markers = new ArrayList<>();
                 while (positions.hasNext())
                 {
                     markers.add(new BasicMarker(positions.next(), attrs));
@@ -84,15 +79,7 @@ public class GPSTracks extends ApplicationTemplate
 
                 return layer;
             }
-            catch (ParserConfigurationException e)
-            {
-                e.printStackTrace();
-            }
-            catch (SAXException e)
-            {
-                e.printStackTrace();
-            }
-            catch (IOException e)
+            catch (ParserConfigurationException | IOException | SAXException e)
             {
                 e.printStackTrace();
             }

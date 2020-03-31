@@ -22,7 +22,6 @@ import gov.nasa.worldwindx.examples.util.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.Arrays;
 
 /**
@@ -49,8 +48,8 @@ public class SharedShapes
 {
     protected static class WWPanel extends JPanel
     {
-        protected WorldWindowGLCanvas wwd;
-        protected HighlightController highlightController;
+        protected final WorldWindowGLCanvas wwd;
+        protected final HighlightController highlightController;
 
         public WWPanel(WorldWindow shareWith, Model model, Dimension canvasSize)
         {
@@ -77,7 +76,7 @@ public class SharedShapes
 
     protected static class SharedLayerPanel extends JPanel
     {
-        protected JComponent layersComponent;
+        protected final JComponent layersComponent;
 
         public SharedLayerPanel(String title, Dimension preferredSize, Iterable<? extends Layer> layersIterable)
         {
@@ -119,13 +118,9 @@ public class SharedShapes
         protected void addLayer(final Layer layer)
         {
             final JCheckBox jcb = new JCheckBox(layer.getName(), layer.isEnabled());
-            jcb.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
-                {
-                    layer.setEnabled(jcb.isSelected());
-                    layer.firePropertyChange(AVKey.LAYER, null, layer);
-                }
+            jcb.addActionListener(actionEvent -> {
+                layer.setEnabled(jcb.isSelected());
+                layer.firePropertyChange(AVKey.LAYER, null, layer);
             });
 
             this.layersComponent.add(jcb);

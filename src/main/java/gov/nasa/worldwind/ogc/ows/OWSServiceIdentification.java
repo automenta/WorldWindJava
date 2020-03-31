@@ -19,11 +19,11 @@ import java.util.*;
  */
 public class OWSServiceIdentification extends AbstractXMLEventParser
 {
-    protected List<String> abstracts = new ArrayList<String>(1);
-    protected List<String> accessConstraints = new ArrayList<String>(1);
-    protected List<String> profiles = new ArrayList<String>(1);
-    protected List<String> titles = new ArrayList<String>(1);
-    protected List<String> serviceTypeVersions = new ArrayList<String>(1);
+    protected final List<String> abstracts = new ArrayList<>(1);
+    protected final List<String> accessConstraints = new ArrayList<>(1);
+    protected final List<String> profiles = new ArrayList<>(1);
+    protected final List<String> titles = new ArrayList<>(1);
+    protected final List<String> serviceTypeVersions = new ArrayList<>(1);
 
     public OWSServiceIdentification(String namespaceURI)
     {

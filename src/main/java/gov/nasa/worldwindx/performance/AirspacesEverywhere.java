@@ -37,7 +37,7 @@ public class AirspacesEverywhere extends ApplicationTemplate
             double dLat = 1 / intervals;
             double dLon = 1 / intervals;
 
-            ArrayList<LatLon> positions = new ArrayList<LatLon>();
+            ArrayList<LatLon> positions = new ArrayList<>();
 
             RenderableLayer layer = new RenderableLayer();
 

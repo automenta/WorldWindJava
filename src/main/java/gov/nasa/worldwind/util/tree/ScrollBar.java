@@ -81,7 +81,7 @@ public class ScrollBar implements Renderable
     protected int minScrollKnobSize = DEFAULT_MIN_SCROLL_KNOB_SIZE;
 
     /** Support for setting up and restoring picking state, and resolving the picked object. */
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
 
     /** Full bounds of the scroll bar. */
     protected Rectangle bounds = new Rectangle();
@@ -92,7 +92,7 @@ public class ScrollBar implements Renderable
     protected Rectangle scrollBounds = new Rectangle();
 
     /** Insets used to position the triangle in the scroll arrow box. */
-    protected Insets arrowInsets = DEFAULT_ARROW_INSETS;
+    protected final Insets arrowInsets = DEFAULT_ARROW_INSETS;
 
     /** Scroll bar orientation, either {@link AVKey#HORIZONTAL} or {@link AVKey#VERTICAL}. */
     protected String orientation;
@@ -992,10 +992,10 @@ public class ScrollBar implements Renderable
     //**************************************************************//
 
     /** Control for the scroll arrows and areas of the scroll bar above and below the knob. */
-    public class ScrollControl extends TreeHotSpot
+    public static class ScrollControl extends TreeHotSpot
     {
-        protected ScrollBar scrollBar;
-        protected String adjustment;
+        protected final ScrollBar scrollBar;
+        protected final String adjustment;
 
         public ScrollControl(HotSpot parent, ScrollBar owner, String adjustment)
         {
@@ -1064,9 +1064,9 @@ public class ScrollBar implements Renderable
     }
 
     /** Control for dragging the scroll knob. */
-    public class ScrollKnob extends DragControl
+    public static class ScrollKnob extends DragControl
     {
-        protected ScrollBar scrollBar;
+        protected final ScrollBar scrollBar;
         protected int dragRefValue;
 
         public ScrollKnob(HotSpot parent, ScrollBar owner)

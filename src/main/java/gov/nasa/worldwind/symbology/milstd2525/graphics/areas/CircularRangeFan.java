@@ -28,7 +28,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
     /** Position of the center of the range fan. */
     protected Position position;
     /** Rings that make up the range fan. */
-    protected List<SurfaceCircle> rings;
+    protected final List<SurfaceCircle> rings;
 
     /** Symbol drawn at the center of the range fan. */
     protected TacticalSymbol symbol;
@@ -42,7 +42,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.FSUPP_ARS_WPNRF_CIRCLR);
+        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_WPNRF_CIRCLR);
     }
 
     /**
@@ -53,7 +53,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
     public CircularRangeFan(String sidc)
     {
         super(sidc);
-        this.rings = new ArrayList<SurfaceCircle>();
+        this.rings = new ArrayList<>();
     }
 
     /**
@@ -126,7 +126,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
             }
             else if (value instanceof Double)
             {
-                this.setRadii(Arrays.asList((Double) value));
+                this.setRadii(Collections.singletonList((Double) value));
             }
         }
         else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String)
@@ -164,7 +164,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
      */
     public List<Double> getRadii()
     {
-        List<Double> radii = new ArrayList<Double>();
+        List<Double> radii = new ArrayList<>();
         for (SurfaceCircle ring : this.rings)
         {
             radii.add(ring.getRadius());
@@ -238,7 +238,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
     /** {@inheritDoc} */
     public Iterable<? extends Position> getPositions()
     {
-        return Arrays.asList(this.position);
+        return Collections.singletonList(this.position);
     }
 
     /** {@inheritDoc} */
@@ -303,7 +303,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
         else if (modifier != null)
         {
             // Use the modifier as the altitude of the first ring
-            altIterator = Arrays.asList(modifier).iterator();
+            altIterator = Collections.singletonList(modifier).iterator();
         }
 
         // Create a label for each ring

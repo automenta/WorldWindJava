@@ -29,7 +29,7 @@ public class AddAnimator extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        public BasicFlyView view;
+        public final BasicFlyView view;
 
         public class ViewDisplay extends JPanel
         {

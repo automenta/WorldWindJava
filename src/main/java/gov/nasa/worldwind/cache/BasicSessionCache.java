@@ -44,7 +44,7 @@ public class BasicSessionCache implements SessionCache
             throw new IllegalArgumentException(message);
         }
 
-        this.entries = new BoundedHashMap<Object, Object>(capacity);
+        this.entries = new BoundedHashMap<>(capacity);
     }
 
     /** Creates a BasicSessionCache with the default capacity. */

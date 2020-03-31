@@ -440,10 +440,8 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
      *
      * @return a Layer, as described by the specified description.
      *
-     * @throws Exception if an exception occurs during creation.
      */
     protected Object doCreateFromElement(Element domElement, AVList params, CompletionCallback callback)
-        throws Exception
     {
         String shapefileLocation = WWXML.getText(domElement, "ShapefileLocation");
         if (WWUtil.isEmpty(shapefileLocation))
@@ -511,9 +509,8 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
      *
      * @return a Layer that renders the shapefile's contents.
      *
-     * @throws Exception if an exception occurs during creation.
      */
-    protected Object doCreateFromShapefile(Object shapefileSource, CompletionCallback callback) throws Exception
+    protected Object doCreateFromShapefile(Object shapefileSource, CompletionCallback callback)
     {
         RenderableLayer layer = new RenderableLayer();
 
@@ -525,29 +522,24 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     protected void createShapefileLayer(final Object shapefileSource, final RenderableLayer layer,
         final CompletionCallback callback)
     {
-        WorldWind.getScheduledTaskService().addTask(new Runnable()
-        {
-            @Override
-            public void run()
+        WorldWind.getScheduledTaskService().addTask(() -> {
+            Shapefile shp = null;
+            try
             {
-                Shapefile shp = null;
-                try
-                {
-                    shp = loadShapefile(shapefileSource);
-                    assembleShapefileLayer(shp, layer);
-                }
-                catch (Exception e)
-                {
-                    if (callback != null)
-                        callback.exception(e);
-                }
-                finally
-                {
-                    if (callback != null)
-                        callback.completion(layer);
-                    if (shapefileSource != shp) // close the shapefile if we created it
-                        WWIO.closeStream(shp, shapefileSource.toString());
-                }
+                shp = loadShapefile(shapefileSource);
+                assembleShapefileLayer(shp, layer);
+            }
+            catch (Exception e)
+            {
+                if (callback != null)
+                    callback.exception(e);
+            }
+            finally
+            {
+                if (callback != null)
+                    callback.completion(layer);
+                if (shapefileSource != shp) // close the shapefile if we created it
+                    WWIO.closeStream(shp, shapefileSource.toString());
             }
         });
     }

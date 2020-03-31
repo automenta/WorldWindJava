@@ -12,7 +12,6 @@ import gov.nasa.worldwind.layers.AbstractLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
-import java.beans.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -32,20 +31,20 @@ public class VPFLayer extends AbstractLayer
     protected ArrayList<VPFLibraryRenderable> libraries;
 
     // Renderables
-    protected double drawDistance = 1e6;
-    protected int maxTilesToDraw = 4;
-    protected boolean drawTileExtents = false;
-    protected ArrayList<VPFSymbol> symbols = new ArrayList<VPFSymbol>();
-    protected ArrayList<GeographicText> textObjects = new ArrayList<GeographicText>();
-    protected ArrayList<Renderable> renderableObjects = new ArrayList<Renderable>();
+    protected final double drawDistance = 1e6;
+    protected final int maxTilesToDraw = 4;
+    protected final boolean drawTileExtents = false;
+    protected final ArrayList<VPFSymbol> symbols = new ArrayList<>();
+    protected final ArrayList<GeographicText> textObjects = new ArrayList<>();
+    protected final ArrayList<Renderable> renderableObjects = new ArrayList<>();
 
     // Renderers
-    protected GeographicTextRenderer textRenderer = new GeographicTextRenderer();
-    protected VPFSymbolSupport symbolSupport = new VPFSymbolSupport(GeoSymConstants.GEOSYM, "image/png");
+    protected final GeographicTextRenderer textRenderer = new GeographicTextRenderer();
+    protected final VPFSymbolSupport symbolSupport = new VPFSymbolSupport(GeoSymConstants.GEOSYM, "image/png");
 
     // Threaded requests
-    protected Queue<Runnable> requestQ = new PriorityBlockingQueue<Runnable>(4);
-    protected Queue<Disposable> disposalQ = new ConcurrentLinkedQueue<Disposable>();
+    protected final Queue<Runnable> requestQ = new PriorityBlockingQueue<>(4);
+    protected final Queue<Disposable> disposalQ = new ConcurrentLinkedQueue<>();
 
     // --- Inner classes ----------------------------------------------------------------------
 
@@ -54,11 +53,11 @@ public class VPFLayer extends AbstractLayer
     protected static class VPFLibraryRenderable
     {
         protected boolean enabled = false;
-        protected VPFLayer layer;
-        protected VPFLibrary library;
+        protected final VPFLayer layer;
+        protected final VPFLibrary library;
         protected VPFCoverageRenderable referenceCoverage;
-        protected ArrayList<VPFCoverageRenderable> coverages = new ArrayList<VPFCoverageRenderable>();
-        protected ArrayList<VPFTile> currentTiles = new ArrayList<VPFTile>();
+        protected final ArrayList<VPFCoverageRenderable> coverages = new ArrayList<>();
+        protected final ArrayList<VPFTile> currentTiles = new ArrayList<>();
 
         public VPFLibraryRenderable(VPFLayer layer, VPFLibrary library)
         {
@@ -168,15 +167,15 @@ public class VPFLayer extends AbstractLayer
     protected static class VPFCoverageRenderable
     {
         protected boolean enabled = false;
-        protected VPFLayer layer;
-        protected VPFCoverage coverage;
-        protected Map<VPFTile, VPFSymbolCollection> tileCache;
+        protected final VPFLayer layer;
+        protected final VPFCoverage coverage;
+        protected final Map<VPFTile, VPFSymbolCollection> tileCache;
 
         public VPFCoverageRenderable(VPFLayer layer, VPFCoverage coverage)
         {
             this.layer = layer;
             this.coverage = coverage;
-            this.tileCache = Collections.synchronizedMap(new BoundedHashMap<VPFTile, VPFSymbolCollection>(6, true)
+            this.tileCache = Collections.synchronizedMap(new BoundedHashMap<>(6, true)
             {
                 protected boolean removeEldestEntry(Map.Entry<VPFTile, VPFSymbolCollection> eldest)
                 {
@@ -229,7 +228,7 @@ public class VPFLayer extends AbstractLayer
     {
         public static final VPFSymbolCollection EMPTY_SYMBOL_COLLECTION = new VPFSymbolCollection(null);
 
-        protected final ArrayList<VPFSymbol> symbols = new ArrayList<VPFSymbol>();
+        protected final ArrayList<VPFSymbol> symbols = new ArrayList<>();
 
         public VPFSymbolCollection(Collection<? extends VPFSymbol> symbols)
         {
@@ -275,7 +274,7 @@ public class VPFLayer extends AbstractLayer
         VPFBasicSymbolFactory symbolFactory = new VPFBasicSymbolFactory(tile, primitiveData);
         symbolFactory.setStyleSupport(this.symbolSupport);
 
-        ArrayList<VPFSymbol> list = new ArrayList<VPFSymbol>();
+        ArrayList<VPFSymbol> list = new ArrayList<>();
 
         // Create coverage renderables for one tile - if tile is null gets all coverage
         VPFFeatureClass[] array = VPFUtils.readFeatureClasses(coverage, new VPFFeatureTableFilter());
@@ -291,8 +290,8 @@ public class VPFLayer extends AbstractLayer
 
     protected static class RequestTask implements Runnable, Comparable<RequestTask>
     {
-        protected VPFCoverageRenderable coverageRenderable;
-        protected VPFTile tile;
+        protected final VPFCoverageRenderable coverageRenderable;
+        protected final VPFTile tile;
 
         protected RequestTask(VPFCoverageRenderable coverageRenderable, VPFTile tile)
         {
@@ -337,11 +336,10 @@ public class VPFLayer extends AbstractLayer
 
             RequestTask that = (RequestTask) o;
 
-            if (coverageRenderable != null ? !coverageRenderable.equals(that.coverageRenderable)
-                : that.coverageRenderable != null)
+            if (!Objects.equals(coverageRenderable, that.coverageRenderable))
                 return false;
             //noinspection RedundantIfStatement
-            if (tile != null ? !tile.equals(that.tile) : that.tile != null)
+            if (!Objects.equals(tile, that.tile))
                 return false;
 
             return true;
@@ -391,29 +389,25 @@ public class VPFLayer extends AbstractLayer
         this.db = db;
         this.initialize();
 
-        this.db.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent event)
+        this.db.addPropertyChangeListener(event -> {
+            if (event.getPropertyName().equals(LIBRARY_CHANGED))
             {
-                if (event.getPropertyName().equals(LIBRARY_CHANGED))
-                {
-                    VPFLibrary library = (VPFLibrary) event.getSource();
-                    boolean enabled = (Boolean) event.getNewValue();
-                    setLibraryEnabled(library, enabled);
-                }
-                else if (event.getPropertyName().equals(COVERAGE_CHANGED))
-                {
-                    VPFCoverage coverage = (VPFCoverage) event.getSource();
-                    boolean enabled = (Boolean) event.getNewValue();
-                    setCoverageEnabled(coverage, enabled);
-                }
+                VPFLibrary library = (VPFLibrary) event.getSource();
+                boolean enabled = (Boolean) event.getNewValue();
+                setLibraryEnabled(library, enabled);
+            }
+            else if (event.getPropertyName().equals(COVERAGE_CHANGED))
+            {
+                VPFCoverage coverage = (VPFCoverage) event.getSource();
+                boolean enabled = (Boolean) event.getNewValue();
+                setCoverageEnabled(coverage, enabled);
             }
         });
     }
 
     protected void initialize()
     {
-        this.libraries = new ArrayList<VPFLibraryRenderable>();
+        this.libraries = new ArrayList<>();
 
         for (VPFLibrary lib : db.getLibraries())
         {
@@ -514,7 +508,7 @@ public class VPFLayer extends AbstractLayer
 
     protected void sortSymbols(List<VPFSymbol> list)
     {
-        Collections.sort(list, new VPFSymbolComparator());
+        list.sort(new VPFSymbolComparator());
     }
 
     protected void handleDisposal()

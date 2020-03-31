@@ -249,7 +249,7 @@ public class CrosshairLayer extends AbstractLayer
             gl.glPushMatrix();
             projectionPushed = true;
             gl.glLoadIdentity();
-            double maxwh = width > height ? width : height;
+            double maxwh = Math.max(width, height);
             gl.glOrtho(0d, viewport.width, 0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
 
             gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -288,22 +288,13 @@ public class CrosshairLayer extends AbstractLayer
 
     private double computeScale(Rectangle viewport)
     {
-        if (this.resizeBehavior.equals(AVKey.RESIZE_SHRINK_ONLY))
-        {
-            return Math.min(1d, (this.toViewportScale) * viewport.width / this.getScaledIconWidth());
-        }
-        else if (this.resizeBehavior.equals(AVKey.RESIZE_STRETCH))
-        {
-            return (this.toViewportScale) * viewport.width / this.getScaledIconWidth();
-        }
-        else if (this.resizeBehavior.equals(AVKey.RESIZE_KEEP_FIXED_SIZE))
-        {
-            return 1d;
-        }
-        else
-        {
-            return 1d;
-        }
+        return switch (this.resizeBehavior)
+            {
+                case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1d,
+                    (this.toViewportScale) * viewport.width / this.getScaledIconWidth());
+                case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.getScaledIconWidth();
+                default -> 1d;
+            };
     }
 
     private double getScaledIconWidth()

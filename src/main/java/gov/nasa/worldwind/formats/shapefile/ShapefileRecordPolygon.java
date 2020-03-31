@@ -11,7 +11,6 @@ import gov.nasa.worldwind.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -61,13 +60,12 @@ public class ShapefileRecordPolygon extends ShapefileRecordPolyline
      *
      * @throws javax.xml.stream.XMLStreamException
      *                             If an exception occurs while writing the KML
-     * @throws java.io.IOException If an exception occurs while exporting the data.
      */
     @Override
-    public void exportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    public void exportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException
     {
         Iterable<? extends LatLon> outerBoundary = null;
-        List<Iterable<? extends LatLon>> innerBoundaries = new ArrayList<Iterable<? extends LatLon>>();
+        List<Iterable<? extends LatLon>> innerBoundaries = new ArrayList<>();
 
         // If the polygon has a "height" attribute, export as an extruded polygon.
         Double height = ShapefileUtils.extractHeightAttribute(this);
@@ -109,7 +107,7 @@ public class ShapefileRecordPolygon extends ShapefileRecordPolyline
     }
 
     protected void exportPolygonAsKML(XMLStreamWriter xmlWriter, Iterable<? extends LatLon> outerBoundary,
-        List<Iterable<? extends LatLon>> innerBoundaries, Double height) throws IOException, XMLStreamException
+        List<Iterable<? extends LatLon>> innerBoundaries, Double height) throws XMLStreamException
     {
         xmlWriter.writeStartElement("Placemark");
         xmlWriter.writeStartElement("name");

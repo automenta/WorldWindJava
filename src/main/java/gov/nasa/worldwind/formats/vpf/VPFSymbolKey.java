@@ -15,7 +15,7 @@ public class VPFSymbolKey implements Comparable<VPFSymbolKey>
 {
     public static final VPFSymbolKey UNKNOWN_SYMBOL_KEY = new VPFSymbolKey(-1);
 
-    protected int symbolCode;
+    protected final int symbolCode;
 
     public VPFSymbolKey(int symbolCode)
     {
@@ -53,6 +53,6 @@ public class VPFSymbolKey implements Comparable<VPFSymbolKey>
             throw new IllegalArgumentException(message);
         }
 
-        return (this.symbolCode < key.symbolCode) ? -1 : (this.symbolCode > key.symbolCode ? 1 : 0);
+        return Integer.compare(this.symbolCode, key.symbolCode);
     }
 }

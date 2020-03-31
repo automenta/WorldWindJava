@@ -12,9 +12,7 @@ import gov.nasa.worldwindx.examples.util.FileStoreDataSet;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.File;
 import java.util.List;
 import java.util.*;
@@ -84,79 +82,41 @@ public class DataCacheViewer
 
         this.panel.add(ctlPanel, BorderLayout.SOUTH);
 
-        this.ageUnit.addItemListener(new ItemListener()
-        {
-            public void itemStateChanged(ItemEvent e)
-            {
-                update();
-            }
-        });
+        this.ageUnit.addItemListener(e -> update());
 
-        this.ageSpinner.addChangeListener(new ChangeListener()
-        {
-            public void stateChanged(ChangeEvent e)
-            {
-                update();
-            }
-        });
+        this.ageSpinner.addChangeListener(e -> update());
 
-        this.table.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-        {
-            public void valueChanged(ListSelectionEvent e)
-            {
-                update();
-            }
-        });
+        this.table.getSelectionModel().addListSelectionListener(e -> update());
 
-        this.delBtn.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                panel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                Thread t = new Thread(new Runnable()
+        this.delBtn.addActionListener(e -> {
+            panel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            Thread t = new Thread(() -> {
+                try
                 {
-                    public void run()
-                    {
-                        try
-                        {
-                            List<FileStoreDataSet> dataSets = table.getSelectedDataSets();
-                            int age = Integer.parseInt(ageSpinner.getValue().toString());
-                            String unit = getUnitKey();
+                    List<FileStoreDataSet> dataSets = table.getSelectedDataSets();
+                    int age = Integer.parseInt(ageSpinner.getValue().toString());
+                    String unit = getUnitKey();
 
-                            for (FileStoreDataSet ds : dataSets)
-                            {
-                                ds.deleteOutOfScopeFiles(unit, age, false);
-                                if (ds.getSize() == 0)
-                                {
-                                    table.deleteDataSet(ds);
-                                    ds.delete(false);
-                                }
-                            }
-                        }
-                        finally
+                    for (FileStoreDataSet ds : dataSets)
+                    {
+                        ds.deleteOutOfScopeFiles(unit, age, false);
+                        if (ds.getSize() == 0)
                         {
-                            update();
-                            SwingUtilities.invokeLater(new Runnable()
-                            {
-                                public void run()
-                                {
-                                    panel.setCursor(Cursor.getDefaultCursor());
-                                }
-                            });
+                            table.deleteDataSet(ds);
+                            ds.delete(false);
                         }
                     }
-                });
-                t.start();
-            }
+                }
+                finally
+                {
+                    update();
+                    SwingUtilities.invokeLater(() -> panel.setCursor(Cursor.getDefaultCursor()));
+                }
+            });
+            t.start();
         });
 
-        quitButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                System.exit(0);
-            }
-        });
+        quitButton.addActionListener(e -> System.exit(0));
     }
 
     protected void update()
@@ -190,16 +150,14 @@ public class DataCacheViewer
     {
         String unit = null;
         String unitString = (String) this.ageUnit.getSelectedItem();
-        if (unitString.equals("Hours"))
-            unit = FileStoreDataSet.HOUR;
-        else if (unitString.equals("Days"))
-            unit = FileStoreDataSet.DAY;
-        else if (unitString.equals("Weeks"))
-            unit = FileStoreDataSet.WEEK;
-        else if (unitString.equals("Months"))
-            unit = FileStoreDataSet.MONTH;
-        else if (unitString.equals("Years"))
-            unit = FileStoreDataSet.YEAR;
+        switch (unitString)
+        {
+            case "Hours" -> unit = FileStoreDataSet.HOUR;
+            case "Days" -> unit = FileStoreDataSet.DAY;
+            case "Weeks" -> unit = FileStoreDataSet.WEEK;
+            case "Months" -> unit = FileStoreDataSet.MONTH;
+            case "Years" -> unit = FileStoreDataSet.YEAR;
+        }
 
         return unit;
     }
@@ -214,30 +172,26 @@ public class DataCacheViewer
 
     public static void main(String[] args)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                JFrame frame = new JFrame();
-                frame.setPreferredSize(new Dimension(800, 300));
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame();
+            frame.setPreferredSize(new Dimension(800, 300));
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-                FileStore store = new BasicDataFileStore();
-                File cacheRoot = store.getWriteLocation();
-                DataCacheViewer viewerPanel = new DataCacheViewer(cacheRoot);
-                frame.getContentPane().add(viewerPanel.panel, BorderLayout.CENTER);
-                frame.pack();
+            FileStore store = new BasicDataFileStore();
+            File cacheRoot = store.getWriteLocation();
+            DataCacheViewer viewerPanel = new DataCacheViewer(cacheRoot);
+            frame.getContentPane().add(viewerPanel.panel, BorderLayout.CENTER);
+            frame.pack();
 
-                // Center the application on the screen.
-                Dimension prefSize = frame.getPreferredSize();
-                Dimension parentSize;
-                java.awt.Point parentLocation = new java.awt.Point(0, 0);
-                parentSize = Toolkit.getDefaultToolkit().getScreenSize();
-                int x = parentLocation.x + (parentSize.width - prefSize.width) / 2;
-                int y = parentLocation.y + (parentSize.height - prefSize.height) / 2;
-                frame.setLocation(x, y);
-                frame.setVisible(true);
-            }
+            // Center the application on the screen.
+            Dimension prefSize = frame.getPreferredSize();
+            Dimension parentSize;
+            Point parentLocation = new Point(0, 0);
+            parentSize = Toolkit.getDefaultToolkit().getScreenSize();
+            int x = parentLocation.x + (parentSize.width - prefSize.width) / 2;
+            int y = parentLocation.y + (parentSize.height - prefSize.height) / 2;
+            frame.setLocation(x, y);
+            frame.setVisible(true);
         });
     }
 }

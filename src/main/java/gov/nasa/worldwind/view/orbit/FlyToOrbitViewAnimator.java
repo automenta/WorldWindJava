@@ -18,13 +18,13 @@ import gov.nasa.worldwind.view.*;
  */
 public class FlyToOrbitViewAnimator extends CompoundAnimator
 {
-    int altitudeMode;
-    PositionAnimator centerAnimator;
-    ViewElevationAnimator zoomAnimator;
-    AngleAnimator headingAnimator;
-    AngleAnimator pitchAnimator;
-    AngleAnimator rollAnimator;
-    BasicOrbitView orbitView;
+    final int altitudeMode;
+    final PositionAnimator centerAnimator;
+    final ViewElevationAnimator zoomAnimator;
+    final AngleAnimator headingAnimator;
+    final AngleAnimator pitchAnimator;
+    final AngleAnimator rollAnimator;
+    final BasicOrbitView orbitView;
 
     public FlyToOrbitViewAnimator(OrbitView orbitView, Interpolator interpolator, int altitudeMode,
         PositionAnimator centerAnimator, DoubleAnimator zoomAnimator,
@@ -75,17 +75,15 @@ public class FlyToOrbitViewAnimator extends CompoundAnimator
             beginPitch, endPitch,
             ViewPropertyAccessor.createPitchAccessor(orbitView));
 
-        FlyToOrbitViewAnimator panAnimator = new FlyToOrbitViewAnimator(orbitView,
+        return (new FlyToOrbitViewAnimator(orbitView,
             new ScheduledInterpolator(timeToMove), altitudeMode, centerAnimator,
-            zoomAnimator, headingAnimator, pitchAnimator, null);
-
-        return (panAnimator);
+            zoomAnimator, headingAnimator, pitchAnimator, null));
     }
 
     protected static class OnSurfacePositionAnimator extends PositionAnimator
     {
-        Globe globe;
-        int altitudeMode;
+        final Globe globe;
+        final int altitudeMode;
         boolean useMidZoom = true;
 
         public OnSurfacePositionAnimator(Globe globe, Interpolator interpolator,

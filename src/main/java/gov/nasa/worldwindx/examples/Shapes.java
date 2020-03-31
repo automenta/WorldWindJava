@@ -126,13 +126,9 @@ public class Shapes {
         private final ArrayList<JComponent> offTerrainOnlyItems = new ArrayList<>();
         
         private void update() {
-            onTerrainOnlyItems.forEach((c) -> {
-                c.setEnabled(currentFollowTerrain);
-            });
+            onTerrainOnlyItems.forEach((c) -> c.setEnabled(currentFollowTerrain));
             
-            offTerrainOnlyItems.forEach((c) -> {
-                c.setEnabled(!currentFollowTerrain);
-            });
+            offTerrainOnlyItems.forEach((c) -> c.setEnabled(!currentFollowTerrain));
             
             if (this.currentShape instanceof SurfaceShape) {
                 SurfaceShape shape = (SurfaceShape) currentShape;
@@ -306,8 +302,8 @@ public class Shapes {
             for (int i = 0; i < 100; i++) {
                 positions5.add(Position.fromDegrees(38.0 + i * 0.0001, 30.0 + i * 0.0001, 1000.0 + i * 5.0));
             }
-            
-            Info[] infos = new Info[]{
+
+            return new Info[]{
                 new Info("Short Path", new Path(positions)),
                 new Info("Long Path", new Path(positions2)),
                 new Info("Incremental Path", new Path(positions3)),
@@ -316,8 +312,6 @@ public class Shapes {
                 new Info("Quad", new Quadrilateral(Sector.fromDegrees(38, 40, -104, -105), elevation)),
                 new Info("None", null)
             };
-            
-            return infos;
         }
         
         private JPanel makeShapeSelectionPanel() {
@@ -409,7 +403,7 @@ public class Shapes {
             onTerrainOnlyItems.add(sp);
             sp.addChangeListener((ChangeEvent changeEvent) -> {
                 String v = (String) ((JSpinner) changeEvent.getSource()).getValue();
-                currentTerrainConformance = Integer.parseInt(v.substring(0, v.indexOf(" ")));
+                currentTerrainConformance = Integer.parseInt(v.substring(0, v.indexOf(' ')));
                 update();
             });
             sp.setValue(currentTerrainConformance + " pixels");

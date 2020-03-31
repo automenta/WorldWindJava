@@ -165,7 +165,7 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
     public Collection<PerformanceStatistic> getPerFrameStatistics()
     {
         if (this.sceneController == null || this.sceneController.getPerFrameStatistics() == null)
-            return new ArrayList<PerformanceStatistic>(0);
+            return new ArrayList<>(0);
 
         return this.sceneController.getPerFrameStatistics();
     }
@@ -251,14 +251,10 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
 
     protected void callPositionListeners(final PositionEvent event)
     {
-        EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
+        EventQueue.invokeLater(() -> {
+            for (PositionListener listener : eventListeners.getListeners(PositionListener.class))
             {
-                for (PositionListener listener : eventListeners.getListeners(PositionListener.class))
-                {
-                    listener.moved(event);
-                }
+                listener.moved(event);
             }
         });
     }
@@ -275,14 +271,10 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
 
     protected void callSelectListeners(final SelectEvent event)
     {
-        EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
+        EventQueue.invokeLater(() -> {
+            for (SelectListener listener : eventListeners.getListeners(SelectListener.class))
             {
-                for (SelectListener listener : eventListeners.getListeners(SelectListener.class))
-                {
-                    listener.selected(event);
-                }
+                listener.selected(event);
             }
         });
     }
@@ -299,15 +291,11 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
 
     protected void callRenderingExceptionListeners(final Throwable exception)
     {
-        EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
+        EventQueue.invokeLater(() -> {
+            for (RenderingExceptionListener listener : eventListeners.getListeners(
+                RenderingExceptionListener.class))
             {
-                for (RenderingExceptionListener listener : eventListeners.getListeners(
-                    RenderingExceptionListener.class))
-                {
-                    listener.exceptionThrown(exception);
-                }
+                listener.exceptionThrown(exception);
             }
         });
     }

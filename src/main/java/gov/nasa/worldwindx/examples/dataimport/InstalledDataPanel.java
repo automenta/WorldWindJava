@@ -218,7 +218,7 @@ public class InstalledDataPanel extends JPanel
 
     protected class GoToSectorAction extends AbstractAction
     {
-        protected Sector sector;
+        protected final Sector sector;
 
         public GoToSectorAction(Sector sector)
         {

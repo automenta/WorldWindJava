@@ -16,11 +16,9 @@ import gov.nasa.worldwindx.examples.util.ShapeUtils;
 
 import javax.swing.Box;
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
 import java.util.*;
 
 /**
@@ -48,8 +46,8 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate
 
     protected static class PolygonEntry extends WWObjectImpl
     {
-        protected ExtrudedPolygon polygon;
-        protected ShapeAttributes attributes;
+        protected final ExtrudedPolygon polygon;
+        protected final ShapeAttributes attributes;
         protected boolean editing = false;
         protected boolean selected = false;
 
@@ -144,11 +142,11 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate
 
     protected static class PolygonBuilderModel extends AbstractTableModel
     {
-        protected static String[] columnName = {"Name"};
-        protected static Class[] columnClass = {String.class};
-        protected static String[] columnAttribute = {AVKey.DISPLAY_NAME};
+        protected static final String[] columnName = {"Name"};
+        protected static final Class[] columnClass = {String.class};
+        protected static final String[] columnAttribute = {AVKey.DISPLAY_NAME};
 
-        protected ArrayList<PolygonEntry> entryList = new ArrayList<PolygonEntry>();
+        protected final ArrayList<PolygonEntry> entryList = new ArrayList<>();
 
         public PolygonBuilderModel()
         {
@@ -409,14 +407,10 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate
                 this.entryTable.setColumnSelectionAllowed(false);
                 this.entryTable.setRowSelectionAllowed(true);
                 this.entryTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                this.entryTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-                {
-                    public void valueChanged(ListSelectionEvent e)
+                this.entryTable.getSelectionModel().addListSelectionListener(e -> {
+                    if (!ignoreSelectEvents)
                     {
-                        if (!ignoreSelectEvents)
-                        {
-                            controller.actionPerformed(new ActionEvent(e.getSource(), -1, SELECTION_CHANGED));
-                        }
+                        controller.actionPerformed(new ActionEvent(e.getSource(), -1, SELECTION_CHANGED));
                     }
                 });
                 this.entryTable.setToolTipText("<html>Click to select<br>Double-Click to rename</html>");
@@ -454,21 +448,17 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate
             this.add(entryPanel, BorderLayout.CENTER);
             this.add(selectionPanel, BorderLayout.EAST);
 
-            controller.addPropertyChangeListener(new PropertyChangeListener()
-            {
-                public void propertyChange(PropertyChangeEvent e)
+            controller.addPropertyChangeListener(e -> {
+                //noinspection StringEquality
+                if (e.getPropertyName() == SIZE_NEW_SHAPES_TO_VIEWPORT)
                 {
-                    //noinspection StringEquality
-                    if (e.getPropertyName() == SIZE_NEW_SHAPES_TO_VIEWPORT)
-                    {
-                        resizeNewShapesCheckBox.setSelected(controller.isResizeNewShapesToViewport());
-                    }
-                    else //noinspection StringEquality
-                        if (e.getPropertyName() == ENABLE_EDIT)
-                        {
-                            enableEditCheckBox.setSelected(controller.isEnableEdit());
-                        }
+                    resizeNewShapesCheckBox.setSelected(controller.isResizeNewShapesToViewport());
                 }
+                else //noinspection StringEquality
+                    if (e.getPropertyName() == ENABLE_EDIT)
+                    {
+                        enableEditCheckBox.setSelected(controller.isEnableEdit());
+                    }
             });
         }
     }
@@ -479,11 +469,11 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate
 
     protected static class PolygonBuilderController extends WWObjectImpl implements ActionListener, MouseListener
     {
-        protected AppFrame app;
+        protected final AppFrame app;
         protected PolygonBuilderModel model;
         protected PolygonBuilderPanel view;
         protected PolygonEntry selectedEntry;
-        protected ExtrudedPolygonEditor editor;
+        protected final ExtrudedPolygonEditor editor;
         protected boolean enabled = true;
         protected boolean enableEdit = true;
         protected boolean resizeNewShapes;
@@ -855,10 +845,10 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate
     protected static class AppFrame extends ApplicationTemplate.AppFrame
     {
         // Polygon layer and editor UI components.
-        protected RenderableLayer polygonLayer;
-        protected PolygonBuilderModel builderModel;
-        protected PolygonBuilderPanel builderView;
-        protected PolygonBuilderController builderController;
+        protected final RenderableLayer polygonLayer;
+        protected final PolygonBuilderModel builderModel;
+        protected final PolygonBuilderPanel builderView;
+        protected final PolygonBuilderController builderController;
 
         public AppFrame()
         {
@@ -935,21 +925,17 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate
 
             frame.setJMenuBar(menuBar);
 
-            controller.addPropertyChangeListener(new PropertyChangeListener()
-            {
-                public void propertyChange(PropertyChangeEvent e)
+            controller.addPropertyChangeListener(e -> {
+                //noinspection StringEquality
+                if (e.getPropertyName() == SIZE_NEW_SHAPES_TO_VIEWPORT)
                 {
-                    //noinspection StringEquality
-                    if (e.getPropertyName() == SIZE_NEW_SHAPES_TO_VIEWPORT)
-                    {
-                        resizeNewShapesItem.setSelected(controller.isResizeNewShapesToViewport());
-                    }
-                    else //noinspection StringEquality
-                        if (e.getPropertyName() == ENABLE_EDIT)
-                        {
-                            enableEditItem.setSelected(controller.isEnableEdit());
-                        }
+                    resizeNewShapesItem.setSelected(controller.isResizeNewShapesToViewport());
                 }
+                else //noinspection StringEquality
+                    if (e.getPropertyName() == ENABLE_EDIT)
+                    {
+                        enableEditItem.setSelected(controller.isEnableEdit());
+                    }
             });
         }
     }

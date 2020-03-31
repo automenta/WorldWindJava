@@ -26,7 +26,6 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
-import java.beans.*;
 import java.io.*;
 import java.util.*;
 
@@ -79,9 +78,9 @@ public class RigidShapeBuilder extends ApplicationTemplate
      */
     protected static class AbstractShapeEntry extends WWObjectImpl
     {
-        protected AbstractShape shape;
-        protected AbstractShapeEditor editor;
-        protected ShapeAttributes attributes;
+        protected final AbstractShape shape;
+        protected final AbstractShapeEditor editor;
+        protected final ShapeAttributes attributes;
         protected boolean editing = false;
         protected boolean selected = false;
 
@@ -182,11 +181,11 @@ public class RigidShapeBuilder extends ApplicationTemplate
 
     protected static class AbstractShapeBuilderModel extends AbstractTableModel
     {
-        protected static String[] columnName = {"Name"};
-        protected static Class[] columnClass = {String.class};
-        protected static String[] columnAttribute = {AVKey.DISPLAY_NAME};
+        protected static final String[] columnName = {"Name"};
+        protected static final Class[] columnClass = {String.class};
+        protected static final String[] columnAttribute = {AVKey.DISPLAY_NAME};
 
-        protected ArrayList<AbstractShapeEntry> entryList = new ArrayList<AbstractShapeEntry>();
+        protected final ArrayList<AbstractShapeEntry> entryList = new ArrayList<>();
 
         public AbstractShapeBuilderModel()
         {
@@ -288,7 +287,7 @@ public class RigidShapeBuilder extends ApplicationTemplate
         }
     }
 
-    protected static EditMode[] defaultEditModes =
+    protected static final EditMode[] defaultEditModes =
         {
             new EditMode("move", KeyEvent.VK_Z),
             new EditMode("scale", KeyEvent.VK_X),
@@ -299,8 +298,8 @@ public class RigidShapeBuilder extends ApplicationTemplate
 
     protected static class EditMode
     {
-        protected String mode;
-        protected int shortcut;
+        protected final String mode;
+        protected final int shortcut;
 
         public EditMode(String mode, int shortcut)
         {
@@ -319,7 +318,7 @@ public class RigidShapeBuilder extends ApplicationTemplate
         }
     }
 
-    protected static AbstractShapeFactory[] defaultAbstractShapeFactories = new AbstractShapeFactory[]
+    protected static final AbstractShapeFactory[] defaultAbstractShapeFactories = new AbstractShapeFactory[]
         {
             new EllipsoidFactory(),
             new BoxFactory(),
@@ -940,14 +939,10 @@ public class RigidShapeBuilder extends ApplicationTemplate
                 this.entryTable.setColumnSelectionAllowed(false);
                 this.entryTable.setRowSelectionAllowed(true);
                 this.entryTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                this.entryTable.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-                {
-                    public void valueChanged(ListSelectionEvent e)
+                this.entryTable.getSelectionModel().addListSelectionListener(e -> {
+                    if (!ignoreSelectEvents)
                     {
-                        if (!ignoreSelectEvents)
-                        {
-                            controller.actionPerformed(new ActionEvent(e.getSource(), -1, SELECTION_CHANGED));
-                        }
+                        controller.actionPerformed(new ActionEvent(e.getSource(), -1, SELECTION_CHANGED));
                     }
                 });
                 this.entryTable.setToolTipText("<html>Click to select<br>Double-Click to rename</html>");
@@ -1000,26 +995,22 @@ public class RigidShapeBuilder extends ApplicationTemplate
             this.add(entryPanel, BorderLayout.CENTER);
             this.add(selectionPanel, BorderLayout.EAST);
 
-            controller.addPropertyChangeListener(new PropertyChangeListener()
-            {
-                public void propertyChange(PropertyChangeEvent e)
+            controller.addPropertyChangeListener(e -> {
+                //noinspection StringEquality
+                if (e.getPropertyName() == SIZE_NEW_SHAPES_TO_VIEWPORT)
                 {
-                    //noinspection StringEquality
-                    if (e.getPropertyName() == SIZE_NEW_SHAPES_TO_VIEWPORT)
+                    resizeNewShapesCheckBox.setSelected(controller.isResizeNewShapesToViewport());
+                }
+                else //noinspection StringEquality
+                    if (e.getPropertyName() == ENABLE_EDIT)
                     {
-                        resizeNewShapesCheckBox.setSelected(controller.isResizeNewShapesToViewport());
+                        enableEditCheckBox.setSelected(controller.isEnableEdit());
                     }
                     else //noinspection StringEquality
-                        if (e.getPropertyName() == ENABLE_EDIT)
+                        if (e.getPropertyName() == KEEP_SHAPE_ABOVE_SURFACE)
                         {
-                            enableEditCheckBox.setSelected(controller.isEnableEdit());
+                            aboveGroundCheckBox.setSelected(controller.isAboveGround());
                         }
-                        else //noinspection StringEquality
-                            if (e.getPropertyName() == KEEP_SHAPE_ABOVE_SURFACE)
-                            {
-                                aboveGroundCheckBox.setSelected(controller.isAboveGround());
-                            }
-                }
             });
         }
     }
@@ -1031,7 +1022,7 @@ public class RigidShapeBuilder extends ApplicationTemplate
     protected static class AbstractShapeBuilderController extends WWObjectImpl implements ActionListener,
         MouseListener, CaretListener
     {
-        protected AppFrame app;
+        protected final AppFrame app;
         protected AbstractShapeBuilderModel model;
         protected AbstractShapeBuilderPanel view;
         protected AbstractShapeEntry selectedEntry;
@@ -1168,13 +1159,12 @@ public class RigidShapeBuilder extends ApplicationTemplate
                     || imageSource.endsWith(".png") || imageSource.endsWith(".gif"))
                 {
                     myShape.setImageSource(selected, imageSource);
-                    this.getApp().getWwd().redraw();
                 }
                 else
                 {
                     myShape.setImageSource(selected, null);
-                    this.getApp().getWwd().redraw();
                 }
+                this.getApp().getWwd().redraw();
             }
         }
 
@@ -1190,64 +1180,56 @@ public class RigidShapeBuilder extends ApplicationTemplate
             if (WWUtil.isEmpty(actionCommand))
                 return;
 
-            if (actionCommand == NEW_ABSTRACT_SHAPE)
+            switch (actionCommand)
             {
-                AbstractShapeFactory factory = this.getView().getSelectedFactory();
-                this.createNewEntry(factory);
-            }
-            else if (actionCommand == CLEAR_SELECTION)
-            {
-                this.selectEntry(null, true);
-            }
-            else if (actionCommand == SIZE_NEW_SHAPES_TO_VIEWPORT)
-            {
-                if (e.getSource() instanceof AbstractButton)
-                {
-                    boolean selected = ((AbstractButton) e.getSource()).isSelected();
-                    this.setResizeNewShapesToViewport(selected);
-                }
-            }
-            else if (actionCommand == ENABLE_EDIT)
-            {
-                if (e.getSource() instanceof AbstractButton)
-                {
-                    boolean selected = ((AbstractButton) e.getSource()).isSelected();
-                    this.setEnableEdit(selected);
-                }
-            }
-            else if (actionCommand == KEEP_SHAPE_ABOVE_SURFACE)
-            {
-                if (e.getSource() instanceof AbstractButton)
-                {
-                    boolean selected = ((AbstractButton) e.getSource()).isSelected();
-                    this.setAboveGround(selected);
-                }
-            }
-            else if (actionCommand == OPEN)
-            {
-                this.openFromFile();
-            }
-            else if (actionCommand == REMOVE_SELECTED)
-            {
-                this.removeEntries(Arrays.asList(this.getSelectedEntries()));
-            }
-            else if (actionCommand == SAVE)
-            {
-                this.saveToFile();
-            }
-            else if (actionCommand == SELECTION_CHANGED)
-            {
-                this.viewSelectionChanged();
-            }
-            else if (actionCommand == SET_EDIT_MODE)
-            {
-                this.setEditMode(this.getView().getSelectedEditMode());
-            }
-            else if (actionCommand == EDIT_TEXTURE)
-            {
-                String imageSource = this.getView().textureBox.getText();
-                this.setImageSource(imageSource);
-                view.textureBox.setText(imageSource);
+                case NEW_ABSTRACT_SHAPE:
+                    AbstractShapeFactory factory = this.getView().getSelectedFactory();
+                    this.createNewEntry(factory);
+                    break;
+                case CLEAR_SELECTION:
+                    this.selectEntry(null, true);
+                    break;
+                case SIZE_NEW_SHAPES_TO_VIEWPORT:
+                    if (e.getSource() instanceof AbstractButton)
+                    {
+                        boolean selected = ((AbstractButton) e.getSource()).isSelected();
+                        this.setResizeNewShapesToViewport(selected);
+                    }
+                    break;
+                case ENABLE_EDIT:
+                    if (e.getSource() instanceof AbstractButton)
+                    {
+                        boolean selected = ((AbstractButton) e.getSource()).isSelected();
+                        this.setEnableEdit(selected);
+                    }
+                    break;
+                case KEEP_SHAPE_ABOVE_SURFACE:
+                    if (e.getSource() instanceof AbstractButton)
+                    {
+                        boolean selected = ((AbstractButton) e.getSource()).isSelected();
+                        this.setAboveGround(selected);
+                    }
+                    break;
+                case OPEN:
+                    this.openFromFile();
+                    break;
+                case REMOVE_SELECTED:
+                    this.removeEntries(Arrays.asList(this.getSelectedEntries()));
+                    break;
+                case SAVE:
+                    this.saveToFile();
+                    break;
+                case SELECTION_CHANGED:
+                    this.viewSelectionChanged();
+                    break;
+                case SET_EDIT_MODE:
+                    this.setEditMode(this.getView().getSelectedEditMode());
+                    break;
+                case EDIT_TEXTURE:
+                    String imageSource = this.getView().textureBox.getText();
+                    this.setImageSource(imageSource);
+                    view.textureBox.setText(imageSource);
+                    break;
             }
             if (actionCommand == OPEN_IMAGE_FILE)
             {
@@ -1569,55 +1551,47 @@ public class RigidShapeBuilder extends ApplicationTemplate
 
             final Iterable<AbstractShapeEntry> entries = this.getModel().getEntries();
 
-            Thread t = new Thread(new Runnable()
-            {
-                public void run()
+            Thread t = new Thread(() -> {
+                try
                 {
-                    try
+                    java.text.DecimalFormat f = new java.text.DecimalFormat("####");
+                    f.setMinimumIntegerDigits(4);
+                    int counter = 0;
+
+                    for (AbstractShapeEntry entry : entries)
                     {
-                        java.text.DecimalFormat f = new java.text.DecimalFormat("####");
-                        f.setMinimumIntegerDigits(4);
-                        int counter = 0;
+                        AbstractShape a = entry.getShape();
+                        ShapeAttributes currentAttribs = a.getAttributes();
+                        a.setAttributes(entry.getAttributes());
 
-                        for (AbstractShapeEntry entry : entries)
+                        String xmlString = a.getRestorableState();
+                        if (xmlString != null)
                         {
-                            AbstractShape a = entry.getShape();
-                            ShapeAttributes currentAttribs = a.getAttributes();
-                            a.setAttributes(entry.getAttributes());
-
-                            String xmlString = a.getRestorableState();
-                            if (xmlString != null)
+                            try
                             {
-                                try
-                                {
-                                    PrintWriter of = new PrintWriter(new File(dir,
-                                        a.getClass().getName() + "-" + entry.getName() + "-" + f.format(counter++)
-                                            + ".xml"));
-                                    of.write(xmlString);
-                                    of.flush();
-                                    of.close();
-                                }
-                                catch (Exception e)
-                                {
-                                    e.printStackTrace();
-                                }
+                                PrintWriter of = new PrintWriter(new File(dir,
+                                    a.getClass().getName() + "-" + entry.getName() + "-" + f.format(counter++)
+                                        + ".xml"));
+                                of.write(xmlString);
+                                of.flush();
+                                of.close();
                             }
-
-                            a.setAttributes(currentAttribs);
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
                         }
+
+                        a.setAttributes(currentAttribs);
                     }
-                    finally
-                    {
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            public void run()
-                            {
-                                setEnabled(true);
-                                getApp().setCursor(null);
-                                getApp().getWwd().redraw();
-                            }
-                        });
-                    }
+                }
+                finally
+                {
+                    SwingUtilities.invokeLater(() -> {
+                        setEnabled(true);
+                        getApp().setCursor(null);
+                        getApp().getWwd().redraw();
+                    });
                 }
             });
             this.setEnabled(false);
@@ -1644,57 +1618,44 @@ public class RigidShapeBuilder extends ApplicationTemplate
             if (dir == null)
                 return;
 
-            Thread t = new Thread(new Runnable()
-            {
-                public void run()
+            Thread t = new Thread(() -> {
+                final ArrayList<AbstractShape> shapes = new ArrayList<>();
+                try
                 {
-                    final ArrayList<AbstractShape> shapes = new ArrayList<AbstractShape>();
-                    try
+                    File[] files = dir.listFiles(
+                        (dir1, name) -> name.startsWith("gov.nasa.worldwind.render") && name.endsWith(".xml"));
+
+                    for (File file : files)
                     {
-                        File[] files = dir.listFiles(new FilenameFilter()
+                        String[] name = file.getName().split("-");
+                        try
                         {
-                            public boolean accept(File dir, String name)
-                            {
-                                return name.startsWith("gov.nasa.worldwind.render") && name.endsWith(".xml");
-                            }
-                        });
+                            Class<?> c = Class.forName(name[0]);
+                            AbstractShape newShape = (AbstractShape) c.getConstructor().newInstance();
+                            BufferedReader input = new BufferedReader(new FileReader(file));
+                            String s = input.readLine();
+                            newShape.restoreState(s);
+                            shapes.add(newShape);
 
-                        for (File file : files)
-                        {
-                            String[] name = file.getName().split("-");
-                            try
+                            if (name.length >= 2)
                             {
-                                Class<?> c = Class.forName(name[0]);
-                                AbstractShape newShape = (AbstractShape) c.getConstructor().newInstance();
-                                BufferedReader input = new BufferedReader(new FileReader(file));
-                                String s = input.readLine();
-                                newShape.restoreState(s);
-                                shapes.add(newShape);
-
-                                if (name.length >= 2)
-                                {
-                                    newShape.setValue(AVKey.DISPLAY_NAME, name[1]);
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                e.printStackTrace();
+                                newShape.setValue(AVKey.DISPLAY_NAME, name[1]);
                             }
                         }
-                    }
-                    finally
-                    {
-                        SwingUtilities.invokeLater(new Runnable()
+                        catch (Exception e)
                         {
-                            public void run()
-                            {
-                                setAbstractShapes(shapes);
-                                setEnabled(true);
-                                getApp().setCursor(null);
-                                getApp().getWwd().redraw();
-                            }
-                        });
+                            e.printStackTrace();
+                        }
                     }
+                }
+                finally
+                {
+                    SwingUtilities.invokeLater(() -> {
+                        setAbstractShapes(shapes);
+                        setEnabled(true);
+                        getApp().setCursor(null);
+                        getApp().getWwd().redraw();
+                    });
                 }
             });
             this.setEnabled(false);
@@ -1726,38 +1687,30 @@ public class RigidShapeBuilder extends ApplicationTemplate
         {
             this.app.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-            Thread thread = new Thread(new Runnable()
-            {
-                public void run()
+            Thread thread = new Thread(() -> {
+                for (File f : files)
                 {
-                    for (File f : files)
-                    {
-                        loadFile(f);
-                    }
-
-                    app.setCursor(null);
+                    loadFile(f);
                 }
+
+                app.setCursor(null);
             });
             thread.start();
         }
 
         protected void loadFile(final File file)
         {
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
+            SwingUtilities.invokeLater(() -> {
+                String filename = file.getAbsolutePath();
+
+                AbstractShape shape = null;
+                if (getSelectedEntry() != null)
+                    shape = getSelectedEntry().getShape();
+
+                if (filename != null && shape != null)
                 {
-                    String filename = file.getAbsolutePath();
-
-                    AbstractShape shape = null;
-                    if (getSelectedEntry() != null)
-                        shape = getSelectedEntry().getShape();
-
-                    if (filename != null && shape != null)
-                    {
-                        setImageSource(filename);
-                        view.textureBox.setText(filename);
-                    }
+                    setImageSource(filename);
+                    view.textureBox.setText(filename);
                 }
             });
         }
@@ -1777,7 +1730,7 @@ public class RigidShapeBuilder extends ApplicationTemplate
 
         private void setAbstractShapes(Iterable<? extends AbstractShape> shapes)
         {
-            ArrayList<AbstractShapeEntry> entryList = new ArrayList<AbstractShapeEntry>(this.getModel().getEntries());
+            ArrayList<AbstractShapeEntry> entryList = new ArrayList<>(this.getModel().getEntries());
             this.removeEntries(entryList);
 
             for (AbstractShape shape : shapes)
@@ -1796,10 +1749,10 @@ public class RigidShapeBuilder extends ApplicationTemplate
     protected static class AppFrame extends ApplicationTemplate.AppFrame
     {
         // Polygon layer and editor UI components.
-        protected RenderableLayer shapeLayer;
-        protected AbstractShapeBuilderModel builderModel;
-        protected AbstractShapeBuilderPanel builderView;
-        protected AbstractShapeBuilderController builderController;
+        protected final RenderableLayer shapeLayer;
+        protected final AbstractShapeBuilderModel builderModel;
+        protected final AbstractShapeBuilderPanel builderView;
+        protected final AbstractShapeBuilderController builderController;
 
         public AppFrame()
         {
@@ -1861,13 +1814,7 @@ public class RigidShapeBuilder extends ApplicationTemplate
                 for (final AbstractShapeFactory factory : defaultAbstractShapeFactories)
                 {
                     JMenuItem item = new JMenuItem(factory.toString());
-                    item.addActionListener(new ActionListener()
-                    {
-                        public void actionPerformed(ActionEvent e)
-                        {
-                            controller.createNewEntry(factory);
-                        }
-                    });
+                    item.addActionListener(e -> controller.createNewEntry(factory));
                     subMenu.add(item);
                 }
                 menu.add(subMenu);
@@ -1879,13 +1826,7 @@ public class RigidShapeBuilder extends ApplicationTemplate
                     JMenuItem item = new JMenuItem(mode.getMode());
                     item.setAccelerator(KeyStroke.getKeyStroke(mode.getShortcut(),
                         Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
-                    item.addActionListener(new ActionListener()
-                    {
-                        public void actionPerformed(ActionEvent e)
-                        {
-                            controller.setEditMode(mode.getMode());
-                        }
-                    });
+                    item.addActionListener(e -> controller.setEditMode(mode.getMode()));
                     subMenu.add(item);
                 }
                 menu.add(subMenu);
@@ -1929,26 +1870,22 @@ public class RigidShapeBuilder extends ApplicationTemplate
 
             frame.setJMenuBar(menuBar);
 
-            controller.addPropertyChangeListener(new PropertyChangeListener()
-            {
-                public void propertyChange(PropertyChangeEvent e)
+            controller.addPropertyChangeListener(e -> {
+                //noinspection StringEquality
+                if (e.getPropertyName() == SIZE_NEW_SHAPES_TO_VIEWPORT)
                 {
-                    //noinspection StringEquality
-                    if (e.getPropertyName() == SIZE_NEW_SHAPES_TO_VIEWPORT)
+                    resizeNewShapesItem.setSelected(controller.isResizeNewShapesToViewport());
+                }
+                else //noinspection StringEquality
+                    if (e.getPropertyName() == ENABLE_EDIT)
                     {
-                        resizeNewShapesItem.setSelected(controller.isResizeNewShapesToViewport());
+                        enableEditItem.setSelected(controller.isEnableEdit());
                     }
                     else //noinspection StringEquality
-                        if (e.getPropertyName() == ENABLE_EDIT)
+                        if (e.getPropertyName() == KEEP_SHAPE_ABOVE_SURFACE)
                         {
-                            enableEditItem.setSelected(controller.isEnableEdit());
+                            aboveGroundItem.setSelected(controller.isAboveGround());
                         }
-                        else //noinspection StringEquality
-                            if (e.getPropertyName() == KEEP_SHAPE_ABOVE_SURFACE)
-                            {
-                                aboveGroundItem.setSelected(controller.isAboveGround());
-                            }
-                }
             });
         }
     }

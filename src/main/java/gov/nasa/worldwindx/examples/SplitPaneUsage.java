@@ -140,13 +140,7 @@ public class SplitPaneUsage
             final AppFrame frame = new AppFrame();
             frame.setTitle(appName);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            java.awt.EventQueue.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    frame.setVisible(true);
-                }
-            });
+            java.awt.EventQueue.invokeLater(() -> frame.setVisible(true));
         }
         catch (Exception e)
         {

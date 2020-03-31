@@ -20,8 +20,8 @@ import java.util.*;
  */
 public class KMLExtendedData extends KMLAbstractObject
 {
-    protected List<KMLData> data = new ArrayList<KMLData>();
-    protected List<KMLSchemaData> schemaData = new ArrayList<KMLSchemaData>();
+    protected final List<KMLData> data = new ArrayList<>();
+    protected final List<KMLSchemaData> schemaData = new ArrayList<>();
 
     /**
      * Construct an instance.

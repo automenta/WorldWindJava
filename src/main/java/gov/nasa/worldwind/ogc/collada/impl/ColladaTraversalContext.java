@@ -21,12 +21,12 @@ import java.util.Stack;
 public class ColladaTraversalContext
 {
     /** Transform matrix stack. */
-    protected Stack<Matrix> matrixStack = new Stack<Matrix>();
+    protected Stack<Matrix> matrixStack = new Stack<>();
 
     /** Create a new traversal context. The traversal matrix stack initially contains one element: the identity matrix. */
     public ColladaTraversalContext()
     {
-        this.matrixStack = new Stack<Matrix>();
+        this.matrixStack = new Stack<>();
         this.matrixStack.push(Matrix.IDENTITY);
     }
 

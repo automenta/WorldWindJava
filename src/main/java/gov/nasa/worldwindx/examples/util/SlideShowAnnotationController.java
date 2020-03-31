@@ -27,12 +27,12 @@ public class SlideShowAnnotationController extends DialogAnnotationController
 
     protected static final long SLIDESHOW_UPDATE_DELAY_MILLIS = 2000;
     protected static final long DEFAULT_BUFFERED_IMAGE_CACHE_SIZE = 30000000;
-    protected static java.awt.Dimension SMALL_IMAGE_PREFERRED_SIZE = new java.awt.Dimension(320, 240);
-    protected static java.awt.Dimension LARGE_IMAGE_PREFERRED_SIZE = new java.awt.Dimension(600, 450);
+    protected static final java.awt.Dimension SMALL_IMAGE_PREFERRED_SIZE = new java.awt.Dimension(320, 240);
+    protected static final java.awt.Dimension LARGE_IMAGE_PREFERRED_SIZE = new java.awt.Dimension(600, 450);
 
     protected int index;
     protected String state;
-    protected java.util.List<Object> imageSources;
+    protected final java.util.List<Object> imageSources;
     // Concurrent task components.
     protected Thread readThread;
     protected javax.swing.Timer updateTimer;
@@ -44,7 +44,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController
 
         this.state = AVKey.STOP;
         this.index = -1;
-        this.imageSources = new java.util.ArrayList<Object>();
+        this.imageSources = new java.util.ArrayList<>();
 
         if (imageSources != null)
         {
@@ -441,36 +441,28 @@ public class SlideShowAnnotationController extends DialogAnnotationController
 
     protected void doRetrieveAndSetImage(Object source, final int index)
     {
-        javax.swing.SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            if (updateTimer != null)
             {
-                if (updateTimer != null)
-                {
-                    updateTimer.stop();
-                }
-
-                getAnnotation().setBusy(true);
-                getWorldWindow().redraw();
+                updateTimer.stop();
             }
+
+            getAnnotation().setBusy(true);
+            getWorldWindow().redraw();
         });
 
         final PowerOfTwoPaddedImage image = this.readImage(source);
         this.putImage(source, image);
 
-        javax.swing.SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            doSetImage(image, index);
+
+            getAnnotation().setBusy(false);
+            getWorldWindow().redraw();
+
+            if (updateTimer != null)
             {
-                doSetImage(image, index);
-
-                getAnnotation().setBusy(false);
-                getWorldWindow().redraw();
-
-                if (updateTimer != null)
-                {
-                    updateTimer.start();
-                }
+                updateTimer.start();
             }
         });
     }
@@ -508,13 +500,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController
 
     protected void startImageRetrieval(final Object source, final int index)
     {
-        this.readThread = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                doRetrieveAndSetImage(source, index);
-            }
-        });
+        this.readThread = new Thread(() -> doRetrieveAndSetImage(source, index));
         this.readThread.start();
     }
 
@@ -580,13 +566,7 @@ public class SlideShowAnnotationController extends DialogAnnotationController
     protected void startSlideShowUpdate()
     {
         this.updateTimer = new javax.swing.Timer((int) SLIDESHOW_UPDATE_DELAY_MILLIS,
-            new java.awt.event.ActionListener()
-            {
-                public void actionPerformed(java.awt.event.ActionEvent actionEvent)
-                {
-                    onSlideShowUpdate();
-                }
-            });
+            actionEvent -> onSlideShowUpdate());
         // Coalesce timer events, so that an image load delay on the timer thread does not cause slide transition
         // events to bunch up.
         this.updateTimer.setCoalesce(true);
@@ -631,9 +611,9 @@ public class SlideShowAnnotationController extends DialogAnnotationController
         String s = imageSource.toString();
         s = WWIO.stripTrailingSeparator(s);
 
-        int index = s.lastIndexOf("/");
+        int index = s.lastIndexOf('/');
         if (index == -1)
-            index = s.lastIndexOf("\\");
+            index = s.lastIndexOf('\\');
 
         if (index != -1 && index < s.length() - 1)
         {

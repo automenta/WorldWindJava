@@ -104,7 +104,7 @@ public class ContourBuilderExample extends ApplicationTemplate
         protected void addRectangularArrayShapes(RenderableLayer layer)
         {
             ArrayList<AnalyticSurface.GridPointAttributes> pointAttrs =
-                new ArrayList<AnalyticSurface.GridPointAttributes>();
+                new ArrayList<>();
             for (double value : this.arrayValues)
             {
                 Color color = this.colorForValue(value, 0.5); // color for value at 50% brightness

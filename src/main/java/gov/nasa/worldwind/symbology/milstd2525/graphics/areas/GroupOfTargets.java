@@ -28,7 +28,7 @@ public class GroupOfTargets extends BasicArea
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.FSUPP_ARS_ARATGT_SGTGT);
+        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_ARATGT_SGTGT);
     }
 
     /**

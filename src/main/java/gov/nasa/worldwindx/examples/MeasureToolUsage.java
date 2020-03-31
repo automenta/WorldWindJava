@@ -52,7 +52,7 @@ public class MeasureToolUsage extends ApplicationTemplate {
                     MeasureTool measureTool = new MeasureTool(getWwd());
                     measureTool.setController(new MeasureToolController());
                     tabbedPane.add(new MeasureToolPanel(getWwd(), measureTool));
-                    tabbedPane.setTitleAt(tabbedPane.getTabCount() - 1, "" + (tabbedPane.getTabCount() - 1));
+                    tabbedPane.setTitleAt(tabbedPane.getTabCount() - 1, String.valueOf(tabbedPane.getTabCount() - 1));
                     tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
                     switchMeasureTool();
                 } else {

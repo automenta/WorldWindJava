@@ -131,7 +131,7 @@ public class GeotiffRasterReader extends AbstractDataRasterReader
                 WorldFile.readWorldFiles(source, params);
 
                 Object o = params.getValue(AVKey.SECTOR);
-                if (o == null || !(o instanceof Sector))
+                if (!(o instanceof Sector))
                 {
                     ImageUtil.calcBoundingBoxForUTM(params);
                 }

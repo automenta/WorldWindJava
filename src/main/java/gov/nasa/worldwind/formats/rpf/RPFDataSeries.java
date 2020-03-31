@@ -125,7 +125,7 @@ public enum RPFDataSeries
         if (enumConstantDirectory == null)
         {
             RPFDataSeries[] universe = RPFDataSeries.class.getEnumConstants();
-            enumConstantDirectory = new HashMap<String, RPFDataSeries>(2 * universe.length);
+            enumConstantDirectory = new HashMap<>(2 * universe.length);
             for (RPFDataSeries dataSeries : universe)
             {
                 enumConstantDirectory.put(dataSeries.seriesCode, dataSeries);

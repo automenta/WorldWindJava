@@ -18,8 +18,8 @@ import java.util.*;
  */
 public class GMLEnvelope extends AbstractXMLEventParser
 {
-    List<GMLPos> positions = new ArrayList<GMLPos>(2);
-    List<String> timePositions = new ArrayList<String>(2);
+    final List<GMLPos> positions = new ArrayList<>(2);
+    List<String> timePositions = new ArrayList<>(2);
 
     public GMLEnvelope(String namespaceURI)
     {
@@ -45,7 +45,7 @@ public class GMLEnvelope extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof GMLPos)
+                if (o instanceof GMLPos)
                     this.positions.add((GMLPos) o);
             }
         }

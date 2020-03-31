@@ -37,7 +37,7 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_DEF_LNE_FEBA);
+        return Collections.singletonList(TacGrpSidc.C2GM_DEF_LNE_FEBA);
     }
 
     /** Implementation of TacticalSymbol to draw a symbol at the end of a FEBA line. */
@@ -157,7 +157,7 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic
     protected FEBASymbol symbol2;
 
     /** Attribute bundle shared by the two symbols. */
-    protected TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
+    protected final TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
 
     /**
      * Create a new FEBA line.

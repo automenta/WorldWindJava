@@ -437,9 +437,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      *
      * @return a buffer containing the retrieved HTML.
      *
-     * @throws IOException if an IO error occurs while processing the data.
      */
-    protected ByteBuffer handleHTMLContent() throws IOException
+    protected ByteBuffer handleHTMLContent()
     {
         this.logTextBuffer(this.getRetriever().getBuffer());
 

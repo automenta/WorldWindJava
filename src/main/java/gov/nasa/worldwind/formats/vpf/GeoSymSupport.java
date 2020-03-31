@@ -40,10 +40,10 @@ public class GeoSymSupport
 
             FeatureKey that = (FeatureKey) o;
 
-            if (this.featureCode != null ? !this.featureCode.equals(that.featureCode) : that.featureCode != null)
+            if (!Objects.equals(this.featureCode, that.featureCode))
                 return false;
             //noinspection RedundantIfStatement
-            if (this.featureClass != null ? !this.featureClass.equals(that.featureClass) : that.featureClass != null)
+            if (!Objects.equals(this.featureClass, that.featureClass))
                 return false;
 
             return true;
@@ -90,7 +90,7 @@ public class GeoSymSupport
 
         this.filePath = filePath;
         this.imageSuffix = WWIO.makeSuffixForMimeType(symbolMimeType);
-        this.featureMap = new HashMap<FeatureKey, List<? extends VPFSymbolKey>>();
+        this.featureMap = new HashMap<>();
 
         this.loadAssignment(filePath);
 
@@ -319,7 +319,7 @@ public class GeoSymSupport
         Map<Integer, VPFSymbolAttributes.LabelAttributes> labelLocations = getTextLabelLocations(textLocTable);
 
         // Map text join to label attributes
-        this.textJoinAttributes = new HashMap<Integer, VPFSymbolAttributes.LabelAttributes>();
+        this.textJoinAttributes = new HashMap<>();
         GeoSymTable joinTable = this.getAssignment().getTable(GeoSymConstants.TEXT_LABEL_JOIN_FILE);
         for (AVList row : joinTable.getRecords())
         {
@@ -353,11 +353,11 @@ public class GeoSymSupport
     protected void loadProductTypes()
     {
         GeoSymTable codeTable = this.getAssignment().getTable(GeoSymConstants.CODE_VALUE_DESCRIPTION_FILE);
-        ArrayList<AVList> rows = new ArrayList<AVList>(Arrays.asList(codeTable.getRecords()));
+        ArrayList<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingRows("file", GeoSymConstants.FULL_SYMBOL_ASSIGNMENT_FILE, false, rows);
         GeoSymTable.selectMatchingRows("attribute", "pid", false, rows);
 
-        this.productTypes = new HashMap<String, Integer>();
+        this.productTypes = new HashMap<>();
         for (AVList row : rows)
         {
             Integer value = (Integer) row.getValue("value");
@@ -370,11 +370,11 @@ public class GeoSymSupport
     protected void loadFeatureTypes()
     {
         GeoSymTable codeTable = this.getAssignment().getTable(GeoSymConstants.CODE_VALUE_DESCRIPTION_FILE);
-        ArrayList<AVList> rows = new ArrayList<AVList>(Arrays.asList(codeTable.getRecords()));
+        ArrayList<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingRows("file", GeoSymConstants.FULL_SYMBOL_ASSIGNMENT_FILE, false, rows);
         GeoSymTable.selectMatchingRows("attribute", "delin", false, rows);
 
-        this.deliniations = new HashMap<String, Integer>();
+        this.deliniations = new HashMap<>();
         for (AVList row : rows)
         {
             Integer value = (Integer) row.getValue("value");
@@ -383,7 +383,7 @@ public class GeoSymSupport
                 this.deliniations.put(description.toUpperCase(), value);
         }
 
-        this.featureName = new HashMap<VPFFeatureType, String>();
+        this.featureName = new HashMap<>();
         this.featureName.put(VPFFeatureType.POINT, "POINT");
         this.featureName.put(VPFFeatureType.LINE, "LINE");
         this.featureName.put(VPFFeatureType.AREA, "AREA");
@@ -415,7 +415,7 @@ public class GeoSymSupport
         GeoSymTable colorTable)
     {
         HashMap<Integer, VPFSymbolAttributes.LabelAttributes> attributes =
-            new HashMap<Integer, VPFSymbolAttributes.LabelAttributes>();
+            new HashMap<>();
 
         for (AVList row : textCharTable.getRecords())
         {
@@ -464,9 +464,9 @@ public class GeoSymSupport
             attr.setBackgroundColor(WWUtil.computeContrastingColor(color));
         }
         if (prepend != null)
-            attr.setPrepend("" + Character.toChars(Integer.parseInt(prepend, 16))[0]);
+            attr.setPrepend(String.valueOf(Character.toChars(Integer.parseInt(prepend, 16))[0]));
         if (append != null)
-            attr.setAppend("" + Character.toChars(Integer.parseInt(append, 16))[0]);
+            attr.setAppend(String.valueOf(Character.toChars(Integer.parseInt(append, 16))[0]));
         if (abbreviationTableIndex != null)
             attr.setAbbreviationTableId(abbreviationTableIndex);
 
@@ -477,7 +477,7 @@ public class GeoSymSupport
         GeoSymTable textLocTable)
     {
         HashMap<Integer, VPFSymbolAttributes.LabelAttributes> attributes =
-            new HashMap<Integer, VPFSymbolAttributes.LabelAttributes>();
+            new HashMap<>();
 
         for (AVList row : textLocTable.getRecords())
         {
@@ -536,7 +536,7 @@ public class GeoSymSupport
         }
 
         // Create symbol keys for each symbol row.
-        ArrayList<VPFSymbolKey> keyList = new ArrayList<VPFSymbolKey>();
+        ArrayList<VPFSymbolKey> keyList = new ArrayList<>();
 
         for (AVList symbolRow : symbolRows)
         {
@@ -572,13 +572,13 @@ public class GeoSymSupport
      */
     protected List<? extends VPFSymbolKey> doGetUnknownSymbolKeys()
     {
-        return Arrays.asList(VPFSymbolKey.UNKNOWN_SYMBOL_KEY);
+        return Collections.singletonList(VPFSymbolKey.UNKNOWN_SYMBOL_KEY);
     }
 
     protected List<VPFSymbolKey> doEvaluateSymbolKeys(Iterable<? extends VPFSymbolKey> iterable,
         AVList featureAttributes)
     {
-        ArrayList<VPFSymbolKey> filteredKeys = new ArrayList<VPFSymbolKey>();
+        ArrayList<VPFSymbolKey> filteredKeys = new ArrayList<>();
 
         for (VPFSymbolKey key : iterable)
         {
@@ -634,7 +634,7 @@ public class GeoSymSupport
     protected static Collection<AVList> selectSymbolAssignments(GeoSymTable table, int pid, String fcode, int delin,
         String cov)
     {
-        ArrayList<AVList> rows = new ArrayList<AVList>(Arrays.asList(table.getRecords()));
+        ArrayList<AVList> rows = new ArrayList<>(Arrays.asList(table.getRecords()));
 
         // The fcode field contains the 5-character feature code as defined in the applicable VPF product specification.
         GeoSymTable.selectMatchingStringRows("fcode", fcode, false, rows);
@@ -727,7 +727,7 @@ public class GeoSymSupport
     protected static int selectCodeValue(GeoSymTable codeTable, String fileName, String attributeName,
         String description)
     {
-        ArrayList<AVList> rows = new ArrayList<AVList>(Arrays.asList(codeTable.getRecords()));
+        ArrayList<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingStringRows("file", fileName, false, rows);
         GeoSymTable.selectMatchingStringRows("attribute", attributeName, false, rows);
         GeoSymTable.selectMatchingStringRows("description", description, false, rows);
@@ -741,7 +741,7 @@ public class GeoSymSupport
     protected static String selectCodeDescription(GeoSymTable codeTable, String fileName, String attributeName,
         int value)
     {
-        ArrayList<AVList> rows = new ArrayList<AVList>(Arrays.asList(codeTable.getRecords()));
+        ArrayList<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingStringRows("file", fileName, false, rows);
         GeoSymTable.selectMatchingStringRows("attribute", attributeName, false, rows);
         GeoSymTable.selectMatchingRows("value", value, false, rows);
@@ -753,7 +753,7 @@ public class GeoSymSupport
 
     protected static Color selectColor(GeoSymTable colorTable, int colorIndex)
     {
-        ArrayList<AVList> rows = new ArrayList<AVList>(Arrays.asList(colorTable.getRecords()));
+        ArrayList<AVList> rows = new ArrayList<>(Arrays.asList(colorTable.getRecords()));
         GeoSymTable.selectMatchingRows("index", colorIndex, false, rows);
         if (rows.size() == 0)
             return null;
@@ -767,7 +767,7 @@ public class GeoSymSupport
 
     protected static AVList selectTextLabelCharacteristics(GeoSymTable textCharTable, int txtRowId)
     {
-        ArrayList<AVList> rows = new ArrayList<AVList>(Arrays.asList(textCharTable.getRecords()));
+        ArrayList<AVList> rows = new ArrayList<>(Arrays.asList(textCharTable.getRecords()));
         GeoSymTable.selectMatchingRows("id", txtRowId, false, rows);
         return (rows.size() == 0) ? null : rows.get(0);
     }
@@ -818,13 +818,13 @@ public class GeoSymSupport
             this.assembleCommonSymbolAttributes(symbolRow, attr);
         }
 
-        return Arrays.asList(attr);
+        return Collections.singletonList(attr);
     }
 
     protected Iterable<? extends VPFSymbolAttributes> doGetUnknownSymbolAttributes(VPFFeatureClass featureClass,
         VPFSymbolKey key)
     {
-        ArrayList<VPFSymbolAttributes> list = new ArrayList<VPFSymbolAttributes>();
+        ArrayList<VPFSymbolAttributes> list = new ArrayList<>();
 
         if (featureClass.getType() == VPFFeatureType.POINT || featureClass.getType() == VPFFeatureType.AREA)
         {

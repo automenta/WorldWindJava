@@ -329,7 +329,7 @@ public class Wizard
     {
         if (button != null)
         {
-            button.setIcon((value != null && value instanceof Icon) ? (Icon) value : null);
+            button.setIcon((value instanceof Icon) ? (Icon) value : null);
         }
     }
     
@@ -339,28 +339,41 @@ public class Wizard
                 String propertyName = evt.getPropertyName();
                 Object newValue = evt.getNewValue();
 
-                if (propertyName.equals(WizardModel.CURRENT_PANEL_DESCRIPTOR)) {
-                    if (controller != null) {
-                        controller.resetButtonsToPanelRules();
-                    }
-                } else if (propertyName.equals(WizardModel.BACK_BUTTON_TEXT)) {
-                    setButtonText(backButton, newValue);
-                } else if (propertyName.equals(WizardModel.NEXT_BUTTON_TEXT)) {
-                    setButtonText(nextButton, newValue);
-                } else if (propertyName.equals(WizardModel.CANCEL_BUTTON_TEXT)) {
-                    setButtonText(cancelButton, newValue);
-                } else if (propertyName.equals(WizardModel.BACK_BUTTON_ENABLED)) {
-                    setButtonEnabled(backButton, newValue);
-                } else if (propertyName.equals(WizardModel.NEXT_BUTTON_ENABLED)) {
-                    setButtonEnabled(nextButton, newValue);
-                } else if (propertyName.equals(WizardModel.CANCEL_BUTTON_ENABLED)) {
-                    setButtonEnabled(cancelButton, newValue);
-                } else if (propertyName.equals(WizardModel.BACK_BUTTON_ICON)) {
-                    setButtonIcon(backButton, newValue);
-                } else if (propertyName.equals(WizardModel.NEXT_BUTTON_ICON)) {
-                    setButtonIcon(nextButton, newValue);
-                } else if (propertyName.equals(WizardModel.CANCEL_BUTTON_ICON)) {
-                    setButtonIcon(cancelButton, newValue);
+                switch (propertyName)
+                {
+                    case WizardModel.CURRENT_PANEL_DESCRIPTOR:
+                        if (controller != null)
+                        {
+                            controller.resetButtonsToPanelRules();
+                        }
+                        break;
+                    case WizardModel.BACK_BUTTON_TEXT:
+                        setButtonText(backButton, newValue);
+                        break;
+                    case WizardModel.NEXT_BUTTON_TEXT:
+                        setButtonText(nextButton, newValue);
+                        break;
+                    case WizardModel.CANCEL_BUTTON_TEXT:
+                        setButtonText(cancelButton, newValue);
+                        break;
+                    case WizardModel.BACK_BUTTON_ENABLED:
+                        setButtonEnabled(backButton, newValue);
+                        break;
+                    case WizardModel.NEXT_BUTTON_ENABLED:
+                        setButtonEnabled(nextButton, newValue);
+                        break;
+                    case WizardModel.CANCEL_BUTTON_ENABLED:
+                        setButtonEnabled(cancelButton, newValue);
+                        break;
+                    case WizardModel.BACK_BUTTON_ICON:
+                        setButtonIcon(backButton, newValue);
+                        break;
+                    case WizardModel.NEXT_BUTTON_ICON:
+                        setButtonIcon(nextButton, newValue);
+                        break;
+                    case WizardModel.CANCEL_BUTTON_ICON:
+                        setButtonIcon(cancelButton, newValue);
+                        break;
                 }
             }
         }

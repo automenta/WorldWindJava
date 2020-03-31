@@ -24,7 +24,7 @@ public class BasicColorBlockExtractor implements ColorBlockExtractor
     protected java.awt.image.BufferedImage image;
     private final int[] buffer;
 
-    protected static int[] remainder =
+    protected static final int[] remainder =
     {
         0, 0, 0, 0,
         0, 1, 0, 1,

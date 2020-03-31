@@ -28,7 +28,7 @@ public class OGCDCType extends AbstractXMLEventParser
 
     public static class DCPInfo
     {
-        protected String protocol;
+        protected final String protocol;
         protected String method;
         protected OGCOnlineResource onlineResource;
 
@@ -38,7 +38,7 @@ public class OGCDCType extends AbstractXMLEventParser
         }
     }
 
-    protected List<DCPInfo> protocols = new ArrayList<DCPInfo>(1);
+    protected final List<DCPInfo> protocols = new ArrayList<>(1);
 
     public OGCDCType(String namespaceURI)
     {
@@ -84,7 +84,7 @@ public class OGCDCType extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OGCOnlineResource)
+                if (o instanceof OGCOnlineResource)
                     this.addOnlineResource((OGCOnlineResource) o);
             }
         }

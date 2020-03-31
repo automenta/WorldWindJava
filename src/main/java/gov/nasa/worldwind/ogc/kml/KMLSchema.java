@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class KMLSchema extends AbstractXMLEventParser
 {
-    protected List<KMLSimpleField> simpleFields = new ArrayList<KMLSimpleField>();
+    protected final List<KMLSimpleField> simpleFields = new ArrayList<>();
 
     /**
      * Construct an instance.

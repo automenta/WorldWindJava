@@ -46,7 +46,7 @@ public class ViewPropertyAccessor
 
     public static class HeadingAccessor implements PropertyAccessor.AngleAccessor
     {
-        protected View view;
+        protected final View view;
 
         HeadingAccessor(View view)
         {
@@ -81,7 +81,7 @@ public class ViewPropertyAccessor
 
     public static class PitchAccessor implements PropertyAccessor.AngleAccessor
     {
-        protected View view;
+        protected final View view;
 
         PitchAccessor(View view)
         {
@@ -116,7 +116,7 @@ public class ViewPropertyAccessor
 
     public static class RollAccessor implements PropertyAccessor.AngleAccessor
     {
-        protected View view;
+        protected final View view;
 
         RollAccessor(View view)
         {
@@ -153,7 +153,7 @@ public class ViewPropertyAccessor
         PropertyAccessor.PositionAccessor
     {
 
-        protected View view;
+        protected final View view;
 
         EyePositionAccessor(View view)
         {
@@ -189,7 +189,7 @@ public class ViewPropertyAccessor
     public static class ElevationAccessor implements
         PropertyAccessor.DoubleAccessor
     {
-        protected View view;
+        protected final View view;
 
         ElevationAccessor(View view)
         {

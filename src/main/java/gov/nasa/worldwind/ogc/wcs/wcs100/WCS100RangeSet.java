@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class WCS100RangeSet extends AbstractXMLEventParser
 {
-    protected List<WCS100AxisDescriptionHolder> axisDescriptions = new ArrayList<WCS100AxisDescriptionHolder>(1);
+    protected final List<WCS100AxisDescriptionHolder> axisDescriptions = new ArrayList<>(1);
 
     public WCS100RangeSet(String namespaceURI)
     {
@@ -64,7 +64,7 @@ public class WCS100RangeSet extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WCS100AxisDescriptionHolder)
+                if (o instanceof WCS100AxisDescriptionHolder)
                     this.axisDescriptions.add((WCS100AxisDescriptionHolder) o);
             }
         }

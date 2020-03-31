@@ -19,9 +19,9 @@ import java.util.*;
  */
 public class WCS100SpatialDomain extends AbstractXMLEventParser
 {
-    protected List<GMLEnvelope> envelopes = new ArrayList<GMLEnvelope>(1);
-    protected List<GMLRectifiedGrid> rectifiedGrids = new ArrayList<GMLRectifiedGrid>(1);
-    protected List<GMLGrid> grids = new ArrayList<GMLGrid>(1);
+    protected final List<GMLEnvelope> envelopes = new ArrayList<>(1);
+    protected final List<GMLRectifiedGrid> rectifiedGrids = new ArrayList<>(1);
+    protected final List<GMLGrid> grids = new ArrayList<>(1);
 
     public WCS100SpatialDomain(String namespaceURI)
     {
@@ -52,7 +52,7 @@ public class WCS100SpatialDomain extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof GMLEnvelope)
+                if (o instanceof GMLEnvelope)
                     this.envelopes.add((GMLEnvelope) o);
             }
         }
@@ -62,7 +62,7 @@ public class WCS100SpatialDomain extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof GMLRectifiedGrid)
+                if (o instanceof GMLRectifiedGrid)
                     this.rectifiedGrids.add((GMLRectifiedGrid) o);
             }
         }
@@ -72,7 +72,7 @@ public class WCS100SpatialDomain extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof GMLGrid)
+                if (o instanceof GMLGrid)
                     this.grids.add((GMLGrid) o);
             }
         }

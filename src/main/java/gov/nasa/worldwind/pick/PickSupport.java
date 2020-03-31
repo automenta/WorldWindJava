@@ -24,13 +24,13 @@ public class PickSupport
      * The picked objects currently registered with this PickSupport, represented as a map of color codes to picked
      * objects. This maps provides constant time access to a picked object when its color code is known.
      */
-    protected Map<Integer, PickedObject> pickableObjects = new HashMap<Integer, PickedObject>();
+    protected final Map<Integer, PickedObject> pickableObjects = new HashMap<>();
     /**
      * The picked object color code ranges currently registered with this PickSupport, represented as a map of color
      * code ranges to picked object factories. PickSupport uses these factories to delay PickedObject construction until
      * a matching pick color is identified.
      */
-    protected Map<Range, PickedObjectFactory> pickableObjectRanges = new HashMap<Range, PickedObjectFactory>();
+    protected final Map<Range, PickedObjectFactory> pickableObjectRanges = new HashMap<>();
     /**
      * Indicates the minimum and maximum color code associated with the picked objects in the pickableObjects map.
      * Initially <code>null</code>, indicating that the minimum and maximum color codes are unknown.
@@ -95,9 +95,7 @@ public class PickSupport
         if (colorCode == 0) // getTopColor returns 0 if the pick point selects the clear color.
             return null;
 
-        PickedObject pickedObject = this.lookupPickableObject(colorCode);
-
-        return pickedObject;
+        return this.lookupPickableObject(colorCode);
     }
 
     /**

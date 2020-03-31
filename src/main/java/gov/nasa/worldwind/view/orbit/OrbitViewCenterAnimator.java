@@ -19,7 +19,7 @@ import gov.nasa.worldwind.util.PropertyAccessor;
 public class OrbitViewCenterAnimator extends MoveToPositionAnimator
 {
     private final BasicOrbitView orbitView;
-    boolean endCenterOnSurface;
+    final boolean endCenterOnSurface;
     public OrbitViewCenterAnimator(BasicOrbitView orbitView, Position startPosition, Position endPosition,
         double smoothing, PropertyAccessor.PositionAccessor propertyAccessor, boolean endCenterOnSurface)
     {

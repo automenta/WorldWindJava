@@ -119,7 +119,7 @@ public class WWOMeasureTool extends AVListImpl
     protected boolean showAnnotation = true;
     protected UnitsFormat unitsFormat = new UnitsFormat();
 
-    protected ArrayList<Position> positions = new ArrayList<>();
+    protected final ArrayList<Position> positions = new ArrayList<>();
     protected Rectangle2D.Double shapeRectangle = null;
     protected Position shapeCenterPosition = null;
     protected Angle shapeOrientation = null;
@@ -925,18 +925,16 @@ public class WWOMeasureTool extends AVListImpl
         this.firePropertyChange(WWOMeasureTool.EVENT_POSITION_REPLACE, oldPosition, newPosition);
     }
 
-    protected EventListenerList eventListeners = new EventListenerList();
+    protected final EventListenerList eventListeners = new EventListenerList();
 
     public void addSelectListener(SelectListener listener) {
         this.eventListeners.add(SelectListener.class, listener);
     }
 
     protected void callSelectListeners(final SelectEvent event) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                for (SelectListener listener : eventListeners.getListeners(SelectListener.class)) {
-                    listener.selected(event);
-                }
+        EventQueue.invokeLater(() -> {
+            for (SelectListener listener : eventListeners.getListeners(SelectListener.class)) {
+                listener.selected(event);
             }
         });
     }
@@ -1013,8 +1011,8 @@ public class WWOMeasureTool extends AVListImpl
         if (this.lastPickedObject == o) {
             return; // Same thing selected
         }
-        if (o != null && o instanceof WWOMeasureTool.ControlPoint
-                && ((WWOMeasureTool.ControlPoint) o).getParent() != this) {
+        if (o instanceof ControlPoint
+            && ((ControlPoint) o).getParent() != this) {
             return; // Does not belong to this measure tool
         }
         // Turn off highlight if on.
@@ -1027,7 +1025,7 @@ public class WWOMeasureTool extends AVListImpl
         }
 
         // Turn on highlight if object selected.
-        if (o != null && o instanceof WWOMeasureTool.ControlPoint) {
+        if (o instanceof ControlPoint) {
             this.lastPickedObject = (WWOMeasureTool.ControlPoint) o;
             this.lastPickedObject.highlight(true);
             if (this.isShowAnnotation()) {

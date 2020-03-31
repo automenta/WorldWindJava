@@ -10,7 +10,6 @@ import gov.nasa.worldwind.render.*;
 
 import java.awt.image.*;
 import java.beans.*;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -24,9 +23,9 @@ public class GliderImageLayer extends AbstractLayer {
     public static final String GLIDER_IMAGE = "gov.nasa.worldwind.glider.Image";
 
     protected GliderImage image;
-    protected SurfaceImageLayer imageLayer = new SurfaceImageLayer();
-    protected RenderableLayer regionLayer = new RenderableLayer();
-    protected ImageListener imageListener = new ImageListener();
+    protected final SurfaceImageLayer imageLayer = new SurfaceImageLayer();
+    protected final RenderableLayer regionLayer = new RenderableLayer();
+    protected final ImageListener imageListener = new ImageListener();
 
     @Override
     public void dispose() {
@@ -37,7 +36,8 @@ public class GliderImageLayer extends AbstractLayer {
         this.regionLayer.dispose();
     }
 
-    public void setImage(GliderImage image) throws IOException {
+    public void setImage(GliderImage image)
+    {
         if (image.getImageSource() instanceof String) {
             ((SurfaceImageLayer) this.getImageLayer()).addImage((String) image.getImageSource(), image.getCorners());
         } else if (image.getImageSource() instanceof BufferedImage) {
@@ -107,11 +107,7 @@ public class GliderImageLayer extends AbstractLayer {
                     case GliderImage.GLIDER_IMAGE_SOURCE:
                         imageLayer.removeImage(((GliderImage) evt.getSource()).getName());
                         if (evt.getNewValue() != null) {
-                            try {
-                                GliderImageLayer.this.setImage((GliderImage) evt.getNewValue());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            GliderImageLayer.this.setImage((GliderImage) evt.getNewValue());
                         }   // Cause owner to repaint
                         evt.setPropagationId(GliderImageLayer.this);
                         GliderImageLayer.this.firePropertyChange(evt);

@@ -25,7 +25,7 @@ public class PersistSessionState extends ApplicationTemplate
          * Create a SessionState utility to load and save WorldWind's layer and view state to the default location.
          * Initialized to a new SessionState with its session key set to this application's class name.
          */
-        protected SessionState sessionState = new SessionState(PersistSessionState.class.getName());
+        protected final SessionState sessionState = new SessionState(PersistSessionState.class.getName());
 
         /** Creates a new AppFrame, but otherwise does nothing. */
         public AppFrame()

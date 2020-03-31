@@ -15,11 +15,11 @@ import java.util.*;
  */
 public class VPFFeatureClass extends AVListImpl
 {
-    protected VPFCoverage coverage;
-    protected VPFFeatureClassSchema schema;
+    protected final VPFCoverage coverage;
+    protected final VPFFeatureClassSchema schema;
     protected VPFRelation[] relations;
-    protected String joinTableName;
-    protected String primitiveTableName;
+    protected final String joinTableName;
+    protected final String primitiveTableName;
 
     public VPFFeatureClass(VPFCoverage coverage, VPFFeatureClassSchema schema, String joinTableName,
         String primitiveTableName)
@@ -97,15 +97,14 @@ public class VPFFeatureClass extends AVListImpl
         if (this.coverage != null ? !this.coverage.getFilePath().equals(that.coverage.getFilePath())
             : that.coverage != null)
             return false;
-        if (this.schema != null ? !this.schema.equals(that.schema) : that.schema != null)
+        if (!Objects.equals(this.schema, that.schema))
             return false;
         if (!Arrays.equals(this.relations, that.relations))
             return false;
-        if (this.joinTableName != null ? !this.joinTableName.equals(that.joinTableName) : that.joinTableName != null)
+        if (!Objects.equals(this.joinTableName, that.joinTableName))
             return false;
         //noinspection RedundantIfStatement
-        if (this.primitiveTableName != null ? !this.primitiveTableName.equals(that.primitiveTableName)
-            : that.primitiveTableName != null)
+        if (!Objects.equals(this.primitiveTableName, that.primitiveTableName))
             return false;
 
         return true;

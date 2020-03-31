@@ -28,8 +28,8 @@ public class CachedRenderableLayer extends AbstractLayer
 {
     protected static final int DEFAULT_DEPTH = 4;
 
-    protected BasicQuadTree<Renderable> extentTree; // this is used until we work out the caching and retrieval scheme
-    protected PickSupport pickSupport = new PickSupport();
+    protected final BasicQuadTree<Renderable> extentTree; // this is used until we work out the caching and retrieval scheme
+    protected final PickSupport pickSupport = new PickSupport();
 
     /**
      * Constructs a layer instance.
@@ -41,7 +41,7 @@ public class CachedRenderableLayer extends AbstractLayer
     public CachedRenderableLayer(Sector coverage)
     {
         // Extent tree checks args
-        this.extentTree = new BasicQuadTree<Renderable>(DEFAULT_DEPTH, coverage, null);
+        this.extentTree = new BasicQuadTree<>(DEFAULT_DEPTH, coverage, null);
     }
 
     /**
@@ -55,7 +55,7 @@ public class CachedRenderableLayer extends AbstractLayer
     public CachedRenderableLayer(Sector coverage, int numLevels)
     {
         // Extent tree checks args
-        this.extentTree = new BasicQuadTree<Renderable>(numLevels, coverage, null);
+        this.extentTree = new BasicQuadTree<>(numLevels, coverage, null);
     }
 
     /**
@@ -254,7 +254,7 @@ public class CachedRenderableLayer extends AbstractLayer
             {
                 // If the caller has specified their own Iterable,
                 // then we cannot make any guarantees about its contents.
-                if (renderable != null && renderable instanceof PreRenderable)
+                if (renderable instanceof PreRenderable)
                     ((PreRenderable) renderable).preRender(dc);
             }
             catch (Exception e)

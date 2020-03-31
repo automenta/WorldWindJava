@@ -26,7 +26,7 @@ public class DDSRasterWriter extends AbstractDataRasterWriter
 
     protected boolean doCanWrite(DataRaster raster, String formatSuffix, File file)
     {
-        return (raster != null) && (raster instanceof BufferedImageRaster);
+        return (raster instanceof BufferedImageRaster);
     }
 
     protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException

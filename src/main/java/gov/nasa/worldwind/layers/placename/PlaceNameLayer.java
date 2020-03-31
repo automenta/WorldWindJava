@@ -16,6 +16,7 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 
+import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
@@ -29,7 +30,7 @@ import java.util.logging.Level;
 public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
 {
     protected final PlaceNameServiceSet placeNameServiceSet;
-    protected PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<Runnable>(64);
+    protected final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(64);
     protected Vec4 referencePoint;
     protected final Object fileLock = new Object();
     protected boolean cullNames = true; // this flag is no longer used. placenames participate in global decluttering
@@ -61,7 +62,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
     public static final LatLon GRID_576x1152 = new LatLon(Angle.fromDegrees(0.3125d), Angle.fromDegrees(0.3125d));
     public static final LatLon GRID_1152x2304 = new LatLon(Angle.fromDegrees(0.1563d), Angle.fromDegrees(0.1563d));
 
-    protected List<NavigationTile> navTiles = new ArrayList<NavigationTile>();
+    protected final List<NavigationTile> navTiles = new ArrayList<>();
     //top navigation tiles for each service
 
     /**
@@ -138,12 +139,12 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
 
     protected class NavigationTile
     {
-        String id;
-        protected PlaceNameService placeNameService;
-        public Sector navSector;
-        protected List<NavigationTile> subNavTiles = new ArrayList<NavigationTile>();
-        protected List<String> tileKeys = new ArrayList<String>();
-        protected int level;
+        final String id;
+        protected final PlaceNameService placeNameService;
+        public final Sector navSector;
+        protected final List<NavigationTile> subNavTiles = new ArrayList<>();
+        protected final List<String> tileKeys = new ArrayList<>();
+        protected final int level;
 
         NavigationTile(PlaceNameService placeNameService, Sector sector, int levels, String id)
         {
@@ -168,7 +169,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
 
         public List<NavigationTile> navTilesVisible(DrawContext dc, double minDistSquared, double maxDistSquared)
         {
-            ArrayList<NavigationTile> navList = new ArrayList<NavigationTile>();
+            ArrayList<NavigationTile> navList = new ArrayList<>();
             if (this.isNavSectorVisible(dc, minDistSquared, maxDistSquared))
             {
                 if (this.level > 0 && !this.hasSubTiles())
@@ -254,7 +255,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
             }
             else
             {
-                List<Tile> dataTiles = new ArrayList<Tile>();
+                List<Tile> dataTiles = new ArrayList<>();
                 for (String s : tileKeys)
                 {
                     Tile t = (Tile) WorldWind.getMemoryCache(Tile.class.getName()).getObject(s);
@@ -535,7 +536,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
         {
             //get dispay dist for this service for use in label annealing
             double maxDisplayDistance = this.getPlaceNameService().getMaxDisplayDistance();
-            ArrayList<GeographicText> list = new ArrayList<GeographicText>();
+            ArrayList<GeographicText> list = new ArrayList<>();
             for (int i = 0; i < this.numEntries; i++)
             {
                 CharSequence str = getText(i);
@@ -573,7 +574,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
 
             if (isSectorVisible(dc, placeNameService.getMaskingSector(), minDistSquared, maxDistSquared))
             {
-                ArrayList<Tile> baseTiles = new ArrayList<Tile>();
+                ArrayList<Tile> baseTiles = new ArrayList<>();
                 NavigationTile navTile = this.navTiles.get(i);
                 //drill down into tiles to find bottom level navTiles visible
                 List<NavigationTile> list = navTile.navTilesVisible(dc, minDistSquared, maxDistSquared);
@@ -744,7 +745,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
         double degrees = a.degrees;
         double minDegrees = min.degrees;
         double maxDegrees = max.degrees;
-        return Angle.fromDegrees(degrees < minDegrees ? minDegrees : (degrees > maxDegrees ? maxDegrees : degrees));
+        return Angle.fromDegrees(degrees < minDegrees ? minDegrees : (Math.min(degrees, maxDegrees)));
     }
 
     // ============== Image Reading and Downloading ======================= //
@@ -824,8 +825,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
-            return this.tile.getPriority() == that.tile.getPriority() ? 0 :
-                this.tile.getPriority() < that.tile.getPriority() ? -1 : 1;
+            return Double.compare(this.tile.getPriority(), that.tile.getPriority());
         }
 
         public boolean equals(Object o)
@@ -838,7 +838,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
             final RequestTask that = (RequestTask) o;
 
             // Don't include layer in comparison so that requests are shared among layers
-            return !(tile != null ? !tile.equals(that.tile) : that.tile != null);
+            return Objects.equals(tile, that.tile);
         }
 
         public int hashCode()
@@ -885,6 +885,8 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
         return true;
     }
 
+    static final SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+
     protected static PlaceNameChunk readTileData(Tile tile, java.net.URL url)
     {
         java.io.InputStream is = null;
@@ -895,11 +897,11 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
             path = path.replaceAll("%20", " "); // TODO: find a better way to get a path usable by FileInputStream
 
             java.io.FileInputStream fis = new java.io.FileInputStream(path);
-            java.io.BufferedInputStream buf = new java.io.BufferedInputStream(fis);
-            is = new java.util.zip.GZIPInputStream(buf);
+//            java.io.BufferedInputStream buf = new java.io.BufferedInputStream(fis);
+            is = new java.util.zip.GZIPInputStream(fis);
 
             GMLPlaceNameSAXHandler handler = new GMLPlaceNameSAXHandler();
-            javax.xml.parsers.SAXParserFactory.newInstance().newSAXParser().parse(is, handler);
+            saxParserFactory.newSAXParser().parse(is, handler);
             return handler.createPlaceNameChunk(tile.getPlaceNameService());
         }
         catch (Exception e)
@@ -938,12 +940,12 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
         protected static final String TOPP_FULL_NAME_ND = "topp:full_name_nd";
         protected static final String TOPP_LATITUDE = "topp:latitude";
         protected static final String TOPP_LONGITUDE = "topp:longitude";
-        protected final LinkedList<String> internedQNameStack = new LinkedList<String>();
+        protected final LinkedList<String> internedQNameStack = new LinkedList<>();
         protected boolean inBeginEndPair = false;
-        protected StringBuilder latBuffer = new StringBuilder();
-        protected StringBuilder lonBuffer = new StringBuilder();
+        protected final StringBuilder latBuffer = new StringBuilder();
+        protected final StringBuilder lonBuffer = new StringBuilder();
 
-        StringBuilder textArray = new StringBuilder();
+        final StringBuilder textArray = new StringBuilder();
         int[] textIndexArray = new int[16];
         double[] latlonArray = new double[16];
         int numEntries = 0;

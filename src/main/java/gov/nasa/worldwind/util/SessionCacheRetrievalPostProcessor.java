@@ -249,7 +249,7 @@ public class SessionCacheRetrievalPostProcessor implements RetrievalPostProcesso
         this.cache.put(this.cacheKey, caps.parse());
     }
 
-    protected void handleUnknownContent(Retriever retriever) throws Exception
+    protected void handleUnknownContent(Retriever retriever)
     {
         this.cache.put(this.cacheKey, retriever.getBuffer());
     }

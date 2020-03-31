@@ -379,7 +379,6 @@ public class SectorSelector extends WWObjectImpl
                 Sector newSector = this.resizeShape(dragObject, this.getSide());
                 if (newSector != null)
                     dragObject.setSector(newSector);
-                event.consume();
             }
             else
             {
@@ -397,8 +396,8 @@ public class SectorSelector extends WWObjectImpl
                         dragObject.setSector(newSector);
                     this.setOperation(SIZING);
                 }
-                event.consume();
             }
+            event.consume();
 
             this.setPreviousPosition(this.getWwd().getCurrentPosition());
             this.notifySectorChanged();

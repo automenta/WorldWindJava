@@ -21,14 +21,14 @@ import javax.swing.event.*;
  */
 public abstract class BulkRetrievalThread extends Thread
 {
-    protected int RETRIEVAL_SERVICE_POLL_DELAY = 1000;
+    protected final int RETRIEVAL_SERVICE_POLL_DELAY = 1000;
 
     protected final BulkRetrievable retrievable;
     protected final Sector sector;
     protected final double resolution;
     protected final Progress progress;
     protected final FileStore fileStore;
-    protected EventListenerList retrievalListeners = new EventListenerList();
+    protected final EventListenerList retrievalListeners = new EventListenerList();
 
     /**
      * Construct a thread that attempts to download to a specified {@link FileStore} a retrievable's data for a given

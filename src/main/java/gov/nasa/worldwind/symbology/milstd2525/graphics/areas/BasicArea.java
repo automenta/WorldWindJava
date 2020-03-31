@@ -27,7 +27,7 @@ import java.util.*;
  */
 public class BasicArea extends AbstractMilStd2525TacticalGraphic implements PreRenderable
 {
-    protected SurfacePolygon polygon;
+    protected final SurfacePolygon polygon;
 
     /** First "ENY" label, for hostile entities. */
     protected TacticalGraphicLabel identityLabel1;
@@ -68,7 +68,7 @@ public class BasicArea extends AbstractMilStd2525TacticalGraphic implements PreR
     public Iterable<? extends Position> getPositions()
     {
         Iterable<? extends LatLon> locations = this.polygon.getLocations();
-        ArrayList<Position> positions = new ArrayList<Position>();
+        ArrayList<Position> positions = new ArrayList<>();
 
         if (locations == null)
         {

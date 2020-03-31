@@ -61,7 +61,7 @@ public class GeoSymStyleProvider
             throw new WWRuntimeException(message);
         }
 
-        this.attributes = new HashMap<String, VPFSymbolAttributes>();
+        this.attributes = new HashMap<>();
         Scanner scanner = new Scanner(inputStream);
         while (scanner.hasNextLine())
         {

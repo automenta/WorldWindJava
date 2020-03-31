@@ -26,7 +26,7 @@ public class RPFFrameFileIndexSection
     // [ frame file index subsection ]
 
     //      [ frame file index table ]
-    private final ArrayList<RPFFrameFileIndexRecord> frameFileIndexTable = new ArrayList<RPFFrameFileIndexRecord>();
+    private final ArrayList<RPFFrameFileIndexRecord> frameFileIndexTable = new ArrayList<>();
     //      [ pathname table ]
     // private ArrayList<String> pathnameTable = new ArrayList<String>();
 
@@ -80,7 +80,7 @@ public class RPFFrameFileIndexSection
     private void parseFrameFileIndexAndPathnameTables(java.nio.ByteBuffer buffer)
     {
         int theSectionOffset = buffer.position();
-        Hashtable<Integer, String> pathnames = new Hashtable<Integer, String>();
+        Hashtable<Integer, String> pathnames = new Hashtable<>();
 
         for (int i = 0; i < this.numOfFrameFileIndexRecords; i++)
         {
@@ -107,7 +107,7 @@ public class RPFFrameFileIndexSection
         }
     }
 
-    public class RPFFrameFileIndexRecord
+    public static class RPFFrameFileIndexRecord
     {
         public int getBoundaryRectangleRecordNumber()
         {

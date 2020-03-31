@@ -76,11 +76,11 @@ public class FileTree implements Iterable<File>
 
     private static List<File> makeList(File root, FileFilter fileFilter, int mode)
     {
-        Queue<File> dirs = new LinkedList<File>();
+        Queue<File> dirs = new LinkedList<>();
         if (isDirectory(root))
             dirs.offer(root);
 
-        LinkedList<File> result = new LinkedList<File>();
+        LinkedList<File> result = new LinkedList<>();
         while (dirs.peek() != null)
             expand(dirs.poll(), fileFilter, mode, result, dirs);
 
@@ -88,8 +88,8 @@ public class FileTree implements Iterable<File>
     }
 
     private static class FileTreeIterator implements Iterator<File> {
-        private final Queue<File> dirs = new LinkedList<File>();
-        private final Queue<File> files = new LinkedList<File>();
+        private final Queue<File> dirs = new LinkedList<>();
+        private final Queue<File> files = new LinkedList<>();
         private final FileFilter fileFilter;
         private final int mode;
 

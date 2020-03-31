@@ -37,7 +37,7 @@ public class TabbedPaneUsage extends JFrame
 {
     private static class WWPanel extends JPanel
     {
-        WorldWindowGLCanvas wwd;
+        final WorldWindowGLCanvas wwd;
 
         public WWPanel(WorldWindowGLCanvas shareWith, int width, int height)
         {
@@ -124,12 +124,6 @@ public class TabbedPaneUsage extends JFrame
 
     public static void main(String[] args)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                new TabbedPaneUsage();
-            }
-        });
+        SwingUtilities.invokeLater(TabbedPaneUsage::new);
     }
 }

@@ -35,19 +35,15 @@ public class DeepPicking extends Airspaces
             this.getWwd().getSceneController().setDeepPickEnabled(true);
 
             // Register a select listener to print the class names of the items under the cursor.
-            this.getWwd().addSelectListener(new SelectListener()
-            {
-                public void selected(SelectEvent event)
+            this.getWwd().addSelectListener(event -> {
+                if (event.getEventAction().equals(SelectEvent.HOVER) && event.getObjects() != null)
                 {
-                    if (event.getEventAction().equals(SelectEvent.HOVER) && event.getObjects() != null)
+                    System.out.printf("%d objects\n", event.getObjects().size());
+                    if (event.getObjects().size() > 1)
                     {
-                        System.out.printf("%d objects\n", event.getObjects().size());
-                        if (event.getObjects().size() > 1)
+                        for (PickedObject po : event.getObjects())
                         {
-                            for (PickedObject po : event.getObjects())
-                            {
-                                System.out.println(po.getObject().getClass().getName());
-                            }
+                            System.out.println(po.getObject().getClass().getName());
                         }
                     }
                 }

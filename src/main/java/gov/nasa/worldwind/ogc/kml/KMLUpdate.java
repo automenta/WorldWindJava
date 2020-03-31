@@ -57,7 +57,7 @@ public class KMLUpdate extends KMLAbstractObject
     protected void addChange(KMLChange o)
     {
         if (this.operations == null)
-            this.operations = new ArrayList<KMLUpdateOperation>();
+            this.operations = new ArrayList<>();
 
         this.operations.add(o);
     }
@@ -65,7 +65,7 @@ public class KMLUpdate extends KMLAbstractObject
     protected void addCreate(KMLCreate o)
     {
         if (this.operations == null)
-            this.operations = new ArrayList<KMLUpdateOperation>();
+            this.operations = new ArrayList<>();
 
         this.operations.add(o);
     }
@@ -73,7 +73,7 @@ public class KMLUpdate extends KMLAbstractObject
     protected void addDelete(KMLDelete o)
     {
         if (this.operations == null)
-            this.operations = new ArrayList<KMLUpdateOperation>();
+            this.operations = new ArrayList<>();
 
         this.operations.add(o);
     }
@@ -95,7 +95,7 @@ public class KMLUpdate extends KMLAbstractObject
 
         Object o = this.getRoot().resolveReference(this.getTargetHref());
 
-        if (o == null || !(o instanceof KMLRoot))
+        if (!(o instanceof KMLRoot))
             return;
 
         KMLRoot targetRoot = (KMLRoot) o;

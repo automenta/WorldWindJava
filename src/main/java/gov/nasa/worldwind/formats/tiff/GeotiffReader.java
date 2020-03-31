@@ -51,7 +51,8 @@ public class GeotiffReader implements Disposable {
         this(sourceFile.getAbsolutePath());
     }
 
-    protected AVList getMetadata(int imageIndex) throws IOException {
+    protected AVList getMetadata(int imageIndex)
+    {
         this.checkImageIndex(imageIndex);
         AVList values = this.metadata.get(imageIndex);
         return (null != values) ? values.copy() : null;
@@ -75,17 +76,20 @@ public class GeotiffReader implements Disposable {
         this.dispose();
     }
 
-    public int getNumImages() throws IOException {
+    public int getNumImages()
+    {
         return (this.tiffIFDs != null) ? this.tiffIFDs.size() : 0;
     }
 
-    public int getWidth(int imageIndex) throws IOException {
+    public int getWidth(int imageIndex)
+    {
         checkImageIndex(imageIndex);
         AVList values = this.metadata.get(imageIndex);
         return (values.hasKey(AVKey.WIDTH)) ? (Integer) values.getValue(AVKey.WIDTH) : 0;
     }
 
-    public int getHeight(int imageIndex) throws IOException {
+    public int getHeight(int imageIndex)
+    {
         checkImageIndex(imageIndex);
         AVList values = this.metadata.get(imageIndex);
         return (values.hasKey(AVKey.HEIGHT)) ? (Integer) values.getValue(AVKey.HEIGHT) : 0;
@@ -130,7 +134,8 @@ public class GeotiffReader implements Disposable {
         throw new IOException(message);
     }
 
-    public boolean isGeotiff(int imageIndex) throws IOException {
+    public boolean isGeotiff(int imageIndex)
+    {
         AVList values = this.metadata.get(imageIndex);
         return (null != values && values.hasKey(AVKey.COORDINATE_SYSTEM));
     }
@@ -389,9 +394,6 @@ public class GeotiffReader implements Disposable {
                 bankOffsets[i] = i;
             }
             int[] offsets = new int[(tiff.planarConfig == Tiff.PlanarConfiguration.CHUNKY) ? 1 : tiff.samplesPerPixel];
-            for (int i = 0; i < offsets.length; i++) {
-                offsets[i] = 0;
-            }
 
             // construct the right SampleModel...
             ComponentSampleModel sampleModel;
@@ -829,19 +831,19 @@ public class GeotiffReader implements Disposable {
     private void readIFD(int numEntries) throws IOException {
         try {
             if (null == this.tiffIFDs) {
-                this.tiffIFDs = new ArrayList<TiffIFDEntry[]>();
+                this.tiffIFDs = new ArrayList<>();
             }
 
-            java.util.List<TiffIFDEntry> ifd = new ArrayList<TiffIFDEntry>();
+            java.util.List<TiffIFDEntry> ifd = new ArrayList<>();
             for (int i = 0; i < numEntries; i++) {
                 ifd.add(TIFFIFDFactory.create(this.theChannel, this.tiffReader.getByteOrder()));
             }
 
-            TiffIFDEntry[] array = ifd.toArray(new TiffIFDEntry[ifd.size()]);
+            TiffIFDEntry[] array = ifd.toArray(new TiffIFDEntry[0]);
             this.tiffIFDs.add(array);
 
             if (null == this.metadata) {
-                this.metadata = new ArrayList<AVList>();
+                this.metadata = new ArrayList<>();
             }
             this.metadata.add(new AVListImpl());
 
@@ -883,7 +885,8 @@ public class GeotiffReader implements Disposable {
      * We throw an IllegalArgumentException if the index is not valid, otherwise, silently return.
      *
      */
-    private void checkImageIndex(int imageIndex) throws IOException {
+    private void checkImageIndex(int imageIndex)
+    {
         if (imageIndex < 0 || imageIndex >= getNumImages()) {
             String message = Logging.getMessage("GeotiffReader.BadImageIndex", imageIndex, 0, getNumImages());
             Logging.logger().severe(message);

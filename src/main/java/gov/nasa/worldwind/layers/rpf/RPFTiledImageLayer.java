@@ -61,7 +61,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
         int nLatTiles = lastRow - firstRow + 1;
         int nLonTiles = lastCol - firstCol + 1;
 
-        ArrayList<Tile> topLevels = new ArrayList<Tile>(nLatTiles * nLonTiles);
+        ArrayList<Tile> topLevels = new ArrayList<>(nLatTiles * nLonTiles);
 
         Angle p1 = Tile.computeRowLatitude(firstRow, dLat, latOrigin);
         for (int row = firstRow; row <= lastRow; row++)
@@ -213,7 +213,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
         // reflects whats in the RPFFileIndex. If the layer has been re-imported (data has been added, or data has been
         // removed), then all previously created layer imagery will be expired (but not necessarily the preprocessed
         // data).
-        Long expiryTime = new GregorianCalendar(2009, Calendar.FEBRUARY, 25).getTimeInMillis();
+        long expiryTime = new GregorianCalendar(2009, Calendar.FEBRUARY, 25).getTimeInMillis();
         if (file != null && file.lastModified() > expiryTime)
         {
             expiryTime = file.lastModified();
@@ -340,7 +340,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
         StringBuilder sb = new StringBuilder();
 
         Object o = params.getValue(RPFGenerator.RPF_FILE_INDEX);
-        if (o != null && o instanceof RPFFileIndex)
+        if (o instanceof RPFFileIndex)
         {
             RPFFileIndex fileIndex = (RPFFileIndex) o;
             if (fileIndex.getIndexProperties() != null)
@@ -879,8 +879,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
-            return this.tile.getPriority() == that.tile.getPriority() ? 0 :
-                this.tile.getPriority() < that.tile.getPriority() ? -1 : 1;
+            return Double.compare(this.tile.getPriority(), that.tile.getPriority());
         }
 
         public boolean equals(Object o)
@@ -893,7 +892,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
             final TileTask that = (TileTask) o;
 
             // Don't include layer in comparison so that requests are shared among layers
-            return !(tile != null ? !tile.equals(that.tile) : that.tile != null);
+            return Objects.equals(tile, that.tile);
         }
 
         public int hashCode()

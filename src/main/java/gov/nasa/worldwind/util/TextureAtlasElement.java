@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.image.*;
 import java.beans.*;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * Represents a texture defined by a sub-image within a {@link TextureAtlas}.
@@ -245,7 +246,7 @@ public class TextureAtlasElement implements Disposable
             return false;
 
         TextureAtlasElement that = (TextureAtlasElement) o;
-        return this.imageSource != null ? this.imageSource.equals(that.imageSource) : that.imageSource == null;
+        return Objects.equals(this.imageSource, that.imageSource);
     }
 
     /** Returns the hash code for this texture atlas element's image source. */

@@ -101,7 +101,7 @@ public class VPFTableReader
     }
 
     /** MIL-STD-2407, section 5.4.1.1 */
-    public class Column
+    public static class Column
     {
         public final String name;
         public String dataType;
@@ -178,7 +178,7 @@ public class VPFTableReader
         if (s != null && s.charAt(0) != '-')
             header.narrativeTableName = s.trim();
 
-        ArrayList<Column> columnList = new ArrayList<Column>();
+        ArrayList<Column> columnList = new ArrayList<>();
 
         while (buffer.position() < (offset + length))
         {
@@ -235,7 +235,7 @@ public class VPFTableReader
         s = VPFUtils.readDelimitedText(buffer, ':');
         if (s != null)
         {
-            int pos = s.indexOf(",");
+            int pos = s.indexOf(',');
             if (pos >= 0)
             {
                 s = s.substring(0, pos);
@@ -269,7 +269,7 @@ public class VPFTableReader
 
     protected abstract static class AbstractDataReader implements RecordDataReader
     {
-        protected VPFDataBuffer dataBuffer;
+        protected final VPFDataBuffer dataBuffer;
 
         public AbstractDataReader(VPFDataBuffer dataBuffer)
         {
@@ -284,7 +284,7 @@ public class VPFTableReader
 
     protected static class FixedLengthDataReader extends AbstractDataReader
     {
-        protected int numElements;
+        protected final int numElements;
 
         public FixedLengthDataReader(VPFDataBuffer dataBuffer, int numElements)
         {
@@ -366,8 +366,8 @@ public class VPFTableReader
     {
         public static class Entry
         {
-            public int offset;
-            public int length;
+            public final int offset;
+            public final int length;
 
             public Entry(int offset, int length)
             {

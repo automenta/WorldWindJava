@@ -150,11 +150,10 @@ public class PolylineGeneralizer
     // TODO: Modify computeEffectiveArea to correctly compute area when z != 0
     protected double computeEffectiveArea(Element e)
     {
-        Element c = e;
         Element p = e.prev;
         Element n = e.next;
 
-        return 0.5 * Math.abs((p.x - c.x) * (n.y - c.y) - (p.y - c.y) * (n.x - c.x));
+        return 0.5 * Math.abs((p.x - e.x) * (n.y - e.y) - (p.y - e.y) * (n.x - e.x));
     }
 
     protected void updateEffectiveArea(Element e)

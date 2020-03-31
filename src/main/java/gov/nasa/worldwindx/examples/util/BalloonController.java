@@ -87,9 +87,9 @@ public class BalloonController extends MouseAdapter implements SelectListener
      * Timeout to use when requesting remote documents. If the document does not load within this many milliseconds the
      * controller will stop trying and report an error.
      */
-    protected long retrievalTimeout = 30 * 1000; // 30 seconds
+    protected final long retrievalTimeout = 30 * 1000; // 30 seconds
     /** Interval between periodic checks for completion of asynchronous document retrieval (in milliseconds). */
-    protected long retrievalPollInterval = 1000; // 1 second
+    protected final long retrievalPollInterval = 1000; // 1 second
 
     /**
      * A resize controller is created when the mouse enters a resize control on the balloon. The controller is destroyed
@@ -454,7 +454,7 @@ public class BalloonController extends MouseAdapter implements SelectListener
         String linkBase;
         String linkRef;
 
-        int hashSign = url.indexOf("#");
+        int hashSign = url.indexOf('#');
         if (hashSign != -1)
         {
             linkBase = url.substring(0, hashSign);
@@ -1213,7 +1213,7 @@ public class BalloonController extends MouseAdapter implements SelectListener
      */
     protected Position getBalloonPositionForPlacemark(KMLPlacemark placemark)
     {
-        List<Position> positions = new ArrayList<Position>();
+        List<Position> positions = new ArrayList<>();
 
         KMLAbstractGeometry geometry = placemark.getGeometry();
         KMLUtil.getPositions(this.wwd.getModel().getGlobe(), geometry, positions);
@@ -1438,19 +1438,19 @@ public class BalloonController extends MouseAdapter implements SelectListener
     protected class DocumentRetrievalTask extends TimerTask
     {
         /** URL of the KML document to load. */
-        protected String docUrl;
+        protected final String docUrl;
         /** The document that contained the link this document. */
-        protected KMLRoot context;
+        protected final KMLRoot context;
         /**
          * Reference to a feature in the remote document, with an action (for example, "myFeature;flyto"). The action
          * will be carried out when the document becomes available.
          */
-        protected String featureRef;
+        protected final String featureRef;
         /**
          * Task timeout. If the document has not been loaded after this many milliseconds, the task will cancel itself
          * and report an error.
          */
-        protected long timeout;
+        protected final long timeout;
         /** Time that the task started, used to evaluate the timeout. */
         protected long start;
 
@@ -1517,13 +1517,8 @@ public class BalloonController extends MouseAdapter implements SelectListener
                 {
                     // Schedule a callback on the EDT to let the BalloonController finish loading the document.
                     final KMLRoot pinnedRoot = root; // Final ref that can be accessed by anonymous class
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            BalloonController.this.onDocumentLoaded(docUrl, pinnedRoot, featureRef);
-                        }
-                    });
+                    SwingUtilities.invokeLater(
+                        () -> BalloonController.this.onDocumentLoaded(docUrl, pinnedRoot, featureRef));
 
                     this.cancel();
                 }
@@ -1531,13 +1526,7 @@ public class BalloonController extends MouseAdapter implements SelectListener
             catch (final Exception e)
             {
                 // Schedule a callback on the EDT to report the error to the BalloonController
-                SwingUtilities.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        BalloonController.this.onDocumentFailed(docUrl, e);
-                    }
-                });
+                SwingUtilities.invokeLater(() -> BalloonController.this.onDocumentFailed(docUrl, e));
                 this.cancel();
             }
         }

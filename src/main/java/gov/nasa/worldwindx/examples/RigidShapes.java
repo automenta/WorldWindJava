@@ -83,7 +83,7 @@ public class RigidShapes extends ApplicationTemplate
             // Box with a texture.
             Box box = new Box(Position.fromDegrees(0, -90, 600000), 600000, 600000, 600000);
             box.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            ArrayList<Object> imageSources = new ArrayList<Object>();
+            ArrayList<Object> imageSources = new ArrayList<>();
             imageSources.add("images/32x32-icon-nasa.png");
             imageSources.add(null);
             imageSources.add("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");

@@ -89,7 +89,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         if (this.hasKey(AVKey.MISSING_DATA_SIGNAL))
         {
             Object o = this.getValue(AVKey.MISSING_DATA_SIGNAL);
-            if (null != o && o instanceof Double)
+            if (o instanceof Double)
                 return (Double) o;
         }
         return Double.MAX_VALUE;
@@ -380,10 +380,10 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
 
     protected static class InterpolantLookupTable
     {
-        protected int width;
-        protected int height;
-        protected double[] xParams;
-        protected double[] yParams;
+        protected final int width;
+        protected final int height;
+        protected final double[] xParams;
+        protected final double[] yParams;
 
         public InterpolantLookupTable(int width, int height)
         {
@@ -469,7 +469,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
             x = thisPoint.getX();
             if (((x - xMin) > threshold) && ((xMax - x) > threshold))
             {
-                x = (x < xMin) ? xMin : ((x > xMax) ? xMax : x);
+                x = (x < xMin) ? xMin : (Math.min(x, xMax));
                 index = 3 * i;
                 lut.xParams[index] = Math.floor(x);
                 lut.xParams[index + 1] = Math.ceil(x);
@@ -486,7 +486,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
             y = thisPoint.getY();
             if (((y - yMin) > threshold) && ((yMax - y) > threshold))
             {
-                y = (y < yMin) ? yMin : ((y > yMax) ? yMax : y);
+                y = (y < yMin) ? yMin : (Math.min(y, yMax));
                 index = 3 * j;
                 lut.yParams[index] = Math.floor(y);
                 lut.yParams[index + 1] = Math.ceil(y);

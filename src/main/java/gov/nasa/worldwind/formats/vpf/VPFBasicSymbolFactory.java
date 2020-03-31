@@ -21,8 +21,8 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory
 {
     private static final double DEFAULT_ICON_MAX_SIZE = 10000; // Max 10km
 
-    protected VPFPrimitiveData primitiveData;
-    protected VPFFeatureFactory featureFactory;
+    protected final VPFPrimitiveData primitiveData;
+    protected final VPFFeatureFactory featureFactory;
     protected VPFSymbolSupport symbolSupport;
 
     public VPFBasicSymbolFactory(VPFTile tile, VPFPrimitiveData primitiveData)
@@ -60,7 +60,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory
         if (map == null)
             return null;
 
-        ArrayList<VPFSymbol> symbols = new ArrayList<VPFSymbol>();
+        ArrayList<VPFSymbol> symbols = new ArrayList<>();
         this.doCreatePointSymbols(map, symbols);
         return symbols;
     }
@@ -83,7 +83,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory
         if (map == null)
             return null;
 
-        ArrayList<VPFSymbol> symbols = new ArrayList<VPFSymbol>();
+        ArrayList<VPFSymbol> symbols = new ArrayList<>();
         this.doCreateLineSymbols(map, symbols);
         return symbols;
     }
@@ -106,7 +106,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory
         if (map == null)
             return null;
 
-        ArrayList<VPFSymbol> symbols = new ArrayList<VPFSymbol>();
+        ArrayList<VPFSymbol> symbols = new ArrayList<>();
         this.doCreateAreaSymbols(map, symbols);
         return symbols;
     }
@@ -129,7 +129,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory
         if (map == null)
             return null;
 
-        ArrayList<VPFSymbol> symbols = new ArrayList<VPFSymbol>();
+        ArrayList<VPFSymbol> symbols = new ArrayList<>();
         this.doCreateTextSymbols(map, symbols);
         return symbols;
     }
@@ -285,11 +285,9 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory
                 {
                     // Construct a renderable object for each area symbol.
                     case AREA:
-                        this.addAreaSymbol(feature, attr, outCollection);
-                        break;
-                    // Construct a renderable object for each line symbol.
-                    // This renderable area has been configured to draw its outline, and not its fill. Because the display
-                    // order is data driven; we want to control the display order of the fill and the outline independently.
+                        // Construct a renderable object for each line symbol.
+                        // This renderable area has been configured to draw its outline, and not its fill. Because the display
+                        // order is data driven; we want to control the display order of the fill and the outline independently.
                     case LINE:
                         this.addAreaSymbol(feature, attr, outCollection);
                         break;
@@ -339,8 +337,8 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory
         // Build the list of locations and headings associated with each point symbol.
         int numSymbols = 0;
         boolean haveUniqueHeadings = false;
-        ArrayList<LatLon> locations = new ArrayList<LatLon>();
-        ArrayList<Angle> headings = new ArrayList<Angle>();
+        ArrayList<LatLon> locations = new ArrayList<>();
+        ArrayList<Angle> headings = new ArrayList<>();
 
         for (VPFFeature subFeature : feature)
         {
@@ -447,7 +445,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory
     protected void addPointLabel(CombinedFeature feature, VPFSymbolAttributes attr, Collection<VPFSymbol> outCollection)
     {
         // Build the list of point symbol locations associated with each sub-feature.
-        ArrayList<LatLon> locations = new ArrayList<LatLon>();
+        ArrayList<LatLon> locations = new ArrayList<>();
 
         for (VPFFeature subFeature : feature)
         {
@@ -496,7 +494,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory
         Object o = featureAttributes.getValue(attr.getOrientationAttributeName());
         if (o instanceof Number)
         {
-            Double d = ((Number) o).doubleValue();
+            double d = ((Number) o).doubleValue();
             return Angle.fromDegrees(d);
         }
         else if (o instanceof String)
@@ -594,7 +592,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory
         public CombinedFeature(VPFFeatureClass featureClass)
         {
             super(featureClass, -1, new VPFBoundingBox(0, 0, 0, 0), null);
-            this.featureList = new ArrayList<VPFFeature>();
+            this.featureList = new ArrayList<>();
         }
 
         public VPFBoundingBox getBounds()

@@ -76,7 +76,7 @@ public class YahooGazetteer implements Gazetteer
             org.w3c.dom.NodeList resultNodes =
                 (org.w3c.dom.NodeList) xpath.evaluate("/query/results/place", doc, XPathConstants.NODESET);
 
-            ArrayList<PointOfInterest> positions = new ArrayList<PointOfInterest>(resultNodes.getLength());
+            ArrayList<PointOfInterest> positions = new ArrayList<>(resultNodes.getLength());
 
             for (int i = 0; i < resultNodes.getLength(); i++)
             {
@@ -90,22 +90,22 @@ public class YahooGazetteer implements Gazetteer
                 String locality = xpath.evaluate("locality1", location);
                 String admin = xpath.evaluate("admin1", location);
 
-                if (placeType != null && !placeType.equals(""))
+                if (placeType != null && !placeType.isEmpty())
                 {
                     displayName.append(placeType);
                     displayName.append(": ");
                 }
-                if (name != null && !name.equals(""))
+                if (name != null && !name.isEmpty())
                 {
                     displayName.append(name);
                     displayName.append(". ");
                 }
-                if (locality != null && !locality.equals(""))
+                if (locality != null && !locality.isEmpty())
                 {
                     displayName.append(locality);
                     displayName.append(", ");
                 }
-                if (admin != null && !admin.equals(""))
+                if (admin != null && !admin.isEmpty())
                 {
                     displayName.append(admin);
                     displayName.append(", ");

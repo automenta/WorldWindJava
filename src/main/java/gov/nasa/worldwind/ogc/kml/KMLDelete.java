@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class KMLDelete extends AbstractXMLEventParser implements KMLUpdateOperation
 {
-    protected List<KMLAbstractFeature> features = new ArrayList<KMLAbstractFeature>();
+    protected final List<KMLAbstractFeature> features = new ArrayList<>();
 
     /**
      * Construct an instance.
@@ -62,7 +62,7 @@ public class KMLDelete extends AbstractXMLEventParser implements KMLUpdateOperat
                 continue;
 
             Object o = targetRoot.getItemByID(targetId);
-            if (o == null || !(o instanceof KMLAbstractFeature))
+            if (!(o instanceof KMLAbstractFeature))
                 continue;
 
             KMLAbstractFeature featureToDelete = (KMLAbstractFeature) o;

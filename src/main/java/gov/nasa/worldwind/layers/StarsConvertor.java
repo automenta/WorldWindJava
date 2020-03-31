@@ -108,7 +108,7 @@ public class StarsConvertor
     {
         try
         {
-            ArrayList<Float> tmpBuffer = new ArrayList<Float>();
+            ArrayList<Float> tmpBuffer = new ArrayList<>();
 
             InputStream starsStream = StarsConvertor.class.getResourceAsStream("/" + starsFileName);
 

@@ -91,20 +91,18 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor
                 model.setNextButtonEnabled(false);
             }
 
-            startWorkerThread(new Runnable() {
-                public void run() {
-                    List<FileSet> selectedSets = new ArrayList<FileSet>();
-                    for (FileSet set : fileSetList) {
-                        if (set.isSelected()) {
-                            selectedSets.add(set);
-                        }
+            startWorkerThread(() -> {
+                List<FileSet> selectedSets = new ArrayList<>();
+                for (FileSet set : fileSetList) {
+                    if (set.isSelected()) {
+                        selectedSets.add(set);
                     }
-                    for (int i = 0; i < selectedSets.size(); i++) {
-                        FileSet set = selectedSets.get(i);
-                        preprocess(selectedFile, set, i + 1, selectedSets.size());
-                    }
-                    finished();
                 }
+                for (int i = 0; i < selectedSets.size(); i++) {
+                    FileSet set = selectedSets.get(i);
+                    preprocess(selectedFile, set, i + 1, selectedSets.size());
+                }
+                finished();
             });
         }
         else
@@ -170,7 +168,7 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor
             List<Layer> layerList = RPFWizardUtil.getLayerList(model);
             if (layerList == null)
             {
-                layerList = new ArrayList<Layer>();
+                layerList = new ArrayList<>();
                 RPFWizardUtil.setLayerList(model, layerList);
             }
 
@@ -203,16 +201,15 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor
     private class PropertyEvents implements PropertyChangeListener {
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt != null && evt.getPropertyName() != null) {
-                if (evt.getPropertyName().equals(RPFTiledImageProcessor.BEGIN_SUB_TASK)) {
-                    beginTask();
-                } else if (evt.getPropertyName().equals(RPFTiledImageProcessor.END_SUB_TASK)) {
-                    endTask();
-                } else if (evt.getPropertyName().equals(RPFTiledImageProcessor.SUB_TASK_NUM_STEPS)) {
-                    stepsForTask((Integer) evt.getNewValue());
-                } else if (evt.getPropertyName().equals(RPFTiledImageProcessor.SUB_TASK_STEP_COMPLETE)) {
-                    stepComplete(evt.getNewValue().toString(), true);
-                } else if (evt.getPropertyName().equals(RPFTiledImageProcessor.SUB_TASK_STEP_FAILED)) {
-                    stepComplete(evt.getNewValue().toString(), false);
+                switch (evt.getPropertyName())
+                {
+                    case RPFTiledImageProcessor.BEGIN_SUB_TASK -> beginTask();
+                    case RPFTiledImageProcessor.END_SUB_TASK -> endTask();
+                    case RPFTiledImageProcessor.SUB_TASK_NUM_STEPS -> stepsForTask((Integer) evt.getNewValue());
+                    case RPFTiledImageProcessor.SUB_TASK_STEP_COMPLETE -> stepComplete(evt.getNewValue().toString(),
+                        true);
+                    case RPFTiledImageProcessor.SUB_TASK_STEP_FAILED -> stepComplete(evt.getNewValue().toString(),
+                        false);
                 }
             }
         }

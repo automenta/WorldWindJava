@@ -434,21 +434,17 @@ public class DataConfigurationUtils
      */
     public static ScheduledExecutorService createResourceRetrievalService(final String threadName)
     {
-        ThreadFactory threadFactory = new ThreadFactory()
-        {
-            public Thread newThread(Runnable r)
+        ThreadFactory threadFactory = r -> {
+            Thread thread = new Thread(r);
+            thread.setDaemon(true);
+            thread.setPriority(Thread.MIN_PRIORITY);
+
+            if (threadName != null)
             {
-                Thread thread = new Thread(r);
-                thread.setDaemon(true);
-                thread.setPriority(Thread.MIN_PRIORITY);
-
-                if (threadName != null)
-                {
-                    thread.setName(threadName);
-                }
-
-                return thread;
+                thread.setName(threadName);
             }
+
+            return thread;
         };
 
         return Executors.newSingleThreadScheduledExecutor(threadFactory);
@@ -1050,12 +1046,7 @@ public class DataConfigurationUtils
                 return request.getUri().toURL();
             }
         }
-        catch (URISyntaxException e)
-        {
-            String message = Logging.getMessage("generic.URIInvalid", uri);
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
-        }
-        catch (MalformedURLException e)
+        catch (URISyntaxException | MalformedURLException e)
         {
             String message = Logging.getMessage("generic.URIInvalid", uri);
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);

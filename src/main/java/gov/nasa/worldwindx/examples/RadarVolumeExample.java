@@ -34,9 +34,9 @@ public class RadarVolumeExample extends ApplicationTemplate
         protected static final boolean CONE_VOLUME = true;
 
         // Use the HighResolutionTerrain class to get accurate terrain for computing the intersections.
-        protected HighResolutionTerrain terrain;
-        protected double innerRange = 100;
-        protected double outerRange = 30e3;
+        protected final HighResolutionTerrain terrain;
+        protected final double innerRange = 100;
+        protected final double outerRange = 30e3;
         protected final int numAz = 25; // number of azimuth samplings
         protected final int numEl = 25; // number of elevation samplings
         protected final Angle minimumElevation = Angle.fromDegrees(0);
@@ -79,35 +79,25 @@ public class RadarVolumeExample extends ApplicationTemplate
 
             // Intersect the rays defined by the radar center and the computed positions with the terrain. Since
             // this is potentially a long-running operation, perform it in a separate thread.
-            Thread thread = new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    long start = System.currentTimeMillis(); // keep track of how long the intersection operation takes
-                    final int[] obstructionFlags = intersectTerrain(positions);
-                    long end = System.currentTimeMillis();
-                    System.out.println("Intersection calculations took " + (end - start) + " ms");
+            Thread thread = new Thread(() -> {
+                long start = System.currentTimeMillis(); // keep track of how long the intersection operation takes
+                final int[] obstructionFlags = intersectTerrain(positions);
+                long end = System.currentTimeMillis();
+                System.out.println("Intersection calculations took " + (end - start) + " ms");
 
-                    // The computed positions define the radar volume. Set up to show that on the event dispatch thread.
-                    SwingUtilities.invokeLater(new Runnable()
+                // The computed positions define the radar volume. Set up to show that on the event dispatch thread.
+                SwingUtilities.invokeLater(() -> {
+                    try
                     {
-                        @Override
-                        public void run()
-                        {
-                            try
-                            {
-                                showRadarVolume(positions, obstructionFlags, numAz, numEl);
+                        showRadarVolume(positions, obstructionFlags, numAz, numEl);
 //                                showPositionsAndRays(positions, obstructionFlags);
-                                getWwd().redraw();
-                            }
-                            finally
-                            {
-                                ((Component) getWwd()).setCursor(Cursor.getDefaultCursor());
-                            }
-                        }
-                    });
-                }
+                        getWwd().redraw();
+                    }
+                    finally
+                    {
+                        ((Component) getWwd()).setCursor(Cursor.getDefaultCursor());
+                    }
+                });
             });
             ((Component) this.getWwd()).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             thread.start();
@@ -116,7 +106,7 @@ public class RadarVolumeExample extends ApplicationTemplate
             MarkerLayer markerLayer = new MarkerLayer();
             markerLayer.setKeepSeparated(false);
             MarkerAttributes markerAttributes = new BasicMarkerAttributes();
-            ArrayList<Marker> markers = new ArrayList<Marker>();
+            ArrayList<Marker> markers = new ArrayList<>();
             markerLayer.setMarkers(markers);
             markers.add(new BasicMarker(positions.get(0), markerAttributes));
             insertAfterPlacenames(getWwd(), markerLayer);
@@ -130,7 +120,7 @@ public class RadarVolumeExample extends ApplicationTemplate
             // The radar volume shape is expecting this orientation and requires it to make the orientation of the
             // triangle faces consistent with the normal vectors that are parallel to the emanating radar rays.
 
-            List<Vec4> vertices = new ArrayList<Vec4>();
+            List<Vec4> vertices = new ArrayList<>();
             vertices.add(Vec4.ZERO); // the first vertex is the radar position.
 
             double dAz = (rightAzimuth.radians - leftAzimuth.radians) / (numAzimuths - 1);
@@ -177,7 +167,7 @@ public class RadarVolumeExample extends ApplicationTemplate
         List<Vec4> computeConeVertices(Position apex, Angle fov, Angle azimuth, Angle elevation, double innerRange,
             double outerRange, int width, int height)
         {
-            List<Vec4> vertices = new ArrayList<Vec4>();
+            List<Vec4> vertices = new ArrayList<>();
             vertices.add(Vec4.ZERO); // the first vertex is the radar position.
 
             // Rotate both grids around the Y axis to the specified elevation.
@@ -251,7 +241,7 @@ public class RadarVolumeExample extends ApplicationTemplate
         List<Vec4> computeSphereVertices(Position apex, Angle fov, Angle azimuth, Angle elevation, double innerRange,
             double outerRange, int width, int height)
         {
-            List<Vec4> vertices = new ArrayList<Vec4>();
+            List<Vec4> vertices = new ArrayList<>();
             vertices.add(Vec4.ZERO); // the first vertex is the radar position.
 
             // Rotate both grids around the Y axis to the specified elevation.
@@ -314,7 +304,7 @@ public class RadarVolumeExample extends ApplicationTemplate
         {
             // Transforms the incoming origin-centered vertices to the radar position and orientation.
 
-            List<Vec4> transformedVertices = new ArrayList<Vec4>(vertices.size());
+            List<Vec4> transformedVertices = new ArrayList<>(vertices.size());
 
             // Create the transformation matrix that performs the transform.
             Matrix transform = this.getWwd().getModel().getGlobe().computeEllipsoidalOrientationAtPosition(
@@ -341,7 +331,7 @@ public class RadarVolumeExample extends ApplicationTemplate
             Position origin = positions.get(0); // this is the radar position
             Vec4 originPoint = globe.computeEllipsoidalPointFromPosition(origin);
 
-            List<Integer> intersectionIndices = new ArrayList<Integer>();
+            List<Integer> intersectionIndices = new ArrayList<>();
 
             for (int i = 1; i < positions.size(); i++)
             {
@@ -455,7 +445,7 @@ public class RadarVolumeExample extends ApplicationTemplate
         {
             // Convert the Cartesian vertices to geographic positions.
 
-            List<Position> positions = new ArrayList<Position>(vertices.size());
+            List<Position> positions = new ArrayList<>(vertices.size());
 
             Globe globe = this.getWwd().getModel().getGlobe();
 
@@ -508,7 +498,7 @@ public class RadarVolumeExample extends ApplicationTemplate
             MarkerLayer markerLayer = new MarkerLayer();
             markerLayer.setKeepSeparated(false);
             MarkerAttributes attributes = new BasicMarkerAttributes();
-            ArrayList<Marker> markers = new ArrayList<Marker>();
+            ArrayList<Marker> markers = new ArrayList<>();
 
             RenderableLayer lineLayer = new RenderableLayer();
             ShapeAttributes lineAttributes = new BasicShapeAttributes();

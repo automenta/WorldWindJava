@@ -24,7 +24,7 @@ import java.util.*;
 public class LineOfContact extends ForwardLineOfOwnTroops
 {
     /** Line of Contact is drawn with two paths. The super class manages the first path; this is the second. */
-    protected Path path2;
+    protected final Path path2;
 
     /**
      * Indicates the graphics supported by this class.
@@ -33,7 +33,7 @@ public class LineOfContact extends ForwardLineOfOwnTroops
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_GNL_LNE_LOC);
+        return Collections.singletonList(TacGrpSidc.C2GM_GNL_LNE_LOC);
     }
 
     /**
@@ -105,8 +105,8 @@ public class LineOfContact extends ForwardLineOfOwnTroops
         }
 
         // Generate lines that parallel the control line.
-        List<Position> leftPositions = new ArrayList<Position>();
-        List<Position> rightPositions = new ArrayList<Position>();
+        List<Position> leftPositions = new ArrayList<>();
+        List<Position> rightPositions = new ArrayList<>();
         this.generateParallelLines(positions.iterator(), leftPositions, rightPositions, waveLength / 2.0, globe);
 
         if (useDefaultWaveLength)

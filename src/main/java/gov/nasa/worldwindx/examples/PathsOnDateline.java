@@ -35,7 +35,7 @@ public class PathsOnDateline extends ApplicationTemplate
             attrs.setOutlineMaterial(new Material(WWUtil.makeRandomColor(null)));
             attrs.setOutlineWidth(2d);
 
-            ArrayList<Position> pathPositions = new ArrayList<Position>();
+            ArrayList<Position> pathPositions = new ArrayList<>();
             pathPositions.add(Position.fromDegrees(28, 170, 1e4));
             pathPositions.add(Position.fromDegrees(35, -179, 1e4));
             pathPositions.add(Position.fromDegrees(38, 180, 1e4));
@@ -82,8 +82,8 @@ public class PathsOnDateline extends ApplicationTemplate
      */
     public static class ExamplePositionColors implements Path.PositionColors
     {
-        protected Color[] colors;
-        protected int pathLength;
+        protected final Color[] colors;
+        protected final int pathLength;
 
         public ExamplePositionColors(Color[] colors, int pathLength)
         {

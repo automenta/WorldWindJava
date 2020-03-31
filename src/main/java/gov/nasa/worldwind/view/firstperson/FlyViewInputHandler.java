@@ -78,8 +78,8 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         }
     }    
 
-    AnimationController uiAnimControl = new AnimationController();
-    AnimationController gotoAnimControl = new AnimationController();
+    final AnimationController uiAnimControl = new AnimationController();
+    final AnimationController gotoAnimControl = new AnimationController();
 
     protected static final String VIEW_ANIM_HEADING = "ViewAnimHeading";
     protected static final String VIEW_ANIM_PITCH = "ViewAnimPitch";
@@ -102,8 +102,8 @@ public class FlyViewInputHandler extends BasicViewInputHandler
     protected static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE_SLOW = 1;
     protected static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE_SLOW = 100000.0;
 
-    protected static double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MIN_VALUE = 5;
-    protected static double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE = 50000.0;
+    protected static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MIN_VALUE = 5;
+    protected static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE = 50000.0;
     protected static final double DEFAULT_MOUSE_VERTICAL_TRANSLATE_MIN_VALUE = 1;
         // Speed in log-meters per mouse movement
     protected static final double DEFAULT_MOUSE_VERTICAL_TRANSLATE_MAX_VALUE = 30000;
@@ -131,7 +131,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
             DEFAULT_RESET_PITCH_KEY_ACT
         };
 
-    double speed = 10.0;
+    final double speed = 10.0;
 
     public FlyViewInputHandler()
     {

@@ -8,8 +8,11 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.OffsetsList;
+import org.xml.sax.SAXException;
 
+import javax.xml.transform.TransformerException;
 import java.awt.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
@@ -149,13 +152,7 @@ public class RestorableSupport
                 new org.xml.sax.InputSource(new java.io.StringReader(stateInXml)));
             return new RestorableSupport(doc);
         }
-        catch (java.io.IOException e)
-        {
-            String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message, e);
-        }
-        catch (org.xml.sax.SAXException e)
+        catch (IOException | SAXException e)
         {
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -219,13 +216,7 @@ public class RestorableSupport
             // If successful, return the StringWriter contents as a String.
             return stringWriter.toString();
         }
-        catch (javax.xml.transform.TransformerConfigurationException e)
-        {
-            String message = Logging.getMessage("generic.ExceptionWritingXml");
-            Logging.logger().severe(message);
-            return null;
-        }
-        catch (javax.xml.transform.TransformerException e)
+        catch (TransformerException e)
         {
             String message = Logging.getMessage("generic.ExceptionWritingXml");
             Logging.logger().severe(message);
@@ -427,8 +418,7 @@ public class RestorableSupport
                 // document root element.
                 (context != null ? context : getDocumentElement()),
                 javax.xml.xpath.XPathConstants.NODESET);
-            if (result == null
-                || !(result instanceof org.w3c.dom.NodeList)
+            if (!(result instanceof org.w3c.dom.NodeList)
                 || ((org.w3c.dom.NodeList) result).getLength() == 0)
             {
                 return null;
@@ -436,7 +426,7 @@ public class RestorableSupport
 
             // If the result is a NodeList, return an array of StateObjects for each Element node in that list.
             org.w3c.dom.NodeList nodeList = (org.w3c.dom.NodeList) result;
-            ArrayList<StateObject> stateObjectList = new ArrayList<StateObject>();
+            ArrayList<StateObject> stateObjectList = new ArrayList<>();
             for (int i = 0; i < nodeList.getLength(); i++)
             {
                 org.w3c.dom.Node node = nodeList.item(i);
@@ -459,7 +449,7 @@ public class RestorableSupport
     {
         org.w3c.dom.NodeList nodeList = (context != null ? context : getDocumentElement()).getChildNodes();
 
-        ArrayList<StateObject> stateObjectList = new ArrayList<StateObject>();
+        ArrayList<StateObject> stateObjectList = new ArrayList<>();
         if (nodeList != null)
         {
             for (int i = 0; i < nodeList.getLength(); i++)
@@ -1250,7 +1240,7 @@ public class RestorableSupport
         if (llsos == null || llsos.length == 0)
             return null;
 
-        ArrayList<LatLon> outList = new ArrayList<LatLon>(llsos.length);
+        ArrayList<LatLon> outList = new ArrayList<>(llsos.length);
 
         for (RestorableSupport.StateObject llso : llsos)
         {
@@ -1309,7 +1299,7 @@ public class RestorableSupport
         if (offsetsLists == null || offsetsLists.length == 0)
             return null;
 
-        HashMap<Integer, OffsetsList> outList = new HashMap<Integer, OffsetsList>();
+        HashMap<Integer, OffsetsList> outList = new HashMap<>();
 
         int index = 0;
         for (RestorableSupport.StateObject faceOffsets : offsetsLists)
@@ -1489,7 +1479,7 @@ public class RestorableSupport
         if (imageSourceList == null || imageSourceList.length == 0)
             return null;
 
-        HashMap<Integer, Object> outList = new HashMap<Integer, Object>();
+        HashMap<Integer, Object> outList = new HashMap<>();
 
         int index = 0;
         for (RestorableSupport.StateObject imageSource : imageSourceList)
@@ -2168,7 +2158,7 @@ public class RestorableSupport
         // The hexadecimal representation for an RGBA color can result in a value larger than
         // Integer.MAX_VALUE (for example, 0XFFFF). Therefore we decode the string as a long,
         // then keep only the lower four bytes.
-        Long longValue;
+        long longValue;
         try
         {
             longValue = Long.parseLong(encodedString.substring(2), 16);

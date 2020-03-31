@@ -10,10 +10,7 @@ import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.applications.worldwindow.core.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
 import java.net.URISyntaxException;
 
 /**
@@ -59,14 +56,10 @@ public class WMSDialog extends AbstractFeatureDialog
         this.tabbedPane.setTitleAt(0, "+"); // this tab is just a button for adding servers/panels
         this.tabbedPane.setToolTipTextAt(0, "Connect to WMS Server");
 
-        this.tabbedPane.addChangeListener(new ChangeListener()
-        {
-            public void stateChanged(ChangeEvent changeEvent)
+        this.tabbedPane.addChangeListener(changeEvent -> {
+            if (tabbedPane.getSelectedIndex() == 0)
             {
-                if (tabbedPane.getSelectedIndex() == 0)
-                {
-                    addNewPanel(tabbedPane); // Add new panel when '+' is selected
-                }
+                addNewPanel(tabbedPane); // Add new panel when '+' is selected
             }
         });
 
@@ -84,13 +77,7 @@ public class WMSDialog extends AbstractFeatureDialog
         deleteButton.setOpaque(false);
         deleteButton.setBackground(new Color(0, 0, 0, 0));
         deleteButton.setBorderPainted(false);
-        deleteButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                deleteCurrentPanel();
-            }
-        });
+        deleteButton.addActionListener(e -> deleteCurrentPanel());
         deleteButton.setEnabled(true);
         this.insertLeftDialogComponent(deleteButton);
 //
@@ -150,16 +137,13 @@ public class WMSDialog extends AbstractFeatureDialog
         tabPane.setSelectedIndex(tabPane.getTabCount() - 1);
         tabPane.setToolTipTextAt(tabbedPane.getSelectedIndex(), "Server WMS Contents");
 
-        wmsPanel.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent evt)
+        wmsPanel.addPropertyChangeListener(evt -> {
+            if (evt.getPropertyName().equals("NewServer"))
             {
-                if (evt.getPropertyName().equals("NewServer"))
-                {
-                    String serverLocation = (String) evt.getNewValue();
+                String serverLocation = (String) evt.getNewValue();
 
-                    if (WWUtil.isEmpty(serverLocation))
-                        return;
+                if (WWUtil.isEmpty(serverLocation))
+                    return;
 //
 //                    // Check to see if it's already open.
 //                    for (int i = 0; i < tabbedPane.getTabCount(); i++)
@@ -176,15 +160,14 @@ public class WMSDialog extends AbstractFeatureDialog
 //                        }
 //                    }
 
-                    try
-                    {
+                try
+                {
 
-                        addNewPanel(tabPane).contactWMSServer(serverLocation);
-                    }
-                    catch (URISyntaxException e)
-                    {
-                        e.printStackTrace(); // TODO
-                    }
+                    addNewPanel(tabPane).contactWMSServer(serverLocation);
+                }
+                catch (URISyntaxException e)
+                {
+                    e.printStackTrace(); // TODO
                 }
             }
         });

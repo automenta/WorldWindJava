@@ -83,11 +83,11 @@ public class TextRendererCache implements Disposable
         }
     }
 
-    protected java.util.concurrent.ConcurrentHashMap<Object, TextRenderer> textRendererMap;
+    protected final java.util.concurrent.ConcurrentHashMap<Object, TextRenderer> textRendererMap;
 
     public TextRendererCache()
     {
-        this.textRendererMap = new java.util.concurrent.ConcurrentHashMap<Object, TextRenderer>();
+        this.textRendererMap = new java.util.concurrent.ConcurrentHashMap<>();
     }
 
     public void dispose()

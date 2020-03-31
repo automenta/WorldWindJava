@@ -58,7 +58,7 @@ public class AVListImpl implements AVList
         if (!this.hasAvList())
         {
             // The map type used must accept null values. java.util.concurrent.ConcurrentHashMap does not.
-            this.avList = new java.util.HashMap<String, Object>(1);
+            this.avList = new java.util.HashMap<>(1);
         }
 
         return this.avList;
@@ -195,7 +195,7 @@ public class AVListImpl implements AVList
     synchronized protected PropertyChangeSupport getChangeSupport()
     {
         Object pcs = this.getValue(PROPERTY_CHANGE_SUPPORT);
-        if (pcs == null || !(pcs instanceof PropertyChangeSupport))
+        if (!(pcs instanceof PropertyChangeSupport))
         {
             pcs = new PropertyChangeSupport(this);
             this.setValue(PROPERTY_CHANGE_SUPPORT, pcs);

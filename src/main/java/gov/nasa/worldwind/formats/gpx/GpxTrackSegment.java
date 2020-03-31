@@ -16,7 +16,7 @@ public class GpxTrackSegment extends gov.nasa.worldwind.formats.gpx.ElementParse
     implements TrackSegment
 {
     private final java.util.List<TrackPoint> points =
-        new java.util.ArrayList<TrackPoint>();
+        new java.util.ArrayList<>();
 
     public GpxTrackSegment(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
     {
@@ -36,11 +36,9 @@ public class GpxTrackSegment extends gov.nasa.worldwind.formats.gpx.ElementParse
      * @param qname the element qname.
      * @param attributes The element attributes.
      * @throws IllegalArgumentException if any parameter is null
-     * @throws org.xml.sax.SAXException if a parsing error occurs.
      */
     @Override
     public void doStartElement(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
-        throws org.xml.sax.SAXException
     {
         if (lname == null)
         {

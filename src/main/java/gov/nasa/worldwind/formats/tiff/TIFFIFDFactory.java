@@ -16,8 +16,8 @@ import java.nio.channels.FileChannel;
  */
 class TIFFIFDFactory
 {
-    public static int MASK_USHORT = 0xFFFF;
-    public static long MASK_UINT = 0xFFFFFFFFL;
+    public static final int MASK_USHORT = 0xFFFF;
+    public static final long MASK_UINT = 0xFFFFFFFFL;
 
     private TIFFIFDFactory()
     {
@@ -124,13 +124,11 @@ class TIFFIFDFactory
 
             case Tiff.Type.LONG:
             case Tiff.Type.SLONG:
-                return count * 4L;
 
             case Tiff.Type.FLOAT:
                 return count * 4L;
 
             case Tiff.Type.DOUBLE:
-                return count * 8L;
 
             case Tiff.Type.RATIONAL:
             case Tiff.Type.SRATIONAL:

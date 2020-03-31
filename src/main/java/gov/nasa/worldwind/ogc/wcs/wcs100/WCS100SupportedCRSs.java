@@ -19,10 +19,10 @@ import java.util.*;
  */
 public class WCS100SupportedCRSs extends AbstractXMLEventParser
 {
-    protected List<String> requestResponseCRSs = new ArrayList<String>(1);
-    protected List<String> requestCRSs = new ArrayList<String>(1);
-    protected List<String> responseCRSs = new ArrayList<String>(1);
-    protected List<String> nativeCRSs = new ArrayList<String>(1);
+    protected final List<String> requestResponseCRSs = new ArrayList<>(1);
+    protected final List<String> requestCRSs = new ArrayList<>(1);
+    protected final List<String> responseCRSs = new ArrayList<>(1);
+    protected final List<String> nativeCRSs = new ArrayList<>(1);
 
     public WCS100SupportedCRSs(String namespaceURI)
     {

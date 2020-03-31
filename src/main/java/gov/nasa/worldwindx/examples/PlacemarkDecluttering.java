@@ -205,26 +205,21 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             insertBeforeCompass(getWwd(), layer);
 
             // Add a select listener in order to determine when a label is clicked on.
-            this.getWwd().addSelectListener(new SelectListener()
-            {
-                @Override
-                public void selected(SelectEvent event)
+            this.getWwd().addSelectListener(event -> {
+                PickedObject po = event.getTopPickedObject();
+                if (po != null && po.getObject() instanceof PointPlacemark)
                 {
-                    PickedObject po = event.getTopPickedObject();
-                    if (po != null && po.getObject() instanceof PointPlacemark)
+                    if (event.getEventAction().equals(SelectEvent.LEFT_CLICK))
                     {
-                        if (event.getEventAction().equals(SelectEvent.LEFT_CLICK))
+                        // See if it was the label that was picked. If so, raise an input dialog prompting
+                        // for new label text.
+                        Object placemarkPiece = po.getValue(AVKey.PICKED_OBJECT_ID);
+                        if (placemarkPiece != null && placemarkPiece.equals(AVKey.LABEL))
                         {
-                            // See if it was the label that was picked. If so, raise an input dialog prompting
-                            // for new label text.
-                            Object placemarkPiece = po.getValue(AVKey.PICKED_OBJECT_ID);
-                            if (placemarkPiece != null && placemarkPiece.equals(AVKey.LABEL))
-                            {
-                                PointPlacemark placemark = (PointPlacemark) po.getObject();
-                                String labelText = placemark.getLabelText();
-                                System.out.println(labelText);
-                                event.consume();
-                            }
+                            PointPlacemark placemark = (PointPlacemark) po.getObject();
+                            String labelText = placemark.getLabelText();
+                            System.out.println(labelText);
+                            event.consume();
                         }
                     }
                 }

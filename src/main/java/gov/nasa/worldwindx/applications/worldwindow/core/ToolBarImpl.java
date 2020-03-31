@@ -13,7 +13,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-import java.beans.*;
 
 /**
  * @author tag
@@ -123,7 +122,7 @@ public class ToolBarImpl extends AbstractFeature implements ToolBar
 
         public void setRolloverComponent(Component c)
         {
-            this.rolloverComponent = c != null && c instanceof ToolBarButton ? (ToolBarButton) c : null;
+            this.rolloverComponent = c instanceof ToolBarButton ? (ToolBarButton) c : null;
             if (this.rolloverComponent != null)
                 this.repaint();
         }
@@ -192,9 +191,9 @@ public class ToolBarImpl extends AbstractFeature implements ToolBar
     public static class ToolBarButton extends JButton implements Initializable
     {
         protected boolean initialized = false;
-        protected ImageIcon originalIcon;
+        protected final ImageIcon originalIcon;
         protected ImageIcon currentIcon;
-        protected int iconSize = Configuration.getIntegerValue(Constants.TOOL_BAR_ICON_SIZE_PROPERTY, 52);
+        protected final int iconSize = Configuration.getIntegerValue(Constants.TOOL_BAR_ICON_SIZE_PROPERTY, 52);
 
         public ToolBarButton(Feature feature)
         {
@@ -210,13 +209,7 @@ public class ToolBarImpl extends AbstractFeature implements ToolBar
         public void initialize(final Controller controller)
         {
             // Set up to learn of changes to or by the feature
-            this.getFeature().addPropertyChangeListener(new PropertyChangeListener()
-            {
-                public void propertyChange(PropertyChangeEvent propertyChangeEvent)
-                {
-                    repaint();
-                }
-            });
+            this.getFeature().addPropertyChangeListener(propertyChangeEvent -> repaint());
 
             this.initialized = true;
         }

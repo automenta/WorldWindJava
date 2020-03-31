@@ -22,7 +22,6 @@ import gov.nasa.worldwindx.examples.util.*;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.filechooser.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -78,14 +77,10 @@ public class RubberSheetImage extends ApplicationTemplate
 
                 JLabel label = new JLabel("Opacity");
                 JSlider slider = new JSlider(0, 100, 100);
-                slider.addChangeListener(new ChangeListener()
-                {
-                    public void stateChanged(ChangeEvent event)
-                    {
+                slider.addChangeListener(event -> {
 
-                        ActionEvent actionEvent = new ActionEvent(event.getSource(), 0, SET_IMAGE_OPACITY);
-                        AppFrame.this.actionPerformed(actionEvent);
-                    }
+                    ActionEvent actionEvent = new ActionEvent(event.getSource(), 0, SET_IMAGE_OPACITY);
+                    AppFrame.this.actionPerformed(actionEvent);
                 });
                 Box box = Box.createHorizontalBox();
                 box.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -151,7 +146,7 @@ public class RubberSheetImage extends ApplicationTemplate
         private JFileChooser openFileChooser;
         private boolean isEditingEnabled = true;
 
-        private final ArrayList<SurfaceImageEntry> entryList = new ArrayList<SurfaceImageEntry>();
+        private final ArrayList<SurfaceImageEntry> entryList = new ArrayList<>();
 
         public Controller(AppFrame appFrame)
         {
@@ -165,19 +160,17 @@ public class RubberSheetImage extends ApplicationTemplate
             if (WWUtil.isEmpty(actionCommand))
                 return;
 
-            if (actionCommand == OPEN_IMAGE_FILE)
+            switch (actionCommand)
             {
-                this.doOpenImageFile();
-            }
-            else if (actionCommand == SET_IMAGE_OPACITY)
-            {
-                JSlider slider = (JSlider) event.getSource();
-                this.doSetImageOpacity(slider.getValue() / 100.0);
-            }
-            else if (actionCommand == TOGGLE_EDITING)
-            {
-                AbstractButton button = (AbstractButton) event.getSource();
-                this.enableEditing(button.isSelected());
+                case OPEN_IMAGE_FILE -> this.doOpenImageFile();
+                case SET_IMAGE_OPACITY -> {
+                    JSlider slider = (JSlider) event.getSource();
+                    this.doSetImageOpacity(slider.getValue() / 100.0);
+                }
+                case TOGGLE_EDITING -> {
+                    AbstractButton button = (AbstractButton) event.getSource();
+                    this.enableEditing(button.isSelected());
+                }
             }
         }
 
@@ -291,17 +284,13 @@ public class RubberSheetImage extends ApplicationTemplate
         {
             this.appFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-            Thread thread = new Thread(new Runnable()
-            {
-                public void run()
+            Thread thread = new Thread(() -> {
+                for (File f : files)
                 {
-                    for (File f : files)
-                    {
-                        loadFile(f);
-                    }
-
-                    appFrame.setCursor(null);
+                    loadFile(f);
                 }
+
+                appFrame.setCursor(null);
             });
             thread.start();
         }
@@ -319,13 +308,7 @@ public class RubberSheetImage extends ApplicationTemplate
                 return;
             }
 
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    addSurfaceImage(si, file.getName());
-                }
-            });
+            SwingUtilities.invokeLater(() -> addSurfaceImage(si, file.getName()));
         }
 
         protected BufferedImage readImage(File file)
@@ -446,7 +429,7 @@ public class RubberSheetImage extends ApplicationTemplate
         }
 
         protected SurfaceImage createSurfaceImageFromControlPoints(BufferedImage image,
-            RasterControlPointList controlPoints) throws java.io.IOException
+            RasterControlPointList controlPoints)
         {
             int numControlPoints = controlPoints.size();
             Point2D[] imagePoints = new Point2D[numControlPoints];
@@ -470,13 +453,7 @@ public class RubberSheetImage extends ApplicationTemplate
         {
             if (!SwingUtilities.isEventDispatchThread())
             {
-                SwingUtilities.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        addNonGeoreferencedSurfaceImage(file, image, wwd);
-                    }
-                });
+                SwingUtilities.invokeLater(() -> addNonGeoreferencedSurfaceImage(file, image, wwd));
             }
             else
             {

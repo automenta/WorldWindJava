@@ -39,9 +39,9 @@ public class GeotiffImageReaderSpi extends ImageReaderSpi
     }
 
     @Override
-    public boolean canDecodeInput(Object source) throws IOException
+    public boolean canDecodeInput(Object source)
     {
-        if (source == null || !(source instanceof ImageInputStream))
+        if (!(source instanceof ImageInputStream))
             return false;
 
         ImageInputStream inp = (ImageInputStream) source;
@@ -62,7 +62,7 @@ public class GeotiffImageReaderSpi extends ImageReaderSpi
     }
 
     @Override
-    public ImageReader createReaderInstance(Object extension) throws IOException
+    public ImageReader createReaderInstance(Object extension)
     {
         return new GeotiffImageReader(this);
     }

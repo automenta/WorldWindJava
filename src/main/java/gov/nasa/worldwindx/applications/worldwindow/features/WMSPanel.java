@@ -24,7 +24,6 @@ import javax.swing.event.*;
 import javax.swing.tree.*;
 import javax.xml.stream.XMLStreamException;
 import java.awt.*;
-import java.awt.event.*;
 import java.net.*;
 import java.util.Enumeration;
 import java.util.logging.Level;
@@ -87,42 +86,35 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
         this.panel.add(np2, BorderLayout.CENTER);
         this.panel.setToolTipText("");
 
-        this.urlField.addActionListener(new ActionListener() // listen for triggers to cause WMS server contact
-        {
-            public void actionPerformed(ActionEvent actionEvent)
+        // listen for triggers to cause WMS server contact
+        this.urlField.addActionListener(actionEvent -> {
+            try
             {
-                try
+                String serverURLString = urlField.getText();//getSelectedItem().toString();
+                if (!WWUtil.isEmpty(serverURLString))
                 {
-                    String serverURLString = urlField.getText();//getSelectedItem().toString();
-                    if (!WWUtil.isEmpty(serverURLString))
+                    if (serverURI == null || !serverURI.toString().contains(serverURLString))
                     {
-                        if (serverURI == null || !serverURI.toString().contains(serverURLString))
-                        {
-                            if (getTopGroup() != null)
-                                firePropertyChange("NewServer", null, serverURLString);
-                            else
-                                contactWMSServer(serverURLString);
-                        }
+                        if (getTopGroup() != null)
+                            firePropertyChange("NewServer", null, serverURLString);
+                        else
+                            contactWMSServer(serverURLString);
                     }
                 }
-                catch (URISyntaxException e)
-                {
-                    String msg = "Invalid URL";
-                    Util.getLogger().log(Level.SEVERE, msg, e);
-                    controller.showErrorDialog(e, "Invalid URL", msg);
-                }
+            }
+            catch (URISyntaxException e)
+            {
+                String msg = "Invalid URL";
+                Util.getLogger().log(Level.SEVERE, msg, e);
+                controller.showErrorDialog(e, "Invalid URL", msg);
             }
         });
 
-        this.infoButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
+        this.infoButton.addActionListener(actionEvent -> {
+            String urlString = (String) infoButton.getClientProperty("CapsURL");
+            if (!WWUtil.isEmpty(urlString))
             {
-                String urlString = (String) infoButton.getClientProperty("CapsURL");
-                if (!WWUtil.isEmpty(urlString))
-                {
-                    controller.openLink(urlString);
-                }
+                controller.openLink(urlString);
             }
         });
     }
@@ -282,51 +274,43 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
         this.serverURI = new URI(URLString.trim()); // throws an exception if server name is not a valid uri.
 
         // Thread off a retrieval of the server's capabilities document and update of this panel.
-        this.loadingThread = new Thread(new Runnable()
-        {
-            public void run()
+        this.loadingThread = new Thread(() -> {
+            controller.getNetworkActivitySignal().addNetworkUser(WMSPanel.this);
+            try
             {
-                controller.getNetworkActivitySignal().addNetworkUser(WMSPanel.this);
-                try
+                CapabilitiesRequest request = new CapabilitiesRequest(serverURI);
+                WMSCapabilities caps = new WMSCapabilities(request);
+                caps.parse();
+                if (!Thread.currentThread().isInterrupted())
+                    createLayerList(caps);
+            }
+            catch (XMLStreamException e)
+            {
+                String msg = "Error retrieving servers capabilities " + serverURI;
+                Util.getLogger().log(Level.SEVERE, msg, e);
+                controller.showErrorDialog(e, "Get Capabilities Error", msg);
+            }
+            catch (Exception e)
+            {
+                String msg;
+                if (e.getClass().getName().toLowerCase().contains("timeout"))
                 {
-                    CapabilitiesRequest request = new CapabilitiesRequest(serverURI);
-                    WMSCapabilities caps = new WMSCapabilities(request);
-                    caps.parse();
-                    if (!Thread.currentThread().isInterrupted())
-                        createLayerList(caps);
+                    msg = "Connection to server timed out\n" + serverURI;
+                    controller.showErrorDialog(e, "Connection Timeout", msg);
                 }
-                catch (XMLStreamException e)
+                else
                 {
-                    String msg = "Error retrieving servers capabilities " + serverURI;
-                    Util.getLogger().log(Level.SEVERE, msg, e);
-                    controller.showErrorDialog(e, "Get Capabilities Error", msg);
+                    msg = "Attempt to contact server failed\n" + serverURI;
+                    controller.showErrorDialog(e, "Server Not Responding", msg);
                 }
-                catch (Exception e)
-                {
-                    if (e.getClass().getName().toLowerCase().contains("timeout"))
-                    {
-                        String msg = "Connection to server timed out\n" + serverURI;
-                        controller.showErrorDialog(e, "Connection Timeout", msg);
-                        Util.getLogger().log(Level.SEVERE, msg + serverURI, e);
-                    }
-                    else
-                    {
-                        String msg = "Attempt to contact server failed\n" + serverURI;
-                        controller.showErrorDialog(e, "Server Not Responding", msg);
-                        Util.getLogger().log(Level.SEVERE, msg + serverURI, e);
-                    }
-                }
-                finally // ensure that the cursor is restored to default whether succes or failure
-                {
-                    EventQueue.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            controller.getNetworkActivitySignal().removeNetworkUser(WMSPanel.this);
-                            panel.setCursor(Cursor.getDefaultCursor());
-                        }
-                    });
-                }
+                Util.getLogger().log(Level.SEVERE, msg + serverURI, e);
+            }
+            finally // ensure that the cursor is restored to default whether succes or failure
+            {
+                EventQueue.invokeLater(() -> {
+                    controller.getNetworkActivitySignal().removeNetworkUser(WMSPanel.this);
+                    panel.setCursor(Cursor.getDefaultCursor());
+                });
             }
         });
 
@@ -356,24 +340,21 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
         this.infoButton.putClientProperty("CapsURL", infoUrl != null ? infoUrl
             : caps.getRequestURL("GetCapabilities", "HTTP", "Get"));
 
-        EventQueue.invokeLater(new Runnable() // UI changes should be finalized on the EDT
-        {
-            public void run()
-            {
-                if (nameField.getText() == null || nameField.getText().length() == 0)
-                    nameField.setText(getServerDisplayString(caps));
+        // UI changes should be finalized on the EDT
+        EventQueue.invokeLater(() -> {
+            if (nameField.getText() == null || nameField.getText().length() == 0)
+                nameField.setText(getServerDisplayString(caps));
 
-                urlField.setText(serverURI.toString());//SelectedItem(serverURI.toString());
+            urlField.setText(serverURI.toString());//SelectedItem(serverURI.toString());
 
-                layerTree.expandRow(0); // ensure that the top grouping layer is expanded
-            }
+            layerTree.expandRow(0); // ensure that the top grouping layer is expanded
         });
     }
 
     protected LayerTreeGroupNode getTopGroup()
     {
         Object root = this.layerTree.getModel().getRoot();
-        return root != null && root instanceof LayerTreeGroupNode
+        return root instanceof LayerTreeGroupNode
             && ((LayerTreeGroupNode) root).getChildCount() > 0 ?
             (LayerTreeGroupNode) ((LayerTreeGroupNode) root).getFirstChild() : null;
     }
@@ -506,24 +487,20 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
                 GridBagConstraints.HORIZONTAL));
 
         // Inform the parent tabbed pane as the user enters the server name
-        this.nameField.getDocument().addUndoableEditListener(new UndoableEditListener()
-        {
-            public void undoableEditHappened(UndoableEditEvent event)
+        this.nameField.getDocument().addUndoableEditListener(event -> {
+            if (nameField.getText().trim().length() <= 0)
+                return;
+
+            // Change the layer name in the application's layer manager
+            LayerNode lmGroupNode = getLayerManagerGroupNode();
+            if (lmGroupNode != null)
             {
-                if (nameField.getText().trim().length() <= 0)
-                    return;
-
-                // Change the layer name in the application's layer manager
-                LayerNode lmGroupNode = getLayerManagerGroupNode();
-                if (lmGroupNode != null)
-                {
-                    lmGroupNode.setTitle(nameField.getText());
-                    controller.getLayerManager().redraw();
-                }
-
-                // Change the tabbed-pane title
-                setTabTitle(nameField.getText());
+                lmGroupNode.setTitle(nameField.getText());
+                controller.getLayerManager().redraw();
             }
+
+            // Change the tabbed-pane title
+            setTabTitle(nameField.getText());
         });
 
         return topPanel;

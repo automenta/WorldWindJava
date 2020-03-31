@@ -243,11 +243,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                             GRAPH_SIZE_LARGE_TEXT
                         }));
                         this.sizeComboBox.setToolTipText("Size of profile graph");
-                        this.sizeComboBox.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                sizeComboBoxActionPerformed(e);
-                            }
-                        });
+                        this.sizeComboBox.addActionListener(this::sizeComboBoxActionPerformed);
                         this.panel5.add(this.sizeComboBox, BorderLayout.CENTER);
                     }
                     this.panel6.add(this.panel5);
@@ -265,11 +261,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                             FOLLOW_NONE_TEXT
                         }));
                         this.followComboBox.setToolTipText("Set profile behavior");
-                        this.followComboBox.addActionListener(new ActionListener() {
-                            public void actionPerformed(ActionEvent e) {
-                                followComboBoxActionPerformed(e);
-                            }
-                        });
+                        this.followComboBox.addActionListener(this::followComboBoxActionPerformed);
                         this.panel7.add(this.followComboBox, BorderLayout.CENTER);
                     }
                     this.panel6.add(this.panel7);
@@ -286,11 +278,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                 this.proportionalCheckBox.setText("Proportional");
                 this.proportionalCheckBox.setToolTipText("Maintain 1:1 profile dimensions");
                 this.proportionalCheckBox.setAlignmentX(0.5F);
-                this.proportionalCheckBox.addItemListener(new ItemListener() {
-                    public void itemStateChanged(ItemEvent e) {
-                        proportionalCheckBoxItemStateChanged(e);
-                    }
-                });
+                this.proportionalCheckBox.addItemListener(this::proportionalCheckBoxItemStateChanged);
                 this.panel3.add(this.proportionalCheckBox);
 
                 //---- showEyeCheckBox ----
@@ -299,11 +287,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                 this.showEyeCheckBox.setAlignmentX(0.5F);
                 this.showEyeCheckBox.setHorizontalAlignment(SwingConstants.CENTER);
                 this.showEyeCheckBox.setSelected(true);
-                this.showEyeCheckBox.addItemListener(new ItemListener() {
-                    public void itemStateChanged(ItemEvent e) {
-                        showEyeCheckBoxItemStateChanged(e);
-                    }
-                });
+                this.showEyeCheckBox.addItemListener(this::showEyeCheckBoxItemStateChanged);
                 this.panel3.add(this.showEyeCheckBox);
 
                 //---- zeroBaseCheckBox ----
@@ -312,11 +296,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                 this.zeroBaseCheckBox.setAlignmentX(0.5F);
                 this.zeroBaseCheckBox.setHorizontalAlignment(SwingConstants.TRAILING);
                 this.zeroBaseCheckBox.setSelected(true);
-                this.zeroBaseCheckBox.addItemListener(new ItemListener() {
-                    public void itemStateChanged(ItemEvent e) {
-                        zeroBaseCheckBoxItemStateChanged(e);
-                    }
-                });
+                this.zeroBaseCheckBox.addItemListener(this::zeroBaseCheckBoxItemStateChanged);
                 this.panel3.add(this.zeroBaseCheckBox);
             }
             this.panel1.add(this.panel3, BorderLayout.CENTER);
@@ -337,11 +317,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                     this.profileWidthSpinner.setAlignmentX(1.5F);
                     this.profileWidthSpinner.setModel(new SpinnerListModel(profileSizeValues));
                     this.profileWidthSpinner.setValue("x1");
-                    this.profileWidthSpinner.addChangeListener(new ChangeListener() {
-                        public void stateChanged(ChangeEvent e) {
-                            profileWidthSpinnerStateChanged(e);
-                        }
-                    });
+                    this.profileWidthSpinner.addChangeListener(this::profileWidthSpinnerStateChanged);
                     this.panel4.add(this.profileWidthSpinner, BorderLayout.CENTER);
 
                     //---- profileWidthLabel ----
@@ -361,11 +337,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                     this.profileLengthSpinner.setAlignmentX(1.5F);
                     this.profileLengthSpinner.setModel(new SpinnerListModel(profileSizeValues));
                     this.profileLengthSpinner.setValue("x1");
-                    this.profileLengthSpinner.addChangeListener(new ChangeListener() {
-                        public void stateChanged(ChangeEvent e) {
-                            profileLengthSpinnerStateChanged(e);
-                        }
-                    });
+                    this.profileLengthSpinner.addChangeListener(this::profileLengthSpinnerStateChanged);
                     this.panel4b.add(this.profileLengthSpinner, BorderLayout.CENTER);
 
                     //---- profileLengthLabel ----
@@ -381,11 +353,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
 
                     //---- profileSameSize ----
                     this.profilesSameSize.setText("Same size");
-                    this.profilesSameSize.addChangeListener(new ChangeListener() {
-                        public void stateChanged(ChangeEvent e) {
-                            profilesSameSizeStateChanged(e);
-                        }
-                    });
+                    this.profilesSameSize.addChangeListener(this::profilesSameSizeStateChanged);
                     this.panel4c.add(this.profilesSameSize, BorderLayout.CENTER);
                 }
                 this.panel8.add(this.panel4c);
@@ -397,11 +365,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
 
                     //---- profileFollowPath ----
                     this.profileFollowPath.setText("Whole track length");
-                    this.profileFollowPath.addChangeListener(new ChangeListener() {
-                        public void stateChanged(ChangeEvent e) {
-                            profileFollowPathStateChanged(e);
-                        }
-                    });
+                    this.profileFollowPath.addChangeListener(this::profileFollowPathStateChanged);
                     this.panel4d.add(this.profileFollowPath, BorderLayout.CENTER);
                 }
                 this.panel8.add(this.panel4d);
@@ -437,7 +401,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
 
     private static class TerrainProfileController {
 
-        private static final HashMap<String, Dimension> sizes = new HashMap<String, Dimension>();
+        private static final HashMap<String, Dimension> sizes = new HashMap<>();
 
         public static String[] getSizeKeys() {
             return sizes.keySet().toArray(new String[1]);
@@ -449,7 +413,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
             sizes.put(GRAPH_SIZE_LARGE_TEXT, new Dimension(655, 240));
         }
 
-        private static final HashMap<String, String> follows = new HashMap<String, String>();
+        private static final HashMap<String, String> follows = new HashMap<>();
 
         public static String[] getFollowKeys() {
             return follows.keySet().toArray(new String[1]);

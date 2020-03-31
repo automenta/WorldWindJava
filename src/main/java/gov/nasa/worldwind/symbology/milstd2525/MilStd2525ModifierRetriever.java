@@ -133,7 +133,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
     protected Integer chooseBestFittingWidth(AVList params)
     {
         Object o = params.getValue(AVKey.WIDTH);
-        if (o == null || !(o instanceof Number))
+        if (!(o instanceof Number))
             return null;
 
         int value = ((Number) o).intValue();

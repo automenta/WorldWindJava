@@ -10,7 +10,6 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe2D;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
@@ -342,9 +341,9 @@ public class GeographicTextRenderer
 
     protected class OrderedText implements OrderedRenderable, Comparable<OrderedText>
     {
-        GeographicText text;
-        Vec4 point;
-        double eyeDistance;
+        final GeographicText text;
+        final Vec4 point;
+        final double eyeDistance;
 
         OrderedText(GeographicText text, Vec4 point, double eyeDistance)
         {
@@ -381,12 +380,12 @@ public class GeographicTextRenderer
             {
                 if (cullText)
                 {
-                    ArrayList<OrderedText> textList = new ArrayList<OrderedText>();
+                    ArrayList<OrderedText> textList = new ArrayList<>();
                     textList.add(this);
 
                     // Draw as many as we can in a batch to save ogl state switching.
                     Object nextItem = dc.peekOrderedRenderables();
-                    while (nextItem != null && nextItem instanceof OrderedText)
+                    while (nextItem instanceof OrderedText)
                     {
                         OrderedText ot = (OrderedText) nextItem;
                         if (ot.getRenderer() != GeographicTextRenderer.this)
@@ -399,7 +398,7 @@ public class GeographicTextRenderer
 
                     Collections.sort(textList); // sort for rendering priority then front to back
 
-                    ArrayList<Rectangle2D> textBounds = new ArrayList<Rectangle2D>();
+                    ArrayList<Rectangle2D> textBounds = new ArrayList<>();
                     for (OrderedText ot : textList)
                     {
                         double[] scaleAndOpacity = GeographicTextRenderer.this.computeDistanceScaleAndOpacity(dc, ot);
@@ -429,7 +428,7 @@ public class GeographicTextRenderer
                     GeographicTextRenderer.this.drawText(dc, this, scaleAndOpacity[0], scaleAndOpacity[1]);
                     // Draw as many as we can in a batch to save ogl state switching.
                     Object nextItem = dc.peekOrderedRenderables();
-                    while (nextItem != null && nextItem instanceof OrderedText)
+                    while (nextItem instanceof OrderedText)
                     {
                         OrderedText ot = (OrderedText) nextItem;
                         if (ot.getRenderer() != GeographicTextRenderer.this)
@@ -441,10 +440,6 @@ public class GeographicTextRenderer
                         nextItem = dc.peekOrderedRenderables();
                     }
                 }
-            }
-            catch (WWRuntimeException e)
-            {
-                Logging.logger().log(java.util.logging.Level.SEVERE, "generic.ExceptionWhileRenderingText", e);
             }
             catch (Exception e)
             {
@@ -778,7 +773,7 @@ public class GeographicTextRenderer
         if (altitude < (dc.getGlobe().getMaxElevation() * dc.getVerticalExaggeration()))
         {
             double depth = screenPoint.z - (8d * 0.00048875809d);
-            depth = depth < 0d ? 0d : (depth > 1d ? 1d : depth);
+            depth = depth < 0d ? 0d : (Math.min(depth, 1d));
             gl.glDepthFunc(GL.GL_LESS);
             gl.glDepthRange(depth, depth);
         }

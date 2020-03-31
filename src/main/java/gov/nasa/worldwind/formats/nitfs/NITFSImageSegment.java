@@ -266,8 +266,6 @@ public class NITFSImageSegment extends NITFSSegment
                                   //case IMAGE_TYPE_RGB:
                                   //    break;
                                     case IMAGE_TYPE_GRAY_ALPHA:
-                                        rgbColor = (rgbColor << 8) + 0xFF;
-                                        break;
                                     case IMAGE_TYPE_RGB_ALPHA:
                                         rgbColor = (rgbColor << 8) + 0xFF;
                                         break;

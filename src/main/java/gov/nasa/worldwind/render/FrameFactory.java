@@ -102,15 +102,13 @@ public class FrameFactory
     public static DoubleBuffer createShapeBuffer(String shape, double width, double height, int cornerRadius,
         DoubleBuffer buffer)
     {
-        if (shape.equals(AVKey.SHAPE_RECTANGLE))
-            return createRoundedRectangleBuffer(width, height, cornerRadius, buffer);
-        else if (shape.equals(AVKey.SHAPE_ELLIPSE))
-            return createEllipseBuffer(width, height, circleSteps, buffer);
-        else if (shape.equals(AVKey.SHAPE_NONE))
-            return null;
-        else
-            // default to rectangle if shape unknown
-            return createRoundedRectangleBuffer(width, height, cornerRadius, buffer);
+        // default to rectangle if shape unknown
+        return switch (shape)
+            {
+                case AVKey.SHAPE_ELLIPSE -> createEllipseBuffer(width, height, circleSteps, buffer);
+                case AVKey.SHAPE_NONE -> null;
+                default -> createRoundedRectangleBuffer(width, height, cornerRadius, buffer);
+            };
     }
 
     /**
@@ -131,17 +129,16 @@ public class FrameFactory
     public static DoubleBuffer createShapeWithLeaderBuffer(String shape, double width, double height,
         Point leaderOffset, double leaderGapWidth, int cornerRadius, DoubleBuffer buffer)
     {
-        if (shape.equals(AVKey.SHAPE_RECTANGLE))
-            return createRoundedRectangleWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth, cornerRadius,
-                buffer);
-        else if (shape.equals(AVKey.SHAPE_ELLIPSE))
-            return createEllipseWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth, circleSteps, buffer);
-        else if (shape.equals(AVKey.SHAPE_NONE))
-            return null;
-        else
-            // default to rectangle if shape unknown
-            return createRoundedRectangleWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth, cornerRadius,
-                buffer);
+        // default to rectangle if shape unknown
+        return switch (shape)
+            {
+                case AVKey.SHAPE_ELLIPSE -> createEllipseWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
+                    circleSteps, buffer);
+                case AVKey.SHAPE_NONE -> null;
+                default -> createRoundedRectangleWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
+                    cornerRadius,
+                    buffer);
+            };
     }
 
     /**
@@ -361,16 +358,14 @@ public class FrameFactory
         double halfWidth = width / 2;
         double halfHeight = height / 2;
         double halfPI = Math.PI / 2;
-        double x0 = halfWidth;
-        double y0 = halfHeight;
         double step = Math.PI * 2 / steps;
 
         int idx = 0;
         for (int i = 0; i <= steps; i++)
         {
             double a = step * i - halfPI;
-            double x = x0 + Math.cos(a) * halfWidth;
-            double y = y0 + Math.sin(a) * halfHeight;
+            double x = halfWidth + Math.cos(a) * halfWidth;
+            double y = halfHeight + Math.sin(a) * halfHeight;
             buffer.put(idx++, x);
             buffer.put(idx++, y);
         }
@@ -390,8 +385,6 @@ public class FrameFactory
         double halfWidth = width / 2;
         double halfHeight = height / 2;
         double halfPI = Math.PI / 2;
-        double x0 = halfWidth;
-        double y0 = halfHeight;
         double step = Math.PI * 2 / steps;
         double halfGap = leaderGapWidth / 2 / halfWidth;
 
@@ -403,8 +396,8 @@ public class FrameFactory
                 a += halfGap;
             if (i == steps)
                 a -= halfGap;
-            double x = x0 + Math.cos(a) * halfWidth;
-            double y = y0 + Math.sin(a) * halfHeight;
+            double x = halfWidth + Math.cos(a) * halfWidth;
+            double y = halfHeight + Math.sin(a) * halfHeight;
             buffer.put(idx++, x);
             buffer.put(idx++, y);
         }
@@ -412,8 +405,8 @@ public class FrameFactory
         // Draw leader
         buffer.put(idx++, leaderOffset.x);
         buffer.put(idx++, leaderOffset.y);
-        buffer.put(idx++, x0 + Math.cos(halfGap - halfPI) * halfWidth);
-        buffer.put(idx++, y0 + Math.sin(halfGap - halfPI) * halfHeight);
+        buffer.put(idx++, halfWidth + Math.cos(halfGap - halfPI) * halfWidth);
+        buffer.put(idx++, halfHeight + Math.sin(halfGap - halfPI) * halfHeight);
 
         buffer.limit(idx);
         return buffer;

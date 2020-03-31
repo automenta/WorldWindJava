@@ -43,11 +43,11 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
     {
         // Record group properties.
         public final ShapeAttributes attributes;
-        public ArrayList<Record> records = new ArrayList<Record>();
+        public final ArrayList<Record> records = new ArrayList<>();
         // Data structures supporting drawing.
         public IntBuffer indices;
-        public Range outlineIndexRange = new Range(0, 0);
-        public Object vboKey = new Object();
+        public final Range outlineIndexRange = new Range(0, 0);
+        public final Object vboKey = new Object();
 
         public RecordGroup(ShapeAttributes attributes)
         {
@@ -58,12 +58,12 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
     protected static class Tile implements OrderedRenderable, SurfaceRenderable
     {
         // Tile properties.
-        public ShapefileRenderable shapefileRenderable;
+        public final ShapefileRenderable shapefileRenderable;
         public final Sector sector;
         public final int level;
         // Tile records, attribute groups and child tiles.
-        public ArrayList<Record> records = new ArrayList<Record>();
-        public ArrayList<RecordGroup> attributeGroups = new ArrayList<RecordGroup>();
+        public final ArrayList<Record> records = new ArrayList<>();
+        public final ArrayList<RecordGroup> attributeGroups = new ArrayList<>();
         public long attributeStateID;
         public Tile[] children;
         // Tile shape data.
@@ -71,7 +71,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         public int vertexStride;
         public Vec4 referencePoint;
         public Matrix transformMatrix;
-        public Object vboKey = new Object();
+        public final Object vboKey = new Object();
 
         public Tile(ShapefileRenderable shapefileRenderable, Sector sector, int level)
         {
@@ -89,7 +89,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         @Override
         public List<Sector> getSectors(DrawContext dc)
         {
-            return Arrays.asList(this.sector);
+            return Collections.singletonList(this.sector);
         }
 
         @Override
@@ -112,9 +112,9 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
 
     protected static class TileStateKey
     {
-        protected Tile tile;
-        protected long attributeStateID;
-        protected ShapeAttributes[] attributeGroups;
+        protected final Tile tile;
+        protected final long attributeStateID;
+        protected final ShapeAttributes[] attributeGroups;
 
         public TileStateKey(Tile tile)
         {
@@ -157,22 +157,22 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
 
     // Tile quadtree structures.
     protected Tile rootTile;
-    protected int tileMaxLevel = 3;
-    protected int tileMaxCapacity = 10000;
+    protected final int tileMaxLevel = 3;
+    protected final int tileMaxCapacity = 10000;
     // Data structures supporting polygon tessellation and drawing.
-    protected ArrayList<Tile> currentTiles = new ArrayList<Tile>();
-    protected PolylineTessellator tess = new PolylineTessellator();
-    protected byte[] colorByteArray = new byte[3];
-    protected float[] colorFloatArray = new float[4];
-    protected double[] matrixArray = new double[16];
+    protected final ArrayList<Tile> currentTiles = new ArrayList<>();
+    protected final PolylineTessellator tess = new PolylineTessellator();
+    protected final byte[] colorByteArray = new byte[3];
+    protected final float[] colorFloatArray = new float[4];
+    protected final double[] matrixArray = new double[16];
     // Data structures supporting picking.
     protected int outlinePickWidth = DEFAULT_OUTLINE_PICK_WIDTH;
     protected Layer pickLayer;
-    protected PickSupport pickSupport = new PickSupport();
-    protected SurfaceObjectTileBuilder pickTileBuilder = new SurfaceObjectTileBuilder(new Dimension(512, 512),
+    protected final PickSupport pickSupport = new PickSupport();
+    protected final SurfaceObjectTileBuilder pickTileBuilder = new SurfaceObjectTileBuilder(new Dimension(512, 512),
         GL2.GL_RGBA8, false, false);
     protected ByteBuffer pickColors;
-    protected Object pickColorsVboKey = new Object();
+    protected final Object pickColorsVboKey = new Object();
 
     /**
      * Creates a new ShapefilePolylines with the specified shapefile. The normal attributes and the highlight attributes
@@ -628,7 +628,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         // We take care to avoid assembling groups based on any Attribute property, as those properties may change
         // without re-assembling these groups. However, changes to a record's visibility state, highlight state, normal
         // attributes reference and highlight attributes reference invalidate this grouping.
-        HashMap<ShapeAttributes, RecordGroup> attrMap = new HashMap<ShapeAttributes, RecordGroup>();
+        HashMap<ShapeAttributes, RecordGroup> attrMap = new HashMap<>();
         for (Record record : tile.records)
         {
             if (!record.isVisible()) // ignore records marked as not visible

@@ -82,15 +82,11 @@ public class SARTrackBuilder
             }
         };
 
-        this.positionListener = new PositionListener()
-        {
-            public void moved(PositionEvent event)
-            {
-                if (!active || sarTrack == null)
-                    return;
+        this.positionListener = event -> {
+            if (!active || sarTrack == null)
+                return;
 
-                replacePosition();
-            }
+            replacePosition();
         };
     }
 

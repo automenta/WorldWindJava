@@ -21,9 +21,9 @@ import static org.junit.Assert.assertEquals;
 @RunWith(JUnit4.class)
 public class OGLUtilTest
 {
-    private static final String PNG_FILE = "./src/images/earth-map-512x256.png";
-    private static final String DDS_FILE = "./src/images/BMNG_world.topo.bathy.200405.3.2048x1024.dds";
-    private static final String JPG_FILE = "./src/images/BMNG_world.topo.bathy.200405.3.2048x1024.jpg";
+    private static final String PNG_FILE = "images/earth-map-512x256.png";
+    private static final String DDS_FILE = "images/BMNG_world.topo.bathy.200405.3.2048x1024.dds";
+    private static final String JPG_FILE = "images/BMNG_world.topo.bathy.200405.3.2048x1024.jpg";
 
     private GLProfile glProfile;
 

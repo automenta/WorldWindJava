@@ -36,7 +36,7 @@ public class PullUpPoint extends AbstractCircularGraphic implements TacticalPoin
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_AVN_PNT_PUP);
+        return Collections.singletonList(TacGrpSidc.C2GM_AVN_PNT_PUP);
     }
 
     /**
@@ -112,7 +112,7 @@ public class PullUpPoint extends AbstractCircularGraphic implements TacticalPoin
      */
     protected List<Position> asPositionList(LatLon... locations)
     {
-        List<Position> positions = new ArrayList<Position>(locations.length);
+        List<Position> positions = new ArrayList<>(locations.length);
         for (LatLon loc : locations)
         {
             positions.add(new Position(loc, 0));

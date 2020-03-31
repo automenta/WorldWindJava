@@ -18,6 +18,7 @@ import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.InputStream;
+import java.util.Collections;
 
 /**
  * Illustrates how to use a WorldWind <code>{@link Annotation}</code> with an <code>{@link
@@ -45,10 +46,10 @@ public class AnnotationControls extends ApplicationTemplate
 
     public static class AppFrame extends ApplicationTemplate.AppFrame implements SelectListener
     {
-        protected IconLayer iconLayer;
+        protected final IconLayer iconLayer;
         protected WWIcon highlit;
-        protected RenderableLayer contentLayer;
-        protected BasicDragger dragger;
+        protected final RenderableLayer contentLayer;
+        protected final BasicDragger dragger;
 
         public AppFrame()
         {
@@ -155,9 +156,9 @@ public class AnnotationControls extends ApplicationTemplate
 
     public static class ContentAnnotation implements ActionListener
     {
-        protected AppFrame appFrame;
-        protected DialogAnnotation annnotation;
-        protected DialogAnnotationController controller;
+        protected final AppFrame appFrame;
+        protected final DialogAnnotation annnotation;
+        protected final DialogAnnotationController controller;
 
         public ContentAnnotation(AppFrame appFrame, DialogAnnotation annnotation, DialogAnnotationController controller)
         {
@@ -215,7 +216,7 @@ public class AnnotationControls extends ApplicationTemplate
     public static class AudioContentAnnotation extends ContentAnnotation
     {
         protected Clip clip;
-        protected Object source;
+        protected final Object source;
         protected Thread readThread;
 
         public AudioContentAnnotation(AppFrame appFrame, AudioPlayerAnnotation annnotation,
@@ -263,39 +264,31 @@ public class AnnotationControls extends ApplicationTemplate
 
         protected void doRetrieveAndSetClip(final Object source)
         {
-            javax.swing.SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    getAnnotation().setBusy(true);
-                    appFrame.getWwd().redraw();
-                }
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                getAnnotation().setBusy(true);
+                appFrame.getWwd().redraw();
             });
 
             final Clip clip = this.readClip(source);
 
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
+            SwingUtilities.invokeLater(() -> {
+                AudioPlayerAnnotationController controller = (AudioPlayerAnnotationController) getController();
+                if (controller != null)
                 {
-                    AudioPlayerAnnotationController controller = (AudioPlayerAnnotationController) getController();
-                    if (controller != null)
-                    {
-                        controller.setClip(clip);
-                    }
-
-                    AudioPlayerAnnotation annotation = (AudioPlayerAnnotation) getAnnotation();
-                    if (annotation != null)
-                    {
-                        if (clip == null)
-                        {
-                            annotation.getTitleLabel().setText(createErrorTitle(source.toString()));
-                        }
-                    }
-
-                    getAnnotation().setBusy(false);
-                    appFrame.getWwd().redraw();
+                    controller.setClip(clip);
                 }
+
+                AudioPlayerAnnotation annotation = (AudioPlayerAnnotation) getAnnotation();
+                if (annotation != null)
+                {
+                    if (clip == null)
+                    {
+                        annotation.getTitleLabel().setText(createErrorTitle(source.toString()));
+                    }
+                }
+
+                getAnnotation().setBusy(false);
+                appFrame.getWwd().redraw();
             });
         }
 
@@ -321,13 +314,7 @@ public class AnnotationControls extends ApplicationTemplate
 
         protected void startClipRetrieval(final Object source)
         {
-            this.readThread = new Thread(new Runnable()
-            {
-                public void run()
-                {
-                    doRetrieveAndSetClip(source);
-                }
-            });
+            this.readThread = new Thread(() -> doRetrieveAndSetClip(source));
             this.readThread.start();
         }
 
@@ -388,7 +375,7 @@ public class AnnotationControls extends ApplicationTemplate
         layer.addIcon(icon);
 
         icon = createIcon(IMAGES, Position.fromDegrees(46.1912, -122.1944, 0), "",
-            java.util.Arrays.asList(IMAGE_PATH_MT_ST_HELENS));
+            Collections.singletonList(IMAGE_PATH_MT_ST_HELENS));
         layer.addIcon(icon);
 
         icon = createIcon(IMAGES, Position.fromDegrees(-12, -70, 0), "",

@@ -23,7 +23,7 @@ import java.util.ArrayList;
  */
 public class TableCellColorRenderer extends JLabel implements TableCellRenderer
 {
-    protected java.util.List<Color> fileSetColors = new ArrayList<Color>();
+    protected final java.util.List<Color> fileSetColors = new ArrayList<>();
 
     protected Border unselectedBorder = null;
     protected Border selectedBorder = null;

@@ -23,21 +23,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class LineIntersector implements Runnable
 {
-    protected Terrain terrain;
-    protected int numThreads;
+    protected final Terrain terrain;
+    protected final int numThreads;
 
     protected Position referencePosition;
     protected Iterable<Position> positions;
 
     protected int numPositions;
     protected Vec4 referencePoint;
-    protected ThreadPoolExecutor threadPool;
-    protected AtomicInteger numProcessedPositions = new AtomicInteger();
+    protected final ThreadPoolExecutor threadPool;
+    protected final AtomicInteger numProcessedPositions = new AtomicInteger();
     protected long startTime;
     protected long endTime; // for reporting calculation duration
 
     // Create a container to hold the intersections.
-    protected Map<Position, List<Intersection>> allIntersections;
+    protected final Map<Position, List<Intersection>> allIntersections;
 
     protected LineIntersector(Terrain terrain, int numThreads)
     {
@@ -45,9 +45,9 @@ public abstract class LineIntersector implements Runnable
         this.numThreads = numThreads;
 
         this.threadPool = new ThreadPoolExecutor(numThreads, numThreads, 200, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<Runnable>());
+            new LinkedBlockingQueue<>());
 
-        this.allIntersections = new ConcurrentHashMap<Position, List<Intersection>>();
+        this.allIntersections = new ConcurrentHashMap<>();
     }
 
     /**
@@ -55,9 +55,8 @@ public abstract class LineIntersector implements Runnable
      *
      * @param position the position to test.
      *
-     * @throws InterruptedException if the operation is interrupted.s
      */
-    abstract protected void doPerformIntersection(Position position) throws InterruptedException;
+    abstract protected void doPerformIntersection(Position position);
 
     public Terrain getTerrain()
     {
@@ -140,7 +139,7 @@ public abstract class LineIntersector implements Runnable
         this.numProcessedPositions.set(0);
         this.allIntersections.clear();
 
-        try
+//        try
         {
             this.referencePoint = terrain.getSurfacePoint(referencePosition.getLatitude(),
                 referencePosition.getLongitude(), referencePosition.getAltitude());
@@ -153,10 +152,10 @@ public abstract class LineIntersector implements Runnable
                     this.performIntersection(position);
             }
         }
-        catch (InterruptedException e)
-        {
-            e.printStackTrace();
-        }
+//        catch (InterruptedException e)
+//        {
+//            e.printStackTrace();
+//        }
     }
 
     protected class InternalIntersector implements Runnable
@@ -170,18 +169,18 @@ public abstract class LineIntersector implements Runnable
 
         public void run()
         {
-            try
+//            try
             {
                 performIntersection(position);
             }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
+//            catch (InterruptedException e)
+//            {
+//                e.printStackTrace();
+//            }
         }
     }
 
-    protected void performIntersection(Position position) throws InterruptedException
+    protected void performIntersection(Position position)
     {
         try
         {

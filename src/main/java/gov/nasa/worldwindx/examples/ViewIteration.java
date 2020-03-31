@@ -29,11 +29,11 @@ public class ViewIteration extends ApplicationTemplate
 {
     public static class AppFrame extends JFrame
     {
-        static ArrayList<Position> path;
+        static final ArrayList<Position> path;
 
         static
         {
-            path = new ArrayList<Position>();
+            path = new ArrayList<>();
             path.add(Position.fromDegrees(0, 0, 1e5));
             path.add(Position.fromDegrees(0, 10, 1e5));
             path.add(Position.fromDegrees(0, 20, 1e5));
@@ -46,7 +46,7 @@ public class ViewIteration extends ApplicationTemplate
 
         protected int pathPosition = 0;
 
-        protected PathAction[] pathActions =
+        protected final PathAction[] pathActions =
             new PathAction[] {
                 new GoToLatLonFromCurrent("Zero", LatLon.ZERO),
                 new FollowPath("Follow"),
@@ -55,7 +55,7 @@ public class ViewIteration extends ApplicationTemplate
                 new Backwards("Backwards"),
             };
 
-        protected Dimension canvasSize = new Dimension(800, 600);
+        protected final Dimension canvasSize = new Dimension(800, 600);
         protected ApplicationTemplate.AppPanel wwjPanel;
 
         public AppFrame()
@@ -100,7 +100,7 @@ public class ViewIteration extends ApplicationTemplate
             return cp;
         }
 
-        protected abstract class PathAction extends AbstractAction
+        protected abstract static class PathAction extends AbstractAction
         {
             PathAction(String name)
             {
@@ -193,7 +193,7 @@ public class ViewIteration extends ApplicationTemplate
 
         protected class FollowPath extends PathAction
         {
-            ArrayList<Position> path = new ArrayList<Position>();
+            final ArrayList<Position> path = new ArrayList<>();
 
             FollowPath(String name)
             {

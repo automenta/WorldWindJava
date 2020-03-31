@@ -18,7 +18,7 @@ import java.util.*;
 public class GpxRoute extends gov.nasa.worldwind.formats.gpx.ElementParser implements Track, TrackSegment
 {
     private String name;
-    private final java.util.List<TrackPoint> points = new java.util.ArrayList<TrackPoint>();
+    private final java.util.List<TrackPoint> points = new java.util.ArrayList<>();
 
     @SuppressWarnings({"UnusedDeclaration"})
     public GpxRoute(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
@@ -30,7 +30,7 @@ public class GpxRoute extends gov.nasa.worldwind.formats.gpx.ElementParser imple
 
     public List<TrackSegment> getSegments()
     {
-        return Arrays.asList(this);
+        return Collections.singletonList(this);
     }
 
     public String getName()
@@ -50,7 +50,6 @@ public class GpxRoute extends gov.nasa.worldwind.formats.gpx.ElementParser imple
 
     @Override
     public void doStartElement(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
-        throws org.xml.sax.SAXException
     {
         if (lname == null)
         {
@@ -86,7 +85,7 @@ public class GpxRoute extends gov.nasa.worldwind.formats.gpx.ElementParser imple
     }
     
     @Override
-    public void doEndElement(String uri, String lname, String qname) throws org.xml.sax.SAXException
+    public void doEndElement(String uri, String lname, String qname)
     {
         // don't validate uri or qname - they aren't used
         if (lname == null)

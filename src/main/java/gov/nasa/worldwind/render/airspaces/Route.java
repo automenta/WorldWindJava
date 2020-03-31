@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class Route extends TrackAirspace
 {
-    private List<LatLon> locations = new ArrayList<LatLon>();
+    private List<LatLon> locations = new ArrayList<>();
     private double width = 1.0;
 
     public Route(List<? extends LatLon> locations, double width)
@@ -54,11 +54,8 @@ public class Route extends TrackAirspace
     {
         super(source);
 
-        this.locations = new ArrayList<LatLon>(source.locations.size());
-        for (LatLon location : source.locations)
-        {
-            this.locations.add(location);
-        }
+        this.locations = new ArrayList<>(source.locations.size());
+        this.locations.addAll(source.locations);
 
         this.width = source.width;
     }

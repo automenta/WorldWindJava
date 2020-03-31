@@ -173,7 +173,7 @@ public class TextRenderer {
     private TextureRenderer cachedBackingStore;
     private Graphics2D cachedGraphics;
     private FontRenderContext cachedFontRenderContext;
-    private final Map<String, Rect> stringLocations = new HashMap<String, Rect>();
+    private final Map<String, Rect> stringLocations = new HashMap<>();
     private final GlyphProducer mGlyphProducer;
 
     private int numRenderCycles;
@@ -778,22 +778,19 @@ public class TextRenderer {
     }
 
     private void clearUnusedEntries() {
-        final java.util.List<Rect> deadRects = new ArrayList<Rect>();
+        final java.util.List<Rect> deadRects = new ArrayList<>();
 
         // Iterate through the contents of the backing store, removing
         // text strings that haven't been used recently
-        packer.visit(new RectVisitor() {
-                @Override
-                public void visit(Rect rect) {
-                    TextData data = (TextData) rect.getUserData();
+        packer.visit(rect -> {
+            TextData data = (TextData) rect.getUserData();
 
-                    if (data.used()) {
-                        data.clearUsed();
-                    } else {
-                        deadRects.add(rect);
-                    }
-                }
-            });
+            if (data.used()) {
+                data.clearUsed();
+            } else {
+                deadRects.add(rect);
+            }
+        });
 
         for (Rect r : deadRects) {
             packer.remove(r);
@@ -945,12 +942,7 @@ public class TextRenderer {
                     // Run this on another thread than the AWT event queue to
                     // make sure the call to Animator.stop() completes before
                     // exiting
-                    new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                anim.stop();
-                            }
-                        }).start();
+                    new Thread(anim::stop).start();
                 }
             });
         dbgFrame.setSize(kSize, kSize);
@@ -1141,7 +1133,7 @@ public class TextRenderer {
 
         // If this TextData represents a single glyph, this is its
         // unicode ID
-        int unicodeID;
+        final int unicodeID;
 
         // The following must be defined and used VERY precisely. This is
         // the offset from the upper-left corner of this rectangle (Java
@@ -1633,15 +1625,15 @@ public class TextRenderer {
     class GlyphProducer {
         final int undefined = -2;
         FontRenderContext fontRenderContext;
-        List<Glyph> glyphsOutput = new ArrayList<Glyph>();
-        HashMap<String, GlyphVector> fullGlyphVectorCache = new HashMap<String, GlyphVector>();
-        HashMap<Character, GlyphMetrics> glyphMetricsCache = new HashMap<Character, GlyphMetrics>();
+        final List<Glyph> glyphsOutput = new ArrayList<>();
+        final HashMap<String, GlyphVector> fullGlyphVectorCache = new HashMap<>();
+        final HashMap<Character, GlyphMetrics> glyphMetricsCache = new HashMap<>();
         // The mapping from unicode character to font-specific glyph ID
-        int[] unicodes2Glyphs;
+        final int[] unicodes2Glyphs;
         // The mapping from glyph ID to Glyph
-        Glyph[] glyphCache;
+        final Glyph[] glyphCache;
         // We re-use this for each incoming string
-        CharSequenceIterator iter = new CharSequenceIterator();
+        final CharSequenceIterator iter = new CharSequenceIterator();
 
         GlyphProducer(int fontLengthInGlyphs) {
             unicodes2Glyphs = new int[512];
@@ -1810,8 +1802,8 @@ public class TextRenderer {
 
     class Pipelined_QuadRenderer {
         int mOutstandingGlyphsVerticesPipeline = 0;
-        FloatBuffer mTexCoords;
-        FloatBuffer mVertCoords;
+        final FloatBuffer mTexCoords;
+        final FloatBuffer mVertCoords;
         boolean usingVBOs;
         int mVBO_For_ResuableTileVertices;
         int mVBO_For_ResuableTileTexCoords;
@@ -1985,12 +1977,7 @@ public class TextRenderer {
             rend.endOrthoRendering();
 
             if ((frame.getWidth() != w) || (frame.getHeight() != h)) {
-                EventQueue.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            frame.setSize(w, h);
-                        }
-                    });
+                EventQueue.invokeLater(() -> frame.setSize(w, h));
             }
         }
 

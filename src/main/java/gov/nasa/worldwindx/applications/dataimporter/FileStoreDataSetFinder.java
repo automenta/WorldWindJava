@@ -22,7 +22,7 @@ public class FileStoreDataSetFinder
 {
     public List<FileStoreDataSet> findDataSets(FileStore fileStore)
     {
-        final List<FileStoreDataSet> dataSets = new ArrayList<FileStoreDataSet>();
+        final List<FileStoreDataSet> dataSets = new ArrayList<>();
 
         for (File file : fileStore.getLocations())
         {
@@ -51,7 +51,7 @@ public class FileStoreDataSetFinder
         if (configFilePaths == null || configFilePaths.length == 0)
             return Collections.emptyList();
 
-        List<FileStoreDataSet> dataSets = new ArrayList<FileStoreDataSet>();
+        List<FileStoreDataSet> dataSets = new ArrayList<>();
 
         for (String configFilePath : configFilePaths)
         {

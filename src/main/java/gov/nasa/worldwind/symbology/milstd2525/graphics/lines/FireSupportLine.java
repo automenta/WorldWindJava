@@ -50,7 +50,7 @@ public class FireSupportLine extends AbstractMilStd2525TacticalGraphic
     protected String additionalText;
 
     /** Paths used to render the graphic. */
-    protected Path path;
+    protected final Path path;
 
     /**
      * Indicates the graphics supported by this class.

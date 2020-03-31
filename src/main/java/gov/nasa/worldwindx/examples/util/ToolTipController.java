@@ -23,7 +23,7 @@ import gov.nasa.worldwindx.examples.ApplicationTemplate;
  */
 public class ToolTipController implements SelectListener, Disposable
 {
-    protected WorldWindow wwd;
+    protected final WorldWindow wwd;
     protected String hoverKey = AVKey.HOVER_TEXT;
     protected String rolloverKey = AVKey.ROLLOVER_TEXT;
     protected Object lastRolloverObject;

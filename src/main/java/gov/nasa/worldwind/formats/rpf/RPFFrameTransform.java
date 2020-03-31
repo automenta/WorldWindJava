@@ -102,10 +102,10 @@ public abstract class RPFFrameTransform
     //
     // A class to bundle the results of deprojection -- a BufferedImage and its Sector.
     //
-    public class RPFImage
+    public static class RPFImage
     {
-        public Sector sector;
-        public BufferedImage image;
+        public final Sector sector;
+        public final BufferedImage image;
 
         RPFImage(Sector sector, BufferedImage image)
         {

@@ -35,9 +35,9 @@ public enum VPFDataType
     SHORT_COORD_3F(VPFConstants.SHORT_COORD_3F, 12, new VPFBasicDataBufferFactory.FloatVecDataFactory(3)),
     LONG_COORD_3F(VPFConstants.LONG_COORD_3F, 24, new VPFBasicDataBufferFactory.DoubleVecDataFactory(3));
 
-    protected String name;
-    protected int length;
-    protected VPFDataBufferFactory dataBufferFactory;
+    protected final String name;
+    protected final int length;
+    protected final VPFDataBufferFactory dataBufferFactory;
     private static Map<String, VPFDataType> nameRegistry;
 
     VPFDataType(String name, int length, VPFDataBufferFactory dataBufferFactory)
@@ -51,7 +51,7 @@ public enum VPFDataType
     private static void register(String name, VPFDataType type)
     {
         if (nameRegistry == null)
-            nameRegistry = new HashMap<String, VPFDataType>();
+            nameRegistry = new HashMap<>();
 
         nameRegistry.put(name, type);
     }

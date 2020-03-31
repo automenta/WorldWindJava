@@ -12,7 +12,6 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.ogc.kml.*;
 import gov.nasa.worldwind.ogc.kml.impl.KMLController;
 import gov.nasa.worldwind.render.Offset;
-import gov.nasa.worldwind.retrieve.RetrievalService;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.layertree.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
@@ -23,7 +22,6 @@ import javax.swing.filechooser.*;
 import javax.xml.stream.XMLStreamException;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
 import java.io.*;
 import java.net.URL;
 
@@ -40,12 +38,12 @@ public class KMLViewer extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected LayerTree layerTree;
-        protected RenderableLayer hiddenLayer;
+        protected final LayerTree layerTree;
+        protected final RenderableLayer hiddenLayer;
 
-        protected HotSpotController hotSpotController;
-        protected KMLApplicationController kmlAppController;
-        protected BalloonController balloonController;
+        protected final HotSpotController hotSpotController;
+        protected final KMLApplicationController kmlAppController;
+        protected final BalloonController balloonController;
 
         public AppFrame()
         {
@@ -95,13 +93,9 @@ public class KMLViewer extends ApplicationTemplate
             makeMenu(this);
 
             // Set up to receive SSLHandshakeExceptions that occur during resource retrieval.
-            WorldWind.getRetrievalService().setSSLExceptionListener(new RetrievalService.SSLExceptionListener()
-            {
-                public void onException(Throwable e, String path)
-                {
-                    System.out.println(path);
-                    System.out.println(e);
-                }
+            WorldWind.getRetrievalService().setSSLExceptionListener((e, path) -> {
+                System.out.println(path);
+                System.out.println(e);
             });
         }
 
@@ -140,22 +134,14 @@ public class KMLViewer extends ApplicationTemplate
             // node replaces its children with new nodes created from the refreshed content, then sends a refresh
             // property change event through the layer tree. By expanding open containers after a network link refresh,
             // we ensure that the network link tree view appearance is consistent with the KML specification.
-            layerNode.addPropertyChangeListener(AVKey.RETRIEVAL_STATE_SUCCESSFUL, new PropertyChangeListener()
-            {
-                public void propertyChange(final PropertyChangeEvent event)
+            layerNode.addPropertyChangeListener(AVKey.RETRIEVAL_STATE_SUCCESSFUL, event -> {
+                if (event.getSource() instanceof KMLNetworkLinkTreeNode)
                 {
-                    if (event.getSource() instanceof KMLNetworkLinkTreeNode)
-                    {
-                        // Manipulate the tree on the EDT.
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            public void run()
-                            {
-                                ((KMLNetworkLinkTreeNode) event.getSource()).expandOpenContainers(layerTree);
-                                getWwd().redraw();
-                            }
-                        });
-                    }
+                    // Manipulate the tree on the EDT.
+                    SwingUtilities.invokeLater(() -> {
+                        ((KMLNetworkLinkTreeNode) event.getSource()).expandOpenContainers(layerTree);
+                        getWwd().redraw();
+                    });
                 }
             });
         }
@@ -165,9 +151,9 @@ public class KMLViewer extends ApplicationTemplate
     public static class WorkerThread extends Thread
     {
         /** Indicates the source of the KML file loaded by this thread. Initialized during construction. */
-        protected Object kmlSource;
+        protected final Object kmlSource;
         /** Indicates the <code>AppFrame</code> the KML file content is displayed in. Initialized during construction. */
-        protected AppFrame appFrame;
+        protected final AppFrame appFrame;
 
         /**
          * Creates a new worker thread from a specified <code>kmlSource</code> and <code>appFrame</code>.
@@ -202,13 +188,7 @@ public class KMLViewer extends ApplicationTemplate
 
                 // Schedule a task on the EDT to add the parsed document to a layer
                 final KMLRoot finalKMLRoot = kmlRoot;
-                SwingUtilities.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        appFrame.addKMLLayer(finalKMLRoot);
-                    }
-                });
+                SwingUtilities.invokeLater(() -> appFrame.addKMLLayer(finalKMLRoot));
             }
             catch (Exception e)
             {

@@ -84,7 +84,7 @@ public class Configuration // Singleton
     }
 
     private final Properties properties;
-    private final ArrayList<Document> configDocs = new ArrayList<Document>();
+    private final ArrayList<Document> configDocs = new ArrayList<>();
 
     /** Private constructor invoked only internally. */
     private Configuration()

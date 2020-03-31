@@ -17,7 +17,6 @@ import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -38,14 +37,14 @@ public class TacticalGraphics extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected RenderableLayer pointLayer;
-        protected RenderableLayer lineLayer;
-        protected RenderableLayer areaLayer;
+        protected final RenderableLayer pointLayer;
+        protected final RenderableLayer lineLayer;
+        protected final RenderableLayer areaLayer;
 
         /** Shared attributes for line and area graphics. */
-        protected TacticalGraphicAttributes sharedAttrs;
+        protected final TacticalGraphicAttributes sharedAttrs;
         /** Shared attributes for point graphics. */
-        protected TacticalGraphicAttributes sharedPointAttrs;
+        protected final TacticalGraphicAttributes sharedPointAttrs;
 
         public AppFrame()
         {
@@ -269,7 +268,7 @@ public class TacticalGraphics extends ApplicationTemplate
 
             // Create a Minimum Risk Route graphic
             // First create some Air Control Points to place along the route
-            List<TacticalPoint> controlPoints = new ArrayList<TacticalPoint>();
+            List<TacticalPoint> controlPoints = new ArrayList<>();
 
             // Create an Air Control Point
             TacticalPoint point = factory.createPoint("GFGPAPP-------X", Position.fromDegrees(34.8802, -117.9773),
@@ -569,7 +568,7 @@ public class TacticalGraphics extends ApplicationTemplate
             /////////////////////////////////////////////
 
             position = (Position.fromDegrees(35.0295, -116.9290));
-            TacticalQuad quad = factory.createQuad("GHFPATR-------X", Arrays.asList(position), null);
+            TacticalQuad quad = factory.createQuad("GHFPATR-------X", Collections.singletonList(position), null);
             quad.setLength(8000.0);
             quad.setWidth(4000.0);
             quad.setText("AB0176");
@@ -602,7 +601,7 @@ public class TacticalGraphics extends ApplicationTemplate
             //////////////////////////////////////////////////
 
             position = (Position.fromDegrees(34.6813, -116.9724));
-            graphic = factory.createGraphic("GFFPAXC-------X", Arrays.asList(position), null);
+            graphic = factory.createGraphic("GFFPAXC-------X", Collections.singletonList(position), null);
             graphic.setModifier(SymbologyConstants.DISTANCE, Arrays.asList(1000.0, 6000.0, 11000.0));
             graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("GL", "GL", "GL"));
             graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.1)");
@@ -623,7 +622,7 @@ public class TacticalGraphics extends ApplicationTemplate
                 Angle.fromDegrees(315), Angle.fromDegrees(35));
 
             position = (Position.fromDegrees(34.5798, -116.6591));
-            graphic = factory.createGraphic("GFFPAXS-------X", Arrays.asList(position), null);
+            graphic = factory.createGraphic("GFFPAXS-------X", Collections.singletonList(position), null);
             graphic.setModifier(SymbologyConstants.DISTANCE, Arrays.asList(4000.0, 6000.0, 11000.0, 15000.0));
             graphic.setModifier(SymbologyConstants.AZIMUTH, azimuths);
             graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("GL", "GL", "GL", "GL"));
@@ -931,23 +930,19 @@ public class TacticalGraphics extends ApplicationTemplate
             // Create a slider that controls the opacity of all symbols.
             JLabel label = new JLabel("Opacity");
             JSlider slider = new JSlider(0, 100, 100);
-            slider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent changeEvent)
-                {
-                    // Set the opacity for only the normal attributes. This causes symbols to return to 100% opacity
-                    // when highlighted. Changes in these attributes are reflected in all symbols that use them.
-                    JSlider slider = (JSlider) changeEvent.getSource();
-                    double opacity = (double) slider.getValue() / 100d;
+            slider.addChangeListener(changeEvent -> {
+                // Set the opacity for only the normal attributes. This causes symbols to return to 100% opacity
+                // when highlighted. Changes in these attributes are reflected in all symbols that use them.
+                JSlider slider1 = (JSlider) changeEvent.getSource();
+                double opacity = (double) slider1.getValue() / 100d;
 
-                    sharedAttrs.setInteriorOpacity(opacity);
-                    sharedAttrs.setOutlineOpacity(opacity);
+                sharedAttrs.setInteriorOpacity(opacity);
+                sharedAttrs.setOutlineOpacity(opacity);
 
-                    sharedPointAttrs.setInteriorOpacity(opacity);
-                    sharedPointAttrs.setOutlineOpacity(opacity);
+                sharedPointAttrs.setInteriorOpacity(opacity);
+                sharedPointAttrs.setOutlineOpacity(opacity);
 
-                    getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
-                }
+                getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
             });
             box.add(javax.swing.Box.createVerticalStrut(10));
             label.setAlignmentX(JComponent.LEFT_ALIGNMENT);

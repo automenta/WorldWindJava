@@ -197,14 +197,14 @@ public class BasicJSONEventParser implements JSONEventParser
     protected void addArrayEntry(Object o)
     {
         if (this.array == null)
-            this.array = new ArrayList<Object>();
+            this.array = new ArrayList<>();
 
         this.array.add(o);
     }
 
     protected Object resolveArray(JSONEventParserContext ctx, JSONEvent event)
     {
-        return this.array.toArray(new Object[this.array.size()]);
+        return this.array.toArray(new Object[0]);
     }
 
     //**************************************************************//
@@ -222,7 +222,7 @@ public class BasicJSONEventParser implements JSONEventParser
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
-    protected Object parseScalarContent(JSONEventParserContext ctx, JSONEvent event) throws IOException
+    protected Object parseScalarContent(JSONEventParserContext ctx, JSONEvent event)
     {
         return event.asScalarValue();
     }

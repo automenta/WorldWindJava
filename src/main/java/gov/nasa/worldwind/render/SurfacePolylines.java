@@ -26,7 +26,7 @@ public class SurfacePolylines extends AbstractSurfaceShape
     protected CompoundVecBuffer buffer;
     protected boolean needsOutlineTessellation = true;
     protected boolean crossesDateLine = false;
-    protected Object outlineDisplayListCacheKey = new Object();
+    protected final Object outlineDisplayListCacheKey = new Object();
 
     public SurfacePolylines(CompoundVecBuffer buffer)
     {
@@ -55,7 +55,7 @@ public class SurfacePolylines extends AbstractSurfaceShape
             throw new IllegalArgumentException(message);
         }
 
-        this.sectors = Arrays.asList(sector);
+        this.sectors = Collections.singletonList(sector);
         this.buffer = buffer;
     }
 

@@ -109,7 +109,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature
         {
             Iterator<Annotation> iter = this.getAnnotations().iterator();
             Annotation anno = iter.next();
-            if (anno != null && anno instanceof ScreenAnnotation)
+            if (anno instanceof ScreenAnnotation)
             {
                 anno.setText(formatText(dc));
                 Dimension wwSize = controller.getWWPanel().getSize();
@@ -192,22 +192,16 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature
                 }
                 catch (Exception e)
                 {
-                    sb.append(String.format(
-                        this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_ZONE) + "\n"));
-                    sb.append(String.format(
-                        this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_EASTING) + "\n"));
-                    sb.append(String.format(
-                        this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_NORTHING) + "\n"));
+                    sb.append(this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_ZONE)).append("\n");
+                    sb.append(this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_EASTING)).append("\n");
+                    sb.append(this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_NORTHING)).append("\n");
                 }
             }
             else
             {
-                sb.append(
-                    String.format(this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_ZONE) + "\n"));
-                sb.append(String.format(
-                    this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_EASTING) + "\n"));
-                sb.append(String.format(
-                    this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_NORTHING) + "\n"));
+                sb.append(this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_ZONE)).append("\n");
+                sb.append(this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_EASTING)).append("\n");
+                sb.append(this.controller.getUnits().getStringValue(UnitsFormat.LABEL_UTM_NORTHING)).append("\n");
             }
         }
         else

@@ -31,7 +31,7 @@ public class TextureTile extends Tile implements SurfaceTile
     private volatile TextureData textureData; // if non-null, then must be converted to a Texture
     private TextureTile fallbackTile = null; // holds texture to use if own texture not available
     protected boolean hasMipmapData = false;
-    protected AtomicLong updateTime = new AtomicLong(0);
+    protected final AtomicLong updateTime = new AtomicLong(0);
 
     /**
      * Returns the memory cache used to cache tiles for this class and its subclasses, initializing the cache if it
@@ -80,7 +80,7 @@ public class TextureTile extends Tile implements SurfaceTile
 
     public List<? extends LatLon> getCorners()
     {
-        ArrayList<LatLon> list = new ArrayList<LatLon>(4);
+        ArrayList<LatLon> list = new ArrayList<>(4);
         for (LatLon ll : this.getSector())
         {
             list.add(ll);

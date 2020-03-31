@@ -317,7 +317,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
 
     protected void doMoveTo(Globe globe, Position oldReferencePosition, Position newReferencePosition)
     {
-        List<LatLon> locations = new ArrayList<LatLon>(1);
+        List<LatLon> locations = new ArrayList<>(1);
         locations.add(this.getCenter());
         List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldReferencePosition, newReferencePosition,
             locations);
@@ -368,10 +368,10 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
         if (originalLocations == null)
             return null;
 
-        ArrayList<LatLon> drawLocations = new ArrayList<LatLon>();
+        ArrayList<LatLon> drawLocations = new ArrayList<>();
         this.generateIntermediateLocations(originalLocations, edgeIntervalsPerDegree, false, drawLocations);
 
-        ArrayList<List<LatLon>> geom = new ArrayList<List<LatLon>>();
+        ArrayList<List<LatLon>> geom = new ArrayList<>();
         geom.add(drawLocations);
 
         return geom;

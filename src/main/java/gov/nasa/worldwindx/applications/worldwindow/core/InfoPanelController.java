@@ -24,7 +24,7 @@ public class InfoPanelController extends AbstractFeature implements SelectListen
 {
     protected static final String HARD_SPACE = "\u00a0";
     protected static final String INDENT = "\u00a0\u00a0\u00a0\u00a0";
-    protected int maxLineLength = 100;
+    protected final int maxLineLength = 100;
 
     protected AnnotationLayer annotationLayer;
     protected ScreenAnnotation annotationPanel;

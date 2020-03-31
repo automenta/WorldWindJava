@@ -56,7 +56,6 @@ public class GpxTrackPoint extends gov.nasa.worldwind.formats.gpx.ElementParser 
 
     @Override
     public void doStartElement(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
-        throws org.xml.sax.SAXException
     {
         //don't perform validation here - no parameters are actually used
     }
@@ -66,10 +65,9 @@ public class GpxTrackPoint extends gov.nasa.worldwind.formats.gpx.ElementParser 
      * @param lname The element lname.
      * @param qname The element qname.
      * @throws IllegalArgumentException if <code>lname</code> is null
-     * @throws org.xml.sax.SAXException if a parsing error occurs.
      */
     @Override
-    public void doEndElement(String uri, String lname, String qname) throws org.xml.sax.SAXException
+    public void doEndElement(String uri, String lname, String qname)
     {
         if (lname == null)
         {

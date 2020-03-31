@@ -43,16 +43,16 @@ public class WorldMapLayer extends AbstractLayer
     protected int iconHeight;
     protected Vec4 locationCenter = null;
     protected Vec4 locationOffset = null;
-    protected Color color = Color.white;
+    protected final Color color = Color.white;
     protected Color backColor = new Color(0f, 0f, 0f, 0.4f);
     protected boolean showFootprint = true;
     protected ArrayList<? extends LatLon> footPrintPositions;
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     protected long frameStampForPicking;
     protected long frameStampForDrawing;
 
     // Draw it as ordered with an eye distance of 0 so that it shows up in front of most other things.
-    protected OrderedIcon orderedImage = new OrderedIcon();
+    protected final OrderedIcon orderedImage = new OrderedIcon();
 
     protected class OrderedIcon implements OrderedRenderable
     {
@@ -387,7 +387,7 @@ public class WorldMapLayer extends AbstractLayer
             // into the GL projection matrix.
             java.awt.Rectangle viewport = dc.getView().getViewport();
             ogsh.pushProjectionIdentity(gl);
-            double maxwh = width > height ? width : height;
+            double maxwh = Math.max(width, height);
             gl.glOrtho(0d, viewport.width, 0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
 
             // Translate and scale
@@ -462,10 +462,10 @@ public class WorldMapLayer extends AbstractLayer
                             if (LatLon.locationsCrossDateline(p1, p2))
                             {
                                 int y1 = (int) (height * (p1.getLatitude().degrees + 90) / 180);
-                                gl.glVertex3d(x < width / 2 ? width : 0, (y1 + y) / 2, 0);
+                                gl.glVertex3d(x < width / 2 ? width : 0, (y1 + y) / 2.0, 0);
                                 gl.glEnd();
                                 gl.glBegin(GL2.GL_LINE_STRIP);
-                                gl.glVertex3d(x < width / 2 ? 0 : width, (y1 + y) / 2, 0);
+                                gl.glVertex3d(x < width / 2 ? 0 : width, (y1 + y) / 2.0, 0);
                             }
                             gl.glVertex3d(x, y, 0);
                             p1 = p2;
@@ -511,22 +511,13 @@ public class WorldMapLayer extends AbstractLayer
 
     protected double computeScale(java.awt.Rectangle viewport)
     {
-        if (this.resizeBehavior.equals(AVKey.RESIZE_SHRINK_ONLY))
-        {
-            return Math.min(1d, (this.toViewportScale) * viewport.width / this.getScaledIconWidth());
-        }
-        else if (this.resizeBehavior.equals(AVKey.RESIZE_STRETCH))
-        {
-            return (this.toViewportScale) * viewport.width / this.getScaledIconWidth();
-        }
-        else if (this.resizeBehavior.equals(AVKey.RESIZE_KEEP_FIXED_SIZE))
-        {
-            return 1d;
-        }
-        else
-        {
-            return 1d;
-        }
+        return switch (this.resizeBehavior)
+            {
+                case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1d,
+                    (this.toViewportScale) * viewport.width / this.getScaledIconWidth());
+                case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.getScaledIconWidth();
+                default -> 1d;
+            };
     }
 
     protected double getScaledIconWidth()
@@ -700,7 +691,7 @@ public class WorldMapLayer extends AbstractLayer
      */
     protected ArrayList<LatLon> computeViewFootPrint(DrawContext dc, int steps)
     {
-        ArrayList<LatLon> positions = new ArrayList<LatLon>();
+        ArrayList<LatLon> positions = new ArrayList<>();
         Position eyePos = dc.getView().getEyePosition();
         Angle distance = Angle.fromRadians(
             Math.asin(dc.getView().getFarClipDistance() / (dc.getGlobe().getRadius() + eyePos.getElevation())));

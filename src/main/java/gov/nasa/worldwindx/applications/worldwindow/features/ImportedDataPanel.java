@@ -192,13 +192,9 @@ public class ImportedDataPanel extends ShadedPanel
 
     protected void addLayer(final Layer layer, final LayerPath pathToParent)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                LayerPath path = new LayerPath(pathToParent, layer.getName());
-                doAddLayer(layer, path);
-            }
+        SwingUtilities.invokeLater(() -> {
+            LayerPath path = new LayerPath(pathToParent, layer.getName());
+            doAddLayer(layer, path);
         });
     }
 
@@ -249,7 +245,7 @@ public class ImportedDataPanel extends ShadedPanel
 
     protected class GoToSectorAction extends AbstractAction
     {
-        protected Sector sector;
+        protected final Sector sector;
 
         public GoToSectorAction(Sector sector)
         {

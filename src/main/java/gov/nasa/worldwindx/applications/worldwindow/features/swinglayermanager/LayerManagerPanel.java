@@ -21,7 +21,6 @@ import javax.swing.event.*;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
 import java.util.Enumeration;
 
 /**
@@ -69,20 +68,16 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         this.panel.add(panelTitle, BorderLayout.NORTH);
         this.panel.add(np, BorderLayout.CENTER);
 
-        layerList.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent event)
+        layerList.addPropertyChangeListener(event -> {
+            if (event.getSource() instanceof LayerList) // the layer list lost, gained or swapped layers
             {
-                if (event.getSource() instanceof LayerList) // the layer list lost, gained or swapped layers
-                {
-                    ((LayerTreeModel) layerTree.getModel()).refresh((LayerList) event.getSource());
-                    controller.redraw();
-                }
-                else if (event.getSource() instanceof Layer)
-                {
-                    // Just the state of the layer changed.
-                    layerTree.repaint();
-                }
+                ((LayerTreeModel) layerTree.getModel()).refresh((LayerList) event.getSource());
+                controller.redraw();
+            }
+            else if (event.getSource() instanceof Layer)
+            {
+                // Just the state of the layer changed.
+                layerTree.repaint();
             }
         });
 
@@ -176,7 +171,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
 
             for (Object o : changedNodes)
             {
-                if (o == null || !(o instanceof LayerNode))
+                if (!(o instanceof LayerNode))
                     continue;
 
                 if (o instanceof LayerTreeGroupNode)
@@ -495,7 +490,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         if (WWUtil.isEmpty(layerList.getDisplayName()))
         {
             LayerNode groupNode = this.getModel().findChild(layerList.getDisplayName(), this.getModel().getRootNode());
-            if (groupNode != null && groupNode instanceof LayerTreeGroupNode)
+            if (groupNode instanceof LayerTreeGroupNode)
                 branchRoot = (LayerTreeGroupNode) groupNode;
         }
 

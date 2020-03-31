@@ -297,7 +297,7 @@ public abstract class BufferWrapper
      */
     public static BufferWrapper emptyBufferWrapper()
     {
-        return EMPTY_BUFFER_WRAPPER;
+        return EmptyBufferWrapper.EMPTY_BUFFER_WRAPPER;
     }
 
     /**
@@ -691,7 +691,7 @@ public abstract class BufferWrapper
         {
             if (length <= 0)
             {
-                return EMPTY_BUFFER_WRAPPER;
+                return EmptyBufferWrapper.EMPTY_BUFFER_WRAPPER;
             }
 
             BufferWrapper subBuffer = null;
@@ -1898,10 +1898,10 @@ public abstract class BufferWrapper
     //********************  Empty BufferWrapper  *******************//
     //**************************************************************//
 
-    protected static final BufferWrapper EMPTY_BUFFER_WRAPPER = new EmptyBufferWrapper();
-
     protected static class EmptyBufferWrapper extends BufferWrapper
     {
+        protected static final BufferWrapper EMPTY_BUFFER_WRAPPER = new EmptyBufferWrapper();
+
         public int length()
         {
             return 0;

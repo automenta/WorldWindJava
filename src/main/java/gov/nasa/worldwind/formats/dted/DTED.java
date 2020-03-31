@@ -173,8 +173,8 @@ public class DTED
                 if (elev != DTED_NODATA_VALUE && elev >= DTED_MIN_VALUE && elev <= DTED_MAX_VALUE)
                 {
                     raster.setDoubleAtPosition(y, x, elev);
-                    min = (elev < min) ? elev : min;
-                    max = (elev > max) ? elev : max;
+                    min = Math.min(elev, min);
+                    max = Math.max(elev, max);
                 }
                 else
                 {
@@ -213,7 +213,7 @@ public class DTED
         }
 
         // let's separate DDDMMSSH with spaces and use a standard Angle.fromDMS() method
-        StringBuffer sb = new StringBuffer(angle.trim());
+        StringBuilder sb = new StringBuilder(angle.trim());
         int length = sb.length();
         switch (length)
         {
@@ -334,10 +334,10 @@ public class DTED
         metadata.setValue(AVKey.RASTER_PIXEL, AVKey.RASTER_PIXEL_IS_POINT);
 
         //  Number of longitude lines
-        int width = Integer.valueOf(new String(uhl, 47, 4));
+        int width = Integer.parseInt(new String(uhl, 47, 4));
         metadata.setValue(AVKey.WIDTH, width);
         // Number of latitude points
-        int height = Integer.valueOf(new String(uhl, 51, 4));
+        int height = Integer.parseInt(new String(uhl, 51, 4));
         metadata.setValue(AVKey.HEIGHT, height);
 
         double pixelWidth = 1d / ((double) (width - 1));

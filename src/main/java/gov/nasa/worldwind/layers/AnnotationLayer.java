@@ -22,7 +22,7 @@ import gov.nasa.worldwind.util.Logging;
 public class AnnotationLayer extends AbstractLayer
 {
     protected final java.util.Collection<Annotation> annotations =
-        new java.util.concurrent.ConcurrentLinkedQueue<Annotation>();
+        new java.util.concurrent.ConcurrentLinkedQueue<>();
     protected Iterable<Annotation> annotationsOverride;
     private AnnotationRenderer annotationRenderer = new BasicAnnotationRenderer();
 

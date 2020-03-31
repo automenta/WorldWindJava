@@ -27,8 +27,8 @@ public class LayerManagerApp
 
     public static class AppPanel extends JPanel
     {
-        protected WorldWindow wwd;
-        protected StatusBar statusBar;
+        protected final WorldWindow wwd;
+        protected final StatusBar statusBar;
 
         public AppPanel()
         {
@@ -113,13 +113,7 @@ public class LayerManagerApp
             final AppFrame frame = (AppFrame) appFrameClass.getConstructor().newInstance();
             frame.setTitle(appName);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            java.awt.EventQueue.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    frame.setVisible(true);
-                }
-            });
+            java.awt.EventQueue.invokeLater(() -> frame.setVisible(true));
 
             return frame;
         }

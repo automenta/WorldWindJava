@@ -11,7 +11,7 @@ import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * @author dcollins
@@ -27,12 +27,12 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
 //        protected Tile tile;
 //        protected IntBuffer interiorIndices;
 //        protected IntBuffer outlineIndices;
-        protected int firstPartNumber;
-        protected int numberOfParts;
-        protected int numberOfPoints;
-        protected double[] zValues;
+        protected final int firstPartNumber;
+        protected final int numberOfParts;
+        protected final int numberOfPoints;
+        protected final double[] zValues;
         protected final CompoundVecBuffer pointBuffer;
-        ShapefileRecordMultiPatch.PartType[] partTypes;
+        final ShapefileRecordMultiPatch.PartType[] partTypes;
 
         public Record(ShapefileRecord shapefileRecord) {
             //super(shapefileRenderable, shapefileRecord);
@@ -261,10 +261,7 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
     }
 
     protected void generatePolygon(Position[] locations) {
-        ArrayList<Position> positions = new ArrayList<>();
-        for (Position p : locations) {
-            positions.add(p);
-        }
+        ArrayList<Position> positions = new ArrayList<>(Arrays.asList(locations));
         polygons.add(new gov.nasa.worldwind.render.Polygon(positions));
     }
 

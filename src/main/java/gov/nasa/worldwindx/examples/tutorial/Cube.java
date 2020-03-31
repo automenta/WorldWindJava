@@ -30,12 +30,12 @@ import java.awt.*;
 public class Cube extends ApplicationTemplate implements Renderable
 {
     /** Geographic position of the cube. */
-    protected Position position;
+    protected final Position position;
     /** Length of each face, in meters. */
-    protected double size;
+    protected final double size;
 
     /** Support object to help with pick resolution. */
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
 
     // Determined each frame
     protected long frameTimestamp = -1L;

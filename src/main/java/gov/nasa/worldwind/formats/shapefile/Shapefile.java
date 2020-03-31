@@ -131,19 +131,19 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
 
     public static final String SHAPE_MULTI_PATCH = "gov.nasa.worldwind.formats.shapefile.Shapefile.ShapeMultiPatch";
 
-    protected static List<String> measureTypes = new ArrayList<String>(Arrays.asList(
+    protected static final List<String> measureTypes = new ArrayList<>(Arrays.asList(
         Shapefile.SHAPE_POINT_M, Shapefile.SHAPE_POINT_Z,
         Shapefile.SHAPE_MULTI_POINT_M, Shapefile.SHAPE_MULTI_POINT_Z,
         Shapefile.SHAPE_POLYLINE_M, Shapefile.SHAPE_POLYLINE_Z,
-        Shapefile.SHAPE_POLYGON_M, Shapefile.SHAPE_POLYGON_Z, 
+        Shapefile.SHAPE_POLYGON_M, Shapefile.SHAPE_POLYGON_Z,
         Shapefile.SHAPE_MULTI_PATCH
     ));
 
-    protected static List<String> zTypes = new ArrayList<String>(Arrays.asList(
+    protected static final List<String> zTypes = new ArrayList<>(Arrays.asList(
         Shapefile.SHAPE_POINT_Z,
         Shapefile.SHAPE_MULTI_POINT_Z,
         Shapefile.SHAPE_POLYLINE_Z,
-        Shapefile.SHAPE_POLYGON_Z, 
+        Shapefile.SHAPE_POLYGON_Z,
         Shapefile.SHAPE_MULTI_PATCH
     ));
 
@@ -447,7 +447,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
         if (this.attributeFile == null)
             return null;
 
-        HashSet<String> set = new HashSet<String>();
+        HashSet<String> set = new HashSet<>();
         for (DBaseField field : this.attributeFile.getFields())
         {
             set.add(field.getName());
@@ -962,9 +962,8 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
      *
      * @return a {@link Header} instances.
      *
-     * @throws IOException if the header cannot be read for any reason.
      */
-    protected Header readHeaderFromBuffer(ByteBuffer buffer) throws IOException
+    protected Header readHeaderFromBuffer(ByteBuffer buffer)
     {
         Header header = null;
 
@@ -2166,7 +2165,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
         }
     }
 
-    protected void doExport(String mimeType, Object output) throws IOException, XMLStreamException
+    protected void doExport(String mimeType, Object output) throws XMLStreamException
     {
         XMLStreamWriter xmlWriter = null;
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
@@ -2203,7 +2202,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
             xmlWriter.close();
     }
 
-    protected void exportAsXML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void exportAsXML(XMLStreamWriter xmlWriter) throws XMLStreamException
     {
         xmlWriter.writeStartElement("Shapefile");
         xmlWriter.writeCharacters("\n");
@@ -2231,7 +2230,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
         xmlWriter.writeEndElement(); // Shapefile
     }
 
-    protected void exportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void exportAsKML(XMLStreamWriter xmlWriter)
     {
         while (this.hasNext())
         {

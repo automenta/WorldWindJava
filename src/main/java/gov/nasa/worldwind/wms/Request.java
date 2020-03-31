@@ -23,7 +23,7 @@ public abstract class Request
     // Use a TreeMap to hold the query params so that they'll always be attached to the
     // URL query string in the same order. This allows a simple string comparison to
     // determine whether two url strings address the same document.
-    private final TreeMap<String, String> queryParams = new TreeMap<String, String>();
+    private final TreeMap<String, String> queryParams = new TreeMap<>();
 
     /** Constructs a request for the default service, WMS. */
     protected Request()

@@ -32,7 +32,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
     // interface to the TacticalSymbol interface.
 
     /** Symbol used to render this graphic. */
-    protected TacticalGraphicSymbol symbol;
+    protected final TacticalGraphicSymbol symbol;
 
     /** Indicates whether or not the graphic is highlighted. */
     protected boolean highlighted;
@@ -55,9 +55,9 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
     /** Current frame timestamp. */
     protected long frameTimestamp = -1L;
     /** Attributes to use for the current frame. */
-    protected TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
+    protected final TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
 
-    protected static TacticalSymbolAttributes defaultSymbolAttributes = new BasicTacticalSymbolAttributes();
+    protected static final TacticalSymbolAttributes defaultSymbolAttributes = new BasicTacticalSymbolAttributes();
 
     /**
      * Create a new point graphic.
@@ -194,7 +194,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
      */
     public Iterable<? extends Position> getPositions()
     {
-        return Arrays.asList(this.getPosition());
+        return Collections.singletonList(this.getPosition());
     }
 
     /**
@@ -551,7 +551,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
      */
     public static List<String> getSupportedGraphics()
     {
-        List<String> graphics = new ArrayList<String>();
+        List<String> graphics = new ArrayList<>();
         graphics.addAll(getTacGrpGraphics());
         graphics.addAll(getMetocGraphics());
         graphics.addAll(getEmsGraphics());

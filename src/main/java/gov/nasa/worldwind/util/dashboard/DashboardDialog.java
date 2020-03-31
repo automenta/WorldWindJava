@@ -38,15 +38,11 @@ public class DashboardDialog extends JDialog
         this.setResizable(false);
         this.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 
-        wwd.addRenderingListener(new RenderingListener()
-        {
-            public void stageChanged(RenderingEvent event)
+        wwd.addRenderingListener(event -> {
+            if (runContinuously && event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)
+                && event.getSource() instanceof WorldWindow)
             {
-                if (runContinuously && event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)
-                    && event.getSource() instanceof WorldWindow)
-                {
-                    ((WorldWindow) event.getSource()).redraw();
-                }
+                ((WorldWindow) event.getSource()).redraw();
             }
         });
     }
@@ -134,33 +130,29 @@ public class DashboardDialog extends JDialog
         final JCheckBox runContinuouslyButton = new JCheckBox("Run Continuously");
         panel.add(runContinuouslyButton);
 
-        ActionListener listener = new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
+        ActionListener listener = e -> {
+            boolean tris = triangleButton.isSelected();
+            boolean skirts = skirtsButton.isSelected();
+
+            if (tris && e.getSource() == triangleButton)
             {
-                boolean tris = triangleButton.isSelected();
-                boolean skirts = skirtsButton.isSelected();
-
-                if (tris && e.getSource() == triangleButton)
-                {
-                    wwd.getModel().setShowWireframeInterior(true);
-                    wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(false);
-                    skirtsButton.setSelected(false);
-                }
-                else if (skirts && e.getSource() == skirtsButton)
-                {
-                    wwd.getModel().setShowWireframeInterior(true);
-                    wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(true);
-                    triangleButton.setSelected(false);
-                }
-                else
-                {
-                    wwd.getModel().setShowWireframeInterior(false);
-                    wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(true);
-                }
-
-                wwd.redraw();
+                wwd.getModel().setShowWireframeInterior(true);
+                wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(false);
+                skirtsButton.setSelected(false);
             }
+            else if (skirts && e.getSource() == skirtsButton)
+            {
+                wwd.getModel().setShowWireframeInterior(true);
+                wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(true);
+                triangleButton.setSelected(false);
+            }
+            else
+            {
+                wwd.getModel().setShowWireframeInterior(false);
+                wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(true);
+            }
+
+            wwd.redraw();
         };
         triangleButton.addActionListener(listener);
         skirtsButton.addActionListener(listener);
@@ -178,31 +170,19 @@ public class DashboardDialog extends JDialog
 //            }
 //        });
 
-        tileButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                wwd.getModel().setShowWireframeExterior(!wwd.getModel().isShowWireframeExterior());
-                wwd.redraw();
-            }
+        tileButton.addActionListener(e -> {
+            wwd.getModel().setShowWireframeExterior(!wwd.getModel().isShowWireframeExterior());
+            wwd.redraw();
         });
 
-        extentsButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                wwd.getModel().setShowTessellationBoundingVolumes(!wwd.getModel().isShowTessellationBoundingVolumes());
-                wwd.redraw();
-            }
+        extentsButton.addActionListener(e -> {
+            wwd.getModel().setShowTessellationBoundingVolumes(!wwd.getModel().isShowTessellationBoundingVolumes());
+            wwd.redraw();
         });
 
-        runContinuouslyButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                runContinuously = runContinuouslyButton.isSelected();
-                wwd.redraw();
-            }
+        runContinuouslyButton.addActionListener(e -> {
+            runContinuously = runContinuouslyButton.isSelected();
+            wwd.redraw();
         });
 
         return panel;

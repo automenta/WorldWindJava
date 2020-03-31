@@ -37,8 +37,8 @@ public class WebBrowserBalloons extends ApplicationTemplate
 
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected HotSpotController hotSpotController;
-        protected BalloonController balloonController;
+        protected final HotSpotController hotSpotController;
+        protected final BalloonController balloonController;
 
         public AppFrame()
         {

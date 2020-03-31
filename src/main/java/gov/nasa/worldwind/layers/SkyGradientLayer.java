@@ -29,8 +29,8 @@ public class SkyGradientLayer extends AbstractLayer
     // TODO: make configurable
     protected double thickness = 100e3; // Atmosphere thickness
     //protected float[] horizonColor = new float[] { 0.66f, 0.70f, 0.81f, 1.0f }; // horizon color (same as fog)
-    protected float[] horizonColor = new float[] {0.76f, 0.76f, 0.80f, 1.0f}; // horizon color
-    protected float[] zenithColor = new float[] {0.26f, 0.47f, 0.83f, 1.0f}; // zenith color
+    protected final float[] horizonColor = new float[] {0.76f, 0.76f, 0.80f, 1.0f}; // horizon color
+    protected final float[] zenithColor = new float[] {0.26f, 0.47f, 0.83f, 1.0f}; // zenith color
 
     /** Renders an atmosphere around the globe */
     public SkyGradientLayer()

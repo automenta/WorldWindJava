@@ -75,11 +75,11 @@ class RPFGenerator
         }
 
         Object o = params.getValue(WAVELET_IMAGE_THRESHOLD);
-        if (o == null || !(o instanceof Integer))
+        if (!(o instanceof Integer))
             params.setValue(WAVELET_IMAGE_THRESHOLD, 256);
 
         o = params.getValue(WAVELET_PRELOAD_SIZE);
-        if (o == null || !(o instanceof Integer) || !WWMath.isPowerOfTwo((Integer) o))
+        if (!(o instanceof Integer) || !WWMath.isPowerOfTwo((Integer) o))
             params.setValue(WAVELET_PRELOAD_SIZE, 32);
 
         return params;
@@ -97,7 +97,7 @@ class RPFGenerator
 
     private FrameFile[] loadFrameFiles(RPFFileIndex fileIndex)
     {
-        Collection<FrameFile> list = new ArrayList<FrameFile>();
+        Collection<FrameFile> list = new ArrayList<>();
 
         long frameId = -1;
         RPFFileIndex.Table fileTable = fileIndex.getRPFFileTable();
@@ -150,12 +150,12 @@ class RPFGenerator
     //
     private static class FrameFile
     {
-        public long id;
-        public File rpfFile;
-        public File waveletFile;
-        public Sector sector;
+        public final long id;
+        public final File rpfFile;
+        public final File waveletFile;
+        public final Sector sector;
         public WaveletCodec codec;
-        public RPFFrameFilename frameFile;
+        public final RPFFrameFilename frameFile;
         public RPFFrameTransform transform;
 
         public FrameFile(long id, File rpfFile, File waveletFile, Sector sector)
@@ -267,7 +267,7 @@ class RPFGenerator
                      else
                      {
                          int maxRes = footprintX;
-                         maxRes = (footprintY > maxRes) ? footprintY : maxRes;
+                         maxRes = Math.max(footprintY, maxRes);
                          int power = (int) Math.ceil(Math.log(maxRes) / Math.log(2.));
                          int res = (int) Math.pow(2., power);
                          res = Math.max(1, res);
@@ -352,24 +352,24 @@ class RPFGenerator
          */
         private String validate(AVList params)
         {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
 
             Object o = params.getValue(BBOX);
-            if (o == null || !(o instanceof Sector))
+            if (!(o instanceof Sector))
                 sb.append("bounding box");
 
             o = params.getValue(WIDTH);
-            if (o == null || !(o instanceof Integer) || ((Integer) o) < 1)
+            if (!(o instanceof Integer) || ((Integer) o) < 1)
                 sb.append("width");
 
             o = params.getValue(HEIGHT);
-            if (o == null || !(o instanceof Integer) || ((Integer) o) < 1)
+            if (!(o instanceof Integer) || ((Integer) o) < 1)
                 sb.append("height");
 
             if (sb.length() == 0)
                 return null;
 
-            return "Inavlid RPFGenerator service request fields: " + sb.toString();
+            return "Inavlid RPFGenerator service request fields: " + sb;
         }
 
         private AVList initParams(AVList params)

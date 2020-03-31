@@ -313,7 +313,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable
         this.height = (Integer) this.getValue(AVKey.HEIGHT);
 
         Object o = this.getValue(AVKey.GDAL_AREA);
-        this.area = (o != null && o instanceof GDAL.Area) ? (GDAL.Area) o : null;
+        this.area = (o instanceof GDAL.Area) ? (GDAL.Area) o : null;
 
         String proj = ds.GetProjectionRef();
         proj = (null == proj || 0 == proj.length()) ? ds.GetProjection() : proj;
@@ -704,8 +704,8 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable
         int clipWidth = (int) Math.floor(lr.getX() - ul.getX());
         int clipHeight = (int) Math.floor(lr.getY() - ul.getY());
 
-        clipWidth = (clipWidth > srcWidth) ? srcWidth : clipWidth;
-        clipHeight = (clipHeight > srcHeight) ? srcHeight : clipHeight;
+        clipWidth = Math.min(clipWidth, srcWidth);
+        clipHeight = Math.min(clipHeight, srcHeight);
 
         Driver drv = gdal.GetDriverByName("MEM");
         if (null == drv)
@@ -1112,7 +1112,6 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable
                     {
                         gdal.ReprojectImage(srcDS, maskDS, s_srs_wkt, t_srs_wkt, gdalconst.GRA_NearestNeighbour);
                     }
-                    maskTime = System.currentTimeMillis() - start;
                 }
                 else
                 {
@@ -1124,8 +1123,8 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable
                     {
                         gdal.ReprojectImage(srcDS, maskDS);
                     }
-                    maskTime = System.currentTimeMillis() - start;
                 }
+                maskTime = System.currentTimeMillis() - start;
 
                 String error = GDALUtils.getErrorMessage();
                 if (error != null)
@@ -1197,8 +1196,8 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable
             return "";
         }
 
-        StringBuffer sb = new StringBuffer("{ ");
-        Vector<String> keys = new Vector<String>();
+        StringBuilder sb = new StringBuilder("{ ");
+        Vector<String> keys = new Vector<>();
 
         Set<Map.Entry<String, Object>> entries = list.getEntries();
         for (Map.Entry<String, Object> entry : entries)

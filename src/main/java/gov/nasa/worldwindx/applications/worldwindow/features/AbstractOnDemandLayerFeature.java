@@ -16,7 +16,7 @@ import gov.nasa.worldwindx.applications.worldwindow.core.layermanager.LayerPath;
  */
 public abstract class AbstractOnDemandLayerFeature extends AbstractFeature
 {
-    protected String group;
+    protected final String group;
     protected Layer layer;
     protected boolean on = false;
 

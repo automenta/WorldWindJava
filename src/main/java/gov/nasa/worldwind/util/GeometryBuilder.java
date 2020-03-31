@@ -363,17 +363,12 @@ public class GeometryBuilder
 
         // fill subset of index buffer
         int[] subArray = new int[BOX_INDEX_COUNT / 6];
-        for (int i = 0; i < BOX_INDEX_COUNT / 6; i++)
-        {
-            subArray[i] = boxFacesIndexArray[face * BOX_INDEX_COUNT / 6 + i];
-        }
+        System.arraycopy(boxFacesIndexArray, face * 36 / 6 + 0, subArray, 0, BOX_INDEX_COUNT / 6);
         indexBuffer.put(subArray, 0, BOX_INDEX_COUNT / 6);
 
         float[] vertexSubset = new float[3 * BOX_VERTEX_COUNT / 6];
-        for (int i = 0; i < 3 * BOX_VERTEX_COUNT / 6; i++)
-        {
-            vertexSubset[i] = boxVertexArray[face * 3 * BOX_VERTEX_COUNT / 6 + i];
-        }
+        System.arraycopy(boxVertexArray, face * 3 * BOX_VERTEX_COUNT / 6 + 0, vertexSubset, 0,
+            3 * BOX_VERTEX_COUNT / 6);
         vertexBuffer.put(vertexSubset, 0, 3 * BOX_VERTEX_COUNT / 6);
 
         // The static box tessellation is assumed to be viewed from the outside. If the orientation is set to
@@ -572,17 +567,11 @@ public class GeometryBuilder
 
         // fill subset of index buffer
         int[] subArray = new int[faceIndexCount];
-        for (int i = 0; i < faceIndexCount; i++)
-        {
-            subArray[i] = pyramidFacesIndexArray[faceIndicesOffset + i];
-        }
+        System.arraycopy(pyramidFacesIndexArray, faceIndicesOffset + 0, subArray, 0, faceIndexCount);
         indexBuffer.put(subArray, 0, faceIndexCount);
 
         float[] vertexSubset = new float[3 * faceVertexCount];
-        for (int i = 0; i < 3 * faceVertexCount; i++)
-        {
-            vertexSubset[i] = pyramidVertexArray[faceVerticesOffset + i];
-        }
+        System.arraycopy(pyramidVertexArray, faceVerticesOffset + 0, vertexSubset, 0, 3 * faceVertexCount);
         vertexBuffer.put(vertexSubset, 0, 3 * faceVertexCount);
 
         // The static box tessellation is assumed to be viewed from the outside. If the orientation is set to
@@ -2487,15 +2476,14 @@ public class GeometryBuilder
                     vertex = j + slices * (stacks + 1);
                     dest[index++] = vertex - 1;
                     vertex = j + 1;
-                    dest[index++] = vertex;
                 }
                 else //(this.orientation == OUTSIDE)
                 {
                     vertex = j + slices * (stacks + 1);
                     dest[index++] = vertex;
                     vertex = j;
-                    dest[index++] = vertex;
                 }
+                dest[index++] = vertex;
             }
             for (i = 0; i <= slices; i++)
             {
@@ -3113,15 +3101,14 @@ public class GeometryBuilder
                 {
                     vertex = l;
                     dest[index++] = vertex;
-                    dest[index++] = vertex;
                 }
                 else // (this.orientation == OUTSIDE)
                 {
                     vertex = l - 1;
                     dest[index++] = vertex;
                     vertex = l + 1;
-                    dest[index++] = vertex;
                 }
+                dest[index++] = vertex;
             }
             for (s = 0; s <= slices; s++)
             {
@@ -3673,7 +3660,6 @@ public class GeometryBuilder
             throw new IllegalArgumentException(message);
         }
 
-        double a = angle;
         double dr = (outerRadius - innerRadius) / pillars;
         double globeRadius = terrain.getGlobe().getRadius();
         FloatBuffer destBuffer = FloatBuffer.wrap(dest);
@@ -3683,7 +3669,7 @@ public class GeometryBuilder
             for (int p = 0; p <= pillars; p++)
             {
                 double r = (innerRadius + p * dr) / globeRadius;
-                LatLon ll = LatLon.greatCircleEndPosition(center, a, r);
+                LatLon ll = LatLon.greatCircleEndPosition(center, angle, r);
                 this.append(terrain, ll, altitudes[s], terrainConformant[s], refPoint, destBuffer);
             }
         }
@@ -3840,15 +3826,14 @@ public class GeometryBuilder
                     vertex = pillars + s * (pillars + 1);
                     dest[index++] = vertex;
                     vertex = s * (pillars + 1);
-                    dest[index++] = vertex;
                 }
                 else // (this.orientation == OUTSIDE)
                 {
                     vertex = pillars + (s - 1) * (pillars + 1);
                     dest[index++] = vertex;
                     vertex = (s + 1) * (pillars + 1);
-                    dest[index++] = vertex;
                 }
+                dest[index++] = vertex;
             }
             for (p = 0; p <= pillars; p++)
             {
@@ -4306,15 +4291,14 @@ public class GeometryBuilder
                     vertex = (j - 1) * slices;
                     dest[index++] = vertex;
                     vertex = j * slices;
-                    dest[index++] = vertex;
                 }
                 else // (this.orientation == OUTSIDE)
                 {
                     vertex = (j - 1) * slices;
                     dest[index++] = vertex + slices;
                     vertex = (j - 1) * slices;
-                    dest[index++] = vertex;
                 }
+                dest[index++] = vertex;
             }
             for (i = 0; i <= slices; i++)
             {
@@ -4982,15 +4966,14 @@ public class GeometryBuilder
                     vertex = (l - 1) * slices;
                     dest[index++] = vertex + slices;
                     vertex = (l - 1) * slices;
-                    dest[index++] = vertex;
                 }
                 else // (this.orientation == OUTSIDE)
                 {
                     vertex = (l - 1) * slices;
                     dest[index++] = vertex;
                     vertex = l * slices;
-                    dest[index++] = vertex;
                 }
+                dest[index++] = vertex;
             }
             for (s = 0; s <= slices; s++)
             {
@@ -5354,7 +5337,7 @@ public class GeometryBuilder
         Integer split;
 
         indexCount = itb.getIndexCount();
-        edgeMap = new HashMap<Edge, Integer>();
+        edgeMap = new HashMap<>();
 
         // Iterate over each triangle, and split the edge of each triangle. Each edge is split exactly once. The
         // index of the new vertex created by a split is stored in edgeMap.
@@ -5762,10 +5745,10 @@ public class GeometryBuilder
         double x0, y0, x1, y1, x2, y2;   // actual x and y point values of those vertices
         double phi0, phi1, phi2;
 
-        Integer newVertex, wrapVertex;
+        int newVertex, wrapVertex;
         int wrapIndex = -1;     //  track index of the vertex that will be replaced by a new "wrapped" vertex
         // keep track of newly created duplicate vertices:
-        Map<Integer, Integer> duplicates = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> duplicates = new HashMap<>();
 
         // for each indexed triangle, determine if phi (longitude) of any of the vertices is on the
         // opposite side of 2PI from others (the "wrap" vertex)
@@ -5811,18 +5794,15 @@ public class GeometryBuilder
             {
                 wrapVertex = itb.indices.get(wrapIndex);
                 //look to see if this vertex has been duplicated already
-                newVertex = duplicates.get(wrapVertex);
-                if (newVertex != null)
-                    itb.indices.put(wrapIndex, newVertex);   // replace the old vertex with the duplicate
-                else
-                {
+                newVertex = duplicates.getOrDefault(wrapVertex, Integer.MIN_VALUE);
+                if (newVertex == Integer.MIN_VALUE) {
                     // create a duplicate of the wrapIndex vertex and get its index newVertex
                     newVertex = duplicateVertex(itb, wrapVertex);
                     // place the new vertex in the duplicates structure
                     duplicates.put(wrapVertex, newVertex);
                     // now replace the index at the wrapIndex with the index of the new duplicate
-                    itb.indices.put(wrapIndex, newVertex);
                 }
+                itb.indices.put(wrapIndex, newVertex);   // replace the old vertex with the duplicate
                 wrapIndex = -1;     // reset the wrapVertex
             }
         }
@@ -6647,7 +6627,7 @@ public class GeometryBuilder
         Integer split;
 
         indexCount = ita.indexCount;
-        edgeMap = new HashMap<Edge, Integer>();
+        edgeMap = new HashMap<>();
 
         // Iterate over each triangle, and split the edge of each triangle. Each edge is split exactly once. The
         // index of the new vertex created by a split is stored in edgeMap.
@@ -6878,14 +6858,13 @@ public class GeometryBuilder
             {
                 faceIndices[0] = indices[indexPos + i - 2];
                 faceIndices[1] = indices[indexPos + i - 1];
-                faceIndices[2] = indices[indexPos + i];
             }
             else
             {
                 faceIndices[0] = indices[indexPos + i - 1];
                 faceIndices[1] = indices[indexPos + i - 2];
-                faceIndices[2] = indices[indexPos + i];
             }
+            faceIndices[2] = indices[indexPos + i];
             // Compute the normal for this face.
             this.facenorm(vertices, faceIndices[0], faceIndices[1], faceIndices[2], norm);
             // Add this face normal to the normal at each vertex.
@@ -7155,15 +7134,14 @@ public class GeometryBuilder
                     vertex = uStacks + vi * (uStacks + 1);
                     dest[index++] = vertexPos + vertex;
                     vertex = vi * (uStacks + 1);
-                    dest[index++] = vertexPos + vertex;
                 }
                 else // (this.orientation == OUTSIDE)
                 {
                     vertex = uStacks + (vi - 1) * (uStacks + 1);
                     dest[index++] = vertexPos + vertex;
                     vertex = vi * (uStacks + 1) + (uStacks + 1);
-                    dest[index++] = vertexPos + vertex;
                 }
+                dest[index++] = vertexPos + vertex;
             }
             for (ui = 0; ui <= uStacks; ui++)
             {
@@ -7458,9 +7436,7 @@ public class GeometryBuilder
      * @param majorRadius the ellipse's radius along the x axis.
      * @param minorRadius the ellipse's radius along the y axis.
      * @param slices      the number of slices in the ellipse.
-     *
      * @return a buffer containing the ellipse's x and y locations.
-     *
      * @throws IllegalArgumentException if any of <code>majorRadius</code>, <code>minorRadius</code>, or
      *                                  <code>slices</code> are less than zero.
      */
@@ -7540,9 +7516,7 @@ public class GeometryBuilder
      * @param leaderX     the x-coordinate the leader points to.
      * @param leaderY     the y-coordinate the leader points to.
      * @param leaderWidth the leader triangle's width.
-     *
      * @return a buffer containing the ellipse's x and y locations.
-     *
      * @throws IllegalArgumentException if any of <code>majorRadius</code>, <code>minorRadius</code>,
      *                                  <code>slices</code>, or <code>leaderWidth</code> are less than zero.
      */
@@ -7693,9 +7667,7 @@ public class GeometryBuilder
      * @param y      the y-coordinate of the rectangle's lower left corner.
      * @param width  the rectangle's width.
      * @param height the rectangle's height.
-     *
      * @return a buffer containing the rectangle's x and y locations.
-     *
      * @throws IllegalArgumentException if either <code>width</code> or <code>height</code> are less than zero.
      */
     public FloatBuffer makeRectangle(float x, float y, float width, float height)
@@ -7756,10 +7728,9 @@ public class GeometryBuilder
      * @param height       the rectangle's height.
      * @param cornerRadius the rectangle's rounded corner radius, or 0 to disable rounded corners.
      * @param cornerSlices the number of slices in each rounded corner, or 0 to disable rounded corners.
-     *
      * @return a buffer containing the rectangle's x and y locations.
-     *
-     * @throws IllegalArgumentException if any of <code>width</code>, <code>height</code>, <code>cornerRadius</code>, or
+     * @throws IllegalArgumentException if any of <code>width</code>, <code>height</code>, <code>cornerRadius</code>,
+     *                                  or
      *                                  <code>cornerSlices</code> are less than zero.
      */
     public FloatBuffer makeRectangle(float x, float y, float width, float height, float cornerRadius, int cornerSlices)
@@ -7840,7 +7811,8 @@ public class GeometryBuilder
 
     /**
      * Creates a vertex buffer for a two-dimensional rectangle at the specified location, with the specified size, and
-     * with an optional leader pointing to the specified leader location. The rectangle's lower left corner is placed at
+     * with an optional leader pointing to the specified leader location. The rectangle's lower left corner is placed
+     * at
      * <code>(x, y)</code>, and its upper right corner is placed at <code>(x + width, y + height)</code>.
      * <p>
      * If the specified <code>leaderWidth</code> is greater than zero and the location <code>(leaderX, leaderY)</code>
@@ -7862,9 +7834,7 @@ public class GeometryBuilder
      * @param leaderX     the x-coordinate the leader points to.
      * @param leaderY     the y-coordinate the leader points to.
      * @param leaderWidth the leader triangle's width.
-     *
      * @return a buffer containing the rectangle's x and y locations.
-     *
      * @throws IllegalArgumentException if any of <code>width</code>, <code>height</code>, or <code>leaderWidth</code>
      *                                  are less than zero.
      */
@@ -8066,10 +8036,11 @@ public class GeometryBuilder
      * If the specified <code>leaderWidth</code> is greater than zero and the location <code>(leaderX, leaderY)</code>
      * is outside of the rectangle, the rectangle has a triangle attached to one side with with its top pointing at
      * <code>(leaderX, leaderY)</code>. Otherwise this returns a rectangle with no leader and is equivalent to calling
-     * <code>{@link #makeRectangle(float, float, float, float, float, int)}</code>. The leader is attached at the center
-     * of either the top, bottom, left, or right side, depending on the leader's location relative to the rectangle. The
-     * leader width is limited in size by the side it is attached to. For example, if the leader is attached to the
-     * rectangle's bottom, its width is limited by the rectangle's width minus any area used by the rounded corners.
+     * <code>{@link #makeRectangle(float, float, float, float, float, int)}</code>. The leader is attached at the
+     * center of either the top, bottom, left, or right side, depending on the leader's location relative to the
+     * rectangle. The leader width is limited in size by the side it is attached to. For example, if the leader is
+     * attached to the rectangle's bottom, its width is limited by the rectangle's width minus any area used by the
+     * rounded corners.
      * <p>
      * The returned buffer contains pairs of xy coordinates representing the location of each vertex in the rectangle in
      * a counter-clockwise winding order relative to the z axis. The buffer may be rendered in OpenGL as either a
@@ -8084,9 +8055,7 @@ public class GeometryBuilder
      * @param leaderX      the x-coordinate the leader points to.
      * @param leaderY      the y-coordinate the leader points to.
      * @param leaderWidth  the leader triangle's width.
-     *
      * @return a buffer containing the rectangle's x and y locations.
-     *
      * @throws IllegalArgumentException if any of <code>width</code>, <code>height</code>, <code>cornerRadius</code>,
      *                                  <code>cornerSlices</code>, or <code>leaderWidth</code> are less than zero.
      */
@@ -8409,7 +8378,6 @@ public class GeometryBuilder
      * @param y2      the rectangle's maximum y-coordinate.
      * @param leaderX the leader's x-coordinate.
      * @param leaderY the leader's y-coordinate.
-     *
      * @return a four bit code indicating the leader's location relative to the rectangle.
      */
     protected int computeLeaderLocationCode(float x1, float y1, float x2, float y2, float leaderX, float leaderY)

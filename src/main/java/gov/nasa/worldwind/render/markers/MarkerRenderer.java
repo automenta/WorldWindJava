@@ -31,9 +31,9 @@ public class MarkerRenderer
     private boolean enablePickSizeReturn = false;
     // Rendering state.
     private long frameTimeStamp = 0;
-    private final ArrayList<Vec4> surfacePoints = new ArrayList<Vec4>();
+    private final ArrayList<Vec4> surfacePoints = new ArrayList<>();
     private MarkerAttributes previousAttributes; // used only by drawSeparated and drawMarker
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
 
     public double getElevation()
     {
@@ -115,7 +115,7 @@ public class MarkerRenderer
         }
         else
         {
-            markerList = new ArrayList<Marker>();
+            markerList = new ArrayList<>();
             for (Marker m : markers)
             {
                 markerList.add(m);
@@ -407,12 +407,12 @@ public class MarkerRenderer
 
     protected class OrderedMarker implements OrderedRenderable
     {
-        protected int index;
-        protected Marker marker;
-        protected Vec4 point;
-        protected double radius;
-        protected Layer layer;
-        protected double eyeDistance;
+        protected final int index;
+        protected final Marker marker;
+        protected final Vec4 point;
+        protected final double radius;
+        protected final Layer layer;
+        protected final double eyeDistance;
 
         public OrderedMarker(int index, Marker marker, Vec4 point, double radius, Layer layer, double eyeDistance)
         {
@@ -478,7 +478,7 @@ public class MarkerRenderer
 
         // Draw as many as we can in a batch to save ogl state switching.
         Object next = dc.peekOrderedRenderables();
-        while (next != null && next instanceof OrderedMarker && ((OrderedMarker) next).getRenderer() == this)
+        while (next instanceof OrderedMarker && ((OrderedMarker) next).getRenderer() == this)
         {
             dc.pollOrderedRenderables(); // take it off the queue
 
@@ -495,7 +495,7 @@ public class MarkerRenderer
 
         // Draw as many as we can in a batch to save ogl state switching.
         Object next = dc.peekOrderedRenderables();
-        while (next != null && next instanceof OrderedMarker && ((OrderedMarker) next).getRenderer() == this
+        while (next instanceof OrderedMarker && ((OrderedMarker) next).getRenderer() == this
             && ((OrderedMarker) next).layer == uMarker.layer)
         {
             dc.pollOrderedRenderables(); // take it off the queue

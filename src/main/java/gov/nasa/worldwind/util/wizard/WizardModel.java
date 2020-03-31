@@ -29,7 +29,7 @@ public class WizardModel extends WizardProperties
 
     public WizardModel()
     {
-        this.panels = new HashMap<Object, WizardPanelDescriptor>();
+        this.panels = new HashMap<>();
     }
 
     public WizardPanelDescriptor getWizardPanel(Object id)
@@ -48,7 +48,7 @@ public class WizardModel extends WizardProperties
     public WizardPanelDescriptor getCurrentPanel()
     {
         Object value = getProperty(CURRENT_PANEL_DESCRIPTOR);
-        return (value != null && value instanceof WizardPanelDescriptor) ? (WizardPanelDescriptor) value : null;
+        return (value instanceof WizardPanelDescriptor) ? (WizardPanelDescriptor) value : null;
     }
 
     public boolean setCurrentPanel(Object id)
@@ -161,6 +161,6 @@ public class WizardModel extends WizardProperties
     public Icon getIconProperty(String propertyName)
     {
         Object value = getProperty(propertyName);
-        return (value != null && value instanceof Icon) ? (Icon) value : null;
+        return (value instanceof Icon) ? (Icon) value : null;
     }
 }

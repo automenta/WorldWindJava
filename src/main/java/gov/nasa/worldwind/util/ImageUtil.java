@@ -31,8 +31,8 @@ import java.util.*;
  */
 public class ImageUtil
 {
-    public static int NEAREST_NEIGHBOR_INTERPOLATION = 1;
-    public static int BILINEAR_INTERPOLATION = 2;
+    public static final int NEAREST_NEIGHBOR_INTERPOLATION = 1;
+    public static final int BILINEAR_INTERPOLATION = 2;
     public static int IMAGE_TILE_SIZE = 1024; // default size to make subimages
     public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
@@ -469,7 +469,7 @@ public class ImageUtil
             throw new IllegalArgumentException(message);
         }
 
-        ArrayList<LatLon> corners = new ArrayList<LatLon>();
+        ArrayList<LatLon> corners = new ArrayList<>();
 
         // Lower left corner.
         Vec4 vec = new Vec4(0, imageHeight, 1).transformBy3(imageToGeographic);
@@ -603,7 +603,7 @@ public class ImageUtil
         BarycentricTriangle sourceLatLon = new BarycentricTriangle(geoPoints[0], geoPoints[1], geoPoints[2]);
         BarycentricTriangle sourcePixels = new BarycentricTriangle(imagePoints[0], imagePoints[1], imagePoints[2]);
 
-        ArrayList<LatLon> extremes = new ArrayList<LatLon>(4);
+        ArrayList<LatLon> extremes = new ArrayList<>(4);
         // Lower left corner.
         double[] bc = sourcePixels.getBarycentricCoords(new Vec4(0, sourceImage.getHeight(), 0));
         extremes.add(sourceLatLon.getLocation(bc));
@@ -653,7 +653,7 @@ public class ImageUtil
         BarycentricQuadrilateral sourcePixels = new BarycentricQuadrilateral(imagePoints[0], imagePoints[1],
             imagePoints[2], imagePoints[3]);
 
-        ArrayList<LatLon> extremes = new ArrayList<LatLon>(4);
+        ArrayList<LatLon> extremes = new ArrayList<>(4);
         // Lower left corner.
         double[] bc = sourcePixels.getBarycentricCoords(new Vec4(0, sourceImage.getHeight(), 0));
         extremes.add(sourceLatLon.getLocation(bc));
@@ -1276,11 +1276,11 @@ public class ImageUtil
         double yPixelSize = 0;
 
         Object o = values.getValue(WorldFile.WORLD_FILE_X_PIXEL_SIZE);
-        if (o != null && o instanceof Double)
+        if (o instanceof Double)
             xPixelSize = (Double) o;
 
         o = values.getValue(WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
-        if (o != null && o instanceof Double)
+        if (o instanceof Double)
             yPixelSize = (Double) o;
 
         // TODO: validate that all these values exist and are valid

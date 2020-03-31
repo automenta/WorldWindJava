@@ -1116,7 +1116,7 @@ public class AnnotationAttributes implements Restorable
         AnnotationAttributes dest)
     {
         // Map legacy versions of the Annotation constants and FrameFactory constants to the new AVKey constants.
-        Map<String, String> legacySupport = new HashMap<String, String>();
+        Map<String, String> legacySupport = new HashMap<>();
         legacySupport.put("render.Annotation.RepeatNone", AVKey.REPEAT_NONE);
         legacySupport.put("render.Annotation.RepeatX", AVKey.REPEAT_X);
         legacySupport.put("render.Annotation.RepeatY", AVKey.REPEAT_Y);

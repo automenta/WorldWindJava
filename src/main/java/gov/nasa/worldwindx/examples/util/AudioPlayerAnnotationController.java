@@ -248,13 +248,7 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
     protected void startPlayerUpdate()
     {
         this.playerUpdateTimer = new javax.swing.Timer((int) PLAYER_UPDATE_DELAY_MILLIS,
-            new java.awt.event.ActionListener()
-            {
-                public void actionPerformed(java.awt.event.ActionEvent actionEvent)
-                {
-                    onPlayerUpdate();
-                }
-            });
+            actionEvent -> onPlayerUpdate());
         this.playerUpdateTimer.start();
     }
 

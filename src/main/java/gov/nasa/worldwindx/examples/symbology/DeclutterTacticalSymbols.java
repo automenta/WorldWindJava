@@ -28,8 +28,8 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected RenderableLayer symbolLayer;
-        protected TacticalSymbolAttributes sharedHighlightAttrs;
+        protected final RenderableLayer symbolLayer;
+        protected final TacticalSymbolAttributes sharedHighlightAttrs;
 
         public AppFrame()
         {
@@ -37,50 +37,45 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate
              * Define an LOD selector to adjust a symbol's attributes and properties during rendering in order to
              * declutter symbols.
              */
-            TacticalSymbol.LODSelector lodSelector = new TacticalSymbol.LODSelector()
-            {
-                @Override
-                public void selectLOD(DrawContext dc, TacticalSymbol symbol, double eyeDistance)
+            TacticalSymbol.LODSelector lodSelector = (dc, symbol, eyeDistance) -> {
+                // Show text modifiers only when eye distance is less than 50 km.
+                symbol.setShowTextModifiers(eyeDistance < 50e3);
+
+                // Scale the symbol when the eye distance is between 1 and 100 km. The symbol is scaled between
+                // 100% and 25% of its normal size.
+
+                // The scale is an attribute, so determine which attributes -- normal or highlight -- need to be
+                // set for this rendering.
+                TacticalSymbolAttributes attributes = symbol.isHighlighted()
+                    ? symbol.getHighlightAttributes() : symbol.getAttributes();
+
+                double minScaleDistance = 1e3;
+                double maxScaleDistance = 100e3;
+
+                if (eyeDistance > minScaleDistance && eyeDistance < maxScaleDistance)
                 {
-                    // Show text modifiers only when eye distance is less than 50 km.
-                    symbol.setShowTextModifiers(eyeDistance < 50e3);
+                    double scale = 0.25 + (maxScaleDistance - eyeDistance) / (maxScaleDistance - minScaleDistance);
+                    attributes.setScale(scale);
+                }
+                else
+                {
+                    attributes.setScale(1.0);
+                }
 
-                    // Scale the symbol when the eye distance is between 1 and 100 km. The symbol is scaled between
-                    // 100% and 25% of its normal size.
-
-                    // The scale is an attribute, so determine which attributes -- normal or highlight -- need to be
-                    // set for this rendering.
-                    TacticalSymbolAttributes attributes = symbol.isHighlighted()
-                        ? symbol.getHighlightAttributes() : symbol.getAttributes();
-
-                    double minScaleDistance = 1e3;
-                    double maxScaleDistance = 100e3;
-
-                    if (eyeDistance > minScaleDistance && eyeDistance < maxScaleDistance)
-                    {
-                        double scale = 0.25 + (maxScaleDistance - eyeDistance) / (maxScaleDistance - minScaleDistance);
-                        attributes.setScale(scale);
-                    }
-                    else
-                    {
-                        attributes.setScale(1.0);
-                    }
-
-                    // Show only the symbol's alternate representation when the eye distance is greater than 100 km.
-                    if (eyeDistance < 100e3)
-                    {
-                        symbol.setShowGraphicModifiers(true);
-                        ((MilStd2525TacticalSymbol) symbol).setShowFrame(true);
-                        ((MilStd2525TacticalSymbol) symbol).setShowIcon(true);
-                    }
-                    else
-                    {
-                        // Setting the symbol's show-frame and  show-icon properties to false causes the symbol's
-                        // alternate representation to be drawn. The alternate representation is a filled circle.
-                        symbol.setShowGraphicModifiers(false);
-                        ((MilStd2525TacticalSymbol) symbol).setShowFrame(false);
-                        ((MilStd2525TacticalSymbol) symbol).setShowIcon(false);
-                    }
+                // Show only the symbol's alternate representation when the eye distance is greater than 100 km.
+                if (eyeDistance < 100e3)
+                {
+                    symbol.setShowGraphicModifiers(true);
+                    ((MilStd2525TacticalSymbol) symbol).setShowFrame(true);
+                    ((MilStd2525TacticalSymbol) symbol).setShowIcon(true);
+                }
+                else
+                {
+                    // Setting the symbol's show-frame and  show-icon properties to false causes the symbol's
+                    // alternate representation to be drawn. The alternate representation is a filled circle.
+                    symbol.setShowGraphicModifiers(false);
+                    ((MilStd2525TacticalSymbol) symbol).setShowFrame(false);
+                    ((MilStd2525TacticalSymbol) symbol).setShowIcon(false);
                 }
             };
 

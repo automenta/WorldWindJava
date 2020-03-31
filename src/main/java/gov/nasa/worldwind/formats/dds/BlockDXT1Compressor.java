@@ -371,9 +371,9 @@ public class BlockDXT1Compressor
         int insetG = (maxColor.g - minColor.g) >> 4;
         int insetB = (maxColor.b - minColor.b) >> 4;
 
-        minColor.r = (minColor.r + insetR < 255) ? (minColor.r + insetR) : 255;
-        minColor.g = (minColor.g + insetG < 255) ? (minColor.g + insetG) : 255;
-        minColor.b = (minColor.b + insetB < 255) ? (minColor.b + insetB) : 255;
+        minColor.r = Math.min(minColor.r + insetR, 255);
+        minColor.g = Math.min(minColor.g + insetG, 255);
+        minColor.b = Math.min(minColor.b + insetB, 255);
 
         maxColor.r = (maxColor.r > insetR) ? (maxColor.r - insetR) : 0;
         maxColor.g = (maxColor.g > insetG) ? (maxColor.g - insetG) : 0;
@@ -487,18 +487,18 @@ public class BlockDXT1Compressor
 
     protected static void maxColorComponents(Color32 c1, Color32 c2, Color32 max)
     {
-        max.a = (c1.a > c2.a) ? c1.a : c2.a;
-        max.r = (c1.r > c2.r) ? c1.r : c2.r;
-        max.g = (c1.g > c2.g) ? c1.g : c2.g;
-        max.b = (c1.b > c2.b) ? c1.b : c2.b;
+        max.a = Math.max(c1.a, c2.a);
+        max.r = Math.max(c1.r, c2.r);
+        max.g = Math.max(c1.g, c2.g);
+        max.b = Math.max(c1.b, c2.b);
     }
 
     protected static void minColorComponents(Color32 c1, Color32 c2, Color32 min)
     {
-        min.a = (c1.a > c2.a) ? c2.a : c1.a;
-        min.r = (c1.r > c2.r) ? c2.r : c1.r;
-        min.g = (c1.g > c2.g) ? c2.g : c1.g;
-        min.b = (c1.b > c2.b) ? c2.b : c1.b;
+        min.a = Math.min(c1.a, c2.a);
+        min.r = Math.min(c1.r, c2.r);
+        min.g = Math.min(c1.g, c2.g);
+        min.b = Math.min(c1.b, c2.b);
     }
 
     protected static void copyColorComponents(Color32 src, Color32 dest)

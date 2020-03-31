@@ -79,12 +79,12 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         protected static final Color DEFAULT_INTERIOR_COLOR = new Color(255, 255, 255, 64);
         protected static final Color DEFAULT_BORDER_COLOR = Color.WHITE;
 
-        protected Rectangle rect;
-        protected Point startPoint;
-        protected Point endPoint;
+        protected final Rectangle rect;
+        protected final Point startPoint;
+        protected final Point endPoint;
         protected Color interiorColor;
         protected Color borderColor;
-        protected OGLStackHandler BEogsh = new OGLStackHandler();
+        protected final OGLStackHandler BEogsh = new OGLStackHandler();
 
         public SelectionRectangle()
         {
@@ -294,8 +294,8 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
     protected WorldWindow wwd;
     protected Layer layer;
     protected SelectionRectangle selectionRect;
-    protected List<Object> selectedObjects = new ArrayList<Object>();
-    protected List<MessageListener> messageListeners = new ArrayList<MessageListener>();
+    protected final List<Object> selectedObjects = new ArrayList<>();
+    protected final List<MessageListener> messageListeners = new ArrayList<>();
     protected boolean armed;
 
     public ScreenSelector(WorldWindow worldWindow)

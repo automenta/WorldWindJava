@@ -102,7 +102,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_SPL_LNE_AMB);
+        return Collections.singletonList(TacGrpSidc.C2GM_SPL_LNE_AMB);
     }
 
     /**
@@ -494,7 +494,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
 
         // Compute the arc positions
         int intervals = this.getIntervals();
-        List<Position> positions = new ArrayList<Position>(intervals);
+        List<Position> positions = new ArrayList<>(intervals);
 
         for (int i = 0; i < intervals; i++)
         {

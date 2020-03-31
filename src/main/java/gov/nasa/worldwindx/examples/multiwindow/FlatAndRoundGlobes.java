@@ -103,8 +103,8 @@ public class FlatAndRoundGlobes
 
     protected static class WWFrame extends JFrame
     {
-        protected Dimension canvasSize = new Dimension(800, 600);
-        protected WWPanel wwPanel;
+        protected final Dimension canvasSize = new Dimension(800, 600);
+        protected final WWPanel wwPanel;
 
         public WWFrame(WorldWindowGLCanvas shareWith, Model model, String displayName, String position)
         {
@@ -123,8 +123,8 @@ public class FlatAndRoundGlobes
 
     protected static class WWPanel extends JPanel
     {
-        protected WorldWindowGLCanvas wwd;
-        protected HighlightController highlightController;
+        protected final WorldWindowGLCanvas wwd;
+        protected final HighlightController highlightController;
 
         public WWPanel(WorldWindowGLCanvas shareWith, Dimension size, Model model)
         {
@@ -178,7 +178,7 @@ public class FlatAndRoundGlobes
     protected Path makePath(Position startPosition, Angle heading, Angle length, int numPositions)
     {
         double dLength = length.radians / (numPositions - 1);
-        java.util.List<Position> positions = new ArrayList<Position>(numPositions);
+        java.util.List<Position> positions = new ArrayList<>(numPositions);
 
         for (int i = 0; i < numPositions - 1; i++)
         {
@@ -226,7 +226,7 @@ public class FlatAndRoundGlobes
         highlightAttributes.setOutlineOpacity(1);
 
         // Create a polygon, set some of its properties and set its attributes.
-        ArrayList<Position> pathPositions = new ArrayList<Position>();
+        ArrayList<Position> pathPositions = new ArrayList<>();
         pathPositions.add(Position.fromDegrees(28, -106, 3e4));
         pathPositions.add(Position.fromDegrees(35, -104, 3e4));
         pathPositions.add(Position.fromDegrees(35, -107, 9e4));
@@ -247,7 +247,7 @@ public class FlatAndRoundGlobes
         pgon.setRotation(-90d);
         layer.addRenderable(pgon);
 
-        ArrayList<Position> pathLocations = new ArrayList<Position>();
+        ArrayList<Position> pathLocations = new ArrayList<>();
         pathLocations.add(Position.fromDegrees(28, -110, 5e4));
         pathLocations.add(Position.fromDegrees(35, -108, 5e4));
         pathLocations.add(Position.fromDegrees(35, -111, 5e4));
@@ -295,7 +295,7 @@ public class FlatAndRoundGlobes
         capAttributes.setEnableLighting(true);
 
         // Create a path, set some of its properties and set its attributes.
-        ArrayList<Position> pathPositions = new ArrayList<Position>();
+        ArrayList<Position> pathPositions = new ArrayList<>();
         pathPositions.add(Position.fromDegrees(36, -106, 3e4));
         pathPositions.add(Position.fromDegrees(43, -104, 3e4));
         pathPositions.add(Position.fromDegrees(43, -107, 9e4));
@@ -315,7 +315,7 @@ public class FlatAndRoundGlobes
         pgon.setCapAttributes(capAttributes);
         layer.addRenderable(pgon);
 
-        ArrayList<LatLon> pathLocations = new ArrayList<LatLon>();
+        ArrayList<LatLon> pathLocations = new ArrayList<>();
         pathLocations.add(LatLon.fromDegrees(36, -110));
         pathLocations.add(LatLon.fromDegrees(43, -108));
         pathLocations.add(LatLon.fromDegrees(43, -111));
@@ -337,12 +337,6 @@ public class FlatAndRoundGlobes
         if (Configuration.isMacOS())
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
 
-        java.awt.EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                new FlatAndRoundGlobes();
-            }
-        });
+        java.awt.EventQueue.invokeLater(FlatAndRoundGlobes::new);
     }
 }

@@ -95,7 +95,7 @@ public abstract class SurfaceTileRenderer implements Disposable
             throw new IllegalStateException(message);
         }
 
-        ArrayList<SurfaceTile> al = new ArrayList<SurfaceTile>(1);
+        ArrayList<SurfaceTile> al = new ArrayList<>(1);
         al.add(tile);
         this.renderTiles(dc, al);
         al.clear();

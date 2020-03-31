@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class ContourList extends WWObjectImpl implements Combinable
 {
-    protected ArrayList<Iterable<? extends LatLon>> contours = new ArrayList<Iterable<? extends LatLon>>();
+    protected final ArrayList<Iterable<? extends LatLon>> contours = new ArrayList<>();
     protected Sector sector;
 
     public ContourList()

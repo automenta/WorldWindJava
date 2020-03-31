@@ -176,34 +176,24 @@ public final class Intersection // Instances are immutable
      */
     public static Queue<Intersection> sort(final Vec4 refPoint, List<Intersection> listA, List<Intersection> listB)
     {
-        PriorityQueue<Intersection> sorted = new PriorityQueue<Intersection>(10, new Comparator<Intersection>()
-        {
-            public int compare(Intersection losiA, Intersection losiB)
-            {
-                if (losiA.intersectionPoint == null || losiB.intersectionPoint == null)
-                    return 0;
+        PriorityQueue<Intersection> sorted = new PriorityQueue<>(10, (losiA, losiB) -> {
+            if (losiA.intersectionPoint == null || losiB.intersectionPoint == null)
+                return 0;
 
-                double dA = refPoint.distanceTo3(losiA.intersectionPoint);
-                double dB = refPoint.distanceTo3(losiB.intersectionPoint);
+            double dA = refPoint.distanceTo3(losiA.intersectionPoint);
+            double dB = refPoint.distanceTo3(losiB.intersectionPoint);
 
-                return dA < dB ? -1 : dA == dB ? 0 : 1;
-            }
+            return Double.compare(dA, dB);
         });
 
         if (listA != null)
         {
-            for (Intersection intersection : listA)
-            {
-                sorted.add(intersection);
-            }
+            sorted.addAll(listA);
         }
 
         if (listB != null)
         {
-            for (Intersection intersection : listB)
-            {
-                sorted.add(intersection);
-            }
+            sorted.addAll(listB);
         }
 
         return sorted;

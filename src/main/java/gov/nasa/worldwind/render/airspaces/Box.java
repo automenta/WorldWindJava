@@ -112,7 +112,7 @@ public class Box extends AbstractAirspace
 
     private void makeDefaultDetailLevels()
     {
-        List<DetailLevel> levels = new ArrayList<DetailLevel>();
+        List<DetailLevel> levels = new ArrayList<>();
         double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
 
         DetailLevel level;
@@ -301,7 +301,7 @@ public class Box extends AbstractAirspace
     protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration)
     {
         List<LatLon> locations = this.makeCapLocations(globe, DEFAULT_PILLARS, DEFAULT_STACKS);
-        List<Vec4> points = new ArrayList<Vec4>();
+        List<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, locations, points);
 
         return points;
@@ -342,7 +342,7 @@ public class Box extends AbstractAirspace
             throw new IllegalArgumentException(message);
         }
 
-        List<LatLon> locations = new ArrayList<LatLon>(2);
+        List<LatLon> locations = new ArrayList<>(2);
         locations.add(this.getLocations()[0]);
         locations.add(this.getLocations()[1]);
 
@@ -464,15 +464,15 @@ public class Box extends AbstractAirspace
             DetailLevel level = this.computeDetailLevel(dc);
 
             Object o = level.getValue(PILLARS);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 lengthSegments = (Integer) o;
 
             o = level.getValue(STACKS);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 widthSegments = (Integer) o;
 
             o = level.getValue(DISABLE_TERRAIN_CONFORMANCE);
-            if (o != null && o instanceof Boolean && (Boolean) o)
+            if (o instanceof Boolean && (Boolean) o)
                 terrainConformant[0] = terrainConformant[1] = false;
         }
 
@@ -528,10 +528,10 @@ public class Box extends AbstractAirspace
 
     private static class BoxGeometry implements Cacheable
     {
-        public Geometry sideGeometry = new Geometry();
-        public Geometry capGeometry = new Geometry();
-        public Geometry outlineIndices = new Geometry();
-        public Geometry centerLineIndices = new Geometry();
+        public final Geometry sideGeometry = new Geometry();
+        public final Geometry capGeometry = new Geometry();
+        public final Geometry outlineIndices = new Geometry();
+        public final Geometry centerLineIndices = new Geometry();
         public Vec4 referencePoint;
 
         @Override
@@ -799,7 +799,7 @@ public class Box extends AbstractAirspace
 
     private List<LatLon> makeSideLocations(Globe globe, int lengthSegments, int widthSegments)
     {
-        ArrayList<LatLon> locations = new ArrayList<LatLon>();
+        ArrayList<LatLon> locations = new ArrayList<>();
         BoxCorners corners = this.computeBoxCorners(globe);
 
         // begin side
@@ -837,7 +837,7 @@ public class Box extends AbstractAirspace
 
     private List<LatLon> makeCapLocations(Globe globe, int lengthSegments, int widthSegments)
     {
-        ArrayList<LatLon> locations = new ArrayList<LatLon>();
+        ArrayList<LatLon> locations = new ArrayList<>();
         BoxCorners corners = this.computeBoxCorners(globe);
 
         // begin row

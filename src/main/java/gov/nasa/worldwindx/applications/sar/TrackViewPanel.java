@@ -11,9 +11,7 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.beans.*;
 
 /**
@@ -71,14 +69,10 @@ public class TrackViewPanel extends JPanel
         this.analysisPanel = analysisPanel;
         initComponents();
         this.updateEnabledState();
-        this.trackPropertyChangeListener = new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent event)
+        this.trackPropertyChangeListener = event -> {
+            if (event.getPropertyName().equals(TrackController.TRACK_MODIFY))
             {
-                if (event.getPropertyName().equals(TrackController.TRACK_MODIFY))
-                {
-                    updatePositionList(false);
-                }
+                updatePositionList(false);
             }
         };
     }
@@ -346,14 +340,8 @@ public class TrackViewPanel extends JPanel
         if (player != null)
             return;
 
-        player = new Timer(50, new ActionListener()
-        {
-            // Animate the view motion by controlling the positionSpinner and positionDelta
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                runPlayer();
-            }
-        });
+        // Animate the view motion by controlling the positionSpinner and positionDelta
+        player = new Timer(50, actionEvent -> runPlayer());
     }
 
     private void runPlayer()
@@ -543,13 +531,7 @@ public class TrackViewPanel extends JPanel
                 this.positionSpinner.setMinimumSize(size);
                 this.positionSpinner.setPreferredSize(size);
                 this.positionSpinner.setMaximumSize(size);
-                this.positionSpinner.addChangeListener(new ChangeListener()
-                {
-                    public void stateChanged(ChangeEvent e)
-                    {
-                        positionSpinnerStateChanged();
-                    }
-                });
+                this.positionSpinner.addChangeListener(e -> positionSpinnerStateChanged());
                 positionControlPanel.add(this.positionSpinner, BorderLayout.WEST);
                 positionControlPanel.add(Box.createHorizontalStrut(10));
 
@@ -558,13 +540,7 @@ public class TrackViewPanel extends JPanel
                 this.positionSlider.setMaximum(1000);
                 this.positionSlider.setValue(0);
                 this.positionSlider.setEnabled(false);
-                this.positionSlider.addChangeListener(new ChangeListener()
-                {
-                    public void stateChanged(ChangeEvent e)
-                    {
-                        positionSliderStateChanged();
-                    }
-                });
+                this.positionSlider.addChangeListener(e -> positionSliderStateChanged());
                 positionControlPanel.add(this.positionSlider, BorderLayout.CENTER);
             }
             positionPanel.add(positionControlPanel);
@@ -579,13 +555,7 @@ public class TrackViewPanel extends JPanel
                 this.fastReverseButton = new JButton();
                 this.fastReverseButton.setText("<<");
                 this.fastReverseButton.setEnabled(false);
-                this.fastReverseButton.addActionListener(new ActionListener()
-                {
-                    public void actionPerformed(ActionEvent e)
-                    {
-                        fastReverseButtonActionPerformed();
-                    }
-                });
+                this.fastReverseButton.addActionListener(e -> fastReverseButtonActionPerformed());
                 vcrPanel.add(this.fastReverseButton);
                 vcrPanel.add(Box.createHorizontalStrut(3));
 
@@ -593,13 +563,7 @@ public class TrackViewPanel extends JPanel
                 this.reverseButton = new JButton();
                 this.reverseButton.setText("<");
                 this.reverseButton.setEnabled(false);
-                this.reverseButton.addActionListener(new ActionListener()
-                {
-                    public void actionPerformed(ActionEvent e)
-                    {
-                        reverseButtonActionPerformed();
-                    }
-                });
+                this.reverseButton.addActionListener(e -> reverseButtonActionPerformed());
                 vcrPanel.add(this.reverseButton);
                 vcrPanel.add(Box.createHorizontalStrut(3));
 
@@ -607,13 +571,7 @@ public class TrackViewPanel extends JPanel
                 this.stopButton = new JButton();
                 this.stopButton.setText("Stop");
                 this.stopButton.setEnabled(false);
-                this.stopButton.addActionListener(new ActionListener()
-                {
-                    public void actionPerformed(ActionEvent e)
-                    {
-                        stopButtonActionPerformed();
-                    }
-                });
+                this.stopButton.addActionListener(e -> stopButtonActionPerformed());
                 vcrPanel.add(this.stopButton);
                 vcrPanel.add(Box.createHorizontalStrut(3));
 
@@ -622,13 +580,7 @@ public class TrackViewPanel extends JPanel
                 this.forwardButton.setText(">");
                 this.forwardButton.setBorder(UIManager.getBorder("Button.border"));
                 this.forwardButton.setEnabled(false);
-                this.forwardButton.addActionListener(new ActionListener()
-                {
-                    public void actionPerformed(ActionEvent e)
-                    {
-                        forwardButtonActionPerformed();
-                    }
-                });
+                this.forwardButton.addActionListener(e -> forwardButtonActionPerformed());
                 vcrPanel.add(this.forwardButton);
                 vcrPanel.add(Box.createHorizontalStrut(3));
 
@@ -636,13 +588,7 @@ public class TrackViewPanel extends JPanel
                 this.fastForwardButton = new JButton();
                 this.fastForwardButton.setText(">>");
                 this.fastForwardButton.setEnabled(false);
-                this.fastForwardButton.addActionListener(new ActionListener()
-                {
-                    public void actionPerformed(ActionEvent e)
-                    {
-                        fastForwardButtonActionPerformed();
-                    }
-                });
+                this.fastForwardButton.addActionListener(e -> fastForwardButtonActionPerformed());
                 vcrPanel.add(this.fastForwardButton);
 
                 //--------
@@ -667,7 +613,7 @@ public class TrackViewPanel extends JPanel
                 String[] speedValues = new String[numValues];
                 for (int i = 1; i <= numValues; i++)
                 {
-                    speedValues[i - 1] = "" + (i * 10);
+                    speedValues[i - 1] = String.valueOf(i * 10);
                 }
                 this.speedSpinner = new JSpinner();
                 this.speedSpinner.setModel(new SpinnerListModel(speedValues));

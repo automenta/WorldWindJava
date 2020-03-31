@@ -49,7 +49,7 @@ public class XALCountry extends XALAbstractObject
     protected void addAddressLine(XALAddressLine o)
     {
         if (this.addressLines == null)
-            this.addressLines = new ArrayList<XALAddressLine>();
+            this.addressLines = new ArrayList<>();
 
         this.addressLines.add(o);
     }
@@ -62,7 +62,7 @@ public class XALCountry extends XALAbstractObject
     protected void addCountryNameCode(XALCountryNameCode o)
     {
         if (this.countryNameCodes == null)
-            this.countryNameCodes = new ArrayList<XALCountryNameCode>();
+            this.countryNameCodes = new ArrayList<>();
 
         this.countryNameCodes.add(o);
     }
@@ -75,7 +75,7 @@ public class XALCountry extends XALAbstractObject
     protected void addCountryName(XALCountryName o)
     {
         if (this.countryNames == null)
-            this.countryNames = new ArrayList<XALCountryName>();
+            this.countryNames = new ArrayList<>();
 
         this.countryNames.add(o);
     }

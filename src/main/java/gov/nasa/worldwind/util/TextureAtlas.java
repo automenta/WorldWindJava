@@ -141,21 +141,21 @@ public class TextureAtlas
         /** Indicates the element's key. Initialized during construction. */
         public final Object key;
         /** Indicates the element's bounding rectangle within the texture atlas. Initialized during construction. */
-        public Rect rect;
+        public final Rect rect;
         /** Indicates the element's image X offset withing the bounding rectangle. Initialized during construction. */
-        public int imageOffsetX;
+        public final int imageOffsetX;
         /** Indicates the element's image Y offset withing the bounding rectangle. Initialized during construction. */
-        public int imageOffsetY;
+        public final int imageOffsetY;
         /**
          * Indicates the element's image width. May be smaller than the bounding rectangle's width. Initialized during
          * construction.
          */
-        public int imageWidth;
+        public final int imageWidth;
         /**
          * Indicates the element's image height. May be smaller than the bounding rectangle's height. Initialized during
          * construction.
          */
-        public int imageHeight;
+        public final int imageHeight;
         /** Indicates the last time this entry was used. */
         public long lastUsed;
 
@@ -201,7 +201,7 @@ public class TextureAtlas
                 throw new IllegalArgumentException(msg);
             }
 
-            return this.lastUsed < that.lastUsed ? -1 : this.lastUsed == that.lastUsed ? 0 : 1;
+            return Long.compare(this.lastUsed, that.lastUsed);
         }
     }
 
@@ -243,7 +243,7 @@ public class TextureAtlas
      * Indicates the maximum amount of vertical fragmentation this texture atlas allows before compacting its elements.
      * Initialized to DEFAULT_MAX_VERTICAL_FRAGMENTATION.
      */
-    protected double maxVerticalFragmentation = DEFAULT_MAX_VERTICAL_FRAGMENTATION;
+    protected final double maxVerticalFragmentation = DEFAULT_MAX_VERTICAL_FRAGMENTATION;
     /**
      * The JOGL rectangle packer used by this texture atlas to determine how to pack the elements within this texture
      * atlas' backing image. Initialized during construction.
@@ -253,7 +253,7 @@ public class TextureAtlas
      * Maps element keys to their corresponding entry. This enables the texture atlas to access the information about
      * each element in constant time using its key. Initialized to a new HashMap.
      */
-    protected Map<Object, Entry> entryMap = new HashMap<Object, Entry>();
+    protected final Map<Object, Entry> entryMap = new HashMap<>();
     /**
      * Indicates the rectangle within this texture atlas' backing image that is currently out-of-sync with its
      * corresponding OpenGL texture. The dirty rectangle is <code>null</code> when this texture atlas' backing image is
@@ -264,7 +264,7 @@ public class TextureAtlas
      * Indicates the color used to fill regions of this texture atlas that do not contain a sub-image element. Initially
      * transparent black (R=0, G=0, B=0, A=0).
      */
-    protected Color clearColor = new Color(0, 0, 0, 0);
+    protected final Color clearColor = new Color(0, 0, 0, 0);
     /**
      * Temporary AWT graphics instance used to move image elements during a beginMovement/endMovement block. This
      * property is assigned in beginMovement, used in move, then cleared in endMovement. Initially <code>null</code>.
@@ -282,7 +282,7 @@ public class TextureAtlas
      * explicitly disposing them avoids polluting the GPU resource cache with orphaned textures that are used only by
      * this texture atlas.
      */
-    protected Queue<Object> disposedTextureKeys = new ArrayDeque<Object>();
+    protected final Queue<Object> disposedTextureKeys = new ArrayDeque<>();
 
     /**
      * Constructs a texture atlas with the specified initial and maximum dimensions. All dimensions must be greater than

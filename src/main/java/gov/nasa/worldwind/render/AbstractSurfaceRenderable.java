@@ -97,7 +97,7 @@ public abstract class AbstractSurfaceRenderable extends AbstractSurfaceObject
         minLat = minLat.degrees >= -90 ? minLat : Angle.NEG90;
         maxLat = maxLat.degrees <= 90 ? maxLat : Angle.POS90;
 
-        java.util.List<Sector> sectors = new ArrayList<Sector>();
+        java.util.List<Sector> sectors = new ArrayList<>();
         if (minLon.degrees >= -180 && maxLon.degrees <= 180)
         {
             // No date line crossing on both sides

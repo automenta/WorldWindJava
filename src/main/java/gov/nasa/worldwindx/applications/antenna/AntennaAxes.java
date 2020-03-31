@@ -17,7 +17,6 @@ import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;
 import java.awt.*;
-import java.io.IOException;
 import java.nio.*;
 
 /**
@@ -33,8 +32,8 @@ public class AntennaAxes extends AbstractShape
     public static final int DISPLAY_MODE_FILL = GL2.GL_FILL;
     public static final int DISPLAY_MODE_LINE = GL2.GL_LINE;
 
-    protected int nHeightIntervals = 10;
-    protected int nThetaIntervals = 20;
+    protected final int nHeightIntervals = 10;
+    protected final int nThetaIntervals = 20;
 
     protected Position position = Position.ZERO;
     protected Angle azimuth;
@@ -514,7 +513,7 @@ public class AntennaAxes extends AbstractShape
         double dHeight = this.getLength() / this.nHeightIntervals;
         double dTheta = 2d * Math.PI / this.nThetaIntervals;
 
-        Double r = this.getRadius();
+        double r = this.getRadius();
 
         for (int ih = 0; ih <= this.nHeightIntervals; ih++)
         {
@@ -532,10 +531,9 @@ public class AntennaAxes extends AbstractShape
 
                 double x = r * Math.sin(theta);
                 double z = r * Math.cos(theta);
-                double y = height;
 
                 double xa = Math.abs(x);
-                double ya = Math.abs(y);
+                double ya = Math.abs(height);
                 double za = Math.abs(z);
                 if (xa > xMax)
                     xMax = xa;
@@ -544,7 +542,7 @@ public class AntennaAxes extends AbstractShape
                 if (za > zMax)
                     zMax = za;
 
-                shapeData.vertices.put((float) x).put((float) y).put((float) z);
+                shapeData.vertices.put((float) x).put((float) height).put((float) z);
             }
         }
 
@@ -670,7 +668,7 @@ public class AntennaAxes extends AbstractShape
     }
 
     @Override
-    public java.util.List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException
+    public java.util.List<Intersection> intersect(Line line, Terrain terrain)
     {
         return null;
     }
@@ -682,7 +680,7 @@ public class AntennaAxes extends AbstractShape
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void doExportAsKML(XMLStreamWriter xmlWriter)
     {
         throw new UnsupportedOperationException("KML output not supported for AntennaModel");
     }

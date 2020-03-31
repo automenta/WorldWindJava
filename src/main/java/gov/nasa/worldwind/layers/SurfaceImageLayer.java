@@ -30,11 +30,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SurfaceImageLayer extends RenderableLayer
 {
-    protected ImageTiler imageTiler = new ImageTiler();
-    protected ConcurrentHashMap<String, ArrayList<SurfaceImage>> imageTable =
-        new ConcurrentHashMap<String, ArrayList<SurfaceImage>>();
+    protected final ImageTiler imageTiler = new ImageTiler();
+    protected final ConcurrentHashMap<String, ArrayList<SurfaceImage>> imageTable =
+        new ConcurrentHashMap<>();
 
-    protected BasicDataRasterReaderFactory factory = new BasicDataRasterReaderFactory();
+    protected final BasicDataRasterReaderFactory factory = new BasicDataRasterReaderFactory();
 
     @Override
     public void dispose()
@@ -58,11 +58,10 @@ public class SurfaceImageLayer extends RenderableLayer
      * @param imagePath the path to the image file.
      *
      * @throws IllegalArgumentException if the image path is null.
-     * @throws IOException              if an error occurs reading the image file.
      * @throws IllegalStateException    if an error occurs while reprojecting or otherwise processing the image.
      * @throws WWRuntimeException       if the image type is unsupported.
      */
-    public void addImage(final String imagePath) throws IOException
+    public void addImage(final String imagePath)
     {
         DataRaster raster = this.openDataRaster(imagePath, null);
         final BufferedImage image = this.getBufferedImage(raster);
@@ -147,7 +146,7 @@ public class SurfaceImageLayer extends RenderableLayer
             if (raster.getSector() == null && params.hasKey(AVKey.SECTOR))
             {
                 Object o = params.getValue(AVKey.SECTOR);
-                if (null != o && o instanceof Sector)
+                if (o instanceof Sector)
                 {
                     Sector sector = (Sector) o;
 
@@ -189,11 +188,10 @@ public class SurfaceImageLayer extends RenderableLayer
      * @param sector    the geographic location of the image.
      *
      * @throws IllegalArgumentException if the image path or sector is null.
-     * @throws IOException              if an error occurs reading the image file.
      * @throws WWRuntimeException       if the image type is unsupported.
      */
     @SuppressWarnings({"UnusedDeclaration"})
-    public void addImage(String imagePath, Sector sector) throws IOException, WWRuntimeException
+    public void addImage(String imagePath, Sector sector) throws WWRuntimeException
     {
         AVList params = new AVListImpl();
 
@@ -255,7 +253,7 @@ public class SurfaceImageLayer extends RenderableLayer
         if (this.imageTable.contains(name))
             this.removeImage(name);
 
-        final ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
+        final ArrayList<SurfaceImage> surfaceImages = new ArrayList<>();
         this.imageTable.put(name, surfaceImages);
         this.imageTiler.tileImage(image, sector, new ImageTiler.ImageTilerListener()
         {
@@ -293,10 +291,9 @@ public class SurfaceImageLayer extends RenderableLayer
      *                  upper-right, upper-left.
      *
      * @throws IllegalArgumentException if the image path or sector is null.
-     * @throws IOException              if an error occurs reading the image file.
      * @throws WWRuntimeException       if the image type is unsupported.
      */
-    public void addImage(String imagePath, List<? extends LatLon> corners) throws IOException, WWRuntimeException
+    public void addImage(String imagePath, List<? extends LatLon> corners) throws WWRuntimeException
     {
         AVList params = new AVListImpl();
 
@@ -362,7 +359,7 @@ public class SurfaceImageLayer extends RenderableLayer
         if (this.imageTable.contains(name))
             this.removeImage(name);
 
-        final ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
+        final ArrayList<SurfaceImage> surfaceImages = new ArrayList<>();
         this.imageTable.put(name, surfaceImages);
         this.imageTiler.tileImage(image, corners, new ImageTiler.ImageTilerListener()
         {

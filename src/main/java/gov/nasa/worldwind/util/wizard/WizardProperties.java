@@ -19,7 +19,7 @@ public class WizardProperties
 
     public WizardProperties()
     {
-        this.properties = new HashMap<String, Object>();
+        this.properties = new HashMap<>();
         this.propertyChangeSupport = new PropertyChangeSupport(this);
     }
 
@@ -31,19 +31,19 @@ public class WizardProperties
     public String getStringProperty(String propertyName)
     {
         Object value = getProperty(propertyName);
-        return (value != null && value instanceof String) ? (String) value : null;
+        return (value instanceof String) ? (String) value : null;
     }
 
     public Boolean getBooleanProperty(String propertyName)
     {
         Object value = getProperty(propertyName);
-        return (value != null && value instanceof Boolean) ? (Boolean) value : null;
+        return (value instanceof Boolean) ? (Boolean) value : null;
     }
 
     public Integer getIntegerProperty(String propertyName)
     {
         Object value = getProperty(propertyName);
-        return (value != null && value instanceof Integer) ? (Integer) value : null;
+        return (value instanceof Integer) ? (Integer) value : null;
     }
 
     public void setProperty(String propertyName, Object newValue)
@@ -51,7 +51,7 @@ public class WizardProperties
         if (propertyName != null)
         {
             Object oldValue = this.properties.get(propertyName);
-            if (newValue != null ? !newValue.equals(oldValue) : oldValue != null)
+            if (!Objects.equals(newValue, oldValue))
             {
                 this.properties.put(propertyName, newValue);
                 firePropertyChange(propertyName, oldValue, newValue);

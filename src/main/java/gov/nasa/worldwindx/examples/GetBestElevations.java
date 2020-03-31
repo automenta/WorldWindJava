@@ -92,7 +92,7 @@ public class GetBestElevations extends ApplicationTemplate {
                         return;
                     }
 
-                    annotation.setText(String.format("Elevation = "));
+                    annotation.setText("Elevation = ");
                     getWwd().redraw();
 
                     // Run the elevation query in a separate thread to avoid locking up the user interface

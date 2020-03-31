@@ -93,14 +93,10 @@ public class MultiResolutionPath extends Path
      * eye distance to the path is greater than 10e3, a value of 2 when the eye distance is greater than 1e3 meters but
      * less then 10e3, and a value of 1 when the eye distance is less than 1e3.
      */
-    protected SkipCountComputer skipCountComputer = new SkipCountComputer()
-    {
-        public int computeSkipCount(DrawContext dc, PathData pathData)
-        {
-            double d = getDistanceMetric(dc, pathData);
+    protected SkipCountComputer skipCountComputer = (dc, pathData) -> {
+        double d = getDistanceMetric(dc, pathData);
 
-            return d > 10e3 ? 4 : d > 1e3 ? 2 : 1;
-        }
+        return d > 10e3 ? 4 : d > 1e3 ? 2 : 1;
     };
 
     /**

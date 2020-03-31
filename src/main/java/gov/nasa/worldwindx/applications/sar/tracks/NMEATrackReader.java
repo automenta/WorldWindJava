@@ -25,11 +25,11 @@ public class NMEATrackReader extends AbstractTrackReader
         return "National Marine Electronics Association (*.nmea)";
     }
 
-    protected Track[] doRead(InputStream inputStream) throws IOException
+    protected Track[] doRead(InputStream inputStream)
     {
         NmeaReader reader = new NmeaReader();
         reader.readStream(inputStream, null); // un-named stream
-        return this.asArray(reader.getTracks());
+        return AbstractTrackReader.asArray(reader.getTracks());
     }
 
     protected boolean acceptFilePath(String filePath)

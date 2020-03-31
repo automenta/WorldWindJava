@@ -44,8 +44,8 @@ public class ImageLibrary
         instance = library;
     }
 
-    private final ConcurrentHashMap<String, BufferedImage> imageMap = new ConcurrentHashMap<String, BufferedImage>();
-    private final ConcurrentHashMap<String, ImageIcon> iconMap = new ConcurrentHashMap<String, ImageIcon>();
+    private final ConcurrentHashMap<String, BufferedImage> imageMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ImageIcon> iconMap = new ConcurrentHashMap<>();
 
     public ImageLibrary()
     {

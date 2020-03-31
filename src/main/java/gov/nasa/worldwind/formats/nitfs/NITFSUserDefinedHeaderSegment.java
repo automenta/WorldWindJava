@@ -12,8 +12,8 @@ package gov.nasa.worldwind.formats.nitfs;
  */
 public abstract class NITFSUserDefinedHeaderSegment extends NITFSSegment
 {
-    protected  int overflow;
-    protected  String dataTag;
+    protected final int overflow;
+    protected final String dataTag;
 
     public NITFSUserDefinedHeaderSegment(java.nio.ByteBuffer buffer)
     {

@@ -45,7 +45,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory
 
     public static class TextDataFactory extends VPFBasicDataBufferFactory
     {
-        protected String charsetName;
+        protected final String charsetName;
 
         public TextDataFactory(String charsetName)
         {
@@ -96,7 +96,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory
 
     public abstract static class VecDataFactory extends VPFBasicDataBufferFactory
     {
-        protected int coordsPerElem;
+        protected final int coordsPerElem;
 
         public VecDataFactory(int coordsPerElem)
         {
@@ -249,8 +249,8 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory
 
     protected static class GenericDataBuffer implements VPFDataBuffer
     {
-        protected GenericReader reader;
-        protected Object[] array;
+        protected final GenericReader reader;
+        protected final Object[] array;
         protected int position;
 
         public GenericDataBuffer(GenericReader reader, int numRows)
@@ -298,15 +298,14 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory
 
     protected static class DateTimeReader implements GenericReader
     {
-        protected TextReader textReader = new TextReader("US-ASCII");
+        protected final TextReader textReader = new TextReader("US-ASCII");
 
         public Object read(ByteBuffer byteBuffer)
         {
             // TODO: correct VPF date parsing.
 
             CharBuffer buffer = this.textReader.read(byteBuffer, 20);
-            if (buffer.length() == 0)
-                return null;
+            buffer.length();
 
             //try
             //{
@@ -379,8 +378,6 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory
 
             switch (length & 3)
             {
-                case 0:
-                    return -1;
                 case 1:
                     return 0xFF & buffer.get();
                 case 2:
@@ -410,13 +407,7 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory
                 this.decoder.onMalformedInput(CodingErrorAction.REPLACE);
                 this.decoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
             }
-            catch (IllegalCharsetNameException e)
-            {
-                String message = Logging.getMessage("generic.InvalidCharsetName", charsetName);
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-            catch (UnsupportedCharsetException e)
+            catch (IllegalCharsetNameException | UnsupportedCharsetException e)
             {
                 String message = Logging.getMessage("generic.InvalidCharsetName", charsetName);
                 Logging.logger().severe(message);
@@ -449,9 +440,9 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory
 
     protected static class TextDataBuffer implements VPFDataBuffer
     {
-        protected int elementsPerRow;
-        protected TextReader reader;
-        protected CompoundStringBuilder buffer;
+        protected final int elementsPerRow;
+        protected final TextReader reader;
+        protected final CompoundStringBuilder buffer;
         protected CharBuffer tmpBuffer;
 
         public TextDataBuffer(String charsetName, int numRows, int elementsPerRow)
@@ -604,9 +595,9 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory
 
     protected static class ScalarDataBuffer implements VPFDataBuffer
     {
-        protected ScalarReader reader;
-        protected ScalarAccessor accessor;
-        protected BufferWrapper buffer;
+        protected final ScalarReader reader;
+        protected final ScalarAccessor accessor;
+        protected final BufferWrapper buffer;
         protected int position;
 
         public ScalarDataBuffer(ScalarReader reader, ScalarAccessor accessor, BufferFactory bufferFactory, int numRows)
@@ -660,8 +651,8 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory
 
     protected abstract static class AbstractVecReader implements VecReader
     {
-        protected int coordsPerElem;
-        protected int bytesPerCoord;
+        protected final int coordsPerElem;
+        protected final int bytesPerCoord;
 
         public AbstractVecReader(int coordsPerElem, int bytesPerCoord)
         {
@@ -900,8 +891,8 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory
 
     protected static class VecDataBuffer implements VPFDataBuffer
     {
-        protected VecReader reader;
-        protected VecBufferSequence buffer;
+        protected final VecReader reader;
+        protected final VecBufferSequence buffer;
 
         public VecDataBuffer(VecReader reader, int coordsPerElem, BufferFactory bufferFactory, int numRows,
             int elementsPerRow)

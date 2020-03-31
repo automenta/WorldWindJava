@@ -203,10 +203,8 @@ public class ViewUtil
         AngleAnimator pitchAnimator = createPitchAnimator(view, beginPitch, endPitch);
         AngleAnimator rollAnimator = createRollAnimator(view, beginRoll, endRoll);
 
-        CompoundAnimator headingPitchAnimator = new CompoundAnimator(new ScheduledInterpolator(lengthMillis),
-            headingAnimator, pitchAnimator, rollAnimator);
-
-        return (headingPitchAnimator);
+        return (new CompoundAnimator(new ScheduledInterpolator(lengthMillis),
+            headingAnimator, pitchAnimator, rollAnimator));
     }
 
     public static PositionAnimator createEyePositionAnimator(
@@ -312,8 +310,7 @@ public class ViewUtil
             throw new IllegalArgumentException(message);
         }
 
-        Matrix modelview = Matrix.fromViewLookAt(eyePoint, centerPoint, up);
-        return (modelview);
+        return (Matrix.fromViewLookAt(eyePoint, centerPoint, up));
     }
 
     public static Vec4 getUpVector(Globe globe, Vec4 lookAtPoint)

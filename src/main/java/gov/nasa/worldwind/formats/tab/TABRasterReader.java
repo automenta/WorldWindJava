@@ -93,10 +93,8 @@ public class TABRasterReader
         if (file == null || !file.exists() || !file.canRead())
             return false;
 
-        java.io.FileReader fileReader = null;
-        try
+        try (java.io.FileReader fileReader = new java.io.FileReader(file))
         {
-            fileReader = new java.io.FileReader(file);
             RasterControlPointList controlPoints = new RasterControlPointList();
             return this.doCanRead(fileReader, controlPoints);
         }
@@ -104,18 +102,7 @@ public class TABRasterReader
         {
             return false;
         }
-        finally
-        {
-            //noinspection EmptyCatchBlock
-            try
-            {
-                if (fileReader != null)
-                    fileReader.close();
-            }
-            catch (java.io.IOException e)
-            {
-            }
-        }
+        //noinspection EmptyCatchBlock
     }
 
     public boolean canRead(String path)
@@ -411,7 +398,6 @@ public class TABRasterReader
     }
 
     protected void readCoordSys(java.io.BufferedReader reader, RasterControlPointList controlPoints)
-        throws java.io.IOException
     {
         if (reader == null)
         {
@@ -431,7 +417,6 @@ public class TABRasterReader
 
     @SuppressWarnings({"UnusedDeclaration"})
     protected void readRasterStyle(java.io.BufferedReader reader, RasterControlPointList controlPoints)
-        throws java.io.IOException
     {
         if (controlPoints == null)
         {

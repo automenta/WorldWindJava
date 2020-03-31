@@ -20,9 +20,9 @@ public class OWSOperation extends AbstractXMLEventParser
 {
     // TODO: Operation Metadata element
 
-    protected List<OWSDCP> dcps = new ArrayList<OWSDCP>(2);
-    protected List<OWSParameter> parameters = new ArrayList<OWSParameter>(1);
-    protected List<OWSConstraint> constraints = new ArrayList<OWSConstraint>(1);
+    protected final List<OWSDCP> dcps = new ArrayList<>(2);
+    protected final List<OWSParameter> parameters = new ArrayList<>(1);
+    protected final List<OWSConstraint> constraints = new ArrayList<>(1);
 
     public OWSOperation(String namespaceURI)
     {
@@ -58,7 +58,7 @@ public class OWSOperation extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OWSDCP)
+                if (o instanceof OWSDCP)
                     this.dcps.add((OWSDCP) o);
             }
         }
@@ -68,7 +68,7 @@ public class OWSOperation extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OWSParameter)
+                if (o instanceof OWSParameter)
                     this.parameters.add((OWSParameter) o);
             }
         }
@@ -78,7 +78,7 @@ public class OWSOperation extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OWSConstraint)
+                if (o instanceof OWSConstraint)
                     this.constraints.add((OWSConstraint) o);
             }
         }

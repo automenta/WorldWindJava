@@ -21,7 +21,7 @@ public class HighResolutionTerrainTest
 {
     protected static ArrayList<Position> generateReferenceLocations(Sector sector, int numLats, int numLons)
     {
-        ArrayList<Position> locations = new ArrayList<Position>();
+        ArrayList<Position> locations = new ArrayList<>();
         double dLat = (sector.getMaxLatitude().degrees - sector.getMinLatitude().degrees) / (numLats - 1);
         double dLon = (sector.getMaxLongitude().degrees - sector.getMinLongitude().degrees) / (numLons - 1);
         for (int j = 0; j < numLats; j++)
@@ -56,7 +56,7 @@ public class HighResolutionTerrainTest
 
     protected static ArrayList<Position> readReferencePositions(String filePath) throws FileNotFoundException
     {
-        ArrayList<Position> positions = new ArrayList<Position>();
+        ArrayList<Position> positions = new ArrayList<>();
         Scanner scanner = new Scanner(new File(filePath));
 
         while (scanner.hasNextDouble())
@@ -75,7 +75,7 @@ public class HighResolutionTerrainTest
         Sector sector = Sector.boundingSector(locations);
         HighResolutionTerrain hrt = new HighResolutionTerrain(new Earth(), sector, null, 1.0);
 
-        ArrayList<Position> computedPositions = new ArrayList<Position>();
+        ArrayList<Position> computedPositions = new ArrayList<>();
         for (LatLon latLon : locations)
         {
             Double elevation = hrt.getElevation(latLon);
@@ -114,7 +114,7 @@ public class HighResolutionTerrainTest
     public static void main(String[] args)
     {
         String testDataLocation = "testData/HighResolutionTerrain/";
-        HashMap<String, Sector> sectors = new HashMap<String, Sector>();
+        HashMap<String, Sector> sectors = new HashMap<>();
         sectors.put(testDataLocation + "HRTOutputTest01.txt", Sector.fromDegrees(37.8, 38.3, -120, -119.3));
         sectors.put(testDataLocation + "HRTOutputTest02.txt",
             Sector.fromDegrees(32.34767, 32.77991, 70.88239, 71.47658));

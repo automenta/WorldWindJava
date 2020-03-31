@@ -140,7 +140,7 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
             return;
 
         if (this.getRenderables() == null)
-            this.renderables = new ArrayList<KMLRenderable>(1); // most common case is one renderable
+            this.renderables = new ArrayList<>(1); // most common case is one renderable
 
         if (geom instanceof KMLPoint)
             this.addRenderable(this.selectPointRenderable(tc, geom));

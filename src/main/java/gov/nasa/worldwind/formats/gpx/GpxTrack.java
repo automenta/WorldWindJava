@@ -17,7 +17,7 @@ public class GpxTrack extends gov.nasa.worldwind.formats.gpx.ElementParser imple
     private String name;
     private int numPoints = -1;
     private final java.util.List<TrackSegment> segments =
-        new java.util.ArrayList<TrackSegment>();
+        new java.util.ArrayList<>();
 
     @SuppressWarnings({"UNUSED_SYMBOL", "UnusedDeclaration"})
     public GpxTrack(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
@@ -63,11 +63,9 @@ public class GpxTrack extends gov.nasa.worldwind.formats.gpx.ElementParser imple
      * @param qname the element qname.
      * @param attributes the element attributes.
      * @throws IllegalArgumentException if <code>lname</code> is null
-     * @throws org.xml.sax.SAXException if a parsing error has occurred.
      */
     @Override
     public void doStartElement(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
-        throws org.xml.sax.SAXException
     {
         // don't validate uri, qname or attributes - they aren't used
         if (lname == null)
@@ -107,10 +105,9 @@ public class GpxTrack extends gov.nasa.worldwind.formats.gpx.ElementParser imple
      * @param lname the element lname.
      * @param qname the element qname.
      * @throws IllegalArgumentException if <code>lname</code> is null
-     * @throws org.xml.sax.SAXException if a parsing error occurs.
      */
     @Override
-    public void doEndElement(String uri, String lname, String qname) throws org.xml.sax.SAXException
+    public void doEndElement(String uri, String lname, String qname)
     {
         // don't validate uri or qname - they aren't used
         if (lname == null)

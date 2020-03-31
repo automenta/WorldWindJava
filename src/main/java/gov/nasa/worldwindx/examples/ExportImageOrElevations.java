@@ -21,7 +21,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
-import java.beans.*;
 import java.io.*;
 import java.util.*;
 
@@ -76,17 +75,13 @@ public class ExportImageOrElevations extends ApplicationTemplate
 
             // Listen for changes to the sector selector's region. Could also just wait until the user finishes
             // and query the result using selector.getSector().
-            this.selector.addPropertyChangeListener(SectorSelector.SECTOR_PROPERTY, new PropertyChangeListener()
-            {
-                public void propertyChange(PropertyChangeEvent evt)
+            this.selector.addPropertyChangeListener(SectorSelector.SECTOR_PROPERTY, evt -> {
+                Sector sector = (Sector) evt.getNewValue();
+                if (null != sector)
                 {
-                    Sector sector = (Sector) evt.getNewValue();
-                    if (null != sector)
-                    {
-                        selectedSector = sector;
-                        btnSaveElevations.setEnabled(true);
-                        btnSaveImage.setEnabled(true);
-                    }
+                    selectedSector = sector;
+                    btnSaveElevations.setEnabled(true);
+                    btnSaveImage.setEnabled(true);
                 }
             });
 
@@ -213,49 +208,41 @@ public class ExportImageOrElevations extends ApplicationTemplate
             jd.setModal(false);
             jd.setVisible(true);
 
-            Thread t = new Thread(new Runnable()
-            {
-                public void run()
+            Thread t = new Thread(() -> {
+                try
                 {
-                    try
-                    {
-                        int[] size = adjustSize(selectedSector, 512);
-                        int width = size[0], height = size[1];
+                    int[] size = adjustSize(selectedSector, 512);
+                    int width = size[0], height = size[1];
 
-                        double[] elevations = readElevations(selectedSector, width, height);
-                        if (null != elevations)
-                        {
-                            jd.setTitle("Writing elevations to " + saveToFile.getName());
-                            writeElevationsToFile(selectedSector, width, height, elevations, saveToFile);
-                            jd.setVisible(false);
-                            JOptionPane.showMessageDialog(wwjPanel,
-                                "Elevations saved into the " + saveToFile.getName());
-                        }
-                        else
-                        {
-                            jd.setVisible(false);
-                            JOptionPane.showMessageDialog(wwjPanel,
-                                "Attempt to save elevations to the " + saveToFile.getName() + " has failed.");
-                        }
-                    }
-                    catch (Exception e)
+                    double[] elevations = readElevations(selectedSector, width, height);
+                    if (null != elevations)
                     {
-                        e.printStackTrace();
+                        jd.setTitle("Writing elevations to " + saveToFile.getName());
+                        writeElevationsToFile(selectedSector, width, height, elevations, saveToFile);
                         jd.setVisible(false);
-                        JOptionPane.showMessageDialog(wwjPanel, e.getMessage());
+                        JOptionPane.showMessageDialog(wwjPanel,
+                            "Elevations saved into the " + saveToFile.getName());
                     }
-                    finally
+                    else
                     {
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            public void run()
-                            {
-                                setCursor(Cursor.getDefaultCursor());
-                                getWwd().redraw();
-                                jd.setVisible(false);
-                            }
-                        });
+                        jd.setVisible(false);
+                        JOptionPane.showMessageDialog(wwjPanel,
+                            "Attempt to save elevations to the " + saveToFile.getName() + " has failed.");
                     }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    jd.setVisible(false);
+                    JOptionPane.showMessageDialog(wwjPanel, e.getMessage());
+                }
+                finally
+                {
+                    SwingUtilities.invokeLater(() -> {
+                        setCursor(Cursor.getDefaultCursor());
+                        getWwd().redraw();
+                        jd.setVisible(false);
+                    });
                 }
             });
 
@@ -267,10 +254,8 @@ public class ExportImageOrElevations extends ApplicationTemplate
         public void enableNAIPLayer()
         {
             LayerList list = this.getWwd().getModel().getLayers();
-            ListIterator iterator = list.listIterator();
-            while (iterator.hasNext())
+            for (Layer layer : list)
             {
-                Layer layer = (Layer) iterator.next();
                 if (layer.getName().contains("NAIP"))
                 {
                     layer.setEnabled(true);
@@ -285,10 +270,8 @@ public class ExportImageOrElevations extends ApplicationTemplate
             LayerList list = this.getWwd().getModel().getLayers();
             DrawContext dc = this.getWwd().getSceneController().getDrawContext();
 
-            ListIterator iterator = list.listIterator();
-            while (iterator.hasNext())
+            for (Object o : list)
             {
-                Object o = iterator.next();
                 if (o instanceof TiledImageLayer)
                 {
                     TiledImageLayer layer = (TiledImageLayer) o;
@@ -317,46 +300,38 @@ public class ExportImageOrElevations extends ApplicationTemplate
             jd.setModal(false);
             jd.setVisible(true);
 
-            Thread t = new Thread(new Runnable()
-            {
-                public void run()
+            Thread t = new Thread(() -> {
+                try
                 {
-                    try
-                    {
-                        BufferedImage image = captureImage(activeLayer, selectedSector, 2048);
+                    BufferedImage image = captureImage(activeLayer, selectedSector, 2048);
 
-                        if (null != image)
-                        {
-                            jd.setTitle("Writing image to " + saveToFile.getName());
-                            writeImageToFile(selectedSector, image, saveToFile);
-                            jd.setVisible(false);
-                            JOptionPane.showMessageDialog(wwjPanel, "Image saved into the " + saveToFile.getName());
-                        }
-                        else
-                        {
-                            jd.setVisible(false);
-                            JOptionPane.showMessageDialog(wwjPanel,
-                                "Attempt to save image to the " + saveToFile.getName() + " has failed.");
-                        }
-                    }
-                    catch (Exception e)
+                    if (null != image)
                     {
-                        e.printStackTrace();
+                        jd.setTitle("Writing image to " + saveToFile.getName());
+                        writeImageToFile(selectedSector, image, saveToFile);
                         jd.setVisible(false);
-                        JOptionPane.showMessageDialog(wwjPanel, e.getMessage());
+                        JOptionPane.showMessageDialog(wwjPanel, "Image saved into the " + saveToFile.getName());
                     }
-                    finally
+                    else
                     {
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            public void run()
-                            {
-                                setCursor(Cursor.getDefaultCursor());
-                                getWwd().redraw();
-                                jd.setVisible(false);
-                            }
-                        });
+                        jd.setVisible(false);
+                        JOptionPane.showMessageDialog(wwjPanel,
+                            "Attempt to save image to the " + saveToFile.getName() + " has failed.");
                     }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    jd.setVisible(false);
+                    JOptionPane.showMessageDialog(wwjPanel, e.getMessage());
+                }
+                finally
+                {
+                    SwingUtilities.invokeLater(() -> {
+                        setCursor(Cursor.getDefaultCursor());
+                        getWwd().redraw();
+                        jd.setVisible(false);
+                    });
                 }
             });
 
@@ -424,7 +399,7 @@ public class ExportImageOrElevations extends ApplicationTemplate
             double lonMax = sector.getMaxLongitude().radians;
             double dLon = (lonMax - lonMin) / (double) (width - 1);
 
-            ArrayList<LatLon> latlons = new ArrayList<LatLon>(width * height);
+            ArrayList<LatLon> latlons = new ArrayList<>(width * height);
 
             int maxx = width - 1, maxy = height - 1;
 

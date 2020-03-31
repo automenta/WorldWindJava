@@ -1376,13 +1376,13 @@ public class LatLon
             throw new IllegalArgumentException(msg);
         }
 
-        List<List<LatLon>> list = new ArrayList<List<LatLon>>();
+        List<List<LatLon>> list = new ArrayList<>();
 
         LatLon prev = null;
         double lonOffset = 0;
         boolean applyLonOffset = false;
 
-        List<LatLon> locationsA = new ArrayList<LatLon>();
+        List<LatLon> locationsA = new ArrayList<>();
         list.add(locationsA);
 
         for (LatLon cur : locations)
@@ -1409,7 +1409,7 @@ public class LatLon
 
         if (lonOffset != 0) // longitude offset is non-zero when the locations cross the dateline
         {
-            List<LatLon> locationsB = new ArrayList<LatLon>();
+            List<LatLon> locationsB = new ArrayList<>();
             list.add(locationsB);
 
             for (LatLon cur : locationsA)
@@ -1451,7 +1451,7 @@ public class LatLon
             throw new IllegalArgumentException(msg);
         }
 
-        List<LatLon> newLocations = new ArrayList<LatLon>();
+        List<LatLon> newLocations = new ArrayList<>();
 
         Angle poleLat = AVKey.NORTH.equals(pole) ? Angle.POS90 : Angle.NEG90;
 
@@ -1516,7 +1516,7 @@ public class LatLon
         if (!iter.hasNext())
             return Collections.emptyList();
 
-        ArrayList<LatLon> newLocations = new ArrayList<LatLon>();
+        ArrayList<LatLon> newLocations = new ArrayList<>();
 
         for (LatLon location : locations)
         {
@@ -1934,7 +1934,7 @@ public class LatLon
             throw new IllegalArgumentException(msg);
         }
 
-        ArrayList<LatLon> newPositions = new ArrayList<LatLon>();
+        ArrayList<LatLon> newPositions = new ArrayList<>();
 
         for (LatLon location : locations)
         {
@@ -1970,7 +1970,7 @@ public class LatLon
             throw new IllegalArgumentException(msg);
         }
 
-        ArrayList<LatLon> newLocations = new ArrayList<LatLon>();
+        ArrayList<LatLon> newLocations = new ArrayList<>();
 
         Vec4 oldPoint = globe.computeEllipsoidalPointFromLocation(oldLocation);
         Vec4 newPoint = globe.computeEllipsoidalPointFromLocation(newLocation);

@@ -10,6 +10,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * Defines the dimensions of an image, label or other screen-space item relative to a container (for example, the
@@ -483,14 +484,14 @@ public class Size
             return false;
         if (Double.compare(this.heightParam, that.heightParam) != 0)
             return false;
-        if (this.widthUnits != null ? !this.widthUnits.equals(that.widthUnits) : that.widthUnits != null)
+        if (!Objects.equals(this.widthUnits, that.widthUnits))
             return false;
-        if (this.heightUnits != null ? !this.heightUnits.equals(that.heightUnits) : that.heightUnits != null)
+        if (!Objects.equals(this.heightUnits, that.heightUnits))
             return false;
-        if (this.widthMode != null ? !this.widthMode.equals(that.widthMode) : that.widthMode != null)
+        if (!Objects.equals(this.widthMode, that.widthMode))
             return false;
         //noinspection RedundantIfStatement
-        if (this.heightMode != null ? !this.heightMode.equals(that.heightMode) : that.heightMode != null)
+        if (!Objects.equals(this.heightMode, that.heightMode))
             return false;
 
         return true;

@@ -44,29 +44,29 @@ public class LevelSet extends WWObjectImpl
     private final LatLon levelZeroTileDelta;
     private final LatLon tileOrigin;
     private final int numLevelZeroColumns;
-    private final java.util.ArrayList<Level> levels = new java.util.ArrayList<Level>();
+    private final java.util.ArrayList<Level> levels = new java.util.ArrayList<>();
     private final SectorResolution[] sectorLevelLimits;
 
     public LevelSet(AVList params)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         Object o = params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA);
-        if (o == null || !(o instanceof LatLon))
+        if (!(o instanceof LatLon))
             sb.append(Logging.getMessage("term.tileDelta")).append(" ");
 
         o = params.getValue(AVKey.SECTOR);
-        if (o == null || !(o instanceof Sector))
+        if (!(o instanceof Sector))
             sb.append(Logging.getMessage("term.sector")).append(" ");
 
         int numLevels = 0;
         o = params.getValue(AVKey.NUM_LEVELS);
-        if (o == null || !(o instanceof Integer) || (numLevels = (Integer) o) < 1)
+        if (!(o instanceof Integer) || (numLevels = (Integer) o) < 1)
             sb.append(Logging.getMessage("term.numLevels")).append(" ");
 
         int numEmptyLevels = 0;
         o = params.getValue(AVKey.NUM_EMPTY_LEVELS);
-        if (o != null && o instanceof Integer && (Integer) o > 0)
+        if (o instanceof Integer && (Integer) o > 0)
             numEmptyLevels = (Integer) o;
 
         String[] inactiveLevels = null;
@@ -109,7 +109,7 @@ public class LevelSet extends WWObjectImpl
         this.levelZeroTileDelta = (LatLon) params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA);
 
         o = params.getValue(AVKey.TILE_ORIGIN);
-        if (o != null && o instanceof LatLon)
+        if (o instanceof LatLon)
             this.tileOrigin = (LatLon) o;
         else
             this.tileOrigin = new LatLon(Angle.NEG90, Angle.NEG180);
@@ -119,41 +119,33 @@ public class LevelSet extends WWObjectImpl
         TileUrlBuilder tub = (TileUrlBuilder) params.getValue(AVKey.TILE_URL_BUILDER);
         if (tub == null)
         {
-            params.setValue(AVKey.TILE_URL_BUILDER, new TileUrlBuilder()
-            {
-                public URL getURL(Tile tile, String altImageFormat) throws MalformedURLException
-                {
-                    String service = tile.getLevel().getService();
-                    if (service == null || service.length() < 1)
-                        return null;
+            params.setValue(AVKey.TILE_URL_BUILDER, (TileUrlBuilder) (tile, altImageFormat) -> {
+                String service = tile.getLevel().getService();
+                if (service == null || service.length() < 1)
+                    return null;
 
-                    StringBuffer sb = new StringBuffer(tile.getLevel().getService());
-                    if (sb.lastIndexOf("?") != sb.length() - 1)
-                        sb.append("?");
-                    sb.append("T=");
-                    sb.append(tile.getLevel().getDataset());
-                    sb.append("&L=");
-                    sb.append(tile.getLevel().getLevelName());
-                    sb.append("&X=");
-                    sb.append(tile.getColumn());
-                    sb.append("&Y=");
-                    sb.append(tile.getRow());
+                StringBuilder sb1 = new StringBuilder(tile.getLevel().getService());
+                if (sb1.lastIndexOf("?") != sb1.length() - 1)
+                    sb1.append("?");
+                sb1.append("T=");
+                sb1.append(tile.getLevel().getDataset());
+                sb1.append("&L=");
+                sb1.append(tile.getLevel().getLevelName());
+                sb1.append("&X=");
+                sb1.append(tile.getColumn());
+                sb1.append("&Y=");
+                sb1.append(tile.getRow());
 
-                    // Convention for NASA WWN tiles is to request them with common dataset name but without dds.
-                    return new URL(altImageFormat == null ? sb.toString() : sb.toString().replace("dds", ""));
-                }
+                // Convention for NASA WWN tiles is to request them with common dataset name but without dds.
+                return new URL(altImageFormat == null ? sb1.toString() : sb1.toString().replace("dds", ""));
             });
         }
 
         if (this.sectorLevelLimits != null)
         {
-            Arrays.sort(this.sectorLevelLimits, new Comparator<SectorResolution>()
-            {
-                public int compare(SectorResolution sra, SectorResolution srb)
-                {
-                    // sort order is deliberately backwards in order to list higher-resolution sectors first
-                    return sra.levelNumber < srb.levelNumber ? 1 : sra.levelNumber == srb.levelNumber ? 0 : -1;
-                }
+            Arrays.sort(this.sectorLevelLimits, (sra, srb) -> {
+                // sort order is deliberately backwards in order to list higher-resolution sectors first
+                return Integer.compare(srb.levelNumber, sra.levelNumber);
             });
         }
 
@@ -202,10 +194,8 @@ public class LevelSet extends WWObjectImpl
         this.numLevelZeroColumns = source.numLevelZeroColumns;
         this.sectorLevelLimits = source.sectorLevelLimits;
 
-        for (Level level : source.levels)
-        {
-            this.levels.add(level); // Levels are final, so it's safe to copy references.
-        }
+        // Levels are final, so it's safe to copy references.
+        this.levels.addAll(source.levels);
     }
 
     @Override

@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class BarycentricQuadrilateral extends BarycentricTriangle
 {
-    protected Vec4 p11;
+    protected final Vec4 p11;
     private final double[] w11;
 
     public BarycentricQuadrilateral(Vec4 p00, Vec4 p10, Vec4 p11, Vec4 p01)
@@ -179,7 +179,7 @@ public class BarycentricQuadrilateral extends BarycentricTriangle
     private static final Vec4 i2 = new Vec4(2d, 2d, 0d);
     private static final Vec4 i3 = new Vec4(0d, 1d, 0d);
 
-    private static final ArrayList<Vec4> testPoints = new ArrayList<Vec4>(Arrays.asList(
+    private static final ArrayList<Vec4> testPoints = new ArrayList<>(Arrays.asList(
         g0, g1, g2, g3,
         i0, i1, i2, i3,
         new Vec4(-17, 0, 0)

@@ -74,18 +74,18 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     protected DraggableSupport draggableSupport = null;
     protected ShapeAttributes normalAttrs;
     protected ShapeAttributes highlightAttrs;
-    protected ShapeAttributes activeAttrs = this.createActiveAttributes(); // re-determined each frame
+    protected final ShapeAttributes activeAttrs = this.createActiveAttributes(); // re-determined each frame
     protected String pathType = DEFAULT_PATH_TYPE;
     protected double texelsPerEdgeInterval = DEFAULT_TEXELS_PER_EDGE_INTERVAL;
     protected int minEdgeIntervals = DEFAULT_MIN_EDGE_INTERVALS;
     protected int maxEdgeIntervals = DEFAULT_MAX_EDGE_INTERVALS;
     // Rendering properties.
-    protected List<List<LatLon>> activeGeometry = new ArrayList<List<LatLon>>(); // re-determined each frame
-    protected List<List<LatLon>> activeOutlineGeometry = new ArrayList<List<LatLon>>(); // re-determined each frame
+    protected final List<List<LatLon>> activeGeometry = new ArrayList<>(); // re-determined each frame
+    protected final List<List<LatLon>> activeOutlineGeometry = new ArrayList<>(); // re-determined each frame
     protected WWTexture texture; // An optional texture.
-    protected Map<Object, CacheEntry> sectorCache = new HashMap<Object, CacheEntry>();
-    protected Map<Object, CacheEntry> geometryCache = new HashMap<Object, CacheEntry>();
-    protected OGLStackHandler stackHandler = new OGLStackHandler();
+    protected final Map<Object, CacheEntry> sectorCache = new HashMap<>();
+    protected final Map<Object, CacheEntry> geometryCache = new HashMap<>();
+    protected final OGLStackHandler stackHandler = new OGLStackHandler();
     protected static FloatBuffer vertexBuffer;
     // Measurement properties.
     protected AreaMeasurer areaMeasurer;
@@ -253,16 +253,12 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         }
 
         CacheEntry entry = this.sectorCache.get(dc.getGlobe().getGlobeStateKey());
-        if (entry != null)
-        {
-            return (List<Sector>) entry.object;
-        }
-        else
+        if (entry == null)
         {
             entry = new CacheEntry(this.computeSectors(dc), dc);
             this.sectorCache.put(dc.getGlobe().getGlobeStateKey(), entry);
-            return (List<Sector>) entry.object;
         }
+        return (List<Sector>) entry.object;
     }
 
     /**
@@ -305,7 +301,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             else
                 s = new Sector(Angle.NEG90, s.getMaxLatitude(), Angle.NEG180, Angle.POS180);
 
-            sectors = Arrays.asList(s);
+            sectors = Collections.singletonList(s);
         }
         else if (LatLon.locationsCrossDateLine(locations))
         {
@@ -317,7 +313,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         {
             Sector s = Sector.boundingSector(locations);
             if (!isSectorEmpty(s))
-                sectors = Arrays.asList(s);
+                sectors = Collections.singletonList(s);
         }
 
         if (sectors == null)
@@ -797,7 +793,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
         for (List<LatLon> locations : geom)
         {
-            List<LatLon> drawLocations = new ArrayList<LatLon>(locations);
+            List<LatLon> drawLocations = new ArrayList<>(locations);
 
             String pole = this.containsPole(drawLocations);
             if (pole != null)
@@ -973,16 +969,12 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
         Object key = this.createGeometryKey(dc, sdc);
         CacheEntry entry = this.geometryCache.get(key);
-        if (entry != null)
-        {
-            return (List<List<LatLon>>) entry.object;
-        }
-        else
+        if (entry == null)
         {
             entry = new CacheEntry(this.createGeometry(dc.getGlobe(), sdc), dc);
             this.geometryCache.put(key, entry);
-            return (List<List<LatLon>>) entry.object;
         }
+        return (List<List<LatLon>>) entry.object;
     }
 
     protected List<List<LatLon>> createGeometry(Globe globe, SurfaceTileDrawContext sdc)
@@ -1435,7 +1427,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             // The AreaMeasurer requires an ArrayList reference, but SurfaceShapes use an opaque iterable. Copy the
             // iterable contents into an ArrayList to satisfy AreaMeasurer without compromising the generality of the
             // shape's iterator.
-            ArrayList<LatLon> arrayList = new ArrayList<LatLon>();
+            ArrayList<LatLon> arrayList = new ArrayList<>();
 
             Iterable<? extends LatLon> locations = this.getLocations(globe);
             if (locations != null)
@@ -1632,24 +1624,14 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         if (s == null)
             return null;
 
-        if (s.equals(AVKey.GREAT_CIRCLE))
-        {
-            return AVKey.GREAT_CIRCLE;
-        }
-        else if (s.equals(AVKey.LINEAR))
-        {
-            return AVKey.LINEAR;
-        }
-        else if (s.equals(AVKey.LOXODROME))
-        {
-            return AVKey.LOXODROME;
-        }
-        else if (s.equals(AVKey.RHUMB_LINE))
-        {
-            return AVKey.RHUMB_LINE;
-        }
-
-        return null;
+        return switch (s)
+            {
+                case AVKey.GREAT_CIRCLE -> AVKey.GREAT_CIRCLE;
+                case AVKey.LINEAR -> AVKey.LINEAR;
+                case AVKey.LOXODROME -> AVKey.LOXODROME;
+                case AVKey.RHUMB_LINE -> AVKey.RHUMB_LINE;
+                default -> null;
+            };
     }
 
     //**************************************************************//
@@ -1702,9 +1684,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
             SurfaceShapeStateKey that = (SurfaceShapeStateKey) o;
             return super.equals(o)
-                && (this.attributes != null ? this.attributes.equals(that.attributes) : that.attributes == null)
-                && (this.globeStateKey != null ? this.globeStateKey.equals(that.globeStateKey)
-                : that.globeStateKey == null);
+                && (Objects.equals(this.attributes, that.attributes))
+                && (Objects.equals(this.globeStateKey, that.globeStateKey));
         }
 
         @Override
@@ -1735,8 +1716,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
     protected static class GeometryKey
     {
-        protected Globe globe;
-        protected double edgeIntervalsPerDegree;
+        protected final Globe globe;
+        protected final double edgeIntervalsPerDegree;
 
         public GeometryKey(DrawContext dc, double edgeIntervalsPerDegree)
         {

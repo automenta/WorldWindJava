@@ -16,8 +16,8 @@ import java.util.*;
  */
 public class ColladaMesh extends ColladaAbstractObject
 {
-    protected List<ColladaSource> sources = new ArrayList<ColladaSource>();
-    protected List<ColladaVertices> vertices = new ArrayList<ColladaVertices>();
+    protected final List<ColladaSource> sources = new ArrayList<>();
+    protected final List<ColladaVertices> vertices = new ArrayList<>();
 
     // Most meshes contain either triangles or lines. Lazily allocate these lists.
     protected List<ColladaTriangles> triangles;
@@ -51,31 +51,21 @@ public class ColladaMesh extends ColladaAbstractObject
     @Override
     public void setField(String keyName, Object value)
     {
-        if (keyName.equals("vertices"))
+        switch (keyName)
         {
-            this.vertices.add((ColladaVertices) value);
-        }
-        else if (keyName.equals("source"))
-        {
-            this.sources.add((ColladaSource) value);
-        }
-        else if (keyName.equals("triangles"))
-        {
-            if (this.triangles == null)
-                this.triangles = new ArrayList<ColladaTriangles>();
-
-            this.triangles.add((ColladaTriangles) value);
-        }
-        else if (keyName.equals("lines"))
-        {
-            if (this.lines == null)
-                this.lines = new ArrayList<ColladaLines>();
-
-            this.lines.add((ColladaLines) value);
-        }
-        else
-        {
-            super.setField(keyName, value);
+            case "vertices" -> this.vertices.add((ColladaVertices) value);
+            case "source" -> this.sources.add((ColladaSource) value);
+            case "triangles" -> {
+                if (this.triangles == null)
+                    this.triangles = new ArrayList<>();
+                this.triangles.add((ColladaTriangles) value);
+            }
+            case "lines" -> {
+                if (this.lines == null)
+                    this.lines = new ArrayList<>();
+                this.lines.add((ColladaLines) value);
+            }
+            default -> super.setField(keyName, value);
         }
     }
 }

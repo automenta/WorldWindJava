@@ -5,6 +5,8 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
+import java.util.Objects;
+
 /**
  * @author dcollins
  * @version $Id: VPFRelation.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -53,14 +55,14 @@ public class VPFRelation
 
         VPFRelation that = (VPFRelation) o;
 
-        if (this.table1 != null ? !this.table1.equals(that.table1) : that.table1 != null)
+        if (!Objects.equals(this.table1, that.table1))
             return false;
-        if (this.table1Key != null ? !this.table1Key.equals(that.table1Key) : that.table1Key != null)
+        if (!Objects.equals(this.table1Key, that.table1Key))
             return false;
-        if (this.table2 != null ? !this.table2.equals(that.table2) : that.table2 != null)
+        if (!Objects.equals(this.table2, that.table2))
             return false;
         //noinspection RedundantIfStatement
-        if (this.table2Key != null ? !this.table2Key.equals(that.table2Key) : that.table2Key != null)
+        if (!Objects.equals(this.table2Key, that.table2Key))
             return false;
 
         return true;

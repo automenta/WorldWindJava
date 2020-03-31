@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class BathymetryFilterElevationModel extends AbstractElevationModel
 {
-    protected ElevationModel sourceModel;
+    protected final ElevationModel sourceModel;
     protected double threshold = 0d;
 
     /**
@@ -163,7 +163,7 @@ public class BathymetryFilterElevationModel extends AbstractElevationModel
      */
     protected double clampElevation(double elevation)
     {
-        return elevation < this.threshold ? this.threshold : elevation;
+        return Math.max(elevation, this.threshold);
     }
 
     @Override

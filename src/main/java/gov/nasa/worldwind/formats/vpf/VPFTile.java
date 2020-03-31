@@ -9,6 +9,8 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;
 
+import java.util.Objects;
+
 /**
  * @author dcollins
  * @version $Id: VPFTile.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -78,10 +80,10 @@ public class VPFTile implements ExtentHolder
 
         if (id != vpfTile.id)
             return false;
-        if (bounds != null ? !bounds.equals(vpfTile.bounds) : vpfTile.bounds != null)
+        if (!Objects.equals(bounds, vpfTile.bounds))
             return false;
         //noinspection RedundantIfStatement
-        if (name != null ? !name.equals(vpfTile.name) : vpfTile.name != null)
+        if (!Objects.equals(name, vpfTile.name))
             return false;
 
         return true;

@@ -49,13 +49,13 @@ public class GliderTestApp extends ApplicationTemplate {
         }
     }
 
-    protected static LatLon nw = LatLon.fromDegrees(48.55774732, -134.459224670811);
-    protected static LatLon ne = nw.add(LatLon.fromDegrees(0, 0.036795 * 250));
-    protected static LatLon se = nw.add(LatLon.fromDegrees(-0.036795 * 200, 0.036795 * 250));
-    protected static LatLon sw = nw.add(LatLon.fromDegrees(-0.036795 * 200, 0));
-    protected static List<LatLon> corners = Arrays.asList(sw, se, ne, nw);
+    protected static final LatLon nw = LatLon.fromDegrees(48.55774732, -134.459224670811);
+    protected static final LatLon ne = nw.add(LatLon.fromDegrees(0, 0.036795 * 250));
+    protected static final LatLon se = nw.add(LatLon.fromDegrees(-0.036795 * 200, 0.036795 * 250));
+    protected static final LatLon sw = nw.add(LatLon.fromDegrees(-0.036795 * 200, 0));
+    protected static final List<LatLon> corners = Arrays.asList(sw, se, ne, nw);
 
-    protected static String cloudImagePath = "gov/nasa/worldwindx/examples/images/GLIDERTestImage-800x519.jpg";
+    protected static final String cloudImagePath = "gov/nasa/worldwindx/examples/images/GLIDERTestImage-800x519.jpg";
 
     protected static float[][] makeField(List<LatLon> corners, int width, int height, Angle angle) {
         Sector sector = Sector.boundingSector(corners);

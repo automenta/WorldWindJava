@@ -105,7 +105,7 @@ public class OGCServiceInformation extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof StringSetXMLEventParser)
+                if (o instanceof StringSetXMLEventParser)
                     this.setKeywords(((StringSetXMLEventParser) o).getStrings());
             }
         }
@@ -115,7 +115,7 @@ public class OGCServiceInformation extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OGCOnlineResource)
+                if (o instanceof OGCOnlineResource)
                     this.setOnlineResource((OGCOnlineResource) o);
             }
         }
@@ -125,7 +125,7 @@ public class OGCServiceInformation extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OGCContactInformation)
+                if (o instanceof OGCContactInformation)
                     this.setContactInformation((OGCContactInformation) o);
             }
         }

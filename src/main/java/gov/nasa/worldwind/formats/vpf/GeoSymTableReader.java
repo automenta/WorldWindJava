@@ -39,7 +39,7 @@ public class GeoSymTableReader
         try
         {
             streamOrException = WWIO.getFileOrResourceAsStream(filePath, this.getClass());
-            result = (streamOrException != null && streamOrException instanceof InputStream);
+            result = (streamOrException instanceof InputStream);
         }
         finally
         {
@@ -73,7 +73,7 @@ public class GeoSymTableReader
         }
     }
 
-    protected GeoSymTable doRead(String filePath) throws IOException
+    protected GeoSymTable doRead(String filePath)
     {
         InputStream inputStream = null;
         GeoSymTable result = null;
@@ -165,7 +165,7 @@ public class GeoSymTableReader
 
     protected void readRecords(Scanner scanner, GeoSymTable table)
     {
-        ArrayList<AVList> list = new ArrayList<AVList>();
+        ArrayList<AVList> list = new ArrayList<>();
 
         while (scanner.hasNextLine())
         {

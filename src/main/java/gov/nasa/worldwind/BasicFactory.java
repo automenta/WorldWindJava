@@ -222,7 +222,7 @@ public class BasicFactory implements Factory
         return null;
     }
 
-    protected Object doCreateFromElement(Element domElement, AVList params) throws Exception
+    protected Object doCreateFromElement(Element domElement, AVList params)
     {
         return null;
     }

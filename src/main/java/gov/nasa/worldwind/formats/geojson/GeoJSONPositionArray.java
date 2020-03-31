@@ -65,7 +65,7 @@ public class GeoJSONPositionArray implements Iterable<Position>
 
     protected static class PositionIterator implements Iterator<Position>
     {
-        protected GeoJSONPositionArray array;
+        protected final GeoJSONPositionArray array;
         protected int index;
 
         public PositionIterator(GeoJSONPositionArray array)

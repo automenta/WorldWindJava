@@ -52,7 +52,7 @@ public class ShapeEditing extends ApplicationTemplate
             AirspaceAttributes highlightAttrs = new BasicAirspaceAttributes(attrs);
             highlightAttrs.setOutlineMaterial(new Material(Color.RED));
 
-            java.util.List<LatLon> locations = new ArrayList<LatLon>();
+            java.util.List<LatLon> locations = new ArrayList<>();
             locations.add(LatLon.fromDegrees(40, -121));
             locations.add(LatLon.fromDegrees(40, -120));
             locations.add(LatLon.fromDegrees(41, -120));
@@ -91,7 +91,7 @@ public class ShapeEditing extends ApplicationTemplate
             orbit.setAltitudes(1e4, 2e4);
             layer.addRenderable(orbit);
 
-            locations = new ArrayList<LatLon>();
+            locations = new ArrayList<>();
             locations.add(LatLon.fromDegrees(40, -113));
             locations.add(LatLon.fromDegrees(41, -112));
             locations.add(LatLon.fromDegrees(41, -111));
@@ -104,7 +104,7 @@ public class ShapeEditing extends ApplicationTemplate
             route.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
             layer.addRenderable(route);
 
-            locations = new ArrayList<LatLon>();
+            locations = new ArrayList<>();
             locations.add(LatLon.fromDegrees(40, -110));
             locations.add(LatLon.fromDegrees(41, -110));
             locations.add(LatLon.fromDegrees(41, -109));
@@ -166,7 +166,7 @@ public class ShapeEditing extends ApplicationTemplate
             attrs.setOutlineMaterial(new Material(Color.BLACK));
             attrs.setOutlineWidth(2);
 
-            locations = new ArrayList<LatLon>();
+            locations = new ArrayList<>();
             locations.add(LatLon.fromDegrees(42, -121));
             locations.add(LatLon.fromDegrees(42, -120));
             locations.add(LatLon.fromDegrees(43, -120));
@@ -175,7 +175,7 @@ public class ShapeEditing extends ApplicationTemplate
             surfacePolygon.setHighlightAttributes(highlightAttrs);
             layer.addRenderable(surfacePolygon);
 
-            locations = new ArrayList<LatLon>();
+            locations = new ArrayList<>();
             locations.add(LatLon.fromDegrees(42, -119));
             locations.add(LatLon.fromDegrees(42, -118));
             locations.add(LatLon.fromDegrees(43, -118));
@@ -203,13 +203,13 @@ public class ShapeEditing extends ApplicationTemplate
             ellipse.setHighlightAttributes(highlightAttrs);
             layer.addRenderable(ellipse);
 
-            java.util.List<Marker> markers = new ArrayList<Marker>(1);
+            java.util.List<Marker> markers = new ArrayList<>(1);
             markers.add(new BasicMarker(Position.fromDegrees(90, 0), new BasicMarkerAttributes()));
             MarkerLayer markerLayer = new MarkerLayer();
             markerLayer.setMarkers(markers);
             insertBeforeCompass(getWwd(), markerLayer);
 
-            java.util.List<Position> positions = new ArrayList<Position>(2);
+            java.util.List<Position> positions = new ArrayList<>(2);
             positions.add(Position.fromDegrees(-90, 180));
             positions.add(Position.fromDegrees(90, 180));
             Path antiMeridian = new Path(positions);

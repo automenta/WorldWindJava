@@ -12,7 +12,6 @@ import gov.nasa.worldwindx.applications.worldwindow.util.Util;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
  * @author tag
@@ -165,13 +164,7 @@ public class AbstractFeatureDialog extends AbstractFeature implements WWODialog
 
         this.closeButton = new JButton("Close");
         this.closeButton.setToolTipText("Close dialog");
-        this.closeButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                setVisible(false);
-            }
-        });
+        this.closeButton.addActionListener(actionEvent -> setVisible(false));
 
         this.rightButtonPanel.add(this.closeButton, BorderLayout.EAST);
 

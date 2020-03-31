@@ -32,7 +32,7 @@ public class Interpolator2D
     protected Double maxValue;
 
     // Retain the input tuples in a sorted map of sorted maps. The outer map represents the S axis, the inner the T.
-    protected TreeMap<Double, TreeMap<Double, Double>> map = new TreeMap<Double, TreeMap<Double, Double>>();
+    protected final TreeMap<Double, TreeMap<Double, Double>> map = new TreeMap<>();
 
     /**
      * Indicates whether this interpolator interpolates between maximum and minimum first coordinates if a first
@@ -104,12 +104,7 @@ public class Interpolator2D
      */
     public void addValue(double s, double t, double r)
     {
-        TreeMap<Double, Double> tMap = this.map.get(s);
-        if (tMap == null)
-        {
-            tMap = new TreeMap<Double, Double>();
-            this.map.put(s, tMap);
-        }
+        TreeMap<Double, Double> tMap = this.map.computeIfAbsent(s, k -> new TreeMap<>());
 
         tMap.put(t, r);
 
@@ -260,9 +255,8 @@ public class Interpolator2D
         double rs1 = as * r11 + (1 - as) * r01;
 
         double at = (t1 - t0) != 0 ? (t - t0) / (t1 - t0) : 0;
-        double r = at * rs1 + (1 - at) * rs0;
 
-        return r;
+        return at * rs1 + (1 - at) * rs0;
     }
 
     public void addFromStream(InputStream is)
@@ -275,9 +269,7 @@ public class Interpolator2D
         String fp = "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?"; // float pattern
         Pattern pattern = Pattern.compile("\\s*" + fp + "\\s+" + fp + "\\s+" + fp);
 
-        Scanner scanner = new Scanner(is);
-
-        try
+        try (Scanner scanner = new Scanner(is))
         {
             while (scanner.hasNextLine())
             {
@@ -301,10 +293,6 @@ public class Interpolator2D
 
                 this.addValue(theta, phi, r);
             }
-        }
-        finally
-        {
-            scanner.close();
         }
     }
 

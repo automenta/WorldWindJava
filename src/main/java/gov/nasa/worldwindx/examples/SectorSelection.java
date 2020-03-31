@@ -11,7 +11,6 @@ import gov.nasa.worldwindx.examples.util.SectorSelector;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
 
 /**
  * Demonstrates how to use the {@link gov.nasa.worldwindx.examples.util.SectorSelector} utility.
@@ -45,13 +44,9 @@ public class SectorSelection extends ApplicationTemplate
 
             // Listen for changes to the sector selector's region. Could also just wait until the user finishes
             // and query the result using selector.getSector().
-            this.selector.addPropertyChangeListener(SectorSelector.SECTOR_PROPERTY, new PropertyChangeListener()
-            {
-                public void propertyChange(PropertyChangeEvent evt)
-                {
+            this.selector.addPropertyChangeListener(SectorSelector.SECTOR_PROPERTY, evt -> {
 //                    Sector sector = (Sector) evt.getNewValue();
 //                    System.out.println(sector != null ? sector : "no sector");
-                }
             });
         }
 

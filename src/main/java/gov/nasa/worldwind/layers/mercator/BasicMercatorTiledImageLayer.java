@@ -20,6 +20,7 @@ import java.awt.image.*;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
+import java.util.Objects;
 
 /**
  * BasicTiledImageLayer modified 2009-02-03 to add support for Mercator projections.
@@ -130,9 +131,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
-            return this.tile.getPriority() == that.tile.getPriority() ? 0
-                : this.tile.getPriority() < that.tile.getPriority() ? -1
-                    : 1;
+            return Double.compare(this.tile.getPriority(), that.tile.getPriority());
         }
 
         public boolean equals(Object o)
@@ -145,7 +144,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
             final RequestTask that = (RequestTask) o;
 
             // Don't include layer in comparison so that requests are shared among layers
-            return !(tile != null ? !tile.equals(that.tile) : that.tile != null);
+            return Objects.equals(tile, that.tile);
         }
 
         public int hashCode()
@@ -351,7 +350,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
                     {
                         this.layer.getLevels().markResourceAbsent(this.tile);
 
-                        StringBuffer sb = new StringBuffer();
+                        StringBuilder sb = new StringBuilder();
                         while (buffer.hasRemaining())
                         {
                             sb.append((char) buffer.get());

@@ -27,7 +27,7 @@ import java.util.zip.*;
 public class WWIO
 {
     public static final String DELETE_ON_EXIT_PREFIX = "WWJDeleteOnExit";
-    public static final String ILLEGAL_FILE_PATH_PART_CHARACTERS = "[" + "?/\\\\=+<>:;\\,\"\\|^\\[\\]" + "]";
+    public static final String ILLEGAL_FILE_PATH_PART_CHARACTERS = "[" + "?/\\\\=+<>:;,\"|^\\[\\]" + "]";
     /** The default character encoding used if none is specified. */
     protected static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
     /** The maximum number of characters allowed in a file path. Covers Windows, Linux and OS X. */
@@ -246,16 +246,12 @@ public class WWIO
         {
             return new File(url.toURI());
         }
-        catch (IllegalArgumentException e)
+        catch (IllegalArgumentException | URISyntaxException e)
         {
             // Thrown if the URI cannot be interpreted as a path on the local filesystem.
             return null;
         }
-        catch (URISyntaxException e)
-        {
-            // Thrown if the URL cannot be converted to a URI.
-            return null;
-        }
+        // Thrown if the URL cannot be converted to a URI.
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored"})
@@ -1040,7 +1036,7 @@ public class WWIO
         }
 
         String suffix = newSuffix != null ? newSuffix : "";
-        int p = in.lastIndexOf(".");
+        int p = in.lastIndexOf('.');
         return p >= 0 ? in.substring(0, p) + suffix : in + suffix;
     }
 
@@ -1054,13 +1050,13 @@ public class WWIO
         }
 
         int len = filePath.length();
-        int p = filePath.lastIndexOf(".");
+        int p = filePath.lastIndexOf('.');
         String suffix = (p >= 0 && p + 1 < len) ? filePath.substring(p + 1, len) : null;
 
         // handle .bil.gz extensions
         if (null != suffix && p > 0 && "gz".equals(suffix))
         {
-            int idx = filePath.lastIndexOf(".", p - 1);
+            int idx = filePath.lastIndexOf('.', p - 1);
             suffix = (idx >= 0 && idx + 1 < len) ? filePath.substring(idx + 1, len) : suffix;
         }
 
@@ -1089,9 +1085,9 @@ public class WWIO
         filePath = stripTrailingSeparator(filePath);
 
         int len = filePath.length();
-        int p = filePath.lastIndexOf("/");
+        int p = filePath.lastIndexOf('/');
         if (p < 0)
-            p = filePath.lastIndexOf("\\");
+            p = filePath.lastIndexOf('\\');
         return (p >= 0 && p + 1 < len) ? filePath.substring(p + 1, len) : null;
     }
 
@@ -1116,9 +1112,9 @@ public class WWIO
         filePath = stripTrailingSeparator(filePath);
 
         int len = filePath.length();
-        int p = filePath.lastIndexOf("/");
+        int p = filePath.lastIndexOf('/');
         if (p < 0)
-            p = filePath.lastIndexOf("\\");
+            p = filePath.lastIndexOf('\\');
         return (p > 0 && p < len) ? filePath.substring(0, p) : null;
     }
 
@@ -1321,14 +1317,14 @@ public class WWIO
 
         // Remove any parameters appended to this mime type before using it as a key in the mimeTypeToSuffixMap. Mime
         // parameters do not change the mapping from mime type to suffix.
-        int paramIndex = mimeType.indexOf(";");
+        int paramIndex = mimeType.indexOf(';');
         if (paramIndex != -1)
             mimeType = mimeType.substring(0, paramIndex);
 
         String suffix = mimeTypeToSuffixMap.get(mimeType);
 
         if (suffix == null)
-            suffix = mimeType.substring(mimeType.lastIndexOf("/") + 1);
+            suffix = mimeType.substring(mimeType.lastIndexOf('/') + 1);
 
         suffix = suffix.replaceFirst("bil32", "bil"); // if bil32, replace with "bil" suffix.
         suffix = suffix.replaceFirst("bil16", "bil"); // if bil16, replace with "bil" suffix.
@@ -1361,8 +1357,8 @@ public class WWIO
         return suffixToMimeTypeMap.get(suffix.toLowerCase());
     }
 
-    protected static Map<String, String> mimeTypeToSuffixMap = new HashMap<String, String>();
-    protected static Map<String, String> suffixToMimeTypeMap = new HashMap<String, String>();
+    protected static final Map<String, String> mimeTypeToSuffixMap = new HashMap<>();
+    protected static final Map<String, String> suffixToMimeTypeMap = new HashMap<>();
 
     static
     {
@@ -1499,16 +1495,12 @@ public class WWIO
             throw new IllegalArgumentException(message);
         }
 
-        if (mimeType.equals("application/bil32"))
-            return AVKey.FLOAT32;
-        else if (mimeType.equals("application/bil16"))
-            return AVKey.INT16;
-        else if (mimeType.equals("application/bil"))
-            return AVKey.INT16;
-        else if (mimeType.equals("image/bil"))
-            return AVKey.INT16;
-
-        return null;
+        return switch (mimeType)
+            {
+                case "application/bil32" -> AVKey.FLOAT32;
+                case "application/bil16", "image/bil", "application/bil" -> AVKey.INT16;
+                default -> null;
+            };
     }
 
     public static Object getFileOrResourceAsStream(String path, Class c)
@@ -1737,8 +1729,8 @@ public class WWIO
         if (fileList == null)
             return;
 
-        List<File> childFiles = new ArrayList<File>();
-        List<File> childDirs = new ArrayList<File>();
+        List<File> childFiles = new ArrayList<>();
+        List<File> childDirs = new ArrayList<>();
         for (File child : fileList)
         {
             if (child == null)
@@ -1767,7 +1759,7 @@ public class WWIO
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored"})
-    public static void deleteDirectory(File file) throws IOException
+    public static void deleteDirectory(File file)
     {
         if (file == null)
         {
@@ -1779,8 +1771,8 @@ public class WWIO
         File[] fileList = file.listFiles();
         if (fileList != null)
         {
-            List<File> childFiles = new ArrayList<File>();
-            List<File> childDirs = new ArrayList<File>();
+            List<File> childFiles = new ArrayList<>();
+            List<File> childDirs = new ArrayList<>();
             for (File child : fileList)
             {
                 if (child == null)
@@ -2306,7 +2298,7 @@ public class WWIO
         if (names == null)
             return null;
 
-        ArrayList<String> matches = new ArrayList<String>();
+        ArrayList<String> matches = new ArrayList<>();
 
         // Collect the non-null pathnames which match the specified filter.
         for (String filename : names)
@@ -2322,7 +2314,7 @@ public class WWIO
             matches.add(filename);
         }
 
-        return matches.toArray(new String[matches.size()]);
+        return matches.toArray(new String[0]);
     }
 
     /**
@@ -2382,10 +2374,10 @@ public class WWIO
         if (file.list() == null)
             return null;
 
-        ArrayList<String> matches = new ArrayList<String>();
+        ArrayList<String> matches = new ArrayList<>();
         listDescendantFilenames(file, null, filter, recurseAfterMatch, matches);
 
-        return matches.toArray(new String[matches.size()]);
+        return matches.toArray(new String[0]);
     }
 
     protected static void listDescendantFilenames(File parent, String pathname, FileFilter filter,

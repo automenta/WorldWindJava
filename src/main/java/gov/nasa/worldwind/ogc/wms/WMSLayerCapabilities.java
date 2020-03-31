@@ -245,7 +245,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerCapabilities)
+                if (o instanceof WMSLayerCapabilities)
                     this.addLayer(((WMSLayerCapabilities) o));
             }
         }
@@ -267,7 +267,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerStyle)
+                if (o instanceof WMSLayerStyle)
                     this.addStyle(((WMSLayerStyle) o));
             }
         }
@@ -329,7 +329,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OGCBoundingBox)
+                if (o instanceof OGCBoundingBox)
                     this.addBoundingBox((OGCBoundingBox) o);
             }
         }
@@ -339,7 +339,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerAttribution)
+                if (o instanceof WMSLayerAttribution)
                     this.addAttribution((WMSLayerAttribution) o);
             }
         }
@@ -349,7 +349,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof StringSetXMLEventParser)
+                if (o instanceof StringSetXMLEventParser)
                     this.setKeywords(((StringSetXMLEventParser) o).getStrings());
             }
         }
@@ -359,7 +359,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerIdentifier)
+                if (o instanceof WMSLayerIdentifier)
                     this.addIdentifer((WMSLayerIdentifier) o);
             }
         }
@@ -369,7 +369,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerDimension)
+                if (o instanceof WMSLayerDimension)
                     this.addDimension((WMSLayerDimension) o);
             }
         }
@@ -379,7 +379,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerExtent)
+                if (o instanceof WMSLayerExtent)
                     this.addExtent((WMSLayerExtent) o);
             }
         }
@@ -389,7 +389,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSAuthorityURL)
+                if (o instanceof WMSAuthorityURL)
                     this.addAuthorityURL((WMSAuthorityURL) o);
             }
         }
@@ -399,7 +399,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerInfoURL)
+                if (o instanceof WMSLayerInfoURL)
                     this.addDataURL((WMSLayerInfoURL) o);
             }
         }
@@ -409,7 +409,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerInfoURL)
+                if (o instanceof WMSLayerInfoURL)
                     this.addFeatureListURL((WMSLayerInfoURL) o);
             }
         }
@@ -419,7 +419,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerInfoURL)
+                if (o instanceof WMSLayerInfoURL)
                     this.addMetadataURL((WMSLayerInfoURL) o);
             }
         }
@@ -530,29 +530,32 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
             }
             else if (event.isStartElement())
             {
-                if (event.asStartElement().getName().getLocalPart().equals("westBoundLongitude"))
+                switch (event.asStartElement().getName().getLocalPart())
                 {
-                    Double d = ctx.getDoubleParser().parseDouble(ctx, event);
-                    if (d != null)
-                        minLon = d;
-                }
-                else if (event.asStartElement().getName().getLocalPart().equals("eastBoundLongitude"))
-                {
-                    Double d = ctx.getDoubleParser().parseDouble(ctx, event);
-                    if (d != null)
-                        maxLon = d;
-                }
-                else if (event.asStartElement().getName().getLocalPart().equals("southBoundLatitude"))
-                {
-                    Double d = ctx.getDoubleParser().parseDouble(ctx, event);
-                    if (d != null)
-                        minLat = d;
-                }
-                else if (event.asStartElement().getName().getLocalPart().equals("northBoundLatitude"))
-                {
-                    Double d = ctx.getDoubleParser().parseDouble(ctx, event);
-                    if (d != null)
-                        maxLat = d;
+                    case "westBoundLongitude" -> {
+                        Double d = ctx.getDoubleParser().parseDouble(ctx, event);
+                        if (d != null)
+                            minLon = d;
+                        break;
+                    }
+                    case "eastBoundLongitude" -> {
+                        Double d = ctx.getDoubleParser().parseDouble(ctx, event);
+                        if (d != null)
+                            maxLon = d;
+                        break;
+                    }
+                    case "southBoundLatitude" -> {
+                        Double d = ctx.getDoubleParser().parseDouble(ctx, event);
+                        if (d != null)
+                            minLat = d;
+                        break;
+                    }
+                    case "northBoundLatitude" -> {
+                        Double d = ctx.getDoubleParser().parseDouble(ctx, event);
+                        if (d != null)
+                            maxLat = d;
+                        break;
+                    }
                 }
             }
         }
@@ -560,7 +563,6 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
 
     @SuppressWarnings({"UnusedDeclaration"})
     protected void parseGeographicBoundingBoxV111(XMLEventParserContext ctx, XMLEvent bboxEvent)
-        throws XMLStreamException
     {
         Double minLat = null;
         Double minLon = null;
@@ -605,7 +607,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
-    protected void parseScaleHint(XMLEventParserContext ctx, XMLEvent bboxEvent) throws XMLStreamException
+    protected void parseScaleHint(XMLEventParserContext ctx, XMLEvent bboxEvent)
     {
         Iterator iter = bboxEvent.asStartElement().getAttributes();
         if (iter == null)
@@ -631,7 +633,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
 
     public List<WMSLayerCapabilities> getNamedLayers()
     {
-        List<WMSLayerCapabilities> namedLayers = new ArrayList<WMSLayerCapabilities>();
+        List<WMSLayerCapabilities> namedLayers = new ArrayList<>();
 
         if (this.getName() != null)
             namedLayers.add(this);
@@ -736,7 +738,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addDimension(WMSLayerDimension dimension)
     {
         if (this.dimensions == null)
-            this.dimensions = new HashSet<WMSLayerDimension>();
+            this.dimensions = new HashSet<>();
 
         this.getDimensions().add(dimension);
     }
@@ -768,7 +770,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addExtent(WMSLayerExtent extent)
     {
         if (this.extents == null)
-            this.extents = new HashSet<WMSLayerExtent>();
+            this.extents = new HashSet<>();
 
         this.getExtents().add(extent);
     }
@@ -860,7 +862,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addAttribution(WMSLayerAttribution attribution)
     {
         if (this.attributions == null)
-            this.attributions = new HashSet<WMSLayerAttribution>();
+            this.attributions = new HashSet<>();
 
         this.getAttributions().add(attribution);
     }
@@ -889,7 +891,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addAuthorityURL(WMSAuthorityURL authorityURL)
     {
         if (this.authorityURLs == null)
-            this.authorityURLs = new HashSet<WMSAuthorityURL>();
+            this.authorityURLs = new HashSet<>();
 
         this.getAuthorityURLs().add(authorityURL);
     }
@@ -913,7 +915,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addIdentifer(WMSLayerIdentifier identifier)
     {
         if (this.identifiers == null)
-            this.identifiers = new HashSet<WMSLayerIdentifier>();
+            this.identifiers = new HashSet<>();
 
         this.getIdentifiers().add(identifier);
     }
@@ -937,7 +939,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addMetadataURL(WMSLayerInfoURL url)
     {
         if (this.metadataURLs == null)
-            this.metadataURLs = new HashSet<WMSLayerInfoURL>();
+            this.metadataURLs = new HashSet<>();
 
         this.getMetadataURLs().add(url);
     }
@@ -961,7 +963,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addFeatureListURL(WMSLayerInfoURL url)
     {
         if (this.featureListURLs == null)
-            this.featureListURLs = new HashSet<WMSLayerInfoURL>();
+            this.featureListURLs = new HashSet<>();
 
         this.getFeatureListURLs().add(url);
     }
@@ -985,7 +987,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addDataURL(WMSLayerInfoURL url)
     {
         if (this.dataURLs == null)
-            this.dataURLs = new HashSet<WMSLayerInfoURL>();
+            this.dataURLs = new HashSet<>();
 
         this.getDataURLs().add(url);
     }
@@ -1009,7 +1011,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addLayer(WMSLayerCapabilities layer)
     {
         if (this.layers == null)
-            this.layers = new ArrayList<WMSLayerCapabilities>();
+            this.layers = new ArrayList<>();
 
         this.getLayers().add(layer);
     }
@@ -1038,7 +1040,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addStyle(WMSLayerStyle style)
     {
         if (this.styles == null)
-            this.styles = new HashSet<WMSLayerStyle>();
+            this.styles = new HashSet<>();
 
         this.getStyles().add(style);
     }
@@ -1067,7 +1069,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addBoundingBox(OGCBoundingBox box)
     {
         if (this.boundingBoxes == null)
-            this.boundingBoxes = new HashSet<OGCBoundingBox>();
+            this.boundingBoxes = new HashSet<>();
 
         this.getBoundingBoxes().add(box);
     }
@@ -1169,7 +1171,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addSRS(String srs)
     {
         if (this.srs == null)
-            this.srs = new HashSet<String>();
+            this.srs = new HashSet<>();
 
         this.srs.add(srs);
     }
@@ -1198,7 +1200,7 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser
     protected void addCRS(String crs)
     {
         if (this.crs == null)
-            this.crs = new HashSet<String>();
+            this.crs = new HashSet<>();
 
         this.crs.add(crs);
     }

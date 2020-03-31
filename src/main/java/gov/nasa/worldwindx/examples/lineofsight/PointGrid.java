@@ -107,17 +107,17 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
     protected boolean visible = true;
     protected int altitudeMode = WorldWind.CLAMP_TO_GROUND;
     protected boolean applyVerticalExaggeration = true;
-    protected long geometryRegenerationInterval = DEFAULT_GEOMETRY_GENERATION_INTERVAL;
+    protected final long geometryRegenerationInterval = DEFAULT_GEOMETRY_GENERATION_INTERVAL;
 
     protected Attributes normalAttrs;
     protected Attributes highlightAttrs;
-    protected Attributes activeAttributes = new Attributes(); // re-determined each frame
+    protected final Attributes activeAttributes = new Attributes(); // re-determined each frame
 
     protected Extent extent;
     protected double eyeDistance;
     protected FloatBuffer currentPoints;
 
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     protected Layer pickLayer;
 
     // Values computed once per frame and reused during the frame as needed.
@@ -360,7 +360,7 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
         if (WWUtil.isEmpty(this.corners))
             return null;
 
-        List<Vec4> cornerPoints = new ArrayList<Vec4>(this.getCorners().size());
+        List<Vec4> cornerPoints = new ArrayList<>(this.getCorners().size());
 
         this.eyeDistance = Double.MAX_VALUE;
 
@@ -588,7 +588,7 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
 
                     // Adjust depth of point to bring it slightly forward
                     double depth = sp.z - (8d * 0.00048875809d);
-                    depth = depth < 0d ? 0d : (depth > 1d ? 1d : depth);
+                    depth = depth < 0d ? 0d : (Math.min(depth, 1d));
                     gl.glDepthRange(depth, depth);
 
                     Color pickColor = dc.getUniquePickColor();
@@ -728,11 +728,9 @@ public class PointGrid extends WWObjectImpl implements OrderedRenderable, Highli
             coords = Buffers.newDirectFloatBuffer(numCoords);
         coords.rewind();
 
-        Iterator<? extends Position> posIter = this.positions.iterator();
-
-        while (posIter.hasNext())
+        for (Position position : this.positions)
         {
-            Vec4 pt = this.computePoint(dc, posIter.next());
+            Vec4 pt = this.computePoint(dc, position);
             if (pt == null)
                 continue;
 

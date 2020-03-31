@@ -20,8 +20,8 @@ public class BasicJSONEventParserContext implements JSONEventParserContext
     protected JsonParser parser;
     protected boolean hasNext;
     protected JSONEvent nextEvent;
-    protected Deque<String> fieldNameStack = new ArrayDeque<String>();
-    protected Map<String, JSONEventParser> parsers = new HashMap<String, JSONEventParser>();
+    protected final Deque<String> fieldNameStack = new ArrayDeque<>();
+    protected final Map<String, JSONEventParser> parsers = new HashMap<>();
 
     public BasicJSONEventParserContext(JsonParser parser) throws IOException
     {

@@ -53,7 +53,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
     protected Point dragRefCursorPoint;
     protected Point dragRefPoint;
     protected int dragRefIndex = -1;
-    protected Color dragColor = Color.RED;
+    protected final Color dragColor = Color.RED;
 
     public LayerManagerLayer(WorldWindow wwd)
     {

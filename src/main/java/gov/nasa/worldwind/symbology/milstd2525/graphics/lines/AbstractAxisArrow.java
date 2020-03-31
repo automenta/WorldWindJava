@@ -201,9 +201,9 @@ public abstract class AbstractAxisArrow extends AbstractMilStd2525TacticalGraphi
         Globe globe = dc.getGlobe();
 
         // Collect positions in two lists, one for points on the left side of the control line, and one for the right side.
-        List<Position> leftPositions = new ArrayList<Position>();
-        List<Position> rightPositions = new ArrayList<Position>();
-        List<Position> arrowHeadPositions = new ArrayList<Position>();
+        List<Position> leftPositions = new ArrayList<>();
+        List<Position> rightPositions = new ArrayList<>();
+        List<Position> arrowHeadPositions = new ArrayList<>();
 
         double halfWidth = this.createArrowHeadPositions(leftPositions, rightPositions, arrowHeadPositions, globe);
 
@@ -211,7 +211,7 @@ public abstract class AbstractAxisArrow extends AbstractMilStd2525TacticalGraphi
 
         Collections.reverse(leftPositions);
 
-        List<Position> allPositions = new ArrayList<Position>(leftPositions);
+        List<Position> allPositions = new ArrayList<>(leftPositions);
         allPositions.addAll(arrowHeadPositions);
         allPositions.addAll(rightPositions);
 

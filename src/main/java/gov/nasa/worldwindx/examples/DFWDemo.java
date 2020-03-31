@@ -121,7 +121,7 @@ public class DFWDemo {
     
     public static class AppPanel extends JPanel {
         
-        protected WorldWindow wwd;
+        protected final WorldWindow wwd;
         protected StatusBar statusBar;
         protected ToolTipController toolTipController;
         protected HighlightController highlightController;
@@ -212,7 +212,7 @@ public class DFWDemo {
                 configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, 30000);
                 configParams.setValue(AVKey.URL_READ_TIMEOUT, 30000);
                 configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
-                long fiveDayMillis = 5l * 24l * 60l * 60l * 1000l;
+                long fiveDayMillis = 5L * 24L * 60L * 60L * 1000L;
                 if (imagery) {
                     WMSTiledImageLayer wmsLayer = new WMSTiledImageLayer(dynamicLayer.getCaps(), configParams);
                     
@@ -435,9 +435,7 @@ public class DFWDemo {
             final AppFrame frame = (AppFrame) appFrameClass.getConstructor().newInstance();
             frame.setTitle(appName);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            java.awt.EventQueue.invokeLater(() -> {
-                frame.setVisible(true);
-            });
+            java.awt.EventQueue.invokeLater(() -> frame.setVisible(true));
             
             return frame;
         } catch (Exception e) {

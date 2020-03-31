@@ -151,8 +151,6 @@ public class VPFWingedEdgeTraverser
         {
             case LEFT:
                 return true;
-            case RIGHT:
-                return false;
             case LEFT_AND_RIGHT:
                 return (prevEdgeId > 0) && this.auxiliaryMustReverseCoordinates(prevEdgeId, curEdgeId, edgeInfo);
             default:

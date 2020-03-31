@@ -38,7 +38,7 @@ public class ScalebarLayer extends AbstractLayer
     protected Font defaultFont = Font.decode("Arial-PLAIN-12");
     protected double toViewportScale = 0.2;
 
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     protected Vec4 locationCenter = null;
     protected Vec4 locationOffset = null;
     protected long frameStampForPicking;
@@ -46,8 +46,8 @@ public class ScalebarLayer extends AbstractLayer
 
     protected class OrderedImage implements OrderedRenderable
     {
-        protected Position referencePosition;
-        protected double pixelSize;
+        protected final Position referencePosition;
+        protected final double pixelSize;
 
         public OrderedImage(Position referencePosition, double pixelSize)
         {
@@ -373,7 +373,7 @@ public class ScalebarLayer extends AbstractLayer
             // into the GL projection matrix.
             java.awt.Rectangle viewport = dc.getView().getViewport();
             ogsh.pushProjectionIdentity(gl);
-            double maxwh = width > height ? width : height;
+            double maxwh = Math.max(width, height);
             gl.glOrtho(0d, viewport.width, 0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
 
             ogsh.pushModelviewIdentity(gl);
@@ -388,35 +388,37 @@ public class ScalebarLayer extends AbstractLayer
             // Compute scale size in real world
             if (orderedImage.pixelSize > 0)
             {
-                Double scaleSize = orderedImage.pixelSize * width * scale;  // meter
+                double scaleSize = orderedImage.pixelSize * width * scale;  // meter
                 String unitLabel = "m";
-                if (this.unit.equals(UNIT_METRIC))
+                switch (this.unit)
                 {
-                    if (scaleSize > 10000)
-                    {
-                        scaleSize /= 1000;
-                        unitLabel = "Km";
-                    }
-                }
-                else if (this.unit.equals(UNIT_IMPERIAL))
-                {
-                    scaleSize *= 3.280839895; // feet
-                    unitLabel = "ft";
-                    if (scaleSize > 5280)
-                    {
-                        scaleSize /= 5280;
-                        unitLabel = "mile(s)";
-                    }
-                }
-                else if (this.unit.equals(UNIT_NAUTICAL))
-                {
-                    scaleSize *= 3.280839895; // feet
-                    unitLabel = "ft";
-                    if (scaleSize > 6076)
-                    {
-                        scaleSize /= 6076;
-                        unitLabel = "Nautical mile(s)";
-                    }
+                    case UNIT_METRIC:
+                        if (scaleSize > 10000)
+                        {
+                            scaleSize /= 1000;
+                            unitLabel = "Km";
+                        }
+                        break;
+                    case UNIT_IMPERIAL:
+                        scaleSize *= 3.280839895; // feet
+
+                        unitLabel = "ft";
+                        if (scaleSize > 5280)
+                        {
+                            scaleSize /= 5280;
+                            unitLabel = "mile(s)";
+                        }
+                        break;
+                    case UNIT_NAUTICAL:
+                        scaleSize *= 3.280839895; // feet
+
+                        unitLabel = "ft";
+                        if (scaleSize > 6076)
+                        {
+                            scaleSize /= 6076;
+                            unitLabel = "Nautical mile(s)";
+                        }
+                        break;
                 }
                 // Rounded division size
                 int pot = (int) Math.floor(Math.log10(scaleSize));
@@ -555,22 +557,13 @@ public class ScalebarLayer extends AbstractLayer
 
     private double computeScale(java.awt.Rectangle viewport)
     {
-        if (this.resizeBehavior.equals(AVKey.RESIZE_SHRINK_ONLY))
-        {
-            return Math.min(1d, (this.toViewportScale) * viewport.width / this.size.width);
-        }
-        else if (this.resizeBehavior.equals(AVKey.RESIZE_STRETCH))
-        {
-            return (this.toViewportScale) * viewport.width / this.size.width;
-        }
-        else if (this.resizeBehavior.equals(AVKey.RESIZE_KEEP_FIXED_SIZE))
-        {
-            return 1d;
-        }
-        else
-        {
-            return 1d;
-        }
+        return switch (this.resizeBehavior)
+            {
+                case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1d,
+                    (this.toViewportScale) * viewport.width / this.size.width);
+                case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.size.width;
+                default -> 1d;
+            };
     }
 
     private Vec4 computeLocation(java.awt.Rectangle viewport, double scale)

@@ -19,9 +19,7 @@ import gov.nasa.worldwindx.examples.util.PowerOfTwoPaddedImage;
 import javax.swing.Box;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.*;
 import java.net.URL;
 
@@ -40,7 +38,7 @@ public class Annotations extends ApplicationTemplate
     private static class AppFrame extends ApplicationTemplate.AppFrame
     {
         // Above mean sea level globe annotation
-        private class AMSLGlobeAnnotation extends GlobeAnnotation
+        private static class AMSLGlobeAnnotation extends GlobeAnnotation
         {
             public AMSLGlobeAnnotation(String text, Position position)
             {
@@ -684,7 +682,7 @@ public class Annotations extends ApplicationTemplate
             }
 
             // Turn on highlight if object selected.
-            if (o != null && o instanceof Annotation)
+            if (o instanceof Annotation)
             {
                 this.lastPickedObject = (Annotation) o;
                 this.lastPickedObject.getAttributes().setHighlighted(true);
@@ -716,14 +714,10 @@ public class Annotations extends ApplicationTemplate
             //this.widthSlider.setPaintTicks(true);
             this.widthSlider.setPaintLabels(true);
             this.widthSlider.setToolTipText("Preferred annotation width");
-            this.widthSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.widthSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             sizePanel.add(this.widthSlider);
@@ -733,14 +727,10 @@ public class Annotations extends ApplicationTemplate
             //this.widthSlider.setPaintTicks(true);
             this.heightSlider.setPaintLabels(true);
             this.heightSlider.setToolTipText("Preferred annotation height, zero = no limit");
-            this.heightSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.heightSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             sizePanel.add(this.heightSlider);
@@ -757,14 +747,10 @@ public class Annotations extends ApplicationTemplate
             //this.cornerRadiusSlider.setPaintTicks(true);
             this.cornerRadiusSlider.setPaintLabels(true);
             this.cornerRadiusSlider.setToolTipText("Rounded corners radius");
-            this.cornerRadiusSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.cornerRadiusSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             cornerRadiusPanel.add(this.cornerRadiusSlider);
@@ -776,47 +762,31 @@ public class Annotations extends ApplicationTemplate
             insetsPanel.add(new JLabel("Insets:"));
             insetsPanel.add(Box.createRigidArea(new Dimension(10, 0)));
             this.insetsTop = new JSpinner();
-            this.insetsTop.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.insetsTop.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             this.insetsRight = new JSpinner();
-            this.insetsRight.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.insetsRight.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             this.insetsBottom = new JSpinner();
-            this.insetsBottom.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.insetsBottom.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             this.insetsLeft = new JSpinner();
-            this.insetsLeft.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.insetsLeft.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             insetsPanel.add(this.insetsTop);
@@ -839,14 +809,10 @@ public class Annotations extends ApplicationTemplate
             //this.borderWidthSlider.setPaintTicks(true);
             this.borderWidthSlider.setPaintLabels(true);
             this.borderWidthSlider.setToolTipText("Border width 1/10th");
-            this.borderWidthSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.borderWidthSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             borderWidthPanel.add(this.borderWidthSlider);
@@ -861,14 +827,10 @@ public class Annotations extends ApplicationTemplate
             this.stippleFactorSlider.setMajorTickSpacing(1);
             this.stippleFactorSlider.setPaintLabels(true);
             this.stippleFactorSlider.setToolTipText("Border line pattern repeat factor");
-            this.stippleFactorSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.stippleFactorSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             stippleFactorPanel.add(this.stippleFactorSlider);
@@ -883,14 +845,10 @@ public class Annotations extends ApplicationTemplate
             //this.scaleSlider.setPaintTicks(true);
             this.scaleSlider.setPaintLabels(true);
             this.scaleSlider.setToolTipText("Annotation scaling");
-            this.scaleSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.scaleSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             scalePanel.add(this.scaleSlider);
@@ -900,14 +858,10 @@ public class Annotations extends ApplicationTemplate
             //this.opacitySlider.setPaintTicks(true);
             this.opacitySlider.setPaintLabels(true);
             this.opacitySlider.setToolTipText("Annotation opacity");
-            this.opacitySlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.opacitySlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             scalePanel.add(this.opacitySlider);
@@ -921,41 +875,29 @@ public class Annotations extends ApplicationTemplate
             fontPanel.add(Box.createRigidArea(new Dimension(10, 0)));
             this.cbFontName = new JComboBox(new String[] {"Arial", "SansSerif", "Serif", "Courier", "Times",
                 "Helvetica", "Trebuchet", "Tahoma"});
-            this.cbFontName.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbFontName.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             fontPanel.add(this.cbFontName);
             fontPanel.add(Box.createRigidArea(new Dimension(10, 0)));
             this.cbFontStyle = new JComboBox(new String[] {"Plain", "Bold", "Italic", "BoldItalic"});
-            this.cbFontStyle.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbFontStyle.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             fontPanel.add(this.cbFontStyle);
             fontPanel.add(Box.createRigidArea(new Dimension(10, 0)));
             this.cbFontSize = new JComboBox(new String[] {"10", "12", "14", "16", "18", "20", "24", "28", "34",
                 "48", "64"});
-            this.cbFontSize.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbFontSize.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             fontPanel.add(this.cbFontSize);
@@ -966,26 +908,18 @@ public class Annotations extends ApplicationTemplate
             alignPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
             alignPanel.add(new JLabel("Align & Effect:"));
             this.cbTextAlign = new JComboBox(new String[] {"Left", "Center", "Right"});
-            this.cbTextAlign.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbTextAlign.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             alignPanel.add(this.cbTextAlign);
             this.cbTextEffect = new JComboBox(new String[] {"None", "Shadow", "Outline"});
-            this.cbTextEffect.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbTextEffect.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             alignPanel.add(this.cbTextEffect);
@@ -994,14 +928,10 @@ public class Annotations extends ApplicationTemplate
             final JPanel adjustWidthPanel = new JPanel(new GridLayout(0, 1, 5, 5));
             adjustWidthPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
             this.cbAdjustWidth = new JCheckBox("Adjust width to text");
-            this.cbAdjustWidth.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbAdjustWidth.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             this.cbAdjustWidth.setSelected(true);
@@ -1013,27 +943,19 @@ public class Annotations extends ApplicationTemplate
 
             shapePanel.add(new JLabel("Shape:"));
             this.cbShape = new JComboBox(new String[] {"Rectangle", "Ellipse", "None"});
-            this.cbShape.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbShape.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             shapePanel.add(this.cbShape);
             shapePanel.add(new JLabel("Leader Shape:"));
             this.cbLeader = new JComboBox(new String[] {"Triangle", "None"});
-            this.cbLeader.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbLeader.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             shapePanel.add(this.cbLeader);
@@ -1043,14 +965,10 @@ public class Annotations extends ApplicationTemplate
             this.leaderGapWidthSlider.setMinorTickSpacing(1);
             this.leaderGapWidthSlider.setPaintLabels(true);
             this.leaderGapWidthSlider.setToolTipText("Leader gap width");
-            this.leaderGapWidthSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.leaderGapWidthSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             shapePanel.add(this.leaderGapWidthSlider);
@@ -1061,27 +979,19 @@ public class Annotations extends ApplicationTemplate
 
             imagePanel.add(new JLabel("Image:"));
             this.cbImage = new JComboBox(new String[] {"None", "Earth", "NASA", "WWJ Splash", "Custom"});
-            this.cbImage.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbImage.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             imagePanel.add(this.cbImage);
             imagePanel.add(new JLabel("Repeat:"));
             this.cbImageRepeat = new JComboBox(new String[] {"None", "Repeat-X", "Repeat-Y", "Repeat-XY"});
-            this.cbImageRepeat.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbImageRepeat.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             imagePanel.add(this.cbImageRepeat);
@@ -1096,14 +1006,10 @@ public class Annotations extends ApplicationTemplate
             this.imageScaleSlider.setMinorTickSpacing(1);
             this.imageScaleSlider.setPaintLabels(true);
             this.imageScaleSlider.setToolTipText("Background image scaling");
-            this.imageScaleSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.imageScaleSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             imageScalePanel.add(this.imageScaleSlider);
@@ -1111,14 +1017,10 @@ public class Annotations extends ApplicationTemplate
             this.imageOpacitySlider.setMajorTickSpacing(1);
             this.imageOpacitySlider.setPaintLabels(true);
             this.imageOpacitySlider.setToolTipText("Background image opacity");
-            this.imageOpacitySlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.imageOpacitySlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             imageScalePanel.add(this.imageOpacitySlider);
@@ -1132,14 +1034,10 @@ public class Annotations extends ApplicationTemplate
             this.imageOffsetXSlider.setMinorTickSpacing(1);
             this.imageOffsetXSlider.setPaintLabels(true);
             this.imageOffsetXSlider.setToolTipText("Background image horizontal offset (X)");
-            this.imageOffsetXSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.imageOffsetXSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             imageOffsetPanel.add(this.imageOffsetXSlider);
@@ -1148,14 +1046,10 @@ public class Annotations extends ApplicationTemplate
             this.imageOffsetXSlider.setMinorTickSpacing(1);
             this.imageOffsetYSlider.setPaintLabels(true);
             this.imageOffsetYSlider.setToolTipText("Background image vertical offset (Y)");
-            this.imageOffsetYSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.imageOffsetYSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             imageOffsetPanel.add(this.imageOffsetYSlider);
@@ -1169,14 +1063,10 @@ public class Annotations extends ApplicationTemplate
             this.offsetXSlider.setMinorTickSpacing(1);
             this.offsetXSlider.setPaintLabels(true);
             this.offsetXSlider.setToolTipText("Annotation horizontal offset (X)");
-            this.offsetXSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.offsetXSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             offsetPanel.add(this.offsetXSlider);
@@ -1185,14 +1075,10 @@ public class Annotations extends ApplicationTemplate
             this.offsetYSlider.setMinorTickSpacing(1);
             this.offsetYSlider.setPaintLabels(true);
             this.offsetYSlider.setToolTipText("Annotation vertical offset (Y)");
-            this.offsetYSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.offsetYSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             offsetPanel.add(this.offsetYSlider);
@@ -1206,14 +1092,10 @@ public class Annotations extends ApplicationTemplate
             this.distanceMinScaleSlider.setMinorTickSpacing(1);
             this.distanceMinScaleSlider.setPaintLabels(true);
             this.distanceMinScaleSlider.setToolTipText("Minimum scale 1/10th");
-            this.distanceMinScaleSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.distanceMinScaleSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             distancePanel.add(this.distanceMinScaleSlider);
@@ -1222,14 +1104,10 @@ public class Annotations extends ApplicationTemplate
             this.distanceMaxScaleSlider.setMinorTickSpacing(1);
             this.distanceMaxScaleSlider.setPaintLabels(true);
             this.distanceMaxScaleSlider.setToolTipText("Maximum scale 1/10th");
-            this.distanceMaxScaleSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.distanceMaxScaleSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             distancePanel.add(this.distanceMaxScaleSlider);
@@ -1237,14 +1115,10 @@ public class Annotations extends ApplicationTemplate
             this.distanceMinOpacitySlider.setMajorTickSpacing(1);
             this.distanceMinOpacitySlider.setPaintLabels(true);
             this.distanceMinOpacitySlider.setToolTipText("Minimum opacity");
-            this.distanceMinOpacitySlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.distanceMinOpacitySlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             distancePanel.add(this.distanceMinOpacitySlider);
@@ -1259,14 +1133,10 @@ public class Annotations extends ApplicationTemplate
             this.highlightScaleSlider.setMinorTickSpacing(1);
             this.highlightScaleSlider.setPaintLabels(true);
             this.highlightScaleSlider.setToolTipText("Highlight scale 1/10th");
-            this.highlightScaleSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
+            this.highlightScaleSlider.addChangeListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             highlightPanel.add(this.highlightScaleSlider);
@@ -1277,93 +1147,69 @@ public class Annotations extends ApplicationTemplate
 
             colorPanel.add(new JLabel("Text color:"));
             this.btTextColor = new JButton("");
-            this.btTextColor.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+            this.btTextColor.addActionListener(event -> {
+                Color c = JColorChooser.showDialog(colorPanel,
+                    "Choose a color...", ((JButton) event.getSource()).getBackground());
+                if (c != null)
                 {
-                    Color c = JColorChooser.showDialog(colorPanel,
-                        "Choose a color...", ((JButton) event.getSource()).getBackground());
-                    if (c != null)
-                    {
-                        ((JButton) event.getSource()).setBackground(c);
-                        if (currentAnnotation != null)
-                            updateAnnotation();
-                    }
+                    ((JButton) event.getSource()).setBackground(c);
+                    if (currentAnnotation != null)
+                        updateAnnotation();
                 }
             });
             colorPanel.add(this.btTextColor);
             this.cbTextColorAlpha = new JComboBox(new String[] {"10", "9", "8", "7", "6", "5", "4", "3", "2",
                 "1", "0"});
-            this.cbTextColorAlpha.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbTextColorAlpha.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             colorPanel.add(this.cbTextColorAlpha);
 
             colorPanel.add(new JLabel("Back color:"));
             this.btBackColor = new JButton("");
-            this.btBackColor.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+            this.btBackColor.addActionListener(event -> {
+                Color c = JColorChooser.showDialog(colorPanel,
+                    "Choose a color...", ((JButton) event.getSource()).getBackground());
+                if (c != null)
                 {
-                    Color c = JColorChooser.showDialog(colorPanel,
-                        "Choose a color...", ((JButton) event.getSource()).getBackground());
-                    if (c != null)
-                    {
-                        ((JButton) event.getSource()).setBackground(c);
-                        if (currentAnnotation != null)
-                            updateAnnotation();
-                    }
+                    ((JButton) event.getSource()).setBackground(c);
+                    if (currentAnnotation != null)
+                        updateAnnotation();
                 }
             });
             colorPanel.add(this.btBackColor);
             this.cbBackColorAlpha = new JComboBox(new String[] {"10", "9", "8", "7", "6", "5", "4", "3", "2",
                 "1", "0"});
-            this.cbBackColorAlpha.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbBackColorAlpha.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             colorPanel.add(this.cbBackColorAlpha);
 
             colorPanel.add(new JLabel("Border color:"));
             this.btBorderColor = new JButton("");
-            this.btBorderColor.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+            this.btBorderColor.addActionListener(event -> {
+                Color c = JColorChooser.showDialog(colorPanel,
+                    "Choose a color...", ((JButton) event.getSource()).getBackground());
+                if (c != null)
                 {
-                    Color c = JColorChooser.showDialog(colorPanel,
-                        "Choose a color...", ((JButton) event.getSource()).getBackground());
-                    if (c != null)
-                    {
-                        ((JButton) event.getSource()).setBackground(c);
-                        if (currentAnnotation != null)
-                            updateAnnotation();
-                    }
+                    ((JButton) event.getSource()).setBackground(c);
+                    if (currentAnnotation != null)
+                        updateAnnotation();
                 }
             });
             colorPanel.add(this.btBorderColor);
             this.cbBorderColorAlpha = new JComboBox(new String[] {"10", "9", "8", "7", "6", "5", "4", "3", "2",
                 "1", "0"});
-            this.cbBorderColorAlpha.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
+            this.cbBorderColorAlpha.addActionListener(actionEvent -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
             colorPanel.add(this.cbBorderColorAlpha);
@@ -1376,54 +1222,42 @@ public class Annotations extends ApplicationTemplate
             // Apply changes button
             this.btApply = new JButton("Apply");
             this.btApply.setEnabled(false);
-            this.btApply.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+            this.btApply.addActionListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        updateAnnotation();
-                    }
+                    updateAnnotation();
                 }
             });
 
             // Add annotation button
             JButton btAdd = new JButton("Add new");
-            btAdd.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+            btAdd.addActionListener(event -> {
+                Position lookAtPos = computeGroundPosition(getWwd());
+                if (lookAtPos != null && inputTextArea.getText().length() > 0)
                 {
-                    Position lookAtPos = computeGroundPosition(getWwd());
-                    if (lookAtPos != null && inputTextArea.getText().length() > 0)
-                    {
-                        Annotation a = currentAnnotation;
-                        currentAnnotation = new GlobeAnnotation(inputTextArea.getText(), lookAtPos);
-                        updateAnnotation();
-                        layer.addAnnotation(currentAnnotation);
-                        currentAnnotation = a;
-                        getWwd().redraw();
-                    }
+                    Annotation a = currentAnnotation;
+                    currentAnnotation = new GlobeAnnotation(inputTextArea.getText(), lookAtPos);
+                    updateAnnotation();
+                    layer.addAnnotation(currentAnnotation);
+                    currentAnnotation = a;
+                    getWwd().redraw();
                 }
             });
 
             // Remove button
             this.btRemove = new JButton("Remove");
             this.btRemove.setEnabled(false);
-            this.btRemove.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+            this.btRemove.addActionListener(event -> {
+                if (currentAnnotation != null)
                 {
-                    if (currentAnnotation != null)
-                    {
-                        layer.removeAnnotation(currentAnnotation);
-                        // Clear current annotation
-                        currentAnnotation = null;
-                        inputTextArea.setText("");
-                        widthSlider.setEnabled(false);
-                        btApply.setEnabled(false);
-                        btRemove.setEnabled(false);
-                        getWwd().redraw();
-                    }
+                    layer.removeAnnotation(currentAnnotation);
+                    // Clear current annotation
+                    currentAnnotation = null;
+                    inputTextArea.setText("");
+                    widthSlider.setEnabled(false);
+                    btApply.setEnabled(false);
+                    btRemove.setEnabled(false);
+                    getWwd().redraw();
                 }
             });
 
@@ -1552,19 +1386,19 @@ public class Annotations extends ApplicationTemplate
                     color.getBlue()) : Color.WHITE);
                 this.cbBorderColorAlpha.setSelectedItem(colorAlpha);
 
-                if (currentAnnotation.getAttributes().getTextAlign().equals(AVKey.LEFT))
-                    cbTextAlign.setSelectedIndex(0);
-                else if (currentAnnotation.getAttributes().getTextAlign().equals(AVKey.CENTER))
-                    cbTextAlign.setSelectedIndex(1);
-                else if (currentAnnotation.getAttributes().getTextAlign().equals(AVKey.RIGHT))
-                    cbTextAlign.setSelectedIndex(2);
+                switch (currentAnnotation.getAttributes().getTextAlign())
+                {
+                    case AVKey.LEFT -> cbTextAlign.setSelectedIndex(0);
+                    case AVKey.CENTER -> cbTextAlign.setSelectedIndex(1);
+                    case AVKey.RIGHT -> cbTextAlign.setSelectedIndex(2);
+                }
 
-                if (currentAnnotation.getAttributes().getEffect().equals(AVKey.TEXT_EFFECT_NONE))
-                    cbTextEffect.setSelectedIndex(0);
-                else if (currentAnnotation.getAttributes().getEffect().equals(AVKey.TEXT_EFFECT_SHADOW))
-                    cbTextEffect.setSelectedIndex(1);
-                else if (currentAnnotation.getAttributes().getEffect().equals(AVKey.TEXT_EFFECT_OUTLINE))
-                    cbTextEffect.setSelectedIndex(2);
+                switch (currentAnnotation.getAttributes().getEffect())
+                {
+                    case AVKey.TEXT_EFFECT_NONE -> cbTextEffect.setSelectedIndex(0);
+                    case AVKey.TEXT_EFFECT_SHADOW -> cbTextEffect.setSelectedIndex(1);
+                    case AVKey.TEXT_EFFECT_OUTLINE -> cbTextEffect.setSelectedIndex(2);
+                }
 
                 if (currentAnnotation.getAttributes().getFrameShape().equals(AVKey.SHAPE_RECTANGLE))
                     cbShape.setSelectedIndex(0);
@@ -1609,14 +1443,13 @@ public class Annotations extends ApplicationTemplate
                 }
 
                 String imageRepeat = currentAnnotation.getAttributes().getImageRepeat();
-                if (imageRepeat.equals(AVKey.REPEAT_NONE))
-                    this.cbImageRepeat.setSelectedIndex(0);
-                else if (imageRepeat.equals(AVKey.REPEAT_X))
-                    this.cbImageRepeat.setSelectedIndex(1);
-                else if (imageRepeat.equals(AVKey.REPEAT_Y))
-                    this.cbImageRepeat.setSelectedIndex(2);
-                else if (imageRepeat.equals(AVKey.REPEAT_XY))
-                    this.cbImageRepeat.setSelectedIndex(3);
+                switch (imageRepeat)
+                {
+                    case AVKey.REPEAT_NONE -> this.cbImageRepeat.setSelectedIndex(0);
+                    case AVKey.REPEAT_X -> this.cbImageRepeat.setSelectedIndex(1);
+                    case AVKey.REPEAT_Y -> this.cbImageRepeat.setSelectedIndex(2);
+                    case AVKey.REPEAT_XY -> this.cbImageRepeat.setSelectedIndex(3);
+                }
 
                 this.imageScaleSlider.setValue((int) (this.currentAnnotation.getAttributes().getImageScale() * 10));
                 this.imageOpacitySlider.setValue((int) (this.currentAnnotation.getAttributes().getImageOpacity() * 10));
@@ -1722,17 +1555,17 @@ public class Annotations extends ApplicationTemplate
                 this.currentAnnotation.getAttributes().setFont(Font.decode(fontString));
 
                 Color color = this.btTextColor.getBackground();
-                int alpha = (int) (Float.valueOf((String) this.cbTextColorAlpha.getSelectedItem()) * 25.5f);
+                int alpha = (int) (Float.parseFloat((String) this.cbTextColorAlpha.getSelectedItem()) * 25.5f);
                 this.currentAnnotation.getAttributes().setTextColor(
                     new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
 
                 color = this.btBackColor.getBackground();
-                alpha = (int) (Float.valueOf((String) this.cbBackColorAlpha.getSelectedItem()) * 25.5f);
+                alpha = (int) (Float.parseFloat((String) this.cbBackColorAlpha.getSelectedItem()) * 25.5f);
                 this.currentAnnotation.getAttributes().setBackgroundColor(
                     new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
 
                 color = this.btBorderColor.getBackground();
-                alpha = (int) (Float.valueOf((String) this.cbBorderColorAlpha.getSelectedItem()) * 25.5f);
+                alpha = (int) (Float.parseFloat((String) this.cbBorderColorAlpha.getSelectedItem()) * 25.5f);
                 this.currentAnnotation.getAttributes().setBorderColor(
                     new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
                 this.savedBorderColor = this.currentAnnotation.getAttributes().getBorderColor();

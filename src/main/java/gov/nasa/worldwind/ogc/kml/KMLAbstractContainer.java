@@ -24,7 +24,7 @@ import java.util.*;
  */
 public class KMLAbstractContainer extends KMLAbstractFeature
 {
-    protected ArrayList<KMLAbstractFeature> features = new ArrayList<KMLAbstractFeature>();
+    protected final ArrayList<KMLAbstractFeature> features = new ArrayList<>();
 
     /**
      * Construct an instance.
@@ -173,7 +173,7 @@ public class KMLAbstractContainer extends KMLAbstractFeature
      */
     protected void preRenderFeatures(KMLTraversalContext tc, DrawContext dc)
     {
-        List<KMLAbstractFeature> containers = new ArrayList<KMLAbstractFeature>();
+        List<KMLAbstractFeature> containers = new ArrayList<>();
 
         // PreRender non-container child features first, and containers second. This ensures that features closer to the
         // root are rendered before features deeper in the tree. In the case of an image pyramid of GroundOverlays,
@@ -203,7 +203,7 @@ public class KMLAbstractContainer extends KMLAbstractFeature
      */
     protected void renderFeatures(KMLTraversalContext tc, DrawContext dc)
     {
-        List<KMLAbstractFeature> containers = new ArrayList<KMLAbstractFeature>();
+        List<KMLAbstractFeature> containers = new ArrayList<>();
 
         // Render non-container child features first, and containers second. This ensures that features closer to the
         // root are rendered before features deeper in the tree. In the case of an image pyramid of GroundOverlays,
@@ -251,7 +251,7 @@ public class KMLAbstractContainer extends KMLAbstractFeature
     protected void mergeFeatures(KMLAbstractContainer sourceContainer)
     {
         // Make a copy of the existing list so we can modify it as we traverse.
-        List<KMLAbstractFeature> featuresListCopy = new ArrayList<KMLAbstractFeature>(this.getFeatures().size());
+        List<KMLAbstractFeature> featuresListCopy = new ArrayList<>(this.getFeatures().size());
         Collections.copy(featuresListCopy, this.getFeatures());
 
         for (KMLAbstractFeature sourceFeature : sourceContainer.getFeatures())

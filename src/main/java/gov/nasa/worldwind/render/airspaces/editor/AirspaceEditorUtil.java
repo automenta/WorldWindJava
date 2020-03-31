@@ -62,7 +62,7 @@ public class AirspaceEditorUtil
 
         double minDistance = Double.MAX_VALUE;
 
-        HashMap<Object, AirspaceControlPoint> map = new HashMap<Object, AirspaceControlPoint>();
+        HashMap<Object, AirspaceControlPoint> map = new HashMap<>();
         for (AirspaceControlPoint p : controlPoints)
         {
             map.put(p.getKey(), p);
@@ -95,11 +95,11 @@ public class AirspaceEditorUtil
 
     public static class EdgeInfo
     {
-        int locationIndex;
-        int nextLocationIndex;
-        int altitudeIndex;
-        Vec4 point1;
-        Vec4 point2;
+        final int locationIndex;
+        final int nextLocationIndex;
+        final int altitudeIndex;
+        final Vec4 point1;
+        final Vec4 point2;
 
         public EdgeInfo(int locationIndex, int nextLocationIndex, int altitudeIndex, Vec4 point1, Vec4 point2)
         {
@@ -149,9 +149,9 @@ public class AirspaceEditorUtil
         // access them by location index and altitude index. To achieve this we place them in a map that will be
         // indexable by location and altitude.
 
-        ArrayList<EdgeInfo> edgeInfoList = new ArrayList<EdgeInfo>();
+        ArrayList<EdgeInfo> edgeInfoList = new ArrayList<>();
 
-        HashMap<Object, AirspaceControlPoint> map = new HashMap<Object, AirspaceControlPoint>();
+        HashMap<Object, AirspaceControlPoint> map = new HashMap<>();
         for (AirspaceControlPoint p : controlPoints)
         {
             map.put(p.getKey(), p);

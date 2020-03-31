@@ -265,7 +265,6 @@ public class Matrix
             compArray[12 + offset] = this.m41;
             compArray[13 + offset] = this.m42;
             compArray[14 + offset] = this.m43;
-            compArray[15 + offset] = this.m44;
         }
         else
         {
@@ -289,8 +288,8 @@ public class Matrix
             compArray[3 + offset] = this.m41;
             compArray[7 + offset] = this.m42;
             compArray[11 + offset] = this.m43;
-            compArray[15 + offset] = this.m44;
         }
+        compArray[15 + offset] = this.m44;
 
         return compArray;
     }
@@ -1407,8 +1406,7 @@ public class Matrix
         double b = (lon2 - lon1) / (y2 - y1) - a * (x2 - x1) / (y2 - y1);
         double c = lon1 - a * x1 - b * y1;
 
-        double d0 = (x3 - x1) - (x2 - x1) * (y3 - y1) / (y2 - y1);
-        double d = (1 / d0) * ((lat3 - lat1) - (lat2 - lat1) * (y3 - y1) / (y2 - y1));
+        double d = (1 / a0) * ((lat3 - lat1) - (lat2 - lat1) * (y3 - y1) / (y2 - y1));
         double e = (lat2 - lat1) / (y2 - y1) - d * (x2 - x1) / (y2 - y1);
         double f = lat1 - d * x1 - e * y1;
 
@@ -1494,8 +1492,7 @@ public class Matrix
         double b = (x2 - x1) / (lat2 - lat1) - a * (lon2 - lon1) / (lat2 - lat1);
         double c = x1 - a * lon1 - b * lat1;
 
-        double d0 = (lon3 - lon1) - (lon2 - lon1) * (lat3 - lat1) / (lat2 - lat1);
-        double d = (1 / d0) * ((y3 - y1) - (y2 - y1) * (lat3 - lat1) / (lat2 - lat1));
+        double d = (1 / a0) * ((y3 - y1) - (y2 - y1) * (lat3 - lat1) / (lat2 - lat1));
         double e = (y2 - y1) / (lat2 - lat1) - d * (lon2 - lon1) / (lat2 - lat1);
         double f = y1 - d * lon1 - e * lat1;
 
@@ -2516,22 +2513,20 @@ public class Matrix
         // Transform the modelview matrix to a local coordinate system at the origin. This eliminates the geographic
         // transform contained in the modelview matrix while maintaining rotation and translation relative to the origin.
         Position originPos = globe.computePositionFromPoint(origin);
-        Matrix modelviewLocal = this.multiply(globe.computeModelCoordinateOriginTransform(originPos));
 
         // Extract the viewing parameters from the transform in local coordinates.
         // TODO: Document how these parameters are extracted. See [WWMatrix extractViewingParameters] in WWiOS.
 
-        Matrix m = modelviewLocal;
-        double range = -m.m34;
+        double range = -this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m34;
 
-        double ct = m.m33;
-        double st = Math.sqrt(m.m13 * m.m13 + m.m23 * m.m23);
-        double tilt = Math.atan2(st, ct);
+        double st = Math.sqrt(
+            this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m13 * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m13 + this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m23 * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m23);
+        double tilt = Math.atan2(st, this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m33);
 
         double cr = Math.cos(roll.radians);
         double sr = Math.sin(roll.radians);
-        double ch = cr * m.m11 - sr * m.m21;
-        double sh = sr * m.m22 - cr * m.m12;
+        double ch = cr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m11 - sr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m21;
+        double sh = sr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m22 - cr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m12;
         double heading = Math.atan2(sh, ch);
 
         AVList params = new AVListImpl();

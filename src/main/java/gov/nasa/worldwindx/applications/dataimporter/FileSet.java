@@ -40,11 +40,11 @@ public class FileSet extends AVListImpl
     public static final String IMAGE_ICON = "ImageIcon";
     public static final String IMAGE_IN_PROGRESS = "ImageInProgress";
 
-    List<File> files = new ArrayList<File>();
+    final List<File> files = new ArrayList<>();
 
     // This thread pool is for preview image generation.
-    static protected ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5, 5, 1L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<Runnable>(200));
+    static protected final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5, 5, 1L, TimeUnit.SECONDS,
+        new LinkedBlockingQueue<>(200));
 
     public FileSet()
     {
@@ -162,7 +162,7 @@ public class FileSet extends AVListImpl
             return;
         }
 
-        List<Object> newList = new ArrayList<Object>(current.length + sectorList.length);
+        List<Object> newList = new ArrayList<>(current.length + sectorList.length);
         newList.add(current);
         newList.add(sectorList);
 

@@ -45,10 +45,10 @@ public class IconRenderer
     protected boolean viewClippingEnabled = true;
     protected boolean pickFrustumClippingEnabled = true;
     protected boolean alwaysUseAbsoluteElevation = false;
-    protected OGLStackHandler oglStackHandler = new OGLStackHandler();
+    protected final OGLStackHandler oglStackHandler = new OGLStackHandler();
     protected boolean allowBatchPicking = true;
 
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
 
     public IconRenderer()
     {
@@ -335,12 +335,12 @@ public class IconRenderer
         dc.addOrderedRenderable(tip);
     }
 
-    protected class OrderedText implements OrderedRenderable
+    protected static class OrderedText implements OrderedRenderable
     {
-        protected Font font;
-        protected String text;
-        protected Vec4 point;
-        protected double eyeDistance;
+        protected final Font font;
+        protected final String text;
+        protected final Vec4 point;
+        protected final double eyeDistance;
         protected java.awt.Point pickPoint;
         protected Layer layer;
         protected java.awt.Color color;
@@ -402,11 +402,11 @@ public class IconRenderer
 
     protected class OrderedIcon implements OrderedRenderable, Locatable
     {
-        protected WWIcon icon;
-        protected Vec4 point;
-        protected double eyeDistance;
-        protected double horizonDistance;
-        protected Layer layer;
+        protected final WWIcon icon;
+        protected final Vec4 point;
+        protected final double eyeDistance;
+        protected final double horizonDistance;
+        protected final Layer layer;
 
         public OrderedIcon(WWIcon icon, Vec4 point, Layer layer, double eyeDistance, double horizonDistance)
         {
@@ -459,10 +459,6 @@ public class IconRenderer
             try
             {
                 IconRenderer.this.drawIconsInBatch(dc, this);
-            }
-            catch (WWRuntimeException e)
-            {
-                Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingIcon", e);
             }
             catch (Exception e)
             {
@@ -577,7 +573,7 @@ public class IconRenderer
 
         // Draw as many as we can in a batch to save ogl state switching.
         Object nextItem = dc.peekOrderedRenderables();
-        while (nextItem != null && nextItem instanceof OrderedIcon)
+        while (nextItem instanceof OrderedIcon)
         {
             OrderedIcon oi = (OrderedIcon) nextItem;
             if (oi.getRenderer() != this)
@@ -599,7 +595,7 @@ public class IconRenderer
         // same layer can be batched because the pick resolution step at the end of batch rendering
         // associates the item's layer with the resolved picked object.
         Object nextItem = dc.peekOrderedRenderables();
-        while (nextItem != null && nextItem instanceof OrderedIcon
+        while (nextItem instanceof OrderedIcon
             && ((OrderedIcon) nextItem).layer == uIcon.layer)
         {
             OrderedIcon oi = (OrderedIcon) nextItem;
@@ -784,7 +780,7 @@ public class IconRenderer
         if (altitude < (dc.getGlobe().getMaxElevation() * dc.getVerticalExaggeration()))
         {
             double depth = screenPoint.z - (8d * 0.00048875809d);
-            depth = depth < 0d ? 0d : (depth > 1d ? 1d : depth);
+            depth = depth < 0d ? 0d : (Math.min(depth, 1d));
             gl.glDepthFunc(GL.GL_LESS);
             gl.glDepthRange(depth, depth);
         }

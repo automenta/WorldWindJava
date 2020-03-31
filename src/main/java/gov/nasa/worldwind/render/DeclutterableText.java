@@ -20,11 +20,11 @@ import java.awt.geom.*;
  */
 public class DeclutterableText implements Declutterable
 {
-    protected GeographicText text;
-    protected Vec4 point;
-    protected double eyeDistance;
-    protected DeclutteringTextRenderer textRenderer;
-    protected boolean enableDecluttering = true;
+    protected final GeographicText text;
+    protected final Vec4 point;
+    protected final double eyeDistance;
+    protected final DeclutteringTextRenderer textRenderer;
+    protected final boolean enableDecluttering = true;
     protected Rectangle2D textBounds; // cached text bounds
     protected Font boundsFont; // font used by cached text bounds
 

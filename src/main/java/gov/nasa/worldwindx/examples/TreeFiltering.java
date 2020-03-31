@@ -6,17 +6,13 @@
 
 package gov.nasa.worldwindx.examples;
 
-import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.MarkerLayer;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.BasicQuadTree;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.io.IOException;
 import java.util.HashSet;
 
 /**
@@ -30,7 +26,7 @@ public class TreeFiltering extends ApplicationTemplate
 {
     private static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        public AppFrame() throws IOException, ParserConfigurationException, SAXException
+        public AppFrame()
         {
             super(true, true, false);
 
@@ -39,13 +35,7 @@ public class TreeFiltering extends ApplicationTemplate
             layer.setPickEnabled(true);
             insertBeforePlacenames(this.getWwd(), layer);
 
-            this.getWwd().addPositionListener(new PositionListener()
-            {
-                public void moved(PositionEvent event)
-                {
-                    layer.setCursorLocation(event.getPosition());
-                }
-            });
+            this.getWwd().addPositionListener(event -> layer.setCursorLocation(event.getPosition()));
         }
 
         private BasicQuadTree<Marker> makeDatabase()
@@ -53,7 +43,7 @@ public class TreeFiltering extends ApplicationTemplate
             int treeDepth = 5;
             int minLat = 23, maxLat = 50, latDelta = 3;
             int minLon = -130, maxLon = -70, lonDelta = 3;
-            BasicQuadTree<Marker> tree = new BasicQuadTree<Marker>(treeDepth, Sector.FULL_SPHERE, null);
+            BasicQuadTree<Marker> tree = new BasicQuadTree<>(treeDepth, Sector.FULL_SPHERE, null);
 
             MarkerAttributes attrs = new BasicMarkerAttributes();
 
@@ -106,7 +96,7 @@ public class TreeFiltering extends ApplicationTemplate
 
         private Iterable<Marker> getVisibleMarkers(DrawContext dc)
         {
-            HashSet<Marker> markers = new HashSet<Marker>();
+            HashSet<Marker> markers = new HashSet<>();
             for (Sector sector : dc.getVisibleSectors(REGION_SIZES, TIME_LIMIT, this.computeSector()))
             {
                 this.database.getItemsInRegion(sector, markers);

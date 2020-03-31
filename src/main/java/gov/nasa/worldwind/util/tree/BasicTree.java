@@ -25,7 +25,7 @@ public class BasicTree extends WWObjectImpl implements Tree, PreRenderable
 
     protected TreeModel model;
 
-    protected Set<TreePath> expandedNodes = new HashSet<TreePath>();
+    protected final Set<TreePath> expandedNodes = new HashSet<>();
 
     /** Create an empty tree. */
     public BasicTree()

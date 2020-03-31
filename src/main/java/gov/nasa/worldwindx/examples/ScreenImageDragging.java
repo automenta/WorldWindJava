@@ -8,10 +8,8 @@ package gov.nasa.worldwindx.examples;
 
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.ScreenImage;
-import org.xml.sax.SAXException;
 
 import javax.imageio.ImageIO;
-import javax.xml.parsers.ParserConfigurationException;
 import java.awt.event.*;
 import java.io.*;
 
@@ -26,7 +24,7 @@ public class ScreenImageDragging extends ApplicationTemplate
 {
     private static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        public AppFrame() throws IOException, ParserConfigurationException, SAXException
+        public AppFrame() throws IOException
         {
             super(true, true, false);
 

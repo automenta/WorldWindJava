@@ -38,7 +38,7 @@ public class KMLCoordinatesParser extends AbstractXMLEventParser
         if (s == null || s.length() < 3) // "a,b" is the smallest possible coordinate string
             return null;
 
-        ArrayList<Position> positions = new ArrayList<Position>();
+        ArrayList<Position> positions = new ArrayList<>();
 
         KMLCoordinateTokenizer tokenizer = new KMLCoordinateTokenizer(s);
 
@@ -48,18 +48,10 @@ public class KMLCoordinatesParser extends AbstractXMLEventParser
             {
                 positions.add(tokenizer.nextPosition());
             }
-            catch (NumberFormatException e)
-            {
-                continue; // TODO: issue warning?
-            }
-            catch (NullPointerException e)
-            {
-                continue; // TODO: issue warning?
-            }
             catch (Exception e)
             {
-                continue; // TODO: issue warning
-            }
+                continue; // TODO: issue warning?
+            }// TODO: issue warning
         }
 
         return new Position.PositionList(positions);

@@ -31,7 +31,7 @@ public class CacheTable extends JTable
         private static final Class[] columnTypes =
             new Class[] {String.class, String.class, Long.class, Long.class, Long.class, Long.class, Long.class};
 
-        private final ArrayList<FileStoreDataSet> datasets = new ArrayList<FileStoreDataSet>();
+        private final ArrayList<FileStoreDataSet> datasets = new ArrayList<>();
         private String rootName;
 
         public void setDataSets(String rootName, List<FileStoreDataSet> sets)
@@ -173,7 +173,7 @@ public class CacheTable extends JTable
         if (rows.length == 0)
             return Collections.emptyList();
 
-        ArrayList<FileStoreDataSet> selected = new ArrayList<FileStoreDataSet>();
+        ArrayList<FileStoreDataSet> selected = new ArrayList<>();
         for (int i : rows)
         {
             if (i < this.model.datasets.size())

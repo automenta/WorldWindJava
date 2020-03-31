@@ -26,7 +26,7 @@ public class Smoke extends BasicArea
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.FSUPP_ARS_ARATGT_SMK);
+        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_ARATGT_SMK);
     }
 
     public Smoke(String sidc)

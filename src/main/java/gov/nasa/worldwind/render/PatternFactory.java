@@ -157,75 +157,77 @@ public class PatternFactory {
             int x = halfWidth - 1 - dim / 2;
             g2.fillRect(x, 0, dim, size.height);
         }
-        if (pattern.equals(PATTERN_HVLINE))
+        switch (pattern)
         {
-            int x = halfWidth - 1 - dim / 2;
-            g2.fillRect(x, 0, dim, size.height);
-            int y = halfHeight - 1 - dim / 2;
-            g2.fillRect(0, y, size.width, dim);
-        }
-        else if (pattern.equals(PATTERN_SQUARE))
-        {
-            int x = halfWidth - dim / 2;
-            int y = halfHeight - dim / 2;
-            g2.fillRect(x, y, dim, dim);
-        }
-        else if (pattern.equals(PATTERN_SQUARES))
-        {
-            int x = halfWidth - 1 - dim / 2;
-            int y = halfHeight - 1 - dim / 2;
-            g2.fillRect(x, y, dim, dim);
-            g2.fillRect(x - halfWidth, y - halfHeight, dim, dim);
-            g2.fillRect(x - halfWidth, y + halfHeight, dim, dim);
-            g2.fillRect(x + halfWidth, y - halfHeight, dim, dim);
-            g2.fillRect(x + halfWidth, y + halfHeight, dim, dim);
-        }
-        else if (pattern.equals(PATTERN_CIRCLE))
-        {
-            int x = halfWidth - dim / 2;
-            int y = halfHeight - dim / 2;
-            g2.fillOval(x, y, dim, dim);
-        }
-        else if (pattern.equals(PATTERN_CIRCLES))
-        {
-            int x = halfWidth - 1 - dim / 2;
-            int y = halfHeight - 1 - dim / 2;
-            g2.fillOval(x, y, dim, dim);
-            g2.fillOval(x - halfWidth, y - halfHeight, dim, dim);
-            g2.fillOval(x - halfWidth, y + halfHeight, dim, dim);
-            g2.fillOval(x + halfWidth, y - halfHeight, dim, dim);
-            g2.fillOval(x + halfWidth, y + halfHeight, dim, dim);
-        }
-        else if (pattern.equals(PATTERN_TRIANGLE_UP))
-        {
-            GeneralPath path = new GeneralPath();
-            path.moveTo(halfWidth - 1 - dim / 2, halfHeight - 1 + dim / 2);
-            path.lineTo(halfWidth - 1, halfHeight - 1 - dim / 2);
-            path.lineTo(halfWidth - 1 + dim / 2, halfHeight - 1 + dim / 2);
-            path.lineTo(halfWidth - 1 - dim / 2, halfHeight - 1 + dim / 2);
-            g2.fill(path);
-        }
-        else if (pattern.equals(PATTERN_DIAGONAL_UP) || pattern.equals(PATTERN_DIAGONAL_DOWN))
-        {
-            if (pattern.equals(PATTERN_DIAGONAL_DOWN))
-            {
-                AffineTransform at = AffineTransform.getScaleInstance(-1, 1);
-                at.translate(-size.width, 0);
-                g2.setTransform(at);
+            case PATTERN_HVLINE -> {
+                int x = halfWidth - 1 - dim / 2;
+                g2.fillRect(x, 0, dim, size.height);
+                int y = halfHeight - 1 - dim / 2;
+                g2.fillRect(0, y, size.width, dim);
+                break;
             }
-            g2.drawLine(-dim, size.height - 1 + dim, size.width - 1 + dim, - dim);
-            g2.drawLine(-dim - 1, dim, dim - 1, - dim);
-            g2.drawLine(size.width - dim, size.height - 1 + dim, size.width + dim, size.height - 1 - dim);
-        }
-        else if (pattern.equals(GRADIENT_VLINEAR))
-        {
-            g2.setPaint(new GradientPaint((float)halfWidth, 0f, lineColor, (float)halfWidth, (float)size.height - 1, backColor));
-            g2.fillRect(0, 0, size.width, size.height);
-        }
-        else if (pattern.equals(GRADIENT_HLINEAR))
-        {
-            g2.setPaint(new GradientPaint(0f, halfHeight, lineColor, (float)size.width - 1, halfHeight, backColor));
-            g2.fillRect(0, 0, size.width, size.height);
+            case PATTERN_SQUARE -> {
+                int x = halfWidth - dim / 2;
+                int y = halfHeight - dim / 2;
+                g2.fillRect(x, y, dim, dim);
+                break;
+            }
+            case PATTERN_SQUARES -> {
+                int x = halfWidth - 1 - dim / 2;
+                int y = halfHeight - 1 - dim / 2;
+                g2.fillRect(x, y, dim, dim);
+                g2.fillRect(x - halfWidth, y - halfHeight, dim, dim);
+                g2.fillRect(x - halfWidth, y + halfHeight, dim, dim);
+                g2.fillRect(x + halfWidth, y - halfHeight, dim, dim);
+                g2.fillRect(x + halfWidth, y + halfHeight, dim, dim);
+                break;
+            }
+            case PATTERN_CIRCLE -> {
+                int x = halfWidth - dim / 2;
+                int y = halfHeight - dim / 2;
+                g2.fillOval(x, y, dim, dim);
+                break;
+            }
+            case PATTERN_CIRCLES -> {
+                int x = halfWidth - 1 - dim / 2;
+                int y = halfHeight - 1 - dim / 2;
+                g2.fillOval(x, y, dim, dim);
+                g2.fillOval(x - halfWidth, y - halfHeight, dim, dim);
+                g2.fillOval(x - halfWidth, y + halfHeight, dim, dim);
+                g2.fillOval(x + halfWidth, y - halfHeight, dim, dim);
+                g2.fillOval(x + halfWidth, y + halfHeight, dim, dim);
+                break;
+            }
+            case PATTERN_TRIANGLE_UP -> {
+                GeneralPath path = new GeneralPath();
+                path.moveTo(halfWidth - 1 - dim / 2.0, halfHeight - 1 + dim / 2.0);
+                path.lineTo(halfWidth - 1, halfHeight - 1 - dim / 2.0);
+                path.lineTo(halfWidth - 1 + dim / 2.0, halfHeight - 1 + dim / 2.0);
+                path.lineTo(halfWidth - 1 - dim / 2.0, halfHeight - 1 + dim / 2.0);
+                g2.fill(path);
+            }
+            case PATTERN_DIAGONAL_UP, PATTERN_DIAGONAL_DOWN -> {
+                if (pattern.equals(PATTERN_DIAGONAL_DOWN))
+                {
+                    AffineTransform at = AffineTransform.getScaleInstance(-1, 1);
+                    at.translate(-size.width, 0);
+                    g2.setTransform(at);
+                }
+                g2.drawLine(-dim, size.height - 1 + dim, size.width - 1 + dim, -dim);
+                g2.drawLine(-dim - 1, dim, dim - 1, -dim);
+                g2.drawLine(size.width - dim, size.height - 1 + dim, size.width + dim, size.height - 1 - dim);
+            }
+            case GRADIENT_VLINEAR -> {
+                g2.setPaint(
+                    new GradientPaint((float) halfWidth, 0f, lineColor, (float) halfWidth, (float) size.height - 1,
+                        backColor));
+                g2.fillRect(0, 0, size.width, size.height);
+            }
+            case GRADIENT_HLINEAR -> {
+                g2.setPaint(
+                    new GradientPaint(0f, halfHeight, lineColor, (float) size.width - 1, halfHeight, backColor));
+                g2.fillRect(0, 0, size.width, size.height);
+            }
         }
 
         return image;

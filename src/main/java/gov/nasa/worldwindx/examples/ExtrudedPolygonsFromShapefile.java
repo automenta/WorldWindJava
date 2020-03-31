@@ -37,14 +37,9 @@ public class ExtrudedPolygonsFromShapefile extends ApplicationTemplate
                         layer.setName(WWIO.getFilename(layer.getName()));
 
                         // Add the layer to the WorldWindow's layer list on the Event Dispatch Thread.
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                getWwd().getModel().getLayers().add(layer);
-                                getWwd().redraw();
-                            }
+                        SwingUtilities.invokeLater(() -> {
+                            getWwd().getModel().getLayers().add(layer);
+                            getWwd().redraw();
                         });
                     }
 

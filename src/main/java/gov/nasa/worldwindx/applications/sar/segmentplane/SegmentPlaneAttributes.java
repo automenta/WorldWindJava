@@ -401,22 +401,22 @@ public class SegmentPlaneAttributes
 
     public SegmentPlaneAttributes()
     {
-        this.geometryAttributes = new HashMap<Object, GeometryAttributes>();
-        this.labelAttributes = new HashMap<Object, LabelAttributes>();
+        this.geometryAttributes = new HashMap<>();
+        this.labelAttributes = new HashMap<>();
     }
 
     public SegmentPlaneAttributes copy()
     {
         SegmentPlaneAttributes copy = new SegmentPlaneAttributes();
 
-        Map<Object, GeometryAttributes> geometryAttributesMap = new HashMap<Object, GeometryAttributes>();
+        Map<Object, GeometryAttributes> geometryAttributesMap = new HashMap<>();
         for (Map.Entry<Object, GeometryAttributes> entry : this.geometryAttributes.entrySet())
         {
             geometryAttributesMap.put(entry.getKey(), entry.getValue().copy());
         }
         copy.setAllGeometryAttributes(geometryAttributesMap);
 
-        Map<Object, LabelAttributes> labelAttributesMap = new HashMap<Object, LabelAttributes>();
+        Map<Object, LabelAttributes> labelAttributesMap = new HashMap<>();
         for (Map.Entry<Object, LabelAttributes> entry : this.labelAttributes.entrySet())
         {
             labelAttributesMap.put(entry.getKey(), entry.getValue().copy());

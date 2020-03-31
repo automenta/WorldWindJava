@@ -16,11 +16,13 @@ import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.BasicDragger;
 import gov.nasa.worldwind.view.orbit.OrbitView;
+import org.xml.sax.SAXException;
 
 import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
 import java.io.IOException;
 
 /**
@@ -164,13 +166,9 @@ public class SARAnnotationSupport
         });
 
         // Listen for angle format change
-        this.wwd.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent)
-            {
-                if (propertyChangeEvent.getPropertyName() == SARKey.ANGLE_FORMAT)
-                    setAngleFormat((String)propertyChangeEvent.getNewValue());
-            }
+        this.wwd.addPropertyChangeListener(propertyChangeEvent -> {
+            if (propertyChangeEvent.getPropertyName() == SARKey.ANGLE_FORMAT)
+                setAngleFormat((String)propertyChangeEvent.getNewValue());
         });
     }
 
@@ -198,7 +196,7 @@ public class SARAnnotationSupport
             //this.currentAnnotation.getAttributes().setHighlighted(false);
             this.currentAnnotation.getAttributes().setBorderColor(SARAnnotationSupport.this.savedBorderColor);
         }
-        if(o != null && o instanceof SARAnnotation && this.currentAnnotation != o)
+        if(o instanceof SARAnnotation && this.currentAnnotation != o)
         {
             // Select new one if not current one already
             this.currentAnnotation = (SARAnnotation)o;
@@ -229,7 +227,7 @@ public class SARAnnotationSupport
         }
 
         // Turn on highlight if object selected.
-        if (o != null && o instanceof SARAnnotation)
+        if (o instanceof SARAnnotation)
         {
             this.lastPickedObject = (SARAnnotation) o;
             this.lastPickedObject.getAttributes().setHighlighted(true);
@@ -316,16 +314,10 @@ public class SARAnnotationSupport
         if (text != null)
             textArea.setText(text);
         // Focus to text area from http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6420212
-        textArea.addHierarchyListener(new HierarchyListener() {
-            public void hierarchyChanged(HierarchyEvent he) {
-                if ((he.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
-                    if (textArea.isShowing()) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                textArea.requestFocus();
-                            }
-                        });
-                    }
+        textArea.addHierarchyListener(he -> {
+            if ((he.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
+                if (textArea.isShowing()) {
+                    SwingUtilities.invokeLater(textArea::requestFocus);
                 }
             }
         });
@@ -343,7 +335,7 @@ public class SARAnnotationSupport
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
         }
         String newText = null;
-        if (dialogResult == JOptionPane.OK_OPTION || dialogResult == JOptionPane.YES_OPTION)
+        if (dialogResult == JOptionPane.YES_OPTION)
             newText = textArea.getText();
         if (dialogResult == JOptionPane.NO_OPTION)
             newText = "";
@@ -441,10 +433,10 @@ public class SARAnnotationSupport
 
     public Iterable<SARAnnotation> getAnnotationsForTrack(SARTrack owner)
     {
-        java.util.ArrayList<SARAnnotation> result = new java.util.ArrayList<SARAnnotation>();
+        java.util.ArrayList<SARAnnotation> result = new java.util.ArrayList<>();
         for (Annotation a : this.annotationLayer.getAnnotations())
         {
-            if (a != null && a instanceof SARAnnotation)
+            if (a instanceof SARAnnotation)
             {
                 if (owner == ((SARAnnotation) a).getOwner())
                     result.add((SARAnnotation) a);
@@ -480,7 +472,7 @@ public class SARAnnotationSupport
         return this.defaults;
     }
 
-    public void writeAnnotations(String filePath, SARTrack trackOwner) throws IOException
+    public void writeAnnotations(String filePath, SARTrack trackOwner)
     {
         try
         {
@@ -491,11 +483,7 @@ public class SARAnnotationSupport
                 writer.close();
             }
         }
-        catch (javax.xml.parsers.ParserConfigurationException e)
-        {
-            throw new IllegalArgumentException(e);
-        }
-        catch (javax.xml.transform.TransformerException e)
+        catch (ParserConfigurationException | TransformerException e)
         {
             throw new IllegalArgumentException(e);
         }
@@ -513,11 +501,7 @@ public class SARAnnotationSupport
                     addNew(sa, trackOwner);
             }
         }
-        catch (javax.xml.parsers.ParserConfigurationException e)
-        {
-            throw new IllegalArgumentException(e);
-        }
-        catch (org.xml.sax.SAXException e)
+        catch (ParserConfigurationException | SAXException e)
         {
             throw new IllegalArgumentException(e);
         }

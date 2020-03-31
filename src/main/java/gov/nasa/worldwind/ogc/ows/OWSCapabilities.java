@@ -25,7 +25,7 @@ public abstract class OWSCapabilities extends AbstractXMLEventParser
 
     protected String owsNamespaceURI;
 
-    protected XMLEventReader eventReader;
+    protected final XMLEventReader eventReader;
     protected XMLEventParserContext parserContext;
 
     /**

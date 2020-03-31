@@ -59,7 +59,7 @@ public class SurfaceImage extends WWObjectImpl
      * A list that contains only a reference to this instance. Used as an argument to the surface tile renderer to
      * prevent its having to create a list every time this surface image is rendered.
      */
-    protected List<SurfaceImage> thisList = Arrays.asList(this);
+    protected final List<SurfaceImage> thisList = Collections.singletonList(this);
 
     /** Create a new surface image with no image source. The image will not be rendered until an image source is set. */
     public SurfaceImage()
@@ -181,7 +181,7 @@ public class SurfaceImage extends WWObjectImpl
 
     protected void initializeGeometry(Iterable<? extends LatLon> corners)
     {
-        this.corners = new ArrayList<LatLon>(4);
+        this.corners = new ArrayList<>(4);
         for (LatLon ll : corners)
         {
             this.corners.add(ll);
@@ -228,7 +228,7 @@ public class SurfaceImage extends WWObjectImpl
 
     public List<LatLon> getCorners()
     {
-        return new ArrayList<LatLon>(this.corners);
+        return new ArrayList<>(this.corners);
     }
 
     public Extent getExtent(DrawContext dc)
@@ -593,10 +593,9 @@ public class SurfaceImage extends WWObjectImpl
      * @param output Object to receive the generated KML.
      *
      * @throws XMLStreamException If an exception occurs while writing the KML
-     * @throws IOException        if an exception occurs while exporting the data.
      * @see #export(String, Object)
      */
-    protected void exportAsKML(Object output) throws IOException, XMLStreamException
+    protected void exportAsKML(Object output) throws XMLStreamException
     {
         XMLStreamWriter xmlWriter = null;
         XMLOutputFactory factory = XMLOutputFactory.newInstance();

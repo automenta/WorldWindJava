@@ -10,8 +10,6 @@ import gov.nasa.worldwind.util.Logging;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
 import java.io.File;
 
 /**
@@ -121,19 +119,13 @@ public class FileChooserPanel extends JPanel
         Dimension preferred = this.fileField.getPreferredSize();
         Dimension max = this.fileField.getMaximumSize();
         this.fileField.setMaximumSize(new Dimension(max.width, preferred.height));
-        this.fileField.addPropertyChangeListener("value", new PropertyChangeListener() {
-            public void propertyChange(PropertyChangeEvent event) {
-                if (event != null) {
-                    onFileFieldChanged(event.getNewValue());
-                }
+        this.fileField.addPropertyChangeListener("value", event -> {
+            if (event != null) {
+                onFileFieldChanged(event.getNewValue());
             }
         });
         this.chooseButton = new JButton("Choose...");
-        this.chooseButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onChooseClicked();
-            }
-        });
+        this.chooseButton.addActionListener(e -> onChooseClicked());
         this.fileChooser = new JFileChooser();
         this.fileChooser.setDialogTitle("Choose Folder to Search");
         this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);

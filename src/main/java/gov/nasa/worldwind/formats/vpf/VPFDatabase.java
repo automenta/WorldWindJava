@@ -23,7 +23,7 @@ import java.util.*;
 public class VPFDatabase extends AVListImpl
 {
     private final String filePath;
-    private final Map<String, VPFLibrary> libraryMap = new HashMap<String, VPFLibrary>();
+    private final Map<String, VPFLibrary> libraryMap = new HashMap<>();
     private VPFBufferedRecordData databaseHeaderTable;
     private VPFBufferedRecordData libraryAttributeTable;
 
@@ -317,7 +317,7 @@ public class VPFDatabase extends AVListImpl
 
     protected static Collection<VPFLibrary> createLibraries(VPFDatabase db, VPFBufferedRecordData table)
     {
-        ArrayList<VPFLibrary> list = new ArrayList<VPFLibrary>();
+        ArrayList<VPFLibrary> list = new ArrayList<>();
 
         for (VPFRecord row : table)
         {

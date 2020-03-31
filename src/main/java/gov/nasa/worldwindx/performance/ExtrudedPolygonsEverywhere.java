@@ -54,7 +54,7 @@ public class ExtrudedPolygonsEverywhere extends ApplicationTemplate
             sideAttrs.setInteriorMaterial(Material.RED);
             sideAttrs.setEnableLighting(true);
 
-            ArrayList<Position> positions = new ArrayList<Position>();
+            ArrayList<Position> positions = new ArrayList<>();
 
             RenderableLayer layer = new RenderableLayer();
 

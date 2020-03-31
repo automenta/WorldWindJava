@@ -31,10 +31,10 @@ public class GliderImage extends AVListImpl
     protected double altitude;
     protected double opacity = 1;
     protected Object imageSource;
-    protected PropertyChangeListener regionListener = new RegionListener();
+    protected final PropertyChangeListener regionListener = new RegionListener();
 
     private final CopyOnWriteArraySet<GliderRegionOfInterest> regionTable
-        = new CopyOnWriteArraySet<GliderRegionOfInterest>();
+        = new CopyOnWriteArraySet<>();
 
     /**
      * Construct an image from a file.
@@ -116,7 +116,7 @@ public class GliderImage extends AVListImpl
         this.sector = Sector.boundingSector(corners);
         this.altitude = altitude;
 
-        this.corners = new ArrayList<LatLon>();
+        this.corners = new ArrayList<>();
         for (LatLon c : corners)
         {
             this.corners.add(c);
@@ -362,13 +362,13 @@ public class GliderImage extends AVListImpl
 
         if (Double.compare(that.altitude, altitude) != 0)
             return false;
-        if (corners != null ? !corners.equals(that.corners) : that.corners != null)
+        if (!Objects.equals(corners, that.corners))
             return false;
 //        if (imageSource != null ? !imageSource.equals(that.imageSource) : that.imageSource != null)
 //            return false;
-        if (name != null ? !name.equals(that.name) : that.name != null)
+        if (!Objects.equals(name, that.name))
             return false;
-        if (sector != null ? !sector.equals(that.sector) : that.sector != null)
+        if (!Objects.equals(sector, that.sector))
             return false;
 
         return true;

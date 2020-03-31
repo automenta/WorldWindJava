@@ -34,9 +34,9 @@ public class SectorVisibilityTree
 
     protected double sectorSize;
     protected Object globeStateKey;
-    protected HashMap<Sector, Extent> prevExtents = new HashMap<Sector, Extent>();
-    protected HashMap<Sector, Extent> newExtents = new HashMap<Sector, Extent>();
-    protected ArrayList<Sector> sectors = new ArrayList<Sector>();
+    protected HashMap<Sector, Extent> prevExtents = new HashMap<>();
+    protected HashMap<Sector, Extent> newExtents = new HashMap<>();
+    protected ArrayList<Sector> sectors = new ArrayList<>();
     protected long timeStamp;
 
     public SectorVisibilityTree()
@@ -68,8 +68,8 @@ public class SectorVisibilityTree
         this.sectors.clear();
     }
 
-    protected DecisionTree<Sector, Context> tree = new DecisionTree<Sector, Context>(
-        new DecisionTree.Controller<Sector, Context>()
+    protected final DecisionTree<Sector, Context> tree = new DecisionTree<>(
+        new DecisionTree.Controller<>()
         {
             public boolean isTerminal(Sector s, Context context)
             {
@@ -131,7 +131,7 @@ public class SectorVisibilityTree
         if (dc.getVisibleSector() == null)
             return Collections.emptyList();
 
-        this.sectors = new ArrayList<Sector>();
+        this.sectors = new ArrayList<>();
         this.sectorSize = sectorSize;
         this.swapCylinderLists(dc);
         this.tree.traverse(dc.getVisibleSector(), new Context(dc, sectorSize, this.sectors));
@@ -177,7 +177,7 @@ public class SectorVisibilityTree
             throw new IllegalArgumentException(message);
         }
 
-        this.sectors = new ArrayList<Sector>();
+        this.sectors = new ArrayList<>();
         this.sectorSize = sectorSize;
         this.swapCylinderLists(dc);
         this.tree.traverse(searchSector, new Context(dc, sectorSize, this.sectors));
@@ -225,7 +225,7 @@ public class SectorVisibilityTree
         }
 
         this.swapCylinderLists(dc);
-        this.sectors = new ArrayList<Sector>();
+        this.sectors = new ArrayList<>();
         this.sectorSize = sectorSize;
         for (Sector s : searchSectors)
         {

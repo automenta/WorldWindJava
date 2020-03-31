@@ -59,11 +59,11 @@ public class FileSetTable extends JTable
         if (selectedRows.length == 0)
             return null;
 
-        java.util.List<FileSet> selectedFileSets = new ArrayList<FileSet>(selectedRows.length);
+        java.util.List<FileSet> selectedFileSets = new ArrayList<>(selectedRows.length);
 
-        for (int i = 0; i < selectedRows.length; i++)
+        for (int selectedRow : selectedRows)
         {
-            int modelRow = this.convertRowIndexToModel(selectedRows[i]);
+            int modelRow = this.convertRowIndexToModel(selectedRow);
             FileSet fileSet = ((FileSetTableModel) this.getModel()).getRow(modelRow);
             selectedFileSets.add(fileSet);
         }

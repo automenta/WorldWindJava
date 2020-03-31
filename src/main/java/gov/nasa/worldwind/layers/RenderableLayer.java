@@ -26,9 +26,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class RenderableLayer extends AbstractLayer
 {
-    protected Collection<Renderable> renderables = new ConcurrentLinkedQueue<Renderable>();
+    protected final Collection<Renderable> renderables = new ConcurrentLinkedQueue<>();
     protected Iterable<Renderable> renderablesOverride;
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
 
     /** Creates a new <code>RenderableLayer</code> with a null <code>delegateOwner</code> */
     public RenderableLayer()
@@ -118,7 +118,7 @@ public class RenderableLayer extends AbstractLayer
         // The renderables are contained in a ConcurrentLinkedQueue, which does not support element insertion. Make a
         // shallow copy of the queue, insert into the copy, then replace the queue contents with the copy. This process
         // maintains the element order, with the new renderabable inserted in the specified index.
-        ArrayList<Renderable> copy = new ArrayList<Renderable>(this.renderables);
+        ArrayList<Renderable> copy = new ArrayList<>(this.renderables);
         copy.add(index, renderable);
         this.renderables.clear();
         this.renderables.addAll(copy);
@@ -431,7 +431,7 @@ public class RenderableLayer extends AbstractLayer
             {
                 // If the caller has specified their own Iterable,
                 // then we cannot make any guarantees about its contents.
-                if (renderable != null && renderable instanceof PreRenderable)
+                if (renderable instanceof PreRenderable)
                     ((PreRenderable) renderable).preRender(dc);
             }
             catch (Exception e)

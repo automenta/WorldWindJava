@@ -38,12 +38,12 @@ public class ControlsPanelImpl extends AbstractFeature implements ControlsPanel
         JPanel centerPanel = new JPanel(new BorderLayout());
 
         LayerManager layerManager = (LayerManager) this.controller.getRegisteredObject(Constants.FEATURE_LAYER_MANAGER);
-        if (layerManager != null && layerManager instanceof FeaturePanel)
+        if (layerManager instanceof FeaturePanel)
             centerPanel.add(((FeaturePanel) layerManager).getJPanel(), BorderLayout.CENTER);
 
         ActiveLayersManager layerList = (ActiveLayersManager) this.controller.getRegisteredObject(
             Constants.FEATURE_ACTIVE_LAYERS_PANEL);
-        if (layerList != null && layerList instanceof FeaturePanel)
+        if (layerList instanceof FeaturePanel)
             topPanel.add(((FeaturePanel) layerList).getJPanel(), BorderLayout.CENTER);
 
         final JSplitPane splitPane = new JSplitPane();

@@ -90,9 +90,9 @@ public class SegmentPlaneRenderer
 
     protected static class ControlPointInfo
     {
-        protected SegmentPlane.ControlPoint controlPoint;
+        protected final SegmentPlane.ControlPoint controlPoint;
         protected Position position;
-        protected MarkerShape shape;
+        protected final MarkerShape shape;
 
         public ControlPointInfo(SegmentPlane.ControlPoint controlPoint, Position position, MarkerShape shape)
         {
@@ -102,14 +102,14 @@ public class SegmentPlaneRenderer
         }
     }
 
-    protected Map<SegmentPlane, RenderInfo> renderInfoMap;
+    protected final Map<SegmentPlane, RenderInfo> renderInfoMap;
     protected double minObjectSize = 0.01;
     protected double maxObjectSizeCoefficient = 0.005;
     protected final PickSupport pickSupport = new PickSupport();
 
     public SegmentPlaneRenderer()
     {
-        this.renderInfoMap = new HashMap<SegmentPlane, RenderInfo>();
+        this.renderInfoMap = new HashMap<>();
     }
 
     public double getMinObjectSize()
@@ -1323,12 +1323,12 @@ public class SegmentPlaneRenderer
 
     protected static class OrderedText implements OrderedRenderable
     {
-        protected SegmentPlane segmentPlane;
+        protected final SegmentPlane segmentPlane;
         protected final Position position;
         protected final double distanceFromEye;
-        protected AVList values;
-        protected SegmentPlaneAttributes.LabelAttributes attributes;
-        protected MultiLineTextRenderer textRenderer;
+        protected final AVList values;
+        protected final SegmentPlaneAttributes.LabelAttributes attributes;
+        protected final MultiLineTextRenderer textRenderer;
 
         public OrderedText(SegmentPlane segmentPlane, Position position, double distanceFromEye, AVList values,
             SegmentPlaneAttributes.LabelAttributes attributes, MultiLineTextRenderer textRenderer)
@@ -1749,7 +1749,7 @@ public class SegmentPlaneRenderer
 
     private static double clamp(double x, double min, double max)
     {
-        return (x < min) ? min : ((x > max) ? max : x);
+        return (x < min) ? min : (Math.min(x, max));
     }
 
     //**************************************************************//
@@ -1846,7 +1846,7 @@ public class SegmentPlaneRenderer
     protected void createControlPointGeometry(Globe globe, SegmentPlane segmentPlane, RenderInfo renderInfo)
     {
         if (renderInfo.markerShapeMap == null)
-            renderInfo.markerShapeMap = new HashMap<String, MarkerShape>();
+            renderInfo.markerShapeMap = new HashMap<>();
     }
 
     //**************************************************************//

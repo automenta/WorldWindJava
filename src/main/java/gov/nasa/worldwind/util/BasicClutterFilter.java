@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class BasicClutterFilter implements ClutterFilter
 {
-    protected List<Rectangle2D> rectList = new ArrayList<Rectangle2D>();
+    protected final List<Rectangle2D> rectList = new ArrayList<>();
 
     public void apply(DrawContext dc, List<Declutterable> shapes)
     {

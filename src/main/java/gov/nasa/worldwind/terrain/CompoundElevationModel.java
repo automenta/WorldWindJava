@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class CompoundElevationModel extends AbstractElevationModel
 {
-    protected CopyOnWriteArrayList<ElevationModel> elevationModels = new CopyOnWriteArrayList<ElevationModel>();
+    protected final CopyOnWriteArrayList<ElevationModel> elevationModels = new CopyOnWriteArrayList<>();
 
     public void dispose()
     {
@@ -69,23 +69,15 @@ public class CompoundElevationModel extends AbstractElevationModel
         if (this.elevationModels.size() == 1)
             return;
 
-        List<ElevationModel> temp = new ArrayList<ElevationModel>(this.elevationModels.size());
-        for (ElevationModel em : this.elevationModels)
-        {
-            temp.add(em);
-        }
+        List<ElevationModel> temp = new ArrayList<>(this.elevationModels.size());
+        temp.addAll(this.elevationModels);
 
-        Collections.sort(temp, new Comparator<ElevationModel>()
-        {
-            @Override
-            public int compare(ElevationModel o1, ElevationModel o2)
-            {
-                double res1 = o1.getBestResolution(null);
-                double res2 = o2.getBestResolution(null);
+        temp.sort((o1, o2) -> {
+            double res1 = o1.getBestResolution(null);
+            double res2 = o2.getBestResolution(null);
 
-                // sort from lowest resolution to highest
-                return res1 > res2 ? -1 : res1 == res2 ? 0 : 1;
-            }
+            // sort from lowest resolution to highest
+            return Double.compare(res2, res1);
         });
 
         this.elevationModels.removeAll(temp);
@@ -192,7 +184,7 @@ public class CompoundElevationModel extends AbstractElevationModel
 
     public List<ElevationModel> getElevationModels()
     {
-        return new ArrayList<ElevationModel>(this.elevationModels);
+        return new ArrayList<>(this.elevationModels);
     }
 
     /**
@@ -435,7 +427,7 @@ public class CompoundElevationModel extends AbstractElevationModel
         }
 
         // Find the best elevation available at the specified (latitude, longitude) coordinates.
-        Double value = this.missingDataFlag;
+        double value = this.missingDataFlag;
         for (int i = this.elevationModels.size() - 1; i >= 0; i--) // iterate from highest resolution to lowest
         {
             ElevationModel em = this.elevationModels.get(i);
@@ -484,10 +476,7 @@ public class CompoundElevationModel extends AbstractElevationModel
     public double getElevations(Sector sector, List<? extends LatLon> latlons, double targetResolution, double[] buffer)
     {
         double[] targetResolutions = new double[this.elevationModels.size()];
-        for (int i = 0; i < targetResolutions.length; i++)
-        {
-            targetResolutions[i] = targetResolution;
-        }
+        Arrays.fill(targetResolutions, targetResolution);
 
         return this.doGetElevations(sector, latlons, targetResolutions, buffer, false)[0];
     }
@@ -516,10 +505,7 @@ public class CompoundElevationModel extends AbstractElevationModel
         double[] buffer)
     {
         double[] targetResolutions = new double[this.elevationModels.size()];
-        for (int i = 0; i < targetResolutions.length; i++)
-        {
-            targetResolutions[i] = targetResolution;
-        }
+        Arrays.fill(targetResolutions, targetResolution);
 
         return this.doGetElevations(sector, latlons, targetResolutions, buffer, false)[0];
     }

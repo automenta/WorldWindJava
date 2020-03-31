@@ -21,7 +21,7 @@ import gov.nasa.worldwindx.applications.worldwindow.util.Util;
  */
 public class HighlightController implements SelectListener
 {
-    protected WorldWindow wwd;
+    protected final WorldWindow wwd;
     protected Object highlightEventType = SelectEvent.ROLLOVER;
     protected Highlightable lastHighlightObject;
 

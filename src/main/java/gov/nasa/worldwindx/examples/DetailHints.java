@@ -12,7 +12,6 @@ import gov.nasa.worldwind.terrain.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.util.Hashtable;
 
@@ -72,7 +71,7 @@ public class DetailHints extends ApplicationTemplate
             Box vbox = Box.createVerticalBox();
             vbox.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-            Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+            Hashtable<Integer, JLabel> labelTable = new Hashtable<>();
             labelTable.put(-10, new JLabel("-1.0"));
             labelTable.put(0, new JLabel("0.0"));
             labelTable.put(10, new JLabel("1.0"));
@@ -84,14 +83,10 @@ public class DetailHints extends ApplicationTemplate
             elevationDetailSlider.setPaintTicks(true);
             elevationDetailSlider.setPaintLabels(true);
             elevationDetailSlider.setLabelTable(labelTable);
-            elevationDetailSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent e)
-                {
-                    double newDetailHint = ((JSlider) e.getSource()).getValue() / 10d;
-                    setElevationModelDetailHint(newDetailHint);
-                    getWwd().redraw();
-                }
+            elevationDetailSlider.addChangeListener(e -> {
+                double newDetailHint = ((JSlider) e.getSource()).getValue() / 10d;
+                setElevationModelDetailHint(newDetailHint);
+                getWwd().redraw();
             });
 
             JLabel label = new JLabel("Terrain Detail");
@@ -106,14 +101,10 @@ public class DetailHints extends ApplicationTemplate
             imageDetailSlider.setPaintTicks(true);
             imageDetailSlider.setPaintLabels(true);
             imageDetailSlider.setLabelTable(labelTable);
-            imageDetailSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent e)
-                {
-                    double detailHint = ((JSlider) e.getSource()).getValue() / 10d;
-                    setTiledImageLayerDetailHint(detailHint);
-                    getWwd().redraw();
-                }
+            imageDetailSlider.addChangeListener(e -> {
+                double detailHint = ((JSlider) e.getSource()).getValue() / 10d;
+                setTiledImageLayerDetailHint(detailHint);
+                getWwd().redraw();
             });
 
             label = new JLabel("Image Detail");

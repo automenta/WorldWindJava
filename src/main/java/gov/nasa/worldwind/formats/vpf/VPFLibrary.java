@@ -24,8 +24,8 @@ public class VPFLibrary extends AVListImpl
 {
     private final VPFDatabase database;
     private VPFBoundingBox bounds;
-    private final Map<String, VPFCoverage> coverageMap = new HashMap<String, VPFCoverage>();
-    private final Map<Integer, VPFTile> tileMap = new HashMap<Integer, VPFTile>();
+    private final Map<String, VPFCoverage> coverageMap = new HashMap<>();
+    private final Map<Integer, VPFTile> tileMap = new HashMap<>();
     private VPFTile[] tiles;
     private VPFBufferedRecordData libraryHeaderTable;
     private VPFBufferedRecordData coverageAttributeTable;
@@ -344,7 +344,7 @@ public class VPFLibrary extends AVListImpl
 
         VPFRecord record = this.libraryHeaderTable.getRecord(1);
         Object o = (record != null) ? record.getValue("scale") : null;
-        return (o != null && o instanceof Number) ? ((Number) o).doubleValue() : 0;
+        return (o instanceof Number) ? ((Number) o).doubleValue() : 0;
     }
 
     public Angle computeArcLengthFromMapDistance(double millimeters)
@@ -480,7 +480,7 @@ public class VPFLibrary extends AVListImpl
 
     protected static Collection<VPFCoverage> createCoverages(VPFLibrary library, VPFBufferedRecordData table)
     {
-        ArrayList<VPFCoverage> list = new ArrayList<VPFCoverage>();
+        ArrayList<VPFCoverage> list = new ArrayList<>();
 
         for (VPFRecord row : table)
         {

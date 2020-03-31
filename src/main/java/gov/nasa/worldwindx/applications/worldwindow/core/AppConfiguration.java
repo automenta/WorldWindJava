@@ -53,19 +53,15 @@ public class AppConfiguration implements Initializable
     protected void configureFeatures(final String appConfigurationLocation)
     {
         // Configure the application objects on the EDT
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
+        SwingUtilities.invokeLater(() -> {
+            try
             {
-                try
-                {
-                    registerConfiguration(appConfigurationLocation);
-                }
-                catch (Exception e)
-                {
-                    Util.getLogger().log(Level.SEVERE, "Unable to create initial configuration for {0}",
-                        appConfigurationLocation);
-                }
+                registerConfiguration(appConfigurationLocation);
+            }
+            catch (Exception e)
+            {
+                Util.getLogger().log(Level.SEVERE, "Unable to create initial configuration for {0}",
+                    appConfigurationLocation);
             }
         });
     }
@@ -76,7 +72,7 @@ public class AppConfiguration implements Initializable
         // TODO: this call can return null
         Document doc = WWXML.openDocumentFile(config, this.getClass());
         NodeList emNodes = (NodeList) WWXML.makeXPath().evaluate("//Feature", doc, XPathConstants.NODESET);
-        ArrayList<Object> objects = new ArrayList<Object>();
+        ArrayList<Object> objects = new ArrayList<>();
 
         for (int i = 0; i < emNodes.getLength(); i++)
         {

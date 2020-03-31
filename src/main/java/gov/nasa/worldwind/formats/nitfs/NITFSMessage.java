@@ -19,7 +19,7 @@ public class NITFSMessage
 {
     private final java.nio.ByteBuffer     buffer;
     private final NITFSFileHeader fileHeader;
-    private final java.util.ArrayList<NITFSSegment> segments = new java.util.ArrayList<NITFSSegment>();
+    private final java.util.ArrayList<NITFSSegment> segments = new java.util.ArrayList<>();
 
 
     public NITFSSegment getSegment( NITFSSegmentType segmentType )

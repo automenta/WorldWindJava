@@ -6,8 +6,6 @@
 
 package gov.nasa.worldwind.ogc.collada;
 
-import java.io.IOException;
-
 /**
  * Interface for resolving paths relative to a COLLADA document.
  *
@@ -24,7 +22,6 @@ public interface ColladaResourceResolver
      *
      * @return An absolute path to the resource, or null if the path cannot be determined.
      *
-     * @throws IOException If an error occurs attempting to locate the resource.
      */
-    String resolveFilePath(String path) throws IOException;
+    String resolveFilePath(String path);
 }

@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.formats.shapefile;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -210,10 +209,9 @@ public class ShapefileRecordMultiPatch extends ShapefileRecord {
      * @param xmlWriter XML writer to receive the generated KML.
      *
      * @throws javax.xml.stream.XMLStreamException If an exception occurs while writing the KML
-     * @throws java.io.IOException If an exception occurs while exporting the data.
      */
     @Override
-    public void exportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException {
+    public void exportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException {
         xmlWriter.writeStartElement("Placemark");
         xmlWriter.writeStartElement("name");
         xmlWriter.writeCharacters(Integer.toString(this.getRecordNumber()));

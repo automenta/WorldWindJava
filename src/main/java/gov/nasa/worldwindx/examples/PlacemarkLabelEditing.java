@@ -35,14 +35,9 @@ public class PlacemarkLabelEditing extends ApplicationTemplate
 
             // Create a placemark that uses a 2525C tactical symbol. The symbol is downloaded from the internet on a
             // separate thread.
-            WorldWind.getTaskService().addTask(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    // Use the function in the Placemarks example to create a tactical symbol placemark.
-                    Placemarks.createTacticalSymbolPointPlacemark(layer);
-                }
+            WorldWind.getTaskService().addTask(() -> {
+                // Use the function in the Placemarks example to create a tactical symbol placemark.
+                Placemarks.createTacticalSymbolPointPlacemark(layer);
             });
 
             // Add the layer to the model.
@@ -52,30 +47,25 @@ public class PlacemarkLabelEditing extends ApplicationTemplate
             this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
 
             // Add a select listener in order to determine when the label is selected.
-            this.getWwd().addSelectListener(new SelectListener()
-            {
-                @Override
-                public void selected(SelectEvent event)
+            this.getWwd().addSelectListener(event -> {
+                PickedObject po = event.getTopPickedObject();
+                if (po != null && po.getObject() instanceof PointPlacemark)
                 {
-                    PickedObject po = event.getTopPickedObject();
-                    if (po != null && po.getObject() instanceof PointPlacemark)
+                    if (event.getEventAction().equals(SelectEvent.LEFT_CLICK))
                     {
-                        if (event.getEventAction().equals(SelectEvent.LEFT_CLICK))
+                        // See if it was the label that was picked. If so, raise an input dialog prompting
+                        // for new label text.
+                        Object placemarkPiece = po.getValue(AVKey.PICKED_OBJECT_ID);
+                        if (placemarkPiece != null && placemarkPiece.equals(AVKey.LABEL))
                         {
-                            // See if it was the label that was picked. If so, raise an input dialog prompting
-                            // for new label text.
-                            Object placemarkPiece = po.getValue(AVKey.PICKED_OBJECT_ID);
-                            if (placemarkPiece != null && placemarkPiece.equals(AVKey.LABEL))
+                            PointPlacemark placemark = (PointPlacemark) po.getObject();
+                            String labelText = placemark.getLabelText();
+                            labelText = JOptionPane.showInputDialog(null, "Enter label text", labelText);
+                            if (labelText != null)
                             {
-                                PointPlacemark placemark = (PointPlacemark) po.getObject();
-                                String labelText = placemark.getLabelText();
-                                labelText = JOptionPane.showInputDialog(null, "Enter label text", labelText);
-                                if (labelText != null)
-                                {
-                                    placemark.setLabelText(labelText);
-                                }
-                                event.consume();
+                                placemark.setLabelText(labelText);
                             }
+                            event.consume();
                         }
                     }
                 }

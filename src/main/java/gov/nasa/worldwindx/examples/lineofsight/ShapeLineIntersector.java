@@ -55,7 +55,7 @@ public class ShapeLineIntersector extends LineIntersector
         return this.renderables != null && this.renderables.iterator().hasNext();
     }
 
-    protected void doPerformIntersection(Position position) throws InterruptedException
+    protected void doPerformIntersection(Position position)
     {
         if (this.renderables == null)
             return;
@@ -64,7 +64,7 @@ public class ShapeLineIntersector extends LineIntersector
         Line line = new Line(this.referencePoint, point.subtract3(this.referencePoint));
         double length = point.distanceTo3(this.referencePoint);
 
-        List<Intersection> losList = new ArrayList<Intersection>();
+        List<Intersection> losList = new ArrayList<>();
 
         for (Renderable renderable : this.renderables)
         {
@@ -92,7 +92,6 @@ public class ShapeLineIntersector extends LineIntersector
     }
 
     protected List<Intersection> performRenderableIntersection(Line line, Renderable renderable)
-        throws InterruptedException
     {
         List<Intersection> intersections = null;
 

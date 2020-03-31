@@ -11,9 +11,9 @@ package gov.nasa.worldwind.formats.vpf;
  */
 public class VPFSymbol
 {
-    protected VPFFeature feature;
-    protected VPFSymbolAttributes attributes;
-    protected Object mapObject;
+    protected final VPFFeature feature;
+    protected final VPFSymbolAttributes attributes;
+    protected final Object mapObject;
 
     public VPFSymbol(VPFFeature feature, VPFSymbolAttributes attributes, Object mapObject)
     {

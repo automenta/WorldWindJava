@@ -620,7 +620,7 @@ public class Box implements Extent, Renderable
             throw new IllegalArgumentException(msg);
         }
 
-        ArrayList<Box> boxes = new ArrayList<Box>();
+        ArrayList<Box> boxes = new ArrayList<>();
 
         for (Box box : iterable)
         {
@@ -646,7 +646,7 @@ public class Box implements Extent, Renderable
             // If the iterable contains two or more boxes, gather up their corners and return a box that encloses the
             // boxes corners. We create an ArrayList with enough room to hold all the boxes corners to avoid unnecessary
             // overhead.
-            ArrayList<Vec4> corners = new ArrayList<Vec4>(8 * boxes.size());
+            ArrayList<Vec4> corners = new ArrayList<>(8 * boxes.size());
             for (Box box : boxes)
             {
                 corners.addAll(Arrays.asList(box.getCorners()));
@@ -673,33 +673,33 @@ public class Box implements Extent, Renderable
         Vec4[] endPoints = new Vec4[] {this.bottomCenter, this.topCenter};
 
         double effectiveRadius = this.getEffectiveRadius2(frustum.getNear());
-        intersectionPoint = this.intersectsAt(frustum.getNear(), effectiveRadius, endPoints);
+        intersectionPoint = Box.intersectsAt(frustum.getNear(), effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         // Near and far have the same effective radius.
         effectiveRadius = this.getEffectiveRadius2(frustum.getFar());
-        intersectionPoint = this.intersectsAt(frustum.getFar(), effectiveRadius, endPoints);
+        intersectionPoint = Box.intersectsAt(frustum.getFar(), effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         effectiveRadius = this.getEffectiveRadius2(frustum.getLeft());
-        intersectionPoint = this.intersectsAt(frustum.getLeft(), effectiveRadius, endPoints);
+        intersectionPoint = Box.intersectsAt(frustum.getLeft(), effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         effectiveRadius = this.getEffectiveRadius2(frustum.getRight());
-        intersectionPoint = this.intersectsAt(frustum.getRight(), effectiveRadius, endPoints);
+        intersectionPoint = Box.intersectsAt(frustum.getRight(), effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         effectiveRadius = this.getEffectiveRadius2(frustum.getTop());
-        intersectionPoint = this.intersectsAt(frustum.getTop(), effectiveRadius, endPoints);
+        intersectionPoint = Box.intersectsAt(frustum.getTop(), effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         effectiveRadius = this.getEffectiveRadius2(frustum.getBottom());
-        intersectionPoint = this.intersectsAt(frustum.getBottom(), effectiveRadius, endPoints);
+        intersectionPoint = Box.intersectsAt(frustum.getBottom(), effectiveRadius, endPoints);
         return intersectionPoint >= 0;
     }
 
@@ -736,7 +736,7 @@ public class Box implements Extent, Renderable
         return 0.5 * (Math.abs(this.s.dot3(n)) + Math.abs(this.t.dot3(n)) + Math.abs(this.r.dot3(n)));
     }
 
-    protected double intersectsAt(Plane plane, double effectiveRadius, Vec4[] endpoints)
+    protected static double intersectsAt(Plane plane, double effectiveRadius, Vec4[] endpoints)
     {
         // Test the distance from the first end-point.
         double dq1 = plane.dot(endpoints[0]);
@@ -1060,11 +1060,11 @@ public class Box implements Extent, Renderable
             int n = 20;
             Vec4 dr = this.r.multiply3(1d / (double) n);
 
-            this.drawOutline(dc, a, b, c, d);
+            Box.drawOutline(dc, a, b, c, d);
             for (int i = 1; i < n; i++)
             {
                 gl.glTranslated(dr.x, dr.y, dr.z);
-                this.drawOutline(dc, a, b, c, d);
+                Box.drawOutline(dc, a, b, c, d);
             }
 
             // Draw parallel lines in S direction
@@ -1073,11 +1073,11 @@ public class Box implements Extent, Renderable
 
             gl.glPopMatrix();
             gl.glPushMatrix();
-            this.drawOutline(dc, a, e, f, d);
+            Box.drawOutline(dc, a, e, f, d);
             for (int i = 1; i < n; i++)
             {
                 gl.glTranslated(ds.x, ds.y, ds.z);
-                this.drawOutline(dc, a, e, f, d);
+                Box.drawOutline(dc, a, e, f, d);
             }
         }
         finally
@@ -1087,7 +1087,7 @@ public class Box implements Extent, Renderable
         }
     }
 
-    protected void drawOutline(DrawContext dc, Vec4 a, Vec4 b, Vec4 c, Vec4 d)
+    protected static void drawOutline(DrawContext dc, Vec4 a, Vec4 b, Vec4 c, Vec4 d)
     {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_LINE_LOOP);
@@ -1108,14 +1108,14 @@ public class Box implements Extent, Renderable
 
         Box box = (Box) o;
 
-        if (center != null ? !center.equals(box.center) : box.center != null)
+        if (!Objects.equals(center, box.center))
             return false;
-        if (r != null ? !r.equals(box.r) : box.r != null)
+        if (!Objects.equals(r, box.r))
             return false;
-        if (s != null ? !s.equals(box.s) : box.s != null)
+        if (!Objects.equals(s, box.s))
             return false;
         //noinspection RedundantIfStatement
-        if (t != null ? !t.equals(box.t) : box.t != null)
+        if (!Objects.equals(t, box.t))
             return false;
 
         return true;

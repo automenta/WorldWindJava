@@ -51,7 +51,7 @@ public class WMSLayerInfo
     public static java.util.List<WMSLayerInfo> createLayerInfos(OGCCapabilities caps, WMSLayerCapabilities layerCaps)
     {
         // Create the layer info specified by the layer's capabilities entry and the selected style.
-        ArrayList<WMSLayerInfo> layerInfos = new ArrayList<WMSLayerInfo>();
+        ArrayList<WMSLayerInfo> layerInfos = new ArrayList<>();
 
         // An individual layer may have independent styles, and each layer/style combination is effectively one
         // visual layer. So here the individual layer/style combinations are formed.

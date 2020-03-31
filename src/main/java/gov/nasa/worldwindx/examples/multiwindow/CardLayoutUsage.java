@@ -17,7 +17,6 @@ import gov.nasa.worldwind.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
  * This class illustrates how to use multiple WorldWind windows with a {@link CardLayout} layer manager.
@@ -39,7 +38,7 @@ public class CardLayoutUsage extends JFrame
 {
     private static class WWPanel extends JPanel // A class to encapsulate a WorldWindow that shares resources.
     {
-        WorldWindowGLCanvas wwd;
+        final WorldWindowGLCanvas wwd;
 
         public WWPanel(WorldWindowGLCanvas shareWith, int width, int height)
         {
@@ -138,26 +137,18 @@ public class CardLayoutUsage extends JFrame
         final JButton buttonA = new JButton("WorldWindow A");
         final JButton buttonB = new JButton(" WorldWindow B");
 
-        buttonA.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                cardLayout.show(cardLayoutParent, "WorldWindow A");
-                buttonA.setEnabled(false);
-                buttonB.setEnabled(true);
-                wwpA.wwd.redraw();
-            }
+        buttonA.addActionListener(actionEvent -> {
+            cardLayout.show(cardLayoutParent, "WorldWindow A");
+            buttonA.setEnabled(false);
+            buttonB.setEnabled(true);
+            wwpA.wwd.redraw();
         });
 
-        buttonB.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                cardLayout.show(cardLayoutParent, "WorldWindow B");
-                buttonA.setEnabled(true);
-                buttonB.setEnabled(false);
-                wwpB.wwd.redraw();
-            }
+        buttonB.addActionListener(actionEvent -> {
+            cardLayout.show(cardLayoutParent, "WorldWindow B");
+            buttonA.setEnabled(true);
+            buttonB.setEnabled(false);
+            wwpB.wwd.redraw();
         });
 
         buttonA.setEnabled(false);
@@ -172,12 +163,6 @@ public class CardLayoutUsage extends JFrame
 
     public static void main(String[] args)
     {
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                new CardLayoutUsage();
-            }
-        });
+        SwingUtilities.invokeLater(CardLayoutUsage::new);
     }
 }

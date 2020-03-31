@@ -50,15 +50,11 @@ public class InstallImagery extends ApplicationTemplate
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
             // Install the imagery on a thread other than the event-dispatch thread to avoid freezing the UI.
-            Thread t = new Thread(new Runnable()
-            {
-                public void run()
-                {
-                    installImagery();
+            Thread t = new Thread(() -> {
+                installImagery();
 
-                    // Restore the cursor.
-                    setCursor(Cursor.getDefaultCursor());
-                }
+                // Restore the cursor.
+                setCursor(Cursor.getDefaultCursor());
             });
 
             t.start();
@@ -78,19 +74,15 @@ public class InstallImagery extends ApplicationTemplate
                 return;
 
             // Display a layer with the new imagery. Must do it on the event dispatch thread.
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    // Add the layer created by the install method to the layer list.
-                    insertBeforePlacenames(AppFrame.this.getWwd(), layer);
+            SwingUtilities.invokeLater(() -> {
+                // Add the layer created by the install method to the layer list.
+                insertBeforePlacenames(AppFrame.this.getWwd(), layer);
 
-                    // Set the view to look at the installed image. Get the location from the layer's construction
-                    // parameters.
-                    AVList params = (AVList) layer.getValue(AVKey.CONSTRUCTION_PARAMETERS);
-                    Sector sector = (Sector) params.getValue(AVKey.SECTOR);
-                    ExampleUtil.goTo(getWwd(), sector);
-                }
+                // Set the view to look at the installed image. Get the location from the layer's construction
+                // parameters.
+                AVList params = (AVList) layer.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+                Sector sector = (Sector) params.getValue(AVKey.SECTOR);
+                ExampleUtil.goTo(getWwd(), sector);
             });
         }
 
@@ -135,7 +127,7 @@ public class InstallImagery extends ApplicationTemplate
                 return null;
 
             Object o = results.iterator().next();
-            if (o == null || !(o instanceof Document))
+            if (!(o instanceof Document))
                 return null;
 
             // Construct a Layer by passing the data configuration document to a LayerFactory.

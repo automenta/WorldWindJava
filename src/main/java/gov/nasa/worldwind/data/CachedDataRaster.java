@@ -12,7 +12,6 @@ import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.*;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 
@@ -41,7 +40,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
     protected final Object rasterUsageLock = new Object();
     protected final Object rasterRetrievalLock = new Object();
 
-    protected String[] requiredKeys = new String[] {AVKey.SECTOR, AVKey.PIXEL_FORMAT};
+    protected final String[] requiredKeys = new String[] {AVKey.SECTOR, AVKey.PIXEL_FORMAT};
 
     /**
      * Create a cached data raster.
@@ -162,7 +161,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
     public int getWidth()
     {
         Object o = this.getValue(AVKey.WIDTH);
-        if (null != o && o instanceof Integer)
+        if (o instanceof Integer)
             return (Integer) o;
         throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.WIDTH));
     }
@@ -170,7 +169,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
     public int getHeight()
     {
         Object o = this.getValue(AVKey.HEIGHT);
-        if (null != o && o instanceof Integer)
+        if (o instanceof Integer)
             return (Integer) o;
         throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.HEIGHT));
     }
@@ -178,7 +177,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
     public Sector getSector()
     {
         Object o = this.getValue(AVKey.SECTOR);
-        if (null != o && o instanceof Sector)
+        if (o instanceof Sector)
             return (Sector) o;
         throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR));
     }
@@ -210,7 +209,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
         throw new IllegalStateException(message);
     }
 
-    protected DataRaster[] getDataRasters() throws IOException, WWRuntimeException
+    protected DataRaster[] getDataRasters() throws WWRuntimeException
     {
         synchronized (this.rasterRetrievalLock)
         {
@@ -260,7 +259,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
                     if (this.rasterCache != null)
                     {
                         long totalBytes = getSizeInBytes(rasters);
-                        totalBytes = (memoryDelta > totalBytes) ? memoryDelta : totalBytes;
+                        totalBytes = Math.max(memoryDelta, totalBytes);
                         if (totalBytes > 0L)
                             this.rasterCache.add(this.dataSource, rasters, totalBytes);
                     }
@@ -373,7 +372,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
 
     protected String composeExceptionReason(Throwable t)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if (null != this.dataSource)
             sb.append(this.dataSource).append(" : ");
@@ -391,7 +390,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
         {
             for (DataRaster raster : rasters)
             {
-                if (raster != null && raster instanceof Cacheable)
+                if (raster instanceof Cacheable)
                     totalBytes += ((Cacheable) raster).getSizeInBytes();
             }
         }
@@ -424,7 +423,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
             if (key != this.key)
                 return;
 
-            if (clientObject == null || !(clientObject instanceof DataRaster[]))
+            if (!(clientObject instanceof DataRaster[]))
             {
                 String message = MessageFormat.format("Cannot dispose {0}", clientObject);
                 Logging.logger().warning(message);

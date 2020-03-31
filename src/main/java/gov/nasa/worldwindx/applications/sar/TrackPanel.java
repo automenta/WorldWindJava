@@ -145,14 +145,13 @@ public class TrackPanel extends JPanel
         {
             offset = SAR2.metersToFeet(offset);
             this.offsetUnitLabel.setText("ft");
-            sm = new SpinnerNumberModel((int)offset, -100000, 100000, 100);
         }
         else // SAR2.UNIT_METRIC
         {
             offset = SAR2.feetToMeters(offset);
             this.offsetUnitLabel.setText("m");
-            sm = new SpinnerNumberModel((int)offset, -100000, 100000, 100);
         }
+        sm = new SpinnerNumberModel((int)offset, -100000, 100000, 100);
         this.offsetSpinner.setModel(sm);
     }
 
@@ -185,13 +184,7 @@ public class TrackPanel extends JPanel
             this.visibilityFlag.setSelected(true);
             this.visibilityFlag.setOpaque(false);
             this.visibilityFlag.setToolTipText("Display track on the globe");
-            this.visibilityFlag.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
-                {
-                    visibilityActionPerformed(e);
-                }
-            });
+            this.visibilityFlag.addActionListener(this::visibilityActionPerformed);
             topPanel.add(this.visibilityFlag);
             topPanel.add(Box.createHorizontalStrut(15));
 
@@ -200,25 +193,13 @@ public class TrackPanel extends JPanel
             this.offsetToggleCheckBox.setSelected(true);
             this.offsetToggleCheckBox.setOpaque(false);
             this.offsetToggleCheckBox.setToolTipText("Visually offset track altitude on the globe");
-            this.offsetToggleCheckBox.addItemListener(new ItemListener()
-            {
-                public void itemStateChanged(ItemEvent e)
-                {
-                    offsetToggleCheckBoxItemStateChanged(e);
-                }
-            });
+            this.offsetToggleCheckBox.addItemListener(this::offsetToggleCheckBoxItemStateChanged);
             topPanel.add(this.offsetToggleCheckBox);
             topPanel.add(Box.createHorizontalStrut(3));
 
             SpinnerModel sm = new SpinnerNumberModel(0, -100000, 100000, 100);
             this.offsetSpinner.setModel(sm);
-            this.offsetSpinner.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent e)
-                {
-                    offsetSpinnerStateChanged(e);
-                }
-            });
+            this.offsetSpinner.addChangeListener(this::offsetSpinnerStateChanged);
             topPanel.add(this.offsetSpinner);
             topPanel.add(Box.createHorizontalStrut(5));
 

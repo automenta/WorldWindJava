@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class GMLLimits extends AbstractXMLEventParser
 {
-    protected List<GMLGridEnvelope> gridEnvelopes = new ArrayList<GMLGridEnvelope>(1);
+    protected final List<GMLGridEnvelope> gridEnvelopes = new ArrayList<>(1);
 
     public GMLLimits(String namespaceURI)
     {
@@ -39,7 +39,7 @@ public class GMLLimits extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof GMLGridEnvelope)
+                if (o instanceof GMLGridEnvelope)
                     this.gridEnvelopes.add((GMLGridEnvelope) o);
             }
         }

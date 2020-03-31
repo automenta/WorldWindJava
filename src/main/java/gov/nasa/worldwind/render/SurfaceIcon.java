@@ -480,7 +480,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         double height = this.imageHeight * this.scale * pixelSize;
         double width = this.imageWidth * this.scale * pixelSize;
         // Clamp to size range
-        double size = height > width ? height : width;
+        double size = Math.max(height, width);
         double scale = size > this.maxSize ? this.maxSize / size : size < this.minSize ? this.minSize / size : 1;
 
         return new Rectangle2D.Double(0, 0, width * scale, height * scale); // meter
@@ -569,7 +569,7 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
         // Add rotation to account for icon heading
         gl.glRotated(this.computeDrawHeading(dc).degrees, 0, 0, -1);
         // Translate to lower left corner
-        gl.glTranslated(-this.imageWidth / 2, -this.imageHeight / 2, 0);
+        gl.glTranslatef(-this.imageWidth / 2f, -this.imageHeight / 2f, 0);
         // Apply location offset if any
         if (this.locationOffset != null)
             gl.glTranslated(this.locationOffset.x, this.locationOffset.y, 0);
@@ -686,8 +686,8 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
 
     protected static class SectorInfo
     {
-        protected List<Sector> sectors;
-        protected Object globeStateKey;
+        protected final List<Sector> sectors;
+        protected final Object globeStateKey;
 
         public SectorInfo(List<Sector> sectors, DrawContext dc)
         {

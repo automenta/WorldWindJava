@@ -13,6 +13,7 @@ import gov.nasa.worldwind.util.*;
 import javax.xml.stream.*;
 import java.awt.*;
 import java.io.*;
+import java.util.Objects;
 
 import static gov.nasa.worldwind.ogc.kml.impl.KMLExportUtil.kmlBoolean;
 
@@ -482,11 +483,9 @@ public class BasicShapeAttributes implements ShapeAttributes
             return false;
         if (this.enableLighting != that.enableLighting)
             return false;
-        if (this.interiorMaterial != null ? !this.interiorMaterial.equals(that.interiorMaterial)
-            : that.interiorMaterial != null)
+        if (!Objects.equals(this.interiorMaterial, that.interiorMaterial))
             return false;
-        if (this.outlineMaterial != null ? !this.outlineMaterial.equals(that.outlineMaterial)
-            : that.outlineMaterial != null)
+        if (!Objects.equals(this.outlineMaterial, that.outlineMaterial))
             return false;
         if (Double.compare(this.interiorOpacity, that.interiorOpacity) != 0)
             return false;
@@ -498,7 +497,7 @@ public class BasicShapeAttributes implements ShapeAttributes
             return false;
         if (this.outlineStipplePattern != that.outlineStipplePattern)
             return false;
-        if (this.imageSource != null ? !this.imageSource.equals(that.imageSource) : that.imageSource != null)
+        if (!Objects.equals(this.imageSource, that.imageSource))
             return false;
         //noinspection RedundantIfStatement
         if (Double.compare(this.imageScale, that.imageScale) != 0)

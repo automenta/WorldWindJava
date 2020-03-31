@@ -9,7 +9,6 @@ package gov.nasa.worldwind.ogc.wms;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.util.xml.*;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.*;
 import java.util.Iterator;
 
@@ -37,7 +36,6 @@ public class WMSLayerDimension extends AbstractXMLEventParser
 
     @Override
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
     {
         if (event.isCharacters())
         {

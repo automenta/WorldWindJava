@@ -28,7 +28,7 @@ public class ContourLines extends ApplicationTemplate {
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
-        protected ContourLine contourLine;
+        protected final ContourLine contourLine;
 
         public AppFrame() {
             // Create a layer to display the contour lines.

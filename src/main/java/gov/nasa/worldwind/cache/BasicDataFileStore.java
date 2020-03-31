@@ -39,14 +39,14 @@ public class BasicDataFileStore extends AbstractFileStore
     );
 
     /** The map of cached entries. */
-    protected BasicMemoryCache db = new BasicMemoryCache((long) 3e5, (long) 5e5);
+    protected final BasicMemoryCache db = new BasicMemoryCache((long) 3e5, (long) 5e5);
     /**
      * Absent-resource list to keep track of resources that were requested by requestFile but failed. The default list
      * holds a maximum of 2000 entries, allows 3 attempts separated by 500 milliseconds before marking a resource
      * semi-permanently absent, and allows additional attempts after 60 seconds. The {@link #getAbsentResourceList()}
      * method may be overridden by subclasses if they wish to provide an alternatively configured absent-resource list.
      */
-    protected AbsentResourceList absentResources = new AbsentResourceList(2000, 3, 500, 60000);
+    protected final AbsentResourceList absentResources = new AbsentResourceList(2000, 3, 500, 60000);
     /**
      * The list of content types used to determine an unknown file format in <code>requestFile</code>. If a URL is
      * requested that does not have a format suffix, <code>requestFile</code> appends a suffix appropriate for the
@@ -61,7 +61,7 @@ public class BasicDataFileStore extends AbstractFileStore
      * This list may be overridden by specifying a comma-delimited list of content types in the WorldWind configuration
      * parameter <code>gov.nasa.worldwind.avkey.CacheContentTypes</code>.
      */
-    protected List<String> cacheContentTypes = new ArrayList<String>(DEFAULT_CACHE_CONTENT_TYPES);
+    protected final List<String> cacheContentTypes = new ArrayList<>(DEFAULT_CACHE_CONTENT_TYPES);
 
     /**
      * Create an instance.
@@ -197,7 +197,7 @@ public class BasicDataFileStore extends AbstractFileStore
         protected final static int PENDING = 1;
         protected final static int LOCAL = 2;
 
-        protected String name;
+        protected final String name;
         protected String contentType;
         protected long expiration;
         protected URL localUrl;
@@ -459,11 +459,11 @@ public class BasicDataFileStore extends AbstractFileStore
 
     protected class PostProcessor extends AbstractRetrievalPostProcessor
     {
-        protected String address;
-        protected URL retrievalUrl;
+        protected final String address;
+        protected final URL retrievalUrl;
         protected URL localFileUrl = null;
         protected File outputFile = null;
-        protected boolean saveInLocalCache;
+        protected final boolean saveInLocalCache;
 
         public PostProcessor(String address, URL url, boolean saveInLocalCache)
         {
@@ -789,7 +789,7 @@ public class BasicDataFileStore extends AbstractFileStore
         // Remove the "connectid" query parameter, its corresponding value, and any trailing parameter delimiter. We
         // specify the regular expression directive "(?i)" to enable case-insensitive matching. The regular expression
         // parameters "\Q" and "\E" define the begin and end of a literal quote around the query parameter name.
-        String s = queryString.replaceAll("(?i)\\Qconnectid\\E\\=[^&]*\\&?", "");
+        String s = queryString.replaceAll("(?i)\\Qconnectid\\E=[^&]*&?", "");
 
         // If we removed the query string's last parameter, we need to clean up the trailing delimiter from the previous
         // query parameter.

@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class KMLCreate extends AbstractXMLEventParser implements KMLUpdateOperation
 {
-    protected List<KMLAbstractContainer> containers = new ArrayList<KMLAbstractContainer>();
+    protected final List<KMLAbstractContainer> containers = new ArrayList<>();
 
     /**
      * Construct an instance.
@@ -62,7 +62,7 @@ public class KMLCreate extends AbstractXMLEventParser implements KMLUpdateOperat
                 continue;
 
             Object o = targetRoot.getItemByID(targetId);
-            if (o == null || !(o instanceof KMLAbstractContainer))
+            if (!(o instanceof KMLAbstractContainer))
                 continue;
 
             KMLAbstractContainer receivingContainer = (KMLAbstractContainer) o;

@@ -80,7 +80,7 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
      */
     public static Set<String> getGraphicsWithTimeLabel()
     {
-        return new HashSet<String>(Arrays.asList(
+        return new HashSet<>(Arrays.asList(
             TacGrpSidc.FSUPP_ARS_C2ARS_FSA_RTG,
             TacGrpSidc.FSUPP_ARS_C2ARS_DA_RTG,
             TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_RTG,

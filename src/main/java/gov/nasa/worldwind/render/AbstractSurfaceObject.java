@@ -51,10 +51,10 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     protected Object delegateOwner;
     protected boolean enableBatchPicking;
     protected boolean drawBoundingSectors;
-    protected Map<Object, CacheEntry> extentCache = new HashMap<Object, CacheEntry>();
+    protected final Map<Object, CacheEntry> extentCache = new HashMap<>();
     // Picking properties.
     protected Layer pickLayer;
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     /** Support class used to build surface tiles used to draw the pick representation. */
     protected SurfaceObjectTileBuilder pickTileBuilder;
     /* The next unique ID. This property is shared by all instances of AbstractSurfaceObject. */
@@ -188,16 +188,12 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         }
 
         CacheEntry entry = this.extentCache.get(dc.getGlobe().getGlobeStateKey());
-        if (entry != null)
-        {
-            return (Extent) entry.object;
-        }
-        else
+        if (entry == null)
         {
             entry = new CacheEntry(this.computeExtent(dc), dc);
             this.extentCache.put(dc.getGlobe().getGlobeStateKey(), entry);
-            return (Extent) entry.object;
         }
+        return (Extent) entry.object;
     }
 
     /** {@inheritDoc} */
@@ -358,7 +354,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // Return a box which contains the corners of the boxes bounding each sector.
         else
         {
-            ArrayList<Vec4> boxCorners = new ArrayList<Vec4>();
+            ArrayList<Vec4> boxCorners = new ArrayList<>();
 
             for (Sector s : sectors)
             {
@@ -563,7 +559,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // Draw as many as we can in a batch to save pick resolution.
         Object nextItem = dc.getOrderedSurfaceRenderables().peek();
 
-        while (nextItem != null && nextItem instanceof AbstractSurfaceObject)
+        while (nextItem instanceof AbstractSurfaceObject)
         {
             AbstractSurfaceObject so = (AbstractSurfaceObject) nextItem;
 
@@ -650,7 +646,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             dc.setOrderedRenderingMode(true);
 
             // Build the pick representation as a list of surface tiles.
-            this.pickTileBuilder.buildTiles(dc, Arrays.asList(this));
+            this.pickTileBuilder.buildTiles(dc, Collections.singletonList(this));
         }
         finally
         {
@@ -839,8 +835,8 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     /** Represents a globe dependent cache entry. */
     protected static class CacheEntry
     {
-        public Object object;
-        protected Object globeStateKey;
+        public final Object object;
+        protected final Object globeStateKey;
 
         public CacheEntry(Object object, DrawContext dc)
         {

@@ -25,7 +25,7 @@ public class FramebufferTexture implements WWTexture
 
     protected int width;
     protected int height;
-    protected TextureCoords textureCoords = new TextureCoords(0f, 0f, 1f, 1f);
+    protected final TextureCoords textureCoords = new TextureCoords(0f, 0f, 1f, 1f);
     /** The density of explicit texture coordinates to specify for the quadrilateral the texture's applied to. */
     protected int tessellationDensity;
 

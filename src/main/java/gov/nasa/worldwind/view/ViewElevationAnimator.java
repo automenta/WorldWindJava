@@ -21,8 +21,8 @@ import gov.nasa.worldwind.util.PropertyAccessor;
 public class ViewElevationAnimator extends DoubleAnimator
 {
     protected Globe globe;
-    protected LatLon endLatLon;
-    protected int altitudeMode;
+    protected final LatLon endLatLon;
+    protected final int altitudeMode;
 
     protected double midZoom;
     protected boolean useMidZoom = true;

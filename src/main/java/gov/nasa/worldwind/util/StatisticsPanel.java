@@ -42,23 +42,13 @@ public class StatisticsPanel extends JPanel
         this.makePanel(size);
         wwd.setPerFrameStatisticsKeys(PerformanceStatistic.ALL_STATISTICS_SET);
 
-        wwd.addRenderingListener(new RenderingListener()
-        {
-            public void stageChanged(RenderingEvent event)
+        wwd.addRenderingListener(event -> {
+            long now = System.currentTimeMillis();
+            if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)
+                && event.getSource() instanceof WorldWindow && now - lastUpdate > updateInterval)
             {
-                long now = System.currentTimeMillis();
-                if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)
-                    && event.getSource() instanceof WorldWindow && now - lastUpdate > updateInterval)
-                {
-                    EventQueue.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            update();
-                        }
-                    });
-                    lastUpdate = now;
-                }
+                EventQueue.invokeLater(this::update);
+                lastUpdate = now;
             }
         });
     }

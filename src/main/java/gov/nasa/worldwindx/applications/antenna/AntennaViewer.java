@@ -22,7 +22,7 @@ import java.io.InputStream;
  */
 public class AntennaViewer extends ApplicationTemplate
 {
-    protected static Position ANTENNA_POSITION = Position.fromDegrees(35, -120, 1e3);
+    protected static final Position ANTENNA_POSITION = Position.fromDegrees(35, -120, 1e3);
 
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {

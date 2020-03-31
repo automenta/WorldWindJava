@@ -103,7 +103,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
 
     private void makeDefaultDetailLevels()
     {
-        List<DetailLevel> levels = new ArrayList<DetailLevel>();
+        List<DetailLevel> levels = new ArrayList<>();
         double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
 
         DetailLevel level;
@@ -355,7 +355,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
         LatLon[] locations = gb.makeDiskLocations(globe, this.center, this.getRadii(),
             this.heading, MINIMAL_GEOMETRY_SLICES, MINIMAL_GEOMETRY_LOOPS);
 
-        ArrayList<Vec4> points = new ArrayList<Vec4>();
+        ArrayList<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, Arrays.asList(locations), points);
 
         return points;
@@ -376,7 +376,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
             throw new IllegalArgumentException(message);
         }
 
-        List<LatLon> oldLocations = new ArrayList<LatLon>(1);
+        List<LatLon> oldLocations = new ArrayList<>(1);
         oldLocations.add(this.getCenter());
         List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldRef, newRef, oldLocations);
         this.setCenter(newLocations.get(0));
@@ -532,19 +532,19 @@ public class CappedEllipticalCylinder extends AbstractAirspace
             DetailLevel level = this.computeDetailLevel(dc);
 
             Object o = level.getValue(SLICES);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 slices = (Integer) o;
 
             o = level.getValue(STACKS);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 stacks = (Integer) o;
 
             o = level.getValue(LOOPS);
-            if (o != null && o instanceof Integer)
+            if (o instanceof Integer)
                 loops = (Integer) o;
 
             o = level.getValue(DISABLE_TERRAIN_CONFORMANCE);
-            if (o != null && o instanceof Boolean && ((Boolean) o))
+            if (o instanceof Boolean && ((Boolean) o))
                 terrainConformant[0] = terrainConformant[1] = false;
         }
 

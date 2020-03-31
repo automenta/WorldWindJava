@@ -32,12 +32,12 @@ public class XMLEventParserContextFactory
     protected static class ParserTableEntry
     {
         /** The mime types for which the associated parser should be used. */
-        protected List<String> mimeTypes = new ArrayList<String>();
+        protected final List<String> mimeTypes = new ArrayList<>();
         /**
          * A prototype parser able to construct a copy of itself. The copy typically shares the prototype's parser table
          * and may also share other internal fields.
          */
-        XMLEventParserContext prototypeParser;
+        final XMLEventParserContext prototypeParser;
 
         /**
          * Construct an instance for a specified list of mime types and a specified prototype parser.
@@ -52,10 +52,7 @@ public class XMLEventParserContextFactory
          */
         public ParserTableEntry(String[] mimeTypes, XMLEventParserContext prototypeContext)
         {
-            for (String mimeType : mimeTypes)
-            {
-                this.mimeTypes.add(mimeType);
-            }
+            this.mimeTypes.addAll(Arrays.asList(mimeTypes));
 
             this.prototypeParser = prototypeContext;
 
@@ -77,7 +74,7 @@ public class XMLEventParserContextFactory
      * The list of registered parser contexts. A copy-on-write list is used to avoid the need to explicitly synchronize
      * access.
      */
-    protected static List<ParserTableEntry> parsers = new CopyOnWriteArrayList<ParserTableEntry>();
+    protected static final List<ParserTableEntry> parsers = new CopyOnWriteArrayList<>();
 
     static
     {

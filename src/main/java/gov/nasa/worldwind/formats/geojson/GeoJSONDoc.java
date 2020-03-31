@@ -28,7 +28,7 @@ public class GeoJSONDoc extends JSONDoc
     }
 
     @Override
-    protected JSONEventParser createRootObjectParser() throws IOException
+    protected JSONEventParser createRootObjectParser()
     {
         return new GeoJSONEventParser();
     }

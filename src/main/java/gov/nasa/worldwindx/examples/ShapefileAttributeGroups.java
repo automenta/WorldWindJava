@@ -31,8 +31,8 @@ public class ShapefileAttributeGroups extends ApplicationTemplate
     public static class AppFrame extends ApplicationTemplate.AppFrame
         implements ActionListener, ShapefileRenderable.AttributeDelegate
     {
-        protected static String SHAPEFILE_PATH = "gov/nasa/worldwindx/examples/data/ShapefileAttributeGroups.xml";
-        protected Map<Integer, AttributeGroup> groups = new LinkedHashMap<Integer, AttributeGroup>();
+        protected static final String SHAPEFILE_PATH = "gov/nasa/worldwindx/examples/data/ShapefileAttributeGroups.xml";
+        protected final Map<Integer, AttributeGroup> groups = new LinkedHashMap<>();
 
         public AppFrame()
         {
@@ -107,8 +107,8 @@ public class ShapefileAttributeGroups extends ApplicationTemplate
 
     public static class AttributeGroup
     {
-        protected String displayName;
-        protected Material groupMaterial;
+        protected final String displayName;
+        protected final Material groupMaterial;
         protected Material defaultMaterial;
         protected boolean useGroupColor;
         protected ShapeAttributes attributes;

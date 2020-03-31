@@ -31,7 +31,7 @@ public class ExtrudedShapes extends ApplicationTemplate {
 
     protected static final String DEMO_AIRSPACES_PATH
             = "gov/nasa/worldwindx/examples/data/AirspaceBuilder-DemoShapes.zip";
-    protected static String DEFAULT_IMAGE_URL = "gov/nasa/worldwindx/examples/images/build123sm.jpg";
+    protected static final String DEFAULT_IMAGE_URL = "gov/nasa/worldwindx/examples/images/build123sm.jpg";
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 

@@ -24,9 +24,9 @@ import java.util.ArrayList;
  */
 public class CloudCeiling implements Restorable
 {
-    public static String DELTA_MODE_PLUS = "Sar.CloudCeiling.DeltaModePlus";
-    public static String DELTA_MODE_MINUS = "Sar.CloudCeiling.DeltaModeMinus";
-    public static String DELTA_MODE_BOTH = "Sar.CloudCeiling.DeltaModeBoth";
+    public static final String DELTA_MODE_PLUS = "Sar.CloudCeiling.DeltaModePlus";
+    public static final String DELTA_MODE_MINUS = "Sar.CloudCeiling.DeltaModeMinus";
+    public static final String DELTA_MODE_BOTH = "Sar.CloudCeiling.DeltaModeBoth";
 
     private final WorldWindow wwd;
     private final RenderableLayer layer = new RenderableLayer();
@@ -236,20 +236,20 @@ public class CloudCeiling implements Restorable
     {
         // Contour lines elevation is in meter, so convert if we are using feet
         double unitConvertion = SAR2.UNIT_IMPERIAL.equals(this.elevationUnit) ? SAR2.feetToMeters(1) : 1;
-        if (this.deltaMode.equals(DELTA_MODE_PLUS))
+        switch (this.deltaMode)
         {
-            lines[0].setElevation(this.elevationBase * unitConvertion);
-            lines[1].setElevation((this.elevationBase + this.elevationDelta) * unitConvertion);
-        }
-        else if (this.deltaMode.equals(DELTA_MODE_MINUS))
-        {
-            lines[0].setElevation((this.elevationBase - this.elevationDelta) * unitConvertion);
-            lines[1].setElevation(this.elevationBase * unitConvertion);
-        }
-        else if (this.deltaMode.equals(DELTA_MODE_BOTH))
-        {
-            lines[0].setElevation((this.elevationBase - this.elevationDelta) * unitConvertion);
-            lines[1].setElevation((this.elevationBase + this.elevationDelta) * unitConvertion);
+            case DELTA_MODE_PLUS -> {
+                lines[0].setElevation(this.elevationBase * unitConvertion);
+                lines[1].setElevation((this.elevationBase + this.elevationDelta) * unitConvertion);
+            }
+            case DELTA_MODE_MINUS -> {
+                lines[0].setElevation((this.elevationBase - this.elevationDelta) * unitConvertion);
+                lines[1].setElevation(this.elevationBase * unitConvertion);
+            }
+            case DELTA_MODE_BOTH -> {
+                lines[0].setElevation((this.elevationBase - this.elevationDelta) * unitConvertion);
+                lines[1].setElevation((this.elevationBase + this.elevationDelta) * unitConvertion);
+            }
         }
 
         if (this.elevationDelta > 0)
@@ -292,7 +292,10 @@ public class CloudCeiling implements Restorable
         {
             for (int i = 0; i < newPositions.size(); i++)
                 if (!this.centerPositions.get(i).equals(newPositions.get(i)))
+                {
                     changed = true;
+                    break;
+                }
         }
         else
             changed = true;
@@ -344,7 +347,7 @@ public class CloudCeiling implements Restorable
     private void computeExtentPositions()
     {
         Globe globe = this.wwd.getModel().getGlobe();
-        this.extentPositions = new ArrayList<LatLon>();
+        this.extentPositions = new ArrayList<>();
         Angle heading = Angle.ZERO;
         int cpn = 0; // Current position number
         // Start cap
@@ -390,7 +393,7 @@ public class CloudCeiling implements Restorable
         start = normalizedHeading(start);
         end = normalizedHeading(end);
         end = end.degrees > start.degrees ? end : end.addDegrees(360);
-        ArrayList<LatLon> positions = new ArrayList<LatLon>();
+        ArrayList<LatLon> positions = new ArrayList<>();
         Angle radiusAngle = Angle.fromRadians(radius / globe.getRadiusAt(center));
         //positions.add(LatLon.greatCircleEndPosition(center, start, radiusAngle)); // Skip first pos
         positions.add(LatLon.greatCircleEndPosition(center, Angle.midAngle(start, end), radiusAngle));
@@ -401,7 +404,7 @@ public class CloudCeiling implements Restorable
     private static ArrayList<LatLon> computeLinePositions(Globe globe, LatLon p1, LatLon p2, Angle previousHeading,
         Angle heading, Angle nextHeading, double radius)
     {
-        ArrayList<LatLon> positions = new ArrayList<LatLon>();
+        ArrayList<LatLon> positions = new ArrayList<>();
         Angle radiusAngle = Angle.fromRadians(radius / globe.getRadiusAt(p1));
         // Skip first pos
 //        if (isClockwiseHeadingChange(previousHeading, heading))
@@ -558,7 +561,7 @@ public class CloudCeiling implements Restorable
         RestorableSupport.StateObject positionsStateObj = restorableSupport.getStateObject("positions");
         if (positionsStateObj != null)
         {
-            ArrayList<LatLon> newPositions = new ArrayList<LatLon>();
+            ArrayList<LatLon> newPositions = new ArrayList<>();
             // Get the nested "position" states beneath the base "positions".
             RestorableSupport.StateObject[] positionStateArray =
                 restorableSupport.getAllStateObjects(positionsStateObj, "position");

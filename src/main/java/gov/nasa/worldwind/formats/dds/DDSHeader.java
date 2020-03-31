@@ -168,7 +168,7 @@ public class DDSHeader
 
     public static DDSHeader readFrom(Object source) throws Exception
     {
-        boolean sourceIsInputStream = (null != source && source instanceof InputStream);
+        boolean sourceIsInputStream = (source instanceof InputStream);
 
         InputStream inputStream = WWIO.openStream(source);
         ReadableByteChannel channel = Channels.newChannel(WWIO.getBufferedInputStream(inputStream));

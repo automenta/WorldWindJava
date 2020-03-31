@@ -28,9 +28,9 @@ import java.awt.*;
  */
 public class ViewVolumeViewer extends JFrame
 {
-    protected WWPanel wwp;
-    protected WorldWindowGLCanvas wwd;
-    protected WorldWindow observed;
+    protected final WWPanel wwp;
+    protected final WorldWindowGLCanvas wwd;
+    protected final WorldWindow observed;
 
     /**
      * Construct a view volume viewer.
@@ -55,22 +55,18 @@ public class ViewVolumeViewer extends JFrame
         this.wwd.getModel().getLayers().add(0, vvLayer);
 
         // This view volume viewer updates its display within a rendering listener registered for the observed window
-        this.observed.addRenderingListener(new RenderingListener()
-        {
-            public void stageChanged(RenderingEvent event)
+        this.observed.addRenderingListener(event -> {
+            if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP))
             {
-                if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP))
-                {
-                    // Get the observed window's sector geometry and update this window's terrain display layer
-                    SectorGeometryList sgCopy = new SectorGeometryList(observed.getSceneController().getTerrain());
-                    sgLayer.setGeometry(sgCopy);
+                // Get the observed window's sector geometry and update this window's terrain display layer
+                SectorGeometryList sgCopy = new SectorGeometryList(observed.getSceneController().getTerrain());
+                sgLayer.setGeometry(sgCopy);
 
-                    // Get the observed window's view and update this window's view volume display layer
-                    vvLayer.setView(observed.getView());
+                // Get the observed window's view and update this window's view volume display layer
+                vvLayer.setView(observed.getView());
 
-                    // Redraw this (the view volume viewer's) window
-                    wwd.redraw();
-                }
+                // Redraw this (the view volume viewer's) window
+                wwd.redraw();
             }
         });
 
@@ -109,7 +105,7 @@ public class ViewVolumeViewer extends JFrame
 
     protected static class WWPanel extends JPanel
     {
-        protected WorldWindowGLCanvas wwd;
+        protected final WorldWindowGLCanvas wwd;
 
         public WWPanel(WorldWindowGLCanvas shareWith, Dimension size, Model model)
         {
@@ -173,7 +169,7 @@ public class ViewVolumeViewer extends JFrame
     protected static class ViewVolumeLayer extends RenderableLayer
     {
         protected View view;
-        protected ViewVolumeRenderer renderer = new ViewVolumeRenderer();
+        protected final ViewVolumeRenderer renderer = new ViewVolumeRenderer();
 
         public ViewVolumeLayer()
         {

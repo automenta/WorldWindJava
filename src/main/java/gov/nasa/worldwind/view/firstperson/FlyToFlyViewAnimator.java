@@ -18,7 +18,7 @@ import gov.nasa.worldwind.view.*;
  */
 public class FlyToFlyViewAnimator extends CompoundAnimator
 {
-    int altitudeMode;
+    final int altitudeMode;
 
     public FlyToFlyViewAnimator(Interpolator interpolator, int altitudeMode,
         PositionAnimator eyePositionAnimator, DoubleAnimator elevationAnimator,
@@ -78,11 +78,9 @@ public class FlyToFlyViewAnimator extends CompoundAnimator
             beginRoll, endRoll,
             ViewPropertyAccessor.createRollAccessor(view));
 
-        FlyToFlyViewAnimator panAnimator = new FlyToFlyViewAnimator(
+        return (new FlyToFlyViewAnimator(
             new ScheduledInterpolator(timeToMove), altitudeMode, centerAnimator,
-            elevAnimator, headingAnimator, pitchAnimator, rollAnimator);
-
-        return (panAnimator);
+            elevAnimator, headingAnimator, pitchAnimator, rollAnimator));
     }
 
     public static class FlyToElevationAnimator extends ViewElevationAnimator
@@ -117,9 +115,9 @@ public class FlyToFlyViewAnimator extends CompoundAnimator
 
     public static class OnSurfacePositionAnimator extends PositionAnimator
     {
-        Globe globe;
-        int altitudeMode;
-        boolean useMidZoom = true;
+        final Globe globe;
+        final int altitudeMode;
+        final boolean useMidZoom = true;
 
         public OnSurfacePositionAnimator(Globe globe, Interpolator interpolator,
             Position begin,

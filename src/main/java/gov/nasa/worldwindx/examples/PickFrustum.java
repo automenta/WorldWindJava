@@ -13,9 +13,7 @@ import gov.nasa.worldwind.render.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -29,7 +27,7 @@ public class PickFrustum extends ApplicationTemplate
 {
     public static class PickFrustumLayer extends RenderableLayer
     {
-        protected OrderedIcon orderedImage = new OrderedIcon();
+        protected final OrderedIcon orderedImage = new OrderedIcon();
 
         protected class OrderedIcon implements OrderedRenderable
         {
@@ -149,23 +147,19 @@ public class PickFrustum extends ApplicationTemplate
         protected JToggleButton butToggleViewClipping;
         protected WWIcon lastPickedIcon;
         protected IconLayer iconLayer = null;
-        protected PickFrustumLayer frustumLayer = new PickFrustumLayer();
+        protected final PickFrustumLayer frustumLayer = new PickFrustumLayer();
 
         public AppFrame()
         {
             super(true, false, false);
 
-            getWwd().addSelectListener(new SelectListener()
-            {
-                public void selected(SelectEvent event)
+            getWwd().addSelectListener(event -> {
+                if (isEnabled())
                 {
-                    if (isEnabled())
+                    // Have rollover events highlight the rolled-over object.
+                    if (event.getEventAction().equals(SelectEvent.ROLLOVER))
                     {
-                        // Have rollover events highlight the rolled-over object.
-                        if (event.getEventAction().equals(SelectEvent.ROLLOVER))
-                        {
-                            highlight(event.getTopObject());
-                        }
+                        highlight(event.getTopObject());
                     }
                 }
             });
@@ -209,7 +203,7 @@ public class PickFrustum extends ApplicationTemplate
             }
 
             // Turn on highlight if object selected.
-            if (o != null && o instanceof WWIcon)
+            if (o instanceof WWIcon)
             {
                 this.lastPickedIcon = (WWIcon) o;
                 this.lastPickedIcon.setHighlighted(true);
@@ -229,89 +223,73 @@ public class PickFrustum extends ApplicationTemplate
             p2.add(p, BorderLayout.NORTH);
 
             butToggleViewClipping = new JToggleButton();
-            butToggleViewClipping.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(final ActionEvent e)
+            butToggleViewClipping.addActionListener(e -> {
+                if (butToggleViewClipping.isSelected())
                 {
-                    if (butToggleViewClipping.isSelected())
-                    {
 //                        System.out.println("layer.setViewClippingEnabled(true);");
-                        iconLayer.setViewClippingEnabled(true);
-                        butToggleViewClipping.setText("Disable View Clipping");
-                    }
-                    else
-                    {
-//                        System.out.println("layer.setViewClippingEnabled(false);");
-                        iconLayer.setViewClippingEnabled(false);
-                        butToggleViewClipping.setText("Enable View Clipping");
-                    }
-
-                    getWwd().redraw();
+                    iconLayer.setViewClippingEnabled(true);
+                    butToggleViewClipping.setText("Disable View Clipping");
                 }
+                else
+                {
+//                        System.out.println("layer.setViewClippingEnabled(false);");
+                    iconLayer.setViewClippingEnabled(false);
+                    butToggleViewClipping.setText("Enable View Clipping");
+                }
+
+                getWwd().redraw();
             });
             butToggleViewClipping.setSelected(true);
             butToggleViewClipping.setText("Disable View Clipping");
             p.add(butToggleViewClipping);
 
             butTogglePickingClipping = new JToggleButton();
-            butTogglePickingClipping.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(final ActionEvent e)
+            butTogglePickingClipping.addActionListener(e -> {
+                if (butTogglePickingClipping.isSelected())
                 {
-                    if (butTogglePickingClipping.isSelected())
-                    {
-                        iconLayer.setPickFrustumClippingEnabled(true);
-                        butTogglePickingClipping.setText("Disable Picking Clipping");
-                    }
-                    else
-                    {
-                        iconLayer.setPickFrustumClippingEnabled(false);
-                        butTogglePickingClipping.setText("Enable Picking Clipping");
-                    }
-
-                    getWwd().redraw();
+                    iconLayer.setPickFrustumClippingEnabled(true);
+                    butTogglePickingClipping.setText("Disable Picking Clipping");
                 }
+                else
+                {
+                    iconLayer.setPickFrustumClippingEnabled(false);
+                    butTogglePickingClipping.setText("Enable Picking Clipping");
+                }
+
+                getWwd().redraw();
             });
             butTogglePickingClipping.setSelected(true);
             butTogglePickingClipping.setText("Disable Picking Clipping");
             p.add(butTogglePickingClipping);
 
             butShowPickingFrustum = new JToggleButton();
-            butShowPickingFrustum.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(final ActionEvent e)
+            butShowPickingFrustum.addActionListener(e -> {
+                if (butShowPickingFrustum.isSelected())
                 {
-                    if (butShowPickingFrustum.isSelected())
-                    {
-                        frustumLayer.setEnabled(true);
-                        butShowPickingFrustum.setText("Hide Picking Frustum");
-                    }
-                    else
-                    {
-                        frustumLayer.setEnabled(false);
-                        butShowPickingFrustum.setText("Show Picking Frustum");
-                    }
-
-                    getWwd().redraw();
+                    frustumLayer.setEnabled(true);
+                    butShowPickingFrustum.setText("Hide Picking Frustum");
                 }
+                else
+                {
+                    frustumLayer.setEnabled(false);
+                    butShowPickingFrustum.setText("Show Picking Frustum");
+                }
+
+                getWwd().redraw();
             });
             butShowPickingFrustum.setText("Show Picking Frustum");
             p.add(butShowPickingFrustum);
 
             slider = new JSlider();
-            slider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(final ChangeEvent e)
-                {
-                    int val = slider.getValue();
+            slider.addChangeListener(e -> {
+                int val = slider.getValue();
 
-                    if (lblDimension != null)
-                    {
-                        lblDimension.setText("(" + val + "," + val + ")");
-                        getWwd().getSceneController().getDrawContext().setPickPointFrustumDimension(
-                            new Dimension(val, val));
-                        getWwd().redraw();
-                    }
+                if (lblDimension != null)
+                {
+                    lblDimension.setText("(" + val + "," + val + ")");
+                    getWwd().getSceneController().getDrawContext().setPickPointFrustumDimension(
+                        new Dimension(val, val));
+                    getWwd().redraw();
                 }
             });
 

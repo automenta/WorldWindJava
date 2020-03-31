@@ -69,7 +69,7 @@ public class IconController extends AbstractFeature implements SelectListener, D
         }
 
         // Turn on highlight if object selected.
-        if (o != null && o instanceof WWIcon)
+        if (o instanceof WWIcon)
         {
             this.lastPickedIcon = (WWIcon) o;
             this.lastPickedIcon.setHighlighted(true);

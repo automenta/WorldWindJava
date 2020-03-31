@@ -61,7 +61,7 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_GNL_ARS_SRHARA);
+        return Collections.singletonList(TacGrpSidc.C2GM_GNL_ARS_SRHARA);
     }
 
     /**

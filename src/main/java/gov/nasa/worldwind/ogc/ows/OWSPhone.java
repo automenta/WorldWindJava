@@ -19,8 +19,8 @@ import java.util.*;
  */
 public class OWSPhone extends AbstractXMLEventParser
 {
-    protected List<String> voices = new ArrayList<String>(1);
-    protected List<String> faxes = new ArrayList<String>(1);
+    protected final List<String> voices = new ArrayList<>(1);
+    protected final List<String> faxes = new ArrayList<>(1);
 
     public OWSPhone(String namespaceURI)
     {

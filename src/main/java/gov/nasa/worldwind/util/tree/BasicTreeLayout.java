@@ -17,7 +17,6 @@ import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.beans.*;
 import java.util.List;
 import java.util.*;
 
@@ -40,7 +39,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
     /** Attributes to use when the frame is highlighted. */
     protected TreeAttributes highlightAttributes = new BasicTreeAttributes();
     /** Active attributes, either normal or highlight. */
-    protected TreeAttributes activeAttributes = new BasicTreeAttributes();
+    protected final TreeAttributes activeAttributes = new BasicTreeAttributes();
     /** The attributes used if attributes are not specified. */
     protected static final TreeAttributes defaultAttributes;
 
@@ -48,7 +47,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
     protected boolean highlighted;
 
     /** Support for setting up and restoring picking state, and resolving the picked object. */
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
 
     /**
      * This field is set by {@link #makeVisible(TreePath)}, and read by {@link #scrollToNode(gov.nasa.worldwind.render.DrawContext)}
@@ -79,19 +78,19 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
     protected int maxWrappedLines = 2;
 
     /** Cache of computed text bounds. */
-    protected BoundedHashMap<TextCacheKey, Rectangle2D> textCache = new BoundedHashMap<TextCacheKey, Rectangle2D>();
+    protected final BoundedHashMap<TextCacheKey, Rectangle2D> textCache = new BoundedHashMap<>();
 
     /** Cache of computed node layout data. */
-    protected BoundedHashMap<TreeNode, NodeLayout> layoutCache = new BoundedHashMap<TreeNode, NodeLayout>();
+    protected final BoundedHashMap<TreeNode, NodeLayout> layoutCache = new BoundedHashMap<>();
 
     /** Cache of node layouts. This list is populated when the tree layout is computed. */
-    protected java.util.List<NodeLayout> treeNodes = new ArrayList<NodeLayout>();
+    protected final java.util.List<NodeLayout> treeNodes = new ArrayList<>();
 
     /**
      * A little extra space is added to the tree dimensions to give the tree a little bit of separation from the
      * scrollable frame. This value determines the amount of padding, in pixels.
      */
-    protected int padding = 10;
+    protected final int padding = 10;
 
     // Computed each frame
     protected long frameNumber = -1L;
@@ -162,17 +161,13 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         // is a WWObject, it sends property change events to its listeners. Since Tree is likely to listen for property
         // change events on TreeLayout, we add an anonymous listener to avoid an infinite cycle of property change
         // events between TreeLayout and Tree.
-        this.tree.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent)
+        this.tree.addPropertyChangeListener(propertyChangeEvent -> {
+            // Ignore events originated by this TreeLayout, and repaint events. There is no need to recompute the
+            // tree layout just because a repaint was triggered.
+            if (propertyChangeEvent.getSource() != BasicTreeLayout.this
+                && !AVKey.REPAINT.equals(propertyChangeEvent.getPropertyName()))
             {
-                // Ignore events originated by this TreeLayout, and repaint events. There is no need to recompute the
-                // tree layout just because a repaint was triggered.
-                if (propertyChangeEvent.getSource() != BasicTreeLayout.this
-                    && !AVKey.REPAINT.equals(propertyChangeEvent.getPropertyName()))
-                {
-                    BasicTreeLayout.this.invalidate();
-                }
+                BasicTreeLayout.this.invalidate();
             }
         });
 
@@ -628,7 +623,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
     protected void renderNodes(DrawContext dc, Point drawPoint, Iterable<NodeLayout> nodes, Rectangle clipBounds)
     {
         // Collect the nodes that are actually visible in the scroll area in a list.
-        List<NodeLayout> visibleNodes = new ArrayList<NodeLayout>();
+        List<NodeLayout> visibleNodes = new ArrayList<>();
 
         for (NodeLayout layout : nodes)
         {

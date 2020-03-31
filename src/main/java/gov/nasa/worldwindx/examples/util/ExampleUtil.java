@@ -169,7 +169,7 @@ public class ExampleUtil
             throw new IllegalArgumentException(message);
         }
 
-        ArrayList<Double> list = new ArrayList<Double>();
+        ArrayList<Double> list = new ArrayList<>();
 
         InputStream is = null;
         BufferedReader reader = null;

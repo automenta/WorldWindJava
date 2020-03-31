@@ -18,7 +18,7 @@ import gov.nasa.worldwind.util.*;
  */
 public class BasicLightingModel implements LightingModel
 {
-    protected OGLStackHandler lightingStackHandler = new OGLStackHandler();
+    protected final OGLStackHandler lightingStackHandler = new OGLStackHandler();
     protected Vec4 lightDirection = new Vec4(1.0, 0.5, 1.0);
     protected Material lightMaterial = Material.WHITE;
     protected long frameID;

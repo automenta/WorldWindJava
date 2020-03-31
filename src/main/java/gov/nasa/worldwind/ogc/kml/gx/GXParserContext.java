@@ -39,7 +39,7 @@ public class GXParserContext extends BasicXMLEventParserContext
 
     public static Map<QName, XMLEventParser> getDefaultParsers()
     {
-        ConcurrentHashMap<QName, XMLEventParser> parsers = new ConcurrentHashMap<QName, XMLEventParser>();
+        ConcurrentHashMap<QName, XMLEventParser> parsers = new ConcurrentHashMap<>();
 
         String ns = GXConstants.GX_NAMESPACE;
         parsers.put(new QName(ns, "AnimatedUpdate"), new GXAnimatedUpdate(ns));

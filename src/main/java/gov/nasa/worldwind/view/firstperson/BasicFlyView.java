@@ -135,9 +135,7 @@ public class BasicFlyView extends BasicView {
             throw new IllegalArgumentException(message);
         }
 
-        Matrix modelViewMatrix = ViewUtil.computeModelViewMatrix(this.globe, newEyePoint, newCenterPoint, up);
-
-        return (modelViewMatrix);
+        return (ViewUtil.computeModelViewMatrix(this.globe, newEyePoint, newCenterPoint, up));
     }
 
     public ViewUtil.ViewState getViewState(Position eyePosition, Position centerPosition) {
@@ -184,9 +182,7 @@ public class BasicFlyView extends BasicView {
             throw new IllegalArgumentException(message);
         }
 
-        ViewUtil.ViewState viewState = ViewUtil.computeViewState(this.globe, newEyePoint, newCenterPoint, up);
-
-        return (viewState);
+        return (ViewUtil.computeViewState(this.globe, newEyePoint, newCenterPoint, up));
     }
 
     @Override

@@ -63,7 +63,7 @@ public class PrincipleDirectionOfFire extends AbstractMilStd2525TacticalGraphic 
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_DEF_LNE_PDF);
+        return Collections.singletonList(TacGrpSidc.C2GM_DEF_LNE_PDF);
     }
 
     /**

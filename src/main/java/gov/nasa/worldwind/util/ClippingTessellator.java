@@ -21,7 +21,7 @@ public class ClippingTessellator
 {
     protected GLUtessellator tessellator;
     protected double[] clipDegrees;
-    protected double[] prevCoord = new double[2];
+    protected final double[] prevCoord = new double[2];
     protected int prevClipCode;
 
     public ClippingTessellator(GLUtessellator tessellator, Sector sector)

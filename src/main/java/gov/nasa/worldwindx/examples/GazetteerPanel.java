@@ -12,15 +12,11 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.poi.*;
 import gov.nasa.worldwind.view.orbit.OrbitView;
-import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import javax.swing.text.*;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -74,44 +70,34 @@ public class GazetteerPanel extends JPanel
 
         // The text field
         final JTextField field = new JTextField("Name or Lat,Lon?");
-        field.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(final ActionEvent actionEvent)
+        field.addActionListener(actionEvent -> EventQueue.invokeLater(() -> {
+            try
             {
-                EventQueue.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        try
-                        {
-                            handleEntryAction(actionEvent);
-                        }
-                        catch (NoItemException e)
-                        {
-                            JOptionPane.showMessageDialog(GazetteerPanel.this,
-                                "Location not available \"" + (field.getText() != null ? field.getText() : "") + "\"\n"
-                                    + "(" + e.getMessage() + ")",
-                                "Location Not Available", JOptionPane.ERROR_MESSAGE);
-                        }
-                        catch (IllegalArgumentException e)
-                        {
-                            JOptionPane.showMessageDialog(GazetteerPanel.this,
-                                "Error parsing input \"" + (field.getText() != null ? field.getText() : "") + "\"\n"
-                                    + e.getMessage(),
-                                "Lookup Failure", JOptionPane.ERROR_MESSAGE);
-                        }
-                        catch (Exception e)
-                        {
-                            e.printStackTrace();
-                            JOptionPane.showMessageDialog(GazetteerPanel.this,
-                                "Error looking up \"" + (field.getText() != null ? field.getText() : "") + "\"\n"
-                                    + e.getMessage(),
-                                "Lookup Failure", JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                });
+                handleEntryAction(actionEvent);
             }
-        });
+            catch (NoItemException e)
+            {
+                JOptionPane.showMessageDialog(GazetteerPanel.this,
+                    "Location not available \"" + (field.getText() != null ? field.getText() : "") + "\"\n"
+                        + "(" + e.getMessage() + ")",
+                    "Location Not Available", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (IllegalArgumentException e)
+            {
+                JOptionPane.showMessageDialog(GazetteerPanel.this,
+                    "Error parsing input \"" + (field.getText() != null ? field.getText() : "") + "\"\n"
+                        + e.getMessage(),
+                    "Lookup Failure", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(GazetteerPanel.this,
+                    "Error looking up \"" + (field.getText() != null ? field.getText() : "") + "\"\n"
+                        + e.getMessage(),
+                    "Lookup Failure", JOptionPane.ERROR_MESSAGE);
+            }
+        }));
 
         // Enclose entry field in an inner panel in order to control spacing/padding
         JPanel fieldPanel = new JPanel(new BorderLayout());
@@ -127,21 +113,11 @@ public class GazetteerPanel extends JPanel
         resultsPanel.add(new JLabel("Results: "));
         resultsBox = new JComboBox();
         resultsBox.setPreferredSize(new Dimension(300, 30));
-        resultsBox.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(final ActionEvent actionEvent)
-            {
-                EventQueue.invokeLater(new Runnable()
-                {
-                    public void run()
-                    {
-                        JComboBox cb = (JComboBox) actionEvent.getSource();
-                        PointOfInterest selectedPoi = (PointOfInterest) cb.getSelectedItem();
-                        moveToLocation(selectedPoi);
-                    }
-                });
-            }
-        });
+        resultsBox.addActionListener(actionEvent -> EventQueue.invokeLater(() -> {
+            JComboBox cb = (JComboBox) actionEvent.getSource();
+            PointOfInterest selectedPoi = (PointOfInterest) cb.getSelectedItem();
+            moveToLocation(selectedPoi);
+        }));
         resultsPanel.add(resultsBox);
         resultsPanel.setVisible(false);
         this.add(resultsPanel, BorderLayout.EAST);
@@ -164,8 +140,8 @@ public class GazetteerPanel extends JPanel
         return (Gazetteer) o;
     }
 
-    private void handleEntryAction(ActionEvent actionEvent) throws IOException, ParserConfigurationException,
-        XPathExpressionException, SAXException, NoItemException, IllegalArgumentException
+    private void handleEntryAction(ActionEvent actionEvent) throws
+        NoItemException, IllegalArgumentException
     {
         String lookupString = null;
 
@@ -221,7 +197,7 @@ public class GazetteerPanel extends JPanel
                 searchValues[1]); //Street Address may have numbers in first field so use 2nd
             if (matcher.find())
             {
-                java.util.List<PointOfInterest> list = new ArrayList<PointOfInterest>();
+                java.util.List<PointOfInterest> list = new ArrayList<>();
                 list.add(parseCoordinates(searchValues));
                 return list;
             }
@@ -259,8 +235,8 @@ public class GazetteerPanel extends JPanel
     {
         if (isDecimalDegrees(coords))
         {
-            Double d1 = Double.parseDouble(coords[0].trim());
-            Double d2 = Double.parseDouble(coords[1].trim());
+            double d1 = Double.parseDouble(coords[0].trim());
+            double d2 = Double.parseDouble(coords[1].trim());
 
             return new BasicPointOfInterest(LatLon.fromDegrees(d1, d2));
         }
@@ -302,8 +278,7 @@ public class GazetteerPanel extends JPanel
 
         if (altitude == null || altitude == 0)
         {
-            double t = sector.getDeltaLonRadians() > sector.getDeltaLonRadians()
-                ? sector.getDeltaLonRadians() : sector.getDeltaLonRadians();
+            double t = Math.min(sector.getDeltaLonRadians(), sector.getDeltaLonRadians());
             double w = 0.5 * t * 6378137.0;
             altitude = w / this.wwd.getView().getFieldOfView().tanHalfAngle();
         }

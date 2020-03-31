@@ -13,7 +13,6 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.stream.*;
 import javax.xml.stream.events.XMLEvent;
-import java.beans.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -28,17 +27,17 @@ import java.util.logging.Level;
 public class BasicXMLEventParserContext extends AVListImpl implements XMLEventParserContext
 {
     /** The parser name of the default double parser. */
-    public static QName DOUBLE = new QName("Double");
+    public static final QName DOUBLE = new QName("Double");
     /** The parser name of the default integer parser. */
-    public static QName INTEGER = new QName("Integer");
+    public static final QName INTEGER = new QName("Integer");
     /** The parser name of the default string parser. */
-    public static QName STRING = new QName("String");
+    public static final QName STRING = new QName("String");
     /** The parser name of the default boolean parser. */
-    public static QName BOOLEAN = new QName("Boolean");
+    public static final QName BOOLEAN = new QName("Boolean");
     /** The parser name of the default boolean integer parser. */
-    public static QName BOOLEAN_INTEGER = new QName("BooleanInteger");
+    public static final QName BOOLEAN_INTEGER = new QName("BooleanInteger");
     /** The parser name of the unrecognized-element parser. */
-    public static QName UNRECOGNIZED = new QName(UNRECOGNIZED_ELEMENT_PARSER);
+    public static final QName UNRECOGNIZED = new QName(UNRECOGNIZED_ELEMENT_PARSER);
 
     protected XMLEventReader reader;
     protected StringXMLEventParser stringParser;
@@ -48,9 +47,9 @@ public class BasicXMLEventParserContext extends AVListImpl implements XMLEventPa
     protected BooleanIntegerXMLEventParser booleanIntegerParser;
     protected String defaultNamespaceURI = XMLConstants.NULL_NS_URI;
     protected XMLParserNotificationListener notificationListener;
-    protected ConcurrentHashMap<String, Object> idTable = new ConcurrentHashMap<String, Object>();
+    protected final ConcurrentHashMap<String, Object> idTable = new ConcurrentHashMap<>();
 
-    protected ConcurrentHashMap<QName, XMLEventParser> parsers = new ConcurrentHashMap<QName, XMLEventParser>();
+    protected ConcurrentHashMap<QName, XMLEventParser> parsers = new ConcurrentHashMap<>();
 
     /** Construct an instance. Invokes {@link #initializeParsers()} and {@link #initialize()}. */
     public BasicXMLEventParserContext()
@@ -103,36 +102,32 @@ public class BasicXMLEventParserContext extends AVListImpl implements XMLEventPa
 
     protected void initializeDefaultNotificationListener()
     {
-        this.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent propEvent)
+        this.addPropertyChangeListener(propEvent -> {
+            XMLParserNotification notification = (XMLParserNotification) propEvent;
+
+            if (notificationListener != null)
             {
-                XMLParserNotification notification = (XMLParserNotification) propEvent;
-
-                if (notificationListener != null)
-                {
-                    notificationListener.notify(notification);
-                    return;
-                }
-
-                String msg;
-                if (notification.getEvent() != null)
-                {
-                    msg = Logging.getMessage(notification.getMessage(), notification.getEvent().toString(),
-                        notification.getEvent().getLocation().getLineNumber(),
-                        notification.getEvent().getLocation().getColumnNumber(),
-                        notification.getEvent().getLocation().getCharacterOffset());
-                }
-                else
-                {
-                    msg = Logging.getMessage(notification.getMessage(), "", "");
-                }
-
-                if (notification.getPropertyName().equals(XMLParserNotification.EXCEPTION))
-                    Logging.logger().log(Level.WARNING, msg);
-                else if (notification.getPropertyName().equals(XMLParserNotification.UNRECOGNIZED))
-                    Logging.logger().log(Level.WARNING, msg);
+                notificationListener.notify(notification);
+                return;
             }
+
+            String msg;
+            if (notification.getEvent() != null)
+            {
+                msg = Logging.getMessage(notification.getMessage(), notification.getEvent().toString(),
+                    notification.getEvent().getLocation().getLineNumber(),
+                    notification.getEvent().getLocation().getColumnNumber(),
+                    notification.getEvent().getLocation().getCharacterOffset());
+            }
+            else
+            {
+                msg = Logging.getMessage(notification.getMessage(), "", "");
+            }
+
+            if (notification.getPropertyName().equals(XMLParserNotification.EXCEPTION))
+                Logging.logger().log(Level.WARNING, msg);
+            else if (notification.getPropertyName().equals(XMLParserNotification.UNRECOGNIZED))
+                Logging.logger().log(Level.WARNING, msg);
         });
     }
 
@@ -563,7 +558,7 @@ public class BasicXMLEventParserContext extends AVListImpl implements XMLEventPa
                     if (/*o instanceof KMLStyle &&*/ !parser.hasField(fieldName))
                     {
                         if (newFields == null)
-                            newFields = new HashMap<String, Object>();
+                            newFields = new HashMap<>();
                         newFields.put(fieldName, o);
                     }
                 }

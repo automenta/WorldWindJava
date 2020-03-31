@@ -30,24 +30,24 @@ public class GridOfPoints extends ApplicationTemplate
 
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected RenderableLayer layer; // layer to display the polygon and the intersection
-        protected HashMap<Position, Object> positionInfo;
+        protected final RenderableLayer layer; // layer to display the polygon and the intersection
+        protected final HashMap<Position, Object> positionInfo;
 
         public AppFrame()
         {
             super(true, true, false);
 
             // Create the grid and its positions. This one is rectangular; it need not be, but must be four-sided.
-            List<Position> corners = new ArrayList<Position>();
+            List<Position> corners = new ArrayList<>();
             corners.add(Position.fromDegrees(35.0, -125.0, 10e3));
             corners.add(Position.fromDegrees(35.0, -115.0, 10e3));
             corners.add(Position.fromDegrees(45.0, -115.0, 10e3));
             corners.add(Position.fromDegrees(45.0, -125.0, 10e3));
 
-            List<Position> positions = new ArrayList<Position>(NUM_POINTS_WIDE * NUM_POINTS_WIDE);
+            List<Position> positions = new ArrayList<>(NUM_POINTS_WIDE * NUM_POINTS_WIDE);
 
             // Create a hash map to store the data associated with each position.
-            this.positionInfo = new HashMap<Position, Object>(NUM_POINTS_WIDE * NUM_POINTS_HIGH);
+            this.positionInfo = new HashMap<>(NUM_POINTS_WIDE * NUM_POINTS_HIGH);
 
             // Populate the position list with positions and the positionInfo map with data.
             int aDataValue = 0;// generate an arbitrary data value
@@ -97,11 +97,11 @@ public class GridOfPoints extends ApplicationTemplate
         protected int w;
         protected int h;
 
-        protected List<Position> corners;
-        protected Position sw;
-        protected Position se;
-        protected Position ne;
-        protected Position nw;
+        protected final List<Position> corners;
+        protected final Position sw;
+        protected final Position se;
+        protected final Position ne;
+        protected final Position nw;
 
         public PositionIterator(List<Position> corners, int numPointsWide, int numPointsHigh)
         {

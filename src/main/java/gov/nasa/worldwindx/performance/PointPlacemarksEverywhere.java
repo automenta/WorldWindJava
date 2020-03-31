@@ -37,7 +37,7 @@ public class PointPlacemarksEverywhere extends ApplicationTemplate
             double delta = 1.5;
             double intervals = 5;
 
-            ArrayList<Position> positions = new ArrayList<Position>();
+            ArrayList<Position> positions = new ArrayList<>();
 
             RenderableLayer layer = new RenderableLayer();
 

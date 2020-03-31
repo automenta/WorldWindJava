@@ -56,7 +56,7 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer
         }
     }
 
-    protected void doStartProduction(AVList parameters) throws Exception
+    protected void doStartProduction(AVList parameters)
     {
         this.getProductionResultsList().clear();
         Iterable<SourceInfo> dataSources = this.getDataSourceList();
@@ -121,7 +121,7 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer
         StringBuilder sb = new StringBuilder();
 
         Object o = parameters.getValue(AVKey.FILE_STORE_LOCATION);
-        if (o == null || !(o instanceof String) || ((String) o).length() < 1)
+        if (!(o instanceof String) || ((String) o).length() < 1)
             sb.append((sb.length() > 0 ? ", " : "")).append(Logging.getMessage("term.fileStoreLocation"));
 
         o = parameters.getValue(AVKey.DATA_CACHE_NAME);
@@ -205,7 +205,7 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer
     //********************  LayerSet Installation  *****************//
     //**************************************************************//
 
-    protected void convertLayerSet(Object source, ProductionState productionState) throws Exception
+    protected void convertLayerSet(Object source, ProductionState productionState)
     {
         File sourceConfigFile = this.getSourceConfigFile(source);
         if (sourceConfigFile == null)
@@ -387,8 +387,8 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer
         if (fileList == null)
             return;
 
-        java.util.List<java.io.File> childFiles = new java.util.ArrayList<java.io.File>();
-        java.util.List<java.io.File> childDirs = new java.util.ArrayList<java.io.File>();
+        java.util.List<java.io.File> childFiles = new java.util.ArrayList<>();
+        java.util.List<java.io.File> childDirs = new java.util.ArrayList<>();
         for (java.io.File child : fileList)
         {
             if (child == null) // Don't allow null subfiles.
@@ -526,8 +526,8 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer
         if (fileList == null)
             return count;
 
-        java.util.List<java.io.File> childFiles = new java.util.ArrayList<java.io.File>();
-        java.util.List<java.io.File> childDirs = new java.util.ArrayList<java.io.File>();
+        java.util.List<java.io.File> childFiles = new java.util.ArrayList<>();
+        java.util.List<java.io.File> childDirs = new java.util.ArrayList<>();
         for (java.io.File child : fileList)
         {
             if (child == null) // Don't allow null subfiles.

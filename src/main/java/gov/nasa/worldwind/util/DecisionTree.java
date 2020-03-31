@@ -67,7 +67,7 @@ public class DecisionTree<T, C> // T = type being managed. C = traversal context
         T[] split(T o, C context);
     }
 
-    protected Controller<T, C> controller;
+    protected final Controller<T, C> controller;
 
     /**
      * Construct a decision tree for a given item type and controller type.

@@ -98,7 +98,7 @@ public class POIUtils
 
     protected static String getCharsetName(String contentType)
     {
-        if (contentType == null || contentType.toLowerCase().indexOf("charset") == -1)
+        if (contentType == null || !contentType.toLowerCase().contains("charset"))
             return DEFAULT_CHARSET_NAME;
 
         String[] pairs = contentType.split(";");

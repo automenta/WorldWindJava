@@ -130,7 +130,7 @@ public class OpenStreetMapShapefileLoader
                 continue;
 
             Object o = record.getAttributes().getValue("type");
-            if (o == null || !(o instanceof String))
+            if (!(o instanceof String))
                 continue;
 
             // Add points with different rendering attribute for different subsets
@@ -219,13 +219,13 @@ public class OpenStreetMapShapefileLoader
 
     protected static class OSMShapes
     {
-        public ArrayList<LatLon> locations = new ArrayList<LatLon>();
-        public ArrayList<Label> labels = new ArrayList<Label>();
-        public Color foreground;
-        public Color background;
-        public Font font;
-        public double scale;
-        public double labelMaxAltitude;
+        public final ArrayList<LatLon> locations = new ArrayList<>();
+        public final ArrayList<Label> labels = new ArrayList<>();
+        public final Color foreground;
+        public final Color background;
+        public final Font font;
+        public final double scale;
+        public final double labelMaxAltitude;
 
         public OSMShapes(Color color, double scale, double labelMaxAltitude)
         {
@@ -239,8 +239,8 @@ public class OpenStreetMapShapefileLoader
 
     protected static class TextAndShapesLayer extends RenderableLayer
     {
-        protected ArrayList<GeographicText> labels = new ArrayList<GeographicText>();
-        protected GeographicTextRenderer textRenderer = new GeographicTextRenderer();
+        protected final ArrayList<GeographicText> labels = new ArrayList<>();
+        protected final GeographicTextRenderer textRenderer = new GeographicTextRenderer();
 
         public TextAndShapesLayer()
         {

@@ -21,7 +21,7 @@ public abstract class LayerTree implements Iterable<Layer>
 {
     protected String name;
     protected LayerList layers = new LayerList();
-    protected List<LayerTree> children = new ArrayList<LayerTree>();
+    protected List<LayerTree> children = new ArrayList<>();
     protected Controller controller;
 
     abstract public void createLayers(Object infoItem, AVList params);
@@ -125,8 +125,8 @@ public abstract class LayerTree implements Iterable<Layer>
 
     private class LayerIterator implements Iterator<Layer>
     {
-        protected ArrayList<Layer> layers = new ArrayList<Layer>();
-        protected Iterator<Layer> layerListIterator;
+        protected final ArrayList<Layer> layers = new ArrayList<>();
+        protected final Iterator<Layer> layerListIterator;
 
         public LayerIterator()
         {
@@ -151,10 +151,7 @@ public abstract class LayerTree implements Iterable<Layer>
 
         protected void buildLayerList(LayerTree tree)
         {
-            for (Layer layer : tree.getLayers())
-            {
-                this.layers.add(layer);
-            }
+            this.layers.addAll(tree.getLayers());
 
             for (LayerTree subTree : tree.getChildren())
             {
@@ -170,9 +167,9 @@ public abstract class LayerTree implements Iterable<Layer>
 
     private class LayerPathIterator implements Iterator<LayerPath>
     {
-        protected ArrayList<LayerPath> paths = new ArrayList<LayerPath>();
-        protected Iterator<LayerPath> pathIterator;
-        protected LayerPath basePath;
+        protected final ArrayList<LayerPath> paths = new ArrayList<>();
+        protected final Iterator<LayerPath> pathIterator;
+        protected final LayerPath basePath;
 
         public LayerPathIterator(LayerPath basePath)
         {

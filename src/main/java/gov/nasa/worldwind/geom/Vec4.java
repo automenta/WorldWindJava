@@ -1050,9 +1050,9 @@ public class Vec4
         }
 
         return new Vec4(
-            (value1.x < value2.x) ? value1.x : value2.x,
-            (value1.y < value2.y) ? value1.y : value2.y,
-            (value1.z < value2.z) ? value1.z : value2.z);
+            Math.min(value1.x, value2.x),
+            Math.min(value1.y, value2.y),
+            Math.min(value1.z, value2.z));
     }
 
     public static Vec4 max3(Vec4 value1, Vec4 value2)
@@ -1065,9 +1065,9 @@ public class Vec4
         }
 
         return new Vec4(
-            (value1.x > value2.x) ? value1.x : value2.x,
-            (value1.y > value2.y) ? value1.y : value2.y,
-            (value1.z > value2.z) ? value1.z : value2.z);
+            Math.max(value1.x, value2.x),
+            Math.max(value1.y, value2.y),
+            Math.max(value1.z, value2.z));
     }
 
     public static Vec4 clamp3(Vec4 vec4, double min, double max)
@@ -1080,9 +1080,9 @@ public class Vec4
         }
 
         return new Vec4(
-            (vec4.x < min) ? min : ((vec4.x > max) ? max : vec4.x),
-            (vec4.y < min) ? min : ((vec4.y > max) ? max : vec4.y),
-            (vec4.z < min) ? min : ((vec4.z > max) ? max : vec4.z));
+            (vec4.x < min) ? min : (Math.min(vec4.x, max)),
+            (vec4.y < min) ? min : (Math.min(vec4.y, max)),
+            (vec4.z < min) ? min : (Math.min(vec4.z, max)));
     }
 
     public static Vec4 mix3(double amount, Vec4 value1, Vec4 value2)

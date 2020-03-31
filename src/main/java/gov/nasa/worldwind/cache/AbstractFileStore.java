@@ -8,7 +8,10 @@ package gov.nasa.worldwind.cache;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.util.*;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.logging.Level;
 
 /**
@@ -35,7 +38,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         public java.io.File getFile()
         {
             Object o = this.getValue(AVKey.FILE_STORE_LOCATION);
-            return (o != null && o instanceof java.io.File) ? (java.io.File) o : null;
+            return (o instanceof java.io.File) ? (java.io.File) o : null;
         }
 
         public void setFile(java.io.File file)
@@ -46,7 +49,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         public boolean isInstall()
         {
             Object o = this.getValue(AVKey.INSTALLED);
-            return (o != null && o instanceof Boolean) ? (Boolean) o : false;
+            return (o instanceof Boolean) ? (Boolean) o : false;
         }
 
         public void setInstall(boolean isInstall)
@@ -68,7 +71,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
     // Retrieval could be occurring on several threads when the app adds a read location, so protect the list of read
     // locations from concurrent modification.
     protected final java.util.List<StoreLocation> readLocations =
-        new java.util.concurrent.CopyOnWriteArrayList<StoreLocation>();
+        new java.util.concurrent.CopyOnWriteArrayList<>();
     protected StoreLocation writeLocation = null;
     private final Object fileLock = new Object();
 
@@ -104,19 +107,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
                 throw new IllegalStateException(message);
             }
         }
-        catch (javax.xml.parsers.ParserConfigurationException e)
-        {
-            String message = Logging.getMessage("FileStore.ExceptionReadingConfigurationFile");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message, e);
-        }
-        catch (org.xml.sax.SAXException e)
-        {
-            String message = Logging.getMessage("FileStore.ExceptionReadingConfigurationFile");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message, e);
-        }
-        catch (java.io.IOException e)
+        catch (ParserConfigurationException | IOException | SAXException e)
         {
             String message = Logging.getMessage("FileStore.ExceptionReadingConfigurationFile");
             Logging.logger().severe(message);
@@ -361,7 +352,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
 
     public java.util.List<? extends java.io.File> getLocations()
     {
-        java.util.ArrayList<java.io.File> locations = new java.util.ArrayList<java.io.File>();
+        java.util.ArrayList<java.io.File> locations = new java.util.ArrayList<>();
         for (StoreLocation location : this.readLocations)
         {
             locations.add(location.getFile());
@@ -754,7 +745,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
             // Lazily initialize the list of file names. If no location contains the specified path, then the list is
             // not created, and this method will return null.
             if (nameList == null)
-                nameList = new java.util.ArrayList<String>();
+                nameList = new java.util.ArrayList<>();
 
             this.doListFileNames(location, dir, filter, recurse, exitBranchOnFirstMatch, nameList);
         }
@@ -770,7 +761,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
     protected void doListFileNames(StoreLocation location, java.io.File dir, FileStoreFilter filter,
         boolean recurse, boolean exitBranchOnFirstMatch, java.util.Collection<String> names)
     {
-        java.util.ArrayList<java.io.File> subDirs = new java.util.ArrayList<java.io.File>();
+        java.util.ArrayList<java.io.File> subDirs = new java.util.ArrayList<>();
 
         // Search the children of the specified directory. If the child is a directory, append it to the list of sub
         // directories to search later. Otherwise, try to list the file as a match. If the file is a match and

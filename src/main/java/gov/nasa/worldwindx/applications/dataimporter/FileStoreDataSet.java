@@ -216,9 +216,9 @@ public class FileStoreDataSet extends AVListImpl
 
         if (list != null) // Some JVMs return null for File.list() when the directory is empty.
         {
-            for (int i = 0; i < list.length; i++)
+            for (String s : list)
             {
-                File entry = new File(directory, list[i]);
+                File entry = new File(directory, s);
                 if (entry.isDirectory())
                 {
                     if (!removeDirectory(entry))

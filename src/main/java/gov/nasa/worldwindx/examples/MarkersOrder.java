@@ -21,10 +21,8 @@ import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.*;
 import java.io.IOException;
 import java.text.*;
@@ -55,7 +53,7 @@ public class MarkersOrder extends ApplicationTemplate
 
         // Attributes color ramps
         // Monochrome
-        protected static MarkerAttributes[] attrsRampMono = new MarkerAttributes[RAMP_VALUES];
+        protected static final MarkerAttributes[] attrsRampMono = new MarkerAttributes[RAMP_VALUES];
 
         static
         {
@@ -68,7 +66,7 @@ public class MarkersOrder extends ApplicationTemplate
         }
 
         // Monochrome desaturated
-        protected static MarkerAttributes[] attrsRampDesat = new MarkerAttributes[RAMP_VALUES];
+        protected static final MarkerAttributes[] attrsRampDesat = new MarkerAttributes[RAMP_VALUES];
 
         static
         {
@@ -83,7 +81,7 @@ public class MarkersOrder extends ApplicationTemplate
         }
 
         // Two color gradient
-        protected static MarkerAttributes[] attrsRampGradient = new MarkerAttributes[RAMP_VALUES];
+        protected static final MarkerAttributes[] attrsRampGradient = new MarkerAttributes[RAMP_VALUES];
 
         static
         {
@@ -98,7 +96,7 @@ public class MarkersOrder extends ApplicationTemplate
         }
 
         // Rainbow
-        protected static MarkerAttributes[] attrsRampHue = new MarkerAttributes[RAMP_VALUES];
+        protected static final MarkerAttributes[] attrsRampHue = new MarkerAttributes[RAMP_VALUES];
 
         static
         {
@@ -112,7 +110,7 @@ public class MarkersOrder extends ApplicationTemplate
         }
 
         // Seven days color set
-        protected static MarkerAttributes[] attrsDayOfWeek = new MarkerAttributes[7];
+        protected static final MarkerAttributes[] attrsDayOfWeek = new MarkerAttributes[7];
 
         static
         {
@@ -125,7 +123,7 @@ public class MarkersOrder extends ApplicationTemplate
         }
 
         // 24h color set
-        protected static MarkerAttributes[] attrsHours = new MarkerAttributes[24];
+        protected static final MarkerAttributes[] attrsHours = new MarkerAttributes[24];
 
         static
         {
@@ -201,63 +199,51 @@ public class MarkersOrder extends ApplicationTemplate
             final ButtonGroup group = new ButtonGroup();
             JRadioButton btRamp = new JRadioButton("Ramp");
             btRamp.setSelected(false);
-            btRamp.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+            btRamp.addActionListener(event -> {
+                colorMode = COLOR_MODE_RAMP;
+                colorRampCombo.setEnabled(true);
+                timeScaleSlider.setEnabled(true);
+                switch (colorRampCombo.getSelectedIndex())
                 {
-                    colorMode = COLOR_MODE_RAMP;
-                    colorRampCombo.setEnabled(true);
-                    timeScaleSlider.setEnabled(true);
-                    switch (colorRampCombo.getSelectedIndex())
-                    {
-                        case 0:
-                            attrs = attrsRampMono;
-                            break;
-                        case 1:
-                            attrs = attrsRampDesat;
-                            break;
-                        case 2:
-                            attrs = attrsRampGradient;
-                            break;
-                        case 3:
-                            attrs = attrsRampHue;
-                            break;
-                    }
-                    updateScreenAnnotation(null);
-                    getWwd().redraw();
+                    case 0:
+                        attrs = attrsRampMono;
+                        break;
+                    case 1:
+                        attrs = attrsRampDesat;
+                        break;
+                    case 2:
+                        attrs = attrsRampGradient;
+                        break;
+                    case 3:
+                        attrs = attrsRampHue;
+                        break;
                 }
+                updateScreenAnnotation(null);
+                getWwd().redraw();
             });
             group.add(btRamp);
             radioPanel.add(btRamp);
             JRadioButton btDow = new JRadioButton("Days");
             btDow.setSelected(true);
-            btDow.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
-                {
-                    colorMode = COLOR_MODE_DOW;
-                    colorRampCombo.setEnabled(false);
-                    timeScaleSlider.setEnabled(false);
-                    attrs = attrsDayOfWeek;
-                    updateScreenAnnotation(dayOfWeekLegend);
-                    getWwd().redraw();
-                }
+            btDow.addActionListener(event -> {
+                colorMode = COLOR_MODE_DOW;
+                colorRampCombo.setEnabled(false);
+                timeScaleSlider.setEnabled(false);
+                attrs = attrsDayOfWeek;
+                updateScreenAnnotation(dayOfWeekLegend);
+                getWwd().redraw();
             });
             group.add(btDow);
             radioPanel.add(btDow);
             JRadioButton btHours = new JRadioButton("Hours");
             btHours.setSelected(false);
-            btHours.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
-                {
-                    colorMode = COLOR_MODE_HOURS;
-                    colorRampCombo.setEnabled(false);
-                    timeScaleSlider.setEnabled(false);
-                    attrs = attrsHours;
-                    updateScreenAnnotation(hoursLegend);
-                    getWwd().redraw();
-                }
+            btHours.addActionListener(event -> {
+                colorMode = COLOR_MODE_HOURS;
+                colorRampCombo.setEnabled(false);
+                timeScaleSlider.setEnabled(false);
+                attrs = attrsHours;
+                updateScreenAnnotation(hoursLegend);
+                getWwd().redraw();
             });
             group.add(btHours);
             radioPanel.add(btHours);
@@ -269,13 +255,9 @@ public class MarkersOrder extends ApplicationTemplate
             timeScaleSlider = new JSlider(0, 120, 10);
             timeScaleSlider.setEnabled(false);
             timeScaleSlider.setToolTipText("Color ramp time scale - Minutes");
-            timeScaleSlider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent event)
-                {
-                    layer.setTimeScale(timeScaleSlider.getValue() * 60 * 1000 + 100);
-                    getWwd().redraw();
-                }
+            timeScaleSlider.addChangeListener(event -> {
+                layer.setTimeScale(timeScaleSlider.getValue() * 60 * 1000 + 100);
+                getWwd().redraw();
             });
             timeScaleSlider.setPaintLabels(true);
             timeScaleSlider.setPaintTicks(true);
@@ -288,64 +270,56 @@ public class MarkersOrder extends ApplicationTemplate
             comboPanel.add(new JLabel("Color scheme:"));
             colorRampCombo = new JComboBox(new String[] {"Monochrome", "Desaturated", "Gradient", "Rainbow"});
             colorRampCombo.setEnabled(false);
-            colorRampCombo.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent event)
+            colorRampCombo.addActionListener(event -> {
+                switch (colorRampCombo.getSelectedIndex())
                 {
-                    switch (colorRampCombo.getSelectedIndex())
-                    {
-                        case 0:
-                            attrs = attrsRampMono;
-                            break;
-                        case 1:
-                            attrs = attrsRampDesat;
-                            break;
-                        case 2:
-                            attrs = attrsRampGradient;
-                            break;
-                        case 3:
-                            attrs = attrsRampHue;
-                            break;
-                    }
-                    getWwd().redraw();
+                    case 0:
+                        attrs = attrsRampMono;
+                        break;
+                    case 1:
+                        attrs = attrsRampDesat;
+                        break;
+                    case 2:
+                        attrs = attrsRampGradient;
+                        break;
+                    case 3:
+                        attrs = attrsRampHue;
+                        break;
                 }
+                getWwd().redraw();
             });
             comboPanel.add(colorRampCombo);
             controlPanel.add(comboPanel);
             this.getControlPanel().add(controlPanel, BorderLayout.SOUTH);
 
             // Setup select listener to highlight markers on rollover
-            this.getWwd().addSelectListener(new SelectListener()
-            {
-                public void selected(SelectEvent event)
+            this.getWwd().addSelectListener(event -> {
+                if (lastHighlit != null
+                    && (event.getTopObject() == null || !event.getTopObject().equals(lastHighlit)))
                 {
-                    if (lastHighlit != null
-                        && (event.getTopObject() == null || !event.getTopObject().equals(lastHighlit)))
-                    {
-                        lastHighlit.setAttributes(lastAttrs);
-                        lastHighlit = null;
-                    }
+                    lastHighlit.setAttributes(lastAttrs);
+                    lastHighlit = null;
+                }
 
-                    if (!event.getEventAction().equals(SelectEvent.ROLLOVER))
-                        return;
+                if (!event.getEventAction().equals(SelectEvent.ROLLOVER))
+                    return;
 
-                    if (event.getTopObject() == null || event.getTopPickedObject().getParentLayer() == null)
-                        return;
+                if (event.getTopObject() == null || event.getTopPickedObject().getParentLayer() == null)
+                    return;
 
-                    if (event.getTopPickedObject().getParentLayer() != layer)
-                        return;
+                if (event.getTopPickedObject().getParentLayer() != layer)
+                    return;
 
-                    if (lastHighlit == null && event.getTopObject() instanceof Marker)
-                    {
-                        lastHighlit = (Marker) event.getTopObject();
-                        lastAttrs = (BasicMarkerAttributes) lastHighlit.getAttributes();
-                        MarkerAttributes highliteAttrs = new BasicMarkerAttributes(lastAttrs);
-                        highliteAttrs.setMaterial(Material.WHITE);
-                        highliteAttrs.setOpacity(1d);
-                        highliteAttrs.setMarkerPixels(lastAttrs.getMarkerPixels() * 1.4);
-                        highliteAttrs.setMinMarkerSize(lastAttrs.getMinMarkerSize() * 1.4);
-                        lastHighlit.setAttributes(highliteAttrs);
-                    }
+                if (lastHighlit == null && event.getTopObject() instanceof Marker)
+                {
+                    lastHighlit = (Marker) event.getTopObject();
+                    lastAttrs = (BasicMarkerAttributes) lastHighlit.getAttributes();
+                    MarkerAttributes highliteAttrs = new BasicMarkerAttributes(lastAttrs);
+                    highliteAttrs.setMaterial(Material.WHITE);
+                    highliteAttrs.setOpacity(1d);
+                    highliteAttrs.setMarkerPixels(lastAttrs.getMarkerPixels() * 1.4);
+                    highliteAttrs.setMinMarkerSize(lastAttrs.getMinMarkerSize() * 1.4);
+                    lastHighlit.setAttributes(highliteAttrs);
                 }
             });
         }
@@ -358,7 +332,7 @@ public class MarkersOrder extends ApplicationTemplate
                 reader.readStream(WWIO.openFileOrResourceStream(TRACK_PATH, this.getClass()));
                 TrackPointIterator trackPoints = new TrackPointIteratorImpl(reader.getTracks());
                 long latestTime = 0;
-                ArrayList<Marker> markers = new ArrayList<Marker>();
+                ArrayList<Marker> markers = new ArrayList<>();
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 df.setCalendar(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
                 while (trackPoints.hasNext())
@@ -376,7 +350,7 @@ public class MarkersOrder extends ApplicationTemplate
                             time = 0;
                         }
                     }
-                    latestTime = time > latestTime ? time : latestTime;
+                    latestTime = Math.max(time, latestTime);
                     markers.add(new TimedMarker(tp.getPosition(), attrs[0], time));
                 }
 
@@ -388,15 +362,7 @@ public class MarkersOrder extends ApplicationTemplate
 
                 return layer;
             }
-            catch (ParserConfigurationException e)
-            {
-                e.printStackTrace();
-            }
-            catch (SAXException e)
-            {
-                e.printStackTrace();
-            }
-            catch (IOException e)
+            catch (ParserConfigurationException | IOException | SAXException e)
             {
                 e.printStackTrace();
             }
@@ -404,9 +370,9 @@ public class MarkersOrder extends ApplicationTemplate
             return null;
         }
 
-        protected class TimedMarker extends BasicMarker
+        protected static class TimedMarker extends BasicMarker
         {
-            protected long time;
+            protected final long time;
 
             public TimedMarker(Position position, MarkerAttributes attributes, long time)
             {

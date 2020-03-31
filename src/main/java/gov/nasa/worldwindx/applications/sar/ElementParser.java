@@ -45,11 +45,9 @@ public class ElementParser
      * @param lname The element lname.
      * @param qname The element qname.
      * @param attributes The element attributes.
-     * @throws org.xml.sax.SAXException if a parsing exception occurs.
      * @throws IllegalArgumentException if any argument is null
      */
     public void startElement(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
-        throws org.xml.sax.SAXException
     {
         if (uri == null)
         {
@@ -88,10 +86,9 @@ public class ElementParser
      * @param uri The element URI.
      * @param lname The element lname.
      * @param qname The element qname.
-     * @throws org.xml.sax.SAXException if 
      * @throws IllegalArgumentException if any argument is null
      */
-    public void endElement(String uri, String lname, String qname) throws org.xml.sax.SAXException
+    public void endElement(String uri, String lname, String qname)
     {
         if (uri == null)
         {
@@ -124,11 +121,10 @@ public class ElementParser
     }
 
     protected void doStartElement(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
-        throws org.xml.sax.SAXException
     {
     }
 
-    protected void doEndElement(String uri, String lname, String qname) throws org.xml.sax.SAXException
+    protected void doEndElement(String uri, String lname, String qname)
     {
     }
 

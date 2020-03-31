@@ -49,7 +49,7 @@ public class GeoSymAbbreviationProvider
 
     protected void readTables(Scanner scanner)
     {
-        this.abbreviationTables = new HashMap<Integer, HashMap<Integer, String>>();
+        this.abbreviationTables = new HashMap<>();
 
         HashMap<Integer, String> table = null;
         String s;
@@ -70,7 +70,7 @@ public class GeoSymAbbreviationProvider
             {
                 // Table ID
                 Integer id = Integer.parseInt(s.split(":")[0]);
-                table = new HashMap<Integer, String>();
+                table = new HashMap<>();
                 this.abbreviationTables.put(id, table);
             }
             else

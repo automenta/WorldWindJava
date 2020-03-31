@@ -64,7 +64,7 @@ public class ColladaNode extends ColladaAbstractObject implements ColladaRendera
             tc.multiplyMatrix(this.getMatrix());
         }
 
-        ArrayList<Box> extents = new ArrayList<Box>();
+        ArrayList<Box> extents = new ArrayList<>();
 
         for (ColladaMeshShape shape : this.shapes)
         {
@@ -176,7 +176,7 @@ public class ColladaNode extends ColladaAbstractObject implements ColladaRendera
         if (WWUtil.isEmpty(this.geometries))
             return Collections.emptyList();
 
-        List<ColladaMeshShape> shapes = new ArrayList<ColladaMeshShape>();
+        List<ColladaMeshShape> shapes = new ArrayList<>();
         for (ColladaInstanceGeometry geometry : this.geometries)
         {
             this.createShapesForGeometry(geometry, shapes);
@@ -228,14 +228,14 @@ public class ColladaNode extends ColladaAbstractObject implements ColladaRendera
         if ("node".equals(keyName) || "instance_node".equals(keyName))
         {
             if (this.children == null)
-                this.children = new ArrayList<ColladaRenderable>();
+                this.children = new ArrayList<>();
 
             this.children.add((ColladaRenderable) value);
         }
         else if ("instance_geometry".equals(keyName))
         {
             if (this.geometries == null)
-                this.geometries = new ArrayList<ColladaInstanceGeometry>();
+                this.geometries = new ArrayList<>();
 
             this.geometries.add((ColladaInstanceGeometry) value);
         }

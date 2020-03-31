@@ -9,7 +9,6 @@ package gov.nasa.worldwindx.examples;
 import gov.nasa.worldwindx.examples.util.WCSCoveragePanel;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.net.URISyntaxException;
 
@@ -27,7 +26,7 @@ public class WCSElevations extends ApplicationTemplate
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
         protected final Dimension wcsPanelSize = new Dimension(400, 600);
-        protected JTabbedPane tabbedPane;
+        protected final JTabbedPane tabbedPane;
         protected int previousTabIndex;
 
         public AppFrame()
@@ -36,27 +35,23 @@ public class WCSElevations extends ApplicationTemplate
 
             this.tabbedPane.add(new JPanel());
             this.tabbedPane.setTitleAt(0, "+");
-            this.tabbedPane.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent changeEvent)
+            this.tabbedPane.addChangeListener(changeEvent -> {
+                if (tabbedPane.getSelectedIndex() != 0)
                 {
-                    if (tabbedPane.getSelectedIndex() != 0)
-                    {
-                        previousTabIndex = tabbedPane.getSelectedIndex();
-                        return;
-                    }
-
-                    String server = JOptionPane.showInputDialog("Enter WCS server URL");
-                    if (server == null || server.length() < 1)
-                    {
-                        tabbedPane.setSelectedIndex(previousTabIndex);
-                        return;
-                    }
-
-                    // Respond by adding a new WMSLayerPanel to the tabbed pane.
-                    if (addTab(tabbedPane.getTabCount(), server.trim()) != null)
-                        tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
+                    previousTabIndex = tabbedPane.getSelectedIndex();
+                    return;
                 }
+
+                String server = JOptionPane.showInputDialog("Enter WCS server URL");
+                if (server == null || server.length() < 1)
+                {
+                    tabbedPane.setSelectedIndex(previousTabIndex);
+                    return;
+                }
+
+                // Respond by adding a new WMSLayerPanel to the tabbed pane.
+                if (addTab(tabbedPane.getTabCount(), server.trim()) != null)
+                    tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
             });
 
             // Create a tab for each server and add it to the tabbed panel.

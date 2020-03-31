@@ -32,10 +32,10 @@ public class ContourLine implements Renderable {
     protected Object globeStateKey;
 
     // Geometry update support.
-    TimedExpirySupport expirySupport = new TimedExpirySupport(1000, 2000);
+    final TimedExpirySupport expirySupport = new TimedExpirySupport(1000, 2000);
 
     // Segments connection criteria
-    protected int maxConnectingDistance = 10; // meters
+    protected final int maxConnectingDistance = 10; // meters
 
     public ContourLine() {
         this(0, Sector.FULL_SPHERE);

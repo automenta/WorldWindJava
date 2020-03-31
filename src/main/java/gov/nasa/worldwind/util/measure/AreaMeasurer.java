@@ -187,10 +187,11 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
     }
 
     // *** Computing area ******************************************************************
-    protected class Cell {
+    protected static class Cell {
 
-        Sector sector;
-        double projectedArea, surfaceArea;
+        final Sector sector;
+        final double projectedArea;
+        final double surfaceArea;
 
         public Cell(Sector sector, double projected, double surface) {
             this.sector = sector;

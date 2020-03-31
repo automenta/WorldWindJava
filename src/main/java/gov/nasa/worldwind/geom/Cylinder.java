@@ -228,7 +228,7 @@ public class Cylinder implements Extent, Renderable
         Vec4 r = axes[0];
         Vec4 s = axes[1];
 
-        List<Vec4> sPlanePoints = new ArrayList<Vec4>();
+        List<Vec4> sPlanePoints = new ArrayList<>();
         double minDotR = Double.MAX_VALUE;
         double maxDotR = -minDotR;
 
@@ -938,13 +938,12 @@ public class Cylinder implements Extent, Renderable
             return false;
         if (Double.compare(cylinder.cylinderRadius, cylinderRadius) != 0)
             return false;
-        if (axisUnitDirection != null ? !axisUnitDirection.equals(cylinder.axisUnitDirection)
-            : cylinder.axisUnitDirection != null)
+        if (!Objects.equals(axisUnitDirection, cylinder.axisUnitDirection))
             return false;
-        if (bottomCenter != null ? !bottomCenter.equals(cylinder.bottomCenter) : cylinder.bottomCenter != null)
+        if (!Objects.equals(bottomCenter, cylinder.bottomCenter))
             return false;
         //noinspection RedundantIfStatement
-        if (topCenter != null ? !topCenter.equals(cylinder.topCenter) : cylinder.topCenter != null)
+        if (!Objects.equals(topCenter, cylinder.topCenter))
             return false;
 
         return true;

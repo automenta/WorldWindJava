@@ -35,7 +35,7 @@ public class RPFWizardUtil
 
         File file = null;
         Object value = properties.getProperty(SELECTED_FILE);
-        if (value != null && value instanceof File)
+        if (value instanceof File)
             file = (File) value;
         return file;
     }
@@ -64,7 +64,7 @@ public class RPFWizardUtil
 
         List<File> fileList = null;
         Object value = properties.getProperty(FILE_LIST);
-        if (value != null && value instanceof List)
+        if (value instanceof List)
             fileList = (List<File>) value;
         return fileList;
     }
@@ -121,7 +121,7 @@ public class RPFWizardUtil
 
         List<FileSet> fileSets = null;
         Object value = properties.getProperty(FILE_SET_LIST);
-        if (value != null && value instanceof List)
+        if (value instanceof List)
             fileSets = (List<FileSet>) value;
         return fileSets;
     }
@@ -150,7 +150,7 @@ public class RPFWizardUtil
 
         List<Layer> fileSets = null;
         Object value = properties.getProperty(LAYER_LIST);
-        if (value != null && value instanceof List)
+        if (value instanceof List)
             fileSets = (List<Layer>) value;
         return fileSets;
     }

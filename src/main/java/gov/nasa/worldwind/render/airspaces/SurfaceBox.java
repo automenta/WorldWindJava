@@ -22,7 +22,7 @@ public class SurfaceBox extends AbstractSurfaceShape
     protected boolean enableStartCap = true;
     protected boolean enableEndCap = true;
     protected boolean enableCenterLine;
-    protected List<List<LatLon>> activeCenterLineGeometry = new ArrayList<List<LatLon>>(); // re-determined each frame
+    protected final List<List<LatLon>> activeCenterLineGeometry = new ArrayList<>(); // re-determined each frame
 
     public SurfaceBox()
     {
@@ -106,10 +106,10 @@ public class SurfaceBox extends AbstractSurfaceShape
         if (this.locations == null)
             return null;
 
-        ArrayList<List<LatLon>> geom = new ArrayList<List<LatLon>>();
+        ArrayList<List<LatLon>> geom = new ArrayList<>();
 
         // Generate the box interior locations. Store the interior geometry in index 0.
-        ArrayList<LatLon> interior = new ArrayList<LatLon>();
+        ArrayList<LatLon> interior = new ArrayList<>();
         geom.add(interior);
 
         for (int i = 0; i < this.locations.size() - 1; i++)
@@ -138,7 +138,7 @@ public class SurfaceBox extends AbstractSurfaceShape
         // Generate the box center line locations. Store the center line geometry at index size-1.
         LatLon beginLocation = this.locations.get(this.widthSegments);
         LatLon endLocation = this.locations.get(3 * this.widthSegments + this.lengthSegments + 2);
-        ArrayList<LatLon> centerLine = new ArrayList<LatLon>();
+        ArrayList<LatLon> centerLine = new ArrayList<>();
         centerLine.add(beginLocation);
         this.addIntermediateLocations(beginLocation, endLocation, edgeIntervalsPerDegree, centerLine);
         centerLine.add(endLocation);
@@ -149,7 +149,7 @@ public class SurfaceBox extends AbstractSurfaceShape
 
     protected ArrayList<LatLon> makeLocations(int offset, int count, double edgeIntervalsPerDegree)
     {
-        ArrayList<LatLon> locations = new ArrayList<LatLon>();
+        ArrayList<LatLon> locations = new ArrayList<>();
 
         for (int i = offset; i < offset + count; i++)
         {

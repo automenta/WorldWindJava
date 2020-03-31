@@ -95,9 +95,7 @@ public class RPFTiledImageProcessor
             }
 
             // Process RPF file records.
-            int waveletWidth = DEFAULT_WAVELET_SIZE;
-            int waveletHeight = DEFAULT_WAVELET_SIZE;
-            processFileIndex(fileIndex, waveletWidth, waveletHeight);
+            processFileIndex(fileIndex, DEFAULT_WAVELET_SIZE, DEFAULT_WAVELET_SIZE);
 
             // Update the RPF bounding sector.
             fileIndex.updateBoundingSector();
@@ -194,20 +192,18 @@ public class RPFTiledImageProcessor
             firePropertyChange(BEGIN_SUB_TASK, null, null);
             firePropertyChange(SUB_TASK_NUM_STEPS, null, recordList.size());
 
-            Collection<Runnable> tasks = new ArrayList<Runnable>();
+            Collection<Runnable> tasks = new ArrayList<>();
             for (final RPFFileIndex.Record record : recordList)
             {
-                tasks.add(new Runnable() {
-                    public void run() {
-                        File file = fileIndex.getRPFFile(record.getKey());
-                        try {
-                            processRecord(fileIndex, record, waveletWidth, waveletHeight);
-                            firePropertyChange(SUB_TASK_STEP_COMPLETE, null, file.getName());
-                        } catch (Throwable t) {
-                            String message = String.format("Exception while processing file: %s", file);
-                            Logging.logger().log(java.util.logging.Level.SEVERE, message, t);
-                            firePropertyChange(SUB_TASK_STEP_FAILED, null, file.getName());
-                        }
+                tasks.add(() -> {
+                    File file = fileIndex.getRPFFile(record.getKey());
+                    try {
+                        processRecord(fileIndex, record, waveletWidth, waveletHeight);
+                        firePropertyChange(SUB_TASK_STEP_COMPLETE, null, file.getName());
+                    } catch (Throwable t) {
+                        String message = String.format("Exception while processing file: %s", file);
+                        Logging.logger().log(java.util.logging.Level.SEVERE, message, t);
+                        firePropertyChange(SUB_TASK_STEP_FAILED, null, file.getName());
                     }
                 });
             }
@@ -323,11 +319,7 @@ public class RPFTiledImageProcessor
         case BufferedImage.TYPE_BYTE_GRAY:
             waveletImgType = BufferedImage.TYPE_BYTE_GRAY;
             break;
-        case BufferedImage.TYPE_INT_BGR:
-        case BufferedImage.TYPE_INT_RGB:
-            waveletImgType = BufferedImage.TYPE_3BYTE_BGR;
-            break;
-        case BufferedImage.TYPE_INT_ARGB:
+            case BufferedImage.TYPE_INT_ARGB:
             waveletImgType = BufferedImage.TYPE_4BYTE_ABGR;
             break;
         default:
@@ -467,20 +459,18 @@ public class RPFTiledImageProcessor
         firePropertyChange(BEGIN_SUB_TASK, null, null);
         firePropertyChange(SUB_TASK_NUM_STEPS, null, tileList.size());
 
-        Collection<Runnable> tasks = new ArrayList<Runnable>();
+        Collection<Runnable> tasks = new ArrayList<>();
         final RPFGenerator.RPFServiceInstance service = generator.getServiceInstance();
         for (final Tile tile : tileList)
         {
-            tasks.add(new Runnable() {
-                public void run() {
-                    try {
-                        createTileImage(tile, service);
-                        firePropertyChange(SUB_TASK_STEP_COMPLETE, null, tile.getPath());
-                    } catch (Throwable t) {
-                        String message = String.format("Exception while processing image: %s", tile.getPath());
-                        Logging.logger().log(java.util.logging.Level.SEVERE, message, t);
-                        firePropertyChange(SUB_TASK_STEP_FAILED, null, tile.getPath());
-                    }
+            tasks.add(() -> {
+                try {
+                    createTileImage(tile, service);
+                    firePropertyChange(SUB_TASK_STEP_COMPLETE, null, tile.getPath());
+                } catch (Throwable t) {
+                    String message = String.format("Exception while processing image: %s", tile.getPath());
+                    Logging.logger().log(java.util.logging.Level.SEVERE, message, t);
+                    firePropertyChange(SUB_TASK_STEP_FAILED, null, tile.getPath());
                 }
             });
         }

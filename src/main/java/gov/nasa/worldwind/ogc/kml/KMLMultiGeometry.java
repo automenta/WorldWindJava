@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class KMLMultiGeometry extends KMLAbstractGeometry
 {
-    protected List<KMLAbstractGeometry> geometries = new ArrayList<KMLAbstractGeometry>();
+    protected final List<KMLAbstractGeometry> geometries = new ArrayList<>();
 
     /**
      * Construct an instance.
@@ -80,7 +80,7 @@ public class KMLMultiGeometry extends KMLAbstractGeometry
     protected void mergeGeometries(KMLMultiGeometry sourceMultiGeometry)
     {
         // Make a copy of the existing list so we can modify it as we traverse the copy.
-        List<KMLAbstractGeometry> geometriesCopy = new ArrayList<KMLAbstractGeometry>(this.getGeometries().size());
+        List<KMLAbstractGeometry> geometriesCopy = new ArrayList<>(this.getGeometries().size());
         Collections.copy(geometriesCopy, this.getGeometries());
 
         for (KMLAbstractGeometry sourceGeometry : sourceMultiGeometry.getGeometries())

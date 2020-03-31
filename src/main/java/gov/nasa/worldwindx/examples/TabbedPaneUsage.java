@@ -16,7 +16,6 @@ import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -39,7 +38,7 @@ public class TabbedPaneUsage
 
     public static class WWJPanel extends JPanel
     {
-        protected WorldWindow wwd;
+        protected final WorldWindow wwd;
         protected StatusBar statusBar;
 
         public WWJPanel(Dimension canvasSize, boolean includeStatusBar)
@@ -66,7 +65,7 @@ public class TabbedPaneUsage
 
         protected void addMarkers()
         {
-            ArrayList<Marker> markers = new ArrayList<Marker>();
+            ArrayList<Marker> markers = new ArrayList<>();
 
             MarkerAttributes attrs = new BasicMarkerAttributes(Material.YELLOW, BasicMarkerShape.CONE, 1d, 10, 5);
             Position position = Position.fromDegrees(40, -120);
@@ -131,25 +130,17 @@ public class TabbedPaneUsage
             final JPanel controlPanel = new JPanel();
 
             JButton detachButton = new JButton("Detach");
-            detachButton.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
-                {
-                    System.out.print("Removing tab...");
-                    tabbedPane.removeTabAt(0);
-                    System.out.println("Tab removed");
-                }
+            detachButton.addActionListener(actionEvent -> {
+                System.out.print("Removing tab...");
+                tabbedPane.removeTabAt(0);
+                System.out.println("Tab removed");
             });
 
             JButton attachButton = new JButton("Attach");
-            attachButton.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
-                {
-                    System.out.print("Adding tab...");
-                    tabbedPane.insertTab("WWJ Pane " + ++wwjPaneNumber, null, wwjPanel, "Reattach", 0);
-                    System.out.println("Tab added");
-                }
+            attachButton.addActionListener(actionEvent -> {
+                System.out.print("Adding tab...");
+                tabbedPane.insertTab("WWJ Pane " + ++wwjPaneNumber, null, wwjPanel, "Reattach", 0);
+                System.out.println("Tab added");
             });
 
             controlPanel.add(detachButton);

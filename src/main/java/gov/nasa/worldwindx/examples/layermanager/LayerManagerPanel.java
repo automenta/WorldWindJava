@@ -8,13 +8,11 @@ package gov.nasa.worldwindx.examples.layermanager;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.layers.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.beans.*;
 import java.util.List;
 import java.util.*;
 
@@ -27,10 +25,10 @@ import java.util.*;
  */
 public class LayerManagerPanel extends JPanel
 {
-    protected JPanel layerNamesPanel;
-    protected List<LayerPanel> layerPanels = new ArrayList<LayerPanel>();
-    protected Font plainFont;
-    protected Font boldFont;
+    protected final JPanel layerNamesPanel;
+    protected final List<LayerPanel> layerPanels = new ArrayList<>();
+    protected final Font plainFont;
+    protected final Font boldFont;
 
     public LayerManagerPanel(final WorldWindow wwd)
     {
@@ -64,30 +62,12 @@ public class LayerManagerPanel extends JPanel
         this.boldFont = this.getFont().deriveFont(Font.BOLD);
 
         // Register a rendering listener that updates the was-rendered state of each image layer.
-        wwd.addRenderingListener(new RenderingListener()
-        {
-            @Override
-            public void stageChanged(RenderingEvent event)
-            {
-                updateLayerActivity(wwd);
-            }
-        });
+        wwd.addRenderingListener(event -> updateLayerActivity(wwd));
 
         // Add a property change listener that causes this layer panel to be updated whenever the layer list changes.
-        wwd.getModel().getLayers().addPropertyChangeListener(new PropertyChangeListener()
-        {
-            @Override
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent)
-            {
-                if (propertyChangeEvent.getPropertyName().equals(AVKey.LAYERS))
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            update(wwd);
-                        }
-                    });
-            }
+        wwd.getModel().getLayers().addPropertyChangeListener(propertyChangeEvent -> {
+            if (propertyChangeEvent.getPropertyName().equals(AVKey.LAYERS))
+                SwingUtilities.invokeLater(() -> update(wwd));
         });
     }
 

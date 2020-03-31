@@ -91,7 +91,7 @@ public class SurfaceObjectTileBuilder
      * Map associating a tile texture dimension to its corresponding LevelSet. This map is a class property in order to
      * share LevelSets across all instances of SurfaceObjectTileBuilder.
      */
-    protected static Map<Dimension, LevelSet> levelSetMap = new HashMap<Dimension, LevelSet>();
+    protected static final Map<Dimension, LevelSet> levelSetMap = new HashMap<>();
 
     /**
      * Indicates the desired tile texture width and height, in pixels. Initially set to
@@ -112,13 +112,13 @@ public class SurfaceObjectTileBuilder
      * List of currently assembled surface renderables. Valid only during the execution of {@link
      * #buildTiles(DrawContext, Iterable)}.
      */
-    protected List<SurfaceRenderable> currentSurfaceObjects = new ArrayList<SurfaceRenderable>();
+    protected final List<SurfaceRenderable> currentSurfaceObjects = new ArrayList<>();
     /** List of currently assembled surface tiles. */
-    protected Map<Object, TileInfo> tileInfoMap = new HashMap<Object, TileInfo>();
+    protected final Map<Object, TileInfo> tileInfoMap = new HashMap<>();
     /** The currently active TileInfo. Valid only during the execution of {@link #buildTiles(DrawContext, Iterable)}. */
     protected TileInfo currentInfo;
     /** Support class used to render to an offscreen surface tile. */
-    protected OGLRenderToTextureSupport rttSupport = new OGLRenderToTextureSupport();
+    protected final OGLRenderToTextureSupport rttSupport = new OGLRenderToTextureSupport();
 
     /**
      * Constructs a new SurfaceObjectTileBuilder with a tile width and height of <code>512</code>, with the default tile
@@ -847,8 +847,8 @@ public class SurfaceObjectTileBuilder
 
         // Store the top level tiles in a set to ensure that each top level tile is added only once. Store the tiles
         // that intersect each surface renderable in a set to ensure that each object is added to a tile at most once.
-        Set<SurfaceObjectTile> topLevelTiles = new HashSet<SurfaceObjectTile>();
-        Set<Object> intersectingTileKeys = new HashSet<Object>();
+        Set<SurfaceObjectTile> topLevelTiles = new HashSet<>();
+        Set<Object> intersectingTileKeys = new HashSet<>();
 
         // Iterate over the current surface renderables, adding each surface renderable to the top level tiles that it
         // intersects. This produces a set of top level tiles containing the surface renderables that intersect each
@@ -1263,12 +1263,12 @@ public class SurfaceObjectTileBuilder
 
     protected static class TileInfo
     {
-        public ArrayList<SurfaceObjectTile> tiles = new ArrayList<SurfaceObjectTile>();
-        public ArrayList<PickedObject> pickCandidates = new ArrayList<PickedObject>();
-        public LevelSet levelSet;
-        public String cacheName;
-        public int tileWidth;
-        public int tileHeight;
+        public final ArrayList<SurfaceObjectTile> tiles = new ArrayList<>();
+        public final ArrayList<PickedObject> pickCandidates = new ArrayList<>();
+        public final LevelSet levelSet;
+        public final String cacheName;
+        public final int tileWidth;
+        public final int tileHeight;
 
         public TileInfo(LevelSet levelSet, String cacheName, int tileWidth, int tileHeight)
         {
@@ -1433,7 +1433,7 @@ public class SurfaceObjectTileBuilder
         public void addSurfaceObject(SurfaceRenderable so, Sector sector)
         {
             if (this.intersectingObjects == null)
-                this.intersectingObjects = new ArrayList<SurfaceRenderable>();
+                this.intersectingObjects = new ArrayList<>();
 
             this.intersectingObjects.add(so);
             this.objectSector = (this.objectSector != null) ? this.objectSector.union(sector) : sector;
@@ -1448,7 +1448,7 @@ public class SurfaceObjectTileBuilder
         public void addAllSurfaceObjects(List<SurfaceRenderable> c, Sector sector)
         {
             if (this.intersectingObjects == null)
-                this.intersectingObjects = new ArrayList<SurfaceRenderable>();
+                this.intersectingObjects = new ArrayList<>();
 
             this.intersectingObjects.addAll(c);
             this.objectSector = (this.objectSector != null) ? this.objectSector.union(sector) : sector;
@@ -1527,7 +1527,7 @@ public class SurfaceObjectTileBuilder
             // equal, the arrays equivalent length, and each array element is equivalent. Arrays.equals() correctly
             // handles null references.
             SurfaceObjectTileStateKey that = (SurfaceObjectTileStateKey) o;
-            return (this.tileKey != null ? this.tileKey.equals(that.tileKey) : that.tileKey == null)
+            return (Objects.equals(this.tileKey, that.tileKey))
                 && Arrays.equals(this.intersectingObjectKeys, that.intersectingObjectKeys);
         }
 

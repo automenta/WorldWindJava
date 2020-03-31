@@ -156,13 +156,13 @@ public class SurfacePolyline extends AbstractSurfaceShape implements Exportable
         if (this.locations == null)
             return null;
 
-        ArrayList<LatLon> drawLocations = new ArrayList<LatLon>();
+        ArrayList<LatLon> drawLocations = new ArrayList<>();
         this.generateIntermediateLocations(this.locations, edgeIntervalsPerDegree, this.isClosed(), drawLocations);
 
         if (drawLocations.size() < 2)
             return null;
 
-        ArrayList<List<LatLon>> geom = new ArrayList<List<LatLon>>();
+        ArrayList<List<LatLon>> geom = new ArrayList<>();
         geom.add(drawLocations);
 
         return geom;
@@ -173,7 +173,7 @@ public class SurfacePolyline extends AbstractSurfaceShape implements Exportable
         if (this.locations == null)
             return;
 
-        ArrayList<LatLon> newLocations = new ArrayList<LatLon>();
+        ArrayList<LatLon> newLocations = new ArrayList<>();
 
         for (LatLon ll : this.locations)
         {

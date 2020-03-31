@@ -67,15 +67,15 @@ public class LinesOfSight extends ApplicationTemplate
     {
         private static final Cursor WaitCursor = new Cursor(Cursor.WAIT_CURSOR);
 
-        protected HighResolutionTerrain terrain;
-        protected TerrainLineIntersector terrainIntersector;
-        protected ShapeLineIntersector shapeIntersector;
-        protected RenderableLayer gridLayer;
-        protected RenderableLayer intersectionsLayer;
-        protected RenderableLayer sightLinesLayer;
+        protected final HighResolutionTerrain terrain;
+        protected final TerrainLineIntersector terrainIntersector;
+        protected final ShapeLineIntersector shapeIntersector;
+        protected final RenderableLayer gridLayer;
+        protected final RenderableLayer intersectionsLayer;
+        protected final RenderableLayer sightLinesLayer;
         protected RenderableLayer tilesLayer;
         protected Thread calculationDispatchThread;
-        protected JProgressBar progressBar;
+        protected final JProgressBar progressBar;
         protected java.util.List<Position> grid;
         protected Position referencePosition;
         protected Vec4 referencePoint;
@@ -83,11 +83,11 @@ public class LinesOfSight extends ApplicationTemplate
         protected Position previousCurrentPosition;
         protected java.util.Timer updateProgressTimer;
         protected AtomicInteger numPositionsProcessed = new AtomicInteger();
-        protected RenderableLayer renderableLayer = new RenderableLayer();
-        protected ShapeAttributes sightLineAttributes;
-        protected PointPlacemarkAttributes intersectionPointAttributes;
-        protected PointPlacemarkAttributes gridPointAttributes;
-        protected PointPlacemarkAttributes selectedLocationAttributes;
+        protected final RenderableLayer renderableLayer = new RenderableLayer();
+        protected final ShapeAttributes sightLineAttributes;
+        protected final PointPlacemarkAttributes intersectionPointAttributes;
+        protected final PointPlacemarkAttributes gridPointAttributes;
+        protected final PointPlacemarkAttributes selectedLocationAttributes;
 
         public AppFrame()
         {
@@ -196,38 +196,28 @@ public class LinesOfSight extends ApplicationTemplate
         {
             this.previousCurrentPosition = curPos;
 
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    setCursor(WaitCursor);
-                }
-            });
+            SwingUtilities.invokeLater(() -> setCursor(WaitCursor));
 
             // Dispatch the calculation threads in a separate thread to avoid locking up the user interface.
-            this.calculationDispatchThread = new Thread(new Runnable()
-            {
-                public void run()
-                {
-                    try
-                    {
-                        performIntersectionTests(curPos);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        System.out.println("Operation was interrupted");
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
+            this.calculationDispatchThread = new Thread(() -> {
+//                try
+//                {
+                    performIntersectionTests(curPos);
+//                }
+//                catch (InterruptedException e)
+//                {
+//                    System.out.println("Operation was interrupted");
+//                }
+//                catch (Exception e)
+//                {
+//                    e.printStackTrace();
+//                }
             });
 
             this.calculationDispatchThread.start();
         }
 
-        protected void performIntersectionTests(final Position curPos) throws InterruptedException
+        protected void performIntersectionTests(final Position curPos)
         {
             // Compute the position of the selected location (incorporate its height).
             this.referencePosition = new Position(curPos.getLatitude(), curPos.getLongitude(),
@@ -251,16 +241,12 @@ public class LinesOfSight extends ApplicationTemplate
             }
 
             // On the EDT, show the grid.
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    progressBar.setValue(0);
-                    progressBar.setString(null);
-                    clearLayers();
-                    showGrid(grid, referencePosition);
-                    getWwd().redraw();
-                }
+            SwingUtilities.invokeLater(() -> {
+                progressBar.setValue(0);
+                progressBar.setString(null);
+                clearLayers();
+                showGrid(grid, referencePosition);
+                getWwd().redraw();
             });
 
             if (this.updateProgressTimer != null)
@@ -308,7 +294,7 @@ public class LinesOfSight extends ApplicationTemplate
 
         protected List<Position> buildGrid(Sector sector, double height, int nRows, int nCols)
         {
-            java.util.List<Position> grid = new ArrayList<Position>((nRows) * (nCols));
+            java.util.List<Position> grid = new ArrayList<>((nRows) * (nCols));
 
             double dLat = sector.getDeltaLatDegrees() / (nCols - 1);
             double dLon = sector.getDeltaLonDegrees() / (nRows - 1);
@@ -345,22 +331,18 @@ public class LinesOfSight extends ApplicationTemplate
             final int progress = (int) (100d * numPositionsProcessed / (double) totalNum);
 
             // On the EDT, update the progress bar and if calculations are complete, update the WorldWindow.
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    progressBar.setValue(progress);
+            SwingUtilities.invokeLater(() -> {
+                progressBar.setValue(progress);
 
-                    if (progress >= 100)
-                    {
-                        endTime = System.currentTimeMillis();
-                        updateProgressTimer.cancel();
-                        updateProgressTimer = null;
-                        setCursor(Cursor.getDefaultCursor());
-                        progressBar.setString((endTime - startTime) + " ms");
-                        showResults();
-                        System.out.printf("Calculation time %d milliseconds\n", endTime - startTime);
-                    }
+                if (progress >= 100)
+                {
+                    endTime = System.currentTimeMillis();
+                    updateProgressTimer.cancel();
+                    updateProgressTimer = null;
+                    setCursor(Cursor.getDefaultCursor());
+                    progressBar.setString((endTime - startTime) + " ms");
+                    showResults();
+                    System.out.printf("Calculation time %d milliseconds\n", endTime - startTime);
                 }
             });
         }
@@ -537,11 +519,11 @@ public class LinesOfSight extends ApplicationTemplate
 
     public static class ShapeLoaderThread extends Thread
     {
-        protected File file;
-        protected WorldWindow wwd;
-        protected LayerPanel layerPanel;
-        protected RenderableLayer layer;
-        protected ShapeAttributes buildingAttributes;
+        protected final File file;
+        protected final WorldWindow wwd;
+        protected final LayerPanel layerPanel;
+        protected final RenderableLayer layer;
+        protected final ShapeAttributes buildingAttributes;
 
         public ShapeLoaderThread(File file, WorldWindow wwd, RenderableLayer layer, LayerPanel layerPanel)
         {
@@ -560,9 +542,8 @@ public class LinesOfSight extends ApplicationTemplate
 
         public void run()
         {
-            Shapefile sf = new Shapefile(this.file);
 
-            try
+            try (Shapefile sf = new Shapefile(this.file))
             {
                 while (sf.hasNext())
                 {
@@ -576,18 +557,8 @@ public class LinesOfSight extends ApplicationTemplate
                     this.layer.addRenderable(this.makeShape(r));
                 }
             }
-            finally
-            {
-                sf.close();
-            }
 
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    insertBeforePlacenames(wwd, layer);
-                }
-            });
+            SwingUtilities.invokeLater(() -> insertBeforePlacenames(wwd, layer));
         }
 
         protected ExtrudedPolygon makeShape(ShapefileRecord record)

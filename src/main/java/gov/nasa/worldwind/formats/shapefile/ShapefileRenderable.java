@@ -202,8 +202,8 @@ public abstract class ShapefileRenderable extends WWObjectImpl
     protected ShapeAttributes initHighlightAttrs;
     protected ShapefileRenderable.AttributeDelegate initAttributeDelegate;
 
-    protected static ShapeAttributes defaultAttributes;
-    protected static ShapeAttributes defaultHighlightAttributes;
+    protected static final ShapeAttributes defaultAttributes;
+    protected static final ShapeAttributes defaultHighlightAttributes;
 
     static
     {

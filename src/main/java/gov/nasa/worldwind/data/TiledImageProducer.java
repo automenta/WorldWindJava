@@ -25,7 +25,7 @@ public class TiledImageProducer extends TiledRasterProducer
     // Statically reference the readers used to for unknown data sources. This drastically improves the performance of
     // reading large quantities of sources. Since the readers are invoked from a single thread, they can be
     // safely re-used.
-    protected static DataRasterReader[] readers = new DataRasterReader[]
+    protected static final DataRasterReader[] readers = new DataRasterReader[]
         {
             new RPFRasterReader(),
             new GDALDataRasterReader(),
@@ -92,8 +92,7 @@ public class TiledImageProducer extends TiledRasterProducer
             if (!(raster instanceof BufferedImageRaster))
                 return Logging.getMessage("TiledRasterProducer.UnrecognizedDataSource", raster);
 
-            String s = this.validateDataSourceParams(raster, String.valueOf(raster));
-            return s;
+            return this.validateDataSourceParams(raster, String.valueOf(raster));
         }
         // For any other data source, attempt to find a reader for the data source. If the reader knows the data
         // source's raster type, then check that it's a color image or a monochromatic image.

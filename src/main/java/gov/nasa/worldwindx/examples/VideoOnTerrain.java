@@ -16,7 +16,6 @@ import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.util.BasicDragger;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.*;
 import java.util.Arrays;
 
@@ -64,20 +63,16 @@ public class VideoOnTerrain extends ApplicationTemplate
             surfaceImage.setOpacity(IMAGE_OPACITY);
             layer.addRenderable(surfaceImage);
 
-            javax.swing.Timer timer = new javax.swing.Timer(50, new ActionListener()
-            {
-                public void actionPerformed(ActionEvent actionEvent)
-                {
-                    Iterable<LatLon> corners = surfaceImage.getCorners();
-                    surfaceImage.setImageSource(makeImage(), corners);
-                    getWwd().redraw();
-                }
+            javax.swing.Timer timer = new javax.swing.Timer(50, actionEvent -> {
+                Iterable<LatLon> corners = surfaceImage.getCorners();
+                surfaceImage.setImageSource(makeImage(), corners);
+                getWwd().redraw();
             });
             timer.start();
         }
 
         protected long counter;
-        protected long start = System.currentTimeMillis();
+        protected final long start = System.currentTimeMillis();
 
         protected BufferedImage makeImage()
         {
@@ -102,9 +97,9 @@ public class VideoOnTerrain extends ApplicationTemplate
 
     protected static class SurfaceImageDragger implements SelectListener
     {
-        protected WorldWindow wwd;
+        protected final WorldWindow wwd;
         protected SurfaceImage lastHighlit;
-        protected BasicDragger dragger;
+        protected final BasicDragger dragger;
 
         public SurfaceImageDragger(WorldWindow wwd)
         {

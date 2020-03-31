@@ -16,11 +16,11 @@ import gov.nasa.worldwind.util.*;
  */
 public class AnnotationNullLayout extends AbstractAnnotationLayout
 {
-    protected java.util.Map<Annotation, Object> constraintMap;
+    protected final java.util.Map<Annotation, Object> constraintMap;
 
     public AnnotationNullLayout()
     {
-        this.constraintMap = new java.util.HashMap<Annotation, Object>();
+        this.constraintMap = new java.util.HashMap<>();
     }
 
     public Object getConstraint(Annotation annotation)

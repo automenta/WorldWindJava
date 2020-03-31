@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class OWSAllowedValues extends AbstractXMLEventParser
 {
-    protected List<String> values = new ArrayList<String>(2);
+    protected final List<String> values = new ArrayList<>(2);
 
     public OWSAllowedValues(String namespaceURI)
     {

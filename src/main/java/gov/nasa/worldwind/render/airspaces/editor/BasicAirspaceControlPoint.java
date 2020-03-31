@@ -8,6 +8,8 @@ package gov.nasa.worldwind.render.airspaces.editor;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.render.airspaces.Airspace;
 
+import java.util.Objects;
+
 /**
  * @author dcollins
  * @version $Id: BasicAirspaceControlPoint.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -130,7 +132,7 @@ public class BasicAirspaceControlPoint implements AirspaceControlPoint
         if (this.locationIndex != that.locationIndex)
             return false;
         //noinspection RedundantIfStatement
-        if (this.point != null ? !this.point.equals(that.point) : that.point != null)
+        if (!Objects.equals(this.point, that.point))
             return false;
 
         return true;

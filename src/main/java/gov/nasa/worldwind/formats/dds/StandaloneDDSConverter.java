@@ -43,18 +43,14 @@ public class StandaloneDDSConverter
     {
         System.out.printf("===== Converting Directory %s\n", dir.getPath());
 
-        File[] files = dir.listFiles(new FileFilter()
-        {
-            public boolean accept(File file)
+        File[] files = dir.listFiles(file -> {
+            for (String suffix : suffixes)
             {
-                for (String suffix : suffixes)
-                {
-                    if (file.getPath().endsWith(suffix))
-                        return true;
-                }
-
-                return false;
+                if (file.getPath().endsWith(suffix))
+                    return true;
             }
+
+            return false;
         });
 
         if (files != null)
@@ -73,13 +69,7 @@ public class StandaloneDDSConverter
             }
         }
 
-        File[] directories = dir.listFiles(new FileFilter()
-        {
-            public boolean accept(File file)
-            {
-                return file.isDirectory();
-            }
-        });
+        File[] directories = dir.listFiles(File::isDirectory);
 
         if (directories != null)
         {

@@ -118,7 +118,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
             throw new IllegalStateException(message);
         }
 
-        ArrayList<VPFFeature> results = new ArrayList<VPFFeature>();
+        ArrayList<VPFFeature> results = new ArrayList<>();
 
         VPFBufferedRecordData featureTable = this.createFeatureTable(featureClass);
         if (featureTable == null)
@@ -177,7 +177,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
 
         // Query the number of primitives which match the feature.
         Object o = this.getPrimitiveIds(featureClass, featureRow, joinTable, null, true);
-        if (o == null || !(o instanceof Integer))
+        if (!(o instanceof Integer))
             return null;
 
         int numPrimitives = (Integer) o;
@@ -265,7 +265,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
 
     protected Iterable<String> getFeatureAttributeKeys(VPFBufferedRecordData table)
     {
-        ArrayList<String> keys = new ArrayList<String>();
+        ArrayList<String> keys = new ArrayList<>();
 
         for (String name : table.getRecordParameterNames())
         {

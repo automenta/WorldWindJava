@@ -22,12 +22,12 @@ public class WCSCoverageSummary extends AbstractXMLEventParser
 {
     // TODO: metadata
 
-    protected List<String> abstracts = new ArrayList<String>(1);
-    protected List<OWSWGS84BoundingBox> boundingBoxes = new ArrayList<OWSWGS84BoundingBox>(1);
-    protected List<WCSCoverageSummary> coverageSummaries = new ArrayList<WCSCoverageSummary>(1);
-    protected List<String> supportedCRSs = new ArrayList<String>(1);
-    protected List<String> supportedFormats = new ArrayList<String>(1);
-    protected List<String> titles = new ArrayList<String>(1);
+    protected final List<String> abstracts = new ArrayList<>(1);
+    protected final List<OWSWGS84BoundingBox> boundingBoxes = new ArrayList<>(1);
+    protected final List<WCSCoverageSummary> coverageSummaries = new ArrayList<>(1);
+    protected final List<String> supportedCRSs = new ArrayList<>(1);
+    protected final List<String> supportedFormats = new ArrayList<>(1);
+    protected final List<String> titles = new ArrayList<>(1);
 
     public WCSCoverageSummary(String namespaceURI)
     {
@@ -110,7 +110,7 @@ public class WCSCoverageSummary extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof OWSWGS84BoundingBox)
+                if (o instanceof OWSWGS84BoundingBox)
                     this.boundingBoxes.add((OWSWGS84BoundingBox) o);
             }
         }
@@ -120,7 +120,7 @@ public class WCSCoverageSummary extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WCSCoverageSummary)
+                if (o instanceof WCSCoverageSummary)
                     this.coverageSummaries.add((WCSCoverageSummary) o);
             }
         }

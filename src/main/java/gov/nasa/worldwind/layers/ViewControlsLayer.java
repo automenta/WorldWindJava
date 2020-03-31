@@ -384,7 +384,7 @@ public class ViewControlsLayer extends RenderableLayer
      */
     public String getControlType(Object control)
     {
-        if (control == null || !(control instanceof ScreenAnnotation))
+        if (!(control instanceof ScreenAnnotation))
             return null;
 
         if (showPanControls && controlPan.equals(control))
@@ -444,7 +444,7 @@ public class ViewControlsLayer extends RenderableLayer
         }
 
         // Turn on highlight if object selected.
-        if (control != null && control instanceof ScreenAnnotation)
+        if (control instanceof ScreenAnnotation)
         {
             this.currentControl = (ScreenAnnotation) control;
             this.currentControl.getAttributes().setImageOpacity(1);
@@ -583,32 +583,22 @@ public class ViewControlsLayer extends RenderableLayer
      */
     protected Object getImageSource(String control)
     {
-        if (control.equals(AVKey.VIEW_PAN))
-            return IMAGE_PAN;
-        else if (control.equals(AVKey.VIEW_LOOK))
-            return IMAGE_LOOK;
-        else if (control.equals(AVKey.VIEW_HEADING_LEFT))
-            return IMAGE_HEADING_LEFT;
-        else if (control.equals(AVKey.VIEW_HEADING_RIGHT))
-            return IMAGE_HEADING_RIGHT;
-        else if (control.equals(AVKey.VIEW_ZOOM_IN))
-            return IMAGE_ZOOM_IN;
-        else if (control.equals(AVKey.VIEW_ZOOM_OUT))
-            return IMAGE_ZOOM_OUT;
-        else if (control.equals(AVKey.VIEW_PITCH_UP))
-            return IMAGE_PITCH_UP;
-        else if (control.equals(AVKey.VIEW_PITCH_DOWN))
-            return IMAGE_PITCH_DOWN;
-        else if (control.equals(AVKey.VIEW_FOV_WIDE))
-            return IMAGE_FOV_WIDE;
-        else if (control.equals(AVKey.VIEW_FOV_NARROW))
-            return IMAGE_FOV_NARROW;
-        else if (control.equals(AVKey.VERTICAL_EXAGGERATION_UP))
-            return IMAGE_VE_UP;
-        else if (control.equals(AVKey.VERTICAL_EXAGGERATION_DOWN))
-            return IMAGE_VE_DOWN;
-
-        return null;
+        return switch (control)
+            {
+                case AVKey.VIEW_PAN -> IMAGE_PAN;
+                case AVKey.VIEW_LOOK -> IMAGE_LOOK;
+                case AVKey.VIEW_HEADING_LEFT -> IMAGE_HEADING_LEFT;
+                case AVKey.VIEW_HEADING_RIGHT -> IMAGE_HEADING_RIGHT;
+                case AVKey.VIEW_ZOOM_IN -> IMAGE_ZOOM_IN;
+                case AVKey.VIEW_ZOOM_OUT -> IMAGE_ZOOM_OUT;
+                case AVKey.VIEW_PITCH_UP -> IMAGE_PITCH_UP;
+                case AVKey.VIEW_PITCH_DOWN -> IMAGE_PITCH_DOWN;
+                case AVKey.VIEW_FOV_WIDE -> IMAGE_FOV_WIDE;
+                case AVKey.VIEW_FOV_NARROW -> IMAGE_FOV_NARROW;
+                case AVKey.VERTICAL_EXAGGERATION_UP -> IMAGE_VE_UP;
+                case AVKey.VERTICAL_EXAGGERATION_DOWN -> IMAGE_VE_DOWN;
+                default -> null;
+            };
     }
 
     // Set controls positions according to layout and viewport dimension
@@ -732,8 +722,8 @@ public class ViewControlsLayer extends RenderableLayer
 
         if (this.locationCenter != null)
         {
-            x = this.locationCenter.x - controls.width / 2;
-            y = this.locationCenter.y - controls.height / 2;
+            x = this.locationCenter.x - controls.width / 2.0;
+            y = this.locationCenter.y - controls.height / 2.0;
         }
         else if (this.position.equals(AVKey.NORTHEAST))
         {

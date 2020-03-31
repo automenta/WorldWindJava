@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class TrackAirspace extends AbstractAirspace
 {
-    protected List<Box> legs = new ArrayList<Box>();
+    protected List<Box> legs = new ArrayList<>();
     protected boolean legsOutOfDate = true;
     protected boolean enableInnerCaps = true;
     protected boolean enableCenterLine;
@@ -49,7 +49,7 @@ public class TrackAirspace extends AbstractAirspace
     {
         super(source);
 
-        this.legs = new ArrayList<Box>(source.legs.size());
+        this.legs = new ArrayList<>(source.legs.size());
         for (Box leg : source.legs)
         {
             this.legs.add(new Box(leg));
@@ -286,7 +286,7 @@ public class TrackAirspace extends AbstractAirspace
 
     public Position getReferencePosition()
     {
-        ArrayList<LatLon> locations = new ArrayList<LatLon>(2 * this.legs.size());
+        ArrayList<LatLon> locations = new ArrayList<>(2 * this.legs.size());
         for (Box box : this.legs)
         {
             LatLon[] ll = box.getLocations();
@@ -324,7 +324,7 @@ public class TrackAirspace extends AbstractAirspace
         }
         else
         {
-            ArrayList<gov.nasa.worldwind.geom.Box> extents = new ArrayList<gov.nasa.worldwind.geom.Box>();
+            ArrayList<gov.nasa.worldwind.geom.Box> extents = new ArrayList<>();
 
             for (Box leg : trackLegs)
             {
@@ -631,7 +631,7 @@ public class TrackAirspace extends AbstractAirspace
         if (lsos == null || lsos.length == 0)
             return;
 
-        ArrayList<Box> legList = new ArrayList<Box>(lsos.length);
+        ArrayList<Box> legList = new ArrayList<>(lsos.length);
 
         for (RestorableSupport.StateObject lso : lsos)
         {

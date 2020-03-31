@@ -33,13 +33,8 @@ public class WMSCapabilities extends OGCCapabilities
      * @param uri The URI of the server.
      *
      * @return The WMS capabilities document for the specified server.
-     * @throws java.lang.Exception if a general error occurs. 
-     *
-     * @throws IllegalArgumentException if the specified URI is invalid.
-     * @throws gov.nasa.worldwind.exception.WWRuntimeException
-     *                                  if an error occurs retrieving the document.
      */
-    public static WMSCapabilities retrieve(URI uri) throws Exception
+    public static WMSCapabilities retrieve(URI uri)
     {
         try
         {
@@ -47,11 +42,7 @@ public class WMSCapabilities extends OGCCapabilities
 
             return new WMSCapabilities(request);
         }
-        catch (URISyntaxException e)
-        {
-            e.printStackTrace();
-        }
-        catch (MalformedURLException e)
+        catch (URISyntaxException | MalformedURLException e)
         {
             e.printStackTrace();
         }
@@ -125,7 +116,7 @@ public class WMSCapabilities extends OGCCapabilities
         if (this.getCapabilityInformation() == null || this.getCapabilityInformation().getLayerCapabilities() == null)
             return null;
 
-        List<WMSLayerCapabilities> namedLayers = new ArrayList<WMSLayerCapabilities>();
+        List<WMSLayerCapabilities> namedLayers = new ArrayList<>();
 
         for (WMSLayerCapabilities layer : this.getCapabilityInformation().getLayerCapabilities())
         {

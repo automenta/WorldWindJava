@@ -9,6 +9,7 @@ import com.jogamp.opengl.GL2;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * @author tag
@@ -289,14 +290,14 @@ public class Material
 
         if (Double.compare(this.shininess, that.shininess) != 0)
             return false;
-        if (this.ambient != null ? !this.ambient.equals(that.ambient) : that.ambient != null)
+        if (!Objects.equals(this.ambient, that.ambient))
             return false;
-        if (this.diffuse != null ? !this.diffuse.equals(that.diffuse) : that.diffuse != null)
+        if (!Objects.equals(this.diffuse, that.diffuse))
             return false;
-        if (this.specular != null ? !this.specular.equals(that.specular) : that.specular != null)
+        if (!Objects.equals(this.specular, that.specular))
             return false;
         //noinspection RedundantIfStatement
-        if (this.emission != null ? !this.emission.equals(that.emission) : that.emission != null)
+        if (!Objects.equals(this.emission, that.emission))
             return false;
 
         return true;

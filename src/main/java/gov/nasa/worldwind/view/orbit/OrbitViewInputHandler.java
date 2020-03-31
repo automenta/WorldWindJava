@@ -24,8 +24,8 @@ import java.util.Date;
  */
 public class OrbitViewInputHandler extends BasicViewInputHandler
 {
-    protected AnimationController gotoAnimControl = new AnimationController();
-    protected AnimationController uiAnimControl = new AnimationController();
+    protected final AnimationController gotoAnimControl = new AnimationController();
+    protected final AnimationController uiAnimControl = new AnimationController();
     protected static final String VIEW_ANIM_HEADING = "ViewAnimHeading";
     protected static final String VIEW_ANIM_PITCH = "ViewAnimPitch";
     protected static final String VIEW_ANIM_ROLL = "ViewAnimRoll";
@@ -142,7 +142,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler
         ViewInputAttributes.ActionAttributes actionAttribs)
     {
         View view = this.getView();
-        if (view == null || !(view instanceof BasicOrbitView))
+        if (!(view instanceof BasicOrbitView))
         {
             return;
         }
@@ -299,7 +299,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler
         ViewInputAttributes.ActionAttributes actionAttributes)
     {
         View view = this.getView();
-        if (view == null || !(view instanceof BasicOrbitView))
+        if (!(view instanceof BasicOrbitView))
         {
             return;
         }
@@ -625,13 +625,12 @@ public class OrbitViewInputHandler extends BasicViewInputHandler
         if (smoothing == 0)
         {
             OrbitViewEyePointAnimator.setEyePoint(globe, view, eyePoint);
-            this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
         }
         else
         {
             this.uiAnimControl.put(VIEW_ANIM_EYE, new OrbitViewEyePointAnimator(globe, view, eyePoint, smoothing));
-            this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
         }
+        this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
     }
 
     protected void setCenterPosition(BasicOrbitView view,
@@ -958,9 +957,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler
             double[] range = actionAttributes.getValues();
             // If this is an OrbitView, we use the zoom value to set the scale
             double radius = this.getWorldWindow().getModel().getGlobe().getRadius();
-            double t = getScaleValue(range[0], range[1],
-                ((OrbitView) view).getZoom(), 3.0 * radius, true);
-            return (t);
+            return (getScaleValue(range[0], range[1],
+                ((OrbitView) view).getZoom(), 3.0 * radius, true));
         } else {
             // Any other view, use the base class scaling method
             return(super.getScaleValueElevation(deviceAttributes, actionAttributes));
@@ -981,9 +979,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler
             double[] range = actionAttributes.getValues();
             // If this is an OrbitView, we use the zoom value to set the scale
             double radius = this.getWorldWindow().getModel().getGlobe().getRadius();
-            double t = getScaleValue(range[0], range[1],
-                ((OrbitView) view).getZoom(), 3.0 * radius, false);
-            return (t);
+            return (getScaleValue(range[0], range[1],
+                ((OrbitView) view).getZoom(), 3.0 * radius, false));
         }
         return(1.0);
     }

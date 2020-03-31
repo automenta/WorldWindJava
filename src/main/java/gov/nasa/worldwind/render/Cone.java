@@ -15,7 +15,6 @@ import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.*;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class Cone extends RigidShape
 
     // Geometry.
     @SuppressWarnings({"FieldCanBeLocal"})
-    protected int faceCount = 2;   // number of separate Geometry pieces that comprise this Cone
+    protected final int faceCount = 2;   // number of separate Geometry pieces that comprise this Cone
     // The faces are numbered as follows:
     // face 0: Cone base
     // face 1: Cone pointed core
@@ -505,7 +504,7 @@ public class Cone extends RigidShape
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void doExportAsKML(XMLStreamWriter xmlWriter)
     {
         String message = Logging.getMessage("generic.UnsupportedOperation", "doExportAsKML");
         Logging.logger().severe(message);

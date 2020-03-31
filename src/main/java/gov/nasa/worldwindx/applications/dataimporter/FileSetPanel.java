@@ -26,12 +26,12 @@ import java.util.logging.Level;
  */
 public class FileSetPanel extends JPanel
 {
-    protected WorldWindow wwd;
+    protected final WorldWindow wwd;
 
     protected FileSetFinder fileSetFinder;
     protected FileSetTable fileSetTable;
-    protected FileSetHighlighter sectorHighlighter;
-    protected JFileChooser fileChooser;
+    protected final FileSetHighlighter sectorHighlighter;
+    protected final JFileChooser fileChooser;
     protected Thread scanningThread;
 
     /**
@@ -50,26 +50,21 @@ public class FileSetPanel extends JPanel
         this.fileChooser = new JFileChooser();
         this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         this.fileChooser.setMultiSelectionEnabled(true);
-        this.fileChooser.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent event)
+        this.fileChooser.addActionListener(event -> {
+            if (event.getActionCommand().equals(JFileChooser.CANCEL_SELECTION))
             {
-                if (event.getActionCommand().equals(JFileChooser.CANCEL_SELECTION))
-                {
-                    // Cancel the scanning action by interrupting the thread. Interrupts are checked by the
-                    // FileSetFinder.
-                    if (scanningThread != null && scanningThread.isAlive())
-                        scanningThread.interrupt();
+                // Cancel the scanning action by interrupting the thread. Interrupts are checked by the
+                // FileSetFinder.
+                if (scanningThread != null && scanningThread.isAlive())
+                    scanningThread.interrupt();
 
-                    return;
-                }
-
-                // Re-populate the file set table if the file-chooser selection changed.
-                File[] roots = fileChooser.getSelectedFiles();
-                if (roots != null && roots.length > 0)
-                    resetTable(roots);
+                return;
             }
+
+            // Re-populate the file set table if the file-chooser selection changed.
+            File[] roots = fileChooser.getSelectedFiles();
+            if (roots != null && roots.length > 0)
+                resetTable(roots);
         });
 
         // Disable the cancel button until a directory scan begins.
@@ -126,31 +121,23 @@ public class FileSetPanel extends JPanel
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         this.enableCancelAction(true);
 
-        this.scanningThread = new Thread(new Runnable()
-        {
-            public void run()
+        this.scanningThread = new Thread(() -> {
+            try
             {
-                try
-                {
-                    fileSetFinder.findFileSets(roots);
-                }
-                catch (Exception e)
-                {
-                    Logging.logger().log(Level.SEVERE, "Exception while finding available data", e);
-                }
-                finally
-                {
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            fileSetTable.setFileSetMap(fileSetFinder.getFileSetMap());
-                            setCursor(Cursor.getDefaultCursor());
-                            enableCancelAction(false);
-                            scanningThread = null;
-                        }
-                    });
-                }
+                fileSetFinder.findFileSets(roots);
+            }
+            catch (Exception e)
+            {
+                Logging.logger().log(Level.SEVERE, "Exception while finding available data", e);
+            }
+            finally
+            {
+                SwingUtilities.invokeLater(() -> {
+                    fileSetTable.setFileSetMap(fileSetFinder.getFileSetMap());
+                    setCursor(Cursor.getDefaultCursor());
+                    enableCancelAction(false);
+                    scanningThread = null;
+                });
             }
         });
         this.scanningThread.start();
@@ -171,12 +158,12 @@ public class FileSetPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent actionEvent)
             {
-                final java.util.List<FileSet> fileSetList = new ArrayList<FileSet>();
+                final java.util.List<FileSet> fileSetList = new ArrayList<>();
 
                 int[] rows = fileSetTable.getSelectedRows();
-                for (int i = 0; i < rows.length; i++)
+                for (int row : rows)
                 {
-                    int modelRow = fileSetTable.convertRowIndexToModel(rows[i]);
+                    int modelRow = fileSetTable.convertRowIndexToModel(row);
                     FileSet fileSet = ((FileSetTableModel) fileSetTable.getModel()).getRow(modelRow);
 
                     if (fileSet != null)
@@ -185,13 +172,7 @@ public class FileSetPanel extends JPanel
 
                 final java.util.List<FileSet> consolidatedFileSetList = fileSetFinder.consolidateFileSets(fileSetList);
 
-                Thread t = new Thread(new Runnable()
-                {
-                    public void run()
-                    {
-                        performInstallation(consolidatedFileSetList);
-                    }
-                });
+                Thread t = new Thread(() -> performInstallation(consolidatedFileSetList));
                 t.start();
             }
         });
@@ -230,13 +211,9 @@ public class FileSetPanel extends JPanel
 
                 if (dataConfig != null && this.wwd != null)
                 {
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            DataInstaller.addToWorldWindow(wwd, dataConfig.getDocumentElement(), fileSet, true);
-                            FileSetPanel.this.firePropertyChange(DataInstaller.INSTALL_COMPLETE, dataConfig, null);
-                        }
+                    SwingUtilities.invokeLater(() -> {
+                        DataInstaller.addToWorldWindow(wwd, dataConfig.getDocumentElement(), fileSet, true);
+                        FileSetPanel.this.firePropertyChange(DataInstaller.INSTALL_COMPLETE, dataConfig, null);
                     });
                 }
             }

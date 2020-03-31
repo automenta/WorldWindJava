@@ -311,7 +311,7 @@ public class Triangle
             if (intersection != null)
             {
                 if (intersections == null)
-                    intersections = new ArrayList<Intersection>();
+                    intersections = new ArrayList<>();
                 intersections.add(intersection);
             }
         }
@@ -370,7 +370,7 @@ public class Triangle
             if (intersection != null)
             {
                 if (intersections == null)
-                    intersections = new ArrayList<Intersection>();
+                    intersections = new ArrayList<>();
                 intersections.add(intersection);
             }
         }
@@ -432,7 +432,7 @@ public class Triangle
             if (intersection != null)
             {
                 if (intersections == null)
-                    intersections = new ArrayList<Intersection>();
+                    intersections = new ArrayList<>();
                 intersections.add(intersection);
             }
         }
@@ -491,7 +491,7 @@ public class Triangle
             if (intersection != null)
             {
                 if (intersections == null)
-                    intersections = new ArrayList<Intersection>();
+                    intersections = new ArrayList<>();
                 intersections.add(intersection);
             }
         }
@@ -539,7 +539,7 @@ public class Triangle
             if (intersection != null)
             {
                 if (intersections == null)
-                    intersections = new ArrayList<Intersection>();
+                    intersections = new ArrayList<>();
                 intersections.add(intersection);
             }
         }
@@ -592,7 +592,7 @@ public class Triangle
             if (intersection != null)
             {
                 if (intersections == null)
-                    intersections = new ArrayList<Intersection>();
+                    intersections = new ArrayList<>();
                 intersections.add(intersection);
             }
         }
@@ -795,9 +795,9 @@ public class Triangle
             throw new IllegalArgumentException(msg);
         }
 
-        for (int i = 0; i < indices.size(); i++)
+        for (Integer index : indices)
         {
-            outBuf.put(indices.get(i));
+            outBuf.put(index);
         }
     }
 

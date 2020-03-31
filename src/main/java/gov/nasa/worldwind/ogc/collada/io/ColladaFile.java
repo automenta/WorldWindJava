@@ -65,7 +65,8 @@ public class ColladaFile extends XMLDoc
     }
 
     @Override
-    public InputStream getSupportFileStream(String path) throws IOException {
+    public InputStream getSupportFileStream(String path)
+    {
         return null;
     }
 }

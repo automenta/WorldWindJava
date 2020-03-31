@@ -78,8 +78,8 @@ public class ElevationsUtil
            return;
        }
 
-       Double minValue = minmax[0];
-       Double maxValue = minmax[1];
+       double minValue = minmax[0];
+       double maxValue = minmax[1];
 
        Double missingDataSignal = AVListImpl.getDoubleValue(raster, AVKey.MISSING_DATA_SIGNAL, null);
 

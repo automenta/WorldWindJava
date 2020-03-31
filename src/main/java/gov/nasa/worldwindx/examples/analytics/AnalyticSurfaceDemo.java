@@ -63,13 +63,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
 
             // Load the static precipitation data. Since it comes over the network, load it in a separate thread to
             // avoid blocking the example if the load is slow or fails.
-            Thread t = new Thread(new Runnable()
-            {
-                public void run()
-                {
-                    createPrecipitationSurface(HUE_BLUE, HUE_RED, analyticSurfaceLayer);
-                }
-            });
+            Thread t = new Thread(() -> createPrecipitationSurface(HUE_BLUE, HUE_RED, analyticSurfaceLayer));
             t.start();
         }
     }
@@ -77,19 +71,15 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
     protected static Renderable createLegendRenderable(final AnalyticSurface surface, final double surfaceMinScreenSize,
         final AnalyticSurfaceLegend legend)
     {
-        return new Renderable()
-        {
-            public void render(DrawContext dc)
-            {
-                Extent extent = surface.getExtent(dc);
-                if (!extent.intersects(dc.getView().getFrustumInModelCoordinates()))
-                    return;
+        return dc -> {
+            Extent extent = surface.getExtent(dc);
+            if (!extent.intersects(dc.getView().getFrustumInModelCoordinates()))
+                return;
 
-                if (WWMath.computeSizeInWindowCoordinates(dc, extent) < surfaceMinScreenSize)
-                    return;
+            if (WWMath.computeSizeInWindowCoordinates(dc, extent) < surfaceMinScreenSize)
+                return;
 
-                legend.render(dc);
-            }
+            legend.render(dc);
         };
     }
 
@@ -199,7 +189,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
         double minHue, double maxHue)
     {
         ArrayList<AnalyticSurface.GridPointAttributes> attributesList
-            = new ArrayList<AnalyticSurface.GridPointAttributes>();
+            = new ArrayList<>();
 
         long length = Math.min(firstBuffer.length(), secondBuffer.length());
         for (int i = 0; i < length; i++)
@@ -255,14 +245,10 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
         legend.setOpacity(0.8);
         legend.setScreenLocation(new Point(100, 300));
 
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                surface.setClientLayer(outLayer);
-                outLayer.addRenderable(surface);
-                outLayer.addRenderable(createLegendRenderable(surface, 300, legend));
-            }
+        SwingUtilities.invokeLater(() -> {
+            surface.setClientLayer(outLayer);
+            outLayer.addRenderable(surface);
+            outLayer.addRenderable(createLegendRenderable(surface, 300, legend));
         });
     }
 

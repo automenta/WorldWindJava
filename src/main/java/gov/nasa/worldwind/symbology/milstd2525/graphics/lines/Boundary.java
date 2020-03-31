@@ -54,7 +54,7 @@ public class Boundary extends PhaseLine
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_GNL_LNE_BNDS);
+        return Collections.singletonList(TacGrpSidc.C2GM_GNL_LNE_BNDS);
     }
 
     /**
@@ -168,7 +168,7 @@ public class Boundary extends PhaseLine
 
         String echelon = this.symbolCode.getEchelon();
         boolean haveEchelon = !SymbolCode.isFieldEmpty(echelon);
-        this.echelonSymbols = haveEchelon ? new ArrayList<EchelonSymbol>() : Collections.emptyList();
+        this.echelonSymbols = haveEchelon ? new ArrayList<>() : Collections.emptyList();
 
         String sidc = this.symbolCode.toString();
 

@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class WCS100Service extends AbstractXMLEventParser
 {
-    protected List<String> accessConstraints = new ArrayList<String>(1);
+    protected final List<String> accessConstraints = new ArrayList<>(1);
 
     public WCS100Service(String namespaceURI)
     {

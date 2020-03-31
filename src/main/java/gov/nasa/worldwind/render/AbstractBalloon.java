@@ -22,7 +22,7 @@ public abstract class AbstractBalloon extends WWObjectImpl implements Balloon
     protected Object delegateOwner;
     protected BalloonAttributes attributes;
     protected BalloonAttributes highlightAttributes;
-    protected BalloonAttributes activeAttributes = new BasicBalloonAttributes(); // re-determined each frame
+    protected final BalloonAttributes activeAttributes = new BasicBalloonAttributes(); // re-determined each frame
 
     protected String text;
     protected TextDecoder textDecoder = new BasicTextDecoder();

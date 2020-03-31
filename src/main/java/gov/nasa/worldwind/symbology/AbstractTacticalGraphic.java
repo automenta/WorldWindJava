@@ -100,12 +100,12 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
     protected long frameTimestamp = -1L;
 
     /** Override attributes for the current frame. */
-    protected TacticalGraphicAttributes activeOverrides = new BasicTacticalGraphicAttributes();
+    protected final TacticalGraphicAttributes activeOverrides = new BasicTacticalGraphicAttributes();
     /**
      * Shape attributes shared by all shapes that make up this graphic. The graphic's active attributes are copied into
      * this attribute bundle on each frame.
      */
-    protected ShapeAttributes activeShapeAttributes = new BasicShapeAttributes();
+    protected final ShapeAttributes activeShapeAttributes = new BasicShapeAttributes();
 
     /** Flag to indicate that labels must be recreated before the graphic is rendered. */
     protected boolean mustCreateLabels = true;
@@ -484,7 +484,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
     protected TacticalGraphicLabel addLabel(String text)
     {
         if (this.labels == null)
-            this.labels = new ArrayList<TacticalGraphicLabel>();
+            this.labels = new ArrayList<>();
 
         TacticalGraphicLabel label = new TacticalGraphicLabel();
         label.setText(text);

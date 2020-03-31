@@ -11,7 +11,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.Polyline;
 import gov.nasa.worldwind.util.Logging;
 
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Utility class to measure length along a path on a globe.
@@ -75,9 +75,7 @@ public class LengthMeasurer implements MeasurableLength {
         }
 
         ArrayList<Position> newPositions = new ArrayList<>();
-        positions.forEach((pos) -> {
-            newPositions.add(new Position(pos, elevation));
-        });
+        positions.forEach((pos) -> newPositions.add(new Position(pos, elevation)));
 
         setPositions(newPositions);
     }
@@ -89,10 +87,7 @@ public class LengthMeasurer implements MeasurableLength {
             throw new IllegalArgumentException(message);
         }
 
-        ArrayList<Position> newPositions = new ArrayList<>();
-        for (Position p : positions) {
-            newPositions.add(p);
-        }
+        ArrayList<Position> newPositions = new ArrayList<>(Arrays.asList(positions));
         setPositions(newPositions);
     }
 

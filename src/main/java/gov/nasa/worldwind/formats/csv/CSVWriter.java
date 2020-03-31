@@ -29,7 +29,7 @@ public class CSVWriter
         this.printWriter = new java.io.PrintWriter(new java.io.BufferedWriter(new java.io.FileWriter(path)));
     }
 
-    public CSVWriter(java.io.OutputStream stream) throws java.io.IOException
+    public CSVWriter(java.io.OutputStream stream)
     {
         if (stream == null)
         {

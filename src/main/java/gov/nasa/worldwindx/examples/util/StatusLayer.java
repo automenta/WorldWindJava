@@ -18,7 +18,6 @@ import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.geom.*;
 import java.io.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -61,7 +60,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
     private double rotated = 0.0d;
     private Color backColor = new Color(0f, 0f, 0f, 0.4f);
     protected int coordDecimalPlaces = 4;
-    static int rotationIncrement = 60;
+    static final int rotationIncrement = 60;
 
     // Draw it as ordered with an eye distance of 0 so that it shows up in front of most other things.
     private final OrderedIcon orderedImage = new OrderedIcon();
@@ -88,60 +87,46 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
     {
         setPickEnabled(false);
 
-        Timer downloadTimer = new Timer(300, new ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent actionEvent)
+        Timer downloadTimer = new Timer(300, actionEvent -> {
+            if (!showNetworkStatus)
             {
-                if (!showNetworkStatus)
-                {
-                    activatedDownload = false;
-                    noNetwork = "";
-                    return;
-                }
+                activatedDownload = false;
+                noNetwork = "";
+                return;
+            }
 
-                if (!isNetworkAvailable.get())
-                {
-                    noNetwork = Logging.getMessage("term.NoNetwork");
-                    return;
-                }
-                else
-                    noNetwork = "";
+            if (!isNetworkAvailable.get())
+            {
+                noNetwork = Logging.getMessage("term.NoNetwork");
+                return;
+            }
+            else
+                noNetwork = "";
 
-                if (isNetworkAvailable.get() && WorldWind.getRetrievalService().hasActiveTasks())
+            if (isNetworkAvailable.get() && WorldWind.getRetrievalService().hasActiveTasks())
+            {
+                activatedDownload = true;
+                bumpRotation();
+                if (eventSource != null)
+                    eventSource.redraw();  //smooth graphic
+            }
+            else
+            {
+                if (activatedDownload && (eventSource != null))
                 {
-                    activatedDownload = true;
-                    bumpRotation();
-                    if (eventSource != null)
-                        eventSource.redraw();  //smooth graphic
+                    eventSource.redraw();  //force a redraw to clear downloading graphic
                 }
-                else
-                {
-                    if (activatedDownload && (eventSource != null))
-                    {
-                        eventSource.redraw();  //force a redraw to clear downloading graphic
-                    }
-                    activatedDownload = false;
-                }
+                activatedDownload = false;
             }
         });
         downloadTimer.start();
 
-        Timer netCheckTimer = new Timer(10000, new ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent actionEvent)
-            {
-                if (!showNetworkStatus)
-                    return;
+        Timer netCheckTimer = new Timer(10000, actionEvent -> {
+            if (!showNetworkStatus)
+                return;
 
-                Thread t = new Thread(new Runnable()
-                {
-                    public void run()
-                    {
-                        isNetworkAvailable.set(!WorldWind.getNetworkStatus().isNetworkUnavailable());
-                    }
-                });
-                t.start();
-            }
+            Thread t = new Thread(() -> isNetworkAvailable.set(!WorldWind.getNetworkStatus().isNetworkUnavailable()));
+            t.start();
         });
         netCheckTimer.start();
     }
@@ -284,7 +269,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
             Dimension size = getTextRenderSize(dc, label);
             if (size.width < viewport.getWidth())   //todo more accurate add size of graphic
             {
-                double maxwh = size.width > size.height ? size.width : size.height;
+                double maxwh = Math.max(size.width, size.height);
                 gl.glOrtho(0d, viewport.width, 0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
 
                 gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -369,16 +354,12 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         if (!event.getStage().equals(RenderingEvent.BEFORE_BUFFER_SWAP))
             return;
 
-        EventQueue.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                if (eventSource.getView() != null && eventSource.getView().getEyePosition() != null)
-                    altDisplay = makeEyeAltitudeDescription(
-                        eventSource.getView().getEyePosition().getElevation());
-                else
-                    altDisplay = (Logging.getMessage("term.Altitude"));
-            }
+        EventQueue.invokeLater(() -> {
+            if (eventSource.getView() != null && eventSource.getView().getEyePosition() != null)
+                altDisplay = makeEyeAltitudeDescription(
+                    eventSource.getView().getEyePosition().getElevation());
+            else
+                altDisplay = (Logging.getMessage("term.Altitude"));
         });
     }
 

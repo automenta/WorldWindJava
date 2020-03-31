@@ -90,7 +90,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
     {
         this.children = points;
 
-        List<Position> newPositions = new ArrayList<Position>();
+        List<Position> newPositions = new ArrayList<>();
 
         double radius = this.getWidth() / 2.0;
 
@@ -311,7 +311,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
     {
         Globe globe = dc.getGlobe();
 
-        this.paths = new ArrayList<Path>();
+        this.paths = new ArrayList<>();
 
         double halfWidth = this.getWidth() / 2.0;
 

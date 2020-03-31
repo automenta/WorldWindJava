@@ -19,10 +19,10 @@ import java.util.*;
  */
 public class OWSAddress extends AbstractXMLEventParser
 {
-    protected List<String> deliveryPoints = new ArrayList<String>(1);
-    protected List<String> postalCodes = new ArrayList<String>(1);
-    protected List<String> countries = new ArrayList<String>(1);
-    protected List<String> emails = new ArrayList<String>(1);
+    protected final List<String> deliveryPoints = new ArrayList<>(1);
+    protected final List<String> postalCodes = new ArrayList<>(1);
+    protected final List<String> countries = new ArrayList<>(1);
+    protected final List<String> emails = new ArrayList<>(1);
 
     public OWSAddress(String namespaceURI)
     {

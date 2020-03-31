@@ -52,7 +52,7 @@ public class Polygons extends ApplicationTemplate
             highlightAttributes.setOutlineOpacity(1);
 
             // Create a polygon, set some of its properties and set its attributes.
-            ArrayList<Position> pathPositions = new ArrayList<Position>();
+            ArrayList<Position> pathPositions = new ArrayList<>();
             pathPositions.add(Position.fromDegrees(28, -106, 3e4));
             pathPositions.add(Position.fromDegrees(35, -104, 3e4));
             pathPositions.add(Position.fromDegrees(35, -107, 9e4));

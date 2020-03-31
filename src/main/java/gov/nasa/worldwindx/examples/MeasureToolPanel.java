@@ -80,29 +80,36 @@ public class MeasureToolPanel extends JPanel {
         // Handle measure tool events
         measureTool.addPropertyChangeListener((PropertyChangeEvent event) -> {
             // Add, remove or change positions
-            if (event.getPropertyName().equals(MeasureTool.EVENT_POSITION_ADD)
-                    || event.getPropertyName().equals(MeasureTool.EVENT_POSITION_REMOVE)
-                    || event.getPropertyName().equals(MeasureTool.EVENT_POSITION_REPLACE)) {
-                fillPointsPanel();    // Update position list when changed
-            } // The tool was armed / disarmed
-            else if (event.getPropertyName().equals(MeasureTool.EVENT_ARMED)) {
-                if (measureTool.isArmed()) {
-                    newButton.setEnabled(false);
-                    pauseButton.setText("Pause");
-                    pauseButton.setEnabled(true);
-                    endButton.setEnabled(true);
-                    ((Component) wwd).setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-                } else {
-                    newButton.setEnabled(true);
-                    pauseButton.setText("Pause");
-                    pauseButton.setEnabled(false);
-                    endButton.setEnabled(false);
-                    ((Component) wwd).setCursor(Cursor.getDefaultCursor());
-                }
+            switch (event.getPropertyName())
+            {
+                case MeasureTool.EVENT_POSITION_ADD:
+                case MeasureTool.EVENT_POSITION_REMOVE:
+                case MeasureTool.EVENT_POSITION_REPLACE:
+                    fillPointsPanel();    // Update position list when changed
 
-            } // Metric changed - sent after each render frame
-            else if (event.getPropertyName().equals(MeasureTool.EVENT_METRIC_CHANGED)) {
-                updateMetric();
+                    break;
+                case MeasureTool.EVENT_ARMED:
+                    if (measureTool.isArmed())
+                    {
+                        newButton.setEnabled(false);
+                        pauseButton.setText("Pause");
+                        pauseButton.setEnabled(true);
+                        endButton.setEnabled(true);
+                        ((Component) wwd).setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+                    }
+                    else
+                    {
+                        newButton.setEnabled(true);
+                        pauseButton.setText("Pause");
+                        pauseButton.setEnabled(false);
+                        endButton.setEnabled(false);
+                        ((Component) wwd).setCursor(Cursor.getDefaultCursor());
+                    }
+
+                    break;
+                case MeasureTool.EVENT_METRIC_CHANGED:
+                    updateMetric();
+                    break;
             }
         });
     }
@@ -342,9 +349,7 @@ public class MeasureToolPanel extends JPanel {
         pauseButton.setEnabled(false);
 
         endButton = new JButton("End");
-        endButton.addActionListener((ActionEvent actionEvent) -> {
-            measureTool.setArmed(false);
-        });
+        endButton.addActionListener((ActionEvent actionEvent) -> measureTool.setArmed(false));
         buttonPanel.add(endButton);
         endButton.setEnabled(false);
 

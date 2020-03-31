@@ -19,10 +19,10 @@ import java.util.*;
  */
 public class WCSContents extends AbstractXMLEventParser
 {
-    protected List<WCSCoverageSummary> coverageSummaries = new ArrayList<WCSCoverageSummary>(1);
-    protected List<AttributesOnlyXMLEventParser> otherSources = new ArrayList<AttributesOnlyXMLEventParser>(1);
-    protected List<String> supportedCRSs = new ArrayList<String>(1);
-    protected List<String> supportedFormats = new ArrayList<String>(1);
+    protected final List<WCSCoverageSummary> coverageSummaries = new ArrayList<>(1);
+    protected final List<AttributesOnlyXMLEventParser> otherSources = new ArrayList<>(1);
+    protected final List<String> supportedCRSs = new ArrayList<>(1);
+    protected final List<String> supportedFormats = new ArrayList<>(1);
 
     public WCSContents(String namespaceURI)
     {
@@ -46,7 +46,7 @@ public class WCSContents extends AbstractXMLEventParser
 
     public List<String> getOtherSources()
     {
-        List<String> strings = new ArrayList<String>(1);
+        List<String> strings = new ArrayList<>(1);
 
         for (AttributesOnlyXMLEventParser parser : this.otherSources)
         {
@@ -67,7 +67,7 @@ public class WCSContents extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WCSCoverageSummary)
+                if (o instanceof WCSCoverageSummary)
                     this.coverageSummaries.add((WCSCoverageSummary) o);
             }
         }
@@ -77,7 +77,7 @@ public class WCSContents extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof AttributesOnlyXMLEventParser)
+                if (o instanceof AttributesOnlyXMLEventParser)
                     this.otherSources.add((AttributesOnlyXMLEventParser) o);
             }
         }

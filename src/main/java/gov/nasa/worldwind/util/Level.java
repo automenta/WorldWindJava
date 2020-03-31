@@ -8,6 +8,8 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 
+import java.util.Objects;
+
 /**
  * @author tag
  * @version $Id: Level.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -34,8 +36,8 @@ public class Level extends AVListImpl implements Comparable<Level>
     // Retrieval attempts are governed by a minimum time interval between successive attempts. If an attempt is made
     // within this interval, the tile is still deemed to be absent until the interval expires.
     protected AbsentResourceList absentTiles;
-    int DEFAULT_MAX_ABSENT_TILE_ATTEMPTS = 2;
-    int DEFAULT_MIN_ABSENT_TILE_CHECK_INTERVAL = 10000; // milliseconds
+    final int DEFAULT_MAX_ABSENT_TILE_ATTEMPTS = 2;
+    final int DEFAULT_MIN_ABSENT_TILE_CHECK_INTERVAL = 10000; // milliseconds
 
     public Level(AVList params)
     {
@@ -95,34 +97,34 @@ public class Level extends AVListImpl implements Comparable<Level>
      */
     protected String validate(AVList params)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         Object o = params.getValue(AVKey.LEVEL_NUMBER);
-        if (o == null || !(o instanceof Integer) || ((Integer) o) < 0)
+        if (!(o instanceof Integer) || ((Integer) o) < 0)
             sb.append(Logging.getMessage("term.levelNumber")).append(" ");
 
         o = params.getValue(AVKey.LEVEL_NAME);
-        if (o == null || !(o instanceof String))
+        if (!(o instanceof String))
             sb.append(Logging.getMessage("term.levelName")).append(" ");
 
         o = params.getValue(AVKey.TILE_WIDTH);
-        if (o == null || !(o instanceof Integer) || ((Integer) o) < 0)
+        if (!(o instanceof Integer) || ((Integer) o) < 0)
             sb.append(Logging.getMessage("term.tileWidth")).append(" ");
 
         o = params.getValue(AVKey.TILE_HEIGHT);
-        if (o == null || !(o instanceof Integer) || ((Integer) o) < 0)
+        if (!(o instanceof Integer) || ((Integer) o) < 0)
             sb.append(Logging.getMessage("term.tileHeight")).append(" ");
 
         o = params.getValue(AVKey.TILE_DELTA);
-        if (o == null || !(o instanceof LatLon))
+        if (!(o instanceof LatLon))
             sb.append(Logging.getMessage("term.tileDelta")).append(" ");
 
         o = params.getValue(AVKey.DATA_CACHE_NAME);
-        if (o == null || !(o instanceof String) || ((String) o).length() < 1)
+        if (!(o instanceof String) || ((String) o).length() < 1)
             sb.append(Logging.getMessage("term.fileStoreFolder")).append(" ");
 
         o = params.getValue(AVKey.TILE_URL_BUILDER);
-        if (o == null || !(o instanceof TileUrlBuilder))
+        if (!(o instanceof TileUrlBuilder))
             sb.append(Logging.getMessage("term.tileURLBuilder")).append(" ");
 
         o = params.getValue(AVKey.EXPIRY_TIME);
@@ -132,11 +134,11 @@ public class Level extends AVListImpl implements Comparable<Level>
         if (params.getStringValue(AVKey.LEVEL_NAME).length() > 0)
         {
             o = params.getValue(AVKey.DATASET_NAME);
-            if (o == null || !(o instanceof String) || ((String) o).length() < 1)
+            if (!(o instanceof String) || ((String) o).length() < 1)
                 sb.append(Logging.getMessage("term.datasetName")).append(" ");
 
             o = params.getValue(AVKey.FORMAT_SUFFIX);
-            if (o == null || !(o instanceof String) || ((String) o).length() < 1)
+            if (!(o instanceof String) || ((String) o).length() < 1)
                 sb.append(Logging.getMessage("term.formatSuffix")).append(" ");
         }
 
@@ -208,7 +210,7 @@ public class Level extends AVListImpl implements Comparable<Level>
 
     public boolean isEmpty()
     {
-        return this.levelName == null || this.levelName.equals("") || !this.active;
+        return this.levelName == null || this.levelName.isEmpty() || !this.active;
     }
 
     public void markResourceAbsent(long tileNumber)
@@ -335,7 +337,7 @@ public class Level extends AVListImpl implements Comparable<Level>
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        return this.levelNumber < that.levelNumber ? -1 : this.levelNumber == that.levelNumber ? 0 : 1;
+        return Integer.compare(this.levelNumber, that.levelNumber);
     }
 
     public boolean equals(Object o)
@@ -353,18 +355,18 @@ public class Level extends AVListImpl implements Comparable<Level>
             return false;
         if (tileWidth != level.tileWidth)
             return false;
-        if (cacheName != null ? !cacheName.equals(level.cacheName) : level.cacheName != null)
+        if (!Objects.equals(cacheName, level.cacheName))
             return false;
-        if (dataset != null ? !dataset.equals(level.dataset) : level.dataset != null)
+        if (!Objects.equals(dataset, level.dataset))
             return false;
-        if (formatSuffix != null ? !formatSuffix.equals(level.formatSuffix) : level.formatSuffix != null)
+        if (!Objects.equals(formatSuffix, level.formatSuffix))
             return false;
-        if (levelName != null ? !levelName.equals(level.levelName) : level.levelName != null)
+        if (!Objects.equals(levelName, level.levelName))
             return false;
-        if (service != null ? !service.equals(level.service) : level.service != null)
+        if (!Objects.equals(service, level.service))
             return false;
         //noinspection RedundantIfStatement
-        if (tileDelta != null ? !tileDelta.equals(level.tileDelta) : level.tileDelta != null)
+        if (!Objects.equals(tileDelta, level.tileDelta))
             return false;
 
         return true;

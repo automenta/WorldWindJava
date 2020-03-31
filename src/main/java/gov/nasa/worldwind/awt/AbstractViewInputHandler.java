@@ -23,11 +23,11 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, java
 {
     protected WorldWindow wwd;
     protected ViewInputAttributes attributes;
-    protected ViewInputAttributes.ActionAttributesMap mouseActionMap;
-    protected ViewInputAttributes.ActionAttributesMap keyActionMap;
-    protected ViewInputAttributes.DeviceModifierMap keyModsActionMap;
-    protected ViewInputAttributes.DeviceModifierMap mouseModsActionMap;
-    protected ViewInputAttributes.DeviceModifierMap mouseWheelModsActionMap;
+    protected final ViewInputAttributes.ActionAttributesMap mouseActionMap;
+    protected final ViewInputAttributes.ActionAttributesMap keyActionMap;
+    protected final ViewInputAttributes.DeviceModifierMap keyModsActionMap;
+    protected final ViewInputAttributes.DeviceModifierMap mouseModsActionMap;
+    protected final ViewInputAttributes.DeviceModifierMap mouseWheelModsActionMap;
     // Optional behaviors.
     protected boolean enableSmoothing;
     protected boolean lockHeading;
@@ -41,7 +41,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, java
     protected Matrix mouseDownModelview;
     protected Matrix mouseDownProjection;
     protected Rectangle mouseDownViewport;
-    protected KeyEventState keyEventState = new KeyEventState();
+    protected final KeyEventState keyEventState = new KeyEventState();
     // Input transformation coefficients.
     protected double dragSlopeFactor = DEFAULT_DRAG_SLOPE_FACTOR;
     // Per-frame input event timing support.
@@ -67,7 +67,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, java
     protected static final String SCALE_FUNC_ZOOM = "ScaleFuncZoom";
     protected static final String SCALE_FUNC_ZOOM_EXP = "ScaleFuncZoomExp";
 
-    protected int[] modifierList =
+    protected final int[] modifierList =
         {
             KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
             KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK,

@@ -129,26 +129,18 @@ public abstract class AbstractApplicationFeature extends AbstractFeature impleme
             this.appLayers.setDisplayName(this.getLayerGroupName());
         }
 
-        this.createLayersThread = new Thread(new Runnable()
-        {
-            public void run()
+        this.createLayersThread = new Thread(() -> {
+            try
             {
-                try
-                {
-                    doCreateLayers();
-                }
-                finally
-                {
-                    handleInterrupt();
-                    SwingUtilities.invokeLater(new Runnable()
-                    {
-                        public void run()
-                        {
-                            controller.getNetworkActivitySignal().removeNetworkUser(AbstractApplicationFeature.this);
-                            createLayersThread = null;
-                        }
-                    });
-                }
+                doCreateLayers();
+            }
+            finally
+            {
+                handleInterrupt();
+                SwingUtilities.invokeLater(() -> {
+                    controller.getNetworkActivitySignal().removeNetworkUser(AbstractApplicationFeature.this);
+                    createLayersThread = null;
+                });
             }
         });
         this.createLayersThread.setPriority(Thread.MIN_PRIORITY);
@@ -165,13 +157,7 @@ public abstract class AbstractApplicationFeature extends AbstractFeature impleme
             if (SwingUtilities.isEventDispatchThread())
                 this.doAddLayer(layer, path);
             else
-                SwingUtilities.invokeAndWait(new Runnable()
-                {
-                    public void run()
-                    {
-                        doAddLayer(layer, path);
-                    }
-                });
+                SwingUtilities.invokeAndWait(() -> doAddLayer(layer, path));
         }
         catch (InterruptedException e)
         {

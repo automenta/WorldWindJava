@@ -30,7 +30,7 @@ public class AirfieldZone extends BasicArea
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_GNL_ARS_AIRFZ);
+        return Collections.singletonList(TacGrpSidc.C2GM_GNL_ARS_AIRFZ);
     }
 
     public AirfieldZone(String sidc)
@@ -93,7 +93,7 @@ public class AirfieldZone extends BasicArea
      */
     protected List<Path> createAirfieldPaths(DrawContext dc)
     {
-        List<Path> paths = new ArrayList<Path>();
+        List<Path> paths = new ArrayList<>();
 
         List<Sector> sectors = this.polygon.getSectors(dc);
         if (sectors == null)

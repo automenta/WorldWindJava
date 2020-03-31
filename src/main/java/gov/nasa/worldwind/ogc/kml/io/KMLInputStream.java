@@ -34,9 +34,8 @@ public class KMLInputStream extends XMLDoc
      *                     null}.
      *
      * @throws IllegalArgumentException if the specified input stream is null.
-     * @throws IOException              if an error occurs while attempting to read from the stream.
      */
-    public KMLInputStream(InputStream sourceStream, URI uri) throws IOException
+    public KMLInputStream(InputStream sourceStream, URI uri)
     {
         if (sourceStream == null)
         {
@@ -54,7 +53,7 @@ public class KMLInputStream extends XMLDoc
      *
      * @return the input stream reference passed to the constructor.
      */
-    public InputStream getInputStream() throws IOException
+    public InputStream getInputStream()
     {
         return this.inputStream;
     }

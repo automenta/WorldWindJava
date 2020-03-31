@@ -61,7 +61,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     protected double toViewportScale = 1;
     protected Point locationCenter = null;
     protected Vec4 locationOffset = null;
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     protected boolean initialized = false;
     protected boolean isMinimized = false;     // True when graph is minimized to an icon
     protected boolean isMaximized = false;     // True when graph is 'full screen'
@@ -94,7 +94,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     protected WorldWindow wwd;
 
     // Draw it as ordered with an eye distance of 0 so that it shows up in front of most other things.
-    protected OrderedIcon orderedImage = new OrderedIcon();
+    protected final OrderedIcon orderedImage = new OrderedIcon();
 
     protected class OrderedIcon implements OrderedRenderable {
 
@@ -824,7 +824,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             gl.glPushMatrix();
             projectionPushed = true;
             gl.glLoadIdentity();
-            double maxwh = width > height ? width : height;
+            double maxwh = Math.max(width, height);
             gl.glOrtho(0d, viewport.width, 0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
 
             gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -1193,8 +1193,6 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                 return Math.min(1d, (this.toViewportScale) * viewport.width / this.size.width);
             case AVKey.RESIZE_STRETCH:
                 return (this.toViewportScale) * viewport.width / this.size.width;
-            case AVKey.RESIZE_KEEP_FIXED_SIZE:
-                return 1d;
             default:
                 return 1d;
         }
@@ -1204,7 +1202,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         double scaledWidth = scale * (isMinimized ? MINIMIZED_SIZE
                 : isMaximized ? viewport.width - this.borderWidth * 2 : this.size.width);
         double scaledHeight = scale * (isMinimized ? MINIMIZED_SIZE
-                : isMaximized ? viewport.height * 2 / 3 - this.borderWidth * 2 : this.size.height);
+                : isMaximized ? viewport.height * 2 / 3f - this.borderWidth * 2 : this.size.height);
 
         double x;
         double y;
@@ -1571,10 +1569,10 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     protected void setPosition(int index, LatLon latLon) {
-        Double elevation
+        double elevation
                 = this.wwd.getModel().getGlobe().getElevation(latLon.getLatitude(), latLon.getLongitude());
-        this.minElevation = elevation < this.minElevation ? elevation : this.minElevation;
-        this.maxElevation = elevation > this.maxElevation ? elevation : this.maxElevation;
+        this.minElevation = Math.min(elevation, this.minElevation);
+        this.maxElevation = Math.max(elevation, this.maxElevation);
         // Add position to the list
         positions[index] = new Position(latLon, elevation);
     }

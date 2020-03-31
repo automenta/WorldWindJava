@@ -14,8 +14,8 @@ import gov.nasa.worldwind.util.PropertyAccessor;
  */
 public class OrbitViewMoveToZoomAnimator  extends MoveToDoubleAnimator
 {
-    BasicOrbitView orbitView;
-    boolean endCenterOnSurface;
+    final BasicOrbitView orbitView;
+    final boolean endCenterOnSurface;
 
     OrbitViewMoveToZoomAnimator(BasicOrbitView orbitView, Double end, double smoothing,
         PropertyAccessor.DoubleAccessor propertyAccessor, boolean endCenterOnSurface)

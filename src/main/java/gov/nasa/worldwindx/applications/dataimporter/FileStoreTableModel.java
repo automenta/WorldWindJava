@@ -24,7 +24,7 @@ public class FileStoreTableModel extends AbstractTableModel
     protected static final Class[] columnTypes =
         new Class[]{Color.class, String.class, String.class, Long.class};
 
-    protected java.util.List<FileStoreDataSet> dataSets = new ArrayList<FileStoreDataSet>();
+    protected final java.util.List<FileStoreDataSet> dataSets = new ArrayList<>();
 
     public void setDataSets(java.util.List<FileStoreDataSet> sets)
     {

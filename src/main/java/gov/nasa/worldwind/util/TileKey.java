@@ -7,6 +7,8 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.geom.Angle;
 
+import java.util.Objects;
+
 /**
  * @author tag
  * @version $Id: TileKey.java 1171 2013-02-11 21:45:02Z dcollins $
@@ -194,7 +196,7 @@ public class TileKey implements Comparable<TileKey>
         if (this.row != tileKey.row)
             return false;
 
-        return !(this.cacheName != null ? !this.cacheName.equals(tileKey.cacheName) : tileKey.cacheName != null);
+        return Objects.equals(this.cacheName, tileKey.cacheName);
     }
 
     @Override

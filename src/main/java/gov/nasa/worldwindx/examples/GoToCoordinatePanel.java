@@ -14,7 +14,6 @@ import gov.nasa.worldwind.util.Logging;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.regex.*;
 
 /**
@@ -69,13 +68,9 @@ public class GoToCoordinatePanel extends JPanel
         coordPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         this.coordInput = new JTextField(10);
         this.coordInput.setToolTipText("Type coordinates and press Enter");
-        this.coordInput.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
-            {
-                LatLon latLon =  computeLatLonFromString(coordInput.getText(), wwd.getModel().getGlobe());
-                updateResult(latLon);
-            }
+        this.coordInput.addActionListener(event -> {
+            LatLon latLon =  computeLatLonFromString(coordInput.getText(), wwd.getModel().getGlobe());
+            updateResult(latLon);
         });
         coordPanel.add(this.coordInput);
 
@@ -89,19 +84,15 @@ public class GoToCoordinatePanel extends JPanel
         JPanel gotoPanel = new JPanel(new GridLayout(0, 1, 0, 0));
         gotoPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         JButton gotoButton = new JButton("Go to location");
-        gotoButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent event)
+        gotoButton.addActionListener(event -> {
+            LatLon latLon =  computeLatLonFromString(coordInput.getText(), wwd.getModel().getGlobe());
+            updateResult(latLon);
+            if (latLon != null)
             {
-                LatLon latLon =  computeLatLonFromString(coordInput.getText(), wwd.getModel().getGlobe());
-                updateResult(latLon);
-                if (latLon != null)
-                {
-                    View view = wwd.getView();
-                    double distance = view.getCenterPoint().distanceTo3(view.getEyePoint());
-                    view.goTo(new Position(latLon, 0), distance);
+                View view = wwd.getView();
+                double distance = view.getCenterPoint().distanceTo3(view.getEyePoint());
+                view.goTo(new Position(latLon, 0), distance);
 
-                }
             }
         });
         gotoPanel.add(gotoButton);
@@ -178,9 +169,9 @@ public class GoToCoordinatePanel extends JPanel
         // Allow E, W, S, N sufixes
         if (lat == null || lon == null)
         {
-            regex = "([-|\\+]?\\d+?(\\.\\d+?)??\\s*[N|n|S|s]??)";
+            regex = "([-|+]?\\d+?(\\.\\d+?)??\\s*[N|n|S|s]??)";
             regex += separators;
-            regex += "([-|\\+]?\\d+?(\\.\\d+?)??\\s*[E|e|W|w]??)";
+            regex += "([-|+]?\\d+?(\\.\\d+?)??\\s*[E|e|W|w]??)";
             pattern =  Pattern.compile(regex);
             matcher = pattern.matcher(coordString);
             if (matcher.matches())
@@ -216,9 +207,9 @@ public class GoToCoordinatePanel extends JPanel
         // eg: 123� 34' 42"S 45� 12' 30"W
         if (lat == null || lon == null)
         {
-            regex = "([-|\\+]?\\d{1,3}[d|D|\u00B0|\\s](\\s*\\d{1,2}['|\u2019|\\s])?(\\s*\\d{1,2}[\"|\u201d])?\\s*[N|n|S|s]?)";
+            regex = "([-|+]?\\d{1,3}[d|D|\u00B0|\\s](\\s*\\d{1,2}['|\u2019|\\s])?(\\s*\\d{1,2}[\"|\u201d])?\\s*[N|n|S|s]?)";
             regex += separators;
-            regex += "([-|\\+]?\\d{1,3}[d|D|\u00B0|\\s](\\s*\\d{1,2}['|\u2019|\\s])?(\\s*\\d{1,2}[\"|\u201d])?\\s*[E|e|W|w]?)";
+            regex += "([-|+]?\\d{1,3}[d|D|\u00B0|\\s](\\s*\\d{1,2}['|\u2019|\\s])?(\\s*\\d{1,2}[\"|\u201d])?\\s*[E|e|W|w]?)";
             pattern =  Pattern.compile(regex);
             matcher = pattern.matcher(coordString);
             if (matcher.matches())

@@ -100,7 +100,7 @@ public class WMSLayerStyle extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLogoURL)
+                if (o instanceof WMSLogoURL)
                     this.addLegendURL((WMSLogoURL) o);
             }
         }
@@ -110,7 +110,7 @@ public class WMSLayerStyle extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerInfoURL)
+                if (o instanceof WMSLayerInfoURL)
                     this.setStyleSheetURL((WMSLayerInfoURL) o);
             }
         }
@@ -120,7 +120,7 @@ public class WMSLayerStyle extends AbstractXMLEventParser
             if (parser != null)
             {
                 Object o = parser.parse(ctx, event, args);
-                if (o != null && o instanceof WMSLayerInfoURL)
+                if (o instanceof WMSLayerInfoURL)
                     this.setStyleURL((WMSLayerInfoURL) o);
             }
         }
@@ -192,7 +192,7 @@ public class WMSLayerStyle extends AbstractXMLEventParser
     protected void addLegendURL(WMSLogoURL url)
     {
         if (this.legendURLs == null)
-            this.legendURLs = new HashSet<WMSLogoURL>();
+            this.legendURLs = new HashSet<>();
 
         this.getLegendURLs().add(url);
     }

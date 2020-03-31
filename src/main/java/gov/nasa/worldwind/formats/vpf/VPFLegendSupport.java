@@ -100,7 +100,7 @@ public class VPFLegendSupport
         if (attr.getOutlineStippleFactor() > 0)
         {
             // Dashed line - determine dash array from 16 bit stipple pattern
-            ArrayList<Float> dashList = new ArrayList<Float>();
+            ArrayList<Float> dashList = new ArrayList<>();
             short pattern = attr.getOutlineStipplePattern();
             int length = 0;
             boolean dash = true;

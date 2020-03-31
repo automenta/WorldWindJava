@@ -74,7 +74,7 @@ public class DataChooserPanel extends JPanel
         this.fileSetList = fileSetList;
         addListeners(this.fileSetList);
 
-        this.selectButtons = new HashMap<FileSet, JToggleButton>();
+        this.selectButtons = new HashMap<>();
 
         if (fileSetList != null && fileSetList.size() > 0)
         {
@@ -86,11 +86,7 @@ public class DataChooserPanel extends JPanel
                 checkBox.setSelected(set.isSelected());
                 checkBox.setText(makeTitle(set));
                 checkBox.setAlignmentX(Component.LEFT_ALIGNMENT);
-                checkBox.addItemListener(new ItemListener() {
-                    public void itemStateChanged(ItemEvent e) {
-                        fileSetClicked(e);
-                    }
-                });
+                checkBox.addItemListener(this::fileSetClicked);
                 box.add(checkBox);
 
                 this.selectButtons.put(set, checkBox);
@@ -144,7 +140,7 @@ public class DataChooserPanel extends JPanel
             if (e.getItem() != null && e.getItem() instanceof JComponent)
             {
                 Object property = ((JComponent) e.getItem()).getClientProperty("fileSet");
-                if (property != null && property instanceof FileSet)
+                if (property instanceof FileSet)
                     set = (FileSet) property;
             }
 
@@ -182,7 +178,7 @@ public class DataChooserPanel extends JPanel
     private void fileSetSelectionChanged(Object source)
     {
         // Make sure the CheckBox selection reflects the FileSet selection state.
-        if (source != null && source instanceof FileSet)
+        if (source instanceof FileSet)
         {
             FileSet set = (FileSet) source;
             JToggleButton button = this.selectButtons.get(set);
@@ -254,18 +250,10 @@ public class DataChooserPanel extends JPanel
         Dimension size = new Dimension(35, 20);
         this.selectAllButton.setFont(font);
         this.selectAllButton.setPreferredSize(size);
-        this.selectAllButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                selectAllPressed();
-            }
-        });
+        this.selectAllButton.addActionListener(e -> selectAllPressed());
         this.deselectAllButton.setFont(font);
         this.deselectAllButton.setPreferredSize(size);
-        this.deselectAllButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                deselectAllPressed();
-            }
-        });
+        this.deselectAllButton.addActionListener(e -> deselectAllPressed());
         this.dataScrollPane = new JScrollPane();
         this.dataScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         size = this.dataScrollPane.getPreferredSize();

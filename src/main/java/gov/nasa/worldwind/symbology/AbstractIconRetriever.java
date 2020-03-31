@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * Base class for icon retrievers. This class provides methods for loading and manipulating icons.
@@ -122,7 +123,7 @@ public abstract class AbstractIconRetriever implements IconRetriever
             return false;
 
         AbstractIconRetriever that = (AbstractIconRetriever) o;
-        return this.retrieverPath != null ? this.retrieverPath.equals(that.retrieverPath) : that.retrieverPath == null;
+        return Objects.equals(this.retrieverPath, that.retrieverPath);
     }
 
     /** {@inheritDoc} */

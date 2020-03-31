@@ -32,7 +32,7 @@ public class ShapefileViewer extends ApplicationTemplate
     public static class AppFrame extends ApplicationTemplate.AppFrame
         implements ShapefileLayerFactory.CompletionCallback
     {
-        protected RandomShapeAttributes randomAttrs = new RandomShapeAttributes();
+        protected final RandomShapeAttributes randomAttrs = new RandomShapeAttributes();
 
         public AppFrame()
         {
@@ -57,14 +57,7 @@ public class ShapefileViewer extends ApplicationTemplate
         {
             if (!SwingUtilities.isEventDispatchThread())
             {
-                SwingUtilities.invokeLater(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        completion(result);
-                    }
-                });
+                SwingUtilities.invokeLater(() -> completion(result));
                 return;
             }
 

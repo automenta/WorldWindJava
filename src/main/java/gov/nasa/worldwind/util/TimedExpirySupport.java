@@ -22,7 +22,7 @@ public class TimedExpirySupport
     protected long expiryTime = -1L;
     protected long minExpiryTime;
     protected long maxExpiryTime;
-    protected static Random rand = new Random();
+    protected static final Random rand = new Random();
 
     /** Constructs an instance with minimum expiry interval of 1 second and a max of 2 seconds. */
     public TimedExpirySupport()

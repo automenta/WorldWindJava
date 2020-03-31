@@ -52,7 +52,7 @@ public class PhaseLine extends AbstractMilStd2525TacticalGraphic
     }
 
     /** Path used to render the line. */
-    protected Path path;
+    protected final Path path;
 
     /**
      * Create a new Phase Line.

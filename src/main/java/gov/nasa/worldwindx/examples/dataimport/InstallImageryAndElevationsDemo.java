@@ -18,7 +18,6 @@ import org.w3c.dom.*;
 import javax.swing.*;
 import javax.xml.xpath.XPath;
 import java.awt.*;
-import java.awt.event.*;
 import java.beans.*;
 import java.io.File;
 import java.util.*;
@@ -41,7 +40,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected InstalledDataFrame installedDataFrame;
+        protected final InstalledDataFrame installedDataFrame;
 
         public AppFrame()
         {
@@ -61,13 +60,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
         {
             JButton button = new JButton("Show Installed Data...");
             button.setAlignmentX(Component.LEFT_ALIGNMENT);
-            button.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
-                {
-                    getInstalledDataFrame().setVisible(true);
-                }
-            });
+            button.addActionListener(e -> getInstalledDataFrame().setVisible(true));
 
             Box box = Box.createVerticalBox();
             box.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // top, left, bottom, right
@@ -129,13 +122,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
 
         protected void loadPreviouslyInstalledData()
         {
-            Thread t = new Thread(new Runnable()
-            {
-                public void run()
-                {
-                    loadInstalledDataFromFileStore(fileStore, dataConfigPanel);
-                }
-            });
+            Thread t = new Thread(() -> loadInstalledDataFromFileStore(fileStore, dataConfigPanel));
             t.start();
         }
 
@@ -151,38 +138,29 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
             if (files == null || files.length == 0)
                 return;
 
-            Thread thread = new Thread(new Runnable()
-            {
-                public void run()
+            Thread thread = new Thread(() -> {
+                Document dataConfig = null;
+
+                try
                 {
-                    Document dataConfig = null;
+                    // Install the file into a form usable by WorldWind components.
+                    dataConfig = installDataFromFiles(InstalledDataFrame.this, files, fileStore);
+                }
+                catch (Exception e)
+                {
+                    final String message = e.getMessage();
+                    Logging.logger().log(java.util.logging.Level.FINEST, message, e);
 
-                    try
-                    {
-                        // Install the file into a form usable by WorldWind components.
-                        dataConfig = installDataFromFiles(InstalledDataFrame.this, files, fileStore);
-                    }
-                    catch (Exception e)
-                    {
-                        final String message = e.getMessage();
-                        Logging.logger().log(java.util.logging.Level.FINEST, message, e);
+                    // Show a message dialog indicating that the installation failed, and why.
+                    SwingUtilities.invokeLater(
+                        () -> JOptionPane.showMessageDialog(InstalledDataFrame.this, message, "Installation Error",
+                            JOptionPane.ERROR_MESSAGE));
+                }
 
-                        // Show a message dialog indicating that the installation failed, and why.
-                        SwingUtilities.invokeLater(new Runnable()
-                        {
-                            public void run()
-                            {
-                                JOptionPane.showMessageDialog(InstalledDataFrame.this, message, "Installation Error",
-                                    JOptionPane.ERROR_MESSAGE);
-                            }
-                        });
-                    }
-
-                    if (dataConfig != null)
-                    {
-                        AVList params = new AVListImpl();
-                        addInstalledData(dataConfig, params, dataConfigPanel);
-                    }
+                if (dataConfig != null)
+                {
+                    AVList params = new AVListImpl();
+                    addInstalledData(dataConfig, params, dataConfigPanel);
                 }
             });
             thread.start();
@@ -195,13 +173,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
             this.getContentPane().add(this.dataConfigPanel, BorderLayout.CENTER);
 
             JButton installButton = new JButton("Install...");
-            installButton.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
-                {
-                    installFromFiles();
-                }
-            });
+            installButton.addActionListener(e -> installFromFiles());
 
             JCheckBox fullPyramidCheckBox = new JCheckBox("Create a full pyramid", true);
             // set default option "Full pyramid"
@@ -209,34 +181,30 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
             Configuration.removeKey(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL);
             fullPyramidCheckBox.setToolTipText(TOOLTIP_FULL_PYRAMID);
 
-            fullPyramidCheckBox.addActionListener(new ActionListener()
-            {
-                public void actionPerformed(ActionEvent e)
+            fullPyramidCheckBox.addActionListener(e -> {
+                Object source = e.getSource();
+                if (source instanceof JCheckBox)
                 {
-                    Object source = e.getSource();
-                    if (source instanceof JCheckBox)
-                    {
-                        JCheckBox checkBox = (JCheckBox) source;
-                        String tooltipText;
+                    JCheckBox checkBox = (JCheckBox) source;
+                    String tooltipText;
 
-                        if (checkBox.isSelected())
-                        {
-                            Configuration.setValue(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, true);
-                            Configuration.removeKey(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL);
-                            tooltipText = TOOLTIP_FULL_PYRAMID;
-                        }
-                        else
-                        {
-                            Configuration.removeKey(AVKey.PRODUCER_ENABLE_FULL_PYRAMID);
-                            // Set partial pyramid level:
-                            // "0" - level zero only; "1" levels 0 and 1; "2" levels 0,1,2; etc
-                            // "100%" - full pyramid, "50%" half pyramid, "25%" quarter of pyramid, etc
-                            // "Auto" - whatever default is set in a TileProducer (50%)
-                            Configuration.setValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, "50%");
-                            tooltipText = TOOLTIP_PARTIAL_PYRAMID;
-                        }
-                        checkBox.setToolTipText(tooltipText);
+                    if (checkBox.isSelected())
+                    {
+                        Configuration.setValue(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, true);
+                        Configuration.removeKey(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL);
+                        tooltipText = TOOLTIP_FULL_PYRAMID;
                     }
+                    else
+                    {
+                        Configuration.removeKey(AVKey.PRODUCER_ENABLE_FULL_PYRAMID);
+                        // Set partial pyramid level:
+                        // "0" - level zero only; "1" levels 0 and 1; "2" levels 0,1,2; etc
+                        // "100%" - full pyramid, "50%" half pyramid, "25%" quarter of pyramid, etc
+                        // "Auto" - whatever default is set in a TileProducer (50%)
+                        Configuration.setValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, "50%");
+                        tooltipText = TOOLTIP_PARTIAL_PYRAMID;
+                    }
+                    checkBox.setToolTipText(tooltipText);
                 }
             });
 
@@ -257,13 +225,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
     {
         if (!SwingUtilities.isEventDispatchThread())
         {
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    addInstalledData(dataConfig, params, panel);
-                }
-            });
+            SwingUtilities.invokeLater(() -> addInstalledData(dataConfig, params, panel));
         }
         else
         {
@@ -365,16 +327,12 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
 
         // Configure the ProgressMonitor to receive progress events from the DataStoreProducer. This stops sending
         // progress events when the user clicks the "Cancel" button, ensuring that the ProgressMonitor does not
-        PropertyChangeListener progressListener = new PropertyChangeListener()
-        {
-            public void propertyChange(PropertyChangeEvent evt)
-            {
-                if (progressMonitor.isCanceled())
-                    return;
+        PropertyChangeListener progressListener = evt -> {
+            if (progressMonitor.isCanceled())
+                return;
 
-                if (evt.getPropertyName().equals(AVKey.PROGRESS))
-                    progress.set((int) (100 * (Double) evt.getNewValue()));
-            }
+            if (evt.getPropertyName().equals(AVKey.PROGRESS))
+                progress.set((int) (100 * (Double) evt.getNewValue()));
         };
         producer.addPropertyChangeListener(progressListener);
         progressMonitor.setProgress(0);
@@ -494,7 +452,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
         if (results != null && results.iterator() != null && results.iterator().hasNext())
         {
             Object o = results.iterator().next();
-            if (o != null && o instanceof Document)
+            if (o instanceof Document)
             {
                 return (Document) o;
             }
@@ -601,7 +559,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
         String name = sb.toString();
         sb.setLength(0);
 
-        ArrayList<String> words = new ArrayList<String>();
+        ArrayList<String> words = new ArrayList<>();
 
         StringTokenizer tokens = new StringTokenizer(name, " _:/\\-=!@#$%^&()[]{}|\".,<>;`+");
         String lastWord = null;

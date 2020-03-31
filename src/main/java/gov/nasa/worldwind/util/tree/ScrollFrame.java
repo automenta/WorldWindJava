@@ -64,7 +64,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     /** Attributes to use when the frame is highlighted. */
     protected FrameAttributes highlightAttributes;
     /** Active attributes, either normal or highlight. */
-    protected FrameAttributes activeAttributes = new BasicFrameAttributes(); // re-determined each frame
+    protected final FrameAttributes activeAttributes = new BasicFrameAttributes(); // re-determined each frame
 
     /**
      * The full frame title. This title may be displayed in a truncated form if the frame is too small to accommodate
@@ -88,18 +88,18 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     /** The height, in pixels, of the frame title bar. */
     protected int titleBarHeight = DEFAULT_TITLE_BAR_HEIGHT;
     /** The size, in pixels, of the frame's minimize button. */
-    protected int buttonSize = DEFAULT_BUTTON_SIZE;
+    protected final int buttonSize = DEFAULT_BUTTON_SIZE;
     /** The width of the frame scroll bar. */
-    protected int scrollBarSize = DEFAULT_SCROLL_BAR_SIZE;
+    protected final int scrollBarSize = DEFAULT_SCROLL_BAR_SIZE;
     /** The width of the frame border. */
-    protected int frameBorder = DEFAULT_FRAME_BORDER_WIDTH;
+    protected final int frameBorder = DEFAULT_FRAME_BORDER_WIDTH;
     /** The width of lines used to draw the frame. */
-    protected int frameLineWidth = DEFAULT_LINE_WIDTH;
+    protected final int frameLineWidth = DEFAULT_LINE_WIDTH;
 
     /** Support for setting up and restoring OpenGL state during rendering. */
-    protected OGLStackHandler BEogsh = new OGLStackHandler();
+    protected final OGLStackHandler BEogsh = new OGLStackHandler();
     /** Support for setting up and restoring picking state, and resolving the picked object. */
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
 
     /** Scroll bar to control vertical scrolling. */
     protected ScrollBar verticalScrollBar;
@@ -128,7 +128,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     /** The active animation that is currently playing. */
     protected Animation animation;
     /** Delay in milliseconds between frames of an animation. */
-    protected int animationDelay = DEFAULT_ANIMATION_DELAY;
+    protected final int animationDelay = DEFAULT_ANIMATION_DELAY;
 
     // UI controls
     /** HotSpot to handle user input on the minimize button. */
@@ -136,14 +136,14 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     /** Control to handle resizing the frame. */
     protected FrameResizeControl frameResizeControl;
     /** Width of the pickable frame border. */
-    protected int borderPickWidth = DEFAULT_FRAME_BORDER_PICK_WIDTH;
+    protected final int borderPickWidth = DEFAULT_FRAME_BORDER_PICK_WIDTH;
 
     /** The frame geometry vertices passed to OpenGL. */
     protected DoubleBuffer vertexBuffer;
 
     /** Support class used to render to an offscreen texture. */
-    protected OGLRenderToTextureSupport rttSupport = new OGLRenderToTextureSupport();
-    protected List<ContentTile> tiles = new ArrayList<ContentTile>();
+    protected final OGLRenderToTextureSupport rttSupport = new OGLRenderToTextureSupport();
+    protected final List<ContentTile> tiles = new ArrayList<>();
     /**
      * Indicates whether the contents should be rendered into a texture and cached, or rendered directly. The frame
      * renders into a texture if the frame size can be accommodated by a single texture. If the size is too large to
@@ -158,16 +158,16 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
      * Map that associates logical tiles in the scrollable content with allocated tiles in the texture used to render
      * the content.
      */
-    protected Map<ContentTile, TextureTile> textureTileMap = new HashMap<ContentTile, TextureTile>();
+    protected final Map<ContentTile, TextureTile> textureTileMap = new HashMap<>();
     /** List to manage sub-tiles of the rendering texture. */
-    protected List<TextureTile> textureTiles = new ArrayList<TextureTile>();
+    protected final List<TextureTile> textureTiles = new ArrayList<>();
     /** Dimension of the texture used to render the scrollable content. Must be a power of two. */
     protected int textureDimension;
     /**
      * Dimension of a sub-tile in the rendering texture. Also the dimension of logical tiles in the scrollable content
      * that are rendered into the texture tiles.
      */
-    protected int textureTileDimension = DEFAULT_TEXTURE_TILE_DIMENSION;
+    protected final int textureTileDimension = DEFAULT_TEXTURE_TILE_DIMENSION;
 
     // Frame title fields. These fields are recomputed when the frame size changes, the title text changes, or the
     // title font changes.
@@ -1835,7 +1835,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
 
                 gl.glColor4d(1.0, 1.0, 1.0, 1.0);
 
-                double vertAdjust = (this.titleBarHeight - iconSize.height) / 2;
+                double vertAdjust = (this.titleBarHeight - iconSize.height) / 2.0;
                 TextureCoords texCoords = texture.getTexCoords();
                 gl.glTranslated(drawPoint.x + iconSpace, drawPoint.y + vertAdjust + 1, 1.0);
                 gl.glScaled(iconSize.width, iconSize.height, 1d);
@@ -2368,12 +2368,12 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
      * A tile in the frame content. This class represents one tile in the frame contents, and the time at which that
      * tile was last drawn to texture tile.
      */
-    class ContentTile
+    static class ContentTile
     {
         /** Row in the frame content. */
-        int row;
+        final int row;
         /** Column in the frame content. */
-        int column;
+        final int column;
         /** Time at which this content tile was last drawn to a texture tile. */
         long updateTime;
 
@@ -2421,12 +2421,12 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     }
 
     /** A region of the backing texture used to render one tile of the scrollable content. */
-    class TextureTile implements Comparable<TextureTile>
+    static class TextureTile implements Comparable<TextureTile>
     {
         /** Row of this tile in the frame's backing texture. */
-        int row;
+        final int row;
         /** Column of this tile in the frame's backing texture. */
-        int column;
+        final int column;
         /** The content tile currently rendered in this texture tile. */
         ContentTile currentTile;
         /** The last time that this tile was accessed. Used to implement an LRU tile replacement scheme. */
@@ -2461,7 +2461,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
                 throw new IllegalArgumentException(msg);
             }
 
-            return this.lastUsed < that.lastUsed ? -1 : this.lastUsed == that.lastUsed ? 0 : 1;
+            return Long.compare(this.lastUsed, that.lastUsed);
         }
     }
 }

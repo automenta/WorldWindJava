@@ -29,8 +29,8 @@ public class USDANAIPWMSImageLayer extends WMSTiledImageLayer
 
     public String toString()
     {
-        Object o = this.getStringValue(AVKey.DISPLAY_NAME);
-        return o != null ? (String) o : "USDA FSA Imagery";
+        String o = this.getStringValue(AVKey.DISPLAY_NAME);
+        return o != null ? o : "USDA FSA Imagery";
     }
 }
 

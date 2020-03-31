@@ -55,7 +55,7 @@ public abstract class AbstractShape extends WWObjectImpl
     protected static final int VBO_THRESHOLD = Configuration.getIntegerValue(AVKey.VBO_THRESHOLD, 30);
 
     /** The attributes used if attributes are not specified. */
-    protected static ShapeAttributes defaultAttributes;
+    protected static final ShapeAttributes defaultAttributes;
 
     static
     {
@@ -77,10 +77,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * @return a list of intersections identifying where the line intersects the shape, or null if the line does not
      * intersect the shape.
      *
-     * @throws InterruptedException if the operation is interrupted.
      * @see Terrain
      */
-    abstract public java.util.List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException;
+    abstract public java.util.List<Intersection> intersect(Line line, Terrain terrain);
 
     /**
      * Called during construction to establish any subclass-specific state such as different default values than those
@@ -163,10 +162,9 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @param xmlWriter the export writer to write to.
      *
-     * @throws IOException        if an IO error occurs while writing to the output destination.
      * @throws XMLStreamException if an exception occurs converting this shape's fields to XML.
      */
-    abstract protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException;
+    abstract protected void doExportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException;
 
     /**
      * Creates and returns a new cache entry specific to the subclass.
@@ -185,7 +183,7 @@ public abstract class AbstractShape extends WWObjectImpl
      * The attributes active for a particular pick and render pass. These are determined according to the highlighting
      * mode.
      */
-    protected ShapeAttributes activeAttributes = new BasicShapeAttributes(); // re-determined each frame
+    protected final ShapeAttributes activeAttributes = new BasicShapeAttributes(); // re-determined each frame
 
     protected boolean highlighted;
     protected boolean dragEnabled = true;
@@ -204,12 +202,12 @@ public abstract class AbstractShape extends WWObjectImpl
     protected SurfaceShape surfaceShape;
 
     // Volatile values used only during frame generation.
-    protected OGLStackHandler BEogsh = new OGLStackHandler(); // used for beginDrawing/endDrawing state
+    protected final OGLStackHandler BEogsh = new OGLStackHandler(); // used for beginDrawing/endDrawing state
     protected Layer pickLayer;
     protected PickSupport pickSupport = new PickSupport();
 
     /** Holds globe-dependent computed data. One entry per globe encountered during {@link #render(DrawContext)}. */
-    protected ShapeDataCache shapeDataCache = new ShapeDataCache(60000);
+    protected final ShapeDataCache shapeDataCache = new ShapeDataCache(60000);
 
     // Additional drag context
     protected DraggableSupport draggableSupport = null;
@@ -298,7 +296,7 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     /** Outlined shapes are drawn as {@link gov.nasa.worldwind.render.OutlinedShape}s. */
-    protected OutlinedShape outlineShapeRenderer = new OutlinedShape()
+    protected final OutlinedShape outlineShapeRenderer = new OutlinedShape()
     {
         public boolean isDrawOutline(DrawContext dc, Object shape)
         {
@@ -1579,8 +1577,6 @@ public abstract class AbstractShape extends WWObjectImpl
                     break;
 
                 case GL.GL_TRIANGLE_FAN:
-                    numVertices += (prims.get(i).size() - 2) * 3; // N tris from N + 2 vertices
-                    break;
 
                 case GL.GL_TRIANGLE_STRIP:
                     numVertices += (prims.get(i).size() - 2) * 3; // N tris from N + 2 vertices

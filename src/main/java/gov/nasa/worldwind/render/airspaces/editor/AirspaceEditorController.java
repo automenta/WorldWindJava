@@ -28,7 +28,7 @@ public class AirspaceEditorController implements KeyListener, MouseListener, Mou
     private Airspace activeAirspace;
     private AirspaceControlPoint activeControlPoint;
     // Action/Cursor pairings.
-    private final Map<String, Cursor> actionCursorMap = new HashMap<String, Cursor>();
+    private final Map<String, Cursor> actionCursorMap = new HashMap<>();
 
     protected static final String MOVE_AIRSPACE_LATERALLY = "AirspaceEdiorController.MoveAirspaceLaterally";
     protected static final String MOVE_AIRSPACE_VERTICALLY = "AirspaceEdiorController.MoveAirspaceVertically";

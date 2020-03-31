@@ -18,7 +18,7 @@ public class RPFFrameFileComponents
     public static final String DATA_TAG = "RPFIMG";
 
     // [ rpf location section ]
-    public RPFLocationSection componentLocationTable;
+    public final RPFLocationSection componentLocationTable;
 
     // [ rpf coverage section ]
     public LatLon nwUpperLeft, swLowerleft, neUpperRight, seLowerRight;
@@ -147,12 +147,12 @@ public class RPFFrameFileComponents
         this.horizontalIntervalLongitude = buffer.getDouble();
     }
 
-    public class RelatedImagesSection
+    public static class RelatedImagesSection
     {
         // [ rpf related images section subheader ]
-        public long relatedImageDescriptionTableOffset;
-        public int numOfRelatedImageDescriptionRecords;
-        public int relatedImageDescriptionRecordLength;
+        public final long relatedImageDescriptionTableOffset;
+        public final int numOfRelatedImageDescriptionRecords;
+        public final int relatedImageDescriptionRecordLength;
 
         public RelatedImagesSection(java.nio.ByteBuffer buffer)
         {

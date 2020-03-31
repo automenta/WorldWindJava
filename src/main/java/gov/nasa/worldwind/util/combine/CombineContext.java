@@ -43,7 +43,7 @@ public class CombineContext implements Disposable
         /**
          * The CombineContext that receives forwarded GLU tessellator callbacks.
          */
-        protected CombineContext cc;
+        protected final CombineContext cc;
 
         /**
          * Creates a new TessCallbackAdapter with a CombineContext that receives GLU tessellator callbacks sent to this
@@ -123,13 +123,13 @@ public class CombineContext implements Disposable
     /** The GLU tessellator used to draw shape contours. Initalized during construction. */
     protected GLUtessellator tess;
     /** The list of contours representing the result of a boolean operation on one or more Combinable shapes. */
-    protected ContourList contours = new ContourList();
+    protected final ContourList contours = new ContourList();
     /** The vertices of the current contour currently being assembled. Used by the tess* methods. */
     protected ArrayList<LatLon> currentContour;
     /** Indicates whether this context is currently operating in bounding sector mode. */
     protected boolean isBoundingSectorMode;
     /** The shape bounding sectors associated with this context. */
-    protected ArrayList<Sector> boundingSectors = new ArrayList<Sector>();
+    protected final ArrayList<Sector> boundingSectors = new ArrayList<>();
 
     /**
      * Creates a new combine context with the specified globe, resolution, and the default region of interest.
@@ -313,7 +313,7 @@ public class CombineContext implements Disposable
     @SuppressWarnings("UnusedParameters")
     protected void tessBegin(int type)
     {
-        this.currentContour = new ArrayList<LatLon>();
+        this.currentContour = new ArrayList<>();
     }
 
     protected void tessVertex(Object vertexData)

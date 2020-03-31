@@ -26,7 +26,7 @@ public class GeotiffRasterWriter extends AbstractDataRasterWriter
 
     protected boolean doCanWrite(DataRaster raster, String formatSuffix, File file)
     {
-        return (raster != null) && (raster instanceof BufferedImageRaster || raster instanceof BufferWrapperRaster);
+        return (raster instanceof BufferedImageRaster || raster instanceof BufferWrapperRaster);
     }
 
     protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException

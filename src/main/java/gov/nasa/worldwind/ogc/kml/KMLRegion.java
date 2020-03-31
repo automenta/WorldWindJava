@@ -304,18 +304,18 @@ public class KMLRegion extends KMLAbstractObject
      * The maximum lifespan of this Region's computed data, in milliseconds. Initialized to
      * <code>DEFAULT_DATA_GENERATION_INTERVAL</code>.
      */
-    protected long maxExpiryTime = DEFAULT_DATA_GENERATION_INTERVAL;
+    protected final long maxExpiryTime = DEFAULT_DATA_GENERATION_INTERVAL;
     /**
      * The minimum lifespan of this Region's computed data, in milliseconds. Initialized to
      * <code>DEFAULT_DATA_GENERATION_INTERVAL - 1000</code>.
      */
-    protected long minExpiryTime = Math.max(DEFAULT_DATA_GENERATION_INTERVAL - 1000, 0);
+    protected final long minExpiryTime = Math.max(DEFAULT_DATA_GENERATION_INTERVAL - 1000, 0);
     /**
      * Holds globe-dependent computed Region data. One entry per globe encountered during <code>isActive</code>.
      * Initialized to a new <code>ShapeDataCache</code> with <code>maxTimeSinceLastUsed</code> set to
      * <code>DEFAULT_UNUSED_DATA_LIFETIME</code>.
      */
-    protected ShapeDataCache regionDataCache = new ShapeDataCache(DEFAULT_UNUSED_DATA_LIFETIME);
+    protected final ShapeDataCache regionDataCache = new ShapeDataCache(DEFAULT_UNUSED_DATA_LIFETIME);
     /**
      * Identifies the active globe-dependent data for the current invocation of <code>isActive</code>. The active data
      * is drawn from the <code>regionDataCache</code> at the beginning of the <code>isActive</code> method.
@@ -326,7 +326,7 @@ public class KMLRegion extends KMLAbstractObject
      * <code>KMLRoot's</code> detail hint specifies deviations from this default. Initially
      * <code>DEFAULT_DETAIL_HINT_ORIGIN</code>.
      */
-    protected double detailHintOrigin = DEFAULT_DETAIL_HINT_ORIGIN;
+    protected final double detailHintOrigin = DEFAULT_DETAIL_HINT_ORIGIN;
 
     /**
      * Creates a new <code>KMLRegion</code> with the specified namespace URI, but otherwise does nothing. The new Region

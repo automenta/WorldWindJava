@@ -22,8 +22,8 @@ public class AnimatedGlobe extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame implements RenderingListener
     {
-        protected GLAnimatorControl animator;
-        protected double rotationDegreesPerSecond = 40;
+        protected final GLAnimatorControl animator;
+        protected final double rotationDegreesPerSecond = 40;
         protected long lastTime;
         protected Position eyePosition = Position.fromDegrees(0, 0, 20000000);
 

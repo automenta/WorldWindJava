@@ -33,8 +33,8 @@ public class BoundingBox
             bbox.maxx = Double.parseDouble(maxx);
             bbox.miny = Double.parseDouble(miny);
             bbox.maxy = Double.parseDouble(maxy);
-            bbox.resx = resx != null && !resx.equals("") ? Double.parseDouble(resx) : 0;
-            bbox.resy = resy != null && !resy.equals("") ? Double.parseDouble(resy) : 0;
+            bbox.resx = resx != null && !resx.isEmpty() ? Double.parseDouble(resx) : 0;
+            bbox.resy = resy != null && !resy.isEmpty() ? Double.parseDouble(resy) : 0;
         }
         catch (NumberFormatException e)
         {

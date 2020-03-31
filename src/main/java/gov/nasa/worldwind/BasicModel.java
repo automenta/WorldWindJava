@@ -235,8 +235,7 @@ public class BasicModel extends WWObjectImpl implements Model
         Globe globe = this.getGlobe();
         if (globe != null)
         {
-            Extent e = globe.getExtent();
-            return e;
+            return globe.getExtent();
         }
 
         return null;

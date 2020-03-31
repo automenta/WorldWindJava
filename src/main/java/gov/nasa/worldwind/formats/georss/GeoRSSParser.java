@@ -70,7 +70,7 @@ public class GeoRSSParser {
     
     private static String fixNamespaceQualification(String xmlString) {
         String lcaseString = xmlString.toLowerCase();
-        StringBuffer qualifiers = new StringBuffer();
+        StringBuilder qualifiers = new StringBuilder();
         
         if (lcaseString.contains("georss:") && !lcaseString.contains(GEORSS_URI)) {
             qualifiers.append(" xmlns:georss=\"");

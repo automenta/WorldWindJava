@@ -34,9 +34,9 @@ import java.util.logging.Level;
  */
 public class GDALUtils {
 
-    public static long ALPHA_MASK = 0xFFFFFFFFL;
+    public static final long ALPHA_MASK = 0xFFFFFFFFL;
 
-    protected static byte ALPHA_TRANSPARENT = (byte) 0x00;
+    protected static final byte ALPHA_TRANSPARENT = (byte) 0x00;
     protected static byte ALPHA_OPAQUE = (byte) 0xFF;
 
     protected static final String JAVA_LIBRARY_PATH = "java.library.path";
@@ -50,8 +50,8 @@ public class GDALUtils {
     protected static final String gdalalljni = Configuration.isMacOS()
             ? "gdalalljni" : (is32bitArchitecture() ? "gdalalljni32" : "gdalalljni64");
 
-    protected static final CopyOnWriteArraySet<String> loadedLibraries = new CopyOnWriteArraySet<String>();
-    protected static final CopyOnWriteArraySet<String> failedLibraries = new CopyOnWriteArraySet<String>();
+    protected static final CopyOnWriteArraySet<String> loadedLibraries = new CopyOnWriteArraySet<>();
+    protected static final CopyOnWriteArraySet<String> failedLibraries = new CopyOnWriteArraySet<>();
 
     static {
         // Allow the app or user to prevent library loader replacement.
@@ -122,10 +122,9 @@ public class GDALUtils {
                 String message = Logging.getMessage("gdal.UnknownBuild", gdal.VersionInfo());
                 Logging.logger().finest(message);
             }
-        } catch (ClassNotFoundException cnf) {
+        }
+        catch (Throwable cnf) {
             Logging.logger().finest(cnf.getMessage());
-        } catch (Throwable t) {
-            Logging.logger().finest(t.getMessage());
         }
     }
 
@@ -523,7 +522,7 @@ public class GDALUtils {
                 if (dbls[0] == null) {
                     double[] minmax = new double[2];
                     imageBand.ComputeRasterMinMax(minmax);
-                    maxValue = (minmax[1] > maxValue) ? minmax[1] : maxValue;
+                    maxValue = Math.max(minmax[1], maxValue);
                 } else {
                     maxValue = (dbls[0] > maxValue) ? dbls[0] : maxValue;
                 }
@@ -551,9 +550,7 @@ public class GDALUtils {
             offsets[destBandIdx] = 0;
         }
 
-        int bitsPerColor = gdal.GetDataTypeSize(bandDataType);
-
-        int actualBitsPerColor = bitsPerColor;
+        int actualBitsPerColor = gdal.GetDataTypeSize(bandDataType);
 
         if (params.hasKey(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL)) {
             actualBitsPerColor = (Integer) params.getValue(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL);
@@ -1522,13 +1519,13 @@ public class GDALUtils {
 
             Object o = params.getValue(AVKey.BANDS_ORDER);
 
-            if (null != o && o instanceof Integer[]) {
+            if (o instanceof Integer[]) {
                 Integer[] order = (Integer[]) o;
                 bandsOrder = new int[order.length];
                 for (int i = 0; i < order.length; i++) {
                     bandsOrder[i] = order[i];
                 }
-            } else if (null != o && o instanceof int[]) {
+            } else if (o instanceof int[]) {
                 bandsOrder = (int[]) o;
             }
 
@@ -1544,9 +1541,11 @@ public class GDALUtils {
                 throw new IllegalArgumentException(message);
             }
 
-            for (int i = 0; i < bandsOrder.length; i++) {
-                if (bandsOrder[i] < 0 || bandsOrder[i] >= bandsCount) {
-                    String message = Logging.getMessage("generic.InvalidBandOrder", bandsOrder[i], bandsCount);
+            for (int value : bandsOrder)
+            {
+                if (value < 0 || value >= bandsCount)
+                {
+                    String message = Logging.getMessage("generic.InvalidBandOrder", value, bandsCount);
                     Logging.logger().severe(message);
                     throw new IllegalArgumentException(message);
                 }
@@ -1578,7 +1577,7 @@ public class GDALUtils {
         }
 
         Object o = params.getValue(AVKey.SECTOR);
-        if (null == o || !(o instanceof Sector)) {
+        if (!(o instanceof Sector)) {
             String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);

@@ -8,7 +8,6 @@ package gov.nasa.worldwind.util.xml.xal;
 
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import java.util.*;
 
@@ -27,7 +26,6 @@ public class XALAddressLines extends XALAbstractObject
 
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
     {
         if (o instanceof XALAddressLine)
             this.addAddressLine((XALAddressLine) o);
@@ -41,7 +39,7 @@ public class XALAddressLines extends XALAbstractObject
     protected void addAddressLine(XALAddressLine o)
     {
         if (this.addressLines == null)
-            this.addressLines = new ArrayList<XALAddressLine>();
+            this.addressLines = new ArrayList<>();
 
         this.addressLines.add(o);
     }

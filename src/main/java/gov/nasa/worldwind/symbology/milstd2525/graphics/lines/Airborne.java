@@ -33,7 +33,7 @@ public class Airborne extends Aviation
      */
     public static List<String> getSupportedGraphics()
     {
-        return Arrays.asList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_ABN);
+        return Collections.singletonList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_ABN);
     }
 
     /**

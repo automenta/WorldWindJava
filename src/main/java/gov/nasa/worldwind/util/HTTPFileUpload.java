@@ -37,10 +37,10 @@ public class HTTPFileUpload {
 
     protected final URL url;
 
-    protected ArrayList<FileInfo> filesToUpload = new ArrayList<>();
+    protected final ArrayList<FileInfo> filesToUpload = new ArrayList<>();
 
     protected String requestMethod = "POST";
-    protected AVList requestProperties = new AVListImpl();
+    protected final AVList requestProperties = new AVListImpl();
 
     protected long totalBytesToUpload = 0;
     protected long totalBytesUploaded = 0;
@@ -48,7 +48,7 @@ public class HTTPFileUpload {
     protected int totalFilesFailed = 0;
     protected float lastProgress = 0;
 
-    protected class FileInfo {
+    protected static class FileInfo {
 
         protected final String uploadName;
         protected final Object uploadItem;
@@ -180,7 +180,8 @@ public class HTTPFileUpload {
         }
     }
 
-    public void send() throws Exception {
+    public void send()
+    {
         for (FileInfo info : this.filesToUpload) {
             try {
                 if (info.uploadItem instanceof File) {
@@ -428,9 +429,7 @@ public class HTTPFileUpload {
     protected void writeRequestProperties(HttpURLConnection conn) throws IOException {
         if (null != conn) {
             conn.setRequestMethod(this.getRequestMethod());
-            this.requestProperties.getEntries().forEach((requestProperty) -> {
-                conn.setRequestProperty(requestProperty.getKey(), (String) requestProperty.getValue());
-            });
+            this.requestProperties.getEntries().forEach((requestProperty) -> conn.setRequestProperty(requestProperty.getKey(), (String) requestProperty.getValue()));
         }
     }
 

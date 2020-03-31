@@ -12,7 +12,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.image.*;
-import java.beans.*;
 import java.util.ArrayList;
 
 /**
@@ -40,13 +39,7 @@ public class TracksPanel extends JPanel
         {
             this.tracksTabbedPane.setMinimumSize(new Dimension(361, 223));
             this.tracksTabbedPane.setPreferredSize(new Dimension(361, 223));
-            this.tracksTabbedPane.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent e)
-                {
-                    tracksTabbedPaneStateChanged(e);
-                }
-            });
+            this.tracksTabbedPane.addChangeListener(this::tracksTabbedPaneStateChanged);
         }
         add(this.tracksTabbedPane, BorderLayout.CENTER);
     }
@@ -68,7 +61,7 @@ public class TracksPanel extends JPanel
 
     public Iterable<SARTrack> getAllTracks()
     {
-        ArrayList<SARTrack> tracks = new ArrayList<SARTrack>();
+        ArrayList<SARTrack> tracks = new ArrayList<>();
         for (int i = 0; i < this.tracksTabbedPane.getTabCount(); i++)
         {
             TrackPanel tp = (TrackPanel) this.tracksTabbedPane.getComponentAt(i);
@@ -86,18 +79,13 @@ public class TracksPanel extends JPanel
         tp.setAngleFormat(this.angleFormat);
         tp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // top, left, bottom, right
         this.tracksTabbedPane.addTab(track.getName(), makeColorCircle(track.getColor()), tp);
-        track.addPropertyChangeListener(new PropertyChangeListener()
-        {
-            @SuppressWarnings({"StringEquality"})
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent)
-            {
-                if (propertyChangeEvent.getPropertyName() == TrackController.TRACK_REMOVE)
-                    removeTrack((SARTrack) propertyChangeEvent.getSource());
-                else if (propertyChangeEvent.getPropertyName() == TrackController.TRACK_NAME)
-                    renameTrack((SARTrack) propertyChangeEvent.getSource());
-                else if (propertyChangeEvent.getPropertyName() == TrackController.TRACK_DIRTY_BIT)
-                    updateTrackDirty((SARTrack) propertyChangeEvent.getSource());
-            }
+        track.addPropertyChangeListener(propertyChangeEvent -> {
+            if (propertyChangeEvent.getPropertyName() == TrackController.TRACK_REMOVE)
+                removeTrack((SARTrack) propertyChangeEvent.getSource());
+            else if (propertyChangeEvent.getPropertyName() == TrackController.TRACK_NAME)
+                renameTrack((SARTrack) propertyChangeEvent.getSource());
+            else if (propertyChangeEvent.getPropertyName() == TrackController.TRACK_DIRTY_BIT)
+                updateTrackDirty((SARTrack) propertyChangeEvent.getSource());
         });
         this.tracksTabbedPane.setSelectedComponent(tp);
     }

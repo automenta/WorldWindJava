@@ -15,7 +15,6 @@ import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;
-import java.io.IOException;
 import java.nio.*;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class Box extends RigidShape
     protected static final int DEFAULT_SUBDIVISIONS = 0;
 
     @SuppressWarnings({"FieldCanBeLocal"})
-    protected int faceCount = 6;   // number of separate geometric faces that comprise this Box
+    protected final int faceCount = 6;   // number of separate geometric faces that comprise this Box
     // The faces are numbered as follows:
     // face 0: right face
     // face 1: front face
@@ -38,7 +37,7 @@ public class Box extends RigidShape
     // face 3: back face
     // face 4: top face
     // face 5: bottom face
-    protected int subdivisions = DEFAULT_SUBDIVISIONS;
+    protected final int subdivisions = DEFAULT_SUBDIVISIONS;
 
     /** Construct a box with default parameters */
     public Box()
@@ -397,7 +396,7 @@ public class Box extends RigidShape
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException
+    protected void doExportAsKML(XMLStreamWriter xmlWriter)
     {
         String message = Logging.getMessage("generic.UnsupportedOperation", "doExportAsKML");
         Logging.logger().severe(message);

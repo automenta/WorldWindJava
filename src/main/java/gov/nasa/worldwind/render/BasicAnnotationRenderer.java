@@ -7,7 +7,6 @@ package gov.nasa.worldwind.render;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.Locatable;
-import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.PickSupport;
@@ -29,10 +28,10 @@ import java.util.logging.Level;
  */
 public class BasicAnnotationRenderer implements AnnotationRenderer
 {
-    protected PickSupport pickSupport = new PickSupport();
+    protected final PickSupport pickSupport = new PickSupport();
     protected long currentFrameTime;
-    protected HashSet<Annotation> currentPickAnnotations = new HashSet<Annotation>();
-    protected HashSet<Annotation> currentDrawAnnotations = new HashSet<Annotation>();
+    protected final HashSet<Annotation> currentPickAnnotations = new HashSet<>();
+    protected final HashSet<Annotation> currentDrawAnnotations = new HashSet<>();
 
     protected static boolean isAnnotationValid(Annotation annotation, boolean checkPosition)
     {
@@ -297,8 +296,8 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
 
     protected class OrderedAnnotation implements OrderedRenderable
     {
-        protected Annotation annotation;
-        protected double eyeDistance;
+        protected final Annotation annotation;
+        protected final double eyeDistance;
         protected Layer layer;
 
         public OrderedAnnotation(Annotation annotation, double eyeDistance)
@@ -333,10 +332,6 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
                     this.doRender(dc, oa);
                 }
             }
-            catch (WWRuntimeException e)
-            {
-                Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingAnnotation", e);
-            }
             catch (Exception e)
             {
                 Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingAnnotation", e);
@@ -363,10 +358,6 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
                     oa.annotation.setPickSupport(BasicAnnotationRenderer.this.pickSupport);
                     this.doRender(dc, oa);
                 }
-            }
-            catch (WWRuntimeException e)
-            {
-                Logging.logger().log(Level.SEVERE, "generic.ExceptionWhilePickingAnnotation", e);
             }
             catch (Exception e)
             {

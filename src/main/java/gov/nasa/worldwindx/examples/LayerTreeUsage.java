@@ -24,10 +24,10 @@ public class LayerTreeUsage extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected LayerTree layerTree;
-        protected RenderableLayer hiddenLayer;
+        protected final LayerTree layerTree;
+        protected final RenderableLayer hiddenLayer;
 
-        protected HotSpotController controller;
+        protected final HotSpotController controller;
 
         public AppFrame()
         {

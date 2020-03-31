@@ -60,10 +60,10 @@ public class GeoJSONEventParser extends BasicJSONEventParser
     protected Object resolveArray(JSONEventParserContext ctx, JSONEvent event)
     {
         if (GeoJSONConstants.FIELD_FEATURES.equals(ctx.getCurrentFieldName()))
-            return this.array.toArray(new GeoJSONFeature[this.array.size()]);
+            return this.array.toArray(new GeoJSONFeature[0]);
 
         else if (GeoJSONConstants.FIELD_GEOMETRIES.equals(ctx.getCurrentFieldName()))
-            return this.array.toArray(new GeoJSONFeature[this.array.size()]);
+            return this.array.toArray(new GeoJSONFeature[0]);
 
         return super.resolveArray(ctx, event);
     }

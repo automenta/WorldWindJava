@@ -20,8 +20,8 @@ import java.util.*;
  */
 public class GMLRectifiedGrid extends GMLGrid
 {
-    protected List<String> axisNames = new ArrayList<String>(2);
-    protected List<String> offsetVectors = new ArrayList<String>(2);
+    protected final List<String> axisNames = new ArrayList<>(2);
+    protected final List<String> offsetVectors = new ArrayList<>(2);
 
     public GMLRectifiedGrid(String namespaceURI)
     {
@@ -40,7 +40,7 @@ public class GMLRectifiedGrid extends GMLGrid
 
     public List<Vec4> getOffsetVectors()
     {
-        List<Vec4> vectors = new ArrayList<Vec4>(this.offsetVectors.size());
+        List<Vec4> vectors = new ArrayList<>(this.offsetVectors.size());
 
         for (String s : this.offsetVectors)
         {

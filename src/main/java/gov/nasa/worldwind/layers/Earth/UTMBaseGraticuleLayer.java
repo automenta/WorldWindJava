@@ -29,10 +29,10 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
     public static final String GRATICULE_UTM = "Graticule.UTM";
 
     protected static final double ONEHT = 100e3;
-    protected static final int UTM_MIN_LATITUDE = -80;
-    protected static final int UTM_MAX_LATITUDE = 84;
+    protected static final double UTM_MIN_LATITUDE = -80;
+    protected static final double UTM_MAX_LATITUDE = 84;
 
-    protected MetricScaleSupport metricScaleSupport = new MetricScaleSupport();
+    protected final MetricScaleSupport metricScaleSupport = new MetricScaleSupport();
     protected long frameCount = 0;
 
     // Exceptions for some meridians. Values: longitude, min latitude, max latitude
@@ -264,12 +264,12 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
         OrbitView view = (OrbitView) dc.getView();
         // Compute labels offset from view center
         Position centerPos = view.getCenterPosition();
-        Double pixelSizeDegrees = Angle.fromRadians(view.computePixelSizeAtDistance(view.getZoom())
+        double pixelSizeDegrees = Angle.fromRadians(view.computePixelSizeAtDistance(view.getZoom())
             / dc.getGlobe().getEquatorialRadius()).degrees;
-        Double labelOffsetDegrees = pixelSizeDegrees * view.getViewport().getWidth() / 4;
+        double labelOffsetDegrees = pixelSizeDegrees * view.getViewport().getWidth() / 4;
         Position labelPos = Position.fromDegrees(centerPos.getLatitude().degrees - labelOffsetDegrees,
             centerPos.getLongitude().degrees - labelOffsetDegrees, 0);
-        Double labelLatDegrees = labelPos.getLatitude().normalizedLatitude().degrees;
+        double labelLatDegrees = labelPos.getLatitude().normalizedLatitude().degrees;
         labelLatDegrees = Math.min(Math.max(labelLatDegrees, -76), 78);
         labelPos = new Position(Angle.fromDegrees(labelLatDegrees), labelPos.getLongitude().normalizedLongitude(), 0);
 
@@ -282,7 +282,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
                     if (ge.renderable instanceof GeographicText)
                     {
                         GeographicText gt = (GeographicText) ge.renderable;
-                        if (labelPos.getLatitude().degrees < 72 || "*32*34*36*".indexOf("*" + gt.getText() + "*") == -1)
+                        if (labelPos.getLatitude().degrees < 72 || !"*32*34*36*".contains("*" + gt.getText() + "*"))
                         {
                             // Adjust label position according to eye position
                             Position pos = gt.getPosition();
@@ -307,9 +307,9 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
     /** Create the graticule grid elements */
     private void createUTMRenderables()
     {
-        this.gridElements = new ArrayList<GridElement>();
+        this.gridElements = new ArrayList<>();
 
-        ArrayList<Position> positions = new ArrayList<Position>();
+        ArrayList<Position> positions = new ArrayList<>();
 
         // Generate meridians and zone labels
         int lon = -180;
@@ -330,7 +330,6 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
                 // 'regular' UTM meridians
                 maxLat = 84;
                 positions.add(new Position(Angle.fromDegrees(60), longitude, 10e3));
-                positions.add(new Position(Angle.fromDegrees(maxLat), longitude, 10e3));
             }
             else
             {
@@ -338,21 +337,20 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
                 if (lon == 6)
                 {
                     maxLat = 56;
-                    positions.add(new Position(Angle.fromDegrees(maxLat), longitude, 10e3));
                 }
                 else
                 {
                     maxLat = 72;
                     positions.add(new Position(Angle.fromDegrees(60), longitude, 10e3));
-                    positions.add(new Position(Angle.fromDegrees(maxLat), longitude, 10e3));
                 }
             }
-            Object polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.GREAT_CIRCLE);
+            positions.add(new Position(Angle.fromDegrees(maxLat), longitude, 10e3));
+            Object polyline = createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
             Sector sector = Sector.fromDegrees(-80, maxLat, lon, lon);
             this.gridElements.add(new GridElement(sector, polyline, GridElement.TYPE_LINE));
 
             // Zone label
-            GeographicText text = new UserFacingText(zoneNumber + "",
+            GeographicText text = new UserFacingText(String.valueOf(zoneNumber),
                 Position.fromDegrees(0, lon + 3, 0));
             sector = Sector.fromDegrees(-90, 90, lon + 3, lon + 3);
             this.gridElements.add(new GridElement(sector, text, GridElement.TYPE_LONGITUDE_LABEL));
@@ -369,7 +367,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
             lon = specialMeridians[i][0];
             positions.add(new Position(Angle.fromDegrees(specialMeridians[i][1]), Angle.fromDegrees(lon), 10e3));
             positions.add(new Position(Angle.fromDegrees(specialMeridians[i][2]), Angle.fromDegrees(lon), 10e3));
-            Object polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.GREAT_CIRCLE);
+            Object polyline = createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
             Sector sector = Sector.fromDegrees(specialMeridians[i][1], specialMeridians[i][2], lon, lon);
             this.gridElements.add(new GridElement(sector, polyline, GridElement.TYPE_LINE));
         }
@@ -388,14 +386,14 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
                 positions.add(new Position(latitude, Angle.fromDegrees(lon + 30), 10e3));
                 positions.add(new Position(latitude, Angle.fromDegrees(lon + 60), 10e3));
                 positions.add(new Position(latitude, Angle.fromDegrees(lon + 90), 10e3));
-                Object polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.LINEAR);
+                Object polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
                 Sector sector = Sector.fromDegrees(lat, lat, lon, lon + 90);
                 this.gridElements.add(new GridElement(sector, polyline, GridElement.TYPE_LINE));
             }
             // Latitude band label
             if (i < 20)
             {
-                GeographicText text = new UserFacingText(latBands.charAt(i) + "",
+                GeographicText text = new UserFacingText(String.valueOf(latBands.charAt(i)),
                     Position.fromDegrees(lat + 4, 0, 0));
                 Sector sector = Sector.fromDegrees(lat + 4, lat + 4, -180, 180);
                 this.gridElements.add(new GridElement(sector, text, GridElement.TYPE_LATITUDE_LABEL));
@@ -543,22 +541,22 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
                 || ge.type.equals(GridElement.TYPE_LINE_EAST)
                 || ge.type.equals(GridElement.TYPE_LINE_WEST))
             {
-                levelExtremes.minX = ge.value < levelExtremes.minX ? ge.value : levelExtremes.minX;
-                levelExtremes.maxX = ge.value > levelExtremes.maxX ? ge.value : levelExtremes.maxX;
+                levelExtremes.minX = Math.min(ge.value, levelExtremes.minX);
+                levelExtremes.maxX = Math.max(ge.value, levelExtremes.maxX);
             }
             else if (ge.type.equals(GridElement.TYPE_LINE_NORTHING)
                 || ge.type.equals(GridElement.TYPE_LINE_SOUTH)
                 || ge.type.equals(GridElement.TYPE_LINE_NORTH))
             {
                 if (hemisphere.equals(levelExtremes.minYHemisphere))
-                    levelExtremes.minY = ge.value < levelExtremes.minY ? ge.value : levelExtremes.minY;
+                    levelExtremes.minY = Math.min(ge.value, levelExtremes.minY);
                 else if (hemisphere.equals(AVKey.SOUTH))
                 {
                     levelExtremes.minY = ge.value;
                     levelExtremes.minYHemisphere = hemisphere;
                 }
                 if (hemisphere.equals(levelExtremes.maxYHemisphere))
-                    levelExtremes.maxY = ge.value > levelExtremes.maxY ? ge.value : levelExtremes.maxY;
+                    levelExtremes.maxY = Math.max(ge.value, levelExtremes.maxY);
                 else if (hemisphere.equals(AVKey.NORTH))
                 {
                     levelExtremes.maxY = ge.value;
@@ -573,9 +571,9 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
             {
                 OrbitView view = (OrbitView) dc.getView();
                 // Compute easting and northing label offsets
-                Double pixelSize = view.computePixelSizeAtDistance(view.getZoom());
-                Double eastingOffset = view.getViewport().width * pixelSize * offsetFactorX / 2;
-                Double northingOffset = view.getViewport().height * pixelSize * offsetFactorY / 2;
+                double pixelSize = view.computePixelSizeAtDistance(view.getZoom());
+                double eastingOffset = view.getViewport().width * pixelSize * offsetFactorX / 2;
+                double northingOffset = view.getViewport().height * pixelSize * offsetFactorY / 2;
                 // Derive labels center pos from the view center
                 Position centerPos = view.getCenterPosition();
                 double labelEasting;
@@ -733,7 +731,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
     protected ArrayList<SquareZone> createSquaresGrid(int UTMZone, String hemisphere, Sector UTMZoneSector,
         double minEasting, double maxEasting, double minNorthing, double maxNorthing)
     {
-        ArrayList<SquareZone> squares = new ArrayList<SquareZone>();
+        ArrayList<SquareZone> squares = new ArrayList<>();
         double startEasting = Math.floor(minEasting / ONEHT) * ONEHT;
         double startNorthing = Math.floor(minNorthing / ONEHT) * ONEHT;
         int cols = (int) Math.ceil((maxEasting - startEasting) / ONEHT);
@@ -778,17 +776,17 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
     {
         public static final int MIN_CELL_SIZE_PIXELS = 50;
 
-        protected int UTMZone;
-        protected String hemisphere;
-        protected Sector UTMZoneSector;
-        protected double SWEasting;
-        protected double SWNorthing;
-        protected double size;
+        protected final int UTMZone;
+        protected final String hemisphere;
+        protected final Sector UTMZoneSector;
+        protected final double SWEasting;
+        protected final double SWNorthing;
+        protected final double size;
 
         protected Position sw, se, nw, ne;  // Four corners position
         protected Sector boundingSector;
         protected LatLon centroid;
-        protected LatLon squareCenter;
+        protected final LatLon squareCenter;
         protected boolean isTruncated = false;
 
         public SquareSector(int UTMZone, String hemisphere, Sector UTMZoneSector, double SWEasting,
@@ -827,7 +825,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
 
         private void adjustDateLineCrossingPoints()
         {
-            ArrayList<LatLon> corners = new ArrayList<LatLon>(Arrays.asList(sw, se, nw, ne));
+            ArrayList<LatLon> corners = new ArrayList<>(Arrays.asList(sw, se, nw, ne));
             if (!LatLon.locationsCrossDateLine(corners))
                 return;
 
@@ -917,7 +915,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
         {
             View view = dc.getView();
             Vec4 centerPoint = getSurfacePoint(dc, this.centroid.getLatitude(), this.centroid.getLongitude());
-            Double distance = view.getEyePoint().distanceTo3(centerPoint);
+            double distance = view.getEyePoint().distanceTo3(centerPoint);
             return this.size / view.computePixelSizeAtDistance(distance);
         }
     }
@@ -1017,15 +1015,14 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
 
         public void createRenderables()
         {
-            this.gridElements = new ArrayList<GridElement>();
+            this.gridElements = new ArrayList<>();
 
-            ArrayList<Position> positions = new ArrayList<Position>();
+            ArrayList<Position> positions = new ArrayList<>();
             Position p1, p2;
             Object polyline;
             Sector lineSector;
 
             // left segment
-            positions.clear();
             if (this.isTruncated)
             {
                 computeTruncatedSegment(sw, nw, this.UTMZoneSector, positions);
@@ -1039,7 +1036,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
             {
                 p1 = positions.get(0);
                 p2 = positions.get(1);
-                polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.GREAT_CIRCLE);
+                polyline = createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
                 lineSector = Sector.boundingSector(p1, p2);
                 GridElement ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE_WEST);
                 ge.setValue(this.SWEasting);
@@ -1061,7 +1058,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
             {
                 p1 = positions.get(0);
                 p2 = positions.get(1);
-                polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.GREAT_CIRCLE);
+                polyline = createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
                 lineSector = Sector.boundingSector(p1, p2);
                 GridElement ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE_EAST);
                 ge.setValue(this.SWEasting + this.size);
@@ -1083,7 +1080,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
             {
                 p1 = positions.get(0);
                 p2 = positions.get(1);
-                polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.GREAT_CIRCLE);
+                polyline = createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
                 lineSector = Sector.boundingSector(p1, p2);
                 GridElement ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE_SOUTH);
                 ge.setValue(this.SWNorthing);
@@ -1105,7 +1102,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
             {
                 p1 = positions.get(0);
                 p2 = positions.get(1);
-                polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.GREAT_CIRCLE);
+                polyline = createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
                 lineSector = Sector.boundingSector(p1, p2);
                 GridElement ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE_NORTH);
                 ge.setValue(this.SWNorthing + this.size);
@@ -1229,7 +1226,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
 
         public void createSubGrids()
         {
-            this.subGrids = new ArrayList<SquareGrid>();
+            this.subGrids = new ArrayList<>();
             double gridStep = this.size / 10;
             for (int i = 0; i < 10; i++)
             {
@@ -1247,10 +1244,10 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
 
         public void createRenderables()
         {
-            this.gridElements = new ArrayList<GridElement>();
+            this.gridElements = new ArrayList<>();
             double gridStep = this.size / 10;
             Position p1, p2;
-            ArrayList<Position> positions = new ArrayList<Position>();
+            ArrayList<Position> positions = new ArrayList<>();
 
             // South-North lines
             for (int i = 1; i <= 9; i++)
@@ -1272,7 +1269,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
                 {
                     p1 = positions.get(0);
                     p2 = positions.get(1);
-                    Object polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.GREAT_CIRCLE);
+                    Object polyline = createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
                     Sector lineSector = Sector.boundingSector(p1, p2);
                     GridElement ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE_EASTING);
                     ge.setValue(easting);
@@ -1299,7 +1296,7 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer
                 {
                     p1 = positions.get(0);
                     p2 = positions.get(1);
-                    Object polyline = createLineRenderable(new ArrayList<Position>(positions), AVKey.GREAT_CIRCLE);
+                    Object polyline = createLineRenderable(new ArrayList<>(positions), AVKey.GREAT_CIRCLE);
                     Sector lineSector = Sector.boundingSector(p1, p2);
                     GridElement ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE_NORTHING);
                     ge.setValue(northing);

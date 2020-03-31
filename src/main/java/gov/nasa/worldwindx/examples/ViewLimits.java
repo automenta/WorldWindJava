@@ -15,7 +15,6 @@ import gov.nasa.worldwind.view.orbit.*;
 
 import javax.swing.Box;
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -311,13 +310,9 @@ public class ViewLimits extends ApplicationTemplate
         {
             final JSpinner spinner = new JSpinner(new SpinnerNumberModel(
                 initialValue, min, max, 0.01));
-            spinner.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent changeEvent)
-                {
-                    ActionEvent actionEvent = new ActionEvent(spinner, 0, actionCommand);
-                    actionPerformed(actionEvent);
-                }
+            spinner.addChangeListener(changeEvent -> {
+                ActionEvent actionEvent = new ActionEvent(spinner, 0, actionCommand);
+                actionPerformed(actionEvent);
             });
 
             Dimension preferredSize = spinner.getPreferredSize();
@@ -335,9 +330,9 @@ public class ViewLimits extends ApplicationTemplate
 
     public static class Controller implements ActionListener
     {
-        protected AppFrame appFrame;
-        protected SurfaceSector surfaceSector;
-        protected RenderableLayer layer;
+        protected final AppFrame appFrame;
+        protected final SurfaceSector surfaceSector;
+        protected final RenderableLayer layer;
 
         protected static final Sector DEFAULT_SECTOR_LIMITS = Sector.fromDegrees(40, 50, -130, -120);
 
@@ -383,20 +378,11 @@ public class ViewLimits extends ApplicationTemplate
                 return;
             }
 
-            if (actionCommand == SECTOR_LIMITS_CHANGED
-                || actionCommand == HEADING_LIMITS_CHANGED
-                || actionCommand == PITCH_LIMITS_CHANGED
-                || actionCommand == ZOOM_LIMITS_CHANGED)
+            switch (actionCommand)
             {
-                this.updateViewLimits();
-            }
-            else if (actionCommand == LOAD)
-            {
-                this.loadObjects();
-            }
-            else if (actionCommand == SAVE)
-            {
-                this.saveObjects();
+                case SECTOR_LIMITS_CHANGED, HEADING_LIMITS_CHANGED, PITCH_LIMITS_CHANGED, ZOOM_LIMITS_CHANGED -> this.updateViewLimits();
+                case LOAD -> this.loadObjects();
+                case SAVE -> this.saveObjects();
             }
         }
 
@@ -475,13 +461,13 @@ public class ViewLimits extends ApplicationTemplate
         public OrbitView getOrbitView()
         {
             View view = this.appFrame.getWwd().getView();
-            return (view != null && view instanceof OrbitView) ? (OrbitView) view : null;
+            return (view instanceof OrbitView) ? (OrbitView) view : null;
         }
 
         public void updateRenderables()
         {
             View view = this.appFrame.getWwd().getView();
-            if (view == null || !(view instanceof OrbitView))
+            if (!(view instanceof OrbitView))
             {
                 return;
             }

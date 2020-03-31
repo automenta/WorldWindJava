@@ -34,14 +34,14 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer
 
     protected static final int MIN_CELL_SIZE_PIXELS = 40; // TODO: make settable
 
-    protected GraticuleTile[][] gridTiles = new GraticuleTile[18][36]; // 10 degrees row/col
-    protected ArrayList<Double> latitudeLabels = new ArrayList<Double>();
-    protected ArrayList<Double> longitudeLabels = new ArrayList<Double>();
+    protected final GraticuleTile[][] gridTiles = new GraticuleTile[18][36]; // 10 degrees row/col
+    protected final ArrayList<Double> latitudeLabels = new ArrayList<>();
+    protected final ArrayList<Double> longitudeLabels = new ArrayList<>();
     protected String angleFormat = Angle.ANGLE_FORMAT_DMS;
     /**
      * Indicates the eye altitudes in meters below which each level should be displayed.
      */
-    protected double[] thresholds = new double[] {1200e3, 600e3, 180e3}; // 30 min, 15 min, 5 min
+    protected final double[] thresholds = new double[] {1200e3, 600e3, 180e3}; // 30 min, 15 min, 5 min
 
     public GARSGraticuleLayer()
     {
@@ -238,7 +238,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer
 
     protected ArrayList<GraticuleTile> getVisibleTiles(DrawContext dc)
     {
-        ArrayList<GraticuleTile> tileList = new ArrayList<GraticuleTile>();
+        ArrayList<GraticuleTile> tileList = new ArrayList<>();
         Sector vs = dc.getVisibleSector();
         if (vs != null)
         {
@@ -390,10 +390,10 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer
         }
     }
 
-    protected static ArrayList<String> latLabels = new ArrayList<String>(360);
-    protected static ArrayList<String> lonLabels = new ArrayList<String>(720);
-    protected static String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ";
-    protected static String[][] level2Labels = new String[][] {{"3", "4"}, {"1", "2"}};
+    protected static final ArrayList<String> latLabels = new ArrayList<>(360);
+    protected static final ArrayList<String> lonLabels = new ArrayList<>(720);
+    protected static final String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    protected static final String[][] level2Labels = new String[][] {{"3", "4"}, {"1", "2"}};
 
     static
     {
@@ -575,7 +575,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer
 
         private void createSubTiles()
         {
-            this.subTiles = new ArrayList<GraticuleTile>();
+            this.subTiles = new ArrayList<>();
             Sector[] sectors = this.sector.subdivide(this.divisions);
             int nextLevel = this.level + 1;
             int subDivisions = 10;
@@ -592,7 +592,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer
         /** Create the grid elements */
         private void createRenderables()
         {
-            this.gridElements = new ArrayList<GridElement>();
+            this.gridElements = new ArrayList<>();
 
             double step = sector.getDeltaLatDegrees() / this.divisions;
 
@@ -602,7 +602,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer
             {
                 Angle longitude = Angle.fromDegrees(lon);
                 // Meridian
-                ArrayList<Position> positions = new ArrayList<Position>(2);
+                ArrayList<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(this.sector.getMinLatitude(), longitude, 0));
                 positions.add(new Position(this.sector.getMaxLatitude(), longitude, 0));
 
@@ -624,7 +624,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer
             while (lat < this.sector.getMaxLatitude().degrees - step / 2)
             {
                 Angle latitude = Angle.fromDegrees(lat);
-                ArrayList<Position> positions = new ArrayList<Position>(2);
+                ArrayList<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(latitude, this.sector.getMinLongitude(), 0));
                 positions.add(new Position(latitude, this.sector.getMaxLongitude(), 0));
 
@@ -644,7 +644,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer
             // Draw and label a parallel at the top of the graticule. The line is apparent only on 2D globes.
             if (this.sector.getMaxLatitude().equals(Angle.POS90))
             {
-                ArrayList<Position> positions = new ArrayList<Position>(2);
+                ArrayList<Position> positions = new ArrayList<>(2);
                 positions.add(new Position(Angle.POS90, this.sector.getMinLongitude(), 0));
                 positions.add(new Position(Angle.POS90, this.sector.getMaxLongitude(), 0));
 

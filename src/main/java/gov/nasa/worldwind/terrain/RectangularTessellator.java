@@ -36,7 +36,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         protected final FloatBuffer texCoords;
         protected final IntBuffer indices;
         protected long time;
-        protected Object vboCacheKey = new Object();
+        protected final Object vboCacheKey = new Object();
         protected boolean isVboBound = false;
 
         protected RenderInfo(DrawContext dc, int density, FloatBuffer vertices, Vec4 refCenter) {
@@ -138,7 +138,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         protected final Sector sector;
         protected final int density;
         protected final double cellSize;
-        protected Extent extent; // extent of sector in object coordinates
+        protected final Extent extent; // extent of sector in object coordinates
         protected RenderInfo ri;
 
         protected int minColorCode = 0;
@@ -300,11 +300,11 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             if (density != cacheKey.density) {
                 return false;
             }
-            if (globeStateKey != null ? !globeStateKey.equals(cacheKey.globeStateKey) : cacheKey.globeStateKey != null) {
+            if (!Objects.equals(globeStateKey, cacheKey.globeStateKey)) {
                 return false;
             }
             //noinspection RedundantIfStatement
-            if (sector != null ? !sector.equals(cacheKey.sector) : cacheKey.sector != null) {
+            if (!Objects.equals(sector, cacheKey.sector)) {
                 return false;
             }
 
@@ -322,7 +322,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
     protected static class TopLevelTiles {
 
-        protected ArrayList<RectTile> topLevels;
+        protected final ArrayList<RectTile> topLevels;
 
         public TopLevelTiles(ArrayList<RectTile> topLevels) {
             this.topLevels = topLevels;
@@ -339,26 +339,26 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     protected static final String CACHE_ID = RectangularTessellator.class.getName();
 
     // Tri-strip indices and texture coordinates. These depend only on density and can therefore be statically cached.
-    protected static final HashMap<Integer, FloatBuffer> textureCoords = new HashMap<Integer, FloatBuffer>();
-    protected static final HashMap<Integer, IntBuffer> indexLists = new HashMap<Integer, IntBuffer>();
-    protected static final HashMap<Integer, ByteBuffer> oddRowColorList = new HashMap<Integer, ByteBuffer>();
-    protected static final HashMap<Integer, ByteBuffer> evenRowColorList = new HashMap<Integer, ByteBuffer>();
+    protected static final HashMap<Integer, FloatBuffer> textureCoords = new HashMap<>();
+    protected static final HashMap<Integer, IntBuffer> indexLists = new HashMap<>();
+    protected static final HashMap<Integer, ByteBuffer> oddRowColorList = new HashMap<>();
+    protected static final HashMap<Integer, ByteBuffer> evenRowColorList = new HashMap<>();
 
-    protected static final HashMap<Integer, Object> textureCoordVboCacheKeys = new HashMap<Integer, Object>();
-    protected static final HashMap<Integer, Object> indexListsVboCacheKeys = new HashMap<Integer, Object>();
+    protected static final HashMap<Integer, Object> textureCoordVboCacheKeys = new HashMap<>();
+    protected static final HashMap<Integer, Object> indexListsVboCacheKeys = new HashMap<>();
 
-    protected int numLevel0LatSubdivisions = DEFAULT_NUM_LAT_SUBDIVISIONS;
-    protected int numLevel0LonSubdivisions = DEFAULT_NUM_LON_SUBDIVISIONS;
-    protected SessionCache topLevelTilesCache = new BasicSessionCache(3);
-    protected PickSupport pickSupport = new PickSupport();
-    protected SectorGeometryList currentTiles = new SectorGeometryList();
+    protected final int numLevel0LatSubdivisions = DEFAULT_NUM_LAT_SUBDIVISIONS;
+    protected final int numLevel0LonSubdivisions = DEFAULT_NUM_LON_SUBDIVISIONS;
+    protected final SessionCache topLevelTilesCache = new BasicSessionCache(3);
+    protected final PickSupport pickSupport = new PickSupport();
+    protected final SectorGeometryList currentTiles = new SectorGeometryList();
     protected Frustum currentFrustum;
     protected Sector currentCoverage; // union of all tiles selected during call to render()
     protected boolean makeTileSkirts = true;
     protected int currentLevel;
     protected int maxLevel = DEFAULT_MAX_LEVEL;
     protected Globe globe;
-    protected int density = DEFAULT_DENSITY;
+    protected final int density = DEFAULT_DENSITY;
     protected long updateFrequency = 2000; // milliseconds
 
     public SectorGeometryList tessellate(DrawContext dc) {
@@ -413,7 +413,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
     protected ArrayList<RectTile> createTopLevelTiles(DrawContext dc) {
         ArrayList<RectTile> tops
-                = new ArrayList<RectTile>(this.numLevel0LatSubdivisions * this.numLevel0LonSubdivisions);
+                = new ArrayList<>(this.numLevel0LatSubdivisions * this.numLevel0LonSubdivisions);
 
         this.globe = dc.getGlobe();
         double deltaLat = 180d / this.numLevel0LatSubdivisions;
@@ -672,7 +672,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         Angle lonMax = tile.sector.getMaxLongitude();
         Angle dLon = tile.sector.getDeltaLon().divide(density);
 
-        ArrayList<LatLon> latlons = new ArrayList<LatLon>(numVertices);
+        ArrayList<LatLon> latlons = new ArrayList<>(numVertices);
         for (int j = 0; j <= density + 2; j++) {
             Angle lon = lonMin;
             for (int i = 0; i <= density + 2; i++) {
@@ -776,7 +776,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
             gl.glClientActiveTexture(GL2.GL_TEXTURE0 + i);
             gl.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
             Object texCoords = dc.getValue(AVKey.TEXTURE_COORDINATES);
-            if (texCoords != null && texCoords instanceof DoubleBuffer) {
+            if (texCoords instanceof DoubleBuffer) {
                 gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, ((DoubleBuffer) texCoords).rewind());
             } else {
                 gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, tile.ri.texCoords.rewind());
@@ -1291,7 +1291,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         }
 
         Intersection[] hits;
-        ArrayList<Intersection> list = new ArrayList<Intersection>();
+        ArrayList<Intersection> list = new ArrayList<>();
 
         int[] indices = new int[tile.ri.indices.limit()];
         float[] coords = new float[tile.ri.vertices.limit()];
@@ -1381,24 +1381,25 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         list.toArray(hits);
 
         final Vec4 origin = line.getOrigin();
-        Arrays.sort(hits, new Comparator<Intersection>() {
-            public int compare(Intersection i1, Intersection i2) {
-                if (i1 == null && i2 == null) {
-                    return 0;
-                }
-                if (i2 == null) {
-                    return -1;
-                }
-                if (i1 == null) {
-                    return 1;
-                }
-
-                Vec4 v1 = i1.getIntersectionPoint();
-                Vec4 v2 = i2.getIntersectionPoint();
-                double d1 = origin.distanceTo3(v1);
-                double d2 = origin.distanceTo3(v2);
-                return Double.compare(d1, d2);
+        Arrays.sort(hits, (i1, i2) -> {
+            if (i1 == null && i2 == null)
+            {
+                return 0;
             }
+            if (i2 == null)
+            {
+                return -1;
+            }
+            if (i1 == null)
+            {
+                return 1;
+            }
+
+            Vec4 v1 = i1.getIntersectionPoint();
+            Vec4 v2 = i2.getIntersectionPoint();
+            double d1 = origin.distanceTo3(v1);
+            double d2 = origin.distanceTo3(v2);
+            return Double.compare(d1, d2);
         });
 
         return hits;
@@ -1420,7 +1421,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         }
 
         Intersection[] hits;
-        ArrayList<Intersection> list = new ArrayList<Intersection>();
+        ArrayList<Intersection> list = new ArrayList<>();
 
         int[] indices = new int[tile.ri.indices.limit()];
         float[] coords = new float[tile.ri.vertices.limit()];

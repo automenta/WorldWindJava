@@ -29,12 +29,12 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
     private boolean armed;
     private WorldWindow wwd; // Can be null.
     private SARTrack track; // Can be null.
-    protected SARSegmentPlane segmentPlane;
+    protected final SARSegmentPlane segmentPlane;
     protected Position potentialNextPosition;
     protected boolean waitingForNextPosition = true;
     protected boolean ignoreTrackChangeEvents = false;
-    protected SegmentPlaneAttributes.GeometryAttributes segmentEndGeomAttribs;
-    protected SegmentPlaneAttributes.LabelAttributes segmentEndLabelAttribs;
+    protected final SegmentPlaneAttributes.GeometryAttributes segmentEndGeomAttribs;
+    protected final SegmentPlaneAttributes.LabelAttributes segmentEndLabelAttribs;
 
     public SARTrackExtensionTool()
     {

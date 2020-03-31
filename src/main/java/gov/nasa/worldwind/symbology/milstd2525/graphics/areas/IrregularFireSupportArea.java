@@ -85,7 +85,7 @@ public class IrregularFireSupportArea extends BasicArea
      */
     public static Set<String> getGraphicsWithTimeLabel()
     {
-        return new HashSet<String>(Arrays.asList(
+        return new HashSet<>(Arrays.asList(
             TacGrpSidc.FSUPP_ARS_C2ARS_FSA_IRR,
             TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_IRR,
             TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR,

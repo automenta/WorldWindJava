@@ -180,6 +180,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler
                 if ((keys.getMouseModifiersEx() & buttonAction.mouseButton) != 0)
                 {
                     handleThisEvent = true;
+                    break;
                 }
             }
             if (!handleThisEvent)
@@ -270,6 +271,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler
                 if ((keys.getMouseModifiersEx() & buttonAction.mouseButton) != 0)
                 {
                     handleThisEvent = true;
+                    break;
                 }
             }
             if (!handleThisEvent)
@@ -397,6 +399,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler
                 if ((keys.getMouseModifiersEx() & buttonAction.mouseButton) != 0)
                 {
                     handleThisEvent = true;
+                    break;
                 }
             }
             if (!handleThisEvent)
@@ -659,7 +662,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler
         boolean eventHandled = false;
 
 
-        Integer modifier =  e.getModifiersEx();
+        int modifier =  e.getModifiersEx();
         for (int i = 0; i < NUM_MODIFIERS; i++)
         {
             if ((((modifier & this.modifierList[i]) == this.modifierList[i])))
@@ -688,7 +691,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler
         boolean eventHandled = false;
 
 
-        Integer modifier =  e.getModifiersEx();
+        int modifier =  e.getModifiersEx();
         for (int i = 0; i < NUM_MODIFIERS; i++)
         {
             if ((((modifier & this.modifierList[i]) == this.modifierList[i])))
@@ -712,7 +715,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler
         boolean eventHandled = false;
 
         // TODO : Make this conditional look like handleMouseDragged
-        Integer modifier =  e.getModifiersEx();
+        int modifier =  e.getModifiersEx();
         for (int i = 0; i < NUM_MODIFIERS; i++)
         {
             if ((((modifier & this.modifierList[i]) == this.modifierList[i])))
@@ -776,7 +779,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler
         boolean isKeyEventTrigger = false;
 
 
-        Integer modifier =  keys.getModifiersEx();
+        int modifier =  keys.getModifiersEx();
         for (int i = 0; i < NUM_MODIFIERS; i++)
         {
             if (((modifier & this.modifierList[i]) == this.modifierList[i]))
@@ -803,7 +806,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler
         }
 
 
-        Integer modifier =  keys.getModifiersEx();
+        int modifier =  keys.getModifiersEx();
 
         for (int i = 0; i < NUM_MODIFIERS; i++)
         {

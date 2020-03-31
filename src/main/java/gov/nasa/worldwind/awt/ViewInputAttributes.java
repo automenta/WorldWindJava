@@ -17,11 +17,11 @@ import java.util.*;
  */
 public class ViewInputAttributes
 {
-    public class DeviceModifierMap extends HashMap<Object, ArrayList>
+    public static class DeviceModifierMap extends HashMap<Object, ArrayList>
     {
     }
 
-    public class ActionAttributesList extends ArrayList<ActionAttributes>
+    public static class ActionAttributesList extends ArrayList<ActionAttributes>
     {
     }
 
@@ -61,9 +61,9 @@ public class ViewInputAttributes
             public static final int KA_DIR_Y = 1;
             public static final int KA_DIR_Z = 2;
 
-            public int keyCode;
-            public int sign;
-            public int direction;
+            public final int keyCode;
+            public final int sign;
+            public final int direction;
 
             public KeyAction(int key, int direction, int sign)
             {
@@ -75,7 +75,7 @@ public class ViewInputAttributes
 
         public static class MouseAction
         {
-            public int mouseButton;
+            public final int mouseButton;
 
             public MouseAction(int mouseButton)
             {
@@ -252,8 +252,7 @@ public class ViewInputAttributes
 
         public static ActionAttributes.MouseAction createMouseActionAttribute(int mouseButton)
         {
-            ActionAttributes.MouseAction mouseAction = new ActionAttributes.MouseAction(mouseButton);
-            return (mouseAction);
+            return (new MouseAction(mouseButton));
         }
     }
 
@@ -298,7 +297,7 @@ public class ViewInputAttributes
 
     public static class ActionAttributesMap
     {
-        private final Map<Object, ActionAttributes> actionMap = new HashMap<Object, ActionAttributes>();
+        private final Map<Object, ActionAttributes> actionMap = new HashMap<>();
 
         public ActionAttributesMap()
         {
@@ -586,13 +585,13 @@ public class ViewInputAttributes
     public static final double DEFAULT_MOUSE_ROTATE_MAX_VALUE = 0.18; // Speed in degrees per mouse movement
 
     // Device attributes.
-    private final Map<Object, DeviceAttributes> deviceMap = new HashMap<Object, DeviceAttributes>();
+    private final Map<Object, DeviceAttributes> deviceMap = new HashMap<>();
     // Device/action pairing attributes.
-    private final Map<Object, ActionAttributesMap> deviceActionMap = new HashMap<Object, ActionAttributesMap>();
+    private final Map<Object, ActionAttributesMap> deviceActionMap = new HashMap<>();
     // Device/Modifier/Action map
     // Devices are mapped to modifier keys, which are then mapped to actions.  Actions contain the keys
     // that they are interested in, and only act on those keys.
-    private final Map<Object, DeviceModifierMap> deviceModActionMap = new HashMap<Object, DeviceModifierMap>();
+    private final Map<Object, DeviceModifierMap> deviceModActionMap = new HashMap<>();
 
     public ViewInputAttributes()
     {

@@ -24,7 +24,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author tag
@@ -281,8 +281,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
-            return this.tile.getPriority() == that.tile.getPriority() ? 0 :
-                this.tile.getPriority() < that.tile.getPriority() ? -1 : 1;
+            return Double.compare(this.tile.getPriority(), that.tile.getPriority());
         }
 
         public boolean equals(Object o)
@@ -295,7 +294,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             final RequestTask that = (RequestTask) o;
 
             // Don't include layer in comparison so that requests are shared among layers
-            return !(tile != null ? !tile.equals(that.tile) : that.tile != null);
+            return Objects.equals(tile, that.tile);
         }
 
         public int hashCode()
@@ -774,13 +773,9 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             return;
 
         // Synchronize changes to this Layer with the Event Dispatch Thread.
-        SwingUtilities.invokeLater(new Runnable()
-        {
-            public void run()
-            {
-                BasicTiledImageLayer.this.setExpiryTime(expiryTime);
-                BasicTiledImageLayer.this.firePropertyChange(AVKey.LAYER, null, BasicTiledImageLayer.this);
-            }
+        SwingUtilities.invokeLater(() -> {
+            BasicTiledImageLayer.this.setExpiryTime(expiryTime);
+            BasicTiledImageLayer.this.firePropertyChange(AVKey.LAYER, null, BasicTiledImageLayer.this);
         });
     }
 
@@ -803,14 +798,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     /** Starts retrieving non-tile resources associated with this Layer in a non-rendering thread. */
     protected void startResourceRetrieval()
     {
-        Thread t = new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                retrieveResources();
-            }
-        });
+        Thread t = new Thread(this::retrieveResources);
         t.setName("Capabilities retrieval for " + this.getName());
         t.start();
     }

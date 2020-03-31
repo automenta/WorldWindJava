@@ -29,9 +29,9 @@ public class BasicScheduledTaskService extends WWObjectImpl
         "ThreadedTaskService.IdleThreadNamePrefix");
 
     /** Tasks currently running. */
-    protected ConcurrentLinkedQueue<Runnable> activeTasks;
+    protected final ConcurrentLinkedQueue<Runnable> activeTasks;
     /** Executor for running tasks. */
-    protected ScheduledTaskExecutor executor;
+    protected final ScheduledTaskExecutor executor;
 
     /**
      * Create a new scheduled task service. The thread pool size is from the WorldWind configuration file property
@@ -45,7 +45,7 @@ public class BasicScheduledTaskService extends WWObjectImpl
         this.executor = new ScheduledTaskExecutor(poolSize);
 
         // this.activeTasks holds the list of currently executing tasks
-        this.activeTasks = new ConcurrentLinkedQueue<Runnable>();
+        this.activeTasks = new ConcurrentLinkedQueue<>();
     }
 
     public void shutdown(boolean immediately)
@@ -71,16 +71,12 @@ public class BasicScheduledTaskService extends WWObjectImpl
         protected ScheduledTaskExecutor(int poolSize)
         {
             super(poolSize,
-                new ThreadFactory()
-                {
-                    public Thread newThread(Runnable runnable)
-                    {
-                        Thread thread = new Thread(runnable);
-                        thread.setDaemon(true);
-                        thread.setPriority(Thread.MIN_PRIORITY);
-                        thread.setUncaughtExceptionHandler(BasicScheduledTaskService.this);
-                        return thread;
-                    }
+                runnable -> {
+                    Thread thread = new Thread(runnable);
+                    thread.setDaemon(true);
+                    thread.setPriority(Thread.MIN_PRIORITY);
+                    thread.setUncaughtExceptionHandler(BasicScheduledTaskService.this);
+                    return thread;
                 },
                 new DiscardPolicy()
                 {

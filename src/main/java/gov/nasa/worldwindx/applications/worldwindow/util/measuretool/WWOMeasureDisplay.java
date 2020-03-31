@@ -22,10 +22,10 @@ import java.awt.geom.*;
  */
 public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
 {
-    protected WWOMeasureTool measureTool;
-    protected ScreenAnnotation annotation;
-    protected AnnotationAttributes annotationAttributes;
-    protected AVListImpl avList = new AVListImpl();
+    protected final WWOMeasureTool measureTool;
+    protected final ScreenAnnotation annotation;
+    protected final AnnotationAttributes annotationAttributes;
+    protected final AVListImpl avList = new AVListImpl();
     protected UnitsFormat unitsFormat = new UnitsFormat();
 
     public WWOMeasureDisplay(WWOMeasureTool measureTool)
