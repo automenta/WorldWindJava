@@ -33,7 +33,7 @@ public class HighResolutionTerrainTest2
         LatLon.fromDegrees(50.00240, -122.24467));
 
     @SuppressWarnings("FieldCanBeLocal")
-    private int GRID_SIZE = 3;//50;
+    private final int GRID_SIZE = 3;//50;
 
     @Test
     public void testConsistencyOfBulkPositions()

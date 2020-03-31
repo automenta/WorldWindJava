@@ -1974,7 +1974,7 @@ public class MilStd2525IconRetrieverTest
         "ED---------",
         "EE---------"};
 
-    private static String[] EmergencyManagementInfrastructureFunctionIDs = {//"------",
+    private static final String[] EmergencyManagementInfrastructureFunctionIDs = {//"------",
         "A----------",
         "AA----H----",
         "AB----H----",

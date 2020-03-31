@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.ogc.kml;
 
 import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.ogc.kml.gx.GXConstants;
@@ -15,6 +14,7 @@ import gov.nasa.worldwind.ogc.kml.impl.KMLController;
 import gov.nasa.worldwind.util.WWIO;
 import gov.nasa.worldwind.util.xml.atom.AtomConstants;
 import gov.nasa.worldwind.util.xml.xal.XALConstants;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 import javax.swing.*;
 import java.io.*;
@@ -28,7 +28,7 @@ import java.util.zip.*;
  */
 public class StyleLocationTests extends ApplicationTemplate
 {
-    private static String ICON_LOCATIONS = "http://tomgaskins.net/kmltest/placemarks/";
+    private static final String ICON_LOCATIONS = "http://tomgaskins.net/kmltest/placemarks/";
     protected static Position nextPosition = Position.fromDegrees(0, -151, 1e6);
 
     protected static TestDoc[] tests = new TestDoc[]

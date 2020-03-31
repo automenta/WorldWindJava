@@ -19,8 +19,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * Display all MIL-STD-2525 point graphics in a grid so that a human operator can confirm that they are rendered

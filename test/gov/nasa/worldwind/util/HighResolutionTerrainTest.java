@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 public class HighResolutionTerrainTest
 {
-    private int GRID_SIZE = 50;
+    private final int GRID_SIZE = 50;
 
     @Test
     public void testConsistencyOfBulkPositions()

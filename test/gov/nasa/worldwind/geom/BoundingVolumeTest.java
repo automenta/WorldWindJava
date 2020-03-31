@@ -18,10 +18,10 @@ public class BoundingVolumeTest
 {
     private Sector sector;
     private Globe globe;
-    private double ve = 1;
-    private double minElevation = 0;
-    private double maxElevation = 1e3;
-    private int numIterations = (int) 1e6;
+    private final double ve = 1;
+    private final double minElevation = 0;
+    private final double maxElevation = 1e3;
+    private final int numIterations = (int) 1e6;
 
     @Before
     public void setUp()

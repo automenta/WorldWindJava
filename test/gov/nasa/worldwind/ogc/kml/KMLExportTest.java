@@ -34,7 +34,7 @@ public class KMLExportTest
     private static ShapeAttributes normalShapeAttributes;
     private static ShapeAttributes highlightShapeAttributes;
 
-    private List<Exportable> objectsToExport;
+    private final List<Exportable> objectsToExport;
 
     public KMLExportTest(List<Exportable> objectsToExport)
     {

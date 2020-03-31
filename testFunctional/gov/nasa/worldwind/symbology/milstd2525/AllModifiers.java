@@ -15,8 +15,8 @@ import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * Test program that renders MIL-STD-2525C symbols with all combinations of graphic modifiers.

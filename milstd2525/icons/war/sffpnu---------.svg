@@ -10,4 +10,4 @@ All Rights Reserved.
 MIL-STD-2525 tactical symbol icon image. During icon composition this image is multiplied by the desired frame color 
 (e.g. black), then drawn on top of the frame and fill.
 -->
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="400px" viewBox="0 0 400 400" width="400px"><text style="fill:rgb(255,255,255);font-family:Arial;font-size:75;stroke:rgb(255,255,255)" x="125px" y="228px">UDT</text></svg>
+<svg height="400px" viewBox="0 0 400 400" width="400px"><text style="fill:rgb(255,255,255);font-family:Arial;font-size:75;stroke:rgb(255,255,255)" x="125px" y="228px">UDT</text></svg>

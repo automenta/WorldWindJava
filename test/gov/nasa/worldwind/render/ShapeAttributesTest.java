@@ -75,8 +75,8 @@ public class ShapeAttributesTest
         });
     }
 
-    private ShapeAttributes defaultAttributes;
-    private ShapeAttributes exampleAttributes;
+    private final ShapeAttributes defaultAttributes;
+    private final ShapeAttributes exampleAttributes;
 
     public ShapeAttributesTest(ShapeAttributes defaultAttributes, ShapeAttributes exampleAttributes)
     {

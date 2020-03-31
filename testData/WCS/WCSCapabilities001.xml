@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--$Id: WCSCapabilities001.xml 1981 2014-05-08 03:59:04Z tgaskins $-->
 <wcs:Capabilities version="1.1.1" xmlns:wcs="http://www.opengis.net/wcs/1.1.1"
-                  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ogc="http://www.opengis.net/ogc"
-                  xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:gml="http://www.opengis.net/gml"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  xmlns:ows="http://www.opengis.net/ows/1.1"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                  xsi:schemaLocation="http://10.0.1.198:8080/geoserver/schemas/wcs/1.1.1/wcsGetCapabilities.xsd"
                   updateSequence="99">
     <ows:ServiceIdentification>
         <ows:Title>Web Coverage Service</ows:Title>

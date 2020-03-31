@@ -6,13 +6,13 @@
 
 package gov.nasa.worldwind.util;
 
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.TextureData;
 import gov.nasa.worldwind.Configuration;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import com.jogamp.opengl.*;
 import java.io.*;
 import java.net.URL;
 

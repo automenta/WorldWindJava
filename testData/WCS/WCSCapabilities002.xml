@@ -6,7 +6,7 @@
   -->
 
 <wcs:WCS_Capabilities version="1.0.0" xmlns:wcs="http://www.opengis.net/wcs" xmlns:xlink="http://www.w3.org/1999/xlink"
-                      xmlns:ogc="http://www.opengis.net/ogc" xmlns:ows="http://www.opengis.net/ows/1.1"
+                      xmlns:ogc="http://www.opengis.net/ogc"
                       xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                       xsi:schemaLocation="http://www.opengis.net/wcs http://10.0.1.198:8080/geoserver/schemas/wcs/1.0.0/wcsCapabilities.xsd"
                       updateSequence="105">
