@@ -355,7 +355,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         // origin. Make the other the intersection point of the line with the globe's ellipsoid.
 
         // Get the position of the line's origin.
-        Position pA = this.globe.computePositionFromPoint(line.getOrigin());
+        Position pA = this.globe.computePositionFromPoint(line.origin);
 
         Intersection[] ellipsoidIntersections = this.globe.intersect(line, 0);
         if (ellipsoidIntersections == null || ellipsoidIntersections.length == 0)
@@ -758,7 +758,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         if (list.size() == 1)
             return hits;
 
-        final Vec4 origin = line.getOrigin();
+        final Vec4 origin = line.origin;
         Arrays.sort(hits, (i1, i2) -> {
             if (i1 == null && i2 == null)
                 return 0;
@@ -1356,7 +1356,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         hits = new Intersection[numHits];
         list.toArray(hits);
 
-        final Vec4 origin = line.getOrigin();
+        final Vec4 origin = line.origin;
         Arrays.sort(hits, (i1, i2) -> {
             if (i1 == null && i2 == null)
                 return 0;

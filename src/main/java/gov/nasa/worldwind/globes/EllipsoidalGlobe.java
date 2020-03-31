@@ -331,12 +331,12 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe
         double n2 = n * n;
         double r2 = equRadius * equRadius; // nominal radius squared //equRadius * polRadius;
 
-        double vx = line.getDirection().x;
-        double vy = line.getDirection().y;
-        double vz = line.getDirection().z;
-        double sx = line.getOrigin().x;
-        double sy = line.getOrigin().y;
-        double sz = line.getOrigin().z;
+        double vx = line.direction.x;
+        double vy = line.direction.y;
+        double vz = line.direction.z;
+        double sx = line.origin.x;
+        double sy = line.origin.y;
+        double sz = line.origin.z;
 
         double a = vx * vx + m2 * vy * vy + n2 * vz * vz;
         double b = 2d * (sx * vx + m2 * sy * vy + n2 * sz * vz);
@@ -373,9 +373,9 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe
         if (t == null)
             return null;
 
-        boolean bA = isPointAboveElevation(t.getA(), elevation);
-        boolean bB = isPointAboveElevation(t.getB(), elevation);
-        boolean bC = isPointAboveElevation(t.getC(), elevation);
+        boolean bA = isPointAboveElevation(t.a, elevation);
+        boolean bB = isPointAboveElevation(t.b, elevation);
+        boolean bC = isPointAboveElevation(t.c, elevation);
 
         if (bA == bB && bB == bC)
             return null; // all triangle points are either above or below the given elevation
@@ -387,21 +387,21 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe
         // originates inside the ellipsoid at the given elevation.
         if (bA ^ bB)
             if (bA)
-                inter[idx++] = intersect(new Line(t.getB(), t.getA().subtract3(t.getB())), elevation)[0];
+                inter[idx++] = intersect(new Line(t.b, t.a.subtract3(t.b)), elevation)[0];
             else
-                inter[idx++] = intersect(new Line(t.getA(), t.getB().subtract3(t.getA())), elevation)[0];
+                inter[idx++] = intersect(new Line(t.a, t.b.subtract3(t.a)), elevation)[0];
 
         if (bB ^ bC)
             if (bB)
-                inter[idx++] = intersect(new Line(t.getC(), t.getB().subtract3(t.getC())), elevation)[0];
+                inter[idx++] = intersect(new Line(t.c, t.b.subtract3(t.c)), elevation)[0];
             else
-                inter[idx++] = intersect(new Line(t.getB(), t.getC().subtract3(t.getB())), elevation)[0];
+                inter[idx++] = intersect(new Line(t.b, t.c.subtract3(t.b)), elevation)[0];
 
         if (bC ^ bA)
             if (bC)
-                inter[idx] = intersect(new Line(t.getA(), t.getC().subtract3(t.getA())), elevation)[0];
+                inter[idx] = intersect(new Line(t.a, t.c.subtract3(t.a)), elevation)[0];
             else
-                inter[idx] = intersect(new Line(t.getC(), t.getA().subtract3(t.getC())), elevation)[0];
+                inter[idx] = intersect(new Line(t.c, t.a.subtract3(t.c)), elevation)[0];
 
         return inter;
     }

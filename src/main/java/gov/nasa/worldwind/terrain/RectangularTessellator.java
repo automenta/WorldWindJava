@@ -1224,16 +1224,16 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
 
         Line ray = dc.getView().computeRayFromScreenPoint(pickPoint.getX(), pickPoint.getY());
 
-        Vec4 w0 = ray.getOrigin().subtract3(v0);
+        Vec4 w0 = ray.origin.subtract3(v0);
         double a = -N.dot3(w0);
-        double b = N.dot3(ray.getDirection());
+        double b = N.dot3(ray.direction);
         if (java.lang.Math.abs(b) < EPSILON) // ray is parallel to triangle plane
         {
             return null;                    // if a == 0 , ray lies in triangle plane
         }
         double r = a / b;
 
-        Vec4 intersect = ray.getOrigin().add3(ray.getDirection().multiply3(r));
+        Vec4 intersect = ray.origin.add3(ray.direction.multiply3(r));
         Position pp = dc.getGlobe().computePositionFromPoint(intersect);
 
         // Draw the elevation from the elevation model, not the geode.
@@ -1269,18 +1269,18 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         Plane horizontalPlane = null;
         double effectiveRadiusVertical = Double.MAX_VALUE;
         double effectiveRadiusHorizontal = Double.MAX_VALUE;
-        Vec4 surfaceNormal = globe.computeSurfaceNormalAtPoint(line.getOrigin());
-        if (Math.abs(line.getDirection().normalize3().dot3(surfaceNormal)) < 1.0) // if not colinear
+        Vec4 surfaceNormal = globe.computeSurfaceNormalAtPoint(line.origin);
+        if (Math.abs(line.direction.normalize3().dot3(surfaceNormal)) < 1.0) // if not colinear
         {
-            Vec4 normalV = line.getDirection().cross3(globe.computeSurfaceNormalAtPoint(line.getOrigin()));
-            verticalPlane = new Plane(normalV.x(), normalV.y(), normalV.z(), -line.getOrigin().dot3(normalV));
+            Vec4 normalV = line.direction.cross3(globe.computeSurfaceNormalAtPoint(line.origin));
+            verticalPlane = new Plane(normalV.x(), normalV.y(), normalV.z(), -line.origin.dot3(normalV));
             if (!tile.getExtent().intersects(verticalPlane)) {
                 return null;
             }
 
             // Compute 'horizontal' plane perpendicular to the vertical plane, that contains the ray
-            Vec4 normalH = line.getDirection().cross3(normalV);
-            horizontalPlane = new Plane(normalH.x(), normalH.y(), normalH.z(), -line.getOrigin().dot3(normalH));
+            Vec4 normalH = line.direction.cross3(normalV);
+            horizontalPlane = new Plane(normalH.x(), normalH.y(), normalH.z(), -line.origin.dot3(normalH));
             if (!tile.getExtent().intersects(horizontalPlane)) {
                 return null;
             }
@@ -1380,7 +1380,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         hits = new Intersection[numHits];
         list.toArray(hits);
 
-        final Vec4 origin = line.getOrigin();
+        final Vec4 origin = line.origin;
         Arrays.sort(hits, (i1, i2) -> {
             if (i1 == null && i2 == null)
             {

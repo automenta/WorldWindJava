@@ -310,7 +310,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
     protected boolean isTextureFileExpired(TextureTile tile, java.net.URL textureURL, FileStore fileStore)
     {
-        if (!WWIO.isFileOutOfDate(textureURL, tile.getLevel().getExpiryTime()))
+        if (!WWIO.isFileOutOfDate(textureURL, tile.level.getExpiryTime()))
             return false;
 
         // The file has expired. Delete it.
@@ -390,7 +390,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
     protected void addTileToCache(TextureTile tile)
     {
-        TextureTile.getMemoryCache().add(tile.getTileKey(), tile);
+        TextureTile.getMemoryCache().add(tile.tileKey, tile);
     }
 
     // *** Bulk download ***
@@ -527,7 +527,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             return;
 
         AVListImpl avList = new AVListImpl();
-        avList.setValue(AVKey.SECTOR, tile.getSector());
+        avList.setValue(AVKey.SECTOR, tile.sector);
         avList.setValue(AVKey.WIDTH, tile.getWidth());
         avList.setValue(AVKey.HEIGHT, tile.getHeight());
         avList.setValue(AVKey.FILE_NAME, tile.getPath());

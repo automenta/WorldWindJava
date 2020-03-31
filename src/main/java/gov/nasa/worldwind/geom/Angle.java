@@ -193,6 +193,9 @@ public class Angle implements Comparable<Angle>
         return Angle.fromDegrees(degrees + minutes / 60d);
     }
 
+    static final Pattern dmsPattern = Pattern.compile("([-|+]?\\d{1,3}[d|D|\u00B0|\\s](\\s*\\d{1,2}['|\u2019|\\s])?"
+        + "(\\s*\\d{1,2}[\"|\u201d|\\s])?\\s*([N|n|S|s|E|e|W|w])?\\s?)");
+
     /**
      * Obtain an angle from a degrees, minute and seconds character string.
      * <p>eg:</p><pre>
@@ -219,10 +222,7 @@ public class Angle implements Comparable<Angle>
             throw new IllegalArgumentException(message);
         }
         // Check for string format validity
-        String regex = "([-|+]?\\d{1,3}[d|D|\u00B0|\\s](\\s*\\d{1,2}['|\u2019|\\s])?"
-            + "(\\s*\\d{1,2}[\"|\u201d|\\s])?\\s*([N|n|S|s|E|e|W|w])?\\s?)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(dmsString + " ");
+        Matcher matcher = dmsPattern.matcher(dmsString + " ");
         if (!matcher.matches())
         {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", dmsString);

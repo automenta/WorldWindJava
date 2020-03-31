@@ -83,7 +83,7 @@ public class AbstractShapeIntersection extends ApplicationTemplate
 
         protected void performIntersection(Position pA, Position pB)
         {
-            try
+//            try
             {
                 // Create the line to intersect with the shape.
                 Vec4 refPoint = terrain.getSurfacePoint(pA);
@@ -102,10 +102,10 @@ public class AbstractShapeIntersection extends ApplicationTemplate
                     }
                 }
             }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
+//            catch (InterruptedException e)
+//            {
+//                e.printStackTrace();
+//            }
         }
 
         protected void drawLine(Position pA, Position pB)

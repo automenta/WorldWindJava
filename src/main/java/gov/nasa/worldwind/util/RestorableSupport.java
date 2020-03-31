@@ -1927,7 +1927,7 @@ public class RestorableSupport
         }
 
         RestorableSupport.StateObject stateObject = addStateObject(context, name);
-        for (Object key : ((Map) offsets).keySet())
+        for (Integer key : offsets.keySet())
         {
             addStateValueAsOffsets(stateObject, "face", offsets.get(key));
         }

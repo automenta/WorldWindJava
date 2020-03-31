@@ -1131,7 +1131,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         // Intersection points are translated back into model coordinates.
         if (tile.records.size() > 0)
         {
-            Line localLine = new Line(line.getOrigin().subtract3(shapeData.referencePoint), line.getDirection());
+            Line localLine = new Line(line.origin.subtract3(shapeData.referencePoint), line.direction);
             for (Record record : tile.records)
             {
                 if (record.isVisible()) // records marked as not visible don't intersect anything
@@ -1166,7 +1166,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
 
         // Intersect the line with the record. Translate the line from model coordinates to tile local coordinates,
         // then translate intersection points back into model coordinates.
-        Line localLine = new Line(line.getOrigin().subtract3(shapeData.referencePoint), line.getDirection());
+        Line localLine = new Line(line.origin.subtract3(shapeData.referencePoint), line.direction);
         this.intersectRecordInterior(localLine, terrain, record, shapeData, results);
     }
 

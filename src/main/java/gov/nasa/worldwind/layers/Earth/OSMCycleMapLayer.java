@@ -48,8 +48,8 @@ public class OSMCycleMapLayer extends BasicMercatorTiledImageLayer
 		public URL getURL(Tile tile, String imageFormat)
 				throws MalformedURLException
 		{
-			return new URL(tile.getLevel().getService()
-					+ (tile.getLevelNumber() + 3) +"/"+ tile.getColumn()+"/"+ ((1 << (tile.getLevelNumber()) + 3) - 1 - tile.getRow()) + ".png");
+			return new URL(tile.level.getService()
+					+ (tile.getLevelNumber() + 3) +"/"+ tile.column +"/"+ ((1 << (tile.getLevelNumber()) + 3) - 1 - tile.row) + ".png");
 		}
 	}
 

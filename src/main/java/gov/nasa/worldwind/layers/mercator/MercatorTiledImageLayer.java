@@ -306,7 +306,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
                 ancestorResource = this.currentResourceTile;
                 this.currentResourceTile = tile;
             }
-            else if (!tile.getLevel().isEmpty())
+            else if (!tile.level.isEmpty())
             {
                 //                this.addTile(dc, tile);
                 //                return;
@@ -409,7 +409,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
         return tile.getExtent(dc).intersects(
             dc.getView().getFrustumInModelCoordinates())
             && (dc.getVisibleSector() == null || dc.getVisibleSector()
-            .intersects(tile.getSector()));
+            .intersects(tile.sector));
     }
 
     //
@@ -460,7 +460,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
     private boolean meetsRenderCriteria(DrawContext dc, MercatorTextureTile tile)
     {
         return this.levels.isFinalLevel(tile.getLevelNumber())
-            || !needToSplit(dc, tile.getSector());
+            || !needToSplit(dc, tile.sector);
     }
 
     private boolean needToSplit(DrawContext dc, Sector sector)
@@ -682,7 +682,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
             if (tile.getFallbackTile() != null)
                 tileLabel += "/" + tile.getFallbackTile().getLabel();
 
-            LatLon ll = tile.getSector().getCentroid();
+            LatLon ll = tile.sector.getCentroid();
             Vec4 pt = dc.getGlobe().computePointFromPosition(
                 ll.getLatitude(),
                 ll.getLongitude(),
@@ -760,7 +760,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
         if (url == null) // image is not local
             return null;
 
-        if (WWIO.isFileOutOfDate(url, tile.getLevel().getExpiryTime()))
+        if (WWIO.isFileOutOfDate(url, tile.level.getExpiryTime()))
         {
             // The file has expired. Delete it.
             this.getDataFileStore().removeFile(url);
@@ -920,19 +920,19 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer
 
                     double sh = ((double) imageHeight / (double) tileImage
                         .getHeight())
-                        * (tile.getSector().getDeltaLat().divide(sector
+                        * (tile.sector.getDeltaLat().divide(sector
                         .getDeltaLat()));
                     double sw = ((double) imageWidth / (double) tileImage
                         .getWidth())
-                        * (tile.getSector().getDeltaLon().divide(sector
+                        * (tile.sector.getDeltaLon().divide(sector
                         .getDeltaLon()));
 
                     double dh = imageHeight
-                        * (-tile.getSector().getMaxLatitude().subtract(
+                        * (-tile.sector.getMaxLatitude().subtract(
                         sector.getMaxLatitude()).degrees / sector
                         .getDeltaLat().degrees);
                     double dw = imageWidth
-                        * (tile.getSector().getMinLongitude().subtract(
+                        * (tile.sector.getMinLongitude().subtract(
                         sector.getMinLongitude()).degrees / sector
                         .getDeltaLon().degrees);
 

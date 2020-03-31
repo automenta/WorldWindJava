@@ -53,9 +53,9 @@ public class SurfaceTileDrawContext
             throw new IllegalArgumentException(message);
         }
 
-        this.sector = tile.getSector();
+        this.sector = tile.sector;
         this.viewport = new Rectangle(0, 0, tile.getWidth(), tile.getHeight());
-        this.modelview = Matrix.fromGeographicToViewport(tile.getSector(), 0, 0, tile.getWidth(), tile.getHeight());
+        this.modelview = Matrix.fromGeographicToViewport(tile.sector, 0, 0, tile.getWidth(), tile.getHeight());
         this.pickCandidates = pickCandidates;
     }
 

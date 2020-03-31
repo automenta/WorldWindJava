@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.layers.mercator;
 
 import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.TextureTile;
 import gov.nasa.worldwind.util.*;
 
@@ -37,14 +37,14 @@ public class MercatorTextureTile extends TextureTile
 		double d2 = this.getMercatorSector().getMaxLatPercent();
 		double d1 = d0 + (d2 - d0) / 2.0;
 
-		Angle t0 = this.getSector().getMinLongitude();
-		Angle t2 = this.getSector().getMaxLongitude();
+		Angle t0 = sector.getMinLongitude();
+		Angle t2 = sector.getMaxLongitude();
 		Angle t1 = Angle.midAngle(t0, t2);
 
 		String nextLevelCacheName = nextLevel.getCacheName();
 		int nextLevelNum = nextLevel.getLevelNumber();
-		int row = this.getRow();
-		int col = this.getColumn();
+		int row = this.row;
+        int col = column;
 
 		MercatorTextureTile[] subTiles = new MercatorTextureTile[4];
 

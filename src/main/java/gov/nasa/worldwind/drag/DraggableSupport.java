@@ -556,7 +556,7 @@ public class DraggableSupport
         Intersection[] intersections = sceneController.getTerrain().intersect(ray);
         if (intersections != null)
         {
-            Vec4 eye = ray.getOrigin();
+            Vec4 eye = ray.origin;
             Vec4 surface = intersections[0].getIntersectionPoint();
             double maxDifference = eye.getLength3() - surface.getLength3();
 

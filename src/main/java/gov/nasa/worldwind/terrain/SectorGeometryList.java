@@ -411,7 +411,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
         hits = new Intersection[numHits];
         list.toArray(hits);
 
-        final Vec4 origin = line.getOrigin();
+        final Vec4 origin = line.origin;
         Arrays.sort(hits, (i1, i2) -> {
             if (i1 == null && i2 == null)
                 return 0;

@@ -290,7 +290,7 @@ public class AirspaceEditorUtil
 
     public static boolean isPointBehindLineOrigin(Line line, Vec4 point)
     {
-        double dot = point.subtract3(line.getOrigin()).dot3(line.getDirection());
+        double dot = point.subtract3(line.origin).dot3(line.direction);
         return dot < 0.0;
     }
 
@@ -299,10 +299,10 @@ public class AirspaceEditorUtil
         // Compute the points on each ray that are closest to one another.
         // Taken from "Mathematics for 3D Game Programming..." by Eric Lengyel, Section 4.1.2.
 
-        double dot_dir = source.getDirection().dot3(target.getDirection());
+        double dot_dir = source.direction.dot3(target.direction);
         double c = 1.0 / (dot_dir * dot_dir - 1.0);
-        double a1 = target.getOrigin().subtract3(source.getOrigin()).dot3(source.getDirection());
-        double a2 = target.getOrigin().subtract3(source.getOrigin()).dot3(target.getDirection());
+        double a1 = target.origin.subtract3(source.origin).dot3(source.direction);
+        double a2 = target.origin.subtract3(source.origin).dot3(target.direction);
         double t1 = c * (a2 * dot_dir - a1);
 
         return source.getPointAt(t1);
@@ -339,7 +339,7 @@ public class AirspaceEditorUtil
             // Ignore any intersections behind the line origin.
             if (!isPointBehindLineOrigin(line, intersection.getIntersectionPoint()))
             {
-                double d = intersection.getIntersectionPoint().distanceTo3(line.getOrigin());
+                double d = intersection.getIntersectionPoint().distanceTo3(line.origin);
                 if (d < nearestDistance)
                 {
                     intersectionPoint = intersection.getIntersectionPoint();

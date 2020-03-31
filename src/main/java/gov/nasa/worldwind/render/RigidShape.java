@@ -1558,8 +1558,8 @@ public abstract class RigidShape extends AbstractShape
         if (highResShapeData.getExtent() != null && highResShapeData.getExtent().intersect(line) == null)
             return null;
 
-        final Line localLine = new Line(line.getOrigin().subtract3(highResShapeData.getReferencePoint()),
-            line.getDirection());
+        final Line localLine = new Line(line.origin.subtract3(highResShapeData.getReferencePoint()),
+            line.direction);
 
         List<Intersection> shapeIntersections = new ArrayList<>();
 
@@ -1622,8 +1622,8 @@ public abstract class RigidShape extends AbstractShape
      */
     public List<Intersection> intersectFace(Line line, int index, Matrix renderMatrix)
     {
-        final Line localLine = new Line(line.getOrigin().subtract3(this.getCurrentShapeData().getReferencePoint()),
-            line.getDirection());
+        final Line localLine = new Line(line.origin.subtract3(this.getCurrentShapeData().getReferencePoint()),
+            line.direction);
 
         Geometry mesh = this.getCurrentShapeData().getMesh(index);
         // transform the vertices from local to world coords

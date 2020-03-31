@@ -638,11 +638,11 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
         // Channel.
         InputStream shxStream = this.getFileStream(WWIO.replaceSuffix(file.getPath(), INDEX_FILE_SUFFIX));
         if (shxStream != null)
-            this.shxChannel = Channels.newChannel(WWIO.getBufferedInputStream(shxStream));
+            this.shxChannel = Channels.newChannel((shxStream));
 
         InputStream prjStream = this.getFileStream(WWIO.replaceSuffix(file.getPath(), PROJECTION_FILE_SUFFIX));
         if (prjStream != null)
-            this.prjChannel = Channels.newChannel(WWIO.getBufferedInputStream(prjStream));
+            this.prjChannel = Channels.newChannel((prjStream));
 
         // Initialize the Shapefile before opening its associated attributes file. This avoids opening the attributes
         // file if an exception is thrown while opening the Shapefile.
@@ -676,7 +676,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
             throw new IOException(message);
         }
 
-        this.shpChannel = Channels.newChannel(WWIO.getBufferedInputStream(connection.getInputStream()));
+        this.shpChannel = Channels.newChannel((connection.getInputStream()));
 
         // Attempt to open the optional index and projection resources associated with the Shapefile. Ignore exceptions
         // thrown while attempting to open these optional resource streams, but log a warning if the URL connection is
@@ -692,7 +692,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
             {
                 InputStream shxStream = this.getURLStream(shxConnection);
                 if (shxStream != null)
-                    this.shxChannel = Channels.newChannel(WWIO.getBufferedInputStream(shxStream));
+                    this.shxChannel = Channels.newChannel((shxStream));
             }
         }
 
@@ -706,7 +706,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
             {
                 InputStream prjStream = this.getURLStream(prjConnection);
                 if (prjStream != null)
-                    this.prjChannel = Channels.newChannel(WWIO.getBufferedInputStream(prjStream));
+                    this.prjChannel = Channels.newChannel((prjStream));
             }
         }
 
@@ -738,13 +738,13 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable
         // Channel.
 
         if (shpStream != null)
-            this.shpChannel = Channels.newChannel(WWIO.getBufferedInputStream(shpStream));
+            this.shpChannel = Channels.newChannel((shpStream));
 
         if (shxStream != null)
-            this.shxChannel = Channels.newChannel(WWIO.getBufferedInputStream(shxStream));
+            this.shxChannel = Channels.newChannel((shxStream));
 
         if (prjStream != null)
-            this.prjChannel = Channels.newChannel(WWIO.getBufferedInputStream(prjStream));
+            this.prjChannel = Channels.newChannel((prjStream));
 
         // Initialize the Shapefile before opening its associated attributes file. This avoids opening the attributes
         // file if an exception is thrown while opening the Shapefile.

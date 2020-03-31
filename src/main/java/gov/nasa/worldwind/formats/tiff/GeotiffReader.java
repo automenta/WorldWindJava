@@ -58,7 +58,8 @@ public class GeotiffReader implements Disposable {
         return (null != values) ? values.copy() : null;
     }
 
-    public AVList copyMetadataTo(int imageIndex, AVList values) throws IOException {
+    public AVList copyMetadataTo(int imageIndex, AVList values)
+    {
         AVList list = this.getMetadata(imageIndex);
         if (null != values) {
             values.setValues(list);

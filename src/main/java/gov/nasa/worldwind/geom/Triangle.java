@@ -21,9 +21,9 @@ public class Triangle
 {
     private static final double EPSILON = 0.0000001; // used in intersects method
 
-    private final Vec4 a;
-    private final Vec4 b;
-    private final Vec4 c;
+    public final Vec4 a;
+    public final Vec4 b;
+    public final Vec4 c;
 
     /**
      * Construct a triangle from three counter-clockwise ordered vertices. The front face of the triangle is determined
@@ -49,37 +49,7 @@ public class Triangle
         this.c = c;
     }
 
-    /**
-     * Returns the first vertex.
-     *
-     * @return the first vertex.
-     */
-    public Vec4 getA()
-    {
-        return this.a;
-    }
-
-    /**
-     * Returns the second vertex.
-     *
-     * @return the second vertex.
-     */
-    public Vec4 getB()
-    {
-        return this.b;
-    }
-
-    /**
-     * Returns the third vertex.
-     *
-     * @return the third vertex.
-     */
-    public Vec4 getC()
-    {
-        return this.c;
-    }
-
-//    private Plane getPlane()
+    //    private Plane getPlane()
 //    {
 //        Vector ab, ac;
 //        ab = new Vector(this.b.subtract(this.a)).normalize();
@@ -211,8 +181,8 @@ public class Triangle
         // http://www.cs.virginia.edu/~gfx/Courses/2003/ImageSynthesis/papers/Acceleration/
         // Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
 
-        Vec4 origin = line.getOrigin();
-        Vec4 dir = line.getDirection();
+        Vec4 origin = line.origin;
+        Vec4 dir = line.direction;
 
         // find vectors for two edges sharing Point a: vb - va and vc - va
         double edge1x = vbx - vax;

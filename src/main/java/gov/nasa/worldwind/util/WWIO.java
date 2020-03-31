@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.util;
 
-import com.jogamp.common.nio.Buffers;
+import com.jogamp.common.nio.*;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
@@ -271,6 +271,7 @@ public class WWIO
             throw new IllegalArgumentException(message);
         }
 
+
         FileOutputStream fos = null;
         FileChannel channel = null;
         FileLock lock;
@@ -350,6 +351,7 @@ public class WWIO
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
+
 
         WritableByteChannel channel;
         try
@@ -670,7 +672,7 @@ public class WWIO
 
         try
         {
-            is = new GZIPInputStream(new BufferedInputStream(new FileInputStream(gzFile)));
+            is = new GZIPInputStream(new FileInputStream(gzFile));
             buffer = transferStreamToByteBuffer(is, inflatedLength);
             buffer.rewind();
         }
@@ -1276,7 +1278,7 @@ public class WWIO
             String typeSuffix = WWIO.makeSuffixForMimeType(mimeType);
             String fileSuffix = WWIO.getSuffix(file.getName());
 
-            if (fileSuffix == null || typeSuffix == null)
+            if (fileSuffix == null)
                 continue;
 
             if (!fileSuffix.startsWith("."))
@@ -1601,12 +1603,13 @@ public class WWIO
             throw new IllegalArgumentException(message);
         }
 
-        if (buffer.hasArray() && buffer.limit() == buffer.capacity()) // otherwise bytes beyond the limit are included
-            return new ByteArrayInputStream(buffer.array());
-
-        byte[] byteArray = new byte[buffer.limit()];
-        buffer.get(byteArray);
-        return new ByteArrayInputStream(byteArray);
+        return new ByteBufferInputStream(buffer);
+//        if (buffer.hasArray() && buffer.limit() == buffer.capacity()) // otherwise bytes beyond the limit are included
+//            return new ByteArrayInputStream(buffer.array());
+//
+//        byte[] byteArray = new byte[buffer.limit()];
+//        buffer.get(byteArray);
+//        return new ByteArrayInputStream(byteArray);
     }
 
     /**
@@ -1753,7 +1756,7 @@ public class WWIO
             for (File childDir : childDirs)
             {
                 File destDir = new File(destination, childDir.getName());
-                copyDirectory(childDir, destDir, copySubDirectories);
+                copyDirectory(childDir, destDir, true);
             }
         }
     }

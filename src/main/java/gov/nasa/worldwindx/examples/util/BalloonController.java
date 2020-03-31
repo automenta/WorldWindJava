@@ -1178,8 +1178,8 @@ public class BalloonController extends MouseAdapter implements SelectListener
      */
     protected Position computeIntersection(AbstractShape shape, Point screenPoint)
     {
-        try
-        {
+//        try
+//        {
             // Compute the intersection using whatever terrain is available. This calculation does not need to be very
             // precise, it just needs to place the balloon close to the shape.
             Terrain terrain = this.wwd.getSceneController().getDrawContext().getTerrain();
@@ -1191,11 +1191,11 @@ public class BalloonController extends MouseAdapter implements SelectListener
             List<Intersection> intersections = shape.intersect(line, terrain);
             if (intersections != null && !intersections.isEmpty())
                 return intersections.get(0).getIntersectionPosition();
-        }
-        catch (InterruptedException ignored)
-        {
-            // Do nothing
-        }
+//        }
+//        catch (InterruptedException ignored)
+//        {
+//            // Do nothing
+//        }
 
         return null;
     }

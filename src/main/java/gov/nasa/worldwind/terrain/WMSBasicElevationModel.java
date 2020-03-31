@@ -198,7 +198,7 @@ public class WMSBasicElevationModel extends BasicElevationModel
             StringBuffer sb;
             if (this.URLTemplate == null)
             {
-                sb = new StringBuffer(tile.getLevel().getService());
+                sb = new StringBuffer(tile.level.getService());
 
                 if (!sb.toString().toLowerCase().contains("service=wms"))
                     sb.append("service=WMS");
@@ -228,7 +228,7 @@ public class WMSBasicElevationModel extends BasicElevationModel
             sb.append("&height=");
             sb.append(tile.getHeight());
 
-            Sector s = tile.getSector();
+            Sector s = tile.sector;
             sb.append("&bbox=");
             // The order of the coordinate specification matters, and it changed with WMS 1.3.0.
             if (WWUtil.compareVersion(this.wmsVersion, "1.1.1") <= 0 || this.crs.contains("CRS:84"))

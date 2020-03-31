@@ -365,6 +365,8 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
 
         private Layer buildEarthquakeLayer(String earthquakeFeedUrl)
         {
+            RenderableLayer layer = new RenderableLayer();
+            layer.setName("Earthquakes");
             GeoJSONLoader loader = new GeoJSONLoader()
             {
                 @Override
@@ -381,8 +383,6 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
                 }
             };
 
-            RenderableLayer layer = new RenderableLayer();
-            layer.setName("Earthquakes");
             loader.addSourceGeometryToLayer(earthquakeFeedUrl, layer);
 
             return layer;

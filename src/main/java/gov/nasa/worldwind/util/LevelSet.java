@@ -120,21 +120,21 @@ public class LevelSet extends WWObjectImpl
         if (tub == null)
         {
             params.setValue(AVKey.TILE_URL_BUILDER, (TileUrlBuilder) (tile, altImageFormat) -> {
-                String service = tile.getLevel().getService();
+                String service = tile.level.getService();
                 if (service == null || service.length() < 1)
                     return null;
 
-                StringBuilder sb1 = new StringBuilder(tile.getLevel().getService());
+                StringBuilder sb1 = new StringBuilder(tile.level.getService());
                 if (sb1.lastIndexOf("?") != sb1.length() - 1)
                     sb1.append("?");
                 sb1.append("T=");
-                sb1.append(tile.getLevel().getDataset());
+                sb1.append(tile.level.getDataset());
                 sb1.append("&L=");
-                sb1.append(tile.getLevel().getLevelName());
+                sb1.append(tile.level.getLevelName());
                 sb1.append("&X=");
-                sb1.append(tile.getColumn());
+                sb1.append(tile.column);
                 sb1.append("&Y=");
-                sb1.append(tile.getRow());
+                sb1.append(tile.row);
 
                 // Convention for NASA WWN tiles is to request them with common dataset name but without dds.
                 return new URL(altImageFormat == null ? sb1.toString() : sb1.toString().replace("dds", ""));
@@ -349,7 +349,7 @@ public class LevelSet extends WWObjectImpl
 
     private long getTileNumber(Tile tile)
     {
-        return tile.getRow() < 0 ? -1 : (long) tile.getRow() * this.numColumnsInLevel(tile.getLevel()) + tile.getColumn();
+        return tile.row < 0 ? -1 : (long) tile.row * this.numColumnsInLevel(tile.level) + tile.column;
     }
 
     private long getTileNumber(TileKey tileKey)
@@ -374,7 +374,7 @@ public class LevelSet extends WWObjectImpl
             throw new IllegalArgumentException(msg);
         }
 
-        tile.getLevel().markResourceAbsent(this.getTileNumber(tile));
+        tile.level.markResourceAbsent(this.getTileNumber(tile));
     }
 
     /**
@@ -417,7 +417,7 @@ public class LevelSet extends WWObjectImpl
             throw new IllegalArgumentException(msg);
         }
 
-        return tile.getLevel().isEmpty() || tile.getLevel().isResourceAbsent(this.getTileNumber(tile));
+        return tile.level.isEmpty() || tile.level.isResourceAbsent(this.getTileNumber(tile));
     }
 
     /**
@@ -436,7 +436,7 @@ public class LevelSet extends WWObjectImpl
             throw new IllegalArgumentException(msg);
         }
 
-        tile.getLevel().unmarkResourceAbsent(this.getTileNumber(tile));
+        tile.level.unmarkResourceAbsent(this.getTileNumber(tile));
     }
 
     // Create the tile corresponding to a specified key.

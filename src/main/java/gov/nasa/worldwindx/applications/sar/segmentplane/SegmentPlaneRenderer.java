@@ -1950,7 +1950,7 @@ public class SegmentPlaneRenderer
             Vec4 vec = triangle.intersect(ray);
             if (vec != null)
             {
-                double d = ray.getOrigin().distanceTo3(vec);
+                double d = ray.origin.distanceTo3(vec);
                 if (d < nearestDistance)
                 {
                     nearestDistance = d;

@@ -52,10 +52,6 @@ public class TextureTile extends Tile implements SurfaceTile
         return WorldWind.getMemoryCacheSet().getCache(TextureTile.class.getName());
     }
 
-    public TextureTile(Sector sector)
-    {
-        super(sector);
-    }
 
     public TextureTile(Sector sector, Level level, int row, int col)
     {
@@ -65,6 +61,12 @@ public class TextureTile extends Tile implements SurfaceTile
     public TextureTile(Sector sector, Level level, int row, int column, String cacheName)
     {
         super(sector, level, row, column, cacheName);
+
+    }
+
+    @Override
+    public Sector getSector() {
+        return sector;
     }
 
     @Override
@@ -81,7 +83,7 @@ public class TextureTile extends Tile implements SurfaceTile
     public List<? extends LatLon> getCorners()
     {
         ArrayList<LatLon> list = new ArrayList<>(4);
-        for (LatLon ll : this.getSector())
+        for (LatLon ll : sector)
         {
             list.add(ll);
         }
@@ -143,7 +145,7 @@ public class TextureTile extends Tile implements SurfaceTile
             throw new IllegalStateException(message);
         }
 
-        return tc.getTexture(this.getTileKey());
+        return tc.getTexture(this.tileKey);
     }
 
     public boolean isTextureInMemory(GpuResourceCache tc)
@@ -165,7 +167,7 @@ public class TextureTile extends Tile implements SurfaceTile
 
     public boolean isTextureExpired()
     {
-        return this.isTextureExpired(this.getLevel().getExpiryTime());
+        return this.isTextureExpired(level.getExpiryTime());
     }
 
     public boolean isTextureExpired(long expiryTime)
@@ -182,7 +184,7 @@ public class TextureTile extends Tile implements SurfaceTile
             throw new IllegalStateException(message);
         }
 
-        tc.put(this.getTileKey(), texture);
+        tc.put(this.tileKey, texture);
         this.updateTime.set(System.currentTimeMillis());
 
         // No more need for texture data; allow garbage collector and memory cache to reclaim it.
@@ -200,7 +202,7 @@ public class TextureTile extends Tile implements SurfaceTile
             throw new IllegalArgumentException(msg);
         }
 
-        return globe.computePointFromLocation(this.getSector().getCentroid());
+        return globe.computePointFromLocation(sector.getCentroid());
     }
 
     public Extent getExtent(DrawContext dc)
@@ -212,7 +214,7 @@ public class TextureTile extends Tile implements SurfaceTile
             throw new IllegalArgumentException(msg);
         }
 
-        return Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), this.getSector());
+        return Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), sector);
     }
 
     /**
@@ -235,16 +237,16 @@ public class TextureTile extends Tile implements SurfaceTile
             throw new IllegalArgumentException(msg);
         }
 
-        Angle p0 = this.getSector().getMinLatitude();
-        Angle p2 = this.getSector().getMaxLatitude();
+        Angle p0 = sector.getMinLatitude();
+        Angle p2 = sector.getMaxLatitude();
         Angle p1 = Angle.midAngle(p0, p2);
 
-        Angle t0 = this.getSector().getMinLongitude();
-        Angle t2 = this.getSector().getMaxLongitude();
+        Angle t0 = sector.getMinLongitude();
+        Angle t2 = sector.getMaxLongitude();
         Angle t1 = Angle.midAngle(t0, t2);
 
-        int row = this.getRow();
-        int col = this.getColumn();
+        int row = this.row;
+        int col = column;
 
         TextureTile[] subTiles = new TextureTile[4];
 
@@ -320,8 +322,8 @@ public class TextureTile extends Tile implements SurfaceTile
 
     protected void updateMemoryCache()
     {
-        if (this.getTileFromMemoryCache(this.getTileKey()) != null)
-            getMemoryCache().add(this.getTileKey(), this);
+        if (this.getTileFromMemoryCache(this.tileKey) != null)
+            getMemoryCache().add(this.tileKey, this);
     }
 
     protected Texture initializeTexture(DrawContext dc)
@@ -386,7 +388,7 @@ public class TextureTile extends Tile implements SurfaceTile
         // TODO: remove the latitude range restriction if a better tessellator fixes the problem.
 
         boolean useMipmapFilter = (this.hasMipmapData || t.isUsingAutoMipmapGeneration())
-            && this.getSector().getMaxLatitude().degrees < 80d && this.getSector().getMinLatitude().degrees > -80;
+            && sector.getMaxLatitude().degrees < 80d && sector.getMinLatitude().degrees > -80;
 
         // Set the texture minification filter. If the texture qualifies for mipmaps, apply a minification filter that
         // will access the mipmap data using the highest quality algorithm. If the anisotropic texture filter is
@@ -526,7 +528,7 @@ public class TextureTile extends Tile implements SurfaceTile
             throw new IllegalStateException(message);
         }
 
-        if (this.getLevel() == null)
+        if (level == null)
             return;
 
         int levelDelta = this.getLevelNumber() - this.getFallbackTile().getLevelNumber();
@@ -536,8 +538,8 @@ public class TextureTile extends Tile implements SurfaceTile
         double twoToTheN = Math.pow(2, levelDelta);
         double oneOverTwoToTheN = 1 / twoToTheN;
 
-        double sShift = oneOverTwoToTheN * (this.getColumn() % twoToTheN);
-        double tShift = oneOverTwoToTheN * (this.getRow() % twoToTheN);
+        double sShift = oneOverTwoToTheN * (column % twoToTheN);
+        double tShift = oneOverTwoToTheN * (row % twoToTheN);
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glTranslated(sShift, tShift, 0);
@@ -552,20 +554,18 @@ public class TextureTile extends Tile implements SurfaceTile
         if (o == null || getClass() != o.getClass())
             return false;
 
-        final TextureTile tile = (TextureTile) o;
-
-        return !(this.getTileKey() != null ? !this.getTileKey().equals(tile.getTileKey()) : tile.getTileKey() != null);
+        return Objects.equals(this.tileKey, ((TextureTile) o).tileKey);
     }
 
     @Override
     public int hashCode()
     {
-        return (this.getTileKey() != null ? this.getTileKey().hashCode() : 0);
+        return (this.tileKey != null ? this.tileKey.hashCode() : 0);
     }
 
     @Override
     public String toString()
     {
-        return this.getSector().toString();
+        return sector.toString();
     }
 }

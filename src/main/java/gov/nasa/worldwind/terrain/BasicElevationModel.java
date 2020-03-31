@@ -486,7 +486,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
     protected boolean isFileExpired(Tile tile, java.net.URL fileURL, FileStore fileStore)
     {
-        if (!WWIO.isFileOutOfDate(fileURL, tile.getLevel().getExpiryTime()))
+        if (!WWIO.isFileOutOfDate(fileURL, tile.level.getExpiryTime()))
             return false;
 
         // The file has expired. Delete it.
@@ -514,9 +514,9 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     {
         // Level 0 tiles are held in the model itself; other levels are placed in the memory cache.
         if (tile.getLevelNumber() == 0)
-            this.levelZeroTiles.put(tile.getTileKey(), tile);
+            this.levelZeroTiles.put(tile.tileKey, tile);
         else {
-            this.getMemoryCache().add(tile.getTileKey(), tile, elevations.getSizeInBytes());
+            this.getMemoryCache().add(tile.tileKey, tile, elevations.getSizeInBytes());
         }
         
     }
@@ -831,7 +831,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             return;
 
         AVListImpl avList = new AVListImpl();
-        avList.setValue(AVKey.SECTOR, tile.getSector());
+        avList.setValue(AVKey.SECTOR, tile.sector);
         avList.setValue(AVKey.WIDTH, tile.getWidth());
         avList.setValue(AVKey.HEIGHT, tile.getHeight());
         avList.setValue(AVKey.FILE_NAME, tile.getPath());
@@ -1026,7 +1026,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             {
                 for (ElevationTile tile : this.tiles)
                 {
-                    if (tile.getSector().contains(latitude, longitude))
+                    if (tile.sector.contains(latitude, longitude))
                         return this.elevationModel.lookupElevation(latitude, longitude, tile);
                 }
 
@@ -1374,7 +1374,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     protected double lookupElevation(Angle latitude, Angle longitude, final ElevationTile tile)
     {
         BufferWrapper elevations = tile.getElevations();
-        Sector sector = tile.getSector();
+        Sector sector = tile.sector;
         final int tileHeight = tile.getHeight();
         final int tileWidth = tile.getWidth();
         final double sectorDeltaLat = sector.getDeltaLat().radians;
@@ -1661,7 +1661,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         public boolean isElevationsExpired()
         {
-            return this.isElevationsExpired(this.getLevel().getExpiryTime());
+            return this.isElevationsExpired(level.getExpiryTime());
         }
 
         public boolean isElevationsExpired(long expiryTime)
@@ -1671,7 +1671,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         public int computeElevationIndex(LatLon location)
         {
-            Sector sector = this.getSector();
+            Sector sector = this.sector;
 
             final int tileHeight = this.getHeight();
             final int tileWidth = this.getWidth();
@@ -1693,7 +1693,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         public double[] getExtremes(Sector sector, BasicElevationModel em, double[] extremes)
         {
-            Sector intersection = this.getSector().intersection(sector);
+            Sector intersection = this.sector.intersection(sector);
             if (intersection == null)
                 return extremes;
 
@@ -1745,7 +1745,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         java.util.TreeSet<ElevationTile> tiles = new java.util.TreeSet<>((t1, t2) -> {
             if (t2.getLevelNumber() == t1.getLevelNumber()
-                && t2.getRow() == t1.getRow() && t2.getColumn() == t1.getColumn())
+                && t2.row == t1.row && t2.column == t1.column)
                 return 0;
 
             // Higher-res levels compare lower than lower-res
@@ -1821,12 +1821,12 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         {
             // Use the level of the the lowest resolution found to denote the resolution of this elevation set.
             // The list of tiles is sorted first by level, so use the level of the list's last entry.
-            elevations = new Elevations(this, tiles.last().getLevel().getTexelSize());
+            elevations = new Elevations(this, tiles.last().level.getTexelSize());
             elevations.tiles = tiles;
         }
         else
         {
-            elevations = new Elevations(this, tiles.last().getLevel().getTexelSize());
+            elevations = new Elevations(this, tiles.last().level.getTexelSize());
 
             // Compute the elevation extremes now that the sector is fully resolved
             if (tiles.size() > 0)
@@ -1857,7 +1857,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     protected void checkElevationExpiration(ElevationTile tile)
     {
         if (tile.isElevationsExpired())
-            this.requestTile(tile.getTileKey());
+            this.requestTile(tile.tileKey);
     }
 
     protected void checkElevationExpiration(Iterable<? extends ElevationTile> tiles)
@@ -1865,7 +1865,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         for (ElevationTile tile : tiles)
         {
             if (tile.isElevationsExpired())
-                this.requestTile(tile.getTileKey());
+                this.requestTile(tile.tileKey);
         }
     }
 

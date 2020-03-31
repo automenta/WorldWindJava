@@ -16,7 +16,7 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 
-import javax.xml.parsers.SAXParserFactory;
+import javax.xml.parsers.*;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
@@ -271,11 +271,11 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
 
     protected static class Tile implements Cacheable
     {
-        protected final PlaceNameService placeNameService;
-        protected final Sector sector;
-        protected final int row;
-        protected final int column;
-        private Integer hashInt = null;
+        public final PlaceNameService placeNameService;
+        public final Sector sector;
+        public final int row;
+        public final int column;
+        private final int hashInt;
         // Computed data.
         protected String fileCachePath = null;
         protected double extentVerticalExaggeration = Double.MIN_VALUE;
@@ -307,7 +307,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
 
             long result = 32; //references
 
-            result += this.getSector().getSizeInBytes();
+            result += sector.getSizeInBytes();
             if (this.getFileCachePath() != null)
                 result += this.getFileCachePath().length();
 
@@ -363,10 +363,6 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
             return Angle.fromDegrees(-180 + delta.getDegrees() * column);
         }
 
-        public Integer getHashInt()
-        {
-            return hashInt;
-        }
 
         int computeHash()
         {
@@ -395,24 +391,14 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
             return this.fileCachePath;
         }
 
-        public PlaceNameService getPlaceNameService()
-        {
-            return placeNameService;
-        }
-
         public java.net.URL getRequestURL() throws java.net.MalformedURLException
         {
             return this.placeNameService.createServiceURLFromSector(this.sector);
         }
 
-        public Sector getSector()
-        {
-            return sector;
-        }
-
         public int hashCode()
         {
-            return this.hashInt;
+            return hashInt;
         }
 
         protected boolean isTileInMemoryWithData()
@@ -645,7 +631,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
         }
 
         // Tile's data isn't available, so request it
-        if (!tile.getPlaceNameService().isResourceAbsent(tile.getPlaceNameService().getTileNumber(
+        if (!tile.placeNameService.isResourceAbsent(tile.placeNameService.getTileNumber(
             tile.row, tile.column)))
         {
             this.requestTile(dc, tile);
@@ -698,7 +684,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
     protected static boolean isTileVisible(DrawContext dc, Tile tile, double minDistanceSquared,
         double maxDistanceSquared)
     {
-        if (!tile.getSector().intersects(dc.getVisibleSector()))
+        if (!tile.sector.intersects(dc.getVisibleSector()))
             return false;
 
         View view = dc.getView();
@@ -714,10 +700,10 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
         }
         else
         {
-            Angle lat = clampAngle(eyePos.getLatitude(), tile.getSector().getMinLatitude(),
-                tile.getSector().getMaxLatitude());
-            Angle lon = clampAngle(eyePos.getLongitude(), tile.getSector().getMinLongitude(),
-                tile.getSector().getMaxLongitude());
+            Angle lat = clampAngle(eyePos.getLatitude(), tile.sector.getMinLatitude(),
+                tile.sector.getMaxLatitude());
+            Angle lon = clampAngle(eyePos.getLongitude(), tile.sector.getMinLongitude(),
+                tile.sector.getMaxLongitude());
             Vec4 p = dc.getGlobe().computePointFromPosition(lat, lon, 0d);
             distSquared = dc.getView().getEyePoint().distanceToSquared3(p);
         }
@@ -754,7 +740,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
 
     protected void requestTile(DrawContext dc, Tile tile)
     {
-        Vec4 centroid = dc.getGlobe().computePointFromPosition(tile.getSector().getCentroid(), 0);
+        Vec4 centroid = dc.getGlobe().computePointFromPosition(tile.sector.getCentroid(), 0);
         if (this.getReferencePoint() != null)
             tile.setPriority(centroid.distanceTo3(this.getReferencePoint()));
 
@@ -799,7 +785,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
             {
                 if (this.layer.loadTile(this.tile, tileURL))
                 {
-                    tile.getPlaceNameService().unmarkResourceAbsent(tile.getPlaceNameService().getTileNumber(
+                    tile.placeNameService.unmarkResourceAbsent(tile.placeNameService.getTileNumber(
                         tile.row,
                         tile.column));
                     this.layer.firePropertyChange(AVKey.LAYER, null, this);
@@ -873,7 +859,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
         {
             // Assume that something's wrong with the file and delete it.
             this.getDataFileStore().removeFile(url);
-            tile.getPlaceNameService().markResourceAbsent(tile.getPlaceNameService().getTileNumber(tile.row,
+            tile.placeNameService.markResourceAbsent(tile.placeNameService.getTileNumber(tile.row,
                 tile.column));
             String message = Logging.getMessage("generic.DeletedCorruptDataFile", url);
             Logging.logger().fine(message);
@@ -893,6 +879,8 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
 
         try
         {
+            SAXParser p = saxParserFactory.newSAXParser();
+
             String path = url.getFile();
             path = path.replaceAll("%20", " "); // TODO: find a better way to get a path usable by FileInputStream
 
@@ -901,8 +889,8 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
             is = new java.util.zip.GZIPInputStream(fis);
 
             GMLPlaceNameSAXHandler handler = new GMLPlaceNameSAXHandler();
-            saxParserFactory.newSAXParser().parse(is, handler);
-            return handler.createPlaceNameChunk(tile.getPlaceNameService());
+            p.parse(is, handler);
+            return handler.createPlaceNameChunk(tile.placeNameService);
         }
         catch (Exception e)
         {
@@ -1174,8 +1162,8 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable
         @Override
         protected void markResourceAbsent()
         {
-            this.tile.getPlaceNameService().markResourceAbsent(
-                this.tile.getPlaceNameService().getTileNumber(this.tile.row, this.tile.column));
+            this.tile.placeNameService.markResourceAbsent(
+                this.tile.placeNameService.getTileNumber(this.tile.row, this.tile.column));
         }
 
         @Override

@@ -390,7 +390,7 @@ public abstract class TiledImageLayer extends AbstractLayer
                 ancestorResource = this.currentResourceTile;
                 this.currentResourceTile = tile;
             }
-            else if (!tile.getLevel().isEmpty())
+            else if (!tile.level.isEmpty())
             {
 //                this.addTile(dc, tile);
 //                return;
@@ -407,7 +407,7 @@ public abstract class TiledImageLayer extends AbstractLayer
             TextureTile[] subTiles = tile.createSubTiles(this.levels.getLevel(tile.getLevelNumber() + 1));
             for (TextureTile child : subTiles)
             {
-                if (this.getLevels().getSector().intersects(child.getSector()) && this.isTileVisible(dc, child))
+                if (this.getLevels().getSector().intersects(child.sector) && this.isTileVisible(dc, child))
                     this.addTileOrDescendants(dc, child);
             }
         }
@@ -471,12 +471,12 @@ public abstract class TiledImageLayer extends AbstractLayer
     protected boolean isTileVisible(DrawContext dc, TextureTile tile)
     {
         return tile.getExtent(dc).intersects(dc.getView().getFrustumInModelCoordinates()) &&
-            (dc.getVisibleSector() == null || dc.getVisibleSector().intersects(tile.getSector()));
+            (dc.getVisibleSector() == null || dc.getVisibleSector().intersects(tile.sector));
     }
 
     protected boolean meetsRenderCriteria(DrawContext dc, TextureTile tile)
     {
-        return this.levels.isFinalLevel(tile.getLevelNumber()) || !needToSplit(dc, tile.getSector(), tile.getLevel());
+        return this.levels.isFinalLevel(tile.getLevelNumber()) || !needToSplit(dc, tile.sector, tile.level);
     }
 
     protected double getDetailFactor()
@@ -769,7 +769,7 @@ public abstract class TiledImageLayer extends AbstractLayer
             if (tile.getFallbackTile() != null)
                 tileLabel += "/" + tile.getFallbackTile().getLabel();
 
-            LatLon ll = tile.getSector().getCentroid();
+            LatLon ll = tile.sector.getCentroid();
             Vec4 pt = dc.getGlobe().computePointFromPosition(ll.getLatitude(), ll.getLongitude(),
                 dc.getGlobe().getElevation(ll.getLatitude(), ll.getLongitude()));
             pt = dc.getView().project(pt);
@@ -1105,7 +1105,7 @@ public abstract class TiledImageLayer extends AbstractLayer
         if (url == null) // image is not local
             return null;
 
-        if (WWIO.isFileOutOfDate(url, tile.getLevel().getExpiryTime()))
+        if (WWIO.isFileOutOfDate(url, tile.level.getExpiryTime()))
         {
             // The file has expired. Delete it.
             this.getDataFileStore().removeFile(url);
@@ -1191,7 +1191,7 @@ public abstract class TiledImageLayer extends AbstractLayer
             return;
 
         AVListImpl avList = new AVListImpl();
-        avList.setValue(AVKey.SECTOR, tile.getSector());
+        avList.setValue(AVKey.SECTOR, tile.sector);
         avList.setValue(AVKey.WIDTH, tile.getWidth());
         avList.setValue(AVKey.HEIGHT, tile.getHeight());
         avList.setValue(AVKey.FILE_NAME, tile.getPath());
@@ -1338,7 +1338,7 @@ public abstract class TiledImageLayer extends AbstractLayer
                     Thread.sleep(1); // generates InterruptedException if thread has been interupted
 
                     if (tileImage != null)
-                        ImageUtil.mergeImage(sector, tile.getSector(), aspectRatio, tileImage, image);
+                        ImageUtil.mergeImage(sector, tile.sector, aspectRatio, tileImage, image);
 
                     this.firePropertyChange(AVKey.PROGRESS, tileCount / numTiles, ++tileCount / numTiles);
                 }

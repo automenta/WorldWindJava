@@ -13,7 +13,6 @@ import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 import java.beans.*;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 

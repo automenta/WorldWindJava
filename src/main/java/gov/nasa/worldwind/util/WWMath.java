@@ -1182,8 +1182,8 @@ public class WWMath
         double bMin = Double.MAX_VALUE;
         boolean isTangent = false;
 
-        Vec4 u = line.getDirection();
-        Vec4 p = line.getOrigin();
+        Vec4 u = line.direction;
+        Vec4 p = line.origin;
 
         for (Plane plane : planes)
         {
@@ -1670,7 +1670,7 @@ public class WWMath
 
         // Compute side points at the start of the line.
         prevOffset = generateParallelPoints(ptB, null, ptA, leftPositions, rightPositions, distance,
-            posB.getElevation(), globe, prevOffset);
+            posB.getElevation(), globe, null);
 
         double prevElevation;
         while (iterator.hasNext())

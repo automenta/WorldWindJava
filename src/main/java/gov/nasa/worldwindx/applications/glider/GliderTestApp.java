@@ -144,7 +144,7 @@ public class GliderTestApp extends ApplicationTemplate {
             image.addRegionOfInterest(regionOfInterest);
 
             final javax.swing.Timer timer = new javax.swing.Timer(1000, (ActionEvent evt) -> {
-                try {
+//                try {
                     if (((GliderWorldWindow) frame.getWwd()).getImages().isEmpty()) {
                         System.out.println("ADDING");
                         ((GliderWorldWindow) frame.getWwd()).addImage(image);
@@ -156,9 +156,9 @@ public class GliderTestApp extends ApplicationTemplate {
                             opacityIncrement *= -1.0;
                         }
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             });
             timer.setRepeats(true);
             timer.start();

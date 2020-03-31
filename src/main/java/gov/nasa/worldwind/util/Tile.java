@@ -24,13 +24,13 @@ import java.util.*;
  */
 public class Tile implements Comparable<Tile>, Cacheable
 {
-    private final Sector sector;
-    private final Level level;
-    private final int row;
-    private final int column;
+    public final Sector sector;
+    public final Level level;
+    public final int row;
+    public final int column;
     /** An optional cache name. Overrides the Level's cache name when non-null. */
-    private final String cacheName;
-    private final TileKey tileKey;
+    public final String cacheName;
+    public final TileKey tileKey;
     private double priority = Double.MAX_VALUE; // Default is minimum priority
     // The following is late bound because it's only selectively needed and costly to create
     private String path;
@@ -158,30 +158,6 @@ public class Tile implements Comparable<Tile>, Cacheable
         this.path = null;
     }
 
-    /**
-     * Constructs a texture tile for a given sector with a default level, row and column.
-     *
-     * @param sector the sector to create the tile for.
-     */
-    public Tile(Sector sector)
-    {
-        if (sector == null)
-        {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Random random = new Random();
-
-        this.sector = sector;
-        this.level = null;
-        this.row = random.nextInt();
-        this.column = random.nextInt();
-        this.cacheName = null;
-        this.tileKey = new TileKey(this);
-        this.path = null;
-    }
 
     public long getSizeInBytes()
     {
@@ -218,16 +194,6 @@ public class Tile implements Comparable<Tile>, Cacheable
         return path.contains(".") ? path.substring(0, path.lastIndexOf('.')) : path;
     }
 
-    public final Sector getSector()
-    {
-        return sector;
-    }
-
-    public Level getLevel()
-    {
-        return level;
-    }
-
     public final int getLevelNumber()
     {
         return this.level != null ? this.level.getLevelNumber() : 0;
@@ -236,16 +202,6 @@ public class Tile implements Comparable<Tile>, Cacheable
     public final String getLevelName()
     {
         return this.level != null ? this.level.getLevelName() : "";
-    }
-
-    public final int getRow()
-    {
-        return row;
-    }
-
-    public final int getColumn()
-    {
-        return column;
     }
 
     /**
@@ -267,11 +223,6 @@ public class Tile implements Comparable<Tile>, Cacheable
         return this.level != null ? this.level.getFormatSuffix() : null;
     }
 
-    public final TileKey getTileKey()
-    {
-        return this.tileKey;
-    }
-
     public java.net.URL getResourceURL() throws java.net.MalformedURLException
     {
         return this.level != null ? this.level.getTileResourceURL(this, null) : null;
@@ -290,20 +241,20 @@ public class Tile implements Comparable<Tile>, Cacheable
         sb.append("(");
         sb.append(this.getLevelName());
         sb.append(")");
-        sb.append(", ").append(this.getRow());
-        sb.append(", ").append(this.getColumn());
+        sb.append(", ").append(row);
+        sb.append(", ").append(column);
 
         return sb.toString();
     }
 
     public int getWidth()
     {
-        return this.getLevel().getTileWidth();
+        return level.getTileWidth();
     }
 
     public int getHeight()
     {
-        return this.getLevel().getTileHeight();
+        return level.getTileHeight();
     }
 
     public int compareTo(Tile tile)

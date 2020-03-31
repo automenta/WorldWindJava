@@ -575,17 +575,17 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer
         java.util.ArrayList<DataRaster> intersectingRasters = new java.util.ArrayList<>();
         for (DataRaster raster : dataRasters)
         {
-            if (raster.getSector().intersects(tile.getSector()) && raster.getSector().intersects(levelSet.getSector()))
+            if (raster.getSector().intersects(tile.sector) && raster.getSector().intersects(levelSet.getSector()))
                 intersectingRasters.add(raster);
         }
 
         // If any data sources intersect this tile, and the tile's level is not empty, then we attempt to read those
         // sources and render them into this tile.
-        if (!intersectingRasters.isEmpty() && !tile.getLevel().isEmpty())
+        if (!intersectingRasters.isEmpty() && !tile.level.isEmpty())
         {
             // Create the tile raster to render into.
-            tileRaster = this.createDataRaster(tile.getLevel().getTileWidth(), tile.getLevel().getTileHeight(),
-                tile.getSector(), params);
+            tileRaster = this.createDataRaster(tile.level.getTileWidth(), tile.level.getTileHeight(),
+                tile.sector, params);
             // Render each data source raster into the tile raster.
             for (DataRaster raster : intersectingRasters)
             {
@@ -612,7 +612,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer
         for (int index = 0; index < subTiles.length; index++)
         {
             // If the sub-tile does not intersect the level set, then skip that sub-tile.
-            if (subTiles[index].getSector().intersects(levelSet.getSector()))
+            if (subTiles[index].sector.intersects(levelSet.getSector()))
             {
                 // Recursively create the sub-tile raster.
                 DataRaster subRaster = this.createTileRaster(levelSet, subTiles[index], params);
@@ -634,11 +634,11 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer
         if (hasDescendants)
         {
             // If this tile's level is not empty, then create and render the tile's raster.
-            if (!tile.getLevel().isEmpty())
+            if (!tile.level.isEmpty())
             {
                 // Create the tile's raster.
-                tileRaster = this.createDataRaster(tile.getLevel().getTileWidth(), tile.getLevel().getTileHeight(),
-                    tile.getSector(), params);
+                tileRaster = this.createDataRaster(tile.level.getTileWidth(), tile.level.getTileHeight(),
+                    tile.sector, params);
 
                 for (int index = 0; index < subTiles.length; index++)
                 {
@@ -663,16 +663,16 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer
 
     protected Tile[] createSubTiles(Tile tile, Level nextLevel)
     {
-        Angle p0 = tile.getSector().getMinLatitude();
-        Angle p2 = tile.getSector().getMaxLatitude();
+        Angle p0 = tile.sector.getMinLatitude();
+        Angle p2 = tile.sector.getMaxLatitude();
         Angle p1 = Angle.midAngle(p0, p2);
 
-        Angle t0 = tile.getSector().getMinLongitude();
-        Angle t2 = tile.getSector().getMaxLongitude();
+        Angle t0 = tile.sector.getMinLongitude();
+        Angle t2 = tile.sector.getMaxLongitude();
         Angle t1 = Angle.midAngle(t0, t2);
 
-        int row = tile.getRow();
-        int col = tile.getColumn();
+        int row = tile.row;
+        int col = tile.column;
 
         Tile[] subTiles = new Tile[4];
         subTiles[0] = new Tile(new Sector(p0, p1, t0, t1), nextLevel, 2 * row, 2 * col);
@@ -805,7 +805,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer
             {
                 installTileRaster(tile, tileRaster, params);
                 // Dispose the data raster.
-                if (tileRaster instanceof Disposable)
+                if (tileRaster != null)
                     tileRaster.dispose();
             }
             catch (Throwable t)

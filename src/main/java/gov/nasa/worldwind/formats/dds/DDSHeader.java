@@ -171,7 +171,7 @@ public class DDSHeader
         boolean sourceIsInputStream = (source instanceof InputStream);
 
         InputStream inputStream = WWIO.openStream(source);
-        ReadableByteChannel channel = Channels.newChannel(WWIO.getBufferedInputStream(inputStream));
+        ReadableByteChannel channel = Channels.newChannel((inputStream));
 
         try
         {

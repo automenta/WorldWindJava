@@ -161,7 +161,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
     private boolean isTextureExpired(MercatorTextureTile tile,
         java.net.URL textureURL)
     {
-        if (!WWIO.isFileOutOfDate(textureURL, tile.getLevel().getExpiryTime()))
+        if (!WWIO.isFileOutOfDate(textureURL, tile.level.getExpiryTime()))
             return false;
 
         // The file has expired. Delete it.
@@ -209,7 +209,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer
     private void addTileToCache(MercatorTextureTile tile)
     {
         WorldWind.getMemoryCache(MercatorTextureTile.class.getName()).add(
-            tile.getTileKey(), tile);
+            tile.tileKey, tile);
     }
 
     protected void downloadTexture(final MercatorTextureTile tile)

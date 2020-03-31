@@ -104,8 +104,8 @@ public class TileKey implements Comparable<TileKey>
             throw new IllegalArgumentException(msg);
         }
         this.level = tile.getLevelNumber();
-        this.row = tile.getRow();
-        this.col = tile.getColumn();
+        this.row = tile.row;
+        this.col = tile.column;
         this.cacheName = tile.getCacheName();
         this.hash = this.computeHash();
     }

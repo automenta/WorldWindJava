@@ -197,7 +197,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer
             StringBuffer sb;
             if (this.URLTemplate == null)
             {
-                sb = new StringBuffer(WWXML.fixGetMapString(tile.getLevel().getService()));
+                sb = new StringBuffer(WWXML.fixGetMapString(tile.level.getService()));
 
                 if (!sb.toString().toLowerCase().contains("service=wms"))
                     sb.append("service=WMS");
@@ -224,7 +224,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer
             sb.append("&width=").append(tile.getWidth());
             sb.append("&height=").append(tile.getHeight());
 
-            Sector s = tile.getSector();
+            Sector s = tile.sector;
             sb.append("&bbox=");
             // The order of the coordinate specification matters, and it changed with WMS 1.3.0.
             if (WWUtil.compareVersion(this.wmsVersion, "1.1.1") <= 0 || this.crs.contains("CRS:84"))
@@ -324,7 +324,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer
             BufferedImage tileImage = ImageIO.read(tile.getFile());
             Thread.sleep(1); // generates InterruptedException if thread has been interupted
 
-            ImageUtil.mergeImage(sector, tile.getSector(), aspectRatio, tileImage, image);
+            ImageUtil.mergeImage(sector, tile.sector, aspectRatio, tileImage, image);
             Thread.sleep(1); // generates InterruptedException if thread has been interupted
 
             this.firePropertyChange(AVKey.PROGRESS, 0d, 1d);

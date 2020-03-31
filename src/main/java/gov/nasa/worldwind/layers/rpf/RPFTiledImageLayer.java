@@ -555,13 +555,13 @@ public class RPFTiledImageLayer extends TiledImageLayer
             StringBuffer sb;
             if (this.URLTemplate == null)
             {
-                sb = new StringBuffer(tile.getLevel().getService());
+                sb = new StringBuffer(tile.level.getService());
                 sb.append("dataset=");
-                sb.append(tile.getLevel().getDataset());
+                sb.append(tile.level.getDataset());
                 sb.append("&width=");
-                sb.append(tile.getLevel().getTileWidth());
+                sb.append(tile.level.getTileWidth());
                 sb.append("&height=");
-                sb.append(tile.getLevel().getTileHeight());
+                sb.append(tile.level.getTileHeight());
 
                 this.URLTemplate = sb.toString();
             }
@@ -570,7 +570,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
                 sb = new StringBuffer(this.URLTemplate);
             }
 
-            Sector s = tile.getSector();
+            Sector s = tile.sector;
             sb.append("&bbox=");
             sb.append(s.getMinLongitude().getDegrees());
             sb.append(",");
@@ -647,7 +647,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
 
     private boolean loadTexture(TextureTile tile, java.net.URL textureURL)
     {
-        if (WWIO.isFileOutOfDate(textureURL, tile.getLevel().getExpiryTime()))
+        if (WWIO.isFileOutOfDate(textureURL, tile.level.getExpiryTime()))
         {
             // The file has expired. Delete it then request download of newer.
             gov.nasa.worldwind.WorldWind.getDataFileStore().removeFile(textureURL);
@@ -689,7 +689,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
 
     private void addTileToCache(TextureTile tile)
     {
-        TextureTile.getMemoryCache().add(tile.getTileKey(), tile);
+        TextureTile.getMemoryCache().add(tile.tileKey, tile);
     }
 
     protected void downloadTexture(final TextureTile tile)

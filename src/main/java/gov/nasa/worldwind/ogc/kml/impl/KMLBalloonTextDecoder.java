@@ -20,19 +20,20 @@ import java.util.regex.*;
  */
 public class KMLBalloonTextDecoder extends BasicTextDecoder
 {
-    /**
-     * True if there are entities in the balloon text which may refer to unresolved schema. False if all entities have
-     * been resolved, or are known to be unresolvable (because the data they refer to does not exist).
-     */
-    protected boolean isUnresolved;
-
+    static final Pattern kmlBalloonDecoder = Pattern.compile("\\$\\[(.*?)]");
     /**
      * Keep a cache of entities that have been resolved so that we don't have to re-resolve them every time the decoded
      * text is requested.
      */
     protected final Map<String, String> entityCache = new HashMap<>();
-
-    /** Feature to use as context for entity replacements. */
+    /**
+     * True if there are entities in the balloon text which may refer to unresolved schema. False if all entities have
+     * been resolved, or are known to be unresolvable (because the data they refer to does not exist).
+     */
+    protected boolean isUnresolved;
+    /**
+     * Feature to use as context for entity replacements.
+     */
     protected KMLAbstractFeature feature;
 
     /**
@@ -76,7 +77,9 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder
         return this.decodedText;
     }
 
-    /** Perform entity substitution. */
+    /**
+     * Perform entity substitution.
+     */
     @Override
     protected String decode(String textToDecode)
     {
@@ -85,9 +88,8 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder
 
         this.isUnresolved = false;
 
-        Pattern p = Pattern.compile("\\$\\[(.*?)]");
-        Matcher m = p.matcher(textToDecode);
-        StringBuffer sb = new StringBuffer();
+        Matcher m = kmlBalloonDecoder.matcher(textToDecode);
+        StringBuilder sb = new StringBuilder();
         while (m.find())
         {
             String entity = m.group(1);
@@ -113,7 +115,9 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder
         return sb.toString();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized void setText(String input)
     {
@@ -133,7 +137,6 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder
      * See the KML spec for details.
      *
      * @param pattern Pattern of entity to resolve.
-     *
      * @return Return the replacement string for the entity, or null if no replacement can be found.
      */
     protected String resolveEntityReference(String pattern)
@@ -177,10 +180,7 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder
                 {
                     if (isDisplayName)
                     {
-                        if (!WWUtil.isEmpty(data.getDisplayName()))
-                            return data.getDisplayName();
-                        else
-                            return data.getName();
+                        return !WWUtil.isEmpty(data.getDisplayName()) ? data.getDisplayName() : data.getName();
                     }
                     else
                     {

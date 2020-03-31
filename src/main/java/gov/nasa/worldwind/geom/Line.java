@@ -13,8 +13,8 @@ import gov.nasa.worldwind.util.Logging;
  */
 public final class Line// Instances are immutable
 {
-    private final Vec4 origin;
-    private final Vec4 direction;
+    public final Vec4 origin;
+    public final Vec4 direction;
 
     /**
      * Create the line containing a line segement between two points.
@@ -56,16 +56,6 @@ public final class Line// Instances are immutable
 
         this.origin = origin;
         this.direction = direction;
-    }
-
-    public final Vec4 getDirection()
-    {
-        return direction;
-    }
-
-    public final Vec4 getOrigin()
-    {
-        return origin;
     }
 
     public final Vec4 getPointAt(double t)
@@ -279,7 +269,7 @@ public final class Line// Instances are immutable
      */
     public boolean isPointBehindLineOrigin(Vec4 point)
     {
-        double dot = point.subtract3(this.getOrigin()).dot3(this.getDirection());
+        double dot = point.subtract3(origin).dot3(direction);
         return dot < 0.0;
     }
 
@@ -294,7 +284,7 @@ public final class Line// Instances are immutable
             // Ignore any intersections behind the line origin.
             if (!this.isPointBehindLineOrigin(intersection.getIntersectionPoint()))
             {
-                double d = intersection.getIntersectionPoint().distanceTo3(this.getOrigin());
+                double d = intersection.getIntersectionPoint().distanceTo3(origin);
                 if (d < nearestDistance)
                 {
                     intersectionPoint = intersection.getIntersectionPoint();

@@ -300,11 +300,11 @@ public class Cylinder implements Extent, Renderable
         }
 
         double[] tVals = new double[2];
-        if (!intcyl(line.getOrigin(), line.getDirection(), this.bottomCenter, this.axisUnitDirection,
+        if (!intcyl(line.origin, line.direction, this.bottomCenter, this.axisUnitDirection,
             this.cylinderRadius, tVals))
             return null;
 
-        if (!clipcyl(line.getOrigin(), line.getDirection(), this.bottomCenter, this.topCenter,
+        if (!clipcyl(line.origin, line.direction, this.bottomCenter, this.topCenter,
             this.axisUnitDirection, tVals))
             return null;
 

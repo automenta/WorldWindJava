@@ -193,7 +193,7 @@ public final class Plane
             return null;
 
         if (Double.isInfinite(t))
-            return line.getOrigin();
+            return line.origin;
 
         return line.getPointAt(t);
     }
@@ -218,17 +218,17 @@ public final class Plane
             throw new IllegalArgumentException(message);
         }
 
-        double ldotv = this.n.dot3(line.getDirection());
+        double ldotv = this.n.dot3(line.direction);
         if (ldotv == 0) // are line and plane parallel
         {
-            double ldots = this.n.dot4(line.getOrigin());
+            double ldots = this.n.dot4(line.origin);
             if (ldots == 0)
                 return Double.POSITIVE_INFINITY; // line is coincident with the plane
             else
                 return Double.NaN; // line is not coincident with the plane
         }
 
-        return -this.n.dot4(line.getOrigin()) / ldotv; // ldots / ldotv
+        return -this.n.dot4(line.origin) / ldotv; // ldots / ldotv
     }
 
     /**
@@ -310,12 +310,12 @@ public final class Plane
 
         // Get the projection of the segment onto the plane.
         Line line = Line.fromSegment(pa, pb);
-        double ldotv = this.n.dot3(line.getDirection());
+        double ldotv = this.n.dot3(line.direction);
 
         // Are the line and plane parallel?
         if (ldotv == 0) // line and plane are parallel and maybe coincident
         {
-            double ldots = this.n.dot4(line.getOrigin());
+            double ldots = this.n.dot4(line.origin);
             if (ldots == 0)
                 return new Vec4[] {pa, pb}; // line is coincident with the plane
             else
@@ -323,7 +323,7 @@ public final class Plane
         }
 
         // Not parallel so the line intersects. But does the segment intersect?
-        double t = -this.n.dot4(line.getOrigin()) / ldotv; // ldots / ldotv
+        double t = -this.n.dot4(line.origin) / ldotv; // ldots / ldotv
         if (t < 0 || t > 1) // segment does not intersect
             return null;
 

@@ -199,7 +199,7 @@ public class DBaseFile extends AVListImpl
         }
 
         // DBase record reading performs about 200% better when the FileInputStream is wrapped in a BufferedInputStream.
-        this.channel = Channels.newChannel(WWIO.getBufferedInputStream(new FileInputStream(file)));
+        this.channel = Channels.newChannel((new FileInputStream(file)));
         this.initialize();
     }
 
@@ -215,13 +215,13 @@ public class DBaseFile extends AVListImpl
             throw new IOException(message);
         }
 
-        this.channel = Channels.newChannel(WWIO.getBufferedInputStream(connection.getInputStream()));
+        this.channel = Channels.newChannel((connection.getInputStream()));
         this.initialize();
     }
 
     protected void initializeFromStream(InputStream stream) throws IOException
     {
-        this.channel = Channels.newChannel(WWIO.getBufferedInputStream(stream));
+        this.channel = Channels.newChannel((stream));
         this.initialize();
     }
 

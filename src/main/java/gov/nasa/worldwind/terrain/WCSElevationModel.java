@@ -244,7 +244,7 @@ public class WCSElevationModel extends BasicElevationModel
             StringBuffer sb;
             if (this.URLTemplate == null)
             {
-                sb = new StringBuffer(tile.getLevel().getService());
+                sb = new StringBuffer(tile.level.getService());
 
                 if (!sb.toString().toLowerCase().contains("service=wcs"))
                     sb.append("service=WCS");
@@ -272,7 +272,7 @@ public class WCSElevationModel extends BasicElevationModel
             sb.append("&height=");
             sb.append(tile.getHeight());
 
-            Sector s = tile.getSector();
+            Sector s = tile.sector;
             sb.append("&bbox=");
             sb.append(s.getMinLongitude().getDegrees());
             sb.append(",");

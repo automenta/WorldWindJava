@@ -998,13 +998,13 @@ public class SurfaceObjectTileBuilder
 
         // If this tile does not intersect the parent's object bounding sector, then none of the parent's objects
         // intersect this tile. Therefore we exit immediately, and do not add any objects to this tile.
-        if (!tile.getSector().intersects(parent.getObjectSector()))
+        if (!tile.sector.intersects(parent.getObjectSector()))
             return;
 
         // If this tile contains the parent's object bounding sector, then all of the parent's objects intersect this
         // tile. Therefore we just add all of the parent's objects to this tile. Additionally, the parent's object
         // bounding sector becomes this tile's object bounding sector.
-        if (tile.getSector().contains(parent.getObjectSector()))
+        if (tile.sector.contains(parent.getObjectSector()))
         {
             tile.addAllSurfaceObjects(parent.getObjectList(), parent.getObjectSector());
         }
@@ -1022,7 +1022,7 @@ public class SurfaceObjectTileBuilder
                 // intersection to avoid adding the same object to the tile more than once.
                 for (Sector s : sectors)
                 {
-                    if (tile.getSector().intersects(s))
+                    if (tile.sector.intersects(s))
                     {
                         tile.addSurfaceObject(so, s);
                         break;
@@ -1040,7 +1040,7 @@ public class SurfaceObjectTileBuilder
     protected void addTile(SurfaceObjectTile tile)
     {
         this.currentInfo.tiles.add(tile);
-        TextureTile.getMemoryCache().add(tile.getTileKey(), tile);
+        TextureTile.getMemoryCache().add(tile.tileKey, tile);
     }
 
     /**
@@ -1076,7 +1076,7 @@ public class SurfaceObjectTileBuilder
      */
     protected boolean intersectsVisibleSector(DrawContext dc, TextureTile tile)
     {
-        return dc.getVisibleSector() != null && dc.getVisibleSector().intersects(tile.getSector());
+        return dc.getVisibleSector() != null && dc.getVisibleSector().intersects(tile.sector);
     }
 
     /**
@@ -1091,7 +1091,7 @@ public class SurfaceObjectTileBuilder
      */
     protected boolean meetsRenderCriteria(DrawContext dc, LevelSet levelSet, Tile tile)
     {
-        return levelSet.isFinalLevel(tile.getLevel().getLevelNumber()) || !this.needToSplit(dc, tile);
+        return levelSet.isFinalLevel(tile.level.getLevelNumber()) || !this.needToSplit(dc, tile);
     }
 
     /**
@@ -1109,7 +1109,7 @@ public class SurfaceObjectTileBuilder
         // Compute the height in meters of a texel from the specified tile. Take care to convert from the radians to
         // meters by multiplying by the globe's radius, not the length of a Cartesian point. Using the length of a
         // Cartesian point is incorrect when the globe is flat.
-        double texelSizeRadians = tile.getLevel().getTexelSize();
+        double texelSizeRadians = tile.level.getTexelSize();
         double texelSizeMeters = dc.getGlobe().getRadius() * texelSizeRadians;
 
         // Compute the level of detail scale and the field of view scale. These scales are multiplied by the eye
@@ -1120,7 +1120,7 @@ public class SurfaceObjectTileBuilder
         // 50% has the same effect on object size as decreasing the distance between the eye and the object by 50%.
         // The detail hint is reduced for tiles above 75 degrees north and below 75 degrees south.
         double s = this.getSplitScale();
-        if (tile.getSector().getMinLatitude().degrees >= 75 || tile.getSector().getMaxLatitude().degrees <= -75)
+        if (tile.sector.getMinLatitude().degrees >= 75 || tile.sector.getMaxLatitude().degrees <= -75)
             s *= 0.85;
         double detailScale = Math.pow(10, -s);
         double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / Angle.fromDegrees(45).tanHalfAngle();
@@ -1128,7 +1128,7 @@ public class SurfaceObjectTileBuilder
 
         // Compute the distance between the eye point and the sector in meters, and compute a fraction of that distance
         // by multiplying the actual distance by the level of detail scale and the field of view scale.
-        double eyeDistanceMeters = tile.getSector().distanceTo(dc, dc.getView().getEyePoint());
+        double eyeDistanceMeters = tile.sector.distanceTo(dc, dc.getView().getEyePoint());
         double scaledEyeDistanceMeters = eyeDistanceMeters * detailScale * fieldOfViewScale;
 
         // Split when the texel size in meters becomes greater than the specified fraction of the eye distance, also in
@@ -1499,7 +1499,7 @@ public class SurfaceObjectTileBuilder
         {
             if (tile != null && tile.hasObjects())
             {
-                this.tileKey = tile.getTileKey();
+                this.tileKey = tile.tileKey;
                 this.intersectingObjectKeys = new Object[tile.getObjectList().size()];
 
                 int index = 0;

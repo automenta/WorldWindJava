@@ -1354,8 +1354,8 @@ public class Polygon extends AbstractShape
         if (highResShapeData.getExtent() != null && highResShapeData.getExtent().intersect(line) == null)
             return null;
 
-        final Line localLine = new Line(line.getOrigin().subtract3(highResShapeData.getReferencePoint()),
-            line.getDirection());
+        final Line localLine = new Line(line.origin.subtract3(highResShapeData.getReferencePoint()),
+            line.direction);
         List<Intersection> intersections = new ArrayList<>();
 
         this.intersect(localLine, highResShapeData, intersections);

@@ -268,9 +268,9 @@ public final class Sphere implements Extent, Renderable
             throw new IllegalArgumentException(message);
         }
 
-        double a = line.getDirection().getLengthSquared3();
+        double a = line.direction.getLengthSquared3();
         double b = 2 * line.selfDot();
-        double c = line.getOrigin().getLengthSquared3() - this.radius * this.radius;
+        double c = line.origin.getLengthSquared3() - this.radius * this.radius;
 
         double discriminant = Sphere.discriminant(a, b, c);
         if (discriminant < 0)

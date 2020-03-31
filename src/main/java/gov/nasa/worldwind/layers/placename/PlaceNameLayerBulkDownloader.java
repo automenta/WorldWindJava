@@ -252,7 +252,7 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread
 
                 for (PlaceNameLayer.Tile tile : baseTiles)
                 {
-                    if ((tile.getSector().intersects(sector)) && (!this.isTileLocalOrAbsent(tile)))
+                    if ((tile.sector.intersects(sector)) && (!this.isTileLocalOrAbsent(tile)))
                         allMissingTiles.add(tile);
                 }
             }
@@ -337,8 +337,8 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread
 
     protected boolean isTileLocalOrAbsent(PlaceNameLayer.Tile tile)
     {
-        if (tile.getPlaceNameService().isResourceAbsent(
-            tile.getPlaceNameService().getTileNumber(tile.row, tile.column)))
+        if (tile.placeNameService.isResourceAbsent(
+            tile.placeNameService.getTileNumber(tile.row, tile.column)))
             return true;    // tile is absent
 
         URL url = this.fileStore.findFile(tile.getFileCachePath(), false);
