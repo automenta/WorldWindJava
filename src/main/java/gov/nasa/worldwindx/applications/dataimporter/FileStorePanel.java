@@ -8,7 +8,7 @@ package gov.nasa.worldwindx.applications.dataimporter;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.cache.FileStore;
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.RenderingEvent;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.ElevationModel;

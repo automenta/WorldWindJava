@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwindx.examples;
 
-import gov.nasa.worldwind.formats.shapefile.*;
+import gov.nasa.worldwind.formats.shapefile.ShapefileLayerFactory;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.util.*;

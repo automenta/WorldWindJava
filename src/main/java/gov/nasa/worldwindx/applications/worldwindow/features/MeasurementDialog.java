@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwindx.applications.worldwindow.features;
 
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwindx.applications.worldwindow.core.*;

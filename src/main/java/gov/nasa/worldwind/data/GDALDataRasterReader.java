@@ -11,7 +11,7 @@ import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.gdal.GDALUtils;
 
-import java.io.*;
+import java.io.File;
 import java.util.logging.Level;
 
 /**

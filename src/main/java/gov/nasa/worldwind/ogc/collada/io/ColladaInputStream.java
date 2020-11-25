@@ -9,7 +9,7 @@ package gov.nasa.worldwind.ogc.collada.io;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.xml.XMLDoc;
 
-import java.io.*;
+import java.io.InputStream;
 import java.net.URI;
 
 /**

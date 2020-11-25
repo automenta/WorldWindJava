@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwindx.examples;
 
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.MarkerLayer;
 import gov.nasa.worldwind.render.Material;

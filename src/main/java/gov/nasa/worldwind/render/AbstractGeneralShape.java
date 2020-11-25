@@ -11,7 +11,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.Logging;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLStreamWriter;
 import java.util.Map;
 
 /**

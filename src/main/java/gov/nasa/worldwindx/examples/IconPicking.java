@@ -7,7 +7,7 @@ package gov.nasa.worldwindx.examples;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.EarthFlat;
 import gov.nasa.worldwind.layers.IconLayer;

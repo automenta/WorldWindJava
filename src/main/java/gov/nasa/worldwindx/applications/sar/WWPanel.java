@@ -15,7 +15,7 @@ import javax.swing.*;
 import javax.swing.plaf.basic.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
+import java.beans.PropertyChangeListener;
 
 /**
  * @author tag

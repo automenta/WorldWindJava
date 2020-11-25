@@ -22,7 +22,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
-import java.beans.*;
+import java.beans.PropertyChangeEvent;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;

@@ -8,7 +8,7 @@ package gov.nasa.worldwindx.examples.multiwindow;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.RenderingEvent;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;

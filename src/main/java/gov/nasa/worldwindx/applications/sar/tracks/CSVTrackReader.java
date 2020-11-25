@@ -8,7 +8,7 @@ package gov.nasa.worldwindx.applications.sar.tracks;
 import gov.nasa.worldwind.formats.csv.CSVReader;
 import gov.nasa.worldwind.tracks.Track;
 
-import java.io.*;
+import java.io.InputStream;
 
 /**
  * @author dcollins

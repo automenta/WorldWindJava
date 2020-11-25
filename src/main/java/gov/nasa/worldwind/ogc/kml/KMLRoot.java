@@ -648,9 +648,17 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable, XMLRoot
 
         try
         {
+
             File file = new File(linkBase);
-            if (!file.exists())
-                return null;
+            if (!file.exists()) {
+                final URL url = getClass().getResource("/" + linkBase);
+                if (url == null)
+                    return null;
+
+                file = new File(url.toURI());
+                if (!file.exists())
+                    return null;
+            }
 
             // Determine whether the file is a KML or KMZ. If it's not just return the original address.
             if (!WWIO.isContentType(file, KMLConstants.KML_MIME_TYPE, KMLConstants.KMZ_MIME_TYPE))

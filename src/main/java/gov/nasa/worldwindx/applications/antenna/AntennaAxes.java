@@ -15,7 +15,7 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLStreamWriter;
 import java.awt.*;
 import java.nio.*;
 

@@ -14,7 +14,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
+import java.beans.PropertyChangeEvent;
 import java.io.*;
 import java.net.URL;
 import java.util.*;

@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.RenderingEvent;
 
 import javax.swing.*;
 import javax.swing.border.*;

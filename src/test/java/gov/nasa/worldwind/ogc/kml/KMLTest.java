@@ -26,6 +26,32 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 public class KMLTest
 {
+    public static InputStream testResourceStream(String sourceDoc)
+    {
+        return KMLTest.class.getClassLoader().getResourceAsStream(sourceDoc);
+    }
+
+    public static URL testResourceURL(String sourceDoc)
+    {
+        return KMLTest.class.getClassLoader().getResource(sourceDoc);
+    }
+
+
+
+    public static File testResourceFile(String sourceDoc)
+    {
+        try
+        {
+            return new File(testResourceURL(sourceDoc).toURI());
+        }
+        catch (URISyntaxException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
     @Test
     public void testRootElement()
     {
@@ -629,7 +655,9 @@ public class KMLTest
         assertEquals("Coordinates not as expected", ring.getCoordinates().list, coords);
     }
 
-    /** Test coordinate tokenizer with a mix of well formed and not so well formed input. */
+    /**
+     * Test coordinate tokenizer with a mix of well formed and not so well formed input.
+     */
     @Test
     public void testCoordinatesTokenizer()
     {
@@ -995,24 +1023,4 @@ public class KMLTest
 
         return root;
     }
-
-    public static InputStream testResourceStream(String sourceDoc)
-    {
-        return KMLTest.class.getClassLoader().getResourceAsStream(sourceDoc);
-    }
-    public static URL testResourceURL(String sourceDoc)
-    {
-        return KMLTest.class.getClassLoader().getResource(sourceDoc);
-    }
-    public static File testResourceFile(String sourceDoc) {
-        try
-        {
-            return new File(testResourceURL(sourceDoc).toURI());
-        }
-        catch (URISyntaxException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

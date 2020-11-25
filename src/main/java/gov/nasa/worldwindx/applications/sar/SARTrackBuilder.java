@@ -6,7 +6,7 @@
 package gov.nasa.worldwindx.applications.sar;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.PositionListener;
 import gov.nasa.worldwind.geom.Position;
 
 import java.awt.*;

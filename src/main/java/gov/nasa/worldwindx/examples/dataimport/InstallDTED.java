@@ -21,7 +21,7 @@ import org.w3c.dom.Document;
 import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
-import java.beans.*;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

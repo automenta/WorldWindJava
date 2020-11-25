@@ -9,7 +9,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.*;
 
-import java.io.*;
+import java.io.InputStream;
 import java.util.*;
 
 /**

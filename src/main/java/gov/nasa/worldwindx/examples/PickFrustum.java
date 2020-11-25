@@ -6,7 +6,7 @@
 package gov.nasa.worldwindx.examples;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.*;

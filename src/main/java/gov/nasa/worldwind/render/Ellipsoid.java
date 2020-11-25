@@ -14,7 +14,7 @@ import gov.nasa.worldwind.render.airspaces.Geometry;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLStreamWriter;
 import java.nio.*;
 
 /**

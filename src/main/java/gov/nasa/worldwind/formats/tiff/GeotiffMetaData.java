@@ -7,7 +7,7 @@ package gov.nasa.worldwind.formats.tiff;
 
 import org.w3c.dom.Node;
 
-import javax.imageio.metadata.*;
+import javax.imageio.metadata.IIOMetadata;
 
 /**
  * @author brownrigg

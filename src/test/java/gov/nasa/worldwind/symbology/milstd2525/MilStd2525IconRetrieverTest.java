@@ -8,7 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.symbology.IconRetriever;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -16,7 +16,7 @@ import java.awt.image.*;
 
 import static org.junit.Assert.*;
 
-@RunWith(JUnit4.class)
+@RunWith(JUnit4.class) @Ignore
 public class MilStd2525IconRetrieverTest
 {
     // TODO: test all possible values for Standard Identity and Status

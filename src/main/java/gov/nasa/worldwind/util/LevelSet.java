@@ -9,7 +9,7 @@ import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 
-import java.net.*;
+import java.net.URL;
 import java.util.*;
 
 /**

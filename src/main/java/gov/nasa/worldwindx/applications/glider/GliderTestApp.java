@@ -15,7 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
-import java.io.*;
+import java.io.InputStream;
 import java.util.List;
 import java.util.*;
 

@@ -8,7 +8,7 @@ package gov.nasa.worldwind.formats.vpf;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.Logging;
 
-import java.io.*;
+import java.io.File;
 import java.util.Collection;
 
 /**

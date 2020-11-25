@@ -12,7 +12,7 @@ import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.beans.*;
+import java.beans.PropertyChangeListener;
 
 /**
  * @author tag

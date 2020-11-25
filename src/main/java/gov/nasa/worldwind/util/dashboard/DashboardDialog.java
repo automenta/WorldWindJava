@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util.dashboard;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.RenderingEvent;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;

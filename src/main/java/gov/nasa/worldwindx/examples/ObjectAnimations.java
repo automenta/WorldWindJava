@@ -8,7 +8,7 @@ package gov.nasa.worldwindx.examples;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.RenderingEvent;
 import gov.nasa.worldwind.formats.geojson.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;

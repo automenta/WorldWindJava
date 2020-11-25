@@ -6,7 +6,7 @@
 package gov.nasa.worldwindx.applications.sar;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.*;

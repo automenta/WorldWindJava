@@ -14,9 +14,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.*;
-import java.net.URL;
 
-import static gov.nasa.worldwind.ogc.kml.KMLTest.testResourceFile;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
@@ -43,19 +41,7 @@ public class OGLUtilTest
     @Test
     public void testPngFile() throws IOException
     {
-        File f = new File(PNG_FILE);
-
-        TextureData td = OGLUtil.newTextureData(this.glProfile, f, false);
-
-        assertEquals(td.getWidth(), 512);
-        assertEquals(td.getHeight(), 256);
-    }
-
-    @Test
-    public void testPngStream() throws IOException
-    {
-        File f = new File(PNG_FILE);
-        InputStream s = new FileInputStream(f);
+        InputStream s = resource(PNG_FILE);
 
         TextureData td = OGLUtil.newTextureData(this.glProfile, s, false);
 
@@ -63,33 +49,18 @@ public class OGLUtilTest
         assertEquals(td.getHeight(), 256);
     }
 
-    @Test
-    public void testPngUrl() throws IOException
+
+    private InputStream resource(String s)
     {
-        URL url = new File(PNG_FILE).toURI().toURL();
-
-        TextureData td = OGLUtil.newTextureData(this.glProfile, url, false);
-
-        assertEquals(td.getWidth(), 512);
-        assertEquals(td.getHeight(), 256);
+        return getClass().getResourceAsStream("/" + s);
     }
 
-    @Test
-    public void testDdsFile() throws IOException
-    {
-        File f = new File(DDS_FILE);
 
-        TextureData td = OGLUtil.newTextureData(this.glProfile, f, false);
-
-        assertEquals(td.getWidth(), 2048);
-        assertEquals(td.getHeight(), 1024);
-    }
 
     @Test
     public void testDdsStream() throws IOException
     {
-        File f = new File(DDS_FILE);
-        InputStream s = new FileInputStream(f);
+        InputStream s = resource(DDS_FILE);
 
         TextureData td = OGLUtil.newTextureData(this.glProfile, s, false);
 
@@ -97,21 +68,11 @@ public class OGLUtilTest
         assertEquals(td.getHeight(), 1024);
     }
 
-    @Test
-    public void testDdsUrl() throws IOException
-    {
-        URL url = new File(DDS_FILE).toURI().toURL();
-
-        TextureData td = OGLUtil.newTextureData(this.glProfile, url, false);
-
-        assertEquals(td.getWidth(), 2048);
-        assertEquals(td.getHeight(), 1024);
-    }
 
     @Test
     public void testJpgFile() throws IOException
     {
-        File f = new File(JPG_FILE);
+        InputStream f = resource(JPG_FILE);
 
         TextureData td = OGLUtil.newTextureData(this.glProfile, f, false);
 
@@ -119,46 +80,30 @@ public class OGLUtilTest
         assertEquals(td.getHeight(), 1024);
     }
 
-    @Test
-    public void testJpgStream() throws IOException
-    {
-        //File f = new File(JPG_FILE);
-        InputStream s = new FileInputStream(testResourceFile(JPG_FILE));
 
-        TextureData td = OGLUtil.newTextureData(this.glProfile, s, false);
-
-        assertEquals(td.getWidth(), 2048);
-        assertEquals(td.getHeight(), 1024);
-    }
-
-    @Test
-    public void testJpgUrl() throws IOException
-    {
-        URL url = new File(JPG_FILE).toURI().toURL();
-
-        TextureData td = OGLUtil.newTextureData(this.glProfile, url, false);
-
-        assertEquals(td.getWidth(), 2048);
-        assertEquals(td.getHeight(), 1024);
-    }
-
-    /** Test that the newTextureData supports indexed color PNG images. See http://issues.worldwind.arc.nasa.gov/jira/browse/WWJ-369. */
+    /**
+     * Test that the newTextureData supports indexed color PNG images. See http://issues.worldwind.arc.nasa.gov/jira/browse/WWJ-369.
+     */
     @Test
     public void testIndexedColorPng() throws IOException
     {
-        URL url = new File("./32x32-icon-nasa-indexed-color.png").toURI().toURL();
 
-        TextureData td = OGLUtil.newTextureData(this.glProfile, url, false);
+        InputStream f = resource("32x32-icon-nasa-indexed-color.png");
+
+
+        TextureData td = OGLUtil.newTextureData(this.glProfile, f, false);
         assertEquals(td.getPixelFormat(), GL.GL_RGBA);
     }
 
-    /** Test that the newTextureData supports interlaced PNG images. See http://issues.worldwind.arc.nasa.gov/jira/browse/WWJ-365. */
+    /**
+     * Test that the newTextureData supports interlaced PNG images. See http://issues.worldwind.arc.nasa.gov/jira/browse/WWJ-365.
+     */
     @Test
     public void testInterlacedPng() throws IOException
     {
-        URL url = new File("./32x32-icon-nasa-interlaced.png").toURI().toURL();
+        InputStream f = resource("32x32-icon-nasa-interlaced.png");
 
-        TextureData td = OGLUtil.newTextureData(this.glProfile, url, false);
+        TextureData td = OGLUtil.newTextureData(this.glProfile, f, false);
 
         assertEquals(td.getWidth(), 32);
         assertEquals(td.getHeight(), 32);

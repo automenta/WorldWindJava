@@ -18,7 +18,7 @@ import org.w3c.dom.*;
 import javax.swing.*;
 import javax.xml.xpath.XPath;
 import java.awt.*;
-import java.beans.*;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

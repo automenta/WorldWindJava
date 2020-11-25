@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.geom.*;
 
-import java.util.*;
+import java.util.Objects;
 
 /**
  * Large images and most imagery and elevation-data sets are subdivided in order to display visible portions quickly and
