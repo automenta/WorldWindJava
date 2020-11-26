@@ -41,12 +41,12 @@ public class ScalebarHint {
     public void setWwd(WorldWindow worldWindow) {
         this.wwd = worldWindow;
         // Enable picking on the scalebar layer
-        for (Layer l : this.wwd.getModel().getLayers()) {
+        for (Layer l : this.wwd.model().getLayers()) {
             if (l instanceof ScalebarLayer)
                 l.setPickEnabled(true);
         }
         // Add our layer
-        this.wwd.getModel().getLayers().add(this.layer);
+        this.wwd.model().getLayers().add(this.layer);
 
         // Add scalebar select listener to handle rollover
         this.wwd.addSelectListener(event -> {

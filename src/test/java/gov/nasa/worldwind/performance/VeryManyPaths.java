@@ -46,7 +46,7 @@ public class VeryManyPaths extends ApplicationTemplate {
             insertBeforeCompass(getWwd(), layer);
 
             // Update layer panel
-            this.getWwd().getView().setEyePosition(new Position(START_LOCATION, 3.0e6));
+            this.getWwd().view().setEyePosition(new Position(START_LOCATION, 3.0e6));
         }
 
         protected void makePaths(RenderableLayer layer, Position origin, int numPaths, Angle length, int numPositions) {

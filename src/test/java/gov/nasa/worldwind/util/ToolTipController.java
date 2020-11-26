@@ -154,11 +154,11 @@ public class ToolTipController implements SelectListener, Disposable {
     }
 
     protected void addLayer(Layer layer) {
-        if (!this.wwd.getModel().getLayers().contains(layer))
+        if (!this.wwd.model().getLayers().contains(layer))
             ApplicationTemplate.insertBeforeCompass(this.wwd, layer);
     }
 
     protected void removeLayer(Layer layer) {
-        this.wwd.getModel().getLayers().remove(layer);
+        this.wwd.model().getLayers().remove(layer);
     }
 }

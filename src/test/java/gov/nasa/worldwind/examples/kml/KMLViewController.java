@@ -69,7 +69,7 @@ public abstract class KMLViewController {
             throw new IllegalStateException(message);
         }
 
-        View view = wwd.getView();
+        View view = wwd.view();
 
         if (view instanceof OrbitView)
             return new KMLOrbitViewController(wwd);
@@ -165,7 +165,7 @@ public abstract class KMLViewController {
      * @param placemark Placemark to look at
      */
     protected void goToDefaultPlacemarkView(KMLPlacemark placemark) {
-        View view = this.wwd.getView();
+        View view = this.wwd.view();
         List<Position> positions = new ArrayList<>();
 
         // Find all the points in the placemark. We want to bring the entire placemark into view.
@@ -185,7 +185,7 @@ public abstract class KMLViewController {
         List<? extends Position> corners = overlay.getPositions().list;
 
         String altitudeMode = overlay.getAltitudeMode() != null ? overlay.getAltitudeMode() : "clampToGround";
-        corners = KMLUtil.computeAltitude(this.wwd.getModel().getGlobe(), corners, altitudeMode);
+        corners = KMLUtil.computeAltitude(this.wwd.model().getGlobe(), corners, altitudeMode);
 
         this.goToDefaultView(corners);
     }
@@ -197,7 +197,7 @@ public abstract class KMLViewController {
      * @param positions List of positions to bring into view
      */
     protected void goToDefaultView(List<? extends Position> positions) {
-        View view = this.wwd.getView();
+        View view = this.wwd.view();
 
         // If there is only one point, move the view over that point, maintaining the current elevation.
         if (positions.size() == 1) // Only one point

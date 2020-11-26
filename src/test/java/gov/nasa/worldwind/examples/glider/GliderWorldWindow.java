@@ -7,9 +7,9 @@
 package gov.nasa.worldwind.examples.glider;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.Logging;
 
 import java.beans.*;
@@ -77,7 +77,7 @@ public class GliderWorldWindow extends WorldWindowGLCanvas {
         if (layer != null) {
             image.removeKey(AVKey.LAYER);
             layer.removePropertyChangeListener(this.layerListener);
-            this.getModel().getLayers().remove(layer);
+            this.model().getLayers().remove(layer);
             layer.dispose();
         }
 

@@ -278,7 +278,7 @@ public class ShapeEditingExtension extends ApplicationTemplate {
             Arrow arrow = (Arrow) this.getShape();
 
             // Compute the new location for the arrowhead.
-            Globe globe = this.getWwd().getModel().getGlobe();
+            Globe globe = this.getWwd().model().getGlobe();
             Vec4 delta = this.computeControlPointDelta(this.getPreviousPosition(), terrainPosition);
             Vec4 markerPoint = globe.computeEllipsoidalPointFromLocation(controlPoint.getPosition());
             Position markerPosition = globe.computePositionFromEllipsoidalPoint(markerPoint.add3(delta));

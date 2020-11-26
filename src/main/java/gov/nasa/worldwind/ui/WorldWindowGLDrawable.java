@@ -4,9 +4,10 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind;
+package gov.nasa.worldwind.ui;
 
 import com.jogamp.opengl.GLAutoDrawable;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.cache.GpuResourceCache;
 
 /**

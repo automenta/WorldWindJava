@@ -7,10 +7,10 @@
 package gov.nasa.worldwind.examples.multiwindow;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.Earth.*;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.StatusBar;
 
 import javax.swing.*;
@@ -75,11 +75,11 @@ public class MultiFrame {
 
             // Add view control layers, which the WorldWindows cannnot share.
             ViewControlsLayer viewControlsA = new ViewControlsLayer();
-            frameA.wwp.wwd.getModel().getLayers().add(viewControlsA);
+            frameA.wwp.wwd.model().getLayers().add(viewControlsA);
             frameA.wwp.wwd.addSelectListener(new ViewControlsSelectListener(frameA.wwp.wwd, viewControlsA));
 
             ViewControlsLayer viewControlsB = new ViewControlsLayer();
-            frameB.wwp.wwd.getModel().getLayers().add(viewControlsB);
+            frameB.wwp.wwd.model().getLayers().add(viewControlsB);
             frameB.wwp.wwd.addSelectListener(new ViewControlsSelectListener(frameB.wwp.wwd, viewControlsB));
         }
         catch (Exception e) {

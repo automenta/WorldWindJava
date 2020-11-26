@@ -98,7 +98,7 @@ public class SessionState {
     protected void saveViewState(WorldWindow worldWindow) {
         // There's nothing to save if the view is null. We treat this as an exceptional condition rather than a
         // supported case and leave the existing state file, if one exists.
-        View view = worldWindow.getView();
+        View view = worldWindow.view();
         if (view == null)
             return;
 
@@ -123,7 +123,7 @@ public class SessionState {
     protected void restoreViewState(WorldWindow worldWindow) {
         // There's nothing to restore if the view is null. We treat this as an exceptional condition rather than a
         // supported case and leave the existing state file, if one exists.
-        View view = worldWindow.getView();
+        View view = worldWindow.view();
         if (view == null)
             return;
 
@@ -142,7 +142,7 @@ public class SessionState {
                 return;
             }
 
-            worldWindow.getView().restoreState(stateInXml);
+            worldWindow.view().restoreState(stateInXml);
         }
         catch (Exception e) {
             Logging.logger().log(Level.SEVERE, "Unable to restore view state: " + stateFile, e);
@@ -152,7 +152,7 @@ public class SessionState {
     protected void saveLayerListState(WorldWindow worldWindow) {
         // There's nothing to save if the Model or the LayerList is null. We treat this as an exceptional condition
         // rather than a supported case and leave the existing state files, if any exist.
-        if (worldWindow.getModel() == null || worldWindow.getModel().getLayers() == null)
+        if (worldWindow.model() == null || worldWindow.model().getLayers() == null)
             return;
 
         // Delete the contents of the layer state path directory, but not the directory itself.
@@ -165,7 +165,7 @@ public class SessionState {
                 stateFile.mkdirs();
 
             int index = 0;
-            for (Layer layer : worldWindow.getModel().getLayers()) {
+            for (Layer layer : worldWindow.model().getLayers()) {
                 if (layer == null)
                     continue; // There's nothing to save if the Layer is null.
 
@@ -182,7 +182,7 @@ public class SessionState {
     protected void restoreLayerListState(WorldWindow worldWindow) {
         // There's nothing to save if the Model or the LayerList is null. We treat this as an exceptional condition
         // rather than a supported case and leave the existing state files, if any exist.
-        if (worldWindow.getModel() == null || worldWindow.getModel().getLayers() == null)
+        if (worldWindow.model() == null || worldWindow.model().getLayers() == null)
             return;
 
         File stateFile = new File(this.getLayerStatePath());
@@ -193,7 +193,7 @@ public class SessionState {
 
         try {
             Arrays.sort(filenames, LAYER_STATE_FILENAME_COMPARATOR);
-            LayerList layers = worldWindow.getModel().getLayers();
+            LayerList layers = worldWindow.model().getLayers();
 
             for (String filename : filenames) {
                 Layer layer = this.restoreLayerState(new File(stateFile, filename));

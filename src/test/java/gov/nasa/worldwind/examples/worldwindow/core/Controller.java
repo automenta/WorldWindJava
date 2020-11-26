@@ -159,7 +159,7 @@ public class Controller {
     }
 
     public LayerList getActiveLayers() {
-        return getWWd().getModel().getLayers();
+        return getWWd().model().getLayers();
     }
 
     public Layer addInternalLayer(Layer layer) {
@@ -193,13 +193,13 @@ public class Controller {
     }
 
     public Double getCurrentAltitude() {
-        View view = this.getWWd().getView();
+        View view = this.getWWd().view();
         return view != null ? view.getEyePosition().getElevation() : null;
     }
 
     public void moveToLocation(Position position) {
-        OrbitView view = (OrbitView) this.getWWd().getView();
-        Globe globe = this.getWWd().getModel().getGlobe();
+        OrbitView view = (OrbitView) this.getWWd().view();
+        Globe globe = this.getWWd().model().getGlobe();
 
         if (globe != null && view != null) {
             ((OrbitViewInputHandler) view.getViewInputHandler()).addPanToAnimator(position,

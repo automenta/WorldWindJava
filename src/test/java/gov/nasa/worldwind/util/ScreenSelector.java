@@ -148,7 +148,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         this.getWwd().getSceneController().setPickRectangle(null);
 
         // Add and enable the layer that displays this ScreenSelector's selection rectangle.
-        LayerList layers = this.getWwd().getModel().getLayers();
+        LayerList layers = this.getWwd().model().getLayers();
 
         if (!layers.contains(this.getLayer()))
             layers.add(this.getLayer());
@@ -170,7 +170,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         this.getWwd().removeSelectListener(this);
 
         // Remove the layer that displays this ScreenSelector's selection rectangle.
-        this.getWwd().getModel().getLayers().remove(this.getLayer());
+        this.getWwd().model().getLayers().remove(this.getLayer());
 
         // Stop listening for mouse input on the WorldWindow.
         this.getWwd().getInputHandler().removeMouseListener(this);
@@ -314,7 +314,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
      * @return a new Point representing the specified point limited to the WorldWindow's viewport rectangle.
      */
     protected Point limitPointToWorldWindow(Point point) {
-        Rectangle viewport = this.getWwd().getView().getViewport();
+        Rectangle viewport = this.getWwd().view().getViewport();
 
         int x = point.x;
         if (x < viewport.x)

@@ -8,11 +8,11 @@ package gov.nasa.worldwind.examples.worldwindow.core;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.examples.worldwindow.features.AbstractFeature;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 
 import javax.swing.*;
 import java.awt.*;
@@ -69,11 +69,11 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel {
 
     public void addLayer(Layer layer) {
         if (layer != null)
-            this.wwd.getModel().getLayers().add(layer);
+            this.wwd.model().getLayers().add(layer);
     }
 
     public void removeLayer(Layer layer) {
-        this.wwd.getModel().getLayers().remove(layer);
+        this.wwd.model().getLayers().remove(layer);
     }
 
     public void insertBeforeNamedLayer(Layer layer, String targetLayerName) {
@@ -81,13 +81,13 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel {
             return;
 
         if (targetLayerName == null) {
-            this.wwd.getModel().getLayers().add(layer);
+            this.wwd.model().getLayers().add(layer);
             return;
         }
 
         // Insert the layer into the layer list just before the target layer.
         int targetPosition = 0;
-        LayerList layers = this.wwd.getModel().getLayers();
+        LayerList layers = this.wwd.model().getLayers();
         for (Layer l : layers) {
             if (l.getName().contains(targetLayerName)) {
                 targetPosition = layers.indexOf(l);
@@ -102,13 +102,13 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel {
             return;
 
         if (targetLayerName == null) {
-            this.wwd.getModel().getLayers().add(layer);
+            this.wwd.model().getLayers().add(layer);
             return;
         }
 
         // Insert the layer into the layer list just after the target layer.
         int targetPosition = 0;
-        LayerList layers = this.wwd.getModel().getLayers();
+        LayerList layers = this.wwd.model().getLayers();
         for (Layer l : layers) {
             if (l.getName().contains(targetLayerName))
                 targetPosition = layers.indexOf(l);

@@ -673,7 +673,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
                 insertBeforePlacenames(this.getApp().getWwd(), this.editor);
             }
             else {
-                this.getApp().getWwd().getModel().getLayers().remove(this.editor);
+                this.getApp().getWwd().model().getLayers().remove(this.editor);
             }
 
             int index = this.getModel().getIndexForEntry(this.selectedEntry);

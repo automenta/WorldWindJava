@@ -315,13 +315,13 @@ public class WWOMeasureTool extends AVListImpl
             return ((Path) this.shape).getLength();
         }
         else {
-            return ((SurfaceShape) this.shape).getPerimeter(this.getWwd().getModel().getGlobe());
+            return ((SurfaceShape) this.shape).getPerimeter(this.getWwd().model().getGlobe());
         }
     }
 
     public double getArea() {
         return this.shape != null && this.shape instanceof SurfaceShape
-            ? ((SurfaceShape) this.shape).getArea(this.getWwd().getModel().getGlobe(), true) : -1;
+            ? ((SurfaceShape) this.shape).getArea(this.getWwd().model().getGlobe(), true) : -1;
     }
 
     public double getWidth() {
@@ -531,10 +531,10 @@ public class WWOMeasureTool extends AVListImpl
         Vec4 surfacePoint = getWwd().getSceneController().getTerrain().getSurfacePoint(latLon.getLatitude(),
             latLon.getLongitude());
         if (surfacePoint != null) {
-            return getWwd().getModel().getGlobe().computePositionFromPoint(surfacePoint);
+            return getWwd().model().getGlobe().computePositionFromPoint(surfacePoint);
         }
         else {
-            return new Position(latLon, getWwd().getModel().getGlobe().getElevation(latLon.getLatitude(),
+            return new Position(latLon, getWwd().model().getGlobe().getElevation(latLon.getLatitude(),
                 latLon.getLongitude()));
         }
     }
@@ -554,7 +554,7 @@ public class WWOMeasureTool extends AVListImpl
                 .subtractDegrees(headingOffset);
             // Compute distance - have a minimal distance to avoid zero sized shape
             Angle distanceAngle = LatLon.greatCircleDistance(this.shapeCenterPosition, newPosition);
-            double distance = Math.max(distanceAngle.radians * getWwd().getModel().getGlobe().getRadius(), 0.1);
+            double distance = Math.max(distanceAngle.radians * getWwd().model().getGlobe().getRadius(), 0.1);
             double width, height;
             if (control.equals("East") || control.equals("West")) {
                 width = distance * 2;
@@ -605,9 +605,9 @@ public class WWOMeasureTool extends AVListImpl
 
         if (this.shapeRectangle != null) {
             Angle halfWidthAngle = Angle.fromRadians(this.shapeRectangle.width / 2
-                / getWwd().getModel().getGlobe().getRadius());
+                / getWwd().model().getGlobe().getRadius());
             Angle halfHeightAngle = Angle.fromRadians(this.shapeRectangle.height / 2
-                / getWwd().getModel().getGlobe().getRadius());
+                / getWwd().model().getGlobe().getRadius());
             // Update control points positions in four directions
             Position controlPos;
             // North
@@ -666,7 +666,7 @@ public class WWOMeasureTool extends AVListImpl
     }
 
     protected void updatePositionsFromShape() {
-        Globe globe = this.getWwd().getModel().getGlobe();
+        Globe globe = this.getWwd().model().getGlobe();
 
         this.positions.clear();
 
@@ -848,7 +848,7 @@ public class WWOMeasureTool extends AVListImpl
                 Position lastPosition = rubberBandTarget.getPosition();
                 Position newPosition = this.getWwd().getCurrentPosition();
                 double distance = LatLon.greatCircleDistance(lastPosition, newPosition).radians
-                    * this.getWwd().getModel().getGlobe().getRadius();
+                    * this.getWwd().model().getGlobe().getRadius();
                 if (distance >= freeHandMinSpacing) {
                     // Add new control point
                     this.addControlPoint();

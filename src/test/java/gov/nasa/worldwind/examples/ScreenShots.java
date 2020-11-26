@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.ScreenShotAction;
 
 import javax.swing.*;

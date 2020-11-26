@@ -300,9 +300,9 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
             return;
 
         EventQueue.invokeLater(() -> {
-            if (eventSource.getView() != null && eventSource.getView().getEyePosition() != null)
+            if (eventSource.view() != null && eventSource.view().getEyePosition() != null)
                 altDisplay = makeEyeAltitudeDescription(
-                    eventSource.getView().getEyePosition().getElevation());
+                    eventSource.view().getEyePosition().getElevation());
             else
                 altDisplay = (Logging.getMessage("term.Altitude"));
         });
@@ -346,7 +346,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
             latDisplay = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces);
             lonDisplay = makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
             elevDisplay = makeCursorElevationDescription(
-                eventSource.getModel().getGlobe().getElevation(newPos.getLatitude(), newPos.getLongitude()));
+                eventSource.model().getGlobe().getElevation(newPos.getLatitude(), newPos.getLongitude()));
 
             //Need to force an extra draw.  without this the displayed value lags the actual when just moving cursor
             if ((previousPos != null) && (previousPos.getLatitude().compareTo(newPos.getLatitude()) != 0)
@@ -435,11 +435,11 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                 String las = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces) + " "
                     + makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
                 String els = makeCursorElevationDescription(
-                    getEventSource().getModel().getGlobe().getElevation(newPos.getLatitude(), newPos.getLongitude()));
+                    getEventSource().model().getGlobe().getElevation(newPos.getLatitude(), newPos.getLongitude()));
                 String los;
                 try {
                     UTMCoord UTM = UTMCoord.fromLatLon(newPos.getLatitude(), newPos.getLongitude(),
-                        getEventSource().getModel().getGlobe());
+                        getEventSource().model().getGlobe());
                     los = UTM.toString();
                 }
                 catch (Exception e) {
@@ -473,11 +473,11 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                 String las = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces) + " "
                     + makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
                 String els = makeCursorElevationDescription(
-                    getEventSource().getModel().getGlobe().getElevation(newPos.getLatitude(), newPos.getLongitude()));
+                    getEventSource().model().getGlobe().getElevation(newPos.getLatitude(), newPos.getLongitude()));
                 String los;
                 try {
                     MGRSCoord MGRS = MGRSCoord.fromLatLon(newPos.getLatitude(), newPos.getLongitude(),
-                        getEventSource().getModel().getGlobe());
+                        getEventSource().model().getGlobe());
                     los = MGRS.toString();
                 }
                 catch (Exception e) {

@@ -175,7 +175,7 @@ public class Cones extends ApplicationTemplate {
         }
 
         protected RenderableLayer getLayer() {
-            for (Layer layer : getWwd().getModel().getLayers()) {
+            for (Layer layer : getWwd().model().getLayers()) {
                 if (layer.getName().contains("Renderable")) {
                     return (RenderableLayer) layer;
                 }

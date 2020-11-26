@@ -334,7 +334,7 @@ public class MeasureToolController extends MouseAdapter
                 Position lastPosition = rubberBandTarget.getPosition();
                 Position newPosition = measureTool.getWwd().getCurrentPosition();
                 double distance = LatLon.greatCircleDistance(lastPosition, newPosition).radians
-                    * measureTool.getWwd().getModel().getGlobe().getRadius();
+                    * measureTool.getWwd().model().getGlobe().getRadius();
                 if (distance >= freeHandMinSpacing) {
                     // Add new control point
                     if (measureTool.addControlPoint() != null) // null when the cursor is off the globe
@@ -446,7 +446,7 @@ public class MeasureToolController extends MouseAdapter
                     Angle azimuth = LatLon.greatCircleAzimuth(controlPoint.getPosition(),
                         this.measureTool.getCenterPosition());
                     // Account for view heading in cursor selection
-                    azimuth = azimuth.subtract(this.measureTool.getWwd().getView().getHeading());
+                    azimuth = azimuth.subtract(this.measureTool.getWwd().view().getHeading());
                     setComponentCursor(selectResizeCursor(azimuth));
                 }
                 else if (this.measureTool.isCenterControl(controlPoint)) {

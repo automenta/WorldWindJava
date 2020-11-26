@@ -540,7 +540,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
      * Called by {@link #setArmed(boolean)} to initialize this editor.
      */
     protected void enable() {
-        LayerList layers = this.getWwd().getModel().getLayers();
+        LayerList layers = this.getWwd().model().getLayers();
 
         if (!layers.contains(this.getControlPointLayer()))
             layers.add(this.getControlPointLayer());
@@ -574,7 +574,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
      * Called by {@link #setArmed(boolean)} to remove resources no longer needed after editing.
      */
     protected void disable() {
-        LayerList layers = this.getWwd().getModel().getLayers();
+        LayerList layers = this.getWwd().model().getLayers();
 
         layers.remove(this.getControlPointLayer());
         layers.remove(this.getAccessoryLayer());
@@ -876,8 +876,8 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
     protected void dragWholeShape(DragSelectEvent dragEvent) {
         Movable2 dragObject = (Movable2) this.getShape();
 
-        View view = getWwd().getView();
-        Globe globe = getWwd().getModel().getGlobe();
+        View view = getWwd().view();
+        Globe globe = getWwd().model().getGlobe();
 
         // Compute ref-point position in screen coordinates.
         Position refPos = dragObject.getReferencePosition();
@@ -900,7 +900,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         if (inters != null) {
             // Intersection with globe. Move reference point to the intersection point.
             Position p = globe.computePositionFromPoint(inters[0].getIntersectionPoint());
-            dragObject.moveTo(getWwd().getModel().getGlobe(), new Position(p,
+            dragObject.moveTo(getWwd().model().getGlobe(), new Position(p,
                 ((Movable2) this.getShape()).getReferencePosition().getAltitude()));
         }
 
@@ -1096,9 +1096,9 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             rotationLine.setFollowTerrain(true);
 
             // Set the line's altitude relative to the ground.
-            cAltitude = centerPosition.getAltitude() - this.getWwd().getModel().getGlobe().getElevation(
+            cAltitude = centerPosition.getAltitude() - this.getWwd().model().getGlobe().getElevation(
                 centerPosition.getLatitude(), centerPosition.getLongitude());
-            rAltitude = controlPoint.getAltitude() - this.getWwd().getModel().getGlobe().getElevation(
+            rAltitude = controlPoint.getAltitude() - this.getWwd().model().getGlobe().getElevation(
                 controlPoint.getLatitude(), controlPoint.getLongitude());
             // Path does not incorporate vertical exaggeration, but airspace shapes do. Compensate for that difference here.
             cAltitude *= this.getWwd().getSceneController().getVerticalExaggeration();
@@ -1143,7 +1143,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                 LatLon refPos = airspace.getGroundReference();
                 if (refPos == null)
                     refPos = location;
-                altitude += getWwd().getModel().getGlobe().getElevation(refPos.getLatitude(), refPos.getLongitude());
+                altitude += getWwd().model().getGlobe().getElevation(refPos.getLatitude(), refPos.getLongitude());
             }
         }
         else if (shape instanceof Path) {
@@ -1152,7 +1152,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                     if (((Path) shape).getAltitudeMode() == WorldWind.ABSOLUTE)
                         altitude = position.getAltitude();
                     else if (((Path) shape).getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
-                        altitude = position.getAltitude() + this.getWwd().getModel().getGlobe().getElevation(
+                        altitude = position.getAltitude() + this.getWwd().model().getGlobe().getElevation(
                             location.getLatitude(), location.getLongitude());
                 }
             }
@@ -1164,7 +1164,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                         altitude = position.getAltitude();
                     else if (((gov.nasa.worldwind.examples.render.Polygon) shape).getAltitudeMode()
                         == WorldWind.RELATIVE_TO_GROUND)
-                        altitude = position.getAltitude() + this.getWwd().getModel().getGlobe().getElevation(
+                        altitude = position.getAltitude() + this.getWwd().model().getGlobe().getElevation(
                             location.getLatitude(), location.getLongitude());
                 }
             }
@@ -1233,8 +1233,8 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
      */
     protected Vec4 computeControlPointDelta(LatLon previousLocation, LatLon currentLocation) {
         // Compute how much the specified control point moved.
-        Vec4 terrainPoint = getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(currentLocation);
-        Vec4 previousPoint = getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(previousLocation);
+        Vec4 terrainPoint = getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(currentLocation);
+        Vec4 previousPoint = getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(previousLocation);
 
         return terrainPoint.subtract3(previousPoint);
     }
@@ -1269,15 +1269,15 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
      * location.
      */
     protected Position computeEdgeLocation(LatLon center, LatLon location, double length) {
-        Vec4 centerPoint = getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(center);
-        Vec4 surfaceNormal = getWwd().getModel().getGlobe().computeEllipsoidalNormalAtLocation(
+        Vec4 centerPoint = getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(center);
+        Vec4 surfaceNormal = getWwd().model().getGlobe().computeEllipsoidalNormalAtLocation(
             center.getLatitude(), center.getLongitude());
 
-        Vec4 point1 = getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(location);
+        Vec4 point1 = getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(location);
         Vec4 vecToLocation = point1.subtract3(centerPoint).normalize3();
         Vec4 vecToEdge = surfaceNormal.cross3(vecToLocation).normalize3().multiply3(length);
 
-        LatLon edgeLocation = getWwd().getModel().getGlobe().computePositionFromEllipsoidalPoint(
+        LatLon edgeLocation = getWwd().model().getGlobe().computePositionFromEllipsoidalPoint(
             vecToEdge.add3(centerPoint));
         double edgeAltitude = this.getControlPointAltitude(edgeLocation);
 
@@ -1295,7 +1295,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
     protected Position computeRectangularEdgeLocation(LatLon begin, LatLon end, double width) {
         LatLon center = LatLon.interpolateGreatCircle(0.5, begin, end);
         Angle edgeAzimuth = LatLon.greatCircleAzimuth(center, end).add(Angle.POS90);
-        Angle edgeLength = Angle.fromRadians(width / this.getWwd().getModel().getGlobe().getRadius());
+        Angle edgeLength = Angle.fromRadians(width / this.getWwd().model().getGlobe().getRadius());
 
         LatLon edgeLocation = LatLon.greatCircleEndPosition(center, edgeAzimuth, edgeLength);
         double edgeAltitude = this.getControlPointAltitude(edgeLocation);
@@ -1339,7 +1339,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
      * @return the index at which the new location was inserted into the list.
      */
     protected int addNearestLocation(Position terrainPosition, double altitude, List<LatLon> locations) {
-        Globe globe = this.getWwd().getModel().getGlobe();
+        Globe globe = this.getWwd().model().getGlobe();
 
         // Find the nearest edge to the picked point and insert a new position on that edge.
         Vec4 pointPicked = globe.computeEllipsoidalPointFromPosition(terrainPosition.getLatitude(),
@@ -1399,7 +1399,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
      */
     protected void appendLocation(ControlPointMarker controlPoint, List<LatLon> locations) {
         // Add a control point to the beginning or end of the shape.
-        Globe globe = this.getWwd().getModel().getGlobe();
+        Globe globe = this.getWwd().model().getGlobe();
 
         if (controlPoint.getId() == 0) // beginning of list
         {
@@ -1427,9 +1427,9 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
     protected void moveLocation(ControlPointMarker controlPoint, Position terrainPosition, List<LatLon> locations) {
         // Compute the new location for the polygon location associated with the incoming control point.
         Vec4 delta = this.computeControlPointDelta(this.getPreviousPosition(), terrainPosition);
-        Vec4 markerPoint = getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 markerPoint = getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             new Position(controlPoint.getPosition(), 0));
-        Position markerPosition = getWwd().getModel().getGlobe().computePositionFromEllipsoidalPoint(
+        Position markerPosition = getWwd().model().getGlobe().computePositionFromEllipsoidalPoint(
             markerPoint.add3(delta));
 
         // Update the polygon's locations.
@@ -1444,7 +1444,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
      */
     protected void rotateLocations(Position terrainPosition, List<LatLon> locations) {
         // Rotate the positions.
-        LatLon center = LatLon.getCenter(this.getWwd().getModel().getGlobe(), locations); // rotation axis
+        LatLon center = LatLon.getCenter(this.getWwd().model().getGlobe(), locations); // rotation axis
         Angle previousHeading = LatLon.greatCircleAzimuth(center, this.getPreviousPosition());
         Angle deltaHeading = LatLon.greatCircleAzimuth(center, terrainPosition).subtract(previousHeading);
         this.currentHeading = this.normalizedHeading(this.getCurrentHeading(), deltaHeading);
@@ -1546,7 +1546,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         if (locations.size() < 2)
             return;
 
-        Globe globe = this.getWwd().getModel().getGlobe();
+        Globe globe = this.getWwd().model().getGlobe();
 
         LatLon polygonCenter = LatLon.getCenter(globe, locations);
         double centerAltitude = this.getControlPointAltitude(polygonCenter);
@@ -1613,8 +1613,8 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         CappedCylinder cylinder = (CappedCylinder) this.getShape();
         double[] radii = cylinder.getRadii();
 
-        Vec4 centerPoint = getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(cylinder.getCenter());
-        Vec4 markerPoint = getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 centerPoint = getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(cylinder.getCenter());
+        Vec4 markerPoint = getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             controlPoint.getPosition());
         Vec4 vMarker = markerPoint.subtract3(centerPoint).normalize3();
 
@@ -1656,9 +1656,9 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         boolean hasInnerRadius = radii[0] > 0;
 
         LatLon outerRadiusLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(), Angle.fromDegrees(90),
-            Angle.fromRadians(radii[1] / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(radii[1] / this.getWwd().model().getGlobe().getEquatorialRadius()));
         LatLon innerRadiusLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(), Angle.fromDegrees(90),
-            Angle.fromRadians(radii[0] / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(radii[0] / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         double outerRadiusAltitude = this.getControlPointAltitude(outerRadiusLocation);
         double innerRadiusAltitude = this.getControlPointAltitude(innerRadiusLocation);
@@ -1702,14 +1702,14 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         Angle[] azimuths = cylinder.getAzimuths();
 
         LatLon outerRadiusLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(), azimuths[1],
-            Angle.fromRadians(radii[1] / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(radii[1] / this.getWwd().model().getGlobe().getEquatorialRadius()));
         LatLon innerRadiusLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(), azimuths[1],
-            Angle.fromRadians(radii[0] / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(radii[0] / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         LatLon leftAzimuthLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(), azimuths[0],
-            Angle.fromRadians(averageRadius / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(averageRadius / this.getWwd().model().getGlobe().getEquatorialRadius()));
         LatLon rightAzimuthLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(), azimuths[1],
-            Angle.fromRadians(averageRadius / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(averageRadius / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         double outerRadiusAltitude = this.getControlPointAltitude(outerRadiusLocation);
         double innerRadiusAltitude = this.getControlPointAltitude(innerRadiusLocation);
@@ -1717,7 +1717,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         double leftAzimuthAltitude = this.getControlPointAltitude(leftAzimuthLocation);
 
         LatLon rotationControlLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(), this.getCurrentHeading(),
-            Angle.fromRadians(1.2 * radii[1] / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(1.2 * radii[1] / this.getWwd().model().getGlobe().getEquatorialRadius()));
         double rotationControlAltitude = this.getControlPointAltitude(rotationControlLocation);
 
         Iterable<Marker> markers = this.getControlPointLayer().getMarkers();
@@ -1783,8 +1783,8 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         CappedEllipticalCylinder cylinder = (CappedEllipticalCylinder) this.getShape();
         double[] radii = cylinder.getRadii();
 
-        Vec4 centerPoint = getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(cylinder.getCenter());
-        Vec4 markerPoint = getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 centerPoint = getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(cylinder.getCenter());
+        Vec4 markerPoint = getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             controlPoint.getPosition());
         Vec4 vMarker = markerPoint.subtract3(centerPoint).normalize3();
 
@@ -1819,19 +1819,19 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         LatLon innerMinorRadiusLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(),
             Angle.fromDegrees(90).add(heading),
-            Angle.fromRadians(radii[0] / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(radii[0] / this.getWwd().model().getGlobe().getEquatorialRadius()));
         LatLon innerMajorRadiusLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(),
             Angle.fromDegrees(0).add(heading),
-            Angle.fromRadians(radii[1] / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(radii[1] / this.getWwd().model().getGlobe().getEquatorialRadius()));
         LatLon outerMinorRadiusLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(),
             Angle.fromDegrees(90).add(heading),
-            Angle.fromRadians(radii[2] / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(radii[2] / this.getWwd().model().getGlobe().getEquatorialRadius()));
         LatLon outerMajorRadiusLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(),
             Angle.fromDegrees(0).add(heading),
-            Angle.fromRadians(radii[3] / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(radii[3] / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         LatLon rotationControlLocation = LatLon.greatCircleEndPosition(cylinder.getCenter(), this.getCurrentHeading(),
-            Angle.fromRadians(1.4 * radii[3] / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(1.4 * radii[3] / this.getWwd().model().getGlobe().getEquatorialRadius()));
         double rotationControlAltitude = this.getControlPointAltitude(rotationControlLocation);
 
         double innerMinorRadiusAltitude = this.getControlPointAltitude(innerMinorRadiusLocation);
@@ -1903,9 +1903,9 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         SphereAirspace sphere = (SphereAirspace) this.getShape();
         double radius = sphere.getRadius();
 
-        Vec4 centerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 centerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             sphere.getLocation());
-        Vec4 markerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 markerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             controlPoint.getPosition());
         Vec4 vMarker = markerPoint.subtract3(centerPoint).normalize3();
 
@@ -1926,7 +1926,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         double radius = sphere.getRadius();
 
         LatLon radiusLocation = LatLon.greatCircleEndPosition(sphere.getLocation(), Angle.fromDegrees(90),
-            Angle.fromRadians(radius / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(radius / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         double radiusAltitude = this.getControlPointAltitude(radiusLocation);
 
@@ -1961,9 +1961,9 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         double width = orbit.getWidth();
 
         LatLon center = LatLon.interpolateGreatCircle(0.5, locations[0], locations[1]);
-        Vec4 centerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(center);
+        Vec4 centerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(center);
 
-        Vec4 markerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 markerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             new Position(controlPoint.getPosition(), 0));
 
         if (controlPoint.getPurpose().equals(RIGHT_WIDTH)) {
@@ -1987,7 +1987,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         else // location change
         {
             Vec4 delta = this.computeControlPointDelta(this.getPreviousPosition(), terrainPosition);
-            Position markerPosition = this.getWwd().getModel().getGlobe().computePositionFromEllipsoidalPoint(
+            Position markerPosition = this.getWwd().model().getGlobe().computePositionFromEllipsoidalPoint(
                 markerPoint.add3(delta));
             locations[controlPoint.getId()] = markerPosition;
             orbit.setLocations(locations[0], locations[1]);
@@ -2011,7 +2011,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         double centerAltitude = this.getControlPointAltitude(center);
         Position widthPosition = this.computeRectangularEdgeLocation(locations[0], locations[1], 0.5 * width);
 
-        Globe globe = this.getWwd().getModel().getGlobe();
+        Globe globe = this.getWwd().model().getGlobe();
         Vec4 centerPoint = globe.computeEllipsoidalPointFromLocation(center);
         Vec4 point0 = globe.computeEllipsoidalPointFromLocation(locations[1]);
         Vec4 vec = point0.subtract3(centerPoint);
@@ -2074,8 +2074,8 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         else if (controlPoint != null
             && (controlPoint.getPurpose().equals(LEFT_WIDTH) || controlPoint.getPurpose().equals(RIGHT_WIDTH))) {
             LatLon legCenter = LatLon.interpolateGreatCircle(0.5, locations.get(0), locations.get(1));
-            Vec4 centerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(legCenter);
-            Vec4 markerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+            Vec4 centerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(legCenter);
+            Vec4 markerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
                 new Position(controlPoint.getPosition(), 0));
             Vec4 vMarker = markerPoint.subtract3(centerPoint).normalize3();
             Vec4 delta = this.computeControlPointDelta(this.getPreviousPosition(), terrainPosition);
@@ -2131,7 +2131,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         if (locations.size() < 2)
             return;
 
-        Globe globe = this.getWwd().getModel().getGlobe();
+        Globe globe = this.getWwd().model().getGlobe();
         double width = route.getWidth();
         Position leftWidthPosition = this.computeRectangularEdgeLocation(locations.get(0), locations.get(1),
             -0.5 * width);
@@ -2210,7 +2210,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                 trackLocations.add(leg.getLocations()[0]);
                 trackLocations.add(leg.getLocations()[1]);
             }
-            LatLon center = LatLon.getCenter(this.getWwd().getModel().getGlobe(), trackLocations);
+            LatLon center = LatLon.getCenter(this.getWwd().model().getGlobe(), trackLocations);
             Angle previousHeading = LatLon.greatCircleAzimuth(center, this.getPreviousPosition());
             Angle deltaHeading = LatLon.greatCircleAzimuth(center, terrainPosition).subtract(previousHeading);
             this.currentHeading = this.normalizedHeading(this.getCurrentHeading(), deltaHeading);
@@ -2238,8 +2238,8 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             LatLon[] legLocations = leg.getLocations();
 
             LatLon legCenter = LatLon.interpolateGreatCircle(0.5, legLocations[0], legLocations[1]);
-            Vec4 centerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(legCenter);
-            Vec4 markerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+            Vec4 centerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(legCenter);
+            Vec4 markerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
                 new Position(controlPoint.getPosition(), 0));
             Vec4 vMarker = markerPoint.subtract3(centerPoint).normalize3();
 
@@ -2297,7 +2297,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                 && this.isExtensionEnabled()) {
                 // Append a location to the beginning or end of the track.
 
-                Globe globe = this.getWwd().getModel().getGlobe();
+                Globe globe = this.getWwd().model().getGlobe();
 
                 if (controlPoint.getLeg() == 0 && controlPoint.getId() == 0) // first control point
                 {
@@ -2333,9 +2333,9 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             else // control point location change
             {
                 Vec4 delta = this.computeControlPointDelta(this.getPreviousPosition(), terrainPosition);
-                Vec4 markerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+                Vec4 markerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
                     new Position(controlPoint.getPosition(), 0));
-                Position markerPosition = this.getWwd().getModel().getGlobe().computePositionFromEllipsoidalPoint(
+                Position markerPosition = this.getWwd().model().getGlobe().computePositionFromEllipsoidalPoint(
                     markerPoint.add3(delta));
 
                 Box leg = track.getLegs().get(controlPoint.getLeg());
@@ -2457,7 +2457,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             trackLocations.add(leg.getLocations()[1]);
         }
 
-        Globe globe = this.getWwd().getModel().getGlobe();
+        Globe globe = this.getWwd().model().getGlobe();
         LatLon trackCenter = LatLon.getCenter(globe, trackLocations);
         double trackCenterAltitude = this.getControlPointAltitude(trackCenter);
         Angle trackRadius = LatLon.getAverageDistance(globe, trackCenter, trackLocations);
@@ -2561,7 +2561,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         if (locations.size() < 2)
             return;
 
-        Globe globe = this.getWwd().getModel().getGlobe();
+        Globe globe = this.getWwd().model().getGlobe();
 
         LatLon polygonCenter = LatLon.getCenter(globe, locations);
         Angle shapeRadius = LatLon.getAverageDistance(globe, polygonCenter, locations);
@@ -2615,8 +2615,8 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         Vec4 delta = this.computeControlPointDelta(this.getPreviousPosition(), terrainPosition);
 
-        Vec4 centerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(circle.getCenter());
-        Vec4 markerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 centerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(circle.getCenter());
+        Vec4 markerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             controlPoint.getPosition());
         Vec4 vMarker = markerPoint.subtract3(centerPoint).normalize3();
 
@@ -2629,7 +2629,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         SurfaceCircle circle = (SurfaceCircle) this.getShape();
 
         LatLon radiusLocation = LatLon.greatCircleEndPosition(circle.getCenter(), Angle.fromDegrees(90),
-            Angle.fromRadians(circle.getRadius() / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(circle.getRadius() / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         Iterable<Marker> markers = this.getControlPointLayer().getMarkers();
         if (markers == null) {
@@ -2652,13 +2652,13 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         SurfaceSquare square = (SurfaceSquare) this.getShape();
 
-        Vec4 terrainPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(terrainPosition);
-        Vec4 previousPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 terrainPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(terrainPosition);
+        Vec4 previousPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             this.getPreviousPosition());
         Vec4 delta = terrainPoint.subtract3(previousPoint);
 
-        Vec4 centerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(square.getCenter());
-        Vec4 markerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 centerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(square.getCenter());
+        Vec4 markerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             controlPoint.getPosition());
         Vec4 vMarker = markerPoint.subtract3(centerPoint);
 
@@ -2680,11 +2680,11 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         LatLon sizeLocation = LatLon.greatCircleEndPosition(square.getCenter(),
             Angle.fromDegrees(90 + square.getHeading().degrees),
-            Angle.fromRadians(0.5 * square.getSize() / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(0.5 * square.getSize() / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         LatLon rotationLocation = LatLon.greatCircleEndPosition(square.getCenter(),
             Angle.fromDegrees(square.getHeading().degrees),
-            Angle.fromRadians(0.7 * square.getSize() / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(0.7 * square.getSize() / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         Iterable<Marker> markers = this.getControlPointLayer().getMarkers();
         if (markers == null) {
@@ -2716,13 +2716,13 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         SurfaceQuad quad = (SurfaceQuad) this.getShape();
 
-        Vec4 terrainPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(terrainPosition);
-        Vec4 previousPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 terrainPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(terrainPosition);
+        Vec4 previousPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             this.getPreviousPosition());
         Vec4 delta = terrainPoint.subtract3(previousPoint);
 
-        Vec4 centerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(quad.getCenter());
-        Vec4 markerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 centerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(quad.getCenter());
+        Vec4 markerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             controlPoint.getPosition());
         Vec4 vMarker = markerPoint.subtract3(centerPoint).normalize3();
 
@@ -2744,15 +2744,15 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         LatLon widthLocation = LatLon.greatCircleEndPosition(quad.getCenter(),
             Angle.fromDegrees(90 + quad.getHeading().degrees),
-            Angle.fromRadians(0.5 * quad.getWidth() / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(0.5 * quad.getWidth() / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         LatLon heightLocation = LatLon.greatCircleEndPosition(quad.getCenter(),
             Angle.fromDegrees(quad.getHeading().degrees),
-            Angle.fromRadians(0.5 * quad.getHeight() / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(0.5 * quad.getHeight() / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         LatLon rotationLocation = LatLon.greatCircleEndPosition(quad.getCenter(),
             Angle.fromDegrees(quad.getHeading().degrees),
-            Angle.fromRadians(0.7 * quad.getHeight() / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(0.7 * quad.getHeight() / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         Iterable<Marker> markers = this.getControlPointLayer().getMarkers();
         if (markers == null) {
@@ -2788,13 +2788,13 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         SurfaceEllipse ellipse = (SurfaceEllipse) this.getShape();
 
-        Vec4 terrainPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(terrainPosition);
-        Vec4 previousPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 terrainPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(terrainPosition);
+        Vec4 previousPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             this.getPreviousPosition());
         Vec4 delta = terrainPoint.subtract3(previousPoint);
 
-        Vec4 centerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(ellipse.getCenter());
-        Vec4 markerPoint = this.getWwd().getModel().getGlobe().computeEllipsoidalPointFromLocation(
+        Vec4 centerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(ellipse.getCenter());
+        Vec4 markerPoint = this.getWwd().model().getGlobe().computeEllipsoidalPointFromLocation(
             controlPoint.getPosition());
         Vec4 vMarker = markerPoint.subtract3(centerPoint).normalize3();
 
@@ -2818,16 +2818,16 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         LatLon majorLocation = LatLon.greatCircleEndPosition(ellipse.getCenter(),
             Angle.fromDegrees(90 + ellipse.getHeading().degrees),
-            Angle.fromRadians(ellipse.getMajorRadius() / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(ellipse.getMajorRadius() / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         LatLon minorLocation = LatLon.greatCircleEndPosition(ellipse.getCenter(),
             Angle.fromDegrees(ellipse.getHeading().degrees),
-            Angle.fromRadians(ellipse.getMinorRadius() / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+            Angle.fromRadians(ellipse.getMinorRadius() / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         LatLon rotationLocation = LatLon.greatCircleEndPosition(ellipse.getCenter(),
             Angle.fromDegrees(ellipse.getHeading().degrees),
             Angle.fromRadians(
-                1.15 * ellipse.getMinorRadius() / this.getWwd().getModel().getGlobe().getEquatorialRadius()));
+                1.15 * ellipse.getMinorRadius() / this.getWwd().model().getGlobe().getEquatorialRadius()));
 
         Iterable<Marker> markers = this.getControlPointLayer().getMarkers();
         if (markers == null) {

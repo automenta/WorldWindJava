@@ -205,7 +205,7 @@ public class GoToCoordinatePanel extends JPanel {
         this.coordInput = new JTextField(10);
         this.coordInput.setToolTipText("Type coordinates and press Enter");
         this.coordInput.addActionListener(event -> {
-            LatLon latLon = computeLatLonFromString(coordInput.getText(), wwd.getModel().getGlobe());
+            LatLon latLon = computeLatLonFromString(coordInput.getText(), wwd.model().getGlobe());
             updateResult(latLon);
         });
         coordPanel.add(this.coordInput);
@@ -221,10 +221,10 @@ public class GoToCoordinatePanel extends JPanel {
         gotoPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         JButton gotoButton = new JButton("Go to location");
         gotoButton.addActionListener(event -> {
-            LatLon latLon = computeLatLonFromString(coordInput.getText(), wwd.getModel().getGlobe());
+            LatLon latLon = computeLatLonFromString(coordInput.getText(), wwd.model().getGlobe());
             updateResult(latLon);
             if (latLon != null) {
-                View view = wwd.getView();
+                View view = wwd.view();
                 double distance = view.getCenterPoint().distanceTo3(view.getEyePoint());
                 view.goTo(new Position(latLon, 0), distance);
             }

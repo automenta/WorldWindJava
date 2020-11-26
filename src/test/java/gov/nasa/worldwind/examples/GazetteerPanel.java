@@ -245,22 +245,22 @@ public class GazetteerPanel extends JPanel {
 
     public void moveToLocation(PointOfInterest location) {
         // Use a PanToIterator to iterate view to target position
-        this.wwd.getView().goTo(new Position(location.getLatlon(), 0), 25.0e3);
+        this.wwd.view().goTo(new Position(location.getLatlon(), 0), 25.0e3);
     }
 
     public void moveToLocation(Sector sector, Double altitude) {
-        OrbitView view = (OrbitView) this.wwd.getView();
+        OrbitView view = (OrbitView) this.wwd.view();
 
-        Globe globe = this.wwd.getModel().getGlobe();
+        Globe globe = this.wwd.model().getGlobe();
 
         if (altitude == null || altitude == 0) {
             double t = Math.min(sector.getDeltaLonRadians(), sector.getDeltaLonRadians());
             double w = 0.5 * t * 6378137.0;
-            altitude = w / this.wwd.getView().getFieldOfView().tanHalfAngle();
+            altitude = w / this.wwd.view().getFieldOfView().tanHalfAngle();
         }
 
         if (globe != null && view != null) {
-            this.wwd.getView().goTo(new Position(sector.getCentroid(), 0), altitude);
+            this.wwd.view().goTo(new Position(sector.getCentroid(), 0), altitude);
         }
     }
 }

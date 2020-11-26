@@ -77,7 +77,7 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         for (FileSet fileSet : this.currentlyHighlightedSets) {
             Layer layer = (Layer) fileSet.getValue(AVKey.LAYER);
             if (layer != null) {
-                this.wwd.getModel().getLayers().remove(layer);
+                this.wwd.model().getLayers().remove(layer);
             }
         }
 
@@ -95,7 +95,7 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
             }
 
             this.currentlyHighlightedSets.add(fileSet);
-            this.wwd.getModel().getLayers().add(layer);
+            this.wwd.model().getLayers().add(layer);
 
             Sector sector = fileSet.getSector();
             if (sector != null)

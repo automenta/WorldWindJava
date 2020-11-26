@@ -8,7 +8,6 @@ package gov.nasa.worldwind.examples.multiwindow;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.examples.render.Polygon;
 import gov.nasa.worldwind.examples.render.*;
@@ -17,6 +16,7 @@ import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.globes.projections.ProjectionSinusoidal;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.Earth.BMNGOneImage;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
@@ -63,8 +63,8 @@ public class FlatAndRoundGlobes {
         this.addViewControlLayer(roundFrame);
         this.addViewControlLayer(flatFrame);
 
-        roundFrame.wwPanel.wwd.getView().setEyePosition(new Position(START_LOCATION, 3.0e6));
-        flatFrame.wwPanel.wwd.getView().setEyePosition(new Position(START_LOCATION, 3.0e6));
+        roundFrame.wwPanel.wwd.view().setEyePosition(new Position(START_LOCATION, 3.0e6));
+        flatFrame.wwPanel.wwd.view().setEyePosition(new Position(START_LOCATION, 3.0e6));
 
         roundFrame.setVisible(true);
         flatFrame.setVisible(true);
@@ -109,7 +109,7 @@ public class FlatAndRoundGlobes {
 
     protected void addViewControlLayer(WWFrame wwf) {
         ViewControlsLayer layer = new ViewControlsLayer();
-        wwf.wwPanel.wwd.getModel().getLayers().add(layer);
+        wwf.wwPanel.wwd.model().getLayers().add(layer);
         wwf.wwPanel.wwd.addSelectListener(new ViewControlsSelectListener(wwf.wwPanel.wwd, layer));
     }
 

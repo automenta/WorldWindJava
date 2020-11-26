@@ -10,6 +10,7 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.render.DrawContext;
 import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 
 /**
  * TODO: This file needs to be updated to implement "correct" stereo, as described at:
@@ -23,7 +24,7 @@ import gov.nasa.worldwind.geom.Angle;
  * <p>
  * The {@link WorldWindow} instance must support stereo in order to use device-supported stereo. A stereo
  * <code>WorldWindow</code> is selected by specifying the Java VM property described above prior to creating it. See
- * {@link gov.nasa.worldwind.awt.WorldWindowGLCanvas} for further details.
+ * {@link WorldWindowGLCanvas} for further details.
  * <p>
  * Note: The logic and much of the code here was contributed by Xander Enzmann of Mitre Corporation.
  *

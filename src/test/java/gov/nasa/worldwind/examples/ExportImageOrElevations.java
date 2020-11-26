@@ -171,7 +171,7 @@ public class ExportImageOrElevations extends ApplicationTemplate {
         }
 
         public void enableNAIPLayer() {
-            LayerList list = this.getWwd().getModel().getLayers();
+            LayerList list = this.getWwd().model().getLayers();
             for (Layer layer : list) {
                 if (layer.getName().contains("NAIP")) {
                     layer.setEnabled(true);
@@ -182,7 +182,7 @@ public class ExportImageOrElevations extends ApplicationTemplate {
 
         public void doSaveImage() {
             TiledImageLayer currentLayer = null;
-            LayerList list = this.getWwd().getModel().getLayers();
+            LayerList list = this.getWwd().model().getLayers();
             DrawContext dc = this.getWwd().getSceneController().getDrawContext();
 
             for (Object o : list) {
@@ -317,7 +317,7 @@ public class ExportImageOrElevations extends ApplicationTemplate {
             }
 
             try {
-                Globe globe = this.getWwd().getModel().getGlobe();
+                Globe globe = this.getWwd().model().getGlobe();
                 ElevationModel model = globe.getElevationModel();
 
                 elevations = new double[latlons.size()];

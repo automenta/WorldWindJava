@@ -49,7 +49,7 @@ public class DeepPicking extends Airspaces {
         }
 
         protected void disableBatchPicking() {
-            for (Layer layer : this.getWwd().getModel().getLayers()) {
+            for (Layer layer : this.getWwd().model().getLayers()) {
                 if (!layer.getName().toLowerCase().contains("airspace"))
                     continue;
 

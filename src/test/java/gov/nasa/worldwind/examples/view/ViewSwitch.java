@@ -6,10 +6,10 @@
 package gov.nasa.worldwind.examples.view;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.awt.ViewInputHandler;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.*;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.ui.awt.ViewInputHandler;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.swing.*;
@@ -146,7 +146,7 @@ public class ViewSwitch extends ApplicationTemplate {
                         vc.view.getViewInputHandler();
                 }
                 if (copyValues) {
-                    View viewToCopy = getWwd().getView();
+                    View viewToCopy = getWwd().view();
 
                     try {
                         vc.view.copyViewState(viewToCopy);
@@ -215,14 +215,14 @@ public class ViewSwitch extends ApplicationTemplate {
 
                 EventQueue.invokeLater(() -> {
 
-                    if (eventSource.getView() != null && eventSource.getView().getEyePosition() != null) {
-                        Position newPos = eventSource.getView().getEyePosition();
+                    if (eventSource.view() != null && eventSource.view().getEyePosition() != null) {
+                        Position newPos = eventSource.view().getEyePosition();
 
                         if (newPos != null) {
                             String las = makeAngleDescription("Lat", newPos.getLatitude());
                             String los = makeAngleDescription("Lon", newPos.getLongitude());
-                            String heading = makeAngleDescription("Heading", eventSource.getView().getHeading());
-                            String pitch = makeAngleDescription("Pitch", eventSource.getView().getPitch());
+                            String heading = makeAngleDescription("Heading", eventSource.view().getHeading());
+                            String pitch = makeAngleDescription("Pitch", eventSource.view().getPitch());
 
                             latDisplay.setText(las);
                             lonDisplay.setText(los);

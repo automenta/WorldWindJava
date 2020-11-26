@@ -8,9 +8,9 @@ package gov.nasa.worldwind.examples;
 
 import com.jogamp.opengl.GLAnimatorControl;
 import com.jogamp.opengl.util.FPSAnimator;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 
 /**
  * Shows how to use a JOGL Animator to animate in WorldWind
@@ -31,7 +31,7 @@ public class AnimatedGlobe extends ApplicationTemplate {
 
         public AppFrame() {
             // Reduce the frequency at which terrain is regenerated.
-            getWwd().getModel().getGlobe().getTessellator().setUpdateFrequency(5000);
+            getWwd().model().getGlobe().getTessellator().setUpdateFrequency(5000);
 
             // Add a rendering listener to update the eye position each frame. It's implementation is the
             // stageChanged method below.
@@ -47,7 +47,7 @@ public class AnimatedGlobe extends ApplicationTemplate {
         public void stageChanged(RenderingEvent event) {
             if (event.getStage().equals(RenderingEvent.BEFORE_RENDERING)) {
                 // The globe may not be instantiated the first time the listener is called.
-                if (getWwd().getView().getGlobe() == null)
+                if (getWwd().view().getGlobe() == null)
                     return;
 
                 long now = System.currentTimeMillis();
@@ -60,8 +60,8 @@ public class AnimatedGlobe extends ApplicationTemplate {
                 double alt = eyePosition.getAltitude();
 
                 eyePosition = Position.fromDegrees(lat, lon, alt);
-                getWwd().getView().stopAnimations();
-                getWwd().getView().setEyePosition(eyePosition);
+                getWwd().view().stopAnimations();
+                getWwd().view().setEyePosition(eyePosition);
             }
         }
     }

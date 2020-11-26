@@ -160,7 +160,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 return;
             }
 
-            this.getWwd().getModel().getLayers().remove(this.helpLayer);
+            this.getWwd().model().getLayers().remove(this.helpLayer);
             this.helpLayer.clear();
             this.helpLayer = null;
         }
@@ -270,7 +270,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
         }
 
         public Vec4[] computeViewLookAtForScene(View view) {
-            Globe globe = this.wwd.getModel().getGlobe();
+            Globe globe = this.wwd.model().getGlobe();
             double ve = this.wwd.getSceneController().getVerticalExaggeration();
 
             ExtentVisibilitySupport vs = new ExtentVisibilitySupport();
@@ -280,24 +280,24 @@ public class KeepingObjectsInView extends ApplicationTemplate {
         }
 
         public Position computePositionFromPoint(Vec4 point) {
-            return this.wwd.getModel().getGlobe().computePositionFromPoint(point);
+            return this.wwd.model().getGlobe().computePositionFromPoint(point);
         }
 
         public void gotoScene() {
-            Vec4[] lookAtPoints = this.computeViewLookAtForScene(this.wwd.getView());
+            Vec4[] lookAtPoints = this.computeViewLookAtForScene(this.wwd.view());
             if (lookAtPoints == null || lookAtPoints.length != 3) {
                 return;
             }
 
-            Position centerPos = this.wwd.getModel().getGlobe().computePositionFromPoint(lookAtPoints[1]);
+            Position centerPos = this.wwd.model().getGlobe().computePositionFromPoint(lookAtPoints[1]);
             double zoom = lookAtPoints[0].distanceTo3(lookAtPoints[1]);
 
-            this.wwd.getView().stopAnimations();
-            this.wwd.getView().goTo(centerPos, zoom);
+            this.wwd.view().stopAnimations();
+            this.wwd.view().goTo(centerPos, zoom);
         }
 
         public void sceneChanged() {
-            OrbitView view = (OrbitView) this.wwd.getView();
+            OrbitView view = (OrbitView) this.wwd.view();
 
             if (!this.isEnabled()) {
                 return;
@@ -352,7 +352,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             }
 
             if (!extentHolders.isEmpty()) {
-                Globe globe = this.wwd.getModel().getGlobe();
+                Globe globe = this.wwd.model().getGlobe();
                 double ve = this.wwd.getSceneController().getVerticalExaggeration();
                 vs.setExtents(ExtentVisibilitySupport.extentsFromExtentHolders(extentHolders, globe, ve));
             }

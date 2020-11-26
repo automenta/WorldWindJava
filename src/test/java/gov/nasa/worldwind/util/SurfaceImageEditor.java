@@ -80,7 +80,7 @@ public class SurfaceImageEditor implements SelectListener {
     }
 
     protected void enable() {
-        LayerList layers = this.wwd.getModel().getLayers();
+        LayerList layers = this.wwd.model().getLayers();
 
         if (!layers.contains(this.controlPointLayer))
             layers.add(this.controlPointLayer);
@@ -94,7 +94,7 @@ public class SurfaceImageEditor implements SelectListener {
     }
 
     protected void disable() {
-        LayerList layers = this.wwd.getModel().getLayers();
+        LayerList layers = this.wwd.model().getLayers();
 
         layers.remove(this.controlPointLayer);
 
@@ -170,8 +170,8 @@ public class SurfaceImageEditor implements SelectListener {
 
         Movable dragObject = (Movable) topObject;
 
-        View view = wwd.getView();
-        Globe globe = wwd.getModel().getGlobe();
+        View view = wwd.view();
+        Globe globe = wwd.model().getGlobe();
 
         // Compute ref-point position in screen coordinates. Since the SufaceShape is implicitly follows the surface
         // geometry, we will override the reference elevation with the current surface elevation. This will improve
@@ -230,7 +230,7 @@ public class SurfaceImageEditor implements SelectListener {
     protected void updateAffordances() {
         java.util.List<LatLon> corners = this.shape.getCorners();
 
-        double d = LatLon.getAverageDistance(corners).radians * wwd.getModel().getGlobe().getRadius();
+        double d = LatLon.getAverageDistance(corners).radians * wwd.model().getGlobe().getRadius();
 
         MarkerAttributes markerAttrs =
             new BasicMarkerAttributes(Material.BLUE, BasicMarkerShape.SPHERE, 0.7, 10, 0.1, d / 30);
@@ -254,12 +254,12 @@ public class SurfaceImageEditor implements SelectListener {
         if (sgl != null) {
             Vec4 point = sgl.getSurfacePoint(latLon.getLatitude(), latLon.getLongitude(), 0.0);
             if (point != null) {
-                Position pos = wwd.getModel().getGlobe().computePositionFromPoint(point);
+                Position pos = wwd.model().getGlobe().computePositionFromPoint(point);
                 return pos.getElevation();
             }
         }
 
-        return wwd.getModel().getGlobe().getElevation(latLon.getLatitude(), latLon.getLongitude());
+        return wwd.model().getGlobe().getElevation(latLon.getLatitude(), latLon.getLongitude());
     }
 
     protected static class ControlPointMarker extends BasicMarker {

@@ -7,8 +7,8 @@ package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.StatusBar;
 
 import javax.swing.*;
@@ -78,7 +78,7 @@ public class WWPanel extends JPanel {
     }
 
     private void updateElevationUnit(Object newValue) {
-        for (Layer layer : this.wwd.getModel().getLayers()) {
+        for (Layer layer : this.wwd.model().getLayers()) {
             if (layer instanceof ScalebarLayer) {
                 if (SAR2.UNIT_IMPERIAL.equals(newValue))
                     ((ScalebarLayer) layer).setUnit(ScalebarLayer.UNIT_IMPERIAL);

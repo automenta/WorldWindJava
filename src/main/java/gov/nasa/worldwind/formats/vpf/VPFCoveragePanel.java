@@ -383,14 +383,14 @@ public class VPFCoveragePanel extends JPanel {
 
         public void actionPerformed(ActionEvent actionEvent) {
             Sector sector = this.library.getBounds().toSector();
-            Extent extent = Sector.computeBoundingCylinder(wwd.getModel().getGlobe(),
+            Extent extent = Sector.computeBoundingCylinder(wwd.model().getGlobe(),
                 wwd.getSceneController().getVerticalExaggeration(), sector);
 
-            Angle fov = wwd.getView().getFieldOfView();
+            Angle fov = wwd.view().getFieldOfView();
             Position centerPos = new Position(sector.getCentroid(), 0.0d);
             double zoom = extent.getRadius() / fov.cosHalfAngle() / fov.tanHalfAngle();
 
-            wwd.getView().goTo(centerPos, zoom);
+            wwd.view().goTo(centerPos, zoom);
         }
     }
 }

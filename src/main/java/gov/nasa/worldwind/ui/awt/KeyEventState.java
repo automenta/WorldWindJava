@@ -3,7 +3,7 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
-package gov.nasa.worldwind.awt;
+package gov.nasa.worldwind.ui.awt;
 
 import gov.nasa.worldwind.util.Logging;
 

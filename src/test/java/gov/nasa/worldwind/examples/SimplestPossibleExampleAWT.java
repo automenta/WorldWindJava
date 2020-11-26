@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.BasicModel;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +17,8 @@ import java.awt.*;
  *
  * @version $Id: SimplestPossibleExample.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SimplestPossibleExample extends JFrame {
-    public SimplestPossibleExample() {
+public class SimplestPossibleExampleAWT extends JFrame {
+    public SimplestPossibleExampleAWT() {
         WorldWindowGLCanvas wwd = new WorldWindowGLCanvas();
         wwd.setPreferredSize(new Dimension(1000, 800));
         this.getContentPane().add(wwd, BorderLayout.CENTER);
@@ -27,7 +27,7 @@ public class SimplestPossibleExample extends JFrame {
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
-            JFrame frame = new SimplestPossibleExample();
+            JFrame frame = new SimplestPossibleExampleAWT();
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.pack();
             frame.setVisible(true);

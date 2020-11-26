@@ -397,7 +397,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             java.util.List<LatLon> locations = ShapeUtils.createSquareInViewport(wwd, position, heading, sizeInMeters);
 
             double maxElevation = -Double.MAX_VALUE;
-            Globe globe = wwd.getModel().getGlobe();
+            Globe globe = wwd.model().getGlobe();
 
             for (LatLon ll : locations) {
                 double e = globe.getElevation(ll.getLatitude(), ll.getLongitude());
@@ -868,7 +868,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             Vec4 point = null;
 
             SceneController sc = this.getApp().getWwd().getSceneController();
-            Globe globe = this.getApp().getWwd().getModel().getGlobe();
+            Globe globe = this.getApp().getWwd().model().getGlobe();
 
             if (sc.getTerrain() != null) {
                 point = sc.getTerrain().getSurfacePoint(
@@ -886,7 +886,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
         protected Vec4 getPoint(LatLon latlon, double elevation) {
             SceneController sc = this.getApp().getWwd().getSceneController();
-            Globe globe = this.getApp().getWwd().getModel().getGlobe();
+            Globe globe = this.getApp().getWwd().model().getGlobe();
             double e = globe.getElevation(latlon.getLatitude(), latlon.getLongitude());
             return globe.computePointFromPosition(
                 latlon.getLatitude(), latlon.getLongitude(), (e + elevation) * sc.getVerticalExaggeration());
@@ -1000,7 +1000,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             }
             else {
                 this.editorController.setEditor(null);
-                this.getApp().getWwd().getModel().getLayers().remove(editor);
+                this.getApp().getWwd().model().getLayers().remove(editor);
             }
 
             int index = this.getModel().getIndexForEntry(this.selectedEntry);
@@ -1045,7 +1045,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         }
 
         protected void zoomTo(LatLon latLon, Angle heading, Angle pitch, double zoom) {
-            BasicOrbitView view = (BasicOrbitView) this.getApp().getWwd().getView();
+            BasicOrbitView view = (BasicOrbitView) this.getApp().getWwd().view();
             view.stopMovement();
             view.addPanToAnimator(
                 new Position(latLon, 0), heading, pitch, zoom, true);

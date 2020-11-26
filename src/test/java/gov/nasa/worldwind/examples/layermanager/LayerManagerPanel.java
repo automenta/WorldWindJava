@@ -63,7 +63,7 @@ public class LayerManagerPanel extends JPanel {
         wwd.addRenderingListener(event -> updateLayerActivity(wwd));
 
         // Add a property change listener that causes this layer panel to be updated whenever the layer list changes.
-        wwd.getModel().getLayers().addPropertyChangeListener(propertyChangeEvent -> {
+        wwd.model().getLayers().addPropertyChangeListener(propertyChangeEvent -> {
             if (propertyChangeEvent.getPropertyName().equals(AVKey.LAYERS))
                 SwingUtilities.invokeLater(() -> update(wwd));
         });
@@ -86,7 +86,7 @@ public class LayerManagerPanel extends JPanel {
         this.layerNamesPanel.removeAll();
 
         // Fill the layers panel with the titles of all layers in the WorldWindow's current model.
-        for (Layer layer : wwd.getModel().getLayers()) {
+        for (Layer layer : wwd.model().getLayers()) {
             if (layer.getValue(AVKey.IGNORE) != null)
                 continue;
 
@@ -102,7 +102,7 @@ public class LayerManagerPanel extends JPanel {
         // Determines whether this layer manager's layer list is consistent with the specified WorldWindow's. Knowing
         // this prevents redundant updates.
 
-        LayerList layerList = wwd.getModel().getLayers();
+        LayerList layerList = wwd.model().getLayers();
 
         if (this.layerPanels.size() != layerList.size())
             return false;

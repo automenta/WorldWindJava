@@ -89,7 +89,7 @@ public class ShapefileAttributeGroups extends ApplicationTemplate {
             factory.setAttributeDelegate(this); // call assignAttributes for each shapefile record
 
             Layer layer = (Layer) factory.createFromConfigSource(SHAPEFILE_PATH, null);
-            this.getWwd().getModel().getLayers().add(layer);
+            this.getWwd().model().getLayers().add(layer);
         }
 
         @Override

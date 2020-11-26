@@ -124,7 +124,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
                     ((Position) location).getAltitude() * terrain.getVerticalExaggeration());
             }
 
-            Position vertexPosition = this.wwd.getModel().getGlobe().computePositionFromPoint(vert);
+            Position vertexPosition = this.wwd.model().getGlobe().computePositionFromPoint(vert);
 
             this.controlPoints.add(new ControlPointMarker(MOVE_VERTEX_ACTION, vertexPosition, vert,
                 this.vertexControlAttributes, i));
@@ -141,7 +141,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         Position firstVertex = this.controlPoints.get(0).getPosition();
         Position secondVertex = this.controlPoints.get(1).getPosition();
 
-        Globe globe = this.wwd.getModel().getGlobe();
+        Globe globe = this.wwd.model().getGlobe();
 
         // Get cartesian points for the vertices
         Vec4 firstPoint = globe.computePointFromPosition(firstVertex);
@@ -290,8 +290,8 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         // If either ray fails to intersect the geoid, then ignore this event. Use the difference between the two
         // intersected positions to move the control point's location.
 
-        View view = this.wwd.getView();
-        Globe globe = this.wwd.getModel().getGlobe();
+        View view = this.wwd.view();
+        Globe globe = this.wwd.model().getGlobe();
 
         Position refPos = this.polygon.getReferencePosition();
         if (refPos == null)
@@ -315,8 +315,8 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
     }
 
     protected void moveControlPoint(ControlPointMarker controlPoint, Point lastMousePoint, Point moveToPoint) {
-        View view = this.wwd.getView();
-        Globe globe = this.wwd.getModel().getGlobe();
+        View view = this.wwd.view();
+        Globe globe = this.wwd.model().getGlobe();
 
         Position refPos = controlPoint.getPosition();
         if (refPos == null)
@@ -359,20 +359,20 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         if (referencePos == null)
             return;
 
-        Vec4 referencePoint = this.wwd.getModel().getGlobe().computePointFromPosition(referencePos);
+        Vec4 referencePoint = this.wwd.model().getGlobe().computePointFromPosition(referencePos);
 
-        Vec4 surfaceNormal = this.wwd.getModel().getGlobe().computeSurfaceNormalAtLocation(referencePos.getLatitude(),
+        Vec4 surfaceNormal = this.wwd.model().getGlobe().computeSurfaceNormalAtLocation(referencePos.getLatitude(),
             referencePos.getLongitude());
         Line verticalRay = new Line(referencePoint, surfaceNormal);
-        Line screenRay = this.wwd.getView().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
-        Line previousScreenRay = this.wwd.getView().computeRayFromScreenPoint(previousMousePoint.getX(),
+        Line screenRay = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
+        Line previousScreenRay = this.wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(),
             previousMousePoint.getY());
 
         Vec4 pointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, screenRay);
         Vec4 previousPointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, previousScreenRay);
 
-        Position pos = this.wwd.getModel().getGlobe().computePositionFromPoint(pointOnLine);
-        Position previousPos = this.wwd.getModel().getGlobe().computePositionFromPoint(previousPointOnLine);
+        Position pos = this.wwd.model().getGlobe().computePositionFromPoint(pointOnLine);
+        Position previousPos = this.wwd.model().getGlobe().computePositionFromPoint(previousPointOnLine);
         double elevationChange = pos.getElevation() - previousPos.getElevation();
 
         Collection<Position> boundary = new ArrayList<>();
@@ -393,7 +393,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         // Try to find the edge that is closest to a ray passing through the screen point. We're trying to determine
         // the user's intent as to which edge a new two control points should be added to.
 
-        Line ray = this.wwd.getView().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
+        Line ray = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Vec4 pickPoint = this.intersectPolygonAltitudeAt(ray);
 
         double nearestDistance = Double.MAX_VALUE;
@@ -415,7 +415,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
             }
         }
 
-        Position newPosition = this.wwd.getModel().getGlobe().computePositionFromPoint(pickPoint);
+        Position newPosition = this.wwd.model().getGlobe().computePositionFromPoint(pickPoint);
 
         // Copy the outer boundary list
         List<Position> positionList = new ArrayList<>(this.controlPoints.size());
@@ -497,12 +497,12 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         Vec4 surfacePoint = this.wwd.getSceneController().getTerrain().getSurfacePoint(
             pos.getLatitude(), pos.getLongitude());
         if (surfacePoint == null) {
-            Globe globe = this.wwd.getModel().getGlobe();
+            Globe globe = this.wwd.model().getGlobe();
             surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
                 globe.getElevation(pos.getLatitude(), pos.getLongitude()));
         }
 
-        return this.wwd.getView().project(surfacePoint);
+        return this.wwd.view().project(surfacePoint);
     }
 
     protected String getDisplayString(Position pos) {

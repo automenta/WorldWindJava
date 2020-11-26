@@ -77,7 +77,7 @@ public class InstallElevations extends ApplicationTemplate {
             // Add the new elevation model to the current (default) one. Must do it on the event dispatch thread.
             SwingUtilities.invokeLater(() -> {
                 CompoundElevationModel model
-                    = (CompoundElevationModel) AppFrame.this.getWwd().getModel().getGlobe().getElevationModel();
+                    = (CompoundElevationModel) AppFrame.this.getWwd().model().getGlobe().getElevationModel();
                 model.addElevationModel(em);
 
                 // Set the view to look at the installed elevations. Get the location from the elevation model's

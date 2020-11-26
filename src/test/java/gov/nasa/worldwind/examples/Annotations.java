@@ -1550,7 +1550,7 @@ public class Annotations extends ApplicationTemplate {
         }
 
         private Position computeGroundPosition(WorldWindow wwd) {
-            View view = wwd.getView();
+            View view = wwd.view();
 
             if (view == null)
                 return null;

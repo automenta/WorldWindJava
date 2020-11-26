@@ -57,7 +57,7 @@ public class ImportElevations extends ApplicationTemplate {
 
                 SwingUtilities.invokeLater(() -> {
                     // Get the WorldWindow's current elevation model.
-                    Globe globe = AppFrame.this.getWwd().getModel().getGlobe();
+                    Globe globe = AppFrame.this.getWwd().model().getGlobe();
                     ElevationModel currentElevationModel = globe.getElevationModel();
 
                     // Add the new elevation model to the globe.

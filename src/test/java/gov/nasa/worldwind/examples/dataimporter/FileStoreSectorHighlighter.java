@@ -66,7 +66,7 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
         for (FileStoreDataSet dataSet : this.currentlyHighlightedSets) {
             Layer layer = (Layer) dataSet.getValue(SECTOR_LAYER);
             if (layer != null) {
-                this.wwd.getModel().getLayers().remove(layer);
+                this.wwd.model().getLayers().remove(layer);
             }
         }
 

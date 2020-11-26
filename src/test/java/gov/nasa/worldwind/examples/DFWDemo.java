@@ -7,7 +7,6 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.ogc.wms.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
@@ -15,6 +14,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
 import gov.nasa.worldwind.terrain.WMSBasicElevationModel;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
@@ -43,7 +43,7 @@ public class DFWDemo {
     public static void insertBeforeCompass(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just before the compass.
         int compassPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
+        LayerList layers = wwd.model().getLayers();
         for (Layer l : layers) {
             if (l instanceof CompassLayer) {
                 compassPosition = layers.indexOf(l);
@@ -55,7 +55,7 @@ public class DFWDemo {
     public static void insertBeforePlacenames(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just before the placenames.
         int compassPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
+        LayerList layers = wwd.model().getLayers();
         for (Layer l : layers) {
             if (l instanceof PlaceNameLayer) {
                 compassPosition = layers.indexOf(l);
@@ -67,7 +67,7 @@ public class DFWDemo {
     public static void insertAfterPlacenames(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just after the placenames.
         int compassPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
+        LayerList layers = wwd.model().getLayers();
         for (Layer l : layers) {
             if (l instanceof PlaceNameLayer) {
                 compassPosition = layers.indexOf(l);
@@ -79,7 +79,7 @@ public class DFWDemo {
     public static void insertBeforeLayerName(WorldWindow wwd, Layer layer, CharSequence targetName) {
         // Insert the layer into the layer list just before the target layer.
         int targetPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
+        LayerList layers = wwd.model().getLayers();
         for (Layer l : layers) {
             if (l.getName().contains(targetName)) {
                 targetPosition = layers.indexOf(l);
@@ -384,7 +384,7 @@ public class DFWDemo {
 
             // Search the layer list for layers that are also select listeners and register them with the World
             // Window. This enables interactive layers to be included without specific knowledge of them here.
-            for (Layer layer : this.wwjPanel.getWwd().getModel().getLayers()) {
+            for (Layer layer : this.wwjPanel.getWwd().model().getLayers()) {
                 if (layer instanceof SelectListener) {
                     this.getWwd().addSelectListener((SelectListener) layer);
                 }
@@ -397,7 +397,7 @@ public class DFWDemo {
             this.setResizable(true);
             Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04),
                 500.0); // DFW
-            this.wwjPanel.getWwd().getView().setEyePosition(eyePos);
+            this.wwjPanel.getWwd().view().setEyePosition(eyePos);
 //            try
 //            {
 //                DynamicLayerInfo dfwImageryLayer = this.loadDynamicLayer(

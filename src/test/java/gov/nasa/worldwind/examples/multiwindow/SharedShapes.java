@@ -8,7 +8,6 @@ package gov.nasa.worldwind.examples.multiwindow;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.examples.render.airspaces.Box;
 import gov.nasa.worldwind.examples.render.airspaces.Polygon;
@@ -17,6 +16,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.Earth.*;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;

@@ -145,7 +145,7 @@ public class ExtrudedShapes extends ApplicationTemplate {
                 insertBeforePlacenames(this.getWwd(), layer);
 
                 // Adjust the view so that it looks at the buildings.
-                View view = getWwd().getView();
+                View view = getWwd().view();
                 view.setEyePosition(Position.fromDegrees(47.656, -122.306, 1.0e3));
 
                 // This is how a select listener would notice that one of the shapes was picked.

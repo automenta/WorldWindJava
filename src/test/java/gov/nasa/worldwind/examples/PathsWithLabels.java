@@ -334,7 +334,7 @@ public class PathsWithLabels extends ApplicationTemplate {
             layer.add(path);
             layer.add(label);
 
-            this.getWwd().getModel().getLayers().add(layer);
+            this.getWwd().model().getLayers().add(layer);
         }
 
         protected List<Position> makePositionList(double[] src) {

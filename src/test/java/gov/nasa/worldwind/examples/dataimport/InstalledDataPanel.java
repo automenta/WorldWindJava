@@ -157,7 +157,7 @@ public class InstalledDataPanel extends JPanel {
 
         layer.setEnabled(true); // TODO: BasicLayerFactory creates layer which is intially disabled
 
-        if (!this.worldWindow.getModel().getLayers().contains(layer))
+        if (!this.worldWindow.model().getLayers().contains(layer))
             ApplicationTemplate.insertBeforePlacenames(this.worldWindow, layer);
     }
 
@@ -176,7 +176,7 @@ public class InstalledDataPanel extends JPanel {
         if (em == null)
             return;
 
-        ElevationModel defaultElevationModel = this.worldWindow.getModel().getGlobe().getElevationModel();
+        ElevationModel defaultElevationModel = this.worldWindow.model().getGlobe().getElevationModel();
         if (defaultElevationModel instanceof CompoundElevationModel) {
             if (!((CompoundElevationModel) defaultElevationModel).containsElevationModel(em))
                 ((CompoundElevationModel) defaultElevationModel).addElevationModel(em);
@@ -185,7 +185,7 @@ public class InstalledDataPanel extends JPanel {
             CompoundElevationModel cm = new CompoundElevationModel();
             cm.addElevationModel(defaultElevationModel);
             cm.addElevationModel(em);
-            this.worldWindow.getModel().getGlobe().setElevationModel(cm);
+            this.worldWindow.model().getGlobe().setElevationModel(cm);
         }
     }
 

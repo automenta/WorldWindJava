@@ -150,12 +150,12 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         Vec4 surfacePoint = mt.getWwd().getSceneController().getTerrain().getSurfacePoint(
             pos.getLatitude(), pos.getLongitude());
         if (surfacePoint == null) {
-            Globe globe = mt.getWwd().getModel().getGlobe();
+            Globe globe = mt.getWwd().model().getGlobe();
             surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
                 globe.getElevation(pos.getLatitude(), pos.getLongitude()));
         }
 
-        return mt.getWwd().getView().project(surfacePoint);
+        return mt.getWwd().view().project(surfacePoint);
     }
 
     protected String formatCircleMeasurements(Position pos, WWOMeasureTool mt) {
@@ -277,7 +277,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
         if (mt.getPositions().size() < 2)
             return null;
 
-        double radius = mt.getWwd().getModel().getGlobe().getRadius();
+        double radius = mt.getWwd().model().getGlobe().getRadius();
         double distanceFromStart = 0;
         int segmentIndex = 0;
         LatLon pos1 = mt.getPositions().get(segmentIndex);
@@ -313,7 +313,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
             pos1 = pos2;
         }
 
-        return pathLengthRadians * mt.getWwd().getModel().getGlobe().getRadius();
+        return pathLengthRadians * mt.getWwd().model().getGlobe().getRadius();
     }
 
     protected Angle computeAngleBetween(LatLon a, LatLon b, LatLon c) {

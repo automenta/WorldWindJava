@@ -126,7 +126,7 @@ public class ShapeClippingPanel extends JPanel implements ActionListener {
     }
 
     protected ContourList clipShape() {
-        Globe globe = this.wwd.getModel().getGlobe();
+        Globe globe = this.wwd.model().getGlobe();
         double resolutionMeters = WWMath.clamp(this.getResolution(), 1000, Double.MAX_VALUE); // no less than 1km
         double resolutionRadians = resolutionMeters / globe.getRadius();
         ShapeCombiner combiner = new ShapeCombiner(globe, resolutionRadians);
@@ -160,7 +160,7 @@ public class ShapeClippingPanel extends JPanel implements ActionListener {
         layer.setPickEnabled(false);
         layer.add(shape);
 
-        this.wwd.getModel().getLayers().add(layer);
+        this.wwd.model().getLayers().add(layer);
         this.wwd.redraw();
     }
 

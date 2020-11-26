@@ -47,11 +47,11 @@ public class ShapeCombining extends ApplicationTemplate {
             originalLayer.setName("Original");
             originalLayer.add(shape1);
             originalLayer.add(shape2);
-            this.getWwd().getModel().getLayers().add(originalLayer);
+            this.getWwd().model().getLayers().add(originalLayer);
 
             // Set up a ShapeCombiner to combine the two surface circles into a potentially complex set of contours
             // using boolean operations: union, intersection and difference.
-            Globe globe = this.getWwd().getModel().getGlobe();
+            Globe globe = this.getWwd().model().getGlobe();
             double resolutionRadians = 10000 / globe.getRadius(); // 10km resolution
             ShapeCombiner shapeCombiner = new ShapeCombiner(globe, resolutionRadians);
 
@@ -83,7 +83,7 @@ public class ShapeCombining extends ApplicationTemplate {
             RenderableLayer layer = new RenderableLayer();
             layer.setName(displayName);
             layer.add(shape);
-            this.getWwd().getModel().getLayers().add(layer);
+            this.getWwd().model().getLayers().add(layer);
         }
     }
 }

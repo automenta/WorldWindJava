@@ -59,7 +59,7 @@ public class ParallelPaths extends ApplicationTemplate {
             List<Position> pathPositions3 = new ArrayList<>();
             List<Position> pathPositions4 = new ArrayList<>();
 
-            Globe globe = getWwd().getModel().getGlobe();
+            Globe globe = getWwd().model().getGlobe();
 
             // Generate two sets of lines parallel to the control line. The positions will be added to the pathPosition lists.
             WWMath.generateParallelLines(positions, pathPositions1, pathPositions2, 50, globe);

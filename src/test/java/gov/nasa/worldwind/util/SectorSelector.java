@@ -112,7 +112,7 @@ public class SectorSelector extends WWObjectImpl
     public void enable() {
         this.getShape().setStartPosition(null);
 
-        LayerList layers = this.getWwd().getModel().getLayers();
+        LayerList layers = this.getWwd().model().getLayers();
 
         if (!layers.contains(this.getLayer()))
             layers.add(this.getLayer());
@@ -136,7 +136,7 @@ public class SectorSelector extends WWObjectImpl
         this.getWwd().getInputHandler().removeMouseListener(this);
         this.getWwd().getInputHandler().removeMouseMotionListener(this);
 
-        this.getWwd().getModel().getLayers().remove(this.getLayer());
+        this.getWwd().model().getLayers().remove(this.getLayer());
 
         this.getShape().clear();
     }
@@ -468,8 +468,8 @@ public class SectorSelector extends WWObjectImpl
     }
 
     protected void dragWholeShape(DragSelectEvent dragEvent, Movable dragObject) {
-        View view = getWwd().getView();
-        Globe globe = getWwd().getModel().getGlobe();
+        View view = getWwd().view();
+        Globe globe = getWwd().model().getGlobe();
 
         // Compute ref-point position in screen coordinates.
         Position refPos = dragObject.getReferencePosition();

@@ -74,14 +74,14 @@ public class ElevationModelManagerPanel extends JPanel {
 
         // Fill the panel with the titles of all elevation models in the WorldWindow.
 
-        if (!(wwd.getModel().getGlobe().getElevationModel() instanceof CompoundElevationModel)) {
+        if (!(wwd.model().getGlobe().getElevationModel() instanceof CompoundElevationModel)) {
             ElevationModelPanel elevationModelPanel = new ElevationModelPanel(wwd, this,
-                wwd.getModel().getGlobe().getElevationModel());
+                wwd.model().getGlobe().getElevationModel());
             this.modelPanels.add(elevationModelPanel);
             this.modelNamesPanel.add(elevationModelPanel);
         }
         else {
-            CompoundElevationModel cem = (CompoundElevationModel) wwd.getModel().getGlobe().getElevationModel();
+            CompoundElevationModel cem = (CompoundElevationModel) wwd.model().getGlobe().getElevationModel();
 
             for (ElevationModel elevationModel : cem.getElevationModels()) {
                 if (elevationModel.getValue(AVKey.IGNORE) != null)
@@ -98,11 +98,11 @@ public class ElevationModelManagerPanel extends JPanel {
         // Determines whether this manager's elevation model list is consistent with the specified WorldWindow's.
         // Knowing this prevents redundant updates.
 
-        if (!(wwd.getModel().getGlobe().getElevationModel() instanceof CompoundElevationModel)) {
-            return this.modelPanels.get(0).getElevationModel() == wwd.getModel().getGlobe().getElevationModel();
+        if (!(wwd.model().getGlobe().getElevationModel() instanceof CompoundElevationModel)) {
+            return this.modelPanels.get(0).getElevationModel() == wwd.model().getGlobe().getElevationModel();
         }
 
-        CompoundElevationModel cem = (CompoundElevationModel) wwd.getModel().getGlobe().getElevationModel();
+        CompoundElevationModel cem = (CompoundElevationModel) wwd.model().getGlobe().getElevationModel();
 
         if (this.modelPanels.size() != cem.getElevationModels().size())
             return false;

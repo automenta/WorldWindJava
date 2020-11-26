@@ -18,18 +18,18 @@ import java.util.*;
  */
 public class ShapeUtils {
     public static double getViewportScaleFactor(WorldWindow wwd) {
-        return ((OrbitView) wwd.getView()).getZoom() / 8.0;
+        return ((OrbitView) wwd.view()).getZoom() / 8.0;
     }
 
     public static Position getNewShapePosition(WorldWindow wwd) {
-        Line ray = new Line(wwd.getView().getEyePoint(), wwd.getView().getForwardVector());
+        Line ray = new Line(wwd.view().getEyePoint(), wwd.view().getForwardVector());
         Intersection[] intersection = wwd.getSceneController().getTerrain().intersect(ray);
 
         if (intersection != null && intersection.length != 0) {
-            return wwd.getModel().getGlobe().computePositionFromPoint(intersection[0].getIntersectionPoint());
+            return wwd.model().getGlobe().computePositionFromPoint(intersection[0].getIntersectionPoint());
         }
-        else if (wwd.getView() instanceof OrbitView) {
-            return ((OrbitView) wwd.getView()).getCenterPosition();
+        else if (wwd.view() instanceof OrbitView) {
+            return ((OrbitView) wwd.view()).getCenterPosition();
         }
 
         return Position.ZERO;
@@ -37,8 +37,8 @@ public class ShapeUtils {
 
     public static Angle getNewShapeHeading(WorldWindow wwd, boolean matchViewHeading) {
         if (matchViewHeading) {
-            if (wwd.getView() instanceof OrbitView) {
-                return wwd.getView().getHeading();
+            if (wwd.view() instanceof OrbitView) {
+                return wwd.view().getHeading();
             }
         }
 
@@ -47,7 +47,7 @@ public class ShapeUtils {
 
     public static List<LatLon> createSquareInViewport(WorldWindow wwd, Position position, Angle heading,
         double sizeInMeters) {
-        Globe globe = wwd.getModel().getGlobe();
+        Globe globe = wwd.model().getGlobe();
         Matrix transform = Matrix.IDENTITY;
         transform = transform.multiply(globe.computeSurfaceOrientationAtPosition(position));
         transform = transform.multiply(Matrix.fromRotationZ(heading.multiply(-1)));
@@ -72,7 +72,7 @@ public class ShapeUtils {
 
     public static List<Position> createPositionSquareInViewport(WorldWindow wwd, Position position, Angle heading,
         double sizeInMeters) {
-        Globe globe = wwd.getModel().getGlobe();
+        Globe globe = wwd.model().getGlobe();
         Matrix transform = Matrix.IDENTITY;
         transform = transform.multiply(globe.computeSurfaceOrientationAtPosition(position));
         transform = transform.multiply(Matrix.fromRotationZ(heading.multiply(-1)));

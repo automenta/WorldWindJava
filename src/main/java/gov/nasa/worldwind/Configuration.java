@@ -9,6 +9,7 @@ package gov.nasa.worldwind;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
 
@@ -30,7 +31,7 @@ import java.util.logging.Level;
  * registers all the information there. The information can subsequently be retrieved via the class' various
  * <code>getValue</code> methods. Many WorldWind start-up objects query this information to determine the classes to
  * create. For example, the first WorldWind object created by an application is typically a {@link
- * gov.nasa.worldwind.awt.WorldWindowGLCanvas}. During construction that class causes WorldWind's internal classes to be
+ * WorldWindowGLCanvas}. During construction that class causes WorldWind's internal classes to be
  * constructed, using the names of those classes drawn from the Configuration singleton, this class.
  * <p>
  * The default WorldWind configuration document is <code>config/worldwind.xml</code>. This can be changed by setting the

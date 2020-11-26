@@ -7,13 +7,13 @@
 package gov.nasa.worldwind.examples.multiwindow;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.RenderingEvent;
 import gov.nasa.worldwind.examples.render.DrawContext;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.terrain.*;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
@@ -46,10 +46,10 @@ public class ViewVolumeViewer extends JFrame {
         this.wwd = wwp.wwd;
 
         final SectorGeometryLayer sgLayer = new SectorGeometryLayer();
-        this.wwd.getModel().getLayers().add(sgLayer);
+        this.wwd.model().getLayers().add(sgLayer);
 
         final ViewVolumeLayer vvLayer = new ViewVolumeLayer();
-        this.wwd.getModel().getLayers().add(0, vvLayer);
+        this.wwd.model().getLayers().add(0, vvLayer);
 
         // This view volume viewer updates its display within a rendering listener registered for the observed window
         this.observed.addRenderingListener(event -> {
@@ -59,7 +59,7 @@ public class ViewVolumeViewer extends JFrame {
                 sgLayer.setGeometry(sgCopy);
 
                 // Get the observed window's view and update this window's view volume display layer
-                vvLayer.setView(observed.getView());
+                vvLayer.setView(observed.view());
 
                 // Redraw this (the view volume viewer's) window
                 wwd.redraw();
@@ -75,13 +75,13 @@ public class ViewVolumeViewer extends JFrame {
     protected Model makeModel() {
         LayerList layers = new LayerList();
 
-        for (Layer layer : this.observed.getModel().getLayers()) {
+        for (Layer layer : this.observed.model().getLayers()) {
             if (layer instanceof TiledImageLayer) // share TiledImageLayers
                 layers.add(layer);
         }
 
         Model model = new BasicModel();
-        model.setGlobe(this.observed.getModel().getGlobe()); // share the globe
+        model.setGlobe(this.observed.model().getGlobe()); // share the globe
         model.setLayers(layers);
 
         return model;

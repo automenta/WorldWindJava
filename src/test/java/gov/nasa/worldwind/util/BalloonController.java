@@ -616,7 +616,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
                 }
                 // If the feature is not attached to a particular point, just put it in the middle of the viewport
                 else {
-                    Rectangle viewport = this.wwd.getView().getViewport();
+                    Rectangle viewport = this.wwd.view().getViewport();
 
                     Point center = new Point((int) viewport.getCenterX(), (int) viewport.getCenterY());
 
@@ -859,11 +859,11 @@ public class BalloonController extends MouseAdapter implements SelectListener {
      *                 position at the screen point currently over this position.
      */
     protected void showBalloon(Balloon balloon, Position position) {
-        Vec4 screenVec4 = this.wwd.getView().project(
-            this.wwd.getModel().getGlobe().computePointFromPosition(position));
+        Vec4 screenVec4 = this.wwd.view().project(
+            this.wwd.model().getGlobe().computePointFromPosition(position));
 
         Point screenPoint = new Point((int) screenVec4.x,
-            (int) (this.wwd.getView().getViewport().height - screenVec4.y));
+            (int) (this.wwd.view().getViewport().height - screenVec4.y));
 
         // If the balloon is attached to the screen rather than the globe, move it to the
         // current point. Otherwise move it to the position under the current point.
@@ -905,7 +905,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // width is less than half of the viewport width, and that the balloon height is less half of the viewport
         // height, the default maximum size applied to balloons created by the controller.
 
-        Rectangle viewport = this.wwd.getView().getViewport();
+        Rectangle viewport = this.wwd.view().getViewport();
 
         double x, y;
         String xUnits, yUnits;
@@ -1010,15 +1010,15 @@ public class BalloonController extends MouseAdapter implements SelectListener {
 
         // Fall back to a terrain intersection if we still don't have a position.
         if (position == null) {
-            Line ray = this.wwd.getView().computeRayFromScreenPoint(pickPoint.x, pickPoint.y);
+            Line ray = this.wwd.view().computeRayFromScreenPoint(pickPoint.x, pickPoint.y);
             Intersection[] inter = this.wwd.getSceneController().getDrawContext().getSurfaceGeometry().intersect(ray);
             if (inter != null && inter.length > 0) {
-                position = this.wwd.getModel().getGlobe().computePositionFromPoint(inter[0].getIntersectionPoint());
+                position = this.wwd.model().getGlobe().computePositionFromPoint(inter[0].getIntersectionPoint());
             }
 
             // We still don't have a position, fall back to intersection with the ellipsoid.
             if (position == null) {
-                position = this.wwd.getView().computePositionFromScreenPoint(pickPoint.x, pickPoint.y);
+                position = this.wwd.view().computePositionFromScreenPoint(pickPoint.x, pickPoint.y);
             }
         }
 
@@ -1060,7 +1060,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         Terrain terrain = this.wwd.getSceneController().getDrawContext().getTerrain();
 
         // Compute a line through the pick point.
-        Line line = this.wwd.getView().computeRayFromScreenPoint(screenPoint.x, screenPoint.y);
+        Line line = this.wwd.view().computeRayFromScreenPoint(screenPoint.x, screenPoint.y);
 
         // Find the intersection of the line and the shape.
         List<Intersection> intersections = shape.intersect(line, terrain);
@@ -1088,7 +1088,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         List<Position> positions = new ArrayList<>();
 
         KMLAbstractGeometry geometry = placemark.getGeometry();
-        KMLUtil.getPositions(this.wwd.getModel().getGlobe(), geometry, positions);
+        KMLUtil.getPositions(this.wwd.model().getGlobe(), geometry, positions);
 
         return this.getBalloonPosition(positions);
     }
@@ -1159,7 +1159,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         Offset offset = new Offset(xy.getX(), xy.getY(), KMLUtil.kmlUnitsToWWUnits(xy.getXunits()),
             KMLUtil.kmlUnitsToWWUnits(xy.getYunits()));
 
-        Rectangle viewport = this.wwd.getView().getViewport();
+        Rectangle viewport = this.wwd.view().getViewport();
         Point2D point2D = offset.computeOffset(viewport.width, viewport.height, 1.0d, 1.0d);
 
         int y = (int) point2D.getY();
@@ -1272,7 +1272,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         kmlLayer.setName((String) document.getField(AVKey.DISPLAY_NAME));
         kmlLayer.add(controller);
 
-        this.wwd.getModel().getLayers().add(kmlLayer);
+        this.wwd.model().getLayers().add(kmlLayer);
     }
 
     /**

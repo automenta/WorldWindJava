@@ -7,11 +7,11 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
@@ -40,7 +40,7 @@ public class ApplicationTemplate {
     public static void insertBeforeCompass(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just before the compass.
         int compassPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
+        LayerList layers = wwd.model().getLayers();
         for (Layer l : layers) {
             if (l instanceof CompassLayer) {
                 compassPosition = layers.indexOf(l);
@@ -52,7 +52,7 @@ public class ApplicationTemplate {
     public static void insertBeforePlacenames(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just before the placenames.
         int compassPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
+        LayerList layers = wwd.model().getLayers();
         for (Layer l : layers) {
             if (l instanceof PlaceNameLayer) {
                 compassPosition = layers.indexOf(l);
@@ -64,7 +64,7 @@ public class ApplicationTemplate {
     public static void insertAfterPlacenames(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just after the placenames.
         int compassPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
+        LayerList layers = wwd.model().getLayers();
         for (Layer l : layers) {
             if (l instanceof PlaceNameLayer) {
                 compassPosition = layers.indexOf(l);
@@ -217,7 +217,7 @@ public class ApplicationTemplate {
 
             // Search the layer list for layers that are also select listeners and register them with the World
             // Window. This enables interactive layers to be included without specific knowledge of them here.
-            for (Layer layer : this.wwjPanel.getWwd().getModel().getLayers()) {
+            for (Layer layer : this.wwjPanel.getWwd().model().getLayers()) {
                 if (layer instanceof SelectListener) {
                     this.getWwd().addSelectListener((SelectListener) layer);
                 }

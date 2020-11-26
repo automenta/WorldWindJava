@@ -54,7 +54,7 @@ public class SurfaceImageViewer extends ApplicationTemplate {
                 Thread t = new Thread(() -> {
                     try {
                         CompoundElevationModel cem
-                            = (CompoundElevationModel) getWwd().getModel().getGlobe().getElevationModel();
+                            = (CompoundElevationModel) getWwd().model().getGlobe().getElevationModel();
                         LocalElevationModel em = new LocalElevationModel();
                         em.addElevations(imageFile.getPath());
                         cem.addElevationModel(em);

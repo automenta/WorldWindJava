@@ -7,11 +7,11 @@ package gov.nasa.worldwind.examples.dataimporter;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.*;
 import gov.nasa.worldwind.examples.layermanager.LayerAndElevationManagerPanel;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
@@ -128,7 +128,7 @@ public class DataInstallerApp {
 
             // Search the layer list for layers that are also select listeners and register them with the World
             // Window. This enables interactive layers to be included without specific knowledge of them here.
-            for (Layer layer : this.getWwd().getModel().getLayers()) {
+            for (Layer layer : this.getWwd().model().getLayers()) {
                 if (layer instanceof SelectListener) {
                     this.getWwd().addSelectListener((SelectListener) layer);
                 }

@@ -51,13 +51,13 @@ public class ContourBuilderExample extends ApplicationTemplate {
             // interpolates the colors between array points.
             RenderableLayer arrayLayer = new RenderableLayer();
             arrayLayer.setName("Rectangular Array");
-            this.getWwd().getModel().getLayers().add(arrayLayer);
+            this.getWwd().model().getLayers().add(arrayLayer);
             this.addRectangularArrayShapes(arrayLayer);
 
             // Create a layer to group the contour line shapes.
             RenderableLayer contourLayer = new RenderableLayer();
             contourLayer.setName("Contour Lines");
-            this.getWwd().getModel().getLayers().add(contourLayer);
+            this.getWwd().model().getLayers().add(contourLayer);
 
             // Create a ContourBuilder with the rectangular array of numeric values as a one-dimensional array of
             // floating point numbers. The contour builder assumes that the array is organized in row-major order, with

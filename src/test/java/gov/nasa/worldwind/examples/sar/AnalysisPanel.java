@@ -75,7 +75,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
                     gotoTrackEnd();
             }
             else if (propertyChangeEvent.getPropertyName() == AVKey.ELEVATION_MODEL
-                && trackViewPanel.isExamineViewMode() && !wwd.getView().isAnimating()) {
+                && trackViewPanel.isExamineViewMode() && !wwd.view().isAnimating()) {
                 // When the elevation model changes, and the view is examining the terrain beneath the track
                 // (but has not active state iterators), update the view parameters immediately.
                 updateView(false);
@@ -161,7 +161,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
         if (this.wwd != null) {
             this.wwd.removePropertyChangeListener(this.propertyChangeListener);
 //            this.wwd.getModel().getGlobe().getElevationModel().removePropertyChangeListener(this.propertyChangeListener);
-            this.wwd.getView().removePropertyChangeListener(this.propertyChangeListener);
+            this.wwd.view().removePropertyChangeListener(this.propertyChangeListener);
             this.wwd.removeRenderingListener(this.renderingListener);
         }
         this.wwd = wwd;
@@ -169,7 +169,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
         if (this.wwd != null) {
             this.wwd.addPropertyChangeListener(this.propertyChangeListener);
 //            this.wwd.getModel().getGlobe().getElevationModel().addPropertyChangeListener(this.propertyChangeListener);
-            this.wwd.getView().addPropertyChangeListener(this.propertyChangeListener);
+            this.wwd.view().addPropertyChangeListener(this.propertyChangeListener);
             this.wwd.addRenderingListener(this.renderingListener);
             ApplicationTemplate.insertBeforeCompass(wwd, this.trackRenderables);
             ApplicationTemplate.insertBeforeCompass(wwd, this.crosshairLayer);
@@ -242,7 +242,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
 
     private void updateView(boolean goSmoothly) {
         //System.out.println("AnalysisPanel.updateView(" + goSmoothly + "): view mode: " + this.trackViewPanel.getViewMode());
-        BasicOrbitView view = (BasicOrbitView) this.wwd.getView();
+        BasicOrbitView view = (BasicOrbitView) this.wwd.view();
         view.setFieldOfView(this.getControlFOV());
 
         Position pos = this.getPositionAlongSegment();
@@ -374,7 +374,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
     }
 
     private void saveExamineViewState() {
-        this.examineViewState = new ViewState((OrbitView) this.wwd.getView(), this.getHeading(),
+        this.examineViewState = new ViewState((OrbitView) this.wwd.view(), this.getHeading(),
             this.getPositionAlongSegment());
         //System.out.println("AnalysisPanel.saveExamineViewState(): Saved examine view state.");
     }
@@ -428,8 +428,8 @@ public class AnalysisPanel extends JPanel implements Restorable {
     }
 
     public double getSegmentLength(int startPositionNumber) {
-        Vec4 start = wwd.getModel().getGlobe().computePointFromPosition(getSegmentStartPosition(startPositionNumber));
-        Vec4 end = wwd.getModel().getGlobe().computePointFromPosition(getSegmentEndPosition(startPositionNumber));
+        Vec4 start = wwd.model().getGlobe().computePointFromPosition(getSegmentStartPosition(startPositionNumber));
+        Vec4 end = wwd.model().getGlobe().computePointFromPosition(getSegmentEndPosition(startPositionNumber));
         return start.distanceTo3(end);
     }
 
@@ -506,7 +506,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
     }
 
     private Position getGroundPosition(LatLon location) {
-        double elevation = this.wwd.getModel().getGlobe().getElevation(location.getLatitude(), location.getLongitude());
+        double elevation = this.wwd.model().getGlobe().getElevation(location.getLatitude(), location.getLongitude());
         return new Position(location, elevation);
     }
 
@@ -520,7 +520,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
         if (start == null || end == null)
             return null;
 
-        Globe globe = this.wwd.getModel().getGlobe();
+        Globe globe = this.wwd.model().getGlobe();
         if (globe == null)
             return null;
 
@@ -671,8 +671,8 @@ public class AnalysisPanel extends JPanel implements Restorable {
         posB = new Position(latLon, posB.getElevation() + deltaElevation / numSubsegments);
         segmentDistance = LatLon.rhumbDistance(posA, posB);
         // Iterate through segments to find intersection
-        Globe globe = this.wwd.getModel().getGlobe();
-        Plane near = this.wwd.getView().getFrustumInModelCoordinates().getNear();
+        Globe globe = this.wwd.model().getGlobe();
+        Plane near = this.wwd.view().getFrustumInModelCoordinates().getNear();
         Position p1 = null, p2;
         for (double s = 0; s <= 1; s += step) {
             if (s == 0)
@@ -690,7 +690,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
                 if (pa.distanceTo3(pb) > 0) {
                     Vec4 intersection = near.intersect(pa, pb);
                     if (intersection != null) {
-                        return this.wwd.getView().project(intersection);
+                        return this.wwd.view().project(intersection);
                     }
                 }
             }

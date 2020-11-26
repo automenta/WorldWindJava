@@ -23,13 +23,13 @@ public class BathymetryRemoval extends ApplicationTemplate {
     public static class AppFrame extends ApplicationTemplate.AppFrame {
         public AppFrame() {
             // Get the current elevation model.
-            ElevationModel currentElevationModel = this.getWwd().getModel().getGlobe().getElevationModel();
+            ElevationModel currentElevationModel = this.getWwd().model().getGlobe().getElevationModel();
 
             // Wrap it with the no-bathymetry elevation model.
             ElevationModel noDepthModel = new BathymetryFilterElevationModel(currentElevationModel);
 
             // Have the globe use the no-bathymetry elevation model.
-            this.getWwd().getModel().getGlobe().setElevationModel(noDepthModel);
+            this.getWwd().model().getGlobe().setElevationModel(noDepthModel);
 
             // Increase vertical exaggeration to make it clear that bathymetry is suppressed.
             this.getWwd().getSceneController().setVerticalExaggeration(5.0d);

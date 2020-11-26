@@ -25,7 +25,7 @@ public class LayersMenu extends JMenu {
 
         this.fill(wwd);
 
-        wwd.getModel().getLayers().addPropertyChangeListener(propertyChangeEvent -> {
+        wwd.model().getLayers().addPropertyChangeListener(propertyChangeEvent -> {
             if (propertyChangeEvent.getPropertyName().equals(AVKey.LAYERS))
                 SwingUtilities.invokeLater(() -> update(wwd));
         });
@@ -40,7 +40,7 @@ public class LayersMenu extends JMenu {
         this.removeAll();
 
         // Fill the layers panel with the titles of all layers in the WorldWindow's current model.
-        for (Layer layer : wwd.getModel().getLayers()) {
+        for (Layer layer : wwd.model().getLayers()) {
             if (layer.getValue(AVKey.IGNORE) != null)
                 continue;
 

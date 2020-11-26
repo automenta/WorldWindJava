@@ -41,14 +41,14 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
     public void stageChanged(RenderingEvent event) {
         if (event.getStage().equals(RenderingEvent.BEFORE_RENDERING)) {
             if (globe == null) {
-                globe = this.wwd.getView().getGlobe();
+                globe = this.wwd.view().getGlobe();
             }
             if (globe != null) {
                 if (started) {
-                    animObjects.forEach((ao) -> ao.stepAnimation(wwd.getView().getGlobe()));
+                    animObjects.forEach((ao) -> ao.stepAnimation(wwd.view().getGlobe()));
                 }
                 else {
-                    animObjects.forEach((ao) -> ao.startAnimation(wwd.getView().getGlobe()));
+                    animObjects.forEach((ao) -> ao.startAnimation(wwd.view().getGlobe()));
                     started = true;
                 }
             }

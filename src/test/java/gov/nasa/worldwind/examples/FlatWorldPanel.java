@@ -34,12 +34,12 @@ public class FlatWorldPanel extends JPanel {
         super(new GridLayout(0, 2, 0, 0));
         this.wwd = wwd;
         if (isFlatGlobe()) {
-            this.flatGlobe = (FlatGlobe) wwd.getModel().getGlobe();
+            this.flatGlobe = (FlatGlobe) wwd.model().getGlobe();
             this.roundGlobe = new Earth();
         }
         else {
             this.flatGlobe = new EarthFlat();
-            this.roundGlobe = wwd.getModel().getGlobe();
+            this.roundGlobe = wwd.model().getGlobe();
         }
         this.flatGlobe.setElevationModel(new ZeroElevationModel());
         this.makePanel();
@@ -107,7 +107,7 @@ public class FlatWorldPanel extends JPanel {
             case "Sinusoidal" -> new ProjectionSinusoidal();
             case "Modified Sin." -> new ProjectionModifiedSinusoidal();
             case "Transverse Mercator" -> new ProjectionTransverseMercator(
-                wwd.getView().getCurrentEyePosition().getLongitude());
+                wwd.view().getCurrentEyePosition().getLongitude());
             case "North Polar" -> new ProjectionPolarEquidistant(AVKey.NORTH);
             case "South Polar" -> new ProjectionPolarEquidistant(AVKey.SOUTH);
             case "UPS North" -> new ProjectionUPS(AVKey.NORTH);
@@ -118,7 +118,7 @@ public class FlatWorldPanel extends JPanel {
     }
 
     public boolean isFlatGlobe() {
-        return wwd.getModel().getGlobe() instanceof FlatGlobe;
+        return wwd.model().getGlobe() instanceof FlatGlobe;
     }
 
     public void enableFlatGlobe(boolean flat) {
@@ -127,13 +127,13 @@ public class FlatWorldPanel extends JPanel {
 
         if (!flat) {
             // Switch to round globe
-            wwd.getModel().setGlobe(roundGlobe);
-            wwd.getView().stopMovement();
+            wwd.model().setGlobe(roundGlobe);
+            wwd.view().stopMovement();
         }
         else {
             // Switch to flat globe
-            wwd.getModel().setGlobe(flatGlobe);
-            wwd.getView().stopMovement();
+            wwd.model().setGlobe(flatGlobe);
+            wwd.view().stopMovement();
             this.updateProjection();
         }
 

@@ -8,10 +8,10 @@ package gov.nasa.worldwind.examples.multiwindow;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.Earth.*;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
@@ -69,7 +69,7 @@ public class TabbedPaneUsage extends JFrame {
 
             // Add view control layers, which the WorldWindows cannot share.
             ViewControlsLayer viewControlsA = new ViewControlsLayer();
-            wwpA.wwd.getModel().getLayers().add(viewControlsA);
+            wwpA.wwd.model().getLayers().add(viewControlsA);
             wwpA.wwd.addSelectListener(new ViewControlsSelectListener(wwpA.wwd, viewControlsA));
 
             ViewControlsLayer viewControlsB = new ViewControlsLayer();
@@ -90,7 +90,7 @@ public class TabbedPaneUsage extends JFrame {
             WWPanel wwpB = new WWPanel(wwpA.wwd, wwpA.getWidth(), wwpA.getHeight());
             tabbedPanel.add(wwpB, "WorldWindow B");
             wwpB.wwd.setModel(modelForWindowB);
-            wwpB.wwd.getModel().getLayers().add(viewControlsB);
+            wwpB.wwd.model().getLayers().add(viewControlsB);
             wwpB.wwd.addSelectListener(new ViewControlsSelectListener(wwpB.wwd, viewControlsB));
         }
         catch (Exception e) {

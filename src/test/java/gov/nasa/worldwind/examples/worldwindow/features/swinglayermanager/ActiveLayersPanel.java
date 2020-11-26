@@ -62,7 +62,7 @@ public class ActiveLayersPanel extends AbstractFeaturePanel implements ActiveLay
         this.panel.add(panelTitle, BorderLayout.NORTH);
         this.panel.add(np, BorderLayout.CENTER);
 
-        LayerList layerList = controller.getWWd().getModel().getLayers();
+        LayerList layerList = controller.getWWd().model().getLayers();
         fillModel(layerList);
 
         layerList.addPropertyChangeListener(event -> {
@@ -156,7 +156,7 @@ public class ActiveLayersPanel extends AbstractFeaturePanel implements ActiveLay
 
     public void updateLayerList(LayerList layerList) {
         if (layerList == null)
-            layerList = this.controller.getWWd().getModel().getLayers();
+            layerList = this.controller.getWWd().model().getLayers();
 
         List<Layer> newList = new ArrayList<>(layerList.size());
         for (int i = 0; i < this.model.size(); i++) {

@@ -118,20 +118,20 @@ public class LinesOfSight extends ApplicationTemplate {
             // Create the layer showing the grid.
             this.gridLayer = new RenderableLayer();
             this.gridLayer.setName("Grid");
-            this.getWwd().getModel().getLayers().add(this.gridLayer);
+            this.getWwd().model().getLayers().add(this.gridLayer);
 
             // Create the layer showing the intersections.
             this.intersectionsLayer = new RenderableLayer();
             this.intersectionsLayer.setName("Intersections");
-            this.getWwd().getModel().getLayers().add(this.intersectionsLayer);
+            this.getWwd().model().getLayers().add(this.intersectionsLayer);
 
             // Create the layer showing the sight lines.
             this.sightLinesLayer = new RenderableLayer();
             this.sightLinesLayer.setName("Sight Lines");
-            this.getWwd().getModel().getLayers().add(this.sightLinesLayer);
+            this.getWwd().model().getLayers().add(this.sightLinesLayer);
 
             // Create a Terrain object that uses high-resolution elevation data to compute intersections.
-            this.terrain = new HighResolutionTerrain(this.getWwd().getModel().getGlobe(), TARGET_RESOLUTION);
+            this.terrain = new HighResolutionTerrain(this.getWwd().model().getGlobe(), TARGET_RESOLUTION);
             this.terrain.setCacheCapacity(CACHE_SIZE); // larger cache speeds up repeat calculations
 
             // Create the intersectors for terrain and shapes.

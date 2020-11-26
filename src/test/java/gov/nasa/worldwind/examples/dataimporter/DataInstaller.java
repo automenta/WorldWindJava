@@ -79,7 +79,7 @@ public class DataInstaller extends AVListImpl {
 
             Layer existingLayer = findLayer(wwd, dataSet.getStringValue(AVKey.DISPLAY_NAME));
             if (existingLayer != null)
-                wwd.getModel().getLayers().remove(existingLayer);
+                wwd.model().getLayers().remove(existingLayer);
 
             removeLayerPreview(wwd, dataSet);
 
@@ -141,7 +141,7 @@ public class DataInstaller extends AVListImpl {
             if (existingElevationModel != null)
                 removeElevationModel(wwd, existingElevationModel);
 
-            ElevationModel defaultElevationModel = wwd.getModel().getGlobe().getElevationModel();
+            ElevationModel defaultElevationModel = wwd.model().getGlobe().getElevationModel();
             if (defaultElevationModel instanceof CompoundElevationModel) {
                 if (!((CompoundElevationModel) defaultElevationModel).containsElevationModel(em)) {
                     ((CompoundElevationModel) defaultElevationModel).addElevationModel(em);
@@ -151,7 +151,7 @@ public class DataInstaller extends AVListImpl {
                 CompoundElevationModel cm = new CompoundElevationModel();
                 cm.addElevationModel(defaultElevationModel);
                 cm.addElevationModel(em);
-                wwd.getModel().getGlobe().setElevationModel(cm);
+                wwd.model().getGlobe().setElevationModel(cm);
             }
 
             Sector sector = (Sector) em.getValue(AVKey.SECTOR);
@@ -174,7 +174,7 @@ public class DataInstaller extends AVListImpl {
     }
 
     public static Layer findLayer(WorldWindow wwd, String layerName) {
-        for (Layer layer : wwd.getModel().getLayers()) {
+        for (Layer layer : wwd.model().getLayers()) {
             String dataSetName = layer.getStringValue(AVKey.DISPLAY_NAME);
             if (dataSetName != null && dataSetName.equals(layerName))
                 return layer;
@@ -184,7 +184,7 @@ public class DataInstaller extends AVListImpl {
     }
 
     public static ElevationModel findElevationModel(WorldWindow wwd, String elevationModelName) {
-        ElevationModel defaultElevationModel = wwd.getModel().getGlobe().getElevationModel();
+        ElevationModel defaultElevationModel = wwd.model().getGlobe().getElevationModel();
         if (defaultElevationModel instanceof CompoundElevationModel) {
             CompoundElevationModel cm = (CompoundElevationModel) defaultElevationModel;
             for (ElevationModel em : cm.getElevationModels()) {
@@ -203,7 +203,7 @@ public class DataInstaller extends AVListImpl {
     }
 
     public static void removeElevationModel(WorldWindow wwd, ElevationModel elevationModel) {
-        ElevationModel defaultElevationModel = wwd.getModel().getGlobe().getElevationModel();
+        ElevationModel defaultElevationModel = wwd.model().getGlobe().getElevationModel();
         if (defaultElevationModel instanceof CompoundElevationModel) {
             CompoundElevationModel cm = (CompoundElevationModel) defaultElevationModel;
             for (ElevationModel em : cm.getElevationModels()) {

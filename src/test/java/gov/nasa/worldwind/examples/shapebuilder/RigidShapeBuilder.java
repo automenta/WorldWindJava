@@ -405,7 +405,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.getModel().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -452,7 +452,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.getModel().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -499,7 +499,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.getModel().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -546,7 +546,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.getModel().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -595,7 +595,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.getModel().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -642,7 +642,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // adjust position height so shape sits on terrain surface
             Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
-            Position centerPosition = wwd.getModel().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
             shape.setCenterPosition(centerPosition);
             shape.setEastWestRadius(radius);
@@ -1289,7 +1289,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             else {
                 activeEditor.setWorldWindow(null);
                 this.setActiveEditor(null);
-                this.getApp().getWwd().getModel().getLayers().remove(activeEditor);
+                this.getApp().getWwd().model().getLayers().remove(activeEditor);
             }
 
             int index = this.getModel().getIndexForEntry(this.selectedEntry);

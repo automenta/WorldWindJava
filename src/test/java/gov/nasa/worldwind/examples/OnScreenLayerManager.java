@@ -26,7 +26,7 @@ public class OnScreenLayerManager extends ApplicationTemplate {
             super(true, false, false);
 
             // Add the layer manager layer to the model layer list
-            getWwd().getModel().getLayers().add(new LayerManagerLayer(getWwd()));
+            getWwd().model().getLayers().add(new LayerManagerLayer(getWwd()));
         }
     }
 }

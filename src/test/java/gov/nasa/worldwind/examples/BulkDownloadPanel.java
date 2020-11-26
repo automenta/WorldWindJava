@@ -47,12 +47,12 @@ public class BulkDownloadPanel extends JPanel {
         // Init retievable list
         this.retrievables = new ArrayList<>();
         // Layers
-        for (Layer layer : this.wwd.getModel().getLayers()) {
+        for (Layer layer : this.wwd.model().getLayers()) {
             if (layer instanceof BulkRetrievable)
                 this.retrievables.add(new BulkRetrievablePanel((BulkRetrievable) layer));
         }
         // Elevation models
-        CompoundElevationModel cem = (CompoundElevationModel) wwd.getModel().getGlobe().getElevationModel();
+        CompoundElevationModel cem = (CompoundElevationModel) wwd.model().getGlobe().getElevationModel();
         for (ElevationModel elevationModel : cem.getElevationModels()) {
             if (elevationModel instanceof BulkRetrievable)
                 this.retrievables.add(new BulkRetrievablePanel((BulkRetrievable) elevationModel));

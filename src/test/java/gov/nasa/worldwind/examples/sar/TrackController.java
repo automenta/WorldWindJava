@@ -183,7 +183,7 @@ public class TrackController {
         RenderableLayer layer = new RenderableLayer();
         layer.add(airPath);
         layer.add(groundPath);
-        this.wwd.getModel().getLayers().add(layer);
+        this.wwd.model().getLayers().add(layer);
         if (this.wwd != null) {
             this.wwd.redraw();
         }
@@ -197,7 +197,7 @@ public class TrackController {
         }
 
         this.trackLayers.remove(track);
-        this.wwd.getModel().getLayers().remove(layer);
+        this.wwd.model().getLayers().remove(layer);
         if (this.wwd != null) {
             this.wwd.redraw();
         }
@@ -326,7 +326,7 @@ public class TrackController {
     //move to the first position in a track
     private void moveToTrack(SARTrack track) {
 
-        View view = this.wwd.getView();
+        View view = this.wwd.view();
         if (!track.getPositions().isEmpty()) {
             Position pos = track.getPositions().get(0);
             ((BasicOrbitView) view).addPanToAnimator(pos, view.getHeading(), Angle.ZERO, 10000, true);

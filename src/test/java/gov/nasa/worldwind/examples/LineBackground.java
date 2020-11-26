@@ -95,7 +95,7 @@ public class LineBackground extends ApplicationTemplate {
                 insertBeforeCompass(this.getWwd(), layer);
 
                 // Move the view to the line locations.
-                View view = getWwd().getView();
+                View view = getWwd().view();
                 view.setEyePosition(Position.fromDegrees(35.3, 124.6, 1500.0e3));
             }
             catch (Exception e) {

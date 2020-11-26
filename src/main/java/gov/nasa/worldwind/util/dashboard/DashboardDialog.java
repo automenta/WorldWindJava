@@ -112,18 +112,18 @@ public class DashboardDialog extends JDialog {
             boolean skirts = skirtsButton.isSelected();
 
             if (tris && e.getSource() == triangleButton) {
-                wwd.getModel().setShowWireframeInterior(true);
-                wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(false);
+                wwd.model().setShowWireframeInterior(true);
+                wwd.model().getGlobe().getTessellator().setMakeTileSkirts(false);
                 skirtsButton.setSelected(false);
             }
             else if (skirts && e.getSource() == skirtsButton) {
-                wwd.getModel().setShowWireframeInterior(true);
-                wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(true);
+                wwd.model().setShowWireframeInterior(true);
+                wwd.model().getGlobe().getTessellator().setMakeTileSkirts(true);
                 triangleButton.setSelected(false);
             }
             else {
-                wwd.getModel().setShowWireframeInterior(false);
-                wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(true);
+                wwd.model().setShowWireframeInterior(false);
+                wwd.model().getGlobe().getTessellator().setMakeTileSkirts(true);
             }
 
             wwd.redraw();
@@ -145,12 +145,12 @@ public class DashboardDialog extends JDialog {
 //        });
 
         tileButton.addActionListener(e -> {
-            wwd.getModel().setShowWireframeExterior(!wwd.getModel().isShowWireframeExterior());
+            wwd.model().setShowWireframeExterior(!wwd.model().isShowWireframeExterior());
             wwd.redraw();
         });
 
         extentsButton.addActionListener(e -> {
-            wwd.getModel().setShowTessellationBoundingVolumes(!wwd.getModel().isShowTessellationBoundingVolumes());
+            wwd.model().setShowTessellationBoundingVolumes(!wwd.model().isShowTessellationBoundingVolumes());
             wwd.redraw();
         });
 

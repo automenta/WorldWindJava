@@ -63,7 +63,7 @@ public class ViewLookAround extends ApplicationTemplate {
             public ViewControlPanel(WorldWindow wwd) {
                 this.wwd = wwd;
                 // Add view property listener
-                this.wwd.getView().addPropertyChangeListener((PropertyChangeEvent propertyChangeEvent) -> update());
+                this.wwd.view().addPropertyChangeListener((PropertyChangeEvent propertyChangeEvent) -> update());
 
                 // Compose panel
                 this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -126,7 +126,7 @@ public class ViewLookAround extends ApplicationTemplate {
             // Update view settings from control panel in a 'first person' perspective
             private void updateView() {
                 if (!suspendEvents) {
-                    BasicFlyView view = (BasicFlyView) this.wwd.getView();
+                    BasicFlyView view = (BasicFlyView) this.wwd.view();
 
                     // Stop iterators first
                     view.stopAnimations();
@@ -152,7 +152,7 @@ public class ViewLookAround extends ApplicationTemplate {
             public void update() {
                 this.suspendEvents = true;
                 {
-                    View view = wwd.getView();
+                    View view = wwd.view();
                     this.pitchSlider.setValue((int) view.getPitch().degrees);
                     this.headingSlider.setValue((int) view.getHeading().degrees);
                     this.fovSlider.setValue((int) view.getFieldOfView().degrees);

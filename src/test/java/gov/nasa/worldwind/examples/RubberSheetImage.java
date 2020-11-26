@@ -426,7 +426,7 @@ public class RubberSheetImage extends ApplicationTemplate {
                 double lat = position.getLatitude().radians;
                 double lon = position.getLongitude().radians;
                 double sizeInMeters = ShapeUtils.getViewportScaleFactor(wwd);
-                double arcLength = sizeInMeters / wwd.getModel().getGlobe().getRadiusAt(position);
+                double arcLength = sizeInMeters / wwd.model().getGlobe().getRadiusAt(position);
                 Sector sector = Sector.fromRadians(lat - arcLength, lat + arcLength, lon - arcLength, lon + arcLength);
 
                 BufferedImage powerOfTwoImage = createPowerOfTwoScaledCopy(image);

@@ -234,10 +234,10 @@ public class ViewControlsSelectListener implements SelectListener {
         if (this.wwd == null)
             return;
 
-        if (!(this.wwd.getView() instanceof OrbitView))
+        if (!(this.wwd.view() instanceof OrbitView))
             return;
 
-        OrbitView view = (OrbitView) this.wwd.getView();
+        OrbitView view = (OrbitView) this.wwd.view();
 
         if (this.viewControlsLayer.getHighlightedObject() != null) {
             this.viewControlsLayer.highlight(null);
@@ -317,10 +317,10 @@ public class ViewControlsSelectListener implements SelectListener {
     protected void updateView(ScreenAnnotation control, String controlType) {
         if (this.wwd == null)
             return;
-        if (!(this.wwd.getView() instanceof OrbitView))
+        if (!(this.wwd.view() instanceof OrbitView))
             return;
 
-        OrbitView view = (OrbitView) this.wwd.getView();
+        OrbitView view = (OrbitView) this.wwd.view();
         view.stopAnimations();
         view.stopMovement();
 
@@ -329,7 +329,7 @@ public class ViewControlsSelectListener implements SelectListener {
                 resetOrbitView(view);
                 // Go some distance in the control mouse direction
                 Angle heading = computePanHeading(view, control);
-                Angle distance = computePanAmount(this.wwd.getModel().getGlobe(), view, control, panStep);
+                Angle distance = computePanAmount(this.wwd.model().getGlobe(), view, control, panStep);
                 LatLon newViewCenter = LatLon.greatCircleEndPosition(view.getCenterPosition(),
                     heading, distance);
                 // Turn around if passing by a pole - TODO: better handling of the pole crossing situation
@@ -495,11 +495,11 @@ public class ViewControlsSelectListener implements SelectListener {
         if (centerPoint != null) {
             Vec4 eyePoint = view.getEyePoint();
             // Center pos on terrain surface
-            Position centerPosition = wwd.getModel().getGlobe().computePositionFromPoint(centerPoint);
+            Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
             // Compute pitch and heading relative to center position
-            Vec4 normal = wwd.getModel().getGlobe().computeSurfaceNormalAtLocation(centerPosition.getLatitude(),
+            Vec4 normal = wwd.model().getGlobe().computeSurfaceNormalAtLocation(centerPosition.getLatitude(),
                 centerPosition.getLongitude());
-            Vec4 north = wwd.getModel().getGlobe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
+            Vec4 north = wwd.model().getGlobe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
                 centerPosition.getLongitude());
             // Pitch
             view.setPitch(Angle.POS180.subtract(view.getForwardVector().angleBetween3(normal)));
@@ -526,11 +526,11 @@ public class ViewControlsSelectListener implements SelectListener {
 
         Vec4 eyePoint = view.getEyePoint();
         // Center pos at eye pos
-        Position centerPosition = wwd.getModel().getGlobe().computePositionFromPoint(eyePoint);
+        Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(eyePoint);
         // Compute pitch and heading relative to center position
-        Vec4 normal = wwd.getModel().getGlobe().computeSurfaceNormalAtLocation(centerPosition.getLatitude(),
+        Vec4 normal = wwd.model().getGlobe().computeSurfaceNormalAtLocation(centerPosition.getLatitude(),
             centerPosition.getLongitude());
-        Vec4 north = wwd.getModel().getGlobe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
+        Vec4 north = wwd.model().getGlobe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
             centerPosition.getLongitude());
         // Pitch
         view.setPitch(Angle.POS180.subtract(view.getForwardVector().angleBetween3(normal)));
@@ -554,7 +554,7 @@ public class ViewControlsSelectListener implements SelectListener {
      * @return the terrain surface point the view would be looking at in the viewport center.
      */
     protected Vec4 computeSurfacePoint(OrbitView view, Angle heading, Angle pitch) {
-        Globe globe = wwd.getModel().getGlobe();
+        Globe globe = wwd.model().getGlobe();
         // Compute transform to be applied to north pointing Y so that it would point in the view direction
         // Move coordinate system to view center point
         Matrix transform = globe.computeSurfaceOrientationAtPosition(view.getCenterPosition());

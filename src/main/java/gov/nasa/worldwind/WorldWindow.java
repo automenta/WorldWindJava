@@ -6,14 +6,17 @@
 
 package gov.nasa.worldwind;
 
+import com.jogamp.nativewindow.ScalableSurface;
 import com.jogamp.opengl.GLContext;
-import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.cache.GpuResourceCache;
+import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.pick.PickedObjectList;
-import gov.nasa.worldwind.util.PerformanceStatistic;
+import gov.nasa.worldwind.ui.WorldWindowGLDrawable;
+import gov.nasa.worldwind.util.*;
 
+import java.beans.*;
 import java.util.*;
 
 /**
@@ -22,125 +25,52 @@ import java.util.*;
  * @author Tom Gaskins
  * @version $Id: WorldWindow.java 2047 2014-06-06 22:48:33Z tgaskins $
  */
-public interface WorldWindow extends AVList {
-    /**
-     * Returns the window's current model.
-     *
-     * @return the window's current model.
-     */
-    Model getModel();
+public interface WorldWindow extends AVList, PropertyChangeListener {
+    long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
 
     /**
-     * Sets the model to display in this window. If <code>null</code> is specified for the model, the current model, if
-     * any, is disassociated with the window.
+     * Configures JOGL's surface pixel scaling on the specified
+     * <code>ScalableSurface</code> to ensure backward compatibility with
+     * WorldWind applications developed prior to JOGL pixel scaling's introduction.This method is used by
+     * <code>GLCanvas</code> and
+     * <code>GLJPanel</code> to effectively disable JOGL's surface pixel scaling
+     * by requesting a 1:1 scale.<p> Since v2.2.0, JOGL defaults to using high-dpi pixel scales where possible. This
+     * causes WorldWind screen elements such as placemarks, the compass, the world map, the view controls, and the scale
+     * bar (plus many more) to appear smaller than they are intended to on screen. The high-dpi default also has the
+     * effect of degrading WorldWind rendering performance.
      *
-     * @param model the model to display. May be <code>null</code>.
+     * @param surface The surface to configure.
      */
-    void setModel(Model model);
+    static void configureIdentityPixelScale(ScalableSurface surface) {
+        if (surface == null) {
+            String message = Logging.getMessage("nullValue.SurfaceIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        float[] identityScale = new float[] {ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE};
+        surface.setSurfaceScale(identityScale);
+    }
+
+    static GpuResourceCache createGpuResourceCache() {
+        long cacheSize = Configuration.getLongValue(AVKey.TEXTURE_CACHE_SIZE, WorldWindow.FALLBACK_TEXTURE_CACHE_SIZE);
+        return new BasicGpuResourceCache((long) (0.8 * cacheSize), cacheSize);
+    }
+
 
     /**
-     * Returns this window's current view.
-     *
-     * @return the window's current view.
+     * Constructs and attaches the {@link View} for this <code>WorldWindow</code>.
      */
-    View getView();
+    default void createView() {
+        this.setView((View) WorldWind.createConfigurationComponent(AVKey.VIEW_CLASS_NAME));
+    }
 
     /**
-     * Sets the view to use when displaying this window's model. If <code>null</code> is specified for the view, the
-     * current view, if any, is disassociated with the window.
-     *
-     * @param view the view to use to display this window's model. May be null.
+     * Constructs and attaches the {@link InputHandler} for this <code>WorldWindow</code>.
      */
-    void setView(View view);
-
-    /**
-     * Sets the model to display in this window and the view used to display it. If <code>null</code> is specified for
-     * the model, the current model, if any, is disassociated with the window. If <code>null</code> is specified for the
-     * view, the current view, if any, is disassociated with the window.
-     *
-     * @param model the model to display. May be<code>null</code>.
-     * @param view  the view to use to display this window's model. May be<code>null</code>.
-     */
-    void setModelAndView(Model model, View view);
-
-    /**
-     * Returns the scene controller associated with this instance.
-     *
-     * @return The scene controller associated with the instance, or <code>null</code> if no scene controller is
-     * associated.
-     */
-    SceneController getSceneController();
-
-    /**
-     * Specifies a new scene controller for the window. The caller is responsible for populating the new scene
-     * controller with a {@link View}, {@link Model} and any desired per-frame statistics keys.
-     *
-     * @param sceneController the new scene controller.
-     * @see SceneController#setView(View)
-     * @see SceneController#setModel(Model)
-     * @see SceneController#setPerFrameStatisticsKeys(Set)
-     */
-    void setSceneController(SceneController sceneController);
-
-    /**
-     * Returns the input handler associated with this instance.
-     *
-     * @return The input handler associated with this instance, or <code>null</code> if no input handler is associated.
-     */
-    InputHandler getInputHandler();
-
-    /**
-     * Sets the input handler to use for this instance.
-     *
-     * @param inputHandler The input handler to use for this WorldWindow. May by <code>null</code> if <code>null</code>
-     *                     is specified, the current input handler, if any, is disassociated with the WorldWindow.
-     */
-    void setInputHandler(InputHandler inputHandler);
-
-    /**
-     * Adds a rendering listener to this WorldWindow. Rendering listeners are called at key point during WorldWind
-     * drawing and provide applications the ability to participate or monitor rendering.
-     *
-     * @param listener The rendering listener to add to those notified of rendering events by this WorldWindow.
-     */
-    void addRenderingListener(RenderingListener listener);
-
-    /**
-     * Removes a specified rendering listener associated with this WorldWindow.
-     *
-     * @param listener The rendering listener to remove.
-     */
-    void removeRenderingListener(RenderingListener listener);
-
-    /**
-     * Adds a select listener to this WorldWindow. Select listeners are called when a selection is made by the user in
-     * the WorldWindow. A selection is any operation that identifies a visible item.
-     *
-     * @param listener The select listener to add.
-     */
-    void addSelectListener(SelectListener listener);
-
-    /**
-     * Removes the specified select listener associated with this WorldWindow.
-     *
-     * @param listener The select listener to remove.
-     */
-    void removeSelectListener(SelectListener listener);
-
-    /**
-     * Adds a position listener to this WorldWindow. Position listeners are called when the cursor's position changes.
-     * They identify the position of the cursor on the globe, or that the cursor is not on the globe.
-     *
-     * @param listener The position listener to add.
-     */
-    void addPositionListener(PositionListener listener);
-
-    /**
-     * Removes the specified position listener associated with this WorldWindow.
-     *
-     * @param listener The listener to remove.
-     */
-    void removePositionListener(PositionListener listener);
+    default void createDefaultInputHandler() {
+        this.setInputHandler((InputHandler) WorldWind.createConfigurationComponent(AVKey.INPUT_HANDLER_CLASS_NAME));
+    }
 
     /**
      * Causes a repaint event to be enqueued with the window system for this WorldWindow. The repaint will occur at the
@@ -148,85 +78,6 @@ public interface WorldWindow extends AVList {
      * is the preferred method for requesting a repaint of the WorldWindow.
      */
     void redraw();
-
-    /**
-     * Immediately repaints the WorldWindow without waiting for a window system repaint event. This is not the preferred
-     * way to cause a repaint, but is provided for the rare cases that require it.
-     */
-    void redrawNow();
-
-    /**
-     * Returns the current latitude, longitude and altitude of the current cursor position, or <code>null</code> if the
-     * cursor is not on the globe.
-     *
-     * @return The current position of the cursor, or <code>null</code> if the cursor is not positioned on the globe.
-     */
-    Position getCurrentPosition();
-
-    /**
-     * Returns the WorldWind objects at the current cursor position. The list of objects under the cursor is determined
-     * each time the WorldWindow is repainted. This method returns the list of objects determined when the most recent
-     * repaint was performed.
-     *
-     * @return The list of objects at the cursor position, or <code>null</code> if no objects are under the cursor.
-     */
-    PickedObjectList getObjectsAtCurrentPosition();
-
-    /**
-     * Returns the WorldWind objects intersecting the current selection box. The list of objects in the selection box is
-     * determined each time the WorldWindow  is repainted. This method returns the list of objects determined when the
-     * most recent repaint was performed.
-     *
-     * @return The list of objects intersecting the selection box, or <code>null</code> if no objects are in the box.
-     */
-    PickedObjectList getObjectsInSelectionBox();
-
-    /**
-     * Returns the GPU Resource used by this WorldWindow. This method is for internal use only.
-     * <p>
-     * Note: Applications do not need to interact with the GPU resource cache. It is self managed. Modifying it in any
-     * way will cause significant problems such as excessive memory usage or application crashes. The only reason to use
-     * the GPU resource cache is to request management of GPU resources within implementations of shapes or layers. And
-     * then access should be only through the draw context only.
-     *
-     * @return The GPU Resource cache used by this WorldWindow.
-     */
-    GpuResourceCache getGpuResourceCache();
-
-    /**
-     * Activates the per-frame performance statistic specified. Per-frame statistics measure values within a single
-     * frame of rendering, such as number of tiles drawn to produce the frame.
-     *
-     * @param keys The statistics to activate.
-     */
-    void setPerFrameStatisticsKeys(Set<String> keys);
-
-    /**
-     * Returns the active per-frame performance statistics such as number of tiles drawn in the most recent frame.
-     *
-     * @return The keys and values of the active per-frame statistics.
-     */
-    Collection<PerformanceStatistic> getPerFrameStatistics(); // TODO: move the constants from AVKey to this interface.
-
-    /**
-     * Causes resources used by the WorldWindow to be freed. The WorldWindow cannot be used once this method is called.
-     */
-    void shutdown();
-
-    /**
-     * Adds an exception listener to this WorldWindow. Exception listeners are called when an exception or other
-     * critical event occurs during drawable initialization or during rendering.
-     *
-     * @param listener the The exception listener to add.
-     */
-    void addRenderingExceptionListener(RenderingExceptionListener listener);
-
-    /**
-     * Removes the specified rendering exception listener associated with this WorldWindow.
-     *
-     * @param listener The listener to remove.
-     */
-    void removeRenderingExceptionListener(RenderingExceptionListener listener);
 
     /**
      * Returns the {@link GLContext} associated with this <code>WorldWindow</code>.
@@ -240,7 +91,9 @@ public interface WorldWindow extends AVList {
      *
      * @return <code>true</code> if reinitialization is enabled, otherwise <code>false</code>.
      */
-    boolean isEnableGpuCacheReinitialization();
+    default boolean isEnableGpuCacheReinitialization() {
+        return this.wwd().isEnableGpuCacheReinitialization();
+    }
 
     /**
      * Specifies whether to reinitialize the GPU resource cache when this window is reinitialized. A value of
@@ -252,5 +105,221 @@ public interface WorldWindow extends AVList {
      * @param enableGpuCacheReinitialization <code>true</code> to enable reinitialization, otherwise
      *                                       <code>false</code>.
      */
-    void setEnableGpuCacheReinitialization(boolean enableGpuCacheReinitialization);
+    default void setEnableGpuCacheReinitialization(boolean enableGpuCacheReinitialization) {
+        this.wwd().setEnableGpuCacheReinitialization(enableGpuCacheReinitialization);
+    }
+
+    WorldWindowGLDrawable wwd();
+
+    default void propertyChange(PropertyChangeEvent evt) {
+        if (this.wwd() == evt.getSource())
+            this.firePropertyChange(evt);
+
+        //noinspection StringEquality
+        if (evt.getPropertyName() == WorldWind.SHUTDOWN_EVENT)
+            this.shutdown();
+    }
+
+    /**
+     * Causes resources used by the WorldWindow to be freed. The WorldWindow cannot be used once this method is called.
+     */
+    default void shutdown() {
+        WorldWind.removePropertyChangeListener(WorldWind.SHUTDOWN_EVENT, this);
+        this.wwd().shutdown();
+    }
+
+    default InputHandler getInputHandler() {
+        return this.wwd().getInputHandler();
+    }
+
+    /**
+     * Sets the input handler to use for this instance.
+     *
+     * @param inputHandler The input handler to use for this WorldWindow. May by <code>null</code> if <code>null</code>
+     *                     is specified, the current input handler, if any, is disassociated with the WorldWindow.
+     */
+    default void setInputHandler(InputHandler inputHandler) {
+        if (this.wwd().getInputHandler() != null)
+            this.wwd().getInputHandler().setEventSource(null); // remove this window as a source of events
+
+        this.wwd().setInputHandler(inputHandler != null ? inputHandler : new NoOpInputHandler());
+        if (inputHandler != null)
+            inputHandler.setEventSource(this);
+    }
+
+    default SceneController getSceneController() {
+        return this.wwd().getSceneController();
+    }
+
+    /**
+     * Specifies a new scene controller for the window. The caller is responsible for populating the new scene
+     * controller with a {@link View}, {@link Model} and any desired per-frame statistics keys.
+     *
+     * @param sceneController the new scene controller.
+     * @see SceneController#setView(View)
+     * @see SceneController#setModel(Model)
+     * @see SceneController#setPerFrameStatisticsKeys(Set)
+     */
+    default void setSceneController(SceneController sceneController) {
+        this.wwd().setSceneController(sceneController);
+    }
+
+    /**
+     * Returns the GPU Resource used by this WorldWindow. This method is for internal use only.
+     * <p>
+     * Note: Applications do not need to interact with the GPU resource cache. It is self managed. Modifying it in any
+     * way will cause significant problems such as excessive memory usage or application crashes. The only reason to use
+     * the GPU resource cache is to request management of GPU resources within implementations of shapes or layers. And
+     * then access should be only through the draw context only.
+     *
+     * @return The GPU Resource cache used by this WorldWindow.
+     */
+    default GpuResourceCache getGpuResourceCache() {
+        return this.wwd().getGpuResourceCache();
+    }
+
+    default void redrawNow() {
+        this.wwd().redrawNow();
+    }
+
+    default Model model() {
+        return this.wwd().model();
+    }
+
+    default View view() {
+        return this.wwd().view();
+    }
+
+    /**
+     * Sets the view to use when displaying this window's model. If <code>null</code> is specified for the view, the
+     * current view, if any, is disassociated with the window.
+     *
+     * @param view the view to use to display this window's model. May be null.
+     */
+    default void setView(View view) {
+        // null views are permissible
+        if (view != null)
+            this.wwd().setView(view);
+    }
+
+    default void setModel(Model model) {
+        this.wwd().setModel(model); // null models are permissible
+    }
+
+    default void setModelAndView(Model model, View view) {   // null models/views are permissible
+        this.setModel(model);
+        this.setView(view);
+    }
+
+    default void addRenderingListener(RenderingListener listener) {
+        this.wwd().addRenderingListener(listener);
+    }
+
+    default void removeRenderingListener(RenderingListener listener) {
+        this.wwd().removeRenderingListener(listener);
+    }
+
+    default void addSelectListener(SelectListener listener) {
+        this.wwd().getInputHandler().addSelectListener(listener);
+        this.wwd().addSelectListener(listener);
+    }
+
+    default void removeSelectListener(SelectListener listener) {
+        this.wwd().getInputHandler().removeSelectListener(listener);
+        this.wwd().removeSelectListener(listener);
+    }
+
+    default void addPositionListener(PositionListener listener) {
+        this.wwd().addPositionListener(listener);
+    }
+
+    default void removePositionListener(PositionListener listener) {
+        this.wwd().removePositionListener(listener);
+    }
+
+    /**
+     * Adds an exception listener to this WorldWindow. Exception listeners are called when an exception or other
+     * critical event occurs during drawable initialization or during rendering.
+     *
+     * @param listener the The exception listener to add.
+     */
+    default void addRenderingExceptionListener(RenderingExceptionListener listener) {
+        this.wwd().addRenderingExceptionListener(listener);
+    }
+
+    default void removeRenderingExceptionListener(RenderingExceptionListener listener) {
+        this.wwd().removeRenderingExceptionListener(listener);
+    }
+
+    default Position getCurrentPosition() {
+        return this.wwd().getCurrentPosition();
+    }
+
+    default PickedObjectList getObjectsAtCurrentPosition() {
+        return this.wwd().getSceneController() != null ? this.wwd().getSceneController().getPickedObjectList() : null;
+    }
+
+    default PickedObjectList getObjectsInSelectionBox() {
+        return this.wwd().getSceneController() != null ? this.wwd().getSceneController().getObjectsInPickRectangle()
+            : null;
+    }
+
+    default Object setValue(String key, Object value) {
+        return this.wwd().setValue(key, value);
+    }
+
+    default AVList setValues(AVList avList) {
+        return this.wwd().setValues(avList);
+    }
+
+    default Object getValue(String key) {
+        return this.wwd().getValue(key);
+    }
+
+    default Iterable<Object> getValues() {
+        return this.wwd().getValues();
+    }
+
+    default Set<Map.Entry<String, Object>> getEntries() {
+        return this.wwd().getEntries();
+    }
+
+    default String getStringValue(String key) {
+        return this.wwd().getStringValue(key);
+    }
+
+    default boolean hasKey(String key) {
+        return this.wwd().hasKey(key);
+    }
+
+    default Object removeKey(String key) {
+        return this.wwd().removeKey(key);
+    }
+
+
+
+    default void firePropertyChange(PropertyChangeEvent propertyChangeEvent) {
+        this.wwd().firePropertyChange(propertyChangeEvent);
+    }
+
+    default AVList copy() {
+        return this.wwd().copy();
+    }
+
+    default AVList clearList() {
+        return this.wwd().clearList();
+    }
+
+    /**
+     * Returns the active per-frame performance statistics such as number of tiles drawn in the most recent frame.
+     *
+     * @return The keys and values of the active per-frame statistics.
+     */
+    default Collection<PerformanceStatistic> getPerFrameStatistics() {
+        return this.wwd().getPerFrameStatistics();
+    }
+
+    default void setPerFrameStatisticsKeys(Set<String> keys) {
+        this.wwd().setPerFrameStatisticsKeys(keys);
+    }
 }

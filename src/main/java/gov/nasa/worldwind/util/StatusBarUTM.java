@@ -24,11 +24,11 @@ public class StatusBarUTM extends StatusBar {
             String las = String.format("%7.4f\u00B0 %7.4f\u00B0", newPos.getLatitude().getDegrees(),
                 newPos.getLongitude().getDegrees());
             String els = makeCursorElevationDescription(
-                getEventSource().getModel().getGlobe().getElevation(newPos.getLatitude(), newPos.getLongitude()));
+                getEventSource().model().getGlobe().getElevation(newPos.getLatitude(), newPos.getLongitude()));
             String los = "";
             try {
                 UTMCoord UTM = UTMCoord.fromLatLon(newPos.getLatitude(), newPos.getLongitude(),
-                    getEventSource().getModel().getGlobe());
+                    getEventSource().model().getGlobe());
                 los = UTM.toString();
             }
             catch (Exception e) {

@@ -501,7 +501,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
                     }
                     // Enable/disable layer on left click
                     if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
-                        LayerList layers = wwd.getModel().getLayers();
+                        LayerList layers = wwd.model().getLayers();
                         if (i >= 0 && i < layers.size()) {
                             layers.get(i).setEnabled(!layers.get(i).isEnabled());
                             update = true;
@@ -573,7 +573,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
                 }
                 if (this.selectedIndex != -1 && this.dragRefIndex != -1 && this.dragRefIndex != this.selectedIndex) {
                     // Move dragged layer
-                    LayerList layers = this.wwd.getModel().getLayers();
+                    LayerList layers = this.wwd.model().getLayers();
                     int insertIndex = this.dragRefIndex > this.selectedIndex ?
                         this.selectedIndex : this.selectedIndex + 1;
                     int removeIndex = this.dragRefIndex > this.selectedIndex ?
@@ -603,7 +603,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         this.locationOffset = new Vec4(x, y, 0);
 
         // Compensate for rounding errors
-        Point computedPoint = this.computeLocation(this.wwd.getView().getViewport());
+        Point computedPoint = this.computeLocation(this.wwd.view().getViewport());
         x += targetPoint.x - computedPoint.x;
         y += targetPoint.y - computedPoint.y;
         this.locationOffset = new Vec4(x, y, 0);
@@ -616,7 +616,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         // TODO: handle annotation scaling
         int width = this.size.width;
         int height = this.size.height;
-        Rectangle viewport = this.wwd.getView().getViewport();
+        Rectangle viewport = this.wwd.view().getViewport();
         Point refPoint = this.computeLocation(viewport);
         Point centerPoint = new Point(refPoint.x + width / 2, refPoint.y + height / 2);
 
@@ -683,7 +683,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         this.highlight(this.annotation.getAttributes().isHighlighted());
 
         // Compose html text
-        String text = this.makeAnnotationText(this.wwd.getModel().getLayers());
+        String text = this.makeAnnotationText(this.wwd.model().getLayers());
         this.annotation.setText(text);
 
         // Update current size and adjust annotation draw offset according to it's width

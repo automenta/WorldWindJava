@@ -397,7 +397,7 @@ public class ViewLimits extends ApplicationTemplate {
             if (file == null)
                 return;
 
-            View view = this.appFrame.getWwd().getView();
+            View view = this.appFrame.getWwd().view();
             String xmlString = view.getRestorableState();
 
             WWIO.writeTextFile(xmlString, file);
@@ -417,7 +417,7 @@ public class ViewLimits extends ApplicationTemplate {
             if (file == null)
                 return;
 
-            View view = this.appFrame.getWwd().getView();
+            View view = this.appFrame.getWwd().view();
             String xmlString = WWIO.readTextFile(file);
             view.restoreState(xmlString);
 
@@ -425,12 +425,12 @@ public class ViewLimits extends ApplicationTemplate {
         }
 
         public OrbitView getOrbitView() {
-            View view = this.appFrame.getWwd().getView();
+            View view = this.appFrame.getWwd().view();
             return (view instanceof OrbitView) ? (OrbitView) view : null;
         }
 
         public void updateRenderables() {
-            View view = this.appFrame.getWwd().getView();
+            View view = this.appFrame.getWwd().view();
             if (!(view instanceof OrbitView)) {
                 return;
             }

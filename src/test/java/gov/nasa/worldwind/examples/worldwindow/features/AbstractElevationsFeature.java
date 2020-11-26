@@ -121,7 +121,7 @@ public abstract class AbstractElevationsFeature extends AbstractFeature implemen
         if (em == null)
             return;
 
-        ElevationModel parentModel = this.controller.getWWd().getModel().getGlobe().getElevationModel();
+        ElevationModel parentModel = this.controller.getWWd().model().getGlobe().getElevationModel();
 
         if (parentModel instanceof CompoundElevationModel)
             ((CompoundElevationModel) parentModel).removeElevationModel(em);
@@ -170,12 +170,12 @@ public abstract class AbstractElevationsFeature extends AbstractFeature implemen
     }
 
     protected void doAddModel(ElevationModel em) {
-        ElevationModel globeEM = this.controller.getWWd().getModel().getGlobe().getElevationModel();
+        ElevationModel globeEM = this.controller.getWWd().model().getGlobe().getElevationModel();
         if (!(globeEM instanceof CompoundElevationModel)) {
             CompoundElevationModel cem = new CompoundElevationModel();
             cem.addElevationModel(globeEM);
             globeEM = cem;
-            this.controller.getWWd().getModel().getGlobe().setElevationModel(globeEM);
+            this.controller.getWWd().model().getGlobe().setElevationModel(globeEM);
         }
 
         ((CompoundElevationModel) globeEM).addElevationModel(em);

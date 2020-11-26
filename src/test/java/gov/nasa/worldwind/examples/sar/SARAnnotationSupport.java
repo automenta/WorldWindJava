@@ -74,7 +74,7 @@ public class SARAnnotationSupport {
     public void setWwd(WorldWindow wwd) {
         this.wwd = wwd;
         // Add annotation layer
-        this.wwd.getModel().getLayers().add(this.annotationLayer);
+        this.wwd.model().getLayers().add(this.annotationLayer);
 
         // Add a select listener to select or highlight annotations on rollover
         this.wwd.addSelectListener(new SelectListener() {
@@ -215,11 +215,11 @@ public class SARAnnotationSupport {
             Vec4 surfacePoint = this.getWwd().getSceneController().getTerrain().getSurfacePoint(
                 pos.getLatitude(), pos.getLongitude());
             if (surfacePoint == null) {
-                Globe globe = this.getWwd().getModel().getGlobe();
+                Globe globe = this.getWwd().model().getGlobe();
                 surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
                     globe.getElevation(pos.getLatitude(), pos.getLongitude()));
             }
-            Vec4 screenPoint = this.getWwd().getView().project(surfacePoint);
+            Vec4 screenPoint = this.getWwd().view().project(surfacePoint);
             if (screenPoint != null)
                 this.helpMessageAnnotation.setScreenPoint(new Point((int) screenPoint.x, (int) screenPoint.y));
         }
@@ -239,7 +239,7 @@ public class SARAnnotationSupport {
         if (text == null)
             text = showAnnotationDialog("Add New Annotation", null);
 
-        OrbitView view = (OrbitView) this.wwd.getView();
+        OrbitView view = (OrbitView) this.wwd.view();
         if (text != null && !text.isEmpty() && view != null) {
             Position centerPosition = new Position(view.getCenterPosition(), 0);
             SARAnnotation annotation = new SARAnnotation(text, centerPosition);

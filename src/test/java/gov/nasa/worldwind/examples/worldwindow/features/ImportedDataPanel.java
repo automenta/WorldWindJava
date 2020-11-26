@@ -201,7 +201,7 @@ public class ImportedDataPanel extends ShadedPanel {
         if (em == null)
             return;
 
-        ElevationModel defaultElevationModel = this.controller.getWWd().getModel().getGlobe().getElevationModel();
+        ElevationModel defaultElevationModel = this.controller.getWWd().model().getGlobe().getElevationModel();
         if (defaultElevationModel instanceof CompoundElevationModel) {
             if (!((CompoundElevationModel) defaultElevationModel).containsElevationModel(em))
                 ((CompoundElevationModel) defaultElevationModel).addElevationModel(em);
@@ -210,7 +210,7 @@ public class ImportedDataPanel extends ShadedPanel {
             CompoundElevationModel cm = new CompoundElevationModel();
             cm.addElevationModel(defaultElevationModel);
             cm.addElevationModel(em);
-            this.controller.getWWd().getModel().getGlobe().setElevationModel(cm);
+            this.controller.getWWd().model().getGlobe().setElevationModel(cm);
         }
     }
 
@@ -228,14 +228,14 @@ public class ImportedDataPanel extends ShadedPanel {
         }
 
         public void actionPerformed(ActionEvent e) {
-            Extent extent = Sector.computeBoundingCylinder(controller.getWWd().getModel().getGlobe(),
+            Extent extent = Sector.computeBoundingCylinder(controller.getWWd().model().getGlobe(),
                 controller.getWWd().getSceneController().getVerticalExaggeration(), this.sector);
 
-            Angle fov = controller.getWWd().getView().getFieldOfView();
+            Angle fov = controller.getWWd().view().getFieldOfView();
             Position centerPos = new Position(this.sector.getCentroid(), 0.0d);
             double zoom = extent.getRadius() / fov.cosHalfAngle() / fov.tanHalfAngle();
 
-            controller.getWWd().getView().goTo(centerPos, zoom);
+            controller.getWWd().view().goTo(centerPos, zoom);
         }
     }
 }

@@ -372,7 +372,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
     //**************************************************************//
 
     protected SARPosition computeNextTrackPosition(Point mousePoint) {
-        View view = this.wwd.getView();
+        View view = this.wwd.view();
         Line ray = view.computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Position position = this.segmentPlane.getIntersectionPosition(ray);
 
@@ -384,7 +384,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
             return null;
         }
 
-        Globe globe = this.wwd.getModel().getGlobe();
+        Globe globe = this.wwd.model().getGlobe();
         double[] gridDimensions = this.segmentPlane.getGridCellDimensions();
 
         int lastIndex = this.track.size() - 1;

@@ -24,7 +24,7 @@ public class EGM96Offsets extends ApplicationTemplate {
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
         public AppFrame() {
-            Model m = this.wwjPanel.getWwd().getModel();
+            Model m = this.wwjPanel.getWwd().model();
             try {
                 ((Earth) m.getGlobe()).applyEGMA96Offsets("config/EGM96.dat");
             }

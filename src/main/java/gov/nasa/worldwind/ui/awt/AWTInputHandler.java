@@ -3,14 +3,13 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
-package gov.nasa.worldwind.awt;
+package gov.nasa.worldwind.ui.awt;
 
 import com.jogamp.opengl.awt.GLJPanel;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.pick.*;
-import gov.nasa.worldwind.util.Logging;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -74,11 +73,6 @@ public class AWTInputHandler extends WWObjectImpl
     }
 
     public void setEventSource(WorldWindow newWorldWindow) {
-        if (newWorldWindow != null && !(newWorldWindow instanceof Component)) {
-            String message = Logging.getMessage("Awt.AWTInputHandler.EventSourceNotAComponent");
-            Logging.logger().finer(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (newWorldWindow == this.wwd) {
             return;
@@ -86,33 +80,38 @@ public class AWTInputHandler extends WWObjectImpl
 
         this.eventListeners = new EventListenerList(); // make orphans of listener references
 
-        if (this.wwd != null) {
-            Component c = (Component) this.wwd;
-            c.removeKeyListener(this);
-            c.removeMouseMotionListener(this);
-            c.removeMouseListener(this);
-            c.removeMouseWheelListener(this);
-            c.removeFocusListener(this);
+        if (newWorldWindow instanceof Canvas) {
 
-            if (this.selectListener != null)
-                this.wwd.removeSelectListener(this.selectListener);
+            if (this.wwd != null) {
+                Component c = (Component) this.wwd;
+                c.removeKeyListener(this);
+                c.removeMouseMotionListener(this);
+                c.removeMouseListener(this);
+                c.removeMouseWheelListener(this);
+                c.removeFocusListener(this);
 
-            if (this.wwd.getSceneController() != null)
-                this.wwd.getSceneController().removePropertyChangeListener(AVKey.VIEW, this);
+                if (this.selectListener != null)
+                    this.wwd.removeSelectListener(this.selectListener);
+
+                if (this.wwd.getSceneController() != null)
+                    this.wwd.getSceneController().removePropertyChangeListener(AVKey.VIEW, this);
+            }
         }
 
         this.wwd = newWorldWindow;
-        if (this.wwd == null) {
+        if (this.wwd == null)
             return;
-        }
 
-        this.wwd.getView().getViewInputHandler().setWorldWindow(this.wwd);
-        Component c = (Component) this.wwd;
-        c.addKeyListener(this);
-        c.addMouseMotionListener(this);
-        c.addMouseListener(this);
-        c.addMouseWheelListener(this);
-        c.addFocusListener(this);
+
+        this.wwd.view().getViewInputHandler().setWorldWindow(this.wwd);
+        if (newWorldWindow instanceof Component) {
+            Component c = (Component) this.wwd;
+            c.addKeyListener(this);
+            c.addMouseMotionListener(this);
+            c.addMouseListener(this);
+            c.addMouseWheelListener(this);
+            c.addFocusListener(this);
+        }
 
         this.selectListener = event -> {
             if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
@@ -134,27 +133,27 @@ public class AWTInputHandler extends WWObjectImpl
     }
 
     public boolean isSmoothViewChanges() {
-        return this.wwd.getView().getViewInputHandler().isEnableSmoothing();
+        return this.wwd.view().getViewInputHandler().isEnableSmoothing();
     }
 
     public void setSmoothViewChanges(boolean smoothViewChanges) {
-        this.wwd.getView().getViewInputHandler().setEnableSmoothing(smoothViewChanges);
+        this.wwd.view().getViewInputHandler().setEnableSmoothing(smoothViewChanges);
     }
 
     public boolean isLockViewHeading() {
-        return this.wwd.getView().getViewInputHandler().isLockHeading();
+        return this.wwd.view().getViewInputHandler().isLockHeading();
     }
 
     public void setLockViewHeading(boolean lockHeading) {
-        this.wwd.getView().getViewInputHandler().setLockHeading(lockHeading);
+        this.wwd.view().getViewInputHandler().setLockHeading(lockHeading);
     }
 
     public boolean isStopViewOnFocusLost() {
-        return this.wwd.getView().getViewInputHandler().isStopOnFocusLost();
+        return this.wwd.view().getViewInputHandler().isStopOnFocusLost();
     }
 
     public void setStopViewOnFocusLost(boolean stopView) {
-        this.wwd.getView().getViewInputHandler().setStopOnFocusLost(stopView);
+        this.wwd.view().getViewInputHandler().setStopOnFocusLost(stopView);
     }
 
     private WorldWindow getWorldWindow() {
@@ -213,7 +212,7 @@ public class AWTInputHandler extends WWObjectImpl
         this.callKeyTypedListeners(keyEvent);
 
         if (!keyEvent.isConsumed()) {
-            this.wwd.getView().getViewInputHandler().keyTyped(keyEvent);
+            this.wwd.view().getViewInputHandler().keyTyped(keyEvent);
         }
     }
 
@@ -229,7 +228,7 @@ public class AWTInputHandler extends WWObjectImpl
         this.callKeyPressedListeners(keyEvent);
 
         if (!keyEvent.isConsumed()) {
-            this.wwd.getView().getViewInputHandler().keyPressed(keyEvent);
+            this.wwd.view().getViewInputHandler().keyPressed(keyEvent);
         }
     }
 
@@ -245,7 +244,7 @@ public class AWTInputHandler extends WWObjectImpl
         this.callKeyReleasedListeners(keyEvent);
 
         if (!keyEvent.isConsumed()) {
-            this.wwd.getView().getViewInputHandler().keyReleased(keyEvent);
+            this.wwd.view().getViewInputHandler().keyReleased(keyEvent);
         }
     }
 
@@ -254,7 +253,7 @@ public class AWTInputHandler extends WWObjectImpl
             return;
         }
 
-        if (this.wwd.getView() == null) {
+        if (this.wwd.view() == null) {
             return;
         }
 
@@ -284,11 +283,11 @@ public class AWTInputHandler extends WWObjectImpl
                     mouseEvent, pickedObjects));
             }
 
-            this.wwd.getView().firePropertyChange(AVKey.VIEW, null, this.wwd.getView());
+            this.wwd.view().firePropertyChange(AVKey.VIEW, null, this.wwd.view());
         }
         else {
             if (!mouseEvent.isConsumed()) {
-                this.wwd.getView().getViewInputHandler().mouseClicked(mouseEvent);
+                this.wwd.view().getViewInputHandler().mouseClicked(mouseEvent);
             }
         }
     }
@@ -335,11 +334,11 @@ public class AWTInputHandler extends WWObjectImpl
             }
 
             // Initiate a repaint.
-            this.wwd.getView().firePropertyChange(AVKey.VIEW, null, this.wwd.getView());
+            this.wwd.view().firePropertyChange(AVKey.VIEW, null, this.wwd.view());
         }
 
         if (!mouseEvent.isConsumed()) {
-            this.wwd.getView().getViewInputHandler().mousePressed(mouseEvent);
+            this.wwd.view().getViewInputHandler().mousePressed(mouseEvent);
         }
 
         // GLJPanel does not take keyboard focus when the user clicks on it, thereby suppressing key events normally
@@ -364,7 +363,7 @@ public class AWTInputHandler extends WWObjectImpl
         this.mousePoint = mouseEvent.getPoint();
         this.callMouseReleasedListeners(mouseEvent);
         if (!mouseEvent.isConsumed()) {
-            this.wwd.getView().getViewInputHandler().mouseReleased(mouseEvent);
+            this.wwd.view().getViewInputHandler().mouseReleased(mouseEvent);
         }
         this.doHover(true);
         this.cancelDrag();
@@ -380,7 +379,7 @@ public class AWTInputHandler extends WWObjectImpl
         }
 
         this.callMouseEnteredListeners(mouseEvent);
-        this.wwd.getView().getViewInputHandler().mouseEntered(mouseEvent);
+        this.wwd.view().getViewInputHandler().mouseEntered(mouseEvent);
         this.cancelHover();
         this.cancelDrag();
     }
@@ -395,7 +394,7 @@ public class AWTInputHandler extends WWObjectImpl
         }
 
         this.callMouseExitedListeners(mouseEvent);
-        this.wwd.getView().getViewInputHandler().mouseExited(mouseEvent);
+        this.wwd.view().getViewInputHandler().mouseExited(mouseEvent);
 
         // Enqueue a redraw to update the current position and selection.
         if (this.wwd.getSceneController() != null) {
@@ -437,7 +436,7 @@ public class AWTInputHandler extends WWObjectImpl
 
         if (!this.isDragging) {
             if (!mouseEvent.isConsumed()) {
-                this.wwd.getView().getViewInputHandler().mouseDragged(mouseEvent);
+                this.wwd.view().getViewInputHandler().mouseDragged(mouseEvent);
             }
         }
 
@@ -461,7 +460,7 @@ public class AWTInputHandler extends WWObjectImpl
         this.callMouseMovedListeners(mouseEvent);
 
         if (!mouseEvent.isConsumed()) {
-            this.wwd.getView().getViewInputHandler().mouseMoved(mouseEvent);
+            this.wwd.view().getViewInputHandler().mouseMoved(mouseEvent);
         }
 
         // Redraw to update the current position and selection.
@@ -483,7 +482,7 @@ public class AWTInputHandler extends WWObjectImpl
         this.callMouseWheelMovedListeners(mouseWheelEvent);
 
         if (!mouseWheelEvent.isConsumed())
-            this.wwd.getView().getViewInputHandler().mouseWheelMoved(mouseWheelEvent);
+            this.wwd.view().getViewInputHandler().mouseWheelMoved(mouseWheelEvent);
     }
 
     public void focusGained(FocusEvent focusEvent) {
@@ -495,7 +494,7 @@ public class AWTInputHandler extends WWObjectImpl
             return;
         }
 
-        this.wwd.getView().getViewInputHandler().focusGained(focusEvent);
+        this.wwd.view().getViewInputHandler().focusGained(focusEvent);
     }
 
     public void focusLost(FocusEvent focusEvent) {
@@ -507,7 +506,7 @@ public class AWTInputHandler extends WWObjectImpl
             return;
         }
 
-        this.wwd.getView().getViewInputHandler().focusLost(focusEvent);
+        this.wwd.view().getViewInputHandler().focusLost(focusEvent);
     }
 
     private static boolean isPickListEmpty(Collection<PickedObject> pickList) {
@@ -701,7 +700,7 @@ public class AWTInputHandler extends WWObjectImpl
             return;
         }
 
-        if (this.wwd.getView() == null) {
+        if (this.wwd.view() == null) {
             return;
         }
 
@@ -711,7 +710,7 @@ public class AWTInputHandler extends WWObjectImpl
 
         if (event.getPropertyName().equals(AVKey.VIEW) &&
             (event.getSource() == this.getWorldWindow().getSceneController())) {
-            this.wwd.getView().getViewInputHandler().setWorldWindow(this.wwd);
+            this.wwd.view().getViewInputHandler().setWorldWindow(this.wwd);
         }
     }
 }

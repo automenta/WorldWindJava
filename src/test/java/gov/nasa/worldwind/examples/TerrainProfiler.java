@@ -192,8 +192,8 @@ public class TerrainProfiler extends ApplicationTemplate {
                         helpLabel.setEnabled(true);
                         showEyeCheck.setEnabled(true);
                         lengthSlider.setEnabled(true);
-                        View view = getWwd().getView();
-                        tpl.setObjectPosition(getWwd().getView().getEyePosition());
+                        View view = getWwd().view();
+                        tpl.setObjectPosition(getWwd().view().getEyePosition());
                         tpl.setObjectHeading(view.getHeading());
                         break;
                     default:

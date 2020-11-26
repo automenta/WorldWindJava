@@ -8,10 +8,10 @@ package gov.nasa.worldwind.examples.kml;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.*;
-import gov.nasa.worldwind.awt.ViewInputHandler;
 import gov.nasa.worldwind.examples.ogc.kml.*;
 import gov.nasa.worldwind.examples.ogc.kml.impl.KMLUtil;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.ui.awt.ViewInputHandler;
 import gov.nasa.worldwind.view.ViewPropertyAccessor;
 import gov.nasa.worldwind.view.firstperson.*;
 import gov.nasa.worldwind.view.orbit.*;
@@ -46,7 +46,7 @@ public class KMLFlyViewController extends KMLViewController {
      */
     protected KMLFlyViewController(WorldWindow wwd) {
         super(wwd);
-        this.flyView = (BasicFlyView) wwd.getView();
+        this.flyView = (BasicFlyView) wwd.view();
     }
 
     /**

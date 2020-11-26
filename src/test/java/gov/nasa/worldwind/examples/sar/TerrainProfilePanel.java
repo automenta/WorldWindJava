@@ -541,7 +541,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                 this.tpl2.setEventSource(wwd);
                 this.tpl2.setPathType(AVKey.RHUMB_LINE);
                 // Move scalebar to north west
-                for (Layer layer : wwd.getModel().getLayers()) {
+                for (Layer layer : wwd.model().getLayers()) {
                     if (layer instanceof ScalebarLayer) {
                         ((ScalebarLayer) layer).setPosition(AVKey.NORTHWEST);
                     }

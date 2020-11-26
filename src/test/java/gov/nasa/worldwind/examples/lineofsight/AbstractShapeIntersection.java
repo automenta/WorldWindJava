@@ -68,7 +68,7 @@ public class AbstractShapeIntersection extends ApplicationTemplate {
             insertBeforeCompass(getWwd(), this.resultsLayer);
 
             // Create high-resolution terrain for the intersection calculations
-            this.terrain = new HighResolutionTerrain(this.getWwd().getModel().getGlobe(), 20.0d);
+            this.terrain = new HighResolutionTerrain(this.getWwd().model().getGlobe(), 20.0d);
 
             // Perform the intersection test within a timer callback. Intersection calculations would normally be done
             // on a separate, non-EDT thread, however.

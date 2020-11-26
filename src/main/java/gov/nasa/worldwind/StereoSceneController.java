@@ -7,12 +7,13 @@
 package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 
 /**
  * An interface for scene controllers that provide stereo.
  * <p>
  * Note: The {@link WorldWindow} instance must support stereo display in order to use device-supported stereo. See
- * {@link gov.nasa.worldwind.awt.WorldWindowGLCanvas} to learn how to select a stereo device.
+ * {@link WorldWindowGLCanvas} to learn how to select a stereo device.
  *
  * @author Tom Gaskins
  * @version $Id: StereoSceneController.java 1171 2013-02-11 21:45:02Z dcollins $

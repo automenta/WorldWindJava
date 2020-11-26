@@ -156,7 +156,7 @@ public class FileStorePanel extends JPanel implements ListSelectionListener {
         else {
             Layer existingLayer = DataInstaller.findLayer(this.wwd, dataSet.getName());
             if (existingLayer != null)
-                this.wwd.getModel().getLayers().remove(existingLayer);
+                this.wwd.model().getLayers().remove(existingLayer);
         }
     }
 
@@ -212,7 +212,7 @@ public class FileStorePanel extends JPanel implements ListSelectionListener {
         if (dataSet.isImagery()) {
             Layer layer = DataInstaller.findLayer(this.wwd, dataSet.getName());
             if (layer != null)
-                this.wwd.getModel().getLayers().remove(layer);
+                this.wwd.model().getLayers().remove(layer);
         }
         else if (dataSet.isElevation()) {
             ElevationModel elevationModel = DataInstaller.findElevationModel(this.wwd, dataSet.getName());

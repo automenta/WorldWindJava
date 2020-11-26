@@ -166,14 +166,14 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
                     location.getLatitude(), location.getLongitude(), altitude);
             }
             else {
-                double elevation = wwd.getModel().getGlobe().getElevation(
+                double elevation = wwd.model().getGlobe().getElevation(
                     location.getLatitude(), location.getLongitude());
-                point = wwd.getModel().getGlobe().computePointFromPosition(
+                point = wwd.model().getGlobe().computePointFromPosition(
                     location.getLatitude(), location.getLongitude(), elevation + altitude);
             }
         }
         else {
-            point = wwd.getModel().getGlobe().computePointFromPosition(
+            point = wwd.model().getGlobe().computePointFromPosition(
                 location.getLatitude(), location.getLongitude(), altitude);
         }
 
@@ -197,16 +197,16 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
         boolean terrainConforming = this.getAirspace().isTerrainConforming()[LOWER_ALTITUDE];
         Vec4 centerPoint = this.getCenterPoint(wwd, airspace);
 
-        Vec4 surfaceNormal = wwd.getModel().getGlobe().computeSurfaceNormalAtPoint(centerPoint);
+        Vec4 surfaceNormal = wwd.model().getGlobe().computeSurfaceNormalAtPoint(centerPoint);
         Line verticalRay = new Line(centerPoint, surfaceNormal);
-        Line screenRay = wwd.getView().computeRayFromScreenPoint(previousMousePoint.getX(), previousMousePoint.getY());
-        Line previousScreenRay = wwd.getView().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
+        Line screenRay = wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(), previousMousePoint.getY());
+        Line previousScreenRay = wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
 
         Vec4 pointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, screenRay);
         Vec4 previousPointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, previousScreenRay);
 
-        Position pos = wwd.getModel().getGlobe().computePositionFromPoint(pointOnLine);
-        Position previousPos = wwd.getModel().getGlobe().computePositionFromPoint(previousPointOnLine);
+        Position pos = wwd.model().getGlobe().computePositionFromPoint(pointOnLine);
+        Position previousPos = wwd.model().getGlobe().computePositionFromPoint(previousPointOnLine);
         double elevationChange = previousPos.getElevation() - pos.getElevation();
 
         if (this.isKeepControlPointsAboveTerrain()) {
@@ -253,8 +253,8 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor {
 
         Vec4 centerPoint = this.getCenterPoint(wwd, this.getSphere());
 
-        Line screenRay = wwd.getView().computeRayFromScreenPoint(previousMousePoint.getX(), previousMousePoint.getY());
-        Line previousScreenRay = wwd.getView().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
+        Line screenRay = wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(), previousMousePoint.getY());
+        Line previousScreenRay = wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
 
         Vec4 nearestPointOnLine = screenRay.nearestPointTo(centerPoint);
         Vec4 previousNearestPointOnLine = previousScreenRay.nearestPointTo(centerPoint);

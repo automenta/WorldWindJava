@@ -232,7 +232,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
             btZoom.addActionListener(event -> {
                 if (latestEq != null) {
                     Position targetPos = latestEq.getPosition();
-                    BasicOrbitView view = (BasicOrbitView) getWwd().getView();
+                    BasicOrbitView view = (BasicOrbitView) getWwd().view();
                     view.addPanToAnimator(
                         // The elevation component of 'targetPos' here is not the surface elevation,
                         // so we ignore it when specifying the view center position.
@@ -252,7 +252,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
                 Double lon = Configuration.getDoubleValue(AVKey.INITIAL_LONGITUDE);
                 Double elevation = Configuration.getDoubleValue(AVKey.INITIAL_ALTITUDE);
                 Position targetPos = Position.fromDegrees(lat, lon, 0);
-                BasicOrbitView view = (BasicOrbitView) getWwd().getView();
+                BasicOrbitView view = (BasicOrbitView) getWwd().view();
                 view.addPanToAnimator(
                     // The elevation component of 'targetPos' here is not the surface elevation,
                     // so we ignore it when specifying the view center position.
@@ -335,7 +335,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
 
             RenderableLayer newLayer = (RenderableLayer) buildEarthquakeLayer(earthquakeFeedUrl);
             if (newLayer.size() > 0) {
-                LayerList layers = this.getWwd().getModel().getLayers();
+                LayerList layers = this.getWwd().model().getLayers();
                 if (this.eqLayer != null)
                     layers.remove(this.eqLayer);
                 this.eqLayer = newLayer;

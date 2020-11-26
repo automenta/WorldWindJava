@@ -69,7 +69,7 @@ public class CloudCeiling implements Restorable {
         this.layer.add(planes[0]);
         this.layer.add(planes[1]);
         this.layer.setPickEnabled(false);
-        this.wwd.getModel().getLayers().add(this.layer);
+        this.wwd.model().getLayers().add(this.layer);
     }
 
     private static ArrayList<LatLon> computeArcPositions(Globe globe, LatLon center, Angle start, Angle end,
@@ -284,8 +284,8 @@ public class CloudCeiling implements Restorable {
     }
 
     public void relocateLayerOnTop() {
-        this.wwd.getModel().getLayers().remove(this.layer);
-        this.wwd.getModel().getLayers().add(this.layer);
+        this.wwd.model().getLayers().remove(this.layer);
+        this.wwd.model().getLayers().add(this.layer);
     }
 
     private void updateElevations() {
@@ -390,7 +390,7 @@ public class CloudCeiling implements Restorable {
      * Compute the positions of a perimeter line surrounding the track center positions at radius distance.
      */
     private void computeExtentPositions() {
-        Globe globe = this.wwd.getModel().getGlobe();
+        Globe globe = this.wwd.model().getGlobe();
         this.extentPositions = new ArrayList<>();
         Angle heading = Angle.ZERO;
         int cpn = 0; // Current position number

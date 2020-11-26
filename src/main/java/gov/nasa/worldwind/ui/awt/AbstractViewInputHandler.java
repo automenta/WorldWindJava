@@ -3,7 +3,7 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
-package gov.nasa.worldwind.awt;
+package gov.nasa.worldwind.ui.awt;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
@@ -278,7 +278,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
     //**************************************************************//
 
     protected View getView() {
-        return (this.wwd != null) ? this.wwd.getView() : null;
+        return (this.wwd != null) ? this.wwd.view() : null;
     }
 
     private boolean isWorldWindowFocusOwner() {
@@ -724,8 +724,8 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         }
 
         Position eyePos = view.getEyePosition();
-        double radius = this.wwd.getModel().getGlobe().getRadius();
-        double surfaceElevation = this.wwd.getModel().getGlobe().getElevation(eyePos.getLatitude(),
+        double radius = this.wwd.model().getGlobe().getRadius();
+        double surfaceElevation = this.wwd.model().getGlobe().getElevation(eyePos.getLatitude(),
             eyePos.getLongitude());
         double t = (eyePos.getElevation() - surfaceElevation) / (3.0 * radius);
         return (t < 0 ? 0 : (t > 1 ? 1 : t));
@@ -738,7 +738,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         }
 
         if (view instanceof OrbitView) {
-            double radius = this.wwd.getModel().getGlobe().getRadius();
+            double radius = this.wwd.model().getGlobe().getRadius();
             double t = ((OrbitView) view).getZoom() / (3.0 * radius);
             return (t < 0 ? 0 : (t > 1 ? 1 : t));
         }
@@ -756,8 +756,8 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         double[] range = actionAttributes.getValues();
 
         Position eyePos = view.getEyePosition();
-        double radius = this.wwd.getModel().getGlobe().getRadius();
-        double surfaceElevation = this.wwd.getModel().getGlobe().getElevation(eyePos.getLatitude(),
+        double radius = this.wwd.model().getGlobe().getRadius();
+        double surfaceElevation = this.wwd.model().getGlobe().getElevation(eyePos.getLatitude(),
             eyePos.getLongitude());
         double t = getScaleValue(range[0], range[1],
             eyePos.getElevation() - surfaceElevation, 3.0 * radius, true);
@@ -801,7 +801,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         // Intersect with a somewhat larger or smaller Globe which will pass through the selected point, but has the
         // same proportions as the actual Globe. This will simulate dragging the selected position more accurately.
         Line ray = view.computeRayFromScreenPoint(point.getX(), point.getY());
-        Intersection[] intersections = this.wwd.getModel().getGlobe().intersect(ray, elevation);
+        Intersection[] intersections = this.wwd.model().getGlobe().intersect(ray, elevation);
         if (intersections == null || intersections.length == 0) {
             return null;
         }
@@ -818,8 +818,8 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
         double dragSlopeFactor = this.getDragSlopeFactor();
         double scale = 1.0 / (1.0 + dragSlopeFactor * dragSlope * dragSlope);
 
-        Position pos1 = this.wwd.getModel().getGlobe().computePositionFromPoint(vec1);
-        Position pos2 = this.wwd.getModel().getGlobe().computePositionFromPoint(vec2);
+        Position pos1 = this.wwd.model().getGlobe().computePositionFromPoint(vec1);
+        Position pos2 = this.wwd.model().getGlobe().computePositionFromPoint(vec2);
         LatLon adjustedLocation = LatLon.interpolateGreatCircle(scale, pos1, pos2);
 
         // Return the distance to travel in angular degrees.

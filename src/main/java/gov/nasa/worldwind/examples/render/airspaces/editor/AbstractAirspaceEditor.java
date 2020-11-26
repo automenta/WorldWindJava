@@ -302,8 +302,8 @@ public abstract class AbstractAirspaceEditor extends AbstractLayer implements Ai
         }
 
         Movable movable = (Movable) airspace;
-        View view = wwd.getView();
-        Globe globe = wwd.getModel().getGlobe();
+        View view = wwd.view();
+        Globe globe = wwd.model().getGlobe();
 
         Position refPos = movable.getReferencePosition();
         if (refPos == null)
@@ -357,19 +357,19 @@ public abstract class AbstractAirspaceEditor extends AbstractLayer implements Ai
         if (referencePos == null)
             return;
 
-        Vec4 referencePoint = wwd.getModel().getGlobe().computePointFromPosition(referencePos);
+        Vec4 referencePoint = wwd.model().getGlobe().computePointFromPosition(referencePos);
 
-        Vec4 surfaceNormal = wwd.getModel().getGlobe().computeSurfaceNormalAtLocation(referencePos.getLatitude(),
+        Vec4 surfaceNormal = wwd.model().getGlobe().computeSurfaceNormalAtLocation(referencePos.getLatitude(),
             referencePos.getLongitude());
         Line verticalRay = new Line(referencePoint, surfaceNormal);
-        Line screenRay = wwd.getView().computeRayFromScreenPoint(previousMousePoint.getX(), previousMousePoint.getY());
-        Line previousScreenRay = wwd.getView().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
+        Line screenRay = wwd.view().computeRayFromScreenPoint(previousMousePoint.getX(), previousMousePoint.getY());
+        Line previousScreenRay = wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
 
         Vec4 pointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, screenRay);
         Vec4 previousPointOnLine = AirspaceEditorUtil.nearestPointOnLine(verticalRay, previousScreenRay);
 
-        Position pos = wwd.getModel().getGlobe().computePositionFromPoint(pointOnLine);
-        Position previousPos = wwd.getModel().getGlobe().computePositionFromPoint(previousPointOnLine);
+        Position pos = wwd.model().getGlobe().computePositionFromPoint(pointOnLine);
+        Position previousPos = wwd.model().getGlobe().computePositionFromPoint(previousPointOnLine);
         double elevationChange = previousPos.getElevation() - pos.getElevation();
 
         double[] altitudes = this.getAirspace().getAltitudes();

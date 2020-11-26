@@ -8,9 +8,9 @@ package gov.nasa.worldwind.view.firstperson;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.ui.awt.*;
 import gov.nasa.worldwind.view.*;
 import gov.nasa.worldwind.view.orbit.OrbitViewPropertyAccessor;
 

@@ -69,7 +69,7 @@ public class SARSegmentPlane extends WWObjectImpl {
             throw new IllegalArgumentException(message);
         }
 
-        Globe globe = wwd.getModel().getGlobe();
+        Globe globe = wwd.model().getGlobe();
         if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
@@ -90,7 +90,7 @@ public class SARSegmentPlane extends WWObjectImpl {
 
     protected static double[] computeAltitudesToFitPositions(WorldWindow wwd, SegmentPlane segmentPlane,
         Iterable<? extends Position> positions, boolean recallUserDefinedVGap) {
-        Globe globe = wwd.getModel().getGlobe();
+        Globe globe = wwd.model().getGlobe();
         double[] altitudes = segmentPlane.getPlaneAltitudes();
         double[] gridSizes = segmentPlane.getGridCellDimensions();
         Position[] segmentPositions = segmentPlane.getSegmentPositions();
@@ -156,7 +156,7 @@ public class SARSegmentPlane extends WWObjectImpl {
         Position position1, Position position2) {
         double[] gridCellDimensions = segmentPlane.getGridCellDimensions();
 
-        double gridWidthRadians = gridCellDimensions[0] / wwd.getModel().getGlobe().getRadius();
+        double gridWidthRadians = gridCellDimensions[0] / wwd.model().getGlobe().getRadius();
         double segmentDistanceRadians = LatLon.rhumbDistance(position1, position2).radians;
 
         return Angle.fromRadians(Math.max(2 * gridWidthRadians, segmentDistanceRadians / 2.0));
@@ -225,8 +225,8 @@ public class SARSegmentPlane extends WWObjectImpl {
         if (this.wwd != null) {
             this.wwd.removePropertyChangeListener(this);
 
-            if (this.wwd.getModel().getLayers().contains(this.segmentPlaneEditor)) {
-                this.wwd.getModel().getLayers().remove(this.segmentPlaneEditor);
+            if (this.wwd.model().getLayers().contains(this.segmentPlaneEditor)) {
+                this.wwd.model().getLayers().remove(this.segmentPlaneEditor);
             }
         }
 
@@ -236,8 +236,8 @@ public class SARSegmentPlane extends WWObjectImpl {
         if (this.wwd != null) {
             this.wwd.addPropertyChangeListener(this);
 
-            if (!this.wwd.getModel().getLayers().contains(this.segmentPlaneEditor)) {
-                this.wwd.getModel().getLayers().add(this.segmentPlaneEditor);
+            if (!this.wwd.model().getLayers().contains(this.segmentPlaneEditor)) {
+                this.wwd.model().getLayers().add(this.segmentPlaneEditor);
             }
         }
     }
@@ -375,7 +375,7 @@ public class SARSegmentPlane extends WWObjectImpl {
             throw new IllegalStateException(message);
         }
 
-        Globe globe = this.wwd.getModel().getGlobe();
+        Globe globe = this.wwd.model().getGlobe();
 
         Vec4 point = this.segmentPlaneEditor.getSegmentPlaneRenderer().intersect(globe, line, this.segmentPlane);
         if (point == null) {
@@ -403,8 +403,8 @@ public class SARSegmentPlane extends WWObjectImpl {
             throw new IllegalStateException(message);
         }
 
-        View view = this.wwd.getView();
-        Globe globe = this.wwd.getModel().getGlobe();
+        View view = this.wwd.view();
+        Globe globe = this.wwd.model().getGlobe();
 
         return this.segmentPlaneEditor.getSegmentPlaneRenderer().computeObjectSize(view, globe, this.segmentPlane,
             key, point);

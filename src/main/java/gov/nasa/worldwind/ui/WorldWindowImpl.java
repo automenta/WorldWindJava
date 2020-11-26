@@ -4,9 +4,10 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind;
+package gov.nasa.worldwind.ui;
 
 import com.jogamp.nativewindow.ScalableSurface;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.event.*;
@@ -16,7 +17,6 @@ import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.event.*;
-import java.awt.*;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -31,7 +31,7 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
     private static final long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
     private final EventListenerList eventListeners = new EventListenerList();
     protected GpuResourceCache gpuResourceCache;
-    private SceneController sceneController;
+    protected SceneController sceneController;
     private InputHandler inputHandler;
 
     protected WorldWindowImpl() {
@@ -88,8 +88,8 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
             this.getGpuResourceCache().clear();
 
         // Dispose all the layers //  TODO: Need per-window dispose for layers
-        if (this.getModel() != null && this.getModel().getLayers() != null) {
-            for (Layer layer : this.getModel().getLayers()) {
+        if (this.model() != null && this.model().getLayers() != null) {
+            for (Layer layer : this.model().getLayers()) {
                 try {
                     layer.dispose();
                 }
@@ -114,7 +114,7 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
         this.sceneController.setGpuResourceCache(this.gpuResourceCache);
     }
 
-    public Model getModel() {
+    public Model model() {
         return this.sceneController != null ? this.sceneController.getModel() : null;
     }
 
@@ -122,10 +122,6 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
         // model can be null, that's ok - it indicates no model.
         if (this.sceneController != null)
             this.sceneController.setModel(model);
-    }
-
-    public View getView() {
-        return this.sceneController != null ? this.sceneController.getView() : null;
     }
 
     public void setView(View view) {
@@ -246,11 +242,11 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
     }
 
     protected void callPositionListeners(final PositionEvent event) {
-        EventQueue.invokeLater(() -> {
+        //EventQueue.invokeLater(() -> {
             for (PositionListener listener : eventListeners.getListeners(PositionListener.class)) {
                 listener.moved(event);
             }
-        });
+        //});
     }
 
     public void addSelectListener(SelectListener listener) {
@@ -262,11 +258,11 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
     }
 
     protected void callSelectListeners(final SelectEvent event) {
-        EventQueue.invokeLater(() -> {
+        //EventQueue.invokeLater(() -> {
             for (SelectListener listener : eventListeners.getListeners(SelectListener.class)) {
                 listener.selected(event);
             }
-        });
+        //});
     }
 
     public void addRenderingExceptionListener(RenderingExceptionListener listener) {
@@ -278,11 +274,11 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
     }
 
     protected void callRenderingExceptionListeners(final Throwable exception) {
-        EventQueue.invokeLater(() -> {
+        //EventQueue.invokeLater(() -> {
             for (RenderingExceptionListener listener : eventListeners.getListeners(
                 RenderingExceptionListener.class)) {
                 listener.exceptionThrown(exception);
             }
-        });
+        //});
     }
 }

@@ -4,19 +4,18 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind;
+package gov.nasa.worldwind.ui;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.AWTGLAutoDrawable;
 import com.jogamp.opengl.util.texture.TextureIO;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.ScreenCreditController;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.util.*;
-import gov.nasa.worldwind.util.dashboard.DashboardController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,7 +52,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     protected ScheduledFuture viewRefreshTask;
     protected boolean enableGpuCacheReinitialization = true;
     private GLAutoDrawable drawable;
-    private DashboardController dashboard;
+
     private boolean shuttingDown = false;
     private Timer redrawTimer;
     private boolean firstInit = true;
@@ -120,13 +119,9 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         this.setGpuResourceCache(cache);
     }
 
+    @Override
     public void endInitialization() {
-        initializeCreditsController();
-        this.dashboard = new DashboardController(this, (Component) this.drawable);
-    }
 
-    protected void initializeCreditsController() {
-        new ScreenCreditController((WorldWindow) this.drawable);
     }
 
     @Override
@@ -138,8 +133,6 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     protected void doShutdown() {
         super.shutdown();
         this.drawable.removeGLEventListener(this);
-        if (this.dashboard != null)
-            this.dashboard.dispose();
         if (this.viewRefreshTask != null)
             this.viewRefreshTask.cancel(false);
         this.shuttingDown = false;
@@ -261,8 +254,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         if (this.shuttingDown) {
             try {
                 this.doShutdown();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Logging.logger().log(Level.SEVERE, Logging.getMessage(
                     "WorldWindowGLCanvas.ExceptionWhileShuttingDownWorldWindow"), e);
             }
@@ -381,7 +373,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
      * @see #getViewStopTime()
      */
     protected void checkForViewChange() {
-        long viewId = this.getView().getViewStateID();
+        long viewId = view().getViewStateID();
 
         // Determine if the view has changed since the previous frame.
         if (viewId != this.lastViewID) {
@@ -418,13 +410,15 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
      * @param glAutoDrawable the drawable
      */
     public void reshape(GLAutoDrawable glAutoDrawable, int x, int y, int w, int h) {
-        // This is apparently necessary to enable the WWJ canvas to resize correctly with JSplitPane.
-        ((Component) glAutoDrawable).setMinimumSize(new Dimension(0, 0));
+        if (glAutoDrawable instanceof Component) {
+            // This is apparently necessary to enable the WWJ canvas to resize correctly with JSplitPane.
+            ((Component) glAutoDrawable).setMinimumSize(new Dimension(0, 0));
+        }
     }
 
     @Override
     public void redraw() {
-        if (this.drawable != null)
+        if (this.drawable instanceof AWTGLAutoDrawable)
             ((AWTGLAutoDrawable) this.drawable).repaint();
     }
 
@@ -467,9 +461,19 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
      */
     @Override
     public void onMessage(Message msg) {
-        Model model = this.getModel();
+        Model model = this.model();
         if (model != null) {
             model.onMessage(msg);
         }
+    }
+
+    @Override
+    public View view() {
+        return this.sceneController != null ? this.sceneController.getView() : null;
+    }
+
+    @Override
+    public WorldWindowGLDrawable wwd() {
+        return this;
     }
 }

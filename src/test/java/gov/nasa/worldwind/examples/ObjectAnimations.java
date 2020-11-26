@@ -83,7 +83,7 @@ public class ObjectAnimations extends ApplicationTemplate {
 //            flyView.setPitch(Angle.fromDegrees(90));
 //            flyView.setFieldOfView(Angle.fromDegrees(45));
 //            flyView.setRoll(Angle.fromDegrees(0));
-            for (Layer layer : wwd.getModel().getLayers()) {
+            for (Layer layer : wwd.model().getLayers()) {
                 if (layer.getName().toLowerCase().contains("bing")) {
                     layer.setEnabled(true);
                 }
@@ -105,8 +105,8 @@ public class ObjectAnimations extends ApplicationTemplate {
             Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04),
                 25000.0); // DFW
             RenderableLayer layer = new RenderableLayer();
-            wwd.getModel().getLayers().add(layer);
-            wwd.getView().setEyePosition(eyePos);
+            wwd.model().getLayers().add(layer);
+            wwd.view().setEyePosition(eyePos);
             KMLRoot model1 = openKML("/home/mpeterson/d/temp/aol-data/airbus-popup/Airbus_Popup.kmz");
             model1.setPosition(
                 new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04), 1500.0));
@@ -123,7 +123,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             Position eyePos = new Position(Angle.fromDegreesLatitude(39.52616886908606),
                 Angle.fromDegreesLongitude(-119.81207373509578), 6000.0); // Reno
             WorldWindow wwd = this.getWwd();
-            wwd.getView().setEyePosition(eyePos);
+            wwd.view().setEyePosition(eyePos);
             TestParser messageParser = new TestParser();
             messageParser.parseMessages("/home/mpeterson/d/temp/aol-data");
             ArrayList<AOLFlightPlan> plans = messageParser.getPlans();
@@ -132,7 +132,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             Map<String, String> callSigns = new HashMap<>();
             int colorIdx = 0;
             RenderableLayer layer = new RenderableLayer();
-            wwd.getModel().getLayers().add(layer);
+            wwd.model().getLayers().add(layer);
             for (AOLFlightPlan p : plans) {
                 String key = p.getGufi();
                 if (!colors.containsKey(key)) {
@@ -192,11 +192,11 @@ public class ObjectAnimations extends ApplicationTemplate {
             WorldWindow wwd = this.getWwd();
             Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04),
                 25000.0); // DFW
-            wwd.getView().setEyePosition(eyePos);
+            wwd.view().setEyePosition(eyePos);
             RenderableLayer layer = new RenderableLayer();
-            wwd.getModel().getLayers().add(layer);
+            wwd.model().getLayers().add(layer);
             RenderableLayer infoLayer = new RenderableLayer();
-            wwd.getModel().getLayers().add(infoLayer);
+            wwd.model().getLayers().add(infoLayer);
             AnimatedObjectController controller = new AnimatedObjectController(wwd, layer, infoLayer);
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineMaterial(new Material(Color.RED));
@@ -335,7 +335,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             public ViewControlPanel(WorldWindow wwd) {
                 this.wwd = wwd;
                 // Add view property listener
-                this.wwd.getView().addPropertyChangeListener((PropertyChangeEvent propertyChangeEvent) -> update());
+                this.wwd.view().addPropertyChangeListener((PropertyChangeEvent propertyChangeEvent) -> update());
 
                 // Compose panel
                 this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -403,7 +403,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             private void updateView() {
                 if (!suspendEvents) {
 //                    BasicFlyView view = (BasicFlyView) this.wwd.getView();
-                    View view = this.wwd.getView();
+                    View view = this.wwd.view();
 
                     // Stop iterators first
                     view.stopAnimations();
@@ -429,7 +429,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             public void update() {
                 this.suspendEvents = true;
                 {
-                    View view = wwd.getView();
+                    View view = wwd.view();
                     this.pitchSlider.setValue((int) view.getPitch().degrees);
                     this.headingSlider.setValue((int) view.getHeading().degrees);
                     this.fovSlider.setValue((int) view.getFieldOfView().degrees);

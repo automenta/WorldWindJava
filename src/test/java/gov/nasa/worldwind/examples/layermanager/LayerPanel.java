@@ -62,7 +62,7 @@ public class LayerPanel extends JPanel {
 
         int index = this.findLayerPosition(wwd, layer);
         this.upButton.setEnabled(index != 0);
-        this.downButton.setEnabled(index != wwd.getModel().getLayers().size() - 1);
+        this.downButton.setEnabled(index != wwd.model().getLayers().size() - 1);
     }
 
     public Layer getLayer() {
@@ -84,7 +84,7 @@ public class LayerPanel extends JPanel {
         if (index < 0)
             return; // layer not found
 
-        LayerList layerList = wwd.getModel().getLayers();
+        LayerList layerList = wwd.model().getLayers();
 
         this.upButton.setEnabled(true);
         this.downButton.setEnabled(true);
@@ -117,8 +117,8 @@ public class LayerPanel extends JPanel {
     protected int findLayerPosition(WorldWindow wwd, Layer layer) {
         // Determines the ordinal location of a layer in the layer list.
 
-        for (int i = 0; i < wwd.getModel().getLayers().size(); i++) {
-            if (layer == wwd.getModel().getLayers().get(i))
+        for (int i = 0; i < wwd.model().getLayers().size(); i++) {
+            if (layer == wwd.model().getLayers().get(i))
                 return i;
         }
 

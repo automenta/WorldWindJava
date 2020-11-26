@@ -145,7 +145,7 @@ public class RetrieveElevations extends ApplicationTemplate {
         public void doActionOnButton1() {
             Logging.logger().info("Zooming to Matterhorn");
 
-            View view = this.wwd.getView();
+            View view = this.wwd.view();
 
             Position matterhorn = new Position(LatLon.fromDegrees(45.9763888888889d, 7.65833333333333d), 0.0d);
 
@@ -169,7 +169,7 @@ public class RetrieveElevations extends ApplicationTemplate {
             // request resolution of DTED2 (1degree / 3600 )
             double targetResolution = Angle.fromDegrees(1.0d).radians / 3600;
 
-            double resolutionAchieved = this.wwd.getModel().getGlobe().getElevationModel().getElevations(
+            double resolutionAchieved = this.wwd.model().getGlobe().getElevationModel().getElevations(
                 sector, latlons, targetResolution, elevations);
 
             StringBuilder sb = new StringBuilder();
@@ -192,7 +192,7 @@ public class RetrieveElevations extends ApplicationTemplate {
             latlons.add(LatLon.fromDegrees(45.58d, -123.3d));
             latlons.add(LatLon.fromDegrees(45.60d, -123.3d));
 
-            ElevationModel model = this.wwd.getModel().getGlobe().getElevationModel();
+            ElevationModel model = this.wwd.model().getGlobe().getElevationModel();
 
             StringBuilder sb = new StringBuilder();
             for (LatLon ll : latlons) {

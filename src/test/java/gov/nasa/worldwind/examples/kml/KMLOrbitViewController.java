@@ -8,11 +8,11 @@ package gov.nasa.worldwind.examples.kml;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.*;
-import gov.nasa.worldwind.awt.ViewInputHandler;
 import gov.nasa.worldwind.examples.ogc.kml.*;
 import gov.nasa.worldwind.examples.ogc.kml.impl.KMLUtil;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.ui.awt.ViewInputHandler;
 import gov.nasa.worldwind.util.PropertyAccessor;
 import gov.nasa.worldwind.view.*;
 import gov.nasa.worldwind.view.firstperson.BasicFlyView;
@@ -47,7 +47,7 @@ public class KMLOrbitViewController extends KMLViewController {
      */
     protected KMLOrbitViewController(WorldWindow wwd) {
         super(wwd);
-        this.orbitView = (OrbitView) wwd.getView();
+        this.orbitView = (OrbitView) wwd.view();
     }
 
     /**
@@ -196,7 +196,7 @@ public class KMLOrbitViewController extends KMLViewController {
         double height;
         Angle latitude = eyePosition.getLatitude();
         Angle longitude = eyePosition.getLongitude();
-        Globe globe = this.wwd.getModel().getGlobe();
+        Globe globe = this.wwd.model().getGlobe();
 
         if (altitudeMode == WorldWind.CLAMP_TO_GROUND)
             height = globe.getElevation(latitude, longitude);

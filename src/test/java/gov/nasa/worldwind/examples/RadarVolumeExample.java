@@ -64,7 +64,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             Angle coneAzimuth = Angle.fromDegrees(205);
 
             // Initialize the high-resolution terrain class. Construct it to use 50 meter resolution elevations.
-            this.terrain = new HighResolutionTerrain(this.getWwd().getModel().getGlobe(), 50.0d);
+            this.terrain = new HighResolutionTerrain(this.getWwd().model().getGlobe(), 50.0d);
 
             // Compute a near and far grid of positions that will serve as ray endpoints for computing terrain
             // intersections.
@@ -296,7 +296,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             List<Vec4> transformedVertices = new ArrayList<>(vertices.size());
 
             // Create the transformation matrix that performs the transform.
-            Matrix transform = this.getWwd().getModel().getGlobe().computeEllipsoidalOrientationAtPosition(
+            Matrix transform = this.getWwd().model().getGlobe().computeEllipsoidalOrientationAtPosition(
                 position.getLatitude(), position.getLongitude(),
                 this.terrain.getElevation(position) + position.getAltitude());
 
@@ -410,7 +410,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
         }
 
         protected boolean isBelowMinimumElevation(Position position, Vec4 cartesianOrigin) {
-            Globe globe = this.getWwd().getModel().getGlobe();
+            Globe globe = this.getWwd().model().getGlobe();
 
             Vec4 cartesianPosition = globe.computeEllipsoidalPointFromPosition(position);
             Angle angle = cartesianOrigin.angleBetween3(cartesianPosition.subtract3(cartesianOrigin));
@@ -423,7 +423,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
 
             List<Position> positions = new ArrayList<>(vertices.size());
 
-            Globe globe = this.getWwd().getModel().getGlobe();
+            Globe globe = this.getWwd().model().getGlobe();
 
             for (Vec4 vertex : vertices) {
                 positions.add(globe.computePositionFromEllipsoidalPoint(vertex));

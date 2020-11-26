@@ -7,12 +7,12 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
+import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.BasicDragger;
 
 import javax.swing.*;
@@ -60,7 +60,7 @@ public class SimpleShapeDragging extends JFrame {
     public static void insertBeforePlacenames(WorldWindow wwd, Layer layer) {
         // Insert the layer into the layer list just before the placenames.
         int compassPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
+        LayerList layers = wwd.model().getLayers();
         for (Layer l : layers) {
             if (l instanceof PlaceNameLayer)
                 compassPosition = layers.indexOf(l);
