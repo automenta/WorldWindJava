@@ -5,9 +5,7 @@
  */
 package gov.nasa.worldwind.util;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * BoundedHashMap is a map with a fixed capacity. When the map's size exceeds its capacity, it automatically removes

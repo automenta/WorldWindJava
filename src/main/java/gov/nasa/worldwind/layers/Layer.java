@@ -9,7 +9,7 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.render.DrawContext;
 
-import java.awt.Point;
+import java.awt.*;
 
 /**
  * @author Tom Gaskins

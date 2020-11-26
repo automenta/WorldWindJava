@@ -11,7 +11,7 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.*;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.*;
 
 /**

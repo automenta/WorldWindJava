@@ -17,8 +17,8 @@ import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 /**
  * Displays a world map overlay with a current-position crosshair in a screen corner.

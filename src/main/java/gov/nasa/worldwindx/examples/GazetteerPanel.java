@@ -19,8 +19,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 import java.util.regex.*;
 
 /**

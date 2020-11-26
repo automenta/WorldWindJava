@@ -17,8 +17,8 @@ import gov.nasa.worldwind.ogc.collada.impl.ColladaController;
 import gov.nasa.worldwind.ogc.kml.*;
 import gov.nasa.worldwind.ogc.kml.impl.KMLController;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.render.airspaces.Polygon;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.AbstractXMLEventParser;
 

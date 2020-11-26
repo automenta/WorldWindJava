@@ -8,22 +8,12 @@ package gov.nasa.worldwind.formats.gpx;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.tracks.*;
 import gov.nasa.worldwind.util.Logging;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import javax.xml.parsers.*;
+import java.io.*;
+import java.util.*;
 
 /**
  * @author tag

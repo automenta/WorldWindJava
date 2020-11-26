@@ -8,8 +8,7 @@ package gov.nasa.worldwind.util.gdal;
 
 import gov.nasa.worldwind.util.*;
 
-import java.io.File;
-import java.io.FileFilter;
+import java.io.*;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 

@@ -9,12 +9,9 @@ import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.*;
 
 /**
  * DDSCompressor converts in-memory images into a DDS file encoded with one of the DXT block compression algorithms. If

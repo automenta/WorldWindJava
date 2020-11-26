@@ -7,8 +7,7 @@ package gov.nasa.worldwind.data;
 
 import gov.nasa.worldwind.util.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * @author dcollins

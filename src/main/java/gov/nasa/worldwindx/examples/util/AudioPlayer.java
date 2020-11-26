@@ -8,8 +8,8 @@ package gov.nasa.worldwindx.examples.util;
 import gov.nasa.worldwind.avlist.AVKey;
 
 import javax.sound.sampled.*;
-import javax.swing.event.EventListenerList;
-import java.awt.EventQueue;
+import javax.swing.event.*;
+import java.awt.*;
 
 /**
  * Plays an audio file.

@@ -8,8 +8,8 @@ package gov.nasa.worldwindx.applications.dataimporter;
 
 import javax.swing.table.*;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * Table model for installed data sets.

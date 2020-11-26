@@ -16,14 +16,14 @@ import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import org.w3c.dom.*;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.*;
 import javax.xml.xpath.XPath;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
-import java.util.*;
 import java.util.Timer;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 

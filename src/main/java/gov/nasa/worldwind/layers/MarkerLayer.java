@@ -11,7 +11,7 @@ import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.Point;
+import java.awt.*;
 
 /**
  * @author tag

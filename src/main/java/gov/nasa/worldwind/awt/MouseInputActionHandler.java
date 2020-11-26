@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.awt;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
+import java.awt.event.*;
 
 /**
  * @author jym

@@ -11,7 +11,7 @@ import gov.nasa.worldwind.util.Logging;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.net.*;
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 

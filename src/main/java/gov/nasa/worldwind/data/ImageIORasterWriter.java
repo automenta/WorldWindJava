@@ -11,16 +11,10 @@ import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.WWIO;
 
 import javax.imageio.ImageIO;
-import javax.imageio.spi.IIORegistry;
-import javax.imageio.spi.ImageWriterSpi;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
+import javax.imageio.spi.*;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
 
 /**
  * @author dcollins

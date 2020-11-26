@@ -16,8 +16,8 @@ import gov.nasa.worldwind.symbology.milstd2525.MilStd2525GraphicFactory;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
-import javax.swing.*;
 import javax.swing.Box;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;

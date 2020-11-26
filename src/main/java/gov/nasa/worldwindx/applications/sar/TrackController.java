@@ -13,7 +13,7 @@ import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.WWUtil;
-import gov.nasa.worldwind.view.orbit.*;
+import gov.nasa.worldwind.view.orbit.BasicOrbitView;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;

@@ -9,9 +9,8 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.*;
 
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
+import java.awt.*;
+import java.awt.geom.*;
 import java.util.Map;
 
 /**

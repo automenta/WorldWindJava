@@ -8,8 +8,7 @@ package gov.nasa.worldwind.formats.rpf;
 
 import gov.nasa.worldwind.formats.nitfs.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * @author Lado Garakanidze

@@ -19,8 +19,8 @@ import gov.nasa.worldwindx.examples.util.ShapeUtils;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 /**
  * @author ccrick

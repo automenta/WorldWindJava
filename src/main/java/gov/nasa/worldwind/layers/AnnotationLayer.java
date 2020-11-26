@@ -8,9 +8,8 @@ package gov.nasa.worldwind.layers;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.Point;
-import java.util.Collection;
-import java.util.Collections;
+import java.awt.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**

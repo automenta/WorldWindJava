@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.geom.*;
 
 import java.nio.IntBuffer;
-import java.util.*;
+import java.util.Iterator;
 
 /**
  * CompoundVecBuffer defines an interface for storing and retrieving a collection of variable length {@link
@@ -477,31 +477,25 @@ public abstract class CompoundVecBuffer {
         }
 
         public boolean hasNext() {
-            this.updateSubIterator();
-
-            return this.subIterator != null && this.subIterator.hasNext();
+            while ((subIterator == null || subIteratorHasNext()) && subBuffer < subBufferCount) {
+                subIterator = subBufferIterable.iterator(subBuffer++);
+            }
+            return this.subIterator != null;
         }
 
         public T next() {
-            this.updateSubIterator();
-
-            if (this.subIterator != null && this.subIterator.hasNext()) {
-                return this.subIterator.next();
-            }
-            else {
-                throw new NoSuchElementException();
-            }
+            return this.subIterator.next();
         }
 
         public void remove() {
             throw new UnsupportedOperationException();
         }
 
-        protected void updateSubIterator() {
-            while (this.subBuffer < this.subBufferCount && (this.subIterator == null || !this.subIterator.hasNext())) {
-                this.subIterator = this.subBufferIterable.iterator(this.subBuffer);
-                this.subBuffer++;
-            }
+        private boolean subIteratorHasNext() {
+            boolean h = this.subIterator.hasNext();
+            if (!h)
+                this.subIterator = null;
+            return h;
         }
     }
 

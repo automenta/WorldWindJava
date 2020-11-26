@@ -8,11 +8,7 @@ package gov.nasa.worldwind.formats.nmea;
 import gov.nasa.worldwind.tracks.*;
 import gov.nasa.worldwind.util.Logging;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 /**
  * @author dcollins

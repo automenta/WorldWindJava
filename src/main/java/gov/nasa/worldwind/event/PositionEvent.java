@@ -7,7 +7,7 @@ package gov.nasa.worldwind.event;
 
 import gov.nasa.worldwind.geom.Position;
 
-import java.awt.Point;
+import java.awt.*;
 
 /**
  * @author tag

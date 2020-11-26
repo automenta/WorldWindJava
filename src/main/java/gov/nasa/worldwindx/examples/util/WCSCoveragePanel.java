@@ -19,8 +19,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.net.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * @author tag

@@ -19,7 +19,7 @@ import org.gdal.osr.*;
 
 import java.awt.*;
 import java.awt.color.*;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.*;

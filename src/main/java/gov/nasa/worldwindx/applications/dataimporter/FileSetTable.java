@@ -9,8 +9,8 @@ package gov.nasa.worldwindx.applications.dataimporter;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 /**
  * Displays the data sets available to install.

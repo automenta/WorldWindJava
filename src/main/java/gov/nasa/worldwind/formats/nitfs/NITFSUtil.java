@@ -7,11 +7,8 @@
 package gov.nasa.worldwind.formats.nitfs;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
+import java.nio.*;
+import java.nio.channels.*;
 
 /**
  * @author Lado Garakanidze

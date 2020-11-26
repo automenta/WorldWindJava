@@ -8,8 +8,7 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.geom.*;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.Objects;
 
 /**

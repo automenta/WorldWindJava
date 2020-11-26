@@ -6,8 +6,7 @@
 
 package gov.nasa.worldwind.util;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 
 /**
  * @author lado

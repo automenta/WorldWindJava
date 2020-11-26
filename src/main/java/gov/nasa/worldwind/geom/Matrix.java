@@ -10,7 +10,7 @@ import gov.nasa.worldwind.formats.worldfile.WorldFile;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.*;
 
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import java.util.Arrays;
 
 /**

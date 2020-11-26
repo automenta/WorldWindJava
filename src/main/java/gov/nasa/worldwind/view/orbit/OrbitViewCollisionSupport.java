@@ -10,7 +10,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 /**
  * @author dcollins

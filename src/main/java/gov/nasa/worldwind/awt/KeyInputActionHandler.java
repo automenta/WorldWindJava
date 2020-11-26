@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.awt;
 
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 
 /**
  * @author jym

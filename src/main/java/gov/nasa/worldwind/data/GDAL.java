@@ -13,7 +13,7 @@ import gov.nasa.worldwind.util.gdal.GDALUtils;
 import org.gdal.gdal.Dataset;
 import org.gdal.osr.*;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.geom.*;
 
 /**

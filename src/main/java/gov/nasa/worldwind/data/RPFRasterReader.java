@@ -11,9 +11,8 @@ import gov.nasa.worldwind.formats.rpf.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.*;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.awt.image.*;
+import java.io.*;
 import java.util.logging.Level;
 
 /**

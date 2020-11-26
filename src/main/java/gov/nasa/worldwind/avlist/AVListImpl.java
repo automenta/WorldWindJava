@@ -7,9 +7,7 @@ package gov.nasa.worldwind.avlist;
 
 import gov.nasa.worldwind.util.*;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.beans.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;

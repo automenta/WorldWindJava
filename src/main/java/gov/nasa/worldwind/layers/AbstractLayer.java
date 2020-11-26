@@ -14,7 +14,7 @@ import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Element;
 
 import javax.xml.xpath.XPath;
-import java.awt.Point;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 
 /**

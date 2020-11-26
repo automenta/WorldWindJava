@@ -9,8 +9,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
 import gov.nasa.worldwind.render.DrawContext;
 
-import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.*;
 
 /**
  * OGLRenderToTextureSupport encapsulates the pattern of rendering GL commands to a destination texture. Currently only

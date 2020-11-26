@@ -14,8 +14,7 @@ import gov.nasa.worldwind.view.orbit.OrbitView;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 
 /**
  * @author dcollins

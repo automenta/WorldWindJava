@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.data;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * <code>DataRasterWriter</code> is a common interface for objects

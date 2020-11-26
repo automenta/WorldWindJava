@@ -7,7 +7,7 @@ package gov.nasa.worldwind.formats.dds;
 
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.nio.ByteBuffer;
 
 /**

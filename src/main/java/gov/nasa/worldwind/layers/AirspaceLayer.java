@@ -9,9 +9,8 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.airspaces.Airspace;
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.Point;
-import java.util.Collection;
-import java.util.Collections;
+import java.awt.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 

@@ -19,10 +19,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.*;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.nio.*;
 import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;

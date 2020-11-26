@@ -16,9 +16,7 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.BasicDragger;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.EventQueue;
+import java.awt.*;
 
 /**
  * This example demonstrates the use of the {@link BasicDragger} class for dragging a shape

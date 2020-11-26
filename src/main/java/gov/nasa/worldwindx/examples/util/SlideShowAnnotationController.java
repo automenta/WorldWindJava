@@ -11,16 +11,15 @@ import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.*;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.*;
 
 /**
  * @author dcollins

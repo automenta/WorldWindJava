@@ -7,8 +7,7 @@ package gov.nasa.worldwind.formats.vpf;
 
 import gov.nasa.worldwind.util.Logging;
 
-import java.io.File;
-import java.io.FileFilter;
+import java.io.*;
 
 /**
  * @author dcollins

@@ -13,7 +13,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.view.ViewPropertyLimits;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 /**
  * The <code>View</code> interface provides a coordinate transformation from model coordinates to eye coordinates. This

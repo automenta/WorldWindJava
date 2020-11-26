@@ -14,7 +14,7 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.view.BasicView;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.logging.Level;
 
 /**

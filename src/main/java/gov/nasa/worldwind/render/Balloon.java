@@ -9,7 +9,7 @@ package gov.nasa.worldwind.render;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.util.TextDecoder;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 /**
  * A text label that can be attached to a point on the screen, or a point on the globe.

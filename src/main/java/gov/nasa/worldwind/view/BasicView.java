@@ -15,7 +15,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 /**
  * A base class from which {@link View} implementations can be derived. Currently {@link

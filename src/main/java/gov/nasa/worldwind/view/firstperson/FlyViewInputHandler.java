@@ -15,8 +15,7 @@ import gov.nasa.worldwind.view.*;
 import gov.nasa.worldwind.view.orbit.OrbitViewPropertyAccessor;
 
 import java.awt.event.*;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author jym

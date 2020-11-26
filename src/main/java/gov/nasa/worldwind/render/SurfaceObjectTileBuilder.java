@@ -880,21 +880,9 @@ public class SurfaceObjectTileBuilder {
      * @param parent   the tile's parent, or null if the tile is a top level tile.
      * @param tile     the tile to add.
      */
-    protected void addTileOrDescendants(DrawContext dc, LevelSet levelSet, SurfaceObjectTile parent,
-        SurfaceObjectTile tile) {
-        // Ignore this tile if it falls completely outside the DrawContext's visible sector.
-        if (!this.intersectsVisibleSector(dc, tile)) {
-            // This tile is not added to the current tile list, so we clear it's object list to prepare it for use
-            // during the next frame.
-            tile.clearObjectList();
-            return;
-        }
+    protected void addTileOrDescendants(DrawContext dc, LevelSet levelSet, SurfaceObjectTile parent, SurfaceObjectTile tile) {
 
-        // Ignore this tile if it falls completely outside the frustum. This may be the viewing frustum or the pick
-        // frustum, depending on the implementation.
-        if (!this.intersectsFrustum(dc, tile)) {
-            // This tile is not added to the current tile list, so we clear it's object list to prepare it for use
-            // during the next frame.
+        if (!this.intersectsVisibleSector(dc, tile) || !this.intersectsFrustum(dc, tile)) {
             tile.clearObjectList();
             return;
         }
@@ -933,26 +921,31 @@ public class SurfaceObjectTileBuilder {
      * @param parent the tile's parent.
      * @param tile   the tile to add intersecting surface renderables to.
      */
-    protected void addIntersectingObjects(DrawContext dc, SurfaceObjectTile parent, SurfaceObjectTile tile) {
+    protected void addIntersectingObjects(DrawContext dc, SurfaceObjectTile parent, final SurfaceObjectTile tile) {
         // If the parent has no objects, then there's nothing to add to this tile and we exit immediately.
         if (!parent.hasObjects())
             return;
 
         // If this tile does not intersect the parent's object bounding sector, then none of the parent's objects
         // intersect this tile. Therefore we exit immediately, and do not add any objects to this tile.
-        if (!tile.sector.intersects(parent.getObjectSector()))
+        final Sector parentSector = parent.getObjectSector();
+
+        final Sector tileSector = tile.sector;
+        if (!tileSector.intersects(parentSector))
             return;
 
         // If this tile contains the parent's object bounding sector, then all of the parent's objects intersect this
         // tile. Therefore we just add all of the parent's objects to this tile. Additionally, the parent's object
         // bounding sector becomes this tile's object bounding sector.
-        if (tile.sector.contains(parent.getObjectSector())) {
-            tile.addAllSurfaceObjects(parent.getObjectList(), parent.getObjectSector());
+        final List<SurfaceRenderable> parentObjs = parent.getObjectList();
+
+        if (tileSector.contains(parentSector)) {
+            tile.addAllSurfaceObjects(parentObjs, parentSector);
         }
         // Otherwise, the tile may intersect some of the parent's object list. Compute which objects intersect this
         // tile, and compute this tile's bounding sector as the union of those object's sectors.
         else {
-            for (SurfaceRenderable so : parent.getObjectList()) {
+            for (SurfaceRenderable so : parentObjs) {
                 List<Sector> sectors = so.getSectors(dc);
                 if (sectors == null)
                     continue;
@@ -960,7 +953,7 @@ public class SurfaceObjectTileBuilder {
                 // Test intersection against each of the surface renderable's sectors. We break after finding an
                 // intersection to avoid adding the same object to the tile more than once.
                 for (Sector s : sectors) {
-                    if (tile.sector.intersects(s)) {
+                    if (tileSector.intersects(s)) {
                         tile.addSurfaceObject(so, s);
                         break;
                     }

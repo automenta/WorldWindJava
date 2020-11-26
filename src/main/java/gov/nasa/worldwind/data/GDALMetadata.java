@@ -12,7 +12,7 @@ import gov.nasa.worldwind.util.*;
 import org.gdal.gdal.Dataset;
 import org.gdal.osr.SpatialReference;
 
-import java.util.*;
+import java.util.Hashtable;
 import java.util.logging.Level;
 
 /**

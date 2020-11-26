@@ -17,10 +17,11 @@ import org.gdal.gdal.*;
 import org.gdal.gdalconst.gdalconst;
 import org.gdal.osr.SpatialReference;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.geom.*;
 import java.io.*;
 import java.nio.*;
+import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
 

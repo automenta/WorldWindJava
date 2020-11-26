@@ -7,7 +7,7 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.render.*;
 
-import java.awt.Font;
+import java.awt.*;
 
 /**
  * @author dcollins

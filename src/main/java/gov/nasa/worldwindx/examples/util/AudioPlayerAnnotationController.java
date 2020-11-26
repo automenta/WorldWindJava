@@ -9,7 +9,7 @@ import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 
 import javax.sound.sampled.*;
-import javax.swing.Timer;
+import javax.swing.*;
 import java.awt.event.*;
 
 /**

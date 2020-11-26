@@ -9,13 +9,14 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.IconLayer;
 import gov.nasa.worldwind.render.*;
 
+import javax.swing.Timer;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 /**
  * Illustrates how to display an icon with an alarm state using a WorldWind <code>{@link WWIcon}</code>. This applies a

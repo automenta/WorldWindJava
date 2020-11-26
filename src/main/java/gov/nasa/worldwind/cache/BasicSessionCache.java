@@ -7,8 +7,7 @@ package gov.nasa.worldwind.cache;
 
 import gov.nasa.worldwind.util.*;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 /**
  * BasicSessionCache is a general receiving area for data represented as key-value pairs. Entries in a BasicSessionCache

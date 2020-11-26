@@ -10,8 +10,8 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
 
-import java.awt.*;
 import java.awt.List;
+import java.awt.*;
 import java.lang.reflect.*;
 import java.nio.*;
 import java.text.*;

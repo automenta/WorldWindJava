@@ -7,11 +7,10 @@ package gov.nasa.worldwindx.examples;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.Version;
+import gov.nasa.worldwind.*;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
+import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;

@@ -9,7 +9,6 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.CrosshairLayer;
 import gov.nasa.worldwind.view.firstperson.BasicFlyView;
-import gov.nasa.worldwind.view.orbit.OrbitView;
 
 import javax.swing.*;
 import javax.swing.border.*;

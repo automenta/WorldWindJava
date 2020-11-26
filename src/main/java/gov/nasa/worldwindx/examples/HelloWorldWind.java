@@ -8,11 +8,8 @@ package gov.nasa.worldwindx.examples;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 
-import javax.swing.JFrame;
-import javax.swing.WindowConstants;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.EventQueue;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * This is the most basic WorldWind program.

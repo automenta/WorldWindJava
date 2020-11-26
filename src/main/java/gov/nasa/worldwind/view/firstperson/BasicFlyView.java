@@ -13,7 +13,7 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.view.*;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 /**
  * This is a basic view that implements a yaw-pitch-roll model that can be applied to first-person style view

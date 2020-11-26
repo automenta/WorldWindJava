@@ -9,11 +9,9 @@ package gov.nasa.worldwind.formats.nitfs;
 import gov.nasa.worldwind.formats.rpf.RPFUserDefinedHeaderSegment;
 import gov.nasa.worldwind.util.Logging;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Lado Garakanidze

@@ -11,8 +11,7 @@ import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Implementation of the Weapons Free Zone graphic (2.X.2.2.3.5).

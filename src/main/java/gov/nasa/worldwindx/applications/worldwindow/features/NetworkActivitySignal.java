@@ -9,11 +9,12 @@ package gov.nasa.worldwindx.applications.worldwindow.features;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwindx.applications.worldwindow.core.*;
 
+import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**

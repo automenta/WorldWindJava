@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.render;
 
-import java.awt.Point;
+import java.awt.*;
 
 /**
  * @author tag

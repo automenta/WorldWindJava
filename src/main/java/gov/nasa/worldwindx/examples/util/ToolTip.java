@@ -8,7 +8,7 @@ package gov.nasa.worldwindx.examples.util;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.logging.Level;
 
 /**

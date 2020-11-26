@@ -11,8 +11,7 @@ import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.Objects;
 
 /**

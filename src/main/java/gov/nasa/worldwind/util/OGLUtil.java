@@ -11,7 +11,7 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import gov.nasa.worldwind.geom.Vec4;
 
 import javax.imageio.ImageIO;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.net.URL;

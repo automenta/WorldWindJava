@@ -7,7 +7,7 @@ package gov.nasa.worldwind.formats.dds;
 
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 
 /**
  * Provides access to 4x4 blocks of pixel data from a <code>BufferedImage</code> via the

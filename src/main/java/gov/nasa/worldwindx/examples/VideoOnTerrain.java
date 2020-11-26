@@ -18,8 +18,8 @@ import gov.nasa.worldwind.util.BasicDragger;
 import javax.swing.Timer;
 import java.awt.*;
 import java.awt.image.*;
-import java.util.Arrays;
 import java.util.List;
+import java.util.*;
 
 /**
  * This example illustrates how you might show video on the globe's surface. It uses a {@link

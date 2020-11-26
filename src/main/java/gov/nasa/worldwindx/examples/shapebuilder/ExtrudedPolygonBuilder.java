@@ -19,8 +19,8 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * ExtrudedPolygonBuilder is a tool for creating and editing {@link ExtrudedPolygon}'s on the

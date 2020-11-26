@@ -8,7 +8,7 @@ package gov.nasa.worldwind.data;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.*;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 
 /**
  * @author dcollins

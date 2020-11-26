@@ -9,8 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * An area that is filled with a pattern of diagonal lines.

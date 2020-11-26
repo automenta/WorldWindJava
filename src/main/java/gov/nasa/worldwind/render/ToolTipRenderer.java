@@ -11,8 +11,7 @@ import gov.nasa.worldwind.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 
 /**
  * @author dcollins

@@ -10,9 +10,7 @@ import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.render.Annotation;
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.logging.Level;
 

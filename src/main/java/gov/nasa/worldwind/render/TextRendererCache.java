@@ -8,7 +8,7 @@ package gov.nasa.worldwind.render;
 import gov.nasa.worldwind.Disposable;
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.Font;
+import java.awt.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

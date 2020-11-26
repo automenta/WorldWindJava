@@ -11,9 +11,7 @@ import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.EventQueue;
+import java.awt.*;
 
 /**
  * This example demonstrates how to take screenshots with WWJ using the {@link ScreenShotAction}

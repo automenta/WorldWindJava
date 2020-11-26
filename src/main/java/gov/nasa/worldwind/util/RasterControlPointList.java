@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.LatLon;
 
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import java.beans.*;
 import java.util.*;
 

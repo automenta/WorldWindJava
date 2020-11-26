@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.util.*;
@@ -46,7 +46,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     /* The next unique ID. This property is shared by all instances of AbstractSurfaceObject. */
     protected static long nextUniqueId = 1;
     protected final long uniqueId;
-    protected final Map<Object, CacheEntry> extentCache = new HashMap<>();
+    protected final Map<GlobeStateKey, Extent> extentCache = new HashMap<>();
     protected final PickSupport pickSupport = new PickSupport();
     // Public interface properties.
     protected boolean visible;
@@ -184,29 +184,26 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * {@inheritDoc}
      */
     public Extent getExtent(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        CacheEntry entry = this.extentCache.get(dc.getGlobe().getGlobeStateKey());
-        if (entry == null) {
-            entry = new CacheEntry(this.computeExtent(dc), dc);
-            this.extentCache.put(dc.getGlobe().getGlobeStateKey(), entry);
-        }
-        return (Extent) entry.object;
+        return this.extentCache.computeIfAbsent(
+            dc.getGlobe().getGlobeStateKey(),
+            K -> this.computeExtent(dc));
     }
 
     /**
      * {@inheritDoc}
      */
     public void preRender(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (!this.isVisible())
             return;
@@ -221,11 +218,11 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * {@inheritDoc}
      */
     public void pick(DrawContext dc, Point pickPoint) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // This method is called only during ordered picking. Therefore we setup for picking and draw this object to the
         // framebuffer in a unique pick color. We invoke a separate path for picking because this object creates and
@@ -254,11 +251,11 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * {@inheritDoc}
      */
     public void render(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (!this.isVisible())
             return;
@@ -793,16 +790,20 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     //********************  Cache Entry  ***************************//
     //**************************************************************//
 
-    /**
-     * Represents a globe dependent cache entry.
-     */
-    protected static class CacheEntry {
-        public final Object object;
-        protected final Object globeStateKey;
-
-        public CacheEntry(Object object, DrawContext dc) {
-            this.object = object;
-            this.globeStateKey = dc.getGlobe().getStateKey(dc);
-        }
-    }
+//    /**
+//     * Represents a globe dependent cache entry.
+//     */
+//    protected static class CacheEntry<X> {
+//        public final X object;
+//        protected final Object globeStateKey;
+//
+//        public CacheEntry(X object, DrawContext dc) {
+//            this((GlobeStateKey) dc.getGlobe().getStateKey(dc), object);
+//        }
+//
+//        public CacheEntry(GlobeStateKey key, X object) {
+//            this.object = object;
+//            this.globeStateKey = key;
+//        }
+//    }
 }

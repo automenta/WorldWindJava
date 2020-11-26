@@ -8,7 +8,7 @@ package gov.nasa.worldwind.data;
 import gov.nasa.worldwind.formats.dds.DDSCompressor;
 import gov.nasa.worldwind.util.WWIO;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.*;
 import java.nio.ByteBuffer;
 

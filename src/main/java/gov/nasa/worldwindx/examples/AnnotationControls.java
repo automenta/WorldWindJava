@@ -16,12 +16,10 @@ import gov.nasa.worldwindx.examples.util.*;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Illustrates how to use a WorldWind <code>{@link Annotation}</code> with an <code>{@link

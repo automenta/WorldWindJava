@@ -15,12 +15,10 @@ import org.w3c.dom.Document;
 import javax.imageio.ImageIO;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.events.XMLEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.awt.image.*;
+import java.io.*;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.logging.Level;
 
 /**

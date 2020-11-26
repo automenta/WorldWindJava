@@ -14,12 +14,8 @@ import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.nio.DoubleBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * An {@link Annotation} represent a text label and its rendering attributes. Annotations must be attached either to a

@@ -19,9 +19,7 @@ import gov.nasa.worldwind.util.xml.*;
 
 import javax.xml.stream.*;
 import javax.xml.stream.events.XMLEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.beans.*;
 import java.io.*;
 import java.net.*;
 import java.util.Map;

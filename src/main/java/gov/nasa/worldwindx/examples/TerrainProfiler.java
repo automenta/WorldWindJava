@@ -8,7 +8,6 @@ package gov.nasa.worldwindx.examples;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.TerrainProfileLayer;
-import gov.nasa.worldwind.view.orbit.OrbitView;
 
 import javax.swing.*;
 import javax.swing.border.*;

@@ -16,8 +16,8 @@ import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.Arrays;
 import java.util.List;
+import java.util.*;
 
 /**
  * Renders a string of text on the surface of the globe. The text will appear draped over terrain. Surface text is drawn

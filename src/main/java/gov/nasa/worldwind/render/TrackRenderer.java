@@ -17,8 +17,7 @@ import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.tracks.TrackPoint;
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.Color;
-import java.awt.Point;
+import java.awt.*;
 import java.util.Iterator;
 
 /**

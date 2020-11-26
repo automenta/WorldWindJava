@@ -7,7 +7,7 @@ package gov.nasa.worldwind.event;
 
 import gov.nasa.worldwind.pick.PickedObjectList;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.*;
 
 /**

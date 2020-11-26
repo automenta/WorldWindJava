@@ -7,8 +7,7 @@ package gov.nasa.worldwindx.applications.sar.tracks;
 
 import gov.nasa.worldwind.util.*;
 
-import java.io.File;
-import java.io.FileFilter;
+import java.io.*;
 
 /**
  * @author dcollins

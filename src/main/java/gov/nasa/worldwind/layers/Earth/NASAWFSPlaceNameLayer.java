@@ -10,8 +10,8 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.placename.*;
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
+import java.util.List;
 import java.util.*;
 
 /**

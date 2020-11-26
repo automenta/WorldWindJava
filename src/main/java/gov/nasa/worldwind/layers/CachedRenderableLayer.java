@@ -13,8 +13,7 @@ import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
-import java.awt.Color;
-import java.awt.Point;
+import java.awt.*;
 import java.util.Collection;
 import java.util.logging.Level;
 

@@ -9,8 +9,7 @@ package gov.nasa.worldwindx.examples;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 
-import java.awt.BorderLayout;
-import java.awt.Frame;
+import java.awt.*;
 
 /**
  * Determines whether a device supports the OpenGL features necessary for WorldWind.

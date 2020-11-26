@@ -12,7 +12,7 @@ import gov.nasa.worldwind.layers.BasicTiledImageLayer;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Document;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.IOException;
 
 /**

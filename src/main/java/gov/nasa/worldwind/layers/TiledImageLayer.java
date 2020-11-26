@@ -18,13 +18,12 @@ import org.w3c.dom.*;
 
 import javax.imageio.ImageIO;
 import javax.xml.xpath.XPath;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
+import java.awt.*;
+import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
 import java.net.*;
+import java.util.List;
 import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;
 

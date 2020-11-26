@@ -25,8 +25,8 @@ import javax.swing.tree.*;
 import javax.xml.stream.XMLStreamException;
 import java.awt.*;
 import java.net.*;
-import java.util.Enumeration;
 import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 /**

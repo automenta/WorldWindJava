@@ -15,7 +15,7 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.HighResolutionTerrain;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
-import javax.swing.Timer;
+import javax.swing.*;
 import java.util.List;
 
 /**

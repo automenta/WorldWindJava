@@ -11,8 +11,7 @@ import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.*;
 
 /**
  * @author dcollins

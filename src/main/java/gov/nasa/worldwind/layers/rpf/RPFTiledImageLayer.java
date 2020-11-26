@@ -18,8 +18,7 @@ import gov.nasa.worldwind.util.*;
 
 import java.awt.image.*;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.util.*;
 

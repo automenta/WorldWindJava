@@ -9,8 +9,7 @@ import gov.nasa.worldwind.tracks.*;
 import gov.nasa.worldwind.util.Logging;
 import org.xml.sax.Attributes;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author tag

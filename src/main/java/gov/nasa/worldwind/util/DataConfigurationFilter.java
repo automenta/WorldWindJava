@@ -8,9 +8,7 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.cache.*;
 import org.w3c.dom.*;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 
 /**

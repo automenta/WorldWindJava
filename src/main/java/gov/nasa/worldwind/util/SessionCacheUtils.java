@@ -11,8 +11,7 @@ import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.retrieve.*;
 
 import java.beans.PropertyChangeListener;
-import java.net.SocketTimeoutException;
-import java.net.URL;
+import java.net.*;
 
 /**
  * A collection of utility methods for retrieving and managing data in the {@link SessionCache}.

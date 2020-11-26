@@ -7,8 +7,7 @@ package gov.nasa.worldwind.tracks;
 
 import gov.nasa.worldwind.util.Logging;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * @author tag

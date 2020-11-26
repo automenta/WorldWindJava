@@ -16,13 +16,14 @@ import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwindx.examples.util.ExampleUtil;
 
+import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.text.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 /**
  * Illustrates how to configure and display a 3D geographic grid of scalar data using the WorldWind <code>{@link

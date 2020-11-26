@@ -17,8 +17,8 @@ import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * Layout that draws a {@link Tree} similar to a file browser tree.

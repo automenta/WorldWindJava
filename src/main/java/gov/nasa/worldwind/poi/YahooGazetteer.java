@@ -10,9 +10,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.util.Logging;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 import javax.xml.parsers.*;
 import javax.xml.xpath.*;

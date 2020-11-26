@@ -13,7 +13,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.combine.*;
@@ -88,8 +88,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     // Rendering properties.
     protected final List<List<LatLon>> activeGeometry = new ArrayList<>(); // re-determined each frame
     protected final Collection<List<LatLon>> activeOutlineGeometry = new ArrayList<>(); // re-determined each frame
-    protected final Map<Object, CacheEntry> sectorCache = new HashMap<>();
-    protected final Map<Object, CacheEntry> geometryCache = new HashMap<>();
+    protected final Map<GlobeStateKey, List<Sector>> sectorCache = new HashMap<>();
+    protected final Map<Object, List<List<LatLon>>> geometryCache = new HashMap<>();
     protected final OGLStackHandler stackHandler = new OGLStackHandler();
     // Public interface properties.
     protected boolean highlighted;
@@ -265,18 +265,15 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
     @SuppressWarnings("unchecked")
     public List<Sector> getSectors(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        CacheEntry entry = this.sectorCache.get(dc.getGlobe().getGlobeStateKey());
-        if (entry == null) {
-            entry = new CacheEntry(this.computeSectors(dc), dc);
-            this.sectorCache.put(dc.getGlobe().getGlobeStateKey(), entry);
-        }
-        return (List<Sector>) entry.object;
+        return this.sectorCache.computeIfAbsent(
+            dc.getGlobe().getGlobeStateKey(),
+            K -> computeSectors(dc));
     }
 
     /**
@@ -870,16 +867,15 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
     @SuppressWarnings("unchecked")
     protected List<List<LatLon>> getCachedGeometry(DrawContext dc, SurfaceTileDrawContext sdc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        CacheEntry entry = this.geometryCache.computeIfAbsent(
+        return this.geometryCache.computeIfAbsent(
             createGeometryKey(dc, sdc),
-            k-> new CacheEntry(this.createGeometry(dc.getGlobe(), sdc), dc));
-        return (List<List<LatLon>>) entry.object;
+            K -> this.createGeometry(dc.getGlobe(), sdc));
     }
 
     protected List<List<LatLon>> createGeometry(Globe globe, SurfaceTileDrawContext sdc) {

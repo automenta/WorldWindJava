@@ -218,11 +218,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     }
 
     public static Sector boundingSector(Iterator<TrackPoint> positions) {
-        if (positions == null) {
-            String message = Logging.getMessage("nullValue.TracksPointsIteratorNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (positions == null) {
+//            String message = Logging.getMessage("nullValue.TracksPointsIteratorNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (!positions.hasNext())
             return EMPTY_SECTOR;

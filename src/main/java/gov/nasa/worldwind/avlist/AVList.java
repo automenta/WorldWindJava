@@ -5,8 +5,7 @@
  */
 package gov.nasa.worldwind.avlist;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 import java.util.*;
 
 /**

@@ -22,8 +22,8 @@ import gov.nasa.worldwindx.examples.util.HighlightController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.*;
 
 /**
  * This class illustrates how to display round and flat globes side by side.

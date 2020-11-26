@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.formats.dds;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.nio.ByteBuffer;
 
 /**
