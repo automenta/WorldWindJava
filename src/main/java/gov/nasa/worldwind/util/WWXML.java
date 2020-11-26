@@ -8,9 +8,9 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 

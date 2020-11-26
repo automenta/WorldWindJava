@@ -34,7 +34,7 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
     private SceneController sceneController;
     private InputHandler inputHandler;
 
-    public WorldWindowImpl() {
+    protected WorldWindowImpl() {
         this.sceneController = (SceneController) WorldWind.createConfigurationComponent(
             AVKey.SCENE_CONTROLLER_CLASS_NAME);
 

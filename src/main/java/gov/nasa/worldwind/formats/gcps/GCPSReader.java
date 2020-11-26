@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.formats.gcps;
 
+////.*;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;

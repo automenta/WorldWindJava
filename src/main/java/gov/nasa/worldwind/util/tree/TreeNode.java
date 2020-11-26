@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.util.tree;
 
 import gov.nasa.worldwind.WWObject;
-import gov.nasa.worldwind.render.WWTexture;
+import gov.nasa.worldwind.examples.render.WWTexture;
 
 /**
  * Describes a node in a {@link Tree}. A node must have a string of text. It may also have an icon.

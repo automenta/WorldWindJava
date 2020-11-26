@@ -8,8 +8,8 @@
  * Provides classes for loading web content, laying out and rendering the content as an OpenGL texture, and interacting
  * with the rendered content.
  * <p>
- * {@link gov.nasa.worldwind.render.AbstractBrowserBalloon} uses WebView to implement a balloon that contains web
- * content. See {@link gov.nasa.worldwindx.examples.Balloons} for an example of usage.
+ * {@link gov.nasa.worldwind.examples.render.AbstractBrowserBalloon} uses WebView to implement a balloon that contains web
+ * content. See {@link gov.nasa.worldwind.examples.Balloons} for an example of usage.
  * <p>
  * To use WebView:
  * <ul>

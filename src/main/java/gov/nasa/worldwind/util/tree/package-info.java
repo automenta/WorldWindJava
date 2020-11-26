@@ -10,8 +10,8 @@
  * the tree similar to a file browser tree, but other layouts can be provided.</p>
  *
  * <p>
- * See {@link gov.nasa.worldwindx.examples.util.TreeControl} for an example of using the tree. {@link
- * gov.nasa.worldwindx.examples.LayerTreeUsage} is an example of using the tree control to display a tree of
+ * See {@link gov.nasa.worldwind.examples.util.TreeControl} for an example of using the tree. {@link
+ * gov.nasa.worldwind.examples.LayerTreeUsage} is an example of using the tree control to display a tree of
  * layers.</p>
  */
 package gov.nasa.worldwind.util.tree;

@@ -6,8 +6,8 @@
 package gov.nasa.worldwind.formats.shapefile;
 
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.examples.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.geom.LatLon;
-import gov.nasa.worldwind.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;

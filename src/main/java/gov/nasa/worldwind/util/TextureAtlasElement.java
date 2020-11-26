@@ -9,7 +9,7 @@ package gov.nasa.worldwind.util;
 import com.jogamp.opengl.util.texture.TextureCoords;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.examples.render.DrawContext;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

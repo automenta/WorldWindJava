@@ -7,10 +7,10 @@ package gov.nasa.worldwind.util.measure;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -82,7 +82,7 @@ import java.util.*;
  * Events will also be fired at the start and end of a rubber band operation during shape creation: {@link
  * #EVENT_RUBBERBAND_START} and {@link #EVENT_RUBBERBAND_STOP}.</p>
  * <p>
- * See {@link gov.nasa.worldwindx.examples.MeasureToolPanel} for some events usage.</p>
+ * See {@link gov.nasa.worldwind.examples.MeasureToolPanel} for some events usage.</p>
  * <p>
  * Several instances of this class can be used simultaneously. However, each instance should be disposed of after usage
  * by calling the {@link #dispose()} method.</p>

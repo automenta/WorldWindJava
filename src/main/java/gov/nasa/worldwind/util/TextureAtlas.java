@@ -10,8 +10,8 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.util.packrect.*;
 import com.jogamp.opengl.util.texture.*;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
+import gov.nasa.worldwind.examples.render.DrawContext;
 import gov.nasa.worldwind.exception.WWRuntimeException;
-import gov.nasa.worldwind.render.DrawContext;
 
 import java.awt.*;
 import java.awt.image.*;

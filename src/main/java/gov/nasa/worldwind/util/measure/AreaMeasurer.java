@@ -20,8 +20,8 @@ import java.util.ArrayList;
  *
  * <p>
  * Segments which are longer then the current maxSegmentLength will be subdivided along lines following the current
- * pathType - {@link gov.nasa.worldwind.render.Polyline#LINEAR}, {@link gov.nasa.worldwind.render.Polyline#RHUMB_LINE}
- * or {@link gov.nasa.worldwind.render.Polyline#GREAT_CIRCLE}.</p>
+ * pathType - {@link gov.nasa.worldwind.examples.render.Polyline#LINEAR}, {@link gov.nasa.worldwind.examples.render.Polyline#RHUMB_LINE}
+ * or {@link gov.nasa.worldwind.examples.render.Polyline#GREAT_CIRCLE}.</p>
  *
  * <p>
  * Projected or non terrain following area is computed in a sinusoidal projection which is equivalent or equal area.

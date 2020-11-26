@@ -9,15 +9,15 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.examples.render.airspaces.Box;
+import gov.nasa.worldwind.examples.render.airspaces.Polygon;
+import gov.nasa.worldwind.examples.render.airspaces.*;
+import gov.nasa.worldwind.examples.render.markers.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
-import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.airspaces.Box;
-import gov.nasa.worldwind.render.airspaces.Polygon;
-import gov.nasa.worldwind.render.airspaces.*;
-import gov.nasa.worldwind.render.markers.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -1157,12 +1157,12 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                 }
             }
         }
-        else if (shape instanceof gov.nasa.worldwind.render.Polygon) {
-            for (Position position : ((gov.nasa.worldwind.render.Polygon) shape).outerBoundary()) {
+        else if (shape instanceof gov.nasa.worldwind.examples.render.Polygon) {
+            for (Position position : ((gov.nasa.worldwind.examples.render.Polygon) shape).outerBoundary()) {
                 if (new LatLon(position).equals(location)) {
-                    if (((gov.nasa.worldwind.render.Polygon) shape).getAltitudeMode() == WorldWind.ABSOLUTE)
+                    if (((gov.nasa.worldwind.examples.render.Polygon) shape).getAltitudeMode() == WorldWind.ABSOLUTE)
                         altitude = position.getAltitude();
-                    else if (((gov.nasa.worldwind.render.Polygon) shape).getAltitudeMode()
+                    else if (((gov.nasa.worldwind.examples.render.Polygon) shape).getAltitudeMode()
                         == WorldWind.RELATIVE_TO_GROUND)
                         altitude = position.getAltitude() + this.getWwd().getModel().getGlobe().getElevation(
                             location.getLatitude(), location.getLongitude());
@@ -1461,7 +1461,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
     }
 
     /**
-     * Performs an edit for {@link gov.nasa.worldwind.render.airspaces.Polygon} shapes.
+     * Performs an edit for {@link gov.nasa.worldwind.examples.render.airspaces.Polygon} shapes.
      *
      * @param controlPoint    the control point selected.
      * @param terrainPosition the terrain position under the cursor.
@@ -1525,7 +1525,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
     }
 
     /**
-     * Updates the control points and affordances for {@link gov.nasa.worldwind.render.airspaces.Polygon} shapes.
+     * Updates the control points and affordances for {@link gov.nasa.worldwind.examples.render.airspaces.Polygon} shapes.
      */
     protected void updatePolygonAirspaceControlPoints() {
         Iterable<? extends LatLon> currentLocations = null;

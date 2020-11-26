@@ -7,7 +7,7 @@ package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.examples.render.DrawContext;
 
 import java.awt.*;
 
@@ -70,7 +70,7 @@ public interface Layer extends WWObject, Disposable, Restorable {
      * Indicates whether the layer performs selection during picking.
      * <p>
      * Most layers enable picking by default. However, this becomes inconvenient for {@link
-     * gov.nasa.worldwind.render.SurfaceImage} and {@link SurfaceImageLayer}} when the image
+     * gov.nasa.worldwind.examples.render.SurfaceImage} and {@link SurfaceImageLayer}} when the image
      * covers a large area because the view input handlers detect the surface image rather than the terrain as the top
      * picked object, and will not respond to the user's attempts at navigation. The solution is to disable picking for
      * the layer.

@@ -7,10 +7,10 @@
 package gov.nasa.worldwind.terrain;
 
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.examples.ogc.gml.GMLRectifiedGrid;
+import gov.nasa.worldwind.examples.ogc.wcs.wcs100.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.ogc.gml.GMLRectifiedGrid;
-import gov.nasa.worldwind.ogc.wcs.wcs100.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;

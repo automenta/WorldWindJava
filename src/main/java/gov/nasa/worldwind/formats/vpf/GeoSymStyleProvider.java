@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
+import gov.nasa.worldwind.examples.render.Material;
 import gov.nasa.worldwind.exception.WWRuntimeException;
-import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;

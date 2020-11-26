@@ -7,7 +7,7 @@ package gov.nasa.worldwind.util;
 
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.Texture;
-import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.examples.render.DrawContext;
 
 import java.awt.*;
 
@@ -22,7 +22,7 @@ import java.awt.*;
  * texture. For this reason, OGLRenderToTextureSupport must be used when the contents of the windowing system buffer
  * (likely the back framebuffer) can be freely modified by OGLRenderToTextureSupport. The WorldWind pre-render stage is
  * a good example of when it is appropriate to use OGLRenderToTextureSupport. Fore more information on the pre-render
- * stage, see {@link gov.nasa.worldwind.render.PreRenderable} and {@link gov.nasa.worldwind.layers.Layer#preRender(DrawContext)}.
+ * stage, see {@link gov.nasa.worldwind.examples.render.PreRenderable} and {@link gov.nasa.worldwind.layers.Layer#preRender(DrawContext)}.
  * <b>Note:</b> In order to achieve consistent results across all platforms, it is essential to clear the texture's
  * contents before rendering anything into the texture. Do this by invoking {@link
  * #clear(DrawContext, Color)} immediately after any call to {@link

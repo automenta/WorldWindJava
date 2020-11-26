@@ -20,7 +20,7 @@ import gov.nasa.worldwind.util.*;
 public class AngleAnimator extends BasicAnimator {
 
     /**
-     * The @link gov.nasa.worldwind.util.PropertyAccessor used to modify the data value being animated.
+     * The @link gov.nasa.worldwind.examples.util.PropertyAccessor used to modify the data value being animated.
      */
     protected final PropertyAccessor.AngleAccessor propertyAccessor;
     /**

@@ -9,10 +9,10 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.PickSupport;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * Displays a world map overlay with a current-position crosshair in a screen corner.
  * <p>
- * A {@link gov.nasa.worldwindx.examples.ClickAndGoSelectListener} can be used in conjunction with this layer to move
+ * A {@link gov.nasa.worldwind.examples.ClickAndGoSelectListener} can be used in conjunction with this layer to move
  * the view to a selected location when that location is clicked within the layer's map. Specify
  * <code>WorldMapLayer.class</code> when constructing the <code>ClickAndGoSelectListener</code>.
  * <p>

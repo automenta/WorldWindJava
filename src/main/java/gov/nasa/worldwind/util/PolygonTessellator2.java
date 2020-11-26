@@ -12,7 +12,7 @@ import java.nio.*;
 
 /**
  * TODO: Combine these capabilities into PolygonTessellator with support for pattern used by ShapefileExtrudedPolygons.
- * TODO: Keep the combined class in package gov.nasa.worldwind.util.
+ * TODO: Keep the combined class in package gov.nasa.worldwind.examples.util.
  *
  * @author dcollins
  * @version $Id: PolygonTessellator2.java 2367 2014-10-02 23:37:12Z dcollins $

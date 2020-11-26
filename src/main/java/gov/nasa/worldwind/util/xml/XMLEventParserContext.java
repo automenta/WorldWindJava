@@ -24,7 +24,7 @@ public interface XMLEventParserContext extends AVList {
      * Identifies the name of the parser handling unrecognized elements. Can be used to explicitly specify the context's
      * parser-table entry for unrecognized elements.
      */
-    String UNRECOGNIZED_ELEMENT_PARSER = "gov.nasa.worldwind.util.xml.UnknownElementParser";
+    String UNRECOGNIZED_ELEMENT_PARSER = "gov.nasa.worldwind.examples.util.xml.UnknownElementParser";
 
     /**
      * Returns the event reader associated with the context.
@@ -231,7 +231,7 @@ public interface XMLEventParserContext extends AVList {
      *                      method with the <code>fieldName</code> specified here as the name argument.
      * @param parser        the parser whose references to resolve.
      * @deprecated Reference resolution is handled by parsers specific to a certain document type. For example, {@link
-     * gov.nasa.worldwind.ogc.kml.KMLRoot} handles resolution of references in KML files.
+     * gov.nasa.worldwind.examples.ogc.kml.KMLRoot} handles resolution of references in KML files.
      */
     @Deprecated
     void resolveInternalReferences(String referenceName, String fieldName, AbstractXMLEventParser parser);

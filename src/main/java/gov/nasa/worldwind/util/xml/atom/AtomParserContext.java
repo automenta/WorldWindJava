@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.util.xml.atom;
 
+//.xml.*;
 import gov.nasa.worldwind.util.xml.*;
 
 import javax.xml.namespace.QName;

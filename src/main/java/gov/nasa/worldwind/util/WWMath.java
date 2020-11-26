@@ -9,9 +9,9 @@ package gov.nasa.worldwind.util;
 import com.jogamp.common.nio.Buffers;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.examples.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.render.DrawContext;
 
 import java.awt.*;
 import java.nio.*;

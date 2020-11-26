@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util.tree;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.BasicWWTexture;
+import gov.nasa.worldwind.examples.render.BasicWWTexture;
 import gov.nasa.worldwind.util.*;
 
 import java.beans.PropertyChangeEvent;

@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology;
 
-import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.examples.render.Material;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;

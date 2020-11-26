@@ -45,7 +45,7 @@ import java.util.*;
  * the new context. WorldWind does this automatically by clearing the associated {@link GpuResourceCache}. Objects
  * subsequently rendered automatically re-create those resources. If an application creates its own graphics resources,
  * including textures, vertex buffer objects and display lists, it must store them in the <code>GpuResourceCache</code>
- * associated with the current {@link gov.nasa.worldwind.render.DrawContext} so that they are automatically cleared, and
+ * associated with the current {@link gov.nasa.worldwind.examples.render.DrawContext} so that they are automatically cleared, and
  * be prepared to re-create them if they do not exist in the <code>DrawContext</code>'s current
  * <code>GpuResourceCache</code> when needed. Examples of doing this can be found by searching for usages of the method
  * {@link GpuResourceCache#get(Object)} and {@link GpuResourceCache#getTexture(Object)}.
@@ -57,7 +57,7 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, Proper
     /**
      * The drawable to which {@link WorldWindow} methods are delegated.
      */
-    protected final WorldWindowGLDrawable wwd; // WorldWindow interface delegates to wwd
+    private final WorldWindowGLDrawable wwd; // WorldWindow interface delegates to wwd
 
     /**
      * Constructs a new <code>WorldWindowGLCanvas</code> on the default graphics device.
@@ -66,7 +66,8 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, Proper
         super(Configuration.getRequiredGLCapabilities(), new BasicGLCapabilitiesChooser(), null);
 
         try {
-            this.wwd = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
+            this.wwd = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(
+                AVKey.WORLD_WINDOW_CLASS_NAME));
             this.wwd.initDrawable(this);
             this.wwd.addPropertyChangeListener(this);
             this.wwd.initGpuResourceCache(WorldWindowImpl.createGpuResourceCache());
@@ -94,7 +95,7 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, Proper
         super(Configuration.getRequiredGLCapabilities(), new BasicGLCapabilitiesChooser(), null);
 
         if (shareWith != null)
-            this.setSharedAutoDrawable((WorldWindowGLCanvas) shareWith);
+            this.setSharedAutoDrawable((GLAutoDrawable) shareWith);
 
         try {
             this.wwd = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
@@ -116,90 +117,6 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, Proper
             throw new WWRuntimeException(message, e);
         }
     }
-
-//    /**
-//     * Constructs a new <code>WorldWindowGLCanvas</code> on a specified graphics device and shares graphics resources
-//     * with another <code>WorldWindow</code>.
-//     *
-//     * @param shareWith a <code>WorldWindow</code> with which to share graphics resources.
-//     * @param device    the <code>GraphicsDevice</code> on which to create the window. May be null, in which case the
-//     *                  default screen device of the local {@link GraphicsEnvironment} is used.
-//     *
-//     * @see GLCanvas#GLCanvas(GLCapabilitiesImmutable, GLCapabilitiesChooser, GraphicsDevice)
-//     */
-//    public WorldWindowGLCanvas(WorldWindow shareWith, java.awt.GraphicsDevice device)
-//    {
-//        super(Configuration.getRequiredGLCapabilities(), new BasicGLCapabilitiesChooser(), device);
-//
-//        if (shareWith != null)
-//            this.setSharedContext(shareWith.getContext());
-//
-//        try
-//        {
-//            this.wwd = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
-//            this.wwd.initDrawable(this);
-//            this.wwd.addPropertyChangeListener(this);
-//            if (shareWith != null)
-//                this.wwd.initGpuResourceCache(shareWith.getGpuResourceCache());
-//            else
-//                this.wwd.initGpuResourceCache(WorldWindowImpl.createGpuResourceCache());
-//            this.createView();
-//            this.createDefaultInputHandler();
-//            WorldWind.addPropertyChangeListener(WorldWind.SHUTDOWN_EVENT, this);
-//            WorldWindowImpl.configureIdentityPixelScale(this);
-//            this.wwd.endInitialization();
-//        }
-//        catch (Exception e)
-//        {
-//            String message = Logging.getMessage("Awt.WorldWindowGLSurface.UnabletoCreateWindow");
-//            Logging.logger().severe(message);
-//            throw new WWRuntimeException(message, e);
-//        }
-//    }
-
-//    /**
-//     * Constructs a new <code>WorldWindowGLCanvas</code> on a specified device with the specified capabilities and
-//     * shares graphics resources with another <code>WorldWindow</code>.
-//     *
-//     * @param shareWith a <code>WorldWindow</code> with which to share graphics resources.
-//     * @param device       the <code>GraphicsDevice</code> on which to create the window. May be null, in which case the
-//     *                     default screen device of the local {@link GraphicsEnvironment} is used.
-//     * @param capabilities a capabilities object indicating the OpenGL rendering context's capabilities. May be null, in
-//     *                     which case a default set of capabilities is used.
-//     * @param chooser      a chooser object that customizes the specified capabilities. May be null, in which case a
-//     *                     default chooser is used.
-//     *
-//     * @see GLCanvas#GLCanvas(GLCapabilitiesImmutable, GLCapabilitiesChooser, GraphicsDevice)
-//     */
-//    public WorldWindowGLCanvas(WorldWindow shareWith, java.awt.GraphicsDevice device,
-//        GLCapabilities capabilities, GLCapabilitiesChooser chooser)
-//    {
-//        super(capabilities, chooser, device);
-//
-//        if (shareWith != null)
-//            this.setSharedContext(shareWith.getContext());
-//
-//        try
-//        {
-//            this.wwd = ((WorldWindowGLDrawable) WorldWind.createConfigurationComponent(AVKey.WORLD_WINDOW_CLASS_NAME));
-//            this.wwd.initDrawable(this);
-//            if (shareWith != null)
-//                this.wwd.initGpuResourceCache(shareWith.getGpuResourceCache());
-//            else
-//                this.wwd.initGpuResourceCache(WorldWindowImpl.createGpuResourceCache());
-//            this.createView();
-//            this.createDefaultInputHandler();
-//            WorldWind.addPropertyChangeListener(WorldWind.SHUTDOWN_EVENT, this);
-//            WorldWindowImpl.configureIdentityPixelScale(this);
-//            this.wwd.endInitialization();
-//        }
-//        catch (Exception e)
-//        {
-//            String message = Logging.getMessage("Awt.WorldWindowGLSurface.UnabletoCreateWindow");
-//            Logging.logger().severe(message);
-//            throw new WWRuntimeException(message, e);
-//        }
-//    }
 
     public void propertyChange(PropertyChangeEvent evt) {
         if (this.wwd == evt.getSource())
@@ -228,14 +145,14 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, Proper
     /**
      * Constructs and attaches the {@link View} for this <code>WorldWindow</code>.
      */
-    protected void createView() {
+    private void createView() {
         this.setView((View) WorldWind.createConfigurationComponent(AVKey.VIEW_CLASS_NAME));
     }
 
     /**
      * Constructs and attaches the {@link InputHandler} for this <code>WorldWindow</code>.
      */
-    protected void createDefaultInputHandler() {
+    private void createDefaultInputHandler() {
         this.setInputHandler((InputHandler) WorldWind.createConfigurationComponent(AVKey.INPUT_HANDLER_CLASS_NAME));
     }
 

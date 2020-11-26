@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.cache.SessionCache;
-import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.examples.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.retrieve.*;
 
 import java.beans.*;

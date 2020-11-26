@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.formats.vpf;
 
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.examples.render.ShapeAttributes;
 import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;

@@ -1523,8 +1523,6 @@ public class LatLon {
         }
         while (Math.abs(D - X) > EPS && iterCount <= 10);
 
-        //FAZ = Math.atan2(TU1, TU2);
-        //BAZ = Math.atan2(CU1 * SX, BAZ * CX - SU1 * CU2) + Math.PI;
         X = Math.sqrt((1.0 / R / R - 1.0) * C2A + 1.0) + 1.0;
         X = (X - 2.0) / X;
         C = 1.0 - X;
@@ -1708,7 +1706,7 @@ public class LatLon {
      * @throws IllegalArgumentException if <code>latLonString</code> is null.
      * @throws NumberFormatException    if the string does not form a latitude, longitude pair.
      */
-    public LatLon parseLatLon(String latLonString) // TODO
+    public static LatLon parseLatLon(String latLonString) // TODO
     {
         if (latLonString == null) {
             String msg = Logging.getMessage("nullValue.StringIsNull");

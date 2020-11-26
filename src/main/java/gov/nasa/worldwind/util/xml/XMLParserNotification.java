@@ -25,11 +25,11 @@ public class XMLParserNotification extends PropertyChangeEvent {
     /**
      * A notification type indicating that an exception occurred during parsing.
      */
-    public static final String EXCEPTION = "gov.nasa.worldwind.util.xml.XMLParserNotification.Exception";
+    public static final String EXCEPTION = "gov.nasa.worldwind.examples.util.xml.XMLParserNotification.Exception";
     /**
      * A notification type indicating that a parser encounter an element it did not recognize.
      */
-    public static final String UNRECOGNIZED = "gov.nasa.worldwind.util.xml.XMLParserNotification.Unrecognized";
+    public static final String UNRECOGNIZED = "gov.nasa.worldwind.examples.util.xml.XMLParserNotification.Unrecognized";
     /**
      * Indicates the cause of the notification.
      */

@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.geom;
 
+////.*;
 import gov.nasa.worldwind.util.*;
 
 /**
@@ -68,11 +69,6 @@ public class Vec4 {
      *                                  array's capacity is less than <code>offset + length</code>.
      */
     public static Vec4 fromDoubleArray(double[] array, int offset, int length) {
-        if (array == null) {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         if (offset < 0) {
             String msg = Logging.getMessage("generic.OffsetIsInvalid", offset);
@@ -120,11 +116,6 @@ public class Vec4 {
      *                                  array's capacity is less than <code>offset + length</code>.
      */
     public static Vec4 fromFloatArray(float[] array, int offset, int length) {
-        if (array == null) {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         if (offset < 0) {
             String msg = Logging.getMessage("generic.OffsetIsInvalid", offset);
@@ -166,11 +157,6 @@ public class Vec4 {
      *                                  than <code>offset + 2</code>.
      */
     public static Vec4 fromArray2(double[] array, int offset) {
-        if (array == null) {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         return fromDoubleArray(array, offset, 2);
     }
@@ -189,11 +175,6 @@ public class Vec4 {
      *                                  than <code>offset + 3</code>.
      */
     public static Vec4 fromArray3(double[] array, int offset) {
-        if (array == null) {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         return fromDoubleArray(array, offset, 3);
     }
@@ -213,11 +194,6 @@ public class Vec4 {
      *                                  than <code>offset + 4</code>.
      */
     public static Vec4 fromArray4(double[] array, int offset) {
-        if (array == null) {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         return fromDoubleArray(array, offset, 4);
     }
@@ -233,12 +209,6 @@ public class Vec4 {
             origin.x + (direction.x * t),
             origin.y + (direction.y * t),
             origin.z + (direction.z * t));
-
-//        return fromLine3(
-//            origin.x, origin.y, origin.z,
-//            direction.x, direction.y, direction.z,
-//            t,
-//            true);
     }
 
     /**
@@ -305,11 +275,6 @@ public class Vec4 {
     }
 
     public static Vec4 clamp3(Vec4 vec4, double min, double max) {
-        if (vec4 == null) {
-            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         return new Vec4(
             (vec4.x < min) ? min : (Math.min(vec4.x, max)),
@@ -394,11 +359,6 @@ public class Vec4 {
      * @throws IllegalArgumentException if the buffer is null, or if the stride is less than three.
      */
     public static Vec4 computeAveragePoint3(BufferWrapper coordinates, int stride) {
-        if (coordinates == null) {
-            String msg = Logging.getMessage("nullValue.CoordinatesAreNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         if (stride < 3) {
             String msg = Logging.getMessage("generic.StrideIsInvalid");
@@ -425,11 +385,6 @@ public class Vec4 {
     }
 
     public static double getAverageDistance(Iterable<? extends Vec4> points) {
-        if ((points == null)) {
-            String msg = Logging.getMessage("nullValue.PointListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         double totalDistance = 0.0;
         int count = 0;
@@ -458,11 +413,6 @@ public class Vec4 {
      * @throws IllegalArgumentException if <code>points</code> is null
      */
     public static Vec4[] computeExtrema(Vec4[] points) {
-        if (points == null) {
-            String message = Logging.getMessage("nullValue.PointsArrayIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (points.length == 0)
             return null;
@@ -504,11 +454,6 @@ public class Vec4 {
     }
 
     public static Vec4[] computeExtrema(BufferWrapper buffer) {
-        if (buffer == null) {
-            String message = Logging.getMessage("nullValue.BufferIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (buffer.getBackingBuffer().position() > buffer.getBackingBuffer().limit() - 3)
             return null;
@@ -559,11 +504,6 @@ public class Vec4 {
      * @throws IllegalArgumentException if any argument is null.
      */
     public static boolean areColinear(Vec4 a, Vec4 b, Vec4 c) {
-        if (a == null || b == null || c == null) {
-            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         Vec4 ab = b.subtract3(a).normalize3();
         Vec4 bc = c.subtract3(b).normalize3();
@@ -618,11 +558,6 @@ public class Vec4 {
      *                                  array's capacity is less than <code>offset + length</code>.
      */
     public final double[] toDoubleArray(double[] array, int offset, int length) {
-        if (array == null) {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         if (offset < 0) {
             String msg = Logging.getMessage("generic.OffsetIsInvalid", offset);
@@ -671,11 +606,6 @@ public class Vec4 {
      *                                  array's capacity is less than <code>offset + length</code>.
      */
     public final float[] toFloatArray(float[] array, int offset, int length) {
-        if (array == null) {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         if (offset < 0) {
             String msg = Logging.getMessage("generic.OffsetIsInvalid", offset);
@@ -719,11 +649,6 @@ public class Vec4 {
      *                                  than <code>offset + 2</code>.
      */
     public final double[] toArray2(double[] array, int offset) {
-        if (array == null) {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         return toDoubleArray(array, offset, 2);
     }
@@ -741,11 +666,6 @@ public class Vec4 {
      *                                  than <code>offset + 3</code>.
      */
     public final double[] toArray3(double[] array, int offset) {
-        if (array == null) {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         return toDoubleArray(array, offset, 3);
     }
@@ -768,11 +688,6 @@ public class Vec4 {
      *                                  than <code>offset + 4</code>.
      */
     public final double[] toArray4(double[] array, int offset) {
-        if (array == null) {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         return toDoubleArray(array, offset, 4);
     }

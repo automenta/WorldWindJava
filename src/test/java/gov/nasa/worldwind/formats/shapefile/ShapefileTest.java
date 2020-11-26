@@ -16,7 +16,7 @@ import org.junit.runners.JUnit4;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 
-import static gov.nasa.worldwind.ogc.kml.KMLTest.*;
+import static gov.nasa.worldwind.examples.ogc.kml.KMLTest.*;
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)

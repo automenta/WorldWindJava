@@ -477,7 +477,7 @@ public abstract class CompoundVecBuffer {
         }
 
         public boolean hasNext() {
-            while ((subIterator == null || subIteratorHasNext()) && subBuffer < subBufferCount) {
+            while ((subIterator == null || !subIteratorHasNext()) && subBuffer < subBufferCount) {
                 subIterator = subBufferIterable.iterator(subBuffer++);
             }
             return this.subIterator != null;
@@ -492,10 +492,12 @@ public abstract class CompoundVecBuffer {
         }
 
         private boolean subIteratorHasNext() {
-            boolean h = this.subIterator.hasNext();
-            if (!h)
+            if (this.subIterator.hasNext())
+                return true;
+            else {
                 this.subIterator = null;
-            return h;
+                return false;
+            }
         }
     }
 

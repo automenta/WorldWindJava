@@ -9,8 +9,8 @@ import com.jogamp.opengl.GL2;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.pick.PickSupport;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;

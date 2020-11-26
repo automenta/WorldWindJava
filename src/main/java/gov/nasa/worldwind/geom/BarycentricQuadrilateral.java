@@ -17,14 +17,6 @@ import java.util.*;
  * @version $Id: BarycentricQuadrilateral.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class BarycentricQuadrilateral extends BarycentricTriangle {
-    //    private static Vec4 g0 = new Vec4(-122.4126, 34.3674, 0);
-//    private static Vec4 g1 = new Vec4(-117.6527, 34.3674, 0);
-//    private static Vec4 g2 = new Vec4(-117.6527, 41.4899, 0);
-//    private static Vec4 g3 = new Vec4(-122.4126, 41.4899, 0);
-//    private static Vec4 g0 = new Vec4(-144, 18, 0);
-//    private static Vec4 g1 = new Vec4(-108, 18, 0);
-//    private static Vec4 g2 = new Vec4(-108, 54, 0);
-//    private static Vec4 g3 = new Vec4(-144, 54, 0);
     private static final Vec4 g0 = new Vec4(-180, -90, 0);
     private static final Vec4 g1 = new Vec4(180, -90, 0);
     private static final Vec4 g2 = new Vec4(180, 90, 0);
@@ -44,21 +36,6 @@ public class BarycentricQuadrilateral extends BarycentricTriangle {
     ));
     protected final Vec4 p11;
     private final double[] w11;
-//
-//    private static ArrayList<Vec4> makePoints(double x0, double y0, double x1, double y1)
-//    {
-//        ArrayList<Vec4> points = new ArrayList<Vec4>();
-//
-//        for (double y = y0; y <= y1; y += 1)
-//        {
-//            for (double x = x0; x <= x1; x += 1)
-//            {
-//                points.add(new Vec4(x, y, 0));
-//            }
-//        }
-//
-//        return points;
-//    }
 
     public BarycentricQuadrilateral(Vec4 p00, Vec4 p10, Vec4 p11, Vec4 p01) {
         super(p00, p10, p01);
@@ -107,11 +84,6 @@ public class BarycentricQuadrilateral extends BarycentricTriangle {
         return new double[] {alpha, beta};
     }
 
-//    private static Vec4 i0 = new Vec4(-122.1594, 34.3680, 0);
-//    private static Vec4 i1 = new Vec4(-117.9151, 34.3674, 0);
-//    private static Vec4 i2 = new Vec4(-117.6527, 41.4891, 0);
-//    private static Vec4 i3 = new Vec4(-122.4126, 41.4899, 0);
-
     public static void main(String[] args) {
         BarycentricPlanarShape bc = new BarycentricQuadrilateral(i0, i1, i2, i3);
 
@@ -123,20 +95,6 @@ public class BarycentricQuadrilateral extends BarycentricTriangle {
             System.out.printf("%s, %s: ( %f, %f, %f) : ( %f, %f), %s\n",
                 point, p, w[0], w[1], w[2], uv[0], uv[1], p.equals(point) ? "true" : "false");
         }
-//
-//        BarycentricPlanarShape bc = new BarycentricQuadrilateral(new Vec4(4, 3, 0), new Vec4(7, 1, 0),
-//            new Vec4(10, 5, 0), new Vec4(7, 7, 0));
-//
-//        ArrayList<Vec4> points = makePoints(0, 0, 14, 10);
-//        for (Vec4 point : points)
-//        {
-//            double[] w = bc.getBarycentricCoords(point);
-//            Vec4 p = bc.getPoint(w);
-//            double[] uv = bc.getBilinearCoords(w[1], w[2]);
-//
-//            System.out.printf("%s, %s: ( %f, %f, %f) : ( %f, %f), %s\n",
-//                point, p, w[0], w[1], w[2], uv[0], uv[1], p.equals(point) ? "true" : "false");
-//        }
     }
 
     public Vec4 getP11() {

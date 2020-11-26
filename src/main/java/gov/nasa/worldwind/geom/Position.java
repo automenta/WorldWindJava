@@ -50,31 +50,26 @@ public class Position extends LatLon {
      * Returns the linear interpolation of <code>value1</code> and <code>value2</code>, treating the geographic
      * locations as simple 2D coordinate pairs, and treating the elevation values as 1D scalars.
      *
-     * @param amount the interpolation factor
-     * @param value1 the first position.
-     * @param value2 the second position.
+     * @param x the first position.
+     * @param y the second position.
+     * @param a the interpolation factor
      * @return the linear interpolation of <code>value1</code> and <code>value2</code>.
      * @throws IllegalArgumentException if either position is null.
      */
-    public static Position interpolate(double amount, Position value1, Position value2) {
-//        if (value1 == null || value2 == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
+    public static Position interpolate(Position x, Position y, double a) {
 
-        if (amount < 0) {
-            return value1;
-        }else if (amount > 1) {
-            return value2;
+        if (a < 0) {
+            return x;
+        }else if (a > 1) {
+            return y;
         }
 
-        LatLon latLon = LatLon.interpolate(amount, value1, value2);
+        LatLon latLon = LatLon.interpolate(a, x, y);
         // Elevation is independent of geographic interpolation method (i.e. rhumb, great-circle, linear), so we
         // interpolate elevation linearly.
-        double elevation = WWMath.mix(amount, value1.getElevation(), value2.getElevation());
 
-        return new Position(latLon, elevation);
+        return new Position(latLon,
+            WWMath.mix(a, x.getElevation(), y.getElevation()));
     }
 
     /**
@@ -87,24 +82,19 @@ public class Position extends LatLon {
      * <code>value2</code> with a linearly interpolated elevation component, and corresponding to the specified
      * interpolation factor.
      *
-     * @param amount the interpolation factor
-     * @param value1 the first position.
-     * @param value2 the second position.
+     * @param x the first position.
+     * @param y the second position.
+     * @param a the interpolation factor
      * @return an interpolated position along the great-arc between <code>value1</code> and <code>value2</code>, with a
      * linearly interpolated elevation component.
      * @throws IllegalArgumentException if either location is null.
      */
-    public static Position interpolateGreatCircle(double amount, Position value1, Position value2) {
-//        if (value1 == null || value2 == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
+    public static Position interpolateGreatCircle(Position x, Position y, double a) {
 
-        LatLon latLon = LatLon.interpolateGreatCircle(amount, value1, value2);
+        LatLon latLon = LatLon.interpolateGreatCircle(a, x, y);
         // Elevation is independent of geographic interpolation method (i.e. rhumb, great-circle, linear), so we
         // interpolate elevation linearly.
-        double elevation = WWMath.mix(amount, value1.getElevation(), value2.getElevation());
+        double elevation = WWMath.mix(a, x.getElevation(), y.getElevation());
 
         return new Position(latLon, elevation);
     }
@@ -118,34 +108,24 @@ public class Position extends LatLon {
      * <code>value2</code> with a linearly interpolated elevation component, and corresponding to the specified
      * interpolation factor.
      *
-     * @param amount the interpolation factor
-     * @param value1 the first position.
-     * @param value2 the second position.
+     * @param x the first position.
+     * @param y the second position.
+     * @param a the interpolation factor
      * @return an interpolated position along the great-arc between <code>value1</code> and <code>value2</code>, with a
      * linearly interpolated elevation component.
      * @throws IllegalArgumentException if either location is null.
      */
-    public static Position interpolateRhumb(double amount, Position value1, Position value2) {
-//        if (value1 == null || value2 == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
+    public static Position interpolateRhumb(Position x, Position y, double a) {
 
-        LatLon latLon = LatLon.interpolateRhumb(amount, value1, value2);
+        LatLon latLon = LatLon.interpolateRhumb(a, x, y);
         // Elevation is independent of geographic interpolation method (i.e. rhumb, great-circle, linear), so we
         // interpolate elevation linearly.
-        double elevation = WWMath.mix(amount, value1.getElevation(), value2.getElevation());
+        double elevation = WWMath.mix(a, x.getElevation(), y.getElevation());
 
         return new Position(latLon, elevation);
     }
 
     public static boolean positionsCrossDateLine(Iterable<? extends Position> positions) {
-//        if (positions == null) {
-//            String msg = Logging.getMessage("nullValue.PositionsListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Position pos = null;
         for (Position posNext : positions) {
@@ -168,80 +148,45 @@ public class Position extends LatLon {
     /**
      * Computes a new set of positions translated from a specified reference position to a new reference position.
      *
-     * @param oldPosition the original reference position.
-     * @param newPosition the new reference position.
-     * @param positions   the positions to translate.
+     * @param from the original reference position.
+     * @param to the new reference position.
+     * @param x   the positions to translate.
      * @return the translated positions, or null if the positions could not be translated.
      * @throws IllegalArgumentException if any argument is null.
      */
-    public static List<Position> computeShiftedPositions(Position oldPosition, Position newPosition,
-        Iterable<? extends Position> positions) {
+    public static List<Position> computeShiftedPositions(Position from, Position to,
+        Iterable<? extends Position> x) {
         // TODO: Account for dateline spanning
-//        if (oldPosition == null || newPosition == null) {
-//            String msg = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (positions == null) {
-//            String msg = Logging.getMessage("nullValue.PositionsListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
-        List<Position> newPositions = new ArrayList<>(WWUtil.sizeEstimate(positions));
+        List<Position> y = new ArrayList<>(WWUtil.sizeEstimate(x));
 
-        double elevDelta = newPosition.getElevation() - oldPosition.getElevation();
+        double elevDelta = to.getElevation() - from.getElevation();
 
-        for (Position pos : positions) {
-            Angle distance = LatLon.greatCircleDistance(oldPosition, pos);
-            Angle azimuth = LatLon.greatCircleAzimuth(oldPosition, pos);
-            LatLon newLocation = LatLon.greatCircleEndPosition(newPosition, azimuth, distance);
-            double newElev = pos.getElevation() + elevDelta;
+        for (Position p : x)
+            y.add(new Position(LatLon.greatCircleEndPosition(to,
+                LatLon.greatCircleAzimuth(from, p),
+                LatLon.greatCircleDistance(from, p)),
+                p.getElevation() + elevDelta));
 
-            newPositions.add(new Position(newLocation, newElev));
-        }
-
-        return newPositions;
+        return y;
     }
 
     public static List<Position> computeShiftedPositions(Globe globe, Position oldPosition, Position newPosition,
-        Iterable<? extends Position> positions) {
-//        if (globe == null) {
-//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (oldPosition == null || newPosition == null) {
-//            String msg = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (positions == null) {
-//            String msg = Logging.getMessage("nullValue.PositionsListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-
-        List<Position> newPositions = new ArrayList<>(WWUtil.sizeEstimate(positions));
+        Iterable<? extends Position> x) {
 
         double elevDelta = newPosition.getElevation() - oldPosition.getElevation();
         Vec4 oldPoint = globe.computePointFromPosition(oldPosition);
         Vec4 newPoint = globe.computePointFromPosition(newPosition);
         Vec4 delta = newPoint.subtract3(oldPoint);
 
-        for (Position pos : positions) {
-            Vec4 point = globe.computePointFromPosition(pos);
-            point = point.add3(delta);
-            Position newPos = globe.computePositionFromPoint(point);
-            double newElev = pos.getElevation() + elevDelta;
-
-            newPositions.add(new Position(newPos, newElev));
+        List<Position> y = new ArrayList<>(WWUtil.sizeEstimate(x));
+        for (Position p : x) {
+            Vec4 v = globe.computePointFromPosition(p);
+            v = v.add3(delta);
+            y.add(new Position(globe.computePositionFromPoint(v), p.getElevation() + elevDelta));
         }
 
-        return newPositions;
+        return y;
     }
 
     /**
@@ -284,20 +229,12 @@ public class Position extends LatLon {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (!super.equals(o)) {
-            return false;
-        }
-
-        return Double.compare(((Position) o).elevation, elevation) == 0;
+        return super.equals(o) && (((Position) o).elevation == elevation);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        long temp;
-        temp = elevation != +0.0d ? Double.doubleToLongBits(elevation) : 0L;
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
+        return 31 * super.hashCode() + Double.hashCode(elevation);
     }
 
     public String toString() {

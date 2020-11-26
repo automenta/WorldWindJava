@@ -388,7 +388,7 @@ public class Configuration // Singleton
      *
      * @return true if the operating system is a Mac operating system, otherwise false.
      */
-    public static boolean isMacOS() {
+    @Deprecated public static boolean isMacOS() {
         String osName = System.getProperty("os.name");
         return osName != null && osName.toLowerCase().contains("mac");
     }

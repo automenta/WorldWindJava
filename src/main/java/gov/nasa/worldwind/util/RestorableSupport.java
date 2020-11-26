@@ -6,8 +6,8 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.examples.render.OffsetsList;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.OffsetsList;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 

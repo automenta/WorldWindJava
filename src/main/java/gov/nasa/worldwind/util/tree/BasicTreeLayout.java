@@ -11,8 +11,8 @@ import com.jogamp.opengl.util.texture.TextureCoords;
 import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.pick.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;

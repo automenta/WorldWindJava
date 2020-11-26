@@ -6,10 +6,10 @@
 package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.examples.ogc.OGCCapabilities;
+import gov.nasa.worldwind.examples.ogc.wcs.wcs100.WCS100Capabilities;
+import gov.nasa.worldwind.examples.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.exception.*;
-import gov.nasa.worldwind.ogc.OGCCapabilities;
-import gov.nasa.worldwind.ogc.wcs.wcs100.WCS100Capabilities;
-import gov.nasa.worldwind.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
 

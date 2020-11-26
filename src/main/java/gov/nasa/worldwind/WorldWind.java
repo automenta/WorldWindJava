@@ -164,20 +164,18 @@ public final class WorldWind {
      * @throws IllegalArgumentException if <code>className</code> is null or zero length
      */
     public static Object createComponent(String className) throws WWRuntimeException {
-        if (className == null || className.isEmpty()) {
-            Logging.logger().severe("nullValue.ClassNameIsNull");
-            throw new IllegalArgumentException(Logging.getMessage("nullValue.ClassNameIsNull"));
-        }
+//        if (className == null || className.isEmpty()) {
+//            Logging.logger().severe("nullValue.ClassNameIsNull");
+//            throw new IllegalArgumentException(Logging.getMessage("nullValue.ClassNameIsNull"));
+//        }
 
         try {
             Class<?> c = Class.forName(className.trim());
             return c.getConstructor().newInstance();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Logging.logger().log(Level.SEVERE, "WorldWind.ExceptionCreatingComponent", className);
             throw new WWRuntimeException(Logging.getMessage("WorldWind.ExceptionCreatingComponent", className), e);
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             Logging.logger().log(Level.SEVERE, "WorldWind.ErrorCreatingComponent", className);
             throw new WWRuntimeException(Logging.getMessage("WorldWind.ErrorCreatingComponent", className), t);
         }

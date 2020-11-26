@@ -10,8 +10,8 @@ import com.jogamp.opengl.util.texture.TextureData;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
+import gov.nasa.worldwind.examples.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 

@@ -16,9 +16,9 @@ import java.util.*;
  */
 public class KeyEventState implements KeyListener, MouseListener {
 
-    protected final Map<Object, InputState> keyStateMap = new HashMap<>();
-    protected int modifiersEx;
-    protected int mouseModifiersEx;
+    private final Map<Object, InputState> keyStateMap = new HashMap<>();
+    private int modifiersEx;
+    private int mouseModifiersEx;
 
     public KeyEventState() {
     }
@@ -76,7 +76,7 @@ public class KeyEventState implements KeyListener, MouseListener {
      * @deprecated Use {@link #setModifiersEx(int)} instead
      */
     @Deprecated
-    protected void setModifiers(int modifiers) {
+    protected static void setModifiers(int modifiers) {
         String msg = Logging.getMessage("generic.OperationDeprecatedAndChanged", "setModifiers", "setModifiersEx");
         Logging.logger().severe(msg);
     }
@@ -88,7 +88,7 @@ public class KeyEventState implements KeyListener, MouseListener {
         return this.modifiersEx;
     }
 
-    protected void setModifiersEx(int modifiersEx) {
+    private void setModifiersEx(int modifiersEx) {
         this.modifiersEx = modifiersEx;
     }
 
@@ -109,7 +109,7 @@ public class KeyEventState implements KeyListener, MouseListener {
      * @deprecated Use {@link #setMouseModifiersEx(int)} instead
      */
     @Deprecated
-    protected void setMouseModifiers(int modifiers) {
+    protected static void setMouseModifiers(int modifiers) {
         String msg = Logging.getMessage("generic.OperationDeprecatedAndChanged", "setMouseModifiers",
             "setMouseModifiersEx");
         Logging.logger().severe(msg);
@@ -122,7 +122,7 @@ public class KeyEventState implements KeyListener, MouseListener {
         return this.mouseModifiersEx;
     }
 
-    protected void setMouseModifiersEx(int modifiersEx) {
+    private void setMouseModifiersEx(int modifiersEx) {
         this.mouseModifiersEx = modifiersEx;
     }
 
@@ -146,12 +146,12 @@ public class KeyEventState implements KeyListener, MouseListener {
         this.removeKeyState(e);
     }
 
-    protected void onKeyEvent(KeyEvent e, int eventType) {
+    private void onKeyEvent(KeyEvent e, int eventType) {
         if (e == null) {
             return;
         }
 
-        long timestamp = this.getTimeStamp(e, eventType, this.keyStateMap.get(e.getKeyCode()));
+        long timestamp = KeyEventState.getTimeStamp(e, eventType, this.keyStateMap.get(e.getKeyCode()));
         this.setKeyState(e.getKeyCode(), new InputState(eventType, e.getKeyCode(), timestamp));
         this.setModifiersEx(e.getModifiersEx());
     }
@@ -162,7 +162,7 @@ public class KeyEventState implements KeyListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        long timestamp = this.getTimeStamp(e, MouseEvent.MOUSE_PRESSED, this.keyStateMap.get(e.getModifiersEx()));
+        long timestamp = KeyEventState.getTimeStamp(e, MouseEvent.MOUSE_PRESSED, this.keyStateMap.get(e.getModifiersEx()));
         this.setKeyState(e.getButton(), new InputState(MouseEvent.MOUSE_PRESSED, e.getButton(), timestamp));
         this.setMouseModifiersEx(e.getModifiersEx());
     }
@@ -183,20 +183,20 @@ public class KeyEventState implements KeyListener, MouseListener {
 
     }
 
-    protected InputState getKeyState(int keyCode) {
+    private InputState getKeyState(int keyCode) {
         return this.keyStateMap.get(keyCode);
     }
 
-    protected void setKeyState(int keyCode, InputState state) {
+    private void setKeyState(int keyCode, InputState state) {
         this.keyStateMap.put(keyCode, state);
     }
 
-    protected void removeKeyState(KeyEvent e) {
+    private void removeKeyState(KeyEvent e) {
         this.keyStateMap.remove(e.getKeyCode());
         this.setModifiersEx(e.getModifiersEx());
     }
 
-    protected long getTimeStamp(InputEvent e, int eventType, InputState currentState) {
+    private static long getTimeStamp(InputEvent e, int eventType, InputState currentState) {
         // If the current state for this input event type exists and is not null, then keep the current timestamp.
         if (currentState != null && currentState.getEventType() == eventType) {
             return currentState.getTimestamp();
@@ -207,17 +207,17 @@ public class KeyEventState implements KeyListener, MouseListener {
 
     protected static class InputState {
 
-        protected final int eventType;
-        protected final int keyOrButtonCode;
-        protected final long timestamp;
+        final int eventType;
+        final int keyOrButtonCode;
+        final long timestamp;
 
-        public InputState(int eventType, int keyOrButtonCode, long timestamp) {
+        InputState(int eventType, int keyOrButtonCode, long timestamp) {
             this.eventType = eventType;
             this.keyOrButtonCode = keyOrButtonCode;
             this.timestamp = timestamp;
         }
 
-        public int getEventType() {
+        int getEventType() {
             return this.eventType;
         }
 
@@ -225,7 +225,7 @@ public class KeyEventState implements KeyListener, MouseListener {
             return this.keyOrButtonCode;
         }
 
-        public long getTimestamp() {
+        long getTimestamp() {
             return this.timestamp;
         }
     }

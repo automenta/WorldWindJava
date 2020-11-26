@@ -7,9 +7,9 @@ package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.examples.ogc.*;
+import gov.nasa.worldwind.examples.ogc.wms.*;
 import gov.nasa.worldwind.exception.*;
-import gov.nasa.worldwind.ogc.*;
-import gov.nasa.worldwind.ogc.wms.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 import org.w3c.dom.Element;

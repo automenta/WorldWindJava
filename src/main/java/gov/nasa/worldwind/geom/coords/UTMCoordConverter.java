@@ -43,8 +43,6 @@ class UTMCoordConverter {
     public final static int UTM_TM_ERROR = 0x0200;
 
     private final static double PI = 3.14159265358979323;
-    //private final static double MIN_LAT = ((-80.5 * PI) / 180.0); /* -80.5 degrees in radians    */
-    //private final static double MAX_LAT = ((84.5 * PI) / 180.0);  /* 84.5 degrees in radians     */
     private final static double MIN_LAT = ((-82 * PI) / 180.0); /* -82 degrees in radians    */
     private final static double MAX_LAT = ((86 * PI) / 180.0);  /* 86 degrees in radians     */
 
@@ -92,13 +90,16 @@ class UTMCoordConverter {
 
         double f = 1 - CLARKE_B / CLARKE_A;
         double e2 = 2 * f - Math.pow(f, 2);
-        double Rn = CLARKE_A * Math.pow(1 - e2 * Math.pow(Math.sin(lat), 2.0), -0.5);
-        double Rm = (CLARKE_A * (1 - e2)) / Math.pow(1 - e2 * Math.pow(Math.sin(lat), 2.0), 1.5);
-        double errLon = (-1 * deltaX * Math.sin(lon) + deltaY * Math.cos(lon)) / (Rn * Math.cos(lat));
-        double errLat = (-1 * deltaX * Math.sin(lat) * Math.cos(lon) - deltaY * Math.sin(lat) * Math.sin(lon)
+        final double sinLat = Math.sin(lat);
+        final double oneMinE2TimesSqrSinLat = 1 - e2 * Math.pow(sinLat, 2.0);
+        double Rn = CLARKE_A * Math.pow(oneMinE2TimesSqrSinLat, -0.5);
+        double Rm = (CLARKE_A * (1 - e2)) / Math.pow(oneMinE2TimesSqrSinLat, 1.5);
+        final double cosLon = Math.cos(lon);
+        double errLon = (-1 * deltaX * Math.sin(lon) + deltaY * cosLon) / (Rn * Math.cos(lat));
+        double errLat = (-1 * deltaX * sinLat * cosLon - deltaY * sinLat * Math.sin(lon)
             + deltaZ * Math.cos(lat)
-            + difA * (Rn * e2 * Math.sin(lat) * Math.cos(lat)) / CLARKE_A
-            + difF * (Rm * CLARKE_A / CLARKE_B + Rn * CLARKE_B / CLARKE_A) * Math.sin(lat) * Math.cos(lat)) / Rm;
+            + difA * (Rn * e2 * sinLat * Math.cos(lat)) / CLARKE_A
+            + difF * (Rm * CLARKE_A / CLARKE_B + Rn * CLARKE_B / CLARKE_A) * sinLat * Math.cos(lat)) / Rm;
 
         return LatLon.fromRadians(lat - errLat, lon - errLon);
     }
@@ -282,8 +283,6 @@ class UTMCoordConverter {
             Error_Code |= UTM_ZONE_ERROR;
         if (!Hemisphere.equals(AVKey.SOUTH) && !Hemisphere.equals(AVKey.NORTH))
             Error_Code |= UTM_HEMISPHERE_ERROR;
-//        if ((Easting < MIN_EASTING) || (Easting > MAX_EASTING))    //removed check to enable reprojecting images
-//            Error_Code |= UTM_EASTING_ERROR;                       //that extend into another zone
         if ((Northing < MIN_NORTHING) || (Northing > MAX_NORTHING))
             Error_Code |= UTM_NORTHING_ERROR;
 

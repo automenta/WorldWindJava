@@ -186,11 +186,6 @@ public class Quaternion {
         //
         // 2. ZYX Ordering
         // (QX * QY * QZ)
-        // qw = (cx * cy * cz) - (sx * sy * sz);
-        // qx = (sx * cy * cz) + (cx * sy * sz);
-        // qy = (cx * sy * cz) - (sx * cy * sz);
-        // qz = (cx * cy * sz) + (sx * sy * cz);
-        //
 
         double qw = (cx * cy * cz) + (sx * sy * sz);
         double qx = (sx * cy * cz) - (cx * sy * sz);
@@ -242,11 +237,6 @@ public class Quaternion {
         //
         // 2. LonLat Ordering
         // (QLat * QLon)
-        // qw = clat * clon;
-        // qx = clat * slon;
-        // qy = slat * clon;
-        // qz = - slat * slon;
-        //
 
         double qw = clat * clon;
         double qx = clat * slon;

@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.util.tree;
 
-import gov.nasa.worldwind.render.Size;
+import gov.nasa.worldwind.examples.render.Size;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;

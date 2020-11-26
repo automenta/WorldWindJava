@@ -8,8 +8,8 @@ package gov.nasa.worldwind.layers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.GpuResourceCache;
+import gov.nasa.worldwind.examples.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;

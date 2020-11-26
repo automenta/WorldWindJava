@@ -9,10 +9,10 @@ package gov.nasa.worldwind;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.GpuResourceCache;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;
 

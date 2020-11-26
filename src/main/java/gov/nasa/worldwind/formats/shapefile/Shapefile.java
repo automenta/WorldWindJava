@@ -9,10 +9,10 @@ package gov.nasa.worldwind.formats.shapefile;
 import com.jogamp.common.nio.Buffers;
 import gov.nasa.worldwind.Exportable;
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.examples.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;

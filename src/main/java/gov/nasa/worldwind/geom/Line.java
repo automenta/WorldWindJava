@@ -146,29 +146,6 @@ public final class Line// Instances are immutable
     public final Vec4 getPointAt(double t) {
         return Vec4.fromLine3(this.origin, t, this.direction);
     }
-//
-//    public final double distanceToOld(Vec4 p)
-//    {
-//        if (p == null)
-//        {
-//            String message = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        Vec4 origin = this.origin;
-//        Vec4 sideB = origin.subtract3(p); // really a vector
-//
-//        double distanceToOrigin = sideB.dot3(this.direction);
-//        double divisor = distanceToOrigin / this.direction.getLengthSquared3();
-//
-//        Vec4 sideA = this.direction.multiply3(divisor);
-//
-//        double aSquared = sideA.getLengthSquared3();
-//        double bSquared = sideB.getLengthSquared3();
-//
-//        return Math.sqrt(bSquared - aSquared);
-//    }
 
     public final double selfDot() {
         return this.origin.dot3(this.direction);

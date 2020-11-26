@@ -85,22 +85,12 @@ class MGRSCoordConverter {
     private static final int MGRS_LETTERS = 3;  /* NUMBER OF LETTERS IN MGRS              */
     private static final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     // UPS Constants are in the following order:
-    //    long letter;            /* letter representing latitude band      */
-    //    long ltr2_low_value;    /* 2nd letter range - high number         */
-    //    long ltr2_high_value;   /* 2nd letter range - low number          */
-    //    long ltr3_high_value;   /* 3rd letter range - high number (UPS)   */
-    //    double false_easting;   /* False easting based on 2nd letter      */
-    //    double false_northing;  /* False northing based on 3rd letter     */
     private static final long[][] upsConstants = {
         {LETTER_A, LETTER_J, LETTER_Z, LETTER_Z, 800000, 800000},
         {LETTER_B, LETTER_A, LETTER_R, LETTER_Z, 2000000, 800000},
         {LETTER_Y, LETTER_J, LETTER_Z, LETTER_P, 800000, 1300000},
         {LETTER_Z, LETTER_A, LETTER_J, LETTER_P, 2000000, 1300000}};
     // Latitude Band Constants are in the following order:
-    //        long letter;            /* letter representing latitude band  */
-    //        double min_northing;    /* minimum northing for latitude band */
-    //        double north;           /* upper latitude for latitude band   */
-    //        double south;           /* lower latitude for latitude band   */
     private static final double[][] latitudeBandConstants = {
         {LETTER_C, 1100000.0, -72.0, -80.5, 0.0},
         {LETTER_D, 2000000.0, -64.0, -72.0, 2000000.0},
@@ -341,7 +331,7 @@ class MGRSCoordConverter {
      * @param MGRSString the MGRS coordinate string.
      * @return the error code.
      */
-    private long checkZone(CharSequence MGRSString) {
+    private static long checkZone(CharSequence MGRSString) {
         int i = 0;
         int j = 0;
         int num_digits = 0;
@@ -634,9 +624,6 @@ class MGRSCoordConverter {
                     letters[0] = LETTER_Y;
 
                 index = (int) letters[0] - 22;
-//                ltr2_low_value = UPS_Constant_Table.get(index).ltr2_low_value;
-//                false_easting = UPS_Constant_Table.get(index).false_easting;
-//                false_northing = UPS_Constant_Table.get(index).false_northing;
                 ltr2_low_value = (int) upsConstants[index][1];
                 false_easting = upsConstants[index][4];
                 false_northing = upsConstants[index][5];
@@ -648,9 +635,6 @@ class MGRSCoordConverter {
                 else
                     letters[0] = LETTER_A;
 
-//                ltr2_low_value = UPS_Constant_Table.get((int) letters[0]).ltr2_low_value;
-//                false_easting = UPS_Constant_Table.get((int) letters[0]).false_easting;
-//                false_northing = UPS_Constant_Table.get((int) letters[0]).false_northing;
                 ltr2_low_value = (int) upsConstants[(int) letters[0]][1];
                 false_easting = upsConstants[(int) letters[0]][4];
                 false_northing = upsConstants[(int) letters[0]][5];
@@ -837,7 +821,7 @@ class MGRSCoordConverter {
      * @param value Value to be rounded
      * @return rounded double value
      */
-    private double roundMGRS(double value) {
+    private static double roundMGRS(double value) {
         double ivalue = Math.floor(value);
         long ival;
         double fraction = value - ivalue;

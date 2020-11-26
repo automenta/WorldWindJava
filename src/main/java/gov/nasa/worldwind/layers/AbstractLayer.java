@@ -8,8 +8,8 @@ package gov.nasa.worldwind.layers;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Element;
 

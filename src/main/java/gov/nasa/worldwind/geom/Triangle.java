@@ -45,36 +45,6 @@ public class Triangle {
         this.c = c;
     }
 
-    //    private Plane getPlane()
-//    {
-//        Vector ab, ac;
-//        ab = new Vector(this.b.subtract(this.a)).normalize();
-//        ac = new Vector(this.c.subtract(this.a)).normalize();
-//
-//        Vector n = new Vector(new Point(ab.x(), ab.y(), ab.z(), ab.w()).cross(new Point(ac.x(), ac.y(), ac.z(), ac.w())));
-//
-//        return new gov.nasa.worldwind.geom.Plane(n);
-//    }
-
-//    private Point temporaryIntersectPlaneAndLine(Line line, Plane plane)
-//    {
-//        Vector n = line.getDirection();
-//        Point v0 = Point.fromOriginAndDirection(plane.getDistance(), plane.getNormal(), Point.ZERO);
-//        Point p0 = line.getPointAt(0);
-//        Point p1 = line.getPointAt(1);
-//
-//        double r1 = n.dot(v0.subtract(p0))/n.dot(p1.subtract(p0));
-//        if(r1 >= 0)
-//            return line.getPointAt(r1);
-//        return null;
-//    }
-//
-//    private Triangle divide(double d)
-//    {
-//        d  = 1/d;
-//        return new Triangle(this.a.multiply(d), this.b.multiply(d), this.c.multiply(d));
-//    }
-
     /**
      * Determines the intersection of a specified line with a specified triangle. The triangle is specified by three
      * points ordered counterclockwise. The triangle's front face is determined by the right-hand rule.
@@ -506,22 +476,29 @@ public class Triangle {
             throw new IllegalArgumentException(msg);
         }
 
-        int nunTriangles = indices.size() / 3;
+        final int n = indices.size();
+        int nunTriangles = n / 3;
         if (nunTriangles * 3 * 3 > outBuf.limit() - outBuf.position()) {
             String msg = Logging.getMessage("generic.BufferSize", outBuf.limit() - outBuf.position());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        for (int i = 0; i < indices.size(); i += 3) {
-            int k = indices.get(i) * 3;
-            outBuf.put(inBuf.get(k)).put(inBuf.get(k + 1)).put(inBuf.get(k + 2));
+        for (int i = 0; i < n; i += 3) {
+            {
+                int k = indices.get(i) * 3;
+                outBuf.put(inBuf.get(k)).put(inBuf.get(k + 1)).put(inBuf.get(k + 2));
+            }
 
-            k = indices.get(i + 1) * 3;
-            outBuf.put(inBuf.get(k)).put(inBuf.get(k + 1)).put(inBuf.get(k + 2));
+            {
+                int k = indices.get(i + 1) * 3;
+                outBuf.put(inBuf.get(k)).put(inBuf.get(k + 1)).put(inBuf.get(k + 2));
+            }
 
-            k = indices.get(i + 2) * 3;
-            outBuf.put(inBuf.get(k)).put(inBuf.get(k + 1)).put(inBuf.get(k + 2));
+            {
+                int k = indices.get(i + 2) * 3;
+                outBuf.put(inBuf.get(k)).put(inBuf.get(k + 1)).put(inBuf.get(k + 2));
+            }
         }
     }
 
@@ -1016,22 +993,28 @@ public class Triangle {
     }
 
     protected static boolean pointInTri(double[] v0, double[] u0, double[] u1, double[] u2, int i0, int i1) {
-        double a = u1[i1] - u0[i1];
-        double b = -(u1[i0] - u0[i0]);
-        double c = -a * u0[i0] - b * u0[i1];
-        double d0 = a * v0[i0] + b * v0[i1] + c;
-
-        a = u2[i1] - u1[i1];
-        b = -(u2[i0] - u1[i0]);
-        c = -a * u1[i0] - b * u1[i1];
-        double d1 = a * v0[i0] + b * v0[i1] + c;
-
-        a = u0[i1] - u2[i1];
-        b = -(u0[i0] - u2[i0]);
-        c = -a * u2[i0] - b * u2[i1];
-        double d2 = a * v0[i0] + b * v0[i1] + c;
-
-        return d0 * d1 > 0 && d0 * d2 > 0;
+        double d0, d1, d2;
+        {
+            double a = u1[i1] - u0[i1];
+            double b = -(u1[i0] - u0[i0]);
+            double c = -a * u0[i0] - b * u0[i1];
+            d0 = a * v0[i0] + b * v0[i1] + c;
+        }
+        {
+            double a = u2[i1] - u1[i1];
+            double b = -(u2[i0] - u1[i0]);
+            double c = -a * u1[i0] - b * u1[i1];
+            d1 = a * v0[i0] + b * v0[i1] + c;
+        }
+        if (d0 * d1 <= 0) return false;
+        {
+            double a = u0[i1] - u2[i1];
+            double b = -(u0[i0] - u2[i0]);
+            double c = -a * u2[i0] - b * u2[i1];
+            d2 = a * v0[i0] + b * v0[i1] + c;
+        }
+        return d0 * d2 > 0;
+        //return d0 * d1 > 0 && d0 * d2 > 0;
     }
 
     /**
@@ -1057,14 +1040,14 @@ public class Triangle {
         double dot12 = v1.dot3(v2);
 
         // Compute barycentric coordinates
-        double det = (dot00 * dot11 - dot01 * dot01);
-
-        double detInv = 1 / det;
+        double detInv = 1 / (dot00 * dot11 - dot01 * dot01);
+        
         double u = (dot11 * dot02 - dot01 * dot12) * detInv;
+        if (u < 0) return false;
         double v = (dot00 * dot12 - dot01 * dot02) * detInv;
 
         // Check if point is contained in triangle (including edges and vertices)
-        return (u >= 0.0d) && (v >= 0.0d) && (u + v <= 1.0d);
+        return /*(u >= 0.0d) && */(v >= 0.0d) && (u + v <= 1.0d);
 
         // Check if point is contained inside triangle (NOT including edges or vertices)
 //        return (u > 0d) && (v > 0d) && (u + v < 1d);

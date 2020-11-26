@@ -33,7 +33,7 @@ public class ViewInputAttributes {
     public static final String DEVICE_MOUSE_WHEEL_MODS = "gov.nasa.worldwind.DeviceMouseWheelMods";
     // Action keys
     public static final String VIEW_MOVE_TO = "gov.nasa.worldwind.ViewMoveTo";
-    public static final String VIEW_MOVE_TO_SLOW = "gov.nasa.worldwind.MoveToSlow";
+    private static final String VIEW_MOVE_TO_SLOW = "gov.nasa.worldwind.MoveToSlow";
     public static final String VIEW_HORIZONTAL_TRANSLATE = "gov.nasa.worldwind.ViewHorizTrans";
     public static final String VIEW_HORIZONTAL_TRANSLATE_SLOW = "gov.nasa.worldwind.ViewHorizTransSlow";
     public static final String VIEW_VERTICAL_TRANSLATE = "gov.nasa.worldwind.ViewVertTrans";
@@ -47,59 +47,59 @@ public class ViewInputAttributes {
     public static final String VIEW_VERTICAL_TRANS_KEYS_META = "gov.nasa.worldwind.ViewVertTransKeysMeta";
     public static final String VIEW_VERTICAL_TRANS_KEYS_CTRL = "gov.nasa.worldwind.ViewVertTransKeysCTRL";
     public static final String VIEW_VERTICAL_TRANS_KEYS = "gov.nasa.worldwind.ViewVertTransKeys";
-    public static final String VIEW_VERTICAL_TRANS_KEYS_SLOW_META = "gov.nasa.worldwind.ViewVertTransKeysMetaSlow";
+    private static final String VIEW_VERTICAL_TRANS_KEYS_SLOW_META = "gov.nasa.worldwind.ViewVertTransKeysMetaSlow";
     public static final String VIEW_VERTICAL_TRANS_KEYS_SLOW_CTRL = "gov.nasa.worldwind.ViewVertTransKeysCtrlSlow";
     public static final String VIEW_VERTICAL_TRANS_KEYS_SLOW = "gov.nasa.worldwind.ViewVertTransKeysSlow";
     public static final String VIEW_ROTATE_KEYS = "gov.nasa.worldwind.ViewRotateKeys";
     public static final String VIEW_ROTATE_KEYS_SHIFT = "gov.nasa.worldwind.ViewRotateKeysShift";
     public static final String VIEW_ROTATE_KEYS_SHIFT_SLOW = "gov.nasa.worldwind.ViewRotateKeysShiftSlow";
     public static final String VIEW_ROLL_KEYS = "gov.nasa.worldwind.ViewRollKeys";
-    public static final boolean DEFAULT_MOVE_TO_SMOOTHING_ENABLED = true;
-    public static final boolean DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_ENABLED = true;
-    public static final boolean DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED = true;
-    public static final double DEFAULT_MOVE_TO_SMOOTHING_VALUE = 0.0; // [0, 1] smoothing value
-    public static final double DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_VALUE = 0.4; // [0, 1] smoothing value
-    public static final double DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE = 0.85; // [0, 1] smoothing value
+    private static final boolean DEFAULT_MOVE_TO_SMOOTHING_ENABLED = true;
+    private static final boolean DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_ENABLED = true;
+    private static final boolean DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED = true;
+    private static final double DEFAULT_MOVE_TO_SMOOTHING_VALUE = 0.0; // [0, 1] smoothing value
+    private static final double DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_VALUE = 0.4; // [0, 1] smoothing value
+    private static final double DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE = 0.85; // [0, 1] smoothing value
     // Keyboard/Action calibration values for extensible view/navigation support
-    public static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE = 0.000005; // Speed in degrees per frame
-    public static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE = 4.0; // Speed in degrees per frame
-    public static final double DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE = 0.06; // Speed in log-meters per frame
+    private static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE = 0.000005; // Speed in degrees per frame
+    private static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE = 4.0; // Speed in degrees per frame
+    private static final double DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE = 0.06; // Speed in log-meters per frame
     // Mouse/Action calibration values for extensible view/navigation support
-    public static final double DEFAULT_MOUSE_MOVE_TO_MIN_VALUE = 0.95; // [0, 1] smoothing value
-    public static final double DEFAULT_MOUSE_MOVE_TO_MAX_VALUE = 0.90; // [0, 1] smoothing value
-    public static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MIN_VALUE = 0.00001;
+    private static final double DEFAULT_MOUSE_MOVE_TO_MIN_VALUE = 0.95; // [0, 1] smoothing value
+    private static final double DEFAULT_MOUSE_MOVE_TO_MAX_VALUE = 0.90; // [0, 1] smoothing value
+    private static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MIN_VALUE = 0.00001;
     // Speed in degrees per mouse movement
-    public static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE = 0.2;
+    private static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE = 0.2;
     // Speed in degrees per mouse movement
-    public static final double DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE = 0.003; // Speed in log-meters per mouse movement
+    private static final double DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE = 0.003; // Speed in log-meters per mouse movement
     // MouseWheel/Action calibration values.
-    public static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE = 0.1;
+    private static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE = 0.1;
     // Speed in log-meters per wheel movement
-    public static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_OSX = 0.01;
+    private static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_OSX = 0.01;
     // Device sensitivity defaults.
-    public static final double DEFAULT_KEY_SENSITIVITY = 1.0; // Scalar multiplier
-    public static final double DEFAULT_MOUSE_SENSITIVITY = 1.0; // Scalar multiplier
-    public static final double DEFAULT_MOUSE_WHEEL_SENSITIVITY = 1.0; // Scalar multiplier
-    public static final double DEFAULT_SLOW_VALUE = 0.25; // Scalar multiplier
-    public static final boolean DEFAULT_ROTATE_SMOOTHING_ENABLED = true;
-    public static final double DEFAULT_ROTATE_SMOOTHING_VALUE = 0.7; // [0, 1] smoothing value
-    public static final boolean DEFAULT_ROLL_SMOOTHING_ENABLED = true;
-    public static final double DEFAULT_ROLL_SMOOTHING_VALUE = 0.7; // [0, 1] smoothing value
+    private static final double DEFAULT_KEY_SENSITIVITY = 1.0; // Scalar multiplier
+    private static final double DEFAULT_MOUSE_SENSITIVITY = 1.0; // Scalar multiplier
+    private static final double DEFAULT_MOUSE_WHEEL_SENSITIVITY = 1.0; // Scalar multiplier
+    private static final double DEFAULT_SLOW_VALUE = 0.25; // Scalar multiplier
+    private static final boolean DEFAULT_ROTATE_SMOOTHING_ENABLED = true;
+    private static final double DEFAULT_ROTATE_SMOOTHING_VALUE = 0.7; // [0, 1] smoothing value
+    private static final boolean DEFAULT_ROLL_SMOOTHING_ENABLED = true;
+    private static final double DEFAULT_ROLL_SMOOTHING_VALUE = 0.7; // [0, 1] smoothing value
     // Keyboard/Action calibration values.
-    public static final double DEFAULT_KEY_ROTATE_MIN_VALUE = 2.0; // Speed in degrees per frame
-    public static final double DEFAULT_KEY_ROTATE_MAX_VALUE = 2.2; // Speed in degrees per frame
+    private static final double DEFAULT_KEY_ROTATE_MIN_VALUE = 2.0; // Speed in degrees per frame
+    private static final double DEFAULT_KEY_ROTATE_MAX_VALUE = 2.2; // Speed in degrees per frame
     public static final double DEFAULT_KEY_ROLL_MIN_VALUE = 2.0; // Speed in degrees per frame
     public static final double DEFAULT_KEY_ROLL_MAX_VALUE = 2.2; // Speed in degrees per frame
-    public static final double DEFAULT_MOUSE_ROTATE_MIN_VALUE = 0.14; // Speed in degrees per mouse movement
-    public static final double DEFAULT_MOUSE_ROTATE_MAX_VALUE = 0.18; // Speed in degrees per mouse movement
+    private static final double DEFAULT_MOUSE_ROTATE_MIN_VALUE = 0.14; // Speed in degrees per mouse movement
+    private static final double DEFAULT_MOUSE_ROTATE_MAX_VALUE = 0.18; // Speed in degrees per mouse movement
     // Roll Keyboard events. Use CTRL-Left and CTRL-Right to change roll.
-    protected static final ActionAttributes.KeyAction DEFAULT_ROTATE_ROLLUP_KEY_ACT =
+    private static final ActionAttributes.KeyAction DEFAULT_ROTATE_ROLLUP_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_LEFT,
             ActionAttributes.KeyAction.KA_DIR_Y, 1);
-    protected static final ActionAttributes.KeyAction DEFAULT_ROTATE_ROLLDOWN_KEY_ACT =
+    private static final ActionAttributes.KeyAction DEFAULT_ROTATE_ROLLDOWN_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_RIGHT,
             ActionAttributes.KeyAction.KA_DIR_Y, -1);
-    public static final ActionAttributes.KeyAction[] rollKeyEvents =
+    private static final ActionAttributes.KeyAction[] rollKeyEvents =
         {
             DEFAULT_ROTATE_ROLLUP_KEY_ACT,
             DEFAULT_ROTATE_ROLLDOWN_KEY_ACT
@@ -107,35 +107,35 @@ public class ViewInputAttributes {
     // Reset Heading
     private static final ActionAttributes.KeyAction DEFAULT_RESET_HEADING_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_N, ActionAttributes.KeyAction.KA_DIR_X, 1);
-    public static final ActionAttributes.KeyAction[] resetHeadingEvents =
+    private static final ActionAttributes.KeyAction[] resetHeadingEvents =
         {
             DEFAULT_RESET_HEADING_KEY_ACT
         };
     // Reset Heading, Pitch, and Roll
     private static final ActionAttributes.KeyAction DEFAULT_RESET_HEADING_PITCH_ROLL_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_R, ActionAttributes.KeyAction.KA_DIR_X, 1);
-    public static final ActionAttributes.KeyAction[] resetHeadingPitchRollEvents =
+    private static final ActionAttributes.KeyAction[] resetHeadingPitchRollEvents =
         {
             DEFAULT_RESET_HEADING_PITCH_ROLL_KEY_ACT
         };
     // Stop view
     private static final ActionAttributes.KeyAction DEFAULT_STOP_VIEW_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_SPACE, ActionAttributes.KeyAction.KA_DIR_X, 1);
-    public static final ActionAttributes.KeyAction[] stopViewEvents =
+    private static final ActionAttributes.KeyAction[] stopViewEvents =
         {
             DEFAULT_STOP_VIEW_KEY_ACT
         };
     // MoveTo Events
     private static final ActionAttributes.MouseAction DEFAULT_MOVETO_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON1);
-    public static final ActionAttributes.MouseAction[] moveToMouseEvents =
+    private static final ActionAttributes.MouseAction[] moveToMouseEvents =
         {
             DEFAULT_MOVETO_MOUSE_MODS
         };
     // Horizontal Translation mouse events
     private static final ActionAttributes.MouseAction DEFAULT_HORIZONTAL_TRANSLATE_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON1_DOWN_MASK);
-    public static final ActionAttributes.MouseAction[] horizontalTransMouseEvents =
+    private static final ActionAttributes.MouseAction[] horizontalTransMouseEvents =
         {
             DEFAULT_HORIZONTAL_TRANSLATE_MOUSE_MODS
         };
@@ -148,7 +148,7 @@ public class ViewInputAttributes {
         new ActionAttributes.KeyAction(KeyEvent.VK_UP, ActionAttributes.KeyAction.KA_DIR_Y, 1);
     private static final ActionAttributes.KeyAction DEFAULT_HORIZONTAL_TRANSDOWN_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_DOWN, ActionAttributes.KeyAction.KA_DIR_Y, -1);
-    public static final ActionAttributes.KeyAction[] horizontalTransKeyEvents =
+    private static final ActionAttributes.KeyAction[] horizontalTransKeyEvents =
         {
             DEFAULT_HORIZONTAL_TRANSLEFT_KEY_ACT,
             DEFAULT_HORIZONTAL_TRANSRIGHT_KEY_ACT,
@@ -158,13 +158,13 @@ public class ViewInputAttributes {
     // Vertical Translation Mouse Events
     private static final ActionAttributes.MouseAction DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON2_DOWN_MASK);
-    public static final ActionAttributes.MouseAction[] verticalTransMouseEvents =
+    private static final ActionAttributes.MouseAction[] verticalTransMouseEvents =
         {
             DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS
         };
     private static final ActionAttributes.MouseAction DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS_CTRL =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON1_DOWN_MASK);
-    public static final ActionAttributes.MouseAction[] verticalTransMouseEventsCtrl =
+    private static final ActionAttributes.MouseAction[] verticalTransMouseEventsCtrl =
         {
             DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS_CTRL
         };
@@ -175,7 +175,7 @@ public class ViewInputAttributes {
     private static final ActionAttributes.KeyAction DEFAULT_VERTICAL_TRANSDOWN_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_DOWN,
             ActionAttributes.KeyAction.KA_DIR_Z, 1);
-    public static final ActionAttributes.KeyAction[] verticalTransKeyEventsCtrl =
+    private static final ActionAttributes.KeyAction[] verticalTransKeyEventsCtrl =
         {
             DEFAULT_VERTICAL_TRANSUP_KEY_ACT,
             DEFAULT_VERTICAL_TRANSDOWN_KEY_ACT
@@ -192,7 +192,7 @@ public class ViewInputAttributes {
     private static final ActionAttributes.KeyAction DEFAULT_VERTICAL_TRANSDOWN_MINUSKEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_MINUS,
             ActionAttributes.KeyAction.KA_DIR_Z, 1);
-    public static final ActionAttributes.KeyAction[] verticalTransKeyEvents =
+    private static final ActionAttributes.KeyAction[] verticalTransKeyEvents =
         {
             DEFAULT_VERTICAL_TRANSUP_ADDKEY_ACT,
             DEFAULT_VERTICAL_TRANSDOWN_EQUALSKEY_ACT,
@@ -201,20 +201,20 @@ public class ViewInputAttributes {
         };
     private static final ActionAttributes.MouseAction DEFAULT_VERTICAL_TRANSLATE_MOUSE_WHEEL_MODS =
         new ActionAttributes.MouseAction(MouseEvent.MOUSE_WHEEL);
-    public static final ActionAttributes.MouseAction[] verticalTransMouseWheelEvents =
+    private static final ActionAttributes.MouseAction[] verticalTransMouseWheelEvents =
         {
             DEFAULT_VERTICAL_TRANSLATE_MOUSE_WHEEL_MODS
         };
     private static final ActionAttributes.MouseAction DEFAULT_ROTATE_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON3_DOWN_MASK);
-    public static final ActionAttributes.MouseAction[] rotateMouseEvents =
+    private static final ActionAttributes.MouseAction[] rotateMouseEvents =
         {
             DEFAULT_ROTATE_MOUSE_MODS
         };
     private static final ActionAttributes.MouseAction DEFAULT_ROTATE_MOUSE_MODS_SHIFT =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON1_DOWN_MASK);
     // Speed in log-meters per wheel movement
-    public static final ActionAttributes.MouseAction[] rotateMouseEventsShift =
+    private static final ActionAttributes.MouseAction[] rotateMouseEventsShift =
         {
             DEFAULT_ROTATE_MOUSE_MODS_SHIFT
         };
@@ -231,7 +231,7 @@ public class ViewInputAttributes {
     private static final ActionAttributes.KeyAction DEFAULT_ROTATE_PITCHDOWN_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_DOWN,
             ActionAttributes.KeyAction.KA_DIR_Y, 1);
-    public static final ActionAttributes.KeyAction[] rotationKeyEvents =
+    private static final ActionAttributes.KeyAction[] rotationKeyEvents =
         {
             DEFAULT_ROTATE_HEADINGLEFT_KEY_ACT,
             DEFAULT_ROTATE_HEADINGRIGHT_KEY_ACT,
@@ -244,7 +244,7 @@ public class ViewInputAttributes {
     private static final ActionAttributes.KeyAction DEFAULT_ROTATE_PITCHDOWN_KEY_PAGE_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_PAGE_DOWN,
             ActionAttributes.KeyAction.KA_DIR_Y, 1);
-    public static final ActionAttributes.KeyAction[] rotationKeyEventsPage =
+    private static final ActionAttributes.KeyAction[] rotationKeyEventsPage =
         {
             DEFAULT_ROTATE_PITCHUP_KEY_PAGE_ACT,
             DEFAULT_ROTATE_PITCHDOWN_KEY_PAGE_ACT
@@ -274,7 +274,7 @@ public class ViewInputAttributes {
         return this.deviceActionMap.get(deviceKey);
     }
 
-    public void setActionMap(Object deviceKey, ActionAttributesMap map) {
+    private void setActionMap(Object deviceKey, ActionAttributesMap map) {
         if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
@@ -289,11 +289,11 @@ public class ViewInputAttributes {
         this.deviceActionMap.put(deviceKey, map);
     }
 
-    public void addModifierAction(Object device, Integer modifier, ActionAttributes action) {
+    private void addModifierAction(Object device, Integer modifier, ActionAttributes action) {
         this.addModifierActionList(device, modifier);
         DeviceModifierMap modActionMap = this.getModifierActionMap(device);
 
-        List<ActionAttributes> actionList = (ActionAttributesList) modActionMap.get(modifier);
+        Collection<ActionAttributes> actionList = (ActionAttributesList) modActionMap.get(modifier);
         actionList.remove(action);
         actionList.add(action);
     }
@@ -322,7 +322,7 @@ public class ViewInputAttributes {
         }
     }
 
-    public void addModifierActionList(Object device, Integer modifier) {
+    private void addModifierActionList(Object device, Integer modifier) {
         DeviceModifierMap deviceActionMap = this.getModifierActionMap(device);
         if (deviceActionMap == null) {
             deviceActionMap = new DeviceModifierMap();
@@ -354,7 +354,7 @@ public class ViewInputAttributes {
         return this.deviceMap.get(deviceKey);
     }
 
-    public void setDeviceAttributes(Object deviceKey, DeviceAttributes attributes) {
+    private void setDeviceAttributes(Object deviceKey, DeviceAttributes attributes) {
         if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
@@ -379,7 +379,7 @@ public class ViewInputAttributes {
         return this.deviceModActionMap.get(deviceKey);
     }
 
-    public void setModifierActionMap(Object deviceKey, DeviceModifierMap map) {
+    private void setModifierActionMap(Object deviceKey, DeviceModifierMap map) {
         if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
@@ -489,13 +489,13 @@ public class ViewInputAttributes {
         }
     }
 
-    protected void setDefaultDeviceAttributes() {
+    private void setDefaultDeviceAttributes() {
         this.setDeviceAttributes(DEVICE_KEYBOARD, new DeviceAttributes(DEFAULT_KEY_SENSITIVITY));
         this.setDeviceAttributes(DEVICE_MOUSE, new DeviceAttributes(DEFAULT_MOUSE_SENSITIVITY));
         this.setDeviceAttributes(DEVICE_MOUSE_WHEEL, new DeviceAttributes(DEFAULT_MOUSE_WHEEL_SENSITIVITY));
     }
 
-    protected void setDeviceModifierActionMaps() {
+    private void setDeviceModifierActionMaps() {
         // Mouse Wheel Vertical Translation Event
         if (Configuration.isMacOS()) {
             this.addAction(DEVICE_MOUSE_WHEEL, ActionAttributes.NO_MODIFIER, VIEW_VERTICAL_TRANSLATE,
@@ -516,7 +516,7 @@ public class ViewInputAttributes {
                 DEFAULT_MOUSE_MOVE_TO_MIN_VALUE, DEFAULT_MOUSE_MOVE_TO_MAX_VALUE,
                 DEFAULT_MOVE_TO_SMOOTHING_ENABLED, DEFAULT_MOVE_TO_SMOOTHING_VALUE));
         this.addAction(DEVICE_MOUSE, KeyEvent.ALT_DOWN_MASK, VIEW_MOVE_TO_SLOW,
-            this.makeSlowActionAttributes(this.getActionAttributes(
+            ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
                 DEVICE_MOUSE, VIEW_MOVE_TO), DEFAULT_SLOW_VALUE));
 
         // Mouse Button Rotate Events
@@ -563,10 +563,10 @@ public class ViewInputAttributes {
                 DEFAULT_ROTATE_SMOOTHING_ENABLED, DEFAULT_ROTATE_SMOOTHING_VALUE));
 
         this.addAction(DEVICE_KEYBOARD, KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK, VIEW_ROTATE_KEYS_SHIFT_SLOW,
-            this.makeSlowActionAttributes(this.getActionAttributes(
+            ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
                 DEVICE_KEYBOARD, VIEW_ROTATE_KEYS_SHIFT), DEFAULT_SLOW_VALUE));
         this.addAction(DEVICE_KEYBOARD, KeyEvent.ALT_DOWN_MASK, VIEW_ROTATE_SLOW,
-            this.makeSlowActionAttributes(this.getActionAttributes(
+            ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
                 DEVICE_KEYBOARD, VIEW_ROTATE_KEYS), DEFAULT_SLOW_VALUE));
 
         // Keyboard Roll Actions
@@ -582,7 +582,7 @@ public class ViewInputAttributes {
                 DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE, DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE,
                 DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_VALUE));
         this.addAction(DEVICE_KEYBOARD, KeyEvent.ALT_DOWN_MASK, VIEW_HORIZONTAL_TRANSLATE_SLOW,
-            this.makeSlowActionAttributes(this.getActionAttributes(
+            ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
                 DEVICE_KEYBOARD, VIEW_HORIZONTAL_TRANS_KEYS), DEFAULT_SLOW_VALUE));
 
         // Vertical Translation Actions
@@ -591,7 +591,7 @@ public class ViewInputAttributes {
                 DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE, DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE,
                 DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
         this.addAction(DEVICE_KEYBOARD, KeyEvent.ALT_DOWN_MASK, VIEW_VERTICAL_TRANS_KEYS_SLOW,
-            this.makeSlowActionAttributes(this.getActionAttributes(
+            ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
                 DEVICE_KEYBOARD, VIEW_VERTICAL_TRANS_KEYS), DEFAULT_SLOW_VALUE));
 
         this.addAction(DEVICE_KEYBOARD, KeyEvent.CTRL_DOWN_MASK, VIEW_VERTICAL_TRANS_KEYS_CTRL,
@@ -603,11 +603,11 @@ public class ViewInputAttributes {
             this.getActionAttributes(DEVICE_KEYBOARD, VIEW_VERTICAL_TRANS_KEYS));
         this.addAction(DEVICE_KEYBOARD, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
             VIEW_VERTICAL_TRANS_KEYS_SLOW_CTRL,
-            this.makeSlowActionAttributes(this.getActionAttributes(
+            ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
                 DEVICE_KEYBOARD, VIEW_VERTICAL_TRANS_KEYS_CTRL), DEFAULT_SLOW_VALUE));
         this.addAction(DEVICE_KEYBOARD, KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
             VIEW_VERTICAL_TRANS_KEYS_SLOW_META,
-            this.makeSlowActionAttributes(this.getActionAttributes(
+            ViewInputAttributes.makeSlowActionAttributes(this.getActionAttributes(
                 DEVICE_KEYBOARD, VIEW_VERTICAL_TRANS_KEYS_CTRL), DEFAULT_SLOW_VALUE));
 
         // Reset Heading Action
@@ -626,7 +626,7 @@ public class ViewInputAttributes {
                 0.1, 0.1, false, 0.1));
     }
 
-    protected ActionAttributes makeSlowActionAttributes(ActionAttributes attributes, double slowCoefficient) {
+    private static ActionAttributes makeSlowActionAttributes(ActionAttributes attributes, double slowCoefficient) {
         ActionAttributes slowAttributes = new ActionAttributes(attributes);
         double[] values = attributes.getValues();
         slowAttributes.setValues(values[0] * slowCoefficient, values[1] * slowCoefficient);
@@ -672,7 +672,7 @@ public class ViewInputAttributes {
             mouseActions = null;
         }
 
-        public ActionAttributes(ActionAttributes.MouseAction[] mouseActions, ActionTrigger trigger,
+        ActionAttributes(ActionAttributes.MouseAction[] mouseActions, ActionTrigger trigger,
             double minValue, double maxValue, boolean enableSmoothing, double smoothingValue) {
             this.setValues(minValue, maxValue);
             this.setEnableSmoothing(enableSmoothing);
@@ -688,7 +688,7 @@ public class ViewInputAttributes {
             this.setSmoothingValue(smoothingValue);
         }
 
-        public ActionAttributes(ActionAttributes attributes) {
+        ActionAttributes(ActionAttributes attributes) {
             if (attributes == null) {
                 String message = Logging.getMessage("nullValue.AttributesIsNull");
                 Logging.logger().severe(message);
@@ -727,7 +727,7 @@ public class ViewInputAttributes {
             return new double[] {this.minValue, this.maxValue};
         }
 
-        public void setValues(double minValue, double maxValue) {
+        void setValues(double minValue, double maxValue) {
             if (minValue <= 0) {
                 String message = Logging.getMessage("generic.ArgumentOutOfRange", "minValue <= 0");
                 Logging.logger().severe(message);
@@ -751,7 +751,7 @@ public class ViewInputAttributes {
             return this.enableSmoothing;
         }
 
-        public void setEnableSmoothing(boolean enable) {
+        void setEnableSmoothing(boolean enable) {
             this.enableSmoothing = enable;
         }
 
@@ -770,11 +770,11 @@ public class ViewInputAttributes {
             this.smoothingValue = smoothingValue;
         }
 
-        public int getKeyCodeModifier() {
+        int getKeyCodeModifier() {
             return (this.keyCodeModifier);
         }
 
-        public void setKeyCodeModifier(int modifier) {
+        void setKeyCodeModifier(int modifier) {
             this.keyCodeModifier = modifier;
         }
 
@@ -782,11 +782,11 @@ public class ViewInputAttributes {
             return (this.keyActions);
         }
 
-        public void setKeyActions(KeyAction[] keyActions) {
+        void setKeyActions(KeyAction[] keyActions) {
             this.keyActions = Arrays.asList(keyActions);
         }
 
-        public void setKeyActions(List keyActions) {
+        void setKeyActions(List keyActions) {
             this.keyActions = keyActions;
         }
 
@@ -794,7 +794,7 @@ public class ViewInputAttributes {
             return (this.mouseActions);
         }
 
-        public void setMouseActions(MouseAction[] mouseActions) {
+        void setMouseActions(MouseAction[] mouseActions) {
             this.mouseActions = Arrays.asList(mouseActions);
         }
 
@@ -806,7 +806,7 @@ public class ViewInputAttributes {
             return this.actionTrigger;
         }
 
-        public void setActionTrigger(ActionTrigger actionTrigger) {
+        void setActionTrigger(ActionTrigger actionTrigger) {
             this.actionTrigger = actionTrigger;
         }
 
@@ -819,8 +819,8 @@ public class ViewInputAttributes {
 
         public static class KeyAction {
             public static final int KA_DIR_X = 0;
-            public static final int KA_DIR_Y = 1;
-            public static final int KA_DIR_Z = 2;
+            static final int KA_DIR_Y = 1;
+            static final int KA_DIR_Z = 2;
 
             public final int keyCode;
             public final int sign;
@@ -845,7 +845,7 @@ public class ViewInputAttributes {
     public static class DeviceAttributes {
         private double sensitivity;
 
-        public DeviceAttributes(double sensitivity) {
+        DeviceAttributes(double sensitivity) {
             this.setSensitivity(sensitivity);
         }
 
@@ -863,7 +863,7 @@ public class ViewInputAttributes {
             return this.sensitivity;
         }
 
-        public void setSensitivity(double sensitivity) {
+        void setSensitivity(double sensitivity) {
             if (sensitivity <= 0) {
                 String message = Logging.getMessage("generic.ArgumentOutOfRange", "sensitivity <= 0");
                 Logging.logger().severe(message);
@@ -877,7 +877,7 @@ public class ViewInputAttributes {
     public static class ActionAttributesMap {
         private final Map<Object, ActionAttributes> actionMap = new HashMap<>();
 
-        public ActionAttributesMap() {
+        ActionAttributesMap() {
         }
 
         public ActionAttributes getActionAttributes(Object actionKey) {
@@ -890,7 +890,7 @@ public class ViewInputAttributes {
             return this.actionMap.get(actionKey);
         }
 
-        public void setActionAttributes(Object actionKey, ActionAttributes attributes) {
+        void setActionAttributes(Object actionKey, ActionAttributes attributes) {
             if (actionKey == null) {
                 String message = Logging.getMessage("nullValue.ActionKeyIsNull");
                 Logging.logger().severe(message);

@@ -1197,11 +1197,6 @@ public class Matrix {
      * @throws IllegalArgumentException if the points Iterable is null.
      */
     public static Matrix fromCovarianceOfVertices(Iterable<? extends Vec4> points) {
-//        if (points == null) {
-//            String msg = Logging.getMessage("nullValue.IterableIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         final Vec4 mean = Vec4.computeAveragePoint(points);
         if (mean == null)
@@ -1337,11 +1332,6 @@ public class Matrix {
      */
     public static void computeEigensystemFromSymmetricMatrix3(Matrix matrix, double[] outEigenvalues,
         Vec4[] outEigenvectors) {
-//        if (matrix == null) {
-//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (matrix.m12 != matrix.m21 || matrix.m13 != matrix.m31 || matrix.m23 != matrix.m32) {
             String msg = Logging.getMessage("generic.MatrixNotSymmetric", matrix);
@@ -1626,8 +1616,6 @@ public class Matrix {
                 A[j][j] = TINY;
             else if (ajj <= 0 && ajj > -TINY)
                 A[j][j] = -TINY;
-//            if (ajj == 0)
-//                A[j][j] = TINY;
 
             if (j != 3) {
                 dum = 1 / A[j][j];
@@ -2016,7 +2004,7 @@ public class Matrix {
             this.isOrthonormalTransform);
     }
 
-    public final Vec4 transformBy3(Matrix matrix, double x, double y, double z) {
+    public static Vec4 transformBy3(Matrix matrix, double x, double y, double z) {
         if (matrix == null) {
             String msg = Logging.getMessage("nullValue.MatrixIsNull");
             Logging.logger().severe(msg);

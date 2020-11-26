@@ -7,8 +7,8 @@ package gov.nasa.worldwind.formats.shapefile;
 
 import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;

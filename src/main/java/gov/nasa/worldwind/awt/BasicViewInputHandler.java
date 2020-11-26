@@ -157,7 +157,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         int modifier = e.getModifiersEx();
         for (int i = 0; i < NUM_MODIFIERS; i++) {
             if ((((modifier & this.modifierList[i]) == this.modifierList[i]))) {
-                ViewInputAttributes.ActionAttributesList actionList = (ViewInputAttributes.ActionAttributesList)
+                Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
                     keyModsActionMap.get(this.modifierList[i]);
                 eventHandled = callActionListListeners(e,
                     ViewInputAttributes.ActionAttributes.ActionTrigger.ON_PRESS, actionList);
@@ -179,7 +179,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         int modifier = e.getModifiersEx();
         for (int i = 0; i < NUM_MODIFIERS; i++) {
             if ((((modifier & this.modifierList[i]) == this.modifierList[i]))) {
-                ViewInputAttributes.ActionAttributesList actionList = (ViewInputAttributes.ActionAttributesList)
+                Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
                     mouseModsActionMap.get(this.modifierList[i]);
                 eventHandled = callMouseActionListListeners(e,
                     ViewInputAttributes.ActionAttributes.ActionTrigger.ON_PRESS, actionList);
@@ -198,7 +198,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         int modifier = e.getModifiersEx();
         for (int i = 0; i < NUM_MODIFIERS; i++) {
             if ((((modifier & this.modifierList[i]) == this.modifierList[i]))) {
-                ViewInputAttributes.ActionAttributesList actionList = (ViewInputAttributes.ActionAttributesList)
+                Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
                     mouseWheelModsActionMap.get(this.modifierList[i]);
                 eventHandled = callMouseWheelActionListListeners(e,
                     ViewInputAttributes.ActionAttributes.ActionTrigger.ON_DRAG, actionList);
@@ -219,7 +219,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
 
         for (int i = 0; i < NUM_MODIFIERS; i++) {
             if ((((modifier & this.modifierList[i]) == this.modifierList[i]))) {
-                ViewInputAttributes.ActionAttributesList actionList = (ViewInputAttributes.ActionAttributesList)
+                Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
                     mouseModsActionMap.get(this.modifierList[i]);
                 if (callMouseActionListListeners(e,
                     ViewInputAttributes.ActionAttributes.ActionTrigger.ON_DRAG, actionList)) {
@@ -235,16 +235,16 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
     // have been generated.
     protected boolean handlePerFrameKeyState(KeyEventState keys, String target) {
 
-        if (keys.getNumKeysDown() == 0) {
+        if (keys.getNumKeysDown() == 0)
             return false;
-        }
+
         boolean isKeyEventTrigger = false;
 
         int modifier = keys.getModifiersEx();
         for (int i = 0; i < NUM_MODIFIERS; i++) {
             if (((modifier & this.modifierList[i]) == this.modifierList[i])) {
 
-                ViewInputAttributes.ActionAttributesList actionList = (ViewInputAttributes.ActionAttributesList)
+                Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
                     keyModsActionMap.get(this.modifierList[i]);
                 isKeyEventTrigger = callActionListListeners(keys, target,
                     ViewInputAttributes.ActionAttributes.ActionTrigger.ON_KEY_DOWN, actionList);
@@ -256,7 +256,6 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
     }
 
     protected boolean handlePerFrameMouseState(KeyEventState keys, String target) {
-        boolean eventHandled = false;
 
         if (keys.getNumButtonsDown() == 0) {
             return false;
@@ -267,7 +266,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         for (int i = 0; i < NUM_MODIFIERS; i++) {
             if (((modifier & this.modifierList[i]) == this.modifierList[i])) {
 
-                ViewInputAttributes.ActionAttributesList actionList = (ViewInputAttributes.ActionAttributesList)
+                Iterable<ViewInputAttributes.ActionAttributes> actionList = (ViewInputAttributes.ActionAttributesList)
                     mouseModsActionMap.get(this.modifierList[i]);
                 if (callActionListListeners(keys, target,
                     ViewInputAttributes.ActionAttributes.ActionTrigger.ON_KEY_DOWN, actionList)) {
@@ -277,10 +276,10 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
             }
         }
 
-        return (eventHandled);
+        return false;
     }
 
-    protected boolean callMouseActionListListeners(MouseEvent e,
+    private boolean callMouseActionListListeners(MouseEvent e,
         ViewInputAttributes.ActionAttributes.ActionTrigger trigger,
         Iterable<ViewInputAttributes.ActionAttributes> actionList) {
         boolean eventHandled = false;
@@ -298,7 +297,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         return eventHandled;
     }
 
-    protected boolean callMouseWheelActionListListeners(MouseWheelEvent e,
+    private boolean callMouseWheelActionListListeners(MouseWheelEvent e,
         ViewInputAttributes.ActionAttributes.ActionTrigger trigger,
         Iterable<ViewInputAttributes.ActionAttributes> actionList) {
         boolean eventHandled = false;
@@ -316,7 +315,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         return eventHandled;
     }
 
-    protected boolean callActionListListeners(KeyEvent e,
+    private boolean callActionListListeners(KeyEvent e,
         ViewInputAttributes.ActionAttributes.ActionTrigger trigger,
         Iterable<ViewInputAttributes.ActionAttributes> actionList) {
         boolean eventHandled = false;
@@ -334,7 +333,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         return eventHandled;
     }
 
-    protected boolean callActionListListeners(KeyEventState keys, String target,
+    private boolean callActionListListeners(KeyEventState keys, String target,
         ViewInputAttributes.ActionAttributes.ActionTrigger trigger,
         Iterable<ViewInputAttributes.ActionAttributes> actionList) {
         boolean eventHandled = false;
@@ -352,7 +351,7 @@ public abstract class BasicViewInputHandler extends AbstractViewInputHandler {
         return eventHandled;
     }
 
-    protected boolean callActionListener(KeyEventState keys, String target,
+    private boolean callActionListener(KeyEventState keys, String target,
         ViewInputAttributes.ActionAttributes action) {
 
         if (action.getActionListener() != null) {

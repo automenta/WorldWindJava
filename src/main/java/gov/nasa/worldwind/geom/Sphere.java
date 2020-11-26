@@ -8,7 +8,7 @@ package gov.nasa.worldwind.geom;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.*;
 import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.util.*;
 
 /**
@@ -420,27 +420,4 @@ public final class Sphere implements Extent, Renderable {
         result = 29 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
-
-//    public final boolean intersects(Line line)
-//    {
-//        if (line == null)
-//        {
-//            String message = WorldWind.retrieveErrMsg("nullValue.LineIsNull");
-//            WorldWind.logger().logger(Level.SEVERE, message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        double a = line.getDirection().getLengthSquared();
-//        double b = 2 * line.selfDot();
-//        double c = line.getOrigin().selfDot() - this.radius * this.radius;
-//
-//        double discriminant = Sphere.discriminant(a, b, c);
-//        if (discriminant < 0)
-//        {
-//            return false;
-//        }
-//
-//        return true;
-//
-//    }
 }

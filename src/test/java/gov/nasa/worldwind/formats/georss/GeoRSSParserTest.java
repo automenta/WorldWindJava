@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.formats.georss;
 
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

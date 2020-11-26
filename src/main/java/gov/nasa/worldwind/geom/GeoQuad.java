@@ -8,7 +8,7 @@ package gov.nasa.worldwind.geom;
 
 import gov.nasa.worldwind.util.Logging;
 
-import java.util.*;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 /**
@@ -28,7 +28,7 @@ public class GeoQuad {
     private final LatLon sw, se, ne, nw;
     private final Line northEdge, southEdge, eastEdge, westEdge;
 
-    public GeoQuad(Collection<? extends LatLon> corners) {
+    public GeoQuad(Iterable<? extends LatLon> corners) {
         if (corners == null) {
             String message = Logging.getMessage("nullValue.LocationsListIsNull");
             Logging.logger().severe(message);

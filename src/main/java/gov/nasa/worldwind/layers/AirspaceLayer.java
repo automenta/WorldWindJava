@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.layers;
 
-import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.render.airspaces.Airspace;
+import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.examples.render.airspaces.Airspace;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -42,7 +42,7 @@ public class AirspaceLayer extends AbstractLayer {
      * @param airspace the airspace to add.
      * @throws IllegalArgumentException if the airspace is null.
      * @throws IllegalStateException    if a custom Iterable has been specified by a call to setRenderables.
-     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#add(gov.nasa.worldwind.render.Renderable)}
+     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#add(gov.nasa.worldwind.examples.render.Renderable)}
      * instead.
      */
     @Deprecated
@@ -99,7 +99,7 @@ public class AirspaceLayer extends AbstractLayer {
      * @param airspace the airspace to remove.
      * @throws IllegalArgumentException if the airspace is null.
      * @throws IllegalStateException    if a custom Iterable has been specified by a call to setRenderables.
-     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#remove(gov.nasa.worldwind.render.Renderable)}
+     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#remove(gov.nasa.worldwind.examples.render.Renderable)}
      * instead.
      */
     @Deprecated
@@ -202,7 +202,7 @@ public class AirspaceLayer extends AbstractLayer {
      * Returns false.
      *
      * @return false
-     * @deprecated Use {@link gov.nasa.worldwind.render.ShapeAttributes#isEnableAntialiasing()} on each Airspace
+     * @deprecated Use {@link gov.nasa.worldwind.examples.render.ShapeAttributes#isEnableAntialiasing()} on each Airspace
      * instance in the layer.
      */
     @Deprecated
@@ -214,7 +214,7 @@ public class AirspaceLayer extends AbstractLayer {
      * Does nothing.
      *
      * @param enable ignored.
-     * @deprecated Use {@link gov.nasa.worldwind.render.ShapeAttributes#setEnableAntialiasing(boolean)} on each Airspace
+     * @deprecated Use {@link gov.nasa.worldwind.examples.render.ShapeAttributes#setEnableAntialiasing(boolean)} on each Airspace
      * instance in the layer.
      */
     @Deprecated
@@ -274,7 +274,7 @@ public class AirspaceLayer extends AbstractLayer {
      * Returns false.
      *
      * @return false
-     * @deprecated Use {@link gov.nasa.worldwind.render.ShapeAttributes#isEnableLighting()} on each Airspace instance in
+     * @deprecated Use {@link gov.nasa.worldwind.examples.render.ShapeAttributes#isEnableLighting()} on each Airspace instance in
      * the layer.
      */
     @Deprecated
@@ -286,7 +286,7 @@ public class AirspaceLayer extends AbstractLayer {
      * Does nothing.
      *
      * @param enable ignored.
-     * @deprecated Use {@link gov.nasa.worldwind.render.ShapeAttributes#isEnableLighting()} on each Airspace instance in
+     * @deprecated Use {@link gov.nasa.worldwind.examples.render.ShapeAttributes#isEnableLighting()} on each Airspace instance in
      * the layer.
      */
     @Deprecated

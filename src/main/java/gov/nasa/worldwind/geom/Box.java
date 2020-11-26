@@ -8,7 +8,7 @@ package gov.nasa.worldwind.geom;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -421,7 +421,7 @@ public class Box implements Extent, Renderable {
             // If the iterable contains two or more boxes, gather up their corners and return a box that encloses the
             // boxes corners. We create an ArrayList with enough room to hold all the boxes corners to avoid unnecessary
             // overhead.
-            List<Vec4> corners = new ArrayList<>(8 * boxes.size());
+            Collection<Vec4> corners = new ArrayList<>(8 * boxes.size());
             for (Box box : boxes) {
                 corners.addAll(Arrays.asList(box.getCorners()));
             }
@@ -839,87 +839,6 @@ public class Box implements Extent, Renderable {
         double area = WWMath.computePolygonAreaFromVertices(Arrays.asList(screenVertices));
         return Math.abs(area);
     }
-
-//    public static void main(String[] args)
-//    {
-//        Box box = new Box(new Vec4[] {new Vec4(1, 0, 0), new Vec4(0, 1, 0), new Vec4(0, 0, 1)},
-//            -.5, .5, -.5, .5, -.5, .5);
-//        Line line = new Line(new Vec4(-1, 0.5, 0.5), new Vec4(1, 0, 0));
-//        Intersection[] intersections = box.intersect(line);
-//        if (intersections != null && intersections.length > 0 && intersections[0] != null)
-//            System.out.println(intersections[0]);
-//        if (intersections != null && intersections.length > 1 && intersections[1] != null)
-//            System.out.println(intersections[1]);
-//    }
-
-//    /** {@inheritDoc} */
-//    public Intersection[] intersect(Line line)
-//    {
-//        return WWMath.polytopeIntersect(line, this.planes);
-//        // Algorithm from "3-D Computer Graphics" by Samuel R. Buss, 2005, Section X.1.4.
-//
-//        // Determine intersection with each plane and categorize the intersections as "front" if the line intersects
-//        // the front side of the plane (dot product of line direction with plane normal is negative) and "back" if the
-//        // line intersects the back side of the plane (dot product of line direction with plane normal is positive).
-//
-//        double fMax = -Double.MAX_VALUE;
-//        double bMin = Double.MAX_VALUE;
-//        boolean isTangent = false;
-//
-//        Vec4 u = line.getDirection();
-//        Vec4 p = line.getOrigin();
-//
-//        for (Plane plane : this.planes)
-//        {
-//            Vec4 n = plane.getNormal();
-//            double d = -plane.getDistance();
-//
-//            double s = u.dot3(n);
-//            if (s == 0) // line is parallel to plane
-//            {
-//                double pdn = p.dot3(n);
-//                if (pdn > d) // is line in positive halfspace (in front of) of the plane?
-//                    return null; // no intersection
-//                else
-//                {
-//                    if (pdn == d)
-//                        isTangent = true; // line coincident with plane
-//                    continue; // line is in negative halfspace; possible intersection; check other planes
-//                }
-//            }
-//
-//            // Determine whether front or back intersection.
-//            double a = (d - p.dot3(n)) / s;
-//            if (u.dot3(n) < 0) // line intersects front face and therefore entering box
-//            {
-//                if (a > fMax)
-//                {
-//                    if (a > bMin)
-//                        return null;
-//                    fMax = a;
-//                }
-//            }
-//            else // line intersects back face and therefore leaving box
-//            {
-//                if (a < bMin)
-//                {
-//                    if (a < 0 || a < fMax)
-//                        return null;
-//                    bMin = a;
-//                }
-//            }
-//        }
-//
-//        // Compute the Cartesian intersection points. There will be no more than two.
-//        if (fMax >= 0) // intersects frontface and backface; point origin is outside the box
-//            return new Intersection[]
-//                {
-//                    new Intersection(p.add3(u.multiply3(fMax)), isTangent),
-//                    new Intersection(p.add3(u.multiply3(bMin)), isTangent)
-//                };
-//        else // intersects backface only; point origin is within the box
-//            return new Intersection[] {new Intersection(p.add3(u.multiply3(bMin)), isTangent)};
-//    }
 
     /**
      * Computes an index into the <code>ProjectionHullTable</code> for this <code>Box</code> given the specified

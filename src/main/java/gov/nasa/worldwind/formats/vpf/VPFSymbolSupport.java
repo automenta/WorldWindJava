@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.formats.vpf;
 
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.examples.render.Material;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.awt.*;

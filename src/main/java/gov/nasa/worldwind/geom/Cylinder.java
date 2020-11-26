@@ -8,8 +8,8 @@ package gov.nasa.worldwind.geom;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.*;
 import gov.nasa.worldwind.View;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -559,7 +559,7 @@ public class Cylinder implements Extent, Renderable {
         return intersect(line) != null;
     }
 
-    protected boolean intcyl(Vec4 raybase, Vec4 raycos, Vec4 base, Vec4 axis, double radius, double[] tVals) {
+    protected static boolean intcyl(Vec4 raybase, Vec4 raycos, Vec4 base, Vec4 axis, double radius, double[] tVals) {
         boolean hit; // True if ray intersects cyl
         Vec4 RC; // Ray base to cylinder base
         double d; // Shortest distance between the ray and the cylinder
@@ -599,7 +599,7 @@ public class Cylinder implements Extent, Renderable {
         return hit;
     }
 
-    protected boolean clipcyl(Vec4 raybase, Vec4 raycos, Vec4 bot, Vec4 top, Vec4 axis, double[] tVals) {
+    protected static boolean clipcyl(Vec4 raybase, Vec4 raycos, Vec4 bot, Vec4 top, Vec4 axis, double[] tVals) {
         double dc, dwb, dwt, tb, tt;
         double in, out; // Object intersection distances.
 
@@ -670,7 +670,7 @@ public class Cylinder implements Extent, Renderable {
         return 1; // Cylinder almost certainly intersects
     }
 
-    protected double intersectsAt(Plane plane, double effectiveRadius, Vec4[] endpoints) {
+    protected static double intersectsAt(Plane plane, double effectiveRadius, Vec4[] endpoints) {
         // Test the distance from the first end-point. Assumes that the first end-point's w-coordinate is 1.
         double dq1 = plane.dot(endpoints[0]);
         boolean bq1 = dq1 <= -effectiveRadius;
@@ -743,32 +743,32 @@ public class Cylinder implements Extent, Renderable {
         Vec4[] endPoints = new Vec4[] {this.bottomCenter, this.topCenter};
 
         double effectiveRadius = this.getEffectiveRadius(frustum.getNear());
-        intersectionPoint = this.intersectsAt(frustum.getNear(), effectiveRadius, endPoints);
+        intersectionPoint = Cylinder.intersectsAt(frustum.getNear(), effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         // Near and far have the same effective radius.
-        intersectionPoint = this.intersectsAt(frustum.getFar(), effectiveRadius, endPoints);
+        intersectionPoint = Cylinder.intersectsAt(frustum.getFar(), effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         effectiveRadius = this.getEffectiveRadius(frustum.getLeft());
-        intersectionPoint = this.intersectsAt(frustum.getLeft(), effectiveRadius, endPoints);
+        intersectionPoint = Cylinder.intersectsAt(frustum.getLeft(), effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         effectiveRadius = this.getEffectiveRadius(frustum.getRight());
-        intersectionPoint = this.intersectsAt(frustum.getRight(), effectiveRadius, endPoints);
+        intersectionPoint = Cylinder.intersectsAt(frustum.getRight(), effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         effectiveRadius = this.getEffectiveRadius(frustum.getTop());
-        intersectionPoint = this.intersectsAt(frustum.getTop(), effectiveRadius, endPoints);
+        intersectionPoint = Cylinder.intersectsAt(frustum.getTop(), effectiveRadius, endPoints);
         if (intersectionPoint < 0)
             return false;
 
         effectiveRadius = this.getEffectiveRadius(frustum.getBottom());
-        intersectionPoint = this.intersectsAt(frustum.getBottom(), effectiveRadius, endPoints);
+        intersectionPoint = Cylinder.intersectsAt(frustum.getBottom(), effectiveRadius, endPoints);
         return intersectionPoint >= 0;
     }
 

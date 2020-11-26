@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.symbology;
 
 import gov.nasa.worldwind.WWObject;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.UnitsFormat;
 
 /**
@@ -17,7 +17,7 @@ import gov.nasa.worldwind.util.UnitsFormat;
  * in time. See the <a href="https://worldwind.arc.nasa.gov/java/tutorials/tactical-graphics/"
  * target="_blank">Tutorial</a> for instructions on using TacticalSymbol in an application.
  * <h2>Construction</h2> Implementations of this interface provide support for symbols belonging to a specific
- * symbology set. For example, class {@link gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol} provides
+ * symbology set. For example, class {@link gov.nasa.worldwind.examples.milstd2525.MilStd2525TacticalSymbol} provides
  * support for tactical symbols from the MIL-STD-2525 symbology specification.
  * <p>
  * To create a tactical symbol, instantiate a concrete implementation appropriate for the desired symbology set. Pass a

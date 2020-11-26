@@ -7,12 +7,12 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
+import gov.nasa.worldwind.examples.ogc.OGCConstants;
+import gov.nasa.worldwind.examples.ogc.wcs.wcs100.*;
+import gov.nasa.worldwind.examples.ogc.wms.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.AbstractLayer;
-import gov.nasa.worldwind.ogc.OGCConstants;
-import gov.nasa.worldwind.ogc.wcs.wcs100.*;
-import gov.nasa.worldwind.ogc.wms.*;
 import gov.nasa.worldwind.terrain.AbstractElevationModel;
 import gov.nasa.worldwind.wms.CapabilitiesRequest;
 import org.w3c.dom.*;

@@ -6,11 +6,11 @@
 package gov.nasa.worldwind.layers.Earth;
 
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.GraticuleRenderingParams;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;

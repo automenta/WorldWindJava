@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.util.gdal;
 
+////.*;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;

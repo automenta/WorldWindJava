@@ -208,11 +208,11 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if dmsString is null or not properly formated.
      */
     public static Angle fromDMS(String dmsString) {
-        if (dmsString == null) {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dmsString == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         // Check for string format validity
         Matcher matcher = dmsPattern.matcher(dmsString + " ");
         if (!matcher.matches()) {
@@ -281,11 +281,6 @@ public class Angle implements Comparable<Angle> {
      * null.
      */
     public static Angle midAngle(Angle a1, Angle a2) {
-        if (a1 == null || a2 == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         return Angle.fromDegrees(0.5 * (a1.degrees + a2.degrees));
     }
@@ -299,11 +294,6 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if <code>a</code> or <code>b</code> is null
      */
     public static Angle average(Angle a, Angle b) {
-        if (a == null || b == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         return Angle.fromDegrees(0.5 * (a.degrees + b.degrees));
     }
@@ -318,11 +308,6 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if <code>a</code>, <code>b</code> or <code>c</code> is null.
      */
     public static Angle average(Angle a, Angle b, Angle c) {
-        if (a == null || b == null || c == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         return Angle.fromDegrees((a.degrees + b.degrees + c.degrees) / 3);
     }
@@ -341,11 +326,6 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if any argument is null.
      */
     public static Angle clamp(Angle value, Angle min, Angle max) {
-        if (value == null || min == null || max == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         return value.degrees < min.degrees ? min : (value.degrees > max.degrees ? max : value);
     }
@@ -359,11 +339,6 @@ public class Angle implements Comparable<Angle> {
      * @return a new angle between <code>value1</code> and <code>value2</code>.
      */
     public static Angle mix(double amount, Angle value1, Angle value2) {
-        if (value1 == null || value2 == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (amount < 0)
             return value1;
@@ -398,31 +373,16 @@ public class Angle implements Comparable<Angle> {
     }
 
     public static Angle normalizedAngle(Angle unnormalizedAngle) {
-        if (unnormalizedAngle == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         return Angle.fromDegrees(normalizedDegrees(unnormalizedAngle.degrees));
     }
 
     public static Angle normalizedLatitude(Angle unnormalizedAngle) {
-        if (unnormalizedAngle == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         return Angle.fromDegrees(normalizedDegreesLatitude(unnormalizedAngle.degrees));
     }
 
     public static Angle normalizedLongitude(Angle unnormalizedAngle) {
-        if (unnormalizedAngle == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         return Angle.fromDegrees(normalizedDegreesLongitude(unnormalizedAngle.degrees));
     }
@@ -496,11 +456,6 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if angle is null.
      */
     public final Angle add(Angle angle) {
-        if (angle == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         return Angle.fromDegrees(this.degrees + angle.degrees);
     }
@@ -514,11 +469,6 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if angle is null.
      */
     public final Angle subtract(Angle angle) {
-        if (angle == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         return Angle.fromDegrees(this.degrees - angle.degrees);
     }
@@ -543,11 +493,6 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if angle is null.
      */
     public final double divide(Angle angle) {
-        if (angle == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
         if (angle.getDegrees() == 0.0) {
             String message = Logging.getMessage("generic.DivideByZero");
             Logging.logger().severe(message);
@@ -591,11 +536,6 @@ public class Angle implements Comparable<Angle> {
      * @return the angular distance between this and <code>value</code>.
      */
     public Angle angularDistanceTo(Angle angle) {
-        if (angle == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         double differenceDegrees = angle.subtract(this).degrees;
         if (differenceDegrees < -180)
@@ -603,8 +543,7 @@ public class Angle implements Comparable<Angle> {
         else if (differenceDegrees > 180)
             differenceDegrees -= 360;
 
-        double absAngle = Math.abs(differenceDegrees);
-        return Angle.fromDegrees(absAngle);
+        return Angle.fromDegrees(Math.abs(differenceDegrees));
     }
 
     /**
@@ -651,11 +590,6 @@ public class Angle implements Comparable<Angle> {
      * @throws IllegalArgumentException if angle is null.
      */
     public final int compareTo(Angle angle) {
-        if (angle == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
 
         return Double.compare(this.degrees, angle.degrees);
     }
@@ -818,7 +752,5 @@ public class Angle implements Comparable<Angle> {
 
     public int hashCode() {
         return Double.hashCode(degrees);
-//        long temp = degrees != +0.0d ? Double.doubleToLongBits(degrees) : 0L;
-//        return (int) (temp ^ (temp >>> 32));
     }
 }

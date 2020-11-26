@@ -7,9 +7,9 @@ package gov.nasa.worldwind.geom;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.Cacheable;
+import gov.nasa.worldwind.examples.render.DrawContext;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.tracks.TrackPoint;
 import gov.nasa.worldwind.util.Logging;
 
@@ -218,11 +218,6 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     }
 
     public static Sector boundingSector(Iterator<TrackPoint> positions) {
-//        if (positions == null) {
-//            String message = Logging.getMessage("nullValue.TracksPointsIteratorNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (!positions.hasNext())
             return EMPTY_SECTOR;

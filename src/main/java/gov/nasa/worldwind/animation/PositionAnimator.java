@@ -78,6 +78,6 @@ public class PositionAnimator extends BasicAnimator {
     }
 
     protected Position nextPosition(double interpolant) {
-        return Position.interpolateGreatCircle(interpolant, this.begin, this.end);
+        return Position.interpolateGreatCircle(this.begin, this.end, interpolant);
     }
 }

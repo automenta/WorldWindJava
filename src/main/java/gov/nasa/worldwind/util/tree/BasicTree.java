@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util.tree;
 
 import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.examples.render.*;
 
 import java.awt.*;
 import java.util.*;
