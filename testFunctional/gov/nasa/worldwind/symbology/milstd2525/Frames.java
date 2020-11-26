@@ -66,7 +66,7 @@ public class Frames extends ApplicationTemplate
                 String symbolId = symbolIds.next();
                 TacticalSymbol symbol = new MilStd2525TacticalSymbol(symbolId, positions.next());
                 symbol.setValue(AVKey.DISPLAY_NAME, symbolId);
-                layer.addRenderable(symbol);
+                layer.add(symbol);
             }
         }
 

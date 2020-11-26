@@ -83,12 +83,12 @@ public class AntennaViewer extends ApplicationTemplate {
             axes.setAttributes(normalAxesAttributes);
 
             RenderableLayer layer = new RenderableLayer();
-            layer.addRenderable(gain);
+            layer.add(gain);
             layer.setName("Antenna Gain");
             insertBeforeCompass(getWwd(), layer);
 
             layer = new RenderableLayer();
-            layer.addRenderable(axes);
+            layer.add(axes);
             layer.setName("Antenna Axes");
             layer.setPickEnabled(false);
             insertBeforeCompass(getWwd(), layer);

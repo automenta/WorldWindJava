@@ -76,7 +76,7 @@ public class GridOfPoints extends ApplicationTemplate {
 
             // Add the shape to the display layer.
             this.layer = new RenderableLayer();
-            this.layer.addRenderable(grid);
+            this.layer.add(grid);
             insertBeforeCompass(getWwd(), this.layer);
 
             // Establish a select listener that causes the tooltip controller to show the picked position's data value.

@@ -69,7 +69,7 @@ public class PathsOnDateline extends ApplicationTemplate {
                 };
             path.setPositionColors(new ExamplePositionColors(colors, pathPositions.size()));
 
-            layer.addRenderable(path);
+            layer.add(path);
 
             insertBeforeCompass(getWwd(), layer);
 

@@ -45,11 +45,11 @@ public class WWOMeasureToolControlPoints implements WWOMeasureTool.ControlPointL
     }
 
     public void addToLayer(RenderableLayer layer) {
-        layer.addRenderable(this);
+        layer.add(this);
     }
 
     public void removeFromLayer(RenderableLayer layer) {
-        layer.removeRenderable(this);
+        layer.remove(this);
     }
 
     public int size() {

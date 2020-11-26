@@ -72,7 +72,7 @@ public class Polygons extends ApplicationTemplate {
             pgon.setAttributes(normalAttributes);
             pgon.setHighlightAttributes(highlightAttributes);
             pgon.setRotation(-170.0d);
-            layer.addRenderable(pgon);
+            layer.add(pgon);
 
 //            ArrayList<Position> pathLocations = new ArrayList<Position>();
 //            pathLocations.add(Position.fromDegrees(28, -110, 5e4));

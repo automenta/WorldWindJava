@@ -72,7 +72,7 @@ public class Symbology extends ApplicationTemplate {
                 Position.fromDegrees(34.4934, -117.6003, 3000));
             symbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Symbol"); // Tool tip text.
             symbol.setShowLocation(false);
-            layer.addRenderable(symbol);
+            layer.add(symbol);
 
             // Add the symbol layer to the WorldWind model.
             this.getWwd().getModel().getLayers().add(layer);
@@ -97,7 +97,7 @@ public class Symbology extends ApplicationTemplate {
             TacticalGraphicFactory factory = new MilStd2525GraphicFactory();
             TacticalGraphic graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Graphic"); // Tool tip text.
-            layer.addRenderable(graphic);
+            layer.add(graphic);
 
             // Create point placemarks to mark each of the control points used to define the tactical graphic. This
             // provides a visualization of how the control point positions affect the displayed graphic.
@@ -123,7 +123,7 @@ public class Symbology extends ApplicationTemplate {
                 placemark.setValue(AVKey.DISPLAY_NAME, "Tactical Graphic Position " + i);
                 placemark.setAttributes(attrs);
                 placemark.setHighlightAttributes(attrs);
-                layer.addRenderable(placemark);
+                layer.add(placemark);
                 i++;
             }
         }

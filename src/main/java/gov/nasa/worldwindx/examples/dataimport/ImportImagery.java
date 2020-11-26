@@ -116,7 +116,7 @@ public class ImportImagery extends ApplicationTemplate {
                     SurfaceImageLayer layer = new SurfaceImageLayer();
                     layer.setName("Imported Surface Image");
                     layer.setPickEnabled(false);
-                    layer.addRenderable(si1);
+                    layer.add(si1);
 
                     // Add the layer to the model and update the application's layer panel.
                     insertBeforeCompass(AppFrame.this.getWwd(), layer);

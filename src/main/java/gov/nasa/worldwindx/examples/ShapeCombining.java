@@ -45,8 +45,8 @@ public class ShapeCombining extends ApplicationTemplate {
 
             RenderableLayer originalLayer = new RenderableLayer();
             originalLayer.setName("Original");
-            originalLayer.addRenderable(shape1);
-            originalLayer.addRenderable(shape2);
+            originalLayer.add(shape1);
+            originalLayer.add(shape2);
             this.getWwd().getModel().getLayers().add(originalLayer);
 
             // Set up a ShapeCombiner to combine the two surface circles into a potentially complex set of contours
@@ -82,7 +82,7 @@ public class ShapeCombining extends ApplicationTemplate {
 
             RenderableLayer layer = new RenderableLayer();
             layer.setName(displayName);
-            layer.addRenderable(shape);
+            layer.add(shape);
             this.getWwd().getModel().getLayers().add(layer);
         }
     }

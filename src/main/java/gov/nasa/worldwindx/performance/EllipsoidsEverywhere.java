@@ -145,7 +145,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate {
                     attrs.setInteriorMaterial(Material.RED);
                     attrs.setEnableLighting(true);
                     shape.setAttributes(attrs);
-                    layer.addRenderable(shape);
+                    layer.add(shape);
                     ++count;
                 }
             }
@@ -169,7 +169,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate {
                 shapeList.addActionListener(e -> {
                     JComboBox cb = (JComboBox) e.getSource();
                     shapeType = (String) cb.getSelectedItem();
-                    getLayer().removeAllRenderables();
+                    getLayer().clear();
                     makeMany();
                     getWwd().redraw();
                 });
@@ -193,7 +193,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate {
                 slider.setPaintLabels(true);
                 slider.addChangeListener(e -> {
                     double hint = ((JSlider) e.getSource()).getValue() / 10.0d;
-                    getLayer().removeAllRenderables();
+                    getLayer().clear();
                     makeMany();
                     setDetailHint(hint);
                     getWwd().redraw();
@@ -226,7 +226,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate {
         }
 
         protected void setDetailHint(double hint) {
-            for (Renderable renderable : getLayer().getRenderables()) {
+            for (Renderable renderable : getLayer().all()) {
 
                 if (shapeType.equalsIgnoreCase("ellipsoid")) {
                     Ellipsoid current;

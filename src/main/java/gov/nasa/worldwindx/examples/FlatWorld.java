@@ -66,7 +66,7 @@ public class FlatWorld extends ApplicationTemplate {
                 Position.fromDegrees(originLat + 5.0, originLon + 2.5, 100.0e3));
             Path shape = new Path(locations);
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             // Path spanning the international dateline.
             attrs = new BasicShapeAttributes();
@@ -85,7 +85,7 @@ public class FlatWorld extends ApplicationTemplate {
                 Position.fromDegrees(20, -170, 100.0e3));
             shape = new Path(locations);
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             // Path around the north pole.
             attrs = new BasicShapeAttributes();
@@ -103,7 +103,7 @@ public class FlatWorld extends ApplicationTemplate {
                 Position.fromDegrees(80, 0, 100.0e3));
             shape = new Path(locations);
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             ApplicationTemplate.insertBeforePlacenames(this.getWwd(), layer);
         }
@@ -135,7 +135,7 @@ public class FlatWorld extends ApplicationTemplate {
                 LatLon.fromDegrees(originLat + 5.0, originLon + 2.5));
             SurfaceShape shape = new SurfacePolygon(locations);
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             // Surface polygon spanning the international dateline.
             attrs = new BasicShapeAttributes();
@@ -154,7 +154,7 @@ public class FlatWorld extends ApplicationTemplate {
                 LatLon.fromDegrees(20, -170));
             shape = new SurfacePolygon(locations);
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             // Surface ellipse over the center of the United States.
             attrs = new BasicShapeAttributes();
@@ -166,7 +166,7 @@ public class FlatWorld extends ApplicationTemplate {
 
             shape = new SurfaceEllipse(LatLon.fromDegrees(38, -104), 1.5e5, 1.0e5, Angle.fromDegrees(15));
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             // Surface circle over the center of the United states.
             attrs = new BasicShapeAttributes();
@@ -178,12 +178,12 @@ public class FlatWorld extends ApplicationTemplate {
 
             shape = new SurfaceCircle(LatLon.fromDegrees(36, -104), 1.0e5);
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             // Surface circle over the North Pole
             shape = new SurfaceCircle(LatLon.fromDegrees(90, 0), 1.0e6);
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             // Surface quadrilateral over the center of the United States.
             attrs = new BasicShapeAttributes();
@@ -195,7 +195,7 @@ public class FlatWorld extends ApplicationTemplate {
 
             shape = new SurfaceQuad(LatLon.fromDegrees(42, -104), 1.0e5, 1.3e5, Angle.fromDegrees(20));
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             // Surface square over the center of the United states.
             attrs = new BasicShapeAttributes();
@@ -207,7 +207,7 @@ public class FlatWorld extends ApplicationTemplate {
 
             shape = new SurfaceSquare(LatLon.fromDegrees(45, -104), 1.0e5);
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             // Surface sector over Mt. Shasta.
             attrs = new BasicShapeAttributes();
@@ -221,7 +221,7 @@ public class FlatWorld extends ApplicationTemplate {
                 Angle.fromDegrees(41.0), Angle.fromDegrees(41.6),
                 Angle.fromDegrees(-122.5), Angle.fromDegrees(-121.7)));
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             // Surface sector over Lake Tahoe.
             attrs = new BasicShapeAttributes();
@@ -235,7 +235,7 @@ public class FlatWorld extends ApplicationTemplate {
                 Angle.fromDegrees(38.9), Angle.fromDegrees(39.3),
                 Angle.fromDegrees(-120.2), Angle.fromDegrees(-119.9)));
             shape.setAttributes(attrs);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             // Surface polyline spanning the international dateline.
             attrs = new BasicShapeAttributes();
@@ -249,7 +249,7 @@ public class FlatWorld extends ApplicationTemplate {
             shape = new SurfacePolyline(locations);
             shape.setAttributes(attrs);
             ((SurfacePolyline) shape).setClosed(false);
-            layer.addRenderable(shape);
+            layer.add(shape);
 
             ApplicationTemplate.insertBeforePlacenames(this.getWwd(), layer);
         }

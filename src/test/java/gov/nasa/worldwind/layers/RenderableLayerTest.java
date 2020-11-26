@@ -41,11 +41,11 @@ public class RenderableLayerTest
         RenderableLayer layer = new RenderableLayer();
         for (Renderable item : renderables)
         {
-            layer.addRenderable(item);
+            layer.add(item);
         }
 
         // Test that the layer contains the renderables.
-        assertEquals("", renderables, layer.getRenderables());
+        assertEquals("", renderables, layer.all());
     }
 
     @Test
@@ -54,10 +54,10 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.addRenderables(renderables);
+        layer.addAll(renderables);
 
         // Test that the layer contains the renderables.
-        assertEquals("", renderables, layer.getRenderables());
+        assertEquals("", renderables, layer.all());
     }
 
     @Test
@@ -71,10 +71,10 @@ public class RenderableLayerTest
         for (Renderable renderable : source)
         {
             renderables.add(renderables.size(), renderable);
-            layer.addRenderable(layer.getNumRenderables(), renderable);
+            layer.add(layer.size(), renderable);
         }
 
-        assertEquals("", renderables, layer.getRenderables());
+        assertEquals("", renderables, layer.all());
     }
 
     @Test
@@ -85,13 +85,13 @@ public class RenderableLayerTest
         List<Renderable> renderables = new ArrayList<Renderable>();
         RenderableLayer layer = new RenderableLayer();
         renderables.addAll(source);
-        layer.addRenderables(source);
+        layer.addAll(source);
 
         Path inserted = new Path();
         renderables.add(0, inserted);
-        layer.addRenderable(0, inserted);
+        layer.add(0, inserted);
 
-        assertEquals("", renderables, layer.getRenderables());
+        assertEquals("", renderables, layer.all());
     }
 
     @Test
@@ -102,13 +102,13 @@ public class RenderableLayerTest
         List<Renderable> renderables = new ArrayList<Renderable>();
         RenderableLayer layer = new RenderableLayer();
         renderables.addAll(source);
-        layer.addRenderables(source);
+        layer.addAll(source);
 
         Path inserted = new Path();
         renderables.add(1, inserted);
-        layer.addRenderable(1, inserted);
+        layer.add(1, inserted);
 
-        assertEquals("", renderables, layer.getRenderables());
+        assertEquals("", renderables, layer.all());
     }
 
     @Test
@@ -119,13 +119,13 @@ public class RenderableLayerTest
         List<Renderable> renderables = new ArrayList<Renderable>();
         RenderableLayer layer = new RenderableLayer();
         renderables.addAll(source);
-        layer.addRenderables(source);
+        layer.addAll(source);
 
         Path inserted = new Path();
         renderables.add(renderables.size(), inserted);
-        layer.addRenderable(layer.getNumRenderables(), inserted);
+        layer.add(layer.size(), inserted);
 
-        assertEquals("", renderables, layer.getRenderables());
+        assertEquals("", renderables, layer.all());
     }
 
     @Test
@@ -136,15 +136,15 @@ public class RenderableLayerTest
         RenderableLayer layer = new RenderableLayer();
         for (Renderable item : renderables)
         {
-            layer.addRenderable(item);
+            layer.add(item);
         }
         for (Renderable item : renderables)
         {
-            layer.removeRenderable(item);
+            layer.remove(item);
         }
 
         // Test that the layer contains no renderables.
-        assertFalse("", layer.getRenderables().iterator().hasNext());
+        assertFalse("", layer.all().iterator().hasNext());
     }
 
     @Test
@@ -153,11 +153,11 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.addRenderables(renderables);
-        layer.removeAllRenderables();
+        layer.addAll(renderables);
+        layer.clear();
 
         // Test that the layer contains no renderables.
-        assertFalse("", layer.getRenderables().iterator().hasNext());
+        assertFalse("", layer.all().iterator().hasNext());
     }
 
     @Test
@@ -166,10 +166,10 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.setRenderables(renderables);
+        layer.set(renderables);
 
         // Test that the layer points to the Iterable.
-        assertSame("", renderables, layer.getRenderables());
+        assertSame("", renderables, layer.all());
     }
 
     //////////////////////////////////////////////////////////
@@ -182,14 +182,14 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.addRenderables(renderables);
-        layer.setRenderables(renderables);
-        layer.setRenderables(null);
+        layer.addAll(renderables);
+        layer.set(renderables);
+        layer.set(null);
 
         // Test that the layer does not point to the Iterable.
-        assertNotSame("", renderables, layer.getRenderables());
+        assertNotSame("", renderables, layer.all());
         // Test that the layer contains no renderables.
-        assertFalse("", layer.getRenderables().iterator().hasNext());
+        assertFalse("", layer.all().iterator().hasNext());
     }
 
     @Test
@@ -198,14 +198,14 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.setRenderables(renderables);
-        layer.setRenderables(null);
-        layer.addRenderables(renderables);
+        layer.set(renderables);
+        layer.set(null);
+        layer.addAll(renderables);
 
         // Test that the layer does not point to the Iterable.
-        assertNotSame("", renderables, layer.getRenderables());
+        assertNotSame("", renderables, layer.all());
         // Test that the layer contains the renderables.
-        assertEquals("", renderables, layer.getRenderables());
+        assertEquals("", renderables, layer.all());
     }
 
     @Test
@@ -214,9 +214,9 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.addRenderables(renderables);
+        layer.addAll(renderables);
 
-        Iterable<? extends Renderable> layerRenderables = layer.getRenderables();
+        Iterable<? extends Renderable> layerRenderables = layer.all();
 
         // Test that the returned list cannot be modified.
         try
@@ -242,7 +242,7 @@ public class RenderableLayerTest
         }
 
         // Test that the layer contents do not change, even if the returned list can be modified.
-        assertEquals("", renderables, layer.getRenderables());
+        assertEquals("", renderables, layer.all());
     }
 
     @Test
@@ -253,7 +253,7 @@ public class RenderableLayerTest
         list.add(null);
 
         RenderableLayer layer = new RenderableLayer();
-        layer.setRenderables(list);
+        layer.set(list);
 
         DrawContext dc = new DrawContextImpl();
         dc.setModel(new BasicModel());
@@ -277,11 +277,11 @@ public class RenderableLayerTest
         Iterable<Renderable> emptyRenderables = new ArrayList<Renderable>();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.addRenderables(renderables);
+        layer.addAll(renderables);
         layer.dispose();
 
         // Test that the layer contains the renderables.
-        assertEquals("", emptyRenderables, layer.getRenderables());
+        assertEquals("", emptyRenderables, layer.all());
     }
 
     //////////////////////////////////////////////////////////
@@ -294,12 +294,12 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.setRenderables(renderables);
+        layer.set(renderables);
 
         try
         {
             // Expecting an IllegalStateException here.
-            layer.addRenderable(new Path());
+            layer.add(new Path());
             fail("Should raise an IllegalStateException");
         }
         catch (IllegalStateException e)
@@ -314,12 +314,12 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.setRenderables(renderables);
+        layer.set(renderables);
 
         try
         {
             // Expecting an IllegalStateException here.
-            layer.addRenderables(renderables);
+            layer.addAll(renderables);
             fail("Should raise an IllegalStateException");
         }
         catch (IllegalStateException e)
@@ -334,12 +334,12 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.setRenderables(renderables);
+        layer.set(renderables);
 
         try
         {
             // Expecting an IllegalStateException here.
-            layer.addRenderable(0, new Path());
+            layer.add(0, new Path());
             fail("Should raise an IllegalStateException");
         }
         catch (IllegalStateException e)
@@ -354,12 +354,12 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.setRenderables(renderables);
+        layer.set(renderables);
 
         try
         {
             // Expecting an IllegalStateException here.
-            layer.removeRenderable(new Path());
+            layer.remove(new Path());
             fail("Should raise an IllegalStateException");
         }
         catch (IllegalStateException e)
@@ -374,12 +374,12 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.setRenderables(renderables);
+        layer.set(renderables);
 
         try
         {
             // Expecting an IllegalStateException here.
-            layer.removeAllRenderables();
+            layer.clear();
             fail("Should raise an IllegalStateException");
         }
         catch (IllegalStateException e)
@@ -394,7 +394,7 @@ public class RenderableLayerTest
         Iterable<Renderable> renderables = createExampleIterable();
 
         RenderableLayer layer = new RenderableLayer();
-        layer.setRenderables(renderables);
+        layer.set(renderables);
 
         try
         {

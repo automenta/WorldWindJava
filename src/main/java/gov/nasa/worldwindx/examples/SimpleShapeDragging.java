@@ -36,7 +36,7 @@ public class SimpleShapeDragging extends JFrame {
         // Add a layer containing an image
         Renderable si = new SurfaceImage("images/400x230-splash-nww.png", Sector.fromDegrees(35, 45, -115, -95));
         RenderableLayer layer = new RenderableLayer();
-        layer.addRenderable(si);
+        layer.add(si);
         insertBeforePlacenames(wwd, layer);
 
         // Set up to drag

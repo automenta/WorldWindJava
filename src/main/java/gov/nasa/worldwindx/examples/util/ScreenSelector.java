@@ -107,7 +107,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         this.layer = this.createLayer();
         this.layer.setPickEnabled(false); // The screen selector is not pickable.
         this.selectionRect = this.createSelectionRectangle();
-        ((RenderableLayer) this.layer).addRenderable(this.selectionRect);
+        ((RenderableLayer) this.layer).add(this.selectionRect);
     }
 
     protected Layer createLayer() {

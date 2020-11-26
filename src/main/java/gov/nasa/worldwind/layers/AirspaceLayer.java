@@ -43,7 +43,7 @@ public class AirspaceLayer extends AbstractLayer {
      * @param airspace the airspace to add.
      * @throws IllegalArgumentException if the airspace is null.
      * @throws IllegalStateException    if a custom Iterable has been specified by a call to setRenderables.
-     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#addRenderable(gov.nasa.worldwind.render.Renderable)}
+     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#add(gov.nasa.worldwind.render.Renderable)}
      * instead.
      */
     @Deprecated
@@ -70,7 +70,7 @@ public class AirspaceLayer extends AbstractLayer {
      * @param airspaces the airspaces to add.
      * @throws IllegalArgumentException if the iterable is null.
      * @throws IllegalStateException    if a custom Iterable has been specified by a call to setRenderables.
-     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#addRenderables(Iterable)} instead.
+     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#addAll(Iterable)} instead.
      */
     @Deprecated
     public void addAirspaces(Iterable<Airspace> airspaces) {
@@ -100,7 +100,7 @@ public class AirspaceLayer extends AbstractLayer {
      * @param airspace the airspace to remove.
      * @throws IllegalArgumentException if the airspace is null.
      * @throws IllegalStateException    if a custom Iterable has been specified by a call to setRenderables.
-     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#removeRenderable(gov.nasa.worldwind.render.Renderable)}
+     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#remove(gov.nasa.worldwind.render.Renderable)}
      * instead.
      */
     @Deprecated
@@ -124,7 +124,7 @@ public class AirspaceLayer extends AbstractLayer {
      * overridden with a call to {@link #setAirspaces(Iterable)}, this will throw an exception.
      *
      * @throws IllegalStateException If a custom Iterable has been specified by a call to <code>setAirspaces</code>.
-     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#removeAllRenderables()} instead.
+     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#clear()} instead.
      */
     @Deprecated
     public void removeAllAirspaces() {
@@ -149,7 +149,7 @@ public class AirspaceLayer extends AbstractLayer {
      * view of this layer's internal collection of Airspaces.
      *
      * @return Iterable of currently active Airspaces.
-     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#getRenderables()} instead.
+     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#all()} instead.
      */
     @Deprecated
     public Iterable<Airspace> getAirspaces() {
@@ -173,7 +173,7 @@ public class AirspaceLayer extends AbstractLayer {
      * collection.
      *
      * @param airspaceIterable Iterable to use instead of this layer's internal collection, or null to use this layer's
-     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#setRenderables(Iterable)} instead.
+     * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#set(Iterable)} instead.
      */
     @Deprecated
     public void setAirspaces(Iterable<Airspace> airspaceIterable) {

@@ -120,7 +120,7 @@ public class AllPointGraphics extends ApplicationTemplate
 
                 graphic.setValue(AVKey.DISPLAY_NAME, sidc.toString());
 
-                layer.addRenderable(graphic);
+                layer.add(graphic);
 
                 if ((i + 1) % cols == 0)
                 {
@@ -159,7 +159,7 @@ public class AllPointGraphics extends ApplicationTemplate
 
                 graphic.setValue(AVKey.DISPLAY_NAME, sidc);
 
-                layer.addRenderable(graphic);
+                layer.add(graphic);
 
                 if ((i + 1) % cols == 0)
                 {
@@ -202,7 +202,7 @@ public class AllPointGraphics extends ApplicationTemplate
 
                 graphic.setValue(AVKey.DISPLAY_NAME, sidc.toString());
 
-                layer.addRenderable(graphic);
+                layer.add(graphic);
 
                 if ((i + 1) % cols == 0)
                 {
@@ -272,12 +272,12 @@ public class AllPointGraphics extends ApplicationTemplate
                 {
                     boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                    for (Renderable r : tacgrpLayer.getRenderables())
+                    for (Renderable r : tacgrpLayer.all())
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowTextModifiers(tf);
                     }
-                    for (Renderable r : metocLayer.getRenderables())
+                    for (Renderable r : metocLayer.all())
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowTextModifiers(tf);
@@ -297,12 +297,12 @@ public class AllPointGraphics extends ApplicationTemplate
                 {
                     boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                    for (Renderable r : tacgrpLayer.getRenderables())
+                    for (Renderable r : tacgrpLayer.all())
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowGraphicModifiers(tf);
                     }
-                    for (Renderable r : metocLayer.getRenderables())
+                    for (Renderable r : metocLayer.all())
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowGraphicModifiers(tf);
@@ -322,12 +322,12 @@ public class AllPointGraphics extends ApplicationTemplate
                 {
                     boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                    for (Renderable r : tacgrpLayer.getRenderables())
+                    for (Renderable r : tacgrpLayer.all())
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowHostileIndicator(tf);
                     }
-                    for (Renderable r : metocLayer.getRenderables())
+                    for (Renderable r : metocLayer.all())
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowHostileIndicator(tf);
@@ -347,7 +347,7 @@ public class AllPointGraphics extends ApplicationTemplate
                 {
                     boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                    for (Renderable r : tacgrpLayer.getRenderables())
+                    for (Renderable r : tacgrpLayer.all())
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowLocation(tf);
@@ -367,7 +367,7 @@ public class AllPointGraphics extends ApplicationTemplate
                 {
                     boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                    for (Renderable r : tacgrpLayer.getRenderables())
+                    for (Renderable r : tacgrpLayer.all())
                     {
                         String status = tf ? SymbologyConstants.STATUS_PRESENT : SymbologyConstants.STATUS_ANTICIPATED;
                         if (r instanceof MilStd2525TacticalGraphic)

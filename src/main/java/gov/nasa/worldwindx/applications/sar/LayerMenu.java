@@ -43,7 +43,7 @@ public class LayerMenu extends JMenu {
 
         if (layer instanceof RenderableLayer)    //detect surface image layers
         {
-            Iterable<Renderable> iter = ((RenderableLayer) layer).getRenderables();
+            Iterable<Renderable> iter = ((RenderableLayer) layer).all();
             for (Renderable rend : iter) {
                 if (rend instanceof SurfaceImage)
                     return true;

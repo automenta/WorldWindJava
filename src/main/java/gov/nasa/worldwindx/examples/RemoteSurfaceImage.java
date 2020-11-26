@@ -31,7 +31,7 @@ public class RemoteSurfaceImage extends ApplicationTemplate {
 
             RenderableLayer layer = new RenderableLayer();
             layer.setName("Remote Surface Image");
-            layer.addRenderable(image);
+            layer.add(image);
             // Disable picking for the layer because it covers the full sphere and will override a terrain pick.
             layer.setPickEnabled(false);
 

@@ -61,7 +61,7 @@ public class ExtrudedPolygonWithBaseDepth extends ApplicationTemplate {
             pgon.setSideAttributes(sideAttributes);
             pgon.setCapAttributes(capAttributes);
             pgon.setBaseDepth(20); // Set the base depth to the extruded polygon's height.
-            layer.addRenderable(pgon);
+            layer.add(pgon);
 
             Path path = new Path(Position.fromDegrees(43.8425, -114.6355, 0),
                 Position.fromDegrees(43.8442, -114.6356, 0));
@@ -72,7 +72,7 @@ public class ExtrudedPolygonWithBaseDepth extends ApplicationTemplate {
             pathAttributes.setOutlineWidth(4);
             path.setAttributes(pathAttributes);
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            layer.addRenderable(path);
+            layer.add(path);
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);

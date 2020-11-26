@@ -75,7 +75,7 @@ public class LineBuilder extends AVListImpl {
             this.line.setSurfacePath(true);
         }
         this.layer = lineLayer != null ? lineLayer : new RenderableLayer();
-        this.layer.addRenderable(this.line);
+        this.layer.add(this.line);
         this.wwd.getModel().getLayers().add(this.layer);
 
         this.wwd.getInputHandler().addMouseListener(new MouseAdapter() {

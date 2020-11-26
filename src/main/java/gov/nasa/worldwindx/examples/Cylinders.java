@@ -63,7 +63,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder3.setAttributes(attrs);
             cylinder3.setVisible(true);
             cylinder3.setValue(AVKey.DISPLAY_NAME, "Cylinder with equal axes, ABSOLUTE altitude mode");
-            layer.addRenderable(cylinder3);
+            layer.add(cylinder3);
 
             // Cylinder with equal axes, RELATIVE_TO_GROUND
             Cylinder cylinder4 = new Cylinder(Position.fromDegrees(37.5, -115, 50000), 50000, 50000, 50000);
@@ -71,7 +71,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder4.setAttributes(attrs);
             cylinder4.setVisible(true);
             cylinder4.setValue(AVKey.DISPLAY_NAME, "Cylinder with equal axes, RELATIVE_TO_GROUND altitude mode");
-            layer.addRenderable(cylinder4);
+            layer.add(cylinder4);
 
             // Cylinder with equal axes, CLAMP_TO_GROUND
             Cylinder cylinder5 = new Cylinder(Position.fromDegrees(35, -110, 50000), 50000, 50000, 50000);
@@ -79,7 +79,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder5.setAttributes(attrs);
             cylinder5.setVisible(true);
             cylinder5.setValue(AVKey.DISPLAY_NAME, "Cylinder with equal axes, CLAMP_TO_GROUND altitude mode");
-            layer.addRenderable(cylinder5);
+            layer.add(cylinder5);
 
             // Cylinder with a texture, using Cylinder(position, height, radius) constructor
             Cylinder cylinder9 = new Cylinder(Position.fromDegrees(0, -90, 600000), 1200000, 600000);
@@ -88,7 +88,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder9.setAttributes(attrs);
             cylinder9.setVisible(true);
             cylinder9.setValue(AVKey.DISPLAY_NAME, "Cylinder with a texture");
-            layer.addRenderable(cylinder9);
+            layer.add(cylinder9);
 
             // Scaled Cylinder with default orientation
             Cylinder cylinder = new Cylinder(Position.ZERO, 1000000, 500000, 100000);
@@ -96,7 +96,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder.setAttributes(attrs);
             cylinder.setVisible(true);
             cylinder.setValue(AVKey.DISPLAY_NAME, "Scaled Cylinder with default orientation");
-            layer.addRenderable(cylinder);
+            layer.add(cylinder);
 
             // Scaled Cylinder with a pre-set orientation
             Cylinder cylinder2 = new Cylinder(Position.fromDegrees(0, 30, 750000), 1000000, 500000, 100000,
@@ -106,7 +106,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder2.setValue(AVKey.DISPLAY_NAME, "Scaled Cylinder with a pre-set orientation");
             cylinder2.setVisible(true);
 
-            layer.addRenderable(cylinder2);
+            layer.add(cylinder2);
 
             // Scaled Cylinder with a pre-set orientation
             Cylinder cylinder6 = new Cylinder(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
@@ -116,7 +116,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder6.setAttributes(attrs2);
             cylinder6.setVisible(true);
             cylinder6.setValue(AVKey.DISPLAY_NAME, "Scaled Cylinder with a pre-set orientation");
-            layer.addRenderable(cylinder6);
+            layer.add(cylinder6);
 
             // Scaled Cylinder with a pre-set orientation
             Cylinder cylinder7 = new Cylinder(Position.fromDegrees(60, 30, 750000), 1000000, 500000, 100000,
@@ -125,7 +125,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder7.setAttributes(attrs2);
             cylinder7.setVisible(true);
             cylinder7.setValue(AVKey.DISPLAY_NAME, "Scaled Cylinder with a pre-set orientation");
-            layer.addRenderable(cylinder7);
+            layer.add(cylinder7);
 
             // Scaled, oriented Cylinder in 3rd "quadrant" (-X, -Y, -Z)
             Cylinder cylinder8 = new Cylinder(Position.fromDegrees(-45, -180, 750000), 1000000, 500000, 100000,
@@ -134,7 +134,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder8.setAttributes(attrs2);
             cylinder8.setVisible(true);
             cylinder8.setValue(AVKey.DISPLAY_NAME, "Scaled, oriented Cylinder in the 3rd 'quadrant' (-X, -Y, -Z)");
-            layer.addRenderable(cylinder8);
+            layer.add(cylinder8);
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
@@ -186,7 +186,7 @@ public class Cylinders extends ApplicationTemplate {
         }
 
         protected void setCylinderDetailHint(double hint) {
-            for (Renderable renderable : getLayer().getRenderables()) {
+            for (Renderable renderable : getLayer().all()) {
                 Cylinder current = (Cylinder) renderable;
                 current.setDetailHint(hint);
             }

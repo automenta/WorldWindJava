@@ -381,7 +381,7 @@ public class MarkersOrder extends ApplicationTemplate {
 
         protected void updateScreenAnnotation(PowerOfTwoPaddedImage image) {
             if (this.screenAnnotation != null)
-                this.renderableLayer.removeRenderable(this.screenAnnotation);
+                this.renderableLayer.remove(this.screenAnnotation);
             if (image != null) {
                 // Setup annotation in lower left viewport corner
                 this.screenAnnotation = new ScreenAnnotation("", new Point(20, 20));
@@ -393,7 +393,7 @@ public class MarkersOrder extends ApplicationTemplate {
                 this.screenAnnotation.getAttributes().setBorderWidth(0);
                 this.screenAnnotation.getAttributes().setCornerRadius(0);
                 this.screenAnnotation.getAttributes().setBackgroundColor(new Color(0.0f, 0.0f, 0.0f, 0.0f));
-                this.renderableLayer.addRenderable(this.screenAnnotation);
+                this.renderableLayer.add(this.screenAnnotation);
             }
         }
 

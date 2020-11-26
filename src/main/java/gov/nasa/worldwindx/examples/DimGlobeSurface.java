@@ -47,7 +47,7 @@ public class DimGlobeSurface extends ApplicationTemplate {
             layer.setName("Surface Dimmer");
             layer.setPickEnabled(false);
 
-            layer.addRenderable(surfaceImage);
+            layer.add(surfaceImage);
 
             ApplicationTemplate.insertBeforePlacenames(this.getWwd(), layer);
 

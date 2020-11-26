@@ -85,7 +85,7 @@ public class ParallelPaths extends ApplicationTemplate {
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             path.setAttributes(attrs);
             path.setValue(AVKey.DISPLAY_NAME, displayName);
-            layer.addRenderable(path);
+            layer.add(path);
 
             // Show how to make the colors vary along the paths.
             path.setPositionColors(new ExamplePositionColors());

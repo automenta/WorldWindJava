@@ -72,7 +72,7 @@ public class AllTacticalSymbols extends ApplicationTemplate
                     MilStd2525TacticalSymbol symbol = new MilStd2525TacticalSymbol(symbolId, pos);
                     symbol.setValue(AVKey.DISPLAY_NAME, symbolId);
                     symbol.setShowLocation(false);
-                    layer.addRenderable(symbol);
+                    layer.add(symbol);
                     lon += dLon;
                 }
 
@@ -117,7 +117,7 @@ public class AllTacticalSymbols extends ApplicationTemplate
                         if (!(layer instanceof RenderableLayer))
                             continue;
 
-                        for (Renderable r : ((RenderableLayer) layer).getRenderables())
+                        for (Renderable r : ((RenderableLayer) layer).all())
                         {
                             if (r instanceof TacticalSymbol)
                                 ((MilStd2525TacticalSymbol) r).setShowFrame(tf);
@@ -143,7 +143,7 @@ public class AllTacticalSymbols extends ApplicationTemplate
                         if (!(layer instanceof RenderableLayer))
                             continue;
 
-                        for (Renderable r : ((RenderableLayer) layer).getRenderables())
+                        for (Renderable r : ((RenderableLayer) layer).all())
                         {
                             if (r instanceof TacticalSymbol)
                                 ((MilStd2525TacticalSymbol) r).setShowFill(tf);
@@ -169,7 +169,7 @@ public class AllTacticalSymbols extends ApplicationTemplate
                         if (!(layer instanceof RenderableLayer))
                             continue;
 
-                        for (Renderable r : ((RenderableLayer) layer).getRenderables())
+                        for (Renderable r : ((RenderableLayer) layer).all())
                         {
                             if (r instanceof TacticalSymbol)
                                 ((MilStd2525TacticalSymbol) r).setShowIcon(tf);
@@ -196,7 +196,7 @@ public class AllTacticalSymbols extends ApplicationTemplate
                         if (!(layer instanceof RenderableLayer))
                             continue;
 
-                        for (Renderable r : ((RenderableLayer) layer).getRenderables())
+                        for (Renderable r : ((RenderableLayer) layer).all())
                         {
                             if (r instanceof TacticalSymbol)
                                 ((MilStd2525TacticalSymbol) r).setStatus(status);

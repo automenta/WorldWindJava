@@ -141,7 +141,7 @@ public class GeoRSS extends ApplicationTemplate {
 
         private void addRenderables(RenderableLayer layer, Iterable<Renderable> renderables) {
             for (Renderable r : renderables) {
-                layer.addRenderable(r);
+                layer.add(r);
             }
         }
     }

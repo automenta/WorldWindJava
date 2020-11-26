@@ -126,7 +126,7 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
         path.setSurfacePath(true);
         path.setAttributes(attrs);
 
-        layer.addRenderable(path);
+        layer.add(path);
     }
 
     @Override

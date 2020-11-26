@@ -127,7 +127,7 @@ public class FlatAndRoundGlobes {
 
         for (int i = 0; i < numPaths; i++) {
             Angle heading = Angle.fromDegrees(i * dAngle);
-            layer.addRenderable(this.makePath(origin, heading, length, numPositions));
+            layer.add(this.makePath(origin, heading, length, numPositions));
         }
 
         System.out.printf("%d paths, each with %d positions\n", NUM_PATHS, NUM_POSITIONS);
@@ -200,7 +200,7 @@ public class FlatAndRoundGlobes {
         pgon.setAttributes(normalAttributes);
         pgon.setHighlightAttributes(highlightAttributes);
         pgon.setRotation(-90.0d);
-        layer.addRenderable(pgon);
+        layer.add(pgon);
 
         ArrayList<Position> pathLocations = new ArrayList<>();
         pathLocations.add(Position.fromDegrees(28, -110, 5.0e4));
@@ -218,7 +218,7 @@ public class FlatAndRoundGlobes {
         pgon.setHighlightAttributes(highlightAttributes);
         float[] texCoords = new float[] {0, 0, 1, 0, 1, 1, 0, 1, 0, 0};
         pgon.setTextureImageSource("images/32x32-icon-nasa.png", texCoords, 5);
-        layer.addRenderable(pgon);
+        layer.add(pgon);
 
         return layer;
     }
@@ -267,7 +267,7 @@ public class FlatAndRoundGlobes {
         pgon.setSideAttributes(sideAttributes);
         pgon.setSideHighlightAttributes(sideHighlightAttributes);
         pgon.setCapAttributes(capAttributes);
-        layer.addRenderable(pgon);
+        layer.add(pgon);
 
         ArrayList<LatLon> pathLocations = new ArrayList<>();
         pathLocations.add(LatLon.fromDegrees(36, -110));
@@ -279,7 +279,7 @@ public class FlatAndRoundGlobes {
         pgon.setSideAttributes(sideAttributes);
         pgon.setSideHighlightAttributes(sideHighlightAttributes);
         pgon.setCapAttributes(capAttributes);
-        layer.addRenderable(pgon);
+        layer.add(pgon);
 
         return layer;
     }

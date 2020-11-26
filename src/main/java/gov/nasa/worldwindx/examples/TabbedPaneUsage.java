@@ -136,7 +136,7 @@ public class TabbedPaneUsage {
             cone3.setAttributes(attrs);
             cone3.setVisible(true);
             cone3.setValue(AVKey.DISPLAY_NAME, "Cone with equal axes, ABSOLUTE altitude mode");
-            layer.addRenderable(cone3);
+            layer.add(cone3);
 
             // Cone with equal axes, RELATIVE_TO_GROUND
             Cone cone4 = new Cone(Position.fromDegrees(37.5, -115, 50000), 50000, 50000, 50000);
@@ -144,7 +144,7 @@ public class TabbedPaneUsage {
             cone4.setAttributes(attrs);
             cone4.setVisible(true);
             cone4.setValue(AVKey.DISPLAY_NAME, "Cone with equal axes, RELATIVE_TO_GROUND altitude mode");
-            layer.addRenderable(cone4);
+            layer.add(cone4);
 
             ApplicationTemplate.insertBeforePlacenames(this.wwd, layer);
         }

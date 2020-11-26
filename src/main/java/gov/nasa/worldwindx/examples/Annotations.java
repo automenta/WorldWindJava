@@ -92,18 +92,18 @@ public class Annotations extends ApplicationTemplate {
             // Add above ground level annotation with fixed height in real world
             ga = new GlobeAnnotation("AGL Annotation\nElev 1000m", Position.fromDegrees(10, 25, 1000));
             ga.setHeightInMeter(10.0e3); // ten kilometer hight
-            rl.addRenderable(ga);
+            rl.add(ga);
 
             // Add above mean sea level annotation with fixed height in real world
             AMSLGlobeAnnotation amsla = new AMSLGlobeAnnotation("AMSL Annotation\nAlt 1000m",
                 Position.fromDegrees(10, 20, 1000));
             amsla.setHeightInMeter(10.0e3); // ten kilometer hight
-            rl.addRenderable(amsla);
+            rl.add(amsla);
 
             // Create an annotation with an image and some text below it
             ga = this.makeTopImageBottomTextAnnotation(IMAGE_WWJ_SPLASH, "Text below image",
                 Position.fromDegrees(0, -40, 0));
-            rl.addRenderable(ga);
+            rl.add(ga);
 
             // Create an AnnotationLayer with lots of annotations
             this.layer = new AnnotationLayer();

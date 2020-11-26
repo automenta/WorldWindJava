@@ -67,11 +67,11 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
     }
 
     public void addToLayer(RenderableLayer layer) {
-        layer.addRenderable(this.annotation);
+        layer.add(this.annotation);
     }
 
     public void removeFromLayer(RenderableLayer layer) {
-        layer.removeRenderable(this.annotation);
+        layer.remove(this.annotation);
     }
 
     public void setLabel(String labelName, String label) {

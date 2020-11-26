@@ -594,7 +594,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
         public void addEntry(PolygonEntry entry) {
             this.getModel().addEntry(entry);
 
-            this.getApp().getPolygonLayer().addRenderable(entry.getPolygon());
+            this.getApp().getPolygonLayer().add(entry.getPolygon());
             this.getApp().getWwd().redraw();
         }
 
@@ -605,7 +605,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
 
             this.getModel().removeEntry(entry);
 
-            this.getApp().getPolygonLayer().removeRenderable(entry.getPolygon());
+            this.getApp().getPolygonLayer().remove(entry.getPolygon());
             this.getApp().getWwd().redraw();
         }
 

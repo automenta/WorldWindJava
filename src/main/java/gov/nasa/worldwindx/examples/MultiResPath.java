@@ -91,7 +91,7 @@ public class MultiResPath extends ApplicationTemplate {
             path.setAttributes(attrs);
 
             RenderableLayer rLayer = new RenderableLayer();
-            rLayer.addRenderable(path);
+            rLayer.add(path);
             insertBeforeCompass(getWwd(), rLayer);
         }
     }

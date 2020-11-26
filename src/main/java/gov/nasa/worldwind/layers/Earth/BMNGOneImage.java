@@ -19,7 +19,7 @@ public class BMNGOneImage extends RenderableLayer {
 
     public BMNGOneImage() {
         this.setName(Logging.getMessage("layers.Earth.BlueMarbleOneImageLayer.Name"));
-        this.addRenderable(new SurfaceImage(IMAGE_PATH, Sector.FULL_SPHERE));
+        this.add(new SurfaceImage(IMAGE_PATH, Sector.FULL_SPHERE));
 
         // Disable picking for the layer because it covers the full sphere and will override a terrain pick.
         this.setPickEnabled(false);

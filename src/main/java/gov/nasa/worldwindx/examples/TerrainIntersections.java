@@ -355,13 +355,13 @@ public class TerrainIntersections extends ApplicationTemplate {
         }
 
         protected void clearLayers() {
-            this.intersectionsLayer.removeAllRenderables();
-            this.sightLinesLayer.removeAllRenderables();
-            this.gridLayer.removeAllRenderables();
+            this.intersectionsLayer.clear();
+            this.sightLinesLayer.clear();
+            this.gridLayer.clear();
         }
 
         protected void showIntersections(Iterable<Position> intersections) {
-            this.intersectionsLayer.removeAllRenderables();
+            this.intersectionsLayer.clear();
 
             // Display the intersections as CYAN points.
             PointPlacemarkAttributes intersectionPointAttributes;
@@ -375,12 +375,12 @@ public class TerrainIntersections extends ApplicationTemplate {
                 pm.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
                 pm.setAttributes(intersectionPointAttributes);
                 pm.setValue(AVKey.DISPLAY_NAME, p.toString());
-                this.intersectionsLayer.addRenderable(pm);
+                this.intersectionsLayer.add(pm);
             }
         }
 
         protected void showSightLines(Iterable<Position[]> sightLines) {
-            this.sightLinesLayer.removeAllRenderables();
+            this.sightLinesLayer.clear();
 
             // Display the sight lines as green lines.
             ShapeAttributes lineAttributes;
@@ -398,12 +398,12 @@ public class TerrainIntersections extends ApplicationTemplate {
                 Path path = new Path(endPoints);
                 path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
                 path.setAttributes(lineAttributes);
-                this.sightLinesLayer.addRenderable(path);
+                this.sightLinesLayer.add(path);
             }
         }
 
         protected void showGridSightLines(Iterable<Position> grid, Position cPos) {
-            this.sightLinesLayer.removeAllRenderables();
+            this.sightLinesLayer.clear();
 
             // Display lines from the center to each grid point.
             ShapeAttributes lineAttributes;
@@ -421,12 +421,12 @@ public class TerrainIntersections extends ApplicationTemplate {
                 Path path = new Path(endPoints);
                 path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
                 path.setAttributes(lineAttributes);
-                this.sightLinesLayer.addRenderable(path);
+                this.sightLinesLayer.add(path);
             }
         }
 
         protected void showGrid(Iterable<Position> grid, Position cPos) {
-            this.gridLayer.removeAllRenderables();
+            this.gridLayer.clear();
 
             // Display the grid points in yellow.
             PointPlacemarkAttributes gridPointAttributes;
@@ -441,7 +441,7 @@ public class TerrainIntersections extends ApplicationTemplate {
                 pm.setAttributes(gridPointAttributes);
                 pm.setLineEnabled(true);
                 pm.setValue(AVKey.DISPLAY_NAME, p.toString());
-                this.gridLayer.addRenderable(pm);
+                this.gridLayer.add(pm);
             }
 
             showCenterPoint(cPos);
@@ -460,7 +460,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             pm.setAttributes(selectedLocationAttributes);
             pm.setValue(AVKey.DISPLAY_NAME, cPos.toString());
             pm.setLineEnabled(true);
-            this.gridLayer.addRenderable(pm);
+            this.gridLayer.add(pm);
         }
 
         /**

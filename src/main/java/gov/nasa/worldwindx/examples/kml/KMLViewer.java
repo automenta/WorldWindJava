@@ -125,7 +125,7 @@ public class KMLViewer extends ApplicationTemplate {
             // the layer tree's model. Doing so would enable the user to hide the layer tree display with no way of
             // bringing it back.
             this.hiddenLayer = new RenderableLayer();
-            this.hiddenLayer.addRenderable(this.layerTree);
+            this.hiddenLayer.add(this.layerTree);
             this.getWwd().getModel().getLayers().add(this.hiddenLayer);
 
             // Add a controller to handle input events on the layer selector and on browser balloons.
@@ -181,7 +181,7 @@ public class KMLViewer extends ApplicationTemplate {
             // retrieves the layer name from the KMLRoot's DISPLAY_NAME field.
             RenderableLayer layer = new RenderableLayer();
             layer.setName((String) kmlRoot.getField(AVKey.DISPLAY_NAME));
-            layer.addRenderable(kmlController);
+            layer.add(kmlController);
             this.getWwd().getModel().getLayers().add(layer);
 
             // Adds a new layer tree node for the KMLRoot to the on-screen layer tree, and makes the new node visible

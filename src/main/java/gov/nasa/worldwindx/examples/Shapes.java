@@ -277,9 +277,9 @@ public class Shapes {
                     path.setAttributes(attrs);
                 }
             }
-            this.layer.removeAllRenderables();
+            this.layer.clear();
             if (this.currentShape != null) {
-                this.layer.addRenderable(this.currentShape);
+                this.layer.add(this.currentShape);
             }
             this.wwjPanel.getWwd().redraw();
         }

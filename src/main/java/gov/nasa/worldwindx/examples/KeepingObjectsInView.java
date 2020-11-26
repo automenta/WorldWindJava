@@ -152,7 +152,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             }
 
             this.helpLayer = new RenderableLayer();
-            this.helpLayer.addRenderable(createHelpAnnotation(getWwd()));
+            this.helpLayer.add(createHelpAnnotation(getWwd()));
             insertBeforePlacenames(this.getWwd(), this.helpLayer);
         }
 
@@ -162,7 +162,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             }
 
             this.getWwd().getModel().getLayers().remove(this.helpLayer);
-            this.helpLayer.removeAllRenderables();
+            this.helpLayer.clear();
             this.helpLayer = null;
         }
 
@@ -185,7 +185,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                     iconLayer.addIcon((WWIcon) o);
                 }
                 else if (o instanceof Renderable) {
-                    shapesLayer.addRenderable((Renderable) o);
+                    shapesLayer.add((Renderable) o);
                 }
             }
 

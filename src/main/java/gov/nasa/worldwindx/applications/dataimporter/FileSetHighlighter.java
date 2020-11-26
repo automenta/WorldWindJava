@@ -139,7 +139,7 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
             path.setSurfacePath(true);
             path.setAttributes(attrs);
 
-            layer.addRenderable(path);
+            layer.add(path);
         }
 
         // Potentially add the preview image.
@@ -175,7 +175,7 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
             Renderable surfaceImage = new SurfaceImage(image, sector);
 
             RenderableLayer layer = (RenderableLayer) fileSet.getValue(AVKey.LAYER);
-            layer.addRenderable(surfaceImage);
+            layer.add(surfaceImage);
 
             this.wwd.redraw();
         }

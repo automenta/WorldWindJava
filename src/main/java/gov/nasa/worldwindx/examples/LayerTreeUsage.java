@@ -38,7 +38,7 @@ public class LayerTreeUsage extends ApplicationTemplate {
 
             // Set up a layer to display the on-screen layer tree in the WorldWindow.
             this.hiddenLayer = new RenderableLayer();
-            this.hiddenLayer.addRenderable(this.layerTree);
+            this.hiddenLayer.add(this.layerTree);
             this.getWwd().getModel().getLayers().add(this.hiddenLayer);
 
             // Mark the layer as hidden to prevent it being included in the layer tree's model. Including the layer in

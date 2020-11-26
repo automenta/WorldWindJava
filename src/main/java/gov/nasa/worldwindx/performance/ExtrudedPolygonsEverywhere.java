@@ -91,7 +91,7 @@ public class ExtrudedPolygonsEverywhere extends ApplicationTemplate {
                     pgon.setEnableCap(true);
                     pgon.setCapAttributes(capAttrs);
                     pgon.setSideAttributes(sideAttrs);
-                    layer.addRenderable(pgon);
+                    layer.add(pgon);
                     ++count;
                 }
             }

@@ -1191,7 +1191,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public void addEntry(AbstractShapeEntry entry) {
             this.getModel().addEntry(entry);
 
-            this.getApp().getShapeLayer().addRenderable(entry.getShape());
+            this.getApp().getShapeLayer().add(entry.getShape());
             this.getApp().getWwd().redraw();
         }
 
@@ -1202,7 +1202,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
 
             this.getModel().removeEntry(entry);
 
-            this.getApp().getShapeLayer().removeRenderable(entry.getShape());
+            this.getApp().getShapeLayer().remove(entry.getShape());
             this.getApp().getWwd().redraw();
         }
 

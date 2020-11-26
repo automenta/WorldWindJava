@@ -447,7 +447,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
                 numEl);
             volume.setAttributes(attributes);
             volume.setEnableSides(!CONE_VOLUME);
-            layer.addRenderable(volume);
+            layer.add(volume);
 
             // Create two paths to show their interaction with the radar volume. The first path goes through most
             // of the volume. The second path goes mostly under the volume.
@@ -457,12 +457,12 @@ public class RadarVolumeExample extends ApplicationTemplate {
             ShapeAttributes pathAttributes = new BasicShapeAttributes();
             pathAttributes.setOutlineMaterial(Material.RED);
             path.setAttributes(pathAttributes);
-            layer.addRenderable(path);
+            layer.add(path);
 
             path = new Path(Position.fromDegrees(36.9843, -119.4464, 5.0e3),
                 Position.fromDegrees(36.4630, -118.3595, 5.0e3));
             path.setAttributes(pathAttributes);
-            layer.addRenderable(path);
+            layer.add(path);
 
             insertAfterPlacenames(getWwd(), layer);
         }
@@ -497,7 +497,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
                             : obstructionFlag == RadarVolume.INTERNAL_OBSTRUCTION ? "Internal" : "UNKNOWN";
                     path.setValue(AVKey.DISPLAY_NAME, msg);
                 }
-                lineLayer.addRenderable(path);
+                lineLayer.add(path);
             }
 
             insertAfterPlacenames(getWwd(), markerLayer);

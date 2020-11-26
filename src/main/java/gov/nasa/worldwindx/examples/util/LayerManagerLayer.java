@@ -84,7 +84,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         this.annotation.getAttributes().setBackgroundColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
         this.annotation.getAttributes().setInsets(new Insets(6, 6, 6, 6));
         this.annotation.getAttributes().setBorderWidth(1);
-        this.addRenderable(this.annotation);
+        this.add(this.annotation);
 
         // Listen to WorldWindow for select event
         this.wwd.addSelectListener(this);

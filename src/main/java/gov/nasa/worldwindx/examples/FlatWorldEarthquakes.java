@@ -334,12 +334,12 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
                 this.statusLabel.setText("Updating earthquakes...");
 
             RenderableLayer newLayer = (RenderableLayer) buildEarthquakeLayer(earthquakeFeedUrl);
-            if (newLayer.getNumRenderables() > 0) {
+            if (newLayer.size() > 0) {
                 LayerList layers = this.getWwd().getModel().getLayers();
                 if (this.eqLayer != null)
                     layers.remove(this.eqLayer);
                 this.eqLayer = newLayer;
-                this.eqLayer.addRenderable(this.tooltipAnnotation);
+                this.eqLayer.add(this.tooltipAnnotation);
                 insertBeforePlacenames(this.getWwd(), this.eqLayer);
                 this.applyMagnitudeFilter(Double.parseDouble((String) magnitudeCombo.getSelectedItem()));
 
@@ -413,7 +413,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
 
             eq.getAttributes().setTextColor(eqColors[Math.min(elapsedDays, eqColors.length - 1)]);
             eq.getAttributes().setScale(eqMagnitude.doubleValue() / 10);
-            layer.addRenderable(eq);
+            layer.add(eq);
         }
 
         private void applyMagnitudeFilter(double minMagnitude) {
@@ -421,7 +421,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
             setBlinker(null);
             setLatestLabel(null);
 
-            Iterable<Renderable> renderables = eqLayer.getRenderables();
+            Iterable<Renderable> renderables = eqLayer.all();
             for (Renderable r : renderables) {
                 if (r instanceof EqAnnotation) {
                     EqAnnotation eq = (EqAnnotation) r;

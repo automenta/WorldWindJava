@@ -83,7 +83,7 @@ public class PathPositionColors extends ApplicationTemplate {
 
             // Create a layer on which to display the path.
             RenderableLayer layer = new RenderableLayer();
-            layer.addRenderable(path);
+            layer.add(path);
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);

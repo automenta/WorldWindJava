@@ -271,7 +271,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         rotationLine.setPathType(AVKey.GREAT_CIRCLE);
         rotationLine.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
         rotationLine.setAttributes(lineAttrs);
-        this.accessoryLayer.addRenderable(rotationLine);
+        this.accessoryLayer.add(rotationLine);
 
         // Create a layer to hold the editing annotations.
         this.annotationLayer = new RenderableLayer();
@@ -280,7 +280,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         // Create the annotation.
         this.annotation = new EditorAnnotation("");
-        this.annotationLayer.addRenderable(this.annotation);
+        this.annotationLayer.add(this.annotation);
 
         // Create a layer to hold the shadow shape, the shape that shows the state before an editing operation.
         this.shadowLayer = new RenderableLayer();
@@ -762,7 +762,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         ((Attributable) this.getShape()).setAttributes(editingAttributes);
         ((Attributable) this.getShape()).setHighlightAttributes(editingAttributes);
 
-        this.getShadowLayer().addRenderable(shadowShape);
+        this.getShadowLayer().add(shadowShape);
 
         if (this.getShape() instanceof Airspace) {
             double[] altitudes = ((Airspace) shadowShape).getAltitudes();
@@ -780,7 +780,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
      * Remove the shadow shape.
      */
     protected void removeShadowShape() {
-        this.getShadowLayer().removeAllRenderables();
+        this.getShadowLayer().clear();
         if (this.getShape() instanceof AbstractAirspace)
             ((AbstractAirspace) this.getShape()).setAlwaysOnTop(false);
 
@@ -1087,7 +1087,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
      * @param controlPoint   the shape orientation control point.
      */
     protected void updateOrientationLine(Position centerPosition, Position controlPoint) {
-        Path rotationLine = (Path) this.getAccessoryLayer().getRenderables().iterator().next();
+        Path rotationLine = (Path) this.getAccessoryLayer().all().iterator().next();
 
         double cAltitude = centerPosition.getAltitude();
         double rAltitude = controlPoint.getAltitude();

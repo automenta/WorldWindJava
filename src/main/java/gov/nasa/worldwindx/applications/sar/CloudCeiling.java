@@ -62,12 +62,12 @@ public class CloudCeiling implements Restorable {
         this.setPatternSize(this.patternSize);
         this.setColor(this.color);
         this.updateElevations();
-        this.layer.addRenderable(lines[0]);
-        this.layer.addRenderable(lines[1]);
-        this.layer.addRenderable(screenLines[0]);
-        this.layer.addRenderable(screenLines[1]);
-        this.layer.addRenderable(planes[0]);
-        this.layer.addRenderable(planes[1]);
+        this.layer.add(lines[0]);
+        this.layer.add(lines[1]);
+        this.layer.add(screenLines[0]);
+        this.layer.add(screenLines[1]);
+        this.layer.add(planes[0]);
+        this.layer.add(planes[1]);
         this.layer.setPickEnabled(false);
         this.wwd.getModel().getLayers().add(this.layer);
     }
@@ -373,7 +373,7 @@ public class CloudCeiling implements Restorable {
 
     private void updateExtentShape() {
         if (this.shape != null) {
-            this.layer.removeRenderable(this.shape);
+            this.layer.remove(this.shape);
         }
         if (this.enabled && this.showExtent && this.extentPositions != null && !this.extentPositions.isEmpty()) {
             this.shape = new SurfacePolygon(this.extentPositions);
@@ -382,7 +382,7 @@ public class CloudCeiling implements Restorable {
             attr.setInteriorMaterial(Material.WHITE);
             attr.setInteriorOpacity(0.1);
             this.shape.setAttributes(attr);
-            this.layer.addRenderable(this.shape);
+            this.layer.add(this.shape);
         }
     }
 

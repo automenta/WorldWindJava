@@ -57,14 +57,14 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Place a default pin placemark at the same location over the previous one.
             pp = new PointPlacemark(pp.getPosition());
             pp.setEnableDecluttering(true);
             pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Default icon over audio icon");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(28, -104, 1.0e4));
             pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading 90, Screen relative");
@@ -81,7 +81,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Place a pin placemark at the same location over the previous one.
             pp = new PointPlacemark(pp.getPosition());
@@ -89,7 +89,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Default icon over rotated audio icon");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             this.setHighlightAttributes(pp);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Use a new attributes instance.
             // Note that a new attributes instance must be created for every unique set of attribute values, although
@@ -110,7 +110,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setImageAddress("images/pushpins/plain-red.png");
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark without a leader line.
             pp = new PointPlacemark(Position.fromDegrees(30, -104.5, 2.0e4));
@@ -123,7 +123,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setImageAddress("images/pushpins/plain-teal.png");
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark clamped to ground.
             pp = new PointPlacemark(Position.fromDegrees(28, -104.5, 2.0e4));
@@ -137,7 +137,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setImageAddress("images/pushpins/plain-white.png");
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark that uses all default values.
             pp = new PointPlacemark(Position.fromDegrees(30, -103.5, 2.0e3));
@@ -146,7 +146,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             pp.setLabelText("Placemark F");
             pp.setValue(AVKey.DISPLAY_NAME, "All defaults");
             this.setHighlightAttributes(pp);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark without an image.
             pp = new PointPlacemark(Position.fromDegrees(29, -104.5, 2.0e4));
@@ -162,7 +162,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setScale(5.0d);
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark off the surface and with a line.
             pp = new PointPlacemark(Position.fromDegrees(30, -104, 2.0e4));
@@ -180,7 +180,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setScale(10.0d);
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(28, -103, 1.0e4));
             pp.setEnableDecluttering(true);
@@ -200,7 +200,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate {
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);

@@ -80,7 +80,7 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
                 if (metadata != null) {
                     Annotation note = new GlobeAnnotation(metadata, this.selectedObject.getPosition(),
                         this.metaAttrs);
-                    this.annotationLayer.addRenderable(note);
+                    this.annotationLayer.add(note);
                     note.getAttributes().setVisible(true);
                     this.selectedObject.setField(AVKey.ANIMATION_ANNOTATION, note);
                 }

@@ -438,7 +438,7 @@ public class ViewControlsLayer extends RenderableLayer {
             controlPan.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_PAN);
             controlPan.getAttributes().setImageSource(getImageSource(AVKey.VIEW_PAN));
             controlPan.getAttributes().setSize(new Dimension(panSize, panSize));
-            this.addRenderable(controlPan);
+            this.add(controlPan);
         }
         if (this.showLookControls) {
             // Look
@@ -446,62 +446,62 @@ public class ViewControlsLayer extends RenderableLayer {
             controlLook.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_LOOK);
             controlLook.getAttributes().setImageSource(getImageSource(AVKey.VIEW_LOOK));
             controlLook.getAttributes().setSize(new Dimension(panSize, panSize));
-            this.addRenderable(controlLook);
+            this.add(controlLook);
         }
         if (this.showZoomControls) {
             // Zoom
             controlZoomIn = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
             controlZoomIn.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_ZOOM_IN);
             controlZoomIn.getAttributes().setImageSource(getImageSource(AVKey.VIEW_ZOOM_IN));
-            this.addRenderable(controlZoomIn);
+            this.add(controlZoomIn);
             controlZoomOut = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
             controlZoomOut.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_ZOOM_OUT);
             controlZoomOut.getAttributes().setImageSource(getImageSource(AVKey.VIEW_ZOOM_OUT));
-            this.addRenderable(controlZoomOut);
+            this.add(controlZoomOut);
         }
         if (this.showHeadingControls) {
             // Heading
             controlHeadingLeft = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
             controlHeadingLeft.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_HEADING_LEFT);
             controlHeadingLeft.getAttributes().setImageSource(getImageSource(AVKey.VIEW_HEADING_LEFT));
-            this.addRenderable(controlHeadingLeft);
+            this.add(controlHeadingLeft);
             controlHeadingRight = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
             controlHeadingRight.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_HEADING_RIGHT);
             controlHeadingRight.getAttributes().setImageSource(getImageSource(AVKey.VIEW_HEADING_RIGHT));
-            this.addRenderable(controlHeadingRight);
+            this.add(controlHeadingRight);
         }
         if (this.showPitchControls) {
             // Pitch
             controlPitchUp = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
             controlPitchUp.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_PITCH_UP);
             controlPitchUp.getAttributes().setImageSource(getImageSource(AVKey.VIEW_PITCH_UP));
-            this.addRenderable(controlPitchUp);
+            this.add(controlPitchUp);
             controlPitchDown = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
             controlPitchDown.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_PITCH_DOWN);
             controlPitchDown.getAttributes().setImageSource(getImageSource(AVKey.VIEW_PITCH_DOWN));
-            this.addRenderable(controlPitchDown);
+            this.add(controlPitchDown);
         }
         if (this.showFovControls) {
             // Field of view FOV
             controlFovNarrow = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
             controlFovNarrow.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_FOV_NARROW);
             controlFovNarrow.getAttributes().setImageSource(getImageSource(AVKey.VIEW_FOV_NARROW));
-            this.addRenderable(controlFovNarrow);
+            this.add(controlFovNarrow);
             controlFovWide = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
             controlFovWide.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_FOV_WIDE);
             controlFovWide.getAttributes().setImageSource(getImageSource(AVKey.VIEW_FOV_WIDE));
-            this.addRenderable(controlFovWide);
+            this.add(controlFovWide);
         }
         if (this.showVeControls) {
             // Vertical Exaggeration
             controlVeUp = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
             controlVeUp.setValue(AVKey.VIEW_OPERATION, AVKey.VERTICAL_EXAGGERATION_UP);
             controlVeUp.getAttributes().setImageSource(getImageSource(AVKey.VERTICAL_EXAGGERATION_UP));
-            this.addRenderable(controlVeUp);
+            this.add(controlVeUp);
             controlVeDown = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
             controlVeDown.setValue(AVKey.VIEW_OPERATION, AVKey.VERTICAL_EXAGGERATION_DOWN);
             controlVeDown.getAttributes().setImageSource(getImageSource(AVKey.VERTICAL_EXAGGERATION_DOWN));
-            this.addRenderable(controlVeDown);
+            this.add(controlVeDown);
         }
 
         // Place controls according to layout and viewport dimension
@@ -680,7 +680,7 @@ public class ViewControlsLayer extends RenderableLayer {
     }
 
     protected void clearControls() {
-        this.removeAllRenderables();
+        this.clear();
 
         this.controlPan = null;
         this.controlLook = null;

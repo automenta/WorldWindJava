@@ -62,7 +62,7 @@ public class PathsWithDirection extends ApplicationTemplate {
             path.setVisible(true);
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             path.setPathType(AVKey.GREAT_CIRCLE);
-            layer.addRenderable(path);
+            layer.add(path);
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);

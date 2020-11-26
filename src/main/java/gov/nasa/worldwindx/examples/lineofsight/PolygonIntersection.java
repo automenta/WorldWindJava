@@ -61,7 +61,7 @@ public class PolygonIntersection extends ApplicationTemplate {
 
             // Add the shape to the display layer.
             this.layer = new RenderableLayer();
-            this.layer.addRenderable(this.polygon);
+            this.layer.add(this.polygon);
             insertBeforeCompass(getWwd(), this.layer);
 
             // Create high-resolution terrain for the intersection calculations
@@ -109,7 +109,7 @@ public class PolygonIntersection extends ApplicationTemplate {
             pathAttributes.setDrawOutline(true);
             pathAttributes.setDrawInterior(false);
             path.setAttributes(pathAttributes);
-            this.layer.addRenderable(path);
+            this.layer.add(path);
 
             this.getWwd().redraw();
         }
@@ -123,7 +123,7 @@ public class PolygonIntersection extends ApplicationTemplate {
             pointAttributes.setScale(8.0d);
             pointAttributes.setUsePointAsDefaultImage(true);
             iPoint.setAttributes(pointAttributes);
-            this.layer.addRenderable(iPoint);
+            this.layer.add(iPoint);
 
             this.getWwd().redraw();
         }

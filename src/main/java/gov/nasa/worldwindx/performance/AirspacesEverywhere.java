@@ -71,7 +71,7 @@ public class AirspacesEverywhere extends ApplicationTemplate {
                     Airspace pgon = new Polygon(positions);
                     pgon.setAltitudes(1.0e3, 1.0e4);
                     pgon.setAltitudeDatum(AVKey.ABOVE_MEAN_SEA_LEVEL, AVKey.ABOVE_MEAN_SEA_LEVEL);
-                    layer.addRenderable(pgon);
+                    layer.add(pgon);
                     ++count;
                 }
             }

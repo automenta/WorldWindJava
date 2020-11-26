@@ -103,8 +103,8 @@ public class WebBrowserBalloons extends ApplicationTemplate {
             // Create a layer to display the balloons.
             RenderableLayer layer = new RenderableLayer();
             layer.setName("Web Browser Balloons");
-            layer.addRenderable(balloon);
-            layer.addRenderable(placemark);
+            layer.add(balloon);
+            layer.add(placemark);
             // Add the layer to the ApplicationTemplate's layer panel.
             insertBeforePlacenames(getWwd(), layer);
         }

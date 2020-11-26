@@ -87,10 +87,10 @@ public class LineBackground extends ApplicationTemplate {
                 RenderableLayer layer = new RenderableLayer();
                 layer.setName("Lines");
                 layer.setPickEnabled(false);
-                layer.addRenderable(si2);
-                layer.addRenderable(si1);
-                layer.addRenderable(path1); // Must draw the primary Path before drawing the background Path
-                layer.addRenderable(path2);
+                layer.add(si2);
+                layer.add(si1);
+                layer.add(path1); // Must draw the primary Path before drawing the background Path
+                layer.add(path2);
 
                 insertBeforeCompass(this.getWwd(), layer);
 

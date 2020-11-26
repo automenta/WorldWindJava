@@ -68,7 +68,7 @@ public class ShapeClipping extends ApplicationTemplate {
                         }
 
                         RenderableLayer layer = (RenderableLayer) result;
-                        Renderable renderable = layer.getRenderables().iterator().next();
+                        Renderable renderable = layer.all().iterator().next();
                         clippingPanel.setLandShape((Combinable) renderable);
                     }
 
@@ -96,7 +96,7 @@ public class ShapeClipping extends ApplicationTemplate {
 
             RenderableLayer shapeLayer = new RenderableLayer();
             shapeLayer.setName("Clipping Shape");
-            shapeLayer.addRenderable(circle);
+            shapeLayer.add(circle);
             this.getWwd().getModel().getLayers().add(shapeLayer);
             this.getWwd().addSelectListener(this);
         }

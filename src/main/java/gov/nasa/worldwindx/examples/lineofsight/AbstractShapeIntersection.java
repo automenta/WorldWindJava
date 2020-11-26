@@ -60,7 +60,7 @@ public class AbstractShapeIntersection extends ApplicationTemplate {
 
             // Add the shape to its display layer.
             this.shapeLayer = new RenderableLayer();
-            this.shapeLayer.addRenderable(this.shape);
+            this.shapeLayer.add(this.shape);
             insertBeforeCompass(getWwd(), this.shapeLayer);
 
             // Prepare the results layer.
@@ -124,7 +124,7 @@ public class AbstractShapeIntersection extends ApplicationTemplate {
             pathAttributes.setDrawOutline(true);
             pathAttributes.setDrawInterior(false);
             path.setAttributes(pathAttributes);
-            this.resultsLayer.addRenderable(path);
+            this.resultsLayer.add(path);
 
             this.getWwd().redraw();
         }
@@ -138,7 +138,7 @@ public class AbstractShapeIntersection extends ApplicationTemplate {
             pointAttributes.setScale(8.0d);
             pointAttributes.setUsePointAsDefaultImage(true);
             iPoint.setAttributes(pointAttributes);
-            this.resultsLayer.addRenderable(iPoint);
+            this.resultsLayer.add(iPoint);
 
             this.getWwd().redraw();
         }

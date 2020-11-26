@@ -65,7 +65,7 @@ public class ShapeEditing extends ApplicationTemplate {
             polygon.setHighlightAttributes(highlightAttrs);
             polygon.setAltitudes(1.0e4, 2.0e4);
             polygon.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
-            layer.addRenderable(polygon);
+            layer.add(polygon);
 
             CappedCylinder cylinder = new CappedCylinder(LatLon.fromDegrees(40.5, -118), 5.0e4);
             cylinder.setDrawSurfaceShape(useSurfaceAirspaces);
@@ -73,7 +73,7 @@ public class ShapeEditing extends ApplicationTemplate {
             cylinder.setHighlightAttributes(highlightAttrs);
             cylinder.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
             cylinder.setAltitudes(1.0e4, 2.0e4);
-            layer.addRenderable(cylinder);
+            layer.add(cylinder);
 
             cylinder = new CappedCylinder(LatLon.fromDegrees(40.5, -116), 5.0e4);
             cylinder.setRadii(3.0e4, 5.0e4);
@@ -82,7 +82,7 @@ public class ShapeEditing extends ApplicationTemplate {
             cylinder.setHighlightAttributes(highlightAttrs);
             cylinder.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
             cylinder.setAltitudes(1.0e4, 2.0e4);
-            layer.addRenderable(cylinder);
+            layer.add(cylinder);
 
             Airspace orbit = new Orbit(LatLon.fromDegrees(40, -114), LatLon.fromDegrees(41, -114),
                 Orbit.OrbitType.CENTER,
@@ -92,7 +92,7 @@ public class ShapeEditing extends ApplicationTemplate {
             orbit.setHighlightAttributes(highlightAttrs);
             orbit.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
             orbit.setAltitudes(1.0e4, 2.0e4);
-            layer.addRenderable(orbit);
+            layer.add(orbit);
 
             locations = new ArrayList<>();
             locations.add(LatLon.fromDegrees(40, -113));
@@ -105,7 +105,7 @@ public class ShapeEditing extends ApplicationTemplate {
             route.setHighlightAttributes(highlightAttrs);
             route.setAltitudes(1.0e4, 2.0e4);
             route.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
-            layer.addRenderable(route);
+            layer.add(route);
 
             locations = new ArrayList<>();
             locations.add(LatLon.fromDegrees(40, -110));
@@ -118,7 +118,7 @@ public class ShapeEditing extends ApplicationTemplate {
             curtain.setHighlightAttributes(highlightAttrs);
             curtain.setAltitudes(1.0e4, 2.0e4);
             curtain.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
-            layer.addRenderable(curtain);
+            layer.add(curtain);
 
             Airspace sphere = new SphereAirspace(LatLon.fromDegrees(40.5, -107), 5.0e4);
             sphere.setDrawSurfaceShape(useSurfaceAirspaces);
@@ -126,7 +126,7 @@ public class ShapeEditing extends ApplicationTemplate {
             sphere.setHighlightAttributes(highlightAttrs);
             sphere.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
             sphere.setAltitude(1.5e4);
-            layer.addRenderable(sphere);
+            layer.add(sphere);
 
             PartialCappedCylinder partialCylinder = new PartialCappedCylinder(LatLon.fromDegrees(40.5, -105), 5.0e4);
             partialCylinder.setAzimuths(Angle.fromDegrees(270), Angle.fromDegrees(90));
@@ -136,7 +136,7 @@ public class ShapeEditing extends ApplicationTemplate {
             partialCylinder.setHighlightAttributes(highlightAttrs);
             partialCylinder.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
             partialCylinder.setAltitudes(1.0e4, 2.0e4);
-            layer.addRenderable(partialCylinder);
+            layer.add(partialCylinder);
 
             TrackAirspace track = new TrackAirspace();
             track.addLeg(LatLon.fromDegrees(40, -103), LatLon.fromDegrees(41, -103), 1.0e4, 2.0e4, 2.0e4, 2.0e4);
@@ -148,7 +148,7 @@ public class ShapeEditing extends ApplicationTemplate {
             track.setHighlightAttributes(highlightAttrs);
             track.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
             track.setAltitudes(1.0e4, 2.0e4);
-            layer.addRenderable(track);
+            layer.add(track);
 
             CappedEllipticalCylinder cec = new CappedEllipticalCylinder(LatLon.fromDegrees(40.5, -100), 5.0e4, 6.0e4,
                 Angle.fromDegrees(0));
@@ -158,7 +158,7 @@ public class ShapeEditing extends ApplicationTemplate {
             cec.setHighlightAttributes(highlightAttrs);
             cec.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
             cec.setAltitudes(1.0e4, 2.0e4);
-            layer.addRenderable(cec);
+            layer.add(cec);
 
             // Surface Shapes
 
@@ -176,7 +176,7 @@ public class ShapeEditing extends ApplicationTemplate {
             locations.add(LatLon.fromDegrees(43, -121));
             SurfaceShape surfacePolygon = new SurfacePolygon(attrs, locations);
             surfacePolygon.setHighlightAttributes(highlightAttrs);
-            layer.addRenderable(surfacePolygon);
+            layer.add(surfacePolygon);
 
             locations = new ArrayList<>();
             locations.add(LatLon.fromDegrees(42, -119));
@@ -185,26 +185,26 @@ public class ShapeEditing extends ApplicationTemplate {
             locations.add(LatLon.fromDegrees(43, -119));
             SurfaceShape polyline = new SurfacePolyline(attrs, locations);
             polyline.setHighlightAttributes(highlightAttrs);
-            layer.addRenderable(polyline);
+            layer.add(polyline);
 
             SurfaceShape circle = new SurfaceCircle(attrs, LatLon.fromDegrees(42.5, -116), 1.0e5);
             circle.setHighlightAttributes(highlightAttrs);
-            layer.addRenderable(circle);
+            layer.add(circle);
 
             SurfaceSquare square = new SurfaceSquare(attrs, LatLon.fromDegrees(42.5, -113), 1.0e5);
             square.setHeading(Angle.fromDegrees(30));
             square.setHighlightAttributes(highlightAttrs);
-            layer.addRenderable(square);
+            layer.add(square);
 
             SurfaceQuad quad = new SurfaceQuad(attrs, LatLon.fromDegrees(42.5, -111), 1.0e5, 1.0e5);
             quad.setHeading(Angle.fromDegrees(30));
             quad.setHighlightAttributes(highlightAttrs);
-            layer.addRenderable(quad);
+            layer.add(quad);
 
             SurfaceEllipse ellipse = new SurfaceEllipse(attrs, LatLon.fromDegrees(42.5, -108), 1.0e5, 1.5e5);
             ellipse.setHeading(Angle.fromDegrees(30));
             ellipse.setHighlightAttributes(highlightAttrs);
-            layer.addRenderable(ellipse);
+            layer.add(ellipse);
 
             Collection<Marker> markers = new ArrayList<>(1);
             markers.add(new BasicMarker(Position.fromDegrees(90, 0), new BasicMarkerAttributes()));
@@ -221,7 +221,7 @@ public class ShapeEditing extends ApplicationTemplate {
             shapeAttributes.setOutlineMaterial(Material.WHITE);
             antiMeridian.setAttributes(antiMeridianAttributes);
             antiMeridian.setHighlightAttributes(antiMeridianAttributes);
-            layer.addRenderable(antiMeridian);
+            layer.add(antiMeridian);
 
             insertBeforePlacenames(getWwd(), layer);
         }

@@ -133,7 +133,7 @@ public class ExtrudedShapes extends ApplicationTemplate {
                         }
 
                         // Add the shape to the layer.
-                        layer.addRenderable(quad);
+                        layer.add(quad);
 
                         ++n;
                         m += ((Polygon) airspace).getLocations().size();

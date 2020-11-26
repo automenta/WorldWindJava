@@ -52,7 +52,7 @@ public class ColladaViewer extends ApplicationTemplate
 
             // Adds a new layer containing the ColladaRoot to the end of the WorldWindow's layer list.
             RenderableLayer layer = new RenderableLayer();
-            layer.addRenderable(colladaController);
+            layer.add(colladaController);
             this.getWwd().getModel().getLayers().add(layer);
         }
     }

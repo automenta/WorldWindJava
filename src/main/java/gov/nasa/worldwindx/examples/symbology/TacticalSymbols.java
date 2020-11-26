@@ -79,7 +79,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             airSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             airSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(235));
             airSymbol.setShowLocation(false);
-            this.symbolLayer.addRenderable(airSymbol);
+            this.symbolLayer.add(airSymbol);
 
             // Create a ground tactical symbol for the MIL-STD-2525 symbology set. This symbol identifier specifies
             // multiple hostile Self-Propelled Rocket Launchers with a destroyed state. MilStd2525TacticalSymbol
@@ -97,7 +97,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             groundSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(90));
             groundSymbol.setModifier(SymbologyConstants.SPEED_LEADER_SCALE, 0.5);
             groundSymbol.setShowLocation(false);
-            this.symbolLayer.addRenderable(groundSymbol);
+            this.symbolLayer.add(groundSymbol);
 
             // Create a ground tactical symbol for the MIL-STD-2525 symbology set. This symbol identifier specifies a
             // MIL-STD-2525 friendly Heavy Machine Gun that's currently mobilized via rail. This symbol is taken from
@@ -115,7 +115,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             machineGunSymbol.setModifier(SymbologyConstants.ADDITIONAL_INFORMATION, "ADDED SUPPORT FOR JJ");
             machineGunSymbol.setModifier(SymbologyConstants.TYPE, "MACHINE GUN");
             machineGunSymbol.setModifier(SymbologyConstants.DATE_TIME_GROUP, "30140000ZSEP97");
-            this.symbolLayer.addRenderable(machineGunSymbol);
+            this.symbolLayer.add(machineGunSymbol);
 
             // Add the same symbol at the dateline to test that all aspects display correctly there.
             TacticalSymbol machineGunSymbolAtDateline = new MilStd2525TacticalSymbol("SFGPEWRH--MTUSG",
@@ -129,7 +129,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             machineGunSymbolAtDateline.setModifier(SymbologyConstants.ADDITIONAL_INFORMATION, "ADDED SUPPORT FOR JJ");
             machineGunSymbolAtDateline.setModifier(SymbologyConstants.TYPE, "MACHINE GUN");
             machineGunSymbolAtDateline.setModifier(SymbologyConstants.DATE_TIME_GROUP, "30140000ZSEP97");
-            this.symbolLayer.addRenderable(machineGunSymbolAtDateline);
+            this.symbolLayer.add(machineGunSymbolAtDateline);
 
             // Add the symbol layer to the WorldWind model.
             this.getWwd().getModel().getLayers().add(symbolLayer);
@@ -193,7 +193,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             cb.addActionListener(actionEvent -> {
                 boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                for (Renderable r : symbolLayer.getRenderables()) {
+                for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
                         ((TacticalSymbol) r).setShowGraphicModifiers(tf);
                     getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
@@ -208,7 +208,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             cb.addActionListener(actionEvent -> {
                 boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                for (Renderable r : symbolLayer.getRenderables()) {
+                for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
                         ((TacticalSymbol) r).setShowTextModifiers(tf);
                     getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
@@ -223,7 +223,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             cb.addActionListener(actionEvent -> {
                 boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                for (Renderable r : symbolLayer.getRenderables()) {
+                for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
                         ((MilStd2525TacticalSymbol) r).setShowFrame(tf);
                     getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
@@ -238,7 +238,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             cb.addActionListener(actionEvent -> {
                 boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                for (Renderable r : symbolLayer.getRenderables()) {
+                for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
                         ((MilStd2525TacticalSymbol) r).setShowFill(tf);
                     getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
@@ -253,7 +253,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             cb.addActionListener(actionEvent -> {
                 boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                for (Renderable r : symbolLayer.getRenderables()) {
+                for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
                         ((MilStd2525TacticalSymbol) r).setShowIcon(tf);
                     getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.

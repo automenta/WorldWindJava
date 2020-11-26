@@ -35,7 +35,7 @@ public class SurfaceTextUsage extends ApplicationTemplate {
 
             Renderable surfaceText = new SurfaceText("Desolation Wilderness",
                 Position.fromDegrees(38.9345, -120.1670, 0));
-            layer.addRenderable(surfaceText);
+            layer.add(surfaceText);
 
             this.getWwd().getModel().getLayers().add(layer);
         }

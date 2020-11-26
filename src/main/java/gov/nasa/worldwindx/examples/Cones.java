@@ -62,7 +62,7 @@ public class Cones extends ApplicationTemplate {
             cone3.setAttributes(attrs);
             cone3.setVisible(true);
             cone3.setValue(AVKey.DISPLAY_NAME, "Cone with equal axes, ABSOLUTE altitude mode");
-            layer.addRenderable(cone3);
+            layer.add(cone3);
 
             // Cone with equal axes, RELATIVE_TO_GROUND
             Cone cone4 = new Cone(Position.fromDegrees(37.5, -115, 50000), 50000, 50000, 50000);
@@ -70,7 +70,7 @@ public class Cones extends ApplicationTemplate {
             cone4.setAttributes(attrs);
             cone4.setVisible(true);
             cone4.setValue(AVKey.DISPLAY_NAME, "Cone with equal axes, RELATIVE_TO_GROUND altitude mode");
-            layer.addRenderable(cone4);
+            layer.add(cone4);
 
             // Cone with equal axes, CLAMP_TO_GROUND
             Cone cone5 = new Cone(Position.fromDegrees(35, -110, 50000), 50000, 50000, 50000);
@@ -78,7 +78,7 @@ public class Cones extends ApplicationTemplate {
             cone5.setAttributes(attrs);
             cone5.setVisible(true);
             cone5.setValue(AVKey.DISPLAY_NAME, "Cone with equal axes, CLAMP_TO_GROUND altitude mode");
-            layer.addRenderable(cone5);
+            layer.add(cone5);
 
             // Cone with a texture, using Cone(position, height, radius) constructor
             Cone cone9 = new Cone(Position.fromDegrees(0, -90, 600000), 1200000, 600000);
@@ -87,7 +87,7 @@ public class Cones extends ApplicationTemplate {
             cone9.setAttributes(attrs);
             cone9.setVisible(true);
             cone9.setValue(AVKey.DISPLAY_NAME, "Cone with a texture");
-            layer.addRenderable(cone9);
+            layer.add(cone9);
 
             // Scaled Cone with default orientation
             Cone cone = new Cone(Position.ZERO, 1000000, 500000, 100000);
@@ -95,7 +95,7 @@ public class Cones extends ApplicationTemplate {
             cone.setAttributes(attrs);
             cone.setVisible(true);
             cone.setValue(AVKey.DISPLAY_NAME, "Scaled Cone with default orientation");
-            layer.addRenderable(cone);
+            layer.add(cone);
 
             // Scaled Cone with a pre-set orientation
             Cone cone2 = new Cone(Position.fromDegrees(0, 30, 750000), 1000000, 500000, 100000,
@@ -105,7 +105,7 @@ public class Cones extends ApplicationTemplate {
             cone2.setValue(AVKey.DISPLAY_NAME, "Scaled Cone with a pre-set orientation");
             cone2.setVisible(true);
 
-            layer.addRenderable(cone2);
+            layer.add(cone2);
 
             // Scaled Cone with a pre-set orientation
             Cone cone6 = new Cone(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
@@ -115,7 +115,7 @@ public class Cones extends ApplicationTemplate {
             cone6.setAttributes(attrs2);
             cone6.setValue(AVKey.DISPLAY_NAME, "Scaled Cone with a pre-set orientation");
             cone6.setVisible(true);
-            layer.addRenderable(cone6);
+            layer.add(cone6);
 
             // Scaled Cone with a pre-set orientation
             Cone cone7 = new Cone(Position.fromDegrees(60, 30, 750000), 1000000, 500000, 100000,
@@ -124,7 +124,7 @@ public class Cones extends ApplicationTemplate {
             cone7.setAttributes(attrs2);
             cone7.setVisible(true);
             cone7.setValue(AVKey.DISPLAY_NAME, "Scaled Cone with a pre-set orientation");
-            layer.addRenderable(cone7);
+            layer.add(cone7);
 
             // Scaled, oriented Cone in 3rd "quadrant" (-X, -Y, -Z)
             Cone cone8 = new Cone(Position.fromDegrees(-45, -180, 750000), 1000000, 500000, 100000,
@@ -133,7 +133,7 @@ public class Cones extends ApplicationTemplate {
             cone8.setAttributes(attrs2);
             cone8.setVisible(true);
             cone8.setValue(AVKey.DISPLAY_NAME, "Scaled, oriented Cone in the 3rd 'quadrant' (-X, -Y, -Z)");
-            layer.addRenderable(cone8);
+            layer.add(cone8);
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
@@ -185,7 +185,7 @@ public class Cones extends ApplicationTemplate {
         }
 
         protected void setConeDetailHint(double hint) {
-            for (Renderable renderable : getLayer().getRenderables()) {
+            for (Renderable renderable : getLayer().all()) {
                 Cone current = (Cone) renderable;
                 current.setDetailHint(hint);
             }

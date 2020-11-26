@@ -111,7 +111,7 @@ public class SimpleImporter {
             kmlRoot.parse();
             kmlController = new KMLController(kmlRoot);
             final RenderableLayer layer = new RenderableLayer();
-            layer.addRenderable(kmlController);
+            layer.add(kmlController);
             layer.setName(formName(source, null));
             this.addLayer(layer, null);
         }

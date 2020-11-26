@@ -67,7 +67,7 @@ public class TreeControl extends ApplicationTemplate {
 
             controller = new HotSpotController(this.getWwd());
 
-            layer.addRenderable(tree);
+            layer.add(tree);
 
             // Add the layer to the model.
             insertBeforeCompass(this.getWwd(), layer);

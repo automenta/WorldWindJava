@@ -916,7 +916,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             this.getModel().addEntry(entry);
             this.updateShapeIntersection();
 
-            this.getApp().getAirspaceLayer().addRenderable(entry.getAirspace());
+            this.getApp().getAirspaceLayer().add(entry.getAirspace());
             this.getApp().getWwd().redraw();
         }
 
@@ -930,7 +930,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             this.getModel().removeEntry(entry);
             this.updateShapeIntersection();
 
-            this.getApp().getAirspaceLayer().removeRenderable(entry.getAirspace());
+            this.getApp().getAirspaceLayer().remove(entry.getAirspace());
             this.getApp().getWwd().redraw();
         }
 

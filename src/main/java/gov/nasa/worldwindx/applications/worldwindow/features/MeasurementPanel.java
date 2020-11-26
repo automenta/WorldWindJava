@@ -187,7 +187,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
             return;
         }
 
-        this.shapeLayer.removeRenderable(this.measureTool.getShape());
+        this.shapeLayer.remove(this.measureTool.getShape());
         if (this.measureTool.getShape() instanceof Disposable) {
             ((Disposable) this.measureTool.getShape()).dispose();
         }
@@ -227,7 +227,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
     }
 
     private boolean layerContains(RenderableLayer layer, Renderable renderable) {
-        for (Renderable r : layer.getRenderables()) {
+        for (Renderable r : layer.all()) {
             if (r == renderable) {
                 return true;
             }
@@ -259,7 +259,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
             else if (event.getPropertyName().equals(WWOMeasureTool.EVENT_POSITION_ADD)) {
                 if (getMeasureTool().getShape() != null
                     && !layerContains(getShapeLayer(), getMeasureTool().getShape())) {
-                    getShapeLayer().addRenderable(getMeasureTool().getShape());
+                    getShapeLayer().add(getMeasureTool().getShape());
                 }
             } // TODO: remove shape when it becomes undefined? such as no points in line
         };
@@ -341,7 +341,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         this.newButton.addActionListener((ActionEvent actionEvent) -> {
             getMeasureTool().clear();
             if (shapeLayer != null && measureTool.getShape() != null) {
-                shapeLayer.removeRenderable(measureTool.getShape());
+                shapeLayer.remove(measureTool.getShape());
             }
             getMeasureTool().setArmed(true);
         });

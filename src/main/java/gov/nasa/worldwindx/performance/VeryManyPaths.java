@@ -54,7 +54,7 @@ public class VeryManyPaths extends ApplicationTemplate {
 
             for (int i = 0; i < numPaths; i++) {
                 Angle heading = Angle.fromDegrees(i * dAngle);
-                layer.addRenderable(this.makePath(origin, heading, length, numPositions));
+                layer.add(this.makePath(origin, heading, length, numPositions));
             }
 
             System.out.printf("%d paths, each with %d positions\n", NUM_PATHS, NUM_POSITIONS);

@@ -53,21 +53,21 @@ public class Paths extends ApplicationTemplate {
             path.setVisible(true);
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             path.setPathType(AVKey.GREAT_CIRCLE);
-            layer.addRenderable(path);
+            layer.add(path);
 
             // Create a path that follows the terrain
             path = new Path(pathPositions);
             path.setAttributes(attrs);
             path.setVisible(true);
             path.setSurfacePath(true);
-            layer.addRenderable(path);
+            layer.add(path);
 
             // Create a path that uses all default values.
             pathPositions = new ArrayList<>();
             pathPositions.add(Position.fromDegrees(28, -104, 1.0e4));
             pathPositions.add(Position.fromDegrees(35, -102, 1.0e4));
             path = new Path(pathPositions);
-            layer.addRenderable(path);
+            layer.add(path);
 
             // Create a path with more than two positions and closed.
             pathPositions = new ArrayList<>();
@@ -86,7 +86,7 @@ public class Paths extends ApplicationTemplate {
             attrs.setOutlineWidth(2);
             path.setAttributes(attrs);
 
-            layer.addRenderable(path);
+            layer.add(path);
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);

@@ -205,11 +205,11 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         this.shapeLayer.setPickEnabled(false);
         this.layer.setName("Measure Tool");
-        this.layer.addRenderable(this.shapeLayer);          // add shape layer to render layer
-        this.layer.addRenderable(this.controlPointsLayer);  // add control points layer to render layer
+        this.layer.add(this.shapeLayer);          // add shape layer to render layer
+        this.layer.add(this.controlPointsLayer);  // add control points layer to render layer
         this.controlPointsLayer.setEnabled(this.showControlPoints);
         if (this.applicationLayer != null) {
-            this.applicationLayer.addRenderable(this.layer);    // add render layer to the application provided layer
+            this.applicationLayer.add(this.layer);    // add render layer to the application provided layer
         }
         else {
             this.wwd.getModel().getLayers().add(this.layer);    // add render layer to the globe model
@@ -260,7 +260,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         this.annotation = new ScreenAnnotation("", new Point(0, 0), this.annotationAttributes);
         this.annotation.getAttributes().setVisible(false);
         this.annotation.getAttributes().setDrawOffset(null); // use defaults
-        this.shapeLayer.addRenderable(this.annotation);
+        this.shapeLayer.add(this.annotation);
     }
 
     protected static Angle computeNormalizedHeading(Angle heading) {
@@ -754,14 +754,14 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         // Clear and replace current shape
         if (this.surfaceShape != null) {
-            this.shapeLayer.removeRenderable(this.surfaceShape);
+            this.shapeLayer.remove(this.surfaceShape);
             this.surfaceShape = null;
         }
         if (this.line != null) {
-            this.shapeLayer.removeRenderable(this.line);
+            this.shapeLayer.remove(this.line);
         }
         this.line = line;
-        this.shapeLayer.addRenderable(line);
+        this.shapeLayer.add(line);
         // Grab some of the line attributes
         setFollowTerrain(line.isFollowTerrain());
         setPathType(line.getPathType());
@@ -799,14 +799,14 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         // Clear and replace current surface shape
         if (this.surfaceShape != null) {
-            this.shapeLayer.removeRenderable(this.surfaceShape);
+            this.shapeLayer.remove(this.surfaceShape);
         }
         if (this.line != null) {
-            this.shapeLayer.removeRenderable(this.line);
+            this.shapeLayer.remove(this.line);
             this.line = null;
         }
         this.surfaceShape = surfaceShape;
-        this.shapeLayer.addRenderable(surfaceShape);
+        this.shapeLayer.add(surfaceShape);
         this.setPathType(surfaceShape.getPathType());
 
         if (surfaceShape instanceof SurfaceQuad) {
@@ -1044,7 +1044,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 this.controlPoints.remove(this.controlPoints.size() - 1);
             }
         }
-        this.controlPointsLayer.setRenderables(this.controlPoints);
+        this.controlPointsLayer.set(this.controlPoints);
         // Update screen shapes
         updateMeasureShape();
         this.firePropertyChange(EVENT_POSITION_REMOVE, currentLastPosition, null);
@@ -1751,11 +1751,11 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 attrs.setOutlineWidth(this.getLineWidth());
                 attrs.setOutlineMaterial(new Material(this.getLineColor()));
                 this.line.setAttributes(attrs);
-                this.shapeLayer.addRenderable(this.line);
+                this.shapeLayer.add(this.line);
             }
             if (this.positions.size() < 2 && this.line != null) {
                 // Remove line if less then 2 positions
-                this.shapeLayer.removeRenderable(this.line);
+                this.shapeLayer.remove(this.line);
                 this.line = null;
             }
             // Update current line
@@ -1765,7 +1765,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
             if (this.surfaceShape != null) {
                 // Remove surface shape if necessary
-                this.shapeLayer.removeRenderable(this.surfaceShape);
+                this.shapeLayer.remove(this.surfaceShape);
                 this.surfaceShape = null;
             }
         } // Update polygon
@@ -1780,11 +1780,11 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 attr.setOutlineOpacity(this.getLineColor().getAlpha() / 255.0d);
                 attr.setOutlineWidth(this.getLineWidth());
                 this.surfaceShape.setAttributes(attr);
-                this.shapeLayer.addRenderable(this.surfaceShape);
+                this.shapeLayer.add(this.surfaceShape);
             }
             if (this.positions.size() <= 3 && this.surfaceShape != null) {
                 // Remove surface shape if only three positions or less - last is same as first
-                this.shapeLayer.removeRenderable(this.surfaceShape);
+                this.shapeLayer.remove(this.surfaceShape);
                 this.surfaceShape = null;
             }
             if (this.surfaceShape != null) {
@@ -1793,7 +1793,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
             }
             // Remove line if necessary
             if (this.line != null) {
-                this.shapeLayer.removeRenderable(this.line);
+                this.shapeLayer.remove(this.line);
                 this.line = null;
             }
         } // Update regular shape
@@ -1829,11 +1829,11 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 attr.setOutlineOpacity(this.getLineColor().getAlpha() / 255.0d);
                 attr.setOutlineWidth(this.getLineWidth());
                 this.surfaceShape.setAttributes(attr);
-                this.shapeLayer.addRenderable(this.surfaceShape);
+                this.shapeLayer.add(this.surfaceShape);
             }
             if (this.shapeRectangle == null && this.surfaceShape != null) {
                 // Remove surface shape if not defined
-                this.shapeLayer.removeRenderable(this.surfaceShape);
+                this.shapeLayer.remove(this.surfaceShape);
                 this.surfaceShape = null;
                 this.positions.clear();
             }
@@ -1855,7 +1855,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
             }
             // Remove line if necessary
             if (this.line != null) {
-                this.shapeLayer.removeRenderable(this.line);
+                this.shapeLayer.remove(this.line);
                 this.line = null;
             }
         }
@@ -1878,13 +1878,13 @@ public class MeasureTool extends AVListImpl implements Disposable {
     public void dispose() {
         this.setController(null);
         if (this.applicationLayer != null) {
-            this.applicationLayer.removeRenderable(this.layer);
+            this.applicationLayer.remove(this.layer);
         }
         else {
             this.wwd.getModel().getLayers().remove(this.layer);
         }
-        this.layer.removeAllRenderables();
-        this.shapeLayer.removeAllRenderables();
+        this.layer.clear();
+        this.shapeLayer.clear();
         this.controlPoints.clear();
 //        this.controlPointsLayer.removeAllRenderables(); // TODO: why commented out? Are annotations being disposed?
     }
@@ -1906,7 +1906,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     protected void doAddControlPoint(Renderable controlPoint) {
         this.controlPoints.add(controlPoint);
-        this.controlPointsLayer.setRenderables(this.controlPoints);
+        this.controlPointsLayer.set(this.controlPoints);
     }
 
     public void updateAnnotation(Position pos) {

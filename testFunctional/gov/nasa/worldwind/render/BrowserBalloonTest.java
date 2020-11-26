@@ -96,7 +96,7 @@ public class BrowserBalloonTest extends ApplicationTemplate
             this.load(new File(DEFAULT_FILE));
 
             RenderableLayer layer = new RenderableLayer();
-            layer.addRenderable(this.balloon);
+            layer.add(this.balloon);
             insertBeforeCompass(this.getWwd(), layer);
         }
 

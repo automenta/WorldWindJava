@@ -21,7 +21,6 @@ import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.render.airspaces.Polygon;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.AbstractXMLEventParser;
-import gov.nasa.worldwind.view.orbit.OrbitView;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -112,7 +111,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             model1.setPosition(
                 new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04), 1500.0));
             model1.setScale(new Vec4(200, 200, 200));
-            layer.addRenderable(new KMLController(model1));
+            layer.add(new KMLController(model1));
 //            KMLRoot model2 = openKML("/home/mpeterson/d/temp/aol-data/octocopter/Octocopter.kmz");
 //            model2.setPosition(new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04), 2000.0));
 //            model2.setScale(new Vec4(1000, 1000, 1000));
@@ -166,7 +165,7 @@ public class ObjectAnimations extends ApplicationTemplate {
                     poly.setAltitudes(ov.getMin_altitude().getAltitudeValue(), ov.getMax_altitude().getAltitudeValue());
                     poly.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_REFERENCE);
                     poly.setValue(AVKey.DISPLAY_NAME, p.getCallSign());
-                    layer.addRenderable(poly);
+                    layer.add(poly);
                 }
             }
             ArrayList<AOLPosition> positions = messageParser.getPositions();
@@ -185,7 +184,7 @@ public class ObjectAnimations extends ApplicationTemplate {
                 //attrs.setScale(0.6);
                 attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
                 pp.setAttributes(attrs);
-                layer.addRenderable(pp);
+                layer.add(pp);
             });
         }
 
@@ -249,8 +248,8 @@ public class ObjectAnimations extends ApplicationTemplate {
                 plane.setVelocity(100 + Math.random() * 150);
                 plane.setMetadata(String.format("N%4d\n%f MPH", i, ((plane.getVelocity() * 3600) / 1000) * 0.6));
                 controller.addObject(plane);
-                layer.addRenderable(flightPath);
-                layer.addRenderable(new ColladaController(planeModel));
+                layer.add(flightPath);
+                layer.add(new ColladaController(planeModel));
             }
 
             controller.startAnimations();
@@ -280,7 +279,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             fpsText.setXMargin(5);
             fpsText.setYMargin(5);
             fpsText.getAttributes().setDefaults(fpsAttrs);
-            layer.addRenderable(fpsText);
+            layer.add(fpsText);
             WorldWindow wwd = this.getWwd();
             wwd.addRenderingListener(event -> {
                 long now = System.currentTimeMillis();

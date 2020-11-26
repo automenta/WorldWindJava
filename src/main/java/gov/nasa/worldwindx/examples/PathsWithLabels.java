@@ -316,23 +316,23 @@ public class PathsWithLabels extends ApplicationTemplate {
             SurfacePolyline path = new SurfacePolyline(pathAttrs, positions);
             LabeledPath label = new LabeledPath(positions, this.makeLabelAnnotation("Waldron Island"));
             label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            layer.addRenderable(path);
-            layer.addRenderable(label);
+            layer.add(path);
+            layer.add(label);
 
             positions = this.makePositionList(SAN_JUAN_COUNTY_2);
             path = new SurfacePolyline(pathAttrs, positions);
             label = new LabeledPath(positions,
                 this.makeLabelAnnotation("Blakley, Center, Lopez, Orcas, Shaw & San Juan Islands"));
             label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            layer.addRenderable(path);
-            layer.addRenderable(label);
+            layer.add(path);
+            layer.add(label);
 
             positions = this.makePositionList(SAN_JUAN_COUNTY_3);
             path = new SurfacePolyline(pathAttrs, positions);
             label = new LabeledPath(positions, this.makeLabelAnnotation("Spieden & Stuart Islands"));
             label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            layer.addRenderable(path);
-            layer.addRenderable(label);
+            layer.add(path);
+            layer.add(label);
 
             this.getWwd().getModel().getLayers().add(layer);
         }

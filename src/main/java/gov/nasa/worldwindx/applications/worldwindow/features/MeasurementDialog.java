@@ -113,7 +113,7 @@ public class MeasurementDialog extends AbstractFeatureDialog {
         int count = 0;
 
         //noinspection UnusedDeclaration
-        for (Renderable r : layer.getRenderables()) {
+        for (Renderable r : layer.all()) {
             ++count;
         }
 

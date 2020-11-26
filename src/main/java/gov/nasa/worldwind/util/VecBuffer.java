@@ -97,24 +97,19 @@ public class VecBuffer {
      * @throws IllegalArgumentException if the position is out of range, or if the array is null.
      */
     public double[] get(int position, double[] array) {
-        if (position < 0 || position >= this.getSize()) {
-            String message = Logging.getMessage("generic.ArgumentOutOfRange", "position < 0 or position >= size");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (position < 0 || position >= this.getSize()) {
+//            String message = Logging.getMessage("generic.ArgumentOutOfRange", "position < 0 or position >= size");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        if (array == null) {
-            String message = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (array == null) {
+//            String message = Logging.getMessage("nullValue.ArrayIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        int index = this.indexFromVectorPosition(position);
-        int length = array.length;
-        if (length > this.coordsPerVec)
-            length = this.coordsPerVec;
-
-        this.buffer.getDouble(index, array, 0, length);
+        buffer.getDouble(indexFromVectorPosition(position), array, 0, Math.min(array.length, coordsPerVec));
 
         return array;
     }
@@ -423,11 +418,6 @@ public class VecBuffer {
      * @throws IllegalArgumentException if the position is out of range, or if this buffer cannot store a LatLon.
      */
     public LatLon getLocation(int position) {
-        if (position < 0 || position >= this.getSize()) {
-            String message = Logging.getMessage("generic.ArgumentOutOfRange", "position < 0 or position >= size");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (this.coordsPerVec < 2) {
             String message = Logging.getMessage("generic.BufferIncompatible", this);
@@ -435,10 +425,7 @@ public class VecBuffer {
             throw new IllegalArgumentException(message);
         }
 
-        double[] compArray = new double[2];
-        this.get(position, compArray);
-
-        return LatLon.fromDegrees(compArray[1], compArray[0]);
+        return buffer.getLatLon(indexFromVectorPosition(position));
     }
 
     /**

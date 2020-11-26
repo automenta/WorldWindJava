@@ -356,12 +356,12 @@ public class ShapeEditingExtension extends ApplicationTemplate {
             SurfaceEllipse ellipse = new SurfaceEllipse(attrs, LatLon.fromDegrees(40, -115), 1.0e5, 1.5e5);
             ellipse.setHeading(Angle.fromDegrees(30));
             ellipse.setHighlightAttributes(highlightAttrs);
-            layer.addRenderable(ellipse);
+            layer.add(ellipse);
 
             Arrow arrow = new Arrow(LatLon.fromDegrees(40, -115), LatLon.fromDegrees(41, -115), 4.0e4);
             arrow.setAttributes(attrs);
             arrow.setHighlightAttributes(highlightAttrs);
-            layer.addRenderable(arrow);
+            layer.add(arrow);
 
             insertBeforePlacenames(getWwd(), layer);
         }

@@ -69,7 +69,7 @@ public class Placemarks extends ApplicationTemplate {
                 pp.setHighlightAttributes(highlightAttributes);
 
                 // Add the placemark to the layer.
-                layer.addRenderable(pp);
+                layer.add(pp);
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -100,13 +100,13 @@ public class Placemarks extends ApplicationTemplate {
 //            attrs.setImageOffset(new Offset(19d, 8d, AVKey.PIXELS, AVKey.PIXELS));
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Place a default pin placemark at the same location over the previous one.
             pp = new PointPlacemark(pp.getPosition());
             pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Default icon over audio icon");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(28, -104, 1.0e4));
             pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading 90, Screen relative");
@@ -120,13 +120,13 @@ public class Placemarks extends ApplicationTemplate {
             attrs.setImageOffset(new Offset(19.0d, 8.0d, AVKey.PIXELS, AVKey.PIXELS));
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Place a pin placemark at the same location over the previous one.
             pp = new PointPlacemark(pp.getPosition());
             pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Default icon over rotated audio icon");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Use a new attributes instance.
             // Note that a new attributes instance must be created for every unique set of attribute values, although
@@ -144,7 +144,7 @@ public class Placemarks extends ApplicationTemplate {
             attrs.setLineWidth(2.0d);
             attrs.setImageAddress("images/pushpins/plain-red.png");
             pp.setAttributes(attrs);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark without a leader line.
             pp = new PointPlacemark(Position.fromDegrees(30, -104.5, 2.0e4));
@@ -154,7 +154,7 @@ public class Placemarks extends ApplicationTemplate {
             attrs = new PointPlacemarkAttributes(attrs);
             attrs.setImageAddress("images/pushpins/plain-teal.png");
             pp.setAttributes(attrs);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark clamped to ground.
             pp = new PointPlacemark(Position.fromDegrees(28, -104.5, 2.0e4));
@@ -165,13 +165,13 @@ public class Placemarks extends ApplicationTemplate {
             attrs.setLabelColor("ffff0000");
             attrs.setImageAddress("images/pushpins/plain-white.png");
             pp.setAttributes(attrs);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark that uses all default values.
             pp = new PointPlacemark(Position.fromDegrees(30, -103.5, 2.0e3));
             pp.setLabelText("Placemark F");
             pp.setValue(AVKey.DISPLAY_NAME, "All defaults");
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark without an image.
             pp = new PointPlacemark(Position.fromDegrees(29, -104.5, 2.0e4));
@@ -184,7 +184,7 @@ public class Placemarks extends ApplicationTemplate {
             attrs.setUsePointAsDefaultImage(true);
             attrs.setScale(5.0d);
             pp.setAttributes(attrs);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark off the surface and with a line.
             pp = new PointPlacemark(Position.fromDegrees(30, -104, 2.0e4));
@@ -199,7 +199,7 @@ public class Placemarks extends ApplicationTemplate {
             attrs.setUsePointAsDefaultImage(true);
             attrs.setScale(10.0d);
             pp.setAttributes(attrs);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(28, -103, 1.0e4));
             pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading -45, Globe relative");
@@ -216,7 +216,7 @@ public class Placemarks extends ApplicationTemplate {
             attrs.setLabelColor("ffffffff");
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(30, 179.9, 100.0e3));
             pp.setValue(AVKey.DISPLAY_NAME, "Near dateline,  Clamp to ground, NASA icon, Heading -45, Globe relative");
@@ -231,7 +231,7 @@ public class Placemarks extends ApplicationTemplate {
             attrs.setLabelColor("ffffffff");
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(90, 0, 100.0e3));
             pp.setValue(AVKey.DISPLAY_NAME, "North Pole,  Clamp to ground, NASA icon, Heading -45, Globe relative");
@@ -246,7 +246,7 @@ public class Placemarks extends ApplicationTemplate {
             attrs.setLabelColor("ffffffff");
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark that uses a 2525C tactical symbol. The symbol is downloaded from the internet on a
             // separate thread.

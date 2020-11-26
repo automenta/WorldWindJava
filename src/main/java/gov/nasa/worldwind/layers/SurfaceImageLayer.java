@@ -235,7 +235,7 @@ public class SurfaceImageLayer extends RenderableLayer {
                     SurfaceImage si = new SurfaceImage(tempFile.getPath(), tileSector);
                     surfaceImages.add(si);
                     si.setOpacity(SurfaceImageLayer.this.getOpacity());
-                    SurfaceImageLayer.this.addRenderable(si);
+                    SurfaceImageLayer.this.add(si);
                 }
                 catch (IOException e) {
                     String message = Logging.getMessage("generic.ImageReadFailed");
@@ -325,7 +325,7 @@ public class SurfaceImageLayer extends RenderableLayer {
                 SurfaceImage si = new SurfaceImage(tileImage, corners);
                 surfaceImages.add(si);
                 si.setOpacity(SurfaceImageLayer.this.getOpacity());
-                SurfaceImageLayer.this.addRenderable(si);
+                SurfaceImageLayer.this.add(si);
             }
         });
     }
@@ -339,7 +339,7 @@ public class SurfaceImageLayer extends RenderableLayer {
 
         for (SurfaceImage si : images) {
             if (si != null)
-                this.removeRenderable(si);
+                this.remove(si);
         }
     }
 
@@ -396,7 +396,7 @@ public class SurfaceImageLayer extends RenderableLayer {
             throw new IllegalStateException(message);
         }
 
-        if (!this.getRenderables().iterator().hasNext()) {
+        if (!this.all().iterator().hasNext()) {
             Logging.logger().severe(Logging.getMessage("generic.NoImagesAvailable"));
             return null;
         }
@@ -404,7 +404,7 @@ public class SurfaceImageLayer extends RenderableLayer {
         if (image == null)
             image = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
 
-        for (Renderable r : this.getRenderables()) {
+        for (Renderable r : this.all()) {
             SurfaceImage si = (SurfaceImage) r;
 
             if (si.getImageSource() == null)

@@ -35,7 +35,7 @@ public class ScalebarHint {
         this.markerAttributes = new BasicMarkerAttributes(new Material(Color.YELLOW),
             BasicMarkerShape.CONE, 1, 10, 5);
         this.marker = new RenderableMarker(Position.ZERO, this.markerAttributes);
-        this.layer.addRenderable(this.marker);
+        this.layer.add(this.marker);
     }
 
     public void setWwd(WorldWindow worldWindow) {

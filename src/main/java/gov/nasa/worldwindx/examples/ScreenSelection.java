@@ -72,7 +72,7 @@ public class ScreenSelection extends ApplicationTemplate {
                         100000.0d);
                     poly.setHighlightAttributes(highlightAttrs);
                     poly.setSideHighlightAttributes(highlightAttrs);
-                    layer.addRenderable(poly);
+                    layer.add(poly);
                 }
             }
 

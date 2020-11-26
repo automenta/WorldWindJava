@@ -72,9 +72,9 @@ public class GliderImageLayer extends AbstractLayer {
             }
         }
 
-        this.regionLayer.removeAllRenderables();
+        this.regionLayer.clear();
         if (image.getRegionsOfInterest() != null) {
-            this.regionLayer.addRenderables(makePaths(image.getRegionsOfInterest(), image.getAltitude()));
+            this.regionLayer.addAll(makePaths(image.getRegionsOfInterest(), image.getAltitude()));
         }
 
         this.firePropertyChange(GliderImageLayer.GLIDER_IMAGE, this.image, this.image = image);
@@ -140,10 +140,10 @@ public class GliderImageLayer extends AbstractLayer {
                         break;
                     case GliderRegionOfInterest.GLIDER_REGION_OF_INTEREST:
                     case GliderImage.GLIDER_REGIONS_OF_INTEREST:
-                        GliderImageLayer.this.regionLayer.removeAllRenderables();
+                        GliderImageLayer.this.regionLayer.clear();
                         GliderRegionOfInterest.RegionSet regions = (GliderRegionOfInterest.RegionSet) evt.getNewValue();
                         if (regions != null) {
-                            GliderImageLayer.this.regionLayer.addRenderables(makePaths(regions,
+                            GliderImageLayer.this.regionLayer.addAll(makePaths(regions,
                                 GliderImageLayer.this.image.getAltitude()));
                         }   // Cause owner to repaint
                         evt.setPropagationId(GliderImageLayer.this);

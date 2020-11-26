@@ -57,7 +57,7 @@ public class ViewMenu extends JMenu {
     private boolean isAbstractLayerMenuItem(Layer layer) {
         if (layer instanceof RenderableLayer)  //detect PlaneModel layer
         {
-            Iterable<Renderable> iter = ((RenderableLayer) layer).getRenderables();
+            Iterable<Renderable> iter = ((RenderableLayer) layer).all();
             for (Renderable rend : iter) {
                 if (rend instanceof PlaneModel)
                     return true;

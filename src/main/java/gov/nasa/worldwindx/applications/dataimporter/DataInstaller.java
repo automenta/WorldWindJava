@@ -103,7 +103,7 @@ public class DataInstaller extends AVListImpl {
 
         SurfaceImage surfaceImage = null;
         RenderableLayer renderableLayer = (RenderableLayer) layer;
-        for (Renderable renderable : renderableLayer.getRenderables()) {
+        for (Renderable renderable : renderableLayer.all()) {
             if (renderable instanceof SurfaceImage) {
                 surfaceImage = (SurfaceImage) renderable;
                 break;
@@ -111,7 +111,7 @@ public class DataInstaller extends AVListImpl {
         }
 
         if (surfaceImage != null)
-            renderableLayer.removeRenderable(surfaceImage);
+            renderableLayer.remove(surfaceImage);
 //
 //        wwd.getModel().getLayers().remove(layer);
     }

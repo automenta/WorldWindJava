@@ -327,7 +327,7 @@ public class ViewLimits extends ApplicationTemplate {
             this.layer = new RenderableLayer();
             this.layer.setName("Sector Limits");
             this.layer.setPickEnabled(false);
-            this.layer.addRenderable(this.surfaceSector);
+            this.layer.add(this.surfaceSector);
             insertBeforePlacenames(this.appFrame.getWwd(), this.layer);
 
             OrbitView view = this.getOrbitView();

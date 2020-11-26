@@ -238,10 +238,10 @@ public class LinesOfSight extends ApplicationTemplate {
             this.terrainIntersector.setPositions(this.grid);
 
             // Add the renderables, if any, to the shape intersector.
-            if (this.renderableLayer.getNumRenderables() > 0) {
+            if (this.renderableLayer.size() > 0) {
                 this.shapeIntersector.setReferencePosition(this.referencePosition);
                 this.shapeIntersector.setPositions(this.grid);
-                this.shapeIntersector.setRenderables(this.renderableLayer.getRenderables());
+                this.shapeIntersector.setRenderables(this.renderableLayer.all());
             }
 
             // On the EDT, show the grid.
@@ -269,9 +269,9 @@ public class LinesOfSight extends ApplicationTemplate {
         }
 
         protected void clearLayers() {
-            this.intersectionsLayer.removeAllRenderables();
-            this.sightLinesLayer.removeAllRenderables();
-            this.gridLayer.removeAllRenderables();
+            this.intersectionsLayer.clear();
+            this.sightLinesLayer.clear();
+            this.gridLayer.clear();
         }
 
         protected void computeIntersections() {
@@ -318,7 +318,7 @@ public class LinesOfSight extends ApplicationTemplate {
             int totalNum = this.grid.size();
             int numPositionsProcessed = this.terrainIntersector.getNumProcessedPositions();
 
-            if (this.renderableLayer.getNumRenderables() > 0) {
+            if (this.renderableLayer.size() > 0) {
                 totalNum += this.grid.size();
                 numPositionsProcessed += this.shapeIntersector.getNumProcessedPositions();
             }
@@ -345,8 +345,8 @@ public class LinesOfSight extends ApplicationTemplate {
          * Updates the WorldWind model with the new intersection locations and sight lines.
          */
         protected void showResults() {
-            this.intersectionsLayer.removeAllRenderables();
-            this.sightLinesLayer.removeAllRenderables();
+            this.intersectionsLayer.clear();
+            this.sightLinesLayer.clear();
 
             for (Position position : this.grid) {
                 this.showIntersectionsForPosition(position);
@@ -386,7 +386,7 @@ public class LinesOfSight extends ApplicationTemplate {
             Path path = new Path(refPosAbsolute, position);
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             path.setAttributes(this.sightLineAttributes);
-            this.sightLinesLayer.addRenderable(path);
+            this.sightLinesLayer.add(path);
         }
 
         protected void showIntersection(Intersection losi) {
@@ -394,7 +394,7 @@ public class LinesOfSight extends ApplicationTemplate {
             pm.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pm.setAttributes(this.intersectionPointAttributes);
             pm.setValue(AVKey.DISPLAY_NAME, losi.getIntersectionPosition().toString());
-            this.intersectionsLayer.addRenderable(pm);
+            this.intersectionsLayer.add(pm);
         }
 
         protected void showIntersections(Iterable<Intersection> intersections) {
@@ -403,7 +403,7 @@ public class LinesOfSight extends ApplicationTemplate {
                 pm.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
                 pm.setAttributes(this.intersectionPointAttributes);
                 pm.setValue(AVKey.DISPLAY_NAME, losi.getIntersectionPosition().toString());
-                this.intersectionsLayer.addRenderable(pm);
+                this.intersectionsLayer.add(pm);
             }
         }
 
@@ -411,7 +411,7 @@ public class LinesOfSight extends ApplicationTemplate {
             Path path = new Path(this.referencePosition, position);
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             path.setAttributes(this.sightLineAttributes);
-            this.sightLinesLayer.addRenderable(path);
+            this.sightLinesLayer.add(path);
         }
 
         protected void showNonIntersections(Iterable<Position> positions) {
@@ -419,12 +419,12 @@ public class LinesOfSight extends ApplicationTemplate {
                 Path path = new Path(this.referencePosition, pos);
                 path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
                 path.setAttributes(this.sightLineAttributes);
-                this.sightLinesLayer.addRenderable(path);
+                this.sightLinesLayer.add(path);
             }
         }
 
         protected void showGrid(Iterable<Position> grid, Position cPos) {
-            this.gridLayer.removeAllRenderables();
+            this.gridLayer.clear();
 
             // Display the grid points in yellow.
             PointPlacemarkAttributes gridPointAttributes;
@@ -439,7 +439,7 @@ public class LinesOfSight extends ApplicationTemplate {
                 pm.setAttributes(this.gridPointAttributes);
                 pm.setLineEnabled(true);
                 pm.setValue(AVKey.DISPLAY_NAME, p.toString());
-                this.gridLayer.addRenderable(pm);
+                this.gridLayer.add(pm);
             }
 
             showCenterPoint(cPos);
@@ -458,7 +458,7 @@ public class LinesOfSight extends ApplicationTemplate {
             pm.setAttributes(this.selectedLocationAttributes);
             pm.setValue(AVKey.DISPLAY_NAME, cPos.toString());
             pm.setLineEnabled(true);
-            this.gridLayer.addRenderable(pm);
+            this.gridLayer.add(pm);
         }
 
         /**
@@ -524,7 +524,7 @@ public class LinesOfSight extends ApplicationTemplate {
                     if (r.getNumberOfPoints() < 4)
                         continue;
 
-                    this.layer.addRenderable(this.makeShape(r));
+                    this.layer.add(this.makeShape(r));
                 }
             }
 

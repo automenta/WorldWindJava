@@ -108,7 +108,7 @@ public class Balloons extends ApplicationTemplate {
             attrs.setOutlineMaterial(Material.WHITE);
             balloon.setAttributes(attrs);
 
-            this.layer.addRenderable(balloon);
+            this.layer.add(balloon);
         }
 
         protected void makeBrowserBalloon() {
@@ -148,8 +148,8 @@ public class Balloons extends ApplicationTemplate {
             // value when an object is clicked.
             placemark.setValue(AVKey.BALLOON, balloon);
 
-            this.layer.addRenderable(balloon);
-            this.layer.addRenderable(placemark);
+            this.layer.add(balloon);
+            this.layer.add(placemark);
         }
     }
 }

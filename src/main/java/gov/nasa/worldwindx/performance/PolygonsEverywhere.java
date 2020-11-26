@@ -78,7 +78,7 @@ public class PolygonsEverywhere extends ApplicationTemplate {
                     attrs.setInteriorMaterial(Material.RED);
                     attrs.setEnableLighting(true);
                     pgon.setAttributes(attrs);
-                    layer.addRenderable(pgon);
+                    layer.add(pgon);
                     ++count;
                 }
             }

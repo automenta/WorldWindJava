@@ -62,7 +62,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid3.setAttributes(attrs);
             ellipsoid3.setVisible(true);
             ellipsoid3.setValue(AVKey.DISPLAY_NAME, "Ellipsoid with equal axes, ABSOLUTE altitude mode");
-            layer.addRenderable(ellipsoid3);
+            layer.add(ellipsoid3);
 
             // Ellipsoid with equal axes, RELATIVE_TO_GROUND
             Ellipsoid ellipsoid4 = new Ellipsoid(Position.fromDegrees(37.5, -115, 50000), 50000, 50000, 50000);
@@ -70,7 +70,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid4.setAttributes(attrs);
             ellipsoid4.setVisible(true);
             ellipsoid4.setValue(AVKey.DISPLAY_NAME, "Ellipsoid with equal axes, RELATIVE_TO_GROUND altitude mode");
-            layer.addRenderable(ellipsoid4);
+            layer.add(ellipsoid4);
 
             // Ellipsoid with equal axes, CLAMP_TO_GROUND
             Ellipsoid ellipsoid5 = new Ellipsoid(Position.fromDegrees(35, -110, 50000), 50000, 50000, 50000);
@@ -78,7 +78,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid5.setAttributes(attrs);
             ellipsoid5.setVisible(true);
             ellipsoid5.setValue(AVKey.DISPLAY_NAME, "Ellipsoid with equal axes, CLAMP_TO_GROUND altitude mode");
-            layer.addRenderable(ellipsoid5);
+            layer.add(ellipsoid5);
 
             // Ellipsoid with a texture
             Ellipsoid ellipsoid9 = new Ellipsoid(Position.fromDegrees(0, -90, 600000), 600000, 600000, 600000);
@@ -87,7 +87,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid9.setAttributes(attrs);
             ellipsoid9.setVisible(true);
             ellipsoid9.setValue(AVKey.DISPLAY_NAME, "Ellipsoid with a texture");
-            layer.addRenderable(ellipsoid9);
+            layer.add(ellipsoid9);
 
             // Scaled Ellipsoid with default orientation
             Ellipsoid ellipsoid = new Ellipsoid(Position.ZERO, 1000000, 500000, 100000);
@@ -95,7 +95,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid.setAttributes(attrs);
             ellipsoid.setVisible(true);
             ellipsoid.setValue(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with default orientation");
-            layer.addRenderable(ellipsoid);
+            layer.add(ellipsoid);
 
             // Scaled Ellipsoid with a pre-set orientation
             Ellipsoid ellipsoid2 = new Ellipsoid(Position.fromDegrees(0, 30, 750000), 1000000, 500000, 100000,
@@ -104,7 +104,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid2.setAttributes(attrs2);
             ellipsoid2.setVisible(true);
             ellipsoid2.setValue(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with a pre-set orientation");
-            layer.addRenderable(ellipsoid2);
+            layer.add(ellipsoid2);
 
             // Scaled Ellipsoid with a pre-set orientation
             Ellipsoid ellipsoid6 = new Ellipsoid(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
@@ -114,7 +114,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid6.setAttributes(attrs2);
             ellipsoid6.setVisible(true);
             ellipsoid6.setValue(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with a pre-set orientation");
-            layer.addRenderable(ellipsoid6);
+            layer.add(ellipsoid6);
 
             // Scaled Ellipsoid with a pre-set orientation
             Ellipsoid ellipsoid7 = new Ellipsoid(Position.fromDegrees(60, 30, 750000), 1000000, 500000, 100000,
@@ -123,7 +123,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid7.setAttributes(attrs2);
             ellipsoid7.setVisible(true);
             ellipsoid7.setValue(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with a pre-set orientation");
-            layer.addRenderable(ellipsoid7);
+            layer.add(ellipsoid7);
 
             // Scaled, oriented Ellipsoid in 3rd "quadrant" (-X, -Y, -Z)
             Ellipsoid ellipsoid8 = new Ellipsoid(Position.fromDegrees(-45, -180, 750000), 1000000, 500000, 100000,
@@ -132,7 +132,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid8.setAttributes(attrs2);
             ellipsoid8.setVisible(true);
             ellipsoid8.setValue(AVKey.DISPLAY_NAME, "Scaled, oriented Ellipsoid in the 3rd 'quadrant' (-X, -Y, -Z)");
-            layer.addRenderable(ellipsoid8);
+            layer.add(ellipsoid8);
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
@@ -184,7 +184,7 @@ public class Ellipsoids extends ApplicationTemplate {
         }
 
         protected void setEllipsoidDetailHint(double hint) {
-            for (Renderable renderable : getLayer().getRenderables()) {
+            for (Renderable renderable : getLayer().all()) {
                 Ellipsoid current = (Ellipsoid) renderable;
                 current.setDetailHint(hint);
             }

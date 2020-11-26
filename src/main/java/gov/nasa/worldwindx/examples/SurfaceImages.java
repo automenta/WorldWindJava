@@ -73,10 +73,10 @@ public class SurfaceImages extends ApplicationTemplate {
                 RenderableLayer layer = new RenderableLayer();
                 layer.setName("Surface Images");
                 layer.setPickEnabled(false);
-                layer.addRenderable(si1);
-                layer.addRenderable(si2);
-                layer.addRenderable(boundary);
-                layer.addRenderable(boundary2);
+                layer.add(si1);
+                layer.add(si2);
+                layer.add(boundary);
+                layer.add(boundary2);
 
                 insertBeforeCompass(this.getWwd(), layer);
             }

@@ -53,7 +53,7 @@ public class DeepPicking extends Airspaces {
                 if (!layer.getName().toLowerCase().contains("airspace"))
                     continue;
 
-                for (Renderable airspace : ((RenderableLayer) layer).getRenderables()) {
+                for (Renderable airspace : ((RenderableLayer) layer).all()) {
                     ((Airspace) airspace).setEnableBatchPicking(false);
                 }
             }

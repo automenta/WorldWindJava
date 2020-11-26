@@ -74,7 +74,7 @@ public class ExtrudedPolygons extends ApplicationTemplate {
             pgon.setSideAttributes(sideAttributes);
             pgon.setSideHighlightAttributes(sideHighlightAttributes);
             pgon.setCapAttributes(capAttributes);
-            layer.addRenderable(pgon);
+            layer.add(pgon);
 
             ArrayList<LatLon> pathLocations = new ArrayList<>();
             pathLocations.add(LatLon.fromDegrees(28, -110));
@@ -86,7 +86,7 @@ public class ExtrudedPolygons extends ApplicationTemplate {
             pgon.setSideAttributes(sideAttributes);
             pgon.setSideHighlightAttributes(sideHighlightAttributes);
             pgon.setCapAttributes(capAttributes);
-            layer.addRenderable(pgon);
+            layer.add(pgon);
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);

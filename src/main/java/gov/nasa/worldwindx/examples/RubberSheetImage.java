@@ -132,7 +132,7 @@ public class RubberSheetImage extends ApplicationTemplate {
             this.layer = new RenderableLayer();
             this.layer.setName(name);
             this.layer.setPickEnabled(true);
-            this.layer.addRenderable(surfaceImage);
+            this.layer.add(surfaceImage);
 
             insertBeforePlacenames(wwd, this.layer);
         }

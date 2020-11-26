@@ -114,7 +114,7 @@ public class AllModifiers extends ApplicationTemplate
             TacticalSymbol symbol = new MilStd2525TacticalSymbol(sidc, pos);
             symbol.setValue(AVKey.DISPLAY_NAME, sidc);
             symbol.setShowLocation(false);
-            layer.addRenderable(symbol);
+            layer.add(symbol);
 
             return symbol;
         }

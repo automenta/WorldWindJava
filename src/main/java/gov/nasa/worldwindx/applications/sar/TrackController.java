@@ -181,8 +181,8 @@ public class TrackController {
         groundPath.setAttributes(attrs);
 
         RenderableLayer layer = new RenderableLayer();
-        layer.addRenderable(airPath);
-        layer.addRenderable(groundPath);
+        layer.add(airPath);
+        layer.add(groundPath);
         this.wwd.getModel().getLayers().add(layer);
         if (this.wwd != null) {
             this.wwd.redraw();
@@ -233,7 +233,7 @@ public class TrackController {
             return;
         }
 
-        for (Renderable r : layer.getRenderables()) {
+        for (Renderable r : layer.all()) {
             Path line = (Path) r;
             line.setPositions(track);
             if (!line.isFollowTerrain()) {
@@ -391,7 +391,7 @@ public class TrackController {
             return;
         }
 
-        for (Renderable r : layer.getRenderables()) {
+        for (Renderable r : layer.all()) {
             Path line = (Path) r;
             line.getActiveAttributes().setOutlineMaterial(new Material(color));
         }
@@ -407,7 +407,7 @@ public class TrackController {
             return;
         }
 
-        for (Renderable r : layer.getRenderables()) {
+        for (Renderable r : layer.all()) {
             Path line = (Path) r;
             line.getActiveAttributes().setOutlineWidth(width);
         }

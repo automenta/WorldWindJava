@@ -70,7 +70,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate {
         surface.setAltitude(400.0e3);
         surface.setDimensions(width, height);
         surface.setClientLayer(outLayer);
-        outLayer.addRenderable(surface);
+        outLayer.add(surface);
 
         BufferWrapper firstBuffer = randomGridValues(width, height, minValue, maxValue);
         BufferWrapper secondBuffer = randomGridValues(width, height, minValue * 2.0d, maxValue / 2.0d);
@@ -95,7 +95,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate {
             AnalyticSurfaceLegend.createDefaultTitle("Random Altitudes"));
         legend.setOpacity(0.8);
         legend.setScreenLocation(new Point(650, 300));
-        outLayer.addRenderable(createLegendRenderable(surface, 300, legend));
+        outLayer.add(createLegendRenderable(surface, 300, legend));
     }
 
     protected static void createRandomColorSurface(double minHue, double maxHue, int width, int height,
@@ -108,7 +108,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate {
         surface.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
         surface.setDimensions(width, height);
         surface.setClientLayer(outLayer);
-        outLayer.addRenderable(surface);
+        outLayer.add(surface);
 
         BufferWrapper firstBuffer = randomGridValues(width, height, minValue, maxValue);
         BufferWrapper secondBuffer = randomGridValues(width, height, minValue * 2.0d, maxValue / 2.0d);
@@ -208,8 +208,8 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate {
 
         SwingUtilities.invokeLater(() -> {
             surface.setClientLayer(outLayer);
-            outLayer.addRenderable(surface);
-            outLayer.addRenderable(createLegendRenderable(surface, 300, legend));
+            outLayer.add(surface);
+            outLayer.add(createLegendRenderable(surface, 300, legend));
         });
     }
 

@@ -124,8 +124,8 @@ public class AnalysisPanel extends JPanel implements Restorable {
         this.planeModel.setShadowColor(new Color(255, 255, 0, 192));
         this.segmentInfo = new TrackSegmentInfo();
         this.trackRenderables = new RenderableLayer();
-        this.trackRenderables.addRenderable(this.planeModel);
-        this.trackRenderables.addRenderable(this.segmentInfo);
+        this.trackRenderables.add(this.planeModel);
+        this.trackRenderables.add(this.segmentInfo);
         // Init crosshair layer
         this.crosshairLayer = new CrosshairLayer("images/64x64-crosshair.png");
         this.crosshairLayer.setOpacity(0.4);

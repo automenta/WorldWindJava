@@ -70,7 +70,7 @@ public class SectorSelector extends WWObjectImpl
 
         this.layer = new RenderableLayer();
         this.shape = new RegionShape(Sector.EMPTY_SECTOR);
-        ((RenderableLayer) this.layer).addRenderable(this.shape);
+        ((RenderableLayer) this.layer).add(this.shape);
     }
 
     protected SectorSelector(WorldWindow worldWindow, RegionShape shape, RenderableLayer rLayer) {
@@ -95,7 +95,7 @@ public class SectorSelector extends WWObjectImpl
         this.wwd = worldWindow;
         this.shape = shape;
         this.layer = rLayer;
-        rLayer.addRenderable(this.shape);
+        rLayer.add(this.shape);
     }
 
     private static double abs(double a) {

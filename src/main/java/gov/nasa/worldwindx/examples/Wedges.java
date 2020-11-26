@@ -65,7 +65,7 @@ public class Wedges extends ApplicationTemplate {
             wedge3.setAttributes(attrs);
             wedge3.setVisible(true);
             wedge3.setValue(AVKey.DISPLAY_NAME, "Wedge with equal axes, ABSOLUTE altitude mode");
-            layer.addRenderable(wedge3);
+            layer.add(wedge3);
 
             // Wedge with equal axes, RELATIVE_TO_GROUND
             Wedge wedge4 = new Wedge(Position.fromDegrees(37.5, -115, 50000), Angle.POS90, 50000, 50000, 50000);
@@ -73,7 +73,7 @@ public class Wedges extends ApplicationTemplate {
             wedge4.setAttributes(attrs);
             wedge4.setVisible(true);
             wedge4.setValue(AVKey.DISPLAY_NAME, "Wedge with equal axes, RELATIVE_TO_GROUND altitude mode");
-            layer.addRenderable(wedge4);
+            layer.add(wedge4);
 
             // Wedge with equal axes, CLAMP_TO_GROUND
             Wedge wedge5 = new Wedge(Position.fromDegrees(35, -110, 50000), Angle.POS90, 50000, 50000, 50000);
@@ -81,7 +81,7 @@ public class Wedges extends ApplicationTemplate {
             wedge5.setAttributes(attrs);
             wedge5.setVisible(true);
             wedge5.setValue(AVKey.DISPLAY_NAME, "Wedge with equal axes, CLAMP_TO_GROUND altitude mode");
-            layer.addRenderable(wedge5);
+            layer.add(wedge5);
 
             // Wedge with a texture, using Wedge(position, angle, height, radius) constructor
             Wedge wedge9 = new Wedge(Position.fromDegrees(0, -90, 600000), Angle.fromDegrees(225), 1200000, 600000);
@@ -90,7 +90,7 @@ public class Wedges extends ApplicationTemplate {
             wedge9.setAttributes(attrs);
             wedge9.setVisible(true);
             wedge9.setValue(AVKey.DISPLAY_NAME, "Wedge with a texture");
-            layer.addRenderable(wedge9);
+            layer.add(wedge9);
 
             // Scaled Wedge with default orientation
             Wedge wedge = new Wedge(Position.ZERO, Angle.fromDegrees(125), 500000, 500000, 500000);
@@ -98,7 +98,7 @@ public class Wedges extends ApplicationTemplate {
             wedge.setAttributes(attrs);
             wedge.setVisible(true);
             wedge.setValue(AVKey.DISPLAY_NAME, "Scaled Wedge with default orientation");
-            layer.addRenderable(wedge);
+            layer.add(wedge);
 
             // Scaled Wedge with a pre-set orientation
             Wedge wedge2 = new Wedge(Position.fromDegrees(0, 30, 750000), Angle.POS90, 500000, 500000, 500000,
@@ -107,7 +107,7 @@ public class Wedges extends ApplicationTemplate {
             wedge2.setAttributes(attrs2);
             wedge2.setVisible(true);
             wedge2.setValue(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
-            layer.addRenderable(wedge2);
+            layer.add(wedge2);
 
             // Scaled Wedge with a pre-set orientation
             Wedge wedge6 = new Wedge(Position.fromDegrees(30, 30, 750000), Angle.POS90, 500000, 500000, 500000,
@@ -117,7 +117,7 @@ public class Wedges extends ApplicationTemplate {
             wedge6.setAttributes(attrs2);
             wedge6.setVisible(true);
             wedge6.setValue(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
-            layer.addRenderable(wedge6);
+            layer.add(wedge6);
 
             // Scaled Wedge with a pre-set orientation
             Wedge wedge7 = new Wedge(Position.fromDegrees(60, 30, 750000), Angle.POS90, 500000, 500000, 500000,
@@ -126,7 +126,7 @@ public class Wedges extends ApplicationTemplate {
             wedge7.setAttributes(attrs2);
             wedge7.setVisible(true);
             wedge7.setValue(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
-            layer.addRenderable(wedge7);
+            layer.add(wedge7);
 
             // Scaled, oriented Wedge in 3rd "quadrant" (-X, -Y, -Z)
             Wedge wedge8 = new Wedge(Position.fromDegrees(-45, -180, 750000), Angle.POS90, 500000, 1000000, 500000,
@@ -135,7 +135,7 @@ public class Wedges extends ApplicationTemplate {
             wedge8.setAttributes(attrs2);
             wedge8.setVisible(true);
             wedge8.setValue(AVKey.DISPLAY_NAME, "Scaled, oriented Wedge with in the 3rd 'quadrant' (-X, -Y, -Z)");
-            layer.addRenderable(wedge8);
+            layer.add(wedge8);
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
@@ -187,7 +187,7 @@ public class Wedges extends ApplicationTemplate {
         }
 
         protected void setWedgeDetailHint(double hint) {
-            for (Renderable renderable : getLayer().getRenderables()) {
+            for (Renderable renderable : getLayer().all()) {
                 Wedge current = (Wedge) renderable;
                 current.setDetailHint(hint);
             }

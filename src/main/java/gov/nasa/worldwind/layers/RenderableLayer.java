@@ -40,24 +40,24 @@ public class RenderableLayer extends AbstractLayer {
 
     /**
      * Adds the specified <code>renderable</code> to the end of this layer's internal collection. If this layer's
-     * internal collection has been overridden with a call to {@link #setRenderables(Iterable)}, this will throw an
+     * internal collection has been overridden with a call to {@link #set(Iterable)}, this will throw an
      * exception.
      * <p>
      * If the <code>renderable</code> implements {@link AVList}, the layer forwards its
      * property change events to the layer's property change listeners. Any property change listeners the layer attaches
-     * to the <code>renderable</code> are removed in {@link #removeRenderable(Renderable)},
-     * {@link #removeAllRenderables()}, or {@link #dispose()}.
+     * to the <code>renderable</code> are removed in {@link #remove(Renderable)},
+     * {@link #clear()}, or {@link #dispose()}.
      *
      * @param renderable Renderable to add.
      * @throws IllegalArgumentException If <code>renderable</code> is null.
      * @throws IllegalStateException    If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
-    public void addRenderable(Renderable renderable) {
-        if (renderable == null) {
-            String msg = Logging.getMessage("nullValue.RenderableIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public void add(Renderable renderable) {
+//        if (renderable == null) {
+//            String msg = Logging.getMessage("nullValue.RenderableIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (this.renderablesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
@@ -76,12 +76,12 @@ public class RenderableLayer extends AbstractLayer {
     /**
      * Inserts the specified <code>renderable</code> at the specified <code>index</code> in this layer's internal
      * collection. If this layer's internal collection has been overridden with a call to {@link
-     * #setRenderables(Iterable)}, this will throw an exception.
+     * #set(Iterable)}, this will throw an exception.
      * <p>
      * If the <code>renderable</code> implements {@link AVList}, the layer forwards its
      * property change events to the layer's property change listeners. Any property change listeners the layer attaches
-     * to the <code>renderable</code> are removed in {@link #removeRenderable(Renderable)},
-     * {@link #removeAllRenderables()}, or {@link #dispose()}.
+     * to the <code>renderable</code> are removed in {@link #remove(Renderable)},
+     * {@link #clear()}, or {@link #dispose()}.
      *
      * @param index      the index at which to insert the specified renderable.
      * @param renderable Renderable to insert.
@@ -90,12 +90,12 @@ public class RenderableLayer extends AbstractLayer {
      *                                  layer.
      * @throws IllegalStateException    If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
-    public void addRenderable(int index, Renderable renderable) {
-        if (renderable == null) {
-            String msg = Logging.getMessage("nullValue.RenderableIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public void add(int index, Renderable renderable) {
+//        if (renderable == null) {
+//            String msg = Logging.getMessage("nullValue.RenderableIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (this.renderablesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
@@ -125,24 +125,24 @@ public class RenderableLayer extends AbstractLayer {
 
     /**
      * Adds the contents of the specified <code>renderables</code> to this layer's internal collection. If this layer's
-     * internal collection has been overriden with a call to {@link #setRenderables(Iterable)}, this will throw an
+     * internal collection has been overriden with a call to {@link #set(Iterable)}, this will throw an
      * exception.
      * <p>
      * If any of the <code>renderables</code> implement {@link AVList}, the layer forwards
      * their property change events to the layer's property change listeners. Any property change listeners the layer
-     * attaches to the <code>renderable</code> are removed in {@link #removeRenderable(Renderable)},
-     * {@link #removeAllRenderables()}, or {@link #dispose()}.
+     * attaches to the <code>renderable</code> are removed in {@link #remove(Renderable)},
+     * {@link #clear()}, or {@link #dispose()}.
      *
      * @param renderables Renderables to add.
      * @throws IllegalArgumentException If <code>renderables</code> is null.
      * @throws IllegalStateException    If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
-    public void addRenderables(Iterable<? extends Renderable> renderables) {
-        if (renderables == null) {
-            String msg = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public void addAll(Iterable<? extends Renderable> renderables) {
+//        if (renderables == null) {
+//            String msg = Logging.getMessage("nullValue.IterableIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (this.renderablesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
@@ -164,24 +164,24 @@ public class RenderableLayer extends AbstractLayer {
 
     /**
      * Removes the specified <code>renderable</code> from this layer's internal collection, if it exists. If this
-     * layer's internal collection has been overridden with a call to {@link #setRenderables(Iterable)}, this will throw
+     * layer's internal collection has been overridden with a call to {@link #set(Iterable)}, this will throw
      * an exception.
      * <p>
      * If the <code>renderable</code> implements {@link AVList}, this stops forwarding the its
      * property change events to the layer's property change listeners. Any property change listeners the layer attached
-     * to the <code>renderable</code> in {@link #addRenderable(Renderable)} or {@link
-     * #addRenderables(Iterable)} are removed.
+     * to the <code>renderable</code> in {@link #add(Renderable)} or {@link
+     * #addAll(Iterable)} are removed.
      *
      * @param renderable Renderable to remove.
      * @throws IllegalArgumentException If <code>renderable</code> is null.
      * @throws IllegalStateException    If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
-    public void removeRenderable(Renderable renderable) {
-        if (renderable == null) {
-            String msg = Logging.getMessage("nullValue.RenderableIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public void remove(Renderable renderable) {
+//        if (renderable == null) {
+//            String msg = Logging.getMessage("nullValue.RenderableIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (this.renderablesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
@@ -199,26 +199,26 @@ public class RenderableLayer extends AbstractLayer {
 
     /**
      * Clears the contents of this layer's internal Renderable collection. If this layer's internal collection has been
-     * overriden with a call to {@link #setRenderables(Iterable)}, this will throw an exception.
+     * overriden with a call to {@link #set(Iterable)}, this will throw an exception.
      * <p>
      * If any of the <code>renderables</code> implement {@link AVList}, this stops forwarding
      * their property change events to the layer's property change listeners. Any property change listeners the layer
-     * attached to the <code>renderables</code> in {@link #addRenderable(Renderable)} or
-     * {@link #addRenderables(Iterable)} are removed.
+     * attached to the <code>renderables</code> in {@link #add(Renderable)} or
+     * {@link #addAll(Iterable)} are removed.
      *
      * @throws IllegalStateException If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
-    public void removeAllRenderables() {
+    public void clear() {
         if (this.renderablesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
             Logging.logger().severe(msg);
             throw new IllegalStateException(msg);
         }
 
-        this.clearRenderables();
+        this._clear();
     }
 
-    protected void clearRenderables() {
+    protected void _clear() {
         if (this.renderables != null && !this.renderables.isEmpty()) {
             // Remove the layer as property change listener of any renderables. This prevents the renderables from
             // keeping a dangling references to the layer.
@@ -231,7 +231,7 @@ public class RenderableLayer extends AbstractLayer {
         }
     }
 
-    public int getNumRenderables() {
+    public int size() {
         if (this.renderablesOverride != null) {
             int size = 0;
             //noinspection UnusedDeclaration
@@ -248,14 +248,14 @@ public class RenderableLayer extends AbstractLayer {
 
     /**
      * Returns the Iterable of Renderables currently in use by this layer. If the caller has specified a custom Iterable
-     * via {@link #setRenderables(Iterable)}, this will returns a reference to that Iterable. If the caller passed
+     * via {@link #set(Iterable)}, this will returns a reference to that Iterable. If the caller passed
      * <code>setRenderables</code> a null parameter, or if <code>setRenderables</code> has not been called, this
      * returns a view of this layer's internal collection of Renderables.
      *
      * @return Iterable of currently active Renderables.
      */
-    public Iterable<Renderable> getRenderables() {
-        return this.getActiveRenderables();
+    public Iterable<Renderable> all() {
+        return this.active();
     }
 
     /**
@@ -265,12 +265,12 @@ public class RenderableLayer extends AbstractLayer {
      * collection of Renderables, and will prevent any modification to its contents via <code>addRenderable,
      * addRenderables, removeRenderables, or dispose</code>.
      * <p>
-     * Unlike {@link #addRenderable(Renderable)} or {@link #addRenderables(Iterable)}, this
+     * Unlike {@link #add(Renderable)} or {@link #addAll(Iterable)}, this
      * does not forward any of the renderable's property change events to the layer's property change listeners. Since
      * the layer is not in control of the iIterable's contents, attaching property change listeners to the renderables
      * could cause the them to hold dangling references to the layer. If any of the renderables in the Iterable rely on
      * forwarding property change events for proper operation - such as {@link AbstractBrowserBalloon}
-     * - use {@link #addRenderables(Iterable)} instead.
+     * - use {@link #addAll(Iterable)} instead.
      * <p>
      * If the specified <code>renderableIterable</code> is null, this layer reverts to maintaining its internal
      * collection.
@@ -278,23 +278,23 @@ public class RenderableLayer extends AbstractLayer {
      * @param renderableIterable Iterable to use instead of this layer's internal collection, or null to use this
      *                           layer's internal collection.
      */
-    public void setRenderables(Iterable<Renderable> renderableIterable) {
+    public void set(Iterable<Renderable> renderableIterable) {
         this.renderablesOverride = renderableIterable;
         // Dispose of the internal collection of Renderables.
-        this.disposeRenderables();
+        this._dispose();
         // Clear the internal collection of Renderables.
-        this.clearRenderables();
+        this._clear();
     }
 
     /**
      * Returns the Iterable of currently active Renderables. If the caller has specified a custom Iterable via {@link
-     * #setRenderables(Iterable)}, this will returns a reference to that Iterable. If the caller passed
+     * #set(Iterable)}, this will returns a reference to that Iterable. If the caller passed
      * <code>setRenderables</code> a null parameter, or if <code>setRenderables</code> has not been called, this
      * returns a view of this layer's internal collection of Renderables.
      *
      * @return Iterable of currently active Renderables.
      */
-    protected Iterable<Renderable> getActiveRenderables() {
+    protected Iterable<Renderable> active() {
         if (this.renderablesOverride != null) {
             return this.renderablesOverride;
         }
@@ -332,22 +332,22 @@ public class RenderableLayer extends AbstractLayer {
      * <p>
      * If any of layer's internal Renderables implement {@link AVList}, this stops forwarding
      * their property change events to the layer's property change listeners. Any property change listeners the layer
-     * attached to the <code>renderables</code> in {@link #addRenderable(Renderable)} or
-     * {@link #addRenderables(Iterable)} are removed.
+     * attached to the <code>renderables</code> in {@link #add(Renderable)} or
+     * {@link #addAll(Iterable)} are removed.
      *
      * @throws IllegalStateException If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
-    public void dispose() {
+    @Override public void dispose() {
         if (this.renderablesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
             Logging.logger().severe(msg);
             throw new IllegalStateException(msg);
         }
 
-        this.disposeRenderables();
+        this._dispose();
     }
 
-    protected void disposeRenderables() {
+    protected void _dispose() {
         if (this.renderables != null && !this.renderables.isEmpty()) {
             for (Renderable renderable : this.renderables) {
                 try {
@@ -371,15 +371,15 @@ public class RenderableLayer extends AbstractLayer {
     }
 
     protected void doPreRender(DrawContext dc) {
-        this.doPreRender(dc, this.getActiveRenderables());
+        this.doPreRender(dc, this.active());
     }
 
     protected void doPick(DrawContext dc, Point pickPoint) {
-        this.doPick(dc, this.getActiveRenderables(), pickPoint);
+        this.doPick(dc, this.active(), pickPoint);
     }
 
     protected void doRender(DrawContext dc) {
-        this.doRender(dc, this.getActiveRenderables());
+        this.doRender(dc, this.active());
     }
 
     protected void doPreRender(DrawContext dc, Iterable<? extends Renderable> renderables) {
@@ -447,7 +447,7 @@ public class RenderableLayer extends AbstractLayer {
             try {
                 // If the caller has specified their own Iterable,
                 // then we cannot make any guarantees about its contents.
-                if (renderable != null)
+                //if (renderable != null)
                     renderable.render(dc);
             }
             catch (Exception e) {

@@ -218,33 +218,33 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark A", itemActionNames));
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(29, -104, 2.0e4));
             pp.setAttributes(attrs);
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark B", itemActionNames));
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(30, -104.5, 2.0e4));
             pp.setAttributes(attrs);
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark C", itemActionNames));
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(28, -104.5, 2.0e4));
             pp.setAttributes(attrs);
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark D", itemActionNames));
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Create a placemark that uses all default values.
             pp = new PointPlacemark(Position.fromDegrees(30, -103.5, 2.0e3));
             pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark E", itemActionNames));
-            layer.addRenderable(pp);
+            layer.add(pp);
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);

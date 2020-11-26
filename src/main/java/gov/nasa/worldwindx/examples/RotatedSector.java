@@ -44,7 +44,7 @@ public class RotatedSector extends ApplicationTemplate {
                 // Create the layer to hold it
                 final RenderableLayer layer = new RenderableLayer();
                 layer.setName("Rotating Sector");
-                layer.addRenderable(quad);
+                layer.add(quad);
 
                 // Add the layer to the model and update the ApplicationTemplate's layer manager
                 insertBeforeCompass(this.getWwd(), layer);

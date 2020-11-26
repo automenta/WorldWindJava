@@ -230,21 +230,21 @@ public class GeoJSONLoader {
     protected void addRenderableForPoint(GeoJSONPoint geom, RenderableLayer layer, AVList properties) {
         PointPlacemarkAttributes attrs = this.createPointAttributes(geom, layer);
 
-        layer.addRenderable(this.createPoint(geom, geom.getPosition(), attrs, properties));
+        layer.add(this.createPoint(geom, geom.getPosition(), attrs, properties));
     }
 
     protected void addRenderableForMultiPoint(GeoJSONMultiPoint geom, RenderableLayer layer, AVList properties) {
         PointPlacemarkAttributes attrs = this.createPointAttributes(geom, layer);
 
         for (int i = 0; i < geom.getPointCount(); i++) {
-            layer.addRenderable(this.createPoint(geom, geom.getPosition(i), attrs, properties));
+            layer.add(this.createPoint(geom, geom.getPosition(i), attrs, properties));
         }
     }
 
     protected void addRenderableForLineString(GeoJSONLineString geom, RenderableLayer layer, AVList properties) {
         ShapeAttributes attrs = this.createPolylineAttributes(geom, layer);
 
-        layer.addRenderable(this.createPolyline(geom, geom.getCoordinates(), attrs, properties));
+        layer.add(this.createPolyline(geom, geom.getCoordinates(), attrs, properties));
     }
 
     protected void addRenderableForMutiLineString(GeoJSONMultiLineString geom, RenderableLayer layer,
@@ -252,14 +252,14 @@ public class GeoJSONLoader {
         ShapeAttributes attrs = this.createPolylineAttributes(geom, layer);
 
         for (GeoJSONPositionArray coords : geom.getCoordinates()) {
-            layer.addRenderable(this.createPolyline(geom, coords, attrs, properties));
+            layer.add(this.createPolyline(geom, coords, attrs, properties));
         }
     }
 
     protected void addRenderableForPolygon(GeoJSONPolygon geom, RenderableLayer layer, AVList properties) {
         ShapeAttributes attrs = this.createPolygonAttributes(geom, layer);
 
-        layer.addRenderable(this.createPolygon(geom, geom.getExteriorRing(), geom.getInteriorRings(), attrs,
+        layer.add(this.createPolygon(geom, geom.getExteriorRing(), geom.getInteriorRings(), attrs,
             properties));
     }
 
@@ -271,7 +271,7 @@ public class GeoJSONLoader {
         ShapeAttributes attrs = this.createPolygonAttributes(geom, layer);
 
         for (int i = 0; i < geom.getPolygonCount(); i++) {
-            layer.addRenderable(
+            layer.add(
                 this.createPolygon(geom, geom.getExteriorRing(i), geom.getInteriorRings(i), attrs, properties));
         }
     }

@@ -65,7 +65,7 @@ public class BrowserBalloonSizeTest extends ApplicationTemplate
             balloon.setAttributes(attrs);
 
             balloon.setText("<table border='1'><tr><td>1) 200 pixels square.</td></tr></table>");
-            layer.addRenderable(balloon);
+            layer.add(balloon);
 
             // Balloon sized to fit content
             balloon = new GlobeBrowserBalloon("", Position.fromDegrees(0, -120));
@@ -77,7 +77,7 @@ public class BrowserBalloonSizeTest extends ApplicationTemplate
 
             balloon.setText(
                 "<table border='1'><tr><td>2) This balloon is sized to fit it's contents. The text will wrap to the default balloon width, and the height will fit the balloon contents.</td></tr></table>");
-            layer.addRenderable(balloon);
+            layer.add(balloon);
 
             // Balloon sized to content width, and 200 pixels tall
             balloon = new GlobeBrowserBalloon("", Position.fromDegrees(0, -100));
@@ -92,7 +92,7 @@ public class BrowserBalloonSizeTest extends ApplicationTemplate
             // the content width.
             balloon.setText(
                 "<table width='400' height='200' border='1'><tr><td>3) This balloon is 200 pixels tall. It's width will fit the balloon contents, in this case a table that is 400 pixels wide.</td></tr></table>");
-            layer.addRenderable(balloon);
+            layer.add(balloon);
 
             // Balloon sized to 100 pixels wide, and content height
             balloon = new GlobeBrowserBalloon("", Position.fromDegrees(0, -80));
@@ -104,7 +104,7 @@ public class BrowserBalloonSizeTest extends ApplicationTemplate
 
             balloon.setText(
                 "<table width='100' border='1'><tr><td>4) 100 pixels wide, fits height of content.</td></tr></table>");
-            layer.addRenderable(balloon);
+            layer.add(balloon);
 
             // Balloon with aspect ratio size
             balloon = new GlobeBrowserBalloon("", Position.fromDegrees(-18, -137));
@@ -117,7 +117,7 @@ public class BrowserBalloonSizeTest extends ApplicationTemplate
             balloon.setText(
                 "<table width='200' height='100' border='1'><tr><td>5) This balloon is 300 pixels wide. It's height will maintain the aspect ratio of its content.</td></tr></table>");
 
-            layer.addRenderable(balloon);
+            layer.add(balloon);
 
             // Balloon with aspect ratio size
             balloon = new GlobeBrowserBalloon("", Position.fromDegrees(-20, -90));
@@ -130,7 +130,7 @@ public class BrowserBalloonSizeTest extends ApplicationTemplate
             balloon.setText(
                 "<table width='300' height='200' border='1'><tr><td>6) This balloon is 200 pixels tall. It's width will maintain the aspect ratio of its content.</td></tr></table>");
 
-            layer.addRenderable(balloon);
+            layer.add(balloon);
 
             // Balloon sized to fit content; content is replaced after 5 seconds.
             final Balloon textUpdateBalloon = new GlobeBrowserBalloon("", Position.fromDegrees(0, -60));
@@ -141,7 +141,7 @@ public class BrowserBalloonSizeTest extends ApplicationTemplate
 
             textUpdateBalloon.setText(
                 "<table width='600' height='600' border='1'><tr><td>7) 600x600 table, replaced by a smaller 300x300 table after 5 seconds.</td></tr></table>");
-            layer.addRenderable(textUpdateBalloon);
+            layer.add(textUpdateBalloon);
 
             Timer timer = new Timer(5000, new ActionListener()
             {

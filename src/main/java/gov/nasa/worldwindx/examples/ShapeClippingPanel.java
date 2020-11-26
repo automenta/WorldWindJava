@@ -158,7 +158,7 @@ public class ShapeClippingPanel extends JPanel implements ActionListener {
         RenderableLayer layer = new RenderableLayer();
         layer.setName(this.getClipMode() == ClipMode.LAND ? "Clipped Shape (Land)" : "Clipped Shape (Water)");
         layer.setPickEnabled(false);
-        layer.addRenderable(shape);
+        layer.add(shape);
 
         this.wwd.getModel().getLayers().add(layer);
         this.wwd.redraw();

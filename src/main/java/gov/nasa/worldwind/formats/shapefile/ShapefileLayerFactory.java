@@ -630,7 +630,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
             AVList mappings = this.applyMappings(record.getAttributes(), this.dBaseMappings);
 
             double[] point = ((ShapefileRecordPoint) record).getPoint();
-            layer.addRenderable(this.createPoint(record, point[1], point[0], mappings));
+            layer.add(this.createPoint(record, point[1], point[0], mappings));
         }
     }
 
@@ -646,7 +646,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
             Iterable<double[]> iterable = ((ShapefileRecordMultiPoint) record).getPoints(0);
 
             for (double[] point : iterable) {
-                layer.addRenderable(
+                layer.add(
                     this.createPoint(record, point[1], point[0], mappings));
             }
         }
@@ -656,7 +656,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         ShapefileMultiPatch shape = new ShapefileMultiPatch(shp, this.normalShapeAttributes,
             this.highlightShapeAttributes, this);
         //layer.addRenderable(shape);
-        layer.addRenderables(shape.getRenderables());
+        layer.addAll(shape.getRenderables());
     }
 
     protected Renderable createPoint(ShapefileRecord record, double latDegrees, double lonDegrees, AVList mappings) {
@@ -677,7 +677,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     protected void addRenderablesForPolylines(Shapefile shp, RenderableLayer layer) {
         Renderable shape = new ShapefilePolylines(shp, this.normalShapeAttributes,
             this.highlightShapeAttributes, this);
-        layer.addRenderable(shape);
+        layer.add(shape);
     }
 
     protected void addRenderablesForPolygons(Shapefile shp, RenderableLayer layer) {
@@ -692,13 +692,13 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     protected void addRenderablesForSurfacePolygons(Shapefile shp, RenderableLayer layer) {
         Renderable shape = new ShapefilePolygons(shp, this.normalShapeAttributes,
             this.highlightShapeAttributes, this);
-        layer.addRenderable(shape);
+        layer.add(shape);
     }
 
     protected void addRenderablesForExtrudedPolygons(Shapefile shp, RenderableLayer layer) {
         Renderable shape = new ShapefileExtrudedPolygons(shp, this.normalShapeAttributes,
             this.highlightShapeAttributes, this);
-        layer.addRenderable(shape);
+        layer.add(shape);
     }
 
     protected AVList applyMappings(AVList attrRecord, AVList attrMappings) {

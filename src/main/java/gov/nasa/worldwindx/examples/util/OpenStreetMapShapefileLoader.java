@@ -178,7 +178,7 @@ public class OpenStreetMapShapefileLoader {
             sis.setMinSize(100);  // 100m
             sis.setScale(shapes.scale);
             sis.setOpacity(0.8);
-            layer.addRenderable(sis);
+            layer.add(sis);
             shapes.locations.clear();
 
             for (Label label : shapes.labels) {

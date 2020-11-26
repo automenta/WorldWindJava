@@ -8,6 +8,7 @@ package gov.nasa.worldwind.util;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.geom.LatLon;
 
 import java.nio.*;
 
@@ -330,6 +331,10 @@ public abstract class BufferWrapper {
      */
     public abstract void getDouble(int index, double[] array, int offset, int length);
 
+    public LatLon getLatLon(int index) {
+        throw new UnsupportedOperationException("TODO implementations for all subclasses");
+    }
+
     /**
      * Sets the sequence of values starting at the specified index and with the specified length, as doubles. The
      * doubles are cast to the underlying data type.
@@ -395,6 +400,9 @@ public abstract class BufferWrapper {
      * @return the backing data store.
      */
     public abstract Buffer getBackingBuffer();
+
+
+
 
     //**************************************************************//
     //********************  BufferWrapper Implementations  *********//
@@ -577,23 +585,24 @@ public abstract class BufferWrapper {
             }
         }
 
+
         public void getDouble(int index, double[] array, int offset, int length) {
-            if (array == null) {
-                String message = Logging.getMessage("nullValue.ArrayIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
+//            if (array == null) {
+//                String message = Logging.getMessage("nullValue.ArrayIsNull");
+//                Logging.logger().severe(message);
+//                throw new IllegalArgumentException(message);
+//            }
 
             if (length <= 0)
                 return;
 
-            int pos = this.buffer.position(); // Save the buffer's current position.
+            int pos = buffer.position(); // Save the buffer's current position.
             try {
-                this.buffer.position(index);
+                buffer.position(index);
                 this.doGetDouble(array, offset, length);
-            }
-            finally {
-                this.buffer.position(pos);  // Restore the buffer's previous position.
+            } finally {
+                if (pos!=index)
+                    buffer.position(pos);  // Restore the buffer's previous position.
             }
         }
 
@@ -1484,6 +1493,10 @@ public abstract class BufferWrapper {
 
         public double getDouble(int index) {
             return this.buffer.get(index);
+        }
+
+        public LatLon getLatLon(int index) {
+            return LatLon.fromDegrees(this.getDouble(index+1), getDouble(index));
         }
 
         public void putDouble(int index, double value) {

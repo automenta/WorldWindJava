@@ -70,7 +70,7 @@ public class VideoOnTerrain extends ApplicationTemplate {
 
             final SurfaceImage surfaceImage = new SurfaceImage(makeImage(), CORNERS);
             surfaceImage.setOpacity(IMAGE_OPACITY);
-            layer.addRenderable(surfaceImage);
+            layer.add(surfaceImage);
 
             Timer timer = new Timer(50, actionEvent -> {
                 Iterable<LatLon> corners = surfaceImage.getCorners();

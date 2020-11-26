@@ -423,15 +423,15 @@ public class AnnotationControls extends ApplicationTemplate {
             this.getController().setEnabled(false);
 
             RenderableLayer layer = this.getAppFrame().getContentLayer();
-            layer.removeRenderable(this.getAnnotation());
+            layer.remove(this.getAnnotation());
         }
 
         public void attach() {
             this.getController().setEnabled(true);
 
             RenderableLayer layer = this.appFrame.getContentLayer();
-            layer.removeRenderable(this.getAnnotation());
-            layer.addRenderable(this.getAnnotation());
+            layer.remove(this.getAnnotation());
+            layer.add(this.getAnnotation());
         }
     }
 

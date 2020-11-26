@@ -35,7 +35,7 @@ public class ScreenImageDragging extends ApplicationTemplate {
 
             RenderableLayer layer = new RenderableLayer();
             layer.setName("Screen Image");
-            layer.addRenderable(screenImage);
+            layer.add(screenImage);
 
             this.getWwd().getModel().getLayers().add(layer);
 

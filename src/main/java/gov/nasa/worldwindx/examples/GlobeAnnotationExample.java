@@ -30,7 +30,7 @@ public class GlobeAnnotationExample extends ApplicationTemplate {
 
             Annotation ga = new GlobeAnnotation("AGL Annotation", Position.fromDegrees(20, -120.9, 1000));
             ga.setAlwaysOnTop(true);
-            layer.addRenderable(ga);
+            layer.add(ga);
         }
     }
 }

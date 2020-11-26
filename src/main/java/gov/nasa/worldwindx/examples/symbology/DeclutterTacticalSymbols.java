@@ -103,7 +103,7 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate {
             airSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(235));
             airSymbol.setShowLocation(false);
             airSymbol.setLODSelector(lodSelector); // specify the LOD selector
-            this.symbolLayer.addRenderable(airSymbol);
+            this.symbolLayer.add(airSymbol);
 
             // Create a ground tactical symbol for the MIL-STD-2525 symbology set.
             attributes = new BasicTacticalSymbolAttributes();
@@ -117,7 +117,7 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate {
             groundSymbol.setModifier(SymbologyConstants.SPEED_LEADER_SCALE, 0.5);
             groundSymbol.setShowLocation(false);
             groundSymbol.setLODSelector(lodSelector); // specify the LOD selector
-            this.symbolLayer.addRenderable(groundSymbol);
+            this.symbolLayer.add(groundSymbol);
 
             // Create a ground tactical symbol for the MIL-STD-2525 symbology set.
             attributes = new BasicTacticalSymbolAttributes();
@@ -133,7 +133,7 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate {
             machineGunSymbol.setModifier(SymbologyConstants.TYPE, "MACHINE GUN");
             machineGunSymbol.setModifier(SymbologyConstants.DATE_TIME_GROUP, "30140000ZSEP97");
             machineGunSymbol.setLODSelector(lodSelector); // specify the LOD selector
-            this.symbolLayer.addRenderable(machineGunSymbol);
+            this.symbolLayer.add(machineGunSymbol);
 
             // Add the symbol layer to the WorldWind model.
             this.getWwd().getModel().getLayers().add(symbolLayer);

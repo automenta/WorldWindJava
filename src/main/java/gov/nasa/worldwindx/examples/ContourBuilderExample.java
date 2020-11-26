@@ -94,7 +94,7 @@ public class ContourBuilderExample extends ApplicationTemplate {
                 path.setAttributes(attrs);
                 path.setSurfacePath(true);
                 path.setValue(AVKey.DISPLAY_NAME, text);
-                layer.addRenderable(path);
+                layer.add(path);
             }
         }
 
@@ -116,7 +116,7 @@ public class ContourBuilderExample extends ApplicationTemplate {
             surface.setDimensions(this.arrayWidth, this.arrayHeight);
             surface.setValues(pointAttrs);
             surface.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            layer.addRenderable(surface);
+            layer.add(surface);
         }
 
         protected Color colorForValue(double value, double brightness) {

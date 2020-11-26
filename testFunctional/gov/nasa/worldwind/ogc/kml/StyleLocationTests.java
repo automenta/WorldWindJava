@@ -627,7 +627,7 @@ public class StyleLocationTests extends ApplicationTemplate
         protected void add(KMLRoot kmlRoot)
         {
             final RenderableLayer layer = new RenderableLayer();
-            layer.addRenderable(new KMLController(kmlRoot));
+            layer.add(new KMLController(kmlRoot));
 
             SwingUtilities.invokeLater(new Runnable()
             {

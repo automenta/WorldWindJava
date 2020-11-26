@@ -1271,7 +1271,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // Load the document into a new layer.
         RenderableLayer kmlLayer = new RenderableLayer();
         kmlLayer.setName((String) document.getField(AVKey.DISPLAY_NAME));
-        kmlLayer.addRenderable(controller);
+        kmlLayer.add(controller);
 
         this.wwd.getModel().getLayers().add(kmlLayer);
     }

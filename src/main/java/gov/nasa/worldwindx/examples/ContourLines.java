@@ -51,7 +51,7 @@ public class ContourLines extends ApplicationTemplate {
             // Add a global moving contour line to the layer.
             this.contourLine = new ContourLine();
             this.contourLine.setElevation(2125);
-            layer.addRenderable(this.contourLine);
+            layer.add(this.contourLine);
 
             // Add a local contour line to the layer.
             ArrayList<LatLon> positions = new ArrayList<>();
@@ -72,7 +72,7 @@ public class ContourLines extends ApplicationTemplate {
                     cl.setLineWidth(2);
                 }
 
-                layer.addRenderable(cl);
+                layer.add(cl);
             }
 
             // Add a contour line control panel to the application window.

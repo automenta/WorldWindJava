@@ -50,7 +50,7 @@ public class PointPlacemarksEverywhere extends ApplicationTemplate {
                     pm.setAltitudeMode(altitudeMode);
 //                    PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
 //                    pm.setAttributes(attrs);
-                    layer.addRenderable(pm);
+                    layer.add(pm);
                     ++count;
                 }
             }
