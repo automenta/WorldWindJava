@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.event;
 
+import com.jogamp.newt.event.WindowUpdateEvent;
 import gov.nasa.worldwind.*;
 
 import java.awt.event.*;
@@ -69,5 +70,80 @@ public class NoOpInputHandler extends WWObjectImpl implements InputHandler {
     }
 
     public void setForceRedrawOnMousePressed(boolean forceRedrawOnMousePressed) {
+    }
+
+    @Override
+    public void mouseClicked(com.jogamp.newt.event.MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(com.jogamp.newt.event.MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(com.jogamp.newt.event.MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(com.jogamp.newt.event.MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(com.jogamp.newt.event.MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(com.jogamp.newt.event.MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e) {
+
+    }
+
+    @Override
+    public void windowResized(com.jogamp.newt.event.WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowMoved(com.jogamp.newt.event.WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDestroyNotify(com.jogamp.newt.event.WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDestroyed(com.jogamp.newt.event.WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowGainedFocus(com.jogamp.newt.event.WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowLostFocus(com.jogamp.newt.event.WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowRepaint(WindowUpdateEvent e) {
+
     }
 }

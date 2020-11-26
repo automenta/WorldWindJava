@@ -206,10 +206,6 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
         this.wwd().setModel(model); // null models are permissible
     }
 
-    default void setModelAndView(Model model, View view) {   // null models/views are permissible
-        this.setModel(model);
-        this.setView(view);
-    }
 
     default void addRenderingListener(RenderingListener listener) {
         this.wwd().addRenderingListener(listener);
@@ -322,4 +318,11 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
     default void setPerFrameStatisticsKeys(Set<String> keys) {
         this.wwd().setPerFrameStatisticsKeys(keys);
     }
+
+    /** start supplying events to the handler */
+    default void startEvents(InputHandler h) { }
+
+    /** stop supplying events to the handler */
+    default void stopEvents(InputHandler h) { }
+
 }

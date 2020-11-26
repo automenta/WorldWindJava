@@ -9,13 +9,14 @@ import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVList;
 
 import java.awt.event.*;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
+import java.util.*;
 
 /**
  * @author tag
  * @version $Id: InputHandler.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface InputHandler extends AVList, PropertyChangeListener {
+public interface InputHandler extends AVList, PropertyChangeListener, com.jogamp.newt.event.MouseListener, com.jogamp.newt.event.WindowListener {
     WorldWindow getEventSource();
 
     void setEventSource(WorldWindow newWorldWindow);
@@ -65,4 +66,79 @@ public interface InputHandler extends AVList, PropertyChangeListener {
      * @param forceRedrawOnMousePressed true to force a redraw on button press, otherwise false, the default.
      */
     void setForceRedrawOnMousePressed(boolean forceRedrawOnMousePressed);
+
+    @Override
+    void mouseClicked(com.jogamp.newt.event.MouseEvent e);
+
+    @Override
+    void mouseEntered(com.jogamp.newt.event.MouseEvent e);
+
+    @Override
+    void mouseExited(com.jogamp.newt.event.MouseEvent e);
+
+    @Override
+    void mousePressed(com.jogamp.newt.event.MouseEvent e);
+
+    @Override
+    void mouseReleased(com.jogamp.newt.event.MouseEvent e);
+
+    @Override
+    void mouseMoved(com.jogamp.newt.event.MouseEvent e);
+
+    @Override
+    void mouseDragged(com.jogamp.newt.event.MouseEvent e);
+
+    @Override
+    void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e);
+
+    @Override
+    Object setValue(String key, Object value);
+
+    @Override
+    Object getValue(String key);
+
+    @Override
+    Iterable<Object> getValues();
+
+    @Override
+    AVList setValues(AVList avList);
+
+    @Override
+    String getStringValue(String key);
+
+    @Override
+    Set<Map.Entry<String, Object>> getEntries();
+
+    @Override
+    boolean hasKey(String key);
+
+    @Override
+    Object removeKey(String key);
+
+    @Override
+    void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
+    @Override
+    void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
+    @Override
+    void addPropertyChangeListener(PropertyChangeListener listener);
+
+    @Override
+    void removePropertyChangeListener(PropertyChangeListener listener);
+
+    @Override
+    void firePropertyChange(String propertyName, Object oldValue, Object newValue);
+
+    @Override
+    void firePropertyChange(PropertyChangeEvent propertyChangeEvent);
+
+    @Override
+    AVList copy();
+
+    @Override
+    AVList clearList();
+
+    @Override
+    void propertyChange(PropertyChangeEvent evt);
 }

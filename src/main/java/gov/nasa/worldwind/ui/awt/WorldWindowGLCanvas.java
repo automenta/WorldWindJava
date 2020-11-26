@@ -10,6 +10,7 @@ import com.jogamp.opengl.awt.GLCanvas;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.GpuResourceCache;
+import gov.nasa.worldwind.event.InputHandler;
 import gov.nasa.worldwind.examples.render.ScreenCreditController;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.ui.WorldWindowGLDrawable;
@@ -33,19 +34,18 @@ import java.beans.PropertyChangeListener;
  * <p>
  * This class is capable of supporting stereo devices. To cause a stereo device to be selected and used, specify the
  * Java VM property "gov.nasa.worldwind.stereo.mode=device" prior to creating an instance of this class. A stereo
- * capable {@link SceneController} such as {@link StereoSceneController} must also be specified in
- * the WorldWind {@link Configuration}. The default configuration specifies a stereo-capable controller. To prevent
- * stereo from being used by subsequently opened {@code WorldWindowGLCanvas}es, set the property to a an empty string,
- * "". If a stereo device cannot be selected and used, this falls back to a non-stereo device that supports WorldWind's
- * minimum requirements.
+ * capable {@link SceneController} such as {@link StereoSceneController} must also be specified in the WorldWind {@link
+ * Configuration}. The default configuration specifies a stereo-capable controller. To prevent stereo from being used by
+ * subsequently opened {@code WorldWindowGLCanvas}es, set the property to a an empty string, "". If a stereo device
+ * cannot be selected and used, this falls back to a non-stereo device that supports WorldWind's minimum requirements.
  * <p>
  * Under certain conditions, JOGL replaces the <code>GLContext</code> associated with instances of this class. This then
  * necessitates that all resources such as textures that have been stored on the graphic devices must be regenerated for
  * the new context. WorldWind does this automatically by clearing the associated {@link GpuResourceCache}. Objects
  * subsequently rendered automatically re-create those resources. If an application creates its own graphics resources,
  * including textures, vertex buffer objects and display lists, it must store them in the <code>GpuResourceCache</code>
- * associated with the current {@link gov.nasa.worldwind.examples.render.DrawContext} so that they are automatically cleared, and
- * be prepared to re-create them if they do not exist in the <code>DrawContext</code>'s current
+ * associated with the current {@link gov.nasa.worldwind.examples.render.DrawContext} so that they are automatically
+ * cleared, and be prepared to re-create them if they do not exist in the <code>DrawContext</code>'s current
  * <code>GpuResourceCache</code> when needed. Examples of doing this can be found by searching for usages of the method
  * {@link GpuResourceCache#get(Object)} and {@link GpuResourceCache#getTexture(Object)}.
  *
@@ -75,23 +75,12 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, Proper
 
             initializeCreditsController();
             this.dashboard = new DashboardController(this, this);
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             String message = Logging.getMessage("Awt.WorldWindowGLSurface.UnabletoCreateWindow");
             Logging.logger().severe(message);
             throw new WWRuntimeException(message, e);
         }
-    }
-
-
-    protected void initializeCreditsController() {
-        new ScreenCreditController(wwd());
-    }
-
-    @Override
-    public void shutdown() {
-        if (this.dashboard != null)
-            this.dashboard.dispose();
     }
 
     /**
@@ -127,13 +116,46 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, Proper
             throw new WWRuntimeException(message, e);
         }
     }
+
+    @Override
+    public void startEvents(InputHandler h) {
+        AWTInputHandler hh = (AWTInputHandler) h;
+        addKeyListener(hh);
+        addMouseMotionListener(hh);
+        addMouseListener(hh);
+        addMouseWheelListener(hh);
+        addFocusListener(hh);
+    }
+
+    @Override
+    public void stopEvents(InputHandler h) {
+        AWTInputHandler hh = (AWTInputHandler) h;
+        removeKeyListener(hh);
+        removeMouseMotionListener(hh);
+        removeMouseListener(hh);
+        removeMouseWheelListener(hh);
+        removeFocusListener(hh);
+    }
+
+    protected void initializeCreditsController() {
+        new ScreenCreditController(wwd());
+    }
+
+    @Override
+    public void shutdown() {
+        if (this.dashboard != null)
+            this.dashboard.dispose();
+    }
+
     public void redraw() {
         this.repaint();
     }
 
-    @Override public WorldWindowGLDrawable wwd() {
+    @Override
+    public WorldWindowGLDrawable wwd() {
         return wwd;
     }
+
     @Override
     public synchronized void addPropertyChangeListener(PropertyChangeListener listener) {
         super.addPropertyChangeListener(listener);

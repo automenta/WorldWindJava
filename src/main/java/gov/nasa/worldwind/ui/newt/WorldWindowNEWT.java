@@ -5,6 +5,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.FPSAnimator;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.event.InputHandler;
 import gov.nasa.worldwind.ui.WorldWindowGLAutoDrawable;
 
 import java.beans.PropertyChangeListener;
@@ -109,4 +110,17 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
     public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
 
     }
+
+    @Override
+    public void startEvents(InputHandler h) {
+        window.addMouseListener(h);
+        window.addWindowListener(h);
+    }
+
+    @Override
+    public void stopEvents(InputHandler h) {
+        window.removeMouseListener(h);
+        window.removeWindowListener(h);
+    }
+
 }
