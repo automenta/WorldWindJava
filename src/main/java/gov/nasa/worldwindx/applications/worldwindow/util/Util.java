@@ -19,19 +19,15 @@ import java.util.regex.*;
  * @author tag
  * @version $Id: Util.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Util
-{
+public class Util {
     public static final String DECIMAL_SYMBOL = Character.toString(new DecimalFormatSymbols().getDecimalSeparator());
 
-    public static Logger getLogger()
-    {
+    public static Logger getLogger() {
         return Logger.getLogger("gov.nasa.worldwind");
     }
 
-    public static Frame findParentFrame(Component c)
-    {
-        while (c != null)
-        {
+    public static Frame findParentFrame(Component c) {
+        while (c != null) {
             if (c instanceof Frame)
                 return (Frame) c;
 
@@ -41,8 +37,7 @@ public class Util
         return null;
     }
 
-    public static File ensureFileSuffix(File file, String suffixWithoutPeriod)
-    {
+    public static File ensureFileSuffix(File file, String suffixWithoutPeriod) {
         String suffix = WWIO.getSuffix(file.getPath());
         if (suffix == null || !suffix.equalsIgnoreCase(suffixWithoutPeriod))
             return new File(file.getPath() + (suffix == null ? "." : "") + suffixWithoutPeriod);
@@ -50,51 +45,38 @@ public class Util
             return file;
     }
 
-    public static void centerDialogInContainer(JDialog dialog, Container frame)
-    {
+    public static void centerDialogInContainer(JDialog dialog, Container frame) {
         Dimension prefSize = dialog.getPreferredSize();
-        java.awt.Point parentLocation = frame.getLocationOnScreen();
+        Point parentLocation = frame.getLocationOnScreen();
         Dimension parentSize = frame.getSize();//Toolkit.getDefaultToolkit().getScreenSize();
         int x = parentLocation.x + (parentSize.width - prefSize.width) / 2;
         int y = parentLocation.y + (parentSize.height - prefSize.height) / 2;
         dialog.setLocation(x, y);
     }
 
-    public static void positionDialogInContainer(JDialog dialog, Container frame, int horizontal, int vertical)
-    {
+    public static void positionDialogInContainer(JDialog dialog, Container frame, int horizontal, int vertical) {
         Dimension prefSize = dialog.getPreferredSize();
-        java.awt.Point parentLocation = frame.getLocationOnScreen();
+        Point parentLocation = frame.getLocationOnScreen();
         Dimension parentSize = frame.getSize();
 
         // default to center
         int x = parentLocation.x + (parentSize.width - prefSize.width) / 2;
         int y = parentLocation.y + (parentSize.height - prefSize.height) / 2;
 
-        switch (horizontal)
-        {
-            case SwingConstants.WEST:
-                x = parentLocation.x;
-                break;
-            case SwingConstants.EAST:
-                x = parentLocation.x + parentSize.width - prefSize.width;
-                break;
+        switch (horizontal) {
+            case SwingConstants.WEST -> x = parentLocation.x;
+            case SwingConstants.EAST -> x = parentLocation.x + parentSize.width - prefSize.width;
         }
 
-        switch (vertical)
-        {
-            case SwingConstants.NORTH:
-                y = parentLocation.y;
-                break;
-            case SwingConstants.SOUTH:
-                y = parentLocation.y + parentSize.height - prefSize.height;
-                break;
+        switch (vertical) {
+            case SwingConstants.NORTH -> y = parentLocation.y;
+            case SwingConstants.SOUTH -> y = parentLocation.y + parentSize.height - prefSize.height;
         }
 
         dialog.setLocation(x, y);
     }
 
-    public static String[] splitLines(String linesString)
-    {
+    public static String[] splitLines(String linesString) {
         if (WWUtil.isEmpty(linesString))
             return null;
 
@@ -103,13 +85,11 @@ public class Util
         return lines.length > 0 ? lines : null;
     }
 
-    public static String[] splitWords(String wordsString)
-    {
+    public static String[] splitWords(String wordsString) {
         return splitWords(wordsString, ",");
     }
 
-    public static String[] splitWords(String wordsString, String separators)
-    {
+    public static String[] splitWords(String wordsString, String separators) {
         if (WWUtil.isEmpty(wordsString))
             return null;
 
@@ -118,8 +98,7 @@ public class Util
         return words.length > 0 ? words : null;
     }
 
-    public static String makeMultiLineToolTip(String original)
-    {
+    public static String makeMultiLineToolTip(String original) {
         StringBuilder sb = new StringBuilder();
 
         if (!original.trim().toLowerCase().startsWith("<html>"))
@@ -130,8 +109,7 @@ public class Util
         Matcher m = p.matcher(original);
         if (m.find())
             sb.append(original.substring(m.start(), m.end()).trim());
-        while (m.find())
-        {
+        while (m.find()) {
             sb.append("<br>");
             sb.append(original.substring(m.start(), m.end()).trim());
         }

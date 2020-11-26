@@ -17,8 +17,7 @@ package gov.nasa.worldwind.formats.dds;
  * @see AlphaBlockDXT3
  * @see BlockDXT1
  */
-public class BlockDXT3
-{
+public class BlockDXT3 {
     /**
      * The DXT2/DXT3 alpha block.
      */
@@ -31,14 +30,12 @@ public class BlockDXT3
     /**
      * Creates a new DXT2/DXT3 alpha block with all alpha and color values set to 0.
      */
-    public BlockDXT3()
-    {
+    public BlockDXT3() {
         this.alphaBlock = new AlphaBlockDXT3();
         this.colorBlock = new BlockDXT1();
     }
 
-    public BlockDXT3(long alphaValueMask, int color0, int color1, long colorIndexMask)
-    {
+    public BlockDXT3(long alphaValueMask, int color0, int color1, long colorIndexMask) {
         this.alphaBlock = new AlphaBlockDXT3(alphaValueMask);
         this.colorBlock = new BlockDXT1(color0, color1, colorIndexMask);
     }
@@ -48,8 +45,7 @@ public class BlockDXT3
      *
      * @return DXT2/DXT3 alpha block.
      */
-    public AlphaBlockDXT3 getAlphaBlock()
-    {
+    public AlphaBlockDXT3 getAlphaBlock() {
         return this.alphaBlock;
     }
 
@@ -58,8 +54,7 @@ public class BlockDXT3
      *
      * @param alphaBlock DXT2/DXT3 alpha block.
      */
-    public void setAlphaBlock(AlphaBlockDXT3 alphaBlock)
-    {
+    public void setAlphaBlock(AlphaBlockDXT3 alphaBlock) {
         this.alphaBlock = alphaBlock;
     }
 
@@ -68,8 +63,7 @@ public class BlockDXT3
      *
      * @return DXT1 color block.
      */
-    public BlockDXT1 getColorBlock()
-    {
+    public BlockDXT1 getColorBlock() {
         return this.colorBlock;
     }
 
@@ -78,8 +72,7 @@ public class BlockDXT3
      *
      * @param colorBlock DXT1 color block.
      */
-    public void setColorBlock(BlockDXT1 colorBlock)
-    {
+    public void setColorBlock(BlockDXT1 colorBlock) {
         this.colorBlock = colorBlock;
     }
 }

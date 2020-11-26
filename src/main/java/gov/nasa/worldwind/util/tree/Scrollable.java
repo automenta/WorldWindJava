@@ -18,8 +18,7 @@ import java.awt.*;
  * @version $Id: Scrollable.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see ScrollFrame
  */
-public interface Scrollable
-{
+public interface Scrollable {
     /**
      * Render the scrollable component. The component should render itself with the lower left corner of the content
      * located at {@code location}.in the rectangle specified by {@code bounds}. Note that some of the content may be
@@ -42,7 +41,6 @@ public interface Scrollable
      * @param frameSize Size of the frame that will hold the the scrollable content. Implementations should be prepared
      *                  to handle a {@code null} frame size because the frame may need to determine the content size
      *                  before it can determine its own size.
-     *
      * @return The size of the scrollable object.
      */
     Dimension getSize(DrawContext dc, Dimension frameSize);

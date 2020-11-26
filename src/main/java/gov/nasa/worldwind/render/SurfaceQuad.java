@@ -21,8 +21,7 @@ import java.util.*;
  * @author dcollins
  * @version $Id: SurfaceQuad.java 2406 2014-10-29 23:39:29Z dcollins $
  */
-public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
-{
+public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
     protected LatLon center = LatLon.ZERO;
     protected double width;
     protected double height;
@@ -32,8 +31,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
      * Constructs a new surface quad with the default attributes, default center location, default dimensions, and
      * default heading.
      */
-    public SurfaceQuad()
-    {
+    public SurfaceQuad() {
     }
 
     /**
@@ -43,8 +41,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
      *
      * @param normalAttrs the normal attributes. May be null, in which case default attributes are used.
      */
-    public SurfaceQuad(ShapeAttributes normalAttrs)
-    {
+    public SurfaceQuad(ShapeAttributes normalAttrs) {
         super(normalAttrs);
     }
 
@@ -55,27 +52,22 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
      * @param center the quad's center location.
      * @param width  the quad's width, in meters.
      * @param height the quad's height, in meters.
-     *
      * @throws IllegalArgumentException if the center is null, or if the width or height are negative.
      */
-    public SurfaceQuad(LatLon center, double width, double height)
-    {
-        if (center == null)
-        {
+    public SurfaceQuad(LatLon center, double width, double height) {
+        if (center == null) {
             String message = Logging.getMessage("nullValue.CenterIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (width < 0)
-        {
+        if (width < 0) {
             String message = Logging.getMessage("Geom.WidthIsNegative", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (height < 0)
-        {
+        if (height < 0) {
             String message = Logging.getMessage("Geom.HeightIsNegative", height);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -94,15 +86,12 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
      * @param width   the quad's width, in meters.
      * @param height  the quad's height, in meters.
      * @param heading the quad's heading, clockwise from North.
-     *
      * @throws IllegalArgumentException if the center or heading are null, or if the width or height are negative.
      */
-    public SurfaceQuad(LatLon center, double width, double height, Angle heading)
-    {
+    public SurfaceQuad(LatLon center, double width, double height, Angle heading) {
         this(center, width, height);
 
-        if (heading == null)
-        {
+        if (heading == null) {
             String message = Logging.getMessage("nullValue.HeadingIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -120,29 +109,24 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
      * @param center      the quad's center location.
      * @param width       the quad's width, in meters.
      * @param height      the quad's height, in meters.
-     *
      * @throws IllegalArgumentException if the center is null, or if the width or height are negative.
      */
-    public SurfaceQuad(ShapeAttributes normalAttrs, LatLon center, double width, double height)
-    {
+    public SurfaceQuad(ShapeAttributes normalAttrs, LatLon center, double width, double height) {
         super(normalAttrs);
 
-        if (center == null)
-        {
+        if (center == null) {
             String message = Logging.getMessage("nullValue.CenterIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (width < 0)
-        {
+        if (width < 0) {
             String message = Logging.getMessage("Geom.WidthIsNegative", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (height < 0)
-        {
+        if (height < 0) {
             String message = Logging.getMessage("Geom.HeightIsNegative", height);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -158,8 +142,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
      *
      * @param source the shape to copy.
      */
-    public SurfaceQuad(SurfaceQuad source)
-    {
+    public SurfaceQuad(SurfaceQuad source) {
         super(source);
 
         this.center = source.center;
@@ -178,15 +161,12 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
      * @param width       the quad's width, in meters.
      * @param height      the quad's height, in meters.
      * @param heading     the quad's heading, clockwise from North.
-     *
      * @throws IllegalArgumentException if the center or heading are null, or if the width or height are negative.
      */
-    public SurfaceQuad(ShapeAttributes normalAttrs, LatLon center, double width, double height, Angle heading)
-    {
+    public SurfaceQuad(ShapeAttributes normalAttrs, LatLon center, double width, double height, Angle heading) {
         this(normalAttrs, center, width, height);
 
-        if (heading == null)
-        {
+        if (heading == null) {
             String message = Logging.getMessage("nullValue.HeadingIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -195,15 +175,12 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
         this.heading = heading;
     }
 
-    public LatLon getCenter()
-    {
+    public LatLon getCenter() {
         return this.center;
     }
 
-    public void setCenter(LatLon center)
-    {
-        if (center == null)
-        {
+    public void setCenter(LatLon center) {
+        if (center == null) {
             String message = Logging.getMessage("nullValue.CenterIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -213,33 +190,27 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
         this.onShapeChanged();
     }
 
-    public double getWidth()
-    {
+    public double getWidth() {
         return this.width;
     }
 
-    public double getHeight()
-    {
+    public void setWidth(double width) {
+        if (width < 0) {
+            String message = Logging.getMessage("Geom.WidthIsNegative", width);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.width = width;
+        this.onShapeChanged();
+    }
+
+    public double getHeight() {
         return this.height;
     }
 
-    public void setWidth(double width)
-    {
-        if (width < 0)
-        {
-            String message = Logging.getMessage("Geom.WidthIsNegative", width);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        this.width = width;
-        this.onShapeChanged();
-    }
-
-    public void setHeight(double height)
-    {
-        if (height < 0)
-        {
+    public void setHeight(double height) {
+        if (height < 0) {
             String message = Logging.getMessage("Geom.HeightIsNegative", height);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -249,17 +220,14 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
         this.onShapeChanged();
     }
 
-    public void setSize(double width, double height)
-    {
-        if (width < 0)
-        {
+    public void setSize(double width, double height) {
+        if (width < 0) {
             String message = Logging.getMessage("Geom.WidthIsNegative", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (height < 0)
-        {
+        if (height < 0) {
             String message = Logging.getMessage("Geom.HeightIsNegative", height);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -270,15 +238,12 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
         this.onShapeChanged();
     }
 
-    public Angle getHeading()
-    {
+    public Angle getHeading() {
         return this.heading;
     }
 
-    public void setHeading(Angle heading)
-    {
-        if (heading == null)
-        {
+    public void setHeading(Angle heading) {
+        if (heading == null) {
             String message = Logging.getMessage("nullValue.HeadingIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -293,41 +258,35 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
      * <p>
      * Overridden to include the globe's state key in the returned state key.
      *
-     * @see gov.nasa.worldwind.globes.Globe#getStateKey(DrawContext)
+     * @see Globe#getStateKey(DrawContext)
      */
     @Override
-    public Object getStateKey(DrawContext dc)
-    {
+    public Object getStateKey(DrawContext dc) {
         // Store a copy of the active attributes to insulate the key from changes made to the shape's active attributes.
         return new SurfaceShapeStateKey(this.getUniqueId(), this.lastModifiedTime, this.getActiveAttributes().copy(),
             dc.getGlobe().getStateKey(dc));
     }
 
-    public Position getReferencePosition()
-    {
+    public Position getReferencePosition() {
         return new Position(this.center, 0);
     }
 
-    protected void doMoveTo(Position oldReferencePosition, Position newReferencePosition)
-    {
+    protected void doMoveTo(Position oldReferencePosition, Position newReferencePosition) {
         Angle heading = LatLon.greatCircleAzimuth(oldReferencePosition, this.center);
         Angle pathLength = LatLon.greatCircleDistance(oldReferencePosition, this.center);
         this.setCenter(LatLon.greatCircleEndPosition(newReferencePosition, heading, pathLength));
     }
 
-    protected void doMoveTo(Globe globe, Position oldReferencePosition, Position newReferencePosition)
-    {
-        List<LatLon> locations = new ArrayList<>(1);
+    protected void doMoveTo(Globe globe, Position oldReferencePosition, Position newReferencePosition) {
+        Collection<LatLon> locations = new ArrayList<>(1);
         locations.add(this.getCenter());
         List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldReferencePosition, newReferencePosition,
             locations);
         this.setCenter(newLocations.get(0));
     }
 
-    public Iterable<? extends LatLon> getLocations(Globe globe)
-    {
-        if (globe == null)
-        {
+    public Iterable<? extends LatLon> getLocations(Globe globe) {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -353,25 +312,23 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
 
         LatLon[] locations = new LatLon[cornerAngles.length];
 
-        for (int i = 0; i < cornerAngles.length; i++)
-        {
+        for (int i = 0; i < cornerAngles.length; i++) {
             double azimuth = (Math.PI / 2.0) - (cornerAngles[i] - this.heading.radians);
             locations[i] = LatLon.greatCircleEndPosition(this.center, azimuth, pathLength);
         }
 
-        return java.util.Arrays.asList(locations);
+        return Arrays.asList(locations);
     }
 
-    protected List<List<LatLon>> createGeometry(Globe globe, double edgeIntervalsPerDegree)
-    {
+    protected List<List<LatLon>> createGeometry(Globe globe, double edgeIntervalsPerDegree) {
         Iterable<? extends LatLon> originalLocations = this.getLocations(globe);
         if (originalLocations == null)
             return null;
 
-        ArrayList<LatLon> drawLocations = new ArrayList<>();
+        List<LatLon> drawLocations = new ArrayList<>();
         this.generateIntermediateLocations(originalLocations, edgeIntervalsPerDegree, false, drawLocations);
 
-        ArrayList<List<LatLon>> geom = new ArrayList<>();
+        List<List<LatLon>> geom = new ArrayList<>();
         geom.add(drawLocations);
 
         return geom;
@@ -381,8 +338,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
     //******************** Restorable State  ***********************//
     //**************************************************************//
 
-    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.doGetRestorableState(rs, context);
 
         rs.addStateValueAsLatLon(context, "center", this.getCenter());
@@ -391,8 +347,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
         rs.addStateValueAsDouble(context, "headingDegrees", this.getHeading().degrees);
     }
 
-    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.doRestoreState(rs, context);
 
         LatLon ll = rs.getStateValueAsLatLon(context, "center");
@@ -412,8 +367,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
             this.setHeading(Angle.fromDegrees(d));
     }
 
-    protected void legacyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void legacyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.legacyRestoreState(rs, context);
 
         // Previous versions of SurfaceQuad used half-width and half-height properties. We are now using standard
@@ -438,33 +392,27 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
      * object must be one of: java.io.Writer java.io.OutputStream javax.xml.stream.XMLStreamWriter
      *
      * @param output Object to receive the generated KML.
-     *
-     * @throws javax.xml.stream.XMLStreamException If an exception occurs while writing the KML
-     * @throws java.io.IOException        if an exception occurs while exporting the data.
+     * @throws XMLStreamException If an exception occurs while writing the KML
+     * @throws IOException                 if an exception occurs while exporting the data.
      * @see #export(String, Object)
      */
-    protected void exportAsKML(Object output) throws IOException, XMLStreamException
-    {
+    protected void exportAsKML(Object output) throws IOException, XMLStreamException {
         XMLStreamWriter xmlWriter = null;
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         boolean closeWriterWhenFinished = true;
 
-        if (output instanceof XMLStreamWriter)
-        {
+        if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
         }
-        else if (output instanceof Writer)
-        {
+        else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
         }
-        else if (output instanceof OutputStream)
-        {
+        else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 
-        if (xmlWriter == null)
-        {
+        if (xmlWriter == null) {
             String message = Logging.getMessage("Export.UnsupportedOutputObject");
             Logging.logger().warning(message);
             throw new IllegalArgumentException(message);
@@ -473,8 +421,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
         xmlWriter.writeStartElement("Placemark");
 
         String property = getStringValue(AVKey.DISPLAY_NAME);
-        if (property != null)
-        {
+        if (property != null) {
             xmlWriter.writeStartElement("name");
             xmlWriter.writeCharacters(property);
             xmlWriter.writeEndElement();
@@ -485,16 +432,14 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
         xmlWriter.writeEndElement();
 
         String shortDescription = (String) getValue(AVKey.SHORT_DESCRIPTION);
-        if (shortDescription != null)
-        {
+        if (shortDescription != null) {
             xmlWriter.writeStartElement("Snippet");
             xmlWriter.writeCharacters(shortDescription);
             xmlWriter.writeEndElement();
         }
 
         String description = (String) getValue(AVKey.BALLOON_TEXT);
-        if (description != null)
-        {
+        if (description != null) {
             xmlWriter.writeStartElement("description");
             xmlWriter.writeCharacters(description);
             xmlWriter.writeEndElement();
@@ -505,8 +450,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
         final ShapeAttributes highlightAttributes = getHighlightAttributes();
 
         // Write style map
-        if (normalAttributes != null || highlightAttributes != null)
-        {
+        if (normalAttributes != null || highlightAttributes != null) {
             xmlWriter.writeStartElement("StyleMap");
             KMLExportUtil.exportAttributesAsKML(xmlWriter, KMLConstants.NORMAL, normalAttributes);
             KMLExportUtil.exportAttributesAsKML(xmlWriter, KMLConstants.HIGHLIGHT, highlightAttributes);
@@ -529,8 +473,7 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
 
         // Outer boundary
         Iterable<? extends LatLon> outerBoundary = this.getLocations(globe);
-        if (outerBoundary != null)
-        {
+        if (outerBoundary != null) {
             xmlWriter.writeStartElement("outerBoundaryIs");
             KMLExportUtil.exportBoundaryAsLinearRing(xmlWriter, outerBoundary, null);
             xmlWriter.writeEndElement(); // outerBoundaryIs

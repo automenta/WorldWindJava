@@ -26,13 +26,10 @@ public final class Intersection // Instances are immutable
      *
      * @param intersectionPoint the intersection point.
      * @param isTangent         true if the intersection is tangent to the object intersected, otherwise false.
-     *
      * @throws IllegalArgumentException if <code>intersectionPoint</code> is null
      */
-    public Intersection(Vec4 intersectionPoint, boolean isTangent)
-    {
-        if (intersectionPoint == null)
-        {
+    public Intersection(Vec4 intersectionPoint, boolean isTangent) {
+        if (intersectionPoint == null) {
             String message = Logging.getMessage("nullValue.IntersectionPointIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -48,20 +45,16 @@ public final class Intersection // Instances are immutable
      * @param intersectionLength the parametric length along the intersection geometry. If the geometry was a line, then
      *                           this value will be the parametric value of the intersection point along the line.
      * @param isTangent          true if the intersection is tangent to the object intersected, otherwise false.
-     *
      * @throws IllegalArgumentException if <code>intersectionPoint</code> is null
      */
-    public Intersection(Vec4 intersectionPoint, double intersectionLength, boolean isTangent)
-    {
+    public Intersection(Vec4 intersectionPoint, double intersectionLength, boolean isTangent) {
         this(intersectionPoint, isTangent);
 
         this.intersectionLength = intersectionLength;
     }
 
-    public Intersection(Vec4 intersectionPoint, Position intersectionPosition, boolean isTangent, Object object)
-    {
-        if (intersectionPoint == null)
-        {
+    public Intersection(Vec4 intersectionPoint, Position intersectionPosition, boolean isTangent, Object object) {
+        if (intersectionPoint == null) {
             String message = Logging.getMessage("nullValue.IntersectionPointIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -74,109 +67,17 @@ public final class Intersection // Instances are immutable
     }
 
     /**
-     * Returns the intersection position if one has been set.
-     *
-     * @return the intersection position, or null if the position has not been set.
-     */
-    public Position getIntersectionPosition()
-    {
-        return intersectionPosition;
-    }
-
-    /**
-     * Specifies the intersection position, which should be a position computed from the intersection point.
-     *
-     * @param intersectionPosition the intersection position. May be null.
-     */
-    public void setIntersectionPosition(Position intersectionPosition)
-    {
-        this.intersectionPosition = intersectionPosition;
-    }
-
-    /**
-     * Returns the object associated with the intersection.
-     *
-     * @return the object associated with the intersection, or null if no object is associated.
-     */
-    public Object getObject()
-    {
-        return object;
-    }
-
-    /**
-     * Specifies the object to associate with the intersection.
-     *
-     * @param object the object to associate with the intersection. May be null.
-     */
-    public void setObject(Object object)
-    {
-        this.object = object;
-    }
-
-    /**
-     * Returns the intersection point.
-     *
-     * @return the intersection point.
-     */
-    public Vec4 getIntersectionPoint()
-    {
-        return intersectionPoint;
-    }
-
-    /**
-     * Specifies the intersection point.
-     *
-     * @param intersectionPoint the intersection point. May be null, but typically should not be.
-     */
-    public void setIntersectionPoint(Vec4 intersectionPoint)
-    {
-        this.intersectionPoint = intersectionPoint;
-    }
-
-    /**
-     * Indicates whether the intersection is tangent to the object intersected.
-     *
-     * @return true if the intersection is tangent, otherwise false.
-     */
-    public boolean isTangent()
-    {
-        return isTangent;
-    }
-
-    /**
-     * Specifies whether the intersection is tangent to the object intersected.
-     *
-     * @param tangent true if the intersection is tangent, otherwise false.
-     */
-    public void setTangent(boolean tangent)
-    {
-        isTangent = tangent;
-    }
-
-    /**
-     * The parametric length along the intersection geometry. If the geometry involved a line, this value is the
-     * parametric distance at which the intersection occurred along the line.
-     *
-     * @return the intersection length, or null if the length was not calculated.
-     */
-    public Double getIntersectionLength()
-    {
-        return intersectionLength;
-    }
-
-    /**
      * Merges two lists of intersections into a single list sorted by intersection distance from a specified reference
      * point.
      *
      * @param refPoint the reference point.
      * @param listA    the first list of intersections.
      * @param listB    the second list of intersections.
-     *
      * @return the merged list of intersections, sorted by increasing distance from the reference point.
      */
-    public static Queue<Intersection> sort(final Vec4 refPoint, List<Intersection> listA, List<Intersection> listB)
-    {
-        PriorityQueue<Intersection> sorted = new PriorityQueue<>(10, (losiA, losiB) -> {
+    public static Queue<Intersection> sort(final Vec4 refPoint, Collection<Intersection> listA,
+        Collection<Intersection> listB) {
+        Queue<Intersection> sorted = new PriorityQueue<>(10, (losiA, losiB) -> {
             if (losiA.intersectionPoint == null || losiB.intersectionPoint == null)
                 return 0;
 
@@ -186,28 +87,107 @@ public final class Intersection // Instances are immutable
             return Double.compare(dA, dB);
         });
 
-        if (listA != null)
-        {
+        if (listA != null) {
             sorted.addAll(listA);
         }
 
-        if (listB != null)
-        {
+        if (listB != null) {
             sorted.addAll(listB);
         }
 
         return sorted;
     }
 
+    /**
+     * Returns the intersection position if one has been set.
+     *
+     * @return the intersection position, or null if the position has not been set.
+     */
+    public Position getIntersectionPosition() {
+        return intersectionPosition;
+    }
+
+    /**
+     * Specifies the intersection position, which should be a position computed from the intersection point.
+     *
+     * @param intersectionPosition the intersection position. May be null.
+     */
+    public void setIntersectionPosition(Position intersectionPosition) {
+        this.intersectionPosition = intersectionPosition;
+    }
+
+    /**
+     * Returns the object associated with the intersection.
+     *
+     * @return the object associated with the intersection, or null if no object is associated.
+     */
+    public Object getObject() {
+        return object;
+    }
+
+    /**
+     * Specifies the object to associate with the intersection.
+     *
+     * @param object the object to associate with the intersection. May be null.
+     */
+    public void setObject(Object object) {
+        this.object = object;
+    }
+
+    /**
+     * Returns the intersection point.
+     *
+     * @return the intersection point.
+     */
+    public Vec4 getIntersectionPoint() {
+        return intersectionPoint;
+    }
+
+    /**
+     * Specifies the intersection point.
+     *
+     * @param intersectionPoint the intersection point. May be null, but typically should not be.
+     */
+    public void setIntersectionPoint(Vec4 intersectionPoint) {
+        this.intersectionPoint = intersectionPoint;
+    }
+
+    /**
+     * Indicates whether the intersection is tangent to the object intersected.
+     *
+     * @return true if the intersection is tangent, otherwise false.
+     */
+    public boolean isTangent() {
+        return isTangent;
+    }
+
+    /**
+     * Specifies whether the intersection is tangent to the object intersected.
+     *
+     * @param tangent true if the intersection is tangent, otherwise false.
+     */
+    public void setTangent(boolean tangent) {
+        isTangent = tangent;
+    }
+
+    /**
+     * The parametric length along the intersection geometry. If the geometry involved a line, this value is the
+     * parametric distance at which the intersection occurred along the line.
+     *
+     * @return the intersection length, or null if the length was not calculated.
+     */
+    public Double getIntersectionLength() {
+        return intersectionLength;
+    }
+
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
 
-        final gov.nasa.worldwind.geom.Intersection that = (gov.nasa.worldwind.geom.Intersection) o;
+        final Intersection that = (Intersection) o;
 
         if (isTangent != that.isTangent)
             return false;
@@ -219,8 +199,7 @@ public final class Intersection // Instances are immutable
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
         result = intersectionPoint.hashCode();
         result = 29 * result + (isTangent ? 1 : 0);
@@ -228,8 +207,7 @@ public final class Intersection // Instances are immutable
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         String pt = "Intersection Point: " + this.intersectionPoint;
         String tang = this.isTangent ? " is a tangent." : " not a tangent";
         return pt + tang;

@@ -12,33 +12,37 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * AbstractHotSpot is an abstract base class for the {@link gov.nasa.worldwind.util.HotSpot} interface. The methods in
+ * AbstractHotSpot is an abstract base class for the {@link HotSpot} interface. The methods in
  * AbstractHotSpot are empty or simply return {@code null}. This is a convenience class for that enables a subclass to
  * override only the events its interested in.
  *
  * @author dcollins
  * @version $Id: AbstractHotSpot.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
-{
-    /** Indicates whether or not this HotSpot is active. */
+public abstract class AbstractHotSpot extends AVListImpl implements HotSpot {
+    /**
+     * Indicates whether or not this HotSpot is active.
+     */
     protected boolean active;
 
-    /** Creates a new AbstractHotSpot, but otherwise does nothing. */
-    public AbstractHotSpot()
-    {
+    /**
+     * Creates a new AbstractHotSpot, but otherwise does nothing.
+     */
+    public AbstractHotSpot() {
     }
 
-    /** {@inheritDoc} */
-    public void setActive(boolean active)
-    {
-        this.active = active;
-    }
-
-    /** {@inheritDoc} */
-    public boolean isActive()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isActive() {
         return this.active;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     /**
@@ -47,8 +51,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void selected(SelectEvent event)
-    {
+    public void selected(SelectEvent event) {
     }
 
     /**
@@ -57,8 +60,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void keyTyped(KeyEvent event)
-    {
+    public void keyTyped(KeyEvent event) {
     }
 
     /**
@@ -67,8 +69,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void keyPressed(KeyEvent event)
-    {
+    public void keyPressed(KeyEvent event) {
     }
 
     /**
@@ -77,8 +78,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void keyReleased(KeyEvent event)
-    {
+    public void keyReleased(KeyEvent event) {
     }
 
     /**
@@ -87,8 +87,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void mouseClicked(MouseEvent event)
-    {
+    public void mouseClicked(MouseEvent event) {
     }
 
     /**
@@ -97,8 +96,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void mousePressed(MouseEvent event)
-    {
+    public void mousePressed(MouseEvent event) {
     }
 
     /**
@@ -107,8 +105,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void mouseReleased(MouseEvent event)
-    {
+    public void mouseReleased(MouseEvent event) {
     }
 
     /**
@@ -117,8 +114,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void mouseEntered(MouseEvent event)
-    {
+    public void mouseEntered(MouseEvent event) {
     }
 
     /**
@@ -127,8 +123,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void mouseExited(MouseEvent event)
-    {
+    public void mouseExited(MouseEvent event) {
     }
 
     /**
@@ -137,8 +132,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void mouseDragged(MouseEvent event)
-    {
+    public void mouseDragged(MouseEvent event) {
     }
 
     /**
@@ -147,8 +141,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void mouseMoved(MouseEvent event)
-    {
+    public void mouseMoved(MouseEvent event) {
     }
 
     /**
@@ -157,8 +150,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @param event The event to handle.
      */
-    public void mouseWheelMoved(MouseWheelEvent event)
-    {
+    public void mouseWheelMoved(MouseWheelEvent event) {
     }
 
     /**
@@ -166,8 +158,7 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      *
      * @return A {@code null} Cursor.
      */
-    public Cursor getCursor()
-    {
+    public Cursor getCursor() {
         return null;
     }
 
@@ -175,12 +166,10 @@ public abstract class AbstractHotSpot extends AVListImpl implements HotSpot
      * Determine if a select event, or the mouse event that generated the select event, has been consumed.
      *
      * @param event Event to test.
-     *
      * @return {@code true} if {@code event} has been consumed, or if {@code event} was triggered by a mouse event, and
-     *         that mouse event has been consumed.
+     * that mouse event has been consumed.
      */
-    protected boolean isConsumed(SelectEvent event)
-    {
+    protected boolean isConsumed(SelectEvent event) {
         return event.isConsumed() || (event.getMouseEvent() != null && event.getMouseEvent().isConsumed());
     }
 }

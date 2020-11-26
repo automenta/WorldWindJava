@@ -23,13 +23,11 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: ExportKML.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ExportKML
-{
+public class ExportKML {
     protected static ShapeAttributes normalShapeAttributes;
     protected static ShapeAttributes highlightShapeAttributes;
 
-    protected static PointPlacemark makePointPlacemark()
-    {
+    protected static PointPlacemark makePointPlacemark() {
         PointPlacemark placemark = new PointPlacemark(Position.fromDegrees(37.824713, -122.370028, 0.0));
 
         placemark.setLabelText("Treasure Island");
@@ -42,8 +40,7 @@ public class ExportKML
         return placemark;
     }
 
-    protected static Path makePath()
-    {
+    protected static Path makePath() {
         Path path = new Path();
 
         List<Position> positions = Arrays.asList(
@@ -63,8 +60,7 @@ public class ExportKML
         return path;
     }
 
-    protected static Polygon makePolygon()
-    {
+    protected static Polygon makePolygon() {
         Polygon poly = new Polygon();
 
         List<Position> outerBoundary = Arrays.asList(
@@ -115,9 +111,8 @@ public class ExportKML
         return poly;
     }
 
-    protected static SurfaceQuad makeSurfaceQuad()
-    {
-        return new SurfaceQuad(LatLon.fromDegrees(45, 100), 1e4, 2e4, Angle.ZERO);
+    protected static SurfaceQuad makeSurfaceQuad() {
+        return new SurfaceQuad(LatLon.fromDegrees(45, 100), 1.0e4, 2.0e4, Angle.ZERO);
     }
 
     /**
@@ -125,10 +120,8 @@ public class ExportKML
      *
      * @param args Not used.
      */
-    public static void main(String[] args)
-    {
-        try
-        {
+    public static void main(String[] args) {
+        try {
             normalShapeAttributes = new BasicShapeAttributes();
             normalShapeAttributes.setInteriorMaterial(Material.BLUE);
             normalShapeAttributes.setOutlineMaterial(Material.BLACK);
@@ -163,8 +156,7 @@ public class ExportKML
             // Write the pretty-printed document to stdout
             transformer.transform(new StreamSource(new StringReader(xmlString)), new StreamResult(System.out));
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToWriteXml", e.toString());
             Logging.logger().severe(message);
             e.printStackTrace();

@@ -14,26 +14,22 @@ import java.io.File;
  * @author dcollins
  * @version $Id: FileChooserPanelDescriptor.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class FileChooserPanelDescriptor extends DefaultPanelDescriptor
-{
-    private final FileChooserPanel panelComponent;
+public class FileChooserPanelDescriptor extends DefaultPanelDescriptor {
     public static final String IDENTIFIER = "gov.nasa.worldwind.rpf.wizard.FileChooserPanel";
+    private final FileChooserPanel panelComponent;
 
-    public FileChooserPanelDescriptor()
-    {
+    public FileChooserPanelDescriptor() {
         this.panelComponent = new FileChooserPanel();
         this.panelComponent.addPropertyChangeListener(new PropertyEvents());
         setPanelIdentifier(IDENTIFIER);
         setPanelComponent(this.panelComponent);
     }
 
-    public Object getBackPanelDescriptor()
-    {
+    public Object getBackPanelDescriptor() {
         return null;
     }
 
-    public Object getNextPanelDescriptor()
-    {
+    public Object getNextPanelDescriptor() {
         Object nextDescriptor;
         if (!RPFWizardUtil.isFileListCurrent(getWizardModel()))
             nextDescriptor = FileSearchPanelDescriptor.IDENTIFIER;
@@ -42,29 +38,24 @@ public class FileChooserPanelDescriptor extends DefaultPanelDescriptor
         return nextDescriptor;
     }
 
-    public void aboutToDisplayPanel()
-    {
+    public void aboutToDisplayPanel() {
         this.panelComponent.setTitle(RPFWizardUtil.makeLarger("Choose Folder to Search"));
         this.panelComponent.setDescription("<html><br>Folder to search...</html>");
         setNextButtonAccordingToSelectedFile();
     }
 
-    private void setNextButtonAccordingToSelectedFile()
-    {
+    private void setNextButtonAccordingToSelectedFile() {
         Wizard wizard = getWizard();
-        if (wizard != null)
-        {
+        if (wizard != null) {
             File file = RPFWizardUtil.getSelectedFile(wizard.getModel());
             wizard.setNextButtonEnabled(file != null && file.exists());
             wizard.giveFocusToNextButton();
         }
     }
 
-    private void selectedFileChanged(Object newValue)
-    {
+    private void selectedFileChanged(Object newValue) {
         WizardModel model = getWizardModel();
-        if (model != null && newValue instanceof File)
-        {
+        if (model != null && newValue instanceof File) {
             RPFWizardUtil.setSelectedFile(model, (File) newValue);
         }
         setNextButtonAccordingToSelectedFile();
@@ -75,7 +66,7 @@ public class FileChooserPanelDescriptor extends DefaultPanelDescriptor
             if (evt != null && evt.getPropertyName() != null) {
                 String propertyName = evt.getPropertyName();
                 if (propertyName.equals("selectedFile")) {
-                    selectedFileChanged(evt.getNewValue());           
+                    selectedFileChanged(evt.getNewValue());
                 }
             }
         }

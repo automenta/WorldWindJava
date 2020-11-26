@@ -16,10 +16,9 @@ import java.awt.*;
  * @author dcollins
  * @version $Id: BasicTacticalSymbolAttributes.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
-{
-    public static final double DEFAULT_SCALE = 1d;
-    public static final double DEFAULT_OPACITY = 1d;
+public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes {
+    public static final double DEFAULT_SCALE = 1.0d;
+    public static final double DEFAULT_OPACITY = 1.0d;
     public static final Font DEFAULT_TEXT_MODIFIER_FONT = Font.decode("Arial-PLAIN-18");
     public static final Material DEFAULT_TEXT_MODIFIER_MATERIAL = Material.BLACK;
 
@@ -39,7 +38,8 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
      */
     protected Double opacity;
     /**
-     * Indicates the font used to draw text modifiers, or <code>null</code> to use the symbol's default scale. Initially
+     * Indicates the font used to draw text modifiers, or <code>null</code> to use the symbol's default scale.
+     * Initially
      * <code>null</code>.
      */
     protected Font textModifierFont;
@@ -49,9 +49,10 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
      */
     protected Material textModifierMaterial;
 
-    /** Constructs a BasicTacticalSymbolAttributes with all attributes set to <code>null</code>. */
-    public BasicTacticalSymbolAttributes()
-    {
+    /**
+     * Constructs a BasicTacticalSymbolAttributes with all attributes set to <code>null</code>.
+     */
+    public BasicTacticalSymbolAttributes() {
     }
 
     /**
@@ -72,22 +73,18 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
      *                             should be used.
      * @param textModifierMaterial the text modifier material. May be <code>null</code>, indicating that the default
      *                             material should be used.
-     *
      * @throws IllegalArgumentException if the scale is less than 0.0, or if the opacity is less than 0.0 or greater
      *                                  than 1.0.
      */
     public BasicTacticalSymbolAttributes(Double scale, Material interiorMaterial, Double opacity, Font textModifierFont,
-        Material textModifierMaterial)
-    {
-        if (scale != null && scale < 0d)
-        {
+        Material textModifierMaterial) {
+        if (scale != null && scale < 0.0d) {
             String msg = Logging.getMessage("generic.ScaleOutOfRange", scale);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (opacity != null && (opacity < 0d || opacity > 1d))
-        {
+        if (opacity != null && (opacity < 0.0d || opacity > 1.0d)) {
             String msg = Logging.getMessage("generic.OpacityOutOfRange", opacity);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -100,11 +97,11 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
         this.textModifierMaterial = textModifierMaterial;
     }
 
-    /** {@inheritDoc} */
-    public void copy(TacticalSymbolAttributes attributes)
-    {
-        if (attributes != null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void copy(TacticalSymbolAttributes attributes) {
+        if (attributes != null) {
             this.scale = attributes.getScale();
             this.interiorMaterial = attributes.getInteriorMaterial();
             this.opacity = attributes.getOpacity();
@@ -113,17 +110,18 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
         }
     }
 
-    /** {@inheritDoc} */
-    public Double getScale()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Double getScale() {
         return this.scale;
     }
 
-    /** {@inheritDoc} */
-    public void setScale(Double scale)
-    {
-        if (scale != null && scale < 0d)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void setScale(Double scale) {
+        if (scale != null && scale < 0.0d) {
             String msg = Logging.getMessage("generic.ScaleOutOfRange", scale);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -132,27 +130,26 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
         this.scale = scale;
     }
 
-    public Material getInteriorMaterial()
-    {
+    public Material getInteriorMaterial() {
         return this.interiorMaterial;
     }
 
-    public void setInteriorMaterial(Material material)
-    {
+    public void setInteriorMaterial(Material material) {
         this.interiorMaterial = material;
     }
 
-    /** {@inheritDoc} */
-    public Double getOpacity()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Double getOpacity() {
         return this.opacity;
     }
 
-    /** {@inheritDoc} */
-    public void setOpacity(Double opacity)
-    {
-        if (opacity != null && (opacity < 0d || opacity > 1d))
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void setOpacity(Double opacity) {
+        if (opacity != null && (opacity < 0.0d || opacity > 1.0d)) {
             String msg = Logging.getMessage("generic.OpacityOutOfRange", opacity);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -161,27 +158,31 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
         this.opacity = opacity;
     }
 
-    /** {@inheritDoc} */
-    public Font getTextModifierFont()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Font getTextModifierFont() {
         return this.textModifierFont;
     }
 
-    /** {@inheritDoc} */
-    public void setTextModifierFont(Font font)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void setTextModifierFont(Font font) {
         this.textModifierFont = font;
     }
 
-    /** {@inheritDoc} */
-    public Material getTextModifierMaterial()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Material getTextModifierMaterial() {
         return this.textModifierMaterial;
     }
 
-    /** {@inheritDoc} */
-    public void setTextModifierMaterial(Material material)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void setTextModifierMaterial(Material material) {
         this.textModifierMaterial = material;
     }
 }

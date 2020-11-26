@@ -16,21 +16,18 @@ import java.util.*;
  * @author tag
  * @version $Id: XALCountry.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class XALCountry extends XALAbstractObject
-{
+public class XALCountry extends XALAbstractObject {
     protected List<XALAddressLine> addressLines;
     protected List<XALCountryNameCode> countryNameCodes;
     protected List<XALCountryName> countryNames;
 
-    public XALCountry(String namespaceURI)
-    {
+    public XALCountry(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         if (o instanceof XALAddressLine)
             this.addAddressLine((XALAddressLine) o);
         else if (o instanceof XALCountryNameCode)
@@ -41,57 +38,48 @@ public class XALCountry extends XALAbstractObject
             super.doAddEventContent(o, ctx, event, args);
     }
 
-    public List<XALAddressLine> getAddressLines()
-    {
+    public List<XALAddressLine> getAddressLines() {
         return this.addressLines;
     }
 
-    protected void addAddressLine(XALAddressLine o)
-    {
+    protected void addAddressLine(XALAddressLine o) {
         if (this.addressLines == null)
             this.addressLines = new ArrayList<>();
 
         this.addressLines.add(o);
     }
 
-    public List<XALCountryNameCode> getCountryNameCodes()
-    {
+    public List<XALCountryNameCode> getCountryNameCodes() {
         return this.countryNameCodes;
     }
 
-    protected void addCountryNameCode(XALCountryNameCode o)
-    {
+    protected void addCountryNameCode(XALCountryNameCode o) {
         if (this.countryNameCodes == null)
             this.countryNameCodes = new ArrayList<>();
 
         this.countryNameCodes.add(o);
     }
 
-    public List<XALCountryName> getCountryNames()
-    {
+    public List<XALCountryName> getCountryNames() {
         return this.countryNames;
     }
 
-    protected void addCountryName(XALCountryName o)
-    {
+    protected void addCountryName(XALCountryName o) {
         if (this.countryNames == null)
             this.countryNames = new ArrayList<>();
 
         this.countryNames.add(o);
     }
 
-    public XALAdministrativeArea getAdministrativeArea()
-    {
+    public XALAdministrativeArea getAdministrativeArea() {
         return (XALAdministrativeArea) this.getField("AdministrativeArea");
     }
 
-    public XALLocality getLocality()
-    {
+    public XALLocality getLocality() {
         return (XALLocality) this.getField("Locality");
     }
 
-    public XALThoroughfare getThoroughfare()
-    {
+    public XALThoroughfare getThoroughfare() {
         return (XALThoroughfare) this.getField("Thoroughfare");
     }
 }

@@ -27,25 +27,26 @@ import java.io.File;
  * place the installed imagery. This example uses the default install location.</li> <li>Compute a unique cache name for
  * the imagery. In this example the cache name is "Examples/ImageName", where "ImageName" is the image's display name,
  * stripped of any illegal filename characters.</li> <li>Install the imagery by constructing, configuring and running a
- * {@link gov.nasa.worldwind.data.TiledImageProducer}.</li> <li>The installed imagery is subsequently described by a
- * configuration {@link org.w3c.dom.Document}, which we use to construct a Layer via the {@link Factory} method {@link
- * gov.nasa.worldwind.Factory#createFromConfigSource(Object, gov.nasa.worldwind.avlist.AVList)}.</li> </ol>
+ * {@link TiledImageProducer}.</li> <li>The installed imagery is subsequently described by a
+ * configuration {@link Document}, which we use to construct a Layer via the {@link Factory} method {@link
+ * Factory#createFromConfigSource(Object, AVList)}.</li> </ol>
  *
  * @author tag
  * @version $Id: InstallImagery.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class InstallImagery extends ApplicationTemplate
-{
+public class InstallImagery extends ApplicationTemplate {
     protected static final String BASE_CACHE_PATH = "Examples/"; // Define a subdirectory in the installed-data area
 
     // This example's imagery is loaded from the following class-path resource.
     protected static final String IMAGE_PATH = "gov/nasa/worldwindx/examples/data/craterlake-imagery-30m.tif";
 
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Imagery Installation", InstallImagery.AppFrame.class);
+    }
+
     // Override ApplicationTemplate.AppFrame's constructor to install an elevation dataset.
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             // Show the WAIT cursor because the installation may take a while.
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
@@ -60,8 +61,7 @@ public class InstallImagery extends ApplicationTemplate
             t.start();
         }
 
-        protected void installImagery()
-        {
+        protected void installImagery() {
             // Download the source file.
             File sourceFile = ExampleUtil.saveResourceToTempFile(IMAGE_PATH, ".tif");
 
@@ -86,8 +86,7 @@ public class InstallImagery extends ApplicationTemplate
             });
         }
 
-        protected Layer installSurfaceImage(String displayName, Object imageSource, FileStore fileStore)
-        {
+        protected Layer installSurfaceImage(String displayName, Object imageSource, FileStore fileStore) {
             // Use the FileStore's install location as the destination for the installed imagery. The default install
             // location is the FileStore's area for permanent storage.
             File fileStoreLocation = DataInstallUtil.getDefaultInstallLocation(fileStore);
@@ -103,8 +102,7 @@ public class InstallImagery extends ApplicationTemplate
 
             // Create a TiledImageProducer to install the imagery.
             TiledImageProducer producer = new TiledImageProducer();
-            try
-            {
+            try {
                 // Configure the TiledImageProducer with the parameter list and the image source.
                 producer.setStoreParameters(params);
                 producer.offerDataSource(imageSource, null);
@@ -112,8 +110,7 @@ public class InstallImagery extends ApplicationTemplate
                 // Install the imagery.
                 producer.startProduction();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 producer.removeProductionState(); // Clean up on failure.
                 e.printStackTrace();
                 return null;
@@ -138,10 +135,5 @@ public class InstallImagery extends ApplicationTemplate
 
             return layer;
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Imagery Installation", InstallImagery.AppFrame.class);
     }
 }

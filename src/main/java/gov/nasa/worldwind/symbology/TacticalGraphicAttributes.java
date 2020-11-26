@@ -12,8 +12,8 @@ import java.awt.*;
 
 /**
  * Holds attributes for a {@link TacticalGraphic}. Changes made to the attributes are applied to the graphic when the
- * <code>WorldWindow</code> renders the next frame. Instances of <code>TacticalGraphicAttributes</code> may be shared by
- * many graphics, thereby reducing the memory normally required to store attributes for each graphic.
+ * <code>WorldWindow</code> renders the next frame. Instances of <code>TacticalGraphicAttributes</code> may be shared
+ * by many graphics, thereby reducing the memory normally required to store attributes for each graphic.
  * <p>
  * TacticalGraphicAttributes is used to override default attributes determined by a graphic's symbol set. Any non-null
  * attributes will override the corresponding default attributes. Here's an example of overriding only the outline
@@ -32,8 +32,7 @@ import java.awt.*;
  * @author pabercrombie
  * @version $Id: TacticalGraphicAttributes.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface TacticalGraphicAttributes
-{
+public interface TacticalGraphicAttributes {
     /**
      * Returns a new TacticalGraphicAttributes instance of the same type as this TacticalGraphicAttributes who's
      * properties are configured exactly as this TacticalGraphicAttributes.
@@ -73,7 +72,6 @@ public interface TacticalGraphicAttributes
      * to the symbol.
      *
      * @param scale the graphic's scale. May be <code>null</code>, indicating that the default scale should be used.
-     *
      * @throws IllegalArgumentException if the scale is less than 0.0.
      */
     void setScale(Double scale);
@@ -93,7 +91,7 @@ public interface TacticalGraphicAttributes
     void setTextModifierFont(Font font);
 
     /**
-     * Indicates the material used to render text modifiers. See {@link #setTextModifierMaterial(gov.nasa.worldwind.render.Material)
+     * Indicates the material used to render text modifiers. See {@link #setTextModifierMaterial(Material)
      * setTextModifierMaterial} for a description of how the material is used.
      *
      * @return The material used to render text modifiers.
@@ -111,11 +109,10 @@ public interface TacticalGraphicAttributes
     void setTextModifierMaterial(Material material);
 
     /**
-     * Indicates the material properties of the graphic's interior. See {@link #setInteriorMaterial(gov.nasa.worldwind.render.Material)
+     * Indicates the material properties of the graphic's interior. See {@link #setInteriorMaterial(Material)
      * setInteriorMaterial} for more information on how this material is interpreted.
      *
      * @return the material applied to the graphic's interior.
-     *
      * @see #setInteriorMaterial(Material)
      */
     Material getInteriorMaterial();
@@ -126,17 +123,15 @@ public interface TacticalGraphicAttributes
      * light. Otherwise, the material's diffuse color indicates the graphic's constant interior color.
      *
      * @param material the material to apply to the graphic's interior.
-     *
      * @see #getInteriorMaterial()
      */
     void setInteriorMaterial(Material material);
 
     /**
-     * Indicates the material properties of the graphic's outline. See {@link #setOutlineMaterial(gov.nasa.worldwind.render.Material)
+     * Indicates the material properties of the graphic's outline. See {@link #setOutlineMaterial(Material)
      * setOutlineMaterial} for more information on how this material is interpreted.
      *
      * @return the material applied to the graphic's outline.
-     *
      * @see #setOutlineMaterial(Material)
      */
     Material getOutlineMaterial();
@@ -147,7 +142,6 @@ public interface TacticalGraphicAttributes
      * Otherwise, the material's diffuse color indicates the graphic's constant outline color.
      *
      * @param material the material to apply to the graphic's outline.
-     *
      * @see #getOutlineMaterial()
      */
     void setOutlineMaterial(Material material);
@@ -156,7 +150,6 @@ public interface TacticalGraphicAttributes
      * Indicates the opacity of the graphic's interior as a floating-point value in the range 0.0 to 1.0.
      *
      * @return the interior opacity as a floating-point value from 0.0 to 1.0.
-     *
      * @see #setInteriorOpacity(Double)
      */
     Double getInteriorOpacity();
@@ -167,7 +160,6 @@ public interface TacticalGraphicAttributes
      * specify a partially transparent interior.
      *
      * @param opacity the interior opacity as a floating-point value from 0.0 to 1.0.
-     *
      * @throws IllegalArgumentException if <code>opacity</code> is less than 0.0 or greater than 1.0.
      * @see #getInteriorOpacity()
      */
@@ -177,7 +169,6 @@ public interface TacticalGraphicAttributes
      * Indicates the opacity of the graphic's outline as a floating-point value in the range 0.0 to 1.0.
      *
      * @return the outline opacity as a floating-point value from 0.0 to 1.0.
-     *
      * @see #setOutlineOpacity(Double)
      */
     Double getOutlineOpacity();
@@ -188,7 +179,6 @@ public interface TacticalGraphicAttributes
      * specify a partially transparent outline.
      *
      * @param opacity the outline opacity as a floating-point value from 0.0 to 1.0.
-     *
      * @throws IllegalArgumentException if <code>opacity</code> is less than 0.0 or greater than 1.0.
      * @see #getOutlineOpacity()
      */
@@ -199,7 +189,6 @@ public interface TacticalGraphicAttributes
      * or a positive floating-point value.
      *
      * @return the line width in pixels.
-     *
      * @see #setOutlineWidth(Double)
      */
     Double getOutlineWidth();
@@ -211,7 +200,6 @@ public interface TacticalGraphicAttributes
      * The maximum width is typically 10 pixels.
      *
      * @param width the line width in pixels.
-     *
      * @throws IllegalArgumentException if <code>width</code> is less than zero.
      * @see #getOutlineWidth()
      */

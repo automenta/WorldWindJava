@@ -23,15 +23,13 @@ import java.util.*;
  * @author tag
  * @version $Id: LayerManagerPanel.java 2147 2014-07-11 23:29:45Z tgaskins $
  */
-public class LayerManagerPanel extends JPanel
-{
+public class LayerManagerPanel extends JPanel {
     protected final JPanel layerNamesPanel;
     protected final List<LayerPanel> layerPanels = new ArrayList<>();
     protected final Font plainFont;
     protected final Font boldFont;
 
-    public LayerManagerPanel(final WorldWindow wwd)
-    {
+    public LayerManagerPanel(final WorldWindow wwd) {
         super(new BorderLayout(10, 10));
 
         this.layerNamesPanel = new JPanel(new GridLayout(0, 1, 0, 5));
@@ -71,15 +69,13 @@ public class LayerManagerPanel extends JPanel
         });
     }
 
-    public void update(WorldWindow wwd)
-    {
+    public void update(WorldWindow wwd) {
         // Repopulate this layer manager.
 
         this.fill(wwd);
     }
 
-    protected void fill(WorldWindow wwd)
-    {
+    protected void fill(WorldWindow wwd) {
         // Populate this layer manager with an entry for each layer in the WorldWindow's layer list.
 
         if (this.isUpToDate(wwd))
@@ -90,8 +86,7 @@ public class LayerManagerPanel extends JPanel
         this.layerNamesPanel.removeAll();
 
         // Fill the layers panel with the titles of all layers in the WorldWindow's current model.
-        for (Layer layer : wwd.getModel().getLayers())
-        {
+        for (Layer layer : wwd.getModel().getLayers()) {
             if (layer.getValue(AVKey.IGNORE) != null)
                 continue;
 
@@ -103,8 +98,7 @@ public class LayerManagerPanel extends JPanel
         this.updateLayerActivity(wwd);
     }
 
-    protected boolean isUpToDate(WorldWindow wwd)
-    {
+    protected boolean isUpToDate(WorldWindow wwd) {
         // Determines whether this layer manager's layer list is consistent with the specified WorldWindow's. Knowing
         // this prevents redundant updates.
 
@@ -113,8 +107,7 @@ public class LayerManagerPanel extends JPanel
         if (this.layerPanels.size() != layerList.size())
             return false;
 
-        for (int i = 0; i < layerList.size(); i++)
-        {
+        for (int i = 0; i < layerList.size(); i++) {
             if (layerList.get(i) != this.layerPanels.get(i).getLayer())
                 return false;
         }
@@ -128,10 +121,8 @@ public class LayerManagerPanel extends JPanel
      *
      * @param wwd the WorldWindow.
      */
-    protected void updateLayerActivity(WorldWindow wwd)
-    {
-        for (LayerPanel layerPanel : this.layerPanels)
-        {
+    protected void updateLayerActivity(WorldWindow wwd) {
+        for (LayerPanel layerPanel : this.layerPanels) {
             // The frame timestamp from the layer indicates the last frame in which it rendered something. If that
             // timestamp matches the current timestamp of the scene controller, then the layer rendered something
             // during the most recent frame. Note that this frame timestamp protocol is only in place by default
@@ -142,23 +133,19 @@ public class LayerManagerPanel extends JPanel
             Long frameTimeStamp = (Long) wwd.getSceneController().getValue(AVKey.FRAME_TIMESTAMP);
 
             if (layerTimeStamp != null && frameTimeStamp != null
-                && layerTimeStamp.longValue() == frameTimeStamp.longValue())
-            {
+                && layerTimeStamp.longValue() == frameTimeStamp.longValue()) {
                 // Set the font to bold if the layer was just rendered.
                 layerPanel.setLayerNameFont(this.boldFont);
             }
-            else if (layerPanel.getLayer() instanceof TiledImageLayer)
-            {
+            else if (layerPanel.getLayer() instanceof TiledImageLayer) {
                 // Set the font to plain if the layer was not just rendered.
                 layerPanel.setLayerNameFont(this.plainFont);
             }
-            else if (layerPanel.getLayer().isEnabled())
-            {
+            else if (layerPanel.getLayer().isEnabled()) {
                 // Set enabled layer types other than TiledImageLayer to bold.
                 layerPanel.setLayerNameFont(this.boldFont);
             }
-            else if (!layerPanel.getLayer().isEnabled())
-            {
+            else if (!layerPanel.getLayer().isEnabled()) {
                 // Set disabled layer types other than TiledImageLayer to plain.
                 layerPanel.setLayerNameFont(this.plainFont);
             }

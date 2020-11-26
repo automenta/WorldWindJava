@@ -13,15 +13,14 @@ import gov.nasa.worldwind.terrain.SectorGeometry;
 import gov.nasa.worldwind.util.*;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
  * @author tag
  * @version $Id: SurfaceTileRenderer.java 2288 2014-08-30 20:24:56Z dcollins $
  */
-public abstract class SurfaceTileRenderer implements Disposable
-{
+public abstract class SurfaceTileRenderer implements Disposable {
     private static final int DEFAULT_ALPHA_TEXTURE_SIZE = 1024;
 
     protected Texture alphaTexture;
@@ -29,14 +28,19 @@ public abstract class SurfaceTileRenderer implements Disposable
     protected boolean showImageTileOutlines = false;
     protected boolean useImageTilePickColors = false;
 
+    private static void fillByteBuffer(ByteBuffer buffer, byte value) {
+        for (int i = 0; i < buffer.capacity(); i++) {
+            buffer.put(value);
+        }
+    }
+
     /**
      * Free internal resources held by this surface tile renderer. A GL context must be current when this method is
      * called.
      *
-     * @throws com.jogamp.opengl.GLException - If an OpenGL context is not current when this method is called.
+     * @throws GLException - If an OpenGL context is not current when this method is called.
      */
-    public void dispose()
-    {
+    public void dispose() {
         GLContext context = GLContext.getCurrent();
         if (context == null || context.getGL() == null)
             return;
@@ -51,13 +55,11 @@ public abstract class SurfaceTileRenderer implements Disposable
         this.outlineTexture = null;
     }
 
-    public boolean isShowImageTileOutlines()
-    {
+    public boolean isShowImageTileOutlines() {
         return showImageTileOutlines;
     }
 
-    public void setShowImageTileOutlines(boolean showImageTileOutlines)
-    {
+    public void setShowImageTileOutlines(boolean showImageTileOutlines) {
         this.showImageTileOutlines = showImageTileOutlines;
     }
 
@@ -67,10 +69,9 @@ public abstract class SurfaceTileRenderer implements Disposable
      * Initially false.
      *
      * @return true if image tile RGB colors are drawn during picking, false if image tile RGB colors are replaced by
-     *         the current RGB color.
+     * the current RGB color.
      */
-    public boolean isUseImageTilePickColors()
-    {
+    public boolean isUseImageTilePickColors() {
         return this.useImageTilePickColors;
     }
 
@@ -81,33 +82,21 @@ public abstract class SurfaceTileRenderer implements Disposable
      * @param useImageTilePickColors true if image tile RGB colors should be drawn during picking, false if image tile
      *                               RGB colors should be replaced by the current RGB color.
      */
-    public void setUseImageTilePickColors(boolean useImageTilePickColors)
-    {
+    public void setUseImageTilePickColors(boolean useImageTilePickColors) {
         this.useImageTilePickColors = useImageTilePickColors;
     }
 
-    public void renderTile(DrawContext dc, SurfaceTile tile)
-    {
-        if (tile == null)
-        {
+    public void renderTile(DrawContext dc, SurfaceTile tile) {
+        if (tile == null) {
             String message = Logging.getMessage("nullValue.TileIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
-        ArrayList<SurfaceTile> al = new ArrayList<>(1);
+        List<SurfaceTile> al = new ArrayList<>(1);
         al.add(tile);
         this.renderTiles(dc, al);
         al.clear();
-    }
-
-    protected static class Transform
-    {
-        double HScale;
-        double VScale;
-        double HShift;
-        double VShift;
-        double rotationDegrees;
     }
 
     abstract protected void preComputeTextureTransform(DrawContext dc, SectorGeometry sg, Transform t);
@@ -117,17 +106,14 @@ public abstract class SurfaceTileRenderer implements Disposable
     abstract protected Iterable<SurfaceTile> getIntersectingTiles(DrawContext dc, SectorGeometry sg,
         Iterable<? extends SurfaceTile> tiles);
 
-    public void renderTiles(DrawContext dc, Iterable<? extends SurfaceTile> tiles)
-    {
-        if (tiles == null)
-        {
+    public void renderTiles(DrawContext dc, Iterable<? extends SurfaceTile> tiles) {
+        if (tiles == null) {
             String message = Logging.getMessage("nullValue.TileIterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
-        if (dc == null)
-        {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -143,11 +129,9 @@ public abstract class SurfaceTileRenderer implements Disposable
             | GL2.GL_DEPTH_BUFFER_BIT // for depth func
             | GL2.GL_TRANSFORM_BIT);
 
-        try
-        {
+        try {
             this.alphaTexture = dc.getTextureCache().getTexture(this);
-            if (this.alphaTexture == null)
-            {
+            if (this.alphaTexture == null) {
                 this.initAlphaTexture(dc, DEFAULT_ALPHA_TEXTURE_SIZE); // TODO: choose size to match incoming tile size?
                 dc.getTextureCache().put(this, this.alphaTexture);
             }
@@ -181,8 +165,7 @@ public abstract class SurfaceTileRenderer implements Disposable
             }
 
             int numTexUnitsUsed = 2;
-            if (showOutlines)
-            {
+            if (showOutlines) {
                 numTexUnitsUsed = 3;
                 alphaTextureUnit = GL.GL_TEXTURE2;
                 gl.glActiveTexture(GL.GL_TEXTURE1);
@@ -203,8 +186,7 @@ public abstract class SurfaceTileRenderer implements Disposable
             // For each current geometry tile, find the intersecting image tiles and render the geometry
             // tile once for each intersecting image tile.
             Transform transform = new Transform();
-            for (SectorGeometry sg : dc.getSurfaceGeometry())
-            {
+            for (SectorGeometry sg : dc.getSurfaceGeometry()) {
                 Iterable<SurfaceTile> tilesToRender = this.getIntersectingTiles(dc, sg, tiles);
                 if (tilesToRender == null)
                     continue;
@@ -219,23 +201,20 @@ public abstract class SurfaceTileRenderer implements Disposable
                 // frame buffer where the image tile does not overlap the geometry tile. Render both the image and
                 // alpha textures via multi-texture rendering.
                 // TODO: Figure out how to apply multi-texture to more than one tile at a time. Use fragment shader?
-                for (SurfaceTile tile : tilesToRender)
-                {
+                for (SurfaceTile tile : tilesToRender) {
                     gl.glActiveTexture(GL.GL_TEXTURE0);
 
-                    if (tile.bind(dc))
-                    {
+                    if (tile.bind(dc)) {
                         gl.glMatrixMode(GL2.GL_TEXTURE);
                         gl.glLoadIdentity();
                         tile.applyInternalTransform(dc, true);
 
                         // Determine and apply texture transform to map image tile into geometry tile's texture space
                         this.computeTextureTransform(dc, tile, transform);
-                        gl.glScaled(transform.HScale, transform.VScale, 1d);
-                        gl.glTranslated(transform.HShift, transform.VShift, 0d);
+                        gl.glScaled(transform.HScale, transform.VScale, 1.0d);
+                        gl.glTranslated(transform.HShift, transform.VShift, 0.0d);
 
-                        if (showOutlines)
-                        {
+                        if (showOutlines) {
                             gl.glActiveTexture(GL.GL_TEXTURE1);
                             this.outlineTexture.bind(gl);
 
@@ -243,8 +222,8 @@ public abstract class SurfaceTileRenderer implements Disposable
                             // different texture unit than the tile, so the transform made above does not carry over.
                             gl.glMatrixMode(GL2.GL_TEXTURE);
                             gl.glLoadIdentity();
-                            gl.glScaled(transform.HScale, transform.VScale, 1d);
-                            gl.glTranslated(transform.HShift, transform.VShift, 0d);
+                            gl.glScaled(transform.HScale, transform.VScale, 1.0d);
+                            gl.glTranslated(transform.HShift, transform.VShift, 0.0d);
                         }
 
                         // Prepare the alpha texture to be used as a mask where texture coords are outside [0,1]
@@ -255,8 +234,8 @@ public abstract class SurfaceTileRenderer implements Disposable
                         // different texture unit than the tile, so the transform made above does not carry over.
                         gl.glMatrixMode(GL2.GL_TEXTURE);
                         gl.glLoadIdentity();
-                        gl.glScaled(transform.HScale, transform.VScale, 1d);
-                        gl.glTranslated(transform.HShift, transform.VShift, 0d);
+                        gl.glScaled(transform.HScale, transform.VScale, 1.0d);
+                        gl.glTranslated(transform.HShift, transform.VShift, 0.0d);
 
                         // Render the geometry tile
                         sg.renderMultiTexture(dc, numTexUnitsUsed);
@@ -266,13 +245,11 @@ public abstract class SurfaceTileRenderer implements Disposable
                 sg.endRendering(dc);
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             Logging.logger().log(Level.SEVERE,
                 Logging.getMessage("generic.ExceptionWhileRenderingLayer", this.getClass().getName()), e);
         }
-        finally
-        {
+        finally {
             dc.getSurfaceGeometry().endRendering(dc);
 
             gl.glActiveTexture(alphaTextureUnit);
@@ -280,8 +257,7 @@ public abstract class SurfaceTileRenderer implements Disposable
             gl.glPopMatrix();
             gl.glDisable(GL.GL_TEXTURE_2D);
 
-            if (showOutlines)
-            {
+            if (showOutlines) {
                 gl.glActiveTexture(GL.GL_TEXTURE1);
                 gl.glMatrixMode(GL2.GL_TEXTURE);
                 gl.glPopMatrix();
@@ -294,8 +270,7 @@ public abstract class SurfaceTileRenderer implements Disposable
             gl.glDisable(GL.GL_TEXTURE_2D);
 
             gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, OGLUtil.DEFAULT_TEX_ENV_MODE);
-            if (dc.isPickingMode())
-            {
+            if (dc.isPickingMode()) {
                 gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_SRC0_RGB, OGLUtil.DEFAULT_SRC0_RGB);
                 gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_COMBINE_RGB, OGLUtil.DEFAULT_COMBINE_RGB);
             }
@@ -304,16 +279,7 @@ public abstract class SurfaceTileRenderer implements Disposable
         }
     }
 
-    private static void fillByteBuffer(ByteBuffer buffer, byte value)
-    {
-        for (int i = 0; i < buffer.capacity(); i++)
-        {
-            buffer.put(value);
-        }
-    }
-
-    protected void initAlphaTexture(DrawContext dc, int size)
-    {
+    protected void initAlphaTexture(DrawContext dc, int size) {
         ByteBuffer textureBytes = Buffers.newDirectByteBuffer(size * size);
         fillByteBuffer(textureBytes, (byte) 0xff);
 
@@ -331,18 +297,15 @@ public abstract class SurfaceTileRenderer implements Disposable
         // Assume the default border color of (0, 0, 0, 0).
     }
 
-    protected void initOutlineTexture(DrawContext dc, int size)
-    {
+    protected void initOutlineTexture(DrawContext dc, int size) {
         ByteBuffer textureBytes = Buffers.newDirectByteBuffer(size * size);
-        for (int row = 0; row < size; row++)
-        {
-            for (int col = 0; col < size; col++)
-            {
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
                 byte p;
                 if (row == 0 || col == 0 || row == size - 1 || col == size - 1)
                     p = (byte) 0xff;
                 else
-                    p = (byte) 0;
+                    p = 0;
                 textureBytes.put(row * size + col, p);
             }
         }
@@ -358,5 +321,13 @@ public abstract class SurfaceTileRenderer implements Disposable
         this.outlineTexture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
         this.outlineTexture.setTexParameteri(gl, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
         this.outlineTexture.setTexParameteri(gl, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+    }
+
+    protected static class Transform {
+        double HScale;
+        double VScale;
+        double HShift;
+        double VShift;
+        double rotationDegrees;
     }
 }

@@ -20,36 +20,33 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.logging.Level;
 
 /**
  * Displays UI components for a set of caller specified installed data, and manages creation of WorldWind components
  * from that data. Callers fill the panel with installed data by invoking <code>{@link
- * #addInstalledData(org.w3c.dom.Element, gov.nasa.worldwind.avlist.AVList)}</code>. This adds the UI components for a
+ * #addInstalledData(Element, AVList)}</code>. This adds the UI components for a
  * specified data set (a <code>Go To</code> button, and a label description), creates a WorldWind component from the
  * DataConfiguration, and adds the component to the WorldWindow passed to the panel during construction.
  *
  * @author dcollins
  * @version $Id: InstalledDataPanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class InstalledDataPanel extends JPanel
-{
+public class InstalledDataPanel extends JPanel {
     protected WorldWindow worldWindow;
     protected JPanel dataConfigPanel;
 
     /**
      * Constructs an InstalledDataPanel with the specified title and WorldWindow. Upon construction, the panel is
-     * configured to accept installed data via calls to {@link #addInstalledData(org.w3c.dom.Element,
-     * gov.nasa.worldwind.avlist.AVList)}.
+     * configured to accept installed data via calls to {@link #addInstalledData(Element,
+     * AVList)}.
      *
      * @param title       the panel's title, displayed in a titled border.
      * @param worldWindow the panel's WorldWindow, which any WorldWind components are added to.
-     *
      * @throws IllegalArgumentException if the WorldWindow is null.
      */
-    public InstalledDataPanel(String title, WorldWindow worldWindow)
-    {
-        if (worldWindow == null)
-        {
+    public InstalledDataPanel(String title, WorldWindow worldWindow) {
+        if (worldWindow == null) {
             String message = Logging.getMessage("nullValue.WorldWindow");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -66,13 +63,10 @@ public class InstalledDataPanel extends JPanel
      *
      * @param domElement the document which describes a WorldWind data configuration.
      * @param params     the parameter list which overrides or extends information contained in the document.
-     *
      * @throws IllegalArgumentException if the Element is null.
      */
-    public void addInstalledData(final Element domElement, final AVList params)
-    {
-        if (domElement == null)
-        {
+    public void addInstalledData(final Element domElement, final AVList params) {
+        if (domElement == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -92,8 +86,7 @@ public class InstalledDataPanel extends JPanel
         this.revalidate();
     }
 
-    protected void layoutComponents(String title)
-    {
+    protected void layoutComponents(String title) {
         this.dataConfigPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // top, left, bottom, right
         // Put the grid in a container to prevent scroll panel from stretching its vertical spacing.
         JPanel dummyPanel = new JPanel(new BorderLayout());
@@ -115,59 +108,49 @@ public class InstalledDataPanel extends JPanel
     //********************  DataConfiguration Utils  ***************//
     //**************************************************************//
 
-    protected String getDescription(Element domElement)
-    {
+    protected String getDescription(Element domElement) {
         String displayName = DataConfigurationUtils.getDataConfigDisplayName(domElement);
         String type = DataConfigurationUtils.getDataConfigType(domElement);
 
         StringBuilder sb = new StringBuilder(displayName);
 
-        if (type.equalsIgnoreCase("Layer"))
-        {
+        if (type.equalsIgnoreCase("Layer")) {
             sb.append(" (Layer)");
         }
-        else if (type.equalsIgnoreCase("ElevationModel"))
-        {
+        else if (type.equalsIgnoreCase("ElevationModel")) {
             sb.append(" (Elevations)");
         }
 
         return sb.toString();
     }
 
-    protected Sector getSector(Element domElement)
-    {
+    protected Sector getSector(Element domElement) {
         return WWXML.getSector(domElement, "Sector", null);
     }
 
-    protected void addToWorldWindow(Element domElement, AVList params)
-    {
+    protected void addToWorldWindow(Element domElement, AVList params) {
         String type = DataConfigurationUtils.getDataConfigType(domElement);
         if (type == null)
             return;
 
-        if (type.equalsIgnoreCase("Layer"))
-        {
+        if (type.equalsIgnoreCase("Layer")) {
             this.addLayerToWorldWindow(domElement, params);
         }
-        else if (type.equalsIgnoreCase("ElevationModel"))
-        {
+        else if (type.equalsIgnoreCase("ElevationModel")) {
             this.addElevationModelToWorldWindow(domElement, params);
         }
     }
 
-    protected void addLayerToWorldWindow(Element domElement, AVList params)
-    {
+    protected void addLayerToWorldWindow(Element domElement, AVList params) {
         Layer layer = null;
-        try
-        {
+        try {
             Factory factory = (Factory) WorldWind.createConfigurationComponent(AVKey.LAYER_FACTORY);
             layer = (Layer) factory.createFromConfigSource(domElement, params);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = Logging.getMessage("generic.CreationFromConfigurationFailed",
                 DataConfigurationUtils.getDataConfigDisplayName(domElement));
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
+            Logging.logger().log(Level.SEVERE, message, e);
         }
 
         if (layer == null)
@@ -179,32 +162,27 @@ public class InstalledDataPanel extends JPanel
             ApplicationTemplate.insertBeforePlacenames(this.worldWindow, layer);
     }
 
-    protected void addElevationModelToWorldWindow(Element domElement, AVList params)
-    {
+    protected void addElevationModelToWorldWindow(Element domElement, AVList params) {
         ElevationModel em = null;
-        try
-        {
+        try {
             Factory factory = (Factory) WorldWind.createConfigurationComponent(AVKey.ELEVATION_MODEL_FACTORY);
             em = (ElevationModel) factory.createFromConfigSource(domElement, params);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = Logging.getMessage("generic.CreationFromConfigurationFailed",
                 DataConfigurationUtils.getDataConfigDisplayName(domElement));
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
+            Logging.logger().log(Level.SEVERE, message, e);
         }
 
         if (em == null)
             return;
 
         ElevationModel defaultElevationModel = this.worldWindow.getModel().getGlobe().getElevationModel();
-        if (defaultElevationModel instanceof CompoundElevationModel)
-        {
+        if (defaultElevationModel instanceof CompoundElevationModel) {
             if (!((CompoundElevationModel) defaultElevationModel).containsElevationModel(em))
                 ((CompoundElevationModel) defaultElevationModel).addElevationModel(em);
         }
-        else
-        {
+        else {
             CompoundElevationModel cm = new CompoundElevationModel();
             cm.addElevationModel(defaultElevationModel);
             cm.addElevationModel(em);
@@ -216,19 +194,16 @@ public class InstalledDataPanel extends JPanel
     //********************  Actions  *******************************//
     //**************************************************************//
 
-    protected class GoToSectorAction extends AbstractAction
-    {
+    protected class GoToSectorAction extends AbstractAction {
         protected final Sector sector;
 
-        public GoToSectorAction(Sector sector)
-        {
+        public GoToSectorAction(Sector sector) {
             super("Go To");
             this.sector = sector;
             this.setEnabled(this.sector != null);
         }
 
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             ExampleUtil.goTo(worldWindow, this.sector);
         }
     }

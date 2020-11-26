@@ -14,26 +14,24 @@ import gov.nasa.worldwindx.applications.worldwindow.util.Util;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 
 /**
  * @author tag
  * @version $Id: GazetteerPanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 @SuppressWarnings("unchecked")
-public class GazetteerPanel extends AbstractFeature implements FeaturePanel
-{
+public class GazetteerPanel extends AbstractFeature implements FeaturePanel {
     private final JPanel panel;
     private Gazetteer gazetteer;
 
-    public GazetteerPanel(Registry registry)
-    {
+    public GazetteerPanel(Registry registry) {
         super("Gazetteer Panel", Constants.FEATURE_GAZETTEER_PANEL, registry);
 
         this.panel = new JPanel(new BorderLayout());
     }
 
-    public void initialize(final Controller controller)
-    {
+    public void initialize(final Controller controller) {
         super.initialize(controller);
 
         this.gazetteer = this.getGazetteer();
@@ -42,18 +40,15 @@ public class GazetteerPanel extends AbstractFeature implements FeaturePanel
         createComponents(this.panel);
     }
 
-    public JPanel getJPanel()
-    {
+    public JPanel getJPanel() {
         return this.panel;
     }
 
-    public JComponent[] getDialogControls()
-    {
+    public JComponent[] getDialogControls() {
         return null;
     }
 
-    private Gazetteer getGazetteer()
-    {
+    private Gazetteer getGazetteer() {
         if (this.gazetteer != null)
             return this.gazetteer;
 
@@ -62,8 +57,7 @@ public class GazetteerPanel extends AbstractFeature implements FeaturePanel
         return o instanceof Gazetteer ? (Gazetteer) o : null;
     }
 
-    private void createComponents(JPanel p)
-    {
+    private void createComponents(JPanel p) {
         String tt = "Any of these:  45.5 -120.2   or   45 30 0 n 120 12 0 w   or   Seattle";
 
         JComboBox field = new JComboBox();
@@ -85,30 +79,24 @@ public class GazetteerPanel extends AbstractFeature implements FeaturePanel
         field.addActionListener(this::performGazeteerAction);
     }
 
-    private void performGazeteerAction(final ActionEvent e)
-    {
+    private void performGazeteerAction(final ActionEvent e) {
         EventQueue.invokeLater(() -> {
-            try
-            {
+            try {
                 handleEntryAction(e);
             }
-            catch (NoItemException e1)
-            {
+            catch (NoItemException e1) {
                 controller.showMessageDialog("No search string was specified", "No Search String",
                     JOptionPane.ERROR_MESSAGE);
             }
-            catch (Exception e1)
-            {
+            catch (Exception e1) {
                 controller.showMessageDialog("Location not found", "Location Unknown", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
 
     private void handleEntryAction(ActionEvent actionEvent) throws
-        NoItemException
-    {
-        if (this.getGazetteer() == null)
-        {
+        NoItemException {
+        if (this.getGazetteer() == null) {
             Util.getLogger().severe("No gazeteer is registered");
             return;
         }
@@ -121,15 +109,14 @@ public class GazetteerPanel extends AbstractFeature implements FeaturePanel
         if (lookupString == null || lookupString.length() < 1)
             return;
 
-        java.util.List<PointOfInterest> results = this.gazetteer.findPlaces(lookupString);
-        if (results == null || results.size() == 0)
+        List<PointOfInterest> results = this.gazetteer.findPlaces(lookupString);
+        if (results == null || results.isEmpty())
             return;
 
         this.controller.moveToLocation(results.get(0));
 
         // Add it to the list if not already there
-        for (int i = 0; i < cmb.getItemCount(); i++)
-        {
+        for (int i = 0; i < cmb.getItemCount(); i++) {
             Object oi = cmb.getItemAt(i);
             if (oi != null && oi.toString().trim().equals(lookupString))
                 return; // item exists

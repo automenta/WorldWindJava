@@ -31,10 +31,10 @@ import gov.nasa.worldwind.util.Logging;
  * @author dcollins
  * @version $Id: RPFFrameFilename.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RPFFrameFilename
-{
+public class RPFFrameFilename {
     // TODO: use nitfs-rpf naming convention
 
+    private static final int FILENAME_LENGTH = 12;
     private final String dataSeriesCode;
     private final int frameNumber;
     private final char producerId;
@@ -44,10 +44,7 @@ public class RPFFrameFilename
     private int hashCode = -1;
     private String filename = null;
 
-    private static final int FILENAME_LENGTH = 12;
-
-    private RPFFrameFilename(String dataSeriesCode, int frameNumber, char producerId, int version, char zoneCode)
-    {
+    private RPFFrameFilename(String dataSeriesCode, int frameNumber, char producerId, int version, char zoneCode) {
         this.dataSeriesCode = dataSeriesCode;
         this.frameNumber = frameNumber;
         this.producerId = producerId;
@@ -57,22 +54,19 @@ public class RPFFrameFilename
 
     /* [Section 30.6, MIL-C-89038] */
     /* [Section A.3.6, MIL-PRF-89041A] */
-    public static RPFFrameFilename parseFilename(String filename)
-    {
-        if (filename == null)
-        {
+    public static RPFFrameFilename parseFilename(String filename) {
+        if (filename == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().fine(message);
             throw new IllegalArgumentException(message);
         }
-        if (filename.length() != FILENAME_LENGTH)
-        {
+        if (filename.length() != FILENAME_LENGTH) {
             String message = Logging.getMessage("RPFFrameFilename.BadFilenameLength", filename);
             Logging.logger().fine(message);
             throw new RPFFrameFilenameFormatException(message);
         }
 
-        char[] buffer = new char[FILENAME_LENGTH];        
+        char[] buffer = new char[FILENAME_LENGTH];
         filename.getChars(0, FILENAME_LENGTH, buffer, 0);
 
         char producerId = buffer[7];
@@ -82,21 +76,18 @@ public class RPFFrameFilename
         // Default to CADRG filename structure.
         int frameChars = 5;
         int versionChars = 2;
-        if (RPFDataSeries.isCIBDataSeries(dataSeriesCode))
-        {
+        if (RPFDataSeries.isCIBDataSeries(dataSeriesCode)) {
             frameChars = 6;
             versionChars = 1;
         }
 
         int frameNumber;
         int version;
-        try
-        {
+        try {
             frameNumber = Base34Converter.parseChars(buffer, 0, frameChars);
             version = Base34Converter.parseChars(buffer, frameChars, versionChars);
         }
-        catch (IllegalArgumentException e)
-        {
+        catch (IllegalArgumentException e) {
             String message = Logging.getMessage("RPFFrameFilename.IntegerNotParsed");
             Logging.logger().fine(message);
             throw new RPFFrameFilenameFormatException(message, e);
@@ -107,13 +98,11 @@ public class RPFFrameFilename
 
     /* [Section 30.6, MIL-C-89038] */
     /* [Section A.3.6, MIL-PRF-89041A] */
-    private static void toCharArray(RPFFrameFilename frameFilename, char[] dest)
-    {
+    private static void toCharArray(RPFFrameFilename frameFilename, char[] dest) {
         // Default to CARDG filename strucutre.
         int frameChars = 5;
         int versionChars = 2;
-        if (RPFDataSeries.isCIBDataSeries(frameFilename.dataSeriesCode))
-        {
+        if (RPFDataSeries.isCIBDataSeries(frameFilename.dataSeriesCode)) {
             frameChars = 6;
             versionChars = 1;
         }
@@ -126,88 +115,8 @@ public class RPFFrameFilename
         dest[11] = frameFilename.zoneCode;
     }
 
-    public final boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || o.getClass() != this.getClass())
-            return false;
-
-        final RPFFrameFilename that = (RPFFrameFilename) o;
-        if (Character.toUpperCase(this.zoneCode) != Character.toUpperCase(that.zoneCode))
-            return false;
-        if (this.frameNumber != that.frameNumber)
-            return false;
-        if (this.dataSeriesCode != null ? !this.dataSeriesCode.equalsIgnoreCase(that.dataSeriesCode) : that.dataSeriesCode != null)
-            return false;
-        if (Character.toUpperCase(this.producerId) != Character.toUpperCase(that.producerId))
-            return false;
-        //noinspection RedundantIfStatement
-        if (this.version != that.version)
-            return false;
-
-        return true;
-    }
-
-    public final String getDataSeriesCode()
-    {
-        return this.dataSeriesCode;
-    }
-
-    public final String getFilename()
-    {
-        if (this.filename == null)
-        {
-            char[] buffer = new char[FILENAME_LENGTH];
-            toCharArray(this, buffer);
-            this.filename = new String(buffer);
-        }
-        return this.filename;
-    }
-
-    public final int getFrameNumber()
-    {
-        return this.frameNumber;
-    }
-
-    public final char getProducerId()
-    {
-        return this.producerId;
-    }
-
-    public final int getVersion()
-    {
-        return this.version;
-    }
-
-    public final char getZoneCode()
-    {
-        return this.zoneCode;
-    }
-
-    public int hashCode()
-    {
-        if (this.hashCode < 0)
-            this.hashCode = this.computeHash();
-        return this.hashCode;
-    }
-
-    private int computeHash()
-    {
-        int hash = 0;
-        if (this.dataSeriesCode != null)
-            hash = this.dataSeriesCode.hashCode();
-        hash = 29 * hash + frameNumber;
-        hash = 29 * hash + (int) producerId;
-        hash = 29 * hash + version;
-        hash = 29 * hash + this.zoneCode;
-        return hash;
-    }
-
-    public static boolean isFilename(String str)
-    {
-        if (str == null)
-        {
+    public static boolean isFilename(String str) {
+        if (str == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().fine(message);
             throw new IllegalArgumentException(message);
@@ -235,8 +144,76 @@ public class RPFFrameFilename
         return true;
     }
 
-    public final String toString()
-    {
+    public final boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || o.getClass() != this.getClass())
+            return false;
+
+        final RPFFrameFilename that = (RPFFrameFilename) o;
+        if (Character.toUpperCase(this.zoneCode) != Character.toUpperCase(that.zoneCode))
+            return false;
+        if (this.frameNumber != that.frameNumber)
+            return false;
+        if (this.dataSeriesCode != null ? !this.dataSeriesCode.equalsIgnoreCase(that.dataSeriesCode)
+            : that.dataSeriesCode != null)
+            return false;
+        if (Character.toUpperCase(this.producerId) != Character.toUpperCase(that.producerId))
+            return false;
+        //noinspection RedundantIfStatement
+        if (this.version != that.version)
+            return false;
+
+        return true;
+    }
+
+    public final String getDataSeriesCode() {
+        return this.dataSeriesCode;
+    }
+
+    public final String getFilename() {
+        if (this.filename == null) {
+            char[] buffer = new char[FILENAME_LENGTH];
+            toCharArray(this, buffer);
+            this.filename = new String(buffer);
+        }
+        return this.filename;
+    }
+
+    public final int getFrameNumber() {
+        return this.frameNumber;
+    }
+
+    public final char getProducerId() {
+        return this.producerId;
+    }
+
+    public final int getVersion() {
+        return this.version;
+    }
+
+    public final char getZoneCode() {
+        return this.zoneCode;
+    }
+
+    public int hashCode() {
+        if (this.hashCode < 0)
+            this.hashCode = this.computeHash();
+        return this.hashCode;
+    }
+
+    private int computeHash() {
+        int hash = 0;
+        if (this.dataSeriesCode != null)
+            hash = this.dataSeriesCode.hashCode();
+        hash = 29 * hash + frameNumber;
+        hash = 29 * hash + producerId;
+        hash = 29 * hash + version;
+        hash = 29 * hash + this.zoneCode;
+        return hash;
+    }
+
+    public final String toString() {
         return this.getFilename();
     }
 }

@@ -18,31 +18,25 @@ import java.text.NumberFormat;
  * @author tag
  * @version $Id: PositionTable.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class PositionTable extends JTable
-{
+public class PositionTable extends JTable {
     private static final int ITEM_NUM_COLUMN = 0;
     private static final int LATITUDE_COLUMN = 1;
     private static final int LONGITUDE_COLUMN = 2;
     private static final int ALTITUDE_COLUMN = 3;
-
+    private final PropertyChangeListener propertyListener = propertyChangeEvent -> {
+        Object newValue = propertyChangeEvent.getNewValue();
+        if (newValue instanceof Integer) {
+            updateTableRow((Integer) newValue);
+        }
+        else {
+            updateTableData();
+        }
+    };
     private SARTrack sarTrack;
     private String elevationUnit;
     private String angleFormat;
 
-    private final PropertyChangeListener propertyListener = propertyChangeEvent -> {
-        Object newValue = propertyChangeEvent.getNewValue();
-        if (newValue instanceof Integer)
-        {
-            updateTableRow((Integer) newValue);
-        }
-        else
-        {
-            updateTableData();
-        }
-    };
-
-    public PositionTable()
-    {
+    public PositionTable() {
         this.setToolTipText("Track Positions");
         this.setModel(new MyTableModel(this));
 
@@ -87,13 +81,11 @@ public class PositionTable extends JTable
         }
     }
 
-    public SARTrack getSarTrack()
-    {
+    public SARTrack getSarTrack() {
         return sarTrack;
     }
 
-    public void setSarTrack(SARTrack sarTrack)
-    {
+    public void setSarTrack(SARTrack sarTrack) {
         if (this.sarTrack == sarTrack)
             return;
 
@@ -109,38 +101,31 @@ public class PositionTable extends JTable
         this.updateTableData();
     }
 
-    public String getElevationUnit()
-    {
+    public String getElevationUnit() {
         return this.elevationUnit;
     }
 
-    public void setElevationUnit(String unit)
-    {
+    public void setElevationUnit(String unit) {
         this.elevationUnit = unit;
     }
 
-    public String getAngleFormat()
-    {
+    public String getAngleFormat() {
         return this.angleFormat;
     }
 
-    public void setAngleFormat(String format)
-    {
+    public void setAngleFormat(String format) {
         this.angleFormat = format;
     }
 
-    public void updateTableData()
-    {
+    public void updateTableData() {
         ((AbstractTableModel) this.getModel()).fireTableDataChanged();
     }
 
-    public void updateTableRow(int row)
-    {
+    public void updateTableRow(int row) {
         ((AbstractTableModel) this.getModel()).fireTableRowsUpdated(row, row);
     }
 
-    protected Color getTableColorForTrack(SARTrack track)
-    {
+    protected Color getTableColorForTrack(SARTrack track) {
         if (track == null)
             return null;
 
@@ -153,14 +138,13 @@ public class PositionTable extends JTable
         float brightness = hsbComponents[2];
 
         saturation *= 0.2f;
-        
+
         int rgbInt = Color.HSBtoRGB(hue, saturation, brightness);
 
         return new Color(rgbInt);
     }
 
-    protected void setTableColors(SARTrack track)
-    {
+    protected void setTableColors(SARTrack track) {
         Color tableBackground = this.getTableColorForTrack(track);
         Color selectionBackground = (tableBackground != null) ? Color.DARK_GRAY : null;
         Color selectionForeground = (tableBackground != null) ? Color.WHITE : null;
@@ -171,16 +155,227 @@ public class PositionTable extends JTable
         this.setOpaque(true);
 
         Container c = this.getParent();
-        if (c != null)
-        {
+        if (c != null) {
             c.setBackground(tableBackground);
             if (c instanceof JComponent)
                 ((JComponent) c).setOpaque(true);
         }
     }
 
-    private class MyTableModel extends AbstractTableModel
-    {
+    private Angle toAngle(String string) {
+        if (Angle.ANGLE_FORMAT_DMS.equals(this.angleFormat)) {
+            try {
+                return Angle.fromDMS(string);
+            }
+            catch (Exception ignore) {
+                return null;
+            }
+        }
+        else {
+            try {
+                Number number = NumberFormat.getInstance().parse(string.trim());
+                return Angle.fromDegrees(number.doubleValue());
+            }
+            catch (Exception ignore) {
+                return null;
+            }
+        }
+    }
+
+    private String makeAngleDescription(double degrees) {
+        return SAR2.formatAngle(this.angleFormat, Angle.fromDegrees(degrees));
+    }
+
+    private String makeElevationDescription(double metersElevation) {
+        String s;
+        if (SAR2.UNIT_IMPERIAL.equals(this.elevationUnit))
+            s = NumberFormat.getInstance().format(SAR2.metersToFeet(metersElevation));
+        else // Default to metric units.
+            s = NumberFormat.getInstance().format(metersElevation);
+        return s;
+    }
+
+    private static class AltitudeHeaderRenderer implements TableCellRenderer {
+        private final TableCellRenderer delegate;
+        private final PositionTable table;
+
+        public AltitudeHeaderRenderer(TableCellRenderer delegate, PositionTable table) {
+            this.delegate = delegate;
+            this.table = table;
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+            int row, int column) {
+            if (this.delegate == null)
+                return null;
+
+            Component c = this.delegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (!(c instanceof JLabel))
+                return c;
+
+            JLabel label = (JLabel) c;
+            if (label.getText() == null)
+                return c;
+
+            if (SAR2.UNIT_IMPERIAL.equals(this.table.elevationUnit))
+                label.setText(label.getText() + " (ft)");
+            else // Default to metric units.
+                label.setText(label.getText() + " (m)");
+            return label;
+        }
+    }
+
+    private static class AngleHeaderRenderer implements TableCellRenderer {
+        private final TableCellRenderer delegate;
+        private final PositionTable table;
+
+        public AngleHeaderRenderer(TableCellRenderer delegate, PositionTable table) {
+            this.delegate = delegate;
+            this.table = table;
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+            int row, int column) {
+            if (this.delegate == null)
+                return null;
+
+            Component c = this.delegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            if (!(c instanceof JLabel))
+                return c;
+
+            JLabel label = (JLabel) c;
+            if (label.getText() == null)
+                return c;
+
+            if (Angle.ANGLE_FORMAT_DMS.equals(this.table.angleFormat))
+                label.setText(label.getText() + " (dms)");
+            else // Default to decimal degrees.
+                label.setText(label.getText() + " (dd)");
+            return label;
+        }
+    }
+
+    private static class AngleCellRenderer extends DefaultTableCellRenderer {
+        private final PositionTable table;
+
+        private AngleCellRenderer(PositionTable table) {
+            this.table = table;
+            setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+
+        public void setValue(Object value) {
+            setText(value != null ? this.table.makeAngleDescription((Double) value) : "");
+        }
+    }
+
+    private static class AltitudeCellRenderer extends DefaultTableCellRenderer {
+        private final PositionTable table;
+
+        private AltitudeCellRenderer(PositionTable table) {
+            this.table = table;
+            setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+
+        protected void setValue(Object value) {
+            setText(this.table.makeElevationDescription((Double) value));
+        }
+    }
+
+    private static class GeneralCellEditor extends DefaultCellEditor {
+        private final PositionTable table;
+        private Object value;
+
+        public GeneralCellEditor(JTextField textField, PositionTable table) {
+            super(textField);
+            this.table = table;
+        }
+
+        public PositionTable getTable() {
+            return table;
+        }
+
+        public Object getCellEditorValue() {
+            return this.value;
+        }
+
+        public boolean stopCellEditing() {
+            String s = (String) super.getCellEditorValue();
+            try {
+                this.value = this.validateEditorText(s);
+            }
+            catch (Exception e) {
+                ((JComponent) getComponent()).setBorder(new LineBorder(Color.red));
+                return false;
+            }
+            return super.stopCellEditing();
+        }
+
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected,
+            int row, int column) {
+            ((JComponent) getComponent()).setBorder(new LineBorder(Color.black));
+            this.value = null;
+            try {
+                this.value = this.createEditorText(value);
+            }
+            catch (Exception e) {
+                return null;
+            }
+            return super.getTableCellEditorComponent(table, this.value, isSelected, row, column);
+        }
+
+        protected Object validateEditorText(String text) throws Exception {
+            return text;
+        }
+
+        protected String createEditorText(Object value) {
+            return value.toString();
+        }
+    }
+
+    private static class AngleCellEditor extends GeneralCellEditor {
+        final double min;
+        final double max;
+
+        public AngleCellEditor(PositionTable table, double min, double max) {
+            super(new JTextField(), table);
+            this.min = min;
+            this.max = max;
+            ((JTextField) getComponent()).setHorizontalAlignment(JTextField.RIGHT);
+        }
+
+        protected Object validateEditorText(String text) {
+            Angle angle = this.getTable().toAngle(text);
+            if (angle == null)
+                throw new IllegalArgumentException(text);
+            if (angle.degrees < min || angle.degrees > max)
+                throw new IllegalArgumentException(text);
+            return text;
+        }
+
+        protected String createEditorText(Object value) {
+            String text = this.getTable().makeAngleDescription((Double) value);
+            text = text.replaceAll("[D|d\u00B0'\u2019\"\u201d]", " ").replaceAll("\\s+", " ");
+            return text;
+        }
+    }
+
+    private static class AltitudeCellEditor extends GeneralCellEditor {
+        public AltitudeCellEditor(PositionTable table) {
+            super(new JTextField(), table);
+            ((JTextField) getComponent()).setHorizontalAlignment(JTextField.RIGHT);
+        }
+
+        protected Object validateEditorText(String text) throws Exception {
+            Number number = NumberFormat.getInstance().parse(text);
+            return number.doubleValue();
+        }
+
+        protected String createEditorText(Object value) {
+            return this.getTable().makeElevationDescription((Double) value);
+        }
+    }
+
+    private class MyTableModel extends AbstractTableModel {
         final String[] columnNames = new String[] {
             "#", "Latitude", "Longitude", "Altitude"
         };
@@ -195,62 +390,48 @@ public class PositionTable extends JTable
 
         private final PositionTable table;
 
-        public MyTableModel(PositionTable table)
-        {
+        public MyTableModel(PositionTable table) {
             this.table = table;
         }
 
         @Override
-        public Class<?> getColumnClass(int columnIndex)
-        {
+        public Class<?> getColumnClass(int columnIndex) {
             return this.columnTypes[columnIndex];
         }
 
         @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex)
-        {
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
             return this.columnEditable[columnIndex];
         }
 
-        public int getRowCount()
-        {
+        public int getRowCount() {
             return sarTrack != null ? sarTrack.size() : 0;
         }
 
         @Override
-        public String getColumnName(int columnIndex)
-        {
+        public String getColumnName(int columnIndex) {
             return this.columnNames[columnIndex];
         }
 
-        public int getColumnCount()
-        {
+        public int getColumnCount() {
             return 4;
         }
 
-        public Object getValueAt(int row, int col)
-        {
+        public Object getValueAt(int row, int col) {
             if (sarTrack == null)
                 return null;
 
-            switch (col)
-            {
-                case ITEM_NUM_COLUMN:
-                    return row;
-                case LATITUDE_COLUMN:
-                    return sarTrack.get(row).getLatitude().degrees;
-                case LONGITUDE_COLUMN:
-                    return sarTrack.get(row).getLongitude().degrees;
-                case ALTITUDE_COLUMN:
-                    return sarTrack.get(row).getElevation();
-            }
-
-            return null;
+            return switch (col) {
+                case ITEM_NUM_COLUMN -> row;
+                case LATITUDE_COLUMN -> sarTrack.get(row).getLatitude().degrees;
+                case LONGITUDE_COLUMN -> sarTrack.get(row).getLongitude().degrees;
+                case ALTITUDE_COLUMN -> sarTrack.get(row).getElevation();
+                default -> null;
+            };
         }
 
         @Override
-        public void setValueAt(Object object, int row, int col)
-        {
+        public void setValueAt(Object object, int row, int col) {
             if (sarTrack == null)
                 return;
 
@@ -258,8 +439,7 @@ public class PositionTable extends JTable
             SARPosition newPos;
             Angle newAngle;
 
-            switch (col)
-            {
+            switch (col) {
                 case LATITUDE_COLUMN:
                     if (!(object instanceof String))
                         return;
@@ -291,260 +471,6 @@ public class PositionTable extends JTable
             }
 
             sarTrack.set(row, newPos);
-        }
-    }
-
-    private Angle toAngle(String string)
-    {
-        if (Angle.ANGLE_FORMAT_DMS.equals(this.angleFormat))
-        {
-            try
-            {
-                return Angle.fromDMS(string);
-            }
-            catch (Exception ignore)
-            {
-                return null;
-            }
-        }
-        else
-        {
-            try
-            {
-                Number number = NumberFormat.getInstance().parse(string.trim());
-                return Angle.fromDegrees(number.doubleValue());
-            }
-            catch (Exception ignore)
-            {
-                return null;
-            }
-        }
-    }
-
-    private String makeAngleDescription(double degrees)
-    {
-        return SAR2.formatAngle(this.angleFormat, Angle.fromDegrees(degrees));
-    }
-
-    private String makeElevationDescription(double metersElevation)
-    {
-        String s;
-        if (SAR2.UNIT_IMPERIAL.equals(this.elevationUnit))
-            s = NumberFormat.getInstance().format(SAR2.metersToFeet(metersElevation));
-        else // Default to metric units.
-            s = NumberFormat.getInstance().format(metersElevation);
-        return s;
-    }
-
-    private static class AltitudeHeaderRenderer implements TableCellRenderer
-    {
-        private final TableCellRenderer delegate;
-        private final PositionTable table;
-
-        public AltitudeHeaderRenderer(TableCellRenderer delegate, PositionTable table)
-        {
-            this.delegate = delegate;
-            this.table = table;
-        }
-
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-            int row, int column)
-        {
-            if (this.delegate == null)
-                return null;
-
-            Component c = this.delegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (!(c instanceof JLabel))
-                return c;
-
-            JLabel label = (JLabel) c;
-            if (label.getText() == null)
-                return c;
-
-            if (SAR2.UNIT_IMPERIAL.equals(this.table.elevationUnit))
-                label.setText(label.getText() + " (ft)");
-            else // Default to metric units.
-                label.setText(label.getText() + " (m)");
-            return label;
-        }
-    }
-
-    private static class AngleHeaderRenderer implements TableCellRenderer
-    {
-        private final TableCellRenderer delegate;
-        private final PositionTable table;
-
-        public AngleHeaderRenderer(TableCellRenderer delegate, PositionTable table)
-        {
-            this.delegate = delegate;
-            this.table = table;
-        }
-
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-            int row, int column)
-        {
-            if (this.delegate == null)
-                return null;
-
-            Component c = this.delegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if (!(c instanceof JLabel))
-                return c;
-
-            JLabel label = (JLabel) c;
-            if (label.getText() == null)
-                return c;
-
-            if (Angle.ANGLE_FORMAT_DMS.equals(this.table.angleFormat))
-                label.setText(label.getText() + " (dms)");
-            else // Default to decimal degrees.
-                label.setText(label.getText() + " (dd)");
-            return label;
-        }
-    }
-
-    private static class AngleCellRenderer extends DefaultTableCellRenderer
-    {
-        private final PositionTable table;
-
-        private AngleCellRenderer(PositionTable table)
-        {
-            this.table = table;
-            setHorizontalAlignment(SwingConstants.RIGHT);
-        }
-
-        public void setValue(Object value)
-        {
-            setText(value != null ? this.table.makeAngleDescription((Double) value) : "");
-        }
-    }
-
-    private static class AltitudeCellRenderer extends DefaultTableCellRenderer
-    {
-        private final PositionTable table;
-
-        private AltitudeCellRenderer(PositionTable table)
-        {
-            this.table = table;
-            setHorizontalAlignment(SwingConstants.RIGHT);
-        }
-
-        protected void setValue(Object value)
-        {
-            setText(this.table.makeElevationDescription((Double) value));
-        }
-    }
-
-    private static class GeneralCellEditor extends DefaultCellEditor
-    {
-        private final PositionTable table;
-        private Object value;
-
-        public GeneralCellEditor(JTextField textField, PositionTable table)
-        {
-            super(textField);
-            this.table = table;
-        }
-
-        public PositionTable getTable()
-        {
-            return table;
-        }
-
-        public Object getCellEditorValue()
-        {
-            return this.value;
-        }
-
-        public boolean stopCellEditing()
-        {
-            String s = (String) super.getCellEditorValue();
-            try
-            {
-                this.value = this.validateEditorText(s);
-            }
-            catch (Exception e)
-            {
-                ((JComponent) getComponent()).setBorder(new LineBorder(Color.red));
-                return false;
-            }
-            return super.stopCellEditing();
-        }
-
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected,
-            int row, int column)
-        {
-            ((JComponent) getComponent()).setBorder(new LineBorder(Color.black));
-            this.value = null;
-            try
-            {
-                this.value = this.createEditorText(value);
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-            return super.getTableCellEditorComponent(table, this.value, isSelected, row, column);
-        }
-
-        protected Object validateEditorText(String text) throws Exception
-        {
-            return text;
-        }
-
-        protected String createEditorText(Object value)
-        {
-            return value.toString();
-        }
-    }
-
-    private static class AngleCellEditor extends GeneralCellEditor
-    {
-        final double min;
-        final double max;
-
-        public AngleCellEditor(PositionTable table, double min, double max)
-        {
-            super(new JTextField(), table);
-            this.min = min;
-            this.max = max;
-            ((JTextField) getComponent()).setHorizontalAlignment(JTextField.RIGHT);
-        }
-
-        protected Object validateEditorText(String text)
-        {
-            Angle angle = this.getTable().toAngle(text);
-            if (angle == null)
-                throw new IllegalArgumentException(text);
-            if (angle.degrees < min || angle.degrees > max)
-                throw new IllegalArgumentException(text);
-            return text;
-        }
-
-        protected String createEditorText(Object value)
-        {
-            String text = this.getTable().makeAngleDescription((Double) value);
-            text = text.replaceAll("[D|d|\u00B0|'|\u2019|\"|\u201d]", " ").replaceAll("\\s+", " ");
-            return text;
-        }
-    }
-
-    private static class AltitudeCellEditor extends GeneralCellEditor
-    {
-        public AltitudeCellEditor(PositionTable table)
-        {
-            super(new JTextField(), table);
-            ((JTextField) getComponent()).setHorizontalAlignment(JTextField.RIGHT);
-        }
-
-        protected Object validateEditorText(String text) throws Exception
-        {
-            Number number = NumberFormat.getInstance().parse(text);
-            return number.doubleValue();
-        }
-
-        protected String createEditorText(Object value)
-        {
-            return this.getTable().makeElevationDescription((Double) value);
         }
     }
 }

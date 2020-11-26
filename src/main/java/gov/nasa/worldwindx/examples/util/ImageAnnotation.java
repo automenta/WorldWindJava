@@ -10,12 +10,16 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Point;
+
 /**
  * @author dcollins
  * @version $Id: ImageAnnotation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ImageAnnotation extends ScreenAnnotation
-{
+public class ImageAnnotation extends ScreenAnnotation {
     protected int imageWidth;
     protected int imageHeight;
     protected boolean fitSizeToImage;
@@ -25,11 +29,10 @@ public class ImageAnnotation extends ScreenAnnotation
     // Tool tip state.
     protected boolean showToolTip;
     protected String toolTipText;
-    protected java.awt.Point toolTipPoint;
+    protected Point toolTipPoint;
 
-    public ImageAnnotation(Object imageSource, int imageWidth, int imageHeight)
-    {
-        super("", new java.awt.Point());
+    public ImageAnnotation(Object imageSource, int imageWidth, int imageHeight) {
+        super("", new Point());
 
         this.fitSizeToImage = true;
         this.useImageAspectRatio = true;
@@ -40,110 +43,89 @@ public class ImageAnnotation extends ScreenAnnotation
         this.setupAnnotationAttributes(this);
     }
 
-    public ImageAnnotation(Object imageSource)
-    {
+    public ImageAnnotation(Object imageSource) {
         this(imageSource, 0, 0);
     }
 
-    public ImageAnnotation()
-    {
+    public ImageAnnotation() {
         this(null, 0, 0);
     }
 
-    public boolean isFitSizeToImage()
-    {
+    public boolean isFitSizeToImage() {
         return this.fitSizeToImage;
     }
 
-    public void setFitSizeToImage(boolean fitSizeToImage)
-    {
+    public void setFitSizeToImage(boolean fitSizeToImage) {
         this.fitSizeToImage = fitSizeToImage;
     }
 
-    public boolean isUseImageAspectRatio()
-    {
+    public boolean isUseImageAspectRatio() {
         return this.useImageAspectRatio;
     }
 
-    public void setUseImageAspectRatio(boolean useImageAspectRatio)
-    {
+    public void setUseImageAspectRatio(boolean useImageAspectRatio) {
         this.useImageAspectRatio = useImageAspectRatio;
     }
 
-    public boolean isEnableSmoothing()
-    {
+    public boolean isEnableSmoothing() {
         return this.enableSmoothing;
     }
 
-    public void setEnableSmoothing(boolean enable)
-    {
+    public void setEnableSmoothing(boolean enable) {
         this.enableSmoothing = enable;
     }
 
-    public boolean isUseMipmaps()
-    {
+    public boolean isUseMipmaps() {
         return this.useMipmaps;
     }
 
-    public void setUseMipmaps(boolean useMipmaps)
-    {
+    public void setUseMipmaps(boolean useMipmaps) {
         this.useMipmaps = useMipmaps;
     }
 
-    public Object getImageSource()
-    {
+    public Object getImageSource() {
         return this.getAttributes().getImageSource();
     }
 
-    public void setImageSource(Object source, int imageWidth, int imageHeight)
-    {
+    public void setImageSource(Object source) {
+        this.setImageSource(source, 0, 0);
+    }
+
+    public void setImageSource(Object source, int imageWidth, int imageHeight) {
         this.getAttributes().setImageSource(source);
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
     }
 
-    public void setImageSource(Object source)
-    {
-        this.setImageSource(source, 0, 0);
+    public Dimension getImageDimension() {
+        return new Dimension(this.imageWidth, this.imageHeight);
     }
 
-    public java.awt.Dimension getImageDimension()
-    {
-        return new java.awt.Dimension(this.imageWidth, this.imageHeight);
-    }
-
-    public WWTexture getTexture(DrawContext dc)
-    {
+    public WWTexture getTexture(DrawContext dc) {
         return this.getAttributes().getBackgroundTexture(dc);
     }
 
-    public boolean isShowToolTip()
-    {
+    public boolean isShowToolTip() {
         return this.showToolTip;
     }
 
-    public void setShowToolTip(boolean show)
-    {
+    public void setShowToolTip(boolean show) {
         this.showToolTip = show;
     }
 
-    public String getToolTipText()
-    {
+    public String getToolTipText() {
         return this.toolTipText;
     }
 
-    public void setToolTipText(String toolTipText)
-    {
+    public void setToolTipText(String toolTipText) {
         this.toolTipText = toolTipText;
     }
 
-    public java.awt.Point getToolTipPoint()
-    {
+    public Point getToolTipPoint() {
         return toolTipPoint;
     }
 
-    public void setToolTipPoint(java.awt.Point toolTipPoint)
-    {
+    public void setToolTipPoint(Point toolTipPoint) {
         this.toolTipPoint = toolTipPoint;
     }
 
@@ -151,50 +133,42 @@ public class ImageAnnotation extends ScreenAnnotation
     //********************  Preferred Size  ************************//
     //**************************************************************//
 
-    public java.awt.Dimension getPreferredSize(DrawContext dc)
-    {
-        java.awt.Dimension imageSize = this.getImageSize(dc);
-        java.awt.Dimension insetSize = null;
+    public Dimension getPreferredSize(DrawContext dc) {
+        Dimension imageSize = this.getImageSize(dc);
+        Dimension insetSize = null;
 
         // Optionally set the annotation's inset size to the image size.
-        if (this.isFitSizeToImage())
-        {
+        if (this.isFitSizeToImage()) {
             insetSize = imageSize;
         }
 
         // Fallback to the superclass preferred size.
-        if (insetSize == null)
-        {
+        if (insetSize == null) {
             insetSize = super.getPreferredSize(dc);
 
             // Optionally set the annotation's aspect ratio to that of the image. We'll use the superclass width, and
             // override it's height to match the image's aspect ration.
-            if (this.isUseImageAspectRatio() && imageSize != null)
-            {
+            if (this.isUseImageAspectRatio() && imageSize != null) {
                 double aspect = imageSize.getHeight() / imageSize.getWidth();
-                insetSize = new java.awt.Dimension(insetSize.width, (int) Math.round(aspect * insetSize.width));
+                insetSize = new Dimension(insetSize.width, (int) Math.round(aspect * insetSize.width));
             }
         }
 
-        java.awt.Insets insets = this.getAttributes().getInsets();
-        return new java.awt.Dimension(
+        Insets insets = this.getAttributes().getInsets();
+        return new Dimension(
             insetSize.width + (insets.left + insets.right),
             insetSize.height + (insets.top + insets.bottom));
     }
 
-    protected java.awt.Dimension getImageSize(DrawContext dc)
-    {
+    protected Dimension getImageSize(DrawContext dc) {
         WWTexture texture = this.getTexture(dc);
-        if (texture != null && this.imageWidth == 0 && this.imageHeight == 0)
-        {
-            return new java.awt.Dimension(texture.getWidth(dc), texture.getHeight(dc));
+        if (texture != null && this.imageWidth == 0 && this.imageHeight == 0) {
+            return new Dimension(texture.getWidth(dc), texture.getHeight(dc));
         }
-        else if (this.imageWidth != 0 && this.imageHeight != 0)
-        {
-            return new java.awt.Dimension(this.imageWidth, this.imageHeight);
+        else if (this.imageWidth != 0 && this.imageHeight != 0) {
+            return new Dimension(this.imageWidth, this.imageHeight);
         }
-        else
-        {
+        else {
             return null;
         }
     }
@@ -203,14 +177,12 @@ public class ImageAnnotation extends ScreenAnnotation
     //********************  Rendering  *****************************//
     //**************************************************************//
 
-    public void drawContent(DrawContext dc, int width, int height, double opacity, Position pickPosition)
-    {
+    public void drawContent(DrawContext dc, int width, int height, double opacity, Position pickPosition) {
         super.drawContent(dc, width, height, opacity, pickPosition);
         this.drawToolTip(dc);
     }
 
-    protected void drawToolTip(DrawContext dc)
-    {
+    protected void drawToolTip(DrawContext dc) {
         if (dc.isPickingMode())
             return;
 
@@ -221,21 +193,20 @@ public class ImageAnnotation extends ScreenAnnotation
         if (text == null)
             return;
 
-        java.awt.Point point = this.getToolTipPoint();
+        Point point = this.getToolTipPoint();
         if (point == null)
             return;
 
         this.doDrawToolTip(dc, text, point.x, point.y);
     }
 
-    protected void doDrawToolTip(DrawContext dc, String text, int x, int y)
-    {
-        ToolTip toolTip = new ToolTip(text, x, y);
+    protected void doDrawToolTip(DrawContext dc, String text, int x, int y) {
+        OrderedRenderable toolTip = new ToolTip(text, x, y);
         dc.addOrderedRenderable(toolTip);
     }
 
-    protected void applyBackgroundTextureState(DrawContext dc, int width, int height, double opacity, WWTexture texture)
-    {
+    protected void applyBackgroundTextureState(DrawContext dc, int width, int height, double opacity,
+        WWTexture texture) {
         super.applyBackgroundTextureState(dc, width, height, opacity, texture);
 
         // Setup the texture filters to correspond to the smoothing and mipmap settings.
@@ -250,15 +221,13 @@ public class ImageAnnotation extends ScreenAnnotation
     }
 
     protected void transformBackgroundImageCoordsToAnnotationCoords(DrawContext dc, int width, int height,
-        WWTexture texture)
-    {
+        WWTexture texture) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Scale background image coordinates to fit the Annotation's dimensions.
-        java.awt.Dimension size = this.getImageSize(dc);
-        if (size != null)
-        {
-            gl.glScaled(size.getWidth() / (double) width, size.getHeight() / (double) height, 1d);
+        Dimension size = this.getImageSize(dc);
+        if (size != null) {
+            gl.glScaled(size.getWidth() / width, size.getHeight() / height, 1.0d);
         }
 
         super.transformBackgroundImageCoordsToAnnotationCoords(dc, width, height, texture);
@@ -268,9 +237,8 @@ public class ImageAnnotation extends ScreenAnnotation
     //********************  Utilities  *****************************//
     //**************************************************************//
 
-    protected void setupAnnotationAttributes(Annotation annotation)
-    {
-        java.awt.Color transparentBlack = new java.awt.Color(0, 0, 0, 0);
+    protected void setupAnnotationAttributes(Annotation annotation) {
+        Color transparentBlack = new Color(0, 0, 0, 0);
 
         AnnotationAttributes defaultAttribs = new AnnotationAttributes();
         defaultAttribs.setAdjustWidthToText(AVKey.SIZE_FIXED);
@@ -278,15 +246,15 @@ public class ImageAnnotation extends ScreenAnnotation
         defaultAttribs.setBorderColor(transparentBlack);
         defaultAttribs.setBorderWidth(0);
         defaultAttribs.setCornerRadius(0);
-        defaultAttribs.setDrawOffset(new java.awt.Point(0, 0));
+        defaultAttribs.setDrawOffset(new Point(0, 0));
         defaultAttribs.setHighlightScale(1);
-        defaultAttribs.setInsets(new java.awt.Insets(0, 0, 0, 0));
+        defaultAttribs.setInsets(new Insets(0, 0, 0, 0));
         defaultAttribs.setImageScale(1);
-        defaultAttribs.setImageOffset(new java.awt.Point(0, 0));
+        defaultAttribs.setImageOffset(new Point(0, 0));
         defaultAttribs.setImageOpacity(1);
         defaultAttribs.setImageRepeat(AVKey.REPEAT_NONE);
         defaultAttribs.setLeader(AVKey.SHAPE_NONE);
-        defaultAttribs.setSize(new java.awt.Dimension(0, 0));
+        defaultAttribs.setSize(new Dimension(0, 0));
 
         annotation.setPickEnabled(false);
         annotation.getAttributes().setDefaults(defaultAttribs);

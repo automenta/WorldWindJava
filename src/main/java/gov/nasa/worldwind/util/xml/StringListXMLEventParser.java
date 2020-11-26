@@ -17,17 +17,14 @@ import java.util.*;
  * @author tag
  * @version $Id: StringListXMLEventParser.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
-public class StringListXMLEventParser extends AbstractXMLEventParser implements Iterable<String>
-{
-    protected QName elementName;
+public class StringListXMLEventParser extends AbstractXMLEventParser implements Iterable<String> {
     protected final List<String> strings = new ArrayList<>();
+    protected QName elementName;
 
-    public StringListXMLEventParser()
-    {
+    public StringListXMLEventParser() {
     }
 
-    public StringListXMLEventParser(String namespaceUri)
-    {
+    public StringListXMLEventParser(String namespaceUri) {
         super(namespaceUri);
     }
 
@@ -37,16 +34,14 @@ public class StringListXMLEventParser extends AbstractXMLEventParser implements 
      * @param namespaceURI the namespace URI to attach to this parser. May be null.
      * @param elementName  the name of the sub-elements that contain the strings.
      */
-    public StringListXMLEventParser(String namespaceURI, QName elementName)
-    {
+    public StringListXMLEventParser(String namespaceURI, QName elementName) {
         super(namespaceURI);
 
         this.elementName = elementName;
     }
 
     @Override
-    public XMLEventParser newInstance() throws Exception
-    {
+    public XMLEventParser newInstance() throws Exception {
         StringListXMLEventParser copy = (StringListXMLEventParser) super.newInstance();
         if (copy != null)
             copy.elementName = this.elementName;
@@ -54,8 +49,7 @@ public class StringListXMLEventParser extends AbstractXMLEventParser implements 
         return copy;
     }
 
-    public Object parse(XMLEventParserContext ctx, XMLEvent listEvent, Object... args) throws XMLStreamException
-    {
+    public Object parse(XMLEventParserContext ctx, XMLEvent listEvent, Object... args) throws XMLStreamException {
         this.strings.clear();
 
         return super.parse(ctx, listEvent, args);
@@ -63,28 +57,23 @@ public class StringListXMLEventParser extends AbstractXMLEventParser implements 
 
     @Override
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
-        if (ctx.isStartElement(event, this.elementName))
-        {
+        throws XMLStreamException {
+        if (ctx.isStartElement(event, this.elementName)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.addString(s);
         }
     }
 
-    public Iterator<String> iterator()
-    {
+    public Iterator<String> iterator() {
         return this.strings.iterator();
     }
 
-    public List<String> getStrings()
-    {
+    public List<String> getStrings() {
         return this.strings;
     }
 
-    protected void addString(String string)
-    {
+    protected void addString(String string) {
         this.strings.add(string);
     }
 }

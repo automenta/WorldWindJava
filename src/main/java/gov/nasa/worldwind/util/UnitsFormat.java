@@ -18,8 +18,7 @@ import gov.nasa.worldwind.geom.*;
  * @author tag
  * @version $Id: UnitsFormat.java 2301 2014-09-06 00:34:45Z tgaskins $
  */
-public class UnitsFormat extends AVListImpl
-{
+public class UnitsFormat extends AVListImpl {
     // Keys identifying unit systems and units
     public static final String IMPERIAL_SYSTEM = "gov.nasa.worldwind.units.ImperialSystem";
     public static final String METRIC_SYSTEM = "gov.nasa.worldwind.units.MetricSystem";
@@ -98,8 +97,7 @@ public class UnitsFormat extends AVListImpl
      * Construct an instance that displays length in kilometers, area in square kilometers and angles in decimal
      * degrees.
      */
-    public UnitsFormat()
-    {
+    public UnitsFormat() {
         this(UnitsFormat.KILOMETERS, UnitsFormat.SQUARE_KILOMETERS, false);
     }
 
@@ -110,11 +108,9 @@ public class UnitsFormat extends AVListImpl
      *                    NAUTICAL_MILES, YARDS</code> and <code>FEET</code>.
      * @param areaUnits   the desired area units. Available area units are <code>SQUARE_METERS, SQUARE_KILOMETERS,
      *                    HECTARE, ACRE, SQUARE_YARD</code> and <code>SQUARE_FEET</code>.
-     *
      * @throws IllegalArgumentException if either <code>lengthUnits</code> or <code>areaUnits</code> is null.
      */
-    public UnitsFormat(String lengthUnits, String areaUnits)
-    {
+    public UnitsFormat(String lengthUnits, String areaUnits) {
         this(lengthUnits, areaUnits, false);
     }
 
@@ -127,20 +123,16 @@ public class UnitsFormat extends AVListImpl
      *                    HECTARE, ACRE, SQUARE_YARD</code> and <code>SQUARE_FEET</code>.
      * @param showDMS     true if the desired angle format is degrees-minutes-seconds, false if the format is decimal
      *                    degrees.
-     *
      * @throws IllegalArgumentException if either <code>lengthUnits</code> or <code>areaUnits</code> is null.
      */
-    public UnitsFormat(String lengthUnits, String areaUnits, boolean showDMS)
-    {
-        if (lengthUnits == null)
-        {
+    public UnitsFormat(String lengthUnits, String areaUnits, boolean showDMS) {
+        if (lengthUnits == null) {
             String msg = Logging.getMessage("nullValue.LengthUnit");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (areaUnits == null)
-        {
+        if (areaUnits == null) {
             String msg = Logging.getMessage("nullValue.AreaUnit");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -161,8 +153,7 @@ public class UnitsFormat extends AVListImpl
      * establish labels other than the defaults. The default labels are drawn from the current message properties. The
      * recognized labels are those indicated by the "LABEL_" constants defined by this class or by its subclasses.
      */
-    protected void setDefaultLabels()
-    {
+    protected void setDefaultLabels() {
         this.setLabel(LABEL_LATITUDE, Logging.getMessage(LABEL_LATITUDE));
         this.setLabel(LABEL_LONGITUDE, Logging.getMessage(LABEL_LONGITUDE));
         this.setLabel(LABEL_LATLON_LAT, Logging.getMessage(LABEL_LATLON_LAT));
@@ -183,8 +174,7 @@ public class UnitsFormat extends AVListImpl
      * value types that have associated formats are indicated by the "FORMAT_" constants defined by this class or by its
      * subclasses.
      */
-    protected void setDefaultFormats()
-    {
+    protected void setDefaultFormats() {
         this.setFormat(FORMAT_LENGTH, " %,12.1f %s");
         this.setFormat(FORMAT_AREA, " %,12.1f %s");
         this.setFormat(FORMAT_PITCH, " %9.2f\u00b0");
@@ -203,20 +193,16 @@ public class UnitsFormat extends AVListImpl
      * @param labelName a key identifying the label type. Available names are those indicated by the "LABEL_" constants
      *                  defined by this class or by its subclasses
      * @param label     the label to use for the specified value type.
-     *
      * @throws IllegalArgumentException if either the label or label name is null.
      */
-    public void setLabel(String labelName, String label)
-    {
-        if (labelName == null)
-        {
+    public void setLabel(String labelName, String label) {
+        if (labelName == null) {
             String msg = Logging.getMessage("nullValue.LabelKey");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (label == null)
-        {
+        if (label == null) {
             String msg = Logging.getMessage("nullValue.Label");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -229,15 +215,11 @@ public class UnitsFormat extends AVListImpl
      * Returns the label for a specified label name.
      *
      * @param labelName the name of the label to return.
-     *
      * @return the label, or null if the label does not exist.
-     *
      * @throws IllegalArgumentException if the label name is null.
      */
-    public String getLabel(String labelName)
-    {
-        if (labelName == null)
-        {
+    public String getLabel(String labelName) {
+        if (labelName == null) {
             String msg = Logging.getMessage("nullValue.LabelKey");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -253,20 +235,16 @@ public class UnitsFormat extends AVListImpl
      * @param formatName a key identifying the value type that is to have the specified format. Available types are
      *                   those indicated by the "FORMAT_" constants defined by this class or by its subclasses
      * @param format     the label to use for the specified value type.
-     *
      * @throws IllegalArgumentException if either the format or format name are null.
      */
-    public void setFormat(String formatName, String format)
-    {
-        if (formatName == null)
-        {
+    public void setFormat(String formatName, String format) {
+        if (formatName == null) {
             String msg = Logging.getMessage("nullValue.FormatKey");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (format == null)
-        {
+        if (format == null) {
             String msg = Logging.getMessage("nullValue.Format");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -279,15 +257,11 @@ public class UnitsFormat extends AVListImpl
      * Returns the format for a specified value type.
      *
      * @param formatName the name of the value type whose format is desired.
-     *
      * @return the format, or null if the format does not exist.
-     *
      * @throws IllegalArgumentException if the format name is null.
      */
-    public String getFormat(String formatName)
-    {
-        if (formatName == null)
-        {
+    public String getFormat(String formatName) {
+        if (formatName == null) {
             String msg = Logging.getMessage("nullValue.FormatKey");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -301,8 +275,7 @@ public class UnitsFormat extends AVListImpl
      *
      * @return true if angles are displayed in degrees-minutes seconds, false if they're displayed in decimal degrees.
      */
-    public boolean isShowDMS()
-    {
+    public boolean isShowDMS() {
         return this.showDMS;
     }
 
@@ -311,8 +284,7 @@ public class UnitsFormat extends AVListImpl
      *
      * @param showDMS true to display angles in degrees-minutes seconds, false to display them in decimal degrees.
      */
-    public void setShowDMS(boolean showDMS)
-    {
+    public void setShowDMS(boolean showDMS) {
         this.showDMS = showDMS;
     }
 
@@ -321,8 +293,7 @@ public class UnitsFormat extends AVListImpl
      *
      * @return the units symbol for the current length units.
      */
-    public String getLengthUnitsSymbol()
-    {
+    public String getLengthUnitsSymbol() {
         return this.lengthUnitsSymbol;
     }
 
@@ -330,10 +301,9 @@ public class UnitsFormat extends AVListImpl
      * Returns the current length units.
      *
      * @return the current length units. See {@link #UnitsFormat(String, String, boolean)} for the list of those
-     *         available.
+     * available.
      */
-    public String getLengthUnits()
-    {
+    public String getLengthUnits() {
         return this.lengthUnits;
     }
 
@@ -343,13 +313,10 @@ public class UnitsFormat extends AVListImpl
      *
      * @param lengthUnits the desired length units. See {@link #UnitsFormat(String, String, boolean)} for the list of
      *                    those available.
-     *
      * @throws IllegalArgumentException if <code>lengthUnits</code> is null.
      */
-    public void setLengthUnits(String lengthUnits)
-    {
-        if (lengthUnits == null)
-        {
+    public void setLengthUnits(String lengthUnits) {
+        if (lengthUnits == null) {
             String msg = Logging.getMessage("nullValue.LengthUnit");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -357,8 +324,7 @@ public class UnitsFormat extends AVListImpl
 
         this.lengthUnits = lengthUnits;
 
-        switch (lengthUnits)
-        {
+        switch (lengthUnits) {
             case UnitsFormat.KILOMETERS -> {
                 this.lengthUnitsMultiplier = WWMath.METERS_TO_KILOMETERS;
                 this.lengthUnitsSymbol = UnitsFormat.SYMBOL_KILOMETERS;
@@ -380,7 +346,7 @@ public class UnitsFormat extends AVListImpl
                 this.lengthUnitsSymbol = UnitsFormat.SYMBOL_FEET;
             }
             default -> {
-                this.lengthUnitsMultiplier = 1d;
+                this.lengthUnitsMultiplier = 1.0d;
                 this.lengthUnitsSymbol = UnitsFormat.SYMBOL_METERS;
             }
         }
@@ -391,8 +357,7 @@ public class UnitsFormat extends AVListImpl
      *
      * @return the conversion multiplier to convert meters to the current length units.
      */
-    public double getLengthUnitsMultiplier()
-    {
+    public double getLengthUnitsMultiplier() {
         return this.lengthUnitsMultiplier;
     }
 
@@ -402,8 +367,7 @@ public class UnitsFormat extends AVListImpl
      *
      * @return the units symbol for the current altitude units.
      */
-    public String getAltitudeUnitsSymbol()
-    {
+    public String getAltitudeUnitsSymbol() {
         return this.altitudeUnitsSymbol;
     }
 
@@ -411,10 +375,9 @@ public class UnitsFormat extends AVListImpl
      * Returns the current altitude units.
      *
      * @return the current altitude units. See {@link #UnitsFormat(String, String, boolean)} for the list of those
-     *         available.
+     * available.
      */
-    public String getAltitudeUnits()
-    {
+    public String getAltitudeUnits() {
         return this.altitudeUnits;
     }
 
@@ -424,13 +387,10 @@ public class UnitsFormat extends AVListImpl
      *
      * @param altitudeUnits the desired altitude units. See {@link #UnitsFormat(String, String, boolean)} for the list
      *                      of those available.
-     *
      * @throws IllegalArgumentException if <code>lengthUnits</code> is null.
      */
-    public void setAltitudeUnits(String altitudeUnits)
-    {
-        if (altitudeUnits == null)
-        {
+    public void setAltitudeUnits(String altitudeUnits) {
+        if (altitudeUnits == null) {
             String msg = Logging.getMessage("nullValue.AltitudeUnit");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -438,8 +398,7 @@ public class UnitsFormat extends AVListImpl
 
         this.altitudeUnits = altitudeUnits;
 
-        switch (altitudeUnits)
-        {
+        switch (altitudeUnits) {
             case UnitsFormat.KILOMETERS -> {
                 this.altitudeUnitsMultiplier = WWMath.METERS_TO_KILOMETERS;
                 this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_KILOMETERS;
@@ -461,7 +420,7 @@ public class UnitsFormat extends AVListImpl
                 this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_FEET;
             }
             default -> {
-                this.altitudeUnitsMultiplier = 1d;
+                this.altitudeUnitsMultiplier = 1.0d;
                 this.altitudeUnitsSymbol = UnitsFormat.SYMBOL_METERS;
             }
         }
@@ -472,8 +431,7 @@ public class UnitsFormat extends AVListImpl
      *
      * @return the conversion multiplier to convert meters to the current altitude units.
      */
-    public double getAltitudeUnitsMultiplier()
-    {
+    public double getAltitudeUnitsMultiplier() {
         return this.altitudeUnitsMultiplier;
     }
 
@@ -481,10 +439,9 @@ public class UnitsFormat extends AVListImpl
      * Returns the current area units.
      *
      * @return the current area units. See {@link #UnitsFormat(String, String, boolean)} for the list of those
-     *         available.
+     * available.
      */
-    public String getAreaUnits()
-    {
+    public String getAreaUnits() {
         return this.areaUnits;
     }
 
@@ -494,13 +451,10 @@ public class UnitsFormat extends AVListImpl
      *
      * @param areaUnits the desired length units. See {@link #UnitsFormat(String, String, boolean)} for the list of
      *                  those available.
-     *
      * @throws IllegalArgumentException if <code>areaUnits</code> is null.
      */
-    public void setAreaUnits(String areaUnits)
-    {
-        if (areaUnits == null)
-        {
+    public void setAreaUnits(String areaUnits) {
+        if (areaUnits == null) {
             String msg = Logging.getMessage("nullValue.AreaUnit");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -508,8 +462,7 @@ public class UnitsFormat extends AVListImpl
 
         this.areaUnits = areaUnits;
 
-        switch (areaUnits)
-        {
+        switch (areaUnits) {
             case UnitsFormat.SQUARE_KILOMETERS -> {
                 this.areaUnitsMultiplier = WWMath.SQUARE_METERS_TO_SQUARE_KILOMETERS;
                 this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_KILOMETERS;
@@ -535,7 +488,7 @@ public class UnitsFormat extends AVListImpl
                 this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_FEET;
             }
             default -> {
-                this.areaUnitsMultiplier = 1d;
+                this.areaUnitsMultiplier = 1.0d;
                 this.areaUnitsSymbol = UnitsFormat.SYMBOL_SQUARE_METERS;
             }
         }
@@ -546,8 +499,7 @@ public class UnitsFormat extends AVListImpl
      *
      * @return the conversion multiplier to convert square meters to the current area units.
      */
-    public double getAreaUnitsMultiplier()
-    {
+    public double getAreaUnitsMultiplier() {
         return this.areaUnitsMultiplier;
     }
 
@@ -557,8 +509,7 @@ public class UnitsFormat extends AVListImpl
      *
      * @return the units symbol for the current area units.
      */
-    public String getAreaUnitsSymbol()
-    {
+    public String getAreaUnitsSymbol() {
         return this.areaUnitsSymbol;
     }
 
@@ -568,26 +519,21 @@ public class UnitsFormat extends AVListImpl
      * square miles.
      *
      * @param unitsSystem the desired units system, either <code>METRIC_SYSTEM</code> or <code>IMPERIAL_SYSTEM</code>.
-     *
      * @throws IllegalArgumentException if <code>unitsSystem</code> is null.
      */
-    public void setUnitsSystem(String unitsSystem)
-    {
-        if (unitsSystem == null)
-        {
+    public void setUnitsSystem(String unitsSystem) {
+        if (unitsSystem == null) {
             String msg = Logging.getMessage("nullValue.UnitsSystem");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (unitsSystem.equals(UnitsFormat.IMPERIAL_SYSTEM))
-        {
+        if (unitsSystem.equals(UnitsFormat.IMPERIAL_SYSTEM)) {
             this.setLengthUnits(UnitsFormat.MILES);
             this.setAltitudeUnits(UnitsFormat.MILES);
             this.setAreaUnits(UnitsFormat.SQUARE_MILES);
         }
-        else
-        {
+        else {
             this.setLengthUnits(UnitsFormat.KILOMETERS);
             this.setAltitudeUnits(UnitsFormat.KILOMETERS);
             this.setAreaUnits(UnitsFormat.SQUARE_KILOMETERS);
@@ -600,8 +546,7 @@ public class UnitsFormat extends AVListImpl
      *
      * @return the current units system for lengths.
      */
-    public String getLengthUnitsSystem()
-    {
+    public String getLengthUnitsSystem() {
         if (this.getLengthUnits().equals(UnitsFormat.METERS)
             || this.getLengthUnits().equals(UnitsFormat.KILOMETERS))
             return UnitsFormat.METRIC_SYSTEM;
@@ -615,12 +560,11 @@ public class UnitsFormat extends AVListImpl
      *
      * @return the current units system for areas.
      */
-    public String getAreaUnitsSystem()
-    {
+    public String getAreaUnitsSystem() {
         if (this.getAreaUnits().equals(UnitsFormat.SQUARE_METERS)
             || this.getAreaUnits().equals(UnitsFormat.SQUARE_KILOMETERS)
             || this.getAreaUnits().equals(UnitsFormat.HECTARE)
-            )
+        )
             return UnitsFormat.METRIC_SYSTEM;
         else
             return UnitsFormat.IMPERIAL_SYSTEM;
@@ -632,15 +576,11 @@ public class UnitsFormat extends AVListImpl
      * The value is formatted using the current {@link #LABEL_LATITUDE} and angle format.
      *
      * @param angle the angle to format.
-     *
      * @return a string containing the formatted angle and ending with the new-line character.
-     *
      * @throws IllegalArgumentException if the angle is null.
      */
-    public String latitudeNL(Angle angle)
-    {
-        if (angle == null)
-        {
+    public String latitudeNL(Angle angle) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -655,15 +595,11 @@ public class UnitsFormat extends AVListImpl
      * The value is formatted using the current {@link #LABEL_LATITUDE} and angle format.
      *
      * @param angle the angle to format.
-     *
      * @return a string containing the formatted angle.
-     *
      * @throws IllegalArgumentException if the angle is null.
      */
-    public String latitude(Angle angle)
-    {
-        if (angle == null)
-        {
+    public String latitude(Angle angle) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -678,13 +614,10 @@ public class UnitsFormat extends AVListImpl
      * The value is formatted using the current {@link #LABEL_LONGITUDE} and angle format.
      *
      * @param angle the angle to format.
-     *
      * @return a string containing the formatted angle and ending with the new-line character.
      */
-    public String longitudeNL(Angle angle)
-    {
-        if (angle == null)
-        {
+    public String longitudeNL(Angle angle) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -699,15 +632,11 @@ public class UnitsFormat extends AVListImpl
      * The value is formatted using the current {@link #LABEL_LONGITUDE} and angle format.
      *
      * @param angle the angle to format.
-     *
      * @return a string containing the formatted angle.
-     *
      * @throws IllegalArgumentException if the angle is null.
      */
-    public String longitude(Angle angle)
-    {
-        if (angle == null)
-        {
+    public String longitude(Angle angle) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -722,13 +651,10 @@ public class UnitsFormat extends AVListImpl
      * The value is formatted using the current {@link #LABEL_HEADING} and angle format.
      *
      * @param angle the heading angle to format.
-     *
      * @return a string containing the formatted angle and ending with the new-line character.
-     *
      * @throws IllegalArgumentException if the angle is null.
      */
-    public String headingNL(Angle angle)
-    {
+    public String headingNL(Angle angle) {
         return this.angleNL(this.getLabel(LABEL_HEADING), angle);
     }
 
@@ -738,15 +664,11 @@ public class UnitsFormat extends AVListImpl
      * The value is formatted using the current {@link #LABEL_HEADING} and angle format.
      *
      * @param angle the heading angle to format.
-     *
      * @return a string containing the formatted angle.
-     *
      * @throws IllegalArgumentException if the angle is null.
      */
-    public String heading(Angle angle)
-    {
-        if (angle == null)
-        {
+    public String heading(Angle angle) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -762,11 +684,9 @@ public class UnitsFormat extends AVListImpl
      * <code>FORMAT_HEADING</code> is " %9.2f\u00b0".
      *
      * @param heading the angle to format.
-     *
      * @return a string containing the formatted angle and ending with the new-line character.
      */
-    public String headingNL(double heading)
-    {
+    public String headingNL(double heading) {
         return this.heading(heading) + NL;
     }
 
@@ -777,11 +697,9 @@ public class UnitsFormat extends AVListImpl
      * <code>FORMAT_HEADING</code> is " %9.2f\u00b0".
      *
      * @param heading the angle to format.
-     *
      * @return a string containing the formatted angle.
      */
-    public String heading(double heading)
-    {
+    public String heading(double heading) {
         return String.format(this.getLabel(LABEL_HEADING) + this.getFormat(FORMAT_HEADING), heading);
     }
 
@@ -792,15 +710,11 @@ public class UnitsFormat extends AVListImpl
      * format.
      *
      * @param latlon the angles to format.
-     *
      * @return a string containing the formatted angles and ending with the new-line character.
-     *
      * @throws IllegalArgumentException if <code>latlon</code> is null.
      */
-    public String latLonNL(LatLon latlon)
-    {
-        if (latlon == null)
-        {
+    public String latLonNL(LatLon latlon) {
+        if (latlon == null) {
             String msg = Logging.getMessage("nullValue.LatLonIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -816,15 +730,11 @@ public class UnitsFormat extends AVListImpl
      * format.
      *
      * @param latlon the angles to format.
-     *
      * @return a string containing the formatted angles.
-     *
      * @throws IllegalArgumentException if <code>latlon</code> is null.
      */
-    public String latLon(LatLon latlon)
-    {
-        if (latlon == null)
-        {
+    public String latLon(LatLon latlon) {
+        if (latlon == null) {
             String msg = Logging.getMessage("nullValue.LatLonIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -835,18 +745,14 @@ public class UnitsFormat extends AVListImpl
     }
 
     /**
-     * Format angles with {@link #latLon2(gov.nasa.worldwind.geom.LatLon)} and append a new-line character.
+     * Format angles with {@link #latLon2(LatLon)} and append a new-line character.
      *
      * @param latlon the angles to format.
-     *
      * @return a string containing the formatted angles and ending with the new-line character.
-     *
      * @throws IllegalArgumentException if <code>latlon</code> is null.
      */
-    public String latLon2NL(LatLon latlon)
-    {
-        if (latlon == null)
-        {
+    public String latLon2NL(LatLon latlon) {
+        if (latlon == null) {
             String msg = Logging.getMessage("nullValue.LatLonIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -860,15 +766,11 @@ public class UnitsFormat extends AVListImpl
      * 85\u00B0S".
      *
      * @param latlon the angles to format.
-     *
      * @return a string containing the formatted angles.
-     *
      * @throws IllegalArgumentException if <code>latlon</code> is null.
      */
-    public String latLon2(LatLon latlon)
-    {
-        if (latlon == null)
-        {
+    public String latLon2(LatLon latlon) {
+        if (latlon == null) {
             String msg = Logging.getMessage("nullValue.LatLonIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -889,16 +791,12 @@ public class UnitsFormat extends AVListImpl
      *
      * @param label a label to prepend to the formatted angle. May be null to indicate no label.
      * @param angle the angle to format.
-     *
      * @return a string containing the formatted angle prepended with the specified label and ending with the new-line
-     *         character.
-     *
+     * character.
      * @throws IllegalArgumentException if the angle is null.
      */
-    public String angleNL(String label, Angle angle)
-    {
-        if (angle == null)
-        {
+    public String angleNL(String label, Angle angle) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -912,15 +810,11 @@ public class UnitsFormat extends AVListImpl
      *
      * @param label a label to prepend to the formatted angle. May be null to indicate no label.
      * @param angle the angle to format.
-     *
      * @return a string containing the formatted angle prepended with the specified label.
-     *
      * @throws IllegalArgumentException if the angle is null.
      */
-    public String angle(String label, Angle angle)
-    {
-        if (angle == null)
-        {
+    public String angle(String label, Angle angle) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -942,11 +836,9 @@ public class UnitsFormat extends AVListImpl
      * format.
      *
      * @param metersAltitude the eye altitude to format, in meters.
-     *
      * @return a string containing the formatted eye altitude and ending with the new-line character.
      */
-    public String eyeAltitudeNL(double metersAltitude)
-    {
+    public String eyeAltitudeNL(double metersAltitude) {
         return this.eyeAltitude(metersAltitude) + NL;
     }
 
@@ -957,11 +849,9 @@ public class UnitsFormat extends AVListImpl
      * format.
      *
      * @param metersAltitude the eye altitude to format, in meters.
-     *
      * @return a string containing the formatted eye altitude.
      */
-    public String eyeAltitude(double metersAltitude)
-    {
+    public String eyeAltitude(double metersAltitude) {
         if (this.getFormat(FORMAT_EYE_ALTITUDE).contains("f"))
             return String.format(this.getLabel(LABEL_EYE_ALTITUDE) + this.getFormat(FORMAT_EYE_ALTITUDE),
                 metersAltitude * this.getAltitudeUnitsMultiplier(),
@@ -979,11 +869,9 @@ public class UnitsFormat extends AVListImpl
      * <code>FORMAT_PITCH</code> is " %9.2f\u00b0".
      *
      * @param pitch the angle to format.
-     *
      * @return a string containing the formatted angle and ending with the new-line character.
      */
-    public String pitchNL(double pitch)
-    {
+    public String pitchNL(double pitch) {
         return this.pitch(pitch) + NL;
     }
 
@@ -994,11 +882,9 @@ public class UnitsFormat extends AVListImpl
      * <code>FORMAT_PITCH</code> is " %9.2f\u00b0".
      *
      * @param pitch the angle to format.
-     *
      * @return a string containing the formatted angle.
      */
-    public String pitch(double pitch)
-    {
+    public String pitch(double pitch) {
         return String.format(this.getLabel(LABEL_PITCH) + this.getFormat(FORMAT_PITCH), pitch);
     }
 
@@ -1008,11 +894,9 @@ public class UnitsFormat extends AVListImpl
      * The value is formatted using the current {@link #LABEL_UTM_ZONE}.
      *
      * @param zone the UTM zone to format.
-     *
      * @return the formatted UTM zone ending with a new-line character.
      */
-    public String utmZoneNL(int zone)
-    {
+    public String utmZoneNL(int zone) {
         return this.utmZone(zone) + NL;
     }
 
@@ -1022,11 +906,9 @@ public class UnitsFormat extends AVListImpl
      * The value is formatted using the current {@link #LABEL_UTM_ZONE}.
      *
      * @param zone the UTM zone to format.
-     *
      * @return the formatted UTM zone.
      */
-    public String utmZone(int zone)
-    {
+    public String utmZone(int zone) {
         return String.format(this.getLabel(LABEL_UTM_ZONE) + " %2d", zone);
     }
 
@@ -1038,11 +920,9 @@ public class UnitsFormat extends AVListImpl
      * northing units are always meters.
      *
      * @param northing the UTM northing to format.
-     *
      * @return the formatted UTM northing ending with a new-line character.
      */
-    public String utmNorthingNL(double northing)
-    {
+    public String utmNorthingNL(double northing) {
         return this.utmNorthing(northing) + NL;
     }
 
@@ -1054,11 +934,9 @@ public class UnitsFormat extends AVListImpl
      * northing units are always meters.
      *
      * @param northing the UTM northing to format.
-     *
      * @return the formatted UTM northing.
      */
-    public String utmNorthing(double northing)
-    {
+    public String utmNorthing(double northing) {
         return String.format(this.getLabel(LABEL_UTM_NORTHING) + this.getFormat(FORMAT_UTM_NORTHING), northing);
     }
 
@@ -1070,11 +948,9 @@ public class UnitsFormat extends AVListImpl
      * units are always meters.
      *
      * @param easting the UTM northing to format.
-     *
      * @return the formatted UTM easting ending with a new-line character.
      */
-    public String utmEastingNL(double easting)
-    {
+    public String utmEastingNL(double easting) {
         return this.utmEasting(easting) + NL;
     }
 
@@ -1086,11 +962,9 @@ public class UnitsFormat extends AVListImpl
      * units are always meters.
      *
      * @param easting the UTM northing to format.
-     *
      * @return the formatted UTM easting.
      */
-    public String utmEasting(double easting)
-    {
+    public String utmEasting(double easting) {
         return String.format(this.getLabel(LABEL_UTM_EASTING) + this.getFormat(FORMAT_UTM_EASTING), easting);
     }
 
@@ -1100,11 +974,9 @@ public class UnitsFormat extends AVListImpl
      *
      * @param metersElevation      the terrain height in meters.
      * @param verticalExaggeration the vertical exaggeration to apply to the terrain height.
-     *
      * @return the formatted terrain height ending with a new-line character.
      */
-    public String terrainHeightNL(double metersElevation, double verticalExaggeration)
-    {
+    public String terrainHeightNL(double metersElevation, double verticalExaggeration) {
         return this.terrainHeight(metersElevation, verticalExaggeration) + NL;
     }
 
@@ -1122,21 +994,17 @@ public class UnitsFormat extends AVListImpl
      *
      * @param metersElevation      the terrain height in meters.
      * @param verticalExaggeration the vertical exaggeration to apply to the terrain height.
-     *
      * @return the formatted terrain height ending with a new-line character.
      */
-    public String terrainHeight(double metersElevation, double verticalExaggeration)
-    {
+    public String terrainHeight(double metersElevation, double verticalExaggeration) {
         double multiplier;
         String symbol;
 
-        if (this.getLengthUnitsSystem().equals(UnitsFormat.METRIC_SYSTEM))
-        {
-            multiplier = 1d;
+        if (this.getLengthUnitsSystem().equals(UnitsFormat.METRIC_SYSTEM)) {
+            multiplier = 1.0d;
             symbol = UnitsFormat.SYMBOL_METERS;
         }
-        else
-        {
+        else {
             multiplier = WWMath.METERS_TO_FEET;
             symbol = UnitsFormat.SYMBOL_FEET;
         }
@@ -1155,11 +1023,9 @@ public class UnitsFormat extends AVListImpl
      *
      * @param label  the label to prepend to the formatted length. May be null to indicate no label.
      * @param meters the length to format, in meters.
-     *
      * @return the formatted length with the specified label prepended and a new-line character appended.
      */
-    public String lengthNL(String label, double meters)
-    {
+    public String lengthNL(String label, double meters) {
         return this.length(label, meters) + NL;
     }
 
@@ -1172,11 +1038,9 @@ public class UnitsFormat extends AVListImpl
      *
      * @param label  the label to prepend to the formatted length. May be null to indicate no label.
      * @param meters the length to format, in meters.
-     *
      * @return the formatted length with the specified label prepended.
      */
-    public String length(String label, double meters)
-    {
+    public String length(String label, double meters) {
         String s = String.format(this.getFormat(FORMAT_LENGTH), meters * this.getLengthUnitsMultiplier(),
             this.getLengthUnitsSymbol()).trim();
 
@@ -1193,11 +1057,9 @@ public class UnitsFormat extends AVListImpl
      *
      * @param label        the label to prepend to the formatted length. May be null to indicate no label.
      * @param squareMeters the area value to format, in square meters.
-     *
      * @return the formatted area with the specified label prepended and a new-line character appended.
      */
-    public String areaNL(String label, double squareMeters)
-    {
+    public String areaNL(String label, double squareMeters) {
         return this.area(label, squareMeters) + NL;
     }
 
@@ -1210,11 +1072,9 @@ public class UnitsFormat extends AVListImpl
      *
      * @param label        the label to prepend to the formatted length. May be null to indicate no label.
      * @param squareMeters the area value to format, in square meters.
-     *
      * @return the formatted area with the specified label prepended.
      */
-    public String area(String label, double squareMeters)
-    {
+    public String area(String label, double squareMeters) {
         String s = String.format(this.getFormat(FORMAT_AREA), squareMeters * this.getAreaUnitsMultiplier(),
             this.getAreaUnitsSymbol()).trim();
 

@@ -11,8 +11,8 @@
  * and {@link gov.nasa.worldwind.view.firstperson}.
  * </p>
  * The {@link gov.nasa.worldwind.View} interface is based on the premise that a view's position and orientation can be
- * defined as Position(latitude, longitude, elevation), heading, pitch, and roll. The
- * {@link gov.nasa.worldwind.view.ViewUtil} class provides utility methods for:
+ * defined as Position(latitude, longitude, elevation), heading, pitch, and roll. The {@link
+ * gov.nasa.worldwind.view.ViewUtil} class provides utility methods for:
  * <ol>
  * <li>
  * Constructing modelview matrices for use in OpenGL from this basic geocentric position/orientation.
@@ -30,6 +30,5 @@
  * single {@link gov.nasa.worldwind.View} instance may not be used simultaneously on {@link gov.nasa.worldwind.Model}s
  * with different {@link gov.nasa.worldwind.globes.Globe}s.
  * </p>
- *
  */
 package gov.nasa.worldwind.view;

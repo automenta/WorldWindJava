@@ -12,15 +12,14 @@ import java.util.List;
 
 /**
  * Common interface for renderables that are drawn on the Globe's terrain surface, such as {@link
- * gov.nasa.worldwind.render.SurfaceShape}. SurfaceRenderable extends the Renderable interface by adding an interface
+ * SurfaceShape}. SurfaceRenderable extends the Renderable interface by adding an interface
  * for determining the geographic region that bounds the renderable, and an interface for determining when the
  * renderable has changed.
  *
  * @author dcollins
  * @version $Id: SurfaceRenderable.java 2283 2014-08-30 15:58:43Z dcollins $
  */
-public interface SurfaceRenderable extends Renderable
-{
+public interface SurfaceRenderable extends Renderable {
     /**
      * Returns a list of sectors indicating the geographic region that bounds this renderable for the specified draw
      * context.
@@ -30,7 +29,6 @@ public interface SurfaceRenderable extends Renderable
      * either side of the anti-meridian.
      *
      * @param dc the draw context for which to determine this renderable's geographic bounds.
-     *
      * @return a list of one or two sectors that bound this renderable.
      */
     List<Sector> getSectors(DrawContext dc);
@@ -44,7 +42,6 @@ public interface SurfaceRenderable extends Renderable
      * false.
      *
      * @param dc the draw context for which to determine this renderable's current state.
-     *
      * @return an object representing this renderable's current state.
      */
     Object getStateKey(DrawContext dc);

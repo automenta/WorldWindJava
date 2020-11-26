@@ -18,10 +18,8 @@ package gov.nasa.worldwindx.examples;
  * @author dcollins
  * @version $Id: SurfaceShapes.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SurfaceShapes extends DraggingShapes
-{
-    public static void main(String[] args)
-    {
+public class SurfaceShapes extends DraggingShapes {
+    public static void main(String[] args) {
         ApplicationTemplate.start("WorldWind Surface Shapes", AppFrame.class);
     }
 }

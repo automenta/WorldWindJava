@@ -14,7 +14,6 @@ import javax.swing.*;
  * @author tag
  * @version $Id: FeaturePanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface FeaturePanel extends WWOPanel, Feature
-{
+public interface FeaturePanel extends WWOPanel, Feature {
     JComponent[] getDialogControls();
 }

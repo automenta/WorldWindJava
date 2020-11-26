@@ -13,10 +13,9 @@ import gov.nasa.worldwind.geom.Position;
  *
  * @author pabercrombie
  * @version $Id: TacticalPoint.java 1171 2013-02-11 21:45:02Z dcollins $
- * @see TacticalGraphicFactory#createPoint(String, gov.nasa.worldwind.geom.Position, gov.nasa.worldwind.avlist.AVList)
+ * @see TacticalGraphicFactory#createPoint(String, Position, gov.nasa.worldwind.avlist.AVList)
  */
-public interface TacticalPoint extends TacticalGraphic
-{
+public interface TacticalPoint extends TacticalGraphic {
     /**
      * Indicates the position of the graphic.
      *

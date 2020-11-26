@@ -7,13 +7,12 @@
 package gov.nasa.worldwind.util.xml;
 
 /**
- * The interface that receives {@link gov.nasa.worldwind.util.xml.XMLEventParserContext} notifications.
+ * The interface that receives {@link XMLEventParserContext} notifications.
  *
  * @author tag
  * @version $Id: XMLParserNotificationListener.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface XMLParserNotificationListener
-{
+public interface XMLParserNotificationListener {
     /**
      * Receives notification events from the parser context.
      *

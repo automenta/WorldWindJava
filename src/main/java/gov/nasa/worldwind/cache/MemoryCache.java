@@ -9,37 +9,10 @@ package gov.nasa.worldwind.cache;
  * @author Eric Dalgliesh
  * @version $Id: MemoryCache.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface MemoryCache
-{
-    void setName(String name);
-
+public interface MemoryCache {
     String getName();
 
-    /**
-     * Provides the interface for cache clients to be notified of key events. Currently the only key event is the
-     * removal of an entry from the cache. A client may need to know a removal instigated by the cache occurred in order
-     * to adjust its own state or to free resources associated with the removed entry.
-     */
-    interface CacheListener
-    {
-        /**
-         * Called just after an entry has been removed from the cache. Listeners should deallocate any resources that
-         * won't be deallocated by normal garbage collection.
-         *
-         * @param key          the entry's cache key.
-         * @param clientObject the cached object.
-         */
-        void entryRemoved(Object key, Object clientObject);
-
-        /**
-         * Called when an exception occurs within the {@link #entryRemoved(Object, Object)} call.
-         *
-         * @param exception    the exception that occurred.
-         * @param key          the entry's cache key.
-         * @param clientObject the cached object.
-         */
-        void removalException(Throwable exception, Object key, Object clientObject);
-    }
+    void setName(String name);
 
     /**
      * Adds a new <code>cacheListener</code>, which will be sent notification whenever an entry is removed from the
@@ -57,11 +30,10 @@ public interface MemoryCache
     void removeCacheListener(CacheListener listener);
 
     /**
-     * Discovers whether or not this cache contains the object referenced by <code> key </code>. Currently no interface exists
-     * to discover if an object resides in the cache by referencing itself.
+     * Discovers whether or not this cache contains the object referenced by <code> key </code>. Currently no interface
+     * exists to discover if an object resides in the cache by referencing itself.
      *
      * @param key the key which the object is referenced by.
-     *
      * @return true if the key is found in the cache, false otherwise.
      */
     boolean contains(Object key);
@@ -79,7 +51,6 @@ public interface MemoryCache
      * @param key          an object used to reference the cached item.
      * @param clientObject the item to be cached.
      * @param objectSize   the size of the item in cache units.
-     *
      * @return true if object was added, false otherwise.
      */
     boolean add(Object key, Object clientObject, long objectSize);
@@ -92,9 +63,7 @@ public interface MemoryCache
      *
      * @param key          an object used to reference the cached item.
      * @param clientObject the item to be cached.
-     *
      * @return true if object was added, false otherwise.
-     *
      * @see Cacheable
      */
     boolean add(Object key, Cacheable clientObject);
@@ -112,7 +81,6 @@ public interface MemoryCache
      * returns null.
      *
      * @param key an <code>Object</code> used to represent the item to retrieve.
-     *
      * @return the requested <code>Object</code> if found, null otherwise.
      */
     Object getObject(Object key);
@@ -126,9 +94,6 @@ public interface MemoryCache
      */
     void clear();
 
-    /* *************************************************************************/
-    // capacity related accessors
-
     /**
      * Retrieve the number of items stored in the <code>MemoryCache</code>.
      *
@@ -136,12 +101,24 @@ public interface MemoryCache
      */
     int getNumObjects();
 
+    /* *************************************************************************/
+    // capacity related accessors
+
     /**
      * Retrieves the maximum size of the cache.
      *
      * @return the maximum size of the <code>MemoryCache</code>.
      */
     long getCapacity();
+
+    /**
+     * Sets the maximum capacity for this <code>cache</code>. This capacity has no impact on the number of items stored
+     * in the <code>MemoryCache</code>, except that every item must have a positive size. Generally the used capacity is
+     * the total of the sizes of all stored items.
+     *
+     * @param capacity the new capacity.
+     */
+    void setCapacity(long capacity);
 
     /**
      * Retrieves the amount of used <code>MemoryCache</code> space. The value returned is in cache units.
@@ -181,11 +158,27 @@ public interface MemoryCache
     void setLowWater(long loWater);
 
     /**
-     * Sets the maximum capacity for this <code>cache</code>. This capacity has no impact on the number of items stored
-     * in the <code>MemoryCache</code>, except that every item must have a positive size. Generally the used capacity is
-     * the total of the sizes of all stored items.
-     *
-     * @param capacity the new capacity.
+     * Provides the interface for cache clients to be notified of key events. Currently the only key event is the
+     * removal of an entry from the cache. A client may need to know a removal instigated by the cache occurred in order
+     * to adjust its own state or to free resources associated with the removed entry.
      */
-    void setCapacity(long capacity);
+    interface CacheListener {
+        /**
+         * Called just after an entry has been removed from the cache. Listeners should deallocate any resources that
+         * won't be deallocated by normal garbage collection.
+         *
+         * @param key          the entry's cache key.
+         * @param clientObject the cached object.
+         */
+        void entryRemoved(Object key, Object clientObject);
+
+        /**
+         * Called when an exception occurs within the {@link #entryRemoved(Object, Object)} call.
+         *
+         * @param exception    the exception that occurred.
+         * @param key          the entry's cache key.
+         * @param clientObject the cached object.
+         */
+        void removalException(Throwable exception, Object key, Object clientObject);
+    }
 }

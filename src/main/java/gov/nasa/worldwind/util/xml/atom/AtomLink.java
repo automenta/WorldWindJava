@@ -18,50 +18,41 @@ import javax.xml.stream.events.*;
  * @author tag
  * @version $Id: AtomLink.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AtomLink extends AtomAbstractObject
-{
-    public AtomLink(String namespaceURI)
-    {
+public class AtomLink extends AtomAbstractObject {
+    public AtomLink(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
     protected void doAddEventAttribute(Attribute attr, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         if ("length".equals(attr.getName().getLocalPart()))
             this.setField(attr.getName(), WWUtil.makeInteger(attr.getValue()));
         else
             super.doAddEventAttribute(attr, ctx, event, args);
     }
 
-    public String getHref()
-    {
+    public String getHref() {
         return (String) this.getField("href");
     }
 
-    public String getRel()
-    {
+    public String getRel() {
         return (String) this.getField("rel");
     }
 
-    public String getType()
-    {
+    public String getType() {
         return (String) this.getField("type");
     }
 
-    public String getHreflang()
-    {
+    public String getHreflang() {
         return (String) this.getField("hreflang");
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return (String) this.getField("title");
     }
 
-    public Integer getLength()
-    {
+    public Integer getLength() {
         return (Integer) this.getField("length");
     }
 }

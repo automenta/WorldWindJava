@@ -20,22 +20,22 @@ import java.util.List;
 import java.util.*;
 
 /**
- * Builds a list of {@link gov.nasa.worldwind.render.SurfaceTile} instances who's content is defined by a specified set
- * of {@link gov.nasa.worldwind.render.SurfaceRenderable} instances. It's typically not necessary to use
+ * Builds a list of {@link SurfaceTile} instances who's content is defined by a specified set
+ * of {@link SurfaceRenderable} instances. It's typically not necessary to use
  * SurfaceObjectTileBuilder directly. WorldWind's default scene controller automatically batches instances of
  * SurfaceRenderable in a single SurfaceObjectTileBuilder. Applications that need to draw basic surface shapes should
- * use or extend {@link gov.nasa.worldwind.render.SurfaceShape} instead of using SurfaceObjectTileBuilder directly.
+ * use or extend {@link SurfaceShape} instead of using SurfaceObjectTileBuilder directly.
  * <p>
  * Surface tiles are built by calling {@link #buildTiles(DrawContext, Iterable)} with an iterable of surface
  * renderables. This assembles a set of surface tiles that meet the resolution requirements for the specified draw
  * context, then draws the surface renderables into those offscreen surface tiles by calling render on each instance.
  * This process may temporarily use the framebuffer to perform offscreen rendering, and therefore should be called
- * during the preRender method of a WorldWind layer. See the {@link gov.nasa.worldwind.render.PreRenderable} interface
- * for details. Once built, the surface tiles can be rendered by a {@link gov.nasa.worldwind.render.SurfaceTileRenderer}.
+ * during the preRender method of a WorldWind layer. See the {@link PreRenderable} interface
+ * for details. Once built, the surface tiles can be rendered by a {@link SurfaceTileRenderer}.
  * <p>
  * By default, SurfaceObjectTileBuilder creates texture tiles with a width and height of 512 pixels, and with internal
  * format <code>GL_RGBA</code>. These parameters are configurable by calling {@link
- * #setTileDimension(java.awt.Dimension)} or {@link #setTileTextureFormat(int)}.
+ * #setTileDimension(Dimension)} or {@link #setTileTextureFormat(int)}.
  * <p>
  * The most common usage pattern for SurfaceObjectTileBuilder is to build the surface tiles from a set of surface
  * renderables during the preRender phase, then draw those surface tiles during the render phase. For example, a
@@ -65,67 +65,90 @@ import java.util.*;
  * @author dcollins
  * @version $Id: SurfaceObjectTileBuilder.java 3108 2015-05-26 19:07:06Z dcollins $
  */
-public class SurfaceObjectTileBuilder
-{
-    /** The default surface tile texture dimension, in pixels. */
+public class SurfaceObjectTileBuilder {
+    /**
+     * The default surface tile texture dimension, in pixels.
+     */
     protected static final int DEFAULT_TEXTURE_DIMENSION = 512;
-    /** The default OpenGL internal format used to create surface tile textures. */
+    /**
+     * The default OpenGL internal format used to create surface tile textures.
+     */
     protected static final int DEFAULT_TEXTURE_INTERNAL_FORMAT = GL.GL_RGBA8;
-    /** The default OpenGL pixel format used to create surface tile textures. */
+    /**
+     * The default OpenGL pixel format used to create surface tile textures.
+     */
     protected static final int DEFAULT_TEXTURE_PIXEL_FORMAT = GL.GL_RGBA;
     /**
      * The default split scale. The split scale 2.9 has been empirically determined to render sharp lines and edges with
      * the SurfaceShapes such as SurfacePolyline and SurfacePolygon.
      */
     protected static final double DEFAULT_SPLIT_SCALE = 2.9;
-    /** The default level zero tile delta used to construct a LevelSet. */
+    /**
+     * The default level zero tile delta used to construct a LevelSet.
+     */
     protected static final LatLon DEFAULT_LEVEL_ZERO_TILE_DELTA = LatLon.fromDegrees(36, 36);
     /**
      * The default number of levels used to construct a LevelSet. Approximately 0.1 meters per pixel at the Earth's
      * equator.
      */
     protected static final int DEFAULT_NUM_LEVELS = 17;
-    /** The next unique ID. This property is shared by all instances of SurfaceObjectTileBuilder. */
-    protected static long nextUniqueId = 1;
     /**
      * Map associating a tile texture dimension to its corresponding LevelSet. This map is a class property in order to
      * share LevelSets across all instances of SurfaceObjectTileBuilder.
      */
     protected static final Map<Dimension, LevelSet> levelSetMap = new HashMap<>();
-
+    /**
+     * The next unique ID. This property is shared by all instances of SurfaceObjectTileBuilder.
+     */
+    protected static long nextUniqueId = 1;
+    /**
+     * List of currently assembled surface renderables. Valid only during the execution of {@link
+     * #buildTiles(DrawContext, Iterable)}.
+     */
+    protected final Collection<SurfaceRenderable> currentSurfaceObjects = new ArrayList<>();
+    /**
+     * List of currently assembled surface tiles.
+     */
+    protected final Map<Object, TileInfo> tileInfoMap = new HashMap<>();
+    /**
+     * Support class used to render to an offscreen surface tile.
+     */
+    protected final OGLRenderToTextureSupport rttSupport = new OGLRenderToTextureSupport();
     /**
      * Indicates the desired tile texture width and height, in pixels. Initially set to
      * <code>DEFAULT_TEXTURE_DIMENSION</code>.
      */
     protected Dimension tileDimension = new Dimension(DEFAULT_TEXTURE_DIMENSION, DEFAULT_TEXTURE_DIMENSION);
-    /** The surface tile OpenGL texture format. 0 indicates the default format is used. */
+    /**
+     * The surface tile OpenGL texture format. 0 indicates the default format is used.
+     */
     protected int tileTextureFormat;
-    /** Controls if surface tiles are rendered using a linear filter or a nearest-neighbor filter. */
+    /**
+     * Controls if surface tiles are rendered using a linear filter or a nearest-neighbor filter.
+     */
     protected boolean useLinearFilter = true;
-    /** Controls if mip-maps are generated for surface tile textures. */
+    /**
+     * Controls if mip-maps are generated for surface tile textures.
+     */
     protected boolean useMipmaps = true;
-    /** Controls if tiles are forced to update during {@link #buildTiles(DrawContext, Iterable)}. */
+    /**
+     * Controls if tiles are forced to update during {@link #buildTiles(DrawContext, Iterable)}.
+     */
     protected boolean forceTileUpdates;
-    /** Controls the tile resolution as distance changes between the globe's surface and the eye point. */
+    /**
+     * Controls the tile resolution as distance changes between the globe's surface and the eye point.
+     */
     protected double splitScale = DEFAULT_SPLIT_SCALE;
     /**
-     * List of currently assembled surface renderables. Valid only during the execution of {@link
-     * #buildTiles(DrawContext, Iterable)}.
+     * The currently active TileInfo. Valid only during the execution of {@link #buildTiles(DrawContext, Iterable)}.
      */
-    protected final List<SurfaceRenderable> currentSurfaceObjects = new ArrayList<>();
-    /** List of currently assembled surface tiles. */
-    protected final Map<Object, TileInfo> tileInfoMap = new HashMap<>();
-    /** The currently active TileInfo. Valid only during the execution of {@link #buildTiles(DrawContext, Iterable)}. */
     protected TileInfo currentInfo;
-    /** Support class used to render to an offscreen surface tile. */
-    protected final OGLRenderToTextureSupport rttSupport = new OGLRenderToTextureSupport();
 
     /**
      * Constructs a new SurfaceObjectTileBuilder with a tile width and height of <code>512</code>, with the default tile
      * texture format, with linear filtering enabled, and with mip-mapping disabled.
      */
-    public SurfaceObjectTileBuilder()
-    {
+    public SurfaceObjectTileBuilder() {
     }
 
     /**
@@ -137,14 +160,11 @@ public class SurfaceObjectTileBuilder
      * @param useLinearFilter      true to use linear filtering while rendering surface tiles; false to use
      *                             nearest-neighbor filtering.
      * @param useMipmaps           true to generate mip-maps for surface tile textures; false otherwise.
-     *
      * @throws IllegalArgumentException if the tile dimension is null.
      */
     public SurfaceObjectTileBuilder(Dimension tileTextureDimension, int tileTextureFormat, boolean useLinearFilter,
-        boolean useMipmaps)
-    {
-        if (tileTextureDimension == null)
-        {
+        boolean useMipmaps) {
+        if (tileTextureDimension == null) {
             String message = Logging.getMessage("nullValue.DimensionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -157,12 +177,38 @@ public class SurfaceObjectTileBuilder
     }
 
     /**
+     * Returns a new LevelSet with the specified tile width and height. The LevelSet overs the full sphere, has a level
+     * zero tile delta of {@link #DEFAULT_LEVEL_ZERO_TILE_DELTA}, has number of levels equal to {@link
+     * #DEFAULT_NUM_LEVELS} (with no empty levels). The LevelSets' cache name and dataset name dummy values, and should
+     * not be used.
+     *
+     * @param tileWidth  the LevelSet's tile width, in pixels.
+     * @param tileHeight the LevelSet's tile height, in pixels.
+     * @return a new LevelSet configured to with
+     */
+    protected static LevelSet createLevelSet(int tileWidth, int tileHeight) {
+        AVList params = new AVListImpl();
+        params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, DEFAULT_LEVEL_ZERO_TILE_DELTA);
+        params.setValue(AVKey.SECTOR, Sector.FULL_SPHERE);
+        params.setValue(AVKey.NUM_LEVELS, DEFAULT_NUM_LEVELS);
+        params.setValue(AVKey.NUM_EMPTY_LEVELS, 0);
+        params.setValue(AVKey.TILE_WIDTH, tileWidth);
+        params.setValue(AVKey.TILE_HEIGHT, tileHeight);
+        // This is a shared LevelSet, so just supply a dummy cache name and dataset name.
+        params.setValue(AVKey.DATA_CACHE_NAME, SurfaceObjectTileBuilder.class.getName());
+        params.setValue(AVKey.DATASET_NAME, SurfaceObjectTileBuilder.class.getName());
+        // We won't use any tile resource paths, so just supply a dummy format suffix.
+        params.setValue(AVKey.FORMAT_SUFFIX, SurfaceObjectTileBuilder.class.getName());
+
+        return new LevelSet(params);
+    }
+
+    /**
      * Returns the surface tile dimension.
      *
      * @return the surface tile dimension, in pixels.
      */
-    public Dimension getTileDimension()
-    {
+    public Dimension getTileDimension() {
         return this.tileDimension;
     }
 
@@ -172,13 +218,10 @@ public class SurfaceObjectTileBuilder
      * specified dimension and the viewport dimension.
      *
      * @param dimension the surface tile dimension, in pixels.
-     *
      * @throws IllegalArgumentException if the dimension is null.
      */
-    public void setTileDimension(Dimension dimension)
-    {
-        if (dimension == null)
-        {
+    public void setTileDimension(Dimension dimension) {
+        if (dimension == null) {
             String message = Logging.getMessage("nullValue.DimensionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -191,11 +234,9 @@ public class SurfaceObjectTileBuilder
      * Returns the surface tile's OpenGL texture format, or 0 to indicate that the default format is used.
      *
      * @return the OpenGL texture format, or 0 if the default format is used.
-     *
      * @see #setTileTextureFormat(int)
      */
-    public int getTileTextureFormat()
-    {
+    public int getTileTextureFormat() {
         return tileTextureFormat;
     }
 
@@ -214,7 +255,7 @@ public class SurfaceObjectTileBuilder
      * <li>GL_RGB10</li> <li>GL_RGB12</li> <li>GL_RGB16</li> <li>GL_RGBA</li> <li>GL_RGBA2</li> <li>GL_RGBA4</li>
      * <li>GL_RGB5_A1</li> <li>GL_RGBA8</li> <li>GL_RGB10_A2</li> <li>GL_RGBA12</li> <li>GL_RGBA16</li>
      * <li>GL_SLUMINANCE</li> <li>GL_SLUMINANCE8</li> <li>GL_SLUMINANCE_ALPHA</li> <li>GL_SLUMINANCE8_ALPHA8</li>
-     * <li>GL_SRGB</li> <li>GL_SRGB8</li> <li>GL_SRGB_ALPHA</li> <li>GL_SRGB8_ALPHA8</li> </ul> 
+     * <li>GL_SRGB</li> <li>GL_SRGB8</li> <li>GL_SRGB_ALPHA</li> <li>GL_SRGB8_ALPHA8</li> </ul>
      * <p>
      * If the texture format is any of <code>GL_RGB, GL_RGB8, GL_RGBA, or GL_RGBA8</code>, the tile builder attempts to
      * use OpenGL framebuffer objects to render shapes to the texture tiles. Otherwise, this renders shapes to the
@@ -222,8 +263,7 @@ public class SurfaceObjectTileBuilder
      *
      * @param textureFormat the OpenGL texture format, or 0 to use the default format.
      */
-    public void setTileTextureFormat(int textureFormat)
-    {
+    public void setTileTextureFormat(int textureFormat) {
         this.tileTextureFormat = textureFormat;
     }
 
@@ -232,8 +272,7 @@ public class SurfaceObjectTileBuilder
      *
      * @return true if linear filtering is used; false if nearest-neighbor filtering is used.
      */
-    public boolean isUseLinearFilter()
-    {
+    public boolean isUseLinearFilter() {
         return useLinearFilter;
     }
 
@@ -242,8 +281,7 @@ public class SurfaceObjectTileBuilder
      *
      * @param useLinearFilter true to use linear filtering; false to use nearest-neighbor filtering.
      */
-    public void setUseLinearFilter(boolean useLinearFilter)
-    {
+    public void setUseLinearFilter(boolean useLinearFilter) {
         this.useLinearFilter = useLinearFilter;
     }
 
@@ -252,8 +290,7 @@ public class SurfaceObjectTileBuilder
      *
      * @return true if mip-maps are generated; false otherwise.
      */
-    public boolean isUseMipmaps()
-    {
+    public boolean isUseMipmaps() {
         return this.useMipmaps;
     }
 
@@ -262,8 +299,7 @@ public class SurfaceObjectTileBuilder
      *
      * @param useMipmaps true to generate mip-maps; false otherwise.
      */
-    public void setUseMipmaps(boolean useMipmaps)
-    {
+    public void setUseMipmaps(boolean useMipmaps) {
         this.useMipmaps = useMipmaps;
     }
 
@@ -275,8 +311,7 @@ public class SurfaceObjectTileBuilder
      * @return true if tile textures always update their contents, false if tile textures only update when the surface
      * renderables change.
      */
-    public boolean isForceTileUpdates()
-    {
+    public boolean isForceTileUpdates() {
         return this.forceTileUpdates;
     }
 
@@ -288,9 +323,19 @@ public class SurfaceObjectTileBuilder
      * @param forceTileUpdates true if tile textures should always update their contents, false if tile textures should
      *                         only update when the surface renderables change.
      */
-    public void setForceTileUpdates(boolean forceTileUpdates)
-    {
+    public void setForceTileUpdates(boolean forceTileUpdates) {
         this.forceTileUpdates = forceTileUpdates;
+    }
+
+    /**
+     * Returns the split scale value controlling the tile's surface texel resolution relative to the distance between
+     * the globe's surface at the image position and the eye point.
+     *
+     * @return the current split scale.
+     * @see #setSplitScale(double)
+     */
+    public double getSplitScale() {
+        return this.splitScale;
     }
 
     /**
@@ -302,37 +347,19 @@ public class SurfaceObjectTileBuilder
      *                   globe's surface and the eye point change. Increasing values select higher resolution,
      *                   decreasing values select lower resolution. The default value is 2.9.
      */
-    public void setSplitScale(double splitScale)
-    {
+    public void setSplitScale(double splitScale) {
         this.splitScale = splitScale;
-    }
-
-    /**
-     * Returns the split scale value controlling the tile's surface texel resolution relative to the distance between
-     * the globe's surface at the image position and the eye point.
-     *
-     * @return the current split scale.
-     *
-     * @see #setSplitScale(double)
-     */
-    public double getSplitScale()
-    {
-        return this.splitScale;
     }
 
     /**
      * Returns the number of SurfaceTiles assembled during the last call to {@link #buildTiles(DrawContext, Iterable)}.
      *
      * @param dc the draw context used to build tiles.
-     *
      * @return a count of SurfaceTiles containing a composite representation of the specified surface renderables.
-     *
      * @throws IllegalArgumentException if the draw context is null.
      */
-    public int getTileCount(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public int getTileCount(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -347,15 +374,11 @@ public class SurfaceObjectTileBuilder
      * Returns the list of SurfaceTiles assembled during the last call to {@link #buildTiles(DrawContext, Iterable)}.
      *
      * @param dc the draw context used to build tiles.
-     *
      * @return a List of SurfaceTiles containing a composite representation of the specified surface renderables.
-     *
      * @throws IllegalArgumentException if the draw context is null.
      */
-    public Collection<? extends SurfaceTile> getTiles(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public Collection<? extends SurfaceTile> getTiles(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -376,13 +399,10 @@ public class SurfaceObjectTileBuilder
      *
      * @param dc       the draw context to build tiles for.
      * @param iterable the iterable to gather surface renderables from.
-     *
      * @throws IllegalArgumentException if the draw context is null.
      */
-    public void buildTiles(DrawContext dc, Iterable<?> iterable)
-    {
-        if (dc == null)
-        {
+    public void buildTiles(DrawContext dc, Iterable<?> iterable) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -390,8 +410,7 @@ public class SurfaceObjectTileBuilder
 
         TileInfoKey tileInfoKey = this.createTileInfoKey(dc);
         this.currentInfo = this.tileInfoMap.get(tileInfoKey);
-        if (this.currentInfo == null)
-        {
+        if (this.currentInfo == null) {
             this.currentInfo = this.createTileInfo(dc);
             this.tileInfoMap.put(tileInfoKey, this.currentInfo);
         }
@@ -417,8 +436,7 @@ public class SurfaceObjectTileBuilder
         // Clear references to surface renderables to avoid dangling references. The surface renderable list is no
         // longer needed, no are the lists held by each tile.
         this.currentSurfaceObjects.clear();
-        for (SurfaceObjectTile tile : this.currentInfo.tiles)
-        {
+        for (SurfaceObjectTile tile : this.currentInfo.tiles) {
             tile.clearObjectList();
         }
     }
@@ -428,13 +446,10 @@ public class SurfaceObjectTileBuilder
      * #buildTiles(DrawContext, Iterable)}.
      *
      * @param dc the draw context used to build tiles.
-     *
      * @throws IllegalArgumentException if the draw context is null.
      */
-    public void clearTiles(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void clearTiles(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -442,8 +457,7 @@ public class SurfaceObjectTileBuilder
 
         Object tileInfoKey = this.createTileInfoKey(dc);
         TileInfo tileInfo = this.tileInfoMap.get(tileInfoKey);
-        if (tileInfo != null)
-        {
+        if (tileInfo != null) {
             tileInfo.tiles.clear();
         }
     }
@@ -453,15 +467,11 @@ public class SurfaceObjectTileBuilder
      * {@link #buildTiles(DrawContext, Iterable)}.
      *
      * @param dc the draw context used to build tiles.
-     *
      * @return the pick candidates associated with the list of SurfaceTiles.
-     *
      * @throws IllegalArgumentException if the draw context is null.
      */
-    public Collection<PickedObject> getPickCandidates(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public Collection<PickedObject> getPickCandidates(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -472,18 +482,19 @@ public class SurfaceObjectTileBuilder
         return tileInfo != null ? tileInfo.pickCandidates : Collections.emptyList();
     }
 
+    //**************************************************************//
+    //********************  Tile Updating  *************************//
+    //**************************************************************//
+
     /**
      * Removes all entries from the list of pickable object candidates assembled during the last call to {@link
      * #buildTiles(DrawContext, Iterable)}.
      *
      * @param dc the draw context used to build tiles.
-     *
      * @throws IllegalArgumentException if the draw context is null.
      */
-    public void clearPickCandidates(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void clearPickCandidates(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -491,15 +502,10 @@ public class SurfaceObjectTileBuilder
 
         Object tileInfoKey = this.createTileInfoKey(dc);
         TileInfo tileInfo = this.tileInfoMap.get(tileInfoKey);
-        if (tileInfo != null)
-        {
+        if (tileInfo != null) {
             tileInfo.pickCandidates.clear();
         }
     }
-
-    //**************************************************************//
-    //********************  Tile Updating  *************************//
-    //**************************************************************//
 
     /**
      * Updates each {@link SurfaceObjectTileBuilder.SurfaceObjectTile} in the {@link #currentInfo}. This is typically
@@ -509,8 +515,7 @@ public class SurfaceObjectTileBuilder
      *
      * @param dc the draw context the tiles relate to.
      */
-    protected void updateTiles(DrawContext dc)
-    {
+    protected void updateTiles(DrawContext dc) {
         if (this.currentInfo.tiles.isEmpty())
             return;
 
@@ -532,15 +537,12 @@ public class SurfaceObjectTileBuilder
                 this.tileTextureFormat == GL.GL_RGBA8);
 
         this.rttSupport.beginRendering(dc, 0, 0, this.currentInfo.tileWidth, this.currentInfo.tileHeight);
-        try
-        {
-            for (SurfaceObjectTile tile : this.currentInfo.tiles)
-            {
+        try {
+            for (SurfaceObjectTile tile : this.currentInfo.tiles) {
                 this.updateTile(dc, tile);
             }
         }
-        finally
-        {
+        finally {
             this.rttSupport.endRendering(dc);
         }
     }
@@ -554,8 +556,7 @@ public class SurfaceObjectTileBuilder
      * @param dc   the draw context the tile relates to.
      * @param tile the tile to update.
      */
-    protected void updateTile(DrawContext dc, SurfaceObjectTile tile)
-    {
+    protected void updateTile(DrawContext dc, SurfaceObjectTile tile) {
         // Get the tile's texture from the draw context's texture cache. If null we create a new texture and update the
         // texture cache below.
         Texture texture = tile.getTexture(dc.getTextureCache());
@@ -567,8 +568,7 @@ public class SurfaceObjectTileBuilder
         // * The tile has no state.
         // * The list of intersecting objects has changed.
         // * An intersecting object's state key is different than one stored in the tile's previous state key.
-        if (!this.isForceTileUpdates())
-        {
+        if (!this.isForceTileUpdates()) {
             Object tileStateKey = tile.getStateKey(dc);
             if (texture != null && tileStateKey.equals(tile.lastUpdateStateKey))
                 return;
@@ -590,8 +590,7 @@ public class SurfaceObjectTileBuilder
             return;
         }
 
-        try
-        {
+        try {
             // Surface renderables expect the SurfaceTileDrawContext to be attached to the draw context's AVList. Create
             // a SurfaceTileDrawContext with the tile's Sector and viewport. The Sector defines the context's geographic
             // extent, and the viewport defines the context's corresponding viewport in pixels.
@@ -600,16 +599,13 @@ public class SurfaceObjectTileBuilder
             this.rttSupport.setColorTarget(dc, texture);
             this.rttSupport.clear(dc, new Color(0, 0, 0, 0)); // Set all texture pixels to transparent black.
 
-            if (tile.hasObjects())
-            {
-                for (SurfaceRenderable so : tile.getObjectList())
-                {
+            if (tile.hasObjects()) {
+                for (SurfaceRenderable so : tile.getObjectList()) {
                     so.render(dc);
                 }
             }
         }
-        finally
-        {
+        finally {
             this.rttSupport.setColorTarget(dc, null);
 
             dc.removeKey(AVKey.SURFACE_TILE_DRAW_CONTEXT);
@@ -622,8 +618,8 @@ public class SurfaceObjectTileBuilder
      * The returned texture's internal format is specified by <code>tilePixelFormat</code>. If
      * <code>tilePixelFormat</code> is zero, this returns a texture with internal format <code>GL_RGBA8</code>.
      * <p>
-     * The returned texture's parameters are configured as follows: <table> <caption style="font-weight: bold;">Parameters</caption><tr><th>Parameter
-     * Name</th><th>Value</th></tr> <tr><td><code>GL.GL_TEXTURE_MIN_FILTER</code></td><td><code>GL_LINEAR_MIPMAP_LINEAR</code>
+     * The returned texture's parameters are configured as follows: <table> <caption style="font-weight:
+     * bold;">Parameters</caption><tr><th>Parameter Name</th><th>Value</th></tr> <tr><td><code>GL.GL_TEXTURE_MIN_FILTER</code></td><td><code>GL_LINEAR_MIPMAP_LINEAR</code>
      * if <code>useLinearFilter</code> and <code>useMipmaps</code> are both true, <code>GL_LINEAR</code> if
      * <code>useLinearFilter</code> is true and <code>useMipmaps</code> is false, and <code>GL_NEAREST</code> if
      * <code>useLinearFilter</code> is false.</td></tr> <tr><td><code>GL.GL_TEXTURE_MAG_FILTER</code></td><td><code>GL_LINEAR</code>
@@ -634,11 +630,9 @@ public class SurfaceObjectTileBuilder
      * @param dc     the draw context to create a texture for.
      * @param width  the texture's width, in pixels.
      * @param height the texture's height, in pixels.
-     *
      * @return a new texture with the specified width and height.
      */
-    protected Texture createTileTexture(DrawContext dc, int width, int height)
-    {
+    protected Texture createTileTexture(DrawContext dc, int width, int height) {
         int internalFormat = this.tileTextureFormat;
         if (internalFormat == 0)
             internalFormat = DEFAULT_TEXTURE_INTERNAL_FORMAT;
@@ -667,8 +661,7 @@ public class SurfaceObjectTileBuilder
              * texture with the common pixel formats.
              */
             @Override
-            public int getEstimatedMemorySize()
-            {
+            public int getEstimatedMemorySize() {
                 int sizeInBytes = OGLUtil.estimateTextureMemorySize(this.getInternalFormat(), this.getWidth(),
                     this.getHeight(), this.getMipmap());
                 if (sizeInBytes > 0)
@@ -688,11 +681,9 @@ public class SurfaceObjectTileBuilder
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
 
-        if (this.isUseMipmaps())
-        {
+        if (this.isUseMipmaps()) {
             double maxAnisotropy = dc.getGLRuntimeCapabilities().getMaxTextureAnisotropy();
-            if (dc.getGLRuntimeCapabilities().isUseAnisotropicTextureFilter() && maxAnisotropy >= 2.0)
-            {
+            if (dc.getGLRuntimeCapabilities().isUseAnisotropicTextureFilter() && maxAnisotropy >= 2.0) {
                 gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAX_ANISOTROPY_EXT, (float) maxAnisotropy);
             }
         }
@@ -700,21 +691,23 @@ public class SurfaceObjectTileBuilder
         return t;
     }
 
+    //**************************************************************//
+    //********************  Surface Renderable Assembly  ***********//
+    //**************************************************************//
+
     /**
      * Returns a new Object representing the drawing context for the specified tile. The returned object should
      * represent the tile's sector and it's corresponding viewport in pixels.
      *
      * @param tile The tile to create a context for.
-     *
      * @return a new drawing context for the specified tile.
      */
-    protected Object createSurfaceTileDrawContext(SurfaceObjectTile tile)
-    {
+    protected Object createSurfaceTileDrawContext(SurfaceObjectTile tile) {
         return new SurfaceTileDrawContext(tile, this.currentInfo.pickCandidates);
     }
 
     //**************************************************************//
-    //********************  Surface Renderable Assembly  ***********//
+    //********************  LevelSet Assembly  *********************//
     //**************************************************************//
 
     /**
@@ -722,19 +715,13 @@ public class SurfaceObjectTileBuilder
      *
      * @param iterable the Iterable to gather SurfaceRenderables from.
      */
-    protected void assembleSurfaceObjects(Iterable<?> iterable)
-    {
+    protected void assembleSurfaceObjects(Iterable<?> iterable) {
         // Gather up all the SurfaceRenderables, ignoring null references and non SurfaceRenderables.
-        for (Object o : iterable)
-        {
+        for (Object o : iterable) {
             if (o instanceof SurfaceRenderable)
                 this.currentSurfaceObjects.add((SurfaceRenderable) o);
         }
     }
-
-    //**************************************************************//
-    //********************  LevelSet Assembly  *********************//
-    //**************************************************************//
 
     /**
      * Returns a shared <code>LevelSet</code> for the specified <code>tileDimension</code>. All instances of
@@ -745,7 +732,8 @@ public class SurfaceObjectTileBuilder
      * The returned LevelSet's cache name and dataset name are dummy values, and should not be used. Use this tile
      * builder's cache name for the specified <code>tileDimension</code> instead.
      * <p>
-     * In practice, there are at most 10 dimensions we use: 512, 256, 128, 64, 32, 16, 8, 4, 2, 1. Therefore keeping the
+     * In practice, there are at most 10 dimensions we use: 512, 256, 128, 64, 32, 16, 8, 4, 2, 1. Therefore keeping
+     * the
      * <code>LevelSet</code>s in a map requires little memory overhead, and ensures each <code>LevelSet</code> is
      * retained once constructed. Retaining references to the <code>LevelSet</code>s means we're able to re-use the
      * texture resources associated with each <code>LevelSet</code> in the <code>DrawContext</code>'s texture cache.
@@ -755,51 +743,19 @@ public class SurfaceObjectTileBuilder
      *
      * @param tileWidth  the tile width, in pixels.
      * @param tileHeight the tile height, in pixels.
-     *
      * @return a LevelSet with the specified tile dimensions.
      */
-    protected LevelSet getLevelSet(int tileWidth, int tileHeight)
-    {
+    protected LevelSet getLevelSet(int tileWidth, int tileHeight) {
         // If we already have a LevelSet for the dimension, just return it. Otherwise create it and put it in a map for
         // use during subsequent calls.
         Dimension key = new Dimension(tileWidth, tileHeight);
         LevelSet levelSet = levelSetMap.get(key);
-        if (levelSet == null)
-        {
+        if (levelSet == null) {
             levelSet = createLevelSet(tileWidth, tileHeight);
             levelSetMap.put(key, levelSet);
         }
 
         return levelSet;
-    }
-
-    /**
-     * Returns a new LevelSet with the specified tile width and height. The LevelSet overs the full sphere, has a level
-     * zero tile delta of {@link #DEFAULT_LEVEL_ZERO_TILE_DELTA}, has number of levels equal to {@link
-     * #DEFAULT_NUM_LEVELS} (with no empty levels). The LevelSets' cache name and dataset name dummy values, and should
-     * not be used.
-     *
-     * @param tileWidth  the LevelSet's tile width, in pixels.
-     * @param tileHeight the LevelSet's tile height, in pixels.
-     *
-     * @return a new LevelSet configured to with
-     */
-    protected static LevelSet createLevelSet(int tileWidth, int tileHeight)
-    {
-        AVList params = new AVListImpl();
-        params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, DEFAULT_LEVEL_ZERO_TILE_DELTA);
-        params.setValue(AVKey.SECTOR, Sector.FULL_SPHERE);
-        params.setValue(AVKey.NUM_LEVELS, DEFAULT_NUM_LEVELS);
-        params.setValue(AVKey.NUM_EMPTY_LEVELS, 0);
-        params.setValue(AVKey.TILE_WIDTH, tileWidth);
-        params.setValue(AVKey.TILE_HEIGHT, tileHeight);
-        // This is a shared LevelSet, so just supply a dummy cache name and dataset name.
-        params.setValue(AVKey.DATA_CACHE_NAME, SurfaceObjectTileBuilder.class.getName());
-        params.setValue(AVKey.DATASET_NAME, SurfaceObjectTileBuilder.class.getName());
-        // We won't use any tile resource paths, so just supply a dummy format suffix.
-        params.setValue(AVKey.FORMAT_SUFFIX, SurfaceObjectTileBuilder.class.getName());
-
-        return new LevelSet(params);
     }
 
     //**************************************************************//
@@ -810,11 +766,9 @@ public class SurfaceObjectTileBuilder
      * Returns true if the draw context's viewport width and height are greater than zero.
      *
      * @param dc the DrawContext to test.
-     *
      * @return true if the DrawContext's has a non-zero viewport; false otherwise.
      */
-    protected boolean canAssembleTiles(DrawContext dc)
-    {
+    protected boolean canAssembleTiles(DrawContext dc) {
         Rectangle viewport = dc.getView().getViewport();
         return viewport.getWidth() > 0 && viewport.getHeight() > 0;
     }
@@ -830,12 +784,11 @@ public class SurfaceObjectTileBuilder
      * intersect. The top level tiles are used as an index to quickly determine which tiles each renderable intersects.
      * Surface renderables are sorted into sub-tiles by simple intersection tests, and are added to each tile's surface
      * renderable list at most once. See {@link SurfaceObjectTileBuilder.SurfaceObjectTile#addSurfaceObject(SurfaceRenderable,
-     * gov.nasa.worldwind.geom.Sector)}. Tiles that don't intersect any surface renderables are discarded.
+     * Sector)}. Tiles that don't intersect any surface renderables are discarded.
      *
      * @param dc the DrawContext to assemble tiles for.
      */
-    protected void assembleTiles(DrawContext dc)
-    {
+    protected void assembleTiles(DrawContext dc) {
         LevelSet levelSet = this.currentInfo.levelSet;
         String tileCacheName = this.currentInfo.cacheName;
 
@@ -847,8 +800,8 @@ public class SurfaceObjectTileBuilder
 
         // Store the top level tiles in a set to ensure that each top level tile is added only once. Store the tiles
         // that intersect each surface renderable in a set to ensure that each object is added to a tile at most once.
-        Set<SurfaceObjectTile> topLevelTiles = new HashSet<>();
-        Set<Object> intersectingTileKeys = new HashSet<>();
+        Collection<SurfaceObjectTile> topLevelTiles = new HashSet<>();
+        Collection<Object> intersectingTileKeys = new HashSet<>();
 
         // Iterate over the current surface renderables, adding each surface renderable to the top level tiles that it
         // intersects. This produces a set of top level tiles containing the surface renderables that intersect each
@@ -856,31 +809,27 @@ public class SurfaceObjectTileBuilder
         // and add object to those tiles. This has the effect of quickly sorting the objects into the top level tiles.
         // We collect the top level tiles in a HashSet to ensure there are no duplicates when multiple objects intersect
         // the same top level tiles.
-        for (SurfaceRenderable so : this.currentSurfaceObjects)
-        {
+        for (SurfaceRenderable so : this.currentSurfaceObjects) {
             List<Sector> sectors = so.getSectors(dc);
             if (sectors == null)
                 continue;
 
-            for (Sector s : sectors)
-            {
+            for (Sector s : sectors) {
                 // Use the LevelSets tiling scheme to index the surface renderable's sector into the top level tiles.
                 // This index operation is faster than computing an intersection test between each tile and the list of
                 // surface renderables.
-                int firstRow = Tile.computeRow(dLat, s.getMinLatitude(), latOrigin);
-                int firstCol = Tile.computeColumn(dLon, s.getMinLongitude(), lonOrigin);
-                int lastRow = Tile.computeRow(dLat, s.getMaxLatitude(), latOrigin);
-                int lastCol = Tile.computeColumn(dLon, s.getMaxLongitude(), lonOrigin);
+                int firstRow = Tile.computeRow(dLat, s.latMin(), latOrigin);
+                int firstCol = Tile.computeColumn(dLon, s.lonMin(), lonOrigin);
+                int lastRow = Tile.computeRow(dLat, s.latMax(), latOrigin);
+                int lastCol = Tile.computeColumn(dLon, s.lonMax(), lonOrigin);
 
                 Angle p1 = Tile.computeRowLatitude(firstRow, dLat, latOrigin);
-                for (int row = firstRow; row <= lastRow; row++)
-                {
+                for (int row = firstRow; row <= lastRow; row++) {
                     Angle p2;
                     p2 = p1.add(dLat);
 
                     Angle t1 = Tile.computeColumnLongitude(firstCol, dLon, lonOrigin);
-                    for (int col = firstCol; col <= lastCol; col++)
-                    {
+                    for (int col = firstCol; col <= lastCol; col++) {
                         Angle t2;
                         t2 = t1.add(dLon);
 
@@ -892,8 +841,7 @@ public class SurfaceObjectTileBuilder
                             continue;
 
                         SurfaceObjectTile tile = (SurfaceObjectTile) TextureTile.getMemoryCache().getObject(tileKey);
-                        if (tile == null)
-                        {
+                        if (tile == null) {
                             tile = this.createTile(new Sector(p1, p2, t1, t2), level, row, col, tileCacheName);
                             TextureTile.getMemoryCache().add(tileKey, tile);
                         }
@@ -912,8 +860,7 @@ public class SurfaceObjectTileBuilder
         }
 
         // Add each top level tile or its descendants to the current tile list.
-        for (SurfaceObjectTile tile : topLevelTiles)
-        {
+        for (SurfaceObjectTile tile : topLevelTiles) {
             this.addTileOrDescendants(dc, levelSet, null, tile);
         }
     }
@@ -924,8 +871,9 @@ public class SurfaceObjectTileBuilder
      * parent's surface renderable list. See {@link SurfaceObjectTileBuilder.SurfaceObjectTile#getObjectList()}.
      * <p>
      * If the tile meet the tile builder's resolution criteria it's added to the tile builder's
-     * <code>currentTiles</code> list. Otherwise, it's split into four sub-tiles and each tile is recursively processed.
-     * See {@link #meetsRenderCriteria(DrawContext, gov.nasa.worldwind.util.LevelSet, gov.nasa.worldwind.util.Tile)}.
+     * <code>currentTiles</code> list. Otherwise, it's split into four sub-tiles and each tile is recursively
+     * processed. See {@link #meetsRenderCriteria(DrawContext, LevelSet,
+     * Tile)}.
      *
      * @param dc       the current DrawContext.
      * @param levelSet the tile's LevelSet.
@@ -933,11 +881,9 @@ public class SurfaceObjectTileBuilder
      * @param tile     the tile to add.
      */
     protected void addTileOrDescendants(DrawContext dc, LevelSet levelSet, SurfaceObjectTile parent,
-        SurfaceObjectTile tile)
-    {
+        SurfaceObjectTile tile) {
         // Ignore this tile if it falls completely outside the DrawContext's visible sector.
-        if (!this.intersectsVisibleSector(dc, tile))
-        {
+        if (!this.intersectsVisibleSector(dc, tile)) {
             // This tile is not added to the current tile list, so we clear it's object list to prepare it for use
             // during the next frame.
             tile.clearObjectList();
@@ -946,8 +892,7 @@ public class SurfaceObjectTileBuilder
 
         // Ignore this tile if it falls completely outside the frustum. This may be the viewing frustum or the pick
         // frustum, depending on the implementation.
-        if (!this.intersectsFrustum(dc, tile))
-        {
+        if (!this.intersectsFrustum(dc, tile)) {
             // This tile is not added to the current tile list, so we clear it's object list to prepare it for use
             // during the next frame.
             tile.clearObjectList();
@@ -964,15 +909,13 @@ public class SurfaceObjectTileBuilder
 
         // If this tile meets the current rendering criteria, add it to the current tile list. This tile's object list
         // is cleared after the tile update operation.
-        if (this.meetsRenderCriteria(dc, levelSet, tile))
-        {
+        if (this.meetsRenderCriteria(dc, levelSet, tile)) {
             this.addTile(tile);
             return;
         }
 
         Level nextLevel = levelSet.getLevel(tile.getLevelNumber() + 1);
-        for (TextureTile subTile : tile.createSubTiles(nextLevel))
-        {
+        for (TextureTile subTile : tile.createSubTiles(nextLevel)) {
             this.addTileOrDescendants(dc, levelSet, tile, (SurfaceObjectTile) subTile);
         }
 
@@ -990,8 +933,7 @@ public class SurfaceObjectTileBuilder
      * @param parent the tile's parent.
      * @param tile   the tile to add intersecting surface renderables to.
      */
-    protected void addIntersectingObjects(DrawContext dc, SurfaceObjectTile parent, SurfaceObjectTile tile)
-    {
+    protected void addIntersectingObjects(DrawContext dc, SurfaceObjectTile parent, SurfaceObjectTile tile) {
         // If the parent has no objects, then there's nothing to add to this tile and we exit immediately.
         if (!parent.hasObjects())
             return;
@@ -1004,26 +946,21 @@ public class SurfaceObjectTileBuilder
         // If this tile contains the parent's object bounding sector, then all of the parent's objects intersect this
         // tile. Therefore we just add all of the parent's objects to this tile. Additionally, the parent's object
         // bounding sector becomes this tile's object bounding sector.
-        if (tile.sector.contains(parent.getObjectSector()))
-        {
+        if (tile.sector.contains(parent.getObjectSector())) {
             tile.addAllSurfaceObjects(parent.getObjectList(), parent.getObjectSector());
         }
         // Otherwise, the tile may intersect some of the parent's object list. Compute which objects intersect this
         // tile, and compute this tile's bounding sector as the union of those object's sectors.
-        else
-        {
-            for (SurfaceRenderable so : parent.getObjectList())
-            {
+        else {
+            for (SurfaceRenderable so : parent.getObjectList()) {
                 List<Sector> sectors = so.getSectors(dc);
                 if (sectors == null)
                     continue;
 
                 // Test intersection against each of the surface renderable's sectors. We break after finding an
                 // intersection to avoid adding the same object to the tile more than once.
-                for (Sector s : sectors)
-                {
-                    if (tile.sector.intersects(s))
-                    {
+                for (Sector s : sectors) {
+                    if (tile.sector.intersects(s)) {
                         tile.addSurfaceObject(so, s);
                         break;
                     }
@@ -1037,8 +974,7 @@ public class SurfaceObjectTileBuilder
      *
      * @param tile the tile to add.
      */
-    protected void addTile(SurfaceObjectTile tile)
-    {
+    protected void addTile(SurfaceObjectTile tile) {
         this.currentInfo.tiles.add(tile);
         TextureTile.getMemoryCache().add(tile.tileKey, tile);
     }
@@ -1050,11 +986,9 @@ public class SurfaceObjectTileBuilder
      *
      * @param dc   the draw context the surface renderable is related to.
      * @param tile the tile to test for intersection.
-     *
      * @return true if the tile intersects the draw context's frustum; false otherwise.
      */
-    protected boolean intersectsFrustum(DrawContext dc, TextureTile tile)
-    {
+    protected boolean intersectsFrustum(DrawContext dc, SurfaceTile tile) {
         Extent extent = tile.getExtent(dc);
         if (extent == null)
             return false;
@@ -1071,11 +1005,9 @@ public class SurfaceObjectTileBuilder
      *
      * @param dc   the current draw context.
      * @param tile the tile to test for intersection.
-     *
      * @return true if the tile intersects the draw context's visible sector; false otherwise.
      */
-    protected boolean intersectsVisibleSector(DrawContext dc, TextureTile tile)
-    {
+    protected boolean intersectsVisibleSector(DrawContext dc, TextureTile tile) {
         return dc.getVisibleSector() != null && dc.getVisibleSector().intersects(tile.sector);
     }
 
@@ -1086,11 +1018,9 @@ public class SurfaceObjectTileBuilder
      * @param dc       the current draw context.
      * @param levelSet the level set the tile belongs to.
      * @param tile     the tile to test.
-     *
      * @return true if the tile meets the rendering criteria; false otherwise.
      */
-    protected boolean meetsRenderCriteria(DrawContext dc, LevelSet levelSet, Tile tile)
-    {
+    protected boolean meetsRenderCriteria(DrawContext dc, LevelSet levelSet, Tile tile) {
         return levelSet.isFinalLevel(tile.level.getLevelNumber()) || !this.needToSplit(dc, tile);
     }
 
@@ -1101,11 +1031,9 @@ public class SurfaceObjectTileBuilder
      *
      * @param dc   the current draw context.
      * @param tile the tile to test.
-     *
      * @return true if the tile must be split; false otherwise.
      */
-    protected boolean needToSplit(DrawContext dc, Tile tile)
-    {
+    protected boolean needToSplit(DrawContext dc, Tile tile) {
         // Compute the height in meters of a texel from the specified tile. Take care to convert from the radians to
         // meters by multiplying by the globe's radius, not the length of a Cartesian point. Using the length of a
         // Cartesian point is incorrect when the globe is flat.
@@ -1120,7 +1048,7 @@ public class SurfaceObjectTileBuilder
         // 50% has the same effect on object size as decreasing the distance between the eye and the object by 50%.
         // The detail hint is reduced for tiles above 75 degrees north and below 75 degrees south.
         double s = this.getSplitScale();
-        if (tile.sector.getMinLatitude().degrees >= 75 || tile.sector.getMaxLatitude().degrees <= -75)
+        if (tile.sector.latMin().degrees >= 75 || tile.sector.latMax().degrees <= -75)
             s *= 0.85;
         double detailScale = Math.pow(10, -s);
         double fieldOfViewScale = dc.getView().getFieldOfView().tanHalfAngle() / Angle.fromDegrees(45).tanHalfAngle();
@@ -1154,11 +1082,9 @@ public class SurfaceObjectTileBuilder
      * SurfaceObjectTileBuilder.
      *
      * @param dc the draw context to create the tile info key for.
-     *
      * @return the tile info key for the specified draw context.
      */
-    protected TileInfoKey createTileInfoKey(DrawContext dc)
-    {
+    protected TileInfoKey createTileInfoKey(DrawContext dc) {
         Dimension tileDimension = this.computeTextureTileDimension(dc);
         return new TileInfoKey(dc, tileDimension.width, tileDimension.height);
     }
@@ -1167,11 +1093,9 @@ public class SurfaceObjectTileBuilder
      * Creates a tile info associated with the specified draw context.
      *
      * @param dc the draw context to create the tile info for.
-     *
      * @return the tile info for the specified draw context.
      */
-    protected TileInfo createTileInfo(DrawContext dc)
-    {
+    protected TileInfo createTileInfo(DrawContext dc) {
         // Use a LevelSet shared by all instances of this class to save memory and prevent a conflict in the tile and
         // texture caches. Use a cache name unique to this tile info instance.
         Dimension tileDimension = this.computeTextureTileDimension(dc);
@@ -1186,11 +1110,9 @@ public class SurfaceObjectTileBuilder
      * two, is square, and fits in the <code>DrawContext</code>'s viewport.
      *
      * @param dc the <code>DrawContext</code> to compute a texture tile dimension for.
-     *
      * @return a texture tile dimension appropriate for the specified <code>DrawContext</code>.
      */
-    protected Dimension computeTextureTileDimension(DrawContext dc)
-    {
+    protected Dimension computeTextureTileDimension(DrawContext dc) {
         // Force a square dimension by using the maximum of the tile builder's tileWidth and tileHeight.
         int maxSize = Math.max(this.tileDimension.width, this.tileDimension.height);
 
@@ -1214,8 +1136,7 @@ public class SurfaceObjectTileBuilder
      *
      * @return a unique cache name.
      */
-    protected String uniqueCacheName()
-    {
+    protected String uniqueCacheName() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.getClass().getName());
         sb.append("/");
@@ -1224,22 +1145,52 @@ public class SurfaceObjectTileBuilder
         return sb.toString();
     }
 
-    protected static class TileInfoKey
-    {
+    /**
+     * Returns a new SurfaceObjectTile corresponding to the specified {@code sector}, {@code level}, {@code row}, {@code
+     * column}, and {@code cacheName}.
+     *
+     * @param sector    The tile's Sector.
+     * @param level     The tile's Level in a {@link LevelSet}.
+     * @param row       The tile's row in the Level, starting from 0 and increasing to the right.
+     * @param column    The tile's column in the Level, starting from 0 and increasing upward.
+     * @param cacheName Tile tile's cache name.
+     * @return a new SurfaceObjectTile.
+     */
+    protected SurfaceObjectTile createTile(Sector sector, Level level, int row, int column, String cacheName) {
+        return new SurfaceObjectTile(sector, level, row, column, cacheName);
+    }
+
+    /**
+     * Returns a new tile key corresponding to the tile with the specified {@code level}, {@code row}, {@code column},
+     * and {@code cacheName}.
+     *
+     * @param level     The tile's Level in a {@link LevelSet}.
+     * @param row       The tile's row in the Level, starting from 0 and increasing to the right.
+     * @param column    The tile's column in the Level, starting from 0 and increasing upward.
+     * @param cacheName Tile tile's cache name.
+     * @return a tile key.
+     */
+    protected Object createTileKey(Level level, int row, int column, String cacheName) {
+        return new TileKey(level.getLevelNumber(), row, column, cacheName);
+    }
+
+    //**************************************************************//
+    //********************  Surface Object Tile  *******************//
+    //**************************************************************//
+
+    protected static class TileInfoKey {
         public final int globeOffset;
         public final int tileWidth;
         public final int tileHeight;
 
-        public TileInfoKey(DrawContext dc, int tileWidth, int tileHeight)
-        {
+        public TileInfoKey(DrawContext dc, int tileWidth, int tileHeight) {
             this.globeOffset = (dc.getGlobe() instanceof Globe2D) ? ((Globe2D) dc.getGlobe()).getOffset() : 0;
             this.tileWidth = tileWidth;
             this.tileHeight = tileHeight;
         }
 
         @Override
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (o == null || this.getClass() != o.getClass())
@@ -1252,8 +1203,7 @@ public class SurfaceObjectTileBuilder
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             int result = this.globeOffset;
             result = 31 * result + this.tileWidth;
             result = 31 * result + this.tileHeight;
@@ -1261,17 +1211,15 @@ public class SurfaceObjectTileBuilder
         }
     }
 
-    protected static class TileInfo
-    {
-        public final ArrayList<SurfaceObjectTile> tiles = new ArrayList<>();
+    protected static class TileInfo {
+        public final List<SurfaceObjectTile> tiles = new ArrayList<>();
         public final ArrayList<PickedObject> pickCandidates = new ArrayList<>();
         public final LevelSet levelSet;
         public final String cacheName;
         public final int tileWidth;
         public final int tileHeight;
 
-        public TileInfo(LevelSet levelSet, String cacheName, int tileWidth, int tileHeight)
-        {
+        public TileInfo(LevelSet levelSet, String cacheName, int tileWidth, int tileHeight) {
             this.levelSet = levelSet;
             this.cacheName = cacheName;
             this.tileWidth = tileWidth;
@@ -1279,57 +1227,25 @@ public class SurfaceObjectTileBuilder
         }
     }
 
-    //**************************************************************//
-    //********************  Surface Object Tile  *******************//
-    //**************************************************************//
-
     /**
-     * Returns a new SurfaceObjectTile corresponding to the specified {@code sector}, {@code level}, {@code row}, {@code
-     * column}, and {@code cacheName}.
-     *
-     * @param sector    The tile's Sector.
-     * @param level     The tile's Level in a {@link LevelSet}.
-     * @param row       The tile's row in the Level, starting from 0 and increasing to the right.
-     * @param column    The tile's column in the Level, starting from 0 and increasing upward.
-     * @param cacheName Tile tile's cache name.
-     *
-     * @return a new SurfaceObjectTile.
-     */
-    protected SurfaceObjectTile createTile(Sector sector, Level level, int row, int column, String cacheName)
-    {
-        return new SurfaceObjectTile(sector, level, row, column, cacheName);
-    }
-
-    /**
-     * Returns a new tile key corresponding to the tile with the specified {@code level}, {@code row}, {@code column},
-     * and {@code cacheName}.
-     *
-     * @param level     The tile's Level in a {@link LevelSet}.
-     * @param row       The tile's row in the Level, starting from 0 and increasing to the right.
-     * @param column    The tile's column in the Level, starting from 0 and increasing upward.
-     * @param cacheName Tile tile's cache name.
-     *
-     * @return a tile key.
-     */
-    protected Object createTileKey(Level level, int row, int column, String cacheName)
-    {
-        return new TileKey(level.getLevelNumber(), row, column, cacheName);
-    }
-
-    /**
-     * Represents a {@link gov.nasa.worldwind.layers.TextureTile} who's contents is constructed by a set of surface
+     * Represents a {@link TextureTile} who's contents is constructed by a set of surface
      * objects. The tile maintains a collection of surface renderables that intersect the tile, and provides methods for
      * to modify and retrieve that collection. Additionally, the method {@link #getStateKey(DrawContext)} provides a
      * mechanism to uniquely identify the tile's current state, including the state of each intersecting surface
      * object.
      */
-    protected static class SurfaceObjectTile extends TextureTile
-    {
-        /** The sector that bounds the surface renderables intersecting the tile. */
+    protected static class SurfaceObjectTile extends TextureTile {
+        /**
+         * The sector that bounds the surface renderables intersecting the tile.
+         */
         protected Sector objectSector;
-        /** List of surface renderables intersecting the tile. */
+        /**
+         * List of surface renderables intersecting the tile.
+         */
         protected List<SurfaceRenderable> intersectingObjects;
-        /** The state key that was valid when the tile was last updated. */
+        /**
+         * The state key that was valid when the tile was last updated.
+         */
         protected Object lastUpdateStateKey;
 
         /**
@@ -1341,12 +1257,10 @@ public class SurfaceObjectTileBuilder
          * @param column    The column index (0 origin) of the tile within the indicated level.
          * @param cacheName The tile's cache name. Overrides the Level's cache name to associates the tile with it's
          *                  tile builder in a global cache.
-         *
          * @throws IllegalArgumentException if any of the {@code sector}, {@code level}, or {@code cacheName } are
          *                                  {@code null}.
          */
-        public SurfaceObjectTile(Sector sector, Level level, int row, int column, String cacheName)
-        {
+        public SurfaceObjectTile(Sector sector, Level level, int row, int column, String cacheName) {
             super(sector, level, row, column, cacheName);
         }
 
@@ -1357,8 +1271,7 @@ public class SurfaceObjectTileBuilder
          * @return The tile's size in bytes.
          */
         @Override
-        public long getSizeInBytes()
-        {
+        public long getSizeInBytes() {
             long size = super.getSizeInBytes();
 
             if (this.lastUpdateStateKey instanceof Cacheable)
@@ -1374,11 +1287,9 @@ public class SurfaceObjectTileBuilder
          * guaranteed to be globally unique; an equality test with a state key from another always returns false.
          *
          * @param dc the draw context the state key relates to.
-         *
          * @return an object representing surface renderable's current state.
          */
-        public Object getStateKey(DrawContext dc)
-        {
+        public Object getStateKey(DrawContext dc) {
             return new SurfaceObjectTileStateKey(dc, this);
         }
 
@@ -1388,8 +1299,7 @@ public class SurfaceObjectTileBuilder
          *
          * @return a sector bounding the tile's intersecting objects.
          */
-        public Sector getObjectSector()
-        {
+        public Sector getObjectSector() {
             return this.objectSector;
         }
 
@@ -1399,8 +1309,7 @@ public class SurfaceObjectTileBuilder
          * @return {@code true} if the list of surface renderables intersecting this tile has elements, and {@code
          * false} otherwise.
          */
-        public boolean hasObjects()
-        {
+        public boolean hasObjects() {
             return this.intersectingObjects != null && !this.intersectingObjects.isEmpty();
         }
 
@@ -1409,8 +1318,7 @@ public class SurfaceObjectTileBuilder
          *
          * @return a tile's intersecting objects.
          */
-        public List<SurfaceRenderable> getObjectList()
-        {
+        public List<SurfaceRenderable> getObjectList() {
             return this.intersectingObjects;
         }
 
@@ -1418,8 +1326,7 @@ public class SurfaceObjectTileBuilder
          * Clears the tile's list of intersecting objects. {@link #getObjectSector()} returns null after calling this
          * method.
          */
-        public void clearObjectList()
-        {
+        public void clearObjectList() {
             this.intersectingObjects = null;
             this.objectSector = null;
         }
@@ -1430,8 +1337,7 @@ public class SurfaceObjectTileBuilder
          * @param so     the surface renderable to add.
          * @param sector the sector bounding the specified surface renderable.
          */
-        public void addSurfaceObject(SurfaceRenderable so, Sector sector)
-        {
+        public void addSurfaceObject(SurfaceRenderable so, Sector sector) {
             if (this.intersectingObjects == null)
                 this.intersectingObjects = new ArrayList<>();
 
@@ -1445,8 +1351,7 @@ public class SurfaceObjectTileBuilder
          * @param c      the collection of surface renderables to add.
          * @param sector the sector bounding the specified surface renderable collection.
          */
-        public void addAllSurfaceObjects(List<SurfaceRenderable> c, Sector sector)
-        {
+        public void addAllSurfaceObjects(Collection<SurfaceRenderable> c, Sector sector) {
             if (this.intersectingObjects == null)
                 this.intersectingObjects = new ArrayList<>();
 
@@ -1461,8 +1366,7 @@ public class SurfaceObjectTileBuilder
          * tile.
          */
         @Override
-        protected TextureTile createSubTile(Sector sector, Level level, int row, int col)
-        {
+        protected TextureTile createSubTile(Sector sector, Level level, int row, int col) {
             return new SurfaceObjectTile(sector, level, row, col, this.getCacheName());
         }
 
@@ -1472,8 +1376,7 @@ public class SurfaceObjectTileBuilder
          * Overridden to return a TileKey with the same cache name as this tile.
          */
         @Override
-        protected TileKey createSubTileKey(Level level, int row, int col)
-        {
+        protected TileKey createSubTileKey(Level level, int row, int col) {
             return new TileKey(level.getLevelNumber(), row, col, this.getCacheName());
         }
     }
@@ -1484,8 +1387,7 @@ public class SurfaceObjectTileBuilder
      * to the surface renderables themselves. Should the tile state key live longer than the surface renderables, the
      * state key does not prevent those objects from being reclaimed by the garbage collector.
      */
-    protected static class SurfaceObjectTileStateKey implements Cacheable
-    {
+    protected static class SurfaceObjectTileStateKey implements Cacheable {
         protected final TileKey tileKey;
         protected final Object[] intersectingObjectKeys;
 
@@ -1495,29 +1397,24 @@ public class SurfaceObjectTileBuilder
          * @param dc   the draw context the state key is related to.
          * @param tile the tile to construct a state key for.
          */
-        public SurfaceObjectTileStateKey(DrawContext dc, SurfaceObjectTile tile)
-        {
-            if (tile != null && tile.hasObjects())
-            {
+        public SurfaceObjectTileStateKey(DrawContext dc, SurfaceObjectTile tile) {
+            if (tile != null && tile.hasObjects()) {
                 this.tileKey = tile.tileKey;
                 this.intersectingObjectKeys = new Object[tile.getObjectList().size()];
 
                 int index = 0;
-                for (SurfaceRenderable so : tile.getObjectList())
-                {
+                for (SurfaceRenderable so : tile.getObjectList()) {
                     this.intersectingObjectKeys[index++] = so.getStateKey(dc);
                 }
             }
-            else
-            {
+            else {
                 this.tileKey = null;
                 this.intersectingObjectKeys = null;
             }
         }
 
         @Override
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (o == null || this.getClass() != o.getClass())
@@ -1532,8 +1429,7 @@ public class SurfaceObjectTileBuilder
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             int result = this.tileKey != null ? this.tileKey.hashCode() : 0;
             result = 31 * result + Arrays.hashCode(this.intersectingObjectKeys); // Correctly handles a null reference.
             return result;
@@ -1546,15 +1442,13 @@ public class SurfaceObjectTileBuilder
          *
          * @return The state key's size in bytes.
          */
-        public long getSizeInBytes()
-        {
+        public long getSizeInBytes() {
             if (this.intersectingObjectKeys == null)
                 return 0;
 
             long size = 4 * this.intersectingObjectKeys.length; // For the array references.
 
-            for (Object o : this.intersectingObjectKeys)
-            {
+            for (Object o : this.intersectingObjectKeys) {
                 if (o instanceof Cacheable)
                     size += ((Cacheable) o).getSizeInBytes();
                 else if (o != null)

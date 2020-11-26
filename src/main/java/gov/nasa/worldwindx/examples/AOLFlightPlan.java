@@ -74,7 +74,7 @@ public class AOLFlightPlan {
             }
         });
     }
-    
+
     public String getGufi() {
         return this.gufi;
     }
@@ -82,9 +82,8 @@ public class AOLFlightPlan {
     public String getCallSign() {
         return this.callsign;
     }
-    
+
     public ArrayList<OperationVolume> getOpVolumes() {
         return this.opVolumes;
     }
-
 }

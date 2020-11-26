@@ -23,34 +23,28 @@ import java.io.*;
  * @author tag
  * @version $Id: ScreenShotAction.java 1689 2013-10-23 18:18:11Z dcollins $
  */
-public class ScreenShotAction extends AbstractAction implements RenderingListener
-{
+public class ScreenShotAction extends AbstractAction implements RenderingListener {
     final WorldWindow wwd;
-    private File snapFile;
     final JFileChooser fileChooser;
+    private File snapFile;
 
-    public ScreenShotAction(WorldWindow wwd)
-    {
+    public ScreenShotAction(WorldWindow wwd) {
         super("Screen Shot");
 
         this.wwd = wwd;
         this.fileChooser = new JFileChooser();
     }
 
-    public void actionPerformed(ActionEvent event)
-    {
+    public void actionPerformed(ActionEvent event) {
         Component frame = wwd instanceof Component ? ((Component) wwd).getParent() : null;
         this.snapFile = this.chooseFile(frame);
     }
 
-    private File chooseFile(Component parentFrame)
-    {
+    private File chooseFile(Component parentFrame) {
         File outFile = null;
 
-        try
-        {
-            while (true)
-            {
+        try {
+            while (true) {
                 fileChooser.setDialogTitle("Save Screen Shot");
                 fileChooser.setSelectedFile(new File(composeSuggestedName()));
 
@@ -69,8 +63,7 @@ public class ScreenShotAction extends AbstractAction implements RenderingListene
                 if (!outFile.getPath().endsWith(".png"))
                     outFile = new File(outFile.getPath() + ".png");
 
-                if (outFile.exists())
-                {
+                if (outFile.exists()) {
                     status = JOptionPane.showConfirmDialog(parentFrame,
                         "Replace existing file\n" + outFile.getName() + "?",
                         "Overwrite Existing File?", JOptionPane.YES_NO_CANCEL_OPTION);
@@ -82,8 +75,7 @@ public class ScreenShotAction extends AbstractAction implements RenderingListene
                 break;
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -93,12 +85,9 @@ public class ScreenShotAction extends AbstractAction implements RenderingListene
         return outFile;
     }
 
-    public void stageChanged(RenderingEvent event)
-    {
-        if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP) && this.snapFile != null)
-        {
-            try
-            {
+    public void stageChanged(RenderingEvent event) {
+        if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP) && this.snapFile != null) {
+            try {
                 GLAutoDrawable glad = (GLAutoDrawable) event.getSource();
                 AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(glad.getGLProfile(), false);
                 BufferedImage image = glReadBufferUtil.readPixelsToBufferedImage(glad.getGL(), true);
@@ -106,28 +95,24 @@ public class ScreenShotAction extends AbstractAction implements RenderingListene
                 ImageIO.write(image, suffix, this.snapFile);
                 System.out.printf("Image saved to file %s\n", this.snapFile.getPath());
             }
-            catch (IOException e)
-            {
+            catch (IOException e) {
                 e.printStackTrace();
             }
-            finally
-            {
+            finally {
                 this.snapFile = null;
                 this.wwd.removeRenderingListener(this);
             }
         }
     }
 
-    private String composeSuggestedName()
-    {
+    private String composeSuggestedName() {
         String baseName = "WWJSnapShot";
         String suffix = ".png";
 
         File currentDirectory = this.fileChooser.getCurrentDirectory();
 
         File candidate = new File(currentDirectory.getPath() + File.separatorChar + baseName + suffix);
-        for (int i = 1; candidate.exists(); i++)
-        {
+        for (int i = 1; candidate.exists(); i++) {
             String sequence = String.format("%03d", i);
             candidate = new File(currentDirectory.getPath() + File.separatorChar + baseName + sequence + suffix);
         }

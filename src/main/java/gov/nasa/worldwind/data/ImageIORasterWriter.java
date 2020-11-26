@@ -10,68 +10,92 @@ import gov.nasa.worldwind.formats.worldfile.WorldFile;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.WWIO;
 
+import javax.imageio.ImageIO;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageWriterSpi;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+
 /**
  * @author dcollins
  * @version $Id: ImageIORasterWriter.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ImageIORasterWriter extends AbstractDataRasterWriter
-{
+public class ImageIORasterWriter extends AbstractDataRasterWriter {
     private boolean writeGeoreferenceFiles;
 
-    public ImageIORasterWriter(boolean writeGeoreferenceFiles)
-    {
-        super(javax.imageio.ImageIO.getWriterMIMETypes(), getImageIOWriterSuffixes());
+    public ImageIORasterWriter(boolean writeGeoreferenceFiles) {
+        super(ImageIO.getWriterMIMETypes(), getImageIOWriterSuffixes());
 
         this.writeGeoreferenceFiles = writeGeoreferenceFiles;
     }
 
-    public ImageIORasterWriter()
-    {
+    public ImageIORasterWriter() {
         this(true); // Enable writing georeference files by default.
     }
 
-    public boolean isWriteGeoreferenceFiles()
-    {
+    private static String[] getImageIOWriterSuffixes() {
+        Iterator<ImageWriterSpi> iter;
+        try {
+            iter = IIORegistry.getDefaultInstance().getServiceProviders(
+                ImageWriterSpi.class, true);
+        }
+        catch (Exception e) {
+            return new String[0];
+        }
+
+        Collection<String> set = new HashSet<>();
+        while (iter.hasNext()) {
+            ImageWriterSpi spi = iter.next();
+            String[] names = spi.getFileSuffixes();
+            set.addAll(Arrays.asList(names));
+        }
+
+        String[] array = new String[set.size()];
+        set.toArray(array);
+        return array;
+    }
+
+    public boolean isWriteGeoreferenceFiles() {
         return this.writeGeoreferenceFiles;
     }
 
-    public void setWriteGeoreferenceFiles(boolean writeGeoreferenceFiles)
-    {
+    public void setWriteGeoreferenceFiles(boolean writeGeoreferenceFiles) {
         this.writeGeoreferenceFiles = writeGeoreferenceFiles;
     }
 
-    protected boolean doCanWrite(DataRaster raster, String formatSuffix, java.io.File file)
-    {
+    protected boolean doCanWrite(DataRaster raster, String formatSuffix, File file) {
         return (raster instanceof BufferedImageRaster);
     }
 
-    protected void doWrite(DataRaster raster, String formatSuffix, java.io.File file) throws java.io.IOException
-    {
+    protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException {
         this.writeImage(raster, formatSuffix, file);
 
-        if (this.isWriteGeoreferenceFiles())
-        {
+        if (this.isWriteGeoreferenceFiles()) {
             AVList worldFileParams = new AVListImpl();
             this.initWorldFileParams(raster, worldFileParams);
-            
-            java.io.File dir = file.getParentFile();
+
+            File dir = file.getParentFile();
             String base = WWIO.replaceSuffix(file.getName(), "");
             String suffix = WWIO.getSuffix(file.getName());
             String worldFileSuffix = this.suffixForWorldFile(suffix);
 
-            this.writeImageMetadata(new java.io.File(dir, base + "." +  worldFileSuffix), worldFileParams);
+            this.writeImageMetadata(new File(dir, base + "." + worldFileSuffix), worldFileParams);
         }
     }
 
-    protected void writeImage(DataRaster raster, String formatSuffix, java.io.File file) throws java.io.IOException
-    {
+    protected void writeImage(DataRaster raster, String formatSuffix, File file) throws IOException {
         BufferedImageRaster bufferedImageRaster = (BufferedImageRaster) raster;
-        java.awt.image.BufferedImage image = bufferedImageRaster.getBufferedImage();
-        javax.imageio.ImageIO.write(image, formatSuffix, file);
+        BufferedImage image = bufferedImageRaster.getBufferedImage();
+        ImageIO.write(image, formatSuffix, file);
     }
 
-    protected void writeImageMetadata(java.io.File file, AVList values) throws java.io.IOException
-    {
+    protected void writeImageMetadata(File file, AVList values) throws IOException {
         Sector sector = (Sector) values.getValue(AVKey.SECTOR);
         int[] size = (int[]) values.getValue(WorldFile.WORLD_FILE_IMAGE_SIZE);
 
@@ -79,11 +103,10 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter
         double yPixelSize = -sector.getDeltaLatDegrees() / size[1];
         double xCoeff = 0.0;
         double yCoeff = 0.0;
-        double xLocation = sector.getMinLongitude().degrees + (xPixelSize * .5);
-        double yLocation = sector.getMaxLatitude().degrees + (yPixelSize * .5);
+        double xLocation = sector.lonMin().degrees + (xPixelSize * 0.5);
+        double yLocation = sector.latMax().degrees + (yPixelSize * 0.5);
 
-        try (java.io.PrintWriter out = new java.io.PrintWriter(file))
-        {
+        try (PrintWriter out = new PrintWriter(file)) {
             out.println(xPixelSize);
             out.println(xCoeff);
             //noinspection SuspiciousNameCombination
@@ -96,8 +119,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter
         }
     }
 
-    protected String suffixForWorldFile(String suffix)
-    {
+    protected String suffixForWorldFile(CharSequence suffix) {
         int length = suffix.length();
         if (length < 2)
             return "";
@@ -110,8 +132,7 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter
         return sb.toString();
     }
 
-    protected void initWorldFileParams(DataRaster raster, AVList worldFileParams)
-    {
+    protected void initWorldFileParams(DataRaster raster, AVList worldFileParams) {
         int[] size = new int[2];
         size[0] = raster.getWidth();
         size[1] = raster.getHeight();
@@ -119,31 +140,5 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter
 
         Sector sector = raster.getSector();
         worldFileParams.setValue(AVKey.SECTOR, sector);
-    }
-
-    private static String[] getImageIOWriterSuffixes()
-    {
-        java.util.Iterator<javax.imageio.spi.ImageWriterSpi> iter;
-        try
-        {
-            iter = javax.imageio.spi.IIORegistry.getDefaultInstance().getServiceProviders(
-                javax.imageio.spi.ImageWriterSpi.class, true);
-        }
-        catch (Exception e)
-        {
-            return new String[0];
-        }
-
-        java.util.Set<String> set = new java.util.HashSet<>();
-        while (iter.hasNext())
-        {
-            javax.imageio.spi.ImageWriterSpi spi = iter.next();
-            String[] names = spi.getFileSuffixes();
-            set.addAll(java.util.Arrays.asList(names));
-        }
-
-        String[] array = new String[set.size()];
-        set.toArray(array);
-        return array;
     }
 }

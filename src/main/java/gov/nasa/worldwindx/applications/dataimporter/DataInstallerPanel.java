@@ -19,14 +19,12 @@ import java.awt.*;
  * @author tag
  * @version $Id: DataInstallerPanel.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
-public class DataInstallerPanel extends JPanel
-{
+public class DataInstallerPanel extends JPanel {
     protected final FileSetPanel fileSetPanel; // data available on disk
     protected final FileStorePanel fileStorePanel; // data currently installed
     protected final WorldWindow wwd;
 
-    public DataInstallerPanel(final WorldWindow wwd)
-    {
+    public DataInstallerPanel(final WorldWindow wwd) {
         super(new BorderLayout(5, 5));
 
         this.wwd = wwd;

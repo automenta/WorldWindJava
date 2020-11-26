@@ -10,19 +10,29 @@ import gov.nasa.worldwind.formats.worldfile.WorldFile;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.*;
 
+import java.awt.geom.Point2D;
+import java.util.Arrays;
+
 /**
  * @author dcollins
  * @version $Id: Matrix.java 2201 2014-08-07 23:17:54Z dcollins $
  */
-public class Matrix
-{
+public class Matrix {
     public static final Matrix IDENTITY = new Matrix(
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1,
         true);
+    protected static final double EPSILON =
+        1.0e-12;
+    protected static final double NEAR_ZERO_THRESHOLD = EPSILON/100;
+    static final double TINY = 1.0e-20;
 
+    // 16 values in a 4x4 matrix.
+    private static final int NUM_ELEMENTS = 16;
+    private static final Double POSITIVE_ZERO = +0.0d;
+    private static final Double NEGATIVE_ZERO = -0.0d;
     // Row 1
     public final double m11;
     public final double m12;
@@ -43,19 +53,12 @@ public class Matrix
     public final double m42;
     public final double m43;
     public final double m44;
-
-    protected static final double EPSILON = 1.0e-6;
-    protected static final double NEAR_ZERO_THRESHOLD = 1.0e-8;
-
-    // 16 values in a 4x4 matrix.
-    private static final int NUM_ELEMENTS = 16;
     // True when this matrix represents a 3D transform.
     private final boolean isOrthonormalTransform;
     // Cached computations.
     private int hashCode;
 
-    public Matrix(double value)
-    {
+    public Matrix(double value) {
         // 'value' is placed in the diagonal.
         this(
             value, 0, 0, 0,
@@ -68,8 +71,7 @@ public class Matrix
         double m11, double m12, double m13, double m14,
         double m21, double m22, double m23, double m24,
         double m31, double m32, double m33, double m34,
-        double m41, double m42, double m43, double m44)
-    {
+        double m41, double m42, double m43, double m44) {
         this(
             m11, m12, m13, m14,
             m21, m22, m23, m24,
@@ -83,8 +85,7 @@ public class Matrix
         double m21, double m22, double m23, double m24,
         double m31, double m32, double m33, double m34,
         double m41, double m42, double m43, double m44,
-        boolean isOrthonormalTransform)
-    {
+        boolean isOrthonormalTransform) {
         this.m11 = m11;
         this.m12 = m12;
         this.m13 = m13;
@@ -104,80 +105,19 @@ public class Matrix
         this.isOrthonormalTransform = isOrthonormalTransform;
     }
 
-    public final boolean equals(Object obj)
-    {
-        if (this == obj)
-            return true;
-        if (obj == null || obj.getClass() != this.getClass())
-            return false;
-
-        Matrix that = (Matrix) obj;
-        return (this.m11 == that.m11) && (this.m12 == that.m12) && (this.m13 == that.m13) && (this.m14 == that.m14)
-            && (this.m21 == that.m21) && (this.m22 == that.m22) && (this.m23 == that.m23) && (this.m24 == that.m24)
-            && (this.m31 == that.m31) && (this.m32 == that.m32) && (this.m33 == that.m33) && (this.m34 == that.m34)
-            && (this.m41 == that.m41) && (this.m42 == that.m42) && (this.m43 == that.m43) && (this.m44 == that.m44);
-    }
-
-    public final int hashCode()
-    {
-        if (this.hashCode == 0)
-        {
-            int result;
-            long tmp;
-            tmp = Double.doubleToLongBits(this.m11);
-            result = (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m12);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m13);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m14);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m21);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m22);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m23);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m24);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m31);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m32);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m33);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m34);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m41);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m42);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m43);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            tmp = Double.doubleToLongBits(this.m44);
-            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-            this.hashCode = result;
-        }
-        return this.hashCode;
-    }
-
-    public static Matrix fromArray(double[] compArray, int offset, boolean rowMajor)
-    {
-        if (compArray == null)
-        {
+    public static Matrix fromArray(double[] compArray, int offset, boolean rowMajor) {
+        if (compArray == null) {
             String msg = Logging.getMessage("nullValue.ArrayIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if ((compArray.length - offset) < NUM_ELEMENTS)
-        {
+        if ((compArray.length - offset) < NUM_ELEMENTS) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", compArray.length);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (rowMajor)
-        {
+        if (rowMajor) {
             //noinspection PointlessArithmeticExpression
             return new Matrix(
                 // Row 1
@@ -201,8 +141,7 @@ public class Matrix
                 compArray[14 + offset],
                 compArray[15 + offset]);
         }
-        else
-        {
+        else {
             //noinspection PointlessArithmeticExpression
             return new Matrix(
                 // Row 1
@@ -227,251 +166,6 @@ public class Matrix
                 compArray[15 + offset]);
         }
     }
-
-    public final double[] toArray(double[] compArray, int offset, boolean rowMajor)
-    {
-        if (compArray == null)
-        {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        if ((compArray.length - offset) < NUM_ELEMENTS)
-        {
-            String msg = Logging.getMessage("generic.ArrayInvalidLength", compArray.length);
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (rowMajor)
-        {
-            // Row 1
-            //noinspection PointlessArithmeticExpression
-            compArray[0 + offset] = this.m11;
-            compArray[1 + offset] = this.m12;
-            compArray[2 + offset] = this.m13;
-            compArray[3 + offset] = this.m14;
-            // Row 2
-            compArray[4 + offset] = this.m21;
-            compArray[5 + offset] = this.m22;
-            compArray[6 + offset] = this.m23;
-            compArray[7 + offset] = this.m24;
-            // Row 3
-            compArray[8 + offset] = this.m31;
-            compArray[9 + offset] = this.m32;
-            compArray[10 + offset] = this.m33;
-            compArray[11 + offset] = this.m34;
-            // Row 4
-            compArray[12 + offset] = this.m41;
-            compArray[13 + offset] = this.m42;
-            compArray[14 + offset] = this.m43;
-        }
-        else
-        {
-            // Row 1
-            //noinspection PointlessArithmeticExpression
-            compArray[0 + offset] = this.m11;
-            compArray[4 + offset] = this.m12;
-            compArray[8 + offset] = this.m13;
-            compArray[12 + offset] = this.m14;
-            // Row 2
-            compArray[1 + offset] = this.m21;
-            compArray[5 + offset] = this.m22;
-            compArray[9 + offset] = this.m23;
-            compArray[13 + offset] = this.m24;
-            // Row 3
-            compArray[2 + offset] = this.m31;
-            compArray[6 + offset] = this.m32;
-            compArray[10 + offset] = this.m33;
-            compArray[14 + offset] = this.m34;
-            // Row 4
-            compArray[3 + offset] = this.m41;
-            compArray[7 + offset] = this.m42;
-            compArray[11 + offset] = this.m43;
-        }
-        compArray[15 + offset] = this.m44;
-
-        return compArray;
-    }
-
-    public final String toString()
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append("(");
-        sb.append(this.m11).append(", ").append(this.m12).append(", ").append(this.m13).append(", ").append(this.m14);
-        sb.append(", \r\n");
-        sb.append(this.m21).append(", ").append(this.m22).append(", ").append(this.m23).append(", ").append(this.m24);
-        sb.append(", \r\n");
-        sb.append(this.m31).append(", ").append(this.m32).append(", ").append(this.m33).append(", ").append(this.m34);
-        sb.append(", \r\n");
-        sb.append(this.m41).append(", ").append(this.m42).append(", ").append(this.m43).append(", ").append(this.m44);
-        sb.append(")");
-        return sb.toString();
-    }
-
-    public final double getM11()
-    {
-        return this.m11;
-    }
-
-    public final double getM12()
-    {
-        return this.m12;
-    }
-
-    public final double getM13()
-    {
-        return this.m13;
-    }
-
-    public final double getM14()
-    {
-        return this.m14;
-    }
-
-    public final double getM21()
-    {
-        return this.m21;
-    }
-
-    public final double getM22()
-    {
-        return this.m22;
-    }
-
-    public final double getM23()
-    {
-        return this.m23;
-    }
-
-    public final double getM24()
-    {
-        return this.m24;
-    }
-
-    public final double getM31()
-    {
-        return this.m31;
-    }
-
-    public final double getM32()
-    {
-        return this.m32;
-    }
-
-    public final double getM33()
-    {
-        return this.m33;
-    }
-
-    public final double getM34()
-    {
-        return this.m34;
-    }
-
-    public final double getM41()
-    {
-        return this.m41;
-    }
-
-    public final double getM42()
-    {
-        return this.m42;
-    }
-
-    public final double getM43()
-    {
-        return this.m43;
-    }
-
-    public final double getM44()
-    {
-        return this.m44;
-    }
-
-    public final double m11()
-    {
-        return this.m11;
-    }
-
-    public final double m12()
-    {
-        return this.m12;
-    }
-
-    public final double m13()
-    {
-        return this.m13;
-    }
-
-    public final double m14()
-    {
-        return this.m14;
-    }
-
-    public final double m21()
-    {
-        return this.m21;
-    }
-
-    public final double m22()
-    {
-        return this.m22;
-    }
-
-    public final double m23()
-    {
-        return this.m23;
-    }
-
-    public final double m24()
-    {
-        return this.m24;
-    }
-
-    public final double m31()
-    {
-        return this.m31;
-    }
-
-    public final double m32()
-    {
-        return this.m32;
-    }
-
-    public final double m33()
-    {
-        return this.m33;
-    }
-
-    public final double m34()
-    {
-        return this.m34;
-    }
-
-    public final double m41()
-    {
-        return this.m41;
-    }
-
-    public final double m42()
-    {
-        return this.m42;
-    }
-
-    public final double m43()
-    {
-        return this.m43;
-    }
-
-    public final double m44()
-    {
-        return this.m44;
-    }
-
-    // ============== Factory Functions ======================= //
-    // ============== Factory Functions ======================= //
-    // ============== Factory Functions ======================= //
 
     /**
      * Returns a Cartesian transform <code>Matrix</code> that maps a local orientation to model coordinates. The
@@ -481,31 +175,25 @@ public class Matrix
      *
      * @param axes an array must of three non-null vectors defining a local orientation in the following order: x-axis,
      *             y-axis, z-axis.
-     *
      * @return a <code>Matrix</code> that a transforms local coordinates to world coordinates.
-     *
      * @throws IllegalArgumentException if <code>axes</code> is <code>null</code>, if <code>axes</code> contains less
      *                                  than three elements, or if any of the first three elements in <code>axes</code>
      *                                  is <code>null</code>.
      */
-    public static Matrix fromAxes(Vec4[] axes)
-    {
-        if (axes == null)
-        {
+    public static Matrix fromAxes(Vec4[] axes) {
+        if (axes == null) {
             String msg = Logging.getMessage("nullValue.AxesIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (axes.length < 3)
-        {
+        if (axes.length < 3) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", axes.length);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (axes[0] == null || axes[1] == null || axes[2] == null)
-        {
+        if (axes[0] == null || axes[1] == null || axes[2] == null) {
             String msg = Logging.getMessage("nullValue.AxesIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -523,16 +211,13 @@ public class Matrix
             true);
     }
 
-    public static Matrix fromAxisAngle(Angle angle, Vec4 axis)
-    {
-        if (angle == null)
-        {
+    public static Matrix fromAxisAngle(Angle angle, Vec4 axis) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (axis == null)
-        {
+        if (axis == null) {
             String msg = Logging.getMessage("nullValue.Vec4IsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -541,10 +226,8 @@ public class Matrix
         return fromAxisAngle(angle, axis.x, axis.y, axis.z, true);
     }
 
-    public static Matrix fromAxisAngle(Angle angle, double axisX, double axisY, double axisZ)
-    {
-        if (angle == null)
-        {
+    public static Matrix fromAxisAngle(Angle angle, double axisX, double axisY, double axisZ) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -552,20 +235,16 @@ public class Matrix
         return fromAxisAngle(angle, axisX, axisY, axisZ, true);
     }
 
-    private static Matrix fromAxisAngle(Angle angle, double axisX, double axisY, double axisZ, boolean normalize)
-    {
-        if (angle == null)
-        {
+    private static Matrix fromAxisAngle(Angle angle, double axisX, double axisY, double axisZ, boolean normalize) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (normalize)
-        {
+        if (normalize) {
             double length = Math.sqrt((axisX * axisX) + (axisY * axisY) + (axisZ * axisZ));
-            if (!isZero(length) && (length != 1.0))
-            {
+            if (!isZero(length) && (length != 1.0)) {
                 axisX /= length;
                 axisY /= length;
                 axisZ /= length;
@@ -597,10 +276,8 @@ public class Matrix
             true);
     }
 
-    public static Matrix fromQuaternion(Quaternion quaternion)
-    {
-        if (quaternion == null)
-        {
+    public static Matrix fromQuaternion(Quaternion quaternion) {
+        if (quaternion == null) {
             String msg = Logging.getMessage("nullValue.QuaternionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -609,13 +286,10 @@ public class Matrix
         return fromQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w, true);
     }
 
-    private static Matrix fromQuaternion(double x, double y, double z, double w, boolean normalize)
-    {
-        if (normalize)
-        {
+    private static Matrix fromQuaternion(double x, double y, double z, double w, boolean normalize) {
+        if (normalize) {
             double length = Math.sqrt((x * x) + (y * y) + (z * z) + (w * w));
-            if (!isZero(length) && (length != 1.0))
-            {
+            if (!isZero(length) && (length != 1.0)) {
                 x /= length;
                 y /= length;
                 z /= length;
@@ -645,10 +319,8 @@ public class Matrix
             true);
     }
 
-    public static Matrix fromRotationXYZ(Angle xRotation, Angle yRotation, Angle zRotation)
-    {
-        if ((xRotation == null) || (yRotation == null) || (zRotation == null))
-        {
+    public static Matrix fromRotationXYZ(Angle xRotation, Angle yRotation, Angle zRotation) {
+        if ((xRotation == null) || (yRotation == null) || (zRotation == null)) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -669,10 +341,8 @@ public class Matrix
             true);
     }
 
-    public static Matrix fromRotationX(Angle angle)
-    {
-        if (angle == null)
-        {
+    public static Matrix fromRotationX(Angle angle) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -689,10 +359,8 @@ public class Matrix
             true);
     }
 
-    public static Matrix fromRotationY(Angle angle)
-    {
-        if (angle == null)
-        {
+    public static Matrix fromRotationY(Angle angle) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -709,10 +377,8 @@ public class Matrix
             true);
     }
 
-    public static Matrix fromRotationZ(Angle angle)
-    {
-        if (angle == null)
-        {
+    public static Matrix fromRotationZ(Angle angle) {
+        if (angle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -729,15 +395,12 @@ public class Matrix
             true);
     }
 
-    public static Matrix fromScale(double scale)
-    {
+    public static Matrix fromScale(double scale) {
         return fromScale(scale, scale, scale);
     }
 
-    public static Matrix fromScale(Vec4 scale)
-    {
-        if (scale == null)
-        {
+    public static Matrix fromScale(Vec4 scale) {
+        if (scale == null) {
             String msg = Logging.getMessage("nullValue.Vec4IsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -746,8 +409,7 @@ public class Matrix
         return fromScale(scale.x, scale.y, scale.z);
     }
 
-    public static Matrix fromScale(double scaleX, double scaleY, double scaleZ)
-    {
+    public static Matrix fromScale(double scaleX, double scaleY, double scaleZ) {
         return new Matrix(
             scaleX, 0.0, 0.0, 0.0,
             0.0, scaleY, 0.0, 0.0,
@@ -757,10 +419,8 @@ public class Matrix
             false);
     }
 
-    public static Matrix fromTranslation(Vec4 translation)
-    {
-        if (translation == null)
-        {
+    public static Matrix fromTranslation(Vec4 translation) {
+        if (translation == null) {
             String msg = Logging.getMessage("nullValue.Vec4IsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -769,8 +429,7 @@ public class Matrix
         return fromTranslation(translation.x, translation.y, translation.z);
     }
 
-    public static Matrix fromTranslation(double x, double y, double z)
-    {
+    public static Matrix fromTranslation(double x, double y, double z) {
         return new Matrix(
             1.0, 0.0, 0.0, x,
             0.0, 1.0, 0.0, y,
@@ -780,20 +439,17 @@ public class Matrix
             true);
     }
 
-    public static Matrix fromSkew(Angle theta, Angle phi)
-    {
+    public static Matrix fromSkew(Angle theta, Angle phi) {
         // from http://faculty.juniata.edu/rhodes/graphics/projectionmat.htm
 
         double cotTheta = 1.0e6;
         double cotPhi = 1.0e6;
 
-        if (theta.getRadians() < EPSILON && phi.getRadians() < EPSILON)
-        {
+        if (theta.getRadians() < EPSILON && phi.getRadians() < EPSILON) {
             cotTheta = 0;
             cotPhi = 0;
         }
-        else
-        {
+        else {
             if (Math.abs(Math.tan(theta.getRadians())) > EPSILON)
                 cotTheta = 1 / Math.tan(theta.getRadians());
             if (Math.abs(Math.tan(phi.getRadians())) > EPSILON)
@@ -818,38 +474,31 @@ public class Matrix
      * @param origin the origin of the local coordinate system.
      * @param axes   an array must of three non-null vectors defining a local orientation in the following order:
      *               x-axis, y-axis, z-axis.
-     *
      * @return a <code>Matrix</code> that transforms local coordinates to world coordinates.
-     *
      * @throws IllegalArgumentException if <code>origin</code> is <code>null</code>, if <code>axes</code> is
-     *                                  <code>null</code>, if <code>axes</code> contains less than three elements, or if
-     *                                  any of the first three elements in <code>axes</code> is <code>null</code>.
+     *                                  <code>null</code>, if <code>axes</code> contains less than three elements, or
+     *                                  if any of the first three elements in <code>axes</code> is <code>null</code>.
      */
-    public static Matrix fromLocalOrientation(Vec4 origin, Vec4[] axes)
-    {
-        if (origin == null)
-        {
+    public static Matrix fromLocalOrientation(Vec4 origin, Vec4[] axes) {
+        if (origin == null) {
             String msg = Logging.getMessage("nullValue.OriginIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (axes == null)
-        {
+        if (axes == null) {
             String msg = Logging.getMessage("nullValue.AxesIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (axes.length < 3)
-        {
+        if (axes.length < 3) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", axes.length);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (axes[0] == null || axes[1] == null || axes[2] == null)
-        {
+        if (axes[0] == null || axes[1] == null || axes[2] == null) {
             String msg = Logging.getMessage("nullValue.AxesIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -872,25 +521,20 @@ public class Matrix
      * @param eye    the eye point, in model coordinates.
      * @param center the scene's reference center point, in model coordinates.
      * @param up     the direction of the up vector, in model coordinates.
-     *
      * @return a viewing matrix in model coordinates defined by the specified eye point, reference center point, and up
-     *         vector.
-     *
+     * vector.
      * @throws IllegalArgumentException if any of the eye point, reference center point, or up vector are null, if the
      *                                  eye point and reference center point are coincident, or if the up vector and the
      *                                  line of sight are parallel.
      */
-    public static Matrix fromViewLookAt(Vec4 eye, Vec4 center, Vec4 up)
-    {
-        if (eye == null || center == null || up == null)
-        {
+    public static Matrix fromViewLookAt(Vec4 eye, Vec4 center, Vec4 up) {
+        if (eye == null || center == null || up == null) {
             String msg = Logging.getMessage("nullValue.Vec4IsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (eye.distanceTo3(center) <= EPSILON)
-        {
+        if (eye.distanceTo3(center) <= EPSILON) {
             String msg = Logging.getMessage("Geom.EyeAndCenterInvalid", eye, center);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -902,8 +546,7 @@ public class Matrix
         Vec4 s = f.cross3(up);
         s = s.normalize3();
 
-        if (s.getLength3() <= EPSILON)
-        {
+        if (s.getLength3() <= EPSILON) {
             String msg = Logging.getMessage("Geom.UpAndLineOfSightInvalid", up, forward);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -934,25 +577,20 @@ public class Matrix
      * @param eye    the eye point, in model coordinates.
      * @param center the scene's reference center point, in model coordinates.
      * @param up     the direction of the up vector, in model coordinates.
-     *
      * @return a viewing matrix in model coordinates defined by the specified eye point, reference center point, and up
-     *         vector.
-     *
+     * vector.
      * @throws IllegalArgumentException if any of the eye point, reference center point, or up vector are null, if the
      *                                  eye point and reference center point are coincident, or if the up vector and the
      *                                  line of sight are parallel.
      */
-    public static Matrix fromModelLookAt(Vec4 eye, Vec4 center, Vec4 up)
-    {
-        if (eye == null || center == null || up == null)
-        {
+    public static Matrix fromModelLookAt(Vec4 eye, Vec4 center, Vec4 up) {
+        if (eye == null || center == null || up == null) {
             String msg = Logging.getMessage("nullValue.Vec4IsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (eye.distanceTo3(center) <= EPSILON)
-        {
+        if (eye.distanceTo3(center) <= EPSILON) {
             String msg = Logging.getMessage("Geom.EyeAndCenterInvalid", eye, center);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -964,8 +602,7 @@ public class Matrix
         Vec4 s = up.cross3(f);
         s = s.normalize3();
 
-        if (s.getLength3() <= EPSILON)
-        {
+        if (s.getLength3() <= EPSILON) {
             String msg = Logging.getMessage("Geom.UpAndLineOfSightInvalid", up, forward);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -986,48 +623,40 @@ public class Matrix
     }
 
     public static Matrix fromPerspective(Angle horizontalFieldOfView, double viewportWidth, double viewportHeight,
-        double near, double far)
-    {
-        if (horizontalFieldOfView == null)
-        {
+        double near, double far) {
+        if (horizontalFieldOfView == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         double fovX = horizontalFieldOfView.degrees;
-        if (fovX <= 0.0 || fovX > 180.0)
-        {
+        if (fovX <= 0.0 || fovX > 180.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", "horizontalFieldOfView=" + fovX);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (viewportWidth <= 0.0)
-        {
+        if (viewportWidth <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", "viewportWidth=" + viewportWidth);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (viewportHeight <= 0.0)
-        {
+        if (viewportHeight <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", "viewportHeight=" + viewportHeight);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (near <= 0.0)
-        {
+        if (near <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", "near=" + near);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (far <= 0.0)
-        {
+        if (far <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", "far=" + far);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (far <= near)
-        {
+        if (far <= near) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", "far=" + far + ",near=" + near);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1043,34 +672,28 @@ public class Matrix
             0.0, 0.0, -1.0, 0.0);
     }
 
-    public static Matrix fromPerspective(double width, double height, double near, double far)
-    {
-        if (width <= 0.0)
-        {
+    public static Matrix fromPerspective(double width, double height, double near, double far) {
+        if (width <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", width);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (height <= 0.0)
-        {
+        if (height <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", height);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (near <= 0.0)
-        {
+        if (near <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", near);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (far <= 0.0)
-        {
+        if (far <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", far);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (far <= near)
-        {
+        if (far <= near) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", far);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1083,34 +706,28 @@ public class Matrix
             0.0, 0.0, -1.0, 0.0);
     }
 
-    public static Matrix fromOrthographic(double width, double height, double near, double far)
-    {
-        if (width <= 0.0)
-        {
+    public static Matrix fromOrthographic(double width, double height, double near, double far) {
+        if (width <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", width);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (height <= 0.0)
-        {
+        if (height <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", height);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (near <= 0.0)
-        {
+        if (near <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", near);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (far <= 0.0)
-        {
+        if (far <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", far);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (far <= near)
-        {
+        if (far <= near) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", far);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1123,16 +740,13 @@ public class Matrix
             0.0, 0.0, 0.0, 1.0);
     }
 
-    public static Matrix fromOrthographic2D(double width, double height)
-    {
-        if (width <= 0.0)
-        {
+    public static Matrix fromOrthographic2D(double width, double height) {
+        if (width <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", width);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (height <= 0.0)
-        {
+        if (height <= 0.0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", height);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1153,22 +767,17 @@ public class Matrix
      * @param sector      the grid sector.
      * @param imageWidth  the grid width.
      * @param imageHeight the grid height.
-     *
      * @return <code>Matrix</code> that will map from grid coordinates to geographic coordinates in degrees.
-     *
      * @throws IllegalArgumentException if <code>sector</code> is null, or if either <code>width</code> or
      *                                  <code>height</code> are less than 1.
      */
-    public static Matrix fromImageToGeographic(int imageWidth, int imageHeight, Sector sector)
-    {
-        if (imageWidth < 1 || imageHeight < 1)
-        {
+    public static Matrix fromImageToGeographic(int imageWidth, int imageHeight, Sector sector) {
+        if (imageWidth < 1 || imageHeight < 1) {
             String message = Logging.getMessage("generic.InvalidImageSize", imageWidth, imageHeight);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (sector == null)
-        {
+        if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1179,8 +788,8 @@ public class Matrix
 
         double sx = sector.getDeltaLonDegrees() / imageWidth;
         double sy = -sector.getDeltaLatDegrees() / imageHeight;
-        double tx = sector.getMinLongitude().degrees;
-        double ty = sector.getMaxLatitude().degrees;
+        double tx = sector.lonMin().degrees;
+        double ty = sector.latMax().degrees;
 
         return new Matrix(
             sx, 0.0, tx, 0.0,
@@ -1189,10 +798,8 @@ public class Matrix
             0.0, 0.0, 0.0, 0.0);
     }
 
-    public static Matrix fromImageToGeographic(AVList worldFileParams)
-    {
-        if (worldFileParams == null)
-        {
+    public static Matrix fromImageToGeographic(AVList worldFileParams) {
+        if (worldFileParams == null) {
             String message = Logging.getMessage("nullValue.ParamsIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1213,8 +820,7 @@ public class Matrix
         Double c = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_LOCATION);
         Double f = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_LOCATION);
 
-        if (a == null || b == null || c == null || d == null || e == null || f == null)
-        {
+        if (a == null || b == null || c == null || d == null || e == null || f == null) {
             return null;
         }
 
@@ -1225,10 +831,8 @@ public class Matrix
             0.0, 0.0, 0.0, 0.0);
     }
 
-    public static Matrix fromGeographicToImage(AVList worldFileParams)
-    {
-        if (worldFileParams == null)
-        {
+    public static Matrix fromGeographicToImage(AVList worldFileParams) {
+        if (worldFileParams == null) {
             String message = Logging.getMessage("nullValue.ParamsIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1285,21 +889,18 @@ public class Matrix
         Double c = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_X_LOCATION);
         Double f = AVListImpl.getDoubleValue(worldFileParams, WorldFile.WORLD_FILE_Y_LOCATION);
 
-        if (a == null || b == null || c == null || d == null || e == null || f == null)
-        {
+        if (a == null || b == null || c == null || d == null || e == null || f == null) {
             return null;
         }
 
-        if (b == 0.0 && d == 0.0)
-        {
+        if (b == 0.0 && d == 0.0) {
             return new Matrix(
                 1.0 / a, 0.0, (-c / a), 0.0,
                 0.0, 1.0 / e, (-f / e), 0.0,
                 0.0, 0.0, 1.0, 0.0,
                 0.0, 0.0, 0.0, 0.0);
         }
-        else
-        {
+        else {
             double x0 = d - (e * a) / b;
             double ap = -e / (b * x0);
             double bp = 1.0 / x0;
@@ -1325,34 +926,27 @@ public class Matrix
      *
      * @param imagePoints three control points in the source grid.
      * @param geoPoints   three geographic locations corresponding to each grid control point.
-     *
      * @return <code>Matrix</code> that will map from geographic coordinates to grid coordinates in degrees.
-     *
      * @throws IllegalArgumentException if either <code>imagePoints</code> or <code>geoPoints</code> is null or have
      *                                  length less than 3.
      */
-    public static Matrix fromImageToGeographic(java.awt.geom.Point2D[] imagePoints, LatLon[] geoPoints)
-    {
-        if (imagePoints == null)
-        {
+    public static Matrix fromImageToGeographic(Point2D[] imagePoints, LatLon[] geoPoints) {
+        if (imagePoints == null) {
             String message = Logging.getMessage("nullValue.ImagePointsIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (geoPoints == null)
-        {
+        if (geoPoints == null) {
             String message = Logging.getMessage("nullValue.GeoPointsIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (imagePoints.length < 3)
-        {
+        if (imagePoints.length < 3) {
             String message = Logging.getMessage("generic.ArrayInvalidLength", "imagePoints.length < 3");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (geoPoints.length < 3)
-        {
+        if (geoPoints.length < 3) {
             String message = Logging.getMessage("generic.ArrayInvalidLength", "geoPoints.length < 3");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1417,28 +1011,23 @@ public class Matrix
             0.0, 0.0, 0.0, 0.0);
     }
 
-    public static Matrix fromGeographicToImage(java.awt.geom.Point2D[] imagePoints, LatLon[] geoPoints)
-    {
-        if (imagePoints == null)
-        {
+    public static Matrix fromGeographicToImage(Point2D[] imagePoints, LatLon[] geoPoints) {
+        if (imagePoints == null) {
             String message = Logging.getMessage("nullValue.ImagePointsIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (geoPoints == null)
-        {
+        if (geoPoints == null) {
             String message = Logging.getMessage("nullValue.GeoPointsIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (imagePoints.length < 3)
-        {
+        if (imagePoints.length < 3) {
             String message = Logging.getMessage("generic.ArrayInvalidLength", "imagePoints.length < 3");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (geoPoints.length < 3)
-        {
+        if (geoPoints.length < 3) {
             String message = Logging.getMessage("generic.ArrayInvalidLength", "geoPoints.length < 3");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1512,30 +1101,24 @@ public class Matrix
      * @param y      y-coordinate of lower left hand corner of the Cartesian region
      * @param width  width of the Cartesian region, extending to the right from the x-coordinate
      * @param height height of the Cartesian region, extending up from the y-coordinate
-     *
      * @return Matrix that will map from the geographic region to the Cartesian region.
-     *
      * @throws IllegalArgumentException if <code>sector</code> is null, or if <code>width</code> or <code>height</code>
      *                                  are less than zero.
      */
-    public static Matrix fromGeographicToViewport(Sector sector, int x, int y, int width, int height)
-    {
-        if (sector == null)
-        {
+    public static Matrix fromGeographicToViewport(Sector sector, int x, int y, int width, int height) {
+        if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (width <= 0)
-        {
+        if (width <= 0) {
             String message = Logging.getMessage("Geom.WidthInvalid", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (height <= 0)
-        {
+        if (height <= 0) {
             String message = Logging.getMessage("Geom.HeightInvalid", height);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1547,7 +1130,7 @@ public class Matrix
         transform = transform.multiply(
             Matrix.fromScale(width / sector.getDeltaLonDegrees(), height / sector.getDeltaLatDegrees(), 1.0));
         transform = transform.multiply(
-            Matrix.fromTranslation(-sector.getMinLongitude().degrees, -sector.getMinLatitude().degrees, 0.0));
+            Matrix.fromTranslation(-sector.lonMin().degrees, -sector.latMin().degrees, 0.0));
 
         return transform;
     }
@@ -1561,30 +1144,24 @@ public class Matrix
      * @param y      y-coordinate of lower left hand corner of the Cartesian region
      * @param width  width of the Cartesian region, extending to the right from the x-coordinate
      * @param height height of the Cartesian region, extending up from the y-coordinate
-     *
      * @return Matrix that will map from Cartesian region to the geographic region.
-     *
      * @throws IllegalArgumentException if <code>sector</code> is null, or if <code>width</code> or <code>height</code>
      *                                  are less than zero.
      */
-    public static Matrix fromViewportToGeographic(Sector sector, int x, int y, int width, int height)
-    {
-        if (sector == null)
-        {
+    public static Matrix fromViewportToGeographic(Sector sector, int x, int y, int width, int height) {
+        if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (width <= 0)
-        {
+        if (width <= 0) {
             String message = Logging.getMessage("Geom.WidthInvalid", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (height <= 0)
-        {
+        if (height <= 0) {
             String message = Logging.getMessage("Geom.HeightInvalid", height);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1592,7 +1169,7 @@ public class Matrix
 
         Matrix transform = Matrix.IDENTITY;
         transform = transform.multiply(
-            Matrix.fromTranslation(sector.getMinLongitude().degrees, sector.getMinLatitude().degrees, 0.0));
+            Matrix.fromTranslation(sector.lonMin().degrees, sector.latMin().degrees, 0.0));
         transform = transform.multiply(
             Matrix.fromScale(sector.getDeltaLonDegrees() / width, sector.getDeltaLatDegrees() / height, 1.0));
         transform = transform.multiply(
@@ -1616,54 +1193,53 @@ public class Matrix
      * distributed evenly about its mean point.
      *
      * @param points the Iterable of points for which to compute a Covariance matrix.
-     *
      * @return the covariance matrix for the iterable of 3D points.
-     *
      * @throws IllegalArgumentException if the points Iterable is null.
      */
-    public static Matrix fromCovarianceOfVertices(Iterable<? extends Vec4> points)
-    {
-        if (points == null)
-        {
-            String msg = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public static Matrix fromCovarianceOfVertices(Iterable<? extends Vec4> points) {
+//        if (points == null) {
+//            String msg = Logging.getMessage("nullValue.IterableIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        Vec4 mean = Vec4.computeAveragePoint(points);
+        final Vec4 mean = Vec4.computeAveragePoint(points);
         if (mean == null)
             return null;
 
         int count = 0;
-        double c11 = 0d;
-        double c22 = 0d;
-        double c33 = 0d;
-        double c12 = 0d;
-        double c13 = 0d;
-        double c23 = 0d;
+        double c11 = 0.0d;
+        double c22 = 0.0d;
+        double c33 = 0.0d;
+        double c12 = 0.0d;
+        double c13 = 0.0d;
+        double c23 = 0.0d;
 
-        for (Vec4 vec : points)
-        {
+        final double meanX = mean.x;
+        final double meanY = mean.y;
+        final double meanZ = mean.z;
+
+        for (Vec4 vec : points) {
             if (vec == null)
                 continue;
 
             count++;
-            c11 += (vec.x - mean.x) * (vec.x - mean.x);
-            c22 += (vec.y - mean.y) * (vec.y - mean.y);
-            c33 += (vec.z - mean.z) * (vec.z - mean.z);
-            c12 += (vec.x - mean.x) * (vec.y - mean.y); // c12 = c21
-            c13 += (vec.x - mean.x) * (vec.z - mean.z); // c13 = c31
-            c23 += (vec.y - mean.y) * (vec.z - mean.z); // c23 = c32
+            c11 += (vec.x - meanX) * (vec.x - meanX);
+            c22 += (vec.y - meanY) * (vec.y - meanY);
+            c33 += (vec.z - meanZ) * (vec.z - meanZ);
+            c12 += (vec.x - meanX) * (vec.y - meanY); // c12 = c21
+            c13 += (vec.x - meanX) * (vec.z - meanZ); // c13 = c31
+            c23 += (vec.y - meanY) * (vec.z - meanZ); // c23 = c32
         }
 
         if (count == 0)
             return null;
 
         return new Matrix(
-            c11 / (double) count, c12 / (double) count, c13 / (double) count, 0d,
-            c12 / (double) count, c22 / (double) count, c23 / (double) count, 0d,
-            c13 / (double) count, c23 / (double) count, c33 / (double) count, 0d,
-            0d, 0d, 0d, 0d);
+            c11 / count, c12 / count, c13 / count, 0.0d,
+            c12 / count, c22 / count, c23 / count, 0.0d,
+            c13 / count, c23 / count, c33 / count, 0.0d,
+            0.0d, 0.0d, 0.0d, 0.0d);
     }
 
     /**
@@ -1690,61 +1266,59 @@ public class Matrix
      * @param coordinates the buffer containing the point coordinates for which to compute a Covariance matrix.
      * @param stride      the number of elements between the first coordinate of consecutive points. If stride is 3,
      *                    this interprets the buffer has having tightly packed XYZ coordinate tuples.
-     *
      * @return the covariance matrix for the buffer of points.
-     *
      * @throws IllegalArgumentException if the buffer is null, or if the stride is less than three.
      */
-    public static Matrix fromCovarianceOfVertices(BufferWrapper coordinates, int stride)
-    {
-        if (coordinates == null)
-        {
+    public static Matrix fromCovarianceOfVertices(BufferWrapper coordinates, int stride) {
+        if (coordinates == null) {
             String msg = Logging.getMessage("nullValue.CoordinatesAreNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (stride < 3)
-        {
+        if (stride < 3) {
             String msg = Logging.getMessage("generic.StrideIsInvalid");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        Vec4 mean = Vec4.computeAveragePoint3(coordinates, stride);
+        final Vec4 mean = Vec4.computeAveragePoint3(coordinates, stride);
         if (mean == null)
             return null;
 
         int count = 0;
-        double c11 = 0d;
-        double c22 = 0d;
-        double c33 = 0d;
-        double c12 = 0d;
-        double c13 = 0d;
-        double c23 = 0d;
+        double c11 = 0.0d;
+        double c22 = 0.0d;
+        double c33 = 0.0d;
+        double c12 = 0.0d;
+        double c13 = 0.0d;
+        double c23 = 0.0d;
 
-        for (int i = 0; i <= coordinates.length() - stride; i += stride)
-        {
+        final double meanX = mean.x;
+        final double meanY = mean.y;
+        final double meanZ = mean.z;
+
+        for (int i = 0; i <= coordinates.length() - stride; i += stride) {
             double x = coordinates.getDouble(i);
             double y = coordinates.getDouble(i + 1);
             double z = coordinates.getDouble(i + 2);
             count++;
-            c11 += (x - mean.x) * (x - mean.x);
-            c22 += (y - mean.y) * (y - mean.y);
-            c33 += (z - mean.z) * (z - mean.z);
-            c12 += (x - mean.x) * (y - mean.y); // c12 = c21
-            c13 += (x - mean.x) * (z - mean.z); // c13 = c31
-            c23 += (y - mean.y) * (z - mean.z); // c23 = c32
+            c11 += (x - meanX) * (x - meanX);
+            c22 += (y - meanY) * (y - meanY);
+            c33 += (z - meanZ) * (z - meanZ);
+            c12 += (x - meanX) * (y - meanY); // c12 = c21
+            c13 += (x - meanX) * (z - meanZ); // c13 = c31
+            c23 += (y - meanY) * (z - meanZ); // c23 = c32
         }
 
         if (count == 0)
             return null;
 
         return new Matrix(
-            c11 / (double) count, c12 / (double) count, c13 / (double) count, 0d,
-            c12 / (double) count, c22 / (double) count, c23 / (double) count, 0d,
-            c13 / (double) count, c23 / (double) count, c33 / (double) count, 0d,
-            0d, 0d, 0d, 0d);
+            c11 / count, c12 / count, c13 / count, 0.0d,
+            c12 / count, c22 / count, c23 / count, 0.0d,
+            c13 / count, c23 / count, c33 / count, 0.0d,
+            0.0d, 0.0d, 0.0d, 0.0d);
     }
 
     /**
@@ -1757,23 +1331,19 @@ public class Matrix
      * @param matrix          the symmetric Matrix for which to compute an eigensystem.
      * @param outEigenvalues  the array which receives the three output eigenvalues.
      * @param outEigenvectors the array which receives the three output eigenvectors.
-     *
      * @throws IllegalArgumentException if the Matrix is null or is not symmetric, if the output eigenvalue array is
      *                                  null or has length less than 3, or if the output eigenvector is null or has
      *                                  length less than 3.
      */
     public static void computeEigensystemFromSymmetricMatrix3(Matrix matrix, double[] outEigenvalues,
-        Vec4[] outEigenvectors)
-    {
-        if (matrix == null)
-        {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+        Vec4[] outEigenvectors) {
+//        if (matrix == null) {
+//            String msg = Logging.getMessage("nullValue.MatrixIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        if (matrix.m12 != matrix.m21 || matrix.m13 != matrix.m31 || matrix.m23 != matrix.m32)
-        {
+        if (matrix.m12 != matrix.m21 || matrix.m13 != matrix.m31 || matrix.m23 != matrix.m32) {
             String msg = Logging.getMessage("generic.MatrixNotSymmetric", matrix);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1795,95 +1365,91 @@ public class Matrix
         double m33 = matrix.m33;
 
         double[][] r = new double[3][3];
-        r[0][0] = r[1][1] = r[2][2] = 1d;
+        r[0][0] = r[1][1] = r[2][2] = 1.0d;
 
-        for (int a = 0; a < MAX_SWEEPS; a++)
-        {
+        for (int a = 0; a < MAX_SWEEPS; a++) {
             // Exit if off-diagonal entries small enough
             if ((Math.abs(m12) < EPSILON) && (Math.abs(m13) < EPSILON) && (Math.abs(m23) < EPSILON))
                 break;
 
             // Annihilate (1,2) entry
-            if (m12 != 0d)
-            {
-                double u = (m22 - m11) * 0.5 / m12;
+            if (m12 != 0.0d) {
+                double u = (m22 - m11) / (2*m12);
                 double u2 = u * u;
-                double u2p1 = u2 + 1d;
+                double u2p1 = u2 + 1.0d;
                 double t = (u2p1 != u2) ?
-                    ((u < 0d) ? -1d : 1d) * (Math.sqrt(u2p1) - Math.abs(u))
+                    ((u < 0.0d) ? -1.0d : 1.0d) * (Math.sqrt(u2p1) - Math.abs(u))
                     : 0.5 / u;
-                double c = 1d / Math.sqrt(t * t + 1d);
+                double c = Math.pow(t * t + 1.0d, -0.5);
                 double s = c * t;
 
                 m11 -= t * m12;
                 m22 += t * m12;
-                m12 = 0d;
+                m12 = 0.0d;
 
                 double temp = c * m13 - s * m23;
                 m23 = s * m13 + c * m23;
                 m13 = temp;
 
-                for (int i = 0; i < 3; i++)
-                {
-                    temp = c * r[i][0] - s * r[i][1];
-                    r[i][1] = s * r[i][0] + c * r[i][1];
-                    r[i][0] = temp;
+                for (int i = 0; i < 3; i++) {
+                    final double[] ri = r[i];
+                    temp =  c * ri[0] - s * ri[1];
+                    ri[1] = s * ri[0] + c * ri[1];
+                    ri[0] = temp;
                 }
             }
 
             // Annihilate (1,3) entry
-            if (m13 != 0d)
-            {
-                double u = (m33 - m11) * 0.5 / m13;
+            if (m13 != 0.0d) {
+                double u = (m33 - m11) / (2 * m13);
                 double u2 = u * u;
-                double u2p1 = u2 + 1d;
+                double u2p1 = u2 + 1.0d;
                 double t = (u2p1 != u2) ?
-                    ((u < 0d) ? -1d : 1d) * (Math.sqrt(u2p1) - Math.abs(u))
+                    ((u < 0.0d) ? -1.0d : 1.0d) * (Math.sqrt(u2p1) - Math.abs(u))
                     : 0.5 / u;
-                double c = 1d / Math.sqrt(t * t + 1d);
+                double c = Math.pow(t * t + 1.0d, -0.5);
                 double s = c * t;
 
                 m11 -= t * m13;
                 m33 += t * m13;
-                m13 = 0d;
+                m13 = 0.0d;
 
                 double temp = c * m12 - s * m23;
                 m23 = s * m12 + c * m23;
                 m12 = temp;
 
-                for (int i = 0; i < 3; i++)
-                {
-                    temp = c * r[i][0] - s * r[i][2];
-                    r[i][2] = s * r[i][0] + c * r[i][2];
-                    r[i][0] = temp;
+                for (int i = 0; i < 3; i++) {
+                    final double[] ri = r[i];
+                    temp = c * ri[0] - s * ri[2];
+                    ri[2] = s * ri[0] + c * ri[2];
+                    ri[0] = temp;
                 }
             }
 
             // Annihilate (2,3) entry
-            if (m23 != 0d)
-            {
-                double u = (m33 - m22) * 0.5 / m23;
+            if (m23 != 0.0d) {
+                double u = (m33 - m22) / (2 * m23);
                 double u2 = u * u;
-                double u2p1 = u2 + 1d;
+                double u2p1 = u2 + 1.0d;
                 double t = (u2p1 != u2) ?
-                    ((u < 0d) ? -1d : 1d) * (Math.sqrt(u2p1) - Math.abs(u))
+                    ((u < 0.0d) ? -1.0d : 1.0d) * (Math.sqrt(u2p1) - Math.abs(u))
                     : 0.5 / u;
-                double c = 1d / Math.sqrt(t * t + 1d);
+                double c = Math.pow(t * t + 1.0d, -0.5);
                 double s = c * t;
 
                 m22 -= t * m23;
                 m33 += t * m23;
-                m23 = 0d;
+                m23 = 0.0d;
 
                 double temp = c * m12 - s * m13;
                 m13 = s * m12 + c * m13;
                 m12 = temp;
 
-                for (int i = 0; i < 3; i++)
-                {
-                    temp = c * r[i][1] - s * r[i][2];
-                    r[i][2] = s * r[i][1] + c * r[i][2];
-                    r[i][1] = temp;
+                for (int i = 0; i < 3; i++) {
+                    final double[] ri = r[i];
+                    temp = c * ri[1] - s * ri[2];
+                    ri[2] = s * ri[1] + c * ri[2];
+                    ri[1] = temp;
                 }
             }
         }
@@ -1897,14 +1463,451 @@ public class Matrix
         outEigenvectors[2] = new Vec4(r[0][2], r[1][2], r[2][2]);
     }
 
+    private static Matrix computeTransformInverse(Matrix a) {
+        // 'a' is assumed to contain a 3D transformation matrix.
+        // Upper-3x3 is inverted, translation is transformed by inverted-upper-3x3 and negated.
+        return new Matrix(
+            a.m11, a.m21, a.m31, 0.0 - (a.m11 * a.m14) - (a.m21 * a.m24) - (a.m31 * a.m34),
+            a.m12, a.m22, a.m32, 0.0 - (a.m12 * a.m14) - (a.m22 * a.m24) - (a.m32 * a.m34),
+            a.m13, a.m23, a.m33, 0.0 - (a.m13 * a.m14) - (a.m23 * a.m24) - (a.m33 * a.m34),
+            0.0, 0.0, 0.0, 1.0,
+            false); // Inverse of an orthogonal, 3D transform matrix is not an orthogonal 3D transform.
+    }
+
+    // ============== Factory Functions ======================= //
+    // ============== Factory Functions ======================= //
+    // ============== Factory Functions ======================= //
+
+    private static Matrix computeGeneralInverse(Matrix a) {
+        // Copy the specified matrix into a mutable two-dimensional array.
+        double[][] A = new double[4][4];
+        A[0][0] = a.m11;
+        A[0][1] = a.m12;
+        A[0][2] = a.m13;
+        A[0][3] = a.m14;
+        A[1][0] = a.m21;
+        A[1][1] = a.m22;
+        A[1][2] = a.m23;
+        A[1][3] = a.m24;
+        A[2][0] = a.m31;
+        A[2][1] = a.m32;
+        A[2][2] = a.m33;
+        A[2][3] = a.m34;
+        A[3][0] = a.m41;
+        A[3][1] = a.m42;
+        A[3][2] = a.m43;
+        A[3][3] = a.m44;
+
+        int[] indx = new int[4];
+        double d = ludcmp(A, indx);
+
+        // Compute the matrix's determinant.
+        for (int i = 0; i < 4; i++) {
+            d *= A[i][i];
+        }
+
+        // The matrix is singular if its determinant is zero or very close to zero.
+        if (Math.abs(d) < NEAR_ZERO_THRESHOLD)
+            return null;
+
+        double[][] Y = new double[4][4];
+        double[] col = new double[4];
+        for (int j = 0; j < 4; j++) {
+            Arrays.fill(col, 0);
+
+            col[j] = 1.0;
+            lubksb(A, indx, col);
+
+            for (int i = 0; i < 4; i++)
+                Y[i][j] = col[i];
+        }
+
+        return new Matrix(
+            Y[0][0], Y[0][1], Y[0][2], Y[0][3],
+            Y[1][0], Y[1][1], Y[1][2], Y[1][3],
+            Y[2][0], Y[2][1], Y[2][2], Y[2][3],
+            Y[3][0], Y[3][1], Y[3][2], Y[3][3]);
+    }
+
+    // Method "lubksb" derived from "Numerical Recipes in C", Press et al., 1988
+    private static void lubksb(double[][] A, int[] indx, double[] b) {
+        int ii = -1;
+        for (int i = 0; i < 4; i++) {
+            int ip = indx[i];
+            double sum = b[ip];
+            b[ip] = b[i];
+
+            final double[] aI = A[i];
+            if (ii != -1) {
+                for (int j = ii; j <= i - 1; j++) {
+                    sum -= aI[j] * b[j];
+                }
+            }
+            else if (sum != 0.0) {
+                ii = i;
+            }
+
+            b[i] = sum;
+        }
+
+        for (int i = 3; i >= 0; i--) {
+            double sum = b[i];
+            final double[] aI = A[i];
+
+            for (int j = i + 1; j < 4; j++)
+                sum -= aI[j] * b[j];
+
+            b[i] = sum / aI[i];
+        }
+    }
+
+    // Method "ludcmp" derived from "Numerical Recipes in C", Press et al., 1988
+    private static double ludcmp(double[][] A, int[] indx) {
+
+        double[] vv = new double[4];
+        double d = 1.0;
+        double temp;
+        for (int i = 0; i < 4; i++) {
+            double big = 0.0;
+            for (int j = 0; j < 4; j++) {
+                if ((temp = Math.abs(A[i][j])) > big)
+                    big = temp;
+            }
+
+            if (big == 0.0)
+                return 0.0; // Matrix is singular if the entire row contains zero.
+            else
+                vv[i] = 1.0 / big;
+        }
+
+        double sum;
+        for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < j; i++) {
+                sum = A[i][j];
+                for (int k = 0; k < i; k++) {
+                    sum -= A[i][k] * A[k][j];
+                }
+
+                A[i][j] = sum;
+            }
+
+            double big = 0.0;
+            double dum;
+            int imax = -1;
+            for (int i = j; i < 4; i++) {
+                sum = A[i][j];
+                for (int k = 0; k < j; k++) {
+                    sum -= A[i][k] * A[k][j];
+                }
+
+                A[i][j] = sum;
+
+                if ((dum = vv[i] * Math.abs(sum)) >= big) {
+                    big = dum;
+                    imax = i;
+                }
+            }
+
+            if (j != imax) {
+                for (int k = 0; k < 4; k++) {
+                    dum = A[imax][k];
+                    A[imax][k] = A[j][k];
+                    A[j][k] = dum;
+                }
+
+                d = -d;
+                vv[imax] = vv[j];
+            }
+
+            indx[j] = imax;
+
+            final double ajj = A[j][j];
+            if (ajj >= 0 && ajj < TINY)
+                A[j][j] = TINY;
+            else if (ajj <= 0 && ajj > -TINY)
+                A[j][j] = -TINY;
+//            if (ajj == 0)
+//                A[j][j] = TINY;
+
+            if (j != 3) {
+                dum = 1 / A[j][j];
+                for (int i = j + 1; i < 4; i++) {
+                    A[i][j] *= dum;
+                }
+            }
+        }
+
+        return d;
+    }
+
+    private static boolean isZero(double value) {
+        return (POSITIVE_ZERO.compareTo(value) == 0)
+            || (NEGATIVE_ZERO.compareTo(value) == 0);
+    }
+
+    public final boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || obj.getClass() != this.getClass())
+            return false;
+
+        Matrix that = (Matrix) obj;
+        return (this.m11 == that.m11) && (this.m12 == that.m12) && (this.m13 == that.m13) && (this.m14 == that.m14)
+            && (this.m21 == that.m21) && (this.m22 == that.m22) && (this.m23 == that.m23) && (this.m24 == that.m24)
+            && (this.m31 == that.m31) && (this.m32 == that.m32) && (this.m33 == that.m33) && (this.m34 == that.m34)
+            && (this.m41 == that.m41) && (this.m42 == that.m42) && (this.m43 == that.m43) && (this.m44 == that.m44);
+    }
+
+    public final int hashCode() {
+        if (this.hashCode == 0) {
+            int result;
+            long tmp;
+            tmp = Double.doubleToLongBits(this.m11);
+            result = (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m12);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m13);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m14);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m21);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m22);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m23);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m24);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m31);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m32);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m33);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m34);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m41);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m42);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m43);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            tmp = Double.doubleToLongBits(this.m44);
+            result = 29 * result + (int) (tmp ^ (tmp >>> 32));
+            this.hashCode = result;
+        }
+        return this.hashCode;
+    }
+
+    public final double[] toArray(double[] compArray, int offset, boolean rowMajor) {
+        if (compArray == null) {
+            String msg = Logging.getMessage("nullValue.ArrayIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        if ((compArray.length - offset) < NUM_ELEMENTS) {
+            String msg = Logging.getMessage("generic.ArrayInvalidLength", compArray.length);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (rowMajor) {
+            // Row 1
+            //noinspection PointlessArithmeticExpression
+            compArray[0 + offset] = this.m11;
+            compArray[1 + offset] = this.m12;
+            compArray[2 + offset] = this.m13;
+            compArray[3 + offset] = this.m14;
+            // Row 2
+            compArray[4 + offset] = this.m21;
+            compArray[5 + offset] = this.m22;
+            compArray[6 + offset] = this.m23;
+            compArray[7 + offset] = this.m24;
+            // Row 3
+            compArray[8 + offset] = this.m31;
+            compArray[9 + offset] = this.m32;
+            compArray[10 + offset] = this.m33;
+            compArray[11 + offset] = this.m34;
+            // Row 4
+            compArray[12 + offset] = this.m41;
+            compArray[13 + offset] = this.m42;
+            compArray[14 + offset] = this.m43;
+        }
+        else {
+            // Row 1
+            //noinspection PointlessArithmeticExpression
+            compArray[0 + offset] = this.m11;
+            compArray[4 + offset] = this.m12;
+            compArray[8 + offset] = this.m13;
+            compArray[12 + offset] = this.m14;
+            // Row 2
+            compArray[1 + offset] = this.m21;
+            compArray[5 + offset] = this.m22;
+            compArray[9 + offset] = this.m23;
+            compArray[13 + offset] = this.m24;
+            // Row 3
+            compArray[2 + offset] = this.m31;
+            compArray[6 + offset] = this.m32;
+            compArray[10 + offset] = this.m33;
+            compArray[14 + offset] = this.m34;
+            // Row 4
+            compArray[3 + offset] = this.m41;
+            compArray[7 + offset] = this.m42;
+            compArray[11 + offset] = this.m43;
+        }
+        compArray[15 + offset] = this.m44;
+
+        return compArray;
+    }
+
+    public final String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        sb.append(this.m11).append(", ").append(this.m12).append(", ").append(this.m13).append(", ").append(this.m14);
+        sb.append(", \r\n");
+        sb.append(this.m21).append(", ").append(this.m22).append(", ").append(this.m23).append(", ").append(this.m24);
+        sb.append(", \r\n");
+        sb.append(this.m31).append(", ").append(this.m32).append(", ").append(this.m33).append(", ").append(this.m34);
+        sb.append(", \r\n");
+        sb.append(this.m41).append(", ").append(this.m42).append(", ").append(this.m43).append(", ").append(this.m44);
+        sb.append(")");
+        return sb.toString();
+    }
+
+    public final double getM11() {
+        return this.m11;
+    }
+
+    public final double getM12() {
+        return this.m12;
+    }
+
+    public final double getM13() {
+        return this.m13;
+    }
+
+    public final double getM14() {
+        return this.m14;
+    }
+
+    public final double getM21() {
+        return this.m21;
+    }
+
+    public final double getM22() {
+        return this.m22;
+    }
+
+    public final double getM23() {
+        return this.m23;
+    }
+
+    public final double getM24() {
+        return this.m24;
+    }
+
+    public final double getM31() {
+        return this.m31;
+    }
+
+    public final double getM32() {
+        return this.m32;
+    }
+
+    public final double getM33() {
+        return this.m33;
+    }
+
+    public final double getM34() {
+        return this.m34;
+    }
+
+    public final double getM41() {
+        return this.m41;
+    }
+
+    public final double getM42() {
+        return this.m42;
+    }
+
+    public final double getM43() {
+        return this.m43;
+    }
+
+    public final double getM44() {
+        return this.m44;
+    }
+
+    public final double m11() {
+        return this.m11;
+    }
+
+    public final double m12() {
+        return this.m12;
+    }
+
+    public final double m13() {
+        return this.m13;
+    }
+
+    public final double m14() {
+        return this.m14;
+    }
+
+    public final double m21() {
+        return this.m21;
+    }
+
+    public final double m22() {
+        return this.m22;
+    }
+
+    public final double m23() {
+        return this.m23;
+    }
+
+    public final double m24() {
+        return this.m24;
+    }
+
+    public final double m31() {
+        return this.m31;
+    }
+
     // ============== Arithmetic Functions ======================= //
     // ============== Arithmetic Functions ======================= //
     // ============== Arithmetic Functions ======================= //
 
-    public final Matrix add(Matrix matrix)
-    {
-        if (matrix == null)
-        {
+    public final double m32() {
+        return this.m32;
+    }
+
+    public final double m33() {
+        return this.m33;
+    }
+
+    public final double m34() {
+        return this.m34;
+    }
+
+    public final double m41() {
+        return this.m41;
+    }
+
+    public final double m42() {
+        return this.m42;
+    }
+
+    public final double m43() {
+        return this.m43;
+    }
+
+    public final double m44() {
+        return this.m44;
+    }
+
+    public final Matrix add(Matrix matrix) {
+        if (matrix == null) {
             String msg = Logging.getMessage("nullValue.MatrixIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1917,10 +1920,12 @@ public class Matrix
             this.m41 + matrix.m41, this.m42 + matrix.m42, this.m43 + matrix.m43, this.m44 + matrix.m44);
     }
 
-    public final Matrix subtract(Matrix matrix)
-    {
-        if (matrix == null)
-        {
+    // ============== Matrix Arithmetic Functions ======================= //
+    // ============== Matrix Arithmetic Functions ======================= //
+    // ============== Matrix Arithmetic Functions ======================= //
+
+    public final Matrix subtract(Matrix matrix) {
+        if (matrix == null) {
             String msg = Logging.getMessage("nullValue.MatrixIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1933,8 +1938,7 @@ public class Matrix
             this.m41 - matrix.m41, this.m42 - matrix.m42, this.m43 - matrix.m43, this.m44 - matrix.m44);
     }
 
-    public final Matrix multiplyComponents(double value)
-    {
+    public final Matrix multiplyComponents(double value) {
         return new Matrix(
             this.m11 * value, this.m12 * value, this.m13 * value, this.m14 * value,
             this.m21 * value, this.m22 * value, this.m23 * value, this.m24 * value,
@@ -1942,10 +1946,8 @@ public class Matrix
             this.m41 * value, this.m42 * value, this.m43 * value, this.m44 * value);
     }
 
-    public final Matrix multiply(Matrix matrix)
-    {
-        if (matrix == null)
-        {
+    public final Matrix multiply(Matrix matrix) {
+        if (matrix == null) {
             String msg = Logging.getMessage("nullValue.MatrixIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1976,10 +1978,8 @@ public class Matrix
             this.isOrthonormalTransform && matrix.isOrthonormalTransform);
     }
 
-    public final Matrix divideComponents(double value)
-    {
-        if (isZero(value))
-        {
+    public final Matrix divideComponents(double value) {
+        if (isZero(value)) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange", value);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1992,10 +1992,8 @@ public class Matrix
             this.m41 / value, this.m42 / value, this.m43 / value, this.m44 / value);
     }
 
-    public final Matrix divideComponents(Matrix matrix)
-    {
-        if (matrix == null)
-        {
+    public final Matrix divideComponents(Matrix matrix) {
+        if (matrix == null) {
             String msg = Logging.getMessage("nullValue.MatrixIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -2008,8 +2006,7 @@ public class Matrix
             this.m41 / matrix.m41, this.m42 / matrix.m42, this.m43 / matrix.m43, this.m44 / matrix.m44);
     }
 
-    public final Matrix negate()
-    {
+    public final Matrix negate() {
         return new Matrix(
             0.0 - this.m11, 0.0 - this.m12, 0.0 - this.m13, 0.0 - this.m14,
             0.0 - this.m21, 0.0 - this.m22, 0.0 - this.m23, 0.0 - this.m24,
@@ -2019,10 +2016,8 @@ public class Matrix
             this.isOrthonormalTransform);
     }
 
-    public final Vec4 transformBy3(Matrix matrix, double x, double y, double z)
-    {
-        if (matrix == null)
-        {
+    public final Vec4 transformBy3(Matrix matrix, double x, double y, double z) {
+        if (matrix == null) {
             String msg = Logging.getMessage("nullValue.MatrixIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -2034,12 +2029,7 @@ public class Matrix
             (matrix.m31 * x) + (matrix.m32 * y) + (matrix.m33 * z));
     }
 
-    // ============== Matrix Arithmetic Functions ======================= //
-    // ============== Matrix Arithmetic Functions ======================= //
-    // ============== Matrix Arithmetic Functions ======================= //
-
-    public final double getDeterminant()
-    {
+    public final double getDeterminant() {
         double result = 0.0;
         // Columns 2, 3, 4.
         result += this.m11 *
@@ -2064,8 +2054,11 @@ public class Matrix
         return result;
     }
 
-    public final Matrix getTranspose()
-    {
+    // ============== Accessor Functions ======================= //
+    // ============== Accessor Functions ======================= //
+    // ============== Accessor Functions ======================= //
+
+    public final Matrix getTranspose() {
         // Swap rows with columns.
         return new Matrix(
             this.m11, this.m21, this.m31, this.m41,
@@ -2076,8 +2069,7 @@ public class Matrix
             false);
     }
 
-    public final double getTrace()
-    {
+    public final double getTrace() {
         return this.m11 + this.m22 + this.m33 + this.m44;
     }
 
@@ -2086,215 +2078,14 @@ public class Matrix
      *
      * @return the inverse of this matrix, or <code>null</code> if this matrix has no inverse.
      */
-    public final Matrix getInverse()
-    {
+    public final Matrix getInverse() {
         if (this.isOrthonormalTransform)
             return computeTransformInverse(this);
         else
             return computeGeneralInverse(this);
     }
 
-    private static Matrix computeTransformInverse(Matrix a)
-    {
-        // 'a' is assumed to contain a 3D transformation matrix.
-        // Upper-3x3 is inverted, translation is transformed by inverted-upper-3x3 and negated.
-        return new Matrix(
-            a.m11, a.m21, a.m31, 0.0 - (a.m11 * a.m14) - (a.m21 * a.m24) - (a.m31 * a.m34),
-            a.m12, a.m22, a.m32, 0.0 - (a.m12 * a.m14) - (a.m22 * a.m24) - (a.m32 * a.m34),
-            a.m13, a.m23, a.m33, 0.0 - (a.m13 * a.m14) - (a.m23 * a.m24) - (a.m33 * a.m34),
-            0.0, 0.0, 0.0, 1.0,
-            false); // Inverse of an orthogonal, 3D transform matrix is not an orthogonal 3D transform.
-    }
-
-    private static Matrix computeGeneralInverse(Matrix a)
-    {
-        // Copy the specified matrix into a mutable two-dimensional array.
-        double[][] A = new double[4][4];
-        A[0][0] = a.m11;
-        A[0][1] = a.m12;
-        A[0][2] = a.m13;
-        A[0][3] = a.m14;
-        A[1][0] = a.m21;
-        A[1][1] = a.m22;
-        A[1][2] = a.m23;
-        A[1][3] = a.m24;
-        A[2][0] = a.m31;
-        A[2][1] = a.m32;
-        A[2][2] = a.m33;
-        A[2][3] = a.m34;
-        A[3][0] = a.m41;
-        A[3][1] = a.m42;
-        A[3][2] = a.m43;
-        A[3][3] = a.m44;
-
-        int[] indx = new int[4];
-        double d = ludcmp(A, indx);
-
-        // Compute the matrix's determinant.
-        for (int i = 0; i < 4; i++)
-        {
-            d *= A[i][i];
-        }
-
-        // The matrix is singular if its determinant is zero or very close to zero.
-        if (Math.abs(d) < NEAR_ZERO_THRESHOLD)
-            return null;
-
-        double[][] Y = new double[4][4];
-        double[] col = new double[4];
-        for (int j = 0; j < 4; j++)
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                col[i] = 0.0;
-            }
-
-            col[j] = 1.0;
-            lubksb(A, indx, col);
-
-            for (int i = 0; i < 4; i++)
-            {
-                Y[i][j] = col[i];
-            }
-        }
-
-        return new Matrix(
-            Y[0][0], Y[0][1], Y[0][2], Y[0][3],
-            Y[1][0], Y[1][1], Y[1][2], Y[1][3],
-            Y[2][0], Y[2][1], Y[2][2], Y[2][3],
-            Y[3][0], Y[3][1], Y[3][2], Y[3][3]);
-    }
-
-    // Method "lubksb" derived from "Numerical Recipes in C", Press et al., 1988
-    private static void lubksb(double[][] A, int[] indx, double[] b)
-    {
-        int ii = -1;
-        for (int i = 0; i < 4; i++)
-        {
-            int ip = indx[i];
-            double sum = b[ip];
-            b[ip] = b[i];
-
-            if (ii != -1)
-            {
-                for (int j = ii; j <= i - 1; j++)
-                {
-                    sum -= A[i][j] * b[j];
-                }
-            }
-            else if (sum != 0.0)
-            {
-                ii = i;
-            }
-
-            b[i] = sum;
-        }
-
-        for (int i = 3; i >= 0; i--)
-        {
-            double sum = b[i];
-            for (int j = i + 1; j < 4; j++)
-            {
-                sum -= A[i][j] * b[j];
-            }
-
-            b[i] = sum / A[i][i];
-        }
-    }
-
-    // Method "ludcmp" derived from "Numerical Recipes in C", Press et al., 1988
-    private static double ludcmp(double[][] A, int[] indx)
-    {
-        final double TINY = 1.0e-20;
-
-        double[] vv = new double[4];
-        double d = 1.0;
-        double temp;
-        for (int i = 0; i < 4; i++)
-        {
-            double big = 0.0;
-            for (int j = 0; j < 4; j++)
-            {
-                if ((temp = Math.abs(A[i][j])) > big)
-                    big = temp;
-            }
-
-            if (big == 0.0)
-                return 0.0; // Matrix is singular if the entire row contains zero.
-            else
-                vv[i] = 1.0 / big;
-        }
-
-        double sum;
-        for (int j = 0; j < 4; j++)
-        {
-            for (int i = 0; i < j; i++)
-            {
-                sum = A[i][j];
-                for (int k = 0; k < i; k++)
-                {
-                    sum -= A[i][k] * A[k][j];
-                }
-
-                A[i][j] = sum;
-            }
-
-            double big = 0.0;
-            double dum;
-            int imax = -1;
-            for (int i = j; i < 4; i++)
-            {
-                sum = A[i][j];
-                for (int k = 0; k < j; k++)
-                {
-                    sum -= A[i][k] * A[k][j];
-                }
-
-                A[i][j] = sum;
-
-                if ((dum = vv[i] * Math.abs(sum)) >= big)
-                {
-                    big = dum;
-                    imax = i;
-                }
-            }
-
-            if (j != imax)
-            {
-                for (int k = 0; k < 4; k++)
-                {
-                    dum = A[imax][k];
-                    A[imax][k] = A[j][k];
-                    A[j][k] = dum;
-                }
-
-                d = -d;
-                vv[imax] = vv[j];
-            }
-
-            indx[j] = imax;
-            if (A[j][j] == 0.0)
-                A[j][j] = TINY;
-
-            if (j != 3)
-            {
-                dum = 1.0 / A[j][j];
-                for (int i = j + 1; i < 4; i++)
-                {
-                    A[i][j] *= dum;
-                }
-            }
-        }
-
-        return d;
-    }
-
-    // ============== Accessor Functions ======================= //
-    // ============== Accessor Functions ======================= //
-    // ============== Accessor Functions ======================= //
-
-    public final Angle getRotationX()
-    {
+    public final Angle getRotationX() {
         double yRadians = Math.asin(this.m13);
         double cosY = Math.cos(yRadians);
         if (isZero(cosY))
@@ -2302,13 +2093,11 @@ public class Matrix
 
         double xRadians;
         // No Gimball lock.
-        if (Math.abs(cosY) > 0.005)
-        {
+        if (Math.abs(cosY) > 0.005) {
             xRadians = Math.atan2(-this.m23 / cosY, this.m33 / cosY);
         }
         // Gimball lock has occurred. Rotation around X axis becomes rotation around Z axis.
-        else
-        {
+        else {
             xRadians = 0;
         }
 
@@ -2318,8 +2107,7 @@ public class Matrix
         return Angle.fromRadians(xRadians);
     }
 
-    public final Angle getRotationY()
-    {
+    public final Angle getRotationY() {
         double yRadians = Math.asin(this.m13);
         if (Double.isNaN(yRadians))
             return null;
@@ -2327,8 +2115,7 @@ public class Matrix
         return Angle.fromRadians(yRadians);
     }
 
-    public final Angle getRotationZ()
-    {
+    public final Angle getRotationZ() {
         double yRadians = Math.asin(this.m13);
         double cosY = Math.cos(yRadians);
         if (isZero(cosY))
@@ -2336,13 +2123,11 @@ public class Matrix
 
         double zRadians;
         // No Gimball lock.
-        if (Math.abs(cosY) > 0.005)
-        {
+        if (Math.abs(cosY) > 0.005) {
             zRadians = Math.atan2(-this.m12 / cosY, this.m11 / cosY);
         }
         // Gimball lock has occurred. Rotation around X axis becomes rotation around Z axis.
-        else
-        {
+        else {
             zRadians = Math.atan2(this.m21, this.m22);
         }
 
@@ -2368,19 +2153,15 @@ public class Matrix
             return null;
 
         double yRadians;
-        if (xRadians < Math.PI / 2)
-        {
-            if (xRadians > -Math.PI / 2)
-            {
+        if (xRadians < Math.PI / 2) {
+            if (xRadians > -Math.PI / 2) {
                 yRadians = Math.atan2(this.m13, this.m33);
             }
-            else
-            {
+            else {
                 yRadians = -Math.atan2(-this.m12, this.m11);
             }
         }
-        else
-        {
+        else {
             yRadians = Math.atan2(-this.m12, this.m11);
         }
 
@@ -2397,12 +2178,10 @@ public class Matrix
             return null;
 
         double zRadians;
-        if (xRadians < Math.PI / 2 && xRadians > -Math.PI / 2)
-        {
+        if (xRadians < Math.PI / 2 && xRadians > -Math.PI / 2) {
             zRadians = Math.atan2(this.m21, this.m22);
         }
-        else
-        {
+        else {
             zRadians = 0;
         }
 
@@ -2412,10 +2191,13 @@ public class Matrix
         return Angle.fromRadians(-zRadians);    // negate angle to make it CW
     }
 
-    public final Vec4 getTranslation()
-    {
+    public final Vec4 getTranslation() {
         return new Vec4(this.m14, this.m24, this.m34);
     }
+
+    // ============== Helper Functions ======================= //
+    // ============== Helper Functions ======================= //
+    // ============== Helper Functions ======================= //
 
     /**
      * Extracts this viewing matrix's eye point.
@@ -2428,8 +2210,7 @@ public class Matrix
      *
      * @return this viewing matrix's eye point, in model coordinates.
      */
-    public Vec4 extractEyePoint()
-    {
+    public Vec4 extractEyePoint() {
         // The eye point of a modelview matrix is computed by transforming the origin (0, 0, 0, 1) by the matrix's
         // inverse. This is equivalent to transforming the inverse of this matrix's translation components in the
         // rightmost column by the transpose of its upper 3x3 components.
@@ -2451,8 +2232,7 @@ public class Matrix
      *
      * @return this viewing matrix's forward vector, in model coordinates.
      */
-    public Vec4 extractForwardVector()
-    {
+    public Vec4 extractForwardVector() {
         // The forward vector of a modelview matrix is computed by transforming the negative Z axis (0, 0, -1, 0) by the
         // matrix's inverse. We have pre-computed the result inline here to simplify this computation.
         return new Vec4(-this.m31, -this.m32, -this.m33);
@@ -2469,7 +2249,7 @@ public class Matrix
      * necessary model coordinate context for the origin and the orientation. The origin should be either the view's eye
      * point or a point on the view's forward vector. The view's roll must be specified in order to disambiguate heading
      * and roll when the view's tilt is zero.
-     *
+     * <p>
      * The following list outlines the returned key-value pairs and their meanings:
      * <ul>
      * <li>AVKey.ORIGIN - The geographic position corresponding to the origin point.</li>
@@ -2482,29 +2262,23 @@ public class Matrix
      * @param origin the origin of the viewing parameters, in model coordinates.
      * @param roll   the view's roll.
      * @param globe  the globe the viewer is looking at.
-     *
      * @return a parameterization of this viewing matrix as a list of key-value pairs.
-     *
      * @throws IllegalArgumentException if any argument is null.
      */
-    public AVList extractViewingParameters(Vec4 origin, Angle roll, Globe globe)
-    {
-        if (origin == null)
-        {
+    public AVList extractViewingParameters(Vec4 origin, Angle roll, Globe globe) {
+        if (origin == null) {
             String msg = Logging.getMessage("nullValue.OriginIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (roll == null)
-        {
+        if (roll == null) {
             String msg = Logging.getMessage("nullValue.RollIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (globe == null)
-        {
+        if (globe == null) {
             String msg = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -2520,13 +2294,18 @@ public class Matrix
         double range = -this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m34;
 
         double st = Math.sqrt(
-            this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m13 * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m13 + this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m23 * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m23);
+            this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m13 * this.multiply(
+                globe.computeModelCoordinateOriginTransform(originPos)).m13
+                + this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m23 * this.multiply(
+                globe.computeModelCoordinateOriginTransform(originPos)).m23);
         double tilt = Math.atan2(st, this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m33);
 
         double cr = Math.cos(roll.radians);
         double sr = Math.sin(roll.radians);
-        double ch = cr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m11 - sr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m21;
-        double sh = sr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m22 - cr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m12;
+        double ch = cr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m11 - sr * this.multiply(
+            globe.computeModelCoordinateOriginTransform(originPos)).m21;
+        double sh = sr * this.multiply(globe.computeModelCoordinateOriginTransform(originPos)).m22 - cr * this.multiply(
+            globe.computeModelCoordinateOriginTransform(originPos)).m12;
         double heading = Math.atan2(sh, ch);
 
         AVList params = new AVListImpl();
@@ -2537,19 +2316,5 @@ public class Matrix
         params.setValue(AVKey.ROLL, roll);
 
         return params;
-    }
-
-    // ============== Helper Functions ======================= //
-    // ============== Helper Functions ======================= //
-    // ============== Helper Functions ======================= //
-
-    private static final Double POSITIVE_ZERO = +0.0d;
-
-    private static final Double NEGATIVE_ZERO = -0.0d;
-
-    private static boolean isZero(double value)
-    {
-        return (POSITIVE_ZERO.compareTo(value) == 0)
-            || (NEGATIVE_ZERO.compareTo(value) == 0);
     }
 }

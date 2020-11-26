@@ -19,33 +19,34 @@ import java.awt.image.*;
  * @author tag
  * @version $Id: MeasurementDialog.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class MeasurementDialog extends AbstractFeatureDialog
-{
+public class MeasurementDialog extends AbstractFeatureDialog {
     private static final String LAYER_NAME = "Measurement";
-
+    private static final Color[] colors = new Color[]
+        {
+            Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.PINK, Color.YELLOW
+        };
+    private static int nextColor = 0;
     private JTabbedPane tabbedPane = new JTabbedPane();
     private int labelSequence = 0;
     private RenderableLayer shapeLayer;
     private RenderableLayer controlPointsLayer;
 
-    private static int nextColor = 0;
-    private static final Color[] colors = new Color[]
-        {
-            Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.PINK, Color.YELLOW
-        };
-
-    private static Color getNextColor()
-    {
-        return colors[nextColor++ % colors.length];
-    }
-
-    public MeasurementDialog(Registry registry)
-    {
+    public MeasurementDialog(Registry registry) {
         super("Measurement", Constants.FEATURE_MEASUREMENT_DIALOG, registry);
     }
 
-    public void initialize(final Controller controller)
-    {
+    private static Color getNextColor() {
+        return colors[nextColor++ % colors.length];
+    }
+
+    private static Icon makeColorCircle(Color color) {
+        BufferedImage bi = PatternFactory.createPattern(
+            PatternFactory.PATTERN_CIRCLE, new Dimension(16, 16), 0.9f, color);
+
+        return new ImageIcon(bi);
+    }
+
+    public void initialize(final Controller controller) {
         super.initialize(controller);
 
         this.shapeLayer = new RenderableLayer();
@@ -62,8 +63,7 @@ public class MeasurementDialog extends AbstractFeatureDialog
         this.tabbedPane.setToolTipTextAt(0, "Create measurement");
 
         this.tabbedPane.addChangeListener(changeEvent -> {
-            if (tabbedPane.getSelectedIndex() == 0)
-            {
+            if (tabbedPane.getSelectedIndex() == 0) {
                 addNewPanel(tabbedPane); // Add new panel when '+' is selected
             }
         });
@@ -93,18 +93,15 @@ public class MeasurementDialog extends AbstractFeatureDialog
     }
 
     @Override
-    public void setVisible(boolean tf)
-    {
+    public void setVisible(boolean tf) {
         // Hide the shape layer if it's empty when the dialog closes. There will be fewer than 3 renderables in that
         // case: the control points and the annotation.
-        if (!tf && countRenderables(this.shapeLayer) < 3)
-        {
+        if (!tf && countRenderables(this.shapeLayer) < 3) {
             this.controller.getActiveLayers().remove(this.shapeLayer);
         }
 
         // Un-hide the shape layer when the dialog is raised
-        if (tf)
-        {
+        if (tf) {
             if (!this.controller.getActiveLayers().contains(this.shapeLayer))
                 this.controller.addInternalActiveLayer(this.shapeLayer);
         }
@@ -112,35 +109,29 @@ public class MeasurementDialog extends AbstractFeatureDialog
         super.setVisible(tf);
     }
 
-    private int countRenderables(RenderableLayer layer)
-    {
+    private int countRenderables(RenderableLayer layer) {
         int count = 0;
 
         //noinspection UnusedDeclaration
-        for (Renderable r : layer.getRenderables())
-        {
+        for (Renderable r : layer.getRenderables()) {
             ++count;
         }
 
         return count;
     }
 
-    private void deleteCurrentPanel()
-    {
+    private void deleteCurrentPanel() {
         MeasurementPanel mp = getCurrentPanel();
-        if (tabbedPane.getTabCount() > 2)
-        {
+        if (tabbedPane.getTabCount() > 2) {
             mp.deletePanel();
             tabbedPane.remove(tabbedPane.getSelectedComponent());
         }
-        else
-        {
+        else {
             mp.clearPanel();
         }
     }
 
-    private void addNewPanel(JTabbedPane tabPane)
-    {
+    private void addNewPanel(JTabbedPane tabPane) {
         final MeasurementPanel mp = new MeasurementPanel(null);
         mp.initialize(this.controller);
         mp.setLayers(this.shapeLayer, this.controlPointsLayer);
@@ -154,19 +145,16 @@ public class MeasurementDialog extends AbstractFeatureDialog
         tabPane.setToolTipTextAt(tabbedPane.getSelectedIndex(), "Select measurement");
 
         this.controller.getWWd().addSelectListener(event -> {
-            if (event.getEventAction().equals(SelectEvent.LEFT_CLICK))
-            {
+            if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
                 if (mp.getShape() == null || mp.getShape() != event.getTopObject())
                     return;
 
-                for (Component c : tabbedPane.getComponents())
-                {
+                for (Component c : tabbedPane.getComponents()) {
                     if (!(c instanceof JComponent))
                         continue;
 
                     Object o = ((JComponent) c).getClientProperty(Constants.FEATURE_OWNER_PROPERTY);
-                    if (o instanceof MeasurementPanel && o == mp)
-                    {
+                    if (o instanceof MeasurementPanel && o == mp) {
                         tabbedPane.setSelectedComponent(c);
                     }
                 }
@@ -174,17 +162,8 @@ public class MeasurementDialog extends AbstractFeatureDialog
         });
     }
 
-    private MeasurementPanel getCurrentPanel()
-    {
+    private MeasurementPanel getCurrentPanel() {
         JComponent p = (JComponent) tabbedPane.getSelectedComponent();
         return (MeasurementPanel) p.getClientProperty(Constants.FEATURE_OWNER_PROPERTY);
-    }
-
-    private static Icon makeColorCircle(Color color)
-    {
-        BufferedImage bi = PatternFactory.createPattern(
-            PatternFactory.PATTERN_CIRCLE, new Dimension(16, 16), .9f, color);
-
-        return new ImageIcon(bi);
     }
 }

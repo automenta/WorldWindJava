@@ -13,16 +13,13 @@ import gov.nasa.worldwindx.applications.worldwindow.core.*;
  * @author tag
  * @version $Id: Crosshair.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Crosshair extends AbstractOnDemandLayerFeature
-{
-    public Crosshair(Registry registry)
-    {
+public class Crosshair extends AbstractOnDemandLayerFeature {
+    public Crosshair(Registry registry) {
         super("Crosshair", Constants.FEATURE_CROSSHAIR, null, null, registry);
     }
 
     @Override
-    protected Layer createLayer()
-    {
+    protected Layer createLayer() {
         Layer layer = this.doCreateLayer();
 
         layer.setPickEnabled(false);
@@ -30,14 +27,12 @@ public class Crosshair extends AbstractOnDemandLayerFeature
         return layer;
     }
 
-    protected Layer doCreateLayer()
-    {
+    protected Layer doCreateLayer() {
         return new CrosshairLayer();
     }
 
     @Override
-    public void turnOn(boolean tf)
-    {
+    public void turnOn(boolean tf) {
         if (tf == this.on || this.layer == null)
             return;
 

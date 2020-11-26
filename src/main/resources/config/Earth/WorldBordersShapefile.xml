@@ -7,7 +7,7 @@
 <!--World boundaries from a shapefile-->
 <!--$Id: WorldBordersShapefile.xml 2408 2014-10-29 23:43:16Z dcollins $-->
 <Layer version="1" layerType="ShapefileLayer">
-    <ShapefileLocation>testData/shapefiles/TM_WORLD_BORDERS-0.3.shp</ShapefileLocation>
+    <ShapefileLocation>shapefiles/TM_WORLD_BORDERS-0.3.shp</ShapefileLocation>
     <DisplayName>Political Boundaries Shapefile</DisplayName>
     <PickEnabled>true</PickEnabled>
     <!--Assign attribute names in the shapefile's DBase file to keys on the shapes created from the shapefile-->

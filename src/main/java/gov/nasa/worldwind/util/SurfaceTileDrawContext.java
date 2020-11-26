@@ -20,8 +20,7 @@ import java.util.Collection;
  * @author dcollins
  * @version $Id: SurfaceTileDrawContext.java 2320 2014-09-17 19:29:24Z dcollins $
  */
-public class SurfaceTileDrawContext
-{
+public class SurfaceTileDrawContext {
     protected Sector sector;
     protected Rectangle viewport;
     protected Matrix modelview;
@@ -34,20 +33,16 @@ public class SurfaceTileDrawContext
      *
      * @param tile           the context's tile.
      * @param pickCandidates the context's list of pick candidates.
-     *
      * @throws IllegalArgumentException if any argument is null.
      */
-    public SurfaceTileDrawContext(Tile tile, Collection<PickedObject> pickCandidates)
-    {
-        if (tile == null)
-        {
+    public SurfaceTileDrawContext(Tile tile, Collection<PickedObject> pickCandidates) {
+        if (tile == null) {
             String message = Logging.getMessage("nullValue.TileIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (pickCandidates == null)
-        {
+        if (pickCandidates == null) {
             String message = Logging.getMessage("nullValue.PickedObjectList");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -64,8 +59,7 @@ public class SurfaceTileDrawContext
      *
      * @return this's sector.
      */
-    public Sector getSector()
-    {
+    public Sector getSector() {
         return this.sector;
     }
 
@@ -74,8 +68,7 @@ public class SurfaceTileDrawContext
      *
      * @return this context's viewport.
      */
-    public Rectangle getViewport()
-    {
+    public Rectangle getViewport() {
         return this.viewport;
     }
 
@@ -84,8 +77,7 @@ public class SurfaceTileDrawContext
      *
      * @return Matrix mapping geographic coordinates to tile coordinates.
      */
-    public Matrix getModelviewMatrix()
-    {
+    public Matrix getModelviewMatrix() {
         return this.modelview;
     }
 
@@ -94,15 +86,11 @@ public class SurfaceTileDrawContext
      * the geographic coordinate origin.
      *
      * @param referenceLocation the geographic coordinate origin.
-     *
      * @return Matrix mapping geographic coordinates to tile coordinates.
-     *
      * @throws IllegalArgumentException if the reference location is null.
      */
-    public Matrix getModelviewMatrix(LatLon referenceLocation)
-    {
-        if (referenceLocation == null)
-        {
+    public Matrix getModelviewMatrix(LatLon referenceLocation) {
+        if (referenceLocation == null) {
             String message = Logging.getMessage("nullValue.LatLonIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -119,8 +107,7 @@ public class SurfaceTileDrawContext
      *
      * @return this context's pick candidates.
      */
-    public Collection<PickedObject> getPickCandidates()
-    {
+    public Collection<PickedObject> getPickCandidates() {
         return this.pickCandidates;
     }
 
@@ -129,13 +116,10 @@ public class SurfaceTileDrawContext
      * accessed by calling {@link #getPickCandidates()}.
      *
      * @param pickedObject the object to add.
-     *
      * @throws IllegalArgumentException if the object is null.
      */
-    public void addPickCandidate(PickedObject pickedObject)
-    {
-        if (null == pickedObject)
-        {
+    public void addPickCandidate(PickedObject pickedObject) {
+        if (null == pickedObject) {
             String msg = Logging.getMessage("nullValue.PickedObject");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);

@@ -23,20 +23,102 @@ import javax.swing.Timer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 import java.util.*;
 
 /**
  * KeepingObjectsInView demonstrates keeping a set of scene elements visible by using the utility class {@link
- * gov.nasa.worldwindx.examples.util.ExtentVisibilitySupport}. To run this demonstration, execute this class' main
+ * ExtentVisibilitySupport}. To run this demonstration, execute this class' main
  * method, then follow the on-screen instructions.
  * <p>
  * The key functionality demonstrated by KeepingObjectsVisible is found in the internal classes {@link
- * KeepingObjectsInView.ViewController} and {@link gov.nasa.worldwindx.examples.KeepingObjectsInView.ViewAnimator}.
+ * KeepingObjectsInView.ViewController} and {@link KeepingObjectsInView.ViewAnimator}.
  *
  * @author dcollins
  * @version $Id: KeepingObjectsInView.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class KeepingObjectsInView extends ApplicationTemplate {
+
+    public static Iterable<?> createObjectsToTrack() {
+        List<Object> objects = new ArrayList<>();
+        Sector sector = Sector.fromDegrees(35, 45, -110, -100);
+
+        for (int i = 0; i < 3; i++) {
+            LatLon randLocation1, randLocation2;
+
+            // Add a UserFacingIcon.
+            randLocation1 = randomLocation(sector);
+            WWIcon icon = new UserFacingIcon("gov/nasa/worldwindx/examples/images/antenna.png",
+                new Position(randLocation1, 0));
+            icon.setSize(new Dimension(64, 64));
+            icon.setValue(AVKey.FEEDBACK_ENABLED, Boolean.TRUE);
+            objects.add(icon);
+
+            // Add a SphereAirspace.
+            randLocation1 = randomLocation(sector);
+            Airspace airspace = new SphereAirspace(randLocation1, 50000.0d);
+            airspace.setAltitude(0.0d);
+            airspace.setTerrainConforming(true);
+            airspace.setAttributes(new BasicAirspaceAttributes(Material.GREEN, 1.0d));
+            objects.add(airspace);
+
+            // Add a Path.
+            randLocation1 = randomLocation(sector);
+            randLocation2 = randomLocation(sector);
+            Path path = new Path(Arrays.asList(randLocation1, randLocation2), 0.0d);
+            path.setSurfacePath(true);
+            var attrs = new BasicShapeAttributes();
+            attrs.setOutlineWidth(3);
+            attrs.setOutlineMaterial(new Material(Color.RED));
+            path.setAttributes(attrs);
+            objects.add(path);
+
+            // Add a SurfaceCircle.
+            randLocation1 = randomLocation(sector);
+            attrs = new BasicShapeAttributes();
+            attrs.setInteriorMaterial(Material.BLUE);
+            attrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(Color.BLUE)));
+            attrs.setInteriorOpacity(0.5);
+            SurfaceCircle circle = new SurfaceCircle(attrs, randLocation1, 50000.0d);
+            objects.add(circle);
+        }
+
+        return objects;
+    }
+
+    protected static LatLon randomLocation(Sector sector) {
+        return new LatLon(
+            Angle.mix(Math.random(), sector.latMin(), sector.latMax()),
+            Angle.mix(Math.random(), sector.lonMin(), sector.lonMax()));
+    }
+
+    public static Annotation createHelpAnnotation(WorldWindow wwd) {
+        String text = "The view tracks the antenna icons,"
+            + " the <font color=\"#DD0000\">red</font> lines,"
+            + " the <font color=\"#00DD00\">green</font> spheres,"
+            + " and the <font color=\"#0000DD\">blue</font> circles."
+            + " Drag any object out of the window to track it.";
+        Rectangle viewport = ((Component) wwd).getBounds();
+        Point screenPoint = new Point(viewport.width / 2, viewport.height / 3);
+
+        AnnotationAttributes attr = new AnnotationAttributes();
+        attr.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
+        attr.setFont(Font.decode("Arial-Bold-16"));
+        attr.setTextAlign(AVKey.CENTER);
+        attr.setTextColor(Color.WHITE);
+        attr.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
+        attr.setBackgroundColor(new Color(0, 0, 0, 127)); // 50% transparent black
+        attr.setBorderColor(Color.LIGHT_GRAY);
+        attr.setLeader(AVKey.SHAPE_NONE);
+        attr.setCornerRadius(0);
+        attr.setSize(new Dimension(350, 0));
+
+        return new ScreenAnnotation(text, screenPoint, attr);
+    }
+
+    public static void main(String[] args) {
+        ApplicationTemplate.start("Keeping Objects In View", AppFrame.class);
+    }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
@@ -101,14 +183,15 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             for (Object o : objectsToTrack) {
                 if (o instanceof WWIcon) {
                     iconLayer.addIcon((WWIcon) o);
-                } else if (o instanceof Renderable) {
+                }
+                else if (o instanceof Renderable) {
                     shapesLayer.addRenderable((Renderable) o);
                 }
             }
 
             // Set up a SelectListener to drag the spheres.
             this.getWwd().addSelectListener(new SelectListener() {
-                protected final BasicDragger dragger = new BasicDragger(getWwd());
+                protected final SelectListener dragger = new BasicDragger(getWwd());
 
                 @Override
                 public void selected(SelectEvent event) {
@@ -144,92 +227,14 @@ public class KeepingObjectsInView extends ApplicationTemplate {
         }
     }
 
-    public static Iterable<?> createObjectsToTrack() {
-        ArrayList<Object> objects = new ArrayList<>();
-        Sector sector = Sector.fromDegrees(35, 45, -110, -100);
-
-        for (int i = 0; i < 3; i++) {
-            LatLon randLocation1, randLocation2;
-
-            // Add a UserFacingIcon.
-            randLocation1 = randomLocation(sector);
-            WWIcon icon = new UserFacingIcon("gov/nasa/worldwindx/examples/images/antenna.png",
-                    new Position(randLocation1, 0));
-            icon.setSize(new Dimension(64, 64));
-            icon.setValue(AVKey.FEEDBACK_ENABLED, Boolean.TRUE);
-            objects.add(icon);
-
-            // Add a SphereAirspace.
-            randLocation1 = randomLocation(sector);
-            Airspace airspace = new SphereAirspace(randLocation1, 50000d);
-            airspace.setAltitude(0d);
-            airspace.setTerrainConforming(true);
-            airspace.setAttributes(new BasicAirspaceAttributes(Material.GREEN, 1d));
-            objects.add(airspace);
-
-            // Add a Path.
-            randLocation1 = randomLocation(sector);
-            randLocation2 = randomLocation(sector);
-            Path path = new Path(Arrays.asList(randLocation1, randLocation2), 0d);
-            path.setSurfacePath(true);
-            var attrs = new BasicShapeAttributes();
-            attrs.setOutlineWidth(3);
-            attrs.setOutlineMaterial(new Material(Color.RED));
-            path.setAttributes(attrs);
-            objects.add(path);
-
-            // Add a SurfaceCircle.
-            randLocation1 = randomLocation(sector);
-            attrs = new BasicShapeAttributes();
-            attrs.setInteriorMaterial(Material.BLUE);
-            attrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(Color.BLUE)));
-            attrs.setInteriorOpacity(0.5);
-            SurfaceCircle circle = new SurfaceCircle(attrs, randLocation1, 50000d);
-            objects.add(circle);
-        }
-
-        return objects;
-    }
-
-    protected static LatLon randomLocation(Sector sector) {
-        return new LatLon(
-                Angle.mix(Math.random(), sector.getMinLatitude(), sector.getMaxLatitude()),
-                Angle.mix(Math.random(), sector.getMinLongitude(), sector.getMaxLongitude()));
-    }
-
-    public static Annotation createHelpAnnotation(WorldWindow wwd) {
-        String text = "The view tracks the antenna icons,"
-                + " the <font color=\"#DD0000\">red</font> lines,"
-                + " the <font color=\"#00DD00\">green</font> spheres,"
-                + " and the <font color=\"#0000DD\">blue</font> circles."
-                + " Drag any object out of the window to track it.";
-        Rectangle viewport = ((Component) wwd).getBounds();
-        Point screenPoint = new Point(viewport.width / 2, viewport.height / 3);
-
-        AnnotationAttributes attr = new AnnotationAttributes();
-        attr.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
-        attr.setFont(Font.decode("Arial-Bold-16"));
-        attr.setTextAlign(AVKey.CENTER);
-        attr.setTextColor(Color.WHITE);
-        attr.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
-        attr.setBackgroundColor(new Color(0, 0, 0, 127)); // 50% transparent black
-        attr.setBorderColor(Color.LIGHT_GRAY);
-        attr.setLeader(AVKey.SHAPE_NONE);
-        attr.setCornerRadius(0);
-        attr.setSize(new Dimension(350, 0));
-
-        return new ScreenAnnotation(text, screenPoint, attr);
-    }
-
     //**************************************************************//
     //********************  View Controller  ***********************//
     //**************************************************************//
     public static class ViewController {
 
         protected static final double SMOOTHING_FACTOR = 0.96;
-
-        protected boolean enabled = true;
         protected final WorldWindow wwd;
+        protected boolean enabled = true;
         protected ViewAnimator animator;
         protected Iterable<?> objectsToTrack;
 
@@ -319,9 +324,9 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 return;
             }
 
-            ArrayList<ExtentHolder> extentHolders = new ArrayList<>();
-            ArrayList<ExtentVisibilitySupport.ScreenExtent> screenExtents
-                    = new ArrayList<>();
+            List<ExtentHolder> extentHolders = new ArrayList<>();
+            List<ExtentVisibilitySupport.ScreenExtent> screenExtents
+                = new ArrayList<>();
 
             for (Object o : iterable) {
                 if (o == null) {
@@ -330,7 +335,8 @@ public class KeepingObjectsInView extends ApplicationTemplate {
 
                 if (o instanceof ExtentHolder) {
                     extentHolders.add((ExtentHolder) o);
-                } else if (o instanceof AVList) {
+                }
+                else if (o instanceof AVList) {
                     AVList avl = (AVList) o;
 
                     Object b = avl.getValue(AVKey.FEEDBACK_ENABLED);
@@ -340,8 +346,8 @@ public class KeepingObjectsInView extends ApplicationTemplate {
 
                     if (avl.getValue(AVKey.FEEDBACK_REFERENCE_POINT) != null) {
                         screenExtents.add(new ExtentVisibilitySupport.ScreenExtent(
-                                (Vec4) avl.getValue(AVKey.FEEDBACK_REFERENCE_POINT),
-                                (Rectangle) avl.getValue(AVKey.FEEDBACK_SCREEN_BOUNDS)));
+                            (Vec4) avl.getValue(AVKey.FEEDBACK_REFERENCE_POINT),
+                            (Rectangle) avl.getValue(AVKey.FEEDBACK_SCREEN_BOUNDS)));
                     }
                 }
             }
@@ -373,7 +379,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
         protected double zoom;
 
         public ViewAnimator(final double smoothing, OrbitView view, ViewController viewController) {
-            super(() -> 1d - smoothing);
+            super(() -> 1.0d - smoothing);
 
             this.view = view;
             this.viewController = viewController;
@@ -398,9 +404,10 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 this.view.setCenterPosition(this.centerPosition);
                 this.view.setZoom(this.zoom);
                 this.stop();
-            } else {
+            }
+            else {
                 Position newCenterPos = Position.interpolateGreatCircle(interpolant, this.view.getCenterPosition(),
-                        this.centerPosition);
+                    this.centerPosition);
                 double newZoom = WWMath.mix(interpolant, this.view.getZoom(), this.zoom);
                 this.view.setCenterPosition(newCenterPos);
                 this.view.setZoom(newZoom);
@@ -434,12 +441,8 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             double zd = Math.abs(this.view.getZoom() - zoom);
 
             return cd.degrees < LOCATION_EPSILON
-                    && ed < ALTITUDE_EPSILON
-                    && zd < ALTITUDE_EPSILON;
+                && ed < ALTITUDE_EPSILON
+                && zd < ALTITUDE_EPSILON;
         }
-    }
-
-    public static void main(String[] args) {
-        ApplicationTemplate.start("Keeping Objects In View", AppFrame.class);
     }
 }

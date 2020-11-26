@@ -16,22 +16,19 @@ import java.util.*;
  * Computes the intersections of a collection of lines with collection of {@link Renderable}s. The lines are specified
  * with a common origin and multiple end positions. For each end position this class computes the intersections of all
  * specified renderables with a line between that position and a reference position. See {@link
- * #setReferencePosition(gov.nasa.worldwind.geom.Position)} and {@link #setRenderables(Iterable)}.
+ * #setReferencePosition(Position)} and {@link #setRenderables(Iterable)}.
  *
  * @author tag
  * @version $Id: ShapeLineIntersector.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ShapeLineIntersector extends LineIntersector
-{
+public class ShapeLineIntersector extends LineIntersector {
     protected Iterable<Renderable> renderables;
 
-    public ShapeLineIntersector(Terrain terrain, int numThreads)
-    {
+    public ShapeLineIntersector(Terrain terrain, int numThreads) {
         super(terrain, numThreads);
     }
 
-    public Iterable<Renderable> getRenderables()
-    {
+    public Iterable<Renderable> getRenderables() {
         return renderables;
     }
 
@@ -40,8 +37,7 @@ public class ShapeLineIntersector extends LineIntersector
      *
      * @param renderables the renderables to intersect.
      */
-    public void setRenderables(Iterable<Renderable> renderables)
-    {
+    public void setRenderables(Iterable<Renderable> renderables) {
         this.renderables = renderables;
     }
 
@@ -50,13 +46,11 @@ public class ShapeLineIntersector extends LineIntersector
      *
      * @return true if this intersector has renderables, otherwise false.
      */
-    public boolean hasRenderables()
-    {
+    public boolean hasRenderables() {
         return this.renderables != null && this.renderables.iterator().hasNext();
     }
 
-    protected void doPerformIntersection(Position position)
-    {
+    protected void doPerformIntersection(Position position) {
         if (this.renderables == null)
             return;
 
@@ -66,23 +60,18 @@ public class ShapeLineIntersector extends LineIntersector
 
         List<Intersection> losList = new ArrayList<>();
 
-        for (Renderable renderable : this.renderables)
-        {
-            try
-            {
+        for (Renderable renderable : this.renderables) {
+            try {
                 List<Intersection> renderableIntersections = performRenderableIntersection(line, renderable);
-                if (renderableIntersections != null)
-                {
+                if (renderableIntersections != null) {
                     // Filter out intersections beyond the position.
-                    for (Intersection los : renderableIntersections)
-                    {
+                    for (Intersection los : renderableIntersections) {
                         if (los.getIntersectionPoint().distanceTo3(this.referencePoint) <= length)
                             losList.add(los);
                     }
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -91,8 +80,7 @@ public class ShapeLineIntersector extends LineIntersector
             this.allIntersections.put(position, losList);
     }
 
-    protected List<Intersection> performRenderableIntersection(Line line, Renderable renderable)
-    {
+    protected List<Intersection> performRenderableIntersection(Line line, Renderable renderable) {
         List<Intersection> intersections = null;
 
         if (renderable instanceof ExtrudedPolygon)

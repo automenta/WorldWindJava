@@ -22,7 +22,7 @@ import java.util.*;
 
 /**
  * Demonstrates the simplest possible usage of WorldWind {@link TacticalSymbol} and {@link
- * gov.nasa.worldwind.symbology.TacticalGraphic} to display symbols from the MIL-STD-2525 symbology set. See the
+ * TacticalGraphic} to display symbols from the MIL-STD-2525 symbology set. See the
  * <a href="https://worldwind.arc.nasa.gov/java/tutorials/tactical-graphics/" target="_blank">Tutorial</a>
  * for more information on symbology support in WorldWind.
  * <p>
@@ -32,12 +32,17 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: Symbology.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class Symbology extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class Symbology extends ApplicationTemplate {
+    public static void main(String[] args) {
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 34.4780);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -117.5250);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 40000);
+
+        ApplicationTemplate.start("WorldWind Symbology", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             // Create a layer that displays WorldWind tactical symbols.
@@ -54,8 +59,7 @@ public class Symbology extends ApplicationTemplate
             WWUtil.alignComponent(null, this, AVKey.CENTER);
         }
 
-        protected void addTacticalSymbols()
-        {
+        protected void addTacticalSymbols() {
             // Create a layer to display the tactical symbol. We add just one tactical symbol, but multiple tactical
             // symbols and tactical graphics may be combined on the same RenderableLayer.
             RenderableLayer layer = new RenderableLayer();
@@ -74,8 +78,7 @@ public class Symbology extends ApplicationTemplate
             this.getWwd().getModel().getLayers().add(layer);
         }
 
-        protected void addTacticalGraphics()
-        {
+        protected void addTacticalGraphics() {
             // Create a layer to display the tactical graphic. We add just one tactical graphic, but multiple tactical
             // graphics and tactical symbols may be combined on the same RenderableLayer.
             RenderableLayer layer = new RenderableLayer();
@@ -110,14 +113,12 @@ public class Symbology extends ApplicationTemplate
          * @param positions list of control points positions.
          * @param layer     layer to receive control point placemarks.
          */
-        protected void addControlPoints(Iterable<Position> positions, RenderableLayer layer)
-        {
+        protected void addControlPoints(Iterable<Position> positions, RenderableLayer layer) {
             PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
             attrs.setUsePointAsDefaultImage(true);
 
             int i = 1;
-            for (Position p : positions)
-            {
+            for (Position p : positions) {
                 PointPlacemark placemark = new PointPlacemark(p);
                 placemark.setValue(AVKey.DISPLAY_NAME, "Tactical Graphic Position " + i);
                 placemark.setAttributes(attrs);
@@ -126,14 +127,5 @@ public class Symbology extends ApplicationTemplate
                 i++;
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 34.4780);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -117.5250);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 40000);
-
-        ApplicationTemplate.start("WorldWind Symbology", AppFrame.class);
     }
 }

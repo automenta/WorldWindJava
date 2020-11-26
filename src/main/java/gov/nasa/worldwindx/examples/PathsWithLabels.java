@@ -17,106 +17,13 @@ import java.util.List;
 import java.util.*;
 
 /**
- * Example of how to draw a path with a text annotation attached to the path. The annotation will adjust to stay in
- * view as long as part of the path is visible in the viewport.
+ * Example of how to draw a path with a text annotation attached to the path. The annotation will adjust to stay in view
+ * as long as part of the path is visible in the viewport.
  *
  * @author dcollins
  * @version $Id: PathsWithLabels.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class PathsWithLabels extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
-            this.makePaths();
-        }
-
-        protected void makePaths()
-        {
-            RenderableLayer layer = new RenderableLayer();
-
-            ShapeAttributes pathAttrs = new BasicShapeAttributes();
-            pathAttrs.setOutlineMaterial(Material.WHITE);
-            pathAttrs.setOutlineOpacity(0.8);
-            pathAttrs.setOutlineWidth(3);
-
-            List<Position> positions = this.makePositionList(SAN_JUAN_COUNTY_1);
-            SurfacePolyline path = new SurfacePolyline(pathAttrs, positions);
-            LabeledPath label = new LabeledPath(positions, this.makeLabelAnnotation("Waldron Island"));
-            label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            layer.addRenderable(path);
-            layer.addRenderable(label);
-
-            positions = this.makePositionList(SAN_JUAN_COUNTY_2);
-            path = new SurfacePolyline(pathAttrs, positions);
-            label = new LabeledPath(positions,
-                this.makeLabelAnnotation("Blakley, Center, Lopez, Orcas, Shaw & San Juan Islands"));
-            label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            layer.addRenderable(path);
-            layer.addRenderable(label);
-
-            positions = this.makePositionList(SAN_JUAN_COUNTY_3);
-            path = new SurfacePolyline(pathAttrs, positions);
-            label = new LabeledPath(positions, this.makeLabelAnnotation("Spieden & Stuart Islands"));
-            label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            layer.addRenderable(path);
-            layer.addRenderable(label);
-
-            this.getWwd().getModel().getLayers().add(layer);
-        }
-
-        protected List<Position> makePositionList(double[] src)
-        {
-            int numCoords = src.length / 2;
-            Position[] array = new Position[numCoords];
-
-            for (int i = 0; i < numCoords; i++)
-            {
-                double lonDegrees = src[2 * i];
-                double latDegrees = src[2 * i + 1];
-                array[i] = Position.fromDegrees(latDegrees, lonDegrees, 0);
-            }
-
-            return Arrays.asList(array);
-        }
-
-        protected ScreenAnnotation makeLabelAnnotation(String text)
-        {
-            ScreenAnnotation ga = new ScreenAnnotation(text, new Point());
-            ga.setPickEnabled(false);
-
-            AnnotationAttributes attrs = new AnnotationAttributes();
-            attrs.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
-            attrs.setFrameShape(AVKey.SHAPE_RECTANGLE);
-            attrs.setDrawOffset(new Point(0, 10));
-            attrs.setLeaderGapWidth(5);
-            attrs.setTextColor(Color.BLACK);
-            attrs.setBackgroundColor(new Color(1f, 1f, 1f, 0.8f));
-            attrs.setCornerRadius(5);
-            attrs.setBorderColor(new Color(0xababab));
-            attrs.setFont(Font.decode("Arial-PLAIN-12"));
-            attrs.setTextAlign(AVKey.CENTER);
-            attrs.setInsets(new Insets(5, 5, 5, 5));
-
-            ga.setAttributes(attrs);
-
-            return ga;
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 48.6);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.95);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 70000);
-
-        start("WorldWind Paths with Labels", AppFrame.class);
-    }
-
-    // Boundary data for San Juan and Snohomish Counties take from
-    // http://www.census.gov/geo/cob/bdy/co/co00ascii/co53_d00_ascii.zip
-
+public class PathsWithLabels extends ApplicationTemplate {
     protected static final double[] SAN_JUAN_COUNTY_1 =
         {
             -0.123025486000000E+03, 0.487179660000000E+02,
@@ -351,6 +258,9 @@ public class PathsWithLabels extends ApplicationTemplate
             -0.122907454714043E+03, 0.487142011426071E+02,
             -0.122906298643435E+03, 0.487142756789313E+02,
         };
+
+    // Boundary data for San Juan and Snohomish Counties take from
+    // http://www.census.gov/geo/cob/bdy/co/co00ascii/co53_d00_ascii.zip
     protected static final double[] SAN_JUAN_COUNTY_3 =
         {
             -0.123172066000000E+03, 0.486798660000000E+02,
@@ -380,4 +290,86 @@ public class PathsWithLabels extends ApplicationTemplate
             -0.123183803136584E+03, 0.486840975686572E+02,
             -0.123172066000000E+03, 0.486798660000000E+02,
         };
+
+    public static void main(String[] args) {
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 48.6);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.95);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 70000);
+
+        start("WorldWind Paths with Labels", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
+            this.makePaths();
+        }
+
+        protected void makePaths() {
+            RenderableLayer layer = new RenderableLayer();
+
+            ShapeAttributes pathAttrs = new BasicShapeAttributes();
+            pathAttrs.setOutlineMaterial(Material.WHITE);
+            pathAttrs.setOutlineOpacity(0.8);
+            pathAttrs.setOutlineWidth(3);
+
+            List<Position> positions = this.makePositionList(SAN_JUAN_COUNTY_1);
+            SurfacePolyline path = new SurfacePolyline(pathAttrs, positions);
+            LabeledPath label = new LabeledPath(positions, this.makeLabelAnnotation("Waldron Island"));
+            label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+            layer.addRenderable(path);
+            layer.addRenderable(label);
+
+            positions = this.makePositionList(SAN_JUAN_COUNTY_2);
+            path = new SurfacePolyline(pathAttrs, positions);
+            label = new LabeledPath(positions,
+                this.makeLabelAnnotation("Blakley, Center, Lopez, Orcas, Shaw & San Juan Islands"));
+            label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+            layer.addRenderable(path);
+            layer.addRenderable(label);
+
+            positions = this.makePositionList(SAN_JUAN_COUNTY_3);
+            path = new SurfacePolyline(pathAttrs, positions);
+            label = new LabeledPath(positions, this.makeLabelAnnotation("Spieden & Stuart Islands"));
+            label.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+            layer.addRenderable(path);
+            layer.addRenderable(label);
+
+            this.getWwd().getModel().getLayers().add(layer);
+        }
+
+        protected List<Position> makePositionList(double[] src) {
+            int numCoords = src.length / 2;
+            Position[] array = new Position[numCoords];
+
+            for (int i = 0; i < numCoords; i++) {
+                double lonDegrees = src[2 * i];
+                double latDegrees = src[2 * i + 1];
+                array[i] = Position.fromDegrees(latDegrees, lonDegrees, 0);
+            }
+
+            return Arrays.asList(array);
+        }
+
+        protected ScreenAnnotation makeLabelAnnotation(String text) {
+            ScreenAnnotation ga = new ScreenAnnotation(text, new Point());
+            ga.setPickEnabled(false);
+
+            AnnotationAttributes attrs = new AnnotationAttributes();
+            attrs.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
+            attrs.setFrameShape(AVKey.SHAPE_RECTANGLE);
+            attrs.setDrawOffset(new Point(0, 10));
+            attrs.setLeaderGapWidth(5);
+            attrs.setTextColor(Color.BLACK);
+            attrs.setBackgroundColor(new Color(1.0f, 1.0f, 1.0f, 0.8f));
+            attrs.setCornerRadius(5);
+            attrs.setBorderColor(new Color(0xababab));
+            attrs.setFont(Font.decode("Arial-PLAIN-12"));
+            attrs.setTextAlign(AVKey.CENTER);
+            attrs.setInsets(new Insets(5, 5, 5, 5));
+
+            ga.setAttributes(attrs);
+
+            return ga;
+        }
+    }
 }

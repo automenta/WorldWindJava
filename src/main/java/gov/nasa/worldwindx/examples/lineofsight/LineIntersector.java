@@ -15,32 +15,27 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Base class for intersectors that compute intersections with a line. The line is specified by a single origin (see
- * {@link #setReferencePosition(gov.nasa.worldwind.geom.Position)}) and a list of end positions (see {@link
+ * {@link #setReferencePosition(Position)}) and a list of end positions (see {@link
  * #setPositions(Iterable)}).
  *
  * @author tag
  * @version $Id: LineIntersector.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class LineIntersector implements Runnable
-{
+public abstract class LineIntersector implements Runnable {
     protected final Terrain terrain;
     protected final int numThreads;
-
-    protected Position referencePosition;
-    protected Iterable<Position> positions;
-
-    protected int numPositions;
-    protected Vec4 referencePoint;
     protected final ThreadPoolExecutor threadPool;
     protected final AtomicInteger numProcessedPositions = new AtomicInteger();
+    // Create a container to hold the intersections.
+    protected final Map<Position, List<Intersection>> allIntersections;
+    protected Position referencePosition;
+    protected Iterable<Position> positions;
+    protected int numPositions;
+    protected Vec4 referencePoint;
     protected long startTime;
     protected long endTime; // for reporting calculation duration
 
-    // Create a container to hold the intersections.
-    protected final Map<Position, List<Intersection>> allIntersections;
-
-    protected LineIntersector(Terrain terrain, int numThreads)
-    {
+    protected LineIntersector(Terrain terrain, int numThreads) {
         this.terrain = terrain;
         this.numThreads = numThreads;
 
@@ -54,22 +49,18 @@ public abstract class LineIntersector implements Runnable
      * Called to execute an intersection test for one position.
      *
      * @param position the position to test.
-     *
      */
     abstract protected void doPerformIntersection(Position position);
 
-    public Terrain getTerrain()
-    {
+    public Terrain getTerrain() {
         return this.terrain;
     }
 
-    public int getNumThreads()
-    {
+    public int getNumThreads() {
         return this.numThreads;
     }
 
-    public Position getReferencePosition()
-    {
+    public Position getReferencePosition() {
         return this.referencePosition;
     }
 
@@ -78,13 +69,11 @@ public abstract class LineIntersector implements Runnable
      *
      * @param referencePosition the origin to use for all lines.
      */
-    public void setReferencePosition(Position referencePosition)
-    {
+    public void setReferencePosition(Position referencePosition) {
         this.referencePosition = referencePosition;
     }
 
-    public Iterable<Position> getPositions()
-    {
+    public Iterable<Position> getPositions() {
         return positions;
     }
 
@@ -94,44 +83,36 @@ public abstract class LineIntersector implements Runnable
      *
      * @param positions the positions.
      */
-    public void setPositions(Iterable<Position> positions)
-    {
+    public void setPositions(Iterable<Position> positions) {
         this.positions = positions;
 
         //noinspection UnusedDeclaration
-        for (Position p : this.positions)
-        {
+        for (Position p : this.positions) {
             ++this.numPositions;
         }
     }
 
-    public long getStartTime()
-    {
+    public long getStartTime() {
         return this.startTime;
     }
 
-    public long getEndTime()
-    {
+    public long getEndTime() {
         return this.endTime;
     }
 
-    public int getNumProcessedPositions()
-    {
+    public int getNumProcessedPositions() {
         return this.numProcessedPositions.get();
     }
 
-    public Map<Position, List<Intersection>> getAllIntersections()
-    {
+    public Map<Position, List<Intersection>> getAllIntersections() {
         return allIntersections;
     }
 
-    public List<Intersection> getIntersections(Position position)
-    {
+    public List<Intersection> getIntersections(Position position) {
         return position != null ? this.allIntersections.get(position) : null;
     }
 
-    public void run()
-    {
+    public void run() {
         if (this.referencePosition == null || this.positions == null)
             throw new IllegalStateException("No reference positions or grid positions specified.");
 
@@ -144,8 +125,7 @@ public abstract class LineIntersector implements Runnable
             this.referencePoint = terrain.getSurfacePoint(referencePosition.getLatitude(),
                 referencePosition.getLongitude(), referencePosition.getAltitude());
 
-            for (Position position : this.positions)
-            {
+            for (Position position : this.positions) {
                 if (this.numThreads > 1)
                     this.threadPool.execute(new InternalIntersector(position));
                 else// if (!position.equals(this.referencePosition))
@@ -158,17 +138,26 @@ public abstract class LineIntersector implements Runnable
 //        }
     }
 
-    protected class InternalIntersector implements Runnable
-    {
+    protected void performIntersection(Position position) {
+        try {
+            this.doPerformIntersection(position);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (this.numProcessedPositions.addAndGet(1) >= this.numPositions)
+            this.endTime = System.currentTimeMillis();
+    }
+
+    protected class InternalIntersector implements Runnable {
         protected final Position position;
 
-        public InternalIntersector(Position position)
-        {
+        public InternalIntersector(Position position) {
             this.position = position;
         }
 
-        public void run()
-        {
+        public void run() {
 //            try
             {
                 performIntersection(position);
@@ -178,20 +167,5 @@ public abstract class LineIntersector implements Runnable
 //                e.printStackTrace();
 //            }
         }
-    }
-
-    protected void performIntersection(Position position)
-    {
-        try
-        {
-            this.doPerformIntersection(position);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        if (this.numProcessedPositions.addAndGet(1) >= this.numPositions)
-            this.endTime = System.currentTimeMillis();
     }
 }

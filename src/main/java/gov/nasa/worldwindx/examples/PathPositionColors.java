@@ -27,12 +27,17 @@ import java.util.ArrayList;
  * @author dcollins
  * @version $Id: PathPositionColors.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class PathPositionColors extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class PathPositionColors extends ApplicationTemplate {
+    public static void main(String[] args) {
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 47.5890);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.3137);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 3000);
+
+        ApplicationTemplate.start("WorldWind Path Position Colors", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             ArrayList<Position> pathPositions = new ArrayList<>();
@@ -70,9 +75,9 @@ public class PathPositionColors extends ApplicationTemplate
             // color to each path position.
             Color[] colors =
                 {
-                    new Color(1f, 0f, 0f, 0.2f),
-                    new Color(0f, 1f, 0f, 0.6f),
-                    new Color(0f, 0f, 1f, 1.0f),
+                    new Color(1.0f, 0.0f, 0.0f, 0.2f),
+                    new Color(0.0f, 1.0f, 0.0f, 0.6f),
+                    new Color(0.0f, 0.0f, 1.0f, 1.0f),
                 };
             path.setPositionColors(new ExamplePositionColors(colors, pathPositions.size()));
 
@@ -85,16 +90,13 @@ public class PathPositionColors extends ApplicationTemplate
 
             // Establish a select listener that causes the tooltip controller to show the picked path position's
             // ordinal.
-            this.setToolTipController(new ToolTipController(this.getWwd())
-            {
+            this.setToolTipController(new ToolTipController(this.getWwd()) {
                 @Override
-                public void selected(SelectEvent event)
-                {
+                public void selected(SelectEvent event) {
                     // Intercept the selected position and assign the selected object's display name to the picked
                     // ordinal.
                     PickedObject po = event.getTopPickedObject();
-                    if (po != null && po.getObject() instanceof Path)
-                    {
+                    if (po != null && po.getObject() instanceof Path) {
                         String name = (po.getValue(AVKey.ORDINAL) != null) ? "Position " + po.getValue(AVKey.ORDINAL)
                             : null;
                         ((Path) po.getObject()).setValue(AVKey.DISPLAY_NAME, name);
@@ -107,35 +109,23 @@ public class PathPositionColors extends ApplicationTemplate
     }
 
     /**
-     * Example implementation of {@link gov.nasa.worldwind.render.Path.PositionColors} that evenly distributes the
+     * Example implementation of {@link Path.PositionColors} that evenly distributes the
      * specified colors along a path with the specified length. For example, if the Colors array contains red, green,
      * blue (in that order) and the pathLength is 6, this assigns the following colors to each path ordinal: 0:red,
      * 1:red, 2:green, 3:green, 4:blue, 5:blue.
      */
-    public static class ExamplePositionColors implements Path.PositionColors
-    {
+    public static class ExamplePositionColors implements Path.PositionColors {
         protected final Color[] colors;
         protected final int pathLength;
 
-        public ExamplePositionColors(Color[] colors, int pathLength)
-        {
+        public ExamplePositionColors(Color[] colors, int pathLength) {
             this.colors = colors;
             this.pathLength = pathLength;
         }
 
-        public Color getColor(Position position, int ordinal)
-        {
+        public Color getColor(Position position, int ordinal) {
             int index = colors.length * ordinal / this.pathLength;
             return this.colors[index];
         }
-    }
-
-    public static void main(String[] args)
-    {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 47.5890);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.3137);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 3000);
-
-        ApplicationTemplate.start("WorldWind Path Position Colors", AppFrame.class);
     }
 }

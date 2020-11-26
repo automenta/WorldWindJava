@@ -26,15 +26,13 @@ import java.util.logging.Level;
  * @see AnnotationAttributes
  * @see AnnotationLayer
  */
-public class BasicAnnotationRenderer implements AnnotationRenderer
-{
+public class BasicAnnotationRenderer implements AnnotationRenderer {
     protected final PickSupport pickSupport = new PickSupport();
+    protected final Set<Annotation> currentPickAnnotations = new HashSet<>();
+    protected final Set<Annotation> currentDrawAnnotations = new HashSet<>();
     protected long currentFrameTime;
-    protected final HashSet<Annotation> currentPickAnnotations = new HashSet<>();
-    protected final HashSet<Annotation> currentDrawAnnotations = new HashSet<>();
 
-    protected static boolean isAnnotationValid(Annotation annotation, boolean checkPosition)
-    {
+    protected static boolean isAnnotationValid(Annotation annotation, boolean checkPosition) {
         if (annotation == null || annotation.getText() == null)
             return false;
 
@@ -45,36 +43,31 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
         return true;
     }
 
-    public void pick(DrawContext dc, Iterable<Annotation> annotations, Point pickPoint, Layer layer)
-    {
+    public void pick(DrawContext dc, Iterable<Annotation> annotations, Point pickPoint, Layer layer) {
         this.drawMany(dc, annotations, layer);
     }
 
-    public void pick(DrawContext dc, Annotation annotation, Vec4 annotationPoint, java.awt.Point pickPoint, Layer layer)
-    {
+    public void pick(DrawContext dc, Annotation annotation, Vec4 annotationPoint, Point pickPoint,
+        Layer layer) {
         if (!isAnnotationValid(annotation, false))
             return;
 
         this.drawOne(dc, annotation, annotationPoint, layer);
     }
 
-    public void render(DrawContext dc, Iterable<Annotation> annotations, Layer layer)
-    {
+    public void render(DrawContext dc, Iterable<Annotation> annotations, Layer layer) {
         this.drawMany(dc, annotations, layer);
     }
 
-    public void render(DrawContext dc, Annotation annotation, Vec4 annotationPoint, Layer layer)
-    {
+    public void render(DrawContext dc, Annotation annotation, Vec4 annotationPoint, Layer layer) {
         if (!isAnnotationValid(annotation, false))
             return;
 
         this.drawOne(dc, annotation, annotationPoint, layer);
     }
 
-    protected void drawMany(DrawContext dc, Iterable<Annotation> annotations, Layer layer)
-    {
-        if (dc == null)
-        {
+    protected void drawMany(DrawContext dc, Iterable<Annotation> annotations, Layer layer) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -88,15 +81,13 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
         if (geos == null)
             return;
 
-        if (annotations == null)
-        {
+        if (annotations == null) {
             String msg = Logging.getMessage("nullValue.AnnotationIterator");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (dc.isContinuous2DGlobe() && this.currentFrameTime != dc.getFrameTimeStamp())
-        {
+        if (dc.isContinuous2DGlobe() && this.currentFrameTime != dc.getFrameTimeStamp()) {
             // Keep track of which annotations are added to the ordered renderable list so that they are not added
             // to that list more than once per frame.
             this.currentPickAnnotations.clear();
@@ -111,8 +102,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
 
         double altitude = dc.getView().getEyePosition().getElevation();
 
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             Annotation annotation = iterator.next();
             if (!isAnnotationValid(annotation, true))
                 continue;
@@ -127,8 +117,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
             if (altitude < annotation.getMinActiveAltitude() || altitude > annotation.getMaxActiveAltitude())
                 continue;
 
-            if (dc.isContinuous2DGlobe() && annotation instanceof ScreenAnnotation)
-            {
+            if (dc.isContinuous2DGlobe() && annotation instanceof ScreenAnnotation) {
                 if (dc.isPickingMode() && this.currentPickAnnotations.contains(annotation))
                     continue;
 
@@ -138,8 +127,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
 
             // TODO: cull annotations that are beyond the horizon
             double eyeDistance = 1;
-            if (annotation instanceof Locatable)
-            {
+            if (annotation instanceof Locatable) {
                 // Determine Cartesian position from the surface geometry if the annotation is near the surface,
                 // otherwise draw it from the globe.
                 Vec4 annotationPoint = getAnnotationDrawPoint(dc, annotation);
@@ -148,8 +136,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
                 eyeDistance = annotation.isAlwaysOnTop() ? 0 : dc.getView().getEyePoint().distanceTo3(annotationPoint);
             }
 
-            if (annotation instanceof ScreenAnnotation)
-            {
+            if (annotation instanceof ScreenAnnotation) {
                 Rectangle screenBounds = annotation.getBounds(dc);
                 if (screenBounds != null && !dc.getView().getViewport().intersects(screenBounds))
                     return;
@@ -158,8 +145,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
             // The annotations aren't drawn here, but added to the ordered queue to be drawn back-to-front.
             dc.addOrderedRenderable(new OrderedAnnotation(annotation, layer, eyeDistance));
 
-            if (dc.isContinuous2DGlobe() && annotation instanceof ScreenAnnotation)
-            {
+            if (dc.isContinuous2DGlobe() && annotation instanceof ScreenAnnotation) {
                 if (dc.isPickingMode())
                     this.currentPickAnnotations.add(annotation);
                 else
@@ -168,18 +154,15 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
         }
     }
 
-    protected void drawOne(DrawContext dc, Annotation annotation, Vec4 annotationPoint, Layer layer)
-    {
-        if (dc == null)
-        {
+    protected void drawOne(DrawContext dc, Annotation annotation, Vec4 annotationPoint, Layer layer) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         if (dc.isContinuous2DGlobe() && annotation instanceof ScreenAnnotation
-            && this.currentFrameTime != dc.getFrameTimeStamp())
-        {
+            && this.currentFrameTime != dc.getFrameTimeStamp()) {
             // Keep track of which screen annotations are added to the ordered renderable list so that they are not added
             // to that list more than once per frame.
             this.currentPickAnnotations.clear();
@@ -202,8 +185,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
         if (dc.isPickingMode() && !this.isAtPickRange(dc, annotation))
             return;
 
-        if (dc.isContinuous2DGlobe() && annotation instanceof ScreenAnnotation)
-        {
+        if (dc.isContinuous2DGlobe() && annotation instanceof ScreenAnnotation) {
             if (dc.isPickingMode() && this.currentPickAnnotations.contains(annotation))
                 return;
 
@@ -216,10 +198,8 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
             return;
 
         double eyeDistance = 1;
-        if (annotation instanceof Locatable)
-        {
-            if (annotationPoint == null)
-            {
+        if (annotation instanceof Locatable) {
+            if (annotationPoint == null) {
                 Position pos = ((Locatable) annotation).getPosition();
 
                 if (!dc.getVisibleSector().contains(pos.getLatitude(), pos.getLongitude()))
@@ -235,8 +215,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
             if (!dc.getView().getFrustumInModelCoordinates().contains(annotationPoint))
                 return;
 
-            if (!dc.isContinuous2DGlobe())
-            {
+            if (!dc.isContinuous2DGlobe()) {
                 double horizon = dc.getView().getHorizonDistance();
                 eyeDistance = annotation.isAlwaysOnTop() ? 0 : dc.getView().getEyePoint().distanceTo3(annotationPoint);
                 if (eyeDistance > horizon)
@@ -244,8 +223,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
             }
         }
 
-        if (annotation instanceof ScreenAnnotation)
-        {
+        if (annotation instanceof ScreenAnnotation) {
             Rectangle screenBounds = annotation.getBounds(dc);
             if (screenBounds != null && !dc.getView().getViewport().intersects(screenBounds))
                 return;
@@ -254,8 +232,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
         // The annotation isn't drawn here, but added to the ordered queue to be drawn back-to-front.
         dc.addOrderedRenderable(new OrderedAnnotation(annotation, layer, eyeDistance));
 
-        if (dc.isContinuous2DGlobe() && annotation instanceof ScreenAnnotation)
-        {
+        if (dc.isContinuous2DGlobe() && annotation instanceof ScreenAnnotation) {
             if (dc.isPickingMode())
                 this.currentPickAnnotations.add(annotation);
             else
@@ -263,8 +240,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
         }
     }
 
-    protected boolean isAtPickRange(DrawContext dc, Annotation annotation)
-    {
+    protected boolean isAtPickRange(DrawContext dc, Annotation annotation) {
         Rectangle screenBounds = annotation.getBounds(dc);
         return screenBounds != null && dc.getPickFrustums().intersectsAny(screenBounds);
     }
@@ -276,14 +252,11 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
      *
      * @param dc         the current DrawContext.
      * @param annotation the annotation
-     *
      * @return the annotation draw cartesian point
      */
-    protected Vec4 getAnnotationDrawPoint(DrawContext dc, Annotation annotation)
-    {
+    protected Vec4 getAnnotationDrawPoint(DrawContext dc, Annotation annotation) {
         Vec4 drawPoint = null;
-        if (annotation instanceof Locatable)
-        {
+        if (annotation instanceof Locatable) {
             Position pos = ((Locatable) annotation).getPosition();
             if (pos.getElevation() < dc.getGlobe().getMaxElevation())
                 drawPoint = dc.getSurfaceGeometry().getSurfacePoint(pos.getLatitude(), pos.getLongitude(),
@@ -294,101 +267,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
         return drawPoint;
     }
 
-    protected class OrderedAnnotation implements OrderedRenderable
-    {
-        protected final Annotation annotation;
-        protected final double eyeDistance;
-        protected Layer layer;
-
-        public OrderedAnnotation(Annotation annotation, double eyeDistance)
-        {
-            this.annotation = annotation;
-            this.eyeDistance = eyeDistance;
-        }
-
-        public OrderedAnnotation(Annotation annotation, Layer layer, double eyeDistance)
-        {
-            this.annotation = annotation;
-            this.eyeDistance = eyeDistance;
-            this.layer = layer;
-        }
-
-        public double getDistanceFromEye()
-        {
-            return this.eyeDistance;
-        }
-
-        public void render(DrawContext dc)
-        {
-            OGLStackHandler stackHandler = new OGLStackHandler();
-            BasicAnnotationRenderer.this.beginDrawAnnotations(dc, stackHandler);
-            try
-            {
-                this.doRender(dc, this);
-                // Draw as many as we can in a batch to save ogl state switching.
-                while (dc.peekOrderedRenderables() instanceof OrderedAnnotation)
-                {
-                    OrderedAnnotation oa = (OrderedAnnotation) dc.pollOrderedRenderables();
-                    this.doRender(dc, oa);
-                }
-            }
-            catch (Exception e)
-            {
-                Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingAnnotation", e);
-            }
-            finally
-            {
-                BasicAnnotationRenderer.this.endDrawAnnotations(dc, stackHandler);
-            }
-        }
-
-        public void pick(DrawContext dc, java.awt.Point pickPoint)
-        {
-            OGLStackHandler stackHandler = new OGLStackHandler();
-            BasicAnnotationRenderer.this.pickSupport.clearPickList();
-            BasicAnnotationRenderer.this.beginDrawAnnotations(dc, stackHandler);
-            try
-            {
-                this.annotation.setPickSupport(BasicAnnotationRenderer.this.pickSupport);
-                this.doRender(dc, this);
-                // Draw as many as we can in a batch to save ogl state switching.
-                while (dc.peekOrderedRenderables() instanceof OrderedAnnotation)
-                {
-                    OrderedAnnotation oa = (OrderedAnnotation) dc.pollOrderedRenderables();
-                    oa.annotation.setPickSupport(BasicAnnotationRenderer.this.pickSupport);
-                    this.doRender(dc, oa);
-                }
-            }
-            catch (Exception e)
-            {
-                Logging.logger().log(Level.SEVERE, "generic.ExceptionWhilePickingAnnotation", e);
-            }
-            finally
-            {
-                BasicAnnotationRenderer.this.endDrawAnnotations(dc, stackHandler);
-                BasicAnnotationRenderer.this.pickSupport.resolvePick(dc, pickPoint, this.layer);
-                BasicAnnotationRenderer.this.pickSupport.clearPickList(); // to ensure entries can be garbage collected
-            }
-        }
-
-        protected void doRender(DrawContext dc, OrderedAnnotation oa)
-        {
-            // Swap the draw context's current layer with that of the ordered annotation
-            Layer previousCurrentLayer = dc.getCurrentLayer();
-            try
-            {
-                dc.setCurrentLayer(oa.layer);
-                oa.annotation.renderNow(dc);
-            }
-            finally
-            {
-                dc.setCurrentLayer(previousCurrentLayer); // restore the original layer
-            }
-        }
-    }
-
-    protected void beginDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler)
-    {
+    protected void beginDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attributeMask = GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, blend func
@@ -403,7 +282,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
 
         // Load a parallel projection with dimensions (viewportWidth, viewportHeight)
         stackHandler.pushProjectionIdentity(gl);
-        gl.glOrtho(0d, dc.getView().getViewport().width, 0d, dc.getView().getViewport().height, -1d, 1d);
+        gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
 
         // Push identity matrices on the texture and modelview matrix stacks. Leave the matrix mode as modelview.
         stackHandler.pushTextureIdentity(gl);
@@ -422,28 +301,100 @@ public class BasicAnnotationRenderer implements AnnotationRenderer
         gl.glDisable(GL2.GL_LIGHTING);
         gl.glDisable(GL.GL_CULL_FACE);
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             // Enable blending in premultiplied color mode.
             gl.glEnable(GL.GL_BLEND);
             OGLUtil.applyBlending(gl, true);
         }
-        else
-        {
+        else {
             this.pickSupport.beginPicking(dc);
         }
     }
 
-    protected void endDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler)
-    {
+    protected void endDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (dc.isPickingMode())
-        {
+        if (dc.isPickingMode()) {
             this.pickSupport.endPicking(dc);
         }
 
         stackHandler.pop(gl);
+    }
+
+    protected class OrderedAnnotation implements OrderedRenderable {
+        protected final Annotation annotation;
+        protected final double eyeDistance;
+        protected Layer layer;
+
+        public OrderedAnnotation(Annotation annotation, double eyeDistance) {
+            this.annotation = annotation;
+            this.eyeDistance = eyeDistance;
+        }
+
+        public OrderedAnnotation(Annotation annotation, Layer layer, double eyeDistance) {
+            this.annotation = annotation;
+            this.eyeDistance = eyeDistance;
+            this.layer = layer;
+        }
+
+        public double getDistanceFromEye() {
+            return this.eyeDistance;
+        }
+
+        public void render(DrawContext dc) {
+            OGLStackHandler stackHandler = new OGLStackHandler();
+            BasicAnnotationRenderer.this.beginDrawAnnotations(dc, stackHandler);
+            try {
+                this.doRender(dc, this);
+                // Draw as many as we can in a batch to save ogl state switching.
+                while (dc.peekOrderedRenderables() instanceof OrderedAnnotation) {
+                    OrderedAnnotation oa = (OrderedAnnotation) dc.pollOrderedRenderables();
+                    this.doRender(dc, oa);
+                }
+            }
+            catch (Exception e) {
+                Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingAnnotation", e);
+            }
+            finally {
+                BasicAnnotationRenderer.this.endDrawAnnotations(dc, stackHandler);
+            }
+        }
+
+        public void pick(DrawContext dc, Point pickPoint) {
+            OGLStackHandler stackHandler = new OGLStackHandler();
+            BasicAnnotationRenderer.this.pickSupport.clearPickList();
+            BasicAnnotationRenderer.this.beginDrawAnnotations(dc, stackHandler);
+            try {
+                this.annotation.setPickSupport(BasicAnnotationRenderer.this.pickSupport);
+                this.doRender(dc, this);
+                // Draw as many as we can in a batch to save ogl state switching.
+                while (dc.peekOrderedRenderables() instanceof OrderedAnnotation) {
+                    OrderedAnnotation oa = (OrderedAnnotation) dc.pollOrderedRenderables();
+                    oa.annotation.setPickSupport(BasicAnnotationRenderer.this.pickSupport);
+                    this.doRender(dc, oa);
+                }
+            }
+            catch (Exception e) {
+                Logging.logger().log(Level.SEVERE, "generic.ExceptionWhilePickingAnnotation", e);
+            }
+            finally {
+                BasicAnnotationRenderer.this.endDrawAnnotations(dc, stackHandler);
+                BasicAnnotationRenderer.this.pickSupport.resolvePick(dc, pickPoint, this.layer);
+                BasicAnnotationRenderer.this.pickSupport.clearPickList(); // to ensure entries can be garbage collected
+            }
+        }
+
+        protected void doRender(DrawContext dc, OrderedAnnotation oa) {
+            // Swap the draw context's current layer with that of the ordered annotation
+            Layer previousCurrentLayer = dc.getCurrentLayer();
+            try {
+                dc.setCurrentLayer(oa.layer);
+                oa.annotation.renderNow(dc);
+            }
+            finally {
+                dc.setCurrentLayer(previousCurrentLayer); // restore the original layer
+            }
+        }
     }
 //
 //

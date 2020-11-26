@@ -18,39 +18,41 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: AttackRotaryWing.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AttackRotaryWing extends Aviation
-{
-    /** Index of the left vertical path in the {@code paths} array. */
-    protected final static int LEFT_VERTICAL = 1;
-    /** Index of the right vertical path in the {@code paths} array. */
-    protected final static int RIGHT_VERTICAL = 2;
-    /** Index of the rotor symbol path in the {@code paths} array. */
-    protected final static int ROTOR_SYMBOL = 3;
-
+public class AttackRotaryWing extends Aviation {
     /**
-     * Indicates the graphics supported by this class.
-     *
-     * @return List of masked SIDC strings that identify graphics that this class supports.
+     * Index of the left vertical path in the {@code paths} array.
      */
-    public static List<String> getSupportedGraphics()
-    {
-        return Collections.singletonList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_ATK);
-    }
+    protected final static int LEFT_VERTICAL = 1;
+    /**
+     * Index of the right vertical path in the {@code paths} array.
+     */
+    protected final static int RIGHT_VERTICAL = 2;
+    /**
+     * Index of the rotor symbol path in the {@code paths} array.
+     */
+    protected final static int ROTOR_SYMBOL = 3;
 
     /**
      * Create a new graphic.
      *
      * @param sidc Symbol code the identifies the graphic.
      */
-    public AttackRotaryWing(String sidc)
-    {
+    public AttackRotaryWing(String sidc) {
         super(sidc, 4);
+    }
+
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics() {
+        return Collections.singletonList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_ATK);
     }
 
     @Override
     protected void createLinePositions(List<Position> leftPositions, List<Position> rightPositions, double halfWidth,
-        Globe globe)
-    {
+        Globe globe) {
         super.createLinePositions(leftPositions, rightPositions, halfWidth, globe);
 
         // Rotary Wing is based on the Aviation graphic, but adds a symbol for the rotor (an upward pointing arrow),

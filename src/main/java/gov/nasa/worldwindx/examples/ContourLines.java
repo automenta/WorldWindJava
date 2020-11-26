@@ -26,6 +26,15 @@ import java.util.*;
  */
 public class ContourLines extends ApplicationTemplate {
 
+    public static void main(String[] args) {
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 44.23);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 6.92);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 30000);
+        Configuration.setValue(AVKey.INITIAL_PITCH, 45);
+
+        ApplicationTemplate.start("WorldWind Contour Lines", AppFrame.class);
+    }
+
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
         protected final ContourLine contourLine;
@@ -74,7 +83,7 @@ public class ContourLines extends ApplicationTemplate {
             JPanel controlPanel = new JPanel();
             controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
             controlPanel.setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9),
-                    new TitledBorder("Contour Line Elevation")));
+                new TitledBorder("Contour Line Elevation")));
 
             final JSlider slider = new JSlider(0, 3000, (int) this.contourLine.getElevation());
             slider.setMajorTickSpacing(1000);
@@ -96,14 +105,5 @@ public class ContourLines extends ApplicationTemplate {
 
             return controlPanel;
         }
-    }
-
-    public static void main(String[] args) {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 44.23);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 6.92);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 30000);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 45);
-
-        ApplicationTemplate.start("WorldWind Contour Lines", AppFrame.class);
     }
 }

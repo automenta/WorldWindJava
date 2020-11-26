@@ -9,7 +9,7 @@ package gov.nasa.worldwind.util;
 /**
  * Traverses an implicit tree and makes decisions at tree nodes visited in depth-first order.
  * <p>
- * Users provide an object at construction that implements the {@link gov.nasa.worldwind.util.DecisionTree.Controller}
+ * Users provide an object at construction that implements the {@link DecisionTree.Controller}
  * interface. This controller provides methods to determine node inclusion, to terminate traversal, and to create
  * descendant nodes. It is carried to each node during traversal.
  * <p>
@@ -19,54 +19,13 @@ package gov.nasa.worldwind.util;
  * At the start of traversal a user-defined object is specified as the object defining the decision. It's the object
  * against which decisions are made at each node.
  * <p>
- * See the source code of {@link gov.nasa.worldwind.util.SectorVisibilityTree} for example usage.
+ * See the source code of {@link SectorVisibilityTree} for example usage.
  *
  * @author tag
  * @version $Id: DecisionTree.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class DecisionTree<T, C> // T = type being managed. C = traversal context
 {
-    /**
-     * Interface defined by the class user to control traversal.
-     *
-     * @param <T> the data type of objects associated with tree nodes -- the objects implicitly contained in the tree.
-     * @param <C> the traversal context type.
-     */
-    public interface Controller<T, C>
-    {
-        /**
-         * Indicates whether a node is active during traversal.
-         *
-         * @param o       the user-defined object specified at traversal start and examined at each tree nodes.
-         * @param context the traversal context.
-         *
-         * @return true if the node is active, otherwise false.
-         */
-        boolean isVisible(T o, C context);
-
-        /**
-         * Indicates whether traversal should contine or end at a node.
-         *
-         * @param o       the user-defined object specified at traversal start and examined at each tree nodes.
-         * @param context the traversal context.
-         *
-         * @return true if the node is terminal, otherwise false. Traversal continues to descendants if false is
-         *         returned. otherwise traversal of the node's branch of the tree stops.
-         */
-        boolean isTerminal(T o, C context);
-
-        /**
-         * Create a cell's descendant nodes. Called in order to continue traversal down a branch of the tree from the
-         * current node. The returned nodes are visited in the order returned.
-         *
-         * @param o       the user-defined object specified at traversal start and examined at each tree nodes.
-         * @param context the traversal context.
-         *
-         * @return an array of descendant nodes.
-         */
-        T[] split(T o, C context);
-    }
-
     protected final Controller<T, C> controller;
 
     /**
@@ -75,8 +34,7 @@ public class DecisionTree<T, C> // T = type being managed. C = traversal context
      * @param controller a user-defined object implementing the <code>Controller</code> interface providing the
      *                   traversal control methods.
      */
-    public DecisionTree(Controller<T, C> controller)
-    {
+    public DecisionTree(Controller<T, C> controller) {
         this.controller = controller;
     }
 
@@ -86,18 +44,53 @@ public class DecisionTree<T, C> // T = type being managed. C = traversal context
      * @param o       a user-defined object to examine at each tree node.
      * @param context the traversal context.
      */
-    public void traverse(T o, C context)
-    {
+    public void traverse(T o, C context) {
         if (!this.controller.isVisible(o, context))
             return;
 
         if (this.controller.isTerminal(o, context))
             return;
 
-        for (T child : this.controller.split(o, context))
-        {
+        for (T child : this.controller.split(o, context)) {
             this.traverse(child, context);
         }
+    }
+
+    /**
+     * Interface defined by the class user to control traversal.
+     *
+     * @param <T> the data type of objects associated with tree nodes -- the objects implicitly contained in the tree.
+     * @param <C> the traversal context type.
+     */
+    public interface Controller<T, C> {
+        /**
+         * Indicates whether a node is active during traversal.
+         *
+         * @param o       the user-defined object specified at traversal start and examined at each tree nodes.
+         * @param context the traversal context.
+         * @return true if the node is active, otherwise false.
+         */
+        boolean isVisible(T o, C context);
+
+        /**
+         * Indicates whether traversal should contine or end at a node.
+         *
+         * @param o       the user-defined object specified at traversal start and examined at each tree nodes.
+         * @param context the traversal context.
+         * @return true if the node is terminal, otherwise false. Traversal continues to descendants if false is
+         * returned. otherwise traversal of the node's branch of the tree stops.
+         */
+        boolean isTerminal(T o, C context);
+
+        /**
+         * Create a cell's descendant nodes. Called in order to continue traversal down a branch of the tree from the
+         * current node. The returned nodes are visited in the order returned.
+         *
+         * @param o       the user-defined object specified at traversal start and examined at each tree nodes.
+         * @param context the traversal context.
+         * @return an array of descendant nodes.
+         */
+        T[] split(T o, C context);
     }
 //
 //    public static void main(String[] args)

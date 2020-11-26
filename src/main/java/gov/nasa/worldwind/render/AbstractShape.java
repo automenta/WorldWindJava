@@ -23,9 +23,10 @@ import gov.nasa.worldwind.util.*;
 import javax.xml.stream.*;
 import java.awt.*;
 import java.io.*;
+import java.util.List;
 
 /**
- * Provides a base class form several geometric {@link gov.nasa.worldwind.render.Renderable}s. Implements common
+ * Provides a base class form several geometric {@link Renderable}s. Implements common
  * attribute handling and rendering flow for outlined shapes. Provides common defaults and common export code.
  * <p>
  * In order to support simultaneous use of this shape with multiple globes (windows), this shape maintains a cache of
@@ -37,32 +38,146 @@ import java.io.*;
  */
 public abstract class AbstractShape extends WWObjectImpl
     implements Highlightable, OrderedRenderable, Movable, Movable2, ExtentHolder, GeographicExtent, Exportable,
-    Restorable, PreRenderable, Attributable, Draggable
-{
-    /** The default interior color. */
+    Restorable, PreRenderable, Attributable, Draggable {
+    /**
+     * The default interior color.
+     */
     protected static final Material DEFAULT_INTERIOR_MATERIAL = Material.LIGHT_GRAY;
-    /** The default outline color. */
+    /**
+     * The default outline color.
+     */
     protected static final Material DEFAULT_OUTLINE_MATERIAL = Material.DARK_GRAY;
-    /** The default highlight color. */
+    /**
+     * The default highlight color.
+     */
     protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
-    /** The default altitude mode. */
+    /**
+     * The default altitude mode.
+     */
     protected static final int DEFAULT_ALTITUDE_MODE = WorldWind.ABSOLUTE;
-    /** The default outline pick width. */
+    /**
+     * The default outline pick width.
+     */
     protected static final int DEFAULT_OUTLINE_PICK_WIDTH = 10;
-    /** The default geometry regeneration interval. */
+    /**
+     * The default geometry regeneration interval.
+     */
     protected static final int DEFAULT_GEOMETRY_GENERATION_INTERVAL = 3000;
-    /** Indicates the number of vertices that must be present in order for VBOs to be used to render this shape. */
+    /**
+     * Indicates the number of vertices that must be present in order for VBOs to be used to render this shape.
+     */
     protected static final int VBO_THRESHOLD = Configuration.getIntegerValue(AVKey.VBO_THRESHOLD, 30);
 
-    /** The attributes used if attributes are not specified. */
+    /**
+     * The attributes used if attributes are not specified.
+     */
     protected static final ShapeAttributes defaultAttributes;
 
-    static
-    {
+    static {
         // Create and populate the default attributes.
         defaultAttributes = new BasicShapeAttributes();
         defaultAttributes.setInteriorMaterial(DEFAULT_INTERIOR_MATERIAL);
         defaultAttributes.setOutlineMaterial(DEFAULT_OUTLINE_MATERIAL);
+    }
+
+    /**
+     * The attributes active for a particular pick and render pass. These are determined according to the highlighting
+     * mode.
+     */
+    protected final ShapeAttributes activeAttributes = new BasicShapeAttributes(); // re-determined each frame
+    // Volatile values used only during frame generation.
+    protected final OGLStackHandler BEogsh = new OGLStackHandler(); // used for beginDrawing/endDrawing state
+    /**
+     * Holds globe-dependent computed data. One entry per globe encountered during {@link #render(DrawContext)}.
+     */
+    protected final ShapeDataCache shapeDataCache = new ShapeDataCache(60000);
+    /**
+     * This shape's normal, non-highlighted attributes.
+     */
+    protected ShapeAttributes normalAttrs;
+    /**
+     * This shape's highlighted attributes.
+     */
+    protected ShapeAttributes highlightAttrs;
+    protected boolean highlighted;
+    protected boolean dragEnabled = true;
+    protected boolean visible = true;
+    protected int altitudeMode = DEFAULT_ALTITUDE_MODE;
+    protected boolean enableBatchRendering = true;
+    protected boolean enableBatchPicking = true;
+    protected boolean enableDepthOffset;
+    protected int outlinePickWidth = DEFAULT_OUTLINE_PICK_WIDTH;
+    /**
+     * Outlined shapes are drawn as {@link OutlinedShape}s.
+     */
+    protected final OutlinedShape outlineShapeRenderer = new OutlinedShape() {
+        public boolean isDrawOutline(DrawContext dc, Object shape) {
+            return ((AbstractShape) shape).mustDrawOutline();
+        }
+
+        public boolean isDrawInterior(DrawContext dc, Object shape) {
+            return ((AbstractShape) shape).mustDrawInterior();
+        }
+
+        public boolean isEnableDepthOffset(DrawContext dc, Object shape) {
+            return ((AbstractShape) shape).isEnableDepthOffset();
+        }
+
+        public void drawOutline(DrawContext dc, Object shape) {
+            ((AbstractShape) shape).drawOutline(dc);
+        }
+
+        public void drawInterior(DrawContext dc, Object shape) {
+            ((AbstractShape) shape).drawInterior(dc);
+        }
+
+        public Double getDepthOffsetFactor(DrawContext dc, Object shape) {
+            return null;
+        }
+
+        public Double getDepthOffsetUnits(DrawContext dc, Object shape) {
+            return null;
+        }
+    };
+    protected Sector sector; // the shape's bounding sector
+    protected Position referencePosition; // the location/position to use as the shape's reference point
+    protected Object delegateOwner; // for app use to identify an owner of this shape other than the current layer
+    protected long maxExpiryTime = DEFAULT_GEOMETRY_GENERATION_INTERVAL;
+    protected long minExpiryTime = Math.max(DEFAULT_GEOMETRY_GENERATION_INTERVAL - 500, 0);
+    protected boolean viewDistanceExpiration = true;
+    protected SurfaceShape surfaceShape;
+    protected Layer pickLayer;
+    protected PickSupport pickSupport = new PickSupport();
+    // Additional drag context
+    protected DraggableSupport draggableSupport = null;
+    /**
+     * Identifies the active globe-dependent data for the current invocation of {@link #render(DrawContext)}. The active
+     * data is drawn from this shape's data cache at the beginning of the <code>render</code> method.
+     */
+    protected AbstractShapeData currentData;
+
+    /**
+     * Invokes {@link #initialize()} during construction and sets the data cache's expiration time to a default value.
+     */
+    protected AbstractShape() {
+        this.initialize();
+    }
+
+    protected AbstractShape(AbstractShape source) {
+        this.normalAttrs = new BasicShapeAttributes(source.normalAttrs);
+        this.highlightAttrs = new BasicShapeAttributes(source.highlightAttrs);
+        this.highlighted = source.highlighted;
+        this.visible = source.visible;
+        this.altitudeMode = source.altitudeMode;
+        this.enableBatchRendering = source.enableBatchRendering;
+        this.enableBatchPicking = source.enableBatchPicking;
+        this.enableDepthOffset = source.enableDepthOffset;
+        this.outlinePickWidth = source.outlinePickWidth;
+        this.sector = source.sector;
+        this.referencePosition = source.referencePosition;
+        this.delegateOwner = source.delegateOwner;
+
+        this.initialize();
     }
 
     /**
@@ -73,10 +188,8 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @param line    the line to intersect.
      * @param terrain the {@link Terrain} to use when computing the shape's geometry.
-     *
      * @return a list of intersections identifying where the line intersects the shape, or null if the line does not
      * intersect the shape.
-     *
      * @see Terrain
      */
     abstract public java.util.List<Intersection> intersect(Line line, Terrain terrain);
@@ -94,7 +207,6 @@ public abstract class AbstractShape extends WWObjectImpl
      * Note: This method always returns false during the pick pass.
      *
      * @param dc the current draw context
-     *
      * @return true if texture should be applied, otherwise false.
      */
     abstract protected boolean mustApplyTexture(DrawContext dc);
@@ -102,16 +214,14 @@ public abstract class AbstractShape extends WWObjectImpl
     /**
      * Produces the geometry and other state necessary to represent this shape as an ordered renderable. Places this
      * shape on the draw context's ordered renderable list for subsequent rendering. This method is called during {@link
-     * #pick(DrawContext, java.awt.Point)} and {@link #render(DrawContext)} when it's been determined that the shape is
+     * #pick(DrawContext, Point)} and {@link #render(DrawContext)} when it's been determined that the shape is
      * likely to be visible.
      *
      * @param dc the current draw context.
-     *
      * @return true if the ordered renderable state was successfully computed, otherwise false, in which case the
      * current pick or render pass is terminated for this shape. Subclasses should return false if it is not possible to
      * create the ordered renderable state.
-     *
-     * @see #pick(DrawContext, java.awt.Point)
+     * @see #pick(DrawContext, Point)
      * @see #render(DrawContext)
      */
     abstract protected boolean doMakeOrderedRenderable(DrawContext dc);
@@ -121,7 +231,6 @@ public abstract class AbstractShape extends WWObjectImpl
      * #makeOrderedRenderable(DrawContext)}just prior to adding the shape to the ordered renderable list.
      *
      * @param dc the current draw context.
-     *
      * @return true if this shape is ready to be rendered as an ordered renderable.
      */
     abstract protected boolean isOrderedRenderableValid(DrawContext dc);
@@ -131,7 +240,7 @@ public abstract class AbstractShape extends WWObjectImpl
      * ShapeAttributes, ShapeAttributes)}, which establishes OpenGL state for lighting, blending, pick color and line
      * attributes. Subclasses should execute the drawing commands specific to the type of shape.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
      */
@@ -142,7 +251,7 @@ public abstract class AbstractShape extends WWObjectImpl
      * ShapeAttributes, ShapeAttributes)}, which establishes OpenGL state for lighting, blending, pick color and
      * interior attributes. Subclasses should execute the drawing commands specific to the type of shape.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
      */
@@ -151,7 +260,7 @@ public abstract class AbstractShape extends WWObjectImpl
     /**
      * Fill this shape's vertex buffer objects. If the vertex buffer object resource IDs don't yet exist, create them.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
      */
@@ -161,7 +270,6 @@ public abstract class AbstractShape extends WWObjectImpl
      * Exports shape-specific fields.
      *
      * @param xmlWriter the export writer to write to.
-     *
      * @throws XMLStreamException if an exception occurs converting this shape's fields to XML.
      */
     abstract protected void doExportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException;
@@ -170,197 +278,23 @@ public abstract class AbstractShape extends WWObjectImpl
      * Creates and returns a new cache entry specific to the subclass.
      *
      * @param dc the current draw context.
-     *
      * @return a data cache entry for the state in the specified draw context.
      */
     protected abstract AbstractShapeData createCacheEntry(DrawContext dc);
-
-    /** This shape's normal, non-highlighted attributes. */
-    protected ShapeAttributes normalAttrs;
-    /** This shape's highlighted attributes. */
-    protected ShapeAttributes highlightAttrs;
-    /**
-     * The attributes active for a particular pick and render pass. These are determined according to the highlighting
-     * mode.
-     */
-    protected final ShapeAttributes activeAttributes = new BasicShapeAttributes(); // re-determined each frame
-
-    protected boolean highlighted;
-    protected boolean dragEnabled = true;
-    protected boolean visible = true;
-    protected int altitudeMode = DEFAULT_ALTITUDE_MODE;
-    protected boolean enableBatchRendering = true;
-    protected boolean enableBatchPicking = true;
-    protected boolean enableDepthOffset;
-    protected int outlinePickWidth = DEFAULT_OUTLINE_PICK_WIDTH;
-    protected Sector sector; // the shape's bounding sector
-    protected Position referencePosition; // the location/position to use as the shape's reference point
-    protected Object delegateOwner; // for app use to identify an owner of this shape other than the current layer
-    protected long maxExpiryTime = DEFAULT_GEOMETRY_GENERATION_INTERVAL;
-    protected long minExpiryTime = Math.max(DEFAULT_GEOMETRY_GENERATION_INTERVAL - 500, 0);
-    protected boolean viewDistanceExpiration = true;
-    protected SurfaceShape surfaceShape;
-
-    // Volatile values used only during frame generation.
-    protected final OGLStackHandler BEogsh = new OGLStackHandler(); // used for beginDrawing/endDrawing state
-    protected Layer pickLayer;
-    protected PickSupport pickSupport = new PickSupport();
-
-    /** Holds globe-dependent computed data. One entry per globe encountered during {@link #render(DrawContext)}. */
-    protected final ShapeDataCache shapeDataCache = new ShapeDataCache(60000);
-
-    // Additional drag context
-    protected DraggableSupport draggableSupport = null;
-
-    /**
-     * Identifies the active globe-dependent data for the current invocation of {@link #render(DrawContext)}. The active
-     * data is drawn from this shape's data cache at the beginning of the <code>render</code> method.
-     */
-    protected AbstractShapeData currentData;
 
     /**
      * Returns the data cache entry for the current rendering.
      *
      * @return the data cache entry for the current rendering.
      */
-    protected AbstractShapeData getCurrentData()
-    {
+    protected AbstractShapeData getCurrentData() {
         return this.currentData;
     }
 
-    /** Holds the globe-dependent data captured in this shape's data cache. */
-    protected static class AbstractShapeData extends ShapeDataCache.ShapeDataCacheEntry
-    {
-        /** Identifies the frame used to calculate this entry's values. */
-        protected long frameNumber = -1;
-        /** This entry's reference point. */
-        protected Vec4 referencePoint;
-        /** A quick-to-compute metric to determine eye distance changes that invalidate this entry's geometry. */
-        protected Double referenceDistance;
-        /** The GPU-resource cache key to use for this entry's VBOs, if VBOs are used. */
-        protected Object vboCacheKey = new Object();
-
-        /**
-         * Constructs a data cache entry and initializes its globe-dependent state key for the globe in the specified
-         * draw context and capture the current vertical exaggeration. The entry becomes invalid when these values
-         * change or when the entry's expiration timer expires.
-         *
-         * @param dc            the current draw context.
-         * @param minExpiryTime the minimum number of milliseconds to use this shape before regenerating its geometry.
-         * @param maxExpiryTime the maximum number of milliseconds to use this shape before regenerating its geometry.
-         */
-        protected AbstractShapeData(DrawContext dc, long minExpiryTime, long maxExpiryTime)
-        {
-            super(dc, minExpiryTime, maxExpiryTime);
-        }
-
-        public long getFrameNumber()
-        {
-            return frameNumber;
-        }
-
-        public void setFrameNumber(long frameNumber)
-        {
-            this.frameNumber = frameNumber;
-        }
-
-        public Vec4 getReferencePoint()
-        {
-            return referencePoint;
-        }
-
-        public void setReferencePoint(Vec4 referencePoint)
-        {
-            this.referencePoint = referencePoint;
-        }
-
-        public Object getVboCacheKey()
-        {
-            return vboCacheKey;
-        }
-
-        public void setVboCacheKey(Object vboCacheKey)
-        {
-            this.vboCacheKey = vboCacheKey;
-        }
-
-        public Double getReferenceDistance()
-        {
-            return referenceDistance;
-        }
-
-        public void setReferenceDistance(Double referenceDistance)
-        {
-            this.referenceDistance = referenceDistance;
-        }
-    }
-
-    /** Outlined shapes are drawn as {@link gov.nasa.worldwind.render.OutlinedShape}s. */
-    protected final OutlinedShape outlineShapeRenderer = new OutlinedShape()
-    {
-        public boolean isDrawOutline(DrawContext dc, Object shape)
-        {
-            return ((AbstractShape) shape).mustDrawOutline();
-        }
-
-        public boolean isDrawInterior(DrawContext dc, Object shape)
-        {
-            return ((AbstractShape) shape).mustDrawInterior();
-        }
-
-        public boolean isEnableDepthOffset(DrawContext dc, Object shape)
-        {
-            return ((AbstractShape) shape).isEnableDepthOffset();
-        }
-
-        public void drawOutline(DrawContext dc, Object shape)
-        {
-            ((AbstractShape) shape).drawOutline(dc);
-        }
-
-        public void drawInterior(DrawContext dc, Object shape)
-        {
-            ((AbstractShape) shape).drawInterior(dc);
-        }
-
-        public Double getDepthOffsetFactor(DrawContext dc, Object shape)
-        {
-            return null;
-        }
-
-        public Double getDepthOffsetUnits(DrawContext dc, Object shape)
-        {
-            return null;
-        }
-    };
-
-    /** Invokes {@link #initialize()} during construction and sets the data cache's expiration time to a default value. */
-    protected AbstractShape()
-    {
-        this.initialize();
-    }
-
-    protected AbstractShape(AbstractShape source)
-    {
-        this.normalAttrs = new BasicShapeAttributes(source.normalAttrs);
-        this.highlightAttrs = new BasicShapeAttributes(source.highlightAttrs);
-        this.highlighted = source.highlighted;
-        this.visible = source.visible;
-        this.altitudeMode = source.altitudeMode;
-        this.enableBatchRendering = source.enableBatchRendering;
-        this.enableBatchPicking = source.enableBatchPicking;
-        this.enableDepthOffset = source.enableDepthOffset;
-        this.outlinePickWidth = source.outlinePickWidth;
-        this.sector = source.sector;
-        this.referencePosition = source.referencePosition;
-        this.delegateOwner = source.delegateOwner;
-
-        this.initialize();
-    }
-
-    /** Invalidates computed values. Called when this shape's contents or certain attributes change. */
-    protected void reset()
-    {
+    /**
+     * Invalidates computed values. Called when this shape's contents or certain attributes change.
+     */
+    protected void reset() {
         this.shapeDataCache.removeAllEntries();
         this.sector = null;
         this.surfaceShape = null;
@@ -371,8 +305,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return this shape's normal attributes. May be null.
      */
-    public ShapeAttributes getAttributes()
-    {
+    public ShapeAttributes getAttributes() {
         return this.normalAttrs;
     }
 
@@ -381,8 +314,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @param normalAttrs the normal attributes. May be null, in which case default attributes are used.
      */
-    public void setAttributes(ShapeAttributes normalAttrs)
-    {
+    public void setAttributes(ShapeAttributes normalAttrs) {
         this.normalAttrs = normalAttrs;
 
         if (this.surfaceShape != null)
@@ -394,8 +326,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return this shape's highlight attributes. May be null.
      */
-    public ShapeAttributes getHighlightAttributes()
-    {
+    public ShapeAttributes getHighlightAttributes() {
         return highlightAttrs;
     }
 
@@ -404,21 +335,18 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @param highlightAttrs the highlight attributes. May be null, in which case default attributes are used.
      */
-    public void setHighlightAttributes(ShapeAttributes highlightAttrs)
-    {
+    public void setHighlightAttributes(ShapeAttributes highlightAttrs) {
         this.highlightAttrs = highlightAttrs;
 
         if (this.surfaceShape != null)
             this.surfaceShape.setHighlightAttributes(highlightAttrs);
     }
 
-    public boolean isHighlighted()
-    {
+    public boolean isHighlighted() {
         return highlighted;
     }
 
-    public void setHighlighted(boolean highlighted)
-    {
+    public void setHighlighted(boolean highlighted) {
         this.highlighted = highlighted;
     }
 
@@ -426,11 +354,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * Indicates whether this shape is drawn during rendering.
      *
      * @return true if this shape is drawn, otherwise false.
-     *
      * @see #setVisible(boolean)
      */
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         return visible;
     }
 
@@ -438,11 +364,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * Specifies whether this shape is drawn during rendering.
      *
      * @param visible true to draw this shape, otherwise false. The default value is true.
-     *
      * @see #setAttributes(ShapeAttributes)
      */
-    public void setVisible(boolean visible)
-    {
+    public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
@@ -450,11 +374,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * Returns this shape's altitude mode.
      *
      * @return this shape's altitude mode.
-     *
      * @see #setAltitudeMode(int)
      */
-    public int getAltitudeMode()
-    {
+    public int getAltitudeMode() {
         return altitudeMode;
     }
 
@@ -468,8 +390,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @param altitudeMode the altitude mode. The default value is {@link WorldWind#ABSOLUTE}.
      */
-    public void setAltitudeMode(int altitudeMode)
-    {
+    public void setAltitudeMode(int altitudeMode) {
         if (this.altitudeMode == altitudeMode)
             return;
 
@@ -477,8 +398,7 @@ public abstract class AbstractShape extends WWObjectImpl
         this.reset();
     }
 
-    public double getDistanceFromEye()
-    {
+    public double getDistanceFromEye() {
         return this.getCurrentData() != null ? this.getCurrentData().getEyeDistance() : 0;
     }
 
@@ -486,11 +406,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * Indicates whether batch rendering is enabled for the concrete shape type of this shape.
      *
      * @return true if batch rendering is enabled, otherwise false.
-     *
      * @see #setEnableBatchRendering(boolean)
      */
-    public boolean isEnableBatchRendering()
-    {
+    public boolean isEnableBatchRendering() {
         return enableBatchRendering;
     }
 
@@ -501,8 +419,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @param enableBatchRendering true to enable batch rendering, otherwise false.
      */
-    public void setEnableBatchRendering(boolean enableBatchRendering)
-    {
+    public void setEnableBatchRendering(boolean enableBatchRendering) {
         this.enableBatchRendering = enableBatchRendering;
     }
 
@@ -510,11 +427,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * Indicates whether batch picking is enabled.
      *
      * @return true if batch rendering is enabled, otherwise false.
-     *
      * @see #setEnableBatchPicking(boolean)
      */
-    public boolean isEnableBatchPicking()
-    {
+    public boolean isEnableBatchPicking() {
         return enableBatchPicking;
     }
 
@@ -528,8 +443,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @param enableBatchPicking true to enable batch rendering, otherwise false.
      */
-    public void setEnableBatchPicking(boolean enableBatchPicking)
-    {
+    public void setEnableBatchPicking(boolean enableBatchPicking) {
         this.enableBatchPicking = enableBatchPicking;
     }
 
@@ -539,8 +453,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return the outline line width used during picking.
      */
-    public int getOutlinePickWidth()
-    {
+    public int getOutlinePickWidth() {
         return this.outlinePickWidth;
     }
 
@@ -551,13 +464,10 @@ public abstract class AbstractShape extends WWObjectImpl
      * Note that the size of the pick aperture also affects the precision necessary to pick.
      *
      * @param outlinePickWidth the outline pick width. The default is 10.
-     *
      * @throws IllegalArgumentException if the width is less than 0.
      */
-    public void setOutlinePickWidth(int outlinePickWidth)
-    {
-        if (outlinePickWidth < 0)
-        {
+    public void setOutlinePickWidth(int outlinePickWidth) {
+        if (outlinePickWidth < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "width < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -572,20 +482,18 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return true if depth offset is applied, otherwise false.
      */
-    public boolean isEnableDepthOffset()
-    {
+    public boolean isEnableDepthOffset() {
         return this.enableDepthOffset;
     }
 
     /**
      * Specifies whether the filled sides of this shape should be offset towards the viewer to help eliminate artifacts
      * when two or more faces of this or other filled shapes are coincident. See {@link
-     * gov.nasa.worldwind.render.Offset}.
+     * Offset}.
      *
      * @param enableDepthOffset true if depth offset is applied, otherwise false.
      */
-    public void setEnableDepthOffset(boolean enableDepthOffset)
-    {
+    public void setEnableDepthOffset(boolean enableDepthOffset) {
         this.enableDepthOffset = enableDepthOffset;
     }
 
@@ -594,11 +502,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * #setGeometryRegenerationInterval(int)} for the regeneration-interval's description.
      *
      * @return the geometry regeneration interval, in milliseconds.
-     *
      * @see #setGeometryRegenerationInterval(int)
      */
-    public long getGeometryRegenerationInterval()
-    {
+    public long getGeometryRegenerationInterval() {
         return this.maxExpiryTime;
     }
 
@@ -613,13 +519,11 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param geometryRegenerationInterval the geometry regeneration interval, in milliseconds. The default is two
      *                                     seconds.
      */
-    public void setGeometryRegenerationInterval(int geometryRegenerationInterval)
-    {
+    public void setGeometryRegenerationInterval(int geometryRegenerationInterval) {
         this.maxExpiryTime = Math.max(geometryRegenerationInterval, 0);
-        this.minExpiryTime = (long) (0.6 * (double) this.maxExpiryTime);
+        this.minExpiryTime = (long) (0.6 * this.maxExpiryTime);
 
-        for (ShapeDataCache.ShapeDataCacheEntry shapeData : this.shapeDataCache)
-        {
+        for (ShapeDataCache.ShapeDataCacheEntry shapeData : this.shapeDataCache) {
             if (shapeData != null)
                 shapeData.getTimer().setExpiryTime(this.minExpiryTime, this.maxExpiryTime);
         }
@@ -632,19 +536,16 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param referencePosition the reference position. May be null, in which case the first position of the outer
      *                          boundary is the reference position.
      */
-    public void setReferencePosition(Position referencePosition)
-    {
+    public void setReferencePosition(Position referencePosition) {
         this.referencePosition = referencePosition;
         this.reset();
     }
 
-    public Object getDelegateOwner()
-    {
+    public Object getDelegateOwner() {
         return delegateOwner;
     }
 
-    public void setDelegateOwner(Object delegateOwner)
-    {
+    public void setDelegateOwner(Object delegateOwner) {
         this.delegateOwner = delegateOwner;
     }
 
@@ -653,8 +554,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return this shape's extent, or null if an extent has not been computed.
      */
-    public Extent getExtent()
-    {
+    public Extent getExtent() {
         return this.getCurrentData().getExtent();
     }
 
@@ -665,13 +565,11 @@ public abstract class AbstractShape extends WWObjectImpl
      * @return the Cartesian coordinates corresponding to this shape's reference position, or null if the point has not
      * been computed.
      */
-    public Vec4 getReferencePoint()
-    {
+    public Vec4 getReferencePoint() {
         return this.currentData.getReferencePoint();
     }
 
-    public Extent getExtent(Globe globe, double verticalExaggeration)
-    {
+    public Extent getExtent(Globe globe, double verticalExaggeration) {
         if (globe == null)
             return null;
 
@@ -686,14 +584,11 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @see #getActiveAttributes()
      */
-    protected void determineActiveAttributes()
-    {
-        if (this.isHighlighted())
-        {
+    protected void determineActiveAttributes() {
+        if (this.isHighlighted()) {
             if (this.getHighlightAttributes() != null)
                 this.activeAttributes.copy(this.getHighlightAttributes());
-            else
-            {
+            else {
                 // If no highlight attributes have been specified we need to use the normal attributes but adjust them
                 // to cause highlighting.
                 if (this.getAttributes() != null)
@@ -705,12 +600,10 @@ public abstract class AbstractShape extends WWObjectImpl
                 this.activeAttributes.setInteriorMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
             }
         }
-        else if (this.getAttributes() != null)
-        {
+        else if (this.getAttributes() != null) {
             this.activeAttributes.copy(this.getAttributes());
         }
-        else
-        {
+        else {
             this.activeAttributes.copy(defaultAttributes);
         }
     }
@@ -723,8 +616,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return this shape's currently active attributes.
      */
-    public ShapeAttributes getActiveAttributes()
-    {
+    public ShapeAttributes getActiveAttributes() {
         return this.activeAttributes;
     }
 
@@ -732,14 +624,12 @@ public abstract class AbstractShape extends WWObjectImpl
      * Indicates whether this shape's renderable geometry must be recomputed, either as a result of an attribute or
      * property change or the expiration of the geometry regeneration interval.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
-     *
      * @return true if this shape's geometry must be regenerated, otherwise false.
      */
-    protected boolean mustRegenerateGeometry(DrawContext dc)
-    {
+    protected boolean mustRegenerateGeometry(DrawContext dc) {
         return this.getCurrentData().isExpired(dc) || !this.getCurrentData().isValid(dc);
     }
 
@@ -747,11 +637,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * Indicates whether this shape should use OpenGL vertex buffer objects.
      *
      * @param dc the current draw context.
-     *
      * @return true if this shape should use vertex buffer objects, otherwise false.
      */
-    protected boolean shouldUseVBOs(DrawContext dc)
-    {
+    protected boolean shouldUseVBOs(DrawContext dc) {
         return dc.getGLRuntimeCapabilities().isUseVertexBufferObject();
     }
 
@@ -760,8 +648,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return true if an interior must be drawn, otherwise false.
      */
-    protected boolean mustDrawInterior()
-    {
+    protected boolean mustDrawInterior() {
         return this.getActiveAttributes().isDrawInterior();
     }
 
@@ -770,8 +657,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return true if the outline should be drawn, otherwise false.
      */
-    protected boolean mustDrawOutline()
-    {
+    protected boolean mustDrawOutline() {
         return this.getActiveAttributes().isDrawOutline();
     }
 
@@ -780,11 +666,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * #mustApplyLighting(DrawContext, ShapeAttributes)}, specifying null for the activeAttrs.
      *
      * @param dc the current draw context
-     *
      * @return true if lighting must be applied, otherwise false.
      */
-    protected boolean mustApplyLighting(DrawContext dc)
-    {
+    protected boolean mustApplyLighting(DrawContext dc) {
         return this.mustApplyLighting(dc, null);
     }
 
@@ -795,11 +679,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param dc          the current draw context
      * @param activeAttrs the attribute bundle to consider when determining whether lighting is applied. May be null, in
      *                    which case the current active attributes are used.
-     *
      * @return true if lighting must be applied, otherwise false.
      */
-    protected boolean mustApplyLighting(DrawContext dc, ShapeAttributes activeAttrs)
-    {
+    protected boolean mustApplyLighting(DrawContext dc, ShapeAttributes activeAttrs) {
         return activeAttrs != null ? activeAttrs.isEnableLighting() : this.activeAttributes.isEnableLighting();
     }
 
@@ -808,11 +690,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * #mustCreateNormals(DrawContext, ShapeAttributes)}, specifying null for the activeAttrs.
      *
      * @param dc the current draw context
-     *
      * @return true if normal vectors must be computed, otherwise false.
      */
-    protected boolean mustCreateNormals(DrawContext dc)
-    {
+    protected boolean mustCreateNormals(DrawContext dc) {
         return this.mustCreateNormals(dc, null);
     }
 
@@ -824,11 +704,9 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param dc          the current draw context
      * @param activeAttrs the attribute bundle to consider when determining whether normals should be computed. May be
      *                    null, in which case the current active attributes are used.
-     *
      * @return true if normal vectors must be computed, otherwise false.
      */
-    protected boolean mustCreateNormals(DrawContext dc, ShapeAttributes activeAttrs)
-    {
+    protected boolean mustCreateNormals(DrawContext dc, ShapeAttributes activeAttrs) {
         return this.mustApplyLighting(dc, activeAttrs);
     }
 
@@ -836,23 +714,17 @@ public abstract class AbstractShape extends WWObjectImpl
      * Creates a {@link WWTexture} for a specified image source.
      *
      * @param imageSource the image source for which to create the texture.
-     *
      * @return the new <code>WWTexture</code>.
-     *
      * @throws IllegalArgumentException if the image source is null.
      */
-    protected WWTexture makeTexture(Object imageSource)
-    {
+    protected WWTexture makeTexture(Object imageSource) {
         return new LazilyLoadedTexture(imageSource, true);
     }
 
     @Override
-    public void preRender(DrawContext dc)
-    {
-        if (dc.getGlobe() instanceof Globe2D)
-        {
-            if (this.surfaceShape == null)
-            {
+    public void preRender(DrawContext dc) {
+        if (dc.getGlobe() instanceof Globe2D) {
+            if (this.surfaceShape == null) {
                 this.surfaceShape = this.createSurfaceShape();
                 if (this.surfaceShape == null)
                     return;
@@ -871,8 +743,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return The surface shape to represent this Path on a 2D globe.
      */
-    protected SurfaceShape createSurfaceShape()
-    {
+    protected SurfaceShape createSurfaceShape() {
         return null;
     }
 
@@ -881,8 +752,7 @@ public abstract class AbstractShape extends WWObjectImpl
      * globes. Subclasses should override this method if they need to update more than the highlighted state, visibility
      * state and delegate owner.
      */
-    protected void updateSurfaceShape()
-    {
+    protected void updateSurfaceShape() {
         this.surfaceShape.setHighlighted(this.isHighlighted());
         this.surfaceShape.setVisible(this.isVisible());
 
@@ -890,46 +760,39 @@ public abstract class AbstractShape extends WWObjectImpl
         this.surfaceShape.setDelegateOwner(o != null ? o : this);
     }
 
-    public void pick(DrawContext dc, Point pickPoint)
-    {
+    public void pick(DrawContext dc, Point pickPoint) {
         // This method is called only when ordered renderables are being drawn.
 
-        if (dc == null)
-        {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         this.pickSupport.clearPickList();
-        try
-        {
+        try {
             this.pickSupport.beginPicking(dc);
             this.render(dc);
         }
-        finally
-        {
+        finally {
             this.pickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
 
-    public void render(DrawContext dc)
-    {
+    public void render(DrawContext dc) {
         // This render method is called three times during frame generation. It's first called as a {@link Renderable}
         // during <code>Renderable</code> picking. It's called again during normal rendering. And it's called a third
         // time as an OrderedRenderable. The first two calls determine whether to add the shape to the ordered renderable
         // list during pick and render. The third call just draws the ordered renderable.
 
-        if (dc == null)
-        {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (dc.getGlobe() instanceof Globe2D && this.surfaceShape != null)
-        {
+        if (dc.getGlobe() instanceof Globe2D && this.surfaceShape != null) {
             this.surfaceShape.render(dc);
             return;
         }
@@ -937,8 +800,7 @@ public abstract class AbstractShape extends WWObjectImpl
         // Retrieve the cached data for the current globe. If it doesn't yet exist, create it. Most code subsequently
         // executed depends on currentData being non-null.
         this.currentData = (AbstractShapeData) this.shapeDataCache.getEntry(dc.getGlobe());
-        if (this.currentData == null)
-        {
+        if (this.currentData == null) {
             this.currentData = this.createCacheEntry(dc);
             this.shapeDataCache.addEntry(this.currentData);
         }
@@ -957,8 +819,7 @@ public abstract class AbstractShape extends WWObjectImpl
             this.currentData.setExtent(null);
         }
 
-        if (this.getExtent() != null)
-        {
+        if (this.getExtent() != null) {
             if (!this.intersectsFrustum(dc))
                 return;
 
@@ -977,22 +838,19 @@ public abstract class AbstractShape extends WWObjectImpl
      * Determines whether to add this shape to the draw context's ordered renderable list. Creates this shapes
      * renderable geometry.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
      */
-    protected void makeOrderedRenderable(DrawContext dc)
-    {
+    protected void makeOrderedRenderable(DrawContext dc) {
         // Re-use values already calculated this frame.
-        if (dc.getFrameTimeStamp() != this.getCurrentData().getFrameNumber())
-        {
+        if (dc.getFrameTimeStamp() != this.getCurrentData().getFrameNumber()) {
             this.determineActiveAttributes();
             if (this.getActiveAttributes() == null)
                 return;
 
             // Regenerate the positions and shape at a specified frequency.
-            if (this.mustRegenerateGeometry(dc))
-            {
+            if (this.mustRegenerateGeometry(dc)) {
                 if (!this.doMakeOrderedRenderable(dc))
                     return;
 
@@ -1019,8 +877,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @param dc the current draw context.
      */
-    protected void addOrderedRenderable(DrawContext dc)
-    {
+    protected void addOrderedRenderable(DrawContext dc) {
         dc.addOrderedRenderable(this);
     }
 
@@ -1029,8 +886,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return true if this shape's geometry depends on the terrain, otherwise false.
      */
-    protected boolean isTerrainDependent()
-    {
+    protected boolean isTerrainDependent() {
         return this.getAltitudeMode() != WorldWind.ABSOLUTE;
     }
 
@@ -1042,8 +898,7 @@ public abstract class AbstractShape extends WWObjectImpl
      * @return true if the terrain dependent geometry is updated as the eye distance changes, otherwise false. The
      * default is true.
      */
-    public boolean isViewDistanceExpiration()
-    {
+    public boolean isViewDistanceExpiration() {
         return viewDistanceExpiration;
     }
 
@@ -1054,8 +909,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @param viewDistanceExpiration true to enable view distance expiration, otherwise false.
      */
-    public void setViewDistanceExpiration(boolean viewDistanceExpiration)
-    {
+    public void setViewDistanceExpiration(boolean viewDistanceExpiration) {
         this.viewDistanceExpiration = viewDistanceExpiration;
     }
 
@@ -1065,8 +919,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @param dc the current draw context.
      */
-    protected void checkViewDistanceExpiration(DrawContext dc)
-    {
+    protected void checkViewDistanceExpiration(DrawContext dc) {
         // Determine whether the distance of this shape from the eye has changed significantly. Invalidate the previous
         // extent and expire the shape geometry if it has. "Significantly" is considered a 10% difference.
 
@@ -1079,8 +932,7 @@ public abstract class AbstractShape extends WWObjectImpl
 
         double newRefDistance = dc.getView().getEyePoint().distanceTo3(refPt);
         Double oldRefDistance = this.currentData.getReferenceDistance();
-        if (oldRefDistance == null || Math.abs(newRefDistance - oldRefDistance) / oldRefDistance > 0.10)
-        {
+        if (oldRefDistance == null || Math.abs(newRefDistance - oldRefDistance) / oldRefDistance > 0.10) {
             this.currentData.setExpired(true);
             this.currentData.setExtent(null);
             this.currentData.setReferenceDistance(newRefDistance);
@@ -1090,14 +942,12 @@ public abstract class AbstractShape extends WWObjectImpl
     /**
      * Determines whether this shape intersects the view frustum.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
-     *
      * @return true if this shape intersects the frustum, otherwise false.
      */
-    protected boolean intersectsFrustum(DrawContext dc)
-    {
+    protected boolean intersectsFrustum(DrawContext dc) {
         if (this.getExtent() == null)
             return true; // don't know the visibility, shape hasn't been computed yet
 
@@ -1110,22 +960,19 @@ public abstract class AbstractShape extends WWObjectImpl
     /**
      * Draws this shape as an ordered renderable.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
      */
-    protected void drawOrderedRenderable(DrawContext dc)
-    {
+    protected void drawOrderedRenderable(DrawContext dc) {
         this.beginDrawing(dc, 0);
-        try
-        {
+        try {
             this.doDrawOrderedRenderable(dc, this.pickSupport);
 
             if (this.isEnableBatchRendering())
                 this.drawBatched(dc);
         }
-        finally
-        {
+        finally {
             this.endDrawing(dc);
         }
     }
@@ -1134,19 +981,16 @@ public abstract class AbstractShape extends WWObjectImpl
      * Draws this ordered renderable and all subsequent Path ordered renderables in the ordered renderable list. If the
      * current pick mode is true, only shapes within the same layer are drawn as a batch.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
      */
-    protected void drawBatched(DrawContext dc)
-    {
+    protected void drawBatched(DrawContext dc) {
         // Draw as many as we can in a batch to save ogl state switching.
         Object nextItem = dc.peekOrderedRenderables();
 
-        if (!dc.isPickingMode())
-        {
-            while (nextItem != null && nextItem.getClass() == this.getClass())
-            {
+        if (!dc.isPickingMode()) {
+            while (nextItem != null && nextItem.getClass() == this.getClass()) {
                 AbstractShape shape = (AbstractShape) nextItem;
                 if (!shape.isEnableBatchRendering())
                     break;
@@ -1157,10 +1001,8 @@ public abstract class AbstractShape extends WWObjectImpl
                 nextItem = dc.peekOrderedRenderables();
             }
         }
-        else if (this.isEnableBatchPicking())
-        {
-            while (nextItem != null && nextItem.getClass() == this.getClass())
-            {
+        else if (this.isEnableBatchPicking()) {
+            while (nextItem != null && nextItem.getClass() == this.getClass()) {
                 AbstractShape shape = (AbstractShape) nextItem;
                 if (!shape.isEnableBatchRendering() || !shape.isEnableBatchPicking())
                     break;
@@ -1182,21 +1024,19 @@ public abstract class AbstractShape extends WWObjectImpl
      * picking the <code>PickSupport</code> of the instance initiating the batch picking is used so that all shapes
      * rendered in batch are added to the same pick list.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc             the current draw context.
      * @param pickCandidates a pick support holding the picked object list to add this shape to.
      */
-    protected void doDrawOrderedRenderable(DrawContext dc, PickSupport pickCandidates)
-    {
+    protected void doDrawOrderedRenderable(DrawContext dc, PickSupport pickCandidates) {
         this.currentData = (AbstractShapeData) this.shapeDataCache.getEntry(dc.getGlobe());
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         dc.getView().setReferenceCenter(dc, this.getCurrentData().getReferencePoint());
 
-        if (dc.isPickingMode())
-        {
+        if (dc.isPickingMode()) {
             Color pickColor = dc.getUniquePickColor();
             pickCandidates.addPickableObject(this.createPickedObject(pickColor.getRGB()));
             gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
@@ -1206,50 +1046,43 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     /**
-     * Creates a {@link gov.nasa.worldwind.pick.PickedObject} for this shape and the specified unique pick color. The
+     * Creates a {@link PickedObject} for this shape and the specified unique pick color. The
      * PickedObject returned by this method will be added to the pick list to represent the current shape.
      *
      * @param dc        the current draw context.
      * @param pickColor the unique color for this shape.
-     *
      * @return a new picked object.
-     *
      * @deprecated Use the more general {@link #createPickedObject(int)} instead.
      */
     @Deprecated
-    protected PickedObject createPickedObject(DrawContext dc, Color pickColor)
-    {
+    protected PickedObject createPickedObject(DrawContext dc, Color pickColor) {
         return this.createPickedObject(pickColor.getRGB());
     }
 
     /**
-     * Creates a {@link gov.nasa.worldwind.pick.PickedObject} for this shape and the specified unique pick color code.
+     * Creates a {@link PickedObject} for this shape and the specified unique pick color code.
      * The PickedObject returned by this method will be added to the pick list to represent the current shape.
      *
      * @param colorCode the unique color code for this shape.
-     *
      * @return a new picked object.
      */
-    protected PickedObject createPickedObject(int colorCode)
-    {
+    protected PickedObject createPickedObject(int colorCode) {
         return new PickedObject(colorCode, this.getDelegateOwner() != null ? this.getDelegateOwner() : this);
     }
 
     /**
      * Establish the OpenGL state needed to draw this shape.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc       the current draw context.
      * @param attrMask an attribute mask indicating state the caller will set. This base class implementation sets
      *                 <code>GL_CURRENT_BIT, GL_LINE_BIT, GL_HINT_BIT, GL_POLYGON_BIT, GL_COLOR_BUFFER_BIT, and
      *                 GL_TRANSFORM_BIT</code>.
-     *
      * @return the stack handler used to set the OpenGL state. Callers should use this to set additional state,
      * especially state indicated in the attribute mask argument.
      */
-    protected OGLStackHandler beginDrawing(DrawContext dc, int attrMask)
-    {
+    protected OGLStackHandler beginDrawing(DrawContext dc, int attrMask) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         this.BEogsh.clear();
 
@@ -1265,15 +1098,13 @@ public abstract class AbstractShape extends WWObjectImpl
 
         this.BEogsh.pushAttrib(gl, attrMask);
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             dc.beginStandardLighting();
             gl.glEnable(GL.GL_LINE_SMOOTH);
             gl.glEnable(GL.GL_BLEND);
             OGLUtil.applyBlending(gl, false);
         }
-        else
-        {
+        else {
             gl.glDisable(GL.GL_LINE_SMOOTH);
             gl.glDisable(GL.GL_BLEND);
         }
@@ -1291,20 +1122,18 @@ public abstract class AbstractShape extends WWObjectImpl
     /**
      * Pop the state set in {@link #beginDrawing(DrawContext, int)}.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
      */
-    protected void endDrawing(DrawContext dc)
-    {
+    protected void endDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         dc.getView().popReferenceCenter(dc);
 
         gl.glDisableClientState(GL2.GL_NORMAL_ARRAY); // explicitly disable normal array client state; fixes WWJ-450
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             dc.endStandardLighting();
             gl.glDisable(GL.GL_TEXTURE_2D);
             gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
@@ -1316,12 +1145,11 @@ public abstract class AbstractShape extends WWObjectImpl
     /**
      * Draws this shape's outline.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
      */
-    protected void drawOutline(DrawContext dc)
-    {
+    protected void drawOutline(DrawContext dc) {
         ShapeAttributes activeAttrs = this.getActiveAttributes();
 
         this.prepareToDrawOutline(dc, activeAttrs, defaultAttributes);
@@ -1337,28 +1165,24 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param activeAttrs  the attributes indicating the state value to set.
      * @param defaultAttrs the attributes to use if <code>activeAttrs</code> does not contain a necessary value.
      */
-    protected void prepareToDrawOutline(DrawContext dc, ShapeAttributes activeAttrs, ShapeAttributes defaultAttrs)
-    {
+    protected void prepareToDrawOutline(DrawContext dc, ShapeAttributes activeAttrs, ShapeAttributes defaultAttrs) {
         if (activeAttrs == null || !activeAttrs.isDrawOutline())
             return;
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             Material material = activeAttrs.getOutlineMaterial();
             if (material == null)
                 material = defaultAttrs.getOutlineMaterial();
 
-            if (this.mustApplyLighting(dc, activeAttrs))
-            {
+            if (this.mustApplyLighting(dc, activeAttrs)) {
                 material.apply(gl, GL2.GL_FRONT_AND_BACK, (float) activeAttrs.getOutlineOpacity());
 
                 gl.glEnable(GL2.GL_LIGHTING);
                 gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
             }
-            else
-            {
+            else {
                 Color sc = material.getDiffuse();
                 double opacity = activeAttrs.getOutlineOpacity();
                 gl.glColor4ub((byte) sc.getRed(), (byte) sc.getGreen(), (byte) sc.getBlue(),
@@ -1376,13 +1200,11 @@ public abstract class AbstractShape extends WWObjectImpl
         else
             gl.glLineWidth((float) activeAttrs.getOutlineWidth());
 
-        if (activeAttrs.getOutlineStippleFactor() > 0)
-        {
+        if (activeAttrs.getOutlineStippleFactor() > 0) {
             gl.glEnable(GL2.GL_LINE_STIPPLE);
             gl.glLineStipple(activeAttrs.getOutlineStippleFactor(), activeAttrs.getOutlineStipplePattern());
         }
-        else
-        {
+        else {
             gl.glDisable(GL2.GL_LINE_STIPPLE);
         }
 
@@ -1392,12 +1214,11 @@ public abstract class AbstractShape extends WWObjectImpl
     /**
      * Draws this shape's interior.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
      */
-    protected void drawInterior(DrawContext dc)
-    {
+    protected void drawInterior(DrawContext dc) {
         this.prepareToDrawInterior(dc, this.getActiveAttributes(), defaultAttributes);
 
         this.doDrawInterior(dc);
@@ -1411,28 +1232,24 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param activeAttrs  the attributes indicating the state value to set.
      * @param defaultAttrs the attributes to use if <code>activeAttrs</code> does not contain a necessary value.
      */
-    protected void prepareToDrawInterior(DrawContext dc, ShapeAttributes activeAttrs, ShapeAttributes defaultAttrs)
-    {
+    protected void prepareToDrawInterior(DrawContext dc, ShapeAttributes activeAttrs, ShapeAttributes defaultAttrs) {
         if (!activeAttrs.isDrawInterior())
             return;
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             Material material = activeAttrs.getInteriorMaterial();
             if (material == null)
                 material = defaultAttrs.getInteriorMaterial();
 
-            if (this.mustApplyLighting(dc, activeAttrs))
-            {
+            if (this.mustApplyLighting(dc, activeAttrs)) {
                 material.apply(gl, GL2.GL_FRONT_AND_BACK, (float) activeAttrs.getInteriorOpacity());
 
                 gl.glEnable(GL2.GL_LIGHTING);
                 gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
             }
-            else
-            {
+            else {
                 Color sc = material.getDiffuse();
                 double opacity = activeAttrs.getInteriorOpacity();
                 gl.glColor4ub((byte) sc.getRed(), (byte) sc.getGreen(), (byte) sc.getBlue(),
@@ -1452,13 +1269,11 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @param terrain  the terrain to compute a point relative to the globe's surface.
      * @param position the position to compute a point for.
-     *
      * @return the model-coordinate point corresponding to the position and this shape's shape type.
      */
-    protected Vec4 computePoint(Terrain terrain, Position position)
-    {
+    protected Vec4 computePoint(Terrain terrain, Position position) {
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
-            return terrain.getSurfacePoint(position.getLatitude(), position.getLongitude(), 0d);
+            return terrain.getSurfacePoint(position.getLatitude(), position.getLongitude(), 0.0d);
         else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
             return terrain.getSurfacePoint(position);
 
@@ -1475,13 +1290,11 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param dc       the current draw context.
      * @param terrain  the terrain to compute a point relative to the globe's surface.
      * @param position the position to compute a point for.
-     *
      * @return the model-coordinate point corresponding to the position and this shape's shape type.
      */
-    protected Vec4 computePoint(DrawContext dc, Terrain terrain, Position position)
-    {
+    protected Vec4 computePoint(DrawContext dc, Terrain terrain, Position position) {
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe())
-            return terrain.getSurfacePoint(position.getLatitude(), position.getLongitude(), 0d);
+            return terrain.getSurfacePoint(position.getLatitude(), position.getLongitude(), 0.0d);
         else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
             return terrain.getSurfacePoint(position);
 
@@ -1497,13 +1310,11 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param globe                the globe to use to compute the extent.
      * @param verticalExaggeration the vertical exaggeration to apply to computed terrain points.
      * @param positions            the positions to compute the extent for.
-     *
      * @return the extent, or null if an extent cannot be computed. Null is returned if either <code>globe</code> or
      * <code>positions</code> is null.
      */
     protected Extent computeExtentFromPositions(Globe globe, double verticalExaggeration,
-        Iterable<? extends LatLon> positions)
-    {
+        Iterable<? extends LatLon> positions) {
         if (globe == null || positions == null)
             return null;
 
@@ -1513,11 +1324,9 @@ public abstract class AbstractShape extends WWObjectImpl
 
         double[] extremes;
         double[] minAndMaxElevations = globe.getMinAndMaxElevations(mySector);
-        if (this.getAltitudeMode() != WorldWind.CLAMP_TO_GROUND)
-        {
+        if (this.getAltitudeMode() != WorldWind.CLAMP_TO_GROUND) {
             extremes = new double[] {Double.MAX_VALUE, -Double.MAX_VALUE};
-            for (LatLon pos : positions)
-            {
+            for (LatLon pos : positions) {
                 double elevation = pos instanceof Position ? ((Position) pos).getElevation() : 0;
                 if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
                     elevation += minAndMaxElevations[1];
@@ -1528,8 +1337,7 @@ public abstract class AbstractShape extends WWObjectImpl
                     extremes[1] = elevation * verticalExaggeration; // max
             }
         }
-        else
-        {
+        else {
             extremes = minAndMaxElevations;
         }
 
@@ -1539,58 +1347,44 @@ public abstract class AbstractShape extends WWObjectImpl
     /**
      * Get or create OpenGL resource IDs for the current data cache entry.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
-     *
      * @return an array containing the coordinate vertex buffer ID in the first position and the index vertex buffer ID
      * in the second position.
      */
-    protected int[] getVboIds(DrawContext dc)
-    {
+    protected int[] getVboIds(DrawContext dc) {
         return (int[]) dc.getGpuResourceCache().get(this.getCurrentData().getVboCacheKey());
     }
 
     /**
      * Removes from the GPU resource cache the entry for the current data cache entry's VBOs.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
      */
-    protected void clearCachedVbos(DrawContext dc)
-    {
+    protected void clearCachedVbos(DrawContext dc) {
         dc.getGpuResourceCache().remove(this.getCurrentData().getVboCacheKey());
     }
 
-    protected int countTriangleVertices(java.util.List<java.util.List<Integer>> prims,
-        java.util.List<Integer> primTypes)
-    {
+    protected int countTriangleVertices(java.util.List<List<Integer>> prims,
+        List<Integer> primTypes) {
         int numVertices = 0;
 
-        for (int i = 0; i < prims.size(); i++)
-        {
-            switch (primTypes.get(i))
-            {
-                case GL.GL_TRIANGLES:
-                    numVertices += prims.get(i).size();
-                    break;
-
-                case GL.GL_TRIANGLE_FAN:
-
-                case GL.GL_TRIANGLE_STRIP:
-                    numVertices += (prims.get(i).size() - 2) * 3; // N tris from N + 2 vertices
-                    break;
+        for (int i = 0; i < prims.size(); i++) {
+            switch (primTypes.get(i)) {
+                case GL.GL_TRIANGLES -> numVertices += prims.get(i).size();
+                case GL.GL_TRIANGLE_FAN, GL.GL_TRIANGLE_STRIP -> numVertices += (prims.get(i).size() - 2)
+                    * 3; // N tris from N + 2 vertices
             }
         }
 
         return numVertices;
     }
 
-    public void move(Position delta)
-    {
-        if (delta == null)
-        {
+    public void move(Position delta) {
+        if (delta == null) {
             String msg = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1608,26 +1402,22 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     @Override
-    public void moveTo(Globe globe, Position position)
-    {
+    public void moveTo(Globe globe, Position position) {
         this.moveTo(position); // TODO: Update all implementers of this method to use the Movable2 interface
     }
 
     @Override
-    public boolean isDragEnabled()
-    {
+    public boolean isDragEnabled() {
         return this.dragEnabled;
     }
 
     @Override
-    public void setDragEnabled(boolean enabled)
-    {
+    public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
 
     @Override
-    public void drag(DragContext dragContext)
-    {
+    public void drag(DragContext dragContext) {
         if (!this.dragEnabled)
             return;
 
@@ -1637,57 +1427,47 @@ public abstract class AbstractShape extends WWObjectImpl
         this.doDrag(dragContext);
     }
 
-    protected void doDrag(DragContext dragContext)
-    {
+    protected void doDrag(DragContext dragContext) {
         this.draggableSupport.dragGlobeSizeConstant(dragContext);
     }
 
-    public String isExportFormatSupported(String mimeType)
-    {
+    public String isExportFormatSupported(String mimeType) {
         if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType))
             return Exportable.FORMAT_SUPPORTED;
         else
             return Exportable.FORMAT_NOT_SUPPORTED;
     }
 
-    public void export(String mimeType, Object output) throws IOException, UnsupportedOperationException
-    {
-        if (mimeType == null)
-        {
+    public void export(String mimeType, Object output) throws IOException, UnsupportedOperationException {
+        if (mimeType == null) {
             String message = Logging.getMessage("nullValue.Format");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (output == null)
-        {
+        if (output == null) {
             String message = Logging.getMessage("nullValue.OutputBufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         String supported = this.isExportFormatSupported(mimeType);
-        if (FORMAT_NOT_SUPPORTED.equals(supported))
-        {
+        if (FORMAT_NOT_SUPPORTED.equals(supported)) {
             String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
             Logging.logger().warning(message);
             throw new UnsupportedOperationException(message);
         }
 
-        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType))
-        {
-            try
-            {
+        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType)) {
+            try {
                 exportAsKML(output);
             }
-            catch (XMLStreamException e)
-            {
+            catch (XMLStreamException e) {
                 Logging.logger().throwing(getClass().getName(), "export", e);
                 throw new IOException(e);
             }
         }
-        else
-        {
+        else {
             String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
             Logging.logger().warning(message);
             throw new UnsupportedOperationException(message);
@@ -1699,33 +1479,27 @@ public abstract class AbstractShape extends WWObjectImpl
      * This object must be one of: java.io.Writer java.io.OutputStream javax.xml.stream.XMLStreamWriter
      *
      * @param output Object to receive the generated KML.
-     *
      * @throws XMLStreamException If an exception occurs while writing the KML
      * @throws IOException        if an exception occurs while exporting the data.
      * @see #export(String, Object)
      */
-    protected void exportAsKML(Object output) throws IOException, XMLStreamException
-    {
+    protected void exportAsKML(Object output) throws IOException, XMLStreamException {
         XMLStreamWriter xmlWriter = null;
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         boolean closeWriterWhenFinished = true;
 
-        if (output instanceof XMLStreamWriter)
-        {
+        if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
         }
-        else if (output instanceof Writer)
-        {
+        else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
         }
-        else if (output instanceof OutputStream)
-        {
+        else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 
-        if (xmlWriter == null)
-        {
+        if (xmlWriter == null) {
             String message = Logging.getMessage("Export.UnsupportedOutputObject");
             Logging.logger().warning(message);
             throw new IllegalArgumentException(message);
@@ -1734,8 +1508,7 @@ public abstract class AbstractShape extends WWObjectImpl
         xmlWriter.writeStartElement("Placemark");
 
         String property = getStringValue(AVKey.DISPLAY_NAME);
-        if (property != null)
-        {
+        if (property != null) {
             xmlWriter.writeStartElement("name");
             xmlWriter.writeCharacters(property);
             xmlWriter.writeEndElement();
@@ -1746,16 +1519,14 @@ public abstract class AbstractShape extends WWObjectImpl
         xmlWriter.writeEndElement();
 
         String shortDescription = (String) getValue(AVKey.SHORT_DESCRIPTION);
-        if (shortDescription != null)
-        {
+        if (shortDescription != null) {
             xmlWriter.writeStartElement("Snippet");
             xmlWriter.writeCharacters(shortDescription);
             xmlWriter.writeEndElement();
         }
 
         String description = (String) getValue(AVKey.BALLOON_TEXT);
-        if (description != null)
-        {
+        if (description != null) {
             xmlWriter.writeStartElement("description");
             xmlWriter.writeCharacters(description);
             xmlWriter.writeEndElement();
@@ -1766,8 +1537,7 @@ public abstract class AbstractShape extends WWObjectImpl
         final ShapeAttributes highlightAttributes = getHighlightAttributes();
 
         // Write style map
-        if (normalAttributes != null || highlightAttributes != null)
-        {
+        if (normalAttributes != null || highlightAttributes != null) {
             xmlWriter.writeStartElement("StyleMap");
             KMLExportUtil.exportAttributesAsKML(xmlWriter, KMLConstants.NORMAL, normalAttributes);
             KMLExportUtil.exportAttributesAsKML(xmlWriter, KMLConstants.HIGHLIGHT, highlightAttributes);
@@ -1783,26 +1553,23 @@ public abstract class AbstractShape extends WWObjectImpl
             xmlWriter.close();
     }
 
-    //**************************************************************//
-    //*********************       Restorable       *****************//
-    //**************************************************************//
-
-    public String getRestorableState()
-    {
+    public String getRestorableState() {
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         this.doGetRestorableState(rs, null);
 
         return rs.getStateAsXml();
     }
 
-    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    //**************************************************************//
+    //*********************       Restorable       *****************//
+    //**************************************************************//
+
+    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
         // Method is invoked by subclasses to have superclass add its state and only its state
         this.doMyGetRestorableState(rs, context);
     }
 
-    private void doMyGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    private void doMyGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
         rs.addStateValueAsBoolean(context, "highlighted", this.isHighlighted());
         rs.addStateValueAsBoolean(context, "visible", this.isVisible());
         rs.addStateValueAsInteger(context, "altitudeMode", this.getAltitudeMode());
@@ -1811,22 +1578,18 @@ public abstract class AbstractShape extends WWObjectImpl
         //this.highlightAttrs.getRestorableState(rs, rs.addStateObject(context, "highlightAttrs"));
     }
 
-    public void restoreState(String stateInXml)
-    {
-        if (stateInXml == null)
-        {
+    public void restoreState(String stateInXml) {
+        if (stateInXml == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         RestorableSupport rs;
-        try
-        {
+        try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -1836,14 +1599,12 @@ public abstract class AbstractShape extends WWObjectImpl
         this.doRestoreState(rs, null);
     }
 
-    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         // Method is invoked by subclasses to have superclass add its state and only its state
         this.doMyRestoreState(rs, context);
     }
 
-    private void doMyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    private void doMyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
 
         Boolean booleanState = rs.getStateValueAsBoolean(context, "highlighted");
         if (booleanState != null)
@@ -1858,8 +1619,7 @@ public abstract class AbstractShape extends WWObjectImpl
             this.setAltitudeMode(integerState);
 
         RestorableSupport.StateObject so = rs.getStateObject(context, "attributes");
-        if (so != null)
-        {
+        if (so != null) {
             ShapeAttributes attrs = (this.getAttributes() != null) ? this.getAttributes() : new BasicShapeAttributes();
             attrs.restoreState(rs, so);
             this.setAttributes(attrs);
@@ -1875,5 +1635,72 @@ public abstract class AbstractShape extends WWObjectImpl
             this.setHighlightAttributes(attrs);
         }
         */
+    }
+
+    /**
+     * Holds the globe-dependent data captured in this shape's data cache.
+     */
+    protected static class AbstractShapeData extends ShapeDataCache.ShapeDataCacheEntry {
+        /**
+         * Identifies the frame used to calculate this entry's values.
+         */
+        protected long frameNumber = -1;
+        /**
+         * This entry's reference point.
+         */
+        protected Vec4 referencePoint;
+        /**
+         * A quick-to-compute metric to determine eye distance changes that invalidate this entry's geometry.
+         */
+        protected Double referenceDistance;
+        /**
+         * The GPU-resource cache key to use for this entry's VBOs, if VBOs are used.
+         */
+        protected Object vboCacheKey = new Object();
+
+        /**
+         * Constructs a data cache entry and initializes its globe-dependent state key for the globe in the specified
+         * draw context and capture the current vertical exaggeration. The entry becomes invalid when these values
+         * change or when the entry's expiration timer expires.
+         *
+         * @param dc            the current draw context.
+         * @param minExpiryTime the minimum number of milliseconds to use this shape before regenerating its geometry.
+         * @param maxExpiryTime the maximum number of milliseconds to use this shape before regenerating its geometry.
+         */
+        protected AbstractShapeData(DrawContext dc, long minExpiryTime, long maxExpiryTime) {
+            super(dc, minExpiryTime, maxExpiryTime);
+        }
+
+        public long getFrameNumber() {
+            return frameNumber;
+        }
+
+        public void setFrameNumber(long frameNumber) {
+            this.frameNumber = frameNumber;
+        }
+
+        public Vec4 getReferencePoint() {
+            return referencePoint;
+        }
+
+        public void setReferencePoint(Vec4 referencePoint) {
+            this.referencePoint = referencePoint;
+        }
+
+        public Object getVboCacheKey() {
+            return vboCacheKey;
+        }
+
+        public void setVboCacheKey(Object vboCacheKey) {
+            this.vboCacheKey = vboCacheKey;
+        }
+
+        public Double getReferenceDistance() {
+            return referenceDistance;
+        }
+
+        public void setReferenceDistance(Double referenceDistance) {
+            this.referenceDistance = referenceDistance;
+        }
     }
 }

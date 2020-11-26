@@ -22,12 +22,13 @@ import gov.nasa.worldwind.render.airspaces.Airspace;
  * @author tag
  * @version $Id: DeepPicking.java 2231 2014-08-15 19:03:12Z dcollins $
  */
-public class DeepPicking extends Airspaces
-{
-    public static class AppFrame extends Airspaces.AppFrame
-    {
-        public AppFrame()
-        {
+public class DeepPicking extends Airspaces {
+    public static void main(String[] args) {
+        start("WorldWind Deep Picking", AppFrame.class);
+    }
+
+    public static class AppFrame extends Airspaces.AppFrame {
+        public AppFrame() {
             // Prohibit batch picking for the airspaces.
             this.disableBatchPicking();
 
@@ -36,13 +37,10 @@ public class DeepPicking extends Airspaces
 
             // Register a select listener to print the class names of the items under the cursor.
             this.getWwd().addSelectListener(event -> {
-                if (event.getEventAction().equals(SelectEvent.HOVER) && event.getObjects() != null)
-                {
+                if (event.getEventAction().equals(SelectEvent.HOVER) && event.getObjects() != null) {
                     System.out.printf("%d objects\n", event.getObjects().size());
-                    if (event.getObjects().size() > 1)
-                    {
-                        for (PickedObject po : event.getObjects())
-                        {
+                    if (event.getObjects().size() > 1) {
+                        for (PickedObject po : event.getObjects()) {
                             System.out.println(po.getObject().getClass().getName());
                         }
                     }
@@ -50,23 +48,15 @@ public class DeepPicking extends Airspaces
             });
         }
 
-        protected void disableBatchPicking()
-        {
-            for (Layer layer : this.getWwd().getModel().getLayers())
-            {
+        protected void disableBatchPicking() {
+            for (Layer layer : this.getWwd().getModel().getLayers()) {
                 if (!layer.getName().toLowerCase().contains("airspace"))
                     continue;
 
-                for (Renderable airspace : ((RenderableLayer) layer).getRenderables())
-                {
+                for (Renderable airspace : ((RenderableLayer) layer).getRenderables()) {
                     ((Airspace) airspace).setEnableBatchPicking(false);
                 }
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        start("WorldWind Deep Picking", AppFrame.class);
     }
 }

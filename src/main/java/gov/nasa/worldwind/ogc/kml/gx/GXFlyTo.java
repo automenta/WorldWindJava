@@ -16,40 +16,33 @@ import javax.xml.stream.events.XMLEvent;
  * @author tag
  * @version $Id: GXFlyTo.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GXFlyTo extends GXAbstractTourPrimitive
-{
-    public GXFlyTo(String namespaceURI)
-    {
+public class GXFlyTo extends GXAbstractTourPrimitive {
+    public GXFlyTo(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         if (o instanceof KMLAbstractView)
             this.setView((KMLAbstractView) o);
         else
             super.doAddEventContent(o, ctx, event, args);
     }
 
-    public Double getDuration()
-    {
+    public Double getDuration() {
         return (Double) this.getField("duration");
     }
 
-    public String getFlyToMode()
-    {
+    public String getFlyToMode() {
         return (String) this.getField("flyToMode");
     }
 
-    public KMLAbstractView getView()
-    {
+    public KMLAbstractView getView() {
         return (KMLAbstractView) this.getField("AbstractView");
     }
 
-    protected void setView(KMLAbstractView o)
-    {
+    protected void setView(KMLAbstractView o) {
         this.setField("AbstractView", o);
     }
 }

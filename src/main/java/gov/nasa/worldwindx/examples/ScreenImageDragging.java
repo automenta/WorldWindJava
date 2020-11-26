@@ -14,18 +14,19 @@ import java.awt.event.*;
 import java.io.*;
 
 /**
- * This example demonstrates the use of the {@link gov.nasa.worldwind.render.ScreenImage} class, and shows how to use it
+ * This example demonstrates the use of the {@link ScreenImage} class, and shows how to use it
  * to create an image that can be dragged around the screen using the mouse.
  *
  * @author tag
  * @version $Id: ScreenImageDragging.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class ScreenImageDragging extends ApplicationTemplate
-{
-    private static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame() throws IOException
-        {
+public class ScreenImageDragging extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("Screen Image Dragging", AppFrame.class);
+    }
+
+    private static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() throws IOException {
             super(true, true, false);
 
             // Create a screen image and containing layer for the image/icon
@@ -39,20 +40,13 @@ public class ScreenImageDragging extends ApplicationTemplate
             this.getWwd().getModel().getLayers().add(layer);
 
             // Tell the input handler to pass mouse events here
-            this.getWwd().getInputHandler().addMouseMotionListener(new MouseMotionAdapter()
-            {
-                public void mouseDragged(MouseEvent event)
-                {
+            this.getWwd().getInputHandler().addMouseMotionListener(new MouseMotionAdapter() {
+                public void mouseDragged(MouseEvent event) {
                     // Update the layer's image location
                     screenImage.setScreenLocation(event.getPoint());
                     event.consume(); // tell the input handler that we've handled the event
                 }
             });
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("Screen Image Dragging", AppFrame.class);
     }
 }

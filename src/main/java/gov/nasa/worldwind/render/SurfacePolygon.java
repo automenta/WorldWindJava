@@ -21,56 +21,32 @@ import javax.xml.stream.*;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * @author dcollins
  * @version $Id: SurfacePolygon.java 3436 2015-10-28 17:43:24Z tgaskins $
  */
 @SuppressWarnings("unchecked")
-public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
-{
-    protected static class ShapeData
-    {
-        public int vertexStride;
-        public boolean hasTexCoords;
-        public FloatBuffer vertices;
-        public IntBuffer interiorIndices;
-        public IntBuffer outlineIndices;
-    }
-
-    protected static class Vertex extends LatLon
-    {
-        public double u;
-        public double v;
-        public boolean edgeFlag = true;
-
-        public Vertex(LatLon location)
-        {
-            super(location);
-        }
-
-        public Vertex(Angle latitude, Angle longitude, double u, double v)
-        {
-            super(latitude, longitude);
-            this.u = u;
-            this.v = v;
-        }
-    }
-
-    /* The polygon's boundaries. */
-    protected final List<Iterable<? extends LatLon>> boundaries = new ArrayList<>();
-    /** If an image source was specified, this is the WWTexture form. */
-    protected WWTexture explicitTexture;
-    /** This shape's texture coordinates. */
-    protected float[] explicitTextureCoords;
-
-    protected final Map<Object, ShapeData> shapeDataCache = new HashMap<>();
+public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
     protected static GLUtessellator tess;
     protected static GLUTessellatorSupport.CollectPrimitivesCallback tessCallback;
+    /* The polygon's boundaries. */
+    protected final List<Iterable<? extends LatLon>> boundaries = new ArrayList<>();
+    protected final Map<Object, ShapeData> shapeDataCache = new HashMap<>();
+    /**
+     * If an image source was specified, this is the WWTexture form.
+     */
+    protected WWTexture explicitTexture;
+    /**
+     * This shape's texture coordinates.
+     */
+    protected float[] explicitTextureCoords;
 
-    /** Constructs a new surface polygon with the default attributes and no locations. */
-    public SurfacePolygon()
-    {
+    /**
+     * Constructs a new surface polygon with the default attributes and no locations.
+     */
+    public SurfacePolygon() {
     }
 
     /**
@@ -78,8 +54,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
      *
      * @param source the shape to copy.
      */
-    public SurfacePolygon(SurfacePolygon source)
-    {
+    public SurfacePolygon(SurfacePolygon source) {
         super(source);
 
         this.boundaries.addAll(source.boundaries);
@@ -92,8 +67,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
      *
      * @param normalAttrs the normal attributes. May be null, in which case default attributes are used.
      */
-    public SurfacePolygon(ShapeAttributes normalAttrs)
-    {
+    public SurfacePolygon(ShapeAttributes normalAttrs) {
         super(normalAttrs);
     }
 
@@ -103,13 +77,10 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
      * Note: If fewer than three locations is specified, no polygon is drawn.
      *
      * @param iterable the polygon locations.
-     *
      * @throws IllegalArgumentException if the locations iterable is null.
      */
-    public SurfacePolygon(Iterable<? extends LatLon> iterable)
-    {
-        if (iterable == null)
-        {
+    public SurfacePolygon(Iterable<? extends LatLon> iterable) {
+        if (iterable == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -127,15 +98,12 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
      *
      * @param normalAttrs the normal attributes. May be null, in which case default attributes are used.
      * @param iterable    the polygon locations.
-     *
      * @throws IllegalArgumentException if the locations iterable is null.
      */
-    public SurfacePolygon(ShapeAttributes normalAttrs, Iterable<? extends LatLon> iterable)
-    {
+    public SurfacePolygon(ShapeAttributes normalAttrs, Iterable<? extends LatLon> iterable) {
         super(normalAttrs);
 
-        if (iterable == null)
-        {
+        if (iterable == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -144,48 +112,40 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         this.setOuterBoundary(iterable);
     }
 
-    public Iterable<? extends LatLon> getLocations(Globe globe)
-    {
+    public Iterable<? extends LatLon> getLocations(Globe globe) {
         return this.getOuterBoundary();
     }
 
-    public Iterable<? extends LatLon> getLocations()
-    {
+    public Iterable<? extends LatLon> getLocations() {
         return this.getOuterBoundary();
     }
 
-    public List<Iterable<? extends LatLon>> getBoundaries()
-    {
+    public void setLocations(Iterable<? extends LatLon> iterable) {
+        if (iterable == null) {
+            String message = Logging.getMessage("nullValue.IterableIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.setOuterBoundary(iterable);
+    }
+
+    public List<Iterable<? extends LatLon>> getBoundaries() {
         return this.boundaries;
     }
 
-    public void setLocations(Iterable<? extends LatLon> iterable)
-    {
-        if (iterable == null)
-        {
+    public Iterable<? extends LatLon> getOuterBoundary() {
+        return !this.boundaries.isEmpty() ? this.boundaries.get(0) : null;
+    }
+
+    public void setOuterBoundary(Iterable<? extends LatLon> iterable) {
+        if (iterable == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        this.setOuterBoundary(iterable);
-    }
-
-    public Iterable<? extends LatLon> getOuterBoundary()
-    {
-        return this.boundaries.size() > 0 ? this.boundaries.get(0) : null;
-    }
-
-    public void setOuterBoundary(Iterable<? extends LatLon> iterable)
-    {
-        if (iterable == null)
-        {
-            String message = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (this.boundaries.size() > 0)
+        if (!this.boundaries.isEmpty())
             this.boundaries.set(0, iterable);
         else
             this.boundaries.add(iterable);
@@ -193,10 +153,8 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         this.onShapeChanged();
     }
 
-    public void addInnerBoundary(Iterable<? extends LatLon> iterable)
-    {
-        if (iterable == null)
-        {
+    public void addInnerBoundary(Iterable<? extends LatLon> iterable) {
+        if (iterable == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -211,8 +169,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
      *
      * @return the texture image source, or null if no source has been specified.
      */
-    public Object getTextureImageSource()
-    {
+    public Object getTextureImageSource() {
         return this.explicitTexture != null ? this.explicitTexture.getImageSource() : null;
     }
 
@@ -221,8 +178,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
      *
      * @return the texture coordinates, or null if no texture coordinates have been specified.
      */
-    public float[] getTextureCoords()
-    {
+    public float[] getTextureCoords() {
         return this.explicitTextureCoords;
     }
 
@@ -234,30 +190,25 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
      * @param texCoords     the (s, t) texture coordinates aligning the image to the polygon. There must be one texture
      *                      coordinate pair, (s, t), for each polygon location in the polygon's outer boundary.
      * @param texCoordCount the number of texture coordinates, (s, v) pairs, specified.
-     *
      * @throws IllegalArgumentException if the image source is not null and either the texture coordinates are null or
      *                                  inconsistent with the specified texture-coordinate count, or there are fewer
      *                                  than three texture coordinate pairs.
      */
-    public void setTextureImageSource(Object imageSource, float[] texCoords, int texCoordCount)
-    {
-        if (imageSource == null)
-        {
+    public void setTextureImageSource(Object imageSource, float[] texCoords, int texCoordCount) {
+        if (imageSource == null) {
             this.explicitTexture = null;
             this.explicitTextureCoords = null;
             this.onShapeChanged();
             return;
         }
 
-        if (texCoords == null)
-        {
+        if (texCoords == null) {
             String message = Logging.getMessage("generic.ListIsEmpty");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (texCoordCount < 3 || texCoords.length < 2 * texCoordCount)
-        {
+        if (texCoordCount < 3 || texCoords.length < 2 * texCoordCount) {
             String message = Logging.getMessage("generic.InsufficientPositions");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -268,8 +219,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         this.onShapeChanged();
     }
 
-    public Position getReferencePosition()
-    {
+    public Position getReferencePosition() {
         if (this.getOuterBoundary() == null)
             return null;
 
@@ -280,28 +230,24 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         return new Position(iterator.next(), 0);
     }
 
-    protected void clearCaches()
-    {
+    protected void clearCaches() {
         super.clearCaches();
         this.shapeDataCache.clear();
     }
 
-    protected void doDrawGeographic(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected void doDrawGeographic(DrawContext dc, SurfaceTileDrawContext sdc) {
         if (this.boundaries.isEmpty())
             return;
 
         Object key = this.createGeometryKey(dc, sdc);
         ShapeData shapeData = this.shapeDataCache.get(key);
 
-        if (shapeData == null)
-        {
+        if (shapeData == null) {
             Angle degreesPerInterval = Angle.fromDegrees(1.0 / this.computeEdgeIntervalsPerDegree(sdc));
             List<List<Vertex>> contours = this.assembleContours(degreesPerInterval);
             shapeData = this.tessellateContours(contours);
 
-            if (shapeData == null)
-            {
+            if (shapeData == null) {
                 String msg = Logging.getMessage("generic.ExceptionWhileTessellating", this);
                 dc.addRenderingException(new WWRuntimeException(msg));
                 this.handleUnsuccessfulInteriorTessellation(dc); // clears boundaries, preventing repeat attempts
@@ -314,76 +260,64 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glVertexPointer(2, GL.GL_FLOAT, shapeData.vertexStride, shapeData.vertices.position(0));
 
-        if (shapeData.hasTexCoords)
-        {
+        if (shapeData.hasTexCoords) {
             gl.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
             gl.glTexCoordPointer(2, GL.GL_FLOAT, shapeData.vertexStride, shapeData.vertices.position(2));
         }
 
         ShapeAttributes attrs = this.getActiveAttributes();
-        if (attrs.isDrawInterior())
-        {
+        if (attrs.isDrawInterior()) {
             this.applyInteriorState(dc, sdc, attrs, this.getInteriorTexture(), this.getReferencePosition());
             IntBuffer indices = shapeData.interiorIndices;
             gl.glDrawElements(GL.GL_TRIANGLES, indices.remaining(), GL.GL_UNSIGNED_INT, indices);
         }
 
-        if (attrs.isDrawOutline())
-        {
+        if (attrs.isDrawOutline()) {
             this.applyOutlineState(dc, attrs);
             IntBuffer indices = shapeData.outlineIndices;
             gl.glDrawElements(GL.GL_LINES, indices.remaining(), GL.GL_UNSIGNED_INT, indices);
         }
 
-        if (shapeData.hasTexCoords)
-        {
+        if (shapeData.hasTexCoords) {
             gl.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
         }
     }
 
     protected void applyInteriorState(DrawContext dc, SurfaceTileDrawContext sdc, ShapeAttributes attributes,
-        WWTexture texture, LatLon refLocation)
-    {
-        if (this.explicitTexture != null && !dc.isPickingMode())
-        {
+        WWTexture texture, LatLon refLocation) {
+        if (this.explicitTexture != null && !dc.isPickingMode()) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
             OGLUtil.applyBlending(gl, true);
             OGLUtil.applyColor(gl, attributes.getInteriorMaterial().getDiffuse(), attributes.getInteriorOpacity(),
                 true);
 
-            if (this.explicitTexture.bind(dc))
-            {
+            if (this.explicitTexture.bind(dc)) {
                 this.explicitTexture.applyInternalTransform(dc);
                 gl.glEnable(GL.GL_TEXTURE_2D);
                 gl.glDisable(GL2.GL_TEXTURE_GEN_S);
                 gl.glDisable(GL2.GL_TEXTURE_GEN_T);
             }
         }
-        else
-        {
+        else {
             super.applyInteriorState(dc, sdc, attributes, this.getInteriorTexture(), this.getReferencePosition());
         }
     }
 
-    protected List<List<Vertex>> assembleContours(Angle maxEdgeLength)
-    {
+    protected List<List<Vertex>> assembleContours(Angle maxEdgeLength) {
         List<List<Vertex>> result = new ArrayList<>();
 
-        for (int b = 0; b < this.boundaries.size(); b++)
-        {
+        for (int b = 0; b < this.boundaries.size(); b++) {
             Iterable<? extends LatLon> locations = this.boundaries.get(b);
             float[] texCoords = (b == 0) ? this.explicitTextureCoords : null;
             int c = 0;
 
             // Merge the boundary locations with their respective texture coordinates, if any.
             List<Vertex> contour = new ArrayList<>();
-            for (LatLon location : locations)
-            {
+            for (LatLon location : locations) {
                 Vertex vertex = new Vertex(location);
                 contour.add(vertex);
 
-                if (texCoords != null && texCoords.length > c)
-                {
+                if (texCoords != null && texCoords.length > c) {
                     vertex.u = texCoords[c++];
                     vertex.v = texCoords[c++];
                 }
@@ -395,16 +329,13 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
 
             // Modify the contour vertices to compensate for the spherical nature of geographic coordinates.
             String pole = LatLon.locationsContainPole(contour);
-            if (pole != null)
-            {
+            if (pole != null) {
                 result.add(this.clipWithPole(contour, pole, maxEdgeLength));
             }
-            else if (LatLon.locationsCrossDateLine(contour))
-            {
+            else if (LatLon.locationsCrossDateLine(contour)) {
                 result.addAll(this.clipWithDateline(contour));
             }
-            else
-            {
+            else {
                 result.add(contour);
             }
         }
@@ -412,22 +343,18 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         return result;
     }
 
-    protected void closeContour(List<Vertex> contour)
-    {
-        if (!contour.get(0).equals(contour.get(contour.size() - 1)))
-        {
+    protected void closeContour(List<Vertex> contour) {
+        if (!contour.get(0).equals(contour.get(contour.size() - 1))) {
             contour.add(contour.get(0));
         }
     }
 
-    protected void subdivideContour(List<Vertex> contour, Angle maxEdgeLength)
-    {
+    protected void subdivideContour(List<Vertex> contour, Angle maxEdgeLength) {
         List<Vertex> original = new ArrayList<>(contour.size());
         original.addAll(contour);
         contour.clear();
 
-        for (int i = 0; i < original.size() - 1; i++)
-        {
+        for (int i = 0; i < original.size() - 1; i++) {
             Vertex begin = original.get(i);
             Vertex end = original.get(i + 1);
             contour.add(begin);
@@ -438,40 +365,33 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         contour.add(last);
     }
 
-    protected void subdivideEdge(Vertex begin, Vertex end, Angle maxEdgeLength, List<Vertex> result)
-    {
+    protected void subdivideEdge(Vertex begin, Vertex end, Angle maxEdgeLength, List<Vertex> result) {
         Vertex center = new Vertex(LatLon.interpolate(this.pathType, 0.5, begin, end));
         center.u = 0.5 * (begin.u + end.u);
         center.v = 0.5 * (begin.v + end.v);
         center.edgeFlag = begin.edgeFlag || end.edgeFlag;
 
         Angle edgeLength = LatLon.linearDistance(begin, end);
-        if (edgeLength.compareTo(maxEdgeLength) > 0)
-        {
+        if (edgeLength.compareTo(maxEdgeLength) > 0) {
             this.subdivideEdge(begin, center, maxEdgeLength, result);
             result.add(center);
             this.subdivideEdge(center, end, maxEdgeLength, result);
         }
-        else
-        {
+        else {
             result.add(center);
         }
     }
 
-    protected List<Vertex> clipWithPole(List<Vertex> contour, String pole, Angle maxEdgeLength)
-    {
+    protected List<Vertex> clipWithPole(List<Vertex> contour, String pole, Angle maxEdgeLength) {
         List<Vertex> newVertices = new ArrayList<>();
 
         Angle poleLat = AVKey.NORTH.equals(pole) ? Angle.POS90 : Angle.NEG90;
 
         Vertex vertex = null;
-        for (Vertex nextVertex : contour)
-        {
-            if (vertex != null)
-            {
+        for (Vertex nextVertex : contour) {
+            if (vertex != null) {
                 newVertices.add(vertex);
-                if (LatLon.locationsCrossDateline(vertex, nextVertex))
-                {
+                if (LatLon.locationsCrossDateline(vertex, nextVertex)) {
                     // Determine where the segment crosses the dateline.
                     LatLon separation = LatLon.intersectionWithMeridian(vertex, nextVertex, Angle.POS180);
                     double sign = Math.signum(vertex.getLongitude().degrees);
@@ -520,12 +440,10 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         return newVertices;
     }
 
-    protected double[] uvWeightedAverage(List<Vertex> contour, Vertex vertex)
-    {
+    protected double[] uvWeightedAverage(List<Vertex> contour, Vertex vertex) {
         double[] weight = new double[contour.size()];
         double sumOfWeights = 0;
-        for (int i = 0; i < contour.size(); i++)
-        {
+        for (int i = 0; i < contour.size(); i++) {
             double distance = LatLon.greatCircleDistance(contour.get(i), vertex).degrees;
             weight[i] = 1 / distance;
             sumOfWeights += weight[i];
@@ -533,8 +451,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
 
         double u = 0;
         double v = 0;
-        for (int i = 0; i < contour.size(); i++)
-        {
+        for (int i = 0; i < contour.size(); i++) {
             double factor = weight[i] / sumOfWeights;
             u += contour.get(i).u * factor;
             v += contour.get(i).v * factor;
@@ -543,28 +460,23 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         return new double[] {u, v};
     }
 
-    protected List<List<Vertex>> clipWithDateline(List<Vertex> contour)
-    {
+    protected List<List<Vertex>> clipWithDateline(Iterable<Vertex> contour) {
         List<Vertex> result = new ArrayList<>();
         Vertex prev = null;
         Angle offset = null;
         boolean applyOffset = false;
 
-        for (Vertex cur : contour)
-        {
-            if (prev != null && LatLon.locationsCrossDateline(prev, cur))
-            {
+        for (Vertex cur : contour) {
+            if (prev != null && LatLon.locationsCrossDateline(prev, cur)) {
                 if (offset == null)
                     offset = (prev.longitude.degrees < 0 ? Angle.NEG360 : Angle.POS360);
                 applyOffset = !applyOffset;
             }
 
-            if (applyOffset)
-            {
+            if (applyOffset) {
                 result.add(new Vertex(cur.latitude, cur.longitude.add(offset), cur.u, cur.v));
             }
-            else
-            {
+            else {
                 result.add(cur);
             }
 
@@ -572,29 +484,25 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         }
 
         List<Vertex> mirror = new ArrayList<>();
-        for (Vertex cur : result)
-        {
+        for (Vertex cur : result) {
             mirror.add(new Vertex(cur.latitude, cur.longitude.subtract(offset), cur.u, cur.v));
         }
 
         return Arrays.asList(result, mirror);
     }
 
-    protected ShapeData tessellateContours(List<List<Vertex>> contours)
-    {
-        List<Vertex> polygonData = new ArrayList<>();
+    protected ShapeData tessellateContours(Iterable<List<Vertex>> contours) {
+        Collection<Vertex> polygonData = new ArrayList<>();
         double[] coords = {0, 0, 0};
 
-        if (tess == null)
-        {
+        if (tess == null) {
             tess = GLU.gluNewTess();
             tessCallback = new GLUTessellatorSupport.CollectPrimitivesCallback();
             tessCallback.attach(tess);
-            GLU.gluTessCallback(tess, GLU.GLU_TESS_COMBINE_DATA, new GLUtessellatorCallbackAdapter()
-            {
+            GLU.gluTessCallback(tess, GLU.GLU_TESS_COMBINE_DATA, new GLUtessellatorCallbackAdapter() {
                 @Override
-                public void combineData(double[] coords, Object[] vertexData, float[] weight, Object[] outData, Object polygonData)
-                {
+                public void combineData(double[] coords, Object[] vertexData, float[] weight, Object[] outData,
+                    Object polygonData) {
                     List<Vertex> vertexList = (List<Vertex>) polygonData;
                     Vertex vertex = new Vertex(LatLon.fromDegrees(coords[1], coords[0]));
                     vertex.edgeFlag = false; // set to true if any of the combined vertices have the edge flag
@@ -617,18 +525,15 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
             });
         }
 
-        try
-        {
+        try {
             tessCallback.reset();
             GLU.gluTessNormal(tess, 0, 0, 1);
             GLU.gluTessBeginPolygon(tess, polygonData);
 
-            for (List<Vertex> contour : contours)
-            {
+            for (List<Vertex> contour : contours) {
                 GLU.gluTessBeginContour(tess);
 
-                for (Vertex vertex : contour)
-                {
+                for (Vertex vertex : contour) {
                     coords[0] = vertex.longitude.degrees;
                     coords[1] = vertex.latitude.degrees;
                     int index = polygonData.size();
@@ -642,18 +547,16 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
 
             GLU.gluTessEndPolygon(tess);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String msg = Logging.getMessage("generic.ExceptionWhileTessellating", e.getMessage());
-            Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
+            Logging.logger().log(Level.SEVERE, msg, e);
             return null;
         }
 
-        if (tessCallback.getError() != 0)
-        {
+        if (tessCallback.getError() != 0) {
             String msg = Logging.getMessage("generic.ExceptionWhileTessellating",
                 GLUTessellatorSupport.convertGLUTessErrorToString(tessCallback.getError()));
-            Logging.logger().log(java.util.logging.Level.SEVERE, msg);
+            Logging.logger().log(Level.SEVERE, msg);
             return null;
         }
 
@@ -663,13 +566,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         shapeData.vertices = Buffers.newDirectFloatBuffer(polygonData.size() * (shapeData.hasTexCoords ? 4 : 2));
         double lonOffset = this.getReferencePosition().longitude.degrees;
         double latOffset = this.getReferencePosition().latitude.degrees;
-        for (Vertex vertex : polygonData)
-        {
+        for (Vertex vertex : polygonData) {
             shapeData.vertices.put((float) (vertex.longitude.degrees - lonOffset));
             shapeData.vertices.put((float) (vertex.latitude.degrees - latOffset));
 
-            if (shapeData.hasTexCoords)
-            {
+            if (shapeData.hasTexCoords) {
                 shapeData.vertices.put((float) vertex.u);
                 shapeData.vertices.put((float) vertex.v);
             }
@@ -689,16 +590,14 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         return shapeData;
     }
 
-    protected List<List<LatLon>> createGeometry(Globe globe, double edgeIntervalsPerDegree)
-    {
+    protected List<List<LatLon>> createGeometry(Globe globe, double edgeIntervalsPerDegree) {
         if (this.boundaries.isEmpty())
             return null;
 
-        ArrayList<List<LatLon>> geom = new ArrayList<>();
+        List<List<LatLon>> geom = new ArrayList<>();
 
-        for (Iterable<? extends LatLon> boundary : this.boundaries)
-        {
-            ArrayList<LatLon> drawLocations = new ArrayList<>();
+        for (Iterable<? extends LatLon> boundary : this.boundaries) {
+            List<LatLon> drawLocations = new ArrayList<>();
 
             this.generateIntermediateLocations(boundary, edgeIntervalsPerDegree, true, drawLocations);
 
@@ -718,17 +617,14 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         return geom;
     }
 
-    protected void doMoveTo(Position oldReferencePosition, Position newReferencePosition)
-    {
+    protected void doMoveTo(Position oldReferencePosition, Position newReferencePosition) {
         if (this.boundaries.isEmpty())
             return;
 
-        for (int i = 0; i < this.boundaries.size(); i++)
-        {
-            ArrayList<LatLon> newLocations = new ArrayList<>();
+        for (int i = 0; i < this.boundaries.size(); i++) {
+            List<LatLon> newLocations = new ArrayList<>();
 
-            for (LatLon ll : this.boundaries.get(i))
-            {
+            for (LatLon ll : this.boundaries.get(i)) {
                 Angle heading = LatLon.greatCircleAzimuth(oldReferencePosition, ll);
                 Angle pathLength = LatLon.greatCircleDistance(oldReferencePosition, ll);
                 newLocations.add(LatLon.greatCircleEndPosition(newReferencePosition, heading, pathLength));
@@ -741,13 +637,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         this.onShapeChanged();
     }
 
-    protected void doMoveTo(Globe globe, Position oldReferencePosition, Position newReferencePosition)
-    {
+    protected void doMoveTo(Globe globe, Position oldReferencePosition, Position newReferencePosition) {
         if (this.boundaries.isEmpty())
             return;
 
-        for (int i = 0; i < this.boundaries.size(); i++)
-        {
+        for (int i = 0; i < this.boundaries.size(); i++) {
             List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldReferencePosition,
                 newReferencePosition, this.boundaries.get(i));
 
@@ -758,10 +652,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         this.onShapeChanged();
     }
 
-    //**************************************************************//
-    //********************  Interior Tessellation  *****************//
-    //**************************************************************//
-
     /**
      * Overridden to clear the polygon's locations iterable upon an unsuccessful tessellation attempt. This ensures the
      * polygon won't attempt to re-tessellate itself each frame.
@@ -769,8 +659,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
      * @param dc the current DrawContext.
      */
     @Override
-    protected void handleUnsuccessfulInteriorTessellation(DrawContext dc)
-    {
+    protected void handleUnsuccessfulInteriorTessellation(DrawContext dc) {
         super.handleUnsuccessfulInteriorTessellation(dc);
 
         // If tessellating the polygon's interior was unsuccessful, we modify the polygon's to avoid any additional
@@ -780,38 +669,31 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         this.onShapeChanged();
     }
 
-    //**************************************************************//
-    //******************** Restorable State  ***********************//
-    //**************************************************************//
-
-    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.doGetRestorableState(rs, context);
 
-        if (!this.boundaries.isEmpty())
-        {
+        if (!this.boundaries.isEmpty()) {
             RestorableSupport.StateObject so = rs.addStateObject(context, "boundaries");
-            for (Iterable<? extends LatLon> boundary : this.boundaries)
-            {
+            for (Iterable<? extends LatLon> boundary : this.boundaries) {
                 rs.addStateValueAsLatLonList(so, "boundary", boundary);
             }
         }
     }
 
-    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    //**************************************************************//
+    //********************  Interior Tessellation  *****************//
+    //**************************************************************//
+
+    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.doRestoreState(rs, context);
 
         RestorableSupport.StateObject so = rs.getStateObject(context, "boundaries");
-        if (so != null)
-        {
+        if (so != null) {
             this.boundaries.clear();
 
             RestorableSupport.StateObject[] sos = rs.getAllStateObjects(so, "boundary");
-            if (sos != null)
-            {
-                for (RestorableSupport.StateObject boundary : sos)
-                {
+            if (sos != null) {
+                for (RestorableSupport.StateObject boundary : sos) {
                     if (boundary == null)
                         continue;
 
@@ -826,8 +708,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         }
     }
 
-    protected void legacyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    //**************************************************************//
+    //******************** Restorable State  ***********************//
+    //**************************************************************//
+
+    protected void legacyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.legacyRestoreState(rs, context);
 
         Iterable<LatLon> locations = rs.getStateValueAsLatLonList(context, "locationList");
@@ -844,33 +729,27 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
      * object must be one of: java.io.Writer java.io.OutputStream javax.xml.stream.XMLStreamWriter
      *
      * @param output Object to receive the generated KML.
-     *
      * @throws XMLStreamException If an exception occurs while writing the KML
      * @throws IOException        if an exception occurs while exporting the data.
      * @see #export(String, Object)
      */
-    protected void exportAsKML(Object output) throws IOException, XMLStreamException
-    {
+    protected void exportAsKML(Object output) throws IOException, XMLStreamException {
         XMLStreamWriter xmlWriter = null;
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         boolean closeWriterWhenFinished = true;
 
-        if (output instanceof XMLStreamWriter)
-        {
+        if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
         }
-        else if (output instanceof Writer)
-        {
+        else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
         }
-        else if (output instanceof OutputStream)
-        {
+        else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 
-        if (xmlWriter == null)
-        {
+        if (xmlWriter == null) {
             String message = Logging.getMessage("Export.UnsupportedOutputObject");
             Logging.logger().warning(message);
             throw new IllegalArgumentException(message);
@@ -879,8 +758,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         xmlWriter.writeStartElement("Placemark");
 
         String property = getStringValue(AVKey.DISPLAY_NAME);
-        if (property != null)
-        {
+        if (property != null) {
             xmlWriter.writeStartElement("name");
             xmlWriter.writeCharacters(property);
             xmlWriter.writeEndElement();
@@ -891,16 +769,14 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         xmlWriter.writeEndElement();
 
         String shortDescription = (String) getValue(AVKey.SHORT_DESCRIPTION);
-        if (shortDescription != null)
-        {
+        if (shortDescription != null) {
             xmlWriter.writeStartElement("Snippet");
             xmlWriter.writeCharacters(shortDescription);
             xmlWriter.writeEndElement();
         }
 
         String description = (String) getValue(AVKey.BALLOON_TEXT);
-        if (description != null)
-        {
+        if (description != null) {
             xmlWriter.writeStartElement("description");
             xmlWriter.writeCharacters(description);
             xmlWriter.writeEndElement();
@@ -911,8 +787,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         final ShapeAttributes highlightAttributes = getHighlightAttributes();
 
         // Write style map
-        if (normalAttributes != null || highlightAttributes != null)
-        {
+        if (normalAttributes != null || highlightAttributes != null) {
             xmlWriter.writeStartElement("StyleMap");
             KMLExportUtil.exportAttributesAsKML(xmlWriter, KMLConstants.NORMAL, normalAttributes);
             KMLExportUtil.exportAttributesAsKML(xmlWriter, KMLConstants.HIGHLIGHT, highlightAttributes);
@@ -932,8 +807,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
 
         // Outer boundary
         Iterable<? extends LatLon> outerBoundary = this.getOuterBoundary();
-        if (outerBoundary != null)
-        {
+        if (outerBoundary != null) {
             xmlWriter.writeStartElement("outerBoundaryIs");
             KMLExportUtil.exportBoundaryAsLinearRing(xmlWriter, outerBoundary, null);
             xmlWriter.writeEndElement(); // outerBoundaryIs
@@ -944,8 +818,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         if (boundaryIterator.hasNext())
             boundaryIterator.next(); // Skip outer boundary, we already dealt with it above
 
-        while (boundaryIterator.hasNext())
-        {
+        while (boundaryIterator.hasNext()) {
             Iterable<? extends LatLon> boundary = boundaryIterator.next();
 
             xmlWriter.writeStartElement("innerBoundaryIs");
@@ -959,5 +832,29 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         xmlWriter.flush();
         if (closeWriterWhenFinished)
             xmlWriter.close();
+    }
+
+    protected static class ShapeData {
+        public int vertexStride;
+        public boolean hasTexCoords;
+        public FloatBuffer vertices;
+        public IntBuffer interiorIndices;
+        public IntBuffer outlineIndices;
+    }
+
+    protected static class Vertex extends LatLon {
+        public double u;
+        public double v;
+        public boolean edgeFlag = true;
+
+        public Vertex(LatLon location) {
+            super(location);
+        }
+
+        public Vertex(Angle latitude, Angle longitude, double u, double v) {
+            super(latitude, longitude);
+            this.u = u;
+            this.v = v;
+        }
     }
 }

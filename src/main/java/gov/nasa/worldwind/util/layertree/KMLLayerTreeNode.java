@@ -15,15 +15,16 @@ import javax.swing.*;
 
 /**
  * A <code>LayerTreeNode</code> that represents a KML feature hierarchy defined by a <code>{@link
- * gov.nasa.worldwind.ogc.kml.KMLRoot}</code>.
+ * KMLRoot}</code>.
  *
  * @author dcollins
  * @version $Id: KMLLayerTreeNode.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see KMLFeatureTreeNode
  */
-public class KMLLayerTreeNode extends LayerTreeNode
-{
-    /** Indicates the KML feature hierarchy this node represents. Initialized during construction. */
+public class KMLLayerTreeNode extends LayerTreeNode {
+    /**
+     * Indicates the KML feature hierarchy this node represents. Initialized during construction.
+     */
     protected KMLRoot kmlRoot;
 
     /**
@@ -33,16 +34,13 @@ public class KMLLayerTreeNode extends LayerTreeNode
      *
      * @param layer   the <code>Layer</code> the <code>kmlRoot</code> corresponds to.
      * @param kmlRoot the KML feature hierarchy this node represents.
-     *
      * @throws IllegalArgumentException if the <code>layer</code> is <code>null</code>, or if <code>kmlRoot</code> is
      *                                  <code>null</code>.
      */
-    public KMLLayerTreeNode(Layer layer, KMLRoot kmlRoot)
-    {
+    public KMLLayerTreeNode(Layer layer, KMLRoot kmlRoot) {
         super(layer);
 
-        if (kmlRoot == null)
-        {
+        if (kmlRoot == null) {
             String message = Logging.getMessage("nullValue.KMLRootIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -60,15 +58,12 @@ public class KMLLayerTreeNode extends LayerTreeNode
             // Update the document if an update is received, or if this node represents a network link that has been
             // resolved.
             if (AVKey.UPDATED.equals(name)
-                || (AVKey.RETRIEVAL_STATE_SUCCESSFUL.equals(name) && rootFeature == newValue))
-            {
+                || (AVKey.RETRIEVAL_STATE_SUCCESSFUL.equals(name) && rootFeature == newValue)) {
                 // Ensure that the node list is manipulated on the EDT
-                if (SwingUtilities.isEventDispatchThread())
-                {
+                if (SwingUtilities.isEventDispatchThread()) {
                     KMLLayerTreeNode.this.refresh();
                 }
-                else
-                {
+                else {
                     SwingUtilities.invokeLater(KMLLayerTreeNode.this::refresh);
                 }
             }
@@ -85,13 +80,11 @@ public class KMLLayerTreeNode extends LayerTreeNode
      * @param selected <code>true</code> to enable the layer, otherwise <code>false</code>.
      */
     @Override
-    public void setSelected(boolean selected)
-    {
+    public void setSelected(boolean selected) {
         super.setSelected(selected);
 
         KMLAbstractFeature feature = this.kmlRoot.getFeature();
-        if (feature instanceof KMLAbstractContainer)
-        {
+        if (feature instanceof KMLAbstractContainer) {
             feature.setVisibility(selected);
         }
     }
@@ -105,8 +98,7 @@ public class KMLLayerTreeNode extends LayerTreeNode
      * <p>
      * This does nothing if the <code>KMLRoot</code>'s top level feature is <code>null</code>.
      */
-    protected void addChildFeatures()
-    {
+    protected void addChildFeatures() {
         KMLAbstractFeature rootFeature = this.kmlRoot.getFeature();
         if (rootFeature == null)
             return;
@@ -121,36 +113,29 @@ public class KMLLayerTreeNode extends LayerTreeNode
         this.setSelected(visibility == null || visibility);
 
         // If the root is a container, add its children
-        if (rootFeature instanceof KMLAbstractContainer)
-        {
+        if (rootFeature instanceof KMLAbstractContainer) {
             KMLAbstractContainer container = (KMLAbstractContainer) rootFeature;
-            for (KMLAbstractFeature child : container.getFeatures())
-            {
+            for (KMLAbstractFeature child : container.getFeatures()) {
                 if (child != null)
                     this.addFeatureNode(child);
             }
         }
 
         // If the root is a network link, add the linked document
-        if (rootFeature instanceof KMLNetworkLink)
-        {
+        if (rootFeature instanceof KMLNetworkLink) {
             KMLRoot networkResource = ((KMLNetworkLink) rootFeature).getNetworkResource();
-            if (networkResource != null && networkResource.getFeature() != null)
-            {
+            if (networkResource != null && networkResource.getFeature() != null) {
                 rootFeature = networkResource.getFeature();
 
                 // Don't add Document nodes (they don't provide meaningful grouping).
-                if (rootFeature instanceof KMLDocument)
-                {
+                if (rootFeature instanceof KMLDocument) {
                     KMLAbstractContainer container = (KMLAbstractContainer) rootFeature;
-                    for (KMLAbstractFeature child : container.getFeatures())
-                    {
+                    for (KMLAbstractFeature child : container.getFeatures()) {
                         if (child != null)
                             this.addFeatureNode(child);
                     }
                 }
-                else if (rootFeature != null)
-                {
+                else if (rootFeature != null) {
                     this.addFeatureNode(rootFeature);
                 }
             }
@@ -162,8 +147,7 @@ public class KMLLayerTreeNode extends LayerTreeNode
      *
      * @param feature the KML feature to add.
      */
-    protected void addFeatureNode(KMLAbstractFeature feature)
-    {
+    protected void addFeatureNode(KMLAbstractFeature feature) {
         TreeNode featureNode = KMLFeatureTreeNode.fromKMLFeature(feature);
         if (featureNode != null)
             this.addChild(featureNode);
@@ -180,13 +164,10 @@ public class KMLLayerTreeNode extends LayerTreeNode
      * <code>KMLFeatureTreeNode</code>.
      *
      * @param tree the <code>Tree</code> who's paths should be expanded.
-     *
      * @throws IllegalArgumentException if the <code>tree</code> is null.
      */
-    public void expandOpenContainers(Tree tree)
-    {
-        if (tree == null)
-        {
+    public void expandOpenContainers(Tree tree) {
+        if (tree == null) {
             String message = Logging.getMessage("nullValue.TreeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -195,8 +176,7 @@ public class KMLLayerTreeNode extends LayerTreeNode
         if (this.mustExpandNode())
             tree.expandPath(this.getPath());
 
-        for (TreeNode child : this.getChildren())
-        {
+        for (TreeNode child : this.getChildren()) {
             if (child instanceof KMLFeatureTreeNode)
                 ((KMLFeatureTreeNode) child).expandOpenContainers(tree);
         }
@@ -209,19 +189,18 @@ public class KMLLayerTreeNode extends LayerTreeNode
      *
      * @return <code>true</code> if the tree path for this node must be expanded, otherwise <code>false</code>.
      */
-    protected boolean mustExpandNode()
-    {
-        if (this.kmlRoot.getFeature() instanceof KMLAbstractContainer)
-        {
+    protected boolean mustExpandNode() {
+        if (this.kmlRoot.getFeature() instanceof KMLAbstractContainer) {
             return Boolean.TRUE.equals(this.kmlRoot.getFeature().getOpen());
         }
 
         return this.kmlRoot.getFeature() != null;
     }
 
-    /** Refresh the tree model to match the contents of the KML document. */
-    protected void refresh()
-    {
+    /**
+     * Refresh the tree model to match the contents of the KML document.
+     */
+    protected void refresh() {
         this.removeAllChildren();
         this.addChildFeatures();
     }

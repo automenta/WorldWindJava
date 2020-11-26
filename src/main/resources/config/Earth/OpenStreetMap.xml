@@ -47,8 +47,8 @@
     <RetainLevelZeroTiles>false</RetainLevelZeroTiles>
     <UseTransparentTextures>true</UseTransparentTextures>
     <!--<ScreenCredit creditType="ScreenImage">-->
-        <!--<FileName>images/Bing_32x32.png</FileName>-->
-        <!--<Link>http://www.microsoft.com/maps/assets/docs/terms.aspx/</Link>-->
+    <!--<FileName>images/Bing_32x32.png</FileName>-->
+    <!--<Link>http://www.microsoft.com/maps/assets/docs/terms.aspx/</Link>-->
     <!--</ScreenCredit>-->
     <RetrievalTimeouts>
         <ReadTimeout>

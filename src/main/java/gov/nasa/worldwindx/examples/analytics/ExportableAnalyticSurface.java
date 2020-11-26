@@ -20,15 +20,24 @@ import java.util.ArrayList;
 /**
  * An extension of AnalyticSurface that enables export of the surface to a KML ground overlay. To successfully export
  * the surface, the export image path and export image name fields of instances of this class must be specified.
+ *
  * @author tag
  * @version $Id: ExportableAnalyticSurface.java 1352 2013-05-20 18:41:16Z tgaskins $
  */
-public class ExportableAnalyticSurface extends AnalyticSurface implements Exportable
-{
+public class ExportableAnalyticSurface extends AnalyticSurface implements Exportable {
     protected String exportImagePath;
     protected String exportImageName;
     protected int exportImageWidth = 1024;
     protected int exportImageHeight = 1024;
+
+    /**
+     * Indicates the directory in which this surface's export image is stored when exporting to KML.
+     *
+     * @return This surface's export image path.
+     */
+    public String getExportImagePath() {
+        return this.exportImagePath;
+    }
 
     /**
      * Specifies the path at which to write this surface's exported image. Used only when exporting this surface as a
@@ -37,22 +46,10 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
      *
      * @param path The directory in which to store the exported ground overlay image. This field must be non-null when
      *             this surface is exported.
-     *
      * @see #setExportImageName(String)
      */
-    public void setExportImagePath(String path)
-    {
+    public void setExportImagePath(String path) {
         this.exportImagePath = path;
-    }
-
-    /**
-     * Indicates the directory in which this surface's export image is stored when exporting to KML.
-     *
-     * @return This surface's export image path.
-     */
-    public String getExportImagePath()
-    {
-        return this.exportImagePath;
     }
 
     /**
@@ -60,8 +57,7 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
      *
      * @return This surface's export image name.
      */
-    public String getExportImageName()
-    {
+    public String getExportImageName() {
         return exportImageName;
     }
 
@@ -71,47 +67,46 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
      *
      * @param exportImageName The name of the file in which to write the exported image. This field must be non-null
      *                        when this surface is exported.
-     *
      * @see #setExportImagePath(String)
      */
-    public void setExportImageName(String exportImageName)
-    {
+    public void setExportImageName(String exportImageName) {
         this.exportImageName = exportImageName;
     }
 
     /**
      * Indicates the image width of the ground overlay image when this surface is exported to KML. The default is 1024.
+     *
      * @return The export image width.
      */
-    public int getExportImageWidth()
-    {
+    public int getExportImageWidth() {
         return exportImageWidth;
     }
 
     /**
      * Specifies the image width of the ground overlay image when this surface is exported to KML. The default is 1024.
+     *
      * @param exportImageWidth The export image width.
      */
-    public void setExportImageWidth(int exportImageWidth)
-    {
+    public void setExportImageWidth(int exportImageWidth) {
         this.exportImageWidth = exportImageWidth;
     }
 
     /**
-     * Indicates the image height of the ground overlay image when this surface is exported to KML. The default is 1024.
+     * Indicates the image height of the ground overlay image when this surface is exported to KML. The default is
+     * 1024.
+     *
      * @return The export image height.
      */
-    public int getExportImageHeight()
-    {
+    public int getExportImageHeight() {
         return exportImageHeight;
     }
 
     /**
      * Specifies the image width of the ground overlay image when this surface is exported to KML. The default is 1024.
+     *
      * @param exportImageHeight The export image height.
      */
-    public void setExportImageHeight(int exportImageHeight)
-    {
+    public void setExportImageHeight(int exportImageHeight) {
         this.exportImageHeight = exportImageHeight;
     }
 
@@ -131,51 +126,42 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
      *                 All formats should support {@code java.io.OutputStream}. Text based format (for example, XML
      *                 formats) should also support {@code java.io.Writer}. Certain formats may also support other
      *                 object types.
-     *
-     * @throws java.io.IOException if an error occurs while writing the output file or its image.
+     * @throws IOException if an error occurs while writing the output file or its image.
      * @see #setExportImageName(String)
      * @see #setExportImagePath(String)
      * @see #setExportImageWidth(int)
      * @see #setExportImageHeight(int)
      */
-    public void export(String mimeType, Object output) throws IOException
-    {
-        if (mimeType == null)
-        {
+    public void export(String mimeType, Object output) throws IOException {
+        if (mimeType == null) {
             String message = Logging.getMessage("nullValue.Format");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (output == null)
-        {
+        if (output == null) {
             String message = Logging.getMessage("nullValue.OutputBufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType))
-        {
-            try
-            {
+        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType)) {
+            try {
                 exportAsKML(output);
             }
-            catch (XMLStreamException e)
-            {
+            catch (XMLStreamException e) {
                 Logging.logger().throwing(getClass().getName(), "export", e);
                 throw new IOException(e);
             }
         }
-        else
-        {
+        else {
             String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
             Logging.logger().warning(message);
             throw new UnsupportedOperationException(message);
         }
     }
 
-    public String isExportFormatSupported(String format)
-    {
+    public String isExportFormatSupported(String format) {
         if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(format))
             return Exportable.FORMAT_SUPPORTED;
         else
@@ -187,53 +173,42 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
      * data. This object must be one of: java.io.Writer java.io.OutputStream javax.xml.stream.XMLStreamWriter
      *
      * @param output Object to receive the generated KML.
-     *
-     * @throws javax.xml.stream.XMLStreamException
-     *                             If an exception occurs while writing the KML
+     * @throws XMLStreamException If an exception occurs while writing the KML
      */
-    protected void exportAsKML(Object output) throws XMLStreamException
-    {
+    protected void exportAsKML(Object output) throws XMLStreamException {
         XMLStreamWriter xmlWriter = null;
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         boolean closeWriterWhenFinished = true;
 
-        if (output instanceof XMLStreamWriter)
-        {
+        if (output instanceof XMLStreamWriter) {
             xmlWriter = (XMLStreamWriter) output;
             closeWriterWhenFinished = false;
         }
-        else if (output instanceof Writer)
-        {
+        else if (output instanceof Writer) {
             xmlWriter = factory.createXMLStreamWriter((Writer) output);
         }
-        else if (output instanceof OutputStream)
-        {
+        else if (output instanceof OutputStream) {
             xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
         }
 
-        if (xmlWriter == null)
-        {
+        if (xmlWriter == null) {
             String message = Logging.getMessage("Export.UnsupportedOutputObject");
             Logging.logger().warning(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (this.exportImagePath == null || this.exportImageName == null)
-        {
+        if (this.exportImagePath == null || this.exportImageName == null) {
             String message = Logging.getMessage("Export.UnableToExportImageSource", "Image path or name unspecified");
             Logging.logger().severe(message);
         }
-        else
-        {
+        else {
             File file = new File(this.exportImagePath + "/" + this.exportImageName);
             BufferedImage image = this.createImage(this.exportImageWidth, this.exportImageHeight);
-            try
-            {
+            try {
                 String suffix = WWIO.getSuffix(this.exportImageName);
                 ImageIO.write(image, suffix, file);
             }
-            catch (IOException e)
-            {
+            catch (IOException e) {
                 String message = Logging.getMessage("Export.UnableToExportImageSource", file.getAbsolutePath(), e);
                 Logging.logger().severe(message);
             }
@@ -262,23 +237,22 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
             xmlWriter.close();
     }
 
-    protected void exportKMLLatLonBox(XMLStreamWriter xmlWriter) throws XMLStreamException
-    {
+    protected void exportKMLLatLonBox(XMLStreamWriter xmlWriter) throws XMLStreamException {
         xmlWriter.writeStartElement("LatLonBox");
         xmlWriter.writeStartElement("north");
-        xmlWriter.writeCharacters(Double.toString(this.sector.getMaxLatitude().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.latMax().getDegrees()));
         xmlWriter.writeEndElement();
 
         xmlWriter.writeStartElement("south");
-        xmlWriter.writeCharacters(Double.toString(this.sector.getMinLatitude().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.latMin().getDegrees()));
         xmlWriter.writeEndElement(); // south
 
         xmlWriter.writeStartElement("east");
-        xmlWriter.writeCharacters(Double.toString(this.sector.getMinLongitude().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.lonMin().getDegrees()));
         xmlWriter.writeEndElement();
 
         xmlWriter.writeStartElement("west");
-        xmlWriter.writeCharacters(Double.toString(this.sector.getMaxLongitude().getDegrees()));
+        xmlWriter.writeCharacters(Double.toString(this.sector.lonMax().getDegrees()));
         xmlWriter.writeEndElement(); // west
         xmlWriter.writeEndElement(); // LatLonBox
     }
@@ -290,18 +264,14 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
      *
      * @param imageWidth  The width of the image to create.
      * @param imageHeight The height of the image to create.
-     *
      * @return An ARGB image reflecting this surface's color values and outline attributes.
      */
-    public BufferedImage createImage(int imageWidth, int imageHeight)
-    {
+    public BufferedImage createImage(int imageWidth, int imageHeight) {
         BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
 
-        if (this.surfaceAttributes.drawInterior && this.values != null)
-        {
+        if (this.surfaceAttributes.drawInterior && this.values != null) {
             ArrayList<Color> colorGrid = new ArrayList<>(this.width * this.height);
-            for (GridPointAttributes gridPoint : this.values)
-            {
+            for (GridPointAttributes gridPoint : this.values) {
                 colorGrid.add(gridPoint.getColor());
             }
 
@@ -312,14 +282,12 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
             double colorCellWidth = sectorWidth / (this.width - 1);
             double colorCellHeight = sectorHeight / (this.height - 1);
 
-            for (int y = 0; y < imageHeight; y++)
-            {
+            for (int y = 0; y < imageHeight; y++) {
                 double lat = (y + 0.5) * pixelWidth;
 
                 int row = (int) (lat / colorCellHeight);
 
-                for (int x = 0; x < imageWidth; x++)
-                {
+                for (int x = 0; x < imageWidth; x++) {
                     double lon = (x + 0.5) * pixelHeight;
 
                     int col = (int) (lon / colorCellWidth);
@@ -339,8 +307,7 @@ public class ExportableAnalyticSurface extends AnalyticSurface implements Export
             }
         }
 
-        if (this.surfaceAttributes.drawOutline)
-        {
+        if (this.surfaceAttributes.drawOutline) {
             Graphics2D g = image.createGraphics();
 
             g.setPaint(this.surfaceAttributes.outlineMaterial.getDiffuse());

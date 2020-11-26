@@ -25,170 +25,42 @@ import java.util.*;
  * @author dcollins
  * @version $Id: ShapefilePolylines.java 2303 2014-09-14 22:33:36Z dcollins $
  */
-public class ShapefilePolylines extends ShapefileRenderable implements OrderedRenderable, PreRenderable
-{
-    public static class Record extends ShapefileRenderable.Record
-    {
-        // Data structures supporting drawing.
-        protected Tile tile;
-        protected IntBuffer outlineIndices;
-
-        public Record(ShapefileRenderable shapefileRenderable, ShapefileRecord shapefileRecord)
-        {
-            super(shapefileRenderable, shapefileRecord);
-        }
-    }
-
-    protected static class RecordGroup
-    {
-        // Record group properties.
-        public final ShapeAttributes attributes;
-        public final ArrayList<Record> records = new ArrayList<>();
-        // Data structures supporting drawing.
-        public IntBuffer indices;
-        public final Range outlineIndexRange = new Range(0, 0);
-        public final Object vboKey = new Object();
-
-        public RecordGroup(ShapeAttributes attributes)
-        {
-            this.attributes = attributes;
-        }
-    }
-
-    protected static class Tile implements OrderedRenderable, SurfaceRenderable
-    {
-        // Tile properties.
-        public final ShapefileRenderable shapefileRenderable;
-        public final Sector sector;
-        public final int level;
-        // Tile records, attribute groups and child tiles.
-        public final ArrayList<Record> records = new ArrayList<>();
-        public final ArrayList<RecordGroup> attributeGroups = new ArrayList<>();
-        public long attributeStateID;
-        public Tile[] children;
-        // Tile shape data.
-        public FloatBuffer vertices;
-        public int vertexStride;
-        public Vec4 referencePoint;
-        public Matrix transformMatrix;
-        public final Object vboKey = new Object();
-
-        public Tile(ShapefileRenderable shapefileRenderable, Sector sector, int level)
-        {
-            this.shapefileRenderable = shapefileRenderable;
-            this.sector = sector;
-            this.level = level;
-        }
-
-        @Override
-        public double getDistanceFromEye()
-        {
-            return 0; // distance from eye is irrelevant for ordered surface renderables
-        }
-
-        @Override
-        public List<Sector> getSectors(DrawContext dc)
-        {
-            return Collections.singletonList(this.sector);
-        }
-
-        @Override
-        public Object getStateKey(DrawContext dc)
-        {
-            return new TileStateKey(this);
-        }
-
-        @Override
-        public void pick(DrawContext dc, Point pickPoint)
-        {
-        }
-
-        @Override
-        public void render(DrawContext dc)
-        {
-            ((ShapefilePolylines) this.shapefileRenderable).renderTile(dc, this);
-        }
-    }
-
-    protected static class TileStateKey
-    {
-        protected final Tile tile;
-        protected final long attributeStateID;
-        protected final ShapeAttributes[] attributeGroups;
-
-        public TileStateKey(Tile tile)
-        {
-            this.tile = tile;
-            this.attributeStateID = tile.attributeStateID;
-            this.attributeGroups = new ShapeAttributes[tile.attributeGroups.size()];
-
-            for (int i = 0; i < this.attributeGroups.length; i++)
-            {
-                this.attributeGroups[i] = tile.attributeGroups.get(i).attributes.copy();
-            }
-        }
-
-        @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-
-            TileStateKey that = (TileStateKey) o;
-            return this.tile.equals(that.tile)
-                && this.attributeStateID == that.attributeStateID
-                && Arrays.equals(this.attributeGroups, that.attributeGroups);
-        }
-
-        @Override
-        public int hashCode()
-        {
-            int result = this.tile.hashCode();
-            result = 31 * result + (int) (this.attributeStateID ^ (this.attributeStateID >>> 32));
-            result = 31 * result + Arrays.hashCode(this.attributeGroups);
-            return result;
-        }
-    }
-
-    /** The default outline pick width. */
+public class ShapefilePolylines extends ShapefileRenderable implements OrderedRenderable, PreRenderable {
+    /**
+     * The default outline pick width.
+     */
     protected static final int DEFAULT_OUTLINE_PICK_WIDTH = 10;
-
-    // Tile quadtree structures.
-    protected Tile rootTile;
     protected final int tileMaxLevel = 3;
     protected final int tileMaxCapacity = 10000;
     // Data structures supporting polygon tessellation and drawing.
-    protected final ArrayList<Tile> currentTiles = new ArrayList<>();
+    protected final List<Tile> currentTiles = new ArrayList<>();
     protected final PolylineTessellator tess = new PolylineTessellator();
     protected final byte[] colorByteArray = new byte[3];
     protected final float[] colorFloatArray = new float[4];
     protected final double[] matrixArray = new double[16];
-    // Data structures supporting picking.
-    protected int outlinePickWidth = DEFAULT_OUTLINE_PICK_WIDTH;
-    protected Layer pickLayer;
     protected final PickSupport pickSupport = new PickSupport();
     protected final SurfaceObjectTileBuilder pickTileBuilder = new SurfaceObjectTileBuilder(new Dimension(512, 512),
         GL2.GL_RGBA8, false, false);
-    protected ByteBuffer pickColors;
     protected final Object pickColorsVboKey = new Object();
+    // Tile quadtree structures.
+    protected Tile rootTile;
+    // Data structures supporting picking.
+    protected int outlinePickWidth = DEFAULT_OUTLINE_PICK_WIDTH;
+    protected Layer pickLayer;
+    protected ByteBuffer pickColors;
 
     /**
      * Creates a new ShapefilePolylines with the specified shapefile. The normal attributes and the highlight attributes
      * for each ShapefileRenderable.Record are assigned default values. In order to modify ShapefileRenderable.Record
-     * shape attributes or key-value attributes during construction, use {@link #ShapefilePolylines(gov.nasa.worldwind.formats.shapefile.Shapefile,
-     * gov.nasa.worldwind.render.ShapeAttributes, gov.nasa.worldwind.render.ShapeAttributes,
-     * gov.nasa.worldwind.formats.shapefile.ShapefileRenderable.AttributeDelegate)}.
+     * shape attributes or key-value attributes during construction, use {@link #ShapefilePolylines(Shapefile,
+     * ShapeAttributes, ShapeAttributes,
+     * ShapefileRenderable.AttributeDelegate)}.
      *
      * @param shapefile The shapefile to display.
-     *
      * @throws IllegalArgumentException if the shapefile is null.
      */
-    public ShapefilePolylines(Shapefile shapefile)
-    {
-        if (shapefile == null)
-        {
+    public ShapefilePolylines(Shapefile shapefile) {
+        if (shapefile == null) {
             String msg = Logging.getMessage("nullValue.ShapefileIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -202,7 +74,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
      * and the attribute delegate are optional. Specifying a non-null value for normalAttrs or highlightAttrs causes
      * each ShapefileRenderable.Record to adopt those attributes. Specifying a non-null value for the attribute delegate
      * enables callbacks during creation of each ShapefileRenderable.Record. See {@link
-     * gov.nasa.worldwind.formats.shapefile.ShapefileRenderable.AttributeDelegate} for more information.
+     * ShapefileRenderable.AttributeDelegate} for more information.
      *
      * @param shapefile         The shapefile to display.
      * @param normalAttrs       The normal attributes for each ShapefileRenderable.Record. May be null to use the
@@ -211,14 +83,11 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
      *                          default highlight attributes.
      * @param attributeDelegate Optional callback for configuring each ShapefileRenderable.Record's shape attributes and
      *                          key-value attributes. May be null.
-     *
      * @throws IllegalArgumentException if the shapefile is null.
      */
     public ShapefilePolylines(Shapefile shapefile, ShapeAttributes normalAttrs, ShapeAttributes highlightAttrs,
-        AttributeDelegate attributeDelegate)
-    {
-        if (shapefile == null)
-        {
+        AttributeDelegate attributeDelegate) {
+        if (shapefile == null) {
             String msg = Logging.getMessage("nullValue.ShapefileIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -233,8 +102,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
      *
      * @return the outline line width used during picking.
      */
-    public int getOutlinePickWidth()
-    {
+    public int getOutlinePickWidth() {
         return this.outlinePickWidth;
     }
 
@@ -245,13 +113,10 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
      * Note that the size of the pick aperture also affects the precision necessary to pick.
      *
      * @param outlinePickWidth the outline pick width. The default is 10.
-     *
      * @throws IllegalArgumentException if the width is less than 0.
      */
-    public void setOutlinePickWidth(int outlinePickWidth)
-    {
-        if (outlinePickWidth < 0)
-        {
+    public void setOutlinePickWidth(int outlinePickWidth) {
+        if (outlinePickWidth < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "width < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -261,16 +126,13 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
     }
 
     @Override
-    public double getDistanceFromEye()
-    {
+    public double getDistanceFromEye() {
         return 0;
     }
 
     @Override
-    public void preRender(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void preRender(DrawContext dc) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -285,35 +147,29 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         // Assemble the tiles used for rendering, then cause those tiles to be drawn into the scene controller's
         // composite surface object tiles.
         this.assembleTiles(dc);
-        for (Tile tile : this.currentTiles)
-        {
+        for (Tile tile : this.currentTiles) {
             dc.addOrderedSurfaceRenderable(tile);
         }
 
         // Assemble the tiles used for picking, then build a set of surface object tiles containing unique colors for
         // each record.
-        if (dc.getCurrentLayer().isPickEnabled())
-        {
-            try
-            {
+        if (dc.getCurrentLayer().isPickEnabled()) {
+            try {
                 dc.enablePickingMode();
                 this.assembleTiles(dc);
                 this.pickSupport.clearPickList();
                 this.pickTileBuilder.setForceTileUpdates(true); // force pick tiles to update with new pick colors
                 this.pickTileBuilder.buildTiles(dc, this.currentTiles); // draw tiles and add candidates to pickSupport
             }
-            finally
-            {
+            finally {
                 dc.disablePickingMode();
             }
         }
     }
 
     @Override
-    public void pick(DrawContext dc, Point pickPoint)
-    {
-        if (dc == null)
-        {
+    public void pick(DrawContext dc, Point pickPoint) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -328,16 +184,14 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        try
-        {
+        try {
             // pick list cleared in preRender
             this.pickSupport.beginPicking(dc);
             gl.glEnable(GL.GL_CULL_FACE);
             dc.getGeographicSurfaceTileRenderer().setUseImageTilePickColors(true);
             dc.getGeographicSurfaceTileRenderer().renderTiles(dc, this.pickTileBuilder.getTiles(dc));
         }
-        finally
-        {
+        finally {
             dc.getGeographicSurfaceTileRenderer().setUseImageTilePickColors(false);
             gl.glDisable(GL.GL_CULL_FACE);
             this.pickSupport.endPicking(dc);
@@ -347,10 +201,8 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
     }
 
     @Override
-    public void render(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void render(DrawContext dc) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -362,22 +214,19 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         if (this.getRecordCount() == 0) // Shapefile is empty or contains only null records.
             return;
 
-        if (dc.isPickingMode() && this.pickTileBuilder.getTileCount(dc) > 0)
-        {
+        if (dc.isPickingMode() && this.pickTileBuilder.getTileCount(dc) > 0) {
             this.pickLayer = dc.getCurrentLayer();
             dc.addOrderedSurfaceRenderable(this); // perform the pick during ordered surface rendering
         }
     }
 
     @Override
-    protected void assembleRecords(Shapefile shapefile)
-    {
+    protected void assembleRecords(Shapefile shapefile) {
         this.rootTile = new Tile(this, this.sector, 0);
 
         super.assembleRecords(shapefile);
 
-        if (this.mustSplitTile(this.rootTile))
-        {
+        if (this.mustSplitTile(this.rootTile)) {
             this.splitTile(this.rootTile);
         }
 
@@ -385,16 +234,14 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
     }
 
     @Override
-    protected boolean mustAssembleRecord(ShapefileRecord shapefileRecord)
-    {
+    protected boolean mustAssembleRecord(ShapefileRecord shapefileRecord) {
         return super.mustAssembleRecord(shapefileRecord)
             && (shapefileRecord.isPolylineRecord()
             || shapefileRecord.isPolygonRecord()); // accept both polyline and polygon records
     }
 
     @Override
-    protected void assembleRecord(ShapefileRecord shapefileRecord)
-    {
+    protected void assembleRecord(ShapefileRecord shapefileRecord) {
         Record record = this.createRecord(shapefileRecord);
         this.addRecord(shapefileRecord, record);
 
@@ -402,14 +249,12 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         record.tile = this.rootTile;
     }
 
-    protected ShapefilePolylines.Record createRecord(ShapefileRecord shapefileRecord)
-    {
+    protected ShapefilePolylines.Record createRecord(ShapefileRecord shapefileRecord) {
         return new ShapefilePolylines.Record(this, shapefileRecord);
     }
 
     @Override
-    protected void recordDidChange(ShapefileRenderable.Record record)
-    {
+    protected void recordDidChange(ShapefileRenderable.Record record) {
         Tile tile = ((ShapefilePolylines.Record) record).tile;
         if (tile != null) // tile is null when attributes are specified during construction
         {
@@ -417,13 +262,11 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         }
     }
 
-    protected boolean mustSplitTile(Tile tile)
-    {
+    protected boolean mustSplitTile(Tile tile) {
         return tile.level < this.tileMaxLevel && tile.records.size() > this.tileMaxCapacity;
     }
 
-    protected void splitTile(Tile tile)
-    {
+    protected void splitTile(Tile tile) {
         // Create four child tiles by subdividing the tile's sector in latitude and longitude.
         Sector[] childSectors = tile.sector.subdivide();
         tile.children = new Tile[4];
@@ -436,13 +279,10 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         // include records that are marked as not visible, as recomputing the tile tree for record visibility changes
         // would be expensive.
         Iterator<Record> iterator = tile.records.iterator();
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             Record record = iterator.next();
-            for (int i = 0; i < 4; i++)
-            {
-                if (tile.children[i].sector.contains(record.sector))
-                {
+            for (int i = 0; i < 4; i++) {
+                if (tile.children[i].sector.contains(record.sector)) {
                     tile.children[i].records.add(record); // add it to the child
                     record.tile = tile.children[i]; // assign the record's tile
                     iterator.remove(); // remove it from the parent
@@ -454,10 +294,8 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         // Recursively split child tiles as necessary, moving their records into each child's descendants. The recursive
         // split stops when a child tile reaches a maximum level, or when the number of records contained within the
         // tile is small enough.
-        for (int i = 0; i < 4; i++)
-        {
-            if (this.mustSplitTile(tile.children[i]))
-            {
+        for (int i = 0; i < 4; i++) {
+            if (this.mustSplitTile(tile.children[i])) {
                 this.splitTile(tile.children[i]);
             }
 
@@ -465,33 +303,27 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         }
     }
 
-    protected void assembleTiles(DrawContext dc)
-    {
+    protected void assembleTiles(DrawContext dc) {
         this.currentTiles.clear();
         this.addTileOrDescendants(dc, this.rootTile);
     }
 
-    protected void addTileOrDescendants(DrawContext dc, Tile tile)
-    {
+    protected void addTileOrDescendants(DrawContext dc, Tile tile) {
         // Determine whether or not the tile is visible. If the tile is not visible, then neither are the tile's records
         // or the tile's children. Note that a tile with no records may have children, so we can't use the tile's record
         // count as a determination of whether or not to test its children.
-        if (!this.isTileVisible(dc, tile))
-        {
+        if (!this.isTileVisible(dc, tile)) {
             return;
         }
 
         // Add the tile to the list of tiles to draw, regenerating the tile's geometry and the tile's attribute groups
         // as necessary.
-        if (tile.records.size() > 0)
-        {
-            if (this.mustRegenerateTileGeometry(tile))
-            {
+        if (!tile.records.isEmpty()) {
+            if (this.mustRegenerateTileGeometry(tile)) {
                 this.regenerateTileGeometry(tile);
             }
 
-            if (this.mustAssembleTileAttributeGroups(tile))
-            {
+            if (this.mustAssembleTileAttributeGroups(tile)) {
                 this.assembleTileAttributeGroups(tile);
             }
 
@@ -499,47 +331,38 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         }
 
         // Process the tile's children, if any.
-        if (tile.children != null)
-        {
-            for (Tile childTile : tile.children)
-            {
+        if (tile.children != null) {
+            for (Tile childTile : tile.children) {
                 this.addTileOrDescendants(dc, childTile);
             }
         }
     }
 
-    protected boolean isTileVisible(DrawContext dc, Tile tile)
-    {
+    protected boolean isTileVisible(DrawContext dc, Tile tile) {
         Extent extent = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), tile.sector);
 
-        if (dc.isSmall(extent, 1))
-        {
+        if (dc.isSmall(extent, 1)) {
             return false;
         }
 
-        if (dc.isPickingMode())
-        {
+        if (dc.isPickingMode()) {
             return dc.getPickFrustums().intersectsAny(extent);
         }
 
         return dc.getView().getFrustumInModelCoordinates().intersects(extent);
     }
 
-    protected boolean mustRegenerateTileGeometry(Tile tile)
-    {
+    protected boolean mustRegenerateTileGeometry(Tile tile) {
         return tile.vertices == null;
     }
 
-    protected void regenerateTileGeometry(Tile tile)
-    {
+    protected void regenerateTileGeometry(Tile tile) {
         this.tessellateTile(tile);
     }
 
-    protected void tessellateTile(Tile tile)
-    {
+    protected void tessellateTile(Tile tile) {
         int numPoints = 0;
-        for (Record record : tile.records)
-        {
+        for (Record record : tile.records) {
             numPoints += record.numberOfPoints;
         }
 
@@ -555,17 +378,14 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         // Generate the geographic coordinate vertices and indices for all records in the tile. This may include records
         // that are marked as not visible, as recomputing the vertices and indices for record visibility changes would
         // be expensive. The tessellated indices are generated only once, since each record's indices never change.
-        for (Record record : tile.records)
-        {
+        for (Record record : tile.records) {
             this.tess.reset();
 
-            for (int i = 0; i < record.getBoundaryCount(); i++)
-            {
+            for (int i = 0; i < record.getBoundaryCount(); i++) {
                 this.tess.beginPolyline();
 
                 VecBuffer points = record.getBoundaryPoints(i);
-                for (int j = 0; j < points.getSize(); j++)
-                {
+                for (int j = 0; j < points.getSize(); j++) {
                     points.get(j, location);
                     double x = location[0]; // map longitude to x
                     double y = location[1]; // map latitude to y
@@ -595,8 +415,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         tile.transformMatrix = Matrix.fromTranslation(rp.x, rp.y, rp.z);
     }
 
-    protected void assembleRecordIndices(PolylineTessellator tessellator, Record record)
-    {
+    protected void assembleRecordIndices(PolylineTessellator tessellator, Record record) {
         // Get the tessellated boundary indices representing a line segment tessellation of the record parts.
         // Flip each buffer in order to limit the buffer range we use to values added during tessellation.
         IntBuffer tessBoundary = tessellator.getIndices().flip();
@@ -608,18 +427,15 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         record.outlineIndices = outlineIndices.rewind();
     }
 
-    protected void invalidateTileAttributeGroups(Tile tile)
-    {
+    protected void invalidateTileAttributeGroups(Tile tile) {
         tile.attributeGroups.clear();
     }
 
-    protected boolean mustAssembleTileAttributeGroups(Tile tile)
-    {
+    protected boolean mustAssembleTileAttributeGroups(Tile tile) {
         return tile.attributeGroups.isEmpty();
     }
 
-    protected void assembleTileAttributeGroups(Tile tile)
-    {
+    protected void assembleTileAttributeGroups(Tile tile) {
         tile.attributeGroups.clear();
         tile.attributeStateID++;
 
@@ -629,8 +445,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         // without re-assembling these groups. However, changes to a record's visibility state, highlight state, normal
         // attributes reference and highlight attributes reference invalidate this grouping.
         HashMap<ShapeAttributes, RecordGroup> attrMap = new HashMap<>();
-        for (Record record : tile.records)
-        {
+        for (Record record : tile.records) {
             if (!record.isVisible()) // ignore records marked as not visible
                 continue;
 
@@ -651,8 +466,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         // Make the indices for each record group. We take care to make indices for both the interior and the outline,
         // regardless of the current state of Attributes.isDrawInterior and Attributes.isDrawOutline. This enable these
         // properties change state without needing to re-assemble these groups.
-        for (RecordGroup group : tile.attributeGroups)
-        {
+        for (RecordGroup group : tile.attributeGroups) {
             int indexCount = group.outlineIndexRange.length;
             IntBuffer indices = Buffers.newDirectIntBuffer(indexCount);
 
@@ -669,44 +483,36 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         }
     }
 
-    protected void renderTile(DrawContext dc, Tile tile)
-    {
+    protected void renderTile(DrawContext dc, Tile tile) {
         this.beginDrawing(dc);
-        try
-        {
-            if (dc.isPickingMode())
-            {
+        try {
+            if (dc.isPickingMode()) {
                 this.drawTileInUniqueColors(dc, tile);
             }
-            else
-            {
+            else {
                 this.drawTile(dc, tile);
             }
         }
-        finally
-        {
+        finally {
             this.endDrawing(dc);
         }
     }
 
-    protected void beginDrawing(DrawContext dc)
-    {
+    protected void beginDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glDisable(GL.GL_DEPTH_TEST);
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // all drawing uses vertex arrays
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glPushMatrix();
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             gl.glEnable(GL.GL_BLEND);
             gl.glEnable(GL.GL_LINE_SMOOTH);
             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         }
     }
 
-    protected void endDrawing(DrawContext dc)
-    {
+    protected void endDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
@@ -714,28 +520,24 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         gl.glLineWidth(1);
         gl.glPopMatrix();
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             gl.glDisable(GL.GL_BLEND);
             gl.glDisable(GL.GL_LINE_SMOOTH);
             gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO);
         }
 
-        if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject())
-        {
+        if (dc.getGLRuntimeCapabilities().isUseVertexBufferObject()) {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
     }
 
-    protected void drawTile(DrawContext dc, Tile tile)
-    {
+    protected void drawTile(DrawContext dc, Tile tile) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         int[] vboId = null;
         boolean useVbo = dc.getGLRuntimeCapabilities().isUseVertexBufferObject();
-        if (useVbo && (vboId = (int[]) dc.getGpuResourceCache().get(tile.vboKey)) == null)
-        {
+        if (useVbo && (vboId = (int[]) dc.getGpuResourceCache().get(tile.vboKey)) == null) {
             long vboSize = 4 * tile.vertices.remaining(); // 4 bytes for each float vertex component
             vboId = new int[1];
             gl.glGenBuffers(1, vboId, 0);
@@ -744,13 +546,11 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
             gl.glVertexPointer(tile.vertexStride, GL.GL_FLOAT, 0, 0);
             dc.getGpuResourceCache().put(tile.vboKey, vboId, GpuResourceCache.VBO_BUFFERS, vboSize);
         }
-        else if (useVbo)
-        {
+        else if (useVbo) {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId[0]);
             gl.glVertexPointer(tile.vertexStride, GL.GL_FLOAT, 0, 0);
         }
-        else
-        {
+        else {
             gl.glVertexPointer(tile.vertexStride, GL.GL_FLOAT, 0, tile.vertices);
         }
 
@@ -759,14 +559,12 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         modelview.toArray(this.matrixArray, 0, false);
         gl.glLoadMatrixd(this.matrixArray, 0);
 
-        for (RecordGroup attrGroup : tile.attributeGroups)
-        {
+        for (RecordGroup attrGroup : tile.attributeGroups) {
             this.drawTileAttributeGroup(dc, attrGroup);
         }
     }
 
-    protected void drawTileAttributeGroup(DrawContext dc, RecordGroup attributeGroup)
-    {
+    protected void drawTileAttributeGroup(DrawContext dc, RecordGroup attributeGroup) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         ShapeAttributes attrs = attributeGroup.attributes;
 
@@ -775,8 +573,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
 
         int[] vboId = null;
         boolean useVbo = dc.getGLRuntimeCapabilities().isUseVertexBufferObject();
-        if (useVbo && (vboId = (int[]) dc.getGpuResourceCache().get(attributeGroup.vboKey)) == null)
-        {
+        if (useVbo && (vboId = (int[]) dc.getGpuResourceCache().get(attributeGroup.vboKey)) == null) {
             long vboSize = 4 * attributeGroup.indices.remaining(); // 4 bytes for each unsigned int index
             vboId = new int[1];
             gl.glGenBuffers(1, vboId, 0);
@@ -784,13 +581,11 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
             gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, vboSize, attributeGroup.indices, GL.GL_STATIC_DRAW);
             dc.getGpuResourceCache().put(attributeGroup.vboKey, vboId, GpuResourceCache.VBO_BUFFERS, vboSize);
         }
-        else if (useVbo)
-        {
+        else if (useVbo) {
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboId[0]);
         }
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             float[] color = this.colorFloatArray;
             attrs.getOutlineMaterial().getDiffuse().getRGBComponents(color);
             gl.glColor4f(color[0], color[1], color[2], color[3]);
@@ -801,24 +596,20 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         else
             gl.glLineWidth((float) attrs.getOutlineWidth());
 
-        if (useVbo)
-        {
+        if (useVbo) {
             gl.glDrawElements(GL.GL_LINES, attributeGroup.indices.remaining(), GL.GL_UNSIGNED_INT, 0);
         }
-        else
-        {
+        else {
             gl.glDrawElements(GL.GL_LINES, attributeGroup.indices.remaining(), GL.GL_UNSIGNED_INT,
                 attributeGroup.indices);
         }
     }
 
-    protected void drawTileInUniqueColors(DrawContext dc, Tile tile)
-    {
+    protected void drawTileInUniqueColors(DrawContext dc, Tile tile) {
         GL2 gl = dc.getGL().getGL2();
 
         int pickColorsSize = 3 * (tile.vertices.remaining() / tile.vertexStride); // 1 RGB color for each XY vertex
-        if (this.pickColors == null || this.pickColors.capacity() < pickColorsSize)
-        {
+        if (this.pickColors == null || this.pickColors.capacity() < pickColorsSize) {
             this.pickColors = Buffers.newDirectByteBuffer(pickColorsSize);
             dc.getGpuResourceCache().remove(this.pickColorsVboKey); // remove any associated VBO from GPU memory
         }
@@ -827,8 +618,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         ByteBuffer colors;
         int[] vboId = null;
         boolean useVbo = dc.getGLRuntimeCapabilities().isUseVertexBufferObject();
-        if (useVbo && (vboId = (int[]) dc.getGpuResourceCache().get(this.pickColorsVboKey)) == null)
-        {
+        if (useVbo && (vboId = (int[]) dc.getGpuResourceCache().get(this.pickColorsVboKey)) == null) {
             vboId = new int[1];
             gl.glGenBuffers(1, vboId, 0);
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId[0]);
@@ -837,19 +627,16 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
                 this.pickColors.remaining());
             colors = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY);
         }
-        else if (useVbo)
-        {
+        else if (useVbo) {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboId[0]);
             colors = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY);
         }
-        else
-        {
+        else {
             colors = pickColors;
         }
 
         byte[] vertexColors = this.colorByteArray;
-        for (Record record : tile.records)
-        {
+        for (Record record : tile.records) {
             // Assign each record a unique RGB color. Generate vertex colors for every record - regardless of its
             // visibility - since the tile's color array must match the tile's vertex array.
             Color color = dc.getUniquePickColor();
@@ -859,35 +646,139 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
             vertexColors[2] = (byte) color.getBlue();
 
             // Add the unique color each vertex of the record.
-            for (int i = 0; i < record.numberOfPoints; i++)
-            {
+            for (int i = 0; i < record.numberOfPoints; i++) {
                 colors.put(vertexColors, 0, 3);
             }
         }
 
         colors.flip();
 
-        try
-        {
+        try {
             this.pickSupport.beginPicking(dc);
             gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
 
-            if (useVbo)
-            {
+            if (useVbo) {
                 gl.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
                 gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, 0);
             }
-            else
-            {
+            else {
                 gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, colors);
             }
 
             this.drawTile(dc, tile);
         }
-        finally
-        {
+        finally {
             gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
             this.pickSupport.endPicking(dc);
+        }
+    }
+
+    public static class Record extends ShapefileRenderable.Record {
+        // Data structures supporting drawing.
+        protected Tile tile;
+        protected IntBuffer outlineIndices;
+
+        public Record(ShapefileRenderable shapefileRenderable, ShapefileRecord shapefileRecord) {
+            super(shapefileRenderable, shapefileRecord);
+        }
+    }
+
+    protected static class RecordGroup {
+        // Record group properties.
+        public final ShapeAttributes attributes;
+        public final ArrayList<Record> records = new ArrayList<>();
+        public final Range outlineIndexRange = new Range(0, 0);
+        public final Object vboKey = new Object();
+        // Data structures supporting drawing.
+        public IntBuffer indices;
+
+        public RecordGroup(ShapeAttributes attributes) {
+            this.attributes = attributes;
+        }
+    }
+
+    protected static class Tile implements OrderedRenderable, SurfaceRenderable {
+        // Tile properties.
+        public final ShapefileRenderable shapefileRenderable;
+        public final Sector sector;
+        public final int level;
+        // Tile records, attribute groups and child tiles.
+        public final ArrayList<Record> records = new ArrayList<>();
+        public final List<RecordGroup> attributeGroups = new ArrayList<>();
+        public final Object vboKey = new Object();
+        public long attributeStateID;
+        public Tile[] children;
+        // Tile shape data.
+        public FloatBuffer vertices;
+        public int vertexStride;
+        public Vec4 referencePoint;
+        public Matrix transformMatrix;
+
+        public Tile(ShapefileRenderable shapefileRenderable, Sector sector, int level) {
+            this.shapefileRenderable = shapefileRenderable;
+            this.sector = sector;
+            this.level = level;
+        }
+
+        @Override
+        public double getDistanceFromEye() {
+            return 0; // distance from eye is irrelevant for ordered surface renderables
+        }
+
+        @Override
+        public List<Sector> getSectors(DrawContext dc) {
+            return Collections.singletonList(this.sector);
+        }
+
+        @Override
+        public Object getStateKey(DrawContext dc) {
+            return new TileStateKey(this);
+        }
+
+        @Override
+        public void pick(DrawContext dc, Point pickPoint) {
+        }
+
+        @Override
+        public void render(DrawContext dc) {
+            ((ShapefilePolylines) this.shapefileRenderable).renderTile(dc, this);
+        }
+    }
+
+    protected static class TileStateKey {
+        protected final Tile tile;
+        protected final long attributeStateID;
+        protected final ShapeAttributes[] attributeGroups;
+
+        public TileStateKey(Tile tile) {
+            this.tile = tile;
+            this.attributeStateID = tile.attributeStateID;
+            this.attributeGroups = new ShapeAttributes[tile.attributeGroups.size()];
+
+            for (int i = 0; i < this.attributeGroups.length; i++) {
+                this.attributeGroups[i] = tile.attributeGroups.get(i).attributes.copy();
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            TileStateKey that = (TileStateKey) o;
+            return this.tile.equals(that.tile)
+                && this.attributeStateID == that.attributeStateID
+                && Arrays.equals(this.attributeGroups, that.attributeGroups);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = this.tile.hashCode();
+            result = 31 * result + (int) (this.attributeStateID ^ (this.attributeStateID >>> 32));
+            result = 31 * result + Arrays.hashCode(this.attributeGroups);
+            return result;
         }
     }
 }

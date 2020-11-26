@@ -17,14 +17,15 @@ import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.*;
+import java.util.logging.Level;
 
 /**
  * @author dcollins
  * @version $Id: SurfaceImageEditor.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SurfaceImageEditor implements SelectListener
-{
+public class SurfaceImageEditor implements SelectListener {
     protected static final int NONE = 0;
     protected static final int MOVING = 1;
     protected static final int SIZING = 2;
@@ -38,34 +39,15 @@ public class SurfaceImageEditor implements SelectListener
     protected int activeOperation = NONE;
     protected Position previousPosition = null;
 
-    protected static class ControlPointMarker extends BasicMarker
-    {
-        private final int index;
-
-        public ControlPointMarker(Position position, MarkerAttributes attrs, int index)
-        {
-            super(position, attrs);
-            this.index = index;
-        }
-
-        public int getIndex()
-        {
-            return this.index;
-        }
-    }
-
-    public SurfaceImageEditor(WorldWindow wwd, SurfaceImage shape)
-    {
-        if (wwd == null)
-        {
+    public SurfaceImageEditor(WorldWindow wwd, SurfaceImage shape) {
+        if (wwd == null) {
             String msg = Logging.getMessage("nullValue.WorldWindow");
-            Logging.logger().log(java.util.logging.Level.FINE, msg);
+            Logging.logger().log(Level.FINE, msg);
             throw new IllegalArgumentException(msg);
         }
-        if (shape == null)
-        {
+        if (shape == null) {
             String msg = Logging.getMessage("nullValue.Shape");
-            Logging.logger().log(java.util.logging.Level.FINE, msg);
+            Logging.logger().log(Level.FINE, msg);
             throw new IllegalArgumentException(msg);
         }
 
@@ -75,37 +57,30 @@ public class SurfaceImageEditor implements SelectListener
         this.controlPointLayer = new MarkerLayer();
     }
 
-    public WorldWindow getWwd()
-    {
+    public WorldWindow getWwd() {
         return this.wwd;
     }
 
-    public SurfaceImage getSurfaceImage()
-    {
+    public SurfaceImage getSurfaceImage() {
         return this.shape;
     }
 
-    public boolean isArmed()
-    {
+    public boolean isArmed() {
         return this.armed;
     }
 
-    public void setArmed(boolean armed)
-    {
-        if (!this.armed && armed)
-        {
+    public void setArmed(boolean armed) {
+        if (!this.armed && armed) {
             this.enable();
         }
-        else if (this.armed && !armed)
-        {
+        else if (this.armed && !armed) {
             this.disable();
         }
 
         this.armed = armed;
     }
 
-    protected void enable()
-    {
+    protected void enable() {
         LayerList layers = this.wwd.getModel().getLayers();
 
         if (!layers.contains(this.controlPointLayer))
@@ -119,8 +94,7 @@ public class SurfaceImageEditor implements SelectListener
         this.wwd.addSelectListener(this);
     }
 
-    protected void disable()
-    {
+    protected void disable() {
         LayerList layers = this.wwd.getModel().getLayers();
 
         layers.remove(this.controlPointLayer);
@@ -128,24 +102,20 @@ public class SurfaceImageEditor implements SelectListener
         wwd.removeSelectListener(this);
     }
 
-    public void selected(SelectEvent event)
-    {
-        if (event == null)
-        {
+    public void selected(SelectEvent event) {
+        if (event == null) {
             String msg = Logging.getMessage("nullValue.EventIsNull");
-            Logging.logger().log(java.util.logging.Level.FINE, msg);
+            Logging.logger().log(Level.FINE, msg);
             throw new IllegalArgumentException(msg);
         }
 
         if (event.getTopObject() != null && !(event.getTopObject() == this.shape
-            || event.getTopPickedObject().getParentLayer() == this.controlPointLayer))
-        {
+            || event.getTopPickedObject().getParentLayer() == this.controlPointLayer)) {
             ((Component) this.wwd).setCursor(null);
             return;
         }
 
-        switch (event.getEventAction())
-        {
+        switch (event.getEventAction()) {
             case SelectEvent.DRAG_END -> {
                 this.active = false;
                 this.activeOperation = NONE;
@@ -154,8 +124,7 @@ public class SurfaceImageEditor implements SelectListener
             case SelectEvent.ROLLOVER -> {
                 if (!(this.wwd instanceof Component))
                     return;
-                if (event.getTopObject() == null || event.getTopPickedObject().isTerrain())
-                {
+                if (event.getTopObject() == null || event.getTopPickedObject().isTerrain()) {
                     ((Component) this.wwd).setCursor(null);
                     return;
                 }
@@ -179,16 +148,14 @@ public class SurfaceImageEditor implements SelectListener
                 Object topObject = dragEvent.getTopObject();
                 if (topObject == null)
                     return;
-                if (topObject == this.shape || this.activeOperation == MOVING)
-                {
+                if (topObject == this.shape || this.activeOperation == MOVING) {
                     this.activeOperation = MOVING;
                     this.dragWholeShape(dragEvent, topObject);
                     this.updateAffordances();
                     event.consume();
                 }
                 else if (dragEvent.getTopPickedObject().getParentLayer() == this.controlPointLayer
-                    || this.activeOperation == SIZING)
-                {
+                    || this.activeOperation == SIZING) {
                     this.activeOperation = SIZING;
                     this.resizeShape(topObject);
                     this.updateAffordances();
@@ -198,8 +165,7 @@ public class SurfaceImageEditor implements SelectListener
         }
     }
 
-    protected void dragWholeShape(DragSelectEvent dragEvent, Object topObject)
-    {
+    protected void dragWholeShape(DragSelectEvent dragEvent, Object topObject) {
         if (!(topObject instanceof Movable))
             return;
 
@@ -230,16 +196,14 @@ public class SurfaceImageEditor implements SelectListener
         Line ray = view.computeRayFromScreenPoint(x, y);
         Intersection[] inters = globe.intersect(ray, refPos.getElevation());
 
-        if (inters != null)
-        {
+        if (inters != null) {
             // Intersection with globe. Move reference point to the intersection point.
             Position p = globe.computePositionFromPoint(inters[0].getIntersectionPoint());
             dragObject.moveTo(p);
         }
     }
 
-    protected void resizeShape(Object topObject)
-    {
+    protected void resizeShape(Object topObject) {
         if (!(topObject instanceof ControlPointMarker))
             return;
 
@@ -264,8 +228,7 @@ public class SurfaceImageEditor implements SelectListener
         this.shape.setCorners(corners);
     }
 
-    protected void updateAffordances()
-    {
+    protected void updateAffordances() {
         java.util.List<LatLon> corners = this.shape.getCorners();
 
         double d = LatLon.getAverageDistance(corners).radians * wwd.getModel().getGlobe().getRadius();
@@ -276,9 +239,8 @@ public class SurfaceImageEditor implements SelectListener
         ArrayList<LatLon> handlePositions = new ArrayList<>(8);
         handlePositions.addAll(corners);
 
-        ArrayList<Marker> handles = new ArrayList<>(handlePositions.size());
-        for (int i = 0; i < handlePositions.size(); i++)
-        {
+        List<Marker> handles = new ArrayList<>(handlePositions.size());
+        for (int i = 0; i < handlePositions.size(); i++) {
             handles.add(new ControlPointMarker(new Position(handlePositions.get(i), 0), markerAttrs, i));
         }
 
@@ -288,19 +250,29 @@ public class SurfaceImageEditor implements SelectListener
         this.controlPointLayer.setMarkers(handles);
     }
 
-    protected double computeSurfaceElevation(WorldWindow wwd, LatLon latLon)
-    {
+    protected double computeSurfaceElevation(WorldWindow wwd, LatLon latLon) {
         SectorGeometryList sgl = wwd.getSceneController().getTerrain();
-        if (sgl != null)
-        {
+        if (sgl != null) {
             Vec4 point = sgl.getSurfacePoint(latLon.getLatitude(), latLon.getLongitude(), 0.0);
-            if (point != null)
-            {
+            if (point != null) {
                 Position pos = wwd.getModel().getGlobe().computePositionFromPoint(point);
                 return pos.getElevation();
             }
         }
 
         return wwd.getModel().getGlobe().getElevation(latLon.getLatitude(), latLon.getLongitude());
+    }
+
+    protected static class ControlPointMarker extends BasicMarker {
+        private final int index;
+
+        public ControlPointMarker(Position position, MarkerAttributes attrs, int index) {
+            super(position, attrs);
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return this.index;
+        }
     }
 }

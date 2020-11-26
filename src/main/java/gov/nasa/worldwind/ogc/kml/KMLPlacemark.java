@@ -25,8 +25,7 @@ import java.util.*;
  * @author tag
  * @version $Id: KMLPlacemark.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
-{
+public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable {
     protected KMLAbstractGeometry geometry;
     protected List<KMLRenderable> renderables;
 
@@ -35,24 +34,17 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLPlacemark(String namespaceURI)
-    {
+    public KMLPlacemark(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         if (o instanceof KMLAbstractGeometry)
             this.setGeometry((KMLAbstractGeometry) o);
         else
             super.doAddEventContent(o, ctx, event, args);
-    }
-
-    protected void setGeometry(KMLAbstractGeometry geometry)
-    {
-        this.geometry = geometry;
     }
 
     /**
@@ -60,9 +52,12 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
      *
      * @return the placemark's geometry element, or null if there is none.
      */
-    public KMLAbstractGeometry getGeometry()
-    {
+    public KMLAbstractGeometry getGeometry() {
         return this.geometry;
+    }
+
+    protected void setGeometry(KMLAbstractGeometry geometry) {
+        this.geometry = geometry;
     }
 
     public KMLSimpleData getSimpleData() // Included for test purposes only
@@ -71,17 +66,15 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
     }
 
     /**
-     * Returns the {@link gov.nasa.worldwind.ogc.kml.impl.KMLRenderable}s of this placemark.
+     * Returns the {@link KMLRenderable}s of this placemark.
      *
      * @return the placemark's renderables, or null if the placemark has no renderables.
      */
-    public List<KMLRenderable> getRenderables()
-    {
+    public List<KMLRenderable> getRenderables() {
         return this.renderables;
     }
 
-    protected void addRenderable(KMLRenderable r)
-    {
+    protected void addRenderable(KMLRenderable r) {
         if (r != null)
             this.getRenderables().add(r);
     }
@@ -94,16 +87,13 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
      * @param dc the current draw context.
      */
     @Override
-    protected void doPreRender(KMLTraversalContext tc, DrawContext dc)
-    {
+    protected void doPreRender(KMLTraversalContext tc, DrawContext dc) {
         if (this.getRenderables() == null)
             this.initializeGeometry(tc, this.getGeometry());
 
         List<KMLRenderable> rs = this.getRenderables();
-        if (rs != null)
-        {
-            for (KMLRenderable r : rs)
-            {
+        if (rs != null) {
+            for (KMLRenderable r : rs) {
                 r.preRender(tc, dc);
             }
         }
@@ -116,16 +106,13 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
      * @param dc the current draw context.
      */
     @Override
-    protected void doRender(KMLTraversalContext tc, DrawContext dc)
-    {
+    protected void doRender(KMLTraversalContext tc, DrawContext dc) {
         // We've already initialized the placemark's renderables during the preRender pass. Render the placemark's
         // renderable list without any further preparation.
 
         List<KMLRenderable> rs = this.getRenderables();
-        if (rs != null)
-        {
-            for (KMLRenderable r : rs)
-            {
+        if (rs != null) {
+            for (KMLRenderable r : rs) {
                 r.render(tc, dc);
             }
         }
@@ -134,8 +121,7 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
         this.renderBalloon(tc, dc);
     }
 
-    protected void initializeGeometry(KMLTraversalContext tc, KMLAbstractGeometry geom)
-    {
+    protected void initializeGeometry(KMLTraversalContext tc, KMLAbstractGeometry geom) {
         if (geom == null)
             return;
 
@@ -150,13 +136,10 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
             this.addRenderable(this.selectLineStringRenderable(tc, geom));
         else if (geom instanceof KMLPolygon)
             this.addRenderable(this.selectPolygonRenderable(tc, geom));
-        else if (geom instanceof KMLMultiGeometry)
-        {
+        else if (geom instanceof KMLMultiGeometry) {
             List<KMLAbstractGeometry> geoms = ((KMLMultiGeometry) geom).geometries;
-            if (geoms != null)
-            {
-                for (KMLAbstractGeometry g : geoms)
-                {
+            if (geoms != null) {
+                for (KMLAbstractGeometry g : geoms) {
                     this.initializeGeometry(tc, g); // recurse
                 }
             }
@@ -165,13 +148,11 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
             this.addRenderable(this.selectModelRenderable(tc, geom));
     }
 
-    protected KMLRenderable selectModelRenderable(KMLTraversalContext tc, KMLAbstractGeometry geom)
-    {
+    protected KMLRenderable selectModelRenderable(KMLTraversalContext tc, KMLAbstractGeometry geom) {
         return new KMLModelPlacemarkImpl(tc, this, geom);
     }
 
-    protected KMLRenderable selectPointRenderable(KMLTraversalContext tc, KMLAbstractGeometry geom)
-    {
+    protected KMLRenderable selectPointRenderable(KMLTraversalContext tc, KMLAbstractGeometry geom) {
         KMLPoint shape = (KMLPoint) geom;
 
         if (shape.getCoordinates() == null)
@@ -180,8 +161,7 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
         return new KMLPointPlacemarkImpl(tc, this, geom);
     }
 
-    protected KMLRenderable selectLineStringRenderable(KMLTraversalContext tc, KMLAbstractGeometry geom)
-    {
+    protected KMLRenderable selectLineStringRenderable(KMLTraversalContext tc, KMLAbstractGeometry geom) {
         KMLLineString shape = (KMLLineString) geom;
 
         if (shape.getCoordinates() == null)
@@ -190,8 +170,7 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
         return new KMLLineStringPlacemarkImpl(tc, this, geom);
     }
 
-    protected KMLRenderable selectLinearRingRenderable(KMLTraversalContext tc, KMLAbstractGeometry geom)
-    {
+    protected KMLRenderable selectLinearRingRenderable(KMLTraversalContext tc, KMLAbstractGeometry geom) {
         KMLLinearRing shape = (KMLLinearRing) geom;
 
         if (shape.getCoordinates() == null)
@@ -204,8 +183,7 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
         return impl;
     }
 
-    protected KMLRenderable selectPolygonRenderable(KMLTraversalContext tc, KMLAbstractGeometry geom)
-    {
+    protected KMLRenderable selectPolygonRenderable(KMLTraversalContext tc, KMLAbstractGeometry geom) {
         KMLPolygon shape = (KMLPolygon) geom;
 
         if (shape.getOuterBoundary().getCoordinates() == null)
@@ -223,21 +201,17 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
      * Indicates whether or not an altitude mode equals one of the altitude modes defined in the KML specification.
      *
      * @param altMode Altitude mode test.
-     *
      * @return True if {@code altMode} is one of "clampToGround", "relativeToGround", or "absolute".
      */
-    protected boolean isValidAltitudeMode(String altMode)
-    {
+    protected boolean isValidAltitudeMode(String altMode) {
         return "clampToGround".equals(altMode)
             || "relativeToGround".equals(altMode)
             || "absolute".equals(altMode);
     }
 
     @Override
-    public void applyChange(KMLAbstractObject sourceValues)
-    {
-        if (!(sourceValues instanceof KMLPlacemark))
-        {
+    public void applyChange(KMLAbstractObject sourceValues) {
+        if (!(sourceValues instanceof KMLPlacemark)) {
             String message = Logging.getMessage("KML.InvalidElementType", sourceValues.getClass().getName());
             Logging.logger().warning(message);
             throw new IllegalArgumentException(message);
@@ -253,14 +227,11 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
             this.renderables = null;
         }
 
-        if (placemark.hasStyle())
-        {
+        if (placemark.hasStyle()) {
             Message msg = new Message(KMLAbstractObject.MSG_STYLE_CHANGED, placemark);
 
-            if (this.renderables != null)
-            {
-                for (KMLRenderable renderable : this.renderables)
-                {
+            if (this.renderables != null) {
+                for (KMLRenderable renderable : this.renderables) {
                     renderable.onMessage(msg);
                 }
             }
@@ -268,29 +239,17 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
     }
 
     @Override
-    public void onChange(Message msg)
-    {
-        if (KMLAbstractObject.MSG_GEOMETRY_CHANGED.equals(msg.getName()))
-        {
+    public void onChange(Message msg) {
+        if (KMLAbstractObject.MSG_GEOMETRY_CHANGED.equals(msg.getName())) {
             this.renderables = null;
         }
-        else if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(msg.getName()))
-        {
-            for (KMLRenderable renderable : this.renderables)
-            {
+        else if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(msg.getName())) {
+            for (KMLRenderable renderable : this.renderables) {
                 renderable.onMessage(msg);
             }
         }
 
         super.onChange(msg);
-    }
-    
-    
-    @Override
-    public void setPosition(Position position) {
-        if (this.geometry instanceof KMLMutable) {
-            ((KMLMutable) this.geometry).setPosition(position);
-        }
     }
 
     @Override
@@ -299,6 +258,13 @@ public class KMLPlacemark extends KMLAbstractFeature implements KMLMutable
             return ((KMLMutable) this.geometry).getPosition();
         }
         return null;
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        if (this.geometry instanceof KMLMutable) {
+            ((KMLMutable) this.geometry).setPosition(position);
+        }
     }
 
     @Override

@@ -15,19 +15,15 @@ import javax.xml.stream.events.XMLEvent;
  * @author tag
  * @version $Id: BooleanIntegerXMLEventParser.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class BooleanIntegerXMLEventParser extends AbstractXMLEventParser
-{
-    public BooleanIntegerXMLEventParser()
-    {
+public class BooleanIntegerXMLEventParser extends AbstractXMLEventParser {
+    public BooleanIntegerXMLEventParser() {
     }
 
-    public BooleanIntegerXMLEventParser(String namespaceUri)
-    {
+    public BooleanIntegerXMLEventParser(String namespaceUri) {
         super(namespaceUri);
     }
 
-    public Object parse(XMLEventParserContext ctx, XMLEvent booleanEvent, Object... args) throws XMLStreamException
-    {
+    public Object parse(XMLEventParserContext ctx, XMLEvent booleanEvent, Object... args) throws XMLStreamException {
         String s = this.parseCharacterContent(ctx, booleanEvent);
         if (s == null)
             return false;

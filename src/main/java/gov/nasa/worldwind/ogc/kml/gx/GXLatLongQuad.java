@@ -13,15 +13,12 @@ import gov.nasa.worldwind.ogc.kml.KMLAbstractObject;
  * @author tag
  * @version $Id: GXLatLongQuad.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GXLatLongQuad extends KMLAbstractObject
-{
-    public GXLatLongQuad(String namespaceURI)
-    {
+public class GXLatLongQuad extends KMLAbstractObject {
+    public GXLatLongQuad(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public Position.PositionList getCoordinates()
-    {
+    public Position.PositionList getCoordinates() {
         return (Position.PositionList) this.getField("coordinates");
     }
 }

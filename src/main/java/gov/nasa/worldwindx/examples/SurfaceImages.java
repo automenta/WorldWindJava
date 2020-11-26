@@ -16,7 +16,7 @@ import java.awt.*;
 import java.util.*;
 
 /**
- * This example demonstrates how to use the {@link gov.nasa.worldwind.render.SurfaceImage} class to place images on the
+ * This example demonstrates how to use the {@link SurfaceImage} class to place images on the
  * surface of the globe.
  *
  * @author tag
@@ -24,13 +24,17 @@ import java.util.*;
  */
 public class SurfaceImages extends ApplicationTemplate {
 
+    protected static final String GEORSS_ICON_PATH = "gov/nasa/worldwindx/examples/images/georss.png";
+    protected static final String TEST_PATTERN = "gov/nasa/worldwindx/examples/images/antenna.png";
+
     static {
         IIORegistry reg = IIORegistry.getDefaultInstance();
         reg.registerServiceProvider(GeotiffImageReaderSpi.inst());
     }
 
-    protected static final String GEORSS_ICON_PATH = "gov/nasa/worldwindx/examples/images/georss.png";
-    protected static final String TEST_PATTERN = "gov/nasa/worldwindx/examples/images/antenna.png";
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Surface Images", SurfaceImages.AppFrame.class);
+    }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
@@ -39,16 +43,16 @@ public class SurfaceImages extends ApplicationTemplate {
 
             try {
                 SurfaceImage si1 = new SurfaceImage(GEORSS_ICON_PATH, new ArrayList<>(Arrays.asList(
-                        LatLon.fromDegrees(20d, -115d),
-                        LatLon.fromDegrees(20d, -105d),
-                        LatLon.fromDegrees(32d, -102d),
-                        LatLon.fromDegrees(30d, -115d)
+                    LatLon.fromDegrees(20.0d, -115.0d),
+                    LatLon.fromDegrees(20.0d, -105.0d),
+                    LatLon.fromDegrees(32.0d, -102.0d),
+                    LatLon.fromDegrees(30.0d, -115.0d)
                 )));
                 SurfaceImage si2 = new SurfaceImage(TEST_PATTERN, new ArrayList<>(Arrays.asList(
-                        LatLon.fromDegrees(37.8677, -105.1668),
-                        LatLon.fromDegrees(37.8677, -104.8332),
-                        LatLon.fromDegrees(38.1321, -104.8326),
-                        LatLon.fromDegrees(38.1321, -105.1674)
+                    LatLon.fromDegrees(37.8677, -105.1668),
+                    LatLon.fromDegrees(37.8677, -104.8332),
+                    LatLon.fromDegrees(38.1321, -104.8326),
+                    LatLon.fromDegrees(38.1321, -105.1674)
                 )));
                 Path boundary = new Path(si1.getCorners(), 0);
                 boundary.setSurfacePath(true);
@@ -75,13 +79,10 @@ public class SurfaceImages extends ApplicationTemplate {
                 layer.addRenderable(boundary2);
 
                 insertBeforeCompass(this.getWwd(), layer);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static void main(String[] args) {
-        ApplicationTemplate.start("WorldWind Surface Images", SurfaceImages.AppFrame.class);
     }
 }

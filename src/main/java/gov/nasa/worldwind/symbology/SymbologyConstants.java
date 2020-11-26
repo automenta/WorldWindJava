@@ -15,8 +15,7 @@ import java.util.*;
  * @author dcollins
  * @version $Id: SymbologyConstants.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface SymbologyConstants
-{
+public interface SymbologyConstants {
     /**
      * The MIL-STD-2525 Additional Information modifier field ID.  The meaning of this field is implementation specific.
      * See MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a
@@ -55,7 +54,9 @@ public interface SymbologyConstants
      * and table VII (page 28).
      */
     String AUXILIARY_EQUIPMENT_TOWED_SONAR_ARRAY_SHORT = "NS";
-    /** List containing all recognized MIL-STD-2525 auxiliary equipment codes. */
+    /**
+     * List containing all recognized MIL-STD-2525 auxiliary equipment codes.
+     */
     List<String> AUXILIARY_EQUIPMENT_ALL = Arrays.asList(
         AUXILIARY_EQUIPMENT_TOWED_SONAR_ARRAY_SHORT,
         AUXILIARY_EQUIPMENT_TOWED_SONAR_ARRAY_LONG
@@ -124,7 +125,9 @@ public interface SymbologyConstants
      * determined or cannot be determined. See MIL-STD-2525C section 5.3.1.3 (page 17).
      */
     String BATTLE_DIMENSION_UNKNOWN = "Z";
-    /** List containing all recognized MIL-STD-2525 battle dimension codes. */
+    /**
+     * List containing all recognized MIL-STD-2525 battle dimension codes.
+     */
     List<String> BATTLE_DIMENSION_ALL = Arrays.asList(
         BATTLE_DIMENSION_UNKNOWN,
         BATTLE_DIMENSION_SPACE,
@@ -135,7 +138,9 @@ public interface SymbologyConstants
         BATTLE_DIMENSION_SOF,
         BATTLE_DIMENSION_OTHER
     );
-    /** List containing all recognized MIL-STD-2525 battle dimension codes for the Signals Intelligence scheme. */
+    /**
+     * List containing all recognized MIL-STD-2525 battle dimension codes for the Signals Intelligence scheme.
+     */
     List<String> BATTLE_DIMENSION_ALL_INTELLIGENCE = Arrays.asList(
         BATTLE_DIMENSION_UNKNOWN,
         BATTLE_DIMENSION_SPACE,
@@ -177,24 +182,38 @@ public interface SymbologyConstants
      * scheme.
      */
     String CATEGORY_COMBAT_SERVICE_SUPPORT = "S";
-    /** The MIL-STD-2525 Fire Support category code, used by symbols belonging to the Tactical Graphics scheme. */
+    /**
+     * The MIL-STD-2525 Fire Support category code, used by symbols belonging to the Tactical Graphics scheme.
+     */
     String CATEGORY_FIRE_SUPPORT = "F";
-    /** The MIL-STD-2525 Incident category code, used by symbols belonging to the Emergency Management scheme. */
+    /**
+     * The MIL-STD-2525 Incident category code, used by symbols belonging to the Emergency Management scheme.
+     */
     String CATEGORY_INCIDENT = "I";
-    /** The MIL-STD-2525 Individual category code, used by symbols belonging to the Stability Operations scheme. */
+    /**
+     * The MIL-STD-2525 Individual category code, used by symbols belonging to the Stability Operations scheme.
+     */
     String CATEGORY_INDIVIDUAL = "P";
-    /** The MIL-STD-2525 Infrastructure category code, used by symbols belonging to the Emergency Management scheme. */
+    /**
+     * The MIL-STD-2525 Infrastructure category code, used by symbols belonging to the Emergency Management scheme.
+     */
     String CATEGORY_INFRASTRUCTURE = "F";
-    /** The MIL-STD-2525 Items category code, used by symbols belonging to the Stability Operations scheme. */
+    /**
+     * The MIL-STD-2525 Items category code, used by symbols belonging to the Stability Operations scheme.
+     */
     String CATEGORY_ITEMS = "I";
-    /** The MIL-STD-2525 Locations category code, used by symbols belonging to the Stability Operations scheme. */
+    /**
+     * The MIL-STD-2525 Locations category code, used by symbols belonging to the Stability Operations scheme.
+     */
     String CATEGORY_LOCATIONS = "L";
     /**
      * The MIL-STD-2525 Mobility/Survivability category code, used by symbols belonging to the Tactical Graphics
      * scheme.
      */
     String CATEGORY_MOBILITY_SURVIVABILITY = "M";
-    /** The MIL-STD-2525 Natural Events category code, used by symbols belonging to the Emergency Management scheme. */
+    /**
+     * The MIL-STD-2525 Natural Events category code, used by symbols belonging to the Emergency Management scheme.
+     */
     String CATEGORY_NATURAL_EVENTS = "N";
     /**
      * The MIL-STD-2525 Non-Military Group or Organization category code, used by symbols belonging to the Stability
@@ -206,23 +225,39 @@ public interface SymbologyConstants
      * Management schemes.
      */
     String CATEGORY_OPERATIONS = "O";
-    /** The MIL-STD-2525 Other category code, used by symbols belonging to the Tactical Graphics scheme. */
+    /**
+     * The MIL-STD-2525 Other category code, used by symbols belonging to the Tactical Graphics scheme.
+     */
     String CATEGORY_OTHER = "O";
-    /** The MIL-STD-2525 Rape category code, used by symbols belonging to the Stability Operations scheme. */
+    /**
+     * The MIL-STD-2525 Rape category code, used by symbols belonging to the Stability Operations scheme.
+     */
     String CATEGORY_RAPE = "R";
-    /** The MIL-STD-2525 Tasks category code, used by symbols belonging to the Tactical Graphics scheme. */
+    /**
+     * The MIL-STD-2525 Tasks category code, used by symbols belonging to the Tactical Graphics scheme.
+     */
     String CATEGORY_TASKS = "T";
-    /** The MIL-STD-2525 Violent Activities category code, used by symbols belonging to the Stability Operations scheme. */
+    /**
+     * The MIL-STD-2525 Violent Activities category code, used by symbols belonging to the Stability Operations scheme.
+     */
     String CATEGORY_VIOLENT_ACTIVITIES = "V";
 
-    /** The MIL-STD-2525 Atmospheric category code, used by symbols belonging to the METOC scheme. */
+    /**
+     * The MIL-STD-2525 Atmospheric category code, used by symbols belonging to the METOC scheme.
+     */
     String CATEGORY_ATMOSPHERIC = "A";
-    /** The MIL-STD-2525 Oceanic category code, used by symbols belonging to the METOC scheme. */
+    /**
+     * The MIL-STD-2525 Oceanic category code, used by symbols belonging to the METOC scheme.
+     */
     String CATEGORY_OCEANIC = "O";
-    /** The MIL-STD-2525 Space category code, used by symbols belonging to the METOC scheme. */
+    /**
+     * The MIL-STD-2525 Space category code, used by symbols belonging to the METOC scheme.
+     */
     String CATEGORY_SPACE = "S";
 
-    /** List containing all recognized MIL-STD-2525 category codes. */
+    /**
+     * List containing all recognized MIL-STD-2525 category codes.
+     */
     List<String> CATEGORY_ALL = Arrays.asList(
         // Tactical Graphics category codes.
         CATEGORY_TASKS,
@@ -248,7 +283,9 @@ public interface SymbologyConstants
         CATEGORY_OCEANIC,
         CATEGORY_SPACE
     );
-    /** List containing all recognized MIL-STD-2525 category codes for the Tactical Graphics scheme. */
+    /**
+     * List containing all recognized MIL-STD-2525 category codes for the Tactical Graphics scheme.
+     */
     List<String> CATEGORY_ALL_TACTICAL_GRAPHICS = Arrays.asList(
         CATEGORY_TASKS,
         CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER,
@@ -257,7 +294,9 @@ public interface SymbologyConstants
         CATEGORY_COMBAT_SERVICE_SUPPORT,
         CATEGORY_OTHER
     );
-    /** List containing all recognized MIL-STD-2525 category codes for the Stability Operations scheme. */
+    /**
+     * List containing all recognized MIL-STD-2525 category codes for the Stability Operations scheme.
+     */
     List<String> CATEGORY_ALL_STABILITY_OPERATIONS = Arrays.asList(
         CATEGORY_VIOLENT_ACTIVITIES,
         CATEGORY_LOCATIONS,
@@ -267,14 +306,18 @@ public interface SymbologyConstants
         CATEGORY_NONMILITARY_GROUP_ORGANIZATION,
         CATEGORY_RAPE
     );
-    /** List containing all recognized MIL-STD-2525 category codes for the Emergency Management scheme. */
+    /**
+     * List containing all recognized MIL-STD-2525 category codes for the Emergency Management scheme.
+     */
     List<String> CATEGORY_ALL_EMERGENCY_MANAGEMENT = Arrays.asList(
         CATEGORY_INCIDENT,
         CATEGORY_NATURAL_EVENTS,
         CATEGORY_OPERATIONS,
         CATEGORY_INFRASTRUCTURE
     );
-    /** List containing all recognized MIL-STD-2525 category codes for the Meteorological and Oceanographic scheme. */
+    /**
+     * List containing all recognized MIL-STD-2525 category codes for the Meteorological and Oceanographic scheme.
+     */
     List<String> CATEGORY_ALL_METOC = Arrays.asList(
         CATEGORY_ATMOSPHERIC,
         CATEGORY_OCEANIC,
@@ -407,7 +450,9 @@ public interface SymbologyConstants
      * table V (pages 25-26).
      */
     String ECHELON_REGION = "M";
-    /** List containing all recognized MIL-STD-2525 echelon codes. */
+    /**
+     * List containing all recognized MIL-STD-2525 echelon codes.
+     */
     List<String> ECHELON_ALL = Arrays.asList(
         ECHELON_TEAM_CREW,
         ECHELON_SQUAD,
@@ -487,11 +532,17 @@ public interface SymbologyConstants
      * <ul> <li>GRAPHIC_TYPE_POINT</li> <li>GRAPHIC_TYPE_LINE</li> <li>GRAPHIC_TYPE_AREA</li> </ul>
      */
     String GRAPHIC_TYPE = "gov.nasa.worldwind.symbology.GraphicType";
-    /** The MIL-STD-2525 Point type, used by symbols belonging to the METOC scheme. */
+    /**
+     * The MIL-STD-2525 Point type, used by symbols belonging to the METOC scheme.
+     */
     String GRAPHIC_TYPE_POINT = "P--";
-    /** The MIL-STD-2525 Line type, used by symbols belonging to the METOC scheme. */
+    /**
+     * The MIL-STD-2525 Line type, used by symbols belonging to the METOC scheme.
+     */
     String GRAPHIC_TYPE_LINE = "-L-";
-    /** The MIL-STD-2525 Area type, used by symbols belonging to the METOC scheme. */
+    /**
+     * The MIL-STD-2525 Area type, used by symbols belonging to the METOC scheme.
+     */
     String GRAPHIC_TYPE_AREA = "--A";
     List<String> GRAPHIC_TYPE_ALL = Arrays.asList(
         GRAPHIC_TYPE_POINT,
@@ -525,7 +576,7 @@ public interface SymbologyConstants
      * and include Hostile Enemy modifier in the MIL-STD-2525C graphic template. Use the accessors on TacticalGraphic to
      * enable or disable display of this modifier for a particular graphic.
      *
-     * @see gov.nasa.worldwind.symbology.TacticalGraphic#isShowHostileIndicator()
+     * @see TacticalGraphic#isShowHostileIndicator()
      * @see TacticalGraphic#setShowHostileIndicator(boolean)
      */
     String HOSTILE_ENEMY = "ENY";
@@ -556,9 +607,13 @@ public interface SymbologyConstants
      * 28).
      */
     String INSTALLATION_NORMAL = "H-";
-    /** The MIL-STD-2525 Feint/Dummy installation code. See MIL-STD-2525 section 5.3.4.5 (page 28). */
+    /**
+     * The MIL-STD-2525 Feint/Dummy installation code. See MIL-STD-2525 section 5.3.4.5 (page 28).
+     */
     String INSTALLATION_FEINT_DUMMY = "HB";
-    /** List containing all recognized MIL-STD-2525 installation codes. */
+    /**
+     * List containing all recognized MIL-STD-2525 installation codes.
+     */
     List<String> INSTALLATION_ALL = Arrays.asList(
         INSTALLATION_NORMAL,
         INSTALLATION_FEINT_DUMMY
@@ -593,7 +648,9 @@ public interface SymbologyConstants
      * (pages 26-27).
      */
     String MOBILITY_AMPHIBIOUS = "MY";
-    /** The MIL-STD-2525 Barge mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27). */
+    /**
+     * The MIL-STD-2525 Barge mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27).
+     */
     String MOBILITY_BARGE = "MX";
     /**
      * The MIL-STD-2525 Cross Country mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages
@@ -610,13 +667,21 @@ public interface SymbologyConstants
      * 26-27).
      */
     String MOBILITY_PACK_ANIMALS = "MW";
-    /** The MIL-STD-2525 Rail mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27). */
+    /**
+     * The MIL-STD-2525 Rail mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27).
+     */
     String MOBILITY_RAIL = "MT";
-    /** The MIL-STD-2525 Sled mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27). */
+    /**
+     * The MIL-STD-2525 Sled mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27).
+     */
     String MOBILITY_SLED = "MV";
-    /** The MIL-STD-2525 Towed mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27). */
+    /**
+     * The MIL-STD-2525 Towed mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27).
+     */
     String MOBILITY_TOWED = "MS";
-    /** The MIL-STD-2525 Tracked mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27). */
+    /**
+     * The MIL-STD-2525 Tracked mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27).
+     */
     String MOBILITY_TRACKED = "MQ";
     /**
      * The MIL-STD-2525 Wheeled/Limited Cross Country mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and
@@ -628,7 +693,9 @@ public interface SymbologyConstants
      * table VI (pages 26-27).
      */
     String MOBILITY_WHEELED_TRACKED_COMBINATION = "MR";
-    /** List containing all recognized MIL-STD-2525 mobility codes. */
+    /**
+     * List containing all recognized MIL-STD-2525 mobility codes.
+     */
     List<String> MOBILITY_ALL = Arrays.asList(
         MOBILITY_WHEELED,
         MOBILITY_CROSS_COUNTRY,
@@ -679,7 +746,9 @@ public interface SymbologyConstants
      * task force and a headquarters. Appears in SIDC position 11. See {@link #TASK_FORCE} and {@link #HEADQUARTERS}.
      */
     String MODIFIER_CODE_TASK_FORCE_HEADQUARTERS = "B";
-    /** List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes. */
+    /**
+     * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes.
+     */
     List<String> MODIFIER_CODE_ALL_UEI = Arrays.asList(
         MODIFIER_CODE_HEADQUARTERS,
         MODIFIER_CODE_TASK_FORCE_HEADQUARTERS,
@@ -757,21 +826,37 @@ public interface SymbologyConstants
      * <ul> <li>ORDER_OF_BATTLE_CONTROL_MARKINGS</li> </ul>
      */
     String ORDER_OF_BATTLE = "gov.nasa.worldwind.symbology.OrderOfBattle";
-    /** The MIL-STD-2525 Air order of battle code. */
+    /**
+     * The MIL-STD-2525 Air order of battle code.
+     */
     String ORDER_OF_BATTLE_AIR = "A";
-    /** The MIL-STD-2525 Civilian order of battle code. */
+    /**
+     * The MIL-STD-2525 Civilian order of battle code.
+     */
     String ORDER_OF_BATTLE_CIVILIAN = "C";
-    /** The MIL-STD-2525 Control Markings order of battle code. */
+    /**
+     * The MIL-STD-2525 Control Markings order of battle code.
+     */
     String ORDER_OF_BATTLE_CONTROL_MARKINGS = "X";
-    /** The MIL-STD-2525 Electronic order of battle code. */
+    /**
+     * The MIL-STD-2525 Electronic order of battle code.
+     */
     String ORDER_OF_BATTLE_ELECTRONIC = "E";
-    /** The MIL-STD-2525 Ground order of battle code. */
+    /**
+     * The MIL-STD-2525 Ground order of battle code.
+     */
     String ORDER_OF_BATTLE_GROUND = "G";
-    /** The MIL-STD-2525 Maritime order of battle code. */
+    /**
+     * The MIL-STD-2525 Maritime order of battle code.
+     */
     String ORDER_OF_BATTLE_MARITIME = "N";
-    /** The MIL-STD-2525 Strategic Force Related order of battle code. */
+    /**
+     * The MIL-STD-2525 Strategic Force Related order of battle code.
+     */
     String ORDER_OF_BATTLE_STRATEGIC_FORCE_RELATED = "S";
-    /** List containing all recognized MIL-STD-2525 order of battle codes. */
+    /**
+     * List containing all recognized MIL-STD-2525 order of battle codes.
+     */
     List<String> ORDER_OF_BATTLE_ALL = Arrays.asList(
         ORDER_OF_BATTLE_AIR,
         ORDER_OF_BATTLE_CIVILIAN,
@@ -793,7 +878,9 @@ public interface SymbologyConstants
         ORDER_OF_BATTLE_MARITIME,
         ORDER_OF_BATTLE_STRATEGIC_FORCE_RELATED
     );
-    /** List containing all recognized MIL-STD-2525 order of battle codes for the Tactical Graphics scheme. */
+    /**
+     * List containing all recognized MIL-STD-2525 order of battle codes for the Tactical Graphics scheme.
+     */
     List<String> ORDER_OF_BATTLE_ALL_TACTICAL_GRAPHICS = Collections.singletonList(
         ORDER_OF_BATTLE_CONTROL_MARKINGS
     );
@@ -827,22 +914,34 @@ public interface SymbologyConstants
      * <li>SCHEME_INTELLIGENCE</li> <li>SCHEME_STABILITY_OPERATIONS</li> <li>SCHEME_EMERGENCY_MANAGEMENT</li> </ul>
      */
     String SCHEME = "gov.nasa.worldwind.symbology.Scheme";
-    /** The MIL-STD-2525 Emergency Management (EM) scheme code. See MIL-STD-2525C table G-I (page 1032). */
+    /**
+     * The MIL-STD-2525 Emergency Management (EM) scheme code. See MIL-STD-2525C table G-I (page 1032).
+     */
     String SCHEME_EMERGENCY_MANAGEMENT = "E";
-    /** The MIL-STD-2525 Signals Intelligence (SIGINT) scheme code. See MIL-STD-2525C table D-I (page 964). */
+    /**
+     * The MIL-STD-2525 Signals Intelligence (SIGINT) scheme code. See MIL-STD-2525C table D-I (page 964).
+     */
     String SCHEME_INTELLIGENCE = "I";
-    /** The MIL-STD-2525 Meteorological and Oceanographic (METOC) scheme code. See MIL-STD-2525C table C-I (page 763). */
+    /**
+     * The MIL-STD-2525 Meteorological and Oceanographic (METOC) scheme code. See MIL-STD-2525C table C-I (page 763).
+     */
     String SCHEME_METOC = "W";
-    /** The MIL-STD-2525 Stability Operations (SO) scheme code. See MIL-STD-2525C table E-I (page 991). */
+    /**
+     * The MIL-STD-2525 Stability Operations (SO) scheme code. See MIL-STD-2525C table E-I (page 991).
+     */
     String SCHEME_STABILITY_OPERATIONS = "O";
-    /** The MIL-STD-2525 Tactical Graphics scheme code. See MIL-STD-2525C table B-I (page 305). */
+    /**
+     * The MIL-STD-2525 Tactical Graphics scheme code. See MIL-STD-2525C table B-I (page 305).
+     */
     String SCHEME_TACTICAL_GRAPHICS = "G";
     /**
      * The MIL-STD-2525 Warfighting scheme code. This scheme is also referred to as Units, Equipment, and Installations
      * (UEI). See MIL-STD-2525C table A-I (page 51).
      */
     String SCHEME_WARFIGHTING = "S";
-    /** List containing all recognized MIL-STD-2525 scheme codes. */
+    /**
+     * List containing all recognized MIL-STD-2525 scheme codes.
+     */
     List<String> SCHEME_ALL = Arrays.asList(
         SCHEME_WARFIGHTING,
         SCHEME_TACTICAL_GRAPHICS,
@@ -873,7 +972,7 @@ public interface SymbologyConstants
 
     /**
      * @deprecated Use {@link TacticalSymbol#setShowLocation(boolean)} to control the visibility of the location
-     *             modifier.
+     * modifier.
      */
     @Deprecated
     String SHOW_LOCATION = "gov.nasa.worldwind.symbology.ShowLocation";
@@ -1006,7 +1105,9 @@ public interface SymbologyConstants
      * See MIL-STD-2525C section 3.2.49 (page 10).
      */
     String STANDARD_IDENTITY_UNKNOWN = "U";
-    /** List containing all recognized MIL-STD-2525 standard identity codes. */
+    /**
+     * List containing all recognized MIL-STD-2525 standard identity codes.
+     */
     List<String> STANDARD_IDENTITY_ALL = Arrays.asList(
         STANDARD_IDENTITY_PENDING,
         STANDARD_IDENTITY_UNKNOWN,
@@ -1030,9 +1131,13 @@ public interface SymbologyConstants
      * <ul> <li>STATIC</li> <li>DYNAMIC</li> </ul>
      */
     String STATIC_DYNAMIC = "gov.nasa.worldwind.symbology.StaticDynamic";
-    /** The MIL-STD-2525 Static, used by symbols belonging to the METOC scheme. */
+    /**
+     * The MIL-STD-2525 Static, used by symbols belonging to the METOC scheme.
+     */
     String STATIC = "S-";
-    /** The MIL-STD-2525 Dynamic, used by symbols belonging to the METOC scheme. */
+    /**
+     * The MIL-STD-2525 Dynamic, used by symbols belonging to the METOC scheme.
+     */
     String DYNAMIC = "-D";
     List<String> STATIC_DYNAMIC_ALL = Arrays.asList(
         STATIC,
@@ -1066,7 +1171,9 @@ public interface SymbologyConstants
      * exist at the symbol's location. See MIL-STD-2525C section 5.3.1.4 (pages 17-18).
      */
     String STATUS_ANTICIPATED = "A";
-    /** The MIL-STD-2525 Known status code. See MIL-STD-2525C table B-I (page 305). */
+    /**
+     * The MIL-STD-2525 Known status code. See MIL-STD-2525C table B-I (page 305).
+     */
     String STATUS_KNOWN = "K";
     /**
      * The MIL-STD-2525 Present/Fully Capable status code. Indicates a symbol who's represented object currently exists
@@ -1098,7 +1205,9 @@ public interface SymbologyConstants
      * symbol's location. See MIL-STD-2525C section 5.3.1.4 (pages 17-18).
      */
     String STATUS_SUSPECTED = "S";
-    /** List containing all recognized MIL-STD-2525 status codes. */
+    /**
+     * List containing all recognized MIL-STD-2525 status codes.
+     */
     List<String> STATUS_ALL = Arrays.asList(
         // UEI, SIGINT, SO, and EM status codes.
         STATUS_ANTICIPATED,

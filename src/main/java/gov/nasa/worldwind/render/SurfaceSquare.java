@@ -12,14 +12,12 @@ import gov.nasa.worldwind.util.Logging;
  * @author dcollins
  * @version $Id: SurfaceSquare.java 2302 2014-09-08 20:40:47Z tgaskins $
  */
-public class SurfaceSquare extends SurfaceQuad
-{
+public class SurfaceSquare extends SurfaceQuad {
     /**
      * Constructs a new surface square with the default attributes, default center location, default size, and default
      * heading.
      */
-    public SurfaceSquare()
-    {
+    public SurfaceSquare() {
     }
 
     /**
@@ -27,8 +25,7 @@ public class SurfaceSquare extends SurfaceQuad
      *
      * @param source the shape to copy.
      */
-    public SurfaceSquare(SurfaceSquare source)
-    {
+    public SurfaceSquare(SurfaceSquare source) {
         super(source);
     }
 
@@ -39,8 +36,7 @@ public class SurfaceSquare extends SurfaceQuad
      *
      * @param normalAttrs the normal attributes. May be null, in which case default attributes are used.
      */
-    public SurfaceSquare(ShapeAttributes normalAttrs)
-    {
+    public SurfaceSquare(ShapeAttributes normalAttrs) {
         super(normalAttrs);
     }
 
@@ -49,11 +45,9 @@ public class SurfaceSquare extends SurfaceQuad
      *
      * @param center the square's center location.
      * @param size   the square's width and height, in meters.
-     *
      * @throws IllegalArgumentException if the center is null, or if the size is negative.
      */
-    public SurfaceSquare(LatLon center, double size)
-    {
+    public SurfaceSquare(LatLon center, double size) {
         super(center, size, size);
     }
 
@@ -64,11 +58,9 @@ public class SurfaceSquare extends SurfaceQuad
      * @param center  the square's center location.
      * @param size    the square's width and height, in meters.
      * @param heading the square's heading, clockwise from North.
-     *
      * @throws IllegalArgumentException if the center or heading are null, or if the size is negative.
      */
-    public SurfaceSquare(LatLon center, double size, Angle heading)
-    {
+    public SurfaceSquare(LatLon center, double size, Angle heading) {
         super(center, size, size, heading);
     }
 
@@ -80,11 +72,9 @@ public class SurfaceSquare extends SurfaceQuad
      * @param normalAttrs the normal attributes. May be null, in which case default attributes are used.
      * @param center      the square's center location.
      * @param size        the square's width and height, in meters.
-     *
      * @throws IllegalArgumentException if the center is null, or if the size is negative.
      */
-    public SurfaceSquare(ShapeAttributes normalAttrs, LatLon center, double size)
-    {
+    public SurfaceSquare(ShapeAttributes normalAttrs, LatLon center, double size) {
         super(normalAttrs, center, size, size);
     }
 
@@ -97,23 +87,18 @@ public class SurfaceSquare extends SurfaceQuad
      * @param center      the square's center location.
      * @param size        the square's width and height, in meters.
      * @param heading     the square's heading, clockwise from North.
-     *
      * @throws IllegalArgumentException if the center or heading are null, or if the size is negative.
      */
-    public SurfaceSquare(ShapeAttributes normalAttrs, LatLon center, double size, Angle heading)
-    {
+    public SurfaceSquare(ShapeAttributes normalAttrs, LatLon center, double size, Angle heading) {
         super(normalAttrs, center, size, size, heading);
     }
 
-    public double getSize()
-    {
+    public double getSize() {
         return this.getWidth();
     }
 
-    public void setSize(double size)
-    {
-        if (size < 0)
-        {
+    public void setSize(double size) {
+        if (size < 0) {
             String message = Logging.getMessage("Geom.SizeIsNegative", size);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);

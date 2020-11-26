@@ -15,16 +15,13 @@ import java.util.Objects;
  * @author tag
  * @version $Id: ScreenCreditImage.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ScreenCreditImage extends ScreenImage implements ScreenCredit
-{
+public class ScreenCreditImage extends ScreenImage implements ScreenCredit {
     private String name;
     private String link;
     private Rectangle viewport;
 
-    public ScreenCreditImage(String name, Object imageSource)
-    {
-        if (imageSource == null)
-        {
+    public ScreenCreditImage(String name, Object imageSource) {
+        if (imageSource == null) {
             String msg = Logging.getMessage("nullValue.ImageSource");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -34,10 +31,20 @@ public class ScreenCreditImage extends ScreenImage implements ScreenCredit
         this.setImageSource(imageSource);
     }
 
-    public void setViewport(Rectangle viewport)
-    {
-        if (viewport == null)
-        {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Rectangle getViewport() {
+        return this.viewport;
+    }
+
+    public void setViewport(Rectangle viewport) {
+        if (viewport == null) {
             String msg = Logging.getMessage("nullValue.ViewportIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -47,47 +54,27 @@ public class ScreenCreditImage extends ScreenImage implements ScreenCredit
         this.setScreenLocation(new Point(viewport.x, viewport.y));
     }
 
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public Rectangle getViewport()
-    {
-        return this.viewport;
-    }
-
-    public void setLink(String link)
-    {
-        this.link = link;
-    }
-
-    public String getLink()
-    {
+    public String getLink() {
         return this.link;
     }
 
+    public void setLink(String link) {
+        this.link = link;
+    }
+
     @Override
-    public int getImageWidth(DrawContext dc)
-    {
+    public int getImageWidth(DrawContext dc) {
         return (int) this.getViewport().getWidth();
     }
 
     @Override
-    public int getImageHeight(DrawContext dc)
-    {
+    public int getImageHeight(DrawContext dc) {
         return (int) this.getViewport().getHeight();
     }
 
-    @SuppressWarnings({"RedundantIfStatement"})
+    @SuppressWarnings("RedundantIfStatement")
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -102,8 +89,7 @@ public class ScreenCreditImage extends ScreenImage implements ScreenCredit
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return name != null ? name.hashCode() : 0;
     }
 }

@@ -19,8 +19,7 @@ import java.util.*;
  * @author Tom Gaskins
  * @version $Id: SceneController.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface SceneController extends WWObject, Disposable
-{
+public interface SceneController extends WWObject, Disposable {
     /**
      * Indicates the scene controller's model. This returns <code>null</code> if the scene controller has no model.
      *
@@ -55,16 +54,9 @@ public interface SceneController extends WWObject, Disposable
      * Cause the window to regenerate the frame, including pick resolution.
      *
      * @return if greater than zero, the window should be automatically repainted again at the indicated number of
-     *         milliseconds from this method's return.
+     * milliseconds from this method's return.
      */
     int repaint();
-
-    /**
-     * Specifies the exaggeration to apply to elevation values of terrain and other displayed items.
-     *
-     * @param verticalExaggeration the vertical exaggeration to apply.
-     */
-    void setVerticalExaggeration(double verticalExaggeration);
 
     /**
      * Indicates the current vertical exaggeration.
@@ -72,6 +64,13 @@ public interface SceneController extends WWObject, Disposable
      * @return the current vertical exaggeration.
      */
     double getVerticalExaggeration();
+
+    /**
+     * Specifies the exaggeration to apply to elevation values of terrain and other displayed items.
+     *
+     * @param verticalExaggeration the vertical exaggeration to apply.
+     */
+    void setVerticalExaggeration(double verticalExaggeration);
 
     /**
      * Returns the list of picked objects at the current pick point. The returned list is computed during the most
@@ -86,7 +85,7 @@ public interface SceneController extends WWObject, Disposable
      * during the most recent call to repaint.
      *
      * @return the list of picked objects intersecting the pick rectangle, or null if no objects are currently
-     *         intersecting the rectangle.
+     * intersecting the rectangle.
      */
     PickedObjectList getObjectsInPickRectangle();
 
@@ -106,6 +105,14 @@ public interface SceneController extends WWObject, Disposable
     double getFrameTime();
 
     /**
+     * Returns the current pick point in AWT screen coordinates.
+     *
+     * @return the current pick point, or <code>null</code> if no pick point is current.
+     * @see #setPickPoint(Point)
+     */
+    Point getPickPoint();
+
+    /**
      * Specifies the current pick point in AWT screen coordinates, or <code>null</code> to indicate that there is no
      * pick point. Each frame, this scene controller determines which objects are drawn at the pick point and places
      * them in a PickedObjectList. This list can be accessed by calling {@link #getPickedObjectList()}.
@@ -118,13 +125,12 @@ public interface SceneController extends WWObject, Disposable
     void setPickPoint(Point pickPoint);
 
     /**
-     * Returns the current pick point in AWT screen coordinates.
+     * Returns the current pick rectangle in AWT screen coordinates.
      *
-     * @return the current pick point, or <code>null</code> if no pick point is current.
-     *
-     * @see #setPickPoint(java.awt.Point)
+     * @return the current pick rectangle, or <code>null</code> if no pick rectangle is current.
+     * @see #setPickRectangle(Rectangle)
      */
-    Point getPickPoint();
+    Rectangle getPickRectangle();
 
     /**
      * Specifies the current pick rectangle in AWT screen coordinates, or <code>null</code> to indicate that there is no
@@ -139,13 +145,12 @@ public interface SceneController extends WWObject, Disposable
     void setPickRectangle(Rectangle pickRect);
 
     /**
-     * Returns the current pick rectangle in AWT screen coordinates.
+     * Indicates whether all items under the cursor are identified during picking and within {@link
+     * gov.nasa.worldwind.event.SelectEvent}s.
      *
-     * @return the current pick rectangle, or <code>null</code> if no pick rectangle is current.
-     *
-     * @see #setPickRectangle(java.awt.Rectangle)
+     * @return true if all items under the cursor are identified during picking, otherwise false.
      */
-    Rectangle getPickRectangle();
+    boolean isDeepPickEnabled();
 
     /**
      * Specifies whether all items under the cursor are identified during picking and within {@link
@@ -156,12 +161,11 @@ public interface SceneController extends WWObject, Disposable
     void setDeepPickEnabled(boolean tf);
 
     /**
-     * Indicates whether all items under the cursor are identified during picking and within {@link
-     * gov.nasa.worldwind.event.SelectEvent}s.
+     * Returns this scene controller's GPU Resource cache.
      *
-     * @return true if all items under the cursor are identified during picking, otherwise false.
+     * @return this scene controller's GPU Resource cache.
      */
-    boolean isDeepPickEnabled();
+    GpuResourceCache getGpuResourceCache();
 
     /**
      * Specifies the GPU Resource cache to use.
@@ -171,13 +175,6 @@ public interface SceneController extends WWObject, Disposable
     void setGpuResourceCache(GpuResourceCache gpuResourceCache);
 
     /**
-     * Returns this scene controller's GPU Resource cache.
-     *
-     * @return this scene controller's GPU Resource cache.
-     */
-    GpuResourceCache getGpuResourceCache();
-
-    /**
      * Returns the current per-frame statistics.
      *
      * @return the current per-frame statistics.
@@ -185,7 +182,7 @@ public interface SceneController extends WWObject, Disposable
     Collection<PerformanceStatistic> getPerFrameStatistics();
 
     /**
-     * Specifies the performance values to monitor. See {@link gov.nasa.worldwind.util.PerformanceStatistic} for the
+     * Specifies the performance values to monitor. See {@link PerformanceStatistic} for the
      * available keys.
      *
      * @param keys the performance statistic keys to monitor.
@@ -194,7 +191,7 @@ public interface SceneController extends WWObject, Disposable
 
     /**
      * Returns the rendering exceptions accumulated by this SceneController during the last frame as a {@link
-     * java.util.Collection} of {@link Throwable} objects.
+     * Collection} of {@link Throwable} objects.
      *
      * @return the Collection of accumulated rendering exceptions.
      */
@@ -215,20 +212,21 @@ public interface SceneController extends WWObject, Disposable
      */
     DrawContext getDrawContext();
 
-    /** Reinitializes the scene controller. */
+    /**
+     * Reinitializes the scene controller.
+     */
     void reinitialize();
 
     /**
      * Returns the current screen credit controller.
      *
      * @return the current screen credit controller. May be null.
-     *
-     * @see #setScreenCreditController(gov.nasa.worldwind.render.ScreenCreditController)
+     * @see #setScreenCreditController(ScreenCreditController)
      */
     ScreenCreditController getScreenCreditController();
 
     /**
-     * Specifies the {@link gov.nasa.worldwind.render.ScreenCreditController} to use for displaying screen credits for
+     * Specifies the {@link ScreenCreditController} to use for displaying screen credits for
      * the model of this screen controller.
      *
      * @param screenCreditRenderer the screen credit controller. May be null, in which case screen credits are not
@@ -247,7 +245,6 @@ public interface SceneController extends WWObject, Disposable
      * Sets the {@link GLRuntimeCapabilities} associated with this SceneController to the specified parameter.
      *
      * @param capabilities the GLRuntimeCapabilities to be associated with this SceneController.
-     *
      * @throws IllegalArgumentException if the capabilities are null.
      */
     void setGLRuntimeCapabilities(GLRuntimeCapabilities capabilities);

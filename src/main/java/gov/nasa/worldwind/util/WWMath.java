@@ -24,24 +24,23 @@ import java.util.*;
  * @author tag
  * @version $Id: WWMath.java 2191 2014-08-01 23:28:20Z dcollins $
  */
-public class WWMath
-{
+public class WWMath {
     public static final double SECOND_TO_MILLIS = 1000.0;
     public static final double MINUTE_TO_MILLIS = 60.0 * SECOND_TO_MILLIS;
     public static final double HOUR_TO_MILLIS = 60.0 * MINUTE_TO_MILLIS;
     public static final double DAY_TO_MILLIS = 24.0 * HOUR_TO_MILLIS;
 
-    public static final double METERS_TO_KILOMETERS = 1e-3;
+    public static final double METERS_TO_KILOMETERS = 1.0e-3;
     public static final double METERS_TO_MILES = 0.000621371192;
     public static final double METERS_TO_NAUTICAL_MILES = 0.000539956803;
     public static final double METERS_TO_YARDS = 1.0936133;
     public static final double METERS_TO_FEET = 3.280839895;
 
-    public static final double SQUARE_METERS_TO_SQUARE_KILOMETERS = 1e-6;
+    public static final double SQUARE_METERS_TO_SQUARE_KILOMETERS = 1.0e-6;
     public static final double SQUARE_METERS_TO_SQUARE_MILES = 3.86102159e-7;
     public static final double SQUARE_METERS_TO_SQUARE_YARDS = 1.19599005;
     public static final double SQUARE_METERS_TO_SQUARE_FEET = 10.7639104;
-    public static final double SQUARE_METERS_TO_HECTARES = 1e-4;
+    public static final double SQUARE_METERS_TO_HECTARES = 1.0e-4;
     public static final double SQUARE_METERS_TO_ACRES = 0.000247105381;
 
     public static final LatLon LONGITUDE_OFFSET_180 = LatLon.fromDegrees(0, 180);
@@ -50,23 +49,19 @@ public class WWMath
      * Convenience method to compute the log base 2 of a value.
      *
      * @param value the value to take the log of.
-     *
      * @return the log base 2 of the specified value.
      */
-    public static double logBase2(double value)
-    {
-        return Math.log(value) / Math.log(2d);
+    public static double logBase2(double value) {
+        return Math.log(value) / Math.log(2.0d);
     }
 
     /**
      * Convenience method for testing whether a value is a power of two.
      *
      * @param value the value to test for power of 2
-     *
      * @return true if power of 2, else false
      */
-    public static boolean isPowerOfTwo(int value)
-    {
+    public static boolean isPowerOfTwo(int value) {
         return (value == powerOfTwoCeiling(value));
     }
 
@@ -74,26 +69,22 @@ public class WWMath
      * Returns the value that is the nearest power of 2 greater than or equal to the given value.
      *
      * @param reference the reference value. The power of 2 returned is greater than or equal to this value.
-     *
      * @return the value that is the nearest power of 2 greater than or equal to the reference value
      */
-    public static int powerOfTwoCeiling(int reference)
-    {
-        int power = (int) Math.ceil(Math.log(reference) / Math.log(2d));
-        return (int) Math.pow(2d, power);
+    public static int powerOfTwoCeiling(int reference) {
+        int power = (int) Math.ceil(Math.log(reference) / Math.log(2.0d));
+        return (int) Math.pow(2.0d, power);
     }
 
     /**
      * Returns the value that is the nearest power of 2 less than or equal to the given value.
      *
      * @param reference the reference value. The power of 2 returned is less than or equal to this value.
-     *
      * @return the value that is the nearest power of 2 less than or equal to the reference value
      */
-    public static int powerOfTwoFloor(int reference)
-    {
-        int power = (int) Math.floor(Math.log(reference) / Math.log(2d));
-        return (int) Math.pow(2d, power);
+    public static int powerOfTwoFloor(int reference) {
+        int power = (int) Math.floor(Math.log(reference) / Math.log(2.0d));
+        return (int) Math.pow(2.0d, power);
     }
 
     /**
@@ -101,17 +92,14 @@ public class WWMath
      *
      * @param base      the number whose powers to compute.
      * @param numPowers the number of powers to compute.
-     *
      * @return an array containing the requested values. Each element contains the value b^i, where b is the base and i
-     *         is the element number (0, 1, etc.).
+     * is the element number (0, 1, etc.).
      */
-    protected static int[] computePowers(int base, int numPowers)
-    {
+    protected static int[] computePowers(int base, int numPowers) {
         int[] powers = new int[numPowers];
 
         powers[0] = 1;
-        for (int i = 1; i < numPowers; i++)
-        {
+        for (int i = 1; i < numPowers; i++) {
             powers[i] += base * powers[i - 1];
         }
 
@@ -124,11 +112,9 @@ public class WWMath
      * @param v   the value to clamp.
      * @param min the floor.
      * @param max the ceiling
-     *
      * @return the nearest value such that min &lt;= v &lt;= max.
      */
-    public static double clamp(double v, double min, double max)
-    {
+    public static double clamp(double v, double min, double max) {
         return v < min ? min : Math.min(v, max);
     }
 
@@ -138,11 +124,9 @@ public class WWMath
      * @param v   the value to clamp.
      * @param min the floor.
      * @param max the ceiling
-     *
      * @return the nearest value such that min &lt;= v &lt;= max.
      */
-    public static int clamp(int v, int min, int max)
-    {
+    public static int clamp(int v, int min, int max) {
         return v < min ? min : Math.min(v, max);
     }
 
@@ -158,25 +142,20 @@ public class WWMath
      * @param value the value to compare to the minimum and maximum.
      * @param min   the minimum value.
      * @param max   the maximum value.
-     *
      * @return a floating point number between 0.0 and 1.0, inclusive.
      */
-    public static double stepValue(double value, double min, double max)
-    {
+    public static double stepValue(double value, double min, double max) {
         // Note: when min==max this returns 0 if the value is on or before the min, and 1 if the value is after the max.
         // The case that would cause a divide by zero error is never evaluated. The value is always less than, equal to,
         // or greater than the min/max.
 
-        if (value <= min)
-        {
+        if (value <= min) {
             return 0;
         }
-        else if (value >= max)
-        {
+        else if (value >= max) {
             return 1;
         }
-        else
-        {
+        else {
             return (value - min) / (max - min);
         }
     }
@@ -198,25 +177,20 @@ public class WWMath
      * @param value the value to compare to the minimum and maximum.
      * @param min   the minimum value.
      * @param max   the maximum value.
-     *
      * @return a floating point number between 0.0 and 1.0, inclusive.
      */
-    public static double smoothStepValue(double value, double min, double max)
-    {
+    public static double smoothStepValue(double value, double min, double max) {
         // When the min and max are equivalent this cannot distinguish between the two. In this case, this returns 0 if
         // the value is on or before the min, and 1 if the value is after the max. The case that would cause a divide by
         // zero error is never evaluated. The value is always less than, equal to, or greater than the min/max.
 
-        if (value <= min)
-        {
+        if (value <= min) {
             return 0;
         }
-        else if (value >= max)
-        {
+        else if (value >= max) {
             return 1;
         }
-        else
-        {
+        else {
             double step = (value - min) / (max - min);
             return step * step * (3 - 2 * step);
         }
@@ -225,36 +199,34 @@ public class WWMath
     /**
      * Returns the interpolation factor for <code>v</code> given the specified range <code>[x, y]</code>. The
      * interpolation factor is a number between 0 and 1 (inclusive), representing the value's relative position between
-     * <code>x</code> and <code>y</code>. For example, 0 corresponds to <code>x</code>, 1 corresponds to <code>y</code>,
+     * <code>x</code> and <code>y</code>. For example, 0 corresponds to <code>x</code>, 1 corresponds to
+     * <code>y</code>,
      * and anything in between corresponds to a linear combination of <code>x</code> and <code>y</code>.
      *
      * @param v the value to compute the interpolation factor for.
      * @param x the first value.
      * @param y the second value.
-     *
      * @return the interpolation factor for <code>v</code> given the specified range <code>[x, y]</code>
      */
-    public static double computeInterpolationFactor(double v, double x, double y)
-    {
-        return clamp((v - x) / (y - x), 0d, 1d);
+    public static double computeInterpolationFactor(double v, double x, double y) {
+        return clamp((v - x) / (y - x), 0.0d, 1.0d);
     }
 
     /**
      * Returns the linear interpolation of <code>x</code> and <code>y</code> according to the function: <code>(1 - a) *
      * x + a * y</code>. The interpolation factor <code>a</code> defines the weight given to each value, and is clamped
-     * to the range [0, 1]. If <code>a</code> is 0 or less, this returns x. If <code>a</code> is 1 or more, this returns
+     * to the range [0, 1]. If <code>a</code> is 0 or less, this returns x. If <code>a</code> is 1 or more, this
+     * returns
      * <code>y</code>. Otherwise, this returns the linear interpolation of <code>x</code> and <code>y</code>. For
      * example, when <code>a</code> is <code>0.5</code> this returns <code>(x + y)/2</code>.
      *
      * @param a the interpolation factor.
      * @param x the first value.
      * @param y the second value.
-     *
      * @return the linear interpolation of <code>x</code> and <code>y</code>.
      */
-    public static double mix(double a, double x, double y)
-    {
-        double t = clamp(a, 0d, 1d);
+    public static double mix(double a, double x, double y) {
+        double t = clamp(a, 0.0d, 1.0d);
         return x + t * (y - x);
     }
 
@@ -272,13 +244,11 @@ public class WWMath
      * @param a the interpolation factor.
      * @param x the first value.
      * @param y the second value.
-     *
      * @return the smooth hermite interpolation of <code>x</code> and <code>y</code>.
      */
-    public static double mixSmooth(double a, double x, double y)
-    {
-        double t = clamp(a, 0d, 1d);
-        t = t * t * (3d - 2d * t);
+    public static double mixSmooth(double a, double x, double y) {
+        double t = clamp(a, 0.0d, 1.0d);
+        t = t * t * (3.0d - 2.0d * t);
         return x + t * (y - x);
     }
 
@@ -286,11 +256,9 @@ public class WWMath
      * converts meters to feet.
      *
      * @param meters the value in meters.
-     *
      * @return the value converted to feet.
      */
-    public static double convertMetersToFeet(double meters)
-    {
+    public static double convertMetersToFeet(double meters) {
         return (meters * METERS_TO_FEET);
     }
 
@@ -298,11 +266,9 @@ public class WWMath
      * converts meters to miles.
      *
      * @param meters the value in meters.
-     *
      * @return the value converted to miles.
      */
-    public static double convertMetersToMiles(double meters)
-    {
+    public static double convertMetersToMiles(double meters) {
         return (meters * METERS_TO_MILES);
     }
 
@@ -310,11 +276,9 @@ public class WWMath
      * Converts distance in feet to distance in meters.
      *
      * @param feet the distance in feet.
-     *
      * @return the distance converted to meters.
      */
-    public static double convertFeetToMeters(double feet)
-    {
+    public static double convertFeetToMeters(double feet) {
         return (feet / METERS_TO_FEET);
     }
 
@@ -322,11 +286,9 @@ public class WWMath
      * Converts time in seconds to time in milliseconds.
      *
      * @param seconds time in seconds.
-     *
      * @return time in milliseconds.
      */
-    public static double convertSecondsToMillis(double seconds)
-    {
+    public static double convertSecondsToMillis(double seconds) {
         return (seconds * SECOND_TO_MILLIS);
     }
 
@@ -334,11 +296,9 @@ public class WWMath
      * Converts time in milliseconds to time in seconds.
      *
      * @param millis time in milliseconds.
-     *
      * @return time in seconds.
      */
-    public static double convertMillisToSeconds(double millis)
-    {
+    public static double convertMillisToSeconds(double millis) {
         return millis / SECOND_TO_MILLIS;
     }
 
@@ -346,11 +306,9 @@ public class WWMath
      * Converts time in minutes to time in milliseconds.
      *
      * @param minutes time in minutes.
-     *
      * @return time in milliseconds.
      */
-    public static double convertMinutesToMillis(double minutes)
-    {
+    public static double convertMinutesToMillis(double minutes) {
         return (minutes * MINUTE_TO_MILLIS);
     }
 
@@ -358,11 +316,9 @@ public class WWMath
      * Converts time in milliseconds to time in minutes.
      *
      * @param millis time in milliseconds.
-     *
      * @return time in minutes.
      */
-    public static double convertMillisToMinutes(double millis)
-    {
+    public static double convertMillisToMinutes(double millis) {
         return millis / MINUTE_TO_MILLIS;
     }
 
@@ -370,11 +326,9 @@ public class WWMath
      * Converts time in hours to time in milliseconds.
      *
      * @param hours time in hours.
-     *
      * @return time in milliseconds.
      */
-    public static double convertHoursToMillis(double hours)
-    {
+    public static double convertHoursToMillis(double hours) {
         return (hours * HOUR_TO_MILLIS);
     }
 
@@ -382,11 +336,9 @@ public class WWMath
      * Converts time in milliseconds to time in hours.
      *
      * @param mills time in milliseconds.
-     *
      * @return time in hours.
      */
-    public static double convertMillisToHours(double mills)
-    {
+    public static double convertMillisToHours(double mills) {
         return mills / HOUR_TO_MILLIS;
     }
 
@@ -394,11 +346,9 @@ public class WWMath
      * Convert time in days to time in milliseconds.
      *
      * @param millis time in days.
-     *
      * @return time in milliseconds.
      */
-    public static double convertDaysToMillis(double millis)
-    {
+    public static double convertDaysToMillis(double millis) {
         return millis * DAY_TO_MILLIS;
     }
 
@@ -406,68 +356,56 @@ public class WWMath
      * Convert time in milliseconds to time in days.
      *
      * @param millis time in milliseconds.
-     *
      * @return time in days.
      */
-    public static double convertMillisToDays(double millis)
-    {
+    public static double convertMillisToDays(double millis) {
         return millis / DAY_TO_MILLIS;
     }
 
     /**
-     * Returns the distance in model coordinates from the {@link gov.nasa.worldwind.View} eye point to the specified
-     * {@link gov.nasa.worldwind.geom.Extent}. If the View eye point is inside the extent, this returns 0.
+     * Returns the distance in model coordinates from the {@link View} eye point to the specified
+     * {@link Extent}. If the View eye point is inside the extent, this returns 0.
      *
-     * @param dc     the {@link gov.nasa.worldwind.render.DrawContext} which the View eye point is obtained from.
+     * @param dc     the {@link DrawContext} which the View eye point is obtained from.
      * @param extent the extent to compute the distance from.
-     *
      * @return the distance from the View eye point to the extent, in model coordinates.
-     *
      * @throws IllegalArgumentException if either the DrawContext or the extent is null.
      */
-    public static double computeDistanceFromEye(DrawContext dc, Extent extent)
-    {
-        if (dc == null)
-        {
+    public static double computeDistanceFromEye(DrawContext dc, Extent extent) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (extent == null)
-        {
+        if (extent == null) {
             String message = Logging.getMessage("nullValue.ExtentIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         double distance = dc.getView().getEyePoint().distanceTo3(extent.getCenter()) - extent.getRadius();
-        return Math.max(distance, 0d);
+        return Math.max(distance, 0.0d);
     }
 
     /**
-     * Returns the size in window coordinates of the specified {@link gov.nasa.worldwind.geom.Extent} from the current
-     * {@link gov.nasa.worldwind.View}. The returned size is an estimate of the Extent's diameter in window
+     * Returns the size in window coordinates of the specified {@link Extent} from the current
+     * {@link View}. The returned size is an estimate of the Extent's diameter in window
      * coordinates.
      *
      * @param dc     the current draw context, from which the View is obtained from.
      * @param extent the extent to compute the window size for.
-     *
      * @return size of the specified Extent from the specified View, in window coordinates (screen pixels).
-     *
      * @throws IllegalArgumentException if either the DrawContext or the extent is null.
      */
-    public static double computeSizeInWindowCoordinates(DrawContext dc, Extent extent)
-    {
-        if (dc == null)
-        {
+    public static double computeSizeInWindowCoordinates(DrawContext dc, Extent extent) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (extent == null)
-        {
+        if (extent == null) {
             String message = Logging.getMessage("nullValue.ExtentIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -486,7 +424,7 @@ public class WWMath
 
         double distance = dc.getView().getEyePoint().distanceTo3(extent.getCenter());
         double pixelSize = dc.getView().computePixelSizeAtDistance(distance);
-        return 2d * extent.getRadius() / pixelSize;
+        return 2.0d * extent.getRadius() / pixelSize;
     }
 
     /**
@@ -500,30 +438,24 @@ public class WWMath
      * @param view   the <code>View</code> for which to compute a projected screen area.
      * @param center the sphere's center point, in model coordinates.
      * @param radius the sphere's radius, in meters.
-     *
      * @return the projected screen area of the sphere in square pixels.
-     *
      * @throws IllegalArgumentException if the <code>view</code> is <code>null</code>, if <code>center</code> is
      *                                  <code>null</code>, or if <code>radius</code> is less than zero.
      */
-    public static double computeSphereProjectedArea(View view, Vec4 center, double radius)
-    {
-        if (view == null)
-        {
+    public static double computeSphereProjectedArea(View view, Vec4 center, double radius) {
+        if (view == null) {
             String message = Logging.getMessage("nullValue.ViewIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (center == null)
-        {
+        if (center == null) {
             String message = Logging.getMessage("nullValue.CenterIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (radius < 0)
-        {
+        if (radius < 0) {
             String message = Logging.getMessage("Geom.RadiusIsNegative", radius);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -552,11 +484,9 @@ public class WWMath
      * @param coords the coordinates. This method returns null if this argument is null.
      * @param stride the number of floats between successive points. 0 indicates that the points are arranged one
      *               immediately after the other.
-     *
      * @return the computed unit-length normal vector, or null if a normal vector could not be computed.
      */
-    public static Vec4 computeBufferNormal(FloatBuffer coords, int stride)
-    {
+    public static Vec4 computeBufferNormal(FloatBuffer coords, int stride) {
         Vec4[] verts = WWMath.findThreeIndependentVertices(coords, stride);
         return verts != null ? WWMath.computeTriangleNormal(verts[0], verts[1], verts[2]) : null;
     }
@@ -566,11 +496,9 @@ public class WWMath
      * three non-colinear points in the array.
      *
      * @param coords the coordinates. This method returns null if this argument is null.
-     *
      * @return the computed unit-length normal vector, or null if a normal vector could not be computed.
      */
-    public static Vec4 computeArrayNormal(Vec4[] coords)
-    {
+    public static Vec4 computeArrayNormal(Vec4[] coords) {
         Vec4[] verts = WWMath.findThreeIndependentVertices(coords);
         return verts != null ? WWMath.computeTriangleNormal(verts[0], verts[1], verts[2]) : null;
     }
@@ -581,11 +509,9 @@ public class WWMath
      * @param coords the coordinates. This method returns null if this argument is null.
      * @param stride the number of floats between successive points. 0 indicates that the points are arranged one
      *               immediately after the other.
-     *
      * @return an array of three points, or null if three non-colinear points could not be found.
      */
-    public static Vec4[] findThreeIndependentVertices(FloatBuffer coords, int stride)
-    {
+    public static Vec4[] findThreeIndependentVertices(FloatBuffer coords, int stride) {
         int xstride = stride > 0 ? stride : 3;
 
         if (coords == null || coords.limit() < 3 * xstride)
@@ -596,8 +522,7 @@ public class WWMath
         Vec4 c = null;
 
         int k = xstride;
-        for (; k < coords.limit(); k += xstride)
-        {
+        for (; k < coords.limit(); k += xstride) {
             b = new Vec4(coords.get(k), coords.get(k + 1), coords.get(k + 2));
             if (!(b.x == a.x && b.y == a.y && b.z == a.z))
                 break;
@@ -607,13 +532,11 @@ public class WWMath
         if (b == null)
             return null;
 
-        for (k += xstride; k < coords.limit(); k += xstride)
-        {
+        for (k += xstride; k < coords.limit(); k += xstride) {
             c = new Vec4(coords.get(k), coords.get(k + 1), coords.get(k + 2));
 
             // if c is not coincident with a or b, and the vectors ab and bc are not colinear, break and return a, b, c
-            if (!((c.x == a.x && c.y == a.y && c.z == a.z) || (c.x == b.x && c.y == b.y && c.z == b.z)))
-            {
+            if (!((c.x == a.x && c.y == a.y && c.z == a.z) || (c.x == b.x && c.y == b.y && c.z == b.z))) {
                 if (!Vec4.areColinear(a, b, c))
                     break;
             }
@@ -628,11 +551,9 @@ public class WWMath
      * Finds three non-colinear points in an array of points.
      *
      * @param coords the coordinates. This method returns null if this argument is null.
-     *
      * @return an array of three points, or null if three non-colinear points could not be found.
      */
-    public static Vec4[] findThreeIndependentVertices(Vec4[] coords)
-    {
+    public static Vec4[] findThreeIndependentVertices(Vec4[] coords) {
         if (coords == null || coords.length < 3)
             return null;
 
@@ -641,8 +562,7 @@ public class WWMath
         Vec4 c = null;
 
         int k = 1;
-        for (; k < coords.length; k++)
-        {
+        for (; k < coords.length; k++) {
             b = coords[k];
             if (!(b.x == a.x && b.y == a.y && b.z == a.z))
                 break;
@@ -652,13 +572,11 @@ public class WWMath
         if (b == null)
             return null;
 
-        for (; k < coords.length; k++)
-        {
+        for (; k < coords.length; k++) {
             c = coords[k];
 
             // if c is not coincident with a or b, and the vectors ab and bc are not colinear, break and return a, b, c
-            if (!((c.x == a.x && c.y == a.y && c.z == a.z) || (c.x == b.x && c.y == b.y && c.z == b.z)))
-            {
+            if (!((c.x == a.x && c.y == a.y && c.z == a.z) || (c.x == b.x && c.y == b.y && c.z == b.z))) {
                 if (!Vec4.areColinear(a, b, c))
                     break;
             }
@@ -675,15 +593,11 @@ public class WWMath
      * @param a the triangle's first vertex.
      * @param b the triangle's second vertex.
      * @param c the triangle's third vertex.
-     *
      * @return the triangle's unit-length normal vector.
-     *
      * @throws IllegalArgumentException if any of the specified vertices are null.
      */
-    public static Vec4 computeTriangleNormal(Vec4 a, Vec4 b, Vec4 c)
-    {
-        if (a == null || b == null || c == null)
-        {
+    public static Vec4 computeTriangleNormal(Vec4 a, Vec4 b, Vec4 c) {
+        if (a == null || b == null || c == null) {
             String message = Logging.getMessage("nullValue.Vec4IsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -694,7 +608,7 @@ public class WWMath
         double z = ((b.x - a.x) * (c.y - a.y)) - ((b.y - a.y) * (c.x - a.x));
 
         double length = (x * x) + (y * y) + (z * z);
-        if (length == 0d)
+        if (length == 0.0d)
             return new Vec4(x, y, z);
 
         length = Math.sqrt(length);
@@ -707,23 +621,18 @@ public class WWMath
      * to the last point.
      *
      * @param points the (x, y) points which define the 2D polygon.
-     *
      * @return the area enclosed by the specified coordinates.
-     *
      * @throws IllegalArgumentException if points is null.
      */
-    public static double computePolygonAreaFromVertices(Iterable<? extends Vec4> points)
-    {
-        if (points == null)
-        {
+    public static double computePolygonAreaFromVertices(Iterable<? extends Vec4> points) {
+        if (points == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        java.util.Iterator<? extends Vec4> iter = points.iterator();
-        if (!iter.hasNext())
-        {
+        Iterator<? extends Vec4> iter = points.iterator();
+        if (!iter.hasNext()) {
             return 0;
         }
 
@@ -731,8 +640,7 @@ public class WWMath
         Vec4 firstPoint = iter.next();
         Vec4 point = firstPoint;
 
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             Vec4 nextLocation = iter.next();
 
             area += point.x * nextLocation.y;
@@ -742,8 +650,7 @@ public class WWMath
         }
 
         // Include the area connecting the last point to the first point, if they're not already equal.
-        if (!point.equals(firstPoint))
-        {
+        if (!point.equals(firstPoint)) {
             area += point.x * firstPoint.y;
             area -= firstPoint.x * point.y;
         }
@@ -757,20 +664,17 @@ public class WWMath
      * perpendicular to the (lat, lon) coordinates, and pointing in the direction of "positive elevation".
      *
      * @param locations the locations defining the geographic polygon.
-     *
      * @return {@link AVKey#CLOCKWISE} if the polygon has clockwise winding order, and {@link AVKey#COUNTER_CLOCKWISE}
-     *         otherwise.
+     * otherwise.
      */
-    public static String computeWindingOrderOfLocations(Iterable<? extends LatLon> locations)
-    {
-        if (locations == null)
-        {
+    public static String computeWindingOrderOfLocations(Iterable<? extends LatLon> locations) {
+        if (locations == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        java.util.Iterator<? extends LatLon> iter = locations.iterator();
+        Iterator<? extends LatLon> iter = locations.iterator();
         if (!iter.hasNext())
             return AVKey.COUNTER_CLOCKWISE;
 
@@ -781,8 +685,7 @@ public class WWMath
         LatLon firstLocation = iter.next();
         LatLon location = firstLocation;
 
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             LatLon nextLocation = iter.next();
 
             area += location.getLongitude().degrees * nextLocation.getLatitude().degrees;
@@ -792,8 +695,7 @@ public class WWMath
         }
 
         // Include the area connecting the last point to the first point, if they're not already equal.
-        if (!location.equals(firstLocation))
-        {
+        if (!location.equals(firstLocation)) {
             area += location.getLongitude().degrees * firstLocation.getLatitude().degrees;
             area -= firstLocation.getLongitude().degrees * location.getLatitude().degrees;
         }
@@ -806,14 +708,11 @@ public class WWMath
      * ignored), with respect to the positive z axis.
      *
      * @param points the (x, y) points which define the 2D polygon.
-     *
      * @return AVKey.CLOCKWISE if the polygon has clockwise winding order about the positive z axis, and
-     *         AVKey.COUNTER_CLOCKWISE otherwise.
+     * AVKey.COUNTER_CLOCKWISE otherwise.
      */
-    public static String computeWindingOrderOfVertices(Iterable<? extends Vec4> points)
-    {
-        if (points == null)
-        {
+    public static String computeWindingOrderOfVertices(Iterable<? extends Vec4> points) {
+        if (points == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -832,20 +731,16 @@ public class WWMath
      * arithmetic mean.
      *
      * @param points the Iterable of points for which to compute the principal axes.
-     *
      * @return the normalized principal axes of the points Iterable, sorted from the most prominent axis to the least
-     *         prominent.
-     *
+     * prominent.
      * @throws IllegalArgumentException if the points Iterable is null.
      */
-    public static Vec4[] computePrincipalAxes(Iterable<? extends Vec4> points)
-    {
-        if (points == null)
-        {
-            String message = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public static Vec4[] computePrincipalAxes(Iterable<? extends Vec4> points) {
+//        if (points == null) {
+//            String message = Logging.getMessage("nullValue.IterableIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Compute the covariance matrix of the specified points Iterable. Note that Matrix.fromCovarianceOfVertices
         // returns null if the points Iterable is empty, or if all of the points are null.
@@ -891,22 +786,17 @@ public class WWMath
      * @param coordinates the buffer containing the point coordinates for which to compute the principal axes.
      * @param stride      the number of elements between the first coordinate of consecutive points. If stride is 3,
      *                    this interprets the buffer has having tightly packed XYZ coordinate tuples.
-     *
      * @return the normalized principal axes of the points, sorted from the most prominent axis to the least prominent.
-     *
      * @throws IllegalArgumentException if the buffer is null, or if the stride is less than three.
      */
-    public static Vec4[] computePrincipalAxes(BufferWrapper coordinates, int stride)
-    {
-        if (coordinates == null)
-        {
+    public static Vec4[] computePrincipalAxes(BufferWrapper coordinates, int stride) {
+        if (coordinates == null) {
             String message = Logging.getMessage("nullValue.CoordinatesAreNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (stride < 3)
-        {
+        if (stride < 3) {
             String msg = Logging.getMessage("generic.StrideIsInvalid");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -946,31 +836,25 @@ public class WWMath
      * and the empty polygon are not considered closed loops.
      *
      * @param locations the locations which define the geographic polygon.
-     *
      * @return true if the polygon defines a closed loop, and false otherwise.
-     *
      * @throws IllegalArgumentException if the locations are null.
      */
-    public static boolean isPolygonClosed(Iterable<? extends LatLon> locations)
-    {
-        if (locations == null)
-        {
+    public static boolean isPolygonClosed(Iterable<? extends LatLon> locations) {
+        if (locations == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        java.util.Iterator<? extends LatLon> iter = locations.iterator();
-        if (!iter.hasNext())
-        {
+        Iterator<? extends LatLon> iter = locations.iterator();
+        if (!iter.hasNext()) {
             return false;
         }
 
         LatLon firstLocation = iter.next();
         LatLon lastLocation = null;
 
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             lastLocation = iter.next();
         }
 
@@ -983,31 +867,25 @@ public class WWMath
      * polygon consisting of a single point and the empty polygon are not considered closed loops.
      *
      * @param points the (x, y) points which define the 2D polygon.
-     *
      * @return true if the polygon defines a closed loop, and false otherwise.
-     *
      * @throws IllegalArgumentException if the points are null.
      */
-    public static boolean isPolygonClosed2(Iterable<? extends Vec4> points)
-    {
-        if (points == null)
-        {
+    public static boolean isPolygonClosed2(Iterable<? extends Vec4> points) {
+        if (points == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        java.util.Iterator<? extends Vec4> iter = points.iterator();
-        if (!iter.hasNext())
-        {
+        Iterator<? extends Vec4> iter = points.iterator();
+        if (!iter.hasNext()) {
             return false;
         }
 
         Vec4 firstPoint = iter.next();
         Vec4 lastPoint = null;
 
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             lastPoint = iter.next();
         }
 
@@ -1021,29 +899,24 @@ public class WWMath
      *
      * @param location  the location
      * @param locations the list of positions describing the polygon. Last one should be the same as the first one.
-     *
      * @return true if the location is inside the polygon.
      */
-    public static boolean isLocationInside(LatLon location, Iterable<? extends LatLon> locations)
-    {
-        if (location == null)
-        {
+    public static boolean isLocationInside(LatLon location, Iterable<? extends LatLon> locations) {
+        if (location == null) {
             String message = Logging.getMessage("nullValue.LatLonIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        java.util.Iterator<? extends LatLon> iter = locations.iterator();
-        if (!iter.hasNext())
-        {
+        Iterator<? extends LatLon> iter = locations.iterator();
+        if (!iter.hasNext()) {
             return false;
         }
 
         // Test for even/odd number of intersections with a constant latitude line going through the given location.
         boolean result = false;
         LatLon p1 = iter.next();
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             LatLon p2 = iter.next();
 
 // Developped for clarity
@@ -1083,16 +956,12 @@ public class WWMath
      * @param centerOut preallocated array to hold the circle's center.
      * @param axisOut   preallocated array to hold the circle's axis.
      * @param radiusOut preallocated array to hold the circle's radius.
-     *
      * @return true if the computation was successful; false otherwise.
-     *
      * @throws IllegalArgumentException if <code>p0</code>, <code>p1</code>, or <code>p2</code> is null
      */
     public static boolean computeCircleThroughPoints(Vec4 p0, Vec4 p1, Vec4 p2, Vec4[] centerOut, Vec4[] axisOut,
-        double[] radiusOut)
-    {
-        if (p0 == null || p1 == null || p2 == null)
-        {
+        double[] radiusOut) {
+        if (p0 == null || p1 == null || p2 == null) {
             String msg = Logging.getMessage("nullValue.Vec4IsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1119,13 +988,13 @@ public class WWMath
 
         double E = e0 + e1 + e2;
 
-        double tolerance = 1e-6;
+        double tolerance = 1.0e-6;
         if (Math.abs(E) <= tolerance * (max_e - min_e))
             return false;
 
         double radiusSquared = 0.5d * t0 * t1 * t2 / E;
         // the three points are collinear -- no circle with finite radius is possible
-        if (radiusSquared < 0d)
+        if (radiusSquared < 0.0d)
             return false;
 
         double radius = Math.sqrt(radiusSquared);
@@ -1155,18 +1024,13 @@ public class WWMath
      * @param planes the planes defining the polytope. Each plane's normal must point away from the the polytope, i.e.
      *               each plane's positive halfspace is outside the polytope. (Note: This is the opposite convention
      *               from that of a view frustum.)
-     *
      * @return the points of intersection, or null if the line does not intersect the polytope. Two points are returned
-     *         if the line both enters and exits the polytope. One point is retured if the line origin is within the
-     *         polytope.
-     *
+     * if the line both enters and exits the polytope. One point is retured if the line origin is within the polytope.
      * @throws IllegalArgumentException if the line is null or ill-formed, the planes array is null or there are fewer
      *                                  than three planes.
      */
-    public static Intersection[] polytopeIntersect(Line line, Plane[] planes)
-    {
-        if (line == null)
-        {
+    public static Intersection[] polytopeIntersect(Line line, Plane[] planes) {
+        if (line == null) {
             String message = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1185,8 +1049,7 @@ public class WWMath
         Vec4 u = line.direction;
         Vec4 p = line.origin;
 
-        for (Plane plane : planes)
-        {
+        for (Plane plane : planes) {
             Vec4 n = plane.getNormal();
             double d = -plane.getDistance();
 
@@ -1196,8 +1059,7 @@ public class WWMath
                 double pdn = p.dot3(n);
                 if (pdn > d) // is line in positive halfspace (in front of) of the plane?
                     return null; // no intersection
-                else
-                {
+                else {
                     if (pdn == d)
                         isTangent = true; // line coincident with plane
                     continue; // line is in negative halfspace; possible intersection; check other planes
@@ -1208,8 +1070,7 @@ public class WWMath
             double a = (d - p.dot3(n)) / s;
             if (u.dot3(n) < 0) // line intersects front face and therefore entering polytope
             {
-                if (a > fMax)
-                {
+                if (a > fMax) {
                     if (a > bMin)
                         return null;
                     fMax = a;
@@ -1217,8 +1078,7 @@ public class WWMath
             }
             else // line intersects back face and therefore leaving polytope
             {
-                if (a < bMin)
-                {
+                if (a < bMin) {
                     if (a < 0 || a < fMax)
                         return null;
                     bMin = a;
@@ -1244,7 +1104,7 @@ public class WWMath
     /**
      * Computes an index buffer in the system native byte order that tessellates the interior of a vertex grid as a
      * triangle strip. The returned buffer may be used as the source <code>buffer</code> in a call to {@link
-     * com.jogamp.opengl.GL2#glDrawElements(int, int, int, java.nio.Buffer)}, where <code>mode</code> is {@link
+     * com.jogamp.opengl.GL2#glDrawElements(int, int, int, Buffer)}, where <code>mode</code> is {@link
      * com.jogamp.opengl.GL#GL_TRIANGLE_STRIP}, <code>count</code> is the number of elements remaining in the buffer,
      * and <code>type</code> is {@link com.jogamp.opengl.GL#GL_UNSIGNED_INT}.
      * <p>
@@ -1252,22 +1112,17 @@ public class WWMath
      *
      * @param width  the patch width, in vertices.
      * @param height the patch height, in vertices.
-     *
      * @return an index buffer that tessellate's the grid interior as a triangle strip.
-     *
      * @throws IllegalArgumentException if either the width or height are less than or equal to zero.
      */
-    public static IntBuffer computeIndicesForGridInterior(int width, int height)
-    {
-        if (width <= 0)
-        {
+    public static IntBuffer computeIndicesForGridInterior(int width, int height) {
+        if (width <= 0) {
             String message = Logging.getMessage("Geom.WidthInvalid", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (height <= 0)
-        {
+        if (height <= 0) {
             String message = Logging.getMessage("Geom.HeightInvalid", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1277,16 +1132,13 @@ public class WWMath
         IntBuffer buffer = Buffers.newDirectIntBuffer(numIndices);
 
         int pos;
-        for (int y = 0; y < height - 1; y++)
-        {
-            if (y != 0)
-            {
+        for (int y = 0; y < height - 1; y++) {
+            if (y != 0) {
                 buffer.put((width - 1) + (y - 1) * width);
                 buffer.put(width + y * width);
             }
 
-            for (int x = 0; x < width; x++)
-            {
+            for (int x = 0; x < width; x++) {
                 pos = x + y * width;
                 buffer.put(pos + width);
                 buffer.put(pos);
@@ -1300,7 +1152,7 @@ public class WWMath
     /**
      * Computes an index buffer in the system native byte order that tessellates the outline of a vertex grid as a line
      * strip. The returned buffer may be used as the source <code>buffer</code> in a call to {@link
-     * com.jogamp.opengl.GL2#glDrawElements(int, int, int, java.nio.Buffer)}, where <code>mode</code> is {@link
+     * com.jogamp.opengl.GL2#glDrawElements(int, int, int, Buffer)}, where <code>mode</code> is {@link
      * com.jogamp.opengl.GL#GL_LINE_STRIP}, <code>count</code> is the number of elements remaining in the buffer, and
      * <code>type</code> is {@link com.jogamp.opengl.GL#GL_UNSIGNED_INT}.
      * <p>
@@ -1308,22 +1160,17 @@ public class WWMath
      *
      * @param width  the patch width, in vertices.
      * @param height the patch height, in vertices.
-     *
      * @return an index buffer that tessellates the grid outline as a line strip.
-     *
      * @throws IllegalArgumentException if either the width or height are less than or equal to zero.
      */
-    public static IntBuffer computeIndicesForGridOutline(int width, int height)
-    {
-        if (width <= 0)
-        {
+    public static IntBuffer computeIndicesForGridOutline(int width, int height) {
+        if (width <= 0) {
             String message = Logging.getMessage("Geom.WidthInvalid", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (height <= 0)
-        {
+        if (height <= 0) {
             String message = Logging.getMessage("Geom.HeightInvalid", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1332,23 +1179,19 @@ public class WWMath
         int numIndices = 2 * (width + height - 2);
         IntBuffer buffer = Buffers.newDirectIntBuffer(numIndices);
 
-        for (int x = 0; x < width; x++)
-        {
+        for (int x = 0; x < width; x++) {
             buffer.put(x);
         }
 
-        for (int y = 1; y < height - 1; y++)
-        {
+        for (int y = 1; y < height - 1; y++) {
             buffer.put((width - 1) + y * width);
         }
 
-        for (int x = width - 1; x >= 0; x--)
-        {
+        for (int x = width - 1; x >= 0; x--) {
             buffer.put(x + (height - 1) * width);
         }
 
-        for (int y = height - 2; y >= 1; y--)
-        {
+        for (int y = height - 2; y >= 1; y--) {
             buffer.put(y * width);
         }
 
@@ -1369,23 +1212,18 @@ public class WWMath
      * @param vertices buffer of vertex coordinate tuples used to compute the normal coordinates.
      * @param normals  buffer of normal coordinate tuples that receives the normal coordinates, or null to create a new
      *                 buffer to hold the normal coordinates.
-     *
      * @return buffer of normal coordinate tuples.
-     *
      * @throws IllegalArgumentException if either the index buffer or the vertex buffer is null.
      */
     public static FloatBuffer computeNormalsForIndexedTriangleStrip(IntBuffer indices, FloatBuffer vertices,
-        FloatBuffer normals)
-    {
-        if (indices == null)
-        {
+        FloatBuffer normals) {
+        if (indices == null) {
             String message = Logging.getMessage("nullValue.IndexBufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (vertices == null)
-        {
+        if (vertices == null) {
             String message = Logging.getMessage("nullValue.VertexBufferNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1398,10 +1236,8 @@ public class WWMath
         // the vertex buffer. Otherwise, initialize the normal buffer by setting all normal coordinate to zero.
         if (normals == null)
             normals = Buffers.newDirectFloatBuffer(3 * numVertices);
-        else
-        {
-            for (int i = 0; i < numVertices; i++)
-            {
+        else {
+            for (int i = 0; i < numVertices; i++) {
                 normals.put(0);
                 normals.put(0);
                 normals.put(0);
@@ -1412,8 +1248,7 @@ public class WWMath
         // Compute the normal for each face, then add that normal to each individual vertex of the face. After this step
         // each normal contains the accumulated normal values from each face it contributes to.
         int[] triangle = new int[3];
-        for (int i = 2; i < numIndices; i++)
-        {
+        for (int i = 2; i < numIndices; i++) {
             indices.position(i - 2);
             indices.get(triangle);
 
@@ -1421,8 +1256,7 @@ public class WWMath
             // starting with an even index are clockwise, while those starting with an odd index are counter-clockwise.
             // Reverse the face's vertex order for even triangles to ensure that all faces have counter-clockwise
             // ordering.
-            if ((i % 2) != 0)
-            {
+            if ((i % 2) != 0) {
                 int tmp = triangle[0];
                 triangle[0] = triangle[1];
                 triangle[1] = tmp;
@@ -1438,8 +1272,7 @@ public class WWMath
         // Normalize each tuple. Each normal contains the accumulated normal values from each face it contributes to
         // Normalizing the tuple averages the accumulated normals from each face, and ensures that the normal has unit
         // length.
-        for (int i = 0; i < numVertices; i++)
-        {
+        for (int i = 0; i < numVertices; i++) {
             // Normalizes the tuple and the buffer's position then advances to the next tuple.
             normalize3(normals);
         }
@@ -1459,8 +1292,7 @@ public class WWMath
      * @param vertices buffer of vertex coordinate tuples used to compute the normal coordinates.
      * @param normals  buffer of normal coordinate tuples that receives the normal coordinates.
      */
-    protected static void addTriangleNormal(int a, int b, int c, FloatBuffer vertices, FloatBuffer normals)
-    {
+    protected static void addTriangleNormal(int a, int b, int c, FloatBuffer vertices, FloatBuffer normals) {
         vertices.position(a);
         float ax = vertices.get();
         float ay = vertices.get();
@@ -1481,8 +1313,7 @@ public class WWMath
         float z = ((bx - ax) * (cy - ay)) - ((by - ay) * (cx - ax));
 
         float length = (x * x) + (y * y) + (z * z);
-        if (length > 0d)
-        {
+        if (length > 0.0d) {
             length = (float) Math.sqrt(length);
             x /= length;
             y /= length;
@@ -1522,11 +1353,9 @@ public class WWMath
      * end of the tuple.
      *
      * @param buffer the buffer to normalize.
-     *
      * @throws NullPointerException if the buffer is null.
      */
-    protected static void normalize3(FloatBuffer buffer)
-    {
+    protected static void normalize3(FloatBuffer buffer) {
         int pos = buffer.position();
 
         float x = buffer.get();
@@ -1534,8 +1363,7 @@ public class WWMath
         float z = buffer.get();
 
         float length = (x * x) + (y * y) + (z * z);
-        if (length > 0d)
-        {
+        if (length > 0.0d) {
             length = (float) Math.sqrt(length);
             x /= length;
             y /= length;
@@ -1555,16 +1383,13 @@ public class WWMath
      * @param y0 the y coordinate of the first point, relative to an upper-left origin.
      * @param x1 the x coordinate of the second point.
      * @param y1 the y coordinate of the second point, relative to an upper-left origin.
-     *
      * @return a list of points defining a line between the two input points.
      */
-    public static List<Point> bresenham(int x0, int y0, int x1, int y1)
-    {
+    public static List<Point> bresenham(int x0, int y0, int x1, int y1) {
         List<Point> points = new ArrayList<>(Math.abs(x1 - x0 + 1));
 
         boolean steep = Math.abs(y1 - y0) > Math.abs(x1 - x0);
-        if (steep)
-        {
+        if (steep) {
             int t = x0;
             //noinspection SuspiciousNameCombination
             x0 = y0;
@@ -1575,8 +1400,7 @@ public class WWMath
             y1 = t;
         }
 
-        if (x0 > x1)
-        {
+        if (x0 > x1) {
             int t = x0;
             x0 = x1;
             x1 = t;
@@ -1591,15 +1415,13 @@ public class WWMath
         int ystep = y0 < y1 ? 1 : -1;
         int y = y0;
 
-        for (int x = x0; x <= x1; x += 1)
-        {
+        for (int x = x0; x <= x1; x += 1) {
             if (steep)
                 points.add(new Point(y, x));
             else
                 points.add(new Point(x, y));
             error -= deltay;
-            if (error < 0)
-            {
+            if (error < 0) {
                 y += ystep;
                 error += deltax;
             }
@@ -1616,29 +1438,24 @@ public class WWMath
      * @param rightPositions   List to receive positions on the right line.
      * @param distance         Distance from the center line to the left and right lines.
      * @param globe            Globe used to compute positions.
-     *
      * @throws IllegalArgumentException if any of the lists are null, the number of control positions is less than 2, or
      *                                  the globe is null.
      */
-    public static void generateParallelLines(List<Position> controlPositions, List<Position> leftPositions,
-        List<Position> rightPositions, double distance, Globe globe)
-    {
-        if (controlPositions == null || leftPositions == null || rightPositions == null)
-        {
+    public static void generateParallelLines(Collection<Position> controlPositions, List<Position> leftPositions,
+        List<Position> rightPositions, double distance, Globe globe) {
+        if (controlPositions == null || leftPositions == null || rightPositions == null) {
             String message = Logging.getMessage("nullValue.PositionsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (controlPositions.size() < 2)
-        {
+        if (controlPositions.size() < 2) {
             String message = Logging.getMessage("generic.LengthIsInvalid");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (globe == null)
-        {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1673,8 +1490,7 @@ public class WWMath
             posB.getElevation(), globe, null);
 
         double prevElevation;
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             prevElevation = posA.getElevation();
             posA = iterator.next();
 
@@ -1704,32 +1520,26 @@ public class WWMath
      * @param elevation      Elevation at which to place the generated positions.
      * @param globe          Globe used to compute positions.
      * @param previousOffset Offset vector from a previous call to this method. May be null.
-     *
      * @return Offset vector that should be passed back to this method on the next call for a list of positions. (Used
-     *         to generate parallel points when a position list contains sequential co-located positions.)
-     *
+     * to generate parallel points when a position list contains sequential co-located positions.)
      * @throws IllegalArgumentException if the necessary point, previous or next references are null, either the left or
      *                                  right position list is null, or the globe is null.
      */
-    public static Vec4 generateParallelPoints(Vec4 point, Vec4 prev, Vec4 next, List<Position> leftPositions,
-        List<Position> rightPositions, double distance, double elevation, Globe globe, Vec4 previousOffset)
-    {
-        if ((point == null) || (prev == null && next == null))
-        {
+    public static Vec4 generateParallelPoints(Vec4 point, Vec4 prev, Vec4 next, Collection<Position> leftPositions,
+        Collection<Position> rightPositions, double distance, double elevation, Globe globe, Vec4 previousOffset) {
+        if ((point == null) || (prev == null && next == null)) {
             String message = Logging.getMessage("nullValue.PointIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (leftPositions == null || rightPositions == null)
-        {
+        if (leftPositions == null || rightPositions == null) {
             String message = Logging.getMessage("nullValue.PositionsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (globe == null)
-        {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1745,13 +1555,11 @@ public class WWMath
         Vec4 perpendicular = backward.cross3(normal);
 
         // If the current point is co-located with either the next or prev points, then reuse the previously computed offset.
-        if (point.equals(prev) || (point.equals(next)) && previousOffset != null)
-        {
+        if (point.equals(prev) || (point.equals(next)) && previousOffset != null) {
             offset = previousOffset;
         }
         // If both next and previous points are supplied then calculate the angle that bisects the angle current, next, prev.
-        else if (next != null && prev != null && !Vec4.areColinear(prev, point, next))
-        {
+        else if (next != null && prev != null && !Vec4.areColinear(prev, point, next)) {
             // Compute vector in the forward direction.
             Vec4 forward = next.subtract3(point);
 
@@ -1773,15 +1581,13 @@ public class WWMath
             // Compute the scalar triple product of the vector BC, the normal vector, and the offset vector to
             // determine if the offset points to the left or the right of the control line.
             double tripleProduct = perpendicular.dot3(offset);
-            if (tripleProduct < 0)
-            {
+            if (tripleProduct < 0) {
                 offset = offset.multiply3(-1);
             }
 
             offset = offset.multiply3(length);
         }
-        else
-        {
+        else {
             offset = perpendicular.normalize3();
             offset = offset.multiply3(distance);
         }
@@ -1799,4 +1605,12 @@ public class WWMath
 
         return offset;
     }
+
+    public static double sqr(double x) {
+        return x*x;
+    }
+    public static long sqr(int x) {
+        return x*x;
+    }
+
 }

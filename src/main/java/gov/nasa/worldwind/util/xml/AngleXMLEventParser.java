@@ -16,26 +16,21 @@ import javax.xml.stream.events.XMLEvent;
  * @author tag
  * @version $Id: AngleXMLEventParser.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AngleXMLEventParser extends AbstractXMLEventParser
-{
+public class AngleXMLEventParser extends AbstractXMLEventParser {
     protected final QName elementName;
 
-    public AngleXMLEventParser(QName elementName)
-    {
+    public AngleXMLEventParser(QName elementName) {
         this.elementName = elementName;
     }
 
-    public Object parse(XMLEventParserContext ctx, XMLEvent angleEvent, Object... args) throws XMLStreamException
-    {
+    public Object parse(XMLEventParserContext ctx, XMLEvent angleEvent, Object... args) throws XMLStreamException {
         Angle angle = null;
 
-        for (XMLEvent event = ctx.nextEvent(); event != null; event = ctx.nextEvent())
-        {
+        for (XMLEvent event = ctx.nextEvent(); event != null; event = ctx.nextEvent()) {
             if (ctx.isEndElement(event, angleEvent))
                 return angle;
 
-            if (ctx.isStartElement(event, this.elementName))
-            {
+            if (ctx.isStartElement(event, this.elementName)) {
                 Double d = ctx.getDoubleParser().parseDouble(ctx, event);
                 if (d != null)
                     angle = Angle.fromDegrees(d);
@@ -45,8 +40,7 @@ public class AngleXMLEventParser extends AbstractXMLEventParser
         return null;
     }
 
-    public Angle parseAngle(XMLEventParserContext ctx, XMLEvent angleEvent, Object... args) throws XMLStreamException
-    {
+    public Angle parseAngle(XMLEventParserContext ctx, XMLEvent angleEvent, Object... args) throws XMLStreamException {
         return (Angle) this.parse(ctx, angleEvent, args);
     }
 }

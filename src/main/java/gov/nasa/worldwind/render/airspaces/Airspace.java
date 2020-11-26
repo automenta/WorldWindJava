@@ -17,8 +17,7 @@ import java.util.Collection;
  * @author dcollins
  * @version $Id: Airspace.java 2394 2014-10-22 01:16:43Z tgaskins $
  */
-public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, Highlightable, Attributable
-{
+public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, Highlightable, Attributable {
     String DRAW_STYLE_FILL = "Airspace.DrawStyleFill";
     String DRAW_STYLE_OUTLINE = "Airspace.DrawStyleOutline";
 
@@ -49,7 +48,6 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      *
      * @return a two-element array of <code>double</code> with element 0 containing the lower surface altitude, and
      * element 1 containing the upper surface altitude.
-     *
      * @see #setAltitudes(double, double)
      * @see #setAltitudeDatum
      * @see #setGroundReference
@@ -63,7 +61,6 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      *
      * @param lowerAltitude the lower surface altitude, in meters.
      * @param upperAltitude the upper surface altitude, in meters.
-     *
      * @see #setAltitudes(double, double)
      * @see #setAltitudeDatum
      * @see #setGroundReference
@@ -77,7 +74,6 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      * them.
      *
      * @param altitude the lower surface altitude, in meters.
-     *
      * @see #setAltitudes(double, double)
      * @see #setAltitudeDatum
      * @see #setGroundReference
@@ -105,7 +101,6 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      *                               {@link AVKey#ABOVE_GROUND_LEVEL} (terrain conforming), a value of false indicates
      *                               an upper altitude datum of {link AVKey#ABOVE_MEAN_SEA_LEVEL} (not terrain
      *                               conforming. the terrain-conforming, a value of false indicates that it's not.
-     *
      * @see #setAltitudeDatum(String, String)
      */
     void setTerrainConforming(boolean lowerTerrainConformant, boolean upperTerrainConformant);
@@ -114,7 +109,6 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      * Indicates the state of this airspace's always-on-top flag.
      *
      * @return the state of this airspace's always-on-top flag.
-     *
      * @see #isAlwaysOnTop()
      */
     boolean isAlwaysOnTop();
@@ -122,7 +116,7 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
     /**
      * Specifies whether this airspace should have visual priority over other displayed shapes in 3D mode. If
      * <code>true</code>, this shape is drawn after all others. This property is ignored by {@link
-     * gov.nasa.worldwind.render.airspaces.Cake} airspaces.
+     * Cake} airspaces.
      *
      * @param alwaysOnTop if <code>true</code>, this airspace is drawn after all others. Otherwise this airspace is
      *                    drawn with its normal priority, which is its relative distance to the eye point.
@@ -170,36 +164,31 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      * context's viewing frustum.
      *
      * @param dc the draw context the airspace is related to.
-     *
      * @return true if this airspace is visible; false otherwise.
      */
     boolean isAirspaceVisible(DrawContext dc);
 
     /**
-     * Returns this Airspace's enclosing volume as an {@link gov.nasa.worldwind.geom.Extent} in model coordinates, given
-     * a specified {@link gov.nasa.worldwind.globes.Globe} and vertical exaggeration (see {@link
+     * Returns this Airspace's enclosing volume as an {@link Extent} in model coordinates, given
+     * a specified {@link Globe} and vertical exaggeration (see {@link
      * gov.nasa.worldwind.SceneController#getVerticalExaggeration()}.
      *
      * @param globe                the Globe this Airspace is related to.
      * @param verticalExaggeration the vertical exaggeration of the scene containing this Airspace.
-     *
      * @return this Airspace's Extent in model coordinates.
-     *
      * @throws IllegalArgumentException if the Globe is null.
      */
     Extent getExtent(Globe globe, double verticalExaggeration);
 
     /**
-     * Returns this Airspace's enclosing volume as an {@link gov.nasa.worldwind.geom.Extent} in model coordinates, given
-     * a specified {@link gov.nasa.worldwind.render.DrawContext}. The returned Extent may be different than the Extent
-     * returned by calling {@link #getExtent(gov.nasa.worldwind.globes.Globe, double)} with the DrawContext's Globe and
+     * Returns this Airspace's enclosing volume as an {@link Extent} in model coordinates, given
+     * a specified {@link DrawContext}. The returned Extent may be different than the Extent
+     * returned by calling {@link #getExtent(Globe, double)} with the DrawContext's Globe and
      * vertical exaggeration. Additionally, this may cache the computed extent and is therefore potentially faster than
-     * calling {@link #getExtent(gov.nasa.worldwind.globes.Globe, double)}.
+     * calling {@link #getExtent(Globe, double)}.
      *
      * @param dc the current DrawContext.
-     *
      * @return this Airspace's Extent in model coordinates.
-     *
      * @throws IllegalArgumentException if the DrawContext is null, or if the Globe held by the DrawContext is null.
      */
     Extent getExtent(DrawContext dc);
@@ -230,9 +219,8 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      *
      * @param lowerAltitudeDatum the lower altitude datum.
      * @param upperAltitudeDatum the upper altitude datum
-     *
      * @throws IllegalArgumentException if either the lower or upper altitude datum is null.
-     * @see #setGroundReference(gov.nasa.worldwind.geom.LatLon)
+     * @see #setGroundReference(LatLon)
      * @see #setAltitudes
      */
     void setAltitudeDatum(String lowerAltitudeDatum, String upperAltitudeDatum);
@@ -242,10 +230,16 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      *
      * @return a two-element array containing at position 0 the lower altitude datum, and at position 1 the upper
      * altitude datum.
-     *
      * @see #setAltitudeDatum(String, String)
      */
     String[] getAltitudeDatum();
+
+    /**
+     * Returns the current ground reference location.
+     *
+     * @return the current ground reference location.
+     */
+    LatLon getGroundReference();
 
     /**
      * Sets the reference location used to determine the elevation offset for airspace surfaces whose altitude datum is
@@ -256,23 +250,14 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      *                        airspace surface. The location need not be within the airspace's bounds. If null, an
      *                        airspace-specific position is chosen from those defining the airspace. See the method
      *                        descriptions for the individual airspaces to determine the position used.
-     *
      * @see #setAltitudeDatum(String, String)
      */
     void setGroundReference(LatLon groundReference);
 
     /**
-     * Returns the current ground reference location.
-     *
-     * @return the current ground reference location.
-     */
-    LatLon getGroundReference();
-
-    /**
      * Indicates whether batch rendering is enabled for the concrete shape type of this shape.
      *
      * @return true if batch rendering is enabled, otherwise false.
-     *
      * @see #setEnableBatchRendering(boolean)
      */
     boolean isEnableBatchRendering();
@@ -290,7 +275,6 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      * Indicates whether batch picking is enabled.
      *
      * @return true if batch rendering is enabled, otherwise false.
-     *
      * @see #setEnableBatchPicking(boolean)
      */
     boolean isEnableBatchPicking();
@@ -338,7 +322,6 @@ public interface Airspace extends Renderable, Restorable, AVList, ExtentHolder, 
      * Note that the size of the pick aperture also affects the precision necessary to pick.
      *
      * @param outlinePickWidth the outline pick width. The default is 10.
-     *
      * @throws IllegalArgumentException if the width is less than 0.
      */
     void setOutlinePickWidth(int outlinePickWidth);

@@ -19,19 +19,16 @@ import java.io.*;
  * @author pabercrombie
  * @version $Id: KMLDocumentBuilder.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLDocumentBuilder
-{
+public class KMLDocumentBuilder {
     protected XMLStreamWriter writer;
 
     /**
      * Create a KML document using a Writer.
      *
      * @param writer Writer to receive KML output.
-     *
      * @throws XMLStreamException If an error is encountered while writing KML.
      */
-    public KMLDocumentBuilder(Writer writer) throws XMLStreamException
-    {
+    public KMLDocumentBuilder(Writer writer) throws XMLStreamException {
         this.writer = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
         this.startDocument();
     }
@@ -40,11 +37,9 @@ public class KMLDocumentBuilder
      * Create a KML document using an OutputStream.
      *
      * @param stream Stream to receive KML output.
-     *
      * @throws XMLStreamException If an error is encountered while writing KML.
      */
-    public KMLDocumentBuilder(OutputStream stream) throws XMLStreamException
-    {
+    public KMLDocumentBuilder(OutputStream stream) throws XMLStreamException {
         this.writer = XMLOutputFactory.newInstance().createXMLStreamWriter(stream);
         this.startDocument();
     }
@@ -54,8 +49,7 @@ public class KMLDocumentBuilder
      *
      * @throws XMLStreamException If an error is encountered while writing KML.
      */
-    protected void startDocument() throws XMLStreamException
-    {
+    protected void startDocument() throws XMLStreamException {
         this.writer.writeStartDocument();
         this.writer.writeStartElement("kml");
         this.writer.writeDefaultNamespace(KMLConstants.KML_NAMESPACE);
@@ -69,8 +63,7 @@ public class KMLDocumentBuilder
      *
      * @throws XMLStreamException If an error is encountered while writing KML.
      */
-    protected void endDocument() throws XMLStreamException
-    {
+    protected void endDocument() throws XMLStreamException {
         this.writer.writeEndElement(); // Document
         this.writer.writeEndElement(); // kml
         this.writer.writeEndDocument();
@@ -83,8 +76,7 @@ public class KMLDocumentBuilder
      *
      * @throws XMLStreamException If an error is encountered while writing KML.
      */
-    public void close() throws XMLStreamException
-    {
+    public void close() throws XMLStreamException {
         this.endDocument();
         this.writer.close();
     }
@@ -94,14 +86,11 @@ public class KMLDocumentBuilder
      * be ignored.
      *
      * @param exportable Object to export in KML.
-     *
      * @throws IOException If an error is encountered while writing KML.
      */
-    public void writeObject(Exportable exportable) throws IOException
-    {
+    public void writeObject(Exportable exportable) throws IOException {
         String supported = exportable.isExportFormatSupported(KMLConstants.KML_MIME_TYPE);
-        if (Exportable.FORMAT_SUPPORTED.equals(supported) || Exportable.FORMAT_PARTIALLY_SUPPORTED.equals(supported))
-        {
+        if (Exportable.FORMAT_SUPPORTED.equals(supported) || Exportable.FORMAT_PARTIALLY_SUPPORTED.equals(supported)) {
             exportable.export(KMLConstants.KML_MIME_TYPE, this.writer);
         }
     }
@@ -111,17 +100,13 @@ public class KMLDocumentBuilder
      * they will be ignored.
      *
      * @param exportables List of objects to export in KML.
-     *
      * @throws IOException If an error is encountered while writing KML.
      */
-    public void writeObjects(Exportable... exportables) throws IOException
-    {
-        for (Exportable exportable : exportables)
-        {
+    public void writeObjects(Exportable... exportables) throws IOException {
+        for (Exportable exportable : exportables) {
             String supported = exportable.isExportFormatSupported(KMLConstants.KML_MIME_TYPE);
             if (Exportable.FORMAT_SUPPORTED.equals(supported)
-                || Exportable.FORMAT_PARTIALLY_SUPPORTED.equals(supported))
-            {
+                || Exportable.FORMAT_PARTIALLY_SUPPORTED.equals(supported)) {
                 exportable.export(KMLConstants.KML_MIME_TYPE, this.writer);
             }
         }

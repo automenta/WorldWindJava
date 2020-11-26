@@ -18,6 +18,7 @@ import java.awt.*;
 import java.nio.*;
 import java.util.List;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * AnalyticSurface represents a connected grid of geographic locations, covering a specified {@link Sector} at a
@@ -31,7 +32,7 @@ import java.util.*;
  * and proceeding in row-first order across the grid. The iterable should contain at least <code>width * height</code>
  * values, where width and height are the AnalyticSurface's grid dimensions. If the caller does not specify any
  * GridPointAttributes, or the caller specified iterable contains too few values, the unassigned grid points are given
- * default attributes: the default scalar value is 0, and the default color is {@link java.awt.Color#BLACK}.
+ * default attributes: the default scalar value is 0, and the default color is {@link Color#BLACK}.
  * <h2>Surface Altitude</h2>
  * <p>
  * AnalyticSurface's altitude can vary at each grid point. The altitude of each grid point depends on four properties:
@@ -50,39 +51,22 @@ import java.util.*;
  * @author dcollins
  * @version $Id: AnalyticSurface.java 3020 2015-04-14 21:23:03Z dcollins $
  */
-public class AnalyticSurface implements Renderable, PreRenderable
-{
-    /** GridPointAttributes defines the properties associated with a single grid point of an AnalyticSurface. */
-    public interface GridPointAttributes
-    {
-        /**
-         * Returns the scalar value associated with a grid point. By default, AnalyticSurface interprets this value as
-         * the grid point's height relative to the AnalyticSurface's base altitude, both in meters.
-         *
-         * @return the grid point's scalar value.
-         */
-        double getValue();
-
-        /**
-         * Returns the {@link java.awt.Color} associated with a grid point. By default, AnalyticSurface interprets this
-         * Color as the RGBA components of a grid point's RGBA color.
-         *
-         * @return the grid point's RGB color components.
-         */
-        java.awt.Color getColor();
-    }
-
-    protected static final double DEFAULT_ALTITUDE = 0d;
-    /** The default altitude mode. */
+public class AnalyticSurface implements Renderable, PreRenderable {
+    protected static final double DEFAULT_ALTITUDE = 0.0d;
+    /**
+     * The default altitude mode.
+     */
     protected static final int DEFAULT_ALTITUDE_MODE = WorldWind.ABSOLUTE;
     protected static final int DEFAULT_DIMENSION = 10;
-    protected static final double DEFAULT_VALUE = 0d;
+    protected static final double DEFAULT_VALUE = 0.0d;
     protected static final Color DEFAULT_COLOR = Color.BLACK;
     protected static final GridPointAttributes DEFAULT_GRID_POINT_ATTRIBUTES = createGridPointAttributes(
         DEFAULT_VALUE, DEFAULT_COLOR);
-    /** The time period between surface regeneration when altitude mode is relative-to-ground. */
+    /**
+     * The time period between surface regeneration when altitude mode is relative-to-ground.
+     */
     protected static final long RELATIVE_TO_GROUND_REGEN_PERIOD = 2000;
-
+    protected final PickSupport pickSupport = new PickSupport();
     protected boolean visible = true;
     protected Sector sector;
     protected double altitude;
@@ -90,7 +74,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
     protected int width;
     protected int height;
     protected Iterable<? extends GridPointAttributes> values;
-    protected double verticalScale = 1d;
+    protected double verticalScale = 1.0d;
     protected AnalyticSurfaceAttributes surfaceAttributes = new AnalyticSurfaceAttributes();
     protected Object pickObject;
     protected Layer clientLayer;
@@ -106,7 +90,6 @@ public class AnalyticSurface implements Renderable, PreRenderable
     protected RenderInfo surfaceRenderInfo;
     protected AnalyticSurfaceObject clampToGroundSurface;
     protected AnalyticSurfaceObject shadowSurface;
-    protected final PickSupport pickSupport = new PickSupport();
 
     /**
      * Constructs a new AnalyticSurface with the specified {@link Sector}, base altitude in meters, grid dimensions, and
@@ -118,36 +101,30 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * @param width    the surface grid width, in number of grid points.
      * @param height   the surface grid height, in number of grid points.
      * @param iterable the attributes associated with each grid point.
-     *
      * @throws IllegalArgumentException if the sector is null, if the width is less than 1, if the height is less than
      *                                  1, or if the iterable is null.
      */
     public AnalyticSurface(Sector sector, double altitude, int width, int height,
-        Iterable<? extends GridPointAttributes> iterable)
-    {
-        if (sector == null)
-        {
+        Iterable<? extends GridPointAttributes> iterable) {
+        if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (width <= 0)
-        {
+        if (width <= 0) {
             String message = Logging.getMessage("generic.InvalidWidth", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (height <= 0)
-        {
+        if (height <= 0) {
             String message = Logging.getMessage("generic.InvalidHeight", height);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (iterable == null)
-        {
+        if (iterable == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -169,12 +146,10 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * @param altitude the base altitude to place the surface at, in meters.
      * @param width    the surface grid width, in number of grid points.
      * @param height   the surface grid height, in number of grid points.
-     *
      * @throws IllegalArgumentException if the sector is null, if the width is less than 1, or if the height is less
      *                                  than 1.
      */
-    public AnalyticSurface(Sector sector, double altitude, int width, int height)
-    {
+    public AnalyticSurface(Sector sector, double altitude, int width, int height) {
         this(sector, altitude, width, height, createDefaultValues(width * height));
     }
 
@@ -184,11 +159,9 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @param sector   the Sector which defines the surface's geographic region.
      * @param altitude the base altitude to place the surface at, in meters.
-     *
      * @throws IllegalArgumentException if the sector is null.
      */
-    public AnalyticSurface(Sector sector, double altitude)
-    {
+    public AnalyticSurface(Sector sector, double altitude) {
         this(sector, altitude, DEFAULT_DIMENSION, DEFAULT_DIMENSION);
     }
 
@@ -198,11 +171,9 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @param width  the surface grid width, in number of grid points.
      * @param height the surface grid height, in number of grid points.
-     *
      * @throws IllegalArgumentException if the sector is null.
      */
-    public AnalyticSurface(int width, int height)
-    {
+    public AnalyticSurface(int width, int height) {
         this(Sector.EMPTY_SECTOR, DEFAULT_ALTITUDE, width, height);
     }
 
@@ -210,9 +181,161 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * Constructs a new AnalyticSurface with the default Sector {@link Sector#EMPTY_SECTOR}, the default altitude of 0
      * meters, default dimensions of <code>(10, 10)</code>, and default {@link GridPointAttributes}.
      */
-    public AnalyticSurface()
-    {
+    public AnalyticSurface() {
         this(DEFAULT_DIMENSION, DEFAULT_DIMENSION);
+    }
+
+    /**
+     * Returns the minimum and maximum values in the specified iterable of {@link GridPointAttributes}. Values
+     * equivalent to the specified <code>missingDataSignal</code> are ignored. This returns null if the iterable is
+     * empty or contains only missing values.
+     *
+     * @param iterable          the GridPointAttributes to search for the minimum and maximum value.
+     * @param missingDataSignal the number indicating a specific value to ignore.
+     * @return an array containing the minimum value in index 0 and the maximum value in index 1, or null if the
+     * iterable is empty or contains only missing values.
+     * @throws IllegalArgumentException if the iterable is null.
+     */
+    public static double[] computeExtremeValues(Iterable<? extends GridPointAttributes> iterable,
+        double missingDataSignal) {
+        if (iterable == null) {
+            String message = Logging.getMessage("nullValue.IterableIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        double minValue = Double.MAX_VALUE;
+        double maxValue = -Double.MAX_VALUE;
+
+        for (GridPointAttributes attr : iterable) {
+            double value = attr.getValue();
+            if (Double.compare(value, missingDataSignal) == 0)
+                continue;
+
+            if (minValue > value)
+                minValue = value;
+            if (maxValue < value)
+                maxValue = value;
+        }
+
+        if (minValue == Double.MAX_VALUE || minValue == -Double.MIN_VALUE)
+            return null;
+
+        return new double[] {minValue, maxValue};
+    }
+
+    /**
+     * Returns the minimum and maximum values in the specified iterable of {@link GridPointAttributes}. Values
+     * equivalent to <code>Double.NaN</code> are ignored. This returns null if the buffer is empty or contains only NaN
+     * values.
+     *
+     * @param iterable the GridPointAttributes to search for the minimum and maximum value.
+     * @return an array containing the minimum value in index 0 and the maximum value in index 1, or null if the
+     * iterable is empty or contains only NaN values.
+     * @throws IllegalArgumentException if the iterable is null.
+     */
+    public static double[] computeExtremeValues(Iterable<? extends GridPointAttributes> iterable) {
+        if (iterable == null) {
+            String message = Logging.getMessage("nullValue.IterableIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        return computeExtremeValues(iterable, Double.NaN);
+    }
+
+    /**
+     * Returns a new instance of {@link GridPointAttributes} with the specified value and color.
+     *
+     * @param value the new GridPointAttributes' value.
+     * @param color the new GridPointAttributes' color.
+     * @return a new GridPointAttributes defined by the specified value and color.
+     */
+    public static GridPointAttributes createGridPointAttributes(final double value, final Color color) {
+        return new AnalyticSurface.GridPointAttributes() {
+            public double getValue() {
+                return value;
+            }
+
+            public Color getColor() {
+                return color;
+            }
+        };
+    }
+
+    /**
+     * Returns a new instance of {@link GridPointAttributes} with a Color computed from the specified value and value
+     * range. The color's RGB components are computed by mapping value's relative position in the range <code>[minValue,
+     * maxValue]</code> to the range of color hues <code>[minHue, maxHue]</code>. The color's Alpha component is
+     * computed by mapping the values's relative position in the range <code>[minValue, minValue + (maxValue - minValue)
+     * / 10]</code> to the range <code>[0, 1]</code>. This has the effect of interpolating hue and alpha based on the
+     * grid point value.
+     *
+     * @param value    the new GridPointAttributes' value.
+     * @param minValue the minimum value.
+     * @param maxValue the maximum value.
+     * @param minHue   the mimimum color hue, corresponding to the minimum value.
+     * @param maxHue   the maximum color hue, corresponding to the maximum value.
+     * @return a new GridPointAttributes defined by the specified value, value range, and color hue range.
+     */
+    public static AnalyticSurface.GridPointAttributes createColorGradientAttributes(final double value,
+        double minValue, double maxValue, double minHue, double maxHue) {
+        double hueFactor = WWMath.computeInterpolationFactor(value, minValue, maxValue);
+        Color color = Color.getHSBColor((float) WWMath.mixSmooth(hueFactor, minHue, maxHue), 1.0f, 1.0f);
+        double opacity = WWMath.computeInterpolationFactor(value, minValue, minValue + (maxValue - minValue) * 0.1);
+        Color rgbaColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * opacity));
+
+        return createGridPointAttributes(value, rgbaColor);
+    }
+
+    /**
+     * Returns a new iterable populated with the default {@link GridPointAttributes}. The default GridPointAttributes
+     * have a value of 0, and the color {@link Color#BLACK}.
+     *
+     * @param count the desired number of GridPointAttributes to return.
+     * @return an iterable containing <code>count</code> default GridPointAttributes.
+     */
+    public static Iterable<? extends GridPointAttributes> createDefaultValues(int count) {
+        List<GridPointAttributes> list = new ArrayList<>(count);
+        Collections.fill(list, DEFAULT_GRID_POINT_ATTRIBUTES);
+        return list;
+    }
+
+    /**
+     * Returns a new iterable populated with {@link GridPointAttributes} computed by invoking {@link
+     * #createColorGradientAttributes(double, double, double, double, double)} for each double value in the speicfied
+     * {@link BufferWrapper}. Values equivalent to the specified <code>missingDataSignal</code> are replaced with the
+     * specified <code>minValue</code>.
+     *
+     * @param values            the buffer of values.
+     * @param missingDataSignal the number indicating a specific value to ignore.
+     * @param minValue          the minimum value.
+     * @param maxValue          the maximum value.
+     * @param minHue            the mimimum color hue, corresponding to the minimum value.
+     * @param maxHue            the maximum color hue, corresponding to the maximum value.
+     * @return an iiterable GridPointAttributes defined by the specified buffer of values.
+     */
+    public static Iterable<? extends AnalyticSurface.GridPointAttributes> createColorGradientValues(
+        BufferWrapper values, double missingDataSignal, double minValue, double maxValue, double minHue,
+        double maxHue) {
+        if (values == null) {
+            String message = Logging.getMessage("nullValue.BufferIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        List<GridPointAttributes> attributesList
+            = new ArrayList<>();
+
+        for (int i = 0; i < values.length(); i++) {
+            double value = values.getDouble(i);
+            if (Double.compare(value, missingDataSignal) == 0)
+                value = minValue;
+
+            attributesList.add(createColorGradientAttributes(value, minValue, maxValue, minHue, maxHue));
+        }
+
+        return attributesList;
     }
 
     /**
@@ -220,8 +343,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @return true if the surface is visible in the scene, and false otherwise
      */
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         return this.visible;
     }
 
@@ -230,8 +352,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @param visible true to make the surface visible, and false to make it hidden.
      */
-    public void setVisible(boolean visible)
-    {
+    public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
@@ -240,8 +361,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @return this surface's geographic boundary, as a Sector.
      */
-    public Sector getSector()
-    {
+    public Sector getSector() {
         return this.sector;
     }
 
@@ -249,13 +369,10 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * Sets this surface's geographic boundary, as a {@link Sector}.
      *
      * @param sector this surface's new geographic boundary, as a Sector.
-     *
      * @throws IllegalArgumentException if the sector is null.
      */
-    public void setSector(Sector sector)
-    {
-        if (sector == null)
-        {
+    public void setSector(Sector sector) {
+        if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -269,11 +386,9 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * Returns this surface's base altitude, in meters.
      *
      * @return this surface's base altitude, in meters.
-     *
      * @see #setAltitude(double)
      */
-    public double getAltitude()
-    {
+    public double getAltitude() {
         return altitude;
     }
 
@@ -283,36 +398,32 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @param altitude the new base altitude, in meters.
      */
-    public void setAltitude(double altitude)
-    {
+    public void setAltitude(double altitude) {
         this.altitude = altitude;
         this.setExpired(true);
     }
 
     /**
-     * Returns the surface's altitude mode, one of {@link gov.nasa.worldwind.WorldWind#CLAMP_TO_GROUND}, {@link
-     * gov.nasa.worldwind.WorldWind#RELATIVE_TO_GROUND}, or {@link gov.nasa.worldwind.WorldWind#ABSOLUTE}.
+     * Returns the surface's altitude mode, one of {@link WorldWind#CLAMP_TO_GROUND}, {@link
+     * WorldWind#RELATIVE_TO_GROUND}, or {@link WorldWind#ABSOLUTE}.
      *
      * @return the surface's altitude mode.
-     *
      * @see #setAltitudeMode(int)
      */
-    public int getAltitudeMode()
-    {
+    public int getAltitudeMode() {
         return altitudeMode;
     }
 
     /**
-     * Specifies the surface's altitude mode, one of {@link gov.nasa.worldwind.WorldWind#CLAMP_TO_GROUND}, {@link
-     * gov.nasa.worldwind.WorldWind#RELATIVE_TO_GROUND}, or {@link gov.nasa.worldwind.WorldWind#ABSOLUTE}. The altitude
-     * mode {@link gov.nasa.worldwind.WorldWind#CONSTANT} is not supported and {@link
-     * gov.nasa.worldwind.WorldWind#ABSOLUTE} is used if specified. See the AnalyticSurface class documentation for
+     * Specifies the surface's altitude mode, one of {@link WorldWind#CLAMP_TO_GROUND}, {@link
+     * WorldWind#RELATIVE_TO_GROUND}, or {@link WorldWind#ABSOLUTE}. The altitude
+     * mode {@link WorldWind#CONSTANT} is not supported and {@link
+     * WorldWind#ABSOLUTE} is used if specified. See the AnalyticSurface class documentation for
      * information on how the altitude mode is interpreted.
      *
      * @param altitudeMode the surface's altitude mode.
      */
-    public void setAltitudeMode(int altitudeMode)
-    {
+    public void setAltitudeMode(int altitudeMode) {
         this.altitudeMode = altitudeMode;
         this.setExpired(true);
     }
@@ -323,8 +434,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @return the dimensions of this surface's grid.
      */
-    public int[] getDimensions()
-    {
+    public int[] getDimensions() {
         return new int[] {this.width, this.height};
     }
 
@@ -333,20 +443,16 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @param width  the new grid width.
      * @param height the new grid height.
-     *
      * @throws IllegalArgumentException if either width or heigth are less than 1.
      */
-    public void setDimensions(int width, int height)
-    {
-        if (width <= 0)
-        {
+    public void setDimensions(int width, int height) {
+        if (width <= 0) {
             String message = Logging.getMessage("Geom.WidthInvalid", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (height <= 0)
-        {
+        if (height <= 0) {
             String message = Logging.getMessage("Geom.HeightInvalid", height);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -363,8 +469,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @return this surface's GridPointAttributes.
      */
-    public Iterable<? extends GridPointAttributes> getValues()
-    {
+    public Iterable<? extends GridPointAttributes> getValues() {
         return this.values;
     }
 
@@ -373,16 +478,13 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * iterable staring at the upper left hand corner, and proceeding in row-first order across the grid. The iterable
      * should contain at least <code>width * height</code> values, where width and height are the AnalyticSurface's grid
      * dimensions. If the iterable contains too few values, the unassigned grid points are given default attributes: the
-     * default scalar value is 0, and the default color is {@link java.awt.Color#BLACK}.
+     * default scalar value is 0, and the default color is {@link Color#BLACK}.
      *
      * @param iterable the new grid point attributes.
-     *
      * @throws IllegalArgumentException if the iterable is null.
      */
-    public void setValues(Iterable<? extends GridPointAttributes> iterable)
-    {
-        if (iterable == null)
-        {
+    public void setValues(Iterable<? extends GridPointAttributes> iterable) {
+        if (iterable == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -398,8 +500,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @return the surface's vertical scale coefficient.
      */
-    public double getVerticalScale()
-    {
+    public double getVerticalScale() {
         return this.verticalScale;
     }
 
@@ -410,8 +511,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @param scale the surface's vertical scale coefficient.
      */
-    public void setVerticalScale(double scale)
-    {
+    public void setVerticalScale(double scale) {
         this.verticalScale = scale;
         this.setExpired(true);
     }
@@ -423,8 +523,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @return a copy of this surface's rendering attributes.
      */
-    public AnalyticSurfaceAttributes getSurfaceAttributes()
-    {
+    public AnalyticSurfaceAttributes getSurfaceAttributes() {
         return this.surfaceAttributes.copy();
     }
 
@@ -435,13 +534,10 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * setSurfaceAttributes(AnalyticSurfaceAttributes) again with the modified attributes.
      *
      * @param attributes this surface's new rendering attributes.
-     *
      * @throws IllegalArgumentException if attributes is null.
      */
-    public void setSurfaceAttributes(AnalyticSurfaceAttributes attributes)
-    {
-        if (attributes == null)
-        {
+    public void setSurfaceAttributes(AnalyticSurfaceAttributes attributes) {
+        if (attributes == null) {
             String message = Logging.getMessage("nullValue.AttributesIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -457,8 +553,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @return this surface's pick object.
      */
-    public Object getPickObject()
-    {
+    public Object getPickObject() {
         return this.pickObject;
     }
 
@@ -469,8 +564,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * @param pickObject the object to associated with this surface during picking. A null value is permitted and
      *                   indicates that the surface itself will be the object returned during picking.
      */
-    public void setPickObject(Object pickObject)
-    {
+    public void setPickObject(Object pickObject) {
         this.pickObject = pickObject;
     }
 
@@ -479,10 +573,13 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @return this surface's pick layer.
      */
-    public Layer getClientLayer()
-    {
+    public Layer getClientLayer() {
         return this.clientLayer;
     }
+
+    //**************************************************************//
+    //********************  Attribute Construction  ****************//
+    //**************************************************************//
 
     /**
      * Sets the layer associated with this surface during picking. A null value is permitted, and indicates that no
@@ -490,8 +587,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @param layer this surface's pick layer.
      */
-    public void setClientLayer(Layer layer)
-    {
+    public void setClientLayer(Layer layer) {
         this.clientLayer = layer;
     }
 
@@ -500,10 +596,8 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @param dc The current display context.
      */
-    public void preRender(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void preRender(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -529,10 +623,8 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @param dc the <code>DrawContext</code> to be used
      */
-    public void render(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void render(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -558,40 +650,31 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * Returns this surface's extent in model coordinates.
      *
      * @param dc the current DrawContext.
-     *
      * @return this surface's extent in the specified DrawContext.
-     *
      * @throws IllegalArgumentException if the DrawContext is null.
      */
-    public Extent getExtent(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public Extent getExtent(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
-        {
+        if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND) {
             return Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), this.getSector());
         }
-        else
-        {
+        else {
             double minAltitude = this.getAltitude();
             double maxAltitude = this.getAltitude();
             double[] minAndMaxElevations = dc.getGlobe().getMinAndMaxElevations(this.getSector());
 
-            if (this.extremeValues != null)
-            {
+            if (this.extremeValues != null) {
                 minAltitude = this.getAltitude() + this.getVerticalScale() * this.extremeValues[0];
                 maxAltitude = this.getAltitude() + this.getVerticalScale() * this.extremeValues[1];
             }
 
-            if (minAndMaxElevations != null)
-            {
-                if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
-                {
+            if (minAndMaxElevations != null) {
+                if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND) {
                     minAltitude -= minAndMaxElevations[0];
                     maxAltitude += minAndMaxElevations[1];
                 }
@@ -613,11 +696,9 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * against the draw context's viewing frustum.
      *
      * @param dc the current draw context.
-     *
      * @return true if this AnalyticSurface intersects the draw context's frustum; false otherwise.
      */
-    protected boolean intersectsFrustum(DrawContext dc)
-    {
+    protected boolean intersectsFrustum(DrawContext dc) {
         // A null extent indicates an object which has no location.
         Extent extent = this.getExtent(dc);
         if (extent == null)
@@ -631,190 +712,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
         return dc.getView().getFrustumInModelCoordinates().intersects(extent);
     }
 
-    //**************************************************************//
-    //********************  Attribute Construction  ****************//
-    //**************************************************************//
-
-    /**
-     * Returns the minimum and maximum values in the specified iterable of {@link GridPointAttributes}. Values
-     * equivalent to the specified <code>missingDataSignal</code> are ignored. This returns null if the iterable is
-     * empty or contains only missing values.
-     *
-     * @param iterable          the GridPointAttributes to search for the minimum and maximum value.
-     * @param missingDataSignal the number indicating a specific value to ignore.
-     *
-     * @return an array containing the minimum value in index 0 and the maximum value in index 1, or null if the
-     *         iterable is empty or contains only missing values.
-     *
-     * @throws IllegalArgumentException if the iterable is null.
-     */
-    public static double[] computeExtremeValues(Iterable<? extends GridPointAttributes> iterable,
-        double missingDataSignal)
-    {
-        if (iterable == null)
-        {
-            String message = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        double minValue = Double.MAX_VALUE;
-        double maxValue = -Double.MAX_VALUE;
-
-        for (GridPointAttributes attr : iterable)
-        {
-            double value = attr.getValue();
-            if (Double.compare(value, missingDataSignal) == 0)
-                continue;
-
-            if (minValue > value)
-                minValue = value;
-            if (maxValue < value)
-                maxValue = value;
-        }
-
-        if (minValue == Double.MAX_VALUE || minValue == -Double.MIN_VALUE)
-            return null;
-
-        return new double[] {minValue, maxValue};
-    }
-
-    /**
-     * Returns the minimum and maximum values in the specified iterable of {@link GridPointAttributes}. Values
-     * equivalent to <code>Double.NaN</code> are ignored. This returns null if the buffer is empty or contains only NaN
-     * values.
-     *
-     * @param iterable the GridPointAttributes to search for the minimum and maximum value.
-     *
-     * @return an array containing the minimum value in index 0 and the maximum value in index 1, or null if the
-     *         iterable is empty or contains only NaN values.
-     *
-     * @throws IllegalArgumentException if the iterable is null.
-     */
-    public static double[] computeExtremeValues(Iterable<? extends GridPointAttributes> iterable)
-    {
-        if (iterable == null)
-        {
-            String message = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return computeExtremeValues(iterable, Double.NaN);
-    }
-
-    /**
-     * Returns a new instance of {@link GridPointAttributes} with the specified value and color.
-     *
-     * @param value the new GridPointAttributes' value.
-     * @param color the new GridPointAttributes' color.
-     *
-     * @return a new GridPointAttributes defined by the specified value and color.
-     */
-    public static GridPointAttributes createGridPointAttributes(final double value, final java.awt.Color color)
-    {
-        return new AnalyticSurface.GridPointAttributes()
-        {
-            public double getValue()
-            {
-                return value;
-            }
-
-            public Color getColor()
-            {
-                return color;
-            }
-        };
-    }
-
-    /**
-     * Returns a new instance of {@link GridPointAttributes} with a Color computed from the specified value and value
-     * range. The color's RGB components are computed by mapping value's relative position in the range <code>[minValue,
-     * maxValue]</code> to the range of color hues <code>[minHue, maxHue]</code>. The color's Alpha component is
-     * computed by mapping the values's relative position in the range <code>[minValue, minValue + (maxValue - minValue)
-     * / 10]</code> to the range <code>[0, 1]</code>. This has the effect of interpolating hue and alpha based on the
-     * grid point value.
-     *
-     * @param value    the new GridPointAttributes' value.
-     * @param minValue the minimum value.
-     * @param maxValue the maximum value.
-     * @param minHue   the mimimum color hue, corresponding to the minimum value.
-     * @param maxHue   the maximum color hue, corresponding to the maximum value.
-     *
-     * @return a new GridPointAttributes defined by the specified value, value range, and color hue range.
-     */
-    public static AnalyticSurface.GridPointAttributes createColorGradientAttributes(final double value,
-        double minValue, double maxValue, double minHue, double maxHue)
-    {
-        double hueFactor = WWMath.computeInterpolationFactor(value, minValue, maxValue);
-        Color color = Color.getHSBColor((float) WWMath.mixSmooth(hueFactor, minHue, maxHue), 1f, 1f);
-        double opacity = WWMath.computeInterpolationFactor(value, minValue, minValue + (maxValue - minValue) * 0.1);
-        Color rgbaColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * opacity));
-
-        return createGridPointAttributes(value, rgbaColor);
-    }
-
-    /**
-     * Returns a new iterable populated with the default {@link GridPointAttributes}. The default GridPointAttributes
-     * have a value of 0, and the color {@link java.awt.Color#BLACK}.
-     *
-     * @param count the desired number of GridPointAttributes to return.
-     *
-     * @return an iterable containing <code>count</code> default GridPointAttributes.
-     */
-    public static Iterable<? extends GridPointAttributes> createDefaultValues(int count)
-    {
-        ArrayList<GridPointAttributes> list = new ArrayList<>(count);
-        Collections.fill(list, DEFAULT_GRID_POINT_ATTRIBUTES);
-        return list;
-    }
-
-    /**
-     * Returns a new iterable populated with {@link GridPointAttributes} computed by invoking {@link
-     * #createColorGradientAttributes(double, double, double, double, double)} for each double value in the speicfied
-     * {@link BufferWrapper}. Values equivalent to the specified <code>missingDataSignal</code> are replaced with the
-     * specified <code>minValue</code>.
-     *
-     * @param values            the buffer of values.
-     * @param missingDataSignal the number indicating a specific value to ignore.
-     * @param minValue          the minimum value.
-     * @param maxValue          the maximum value.
-     * @param minHue            the mimimum color hue, corresponding to the minimum value.
-     * @param maxHue            the maximum color hue, corresponding to the maximum value.
-     *
-     * @return an iiterable GridPointAttributes defined by the specified buffer of values.
-     */
-    public static Iterable<? extends AnalyticSurface.GridPointAttributes> createColorGradientValues(
-        BufferWrapper values, double missingDataSignal, double minValue, double maxValue, double minHue, double maxHue)
-    {
-        if (values == null)
-        {
-            String message = Logging.getMessage("nullValue.BufferIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        ArrayList<AnalyticSurface.GridPointAttributes> attributesList
-            = new ArrayList<>();
-
-        for (int i = 0; i < values.length(); i++)
-        {
-            double value = values.getDouble(i);
-            if (Double.compare(value, missingDataSignal) == 0)
-                value = minValue;
-
-            attributesList.add(createColorGradientAttributes(value, minValue, maxValue, minHue, maxHue));
-        }
-
-        return attributesList;
-    }
-
-    //**************************************************************//
-    //********************  Surface Rendering  *********************//
-    //**************************************************************//
-
-    protected void makeOrderedRenderable(DrawContext dc)
-    {
+    protected void makeOrderedRenderable(DrawContext dc) {
         // Clamp-to-ground analytic surface is drawn entirely by surface objects prepared during
         // preRenderSurfaceObjects().
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
@@ -828,28 +726,27 @@ public class AnalyticSurface implements Renderable, PreRenderable
         dc.addOrderedRenderable(new OrderedSurface(this, eyeDistance));
     }
 
-    protected void drawOrderedRenderable(DrawContext dc)
-    {
+    //**************************************************************//
+    //********************  Surface Rendering  *********************//
+    //**************************************************************//
+
+    protected void drawOrderedRenderable(DrawContext dc) {
         this.beginDrawing(dc);
-        try
-        {
+        try {
             this.doDrawOrderedRenderable(dc);
         }
-        finally
-        {
+        finally {
             this.endDrawing(dc);
         }
     }
 
-    protected void doDrawOrderedRenderable(DrawContext dc)
-    {
+    protected void doDrawOrderedRenderable(DrawContext dc) {
         this.bind(dc);
 
         // If the outline and interior will be drawn, then draw the outline color, but do not affect the depth
         // buffer. When the interior is drawn, it will draw on top of these colors, and the outline will be visible
         // behind the potentially transparent interior.
-        if (this.surfaceAttributes.isDrawOutline() && this.surfaceAttributes.isDrawInterior())
-        {
+        if (this.surfaceAttributes.isDrawOutline() && this.surfaceAttributes.isDrawInterior()) {
             dc.getGL().glDepthMask(false);
             this.drawOutline(dc);
             dc.getGL().glDepthMask(true);
@@ -862,15 +759,13 @@ public class AnalyticSurface implements Renderable, PreRenderable
             this.drawOutline(dc);
     }
 
-    protected void bind(DrawContext dc)
-    {
+    protected void bind(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
         gl.glVertexPointer(3, GL.GL_FLOAT, 0, this.surfaceRenderInfo.cartesianVertexBuffer);
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
             gl.glNormalPointer(GL.GL_FLOAT, 0, this.surfaceRenderInfo.cartesianNormalBuffer);
 
@@ -879,12 +774,10 @@ public class AnalyticSurface implements Renderable, PreRenderable
         }
     }
 
-    protected void drawInterior(DrawContext dc)
-    {
+    protected void drawInterior(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             // Bind the shapes vertex colors as the diffuse material parameter.
             gl.glEnable(GL2.GL_COLOR_MATERIAL);
             gl.glColorMaterial(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE);
@@ -899,12 +792,10 @@ public class AnalyticSurface implements Renderable, PreRenderable
         this.surfaceRenderInfo.drawInterior(dc);
     }
 
-    protected void drawOutline(DrawContext dc)
-    {
+    protected void drawOutline(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             gl.glEnable(GL.GL_LINE_SMOOTH);
             // Unbind the shapes vertex colors as the diffuse material parameter.
             gl.glDisable(GL2.GL_LIGHTING);
@@ -920,8 +811,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
         gl.glLineWidth((float) this.surfaceAttributes.getOutlineWidth());
         this.surfaceRenderInfo.drawOutline(dc);
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             gl.glEnable(GL2.GL_LIGHTING);
             gl.glDisable(GL.GL_LINE_SMOOTH);
             gl.glDisable(GL2.GL_LINE_STIPPLE);
@@ -929,8 +819,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
         }
     }
 
-    protected void beginDrawing(DrawContext dc)
-    {
+    protected void beginDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glPushAttrib(
@@ -948,8 +837,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
 
         gl.glEnable(GL.GL_CULL_FACE);
 
-        if (dc.isPickingMode())
-        {
+        if (dc.isPickingMode()) {
             Color color = dc.getUniquePickColor();
 
             this.pickSupport.addPickableObject(color.getRGB(),
@@ -958,8 +846,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
 
             gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
         }
-        else
-        {
+        else {
             // Enable blending in non-premultiplied color mode. Premultiplied colors don't work with GL fixed
             // functionality lighting.
             gl.glEnable(GL.GL_BLEND);
@@ -982,8 +869,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
         dc.getView().pushReferenceCenter(dc, this.referencePoint);
     }
 
-    protected void endDrawing(DrawContext dc)
-    {
+    protected void endDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         dc.getView().popReferenceCenter(dc);
@@ -995,24 +881,17 @@ public class AnalyticSurface implements Renderable, PreRenderable
         gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
     }
 
-    //**************************************************************//
-    //********************  Surface Construction  ******************//
-    //**************************************************************//
-
-    protected boolean isExpired(DrawContext dc)
-    {
+    protected boolean isExpired(DrawContext dc) {
         if (this.expired)
             return true;
 
-        if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
-        {
+        if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND) {
             if (dc.getFrameTimeStamp() - this.regenTime > RELATIVE_TO_GROUND_REGEN_PERIOD)
                 return true;
         }
 
         if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND ||
-            this.getAltitudeMode() == WorldWind.ABSOLUTE)
-        {
+            this.getAltitudeMode() == WorldWind.ABSOLUTE) {
             Object gsk = dc.getGlobe().getStateKey(dc);
             return !Objects.equals(this.globeStateKey, gsk);
         }
@@ -1020,12 +899,14 @@ public class AnalyticSurface implements Renderable, PreRenderable
         return false;
     }
 
-    protected void setExpired(boolean expired)
-    {
+    //**************************************************************//
+    //********************  Surface Construction  ******************//
+    //**************************************************************//
+
+    protected void setExpired(boolean expired) {
         this.expired = expired;
 
-        if (this.expired)
-        {
+        if (this.expired) {
             if (this.clampToGroundSurface != null)
                 this.clampToGroundSurface.markAsModified();
             if (this.shadowSurface != null)
@@ -1033,35 +914,30 @@ public class AnalyticSurface implements Renderable, PreRenderable
         }
     }
 
-    protected void update(DrawContext dc)
-    {
+    protected void update(DrawContext dc) {
         if (this.updateFailed)
             return;
 
-        try
-        {
+        try {
             this.doUpdate(dc);
             this.setExpired(false);
             this.globeStateKey = dc.getGlobe().getStateKey(dc);
             this.regenTime = dc.getFrameTimeStamp();
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = Logging.getMessage("generic.ExceptionWhileUpdating", this);
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
+            Logging.logger().log(Level.SEVERE, message, e);
             this.updateFailed = true;
         }
     }
 
-    protected void doUpdate(DrawContext dc)
-    {
+    protected void doUpdate(DrawContext dc) {
         this.referencePos = new Position(this.sector.getCentroid(), this.altitude);
         this.referencePoint = dc.getGlobe().computePointFromPosition(this.referencePos);
 
         if (this.surfaceRenderInfo == null ||
             this.surfaceRenderInfo.getGridWidth() != this.width ||
-            this.surfaceRenderInfo.getGridHeight() != this.height)
-        {
+            this.surfaceRenderInfo.getGridHeight() != this.height) {
             this.surfaceRenderInfo = new RenderInfo(this.width, this.height);
         }
 
@@ -1069,19 +945,16 @@ public class AnalyticSurface implements Renderable, PreRenderable
         this.updateSurfaceNormals(this.surfaceRenderInfo);
     }
 
-    protected void updateSurfacePoints(DrawContext dc, RenderInfo outRenderInfo)
-    {
+    protected void updateSurfacePoints(DrawContext dc, RenderInfo outRenderInfo) {
         Iterator<? extends GridPointAttributes> iter = this.values.iterator();
 
-        double latStep = -this.sector.getDeltaLatDegrees() / (double) (this.height - 1);
-        double lonStep = this.sector.getDeltaLonDegrees() / (double) (this.width - 1);
+        double latStep = -this.sector.getDeltaLatDegrees() / (this.height - 1);
+        double lonStep = this.sector.getDeltaLonDegrees() / (this.width - 1);
 
-        double lat = this.sector.getMaxLatitude().degrees;
-        for (int y = 0; y < this.height; y++)
-        {
-            double lon = this.sector.getMinLongitude().degrees;
-            for (int x = 0; x < this.width; x++)
-            {
+        double lat = this.sector.latMax().degrees;
+        for (int y = 0; y < this.height; y++) {
+            double lon = this.sector.lonMin().degrees;
+            for (int x = 0; x < this.width; x++) {
                 GridPointAttributes attr = iter.hasNext() ? iter.next() : null;
                 this.updateNextSurfacePoint(dc, Angle.fromDegrees(lat), Angle.fromDegrees(lon), attr, outRenderInfo);
 
@@ -1097,8 +970,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
     }
 
     protected void updateNextSurfacePoint(DrawContext dc, Angle lat, Angle lon, GridPointAttributes attr,
-        RenderInfo outRenderInfo)
-    {
+        RenderInfo outRenderInfo) {
         Color color = (attr != null) ? attr.getColor() : DEFAULT_COLOR;
         // Convert the floating point opacity from the range [0, 1] to the unsigned byte range [0, 255].
         int alpha = (int) (color.getAlpha() * this.surfaceAttributes.getInteriorOpacity() + 0.5);
@@ -1109,8 +981,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
 
         // We need geographic vertices if the surface's altitude mode is clamp-to-ground, or if we're drawing the
         // surface's shadow.
-        if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND || this.surfaceAttributes.isDrawShadow())
-        {
+        if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND || this.surfaceAttributes.isDrawShadow()) {
             outRenderInfo.geographicVertexBuffer.put((float) (lon.degrees - this.referencePos.getLongitude().degrees));
             outRenderInfo.geographicVertexBuffer.put((float) (lat.degrees - this.referencePos.getLatitude().degrees));
             outRenderInfo.geographicVertexBuffer.put(1);
@@ -1126,8 +997,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
         }
 
         // We need shadow colors if the surface's shadow is enabled.
-        if (this.surfaceAttributes.isDrawShadow())
-        {
+        if (this.surfaceAttributes.isDrawShadow()) {
             // Convert the floating point opacity from the range [0, 1] to the unsigned byte range [0, 255].
             int shadowAlpha = (int) (alpha * this.surfaceAttributes.getShadowOpacity() + 0.5);
             outRenderInfo.shadowColorBuffer.put((byte) 0);
@@ -1137,12 +1007,10 @@ public class AnalyticSurface implements Renderable, PreRenderable
         }
     }
 
-    protected Vec4 computeSurfacePoint(DrawContext dc, Angle lat, Angle lon, double value)
-    {
+    protected Vec4 computeSurfacePoint(DrawContext dc, Angle lat, Angle lon, double value) {
         double offset = this.altitude + this.verticalScale * value;
 
-        if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
-        {
+        if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND) {
             return dc.computeTerrainPoint(lat, lon, dc.getVerticalExaggeration() * offset);
         }
         else // WorldWind.ABSOLUTE
@@ -1151,54 +1019,105 @@ public class AnalyticSurface implements Renderable, PreRenderable
         }
     }
 
-    protected void updateSurfaceNormals(RenderInfo outRenderInfo)
-    {
+    protected void updateSurfaceNormals(RenderInfo outRenderInfo) {
         WWMath.computeNormalsForIndexedTriangleStrip(outRenderInfo.interiorIndexBuffer,
             outRenderInfo.cartesianVertexBuffer, outRenderInfo.cartesianNormalBuffer);
+    }
+
+    protected void preRenderSurfaceObjects(DrawContext dc) {
+        if (this.surfaceAttributes.isDrawShadow()) {
+            if (this.shadowSurface == null)
+                this.shadowSurface = this.createShadowSurface();
+            this.shadowSurface.setDelegateOwner(this.getPickObject() != null ? this.getPickObject() : this);
+            this.shadowSurface.preRender(dc);
+        }
+
+        if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND) {
+            if (this.clampToGroundSurface == null)
+                this.clampToGroundSurface = this.createClampToGroundSurface();
+            this.clampToGroundSurface.setDelegateOwner(this.getPickObject() != null ? this.getPickObject() : this);
+            this.clampToGroundSurface.preRender(dc);
+        }
     }
 
     //**************************************************************//
     //********************  Internal Support Classes  **************//
     //**************************************************************//
 
-    protected static class OrderedSurface implements OrderedRenderable
-    {
+    protected void drawSurfaceObjects(DrawContext dc) {
+        if (this.surfaceAttributes.isDrawShadow()) {
+            if (!dc.isPickingMode())
+                this.shadowSurface.render(dc);
+        }
+
+        if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND) {
+            this.clampToGroundSurface.render(dc);
+        }
+    }
+
+    protected AnalyticSurfaceObject createClampToGroundSurface() {
+        return new ClampToGroundSurface(this);
+    }
+
+    //**************************************************************//
+    //********************  Surface Objects  ***********************//
+    //**************************************************************//
+
+    protected AnalyticSurfaceObject createShadowSurface() {
+        return new ShadowSurface(this);
+    }
+
+    /**
+     * GridPointAttributes defines the properties associated with a single grid point of an AnalyticSurface.
+     */
+    public interface GridPointAttributes {
+        /**
+         * Returns the scalar value associated with a grid point. By default, AnalyticSurface interprets this value as
+         * the grid point's height relative to the AnalyticSurface's base altitude, both in meters.
+         *
+         * @return the grid point's scalar value.
+         */
+        double getValue();
+
+        /**
+         * Returns the {@link Color} associated with a grid point. By default, AnalyticSurface interprets this
+         * Color as the RGBA components of a grid point's RGBA color.
+         *
+         * @return the grid point's RGB color components.
+         */
+        Color getColor();
+    }
+
+    protected static class OrderedSurface implements OrderedRenderable {
         protected final AnalyticSurface surface;
         protected final double eyeDistance;
 
-        public OrderedSurface(AnalyticSurface surface, double eyeDistance)
-        {
+        public OrderedSurface(AnalyticSurface surface, double eyeDistance) {
             this.surface = surface;
             this.eyeDistance = eyeDistance;
         }
 
-        public double getDistanceFromEye()
-        {
+        public double getDistanceFromEye() {
             return this.eyeDistance;
         }
 
-        public void pick(DrawContext dc, Point pickPoint)
-        {
+        public void pick(DrawContext dc, Point pickPoint) {
             this.surface.pickSupport.beginPicking(dc);
-            try
-            {
+            try {
                 this.render(dc);
             }
-            finally
-            {
+            finally {
                 this.surface.pickSupport.endPicking(dc);
                 this.surface.pickSupport.resolvePick(dc, dc.getPickPoint(), this.surface.getClientLayer());
             }
         }
 
-        public void render(DrawContext dc)
-        {
+        public void render(DrawContext dc) {
             this.surface.drawOrderedRenderable(dc);
         }
     }
 
-    protected static class RenderInfo
-    {
+    protected static class RenderInfo {
         protected final int gridWidth;
         protected final int gridHeight;
         protected final IntBuffer interiorIndexBuffer;
@@ -1209,8 +1128,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
         protected final ByteBuffer colorBuffer;
         protected final ByteBuffer shadowColorBuffer;
 
-        public RenderInfo(int gridWidth, int gridHeight)
-        {
+        public RenderInfo(int gridWidth, int gridHeight) {
             int numVertices = gridWidth * gridHeight;
             this.gridWidth = gridWidth;
             this.gridHeight = gridHeight;
@@ -1223,102 +1141,45 @@ public class AnalyticSurface implements Renderable, PreRenderable
             this.shadowColorBuffer = Buffers.newDirectByteBuffer(4 * numVertices);
         }
 
-        public int getGridWidth()
-        {
+        public int getGridWidth() {
             return this.gridWidth;
         }
 
-        public int getGridHeight()
-        {
+        public int getGridHeight() {
             return this.gridHeight;
         }
 
-        public int getNumVertices()
-        {
+        public int getNumVertices() {
             return this.gridWidth * this.gridHeight;
         }
 
-        public void drawInterior(DrawContext dc)
-        {
+        public void drawInterior(DrawContext dc) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glDrawElements(GL.GL_TRIANGLE_STRIP, this.interiorIndexBuffer.remaining(), GL.GL_UNSIGNED_INT,
                 this.interiorIndexBuffer);
         }
 
-        public void drawOutline(DrawContext dc)
-        {
+        public void drawOutline(DrawContext dc) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
             gl.glDrawElements(GL.GL_LINE_LOOP, this.outlineIndexBuffer.remaining(), GL.GL_UNSIGNED_INT,
                 this.outlineIndexBuffer);
         }
     }
 
-    //**************************************************************//
-    //********************  Surface Objects  ***********************//
-    //**************************************************************//
-
-    protected void preRenderSurfaceObjects(DrawContext dc)
-    {
-        if (this.surfaceAttributes.isDrawShadow())
-        {
-            if (this.shadowSurface == null)
-                this.shadowSurface = this.createShadowSurface();
-            this.shadowSurface.setDelegateOwner(this.getPickObject() != null ? this.getPickObject() : this);
-            this.shadowSurface.preRender(dc);
-        }
-
-        if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
-        {
-            if (this.clampToGroundSurface == null)
-                this.clampToGroundSurface = this.createClampToGroundSurface();
-            this.clampToGroundSurface.setDelegateOwner(this.getPickObject() != null ? this.getPickObject() : this);
-            this.clampToGroundSurface.preRender(dc);
-        }
-    }
-
-    protected void drawSurfaceObjects(DrawContext dc)
-    {
-        if (this.surfaceAttributes.isDrawShadow())
-        {
-            if (!dc.isPickingMode())
-                this.shadowSurface.render(dc);
-        }
-
-        if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
-        {
-            this.clampToGroundSurface.render(dc);
-        }
-    }
-
-    protected AnalyticSurfaceObject createClampToGroundSurface()
-    {
-        return new ClampToGroundSurface(this);
-    }
-
-    protected AnalyticSurfaceObject createShadowSurface()
-    {
-        return new ShadowSurface(this);
-    }
-
-    protected static class AnalyticSurfaceObject extends AbstractSurfaceObject
-    {
+    protected static class AnalyticSurfaceObject extends AbstractSurfaceObject {
         protected final AnalyticSurface analyticSurface;
 
-        public AnalyticSurfaceObject(AnalyticSurface analyticSurface)
-        {
+        public AnalyticSurfaceObject(AnalyticSurface analyticSurface) {
             this.analyticSurface = analyticSurface;
         }
 
-        public void markAsModified()
-        {
+        public void markAsModified() {
             super.updateModifiedTime();
             super.clearCaches();
         }
 
-        public List<Sector> getSectors(DrawContext dc)
-        {
-            if (dc == null)
-            {
+        public List<Sector> getSectors(DrawContext dc) {
+            if (dc == null) {
                 String message = Logging.getMessage("nullValue.DrawContextIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
@@ -1327,21 +1188,17 @@ public class AnalyticSurface implements Renderable, PreRenderable
             return Collections.singletonList(this.analyticSurface.sector);
         }
 
-        protected void drawGeographic(DrawContext dc, SurfaceTileDrawContext sdc)
-        {
+        protected void drawGeographic(DrawContext dc, SurfaceTileDrawContext sdc) {
             this.beginDrawing(dc);
-            try
-            {
+            try {
                 this.doDrawGeographic(dc, sdc);
             }
-            finally
-            {
+            finally {
                 this.endDrawing(dc);
             }
         }
 
-        protected void beginDrawing(DrawContext dc)
-        {
+        protected void beginDrawing(DrawContext dc) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glPushAttrib(
@@ -1357,14 +1214,12 @@ public class AnalyticSurface implements Renderable, PreRenderable
             OGLUtil.applyBlending(gl, false);
             gl.glDisable(GL.GL_DEPTH_TEST);
 
-            if (!dc.isPickingMode())
-            {
+            if (!dc.isPickingMode()) {
                 gl.glEnable(GL.GL_LINE_SMOOTH);
             }
         }
 
-        protected void endDrawing(DrawContext dc)
-        {
+        protected void endDrawing(DrawContext dc) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glPopMatrix();
@@ -1375,8 +1230,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
             gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
         }
 
-        protected void doDrawGeographic(DrawContext dc, SurfaceTileDrawContext sdc)
-        {
+        protected void doDrawGeographic(DrawContext dc, SurfaceTileDrawContext sdc) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
             Matrix modelview = sdc.getModelviewMatrix(this.analyticSurface.referencePos);
@@ -1391,17 +1245,14 @@ public class AnalyticSurface implements Renderable, PreRenderable
                 this.drawOutline(dc);
         }
 
-        protected void bind(DrawContext dc)
-        {
+        protected void bind(DrawContext dc) {
         }
 
-        protected void drawInterior(DrawContext dc)
-        {
+        protected void drawInterior(DrawContext dc) {
             this.analyticSurface.surfaceRenderInfo.drawInterior(dc);
         }
 
-        protected void drawOutline(DrawContext dc)
-        {
+        protected void drawOutline(DrawContext dc) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glLineWidth((float) this.analyticSurface.surfaceAttributes.getOutlineWidth());
@@ -1409,34 +1260,28 @@ public class AnalyticSurface implements Renderable, PreRenderable
         }
     }
 
-    protected static class ClampToGroundSurface extends AnalyticSurfaceObject
-    {
-        public ClampToGroundSurface(AnalyticSurface analyticSurface)
-        {
+    protected static class ClampToGroundSurface extends AnalyticSurfaceObject {
+        public ClampToGroundSurface(AnalyticSurface analyticSurface) {
             super(analyticSurface);
         }
 
         @Override
-        protected void bind(DrawContext dc)
-        {
+        protected void bind(DrawContext dc) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, this.analyticSurface.surfaceRenderInfo.geographicVertexBuffer);
 
-            if (!dc.isPickingMode())
-            {
+            if (!dc.isPickingMode()) {
                 gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
                 gl.glColorPointer(4, GL.GL_UNSIGNED_BYTE, 0, this.analyticSurface.surfaceRenderInfo.colorBuffer);
             }
         }
 
-        protected void drawOutline(DrawContext dc)
-        {
+        protected void drawOutline(DrawContext dc) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-            if (!dc.isPickingMode())
-            {
+            if (!dc.isPickingMode()) {
                 // Set the outline color.
                 Color color = this.analyticSurface.surfaceAttributes.getOutlineMaterial().getDiffuse();
                 // Convert the floating point opacity from the range [0, 1] to the unsigned byte range [0, 255].
@@ -1447,48 +1292,40 @@ public class AnalyticSurface implements Renderable, PreRenderable
 
             super.drawOutline(dc);
 
-            if (!dc.isPickingMode())
-            {
+            if (!dc.isPickingMode()) {
                 gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
             }
         }
     }
 
-    protected static class ShadowSurface extends AnalyticSurfaceObject
-    {
-        public ShadowSurface(AnalyticSurface analyticSurface)
-        {
+    protected static class ShadowSurface extends AnalyticSurfaceObject {
+        public ShadowSurface(AnalyticSurface analyticSurface) {
             super(analyticSurface);
         }
 
         @Override
-        protected void buildPickRepresentation(DrawContext dc)
-        {
+        protected void buildPickRepresentation(DrawContext dc) {
             // The analytic surface's shadow is not drawn during picking. Suppress any attempt to create a pick
             // representation for the shadow to eliminate unnecessary overhead.
         }
 
         @Override
-        protected void bind(DrawContext dc)
-        {
+        protected void bind(DrawContext dc) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
             gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, this.analyticSurface.surfaceRenderInfo.geographicVertexBuffer);
 
-            if (!dc.isPickingMode())
-            {
+            if (!dc.isPickingMode()) {
                 gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
                 gl.glColorPointer(4, GL.GL_UNSIGNED_BYTE, 0, this.analyticSurface.surfaceRenderInfo.shadowColorBuffer);
             }
         }
 
-        protected void drawOutline(DrawContext dc)
-        {
+        protected void drawOutline(DrawContext dc) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-            if (!dc.isPickingMode())
-            {
+            if (!dc.isPickingMode()) {
                 // Convert the floating point opacity from the range [0, 1] to the unsigned byte range [0, 255].
                 int alpha = (int) (255 * this.analyticSurface.surfaceAttributes.getOutlineOpacity()
                     * this.analyticSurface.surfaceAttributes.getShadowOpacity() + 0.5);
@@ -1498,8 +1335,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
 
             super.drawOutline(dc);
 
-            if (!dc.isPickingMode())
-            {
+            if (!dc.isPickingMode()) {
                 gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
             }
         }

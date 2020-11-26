@@ -12,11 +12,14 @@ package gov.nasa.worldwind.event;
  * @author pabercrombie
  * @version $Id: Message.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Message extends WWEvent
-{
-    /** Message name. */
+public class Message extends WWEvent {
+    /**
+     * Message name.
+     */
     protected final String name;
-    /** Time at which the message was sent. */
+    /**
+     * Time at which the message was sent.
+     */
     protected final long when;
 
     /**
@@ -25,8 +28,7 @@ public class Message extends WWEvent
      * @param name   The name of the message.
      * @param source The object that generated the message.
      */
-    public Message(String name, Object source)
-    {
+    public Message(String name, Object source) {
         this(name, source, System.currentTimeMillis());
     }
 
@@ -37,8 +39,7 @@ public class Message extends WWEvent
      * @param source The object that generated the message.
      * @param when   The timestamp to apply to the message.
      */
-    public Message(String name, Object source, long when)
-    {
+    public Message(String name, Object source, long when) {
         super(source);
         this.name = name;
         this.when = when;
@@ -49,8 +50,7 @@ public class Message extends WWEvent
      *
      * @return The message name.
      */
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
@@ -59,8 +59,7 @@ public class Message extends WWEvent
      *
      * @return Time, in milliseconds since the Epoch, at which the message was sent.
      */
-    public long getWhen()
-    {
+    public long getWhen() {
         return this.when;
     }
 }

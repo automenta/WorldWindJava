@@ -19,14 +19,12 @@ import java.awt.image.*;
  * @author ccrick
  * @version $Id: IconRetriever.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface IconRetriever
-{
+public interface IconRetriever {
     /**
      * Create an icon to represent a symbol in a symbol set.
      *
      * @param symbolId Identifier for the symbol. The format of this identifier depends on the symbology set.
      * @param params   Parameters that affect icon retrieval.
-     *
      * @return A BufferedImage containing the requested icon, or null if the icon cannot be retrieved.
      */
     BufferedImage createIcon(String symbolId, AVList params);

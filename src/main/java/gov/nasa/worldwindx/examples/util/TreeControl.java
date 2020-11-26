@@ -11,21 +11,22 @@ import gov.nasa.worldwind.util.tree.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 /**
- * This example demonstrates the use of the on-screen tree control using {@link gov.nasa.worldwind.util.tree.BasicTree}.
+ * This example demonstrates the use of the on-screen tree control using {@link BasicTree}.
  *
  * @author pabercrombie
  * @version $Id: TreeControl.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class TreeControl extends ApplicationTemplate
-{
+public class TreeControl extends ApplicationTemplate {
     private static final String ICON_PATH = "images/16x16-icon-nasa.png";
 
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("Tree Control", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
         final HotSpotController controller;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             super(true, true, false);
 
             RenderableLayer layer = new RenderableLayer();
@@ -38,7 +39,7 @@ public class TreeControl extends ApplicationTemplate
 
             BasicTreeModel model = new BasicTreeModel();
 
-            BasicTreeNode root = new BasicTreeNode("Root", ICON_PATH);
+            TreeNode root = new BasicTreeNode("Root", ICON_PATH);
             model.setRoot(root);
 
             BasicTreeNode child = new BasicTreeNode("Child 1", ICON_PATH);
@@ -71,10 +72,5 @@ public class TreeControl extends ApplicationTemplate
             // Add the layer to the model.
             insertBeforeCompass(this.getWwd(), layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("Tree Control", AppFrame.class);
     }
 }

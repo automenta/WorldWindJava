@@ -72,10 +72,10 @@ public class Frames extends ApplicationTemplate
 
         protected Iterable<Position> getGridIterator(Sector sector, int numLatPoints, int numLonPoints, double altitude)
         {
-            double minLat = sector.getMinLatitude().degrees;
-            double maxLat = sector.getMaxLatitude().degrees;
-            double minLon = sector.getMinLongitude().degrees;
-            double maxLon = sector.getMaxLongitude().degrees;
+            double minLat = sector.latMin().degrees;
+            double maxLat = sector.latMax().degrees;
+            double minLon = sector.lonMin().degrees;
+            double maxLon = sector.lonMax().degrees;
             double latDelta = sector.getDeltaLatDegrees() / numLatPoints;
             double lonDelta = sector.getDeltaLonDegrees() / numLonPoints;
 

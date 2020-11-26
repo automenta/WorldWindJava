@@ -22,37 +22,11 @@ import java.net.*;
  * @author tag
  * @version $Id: WCS100Capabilities.java 2072 2014-06-21 21:20:25Z tgaskins $
  */
-public class WCS100Capabilities extends AbstractXMLEventParser
-{
+public class WCS100Capabilities extends AbstractXMLEventParser {
     protected final XMLEventReader eventReader;
     protected XMLEventParserContext parserContext;
 
-    /**
-     * Retrieves the WCS capabilities document from a specified WCS server.
-     *
-     * @param uri The URI of the server.
-     *
-     * @return The WCS capabilities document for the specified server.
-     */
-    public static WCS100Capabilities retrieve(URI uri)
-    {
-        try
-        {
-            CapabilitiesRequest request = new CapabilitiesRequest(uri, "WCS");
-            request.setVersion("1.0.0");
-
-            return new WCS100Capabilities(request.toString());
-        }
-        catch (URISyntaxException e)
-        {
-            String message = Logging.getMessage("OGC.GetCapabilitiesURIInvalid", uri);
-            Logging.logger().warning(message);
-            throw new IllegalArgumentException(message);
-        }
-    }
-
-    public WCS100Capabilities(Object docSource)
-    {
+    public WCS100Capabilities(Object docSource) {
         super(OGCConstants.WCS_1_0_0_NAMESPACE_URI);
 
         this.eventReader = this.createReader(docSource);
@@ -60,26 +34,42 @@ public class WCS100Capabilities extends AbstractXMLEventParser
         this.initialize();
     }
 
-    protected void initialize()
-    {
+    /**
+     * Retrieves the WCS capabilities document from a specified WCS server.
+     *
+     * @param uri The URI of the server.
+     * @return The WCS capabilities document for the specified server.
+     */
+    public static WCS100Capabilities retrieve(URI uri) {
+        try {
+            CapabilitiesRequest request = new CapabilitiesRequest(uri, "WCS");
+            request.setVersion("1.0.0");
+
+            return new WCS100Capabilities(request.toString());
+        }
+        catch (URISyntaxException e) {
+            String message = Logging.getMessage("OGC.GetCapabilitiesURIInvalid", uri);
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    protected void initialize() {
         this.parserContext = this.createParserContext(this.eventReader);
     }
 
-    protected XMLEventReader createReader(Object docSource)
-    {
+    protected XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
     }
 
-    protected XMLEventParserContext createParserContext(XMLEventReader reader)
-    {
+    protected XMLEventParserContext createParserContext(XMLEventReader reader) {
         this.parserContext = new BasicXMLEventParserContext(reader);
         this.parserContext.setDefaultNamespaceURI(this.getNamespaceURI());
 
         return this.parserContext;
     }
 
-    public XMLEventParserContext getParserContext()
-    {
+    public XMLEventParserContext getParserContext() {
         return this.parserContext;
     }
 
@@ -88,8 +78,7 @@ public class WCS100Capabilities extends AbstractXMLEventParser
      *
      * @return the document's version number.
      */
-    public String getVersion()
-    {
+    public String getVersion() {
         return (String) this.getField("version");
     }
 
@@ -98,23 +87,19 @@ public class WCS100Capabilities extends AbstractXMLEventParser
      *
      * @return the document's update sequence.
      */
-    public String getUpdateSequence()
-    {
+    public String getUpdateSequence() {
         return (String) this.getField("updateSequence");
     }
 
-    public WCS100Service getService()
-    {
+    public WCS100Service getService() {
         return (WCS100Service) this.getField("Service");
     }
 
-    public WCS100Capability getCapability()
-    {
+    public WCS100Capability getCapability() {
         return (WCS100Capability) this.getField("Capability");
     }
 
-    public WCS100ContentMetadata getContentMetadata()
-    {
+    public WCS100ContentMetadata getContentMetadata() {
         return (WCS100ContentMetadata) this.getField("ContentMetadata");
     }
 
@@ -123,24 +108,18 @@ public class WCS100Capabilities extends AbstractXMLEventParser
      * document has been parsed.
      *
      * @param args optional arguments to pass to parsers of sub-elements.
-     *
      * @return <code>this</code> if parsing is successful, otherwise  null.
-     *
-     * @throws javax.xml.stream.XMLStreamException
-     *          if an exception occurs while attempting to read the event stream.
+     * @throws XMLStreamException if an exception occurs while attempting to read the event stream.
      */
-    public WCS100Capabilities parse(Object... args) throws XMLStreamException
-    {
+    public WCS100Capabilities parse(Object... args) throws XMLStreamException {
         XMLEventParserContext ctx = this.parserContext;
         QName capsName = new QName(this.getNamespaceURI(), "WCS_Capabilities");
 
-        for (XMLEvent event = ctx.nextEvent(); ctx.hasNext(); event = ctx.nextEvent())
-        {
+        for (XMLEvent event = ctx.nextEvent(); ctx.hasNext(); event = ctx.nextEvent()) {
             if (event == null)
                 continue;
 
-            if (event.isStartElement() && event.asStartElement().getName().equals(capsName))
-            {
+            if (event.isStartElement() && event.asStartElement().getName().equals(capsName)) {
                 // Parse the attributes in order to get the version number.
                 this.doParseEventAttributes(ctx, event);
                 ctx.setDefaultNamespaceURI(this.getNamespaceURI());
@@ -157,8 +136,7 @@ public class WCS100Capabilities extends AbstractXMLEventParser
         return null;
     }
 
-    protected void registerParsers(XMLEventParserContext ctx)
-    {
+    protected void registerParsers(XMLEventParserContext ctx) {
         ctx.addStringParsers(this.getNamespaceURI(), new String[]
             {
                 "accessConstraints",

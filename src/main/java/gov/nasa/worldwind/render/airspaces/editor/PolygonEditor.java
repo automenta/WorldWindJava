@@ -19,32 +19,26 @@ import java.util.*;
  * @author dcollins
  * @version $Id: PolygonEditor.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class PolygonEditor extends AbstractAirspaceEditor
-{
-    private Polygon polygon; // Can be null
+public class PolygonEditor extends AbstractAirspaceEditor {
     private static final double DEFAULT_POLYGON_HEIGHT = 10.0;
+    private Polygon polygon; // Can be null
 
-    public PolygonEditor(AirspaceControlPointRenderer renderer)
-    {
+    public PolygonEditor(AirspaceControlPointRenderer renderer) {
         super(renderer);
     }
 
-    public PolygonEditor()
-    {
+    public PolygonEditor() {
     }
 
-    public Airspace getAirspace()
-    {
+    public Airspace getAirspace() {
         return this.getPolygon();
     }
 
-    public Polygon getPolygon()
-    {
+    public Polygon getPolygon() {
         return this.polygon;
     }
 
-    public void setPolygon(Polygon polygon)
-    {
+    public void setPolygon(Polygon polygon) {
         this.polygon = polygon;
     }
 
@@ -52,19 +46,16 @@ public class PolygonEditor extends AbstractAirspaceEditor
     //********************  Control Point Assembly  ****************//
     //**************************************************************//
 
-    protected void assembleControlPoints(DrawContext dc)
-    {
+    protected void assembleControlPoints(DrawContext dc) {
         if (this.getPolygon() == null)
             return;
 
         int numLocations = this.getPolygon().getLocations().size();
         boolean isCollapsed = this.getPolygon().isAirspaceCollapsed();
 
-        for (int locationIndex = 0; locationIndex < numLocations; locationIndex++)
-        {
+        for (int locationIndex = 0; locationIndex < numLocations; locationIndex++) {
             // If the polygon is not collapsed, then add the lower altitude control points.
-            if (!isCollapsed)
-            {
+            if (!isCollapsed) {
                 this.addPolygonControlPoint(dc, locationIndex, LOWER_ALTITUDE);
             }
 
@@ -73,8 +64,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
         }
     }
 
-    protected void addPolygonControlPoint(DrawContext dc, int locationIndex, int altitudeIndex)
-    {
+    protected void addPolygonControlPoint(DrawContext dc, int locationIndex, int altitudeIndex) {
         LatLon location = this.getPolygon().getLocations().get(locationIndex);
         double altitude = this.getPolygon().getAltitudes()[altitudeIndex];
         boolean terrainConforming = this.getPolygon().isTerrainConforming()[altitudeIndex];
@@ -96,20 +86,16 @@ public class PolygonEditor extends AbstractAirspaceEditor
     //**************************************************************//
 
     protected AirspaceControlPoint doAddControlPoint(WorldWindow wwd, Airspace airspace,
-        Point mousePoint)
-    {
-        if (this.getPolygon().getLocations().isEmpty())
-        {
+        Point mousePoint) {
+        if (this.getPolygon().getLocations().isEmpty()) {
             return this.doAddFirstLocation(wwd, mousePoint);
         }
-        else
-        {
+        else {
             return this.doAddNextLocation(wwd, mousePoint);
         }
     }
 
-    protected AirspaceControlPoint doAddFirstLocation(WorldWindow wwd, Point mousePoint)
-    {
+    protected AirspaceControlPoint doAddFirstLocation(WorldWindow wwd, Point mousePoint) {
         // Adding the first location is unique in two ways:
         //
         // First, the airspace has no existing locations, so the only reference we have to interpret the user's intent
@@ -124,8 +110,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
         double surfaceElevation = AirspaceEditorUtil.surfaceElevationAt(wwd, ray);
 
         Vec4 newPoint = AirspaceEditorUtil.intersectGlobeAt(wwd, surfaceElevation, ray);
-        if (newPoint == null)
-        {
+        if (newPoint == null) {
             return null;
         }
 
@@ -138,12 +123,11 @@ public class PolygonEditor extends AbstractAirspaceEditor
             : newPosition.getElevation() + DEFAULT_POLYGON_HEIGHT;
         this.getPolygon().setAltitudes(altitudes[LOWER_ALTITUDE], altitudes[UPPER_ALTITUDE]);
 
-        ArrayList<LatLon> locationList = new ArrayList<>();
+        List<LatLon> locationList = new ArrayList<>();
         locationList.add(new LatLon(newPosition));
 
         // If rubber banding is enabled, add a second entry at the same location.
-        if (this.isUseRubberBand())
-        {
+        if (this.isUseRubberBand()) {
             locationList.add(new LatLon(newPosition));
         }
 
@@ -154,8 +138,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
         this.fireControlPointAdded(new AirspaceEditEvent(wwd, this.getAirspace(), this, controlPoint));
 
         // If rubber banding is enabled, fire a second add event, and return a reference to the second location.
-        if (this.isUseRubberBand())
-        {
+        if (this.isUseRubberBand()) {
             controlPoint = new BasicAirspaceControlPoint(this, this.getPolygon(), 1, LOWER_ALTITUDE, newPoint);
             this.fireControlPointAdded(new AirspaceEditEvent(wwd, this.getAirspace(), this, controlPoint));
         }
@@ -163,8 +146,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
         return controlPoint;
     }
 
-    protected AirspaceControlPoint doAddNextLocation(WorldWindow wwd, Point mousePoint)
-    {
+    protected AirspaceControlPoint doAddNextLocation(WorldWindow wwd, Point mousePoint) {
         // Try to find the edge that is closest to a ray passing through the screen point. We're trying to determine
         // the user's intent as to which edge a new two control points should be added to. We create a list of all
         // potentiall control point edges, then find the best match. We compute the new location by intersecting the
@@ -174,8 +156,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
         List<AirspaceEditorUtil.EdgeInfo> edgeInfoList = AirspaceEditorUtil.computeEdgeInfoFor(
             this.getPolygon().getLocations().size(), this.getCurrentControlPoints());
 
-        if (edgeInfoList.isEmpty())
-        {
+        if (edgeInfoList.isEmpty()) {
             return null;
         }
 
@@ -183,8 +164,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
         AirspaceEditorUtil.EdgeInfo bestMatch = AirspaceEditorUtil.selectBestEdgeMatch(
             wwd, ray, this.getAirspace(), edgeInfoList);
 
-        if (bestMatch == null)
-        {
+        if (bestMatch == null) {
             return null;
         }
 
@@ -194,7 +174,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
         Vec4 newPoint = controlPoint.getPoint();
         LatLon newLocation = new LatLon(wwd.getModel().getGlobe().computePositionFromPoint(newPoint));
 
-        ArrayList<LatLon> locationList = new ArrayList<>(this.getPolygon().getLocations());
+        List<LatLon> locationList = new ArrayList<>(this.getPolygon().getLocations());
         locationList.add(controlPoint.getLocationIndex(), newLocation);
         this.getPolygon().setLocations(locationList);
 
@@ -203,8 +183,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
         return controlPoint;
     }
 
-    protected void doRemoveControlPoint(WorldWindow wwd, AirspaceControlPoint controlPoint)
-    {
+    protected void doRemoveControlPoint(WorldWindow wwd, AirspaceControlPoint controlPoint) {
         int index = controlPoint.getLocationIndex();
         List<LatLon> newLocationList = new ArrayList<>(this.getPolygon().getLocations());
         newLocationList.remove(index);
@@ -214,8 +193,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
     }
 
     protected void doMoveControlPoint(WorldWindow wwd, AirspaceControlPoint controlPoint,
-        Point mousePoint, Point previousMousePoint)
-    {
+        Point mousePoint, Point previousMousePoint) {
         // Intersect a ray throuh each mouse point, with a geoid passing through the selected control point. Since
         // most airspace control points follow a fixed altitude, this will track close to the intended mouse position.
         // If either ray fails to intersect the geoid, then ignore this event. Use the difference between the two
@@ -230,8 +208,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
         Vec4 vec = AirspaceEditorUtil.intersectGlobeAt(wwd, controlPointPos.getElevation(), ray);
         Vec4 previousVec = AirspaceEditorUtil.intersectGlobeAt(wwd, controlPointPos.getElevation(), previousRay);
 
-        if (vec == null || previousVec == null)
-        {
+        if (vec == null || previousVec == null) {
             return;
         }
 
@@ -249,8 +226,7 @@ public class PolygonEditor extends AbstractAirspaceEditor
     }
 
     protected void doResizeAtControlPoint(WorldWindow wwd, AirspaceControlPoint controlPoint,
-        Point mousePoint, Point previousMousePoint)
-    {
+        Point mousePoint, Point previousMousePoint) {
         // Find the closest points between the rays through each screen point, and the ray from the control point
         // and in the direction of the globe's surface normal. Compute the elevation difference between these two
         // points, and use that as the change in airspace altitude.
@@ -275,27 +251,22 @@ public class PolygonEditor extends AbstractAirspaceEditor
         double elevationChange = previousPos.getElevation() - pos.getElevation();
 
         int index;
-        if (this.getPolygon().isAirspaceCollapsed())
-        {
+        if (this.getPolygon().isAirspaceCollapsed()) {
             index = (elevationChange < 0) ? LOWER_ALTITUDE : UPPER_ALTITUDE;
         }
-        else
-        {
+        else {
             index = controlPoint.getAltitudeIndex();
         }
 
         double[] altitudes = controlPoint.getAirspace().getAltitudes();
         boolean[] terrainConformance = controlPoint.getAirspace().isTerrainConforming();
 
-        if (this.isKeepControlPointsAboveTerrain())
-        {
-            if (terrainConformance[index])
-            {
+        if (this.isKeepControlPointsAboveTerrain()) {
+            if (terrainConformance[index]) {
                 if (altitudes[index] + elevationChange < 0.0)
                     elevationChange = -altitudes[index];
             }
-            else
-            {
+            else {
                 double height = AirspaceEditorUtil.computeLowestHeightAboveSurface(
                     wwd, this.getCurrentControlPoints(), index);
                 if (elevationChange <= -height)
@@ -305,13 +276,11 @@ public class PolygonEditor extends AbstractAirspaceEditor
 
         double d = AirspaceEditorUtil.computeMinimumDistanceBetweenAltitudes(this.getPolygon().getLocations().size(),
             this.getCurrentControlPoints());
-        if (index == LOWER_ALTITUDE)
-        {
+        if (index == LOWER_ALTITUDE) {
             if (elevationChange > d)
                 elevationChange = d;
         }
-        else if (index == UPPER_ALTITUDE)
-        {
+        else if (index == UPPER_ALTITUDE) {
             if (elevationChange < -d)
                 elevationChange = -d;
         }

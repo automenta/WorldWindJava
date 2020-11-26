@@ -20,16 +20,13 @@ import java.util.List;
  * @author Patrick Murris
  * @version $Id: ElevationPlane.java 2231 2014-08-15 19:03:12Z dcollins $
  */
-public class ElevationPlane extends Polygon
-{
-    private Object imageSource;
+public class ElevationPlane extends Polygon {
+    protected final OGLStackHandler osh = new OGLStackHandler();
     protected WWTexture texture;
+    private Object imageSource;
     private double imageSize = 500; // meter
 
-    protected final OGLStackHandler osh = new OGLStackHandler();
-
-    public ElevationPlane()
-    {
+    public ElevationPlane() {
         this.getAttributes().setEnableLighting(false);
     }
 
@@ -39,8 +36,7 @@ public class ElevationPlane extends Polygon
      *
      * @return the source for the fill pattern image - can be null.
      */
-    public Object getImageSource()
-    {
+    public Object getImageSource() {
         return this.imageSource;
     }
 
@@ -50,8 +46,7 @@ public class ElevationPlane extends Polygon
      *
      * @param imageSource the source for the fill pattern image - can be null.
      */
-    public void setImageSource(Object imageSource)
-    {
+    public void setImageSource(Object imageSource) {
         this.imageSource = imageSource;
         this.texture = null;
     }
@@ -61,8 +56,7 @@ public class ElevationPlane extends Polygon
      *
      * @return the real world image size in meter.
      */
-    public double getImageSize()
-    {
+    public double getImageSize() {
         return this.imageSize;
     }
 
@@ -72,17 +66,14 @@ public class ElevationPlane extends Polygon
      *
      * @param sizeInMeter the real world image size in meter.
      */
-    public void setImageSize(double sizeInMeter)
-    {
+    public void setImageSize(double sizeInMeter) {
         this.imageSize = sizeInMeter;
     }
 
     // Airspace Polygon overload
-    protected void doRenderGeometry(DrawContext dc, String drawStyle, List<LatLon> locations, List<Boolean> edgeFlags)
-    {
+    protected void doRenderGeometry(DrawContext dc, String drawStyle, List<LatLon> locations, List<Boolean> edgeFlags) {
         this.beginRendering(dc);
-        try
-        {
+        try {
             // Setup texture coordinates generation
             this.applyTextureState(dc);
 
@@ -93,15 +84,13 @@ public class ElevationPlane extends Polygon
             // Draw
             super.doRenderGeometry(dc, drawStyle, locations, edgeFlags);
         }
-        finally
-        {
+        finally {
             this.unApplyTextureState(dc);
             this.endRendering(dc);
         }
     }
 
-    protected void beginRendering(DrawContext dc)
-    {
+    protected void beginRendering(DrawContext dc) {
         // TODO: review attributes
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         osh.pushAttrib(gl, GL2.GL_COLOR_BUFFER_BIT // for alpha func
@@ -112,14 +101,12 @@ public class ElevationPlane extends Polygon
         osh.pushTextureIdentity(gl);
     }
 
-    protected void endRendering(DrawContext dc)
-    {
+    protected void endRendering(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         osh.pop(gl);
     }
 
-    protected void applyTextureState(DrawContext dc)
-    {
+    protected void applyTextureState(DrawContext dc) {
         WWTexture texture = getTexture();
         if (texture == null)
             return;
@@ -141,7 +128,7 @@ public class ElevationPlane extends Polygon
         gl.glEnable(GL2.GL_TEXTURE_GEN_T);
         // Pattern scaling
         gl.glMatrixMode(GL2.GL_TEXTURE_MATRIX);
-        gl.glScaled(1 / this.imageSize, 1 / this.imageSize, 1f);
+        gl.glScaled(1 / this.imageSize, 1 / this.imageSize, 1.0f);
         // Texture setup
         gl.glEnable(GL.GL_BLEND);
         gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -151,8 +138,7 @@ public class ElevationPlane extends Polygon
         // TODO: factor in polygon opacity?
     }
 
-    protected void unApplyTextureState(DrawContext dc)
-    {
+    protected void unApplyTextureState(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, OGLUtil.DEFAULT_TEXTURE_GEN_MODE);
@@ -163,8 +149,7 @@ public class ElevationPlane extends Polygon
         gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
     }
 
-    protected double[][] computePlanes(DrawContext dc)
-    {
+    protected double[][] computePlanes(DrawContext dc) {
         double[][] planes = new double[2][4];
         // Compute two planes perpendicular to the polygon at its reference position.
         Position center = this.getReferencePosition();
@@ -180,8 +165,7 @@ public class ElevationPlane extends Polygon
         return planes;
     }
 
-    protected WWTexture getTexture()
-    {
+    protected WWTexture getTexture() {
         if (this.texture == null && this.imageSource != null)
             this.texture = new BasicWWTexture(this.imageSource);
 

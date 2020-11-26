@@ -8,6 +8,7 @@ package gov.nasa.worldwindx.examples.kml;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.*;
+import gov.nasa.worldwind.awt.ViewInputHandler;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.ogc.kml.*;
 import gov.nasa.worldwind.ogc.kml.impl.KMLUtil;
@@ -22,14 +23,19 @@ import gov.nasa.worldwind.view.orbit.*;
  * @version $Id: KMLFlyViewController.java 1838 2014-02-05 20:48:12Z dcollins $
  * @see BasicFlyView
  */
-public class KMLFlyViewController extends KMLViewController
-{
-    /** Minimum time for animation, in milliseconds. */
+public class KMLFlyViewController extends KMLViewController {
+    /**
+     * Minimum time for animation, in milliseconds.
+     */
     protected final long MIN_LENGTH_MILLIS = 4000;
-    /** Maximum time for animation, in milliseconds. */
+    /**
+     * Maximum time for animation, in milliseconds.
+     */
     protected final long MAX_LENGTH_MILLIS = 16000;
 
-    /** The view to animate. */
+    /**
+     * The view to animate.
+     */
     protected final BasicFlyView flyView;
 
     /**
@@ -38,16 +44,16 @@ public class KMLFlyViewController extends KMLViewController
      * @param wwd WorldWindow that holds the view to animate. The WorldWindow's view must be an instance of {@link
      *            BasicFlyView}.
      */
-    protected KMLFlyViewController(WorldWindow wwd)
-    {
+    protected KMLFlyViewController(WorldWindow wwd) {
         super(wwd);
         this.flyView = (BasicFlyView) wwd.getView();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void goTo(KMLLookAt lookAt)
-    {
+    protected void goTo(KMLLookAt lookAt) {
         double latitude = lookAt.getLatitude() != null ? lookAt.getLatitude() : 0.0;
         double longitude = lookAt.getLongitude() != null ? lookAt.getLongitude() : 0.0;
         double altitude = lookAt.getAltitude() != null ? lookAt.getAltitude() : 0.0;
@@ -76,15 +82,16 @@ public class KMLFlyViewController extends KMLViewController
             Angle.fromDegrees(heading), Angle.fromDegrees(tilt), range,
             timeToMove, KMLUtil.convertAltitudeMode(altitudeMode, WorldWind.CLAMP_TO_GROUND)); // KML default
 
-        FlyViewInputHandler inputHandler = (FlyViewInputHandler) this.flyView.getViewInputHandler();
+        ViewInputHandler inputHandler = this.flyView.getViewInputHandler();
         inputHandler.stopAnimators();
         inputHandler.addAnimator(animator);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void goTo(KMLCamera camera)
-    {
+    protected void goTo(KMLCamera camera) {
         double latitude = camera.getLatitude() != null ? camera.getLatitude() : 0.0;
         double longitude = camera.getLongitude() != null ? camera.getLongitude() : 0.0;
         double altitude = camera.getAltitude() != null ? camera.getAltitude() : 0.0;
@@ -94,7 +101,7 @@ public class KMLFlyViewController extends KMLViewController
 
         // Roll in WWJ is opposite to KML, so change the sign of roll.
         roll = -roll;
-        
+
         String altitudeMode = camera.getAltitudeMode();
 
         Position cameraPosition = Position.fromDegrees(latitude, longitude, altitude);
@@ -109,9 +116,10 @@ public class KMLFlyViewController extends KMLViewController
             this.flyView.getPitch(), Angle.fromDegrees(tilt),
             this.flyView.getRoll(), Angle.fromDegrees(roll),
             this.flyView.getEyePosition().getElevation(), cameraPosition.getElevation(),
-            timeToMove, KMLUtil.convertAltitudeMode(altitudeMode, WorldWind.RELATIVE_TO_GROUND)); // Camera default, differs from KML default
+            timeToMove, KMLUtil.convertAltitudeMode(altitudeMode,
+                WorldWind.RELATIVE_TO_GROUND)); // Camera default, differs from KML default
 
-        FlyViewInputHandler inputHandler = (FlyViewInputHandler) this.flyView.getViewInputHandler();
+        ViewInputHandler inputHandler = this.flyView.getViewInputHandler();
         inputHandler.stopAnimators();
         inputHandler.addAnimator(animator);
     }
@@ -129,13 +137,11 @@ public class KMLFlyViewController extends KMLViewController
      * @param timeToMove     Time to move, in milliseconds.
      * @param altitudeMode   Altitude mode of the {@code lookAtPosition} ({@link WorldWind#CLAMP_TO_GROUND}, {@link
      *                       WorldWind#RELATIVE_TO_GROUND}, or {@link WorldWind#ABSOLUTE}).
-     *
      * @return Animator that will animate the view to look at {@code lookAtPosition} with the specified heading, pitch,
-     *         roll, and range.
+     * roll, and range.
      */
     protected FlyToFlyViewAnimator createFlyToLookAtAnimator(BasicFlyView view, Position lookAtPosition,
-        Angle heading, Angle pitch, double range, long timeToMove, int altitudeMode)
-    {
+        Angle heading, Angle pitch, double range, long timeToMove, int altitudeMode) {
         // Create a BasicOrbitView to let the OrbitView do the math of finding the eye position based on the LookAt
         // position. The OrbitView is never set to be the active view, but it will be used by the animator to
         // iteratively re-calcuate the final eye position.
@@ -182,8 +188,7 @@ public class KMLFlyViewController extends KMLViewController
      * mode is relative to the surface elevation, the animator will re-compute the final eye position on each iteration
      * to ensure that the animation ends using the most accurate elevation data available.
      */
-    protected static class FlyToLookAtAnimator extends FlyToFlyViewAnimator
-    {
+    protected static class FlyToLookAtAnimator extends FlyToFlyViewAnimator {
         protected final int altitudeMode;
         protected final OrbitView targetView;
         protected final Position lookAtPosition;
@@ -208,8 +213,7 @@ public class KMLFlyViewController extends KMLViewController
          */
         public FlyToLookAtAnimator(Interpolator interpolator, OrbitView targetView, Position lookAtPosition,
             int altitudeMode, PositionAnimator eyePositionAnimator, DoubleAnimator elevationAnimator,
-            AngleAnimator headingAnimator, AngleAnimator pitchAnimator, AngleAnimator rollAnimator)
-        {
+            AngleAnimator headingAnimator, AngleAnimator pitchAnimator, AngleAnimator rollAnimator) {
             super(interpolator, altitudeMode, eyePositionAnimator, elevationAnimator, headingAnimator, pitchAnimator,
                 rollAnimator);
 
@@ -220,31 +224,29 @@ public class KMLFlyViewController extends KMLViewController
             this.elevationAnimator = elevationAnimator;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        protected void setImpl(double interpolant)
-        {
+        protected void setImpl(double interpolant) {
             // Re-compute the end eye position based on the LookAt position if the LookAt position depends on the surface
             // elevation
             double lookAtElevation = 0.0;
             boolean overrideEndElevation = false;
 
-            if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND)
-            {
+            if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND) {
                 overrideEndElevation = true;
                 lookAtElevation = this.targetView.getGlobe().getElevation(this.lookAtPosition.getLatitude(),
                     this.lookAtPosition.getLongitude());
             }
-            else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND)
-            {
+            else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
                 overrideEndElevation = true;
                 lookAtElevation =
                     this.targetView.getGlobe().getElevation(this.lookAtPosition.getLatitude(),
                         this.lookAtPosition.getLongitude()) + this.lookAtPosition.getAltitude();
             }
 
-            if (overrideEndElevation)
-            {
+            if (overrideEndElevation) {
                 Position centerPosition = new Position(this.lookAtPosition, lookAtElevation);
                 this.targetView.setCenterPosition(centerPosition);
 

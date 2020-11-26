@@ -9,8 +9,8 @@ import gov.nasa.worldwind.Exportable;
 import gov.nasa.worldwind.util.RestorableSupport;
 
 /**
- * Holds common attributes for WorldWind shapes such as {@link gov.nasa.worldwind.render.Path}, {@link
- * gov.nasa.worldwind.render.Polygon}, and {@link gov.nasa.worldwind.render.SurfaceShape}. Changes made to the
+ * Holds common attributes for WorldWind shapes such as {@link Path}, {@link
+ * Polygon}, and {@link SurfaceShape}. Changes made to the
  * attributes are applied to the shape when the <code>WorldWindow</code> renders the next frame. Instances of
  * <code>ShapeAttributes</code> may be shared by many shapes, thereby reducing the memory normally required to store
  * attributes for each shape.
@@ -18,8 +18,7 @@ import gov.nasa.worldwind.util.RestorableSupport;
  * @author dcollins
  * @version $Id: ShapeAttributes.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface ShapeAttributes extends Exportable
-{
+public interface ShapeAttributes extends Exportable {
     /**
      * Returns a new ShapeAttributes instance of the same type as this ShapeAttributes who's properties are configured
      * exactly as this ShapeAttributes.
@@ -40,7 +39,6 @@ public interface ShapeAttributes extends Exportable
      * Indicates whether some of the shape's attributes are unresolved.
      *
      * @return <code>true</code> to indicate that one or more attributes are unresolved, otherwise <code>false</code>.
-     *
      * @see #setUnresolved(boolean)
      */
     boolean isUnresolved();
@@ -53,7 +51,6 @@ public interface ShapeAttributes extends Exportable
      *
      * @param unresolved <code>true</code> to specify that one or more attributes are unresolved, otherwise
      *                   <code>false</code>.
-     *
      * @see #isUnresolved()
      */
     void setUnresolved(boolean unresolved);
@@ -62,7 +59,6 @@ public interface ShapeAttributes extends Exportable
      * Indicates whether the shape's interior geometry is drawn.
      *
      * @return <code>true</code> if the shape's interior is drawn, otherwise <code>false</code>.
-     *
      * @see #setDrawInterior(boolean)
      */
     boolean isDrawInterior();
@@ -71,7 +67,6 @@ public interface ShapeAttributes extends Exportable
      * Specifies whether to draw the shape's interior geometry.
      *
      * @param draw <code>true</code> to draw the shape's interior, otherwise <code>false</code>.
-     *
      * @see #isDrawInterior()
      */
     void setDrawInterior(boolean draw);
@@ -80,7 +75,6 @@ public interface ShapeAttributes extends Exportable
      * Indicates whether the shape's outline geometry is drawn.
      *
      * @return <code>true</code> if the shape's outline is drawn, otherwise <code>false</code>.
-     *
      * @see #setDrawOutline(boolean)
      */
     boolean isDrawOutline();
@@ -89,7 +83,6 @@ public interface ShapeAttributes extends Exportable
      * Specifies whether to draw the shape's outline geometry.
      *
      * @param draw <code>true</code> to draw the shape's outline, otherwise <code>false</code>.
-     *
      * @see #isDrawOutline()
      */
     void setDrawOutline(boolean draw);
@@ -98,7 +91,6 @@ public interface ShapeAttributes extends Exportable
      * Indicates whether the shape is rendered with smooth lines and edges.
      *
      * @return <code>true</code> if the shape is drawn with smooth lines and edges, otherwise <code>false</code>.
-     *
      * @see #setEnableAntialiasing(boolean)
      */
     boolean isEnableAntialiasing();
@@ -107,7 +99,6 @@ public interface ShapeAttributes extends Exportable
      * Specifies whether the shape should be rendered with smooth lines and edges.
      *
      * @param enable <code>true</code> to draw the shape with smooth lines and edges, otherwise <code>false</code>.
-     *
      * @see #isEnableAntialiasing()
      */
     void setEnableAntialiasing(boolean enable);
@@ -116,7 +107,6 @@ public interface ShapeAttributes extends Exportable
      * Indicates whether lighting is applied to the shape.
      *
      * @return <code>true</code> to apply lighting, otherwise <code>false</code>.
-     *
      * @see #setEnableLighting(boolean)
      */
     boolean isEnableLighting();
@@ -127,7 +117,6 @@ public interface ShapeAttributes extends Exportable
      * DrawContext#endStandardLighting()} before and after the shape is rendered, respectively.
      *
      * @param enableLighting <code>true</code> to apply lighting, otherwise <code>false</code>.
-     *
      * @see #isEnableLighting()
      */
     void setEnableLighting(boolean enableLighting);
@@ -138,7 +127,6 @@ public interface ShapeAttributes extends Exportable
      * Otherwise, the material's diffuse color indicates the shape's constant interior color.
      *
      * @return the material applied to the shape's interior.
-     *
      * @see #setInteriorMaterial(Material)
      */
     Material getInteriorMaterial();
@@ -149,7 +137,6 @@ public interface ShapeAttributes extends Exportable
      * Otherwise, the material's diffuse color specifies the shape's constant interior color.
      *
      * @param material the material to apply to the shape's interior.
-     *
      * @throws IllegalArgumentException if <code>material</code> is <code>null</code>.
      * @see #getInteriorMaterial()
      */
@@ -161,7 +148,6 @@ public interface ShapeAttributes extends Exportable
      * the material's diffuse color indicates the shape's constant outline color.
      *
      * @return the material applied to the shape's outline.
-     *
      * @see #setOutlineMaterial(Material)
      */
     Material getOutlineMaterial();
@@ -172,7 +158,6 @@ public interface ShapeAttributes extends Exportable
      * the material's diffuse color specifies as the shape's constant outline color.
      *
      * @param material the material to apply to the shape's outline.
-     *
      * @throws IllegalArgumentException if <code>material</code> is <code>null</code>.
      * @see #getOutlineMaterial()
      */
@@ -182,7 +167,6 @@ public interface ShapeAttributes extends Exportable
      * Indicates the opacity of the shape's interior as a floating-point value in the range 0.0 to 1.0.
      *
      * @return the interior opacity as a floating-point value from 0.0 to 1.0.
-     *
      * @see #setInteriorOpacity(double)
      */
     double getInteriorOpacity();
@@ -193,7 +177,6 @@ public interface ShapeAttributes extends Exportable
      * specify a partially transparent interior.
      *
      * @param opacity the interior opacity as a floating-point value from 0.0 to 1.0.
-     *
      * @throws IllegalArgumentException if <code>opacity</code> is less than 0.0 or greater than 1.0.
      * @see #getInteriorOpacity()
      */
@@ -203,7 +186,6 @@ public interface ShapeAttributes extends Exportable
      * Indicates the opacity of the shape's outline as a floating-point value in the range 0.0 to 1.0.
      *
      * @return the outline opacity as a floating-point value from 0.0 to 1.0.
-     *
      * @see #setOutlineOpacity(double)
      */
     double getOutlineOpacity();
@@ -214,7 +196,6 @@ public interface ShapeAttributes extends Exportable
      * specify a partially transparent outline.
      *
      * @param opacity the outline opacity as a floating-point value from 0.0 to 1.0.
-     *
      * @throws IllegalArgumentException if <code>opacity</code> is less than 0.0 or greater than 1.0.
      * @see #getOutlineOpacity()
      */
@@ -225,7 +206,6 @@ public interface ShapeAttributes extends Exportable
      * or a positive floating-point value.
      *
      * @return the line width in pixels.
-     *
      * @see #setOutlineWidth(double)
      */
     double getOutlineWidth();
@@ -237,7 +217,6 @@ public interface ShapeAttributes extends Exportable
      * typically 10 pixels.
      *
      * @param width the line width in pixels.
-     *
      * @throws IllegalArgumentException if <code>width</code> is less than zero.
      * @see #getOutlineWidth()
      */
@@ -247,7 +226,6 @@ public interface ShapeAttributes extends Exportable
      * Indicates the number of times each bit in the outline stipple pattern is repeated before the next bit is used.
      *
      * @return the number of times each bit in the outline stipple pattern is repeated.
-     *
      * @see #setOutlineStippleFactor(int)
      */
     int getOutlineStippleFactor();
@@ -262,7 +240,6 @@ public interface ShapeAttributes extends Exportable
      * <code>0xFFFF</code>.
      *
      * @param factor the number of times each bit in the outline stipple pattern should be repeated.
-     *
      * @throws IllegalArgumentException if <code>factor</code> is less than zero.
      * @see #getOutlineStippleFactor()
      * @see #setOutlineStipplePattern(short)
@@ -273,7 +250,6 @@ public interface ShapeAttributes extends Exportable
      * Indicates the 16-bit integer that defines which pixels are rendered in the shape's outline.
      *
      * @return a 16-bit integer whose bit pattern defines which pixels are rendered in the shape's outline.
-     *
      * @see #setOutlineStipplePattern(short)
      */
     short getOutlineStipplePattern();
@@ -290,7 +266,6 @@ public interface ShapeAttributes extends Exportable
      * <code>0xFFFF</code>.
      *
      * @param pattern a 16-bit integer whose bit pattern defines which pixels are rendered in the shape's outline.
-     *
      * @see #getOutlineStipplePattern()
      * @see #setOutlineStippleFactor(int)
      */
@@ -300,8 +275,7 @@ public interface ShapeAttributes extends Exportable
      * Indicates the image source that is applied as a texture to the shape's interior.
      *
      * @return the source of the shape's texture, either a {@link String} path, a {@link java.net.URL}, a {@link
-     *         java.awt.image.BufferedImage}, or <code>null</code>.
-     *
+     * java.awt.image.BufferedImage}, or <code>null</code>.
      * @see #setImageSource(Object)
      */
     Object getImageSource();
@@ -316,7 +290,6 @@ public interface ShapeAttributes extends Exportable
      *
      * @param imageSource the source of the shape's texture, either a <code>String</code> path, a <code>URL</code>, a
      *                    <code>BufferedImage</code>, or <code>null</code>.
-     *
      * @see #getImageSource()
      */
     void setImageSource(Object imageSource);
@@ -324,9 +297,8 @@ public interface ShapeAttributes extends Exportable
     /**
      * Indicates the amount the shape's texture is scaled by as a floating-point value.
      *
-     * @return the amount the shape's texture is scaled by as a floating-point value. This value is always greater
-     *         than zero.
-     *
+     * @return the amount the shape's texture is scaled by as a floating-point value. This value is always greater than
+     * zero.
      * @see #setImageScale(double)
      */
     double getImageScale();
@@ -338,7 +310,6 @@ public interface ShapeAttributes extends Exportable
      * magnifies the texture by a factor of 2x.
      *
      * @param scale the amount to scale the shape's texture as a floating-point value.
-     *
      * @throws IllegalArgumentException if <code>scale</code> is less than or equal to zero.
      * @see #getImageScale()
      * @see #setImageSource(Object)
@@ -349,11 +320,10 @@ public interface ShapeAttributes extends Exportable
      * Saves the attributes' current state in the specified <code>RestorableSupport</code>. If the
      * <code>StateObject</code> is not <code>null</code> the state is appended to it. Otherwise the state is added to
      * the <code>RestorableSupport</code> root. This state can be restored later by calling {@link
-     * #restoreState(gov.nasa.worldwind.util.RestorableSupport, gov.nasa.worldwind.util.RestorableSupport.StateObject)}.
+     * #restoreState(RestorableSupport, RestorableSupport.StateObject)}.
      *
      * @param rs the <code>RestorableSupport</code> that receives the attributes' state.
      * @param so the <code>StateObject</code> the state is appended to, if not <code>null</code>.
-     *
      * @throws IllegalArgumentException if <code>rs</code> is <code>null</code>.
      */
     void getRestorableState(RestorableSupport rs, RestorableSupport.StateObject so);
@@ -365,7 +335,6 @@ public interface ShapeAttributes extends Exportable
      *
      * @param rs the <code>RestorableSupport</code> that contains the attributes' state.
      * @param so the <code>StateObject</code> to search for state values, if not <code>null</code>.
-     *
      * @throws IllegalArgumentException if <code>rs</code> is <code>null</code>.
      */
     void restoreState(RestorableSupport rs, RestorableSupport.StateObject so);

@@ -11,8 +11,7 @@ import gov.nasa.worldwind.util.Logging;
  * @author dcollins
  * @version $Id: RPFProducer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public enum RPFProducer
-{
+public enum RPFProducer {
     /* [Section 5.2.1, MIL-STD-2411-1] */
     PRODUCER_1('1', "AFACC", "Air Force Air Combat Command"),
     PRODUCER_2('2', "AFESC", "Air Force Electronic Systems Center"),
@@ -34,35 +33,29 @@ public enum RPFProducer
 //  PRODUCER_?('I'-'Z', "",                   "Reserved for future standardization"),
     ;
 
+    private static RPFProducer[] enumConstantAlphabet = null;
     public final Character id;
     public final String producerCode;
     public final String producer;
 
-    RPFProducer(Character id, String producerCode, String producer)
-    {
+    RPFProducer(Character id, String producerCode, String producer) {
         this.id = id;
         this.producer = producer;
         this.producerCode = producerCode;
     }
 
-    private static RPFProducer[] enumConstantAlphabet = null;
-
-    private static synchronized RPFProducer[] enumConstantAlphabet()
-    {
-        if (enumConstantAlphabet == null)
-        {
+    private static synchronized RPFProducer[] enumConstantAlphabet() {
+        if (enumConstantAlphabet == null) {
             RPFProducer[] universe = RPFProducer.class.getEnumConstants();
             enumConstantAlphabet = new RPFProducer[36];
-            for (RPFProducer producer : universe)
-            {
+            for (RPFProducer producer : universe) {
                 enumConstantAlphabet[indexFor(producer.id)] = producer;
             }
         }
         return enumConstantAlphabet;
     }
 
-    private static int indexFor(Character id)
-    {
+    private static int indexFor(Character id) {
         if (id >= '0' && id <= '9')
             return id - '0';
         else if (id >= 'A' && id <= 'Z')
@@ -70,10 +63,8 @@ public enum RPFProducer
         return -1;
     }
 
-    public static boolean isProducerId(Character id)
-    {
-        if (id == null)
-        {
+    public static boolean isProducerId(Character id) {
+        if (id == null) {
             String message = Logging.getMessage("nullValue.CharacterIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -83,10 +74,8 @@ public enum RPFProducer
         return (index >= 0) && (index < alphabet.length) && (alphabet[index] != null);
     }
 
-    public static RPFProducer producerFor(Character id)
-    {
-        if (id == null)
-        {
+    public static RPFProducer producerFor(Character id) {
+        if (id == null) {
             String message = Logging.getMessage("nullValue.CharacterIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -94,8 +83,7 @@ public enum RPFProducer
         RPFProducer producer;
         RPFProducer[] alphabet = enumConstantAlphabet();
         int index = indexFor(Character.toUpperCase(id));
-        if (index < 0 || index >= alphabet.length || (producer = alphabet[index]) == null)
-        {
+        if (index < 0 || index >= alphabet.length || (producer = alphabet[index]) == null) {
             String message = Logging.getMessage("generic.EnumNotFound", id);
             Logging.logger().severe(message);
             throw new EnumConstantNotPresentException(RPFZone.class, message);

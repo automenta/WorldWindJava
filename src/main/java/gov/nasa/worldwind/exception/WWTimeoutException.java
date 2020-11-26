@@ -12,10 +12,8 @@ package gov.nasa.worldwind.exception;
  * @author tag
  * @version $Id: WWTimeoutException.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WWTimeoutException extends WWRuntimeException
-{
-    public WWTimeoutException(String message)
-    {
+public class WWTimeoutException extends WWRuntimeException {
+    public WWTimeoutException(String message) {
         super(message);
     }
 }

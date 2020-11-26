@@ -8,36 +8,84 @@ package gov.nasa.worldwind.formats.vpf;
 import gov.nasa.worldwind.util.*;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * @author dcollins
  * @version $Id: VPFBasicPrimitiveDataFactory.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
-{
+public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory {
     private final VPFTile tile;
 
     /**
      * Constructs an instance of a VPFBasicPrimitiveDataFactory which will construct primiitve data for the specified
-     * {@link gov.nasa.worldwind.formats.vpf.VPFTile}.
+     * {@link VPFTile}.
      *
      * @param tile the tile which defines the geographic region to construct features for.
      */
-    public VPFBasicPrimitiveDataFactory(VPFTile tile)
-    {
+    public VPFBasicPrimitiveDataFactory(VPFTile tile) {
         this.tile = tile;
     }
 
-    public VPFTile getTile()
-    {
+    protected static String getPrimitiveTablePath(VPFCoverage coverage, VPFTile tile, String tableName) {
+        // Start with the coverage directory.
+        StringBuilder sb = new StringBuilder(coverage.getFilePath());
+        sb.append(File.separator);
+
+        // If the tile is non-null then append the tile's path.
+        if (tile != null) {
+            sb.append(tile.getName());
+            sb.append(File.separator);
+        }
+
+        // Append the primitive table name.
+        sb.append(tableName);
+
+        return sb.toString();
+    }
+
+    protected static boolean isEdgeOnTileBoundary(VPFRecord record) {
+        VPFTripletId id = null;
+
+        Object o = record.getValue("left_face");
+        if (o instanceof VPFTripletId)
+            id = (VPFTripletId) o;
+
+        if (id == null) {
+            o = record.getValue("right_face");
+            if (o instanceof VPFTripletId)
+                id = (VPFTripletId) o;
+        }
+
+        return id != null && id.getExtId() > 0;
+    }
+
+    //**************************************************************//
+    //********************  Primitive Assembly  ********************//
+    //**************************************************************//
+
+    protected static int getNumber(Object key) {
+        if (key instanceof Number)
+            return ((Number) key).intValue();
+
+        return -1;
+    }
+
+    protected static int getId(Object key) {
+        if (key instanceof Number)
+            return ((Number) key).intValue();
+        else if (key instanceof VPFTripletId)
+            return ((VPFTripletId) key).getId();
+
+        return -1;
+    }
+
+    public VPFTile getTile() {
         return this.tile;
     }
 
-    public VPFPrimitiveData createPrimitiveData(VPFCoverage coverage)
-    {
-        if (coverage == null)
-        {
+    public VPFPrimitiveData createPrimitiveData(VPFCoverage coverage) {
+        if (coverage == null) {
             String message = Logging.getMessage("nullValue.CoverageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -51,12 +99,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
         return this.doCreatePrimitives(coverage);
     }
 
-    //**************************************************************//
-    //********************  Primitive Assembly  ********************//
-    //**************************************************************//
-
-    protected VPFPrimitiveData doCreatePrimitives(VPFCoverage coverage)
-    {
+    protected VPFPrimitiveData doCreatePrimitives(VPFCoverage coverage) {
         VPFPrimitiveData primitiveData = new VPFPrimitiveData();
         this.buildNodePrimitives(coverage, this.tile, primitiveData);
         this.buildEdgePrimitives(coverage, this.tile, primitiveData);
@@ -66,8 +109,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
         return primitiveData;
     }
 
-    protected void buildNodePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData)
-    {
+    protected void buildNodePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
         VPFBufferedRecordData nodeTable = this.createPrimitiveTable(coverage, tile, VPFConstants.NODE_PRIMITIVE_TABLE);
         if (nodeTable != null && nodeTable.getNumRecords() > 0)
             this.buildNodePrimitives(nodeTable, VPFConstants.NODE_PRIMITIVE_TABLE, primitiveData);
@@ -83,14 +125,16 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
             this.buildNodePrimitives(connectedNodeTable, VPFConstants.CONNECTED_NODE_PRIMITIVE_TABLE, primitiveData);
     }
 
-    protected boolean buildNodePrimitives(VPFBufferedRecordData table, String name, VPFPrimitiveData primitiveData)
-    {
+    //**************************************************************//
+    //********************  Winged-Edge Face Construction  *********//
+    //**************************************************************//
+
+    protected boolean buildNodePrimitives(VPFBufferedRecordData table, String name, VPFPrimitiveData primitiveData) {
         int numNodes = table.getNumRecords();
         VPFPrimitiveData.BasicPrimitiveInfo[] nodeInfo = new VPFPrimitiveData.BasicPrimitiveInfo[numNodes];
         VecBufferSequence coords = (VecBufferSequence) table.getRecordData("coordinate").getBackingData();
 
-        for (VPFRecord row : table)
-        {
+        for (VPFRecord row : table) {
             int id = row.getId();
 
             nodeInfo[VPFBufferedRecordData.indexFromId(id)] = new VPFPrimitiveData.BasicPrimitiveInfo(
@@ -102,8 +146,11 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
         return true;
     }
 
-    protected void buildEdgePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData)
-    {
+    //**************************************************************//
+    //********************  Utility Methods  ***********************//
+    //**************************************************************//
+
+    protected void buildEdgePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
         VPFBufferedRecordData edgeTable = this.createPrimitiveTable(coverage, tile, VPFConstants.EDGE_PRIMITIVE_TABLE);
         if (edgeTable == null || edgeTable.getNumRecords() == 0)
             return;
@@ -118,8 +165,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
         VecBufferSequence coords = (VecBufferSequence) edgeTable.getRecordData(
             "coordinates").getBackingData();
 
-        for (VPFRecord row : edgeTable)
-        {
+        for (VPFRecord row : edgeTable) {
             int id = row.getId();
             VPFRecord mbrRow = mbrTable.getRecord(id);
 
@@ -136,8 +182,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
         primitiveData.setPrimitiveCoords(VPFConstants.EDGE_PRIMITIVE_TABLE, coords);
     }
 
-    protected void buildFacePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData)
-    {
+    protected void buildFacePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
         VPFBufferedRecordData faceTable = this.createPrimitiveTable(coverage, tile, VPFConstants.FACE_PRIMITIVE_TABLE);
         if (faceTable == null)
             return;
@@ -156,8 +201,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
         int numFaces = faceTable.getNumRecords();
         VPFPrimitiveData.FaceInfo[] faceInfo = new VPFPrimitiveData.FaceInfo[numFaces];
 
-        for (VPFRecord faceRow : faceTable)
-        {
+        for (VPFRecord faceRow : faceTable) {
             int faceId = faceRow.getId();
             VPFRecord mbrRow = mbrTable.getRecord(faceId);
 
@@ -175,10 +219,9 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
             // The ring table maintains an order relationship for its rows. The first record of a new face id will always
             // be defined as the outer ring. Any repeating records with an identical face value will define inner rings.
 
-            ArrayList<VPFPrimitiveData.Ring> innerRingList = new ArrayList<>();
+            List<VPFPrimitiveData.Ring> innerRingList = new ArrayList<>();
 
-            for (ringId = ringId + 1; ringId <= ringTable.getNumRecords(); ringId++)
-            {
+            for (ringId = ringId + 1; ringId <= ringTable.getNumRecords(); ringId++) {
                 ringRow = ringTable.getRecord(ringId);
 
                 // Break on the first ring primitive row which isn't associated with the face. Because the ring rows
@@ -202,8 +245,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
         primitiveData.setPrimitiveInfo(VPFConstants.FACE_PRIMITIVE_TABLE, faceInfo);
     }
 
-    protected void buildTextPrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData)
-    {
+    protected void buildTextPrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
         VPFBufferedRecordData textTable = this.createPrimitiveTable(coverage, tile, VPFConstants.TEXT_PRIMITIVE_TABLE);
         if (textTable == null || textTable.getNumRecords() == 0)
             return;
@@ -213,8 +255,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
         VecBufferSequence coords = (VecBufferSequence) textTable.getRecordData("shape_line").getBackingData();
         CompoundStringBuilder strings = (CompoundStringBuilder) textTable.getRecordData("string").getBackingData();
 
-        for (VPFRecord row : textTable)
-        {
+        for (VPFRecord row : textTable) {
             int id = row.getId();
 
             textInfo[VPFBufferedRecordData.indexFromId(id)] = new VPFPrimitiveData.BasicPrimitiveInfo(
@@ -226,21 +267,15 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
         primitiveData.setPrimitiveStrings(VPFConstants.TEXT_PRIMITIVE_TABLE, strings);
     }
 
-    //**************************************************************//
-    //********************  Winged-Edge Face Construction  *********//
-    //**************************************************************//
-
     /**
      * Given a row from the ring primitive table, navigate the ring and edge primitive tables to construct a new {@link
      * VPFPrimitiveData.Ring}.
      *
      * @param row           the ring primitive row.
      * @param edgeInfoArray the edge primitive data.
-     *
      * @return a new Ring.
      */
-    protected VPFPrimitiveData.Ring buildRing(VPFRecord row, VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray)
-    {
+    protected VPFPrimitiveData.Ring buildRing(VPFRecord row, VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray) {
         int faceId = ((Number) row.getValue("face_id")).intValue();
         int startEdgeId = ((Number) row.getValue("start_edge")).intValue();
         VPFWingedEdgeTraverser traverser = new VPFWingedEdgeTraverser();
@@ -260,12 +295,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
         return new VPFPrimitiveData.Ring(numEdges, idArray, orientationArray);
     }
 
-    //**************************************************************//
-    //********************  Utility Methods  ***********************//
-    //**************************************************************//
-
-    protected VPFBufferedRecordData createPrimitiveTable(VPFCoverage coverage, VPFTile tile, String tableName)
-    {
+    protected VPFBufferedRecordData createPrimitiveTable(VPFCoverage coverage, VPFTile tile, String tableName) {
         String path = getPrimitiveTablePath(coverage, tile, tableName);
 
         File file = new File(path);
@@ -273,60 +303,5 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory
             return null;
 
         return VPFUtils.readTable(file);
-    }
-
-    protected static String getPrimitiveTablePath(VPFCoverage coverage, VPFTile tile, String tableName)
-    {
-        // Start with the coverage directory.
-        StringBuilder sb = new StringBuilder(coverage.getFilePath());
-        sb.append(File.separator);
-
-        // If the tile is non-null then append the tile's path.
-        if (tile != null)
-        {
-            sb.append(tile.getName());
-            sb.append(File.separator);
-        }
-
-        // Append the primitive table name.
-        sb.append(tableName);
-
-        return sb.toString();
-    }
-
-    protected static boolean isEdgeOnTileBoundary(VPFRecord record)
-    {
-        VPFTripletId id = null;
-
-        Object o = record.getValue("left_face");
-        if (o instanceof VPFTripletId)
-            id = (VPFTripletId) o;
-
-        if (id == null)
-        {
-            o = record.getValue("right_face");
-            if (o instanceof VPFTripletId)
-                id = (VPFTripletId) o;
-        }
-
-        return id != null && id.getExtId() > 0;
-    }
-
-    protected static int getNumber(Object key)
-    {
-        if (key instanceof Number)
-            return ((Number) key).intValue();
-
-        return -1;
-    }
-
-    protected static int getId(Object key)
-    {
-        if (key instanceof Number)
-            return ((Number) key).intValue();
-        else if (key instanceof VPFTripletId)
-            return ((VPFTripletId) key).getId();
-
-        return -1;
     }
 }

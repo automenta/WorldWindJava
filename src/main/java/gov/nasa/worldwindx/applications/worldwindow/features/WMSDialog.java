@@ -17,32 +17,27 @@ import java.net.URISyntaxException;
  * @author tag
  * @version $Id: WMSDialog.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WMSDialog extends AbstractFeatureDialog
-{
+public class WMSDialog extends AbstractFeatureDialog {
     protected static final String FEATURE_TITLE = "WMS Servers...";
     protected static final String ICON_PATH = "gov/nasa/worldwindx/applications/worldwindow/images/wms-64x64.png";
 
     protected JTabbedPane tabbedPane = new JTabbedPane();
 
-    public WMSDialog(Registry registry)
-    {
+    public WMSDialog(Registry registry) {
         super(FEATURE_TITLE, Constants.FEATURE_WMS_DIALOG, ICON_PATH, registry);
     }
 
     @Override
-    public boolean isTwoState()
-    {
+    public boolean isTwoState() {
         return true;
     }
 
     @Override
-    public boolean isOn()
-    {
+    public boolean isOn() {
         return this.dialog != null && this.dialog.isVisible();
     }
 
-    public void initialize(final Controller controller)
-    {
+    public void initialize(final Controller controller) {
         super.initialize(controller);
 
         WWMenu fileMenu = (WWMenu) this.getController().getRegisteredObject(Constants.FILE_MENU);
@@ -57,8 +52,7 @@ public class WMSDialog extends AbstractFeatureDialog
         this.tabbedPane.setToolTipTextAt(0, "Connect to WMS Server");
 
         this.tabbedPane.addChangeListener(changeEvent -> {
-            if (tabbedPane.getSelectedIndex() == 0)
-            {
+            if (tabbedPane.getSelectedIndex() == 0) {
                 addNewPanel(tabbedPane); // Add new panel when '+' is selected
             }
         });
@@ -109,8 +103,7 @@ public class WMSDialog extends AbstractFeatureDialog
 //            wmsPanel.cancel();
 //    }
 
-    protected void deleteCurrentPanel()
-    {
+    protected void deleteCurrentPanel() {
         JComponent tabPane = (JComponent) tabbedPane.getSelectedComponent();
         if (tabPane == null)
             return;
@@ -126,8 +119,7 @@ public class WMSDialog extends AbstractFeatureDialog
             wmsPanel.clearPanel();
     }
 
-    protected WMSPanel addNewPanel(final JTabbedPane tabPane)
-    {
+    protected WMSPanel addNewPanel(final JTabbedPane tabPane) {
         final WMSPanel wmsPanel = new WMSPanel(null); // the null indicates not to register the panel
         wmsPanel.initialize(this.controller);
         wmsPanel.getJPanel().putClientProperty("WMS_PANEL", wmsPanel);
@@ -138,8 +130,7 @@ public class WMSDialog extends AbstractFeatureDialog
         tabPane.setToolTipTextAt(tabbedPane.getSelectedIndex(), "Server WMS Contents");
 
         wmsPanel.addPropertyChangeListener(evt -> {
-            if (evt.getPropertyName().equals("NewServer"))
-            {
+            if (evt.getPropertyName().equals("NewServer")) {
                 String serverLocation = (String) evt.getNewValue();
 
                 if (WWUtil.isEmpty(serverLocation))
@@ -160,13 +151,11 @@ public class WMSDialog extends AbstractFeatureDialog
 //                        }
 //                    }
 
-                try
-                {
+                try {
 
                     addNewPanel(tabPane).contactWMSServer(serverLocation);
                 }
-                catch (URISyntaxException e)
-                {
+                catch (URISyntaxException e) {
                     e.printStackTrace(); // TODO
                 }
             }

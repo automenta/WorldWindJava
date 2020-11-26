@@ -8,20 +8,19 @@ package gov.nasa.worldwind.formats.rpf;
 
 import gov.nasa.worldwind.formats.nitfs.*;
 
+import java.nio.ByteBuffer;
+
 /**
  * @author Lado Garakanidze
  * @version $Id: RPFUserDefinedHeaderSegment.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RPFUserDefinedHeaderSegment extends NITFSUserDefinedHeaderSegment
-{
+public class RPFUserDefinedHeaderSegment extends NITFSUserDefinedHeaderSegment {
     private final RPFFileComponents components;
 
-    public RPFUserDefinedHeaderSegment(java.nio.ByteBuffer buffer)
-    {
+    public RPFUserDefinedHeaderSegment(ByteBuffer buffer) {
         super(buffer);
 
-        if( RPFHeaderSection.DATA_TAG.equals(this.dataTag) )
-        {
+        if (RPFHeaderSection.DATA_TAG.equals(this.dataTag)) {
             this.components = new RPFFileComponents(buffer);
         }
         else
@@ -29,8 +28,7 @@ public class RPFUserDefinedHeaderSegment extends NITFSUserDefinedHeaderSegment
         this.restoreBufferPosition();
     }
 
-    public RPFFileComponents getRPFFileComponents()
-    {
+    public RPFFileComponents getRPFFileComponents() {
         return this.components;
     }
 }

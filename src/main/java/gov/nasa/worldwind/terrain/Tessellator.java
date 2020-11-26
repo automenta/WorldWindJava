@@ -12,15 +12,12 @@ import gov.nasa.worldwind.render.DrawContext;
  * @author tag
  * @version $Id: Tessellator.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface Tessellator extends WWObject
-{
+public interface Tessellator extends WWObject {
     /**
      * Tessellate a globe for the currently visible region.
      *
      * @param dc the current draw context.
-     *
      * @return the tessellation, or null if the tessellation failed or the draw context identifies no visible region.
-     *
      * @throws IllegalStateException if the globe has no tessellator and a default tessellator cannot be created.
      */
     SectorGeometryList tessellate(DrawContext dc);

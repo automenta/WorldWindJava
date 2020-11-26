@@ -17,13 +17,13 @@ import gov.nasa.worldwind.util.Logging;
  * @author jparsons
  * @version $Id: DatumTransformation.java 1958 2014-04-24 19:25:37Z tgaskins $
  */
-public class DatumTransformation
-{
+public class DatumTransformation {
 
     private final static double Clarke1866_EQUATORIAL_RADIUS = 6378206.4;   // ellipsoid equatorial getRadius, in meters
     private final static double Clarke1866_POLAR_RADIUS = 6356583.8;        // ellipsoid polar getRadius, in meters
     private final static double Clarke1866_ES = 0.00676865799729;           // eccentricity squared, semi-major axis
-    public static final Globe CLARKE1866_GLOBE = new EllipsoidalGlobe(Clarke1866_EQUATORIAL_RADIUS, Clarke1866_POLAR_RADIUS,
+    public static final Globe CLARKE1866_GLOBE = new EllipsoidalGlobe(Clarke1866_EQUATORIAL_RADIUS,
+        Clarke1866_POLAR_RADIUS,
         Clarke1866_ES,
         EllipsoidalGlobe.makeElevationModel(AVKey.EARTH_ELEVATION_MODEL_CONFIG_FILE,
             "config/Earth/EarthElevations2.xml"));
@@ -32,15 +32,11 @@ public class DatumTransformation
      * Shift datum from NAD27 to WGS84
      *
      * @param pos the original {@link Position} in NAD27
-     *
      * @return the {@link Position} in WGS84
-     *
      * @throws IllegalArgumentException if Position is null
      */
-    public static Position convertNad27toWGS84(Position pos)
-    {
-        if (pos == null)
-        {
+    public static Position convertNad27toWGS84(Position pos) {
+        if (pos == null) {
             String message = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -59,15 +55,11 @@ public class DatumTransformation
      * Shift datum from WGS84 to NAD27
      *
      * @param pos the original {@link Position} in WGS84
-     *
      * @return the {@link Position} in NAD27
-     *
      * @throws IllegalArgumentException if Position is null
      */
-    public static Position convertWGS84toNad27(Position pos)
-    {
-        if (pos == null)
-        {
+    public static Position convertWGS84toNad27(Position pos) {
+        if (pos == null) {
             String message = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -83,8 +75,7 @@ public class DatumTransformation
     }
 
     private static Position threeParamMolodenski(Position source, Globe fromGlobe, Globe toGlobe,
-        double dx, double dy, double dz)
-    {
+        double dx, double dy, double dz) {
 
         double sinLat = Math.sin(source.getLatitude().getRadians());
         double cosLat = Math.cos(source.getLatitude().getRadians());
@@ -100,7 +91,7 @@ public class DatumTransformation
 
         double rn = fromGlobe.getEquatorialRadius() / Math.sqrt(
             1.0 - fromGlobe.getEccentricitySquared() * sinLatsquared);
-        double rm = fromGlobe.getEquatorialRadius() * (1. - fromGlobe.getEccentricitySquared()) /
+        double rm = fromGlobe.getEquatorialRadius() * (1.0 - fromGlobe.getEccentricitySquared()) /
             Math.pow((1.0 - fromGlobe.getEccentricitySquared() * sinLatsquared), 1.5);
 
         double dLat = (((((-dx * sinLat * cosLon - dy * sinLat * sinLon) + dz * cosLat)

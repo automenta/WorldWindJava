@@ -10,6 +10,8 @@ import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.util.Logging;
 
+import java.beans.PropertyChangeEvent;
+
 /**
  * Implements <code>WWObject</code> functionality. Meant to be either subclassed or aggregated by classes implementing
  * <code>WWObject</code>.
@@ -17,30 +19,26 @@ import gov.nasa.worldwind.util.Logging;
  * @author Tom Gaskins
  * @version $Id: WWObjectImpl.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WWObjectImpl extends AVListImpl implements WWObject
-{
+public class WWObjectImpl extends AVListImpl implements WWObject {
     /**
      * Constructs a new <code>WWObjectImpl</code>.
      */
-    public WWObjectImpl()
-    {
+    public WWObjectImpl() {
     }
 
-    public WWObjectImpl(Object source)
-    {
+    public WWObjectImpl(Object source) {
         super(source);
     }
 
     /**
-     * The property change listener for <em>this</em> instance.
-     * Receives property change notifications that this instance has registered with other property change notifiers.
+     * The property change listener for <em>this</em> instance. Receives property change notifications that this
+     * instance has registered with other property change notifiers.
+     *
      * @param propertyChangeEvent the event
      * @throws IllegalArgumentException if <code>propertyChangeEvent</code> is null
      */
-    public void propertyChange(java.beans.PropertyChangeEvent propertyChangeEvent)
-    {
-        if (propertyChangeEvent == null)
-        {
+    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent == null) {
             String msg = Logging.getMessage("nullValue.PropertyChangeEventIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -50,9 +48,10 @@ public class WWObjectImpl extends AVListImpl implements WWObject
         super.firePropertyChange(propertyChangeEvent);
     }
 
-    /** Empty implementation of MessageListener. */
-    public void onMessage(Message message)
-    {
+    /**
+     * Empty implementation of MessageListener.
+     */
+    public void onMessage(Message message) {
         // Empty implementation
     }
 }

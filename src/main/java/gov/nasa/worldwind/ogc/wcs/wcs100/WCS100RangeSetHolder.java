@@ -12,30 +12,24 @@ import gov.nasa.worldwind.util.xml.AbstractXMLEventParser;
  * @author tag
  * @version $Id: WCS100RangeSetHolder.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
-public class WCS100RangeSetHolder extends AbstractXMLEventParser
-{
-    public WCS100RangeSetHolder(String namespaceURI)
-    {
+public class WCS100RangeSetHolder extends AbstractXMLEventParser {
+    public WCS100RangeSetHolder(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public String getSemantic()
-    {
+    public String getSemantic() {
         return (String) this.getField("semantic");
     }
 
-    public String getRefSys()
-    {
+    public String getRefSys() {
         return (String) this.getField("refSys");
     }
 
-    public String getRefSysLabel()
-    {
+    public String getRefSysLabel() {
         return (String) this.getField("refSysLabel");
     }
 
-    public WCS100RangeSet getRangeSet()
-    {
+    public WCS100RangeSet getRangeSet() {
         return (WCS100RangeSet) this.getField("RangeSet");
     }
 }

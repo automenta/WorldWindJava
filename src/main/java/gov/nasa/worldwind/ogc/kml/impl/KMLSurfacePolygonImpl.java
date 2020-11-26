@@ -14,13 +14,13 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
+import java.util.List;
 
 /**
  * @author dcollins
  * @version $Id: KMLSurfacePolygonImpl.java 1551 2013-08-17 18:00:09Z pabercrombie $
  */
-public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderable
-{
+public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderable {
     protected final KMLAbstractFeature parent;
     protected boolean highlightAttributesResolved = false;
     protected boolean normalAttributesResolved = false;
@@ -36,22 +36,18 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
      *
      * @param tc        the current {@link KMLTraversalContext}.
      * @param placemark the <i>Placemark</i> element containing the <i>LineString</i>.
-     * @param geom      the {@link gov.nasa.worldwind.ogc.kml.KMLPolygon} geometry.
-     *
+     * @param geom      the {@link KMLPolygon} geometry.
      * @throws NullPointerException     if the geometry is null.
      * @throws IllegalArgumentException if the parent placemark or the traversal context is null.
      */
-    public KMLSurfacePolygonImpl(KMLTraversalContext tc, KMLPlacemark placemark, KMLAbstractGeometry geom)
-    {
-        if (tc == null)
-        {
+    public KMLSurfacePolygonImpl(KMLTraversalContext tc, KMLPlacemark placemark, KMLAbstractGeometry geom) {
+        if (tc == null) {
             String msg = Logging.getMessage("nullValue.TraversalContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (placemark == null)
-        {
+        if (placemark == null) {
             String msg = Logging.getMessage("nullValue.ParentIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -69,18 +65,15 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         // KMLPolygon's altitude mode property.
 
         KMLLinearRing outerBoundary = polygon.getOuterBoundary();
-        if (outerBoundary != null)
-        {
+        if (outerBoundary != null) {
             Position.PositionList coords = outerBoundary.getCoordinates();
             if (coords != null && coords.list != null)
                 this.setOuterBoundary(outerBoundary.getCoordinates().list);
         }
 
         Iterable<? extends KMLLinearRing> innerBoundaries = polygon.getInnerBoundaries();
-        if (innerBoundaries != null)
-        {
-            for (KMLLinearRing ring : innerBoundaries)
-            {
+        if (innerBoundaries != null) {
+            for (KMLLinearRing ring : innerBoundaries) {
                 Position.PositionList coords = ring.getCoordinates();
                 if (coords != null && coords.list != null)
                     this.addInnerBoundary(ring.getCoordinates().list);
@@ -103,22 +96,18 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
      * Create a surface polygon from a KML GroundOverlay.
      *
      * @param tc      the current {@link KMLTraversalContext}.
-     * @param overlay the {@link gov.nasa.worldwind.ogc.kml.KMLGroundOverlay} to render as a polygon.
-     *
+     * @param overlay the {@link KMLGroundOverlay} to render as a polygon.
      * @throws NullPointerException     if the geometry is null.
      * @throws IllegalArgumentException if the parent placemark or the traversal context is null.
      */
-    public KMLSurfacePolygonImpl(KMLTraversalContext tc, KMLGroundOverlay overlay)
-    {
-        if (tc == null)
-        {
+    public KMLSurfacePolygonImpl(KMLTraversalContext tc, KMLGroundOverlay overlay) {
+        if (tc == null) {
             String msg = Logging.getMessage("nullValue.TraversalContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (overlay == null)
-        {
+        if (overlay == null) {
             String msg = Logging.getMessage("nullValue.ParentIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -133,8 +122,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         // Check to see if a rotation is provided. The rotation will be applied when the image is rendered, because
         // how the rotation is performed depends on the globe.
         KMLLatLonBox box = overlay.getLatLonBox();
-        if (box != null && box.getRotation() != null)
-        {
+        if (box != null && box.getRotation() != null) {
             this.mustApplyRotation = true;
         }
 
@@ -148,8 +136,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
             this.setValue(AVKey.SHORT_DESCRIPTION, overlay.getSnippetText());
 
         String colorStr = overlay.getColor();
-        if (!WWUtil.isEmpty(colorStr))
-        {
+        if (!WWUtil.isEmpty(colorStr)) {
             Color color = WWUtil.decodeColorABGR(colorStr);
 
             ShapeAttributes attributes = new BasicShapeAttributes();
@@ -159,21 +146,16 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         }
     }
 
-    public void preRender(KMLTraversalContext tc, DrawContext dc)
-    {
+    public void preRender(KMLTraversalContext tc, DrawContext dc) {
         // If the attributes are not inline or internal then they might not be resolved until the external KML
         // document is resolved. Therefore check to see if resolution has occurred.
 
-        if (this.isHighlighted())
-        {
-            if (!this.highlightAttributesResolved)
-            {
+        if (this.isHighlighted()) {
+            if (!this.highlightAttributesResolved) {
                 ShapeAttributes a = this.getHighlightAttributes();
-                if (a == null || a.isUnresolved())
-                {
+                if (a == null || a.isUnresolved()) {
                     a = this.makeAttributesCurrent(KMLConstants.HIGHLIGHT);
-                    if (a != null)
-                    {
+                    if (a != null) {
                         this.setHighlightAttributes(a);
                         if (!a.isUnresolved())
                             this.highlightAttributesResolved = true;
@@ -181,16 +163,12 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
                 }
             }
         }
-        else
-        {
-            if (!this.normalAttributesResolved)
-            {
+        else {
+            if (!this.normalAttributesResolved) {
                 ShapeAttributes a = this.getAttributes();
-                if (a == null || a.isUnresolved())
-                {
+                if (a == null || a.isUnresolved()) {
                     a = this.makeAttributesCurrent(KMLConstants.NORMAL);
-                    if (a != null)
-                    {
+                    if (a != null) {
                         this.setAttributes(a);
                         if (!a.isUnresolved())
                             this.normalAttributesResolved = true;
@@ -201,8 +179,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
 
         // Apply rotation the first time the polygon is rendered. This feature only applies to ground overlays with
         // position specified using a rotated LatLon box.
-        if (this.mustApplyRotation)
-        {
+        if (this.mustApplyRotation) {
             this.applyRotation(dc);
             this.mustApplyRotation = false;
         }
@@ -210,17 +187,17 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         this.preRender(dc);
     }
 
-    public void render(KMLTraversalContext tc, DrawContext dc)
-    {
+    public void render(KMLTraversalContext tc, DrawContext dc) {
         // We've already resolved the SurfacePolygon's attributes during the preRender pass. During the render pass we
         // simply draw the SurfacePolygon.
         this.render(dc);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected PickedObject createPickedObject(DrawContext dc, Color pickColor)
-    {
+    protected PickedObject createPickedObject(DrawContext dc, Color pickColor) {
         PickedObject po = super.createPickedObject(dc, pickColor);
 
         // Add the KMLPlacemark to the picked object as the context of the picked object.
@@ -232,19 +209,16 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
      * Determine and set the {@link Path} highlight attributes from the KML <i>Feature</i> fields.
      *
      * @param attrType the type of attributes, either {@link KMLConstants#NORMAL} or {@link KMLConstants#HIGHLIGHT}.
-     *
      * @return the new attributes.
      */
-    protected ShapeAttributes makeAttributesCurrent(String attrType)
-    {
+    protected ShapeAttributes makeAttributesCurrent(String attrType) {
         ShapeAttributes attrs = this.getInitialAttributes(
             this.isHighlighted() ? KMLConstants.HIGHLIGHT : KMLConstants.NORMAL);
 
         // Get the KML sub-style for Line attributes. Map them to Shape attributes.
 
         KMLAbstractSubStyle lineSubStyle = this.parent.getSubStyle(new KMLLineStyle(null), attrType);
-        if (!this.isHighlighted() || KMLUtil.isHighlightStyleState(lineSubStyle))
-        {
+        if (!this.isHighlighted() || KMLUtil.isHighlightStyleState(lineSubStyle)) {
             KMLUtil.assembleLineAttributes(attrs, (KMLLineStyle) lineSubStyle);
             if (lineSubStyle.hasField(AVKey.UNRESOLVED))
                 attrs.setUnresolved(true);
@@ -253,8 +227,7 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         // Get the KML sub-style for interior attributes. Map them to Shape attributes.
 
         KMLAbstractSubStyle fillSubStyle = this.parent.getSubStyle(new KMLPolyStyle(null), attrType);
-        if (!this.isHighlighted() || KMLUtil.isHighlightStyleState(lineSubStyle))
-        {
+        if (!this.isHighlighted() || KMLUtil.isHighlightStyleState(lineSubStyle)) {
             KMLUtil.assembleInteriorAttributes(attrs, (KMLPolyStyle) fillSubStyle);
             if (fillSubStyle.hasField(AVKey.UNRESOLVED))
                 attrs.setUnresolved(true);
@@ -266,17 +239,14 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
         return attrs;
     }
 
-    protected ShapeAttributes getInitialAttributes(String attrType)
-    {
+    protected ShapeAttributes getInitialAttributes(String attrType) {
         ShapeAttributes attrs = new BasicShapeAttributes();
 
-        if (KMLConstants.HIGHLIGHT.equals(attrType))
-        {
+        if (KMLConstants.HIGHLIGHT.equals(attrType)) {
             attrs.setOutlineMaterial(Material.RED);
             attrs.setInteriorMaterial(Material.PINK);
         }
-        else
-        {
+        else {
             attrs.setOutlineMaterial(Material.WHITE);
             attrs.setInteriorMaterial(Material.LIGHT_GRAY);
         }
@@ -285,12 +255,10 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
     }
 
     @Override
-    public void onMessage(Message message)
-    {
+    public void onMessage(Message message) {
         super.onMessage(message);
 
-        if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(message.getName()))
-        {
+        if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(message.getName())) {
             this.normalAttributesResolved = false;
             this.highlightAttributesResolved = false;
 
@@ -307,20 +275,17 @@ public class KMLSurfacePolygonImpl extends SurfacePolygon implements KMLRenderab
      *
      * @param dc Current draw context.
      */
-    protected void applyRotation(DrawContext dc)
-    {
+    protected void applyRotation(DrawContext dc) {
         // Rotation applies only to ground overlay position with a LatLon box.
         if (!(this.parent instanceof KMLGroundOverlay))
             return;
 
         KMLLatLonBox box = ((KMLGroundOverlay) this.parent).getLatLonBox();
-        if (box != null)
-        {
+        if (box != null) {
             Double rotation = box.getRotation();
-            if (rotation != null)
-            {
+            if (rotation != null) {
                 Sector sector = KMLUtil.createSectorFromLatLonBox(box);
-                java.util.List<LatLon> corners = KMLUtil.rotateSector(dc.getGlobe(), sector,
+                List<LatLon> corners = KMLUtil.rotateSector(dc.getGlobe(), sector,
                     Angle.fromDegrees(rotation));
                 this.setOuterBoundary(corners);
             }

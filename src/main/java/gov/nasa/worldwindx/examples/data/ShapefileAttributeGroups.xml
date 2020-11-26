@@ -7,7 +7,7 @@
 
 <!--$Id: ShapefileAttributeGroups.xml 2344 2014-09-24 00:15:32Z dcollins $-->
 <Layer version="1" layerType="ShapefileLayer">
-    <ShapefileLocation>testData/shapefiles/TM_WORLD_BORDERS-0.3.shp</ShapefileLocation>
+    <ShapefileLocation>shapefiles/TM_WORLD_BORDERS-0.3.shp</ShapefileLocation>
     <DisplayName>Continents</DisplayName>
     <PickEnabled>true</PickEnabled>
     <!--Assign attribute names in the shapefile's DBase file to keys on the shapes created from the shapefile-->

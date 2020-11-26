@@ -12,7 +12,6 @@ import javax.swing.*;
  * @author tag
  * @version $Id: AppPanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface AppPanel extends WWOPanel, Initializable
-{
+public interface AppPanel extends WWOPanel, Initializable {
     JPanel getJPanel();
 }

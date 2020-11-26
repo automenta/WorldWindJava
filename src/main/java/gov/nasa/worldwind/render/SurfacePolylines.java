@@ -20,18 +20,15 @@ import java.util.*;
  * @author Patrick Murris
  * @version $Id: SurfacePolylines.java 2406 2014-10-29 23:39:29Z dcollins $
  */
-public class SurfacePolylines extends AbstractSurfaceShape
-{
+public class SurfacePolylines extends AbstractSurfaceShape {
+    protected final Object outlineDisplayListCacheKey = new Object();
     protected List<Sector> sectors;
     protected CompoundVecBuffer buffer;
     protected boolean needsOutlineTessellation = true;
     protected boolean crossesDateLine = false;
-    protected final Object outlineDisplayListCacheKey = new Object();
 
-    public SurfacePolylines(CompoundVecBuffer buffer)
-    {
-        if (buffer == null)
-        {
+    public SurfacePolylines(CompoundVecBuffer buffer) {
+        if (buffer == null) {
             String message = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -40,16 +37,13 @@ public class SurfacePolylines extends AbstractSurfaceShape
         this.buffer = buffer;
     }
 
-    public SurfacePolylines(Sector sector, CompoundVecBuffer buffer)
-    {
-        if (sector == null)
-        {
+    public SurfacePolylines(Sector sector, CompoundVecBuffer buffer) {
+        if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (buffer == null)
-        {
+        if (buffer == null) {
             String message = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -64,16 +58,13 @@ public class SurfacePolylines extends AbstractSurfaceShape
      *
      * @return the underlying {@link CompoundVecBuffer}.
      */
-    public CompoundVecBuffer getBuffer()
-    {
+    public CompoundVecBuffer getBuffer() {
         return this.buffer;
     }
 
     @Override
-    public List<Sector> getSectors(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public List<Sector> getSectors(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -86,10 +77,8 @@ public class SurfacePolylines extends AbstractSurfaceShape
         return this.sectors;
     }
 
-    public Iterable<? extends LatLon> getLocations(Globe globe)
-    {
-        if (globe == null)
-        {
+    public Iterable<? extends LatLon> getLocations(Globe globe) {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -98,31 +87,26 @@ public class SurfacePolylines extends AbstractSurfaceShape
         return this.getLocations();
     }
 
-    protected List<List<LatLon>> createGeometry(Globe globe, SurfaceTileDrawContext sdc)
-    {
+    protected List<List<LatLon>> createGeometry(Globe globe, SurfaceTileDrawContext sdc) {
         // SurfacePolylines does not invoke this method, so return null indicating this method is not supported.
         // We avoid invoking computeGeometry by overriding determineActiveGeometry below.
         return null;
     }
 
-    protected List<List<LatLon>> createGeometry(Globe globe, double edgeIntervalsPerDegree)
-    {
+    protected List<List<LatLon>> createGeometry(Globe globe, double edgeIntervalsPerDegree) {
         return null;
     }
 
-    public Iterable<? extends LatLon> getLocations()
-    {
+    public Iterable<? extends LatLon> getLocations() {
         return this.buffer.getLocations();
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    public void setLocations(Iterable<? extends LatLon> iterable)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    public void setLocations(Iterable<? extends LatLon> iterable) {
         throw new UnsupportedOperationException();
     }
 
-    public Position getReferencePosition()
-    {
+    public Position getReferencePosition() {
         Iterator<? extends LatLon> iterator = this.getLocations().iterator();
         if (iterator.hasNext())
             return new Position(iterator.next(), 0);
@@ -130,21 +114,19 @@ public class SurfacePolylines extends AbstractSurfaceShape
         return null;
     }
 
-    /** {@inheritDoc} Overridden to treat the polylines as open paths rather than closed polygons. */
+    /**
+     * {@inheritDoc} Overridden to treat the polylines as open paths rather than closed polygons.
+     */
     @Override
-    protected boolean canContainPole()
-    {
+    protected boolean canContainPole() {
         return false;
     }
 
-    protected void doMoveTo(Position oldReferencePosition, Position newReferencePosition)
-    {
-        for (int i = 0; i < this.buffer.size(); i++)
-        {
+    protected void doMoveTo(Position oldReferencePosition, Position newReferencePosition) {
+        for (int i = 0; i < this.buffer.size(); i++) {
             VecBuffer vb = this.buffer.subBuffer(i);
 
-            for (int pos = 0; pos < vb.getSize(); pos++)
-            {
+            for (int pos = 0; pos < vb.getSize(); pos++) {
                 LatLon ll = vb.getLocation(pos);
                 Angle heading = LatLon.greatCircleAzimuth(oldReferencePosition, ll);
                 Angle pathLength = LatLon.greatCircleDistance(oldReferencePosition, ll);
@@ -155,17 +137,14 @@ public class SurfacePolylines extends AbstractSurfaceShape
         this.onGeometryChanged();
     }
 
-    protected void doMoveTo(Globe globe, Position oldReferencePosition, Position newReferencePosition)
-    {
-        for (int i = 0; i < this.buffer.size(); i++)
-        {
+    protected void doMoveTo(Globe globe, Position oldReferencePosition, Position newReferencePosition) {
+        for (int i = 0; i < this.buffer.size(); i++) {
             VecBuffer vb = this.buffer.subBuffer(i);
 
             List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldReferencePosition,
                 newReferencePosition, vb.getLocations());
 
-            for (int pos = 0; pos < vb.getSize(); pos++)
-            {
+            for (int pos = 0; pos < vb.getSize(); pos++) {
                 vb.putLocation(pos, newLocations.get(i));
             }
         }
@@ -173,25 +152,21 @@ public class SurfacePolylines extends AbstractSurfaceShape
         this.onGeometryChanged();
     }
 
-    protected void onGeometryChanged()
-    {
+    protected void onGeometryChanged() {
         this.sectors = null;
         this.needsOutlineTessellation = true;
         super.onShapeChanged();
     }
 
-    protected void determineActiveGeometry(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected void determineActiveGeometry(DrawContext dc, SurfaceTileDrawContext sdc) {
         // Intentionally left blank in order to override the superclass behavior with nothing.
     }
 
-    protected void drawInterior(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected void drawInterior(DrawContext dc, SurfaceTileDrawContext sdc) {
         // Intentionally left blank; SurfacePolylines does not render an interior.
     }
 
-    protected void drawOutline(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected void drawOutline(DrawContext dc, SurfaceTileDrawContext sdc) {
         // Exit immediately if the Polyline has no coordinate data.
         if (this.buffer.size() == 0)
             return;
@@ -217,42 +192,35 @@ public class SurfacePolylines extends AbstractSurfaceShape
         this.applyOutlineState(dc, this.getActiveAttributes());
         gl.glCallList(dlResource[0]);
 
-        if (this.crossesDateLine)
-        {
+        if (this.crossesDateLine) {
             gl.glPushMatrix();
-            try
-            {
+            try {
                 // Apply hemisphere offset and draw again
                 gl.glTranslated(360 * hemisphereSign, 0, 0);
                 gl.glCallList(dlResource[0]);
             }
-            finally
-            {
+            finally {
                 gl.glPopMatrix();
             }
         }
     }
 
-    protected int[] tessellateOutline(DrawContext dc, LatLon referenceLocation)
-    {
+    protected int[] tessellateOutline(DrawContext dc, LatLon referenceLocation) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         this.crossesDateLine = false;
 
         int[] dlResource = new int[] {gl.glGenLists(1), 1};
 
         gl.glNewList(dlResource[0], GL2.GL_COMPILE);
-        try
-        {
+        try {
             // Tessellate each part, note if crossing date line
-            for (int i = 0; i < this.buffer.size(); i++)
-            {
+            for (int i = 0; i < this.buffer.size(); i++) {
                 VecBuffer subBuffer = this.buffer.subBuffer(i);
                 if (this.tessellatePart(gl, subBuffer, referenceLocation))
                     this.crossesDateLine = true;
             }
         }
-        finally
-        {
+        finally {
             gl.glEndList();
         }
 
@@ -265,21 +233,17 @@ public class SurfacePolylines extends AbstractSurfaceShape
         return dlResource;
     }
 
-    protected boolean tessellatePart(GL2 gl, VecBuffer vecBuffer, LatLon referenceLocation)
-    {
+    protected boolean tessellatePart(GL2 gl, VecBuffer vecBuffer, LatLon referenceLocation) {
         Iterable<double[]> iterable = vecBuffer.getCoords(3);
         boolean dateLineCrossed = false;
 
         gl.glBegin(GL2.GL_LINE_STRIP);
-        try
-        {
+        try {
             int sign = 0; // hemisphere offset direction
             double previousLongitude = 0;
 
-            for (double[] coords : iterable)
-            {
-                if (Math.abs(previousLongitude - coords[0]) > 180)
-                {
+            for (double[] coords : iterable) {
+                if (Math.abs(previousLongitude - coords[0]) > 180) {
                     // Crossing date line, sum departure point longitude sign for hemisphere offset
                     sign += (int) Math.signum(previousLongitude);
                     dateLineCrossed = true;
@@ -293,8 +257,7 @@ public class SurfacePolylines extends AbstractSurfaceShape
                 gl.glVertex3f((float) lonDegrees, (float) latDegrees, 0);
             }
         }
-        finally
-        {
+        finally {
             gl.glEnd();
         }
 

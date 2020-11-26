@@ -15,7 +15,10 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 public class GeotiffMetadataFormat extends IIOMetadataFormatImpl {
 
-    public GeotiffMetadataFormat() { super(null,0); }
+    public GeotiffMetadataFormat() {
+        super(null, 0);
+    }
+
     public boolean canNodeAppear(String elementName, ImageTypeSpecifier imageType) {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }

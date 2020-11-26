@@ -20,14 +20,35 @@ import java.io.InputStream;
  * @author tag
  * @version $Id: AntennaViewer.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class AntennaViewer extends ApplicationTemplate
-{
-    protected static final Position ANTENNA_POSITION = Position.fromDegrees(35, -120, 1e3);
+public class AntennaViewer extends ApplicationTemplate {
+    protected static final Position ANTENNA_POSITION = Position.fromDegrees(35, -120, 1.0e3);
 
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+    private static Interpolator2D makeInterpolator() {
+        Interpolator2D interpolator = new Interpolator2D();
+        interpolator.setWrapT(true); // wrap along "phi"
+
+        try {
+            InputStream is = WWIO.openFileOrResourceStream(
+                "gov/nasa/worldwindx/examples/data/ThetaPhi3.antennaTestFile.txt", AntennaViewer.class);
+            interpolator.addFromStream(is);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return interpolator;
+    }
+
+    public static void main(String[] args) {
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, ANTENNA_POSITION.getLatitude().degrees);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, ANTENNA_POSITION.getLongitude().degrees);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 30.0e3);
+
+        ApplicationTemplate.start("WorldWind Antenna Gain Visualization", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             ShapeAttributes normalAttributes = new BasicShapeAttributes();
             normalAttributes.setOutlineOpacity(0.6);
             normalAttributes.setInteriorOpacity(0.4);
@@ -72,33 +93,5 @@ public class AntennaViewer extends ApplicationTemplate
             layer.setPickEnabled(false);
             insertBeforeCompass(getWwd(), layer);
         }
-    }
-
-    private static Interpolator2D makeInterpolator()
-    {
-        Interpolator2D interpolator = new Interpolator2D();
-        interpolator.setWrapT(true); // wrap along "phi"
-
-        try
-        {
-            InputStream is = WWIO.openFileOrResourceStream(
-                "gov/nasa/worldwindx/examples/data/ThetaPhi3.antennaTestFile.txt", AntennaViewer.class);
-            interpolator.addFromStream(is);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        return interpolator;
-    }
-
-    public static void main(String[] args)
-    {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, ANTENNA_POSITION.getLatitude().degrees);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, ANTENNA_POSITION.getLongitude().degrees);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 30e3);
-
-        ApplicationTemplate.start("WorldWind Antenna Gain Visualization", AppFrame.class);
     }
 }

@@ -24,19 +24,18 @@ import java.awt.image.*;
  * @version $Id: LimitedAccessSymbol.java 545 2012-04-24 22:29:21Z pabercrombie $
  * @see LimitedAccessArea
  */
-public class LimitedAccessSymbol extends AbstractTacticalSymbol
-{
-    /** Identifier for the symbol. */
+public class LimitedAccessSymbol extends AbstractTacticalSymbol {
+    /**
+     * Identifier for the symbol.
+     */
     protected String symbolId;
 
-    public LimitedAccessSymbol(String sidc, Position position)
-    {
+    public LimitedAccessSymbol(String sidc, Position position) {
         super(position);
         this.init(sidc);
     }
 
-    protected void init(String symbolId)
-    {
+    protected void init(String symbolId) {
         this.symbolId = symbolId;
 
         // Configure this tactical symbol's icon retriever and modifier retriever with either the configuration value or
@@ -49,25 +48,24 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol
         this.setOffset(Offset.fromFraction(0.5, 0.0));
     }
 
-    /** {@inheritDoc} */
-    public String getIdentifier()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public String getIdentifier() {
         return this.symbolId;
     }
 
-    /** Icon retriever to retrieve an icon framed in a pentagon. */
-    static class IconRetriever extends MilStd2525IconRetriever
-    {
-        public IconRetriever(String retrieverPath)
-        {
+    /**
+     * Icon retriever to retrieve an icon framed in a pentagon.
+     */
+    static class IconRetriever extends MilStd2525IconRetriever {
+        public IconRetriever(String retrieverPath) {
             super(retrieverPath);
         }
 
         @Override
-        public BufferedImage createIcon(String symbolId, AVList params)
-        {
-            if (symbolId == null)
-            {
+        public BufferedImage createIcon(String symbolId, AVList params) {
+            if (symbolId == null) {
                 String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
@@ -104,8 +102,7 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol
                 color = this.getColorForStandardIdentity(symbolCode);
 
             Graphics2D g = null;
-            try
-            {
+            try {
                 g = pentagonImg.createGraphics();
                 g.setColor(color);
                 g.setStroke(new BasicStroke(lineWidth));
@@ -119,8 +116,7 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol
                 g.drawLine(0, imgHeight, pentagonWidth / 2, pentagonHeight); // Left side of triangle
                 g.drawLine(pentagonWidth, imgHeight, pentagonWidth / 2, pentagonHeight); // Right side of triangle
             }
-            finally
-            {
+            finally {
                 if (g != null)
                     g.dispose();
             }
@@ -132,13 +128,11 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol
          * Retrieves the value of the AVKey.COLOR parameter.
          *
          * @param params Parameter list.
-         *
          * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color.
-         *         Returns null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value
-         *         is not a Color.
+         * Returns null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not
+         * a Color.
          */
-        protected Color getColorFromParams(AVList params)
-        {
+        protected Color getColorFromParams(AVList params) {
             if (params == null)
                 return null;
 
@@ -150,11 +144,9 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol
          * Indicates the color to apply to a graphic based on the graphic's standard identity.
          *
          * @param code Symbol code that identifies the graphic.
-         *
          * @return Color to apply based on the standard identity. (Red for hostile entities, black for friendly, etc.)
          */
-        protected Color getColorForStandardIdentity(SymbolCode code)
-        {
+        protected Color getColorForStandardIdentity(SymbolCode code) {
             return MilStd2525Util.getDefaultGraphicMaterial(code).getDiffuse();
         }
     }

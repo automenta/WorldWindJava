@@ -9,12 +9,10 @@ package gov.nasa.worldwind.formats.tiff;
  * @author Lado Garakanidze
  * @version $Id: Tiff.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface Tiff
-{
+public interface Tiff {
     int Undefined = 0;
 
-    interface Type
-    {
+    interface Type {
         int BYTE = 1;
         int ASCII = 2;
         int SHORT = 3;
@@ -29,8 +27,7 @@ public interface Tiff
         int DOUBLE = 12;
     }
 
-    interface Tag
-    {
+    interface Tag {
         // Baseline Tiff 6.0 tags...
         int IMAGE_WIDTH = 256;
         int IMAGE_LENGTH = 257;
@@ -72,8 +69,7 @@ public interface Tiff
     }
 
     // The orientation of the image with respect to the rows and columns.
-    interface Orientation
-    {
+    interface Orientation {
         // 1 = The 0th row represents the visual top of the image,
         // and the 0th column represents the visual left-hand side.
         int Row0_IS_TOP__Col0_IS_LHS = 1;
@@ -105,8 +101,7 @@ public interface Tiff
         int DEFAULT = Row0_IS_TOP__Col0_IS_LHS;
     }
 
-    interface BitsPerSample
-    {
+    interface BitsPerSample {
         int MONOCHROME_BYTE = 8;
         int MONOCHROME_UINT8 = 8;
         int MONOCHROME_UINT16 = 16;
@@ -117,8 +112,7 @@ public interface Tiff
         int CMYK = 32;
     }
 
-    interface SamplesPerPixel
-    {
+    interface SamplesPerPixel {
         int MONOCHROME = 1;
         int RGB = 3;
         int RGBA = 4;
@@ -127,8 +121,7 @@ public interface Tiff
     }
 
     // The color space of the image data
-    interface Photometric
-    {
+    interface Photometric {
         int Undefined = -1;
 
         // 0 = WhiteIsZero
@@ -186,16 +179,14 @@ public interface Tiff
         // There is no default for PhotometricInterpretation, and it is required.
     }
 
-    interface Compression
-    {
+    interface Compression {
         int NONE = 1;
         int LZW = 5;
         int JPEG = 6;
         int PACKBITS = 32773;
     }
 
-    interface PlanarConfiguration
-    {
+    interface PlanarConfiguration {
         // CHUNKY
         // The component values for each pixel are stored contiguously.
         // The order of the components within the pixel is specified by PhotometricInterpretation.
@@ -219,15 +210,13 @@ public interface Tiff
         int DEFAULT = CHUNKY;
     }
 
-    interface ResolutionUnit
-    {
+    interface ResolutionUnit {
         int NONE = 1;
         int INCH = 2;
         int CENTIMETER = 3;
     }
 
-    interface SampleFormat
-    {
+    interface SampleFormat {
         int UNSIGNED = 1;
         int SIGNED = 2;
         int IEEEFLOAT = 3;

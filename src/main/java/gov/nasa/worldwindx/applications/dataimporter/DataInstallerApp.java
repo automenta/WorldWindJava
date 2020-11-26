@@ -17,6 +17,7 @@ import gov.nasa.worldwindx.examples.util.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.logging.Level;
 
 /**
  * An app that shows how to use the panels specific to selecting and installing data sets and displaying those already
@@ -27,6 +28,41 @@ import java.awt.*;
  */
 public class DataInstallerApp {
     // Most of this code was taken from ApplicationTemplate.
+
+    static {
+        System.setProperty("java.net.useSystemProxies", "true");
+        if (Configuration.isMacOS()) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Application");
+            System.setProperty("com.apple.mrj.application.growbox.intrudes", "false");
+        }
+        else if (Configuration.isWindowsOS()) {
+            System.setProperty("sun.awt.noerasebackground", "true"); // prevents flashing during window resizing
+        }
+    }
+
+    public static AppFrame start(String appName, Class<?> appFrameClass) {
+        if (Configuration.isMacOS() && appName != null) {
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
+        }
+
+        try {
+            final AppFrame frame = (AppFrame) appFrameClass.getConstructor().newInstance();
+            frame.setTitle(appName);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            EventQueue.invokeLater(() -> frame.setVisible(true));
+
+            return frame;
+        }
+        catch (Exception e) {
+            Logging.logger().log(Level.SEVERE, "Exception at application start", e);
+            return null;
+        }
+    }
+
+    public static void main(String[] args) {
+        start("Data Installer", AppFrame.class);
+    }
 
     public static class AppPanel extends JPanel {
 
@@ -109,38 +145,5 @@ public class DataInstallerApp {
         public WorldWindow getWwd() {
             return this.wwjPanel.wwd;
         }
-    }
-
-    static {
-        System.setProperty("java.net.useSystemProxies", "true");
-        if (Configuration.isMacOS()) {
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Application");
-            System.setProperty("com.apple.mrj.application.growbox.intrudes", "false");
-        } else if (Configuration.isWindowsOS()) {
-            System.setProperty("sun.awt.noerasebackground", "true"); // prevents flashing during window resizing
-        }
-    }
-
-    public static AppFrame start(String appName, Class<?> appFrameClass) {
-        if (Configuration.isMacOS() && appName != null) {
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
-        }
-
-        try {
-            final AppFrame frame = (AppFrame) appFrameClass.getConstructor().newInstance();
-            frame.setTitle(appName);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            java.awt.EventQueue.invokeLater(() -> frame.setVisible(true));
-
-            return frame;
-        } catch (Exception e) {
-            Logging.logger().log(java.util.logging.Level.SEVERE, "Exception at application start", e);
-            return null;
-        }
-    }
-
-    public static void main(String[] args) {
-        start("Data Installer", AppFrame.class);
     }
 }

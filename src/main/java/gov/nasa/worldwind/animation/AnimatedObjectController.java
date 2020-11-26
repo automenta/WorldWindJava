@@ -14,12 +14,12 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
 
     private final WorldWindow wwd;
     private final ArrayList<AnimatedObject> animObjects;
-    private Globe globe;
-    private boolean started = false;
-    private Animatable selectedObject;
     private final AnnotationAttributes metaAttrs;
     private final RenderableLayer objectLayer;
     private final RenderableLayer annotationLayer;
+    private Globe globe;
+    private boolean started = false;
+    private Animatable selectedObject;
 
     public AnimatedObjectController(WorldWindow wwd, RenderableLayer objectLayer, RenderableLayer annotationLayer) {
         this.wwd = wwd;
@@ -29,7 +29,7 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
         metaAttrs = new AnnotationAttributes();
         metaAttrs.setCornerRadius(0);
         metaAttrs.setInsets(new Insets(4, 4, 4, 4));
-        metaAttrs.setBackgroundColor(new Color(0f, 0f, 0f, .5f));
+        metaAttrs.setBackgroundColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
         metaAttrs.setTextColor(Color.WHITE);
         metaAttrs.setBorderColor(Color.yellow);
         metaAttrs.setBorderWidth(1);
@@ -46,7 +46,8 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
             if (globe != null) {
                 if (started) {
                     animObjects.forEach((ao) -> ao.stepAnimation(wwd.getView().getGlobe()));
-                } else {
+                }
+                else {
                     animObjects.forEach((ao) -> ao.startAnimation(wwd.getView().getGlobe()));
                     started = true;
                 }
@@ -73,10 +74,12 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
             Object prevNote = this.selectedObject.getField(AVKey.ANIMATION_ANNOTATION);
             if (prevNote != null) {
                 ((GlobeAnnotation) prevNote).getAttributes().setVisible(true);
-            } else {
+            }
+            else {
                 String metadata = this.selectedObject.getField(AVKey.ANIMATION_META_DATA).toString();
                 if (metadata != null) {
-                    GlobeAnnotation note = new GlobeAnnotation(metadata, this.selectedObject.getPosition(), this.metaAttrs);
+                    Annotation note = new GlobeAnnotation(metadata, this.selectedObject.getPosition(),
+                        this.metaAttrs);
                     this.annotationLayer.addRenderable(note);
                     note.getAttributes().setVisible(true);
                     this.selectedObject.setField(AVKey.ANIMATION_ANNOTATION, note);

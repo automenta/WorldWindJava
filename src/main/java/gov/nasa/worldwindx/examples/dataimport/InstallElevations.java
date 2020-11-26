@@ -22,32 +22,33 @@ import java.awt.*;
 import java.io.File;
 
 /**
- * Illustrates how to install elevation data into a WorldWind <code>{@link gov.nasa.worldwind.cache.FileStore}</code>.
+ * Illustrates how to install elevation data into a WorldWind <code>{@link FileStore}</code>.
  * <p>
  * Elevation data is installed into a FileStore by executing the following steps: <ol> <li>Choose the FileStore location
  * to place the installed elevations. This example uses the FileStore's install location. </li> <li>Compute a unique
  * cache name for the elevations. In this example, the cache name is "Examples/ElevationsName", where "ElevationsName"
  * is the elevation data's display name, stripped of any illegal filename characters.</li> <li>Install the elevations by
- * constructing, configuring and running a {@link gov.nasa.worldwind.data.TiledElevationProducer}.</li> <li>The
- * elevation data is subsequently described by a configuration {@link org.w3c.dom.Document}, which we use to construct
- * an ElevationModel via the {@link gov.nasa.worldwind.Factory} method {@link gov.nasa.worldwind.Factory#createFromConfigSource(Object,
- * gov.nasa.worldwind.avlist.AVList)}.</li> </ol>
+ * constructing, configuring and running a {@link TiledElevationProducer}.</li> <li>The
+ * elevation data is subsequently described by a configuration {@link Document}, which we use to construct
+ * an ElevationModel via the {@link Factory} method {@link Factory#createFromConfigSource(Object,
+ * AVList)}.</li> </ol>
  *
  * @author tag
  * @version $Id: InstallElevations.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class InstallElevations extends ApplicationTemplate
-{
+public class InstallElevations extends ApplicationTemplate {
     // Define a subdirectory in the installed-data area to place the installed elevation tiles.
     protected static final String BASE_CACHE_PATH = "Examples/";
     // This example's elevations file is loaded from the following class-path resource.
     protected static final String ELEVATIONS_PATH = "gov/nasa/worldwindx/examples/data/craterlake-elev-16bit-30m.tif";
 
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Elevation Installation", InstallElevations.AppFrame.class);
+    }
+
     // Override ApplicationTemplate.AppFrame's constructor to install an elevation dataset.
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             // Show the WAIT cursor because the installation may take a while.
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
@@ -62,8 +63,7 @@ public class InstallElevations extends ApplicationTemplate
             t.start();
         }
 
-        protected void installElevations()
-        {
+        protected void installElevations() {
             // Download the source file.
             File sourceFile = ExampleUtil.saveResourceToTempFile(ELEVATIONS_PATH, ".tif");
 
@@ -89,8 +89,7 @@ public class InstallElevations extends ApplicationTemplate
             });
         }
 
-        protected ElevationModel installElevations(String displayName, Object elevationSource, FileStore fileStore)
-        {
+        protected ElevationModel installElevations(String displayName, Object elevationSource, FileStore fileStore) {
             // Use the FileStore's install location as the destination for the imported elevation tiles. The install
             // location is an area in the data file store for permanent storage.
             File fileStoreLocation = DataInstallUtil.getDefaultInstallLocation(fileStore);
@@ -106,8 +105,7 @@ public class InstallElevations extends ApplicationTemplate
 
             // Create a TiledImageProducer to install the imagery.
             TiledElevationProducer producer = new TiledElevationProducer();
-            try
-            {
+            try {
                 // Configure the TiledElevationProducer with the parameter list and the elevation data source.
                 producer.setStoreParameters(params);
                 producer.offerDataSource(elevationSource, null);
@@ -115,8 +113,7 @@ public class InstallElevations extends ApplicationTemplate
                 // Install the elevations.
                 producer.startProduction();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 producer.removeProductionState();
                 e.printStackTrace();
                 return null;
@@ -137,10 +134,5 @@ public class InstallElevations extends ApplicationTemplate
             return (ElevationModel) BasicFactory.create(AVKey.ELEVATION_MODEL_FACTORY,
                 ((Document) o).getDocumentElement());
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Elevation Installation", InstallElevations.AppFrame.class);
     }
 }

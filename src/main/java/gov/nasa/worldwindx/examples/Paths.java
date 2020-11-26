@@ -14,7 +14,6 @@ import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.BasicDragger;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
 
 /**
@@ -25,6 +24,10 @@ import java.util.*;
  * @version $Id: Paths.java 2292 2014-09-02 21:13:05Z tgaskins $
  */
 public class Paths extends ApplicationTemplate {
+
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Paths", AppFrame.class);
+    }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
@@ -39,12 +42,12 @@ public class Paths extends ApplicationTemplate {
             // Create and set an attribute bundle.
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineMaterial(new Material(Color.YELLOW));
-            attrs.setOutlineWidth(2d);
+            attrs.setOutlineWidth(2.0d);
 
             // Create a path, set some of its properties and set its attributes.
             ArrayList<Position> pathPositions = new ArrayList<>();
-            pathPositions.add(Position.fromDegrees(28, -102, 1e4));
-            pathPositions.add(Position.fromDegrees(35, -100, 1e4));
+            pathPositions.add(Position.fromDegrees(28, -102, 1.0e4));
+            pathPositions.add(Position.fromDegrees(35, -100, 1.0e4));
             Path path = new Path(pathPositions);
             path.setAttributes(attrs);
             path.setVisible(true);
@@ -61,17 +64,17 @@ public class Paths extends ApplicationTemplate {
 
             // Create a path that uses all default values.
             pathPositions = new ArrayList<>();
-            pathPositions.add(Position.fromDegrees(28, -104, 1e4));
-            pathPositions.add(Position.fromDegrees(35, -102, 1e4));
+            pathPositions.add(Position.fromDegrees(28, -104, 1.0e4));
+            pathPositions.add(Position.fromDegrees(35, -102, 1.0e4));
             path = new Path(pathPositions);
             layer.addRenderable(path);
 
             // Create a path with more than two positions and closed.
             pathPositions = new ArrayList<>();
-            pathPositions.add(Position.fromDegrees(28, -106, 4e4));
-            pathPositions.add(Position.fromDegrees(35, -104, 4e4));
-            pathPositions.add(Position.fromDegrees(35, -107, 4e4));
-            pathPositions.add(Position.fromDegrees(28, -107, 4e4));
+            pathPositions.add(Position.fromDegrees(28, -106, 4.0e4));
+            pathPositions.add(Position.fromDegrees(35, -104, 4.0e4));
+            pathPositions.add(Position.fromDegrees(35, -107, 4.0e4));
+            pathPositions.add(Position.fromDegrees(28, -107, 4.0e4));
             path = new Path(pathPositions);
             path.setAltitudeMode(WorldWind.ABSOLUTE);
             path.setExtrude(true);
@@ -88,15 +91,11 @@ public class Paths extends ApplicationTemplate {
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
 
-            List<Marker> markers = new ArrayList<>(1);
+            Collection<Marker> markers = new ArrayList<>(1);
             markers.add(new BasicMarker(Position.fromDegrees(90, 0), new BasicMarkerAttributes()));
             MarkerLayer markerLayer = new MarkerLayer();
             markerLayer.setMarkers(markers);
             insertBeforeCompass(getWwd(), markerLayer);
         }
-    }
-
-    public static void main(String[] args) {
-        ApplicationTemplate.start("WorldWind Paths", AppFrame.class);
     }
 }

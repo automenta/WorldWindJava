@@ -14,22 +14,18 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author tag
  * @version $Id: BasicMemoryCacheSet.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class BasicMemoryCacheSet implements MemoryCacheSet
-{
+public class BasicMemoryCacheSet implements MemoryCacheSet {
     private final ConcurrentHashMap<String, MemoryCache> caches = new ConcurrentHashMap<>();
 
-    public synchronized boolean containsCache(String key)
-    {
+    public synchronized boolean containsCache(String key) {
         return this.caches.containsKey(key);
     }
 
-    public synchronized MemoryCache getCache(String cacheKey)
-    {
+    public synchronized MemoryCache getCache(String cacheKey) {
         MemoryCache cache = this.caches.get(cacheKey);
 
-        if (cache == null)
-        {
-            String message = Logging.getMessage("MemoryCacheSet.CacheDoesNotExist",  cacheKey);
+        if (cache == null) {
+            String message = Logging.getMessage("MemoryCacheSet.CacheDoesNotExist", cacheKey);
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
@@ -37,22 +33,18 @@ public class BasicMemoryCacheSet implements MemoryCacheSet
         return cache;
     }
 
-    public Map<String, MemoryCache> getAllCaches()
-    {
+    public Map<String, MemoryCache> getAllCaches() {
         return this.caches;
     }
 
-    public synchronized MemoryCache addCache(String key, MemoryCache cache)
-    {
-        if (this.containsCache(key))
-        {
+    public synchronized MemoryCache addCache(String key, MemoryCache cache) {
+        if (this.containsCache(key)) {
             String message = Logging.getMessage("MemoryCacheSet.CacheAlreadyExists");
             Logging.logger().fine(message);
             throw new IllegalStateException(message);
         }
 
-        if (cache == null)
-        {
+        if (cache == null) {
             String message = Logging.getMessage("nullValue.CacheIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -63,20 +55,16 @@ public class BasicMemoryCacheSet implements MemoryCacheSet
         return cache;
     }
 
-    public synchronized void clear()
-    {
-        for (MemoryCache cache : this.caches.values())
-        {
+    public synchronized void clear() {
+        for (MemoryCache cache : this.caches.values()) {
             cache.clear();
         }
     }
 
-    public Collection<PerformanceStatistic> getPerformanceStatistics()
-    {
-        ArrayList<PerformanceStatistic> stats = new ArrayList<>();
+    public Collection<PerformanceStatistic> getPerformanceStatistics() {
+        List<PerformanceStatistic> stats = new ArrayList<>();
 
-        for (MemoryCache cache : this.caches.values())
-        {
+        for (MemoryCache cache : this.caches.values()) {
             stats.add(new PerformanceStatistic(PerformanceStatistic.MEMORY_CACHE, "Cache Size (Kb): " + cache.getName(),
                 cache.getUsedCapacity() / 1000));
         }

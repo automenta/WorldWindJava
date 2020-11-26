@@ -10,7 +10,7 @@ import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * DIGEST Part 2, Annex C.2.2.2.3:<br>A coverage is composed of features whose primitives maintain topological
@@ -20,8 +20,7 @@ import java.util.ArrayList;
  * @author dcollins
  * @version $Id: VPFCoverage.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFCoverage extends AVListImpl
-{
+public class VPFCoverage extends AVListImpl {
     private final VPFLibrary library;
     private boolean tiled;
     private VPFBufferedRecordData featureClassSchemaTable;
@@ -30,10 +29,8 @@ public class VPFCoverage extends AVListImpl
     private VPFBufferedRecordData integerValueDescriptionTable;
     private VPFBufferedRecordData symbolRelatedAttributeTable;
 
-    protected VPFCoverage(VPFLibrary library)
-    {
-        if (library == null)
-        {
+    protected VPFCoverage(VPFLibrary library) {
+        if (library == null) {
             String message = Logging.getMessage("nullValue.LibraryIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -49,30 +46,24 @@ public class VPFCoverage extends AVListImpl
      *
      * @param library the Library which the Coverage resides in.
      * @param name    the Coverage's name.
-     *
      * @return a new Coverage from the specified Library with the specified name.
-     *
      * @throws IllegalArgumentException if the library is null, or if the name is null or empty.
      */
-    public static VPFCoverage fromFile(VPFLibrary library, String name)
-    {
-        if (library == null)
-        {
+    public static VPFCoverage fromFile(VPFLibrary library, String name) {
+        if (library == null) {
             String message = Logging.getMessage("nullValue.LibraryIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (WWUtil.isEmpty(name))
-        {
+        if (WWUtil.isEmpty(name)) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         File file = new File(library.getFilePath(), name);
-        if (!file.exists())
-        {
+        if (!file.exists()) {
             String message = Logging.getMessage("generic.FileNotFound", file.getPath());
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -80,8 +71,7 @@ public class VPFCoverage extends AVListImpl
 
         // Coverage tables.
         VPFBufferedRecordData fcs = VPFUtils.readTable(new File(file, VPFConstants.FEATURE_CLASS_SCHEMA_TABLE));
-        if (fcs == null)
-        {
+        if (fcs == null) {
             String message = Logging.getMessage("VPF.FeatureClassSchemaTableMissing");
             throw new WWRuntimeException(message);
         }
@@ -104,8 +94,7 @@ public class VPFCoverage extends AVListImpl
 
         // Coverage metadata attributes.
         VPFRecord record = library.getCoverageAttributeTable().getRecord("coverage_name", name);
-        if (record != null)
-        {
+        if (record != null) {
             VPFUtils.checkAndSetValue(record, "coverage_name", AVKey.DISPLAY_NAME, coverage);
             VPFUtils.checkAndSetValue(record, "description", AVKey.DESCRIPTION, coverage);
         }
@@ -113,8 +102,7 @@ public class VPFCoverage extends AVListImpl
         return coverage;
     }
 
-    public VPFLibrary getLibrary()
-    {
+    public VPFLibrary getLibrary() {
         return this.library;
     }
 
@@ -123,8 +111,7 @@ public class VPFCoverage extends AVListImpl
      *
      * @return name of this Coverage.
      */
-    public String getName()
-    {
+    public String getName() {
         return this.getStringValue(AVKey.DISPLAY_NAME);
     }
 
@@ -133,21 +120,18 @@ public class VPFCoverage extends AVListImpl
      *
      * @return description of this Coverager.
      */
-    public String getDescription()
-    {
+    public String getDescription() {
         return this.getStringValue(AVKey.DESCRIPTION);
     }
 
-    public String getFilePath()
-    {
+    public String getFilePath() {
         StringBuilder sb = new StringBuilder(this.library.getFilePath());
         sb.append(File.separator);
         sb.append(this.getName());
         return sb.toString();
     }
 
-    public boolean isReferenceCoverage()
-    {
+    public boolean isReferenceCoverage() {
         String name = this.getName();
         return name.equalsIgnoreCase(VPFConstants.DATA_QUALITY_COVERAGE)
             || name.equalsIgnoreCase(VPFConstants.LIBRARY_REFERENCE_COVERAGE)
@@ -155,20 +139,16 @@ public class VPFCoverage extends AVListImpl
             || name.equalsIgnoreCase(VPFConstants.TILE_REFERENCE_COVERAGE);
     }
 
-    public boolean isTiled()
-    {
+    public boolean isTiled() {
         return this.tiled;
     }
 
-    public void setTiled(boolean tiled)
-    {
+    public void setTiled(boolean tiled) {
         this.tiled = tiled;
     }
 
-    public VPFFeatureClassSchema[] getFeatureClasses(FileFilter featureTableFilter)
-    {
-        if (featureTableFilter == null)
-        {
+    public VPFFeatureClassSchema[] getFeatureClasses(FileFilter featureTableFilter) {
+        if (featureTableFilter == null) {
             String message = Logging.getMessage("nullValue.FilterIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -182,16 +162,14 @@ public class VPFCoverage extends AVListImpl
         int numFeatures = names.length;
         VPFFeatureClassSchema[] desc = new VPFFeatureClassSchema[numFeatures];
 
-        for (int i = 0; i < numFeatures; i++)
-        {
+        for (int i = 0; i < numFeatures; i++) {
             String featureTableName = names[i];
             String className = WWIO.replaceSuffix(featureTableName, "");
             String type = null;
 
             // If the Feature Class Attriute Table is available, then use it to determine the feature type for the
             // specified class.
-            if (this.featureClassAttributeTable != null)
-            {
+            if (this.featureClassAttributeTable != null) {
                 VPFRecord record = this.featureClassAttributeTable.getRecord("fclass", className);
                 if (record != null)
                     type = (String) record.getValue("type");
@@ -207,19 +185,16 @@ public class VPFCoverage extends AVListImpl
         return desc;
     }
 
-    public VPFRelation[] getFeatureClassRelations(String className)
-    {
-        if (className == null)
-        {
+    public VPFRelation[] getFeatureClassRelations(String className) {
+        if (className == null) {
             String message = Logging.getMessage("nullValue.ClassNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        ArrayList<VPFRelation> rels = new ArrayList<>();
+        List<VPFRelation> rels = new ArrayList<>();
 
-        for (VPFRecord row : this.featureClassSchemaTable)
-        {
+        for (VPFRecord row : this.featureClassSchemaTable) {
             Object o = row.getValue("feature_class");
             if (!(o instanceof String))
                 continue;
@@ -239,53 +214,43 @@ public class VPFCoverage extends AVListImpl
         return array;
     }
 
-    public VPFBufferedRecordData getFeatureClassSchemaTable()
-    {
+    public VPFBufferedRecordData getFeatureClassSchemaTable() {
         return this.featureClassSchemaTable;
     }
 
-    public void setFeatureClassSchemaTable(VPFBufferedRecordData table)
-    {
+    public void setFeatureClassSchemaTable(VPFBufferedRecordData table) {
         this.featureClassSchemaTable = table;
     }
 
-    public VPFBufferedRecordData getFeatureClassAttributeTable()
-    {
+    public VPFBufferedRecordData getFeatureClassAttributeTable() {
         return this.featureClassAttributeTable;
     }
 
-    public void setFeatureClassAttributeTable(VPFBufferedRecordData table)
-    {
+    public void setFeatureClassAttributeTable(VPFBufferedRecordData table) {
         this.featureClassAttributeTable = table;
     }
 
-    public VPFBufferedRecordData getCharacterValueDescriptionTable()
-    {
+    public VPFBufferedRecordData getCharacterValueDescriptionTable() {
         return this.characterValueDescriptionTable;
     }
 
-    public void setCharacterValueDescriptionTable(VPFBufferedRecordData table)
-    {
+    public void setCharacterValueDescriptionTable(VPFBufferedRecordData table) {
         this.characterValueDescriptionTable = table;
     }
 
-    public VPFBufferedRecordData getIntegerValueDescriptionTable()
-    {
+    public VPFBufferedRecordData getIntegerValueDescriptionTable() {
         return this.integerValueDescriptionTable;
     }
 
-    public void setIntegerValueDescriptionTable(VPFBufferedRecordData table)
-    {
+    public void setIntegerValueDescriptionTable(VPFBufferedRecordData table) {
         this.integerValueDescriptionTable = table;
     }
 
-    public VPFBufferedRecordData getSymbolRelatedAttributeTable()
-    {
+    public VPFBufferedRecordData getSymbolRelatedAttributeTable() {
         return this.symbolRelatedAttributeTable;
     }
 
-    public void setSymbolRelatedAttributeTable(VPFBufferedRecordData table)
-    {
+    public void setSymbolRelatedAttributeTable(VPFBufferedRecordData table) {
         this.symbolRelatedAttributeTable = table;
     }
 }

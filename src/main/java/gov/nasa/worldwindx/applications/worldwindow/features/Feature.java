@@ -15,8 +15,7 @@ import java.beans.PropertyChangeListener;
  * @author tag
  * @version $Id: Feature.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface Feature extends Initializable, Action, PropertyChangeListener
-{
+public interface Feature extends Initializable, Action, PropertyChangeListener {
     String getFeatureID();
 
     boolean isOn();

@@ -20,12 +20,15 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: FortifiedArea.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class FortifiedArea extends BasicArea
-{
-    /** Default number of wave lengths for a simple shape. This number is used to compute a default wave length. */
+public class FortifiedArea extends BasicArea {
+    /**
+     * Default number of wave lengths for a simple shape. This number is used to compute a default wave length.
+     */
     public static final int DEFAULT_NUM_WAVES = 20;
 
-    /** Original positions specified by the application. */
+    /**
+     * Original positions specified by the application.
+     */
     protected Iterable<? extends Position> positions;
     /**
      * Positions computed from the original positions. This list includes the positions necessary to draw the square
@@ -33,45 +36,47 @@ public class FortifiedArea extends BasicArea
      */
     protected List<Position> computedPositions;
 
-    /** Indicates the wavelength of the square wave that forms the graphic's border. */
+    /**
+     * Indicates the wavelength of the square wave that forms the graphic's border.
+     */
     protected double waveLength;
+
+    public FortifiedArea(String sidc) {
+        super(sidc);
+    }
 
     /**
      * Indicates the graphics supported by this class.
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         return Collections.singletonList(TacGrpSidc.C2GM_GNL_ARS_FTFDAR);
     }
 
-    public FortifiedArea(String sidc)
-    {
-        super(sidc);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterable<? extends Position> getPositions() {
+        return this.positions;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setPositions(Iterable<? extends Position> positions)
-    {
+    public void setPositions(Iterable<? extends Position> positions) {
         this.positions = positions;
         this.computedPositions = null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Iterable<? extends Position> getPositions()
-    {
-        return this.positions;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void moveTo(Position position)
-    {
-        if (position == null)
-        {
+    public void moveTo(Position position) {
+        if (position == null) {
             String msg = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -103,8 +108,7 @@ public class FortifiedArea extends BasicArea
      *
      * @return The wave length, in meters.
      */
-    public double getWaveLength()
-    {
+    public double getWaveLength() {
         return waveLength;
     }
 
@@ -114,17 +118,16 @@ public class FortifiedArea extends BasicArea
      *
      * @param waveLength The wavelength, in meters.
      */
-    public void setWaveLength(double waveLength)
-    {
+    public void setWaveLength(double waveLength) {
         this.waveLength = waveLength;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void computeGeometry(DrawContext dc)
-    {
-        if (this.computedPositions == null && this.positions != null)
-        {
+    public void computeGeometry(DrawContext dc) {
+        if (this.computedPositions == null && this.positions != null) {
             this.generateIntermediatePositions(dc, this.positions);
             this.polygon.setLocations(this.computedPositions);
         }
@@ -137,16 +140,14 @@ public class FortifiedArea extends BasicArea
      * @param dc        Current draw context.
      * @param positions Positions that define the polygon boundary.
      */
-    protected void generateIntermediatePositions(DrawContext dc, Iterable<? extends Position> positions)
-    {
+    protected void generateIntermediatePositions(DrawContext dc, Iterable<? extends Position> positions) {
         Iterator<? extends Position> iterator = positions.iterator();
 
         Globe globe = dc.getGlobe();
         List<Position> toothPositions = new ArrayList<>();
 
         double waveLength = this.getWaveLength();
-        if (waveLength == 0)
-        {
+        if (waveLength == 0) {
             waveLength = this.computeDefaultWavelength(dc.getGlobe());
         }
 
@@ -162,8 +163,7 @@ public class FortifiedArea extends BasicArea
         Position nextPos = iterator.next();
         Vec4 pNext = globe.computePointFromPosition(nextPos);
 
-        while (true)
-        {
+        while (true) {
             double dist = pNext.distanceTo3(thisPoint);
 
             Position pos = globe.computePositionFromPoint(thisPoint);
@@ -171,13 +171,11 @@ public class FortifiedArea extends BasicArea
 
             // If the distance to the next point is less than the tooth size, walk
             // around the polygon until we find a point far enough away to draw a tooth.
-            while (dist < toothSize && iterator.hasNext())
-            {
+            while (dist < toothSize && iterator.hasNext()) {
                 // If we're drawing a straight segment, add the short line
                 // segment to the boundary in order to preserve the shape
                 // of the polygon as much as possible between the teeth.
-                if (!isTooth)
-                {
+                if (!isTooth) {
                     toothPositions.add(nextPos);
                 }
 
@@ -187,16 +185,13 @@ public class FortifiedArea extends BasicArea
             }
 
             // Break if we can't find a position far enough away to draw a tooth.
-            if (dist < toothSize)
-            {
+            if (dist < toothSize) {
                 // If the polygon is not closed, close it.
-                if (!firstPos.equals(nextPos))
-                {
+                if (!firstPos.equals(nextPos)) {
                     nextPos = firstPos;
                     pNext = globe.computePointFromPosition(nextPos);
                 }
-                else
-                {
+                else {
                     break;
                 }
             }
@@ -205,8 +200,7 @@ public class FortifiedArea extends BasicArea
             Vec4 vAB = pNext.subtract3(thisPoint).normalize3();
             Vec4 endSegment = thisPoint.add3(vAB.multiply3(toothSize));
 
-            if (isTooth)
-            {
+            if (isTooth) {
                 Vec4 normal = globe.computeSurfaceNormalAtPoint(thisPoint);
                 Vec4 perpendicular = vAB.cross3(normal);
                 perpendicular = perpendicular.normalize3().multiply3(toothSize);
@@ -236,30 +230,25 @@ public class FortifiedArea extends BasicArea
      * of the polygon.
      *
      * @param globe Globe on which the area will be rendered.
-     *
      * @return The wave length.
      */
     // TODO: this algorithm assumes that more control points means that the shape is more complicated, so the teeth
     // TODO: need to be smaller. But this isn't always the case; adding points to increase the resolution of a circle
     // TODO: shouldn't make the teeth smaller.
-    protected double computeDefaultWavelength(Globe globe)
-    {
+    protected double computeDefaultWavelength(Globe globe) {
         double perimeter = 0;
         int count = 0;
 
         // Compute the number of vertices and the perimeter of the polygon.
         Vec4 first = null;
         Vec4 prev = null;
-        for (Position pos : this.positions)
-        {
+        for (Position pos : this.positions) {
             Vec4 current = globe.computePointFromPosition(pos);
 
-            if (prev != null)
-            {
+            if (prev != null) {
                 perimeter += current.distanceTo3(prev);
             }
-            else
-            {
+            else {
                 first = current;
             }
 
@@ -268,8 +257,7 @@ public class FortifiedArea extends BasicArea
         }
 
         // If the polygon is not closed account for the missing segment.
-        if (prev != null && !prev.equals(first))
-        {
+        if (prev != null && !prev.equals(first)) {
             perimeter += prev.distanceTo3(first);
         }
 

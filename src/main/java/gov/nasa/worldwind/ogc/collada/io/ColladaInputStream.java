@@ -18,12 +18,15 @@ import java.net.URI;
  * @author pabercrombie
  * @version $Id: ColladaInputStream.java 660 2012-06-26 16:13:11Z pabercrombie $
  */
-public class ColladaInputStream extends XMLDoc
-{
-    /** The {@link java.io.InputStream} specified to the constructor. */
+public class ColladaInputStream extends XMLDoc {
+    /**
+     * The {@link InputStream} specified to the constructor.
+     */
     protected InputStream inputStream;
 
-    /** The URI of this COLLADA document. May be {@code null}. */
+    /**
+     * The URI of this COLLADA document. May be {@code null}.
+     */
     protected URI uri;
 
     /**
@@ -32,13 +35,10 @@ public class ColladaInputStream extends XMLDoc
      * @param sourceStream the COLLADA stream.
      * @param uri          the URI of this COLLADA document. This URI is used to resolve relative references. May be
      *                     {@code null}.
-     *
      * @throws IllegalArgumentException if the specified input stream is null.
      */
-    public ColladaInputStream(InputStream sourceStream, URI uri)
-    {
-        if (sourceStream == null)
-        {
+    public ColladaInputStream(InputStream sourceStream, URI uri) {
+        if (sourceStream == null) {
             String message = Logging.getMessage("nullValue.InputStreamIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -53,23 +53,21 @@ public class ColladaInputStream extends XMLDoc
      *
      * @return the input stream reference passed to the constructor.
      */
-    public InputStream getInputStream()
-    {
+    public InputStream getInputStream() {
         return this.inputStream;
     }
 
-    /** {@inheritDoc} */
-    public String getSupportFilePath(String path)
-    {
-        if (path == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public String getSupportFilePath(String path) {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (this.uri != null)
-        {
+        if (this.uri != null) {
             URI remoteFile = uri.resolve(path);
             if (remoteFile != null)
                 return remoteFile.toString();
@@ -78,8 +76,7 @@ public class ColladaInputStream extends XMLDoc
     }
 
     @Override
-    public InputStream getSupportFileStream(String path)
-    {
+    public InputStream getSupportFileStream(String path) {
         return null;
     }
 }

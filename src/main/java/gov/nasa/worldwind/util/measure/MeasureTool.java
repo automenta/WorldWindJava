@@ -15,7 +15,6 @@ import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.List;
 import java.util.*;
 
 /**
@@ -24,17 +23,17 @@ import java.util.*;
  * #SHAPE_PATH}, {@link #SHAPE_POLYGON}, {@link #SHAPE_CIRCLE}, {@link #SHAPE_ELLIPSE}, {@link #SHAPE_SQUARE} or {@link
  * #SHAPE_QUAD}.
  * <p>
- * In order to allow user interaction with the measuring shape, a controller must be set by calling
- * {@link #setController(MeasureToolController)} with a new instance of a <code>MeasureToolController</code>.</p>
+ * In order to allow user interaction with the measuring shape, a controller must be set by calling {@link
+ * #setController(MeasureToolController)} with a new instance of a <code>MeasureToolController</code>.</p>
  * <p>
  * The interaction sequence for drawing a shape and measuring is as follows: </p>  <ul> <li>Set the measure shape.</li>
  * <li>Arm the <code>MeasureTool</code> object by calling its {@link #setArmed(boolean)} method with an argument of
  * true.</li> <li>Click on the terrain to add points.</li> <li>Disarm the <code>MeasureTool</code> object by calling its
  * {@link #setArmed(boolean)} method with an argument of false. </li> <li>Read the measured length or area by calling
  * the <code>MeasureTool</code> {@link #getLength()} or {@link #getArea()} method. Note that the length and area can be
- * queried at any time during or after the process.</li> </ul><p>
- * While entering points or after the measure tool has been disarmed, dragging the control points allow to change the
- * initial points positions and alter the measure shape.</p>
+ * queried at any time during or after the process.</li> </ul><p> While entering points or after the measure tool has
+ * been disarmed, dragging the control points allow to change the initial points positions and alter the measure
+ * shape.</p>
  * <p>
  * While the <code>MeasureTool</code> is armed, pressing and immediately releasing mouse button one while also pressing
  * the control key (Ctl) removes the last point entered. Once the <code>MeasureTool</code> is disarmed, a measure shape
@@ -46,20 +45,19 @@ import java.util.*;
  * <p>
  * <b>Setting the measure shape from the application</b></p>
  * <p>
- * The application can set the measure shape to an arbitrary list of positions using
- * {@link #setPositions(java.util.ArrayList)}. If the provided list contains two positions, the measure shape will be
- * set to {@link #SHAPE_LINE}. If more then two positions are provided, the measure shape will be set to
- * {@link #SHAPE_PATH} if the last position differs from the first (open path), or {@link
- * #SHAPE_POLYGON} if the path is closed.</p>
+ * The application can set the measure shape to an arbitrary list of positions using {@link
+ * #setPositions(ArrayList)}. If the provided list contains two positions, the measure shape will be set to
+ * {@link #SHAPE_LINE}. If more then two positions are provided, the measure shape will be set to {@link #SHAPE_PATH} if
+ * the last position differs from the first (open path), or {@link #SHAPE_POLYGON} if the path is closed.</p>
  * <p>
- * The application can also set the measure shape to a predefined regular shape by calling
- * {@link #setMeasureShapeType(String, Position, double, double, Angle)}, providing a shape type (one of
- * {@link #SHAPE_CIRCLE}, {@link #SHAPE_ELLIPSE}, {@link #SHAPE_SQUARE} or {@link #SHAPE_QUAD}), a center position, a
- * width, a height (in meters) and a heading angle.</p>
+ * The application can also set the measure shape to a predefined regular shape by calling {@link
+ * #setMeasureShapeType(String, Position, double, double, Angle)}, providing a shape type (one of {@link #SHAPE_CIRCLE},
+ * {@link #SHAPE_ELLIPSE}, {@link #SHAPE_SQUARE} or {@link #SHAPE_QUAD}), a center position, a width, a height (in
+ * meters) and a heading angle.</p>
  * <p>
- * Finally, the application can use an existing <code>Path</code> or <code>SurfaceShape</code> by using
- * {@link #setMeasureShape(Path)} or {@link
- * #setMeasureShape(SurfaceShape)}. The surface shape can be one of <code>SurfacePolyline</code>,
+ * Finally, the application can use an existing <code>Path</code> or <code>SurfaceShape</code> by using {@link
+ * #setMeasureShape(Path)} or {@link #setMeasureShape(SurfaceShape)}. The surface shape can be one of
+ * <code>SurfacePolyline</code>,
  * <code>SurfacePolygon</code>, <code>SurfaceQuad</code>, <code>SurfaceSquare</code>, <code>SurfaceEllipse</code> or
  * <code>SurfaceCircle</code>.
  * <p>
@@ -69,25 +67,22 @@ import java.util.*;
  * {@link #getArea()} method. These methods will return -1 when no value is available.</p>
  * <p>
  * Regular shapes are defined by a center position, a width a height and a heading angle. Those attributes can be
- * accessed by calling the {@link #getCenterPosition()}, {@link #getWidth()},
- * {@link #getHeight()} and {@link #getOrientation()} methods.</p>
+ * accessed by calling the {@link #getCenterPosition()}, {@link #getWidth()}, {@link #getHeight()} and {@link
+ * #getOrientation()} methods.</p>
  * <p>
  * The measurements are displayed in units specified in the measure tool's {@link UnitsFormat} object. Access to the
- * units format is via the method {@link
- * #getUnitsFormat()}.
+ * units format is via the method {@link #getUnitsFormat()}.
  * <p>
  * <b>Events</b></p>
  * <p>
- * The <code>MeasureTool</code> will send events on several occasions: when the position list has changed -
- * {@link #EVENT_POSITION_ADD}, {@link #EVENT_POSITION_REMOVE} or {@link
- * #EVENT_POSITION_REPLACE}, when metrics has changed {@link #EVENT_METRIC_CHANGED} or when the tool is armed or
- * disarmed {@link #EVENT_ARMED}.</p>
+ * The <code>MeasureTool</code> will send events on several occasions: when the position list has changed - {@link
+ * #EVENT_POSITION_ADD}, {@link #EVENT_POSITION_REMOVE} or {@link #EVENT_POSITION_REPLACE}, when metrics has changed
+ * {@link #EVENT_METRIC_CHANGED} or when the tool is armed or disarmed {@link #EVENT_ARMED}.</p>
  * <p>
- * Events will also be fired at the start and end of a rubber band operation during shape creation:
- * {@link #EVENT_RUBBERBAND_START} and {@link #EVENT_RUBBERBAND_STOP}.</p>
+ * Events will also be fired at the start and end of a rubber band operation during shape creation: {@link
+ * #EVENT_RUBBERBAND_START} and {@link #EVENT_RUBBERBAND_STOP}.</p>
  * <p>
- * See {@link
- * gov.nasa.worldwindx.examples.MeasureToolPanel} for some events usage.</p>
+ * See {@link gov.nasa.worldwindx.examples.MeasureToolPanel} for some events usage.</p>
  * <p>
  * Several instances of this class can be used simultaneously. However, each instance should be disposed of after usage
  * by calling the {@link #dispose()} method.</p>
@@ -133,7 +128,10 @@ public class MeasureTool extends AVListImpl implements Disposable {
     public static final String CONTROL_TYPE_LOCATION_INDEX = "MeasureTool.ControlTypeLocationIndex";
     public static final String CONTROL_TYPE_REGULAR_SHAPE = "MeasureTool.ControlTypeRegularShape";
     public static final String CONTROL_TYPE_LEADER_ORIGIN = "MeasureTool.ControlTypeLeaderOrigin";
-
+    protected static final double SHAPE_MIN_WIDTH_METERS = 0.1;
+    protected static final double SHAPE_MIN_HEIGHT_METERS = 0.1;
+    protected static final int MAX_SHAPE_MOVE_ITERATIONS = 10;
+    protected static final double SHAPE_CONTROL_EPSILON_METERS = 0.01;
     private static final String CENTER = "Center";
     private static final String NORTH = "North";
     private static final String EAST = "East";
@@ -144,17 +142,11 @@ public class MeasureTool extends AVListImpl implements Disposable {
     private static final String SOUTHWEST = "SW";
     private static final String NORTHWEST = "NW";
     private static final String NORTH_LEADER = "NorthLeader";
-
-    protected static final double SHAPE_MIN_WIDTH_METERS = 0.1;
-    protected static final double SHAPE_MIN_HEIGHT_METERS = 0.1;
-    protected static final int MAX_SHAPE_MOVE_ITERATIONS = 10;
-    protected static final double SHAPE_CONTROL_EPSILON_METERS = 0.01;
-
     protected final WorldWindow wwd;
-    protected MeasureToolController controller;
-
     protected final ArrayList<Position> positions = new ArrayList<>();
     protected final ArrayList<Renderable> controlPoints = new ArrayList<>();
+    protected final int shapeIntervals = 64;
+    protected MeasureToolController controller;
     protected RenderableLayer applicationLayer;
     protected CustomRenderableLayer layer;
     protected CustomRenderableLayer controlPointsLayer;
@@ -162,9 +154,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
     protected Path line;
     protected SurfaceShape surfaceShape;
     protected ScreenAnnotation annotation;
-
     protected Color lineColor = Color.YELLOW;
-    protected Color fillColor = new Color(.6f, .6f, .4f, .5f);
+    protected Color fillColor = new Color(0.6f, 0.6f, 0.4f, 0.5f);
     protected double lineWidth = 2;
     protected String pathType = AVKey.GREAT_CIRCLE;
     protected AnnotationAttributes controlPointsAttributes;
@@ -176,27 +167,10 @@ public class MeasureTool extends AVListImpl implements Disposable {
     protected boolean showControlPoints = true;
     protected boolean showAnnotation = true;
     protected UnitsFormat unitsFormat = new UnitsFormat();
-
     // Rectangle enclosed regular shapes attributes
     protected Rectangle2D.Double shapeRectangle = null;
     protected Position shapeCenterPosition = null;
     protected Angle shapeOrientation = null;
-    protected final int shapeIntervals = 64;
-
-    protected static class CustomRenderableLayer extends RenderableLayer implements PreRenderable, Renderable {
-
-        @Override
-        public void render(DrawContext dc) {
-            if (dc.isPickingMode() && !this.isPickEnabled()) {
-                return;
-            }
-            if (!this.isEnabled()) {
-                return;
-            }
-
-            super.render(dc);
-        }
-    }
 
     /**
      * Construct a new measure tool drawing events from the specified <code>WorldWindow</code>.
@@ -211,9 +185,9 @@ public class MeasureTool extends AVListImpl implements Disposable {
      * Construct a new measure tool drawing events from the specified <code>WorldWindow</code> and using the given
      * <code>RenderableLayer</code>.
      *
-     * @param wwd the <code>WorldWindow</code> to draw events from.
+     * @param wwd              the <code>WorldWindow</code> to draw events from.
      * @param applicationLayer the <code>RenderableLayer</code> to use. May be null. If specified, the caller is
-     * responsible for adding the layer to the model and enabling it.
+     *                         responsible for adding the layer to the model and enabling it.
      */
     public MeasureTool(final WorldWindow wwd, RenderableLayer applicationLayer) {
         if (wwd == null) {
@@ -236,7 +210,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
         this.controlPointsLayer.setEnabled(this.showControlPoints);
         if (this.applicationLayer != null) {
             this.applicationLayer.addRenderable(this.layer);    // add render layer to the application provided layer
-        } else {
+        }
+        else {
             this.wwd.getModel().getLayers().add(this.layer);    // add render layer to the globe model
         }
         // Init control points rendering attributes
@@ -288,6 +263,12 @@ public class MeasureTool extends AVListImpl implements Disposable {
         this.shapeLayer.addRenderable(this.annotation);
     }
 
+    protected static Angle computeNormalizedHeading(Angle heading) {
+        double a = heading.degrees % 360;
+        double degrees = a > 360 ? a - 360 : a < 0 ? 360 + a : a;
+        return Angle.fromDegrees(degrees);
+    }
+
     protected void setInitialLabels() {
         this.setLabel(ACCUMULATED_LABEL, Logging.getMessage(ACCUMULATED_LABEL));
         this.setLabel(ANGLE_LABEL, Logging.getMessage(ANGLE_LABEL));
@@ -323,7 +304,6 @@ public class MeasureTool extends AVListImpl implements Disposable {
      * Set the measure tool's @{link UnitsFormat} instance that governs measurement value display units and format.
      *
      * @param unitsFormat the units format instance.
-     *
      * @throws IllegalArgumentException if the units format instance is null.
      */
     public void setUnitsFormat(UnitsFormat unitsFormat) {
@@ -341,6 +321,33 @@ public class MeasureTool extends AVListImpl implements Disposable {
      */
     protected CustomRenderableLayer createCustomRenderableLayer() {
         return new CustomRenderableLayer();
+    }
+
+    public void setLabel(String labelName, String label) {
+        if (labelName != null && !labelName.isEmpty()) {
+            this.setValue(labelName, label);
+        }
+    }
+
+    public String getLabel(String labelName) {
+        if (labelName == null) {
+            String msg = Logging.getMessage("nullValue.LabelName");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        String label = this.getStringValue(labelName);
+
+        return label != null ? label : this.unitsFormat.getStringValue(labelName);
+    }
+
+    /**
+     * Get the <code>MeasureToolController</code> for this measure tool.
+     *
+     * @return the <code>MeasureToolController</code> for this measure tool.
+     */
+    public MeasureToolController getController() {
+        return this.controller;
     }
 
     /**
@@ -368,31 +375,13 @@ public class MeasureTool extends AVListImpl implements Disposable {
         }
     }
 
-    public void setLabel(String labelName, String label) {
-        if (labelName != null && labelName.length() > 0) {
-            this.setValue(labelName, label);
-        }
-    }
-
-    public String getLabel(String labelName) {
-        if (labelName == null) {
-            String msg = Logging.getMessage("nullValue.LabelName");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        String label = this.getStringValue(labelName);
-
-        return label != null ? label : this.unitsFormat.getStringValue(labelName);
-    }
-
     /**
-     * Get the <code>MeasureToolController</code> for this measure tool.
+     * Identifies whether the measure tool controller is armed.
      *
-     * @return the <code>MeasureToolController</code> for this measure tool.
+     * @return true if armed, false if not armed.
      */
-    public MeasureToolController getController() {
-        return this.controller;
+    public boolean isArmed() {
+        return this.controller != null && this.controller.isArmed();
     }
 
     /**
@@ -405,15 +394,6 @@ public class MeasureTool extends AVListImpl implements Disposable {
         if (this.controller != null) {
             this.controller.setArmed(state);
         }
-    }
-
-    /**
-     * Identifies whether the measure tool controller is armed.
-     *
-     * @return true if armed, false if not armed.
-     */
-    public boolean isArmed() {
-        return this.controller != null && this.controller.isArmed();
     }
 
     /**
@@ -486,7 +466,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
         boolean closedShape = newPositions.get(0).equals(newPositions.get(newPositions.size() - 1));
         if (newPositions.size() > 2 && closedShape) {
             setMeasureShapeType(SHAPE_POLYGON);
-        } else {
+        }
+        else {
             setMeasureShapeType(getPathType(newPositions));
         }
 
@@ -537,6 +518,10 @@ public class MeasureTool extends AVListImpl implements Disposable {
         return this.annotationAttributes;
     }
 
+    public Color getLineColor() {
+        return this.lineColor;
+    }
+
     public void setLineColor(Color color) {
         if (color == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");
@@ -556,14 +541,14 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 attr = new BasicShapeAttributes();
             }
             attr.setOutlineMaterial(new Material(color));
-            attr.setOutlineOpacity(color.getAlpha() / 255d);
+            attr.setOutlineOpacity(color.getAlpha() / 255.0d);
             this.surfaceShape.setAttributes(attr);
         }
         this.wwd.redraw();
     }
 
-    public Color getLineColor() {
-        return this.lineColor;
+    public Color getFillColor() {
+        return this.fillColor;
     }
 
     public void setFillColor(Color color) {
@@ -579,14 +564,14 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 attr = new BasicShapeAttributes();
             }
             attr.setInteriorMaterial(new Material(color));
-            attr.setInteriorOpacity(color.getAlpha() / 255d);
+            attr.setInteriorOpacity(color.getAlpha() / 255.0d);
             this.surfaceShape.setAttributes(attr);
         }
         this.wwd.redraw();
     }
 
-    public Color getFillColor() {
-        return this.fillColor;
+    public double getLineWidth() {
+        return this.lineWidth;
     }
 
     public void setLineWidth(double width) {
@@ -606,10 +591,6 @@ public class MeasureTool extends AVListImpl implements Disposable {
             this.surfaceShape.setAttributes(attr);
         }
         this.wwd.redraw();
-    }
-
-    public double getLineWidth() {
-        return this.lineWidth;
     }
 
     public String getPathType() {
@@ -652,7 +633,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
      * Removes all positions from the shape, clear attributes.
      */
     public void clear() {
-        while (this.positions.size() > 0 || this.controlPoints.size() > 0) {
+        while (!this.positions.isEmpty() || !this.controlPoints.isEmpty()) {
             this.removeControlPoint();
         }
 
@@ -700,9 +681,9 @@ public class MeasureTool extends AVListImpl implements Disposable {
      * Set and initialize the measure shape to one of the regular shapes {@link #SHAPE_CIRCLE}, {@link #SHAPE_ELLIPSE},
      * {@link #SHAPE_SQUARE} or {@link #SHAPE_QUAD}.
      *
-     * @param shapeType the shape type.
+     * @param shapeType      the shape type.
      * @param centerPosition the shape center position.
-     * @param radius the shape radius of half width/height.
+     * @param radius         the shape radius of half width/height.
      */
     public void setMeasureShapeType(String shapeType, Position centerPosition, double radius) {
         setMeasureShapeType(shapeType, centerPosition, radius * 2, radius * 2, Angle.ZERO);
@@ -712,14 +693,14 @@ public class MeasureTool extends AVListImpl implements Disposable {
      * Set and initialize the measure shape to one of the regular shapes {@link #SHAPE_CIRCLE}, {@link #SHAPE_ELLIPSE},
      * {@link #SHAPE_SQUARE} or {@link #SHAPE_QUAD}.
      *
-     * @param shapeType the shape type.
+     * @param shapeType      the shape type.
      * @param centerPosition the shape center position.
-     * @param width the shape width.
-     * @param height the shape height.
-     * @param orientation the shape orientation or azimuth angle - clockwise from north.
+     * @param width          the shape width.
+     * @param height         the shape height.
+     * @param orientation    the shape orientation or azimuth angle - clockwise from north.
      */
     public void setMeasureShapeType(String shapeType, Position centerPosition, double width, double height,
-            Angle orientation) {
+        Angle orientation) {
         if (shapeType == null) {
             String msg = Logging.getMessage("nullValue.ShapeType");
             Logging.logger().severe(msg);
@@ -796,7 +777,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         this.wwd.redraw();
     }
 
-    protected String getPathType(List<? extends Position> positions) {
+    protected String getPathType(Collection<? extends Position> positions) {
         return positions.size() > 2 ? SHAPE_PATH : SHAPE_LINE;
     }
 
@@ -840,20 +821,22 @@ public class MeasureTool extends AVListImpl implements Disposable {
             updateShapeControlPoints();
             // Extract positions from shape
             updatePositionsFromShape();
-        } else if (surfaceShape instanceof SurfaceEllipse) {
+        }
+        else if (surfaceShape instanceof SurfaceEllipse) {
             // Set measure shape type
             this.measureShapeType = surfaceShape instanceof SurfaceCircle ? SHAPE_CIRCLE : SHAPE_ELLIPSE;
             // Set regular shape properties
             SurfaceEllipse shape = ((SurfaceEllipse) surfaceShape);
             this.shapeCenterPosition = new Position(shape.getCenter(), 0);
             this.shapeRectangle = new Rectangle2D.Double(0, 0, shape.getMajorRadius() * 2,
-                    shape.getMinorRadius() * 2);
+                shape.getMinorRadius() * 2);
             this.shapeOrientation = shape.getHeading();
             // Create control points for regular shapes
             updateShapeControlPoints();
             // Extract positions from shape
             updatePositionsFromShape();
-        } else // SurfacePolygon, SurfacePolyline, SurfaceSector, or some custom shape
+        }
+        else // SurfacePolygon, SurfacePolyline, SurfaceSector, or some custom shape
         {
             // Set measure shape type
             this.measureShapeType = SHAPE_POLYGON;
@@ -875,9 +858,9 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     protected boolean isRegularShape(String shape) {
         return (shape.equals(SHAPE_CIRCLE)
-                || shape.equals(SHAPE_ELLIPSE)
-                || shape.equals(SHAPE_QUAD)
-                || shape.equals(SHAPE_SQUARE));
+            || shape.equals(SHAPE_ELLIPSE)
+            || shape.equals(SHAPE_QUAD)
+            || shape.equals(SHAPE_SQUARE));
     }
 
     public boolean isFollowTerrain() {
@@ -890,27 +873,28 @@ public class MeasureTool extends AVListImpl implements Disposable {
             this.line.setFollowTerrain(followTerrain);
             if (followTerrain) {
                 this.line.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            } else {
+            }
+            else {
                 this.line.setAltitudeMode(WorldWind.ABSOLUTE);
             }
         }
     }
 
-    public boolean isCenterControl(ControlPoint controlPoint) {
+    public boolean isCenterControl(AVList controlPoint) {
         String control = controlPoint.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
         return control != null && control.equals(CENTER);
     }
 
-    public boolean isSideControl(ControlPoint controlPoint) {
+    public boolean isSideControl(AVList controlPoint) {
         String control = controlPoint.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
         return control != null && (control.equals(NORTH) || control.equals(EAST)
-                || control.equals(SOUTH) || control.equals(WEST));
+            || control.equals(SOUTH) || control.equals(WEST));
     }
 
-    public boolean isCornerControl(ControlPoint controlPoint) {
+    public boolean isCornerControl(AVList controlPoint) {
         String control = controlPoint.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
         return control != null && (control.equals(NORTHEAST) || control.equals(SOUTHEAST)
-                || control.equals(SOUTHWEST) || control.equals(NORTHWEST));
+            || control.equals(SOUTHWEST) || control.equals(NORTHWEST));
     }
 
     // *** Metric accessors ***
@@ -961,6 +945,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
     }
 
     // *** Editing shapes ***
+
     /**
      * Add a control point to the current measure shape at the current WorldWindow position.
      *
@@ -978,19 +963,21 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 this.shapeCenterPosition = curPos;
                 this.shapeOrientation = this.getShapeInitialHeading();
                 updateShapeControlPoints();
-            } else if (this.shapeRectangle == null) {
+            }
+            else if (this.shapeRectangle == null) {
                 // Compute shape rectangle and heading, curPos being a corner
                 String control = this.getShapeInitialControl(curPos);
                 updateShapeProperties(control, curPos, null);
                 // Update or create control points
                 updateShapeControlPoints();
             }
-        } else {
+        }
+        else {
             if (!this.measureShapeType.equals(SHAPE_POLYGON) || this.positions.size() <= 1) {
                 // Line, path or polygons with less then two points
                 this.positions.add(curPos);
                 addControlPoint(this.positions.get(this.positions.size() - 1), CONTROL_TYPE_LOCATION_INDEX,
-                        this.positions.size() - 1);
+                    this.positions.size() - 1);
                 if (this.measureShapeType.equals(SHAPE_POLYGON) && this.positions.size() == 2) {
                     // Once we have two points of a polygon, add an extra position
                     // to loop back to the first position and have a closed shape
@@ -1000,11 +987,12 @@ public class MeasureTool extends AVListImpl implements Disposable {
                     // Two points on a line, update line heading info
                     this.shapeOrientation = LatLon.greatCircleAzimuth(this.positions.get(0), this.positions.get(1));
                 }
-            } else {
+            }
+            else {
                 // For polygons with more then 2 points, the last position is the same as the first, so insert before it
                 this.positions.add(positions.size() - 1, curPos);
                 addControlPoint(this.positions.get(this.positions.size() - 2), CONTROL_TYPE_LOCATION_INDEX,
-                        this.positions.size() - 2);
+                    this.positions.size() - 2);
             }
         }
         // Update screen shapes
@@ -1029,11 +1017,13 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 while (this.controlPoints.size() > 1) {
                     this.controlPoints.remove(1);
                 }
-            } else if (this.shapeCenterPosition != null) {
+            }
+            else if (this.shapeCenterPosition != null) {
                 this.shapeCenterPosition = null;
                 this.controlPoints.clear();
             }
-        } else {
+        }
+        else {
             if (this.positions.isEmpty()) {
                 return;
             }
@@ -1041,7 +1031,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
             if (!this.measureShapeType.equals(SHAPE_POLYGON) || this.positions.size() == 1) {
                 currentLastPosition = this.positions.get(this.positions.size() - 1);
                 this.positions.remove(this.positions.size() - 1);
-            } else {
+            }
+            else {
                 // For polygons with more then 2 points, the last position is the same as the first, so remove before it
                 currentLastPosition = this.positions.get(this.positions.size() - 2);
                 this.positions.remove(this.positions.size() - 2);
@@ -1049,7 +1040,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
                     positions.remove(1); // remove last loop position when a polygon shrank to only two (same) positions
                 }
             }
-            if (this.controlPoints.size() > 0) {
+            if (!this.controlPoints.isEmpty()) {
                 this.controlPoints.remove(this.controlPoints.size() - 1);
             }
         }
@@ -1073,7 +1064,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
      * Update the current measure shape according to a given control point position and shape edition mode.
      *
      * @param point one of the shape control points.
-     * @param mode the shape edition mode.
+     * @param mode  the shape edition mode.
      */
     public void moveControlPoint(ControlPoint point, String mode) {
         if (point == null) {
@@ -1112,7 +1103,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
      * Move the current measure shape along a great circle arc at a given azimuth <code>Angle</code> for a given
      * distance <code>Angle</code>.
      *
-     * @param azimuth the azimuth <code>Angle</code>.
+     * @param azimuth  the azimuth <code>Angle</code>.
      * @param distance the distance <code>Angle</code>.
      */
     public void moveMeasureShape(Angle azimuth, Angle distance) {
@@ -1129,17 +1120,18 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         if (this.isRegularShape()) {
             // Move regular shape center
-            if (controlPoints.size() > 0) {
+            if (!controlPoints.isEmpty()) {
                 ControlPoint point = this.getControlPoint(CENTER);
                 point.setPosition(
-                        new Position(LatLon.greatCircleEndPosition(point.getPosition(), azimuth, distance), 0));
+                    new Position(LatLon.greatCircleEndPosition(point.getPosition(), azimuth, distance), 0));
                 moveControlPoint(point);
             }
-        } else {
+        }
+        else {
             // Move all positions and control points
             for (int i = 0; i < positions.size(); i++) {
                 Position newPos = computeSurfacePosition(
-                        LatLon.greatCircleEndPosition(positions.get(i), azimuth, distance));
+                    LatLon.greatCircleEndPosition(positions.get(i), azimuth, distance));
                 positions.set(i, newPos);
                 if (!this.measureShapeType.equals(SHAPE_POLYGON) || i < positions.size() - 1) {
                     ((ControlPoint) controlPoints.get(i)).setPosition(new Position(newPos, 0));
@@ -1156,19 +1148,21 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     protected Position computeSurfacePosition(LatLon latLon) {
         Vec4 surfacePoint = wwd.getSceneController().getTerrain().getSurfacePoint(latLon.getLatitude(),
-                latLon.getLongitude());
+            latLon.getLongitude());
         if (surfacePoint != null) {
             return wwd.getModel().getGlobe().computePositionFromPoint(surfacePoint);
-        } else {
+        }
+        else {
             return new Position(latLon, wwd.getModel().getGlobe().getElevation(latLon.getLatitude(),
-                    latLon.getLongitude()));
+                latLon.getLongitude()));
         }
     }
 
     public String getShapeInitialControl(Position position) {
         if (this.measureShapeType.equals(SHAPE_ELLIPSE) || this.measureShapeType.equals(SHAPE_CIRCLE)) {
             return EAST;
-        } else if (this.measureShapeType.equals(SHAPE_QUAD) || this.measureShapeType.equals(SHAPE_SQUARE)) {
+        }
+        else if (this.measureShapeType.equals(SHAPE_QUAD) || this.measureShapeType.equals(SHAPE_SQUARE)) {
             return NORTHEAST;
         }
 
@@ -1180,19 +1174,13 @@ public class MeasureTool extends AVListImpl implements Disposable {
     }
 
     protected void updateShapeProperties(String control, Position newPosition, String mode) {
+        // Update the shape's center position
+        // Update the shape's orientation.
+        // Update the shape's center position and dimensions.
         switch (control) {
-            case CENTER:
-                // Update the shape's center position
-                this.updateShapeCenter(control, newPosition);
-                break;
-            case NORTH_LEADER:
-                // Update the shape's orientation.
-                this.updateShapeOrientation(control, newPosition);
-                break;
-            default:
-                // Update the shape's center position and dimensions.
-                this.updateShapeSize(control, newPosition);
-                break;
+            case CENTER -> this.updateShapeCenter(control, newPosition);
+            case NORTH_LEADER -> this.updateShapeOrientation(control, newPosition);
+            default -> this.updateShapeSize(control, newPosition);
         }
     }
 
@@ -1203,7 +1191,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
     protected void updateShapeOrientation(String control, Position newPosition) {
         // Compute the control point's azimuth in shape local coordinates.
         Angle controlAzimuth = this.computeControlPointAzimuth(control, this.shapeRectangle.width,
-                this.shapeRectangle.height);
+            this.shapeRectangle.height);
 
         // Compute the shape's new azimuth as the difference between the great arc azimuth from the shape's
         // center position and the new corner position, and the corner's azimuth in shape local coordinates.
@@ -1218,7 +1206,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         if (this.measureShapeType.equals(SHAPE_ELLIPSE) || this.measureShapeType.equals(SHAPE_CIRCLE)) {
             // Compute azimuth and arc length which define the great arc spanning the shape's center position and the
             // control point's position.
-            Angle refAzimiuth = this.computeControlPointAzimuth(control, 1d, 1d).add(this.shapeOrientation);
+            Angle refAzimiuth = this.computeControlPointAzimuth(control, 1.0d, 1.0d).add(this.shapeOrientation);
             Angle controlAzimuth = LatLon.greatCircleAzimuth(this.shapeCenterPosition, newPosition);
             Angle controlArcLength = LatLon.greatCircleDistance(this.shapeCenterPosition, newPosition);
             // Compute the arc length in meters of the great arc between the shape's center position and the control
@@ -1231,7 +1219,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
             double heightMeters;
 
             if (control.equals(EAST) || control.equals(WEST)) {
-                widthMeters = 2d * arcLengthMeters;
+                widthMeters = 2.0d * arcLengthMeters;
                 heightMeters = (this.shapeRectangle != null) ? this.shapeRectangle.getHeight() : widthMeters;
 
                 if (this.measureShapeType.equals(SHAPE_CIRCLE)) {
@@ -1241,9 +1229,10 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 else if (this.controller != null && this.controller.isActive()) {
                     heightMeters = 0.6 * widthMeters;
                 }
-            } else // if (control.equals(NORTH) || control.equals(SOUTH))
+            }
+            else // if (control.equals(NORTH) || control.equals(SOUTH))
             {
-                heightMeters = 2d * arcLengthMeters;
+                heightMeters = 2.0d * arcLengthMeters;
                 widthMeters = (this.shapeRectangle != null) ? this.shapeRectangle.getWidth() : heightMeters;
 
                 if (this.measureShapeType.equals(SHAPE_CIRCLE)) {
@@ -1262,13 +1251,14 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 heightMeters = SHAPE_MIN_HEIGHT_METERS;
             }
 
-            this.shapeRectangle = new Rectangle2D.Double(0d, 0d, widthMeters, heightMeters);
+            this.shapeRectangle = new Rectangle2D.Double(0.0d, 0.0d, widthMeters, heightMeters);
 
             // Determine if the dragged control point crossed the shape's horizontal or vertical boundary, causing
             // the shape to "flip". If so, swap the control point with its horizontal or vertical opposite. This
             // ensures that control points have the correct orientation.
             this.swapEdgeControls(control, newPosition);
-        } else if (this.measureShapeType.equals(SHAPE_QUAD) || this.measureShapeType.equals(SHAPE_SQUARE)) {
+        }
+        else if (this.measureShapeType.equals(SHAPE_QUAD) || this.measureShapeType.equals(SHAPE_SQUARE)) {
             ControlPoint oppositeControlPoint = this.getOppositeControl(control);
 
             // Compute the corner position diagonal from the current corner position, and compute the azimuth
@@ -1279,7 +1269,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
             // Compute the shape's center location as the mid point on the great arc between the two diagonal
             // control points.
             LatLon newCenterLocation = LatLon.greatCircleEndPosition(oppositeControlPoint.getPosition(),
-                    diagonalAzimuth, diagonalArcLength.divide(2d));
+                diagonalAzimuth, diagonalArcLength.divide(2.0d));
 
             // Compute the azimuth and arc length which define a great arc between the new center position and
             // the new corner position.
@@ -1293,8 +1283,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
             // Compute shape's the width and height in meters from the diagonal between the shape's new center
             // position and its new corner position.
-            double widthMeters = 2d * arcLengthMeters * Math.abs(controlAzimuth.sin());
-            double heightMeters = 2d * arcLengthMeters * Math.abs(controlAzimuth.cos());
+            double widthMeters = 2.0d * arcLengthMeters * Math.abs(controlAzimuth.sin());
+            double heightMeters = 2.0d * arcLengthMeters * Math.abs(controlAzimuth.cos());
 
             if (widthMeters <= SHAPE_MIN_WIDTH_METERS) {
                 widthMeters = SHAPE_MIN_WIDTH_METERS;
@@ -1320,15 +1310,15 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 // from its current location. Move the square's opposite control point back to its original location
                 // so that the square drags from a fixed corner out to the current control point.
                 LatLon location = this.moveShapeByControlPoint(oppositeControlPoint, this.wwd.getModel().getGlobe(),
-                        this.shapeOrientation, newCenterLocation, widthMeters, heightMeters);
+                    this.shapeOrientation, newCenterLocation, widthMeters, heightMeters);
                 if (location != null) {
                     newCenterLocation = location;
                 }
             }
 
             // Set the shape's new center position and new dimensions.
-            this.shapeCenterPosition = new Position(newCenterLocation, 0d);
-            this.shapeRectangle = new Rectangle2D.Double(0d, 0d, widthMeters, heightMeters);
+            this.shapeCenterPosition = new Position(newCenterLocation, 0.0d);
+            this.shapeRectangle = new Rectangle2D.Double(0.0d, 0.0d, widthMeters, heightMeters);
 
             if (this.measureShapeType.equals(SHAPE_QUAD)) {
                 // Determine if the dragged control point crossed the shape's horizontal or vertical boundary, causing
@@ -1359,11 +1349,14 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         if (azimuth.degrees < 90) {
             return NORTHEAST;
-        } else if (azimuth.degrees < 180) {
+        }
+        else if (azimuth.degrees < 180) {
             return SOUTHEAST;
-        } else if (azimuth.degrees < 270) {
+        }
+        else if (azimuth.degrees < 270) {
             return SOUTHWEST;
-        } else {
+        }
+        else {
             return NORTHWEST;
         }
     }
@@ -1371,30 +1364,39 @@ public class MeasureTool extends AVListImpl implements Disposable {
     protected ControlPoint getOppositeControl(String control) {
         if (this.controlPoints.isEmpty()) {
             return null;
-        } else if (this.controlPoints.size() == 1) {
+        }
+        else if (this.controlPoints.size() == 1) {
             return getControlPoint(CENTER);
-        } else if (control.equals(NORTH)) {
+        }
+        else if (control.equals(NORTH)) {
             return getControlPoint(SOUTH);
-        } else if (control.equals(EAST)) {
+        }
+        else if (control.equals(EAST)) {
             return getControlPoint(WEST);
-        } else if (control.equals(SOUTH)) {
+        }
+        else if (control.equals(SOUTH)) {
             return getControlPoint(NORTH);
-        } else if (control.equals(WEST)) {
+        }
+        else if (control.equals(WEST)) {
             return getControlPoint(EAST);
-        } else if (control.equals(NORTHEAST)) {
+        }
+        else if (control.equals(NORTHEAST)) {
             return getControlPoint(SOUTHWEST);
-        } else if (control.equals(SOUTHEAST)) {
+        }
+        else if (control.equals(SOUTHEAST)) {
             return getControlPoint(NORTHWEST);
-        } else if (control.equals(SOUTHWEST)) {
+        }
+        else if (control.equals(SOUTHWEST)) {
             return getControlPoint(NORTHEAST);
-        } else if (control.equals(NORTHWEST)) {
+        }
+        else if (control.equals(NORTHWEST)) {
             return getControlPoint(SOUTHEAST);
         }
         return null;
     }
 
     protected LatLon moveShapeByControlPoint(ControlPoint controlPoint, Globe globe, Angle heading, LatLon center,
-            double width, double height) {
+        double width, double height) {
         double globeRadius = globe.getRadiusAt(center);
 
         String control = controlPoint.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
@@ -1412,7 +1414,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         for (int i = 0; i < MAX_SHAPE_MOVE_ITERATIONS; i++) {
             // Compute the control point's corresponding location on the shape.
             LatLon shapeControlLocation = this.computeControlPointLocation(control, globe, heading, newCenterLocation,
-                    width, height);
+                width, height);
             // Compute a great arc spanning the control point's location, and its corresponding location on the shape.
             Angle azimuth = LatLon.greatCircleAzimuth(shapeControlLocation, controlPoint.getPosition());
             Angle pathLength = LatLon.greatCircleDistance(shapeControlLocation, controlPoint.getPosition());
@@ -1445,9 +1447,9 @@ public class MeasureTool extends AVListImpl implements Disposable {
         azimuth = computeNormalizedHeading(azimuth);
 
         if ((control.equals(NORTH) && azimuth.degrees < 270 && azimuth.degrees > 90)
-                || (control.equals(SOUTH) && (azimuth.degrees > 270 || azimuth.degrees < 90))) {
+            || (control.equals(SOUTH) && (azimuth.degrees > 270 || azimuth.degrees < 90))) {
             for (Renderable r : this.controlPoints) {
-                ControlPoint cp = (ControlPoint) r;
+                AVList cp = (ControlPoint) r;
                 String c = cp.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;
@@ -1455,16 +1457,17 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
                 if (c.equals(NORTH)) {
                     cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTH);
-                } else if (c.equals(SOUTH)) {
+                }
+                else if (c.equals(SOUTH)) {
                     cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTH);
                 }
             }
         }
 
         if ((control.equals(EAST) && (azimuth.degrees < 360 && azimuth.degrees > 180))
-                || (control.equals(WEST) && (azimuth.degrees < 180 && azimuth.degrees > 0))) {
+            || (control.equals(WEST) && (azimuth.degrees < 180 && azimuth.degrees > 0))) {
             for (Renderable r : this.controlPoints) {
-                ControlPoint cp = (ControlPoint) r;
+                AVList cp = (ControlPoint) r;
                 String c = cp.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;
@@ -1472,14 +1475,15 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
                 if (c.equals(EAST)) {
                     cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, WEST);
-                } else if (c.equals(WEST)) {
+                }
+                else if (c.equals(WEST)) {
                     cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, EAST);
                 }
             }
         }
     }
 
-    protected void swapCornerControls(String control, Position position) {
+    protected void swapCornerControls(CharSequence control, Position position) {
         if (this.controlPoints.size() < 2) {
             return;
         }
@@ -1495,14 +1499,13 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         if (control.charAt(0) != newControl.charAt(0)) {
             for (Renderable r : this.controlPoints) {
-                ControlPoint cp = (ControlPoint) r;
+                AVList cp = (ControlPoint) r;
                 String c = cp.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;
                 }
 
-                switch (c)
-                {
+                switch (c) {
                     case NORTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHEAST);
                     case SOUTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHEAST);
                     case SOUTHWEST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHWEST);
@@ -1512,14 +1515,13 @@ public class MeasureTool extends AVListImpl implements Disposable {
         }
         if (control.charAt(1) != newControl.charAt(1)) {
             for (Renderable r : this.controlPoints) {
-                ControlPoint cp = (ControlPoint) r;
+                AVList cp = (ControlPoint) r;
                 String c = cp.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;
                 }
 
-                switch (c)
-                {
+                switch (c) {
                     case NORTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHWEST);
                     case SOUTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHWEST);
                     case SOUTHWEST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHEAST);
@@ -1530,13 +1532,14 @@ public class MeasureTool extends AVListImpl implements Disposable {
     }
 
     protected LatLon computeControlPointLocation(String control, Globe globe, Angle heading, LatLon center,
-            double width, double height) {
+        double width, double height) {
         Angle azimuth = this.computeControlPointAzimuth(control, width, height);
         Angle pathLength = this.computeControlPointPathLength(control, width, height, globe.getRadiusAt(center));
 
         if (control.equals(CENTER)) {
             return center;
-        } else if (azimuth != null && pathLength != null) {
+        }
+        else if (azimuth != null && pathLength != null) {
             azimuth = azimuth.add(heading);
             return LatLon.greatCircleEndPosition(center, azimuth, pathLength);
         }
@@ -1545,7 +1548,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
     }
 
     protected LatLon computeQuadEdgeMidpointLocation(String control, Globe globe, Angle heading, LatLon center,
-            double width, double height) {
+        double width, double height) {
         LatLon ne = this.computeControlPointLocation(NORTHEAST, globe, heading, center, width, height);
         LatLon se = this.computeControlPointLocation(SOUTHEAST, globe, heading, center, width, height);
         LatLon sw = this.computeControlPointLocation(SOUTHWEST, globe, heading, center, width, height);
@@ -1567,7 +1570,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         return null;
     }
 
-    @SuppressWarnings({"SuspiciousNameCombination"})
+    @SuppressWarnings("SuspiciousNameCombination")
     protected Angle computeControlPointAzimuth(String control, double width, double height) {
         Angle azimuth = null;
 
@@ -1627,33 +1630,27 @@ public class MeasureTool extends AVListImpl implements Disposable {
         switch (control) {
             case NORTH:
             case SOUTH:
-                pathLength = Angle.fromRadians((height / 2d) / globeRadius);
+                pathLength = Angle.fromRadians((height / 2.0d) / globeRadius);
                 break;
             case EAST:
             case WEST:
-                pathLength = Angle.fromRadians((width / 2d) / globeRadius);
+                pathLength = Angle.fromRadians((width / 2.0d) / globeRadius);
                 break;
             case NORTHEAST:
             case SOUTHEAST:
             case SOUTHWEST:
             case NORTHWEST:
-                double diag = Math.sqrt((width * width) / 4d + (height * height) / 4d);
+                double diag = Math.sqrt((width * width) / 4.0d + (height * height) / 4.0d);
                 pathLength = Angle.fromRadians(diag / globeRadius);
                 break;
             case NORTH_LEADER:
-                pathLength = Angle.fromRadians(3d / 4d * height / globeRadius);
+                pathLength = Angle.fromRadians(3.0d / 4.0d * height / globeRadius);
                 break;
             default:
                 break;
         }
 
         return pathLength;
-    }
-
-    protected static Angle computeNormalizedHeading(Angle heading) {
-        double a = heading.degrees % 360;
-        double degrees = a > 360 ? a - 360 : a < 0 ? 360 + a : a;
-        return Angle.fromDegrees(degrees);
     }
 
     protected void updateShapeControlPoints() {
@@ -1685,7 +1682,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
                 // Add a control point with a leader to the top of the shape.
                 this.addControlPointWithLeader(Position.ZERO, CONTROL_TYPE_REGULAR_SHAPE, NORTH_LEADER,
-                        CONTROL_TYPE_LEADER_ORIGIN, NORTH);
+                    CONTROL_TYPE_LEADER_ORIGIN, NORTH);
             }
 
             Globe globe = this.getWwd().getModel().getGlobe();
@@ -1700,12 +1697,12 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 }
 
                 LatLon controlLocation = this.computeControlPointLocation(control, globe, this.shapeOrientation,
-                        this.shapeCenterPosition, this.shapeRectangle.getWidth(), this.shapeRectangle.getHeight());
+                    this.shapeCenterPosition, this.shapeRectangle.getWidth(), this.shapeRectangle.getHeight());
                 if (controlLocation == null) {
                     continue;
                 }
 
-                cp.setPosition(new Position(controlLocation, 0d));
+                cp.setPosition(new Position(controlLocation, 0.0d));
 
                 if (cp instanceof ControlPointWithLeader) {
                     this.updateControlPointWithLeader((ControlPointWithLeader) cp, controlLocation);
@@ -1726,12 +1723,13 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         if (this.measureShapeType.equals(SHAPE_QUAD) || this.measureShapeType.equals(SHAPE_SQUARE)) {
             leaderBegin = this.computeQuadEdgeMidpointLocation(leaderControl, globe,
-                    this.shapeOrientation, this.shapeCenterPosition, this.shapeRectangle.getWidth(),
-                    this.shapeRectangle.getHeight());
-        } else {
+                this.shapeOrientation, this.shapeCenterPosition, this.shapeRectangle.getWidth(),
+                this.shapeRectangle.getHeight());
+        }
+        else {
             leaderBegin = this.computeControlPointLocation(leaderControl, globe,
-                    this.shapeOrientation, this.shapeCenterPosition, this.shapeRectangle.getWidth(),
-                    this.shapeRectangle.getHeight());
+                this.shapeOrientation, this.shapeCenterPosition, this.shapeRectangle.getWidth(),
+                this.shapeRectangle.getHeight());
         }
 
         if (leaderBegin == null) {
@@ -1749,7 +1747,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 this.line = new Path();
                 setFollowTerrain(this.isFollowTerrain());
                 this.line.setPathType(this.getPathType());
-                var attrs = new BasicShapeAttributes();
+                ShapeAttributes attrs = new BasicShapeAttributes();
                 attrs.setOutlineWidth(this.getLineWidth());
                 attrs.setOutlineMaterial(new Material(this.getLineColor()));
                 this.line.setAttributes(attrs);
@@ -1777,9 +1775,9 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 this.surfaceShape = new SurfacePolygon(this.positions);
                 ShapeAttributes attr = new BasicShapeAttributes();
                 attr.setInteriorMaterial(new Material(this.getFillColor()));
-                attr.setInteriorOpacity(this.getFillColor().getAlpha() / 255d);
+                attr.setInteriorOpacity(this.getFillColor().getAlpha() / 255.0d);
                 attr.setOutlineMaterial(new Material(this.getLineColor()));
-                attr.setOutlineOpacity(this.getLineColor().getAlpha() / 255d);
+                attr.setOutlineOpacity(this.getLineColor().getAlpha() / 255.0d);
                 attr.setOutlineWidth(this.getLineWidth());
                 this.surfaceShape.setAttributes(attr);
                 this.shapeLayer.addRenderable(this.surfaceShape);
@@ -1805,20 +1803,20 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 switch (this.measureShapeType) {
                     case SHAPE_QUAD:
                         this.surfaceShape = new SurfaceQuad(this.shapeCenterPosition,
-                                this.shapeRectangle.width, this.shapeRectangle.height, this.shapeOrientation);
+                            this.shapeRectangle.width, this.shapeRectangle.height, this.shapeOrientation);
                         break;
                     case SHAPE_SQUARE:
                         this.surfaceShape = new SurfaceSquare(this.shapeCenterPosition,
-                                this.shapeRectangle.width);
+                            this.shapeRectangle.width);
                         break;
                     case SHAPE_ELLIPSE:
                         this.surfaceShape = new SurfaceEllipse(this.shapeCenterPosition,
-                                this.shapeRectangle.width / 2, this.shapeRectangle.height / 2, this.shapeOrientation,
-                                this.shapeIntervals);
+                            this.shapeRectangle.width / 2, this.shapeRectangle.height / 2, this.shapeOrientation,
+                            this.shapeIntervals);
                         break;
                     case SHAPE_CIRCLE:
                         this.surfaceShape = new SurfaceCircle(this.shapeCenterPosition,
-                                this.shapeRectangle.width / 2, this.shapeIntervals);
+                            this.shapeRectangle.width / 2, this.shapeIntervals);
                         break;
                     default:
                         break;
@@ -1826,9 +1824,9 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
                 ShapeAttributes attr = new BasicShapeAttributes();
                 attr.setInteriorMaterial(new Material(this.getFillColor()));
-                attr.setInteriorOpacity(this.getFillColor().getAlpha() / 255d);
+                attr.setInteriorOpacity(this.getFillColor().getAlpha() / 255.0d);
                 attr.setOutlineMaterial(new Material(this.getLineColor()));
-                attr.setOutlineOpacity(this.getLineColor().getAlpha() / 255d);
+                attr.setOutlineOpacity(this.getLineColor().getAlpha() / 255.0d);
                 attr.setOutlineWidth(this.getLineWidth());
                 this.surfaceShape.setAttributes(attr);
                 this.shapeLayer.addRenderable(this.surfaceShape);
@@ -1849,7 +1847,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 if (this.measureShapeType.equals(SHAPE_ELLIPSE) || this.measureShapeType.equals(SHAPE_CIRCLE)) {
                     ((SurfaceEllipse) this.surfaceShape).setCenter(this.shapeCenterPosition);
                     ((SurfaceEllipse) this.surfaceShape).setRadii(this.shapeRectangle.width / 2,
-                            this.shapeRectangle.height / 2);
+                        this.shapeRectangle.height / 2);
                     ((SurfaceEllipse) this.surfaceShape).setHeading(this.shapeOrientation);
                 }
                 // Update position from shape list with zero elevation
@@ -1881,84 +1879,14 @@ public class MeasureTool extends AVListImpl implements Disposable {
         this.setController(null);
         if (this.applicationLayer != null) {
             this.applicationLayer.removeRenderable(this.layer);
-        } else {
+        }
+        else {
             this.wwd.getModel().getLayers().remove(this.layer);
         }
         this.layer.removeAllRenderables();
         this.shapeLayer.removeAllRenderables();
         this.controlPoints.clear();
 //        this.controlPointsLayer.removeAllRenderables(); // TODO: why commented out? Are annotations being disposed?
-    }
-
-    // *** Control points ***
-    public static class ControlPoint extends GlobeAnnotation {
-
-        final MeasureTool parent;
-
-        public ControlPoint(Position position, AnnotationAttributes attributes, MeasureTool parent) {
-            super("", position, attributes);
-            this.parent = parent;
-        }
-
-        public MeasureTool getParent() {
-            return this.parent;
-        }
-    }
-
-    protected static class ControlPointWithLeader extends ControlPoint implements PreRenderable {
-
-        protected final SurfacePolyline leaderLine;
-
-        public ControlPointWithLeader(Position position, AnnotationAttributes controlPointAttributes,
-                ShapeAttributes leaderAttributes, MeasureTool parent) {
-            super(position, controlPointAttributes, parent);
-
-            this.leaderLine = new SurfacePolyline(leaderAttributes);
-        }
-
-        @Override
-        public void preRender(DrawContext dc) {
-            if (dc == null) {
-                String message = Logging.getMessage("nullValue.DrawContextIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            if (this.leaderLine != null) {
-                this.leaderLine.preRender(dc);
-            }
-        }
-
-        @Override
-        public void render(DrawContext dc) {
-            if (dc == null) {
-                String message = Logging.getMessage("nullValue.DrawContextIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            if (this.leaderLine != null) {
-                this.leaderLine.render(dc);
-            }
-
-            super.render(dc);
-        }
-
-        public void setLeaderLocations(LatLon begin, LatLon end) {
-            if (begin == null) {
-                String message = Logging.getMessage("nullValue.BeginIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            if (end == null) {
-                String message = Logging.getMessage("nullValue.EndIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.leaderLine.setLocations(Arrays.asList(begin, end));
-        }
     }
 
     protected void addControlPoint(Position position, String key, Object value) {
@@ -1968,15 +1896,15 @@ public class MeasureTool extends AVListImpl implements Disposable {
     }
 
     protected void addControlPointWithLeader(Position position, String controlKey, Object control, String leaderKey,
-            Object leader) {
+        Object leader) {
         ControlPointWithLeader controlPoint = new ControlPointWithLeader(new Position(position, 0),
-                this.controlPointWithLeaderAttributes, this.leaderAttributes, this);
+            this.controlPointWithLeaderAttributes, this.leaderAttributes, this);
         controlPoint.setValue(controlKey, control);
         controlPoint.setValue(leaderKey, leader);
         this.doAddControlPoint(controlPoint);
     }
 
-    protected void doAddControlPoint(ControlPoint controlPoint) {
+    protected void doAddControlPoint(Renderable controlPoint) {
         this.controlPoints.add(controlPoint);
         this.controlPointsLayer.setRenderables(this.controlPoints);
     }
@@ -2006,15 +1934,20 @@ public class MeasureTool extends AVListImpl implements Disposable {
         if (pos != null) {
             if (this.measureShapeType.equals(SHAPE_CIRCLE) && this.shapeRectangle != null) {
                 displayString = this.formatCircleMeasurements(pos);
-            } else if (this.measureShapeType.equals(SHAPE_SQUARE) && this.shapeRectangle != null) {
+            }
+            else if (this.measureShapeType.equals(SHAPE_SQUARE) && this.shapeRectangle != null) {
                 displayString = this.formatSquareMeasurements(pos);
-            } else if (this.measureShapeType.equals(SHAPE_QUAD) && this.shapeRectangle != null) {
+            }
+            else if (this.measureShapeType.equals(SHAPE_QUAD) && this.shapeRectangle != null) {
                 displayString = this.formatQuadMeasurements(pos);
-            } else if (this.measureShapeType.equals(SHAPE_ELLIPSE) && this.shapeRectangle != null) {
+            }
+            else if (this.measureShapeType.equals(SHAPE_ELLIPSE) && this.shapeRectangle != null) {
                 displayString = this.formatEllipseMeasurements(pos);
-            } else if (this.measureShapeType.equals(SHAPE_LINE) || this.measureShapeType.equals(SHAPE_PATH)) {
+            }
+            else if (this.measureShapeType.equals(SHAPE_LINE) || this.measureShapeType.equals(SHAPE_PATH)) {
                 displayString = this.formatLineMeasurements(pos);
-            } else if (this.measureShapeType.equals(SHAPE_POLYGON)) {
+            }
+            else if (this.measureShapeType.equals(SHAPE_POLYGON)) {
                 displayString = this.formatPolygonMeasurements(pos);
             }
         }
@@ -2029,14 +1962,14 @@ public class MeasureTool extends AVListImpl implements Disposable {
         sb.append(this.unitsFormat.lengthNL(this.getLabel(PERIMETER_LABEL), this.getLength()));
 
         if (this.shapeRectangle != null) {
-            sb.append(this.unitsFormat.lengthNL(this.getLabel(RADIUS_LABEL), this.shapeRectangle.width / 2d));
+            sb.append(this.unitsFormat.lengthNL(this.getLabel(RADIUS_LABEL), this.shapeRectangle.width / 2.0d));
         }
 
         if (this.getCenterPosition() != null && areLocationsRedundant(this.getCenterPosition(), pos)) {
             sb.append(
-                    this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
+                this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(CENTER_LONGITUDE_LABEL),
-                    this.getCenterPosition().getLongitude()));
+                this.getCenterPosition().getLongitude()));
         }
 
         if (!this.areLocationsRedundant(pos, this.getCenterPosition())) {
@@ -2064,9 +1997,9 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         if (this.getCenterPosition() != null && areLocationsRedundant(this.getCenterPosition(), pos)) {
             sb.append(
-                    this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
+                this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(CENTER_LONGITUDE_LABEL),
-                    this.getCenterPosition().getLongitude()));
+                this.getCenterPosition().getLongitude()));
         }
 
         if (!this.areLocationsRedundant(pos, this.getCenterPosition())) {
@@ -2093,9 +2026,9 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         if (this.getCenterPosition() != null && areLocationsRedundant(this.getCenterPosition(), pos)) {
             sb.append(
-                    this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
+                this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(CENTER_LONGITUDE_LABEL),
-                    this.getCenterPosition().getLongitude()));
+                this.getCenterPosition().getLongitude()));
         }
 
         if (!this.areLocationsRedundant(pos, this.getCenterPosition())) {
@@ -2123,9 +2056,9 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         if (this.getCenterPosition() != null && areLocationsRedundant(this.getCenterPosition(), pos)) {
             sb.append(
-                    this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
+                this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(CENTER_LONGITUDE_LABEL),
-                    this.getCenterPosition().getLongitude()));
+                this.getCenterPosition().getLongitude()));
         }
 
         if (!this.areLocationsRedundant(pos, this.getCenterPosition())) {
@@ -2144,9 +2077,9 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         if (this.getCenterPosition() != null && areLocationsRedundant(this.getCenterPosition(), pos)) {
             sb.append(
-                    this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
+                this.unitsFormat.angleNL(this.getLabel(CENTER_LATITUDE_LABEL), this.getCenterPosition().getLatitude()));
             sb.append(this.unitsFormat.angleNL(this.getLabel(CENTER_LONGITUDE_LABEL),
-                    this.getCenterPosition().getLongitude()));
+                this.getCenterPosition().getLongitude()));
         }
 
         if (!this.areLocationsRedundant(pos, this.getCenterPosition())) {
@@ -2198,7 +2131,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 // Compute portion of segment length
                 distanceFromStart += length1 / (length1 + length2) * segmentLength;
                 break;
-            } else {
+            }
+            else {
                 distanceFromStart += segmentLength;
             }
             pos1 = pos2;
@@ -2225,12 +2159,12 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     protected Angle computeAngleBetween(LatLon a, LatLon b, LatLon c) {
         Vec4 v0 = new Vec4(
-                b.getLatitude().radians - a.getLatitude().radians,
-                b.getLongitude().radians - a.getLongitude().radians, 0);
+            b.getLatitude().radians - a.getLatitude().radians,
+            b.getLongitude().radians - a.getLongitude().radians, 0);
 
         Vec4 v1 = new Vec4(
-                c.getLatitude().radians - b.getLatitude().radians,
-                c.getLongitude().radians - b.getLongitude().radians, 0);
+            c.getLatitude().radians - b.getLatitude().radians,
+            c.getLongitude().radians - b.getLongitude().radians, 0);
 
         return v0.angleBetween3(v1);
     }
@@ -2255,5 +2189,91 @@ public class MeasureTool extends AVListImpl implements Disposable {
         String bLon = this.unitsFormat.angleNL("", locB.getLongitude());
 
         return aLon.equals(bLon);
+    }
+
+    protected static class CustomRenderableLayer extends RenderableLayer implements PreRenderable, Renderable {
+
+        @Override
+        public void render(DrawContext dc) {
+            if (dc.isPickingMode() && !this.isPickEnabled()) {
+                return;
+            }
+            if (!this.isEnabled()) {
+                return;
+            }
+
+            super.render(dc);
+        }
+    }
+
+    // *** Control points ***
+    public static class ControlPoint extends GlobeAnnotation {
+
+        final MeasureTool parent;
+
+        public ControlPoint(Position position, AnnotationAttributes attributes, MeasureTool parent) {
+            super("", position, attributes);
+            this.parent = parent;
+        }
+
+        public MeasureTool getParent() {
+            return this.parent;
+        }
+    }
+
+    protected static class ControlPointWithLeader extends ControlPoint implements PreRenderable {
+
+        protected final SurfacePolyline leaderLine;
+
+        public ControlPointWithLeader(Position position, AnnotationAttributes controlPointAttributes,
+            ShapeAttributes leaderAttributes, MeasureTool parent) {
+            super(position, controlPointAttributes, parent);
+
+            this.leaderLine = new SurfacePolyline(leaderAttributes);
+        }
+
+        @Override
+        public void preRender(DrawContext dc) {
+            if (dc == null) {
+                String message = Logging.getMessage("nullValue.DrawContextIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            if (this.leaderLine != null) {
+                this.leaderLine.preRender(dc);
+            }
+        }
+
+        @Override
+        public void render(DrawContext dc) {
+            if (dc == null) {
+                String message = Logging.getMessage("nullValue.DrawContextIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            if (this.leaderLine != null) {
+                this.leaderLine.render(dc);
+            }
+
+            super.render(dc);
+        }
+
+        public void setLeaderLocations(LatLon begin, LatLon end) {
+            if (begin == null) {
+                String message = Logging.getMessage("nullValue.BeginIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            if (end == null) {
+                String message = Logging.getMessage("nullValue.EndIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.leaderLine.setLocations(Arrays.asList(begin, end));
+        }
     }
 }

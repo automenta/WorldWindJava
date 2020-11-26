@@ -11,89 +11,83 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
+import javax.swing.event.EventListenerList;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
  * @author dcollins
  * @version $Id: DialogAnnotation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class DialogAnnotation extends GlobeAnnotation implements java.awt.event.ActionListener
-{
+public abstract class DialogAnnotation extends GlobeAnnotation implements ActionListener {
     protected static final String CLOSE_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/16x16-button-cancel.png";
     protected static final String BUSY_IMAGE_PATH = "images/indicator-16.gif";
     protected static final String DEPRESSED_MASK_PATH
         = "gov/nasa/worldwindx/examples/images/16x16-button-depressed-mask.png";
 
     protected static final String CLOSE_TOOLTIP_TEXT = "Close window";
-
+    protected final EventListenerList listenerList = new EventListenerList();
     protected boolean busy;
     protected ButtonAnnotation closeButton;
     protected ImageAnnotation busyImage;
-    protected final javax.swing.event.EventListenerList listenerList = new javax.swing.event.EventListenerList();
 
-    protected DialogAnnotation(Position position)
-    {
+    protected DialogAnnotation(Position position) {
         super("", position);
         this.initComponents();
         this.layoutComponents();
         this.setBusy(false);
     }
 
-    public boolean isBusy()
-    {
+    public boolean isBusy() {
         return this.busy;
     }
 
-    public void setBusy(boolean busy)
-    {
+    public void setBusy(boolean busy) {
         this.busy = busy;
         this.getBusyImage().getAttributes().setVisible(busy);
     }
 
-    public ButtonAnnotation getCloseButton()
-    {
+    public ButtonAnnotation getCloseButton() {
         return this.closeButton;
     }
 
-    public ImageAnnotation getBusyImage()
-    {
+    public ImageAnnotation getBusyImage() {
         return this.busyImage;
     }
 
-    public java.awt.event.ActionListener[] getActionListeners()
-    {
-        return this.listenerList.getListeners(java.awt.event.ActionListener.class);
+    public ActionListener[] getActionListeners() {
+        return this.listenerList.getListeners(ActionListener.class);
     }
 
-    public void addActionListener(java.awt.event.ActionListener listener)
-    {
-        this.listenerList.add(java.awt.event.ActionListener.class, listener);
+    public void addActionListener(ActionListener listener) {
+        this.listenerList.add(ActionListener.class, listener);
     }
 
-    public void removeActionListener(java.awt.event.ActionListener listener)
-    {
-        this.listenerList.remove(java.awt.event.ActionListener.class, listener);
+    public void removeActionListener(ActionListener listener) {
+        this.listenerList.remove(ActionListener.class, listener);
     }
 
     //**************************************************************//
     //********************  Action Listener  ***********************//
     //**************************************************************//
 
-    public void actionPerformed(java.awt.event.ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         // Notify my listeners of the event.
         this.fireActionPerformed(e);
     }
 
-    protected void fireActionPerformed(java.awt.event.ActionEvent e)
-    {
+    protected void fireActionPerformed(ActionEvent e) {
         // Guaranteed to return a non-null array
         Object[] listeners = this.listenerList.getListenerList();
         // Process the listeners last to first, notifying
         // those that are interested in this event
-        for (int i = listeners.length - 2; i >= 0; i -= 2)
-        {
-            if (listeners[i] == java.awt.event.ActionListener.class)
-            {
-                ((java.awt.event.ActionListener) listeners[i + 1]).actionPerformed(e);
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == ActionListener.class) {
+                ((ActionListener) listeners[i + 1]).actionPerformed(e);
             }
         }
     }
@@ -102,8 +96,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements java.a
     //********************  Annotation Components  *****************//
     //**************************************************************//
 
-    protected void initComponents()
-    {
+    protected void initComponents() {
         this.closeButton = new ButtonAnnotation(CLOSE_IMAGE_PATH, DEPRESSED_MASK_PATH);
         this.closeButton.setActionCommand(AVKey.CLOSE);
         this.closeButton.addActionListener(this);
@@ -112,8 +105,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements java.a
         this.busyImage = new BusyImage(BUSY_IMAGE_PATH);
     }
 
-    protected void layoutComponents()
-    {
+    protected void layoutComponents() {
         AnnotationNullLayout layout = new AnnotationNullLayout();
         this.setLayout(layout);
         this.addChild(this.busyImage);
@@ -122,19 +114,17 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements java.a
         layout.setConstraint(this.closeButton, AVKey.NORTHEAST);
     }
 
-    protected void setupContainer(Annotation annotation)
-    {
+    protected void setupContainer(Annotation annotation) {
         AnnotationAttributes defaultAttribs = new AnnotationAttributes();
         this.setupDefaultAttributes(defaultAttribs);
         defaultAttribs.setAdjustWidthToText(AVKey.SIZE_FIXED);
-        defaultAttribs.setSize(new java.awt.Dimension(0, 0));
+        defaultAttribs.setSize(new Dimension(0, 0));
 
         annotation.setPickEnabled(false);
         annotation.getAttributes().setDefaults(defaultAttribs);
     }
 
-    protected void setupLabel(Annotation annotation)
-    {
+    protected void setupLabel(Annotation annotation) {
         AnnotationAttributes defaultAttribs = new AnnotationAttributes();
         this.setupDefaultAttributes(defaultAttribs);
         defaultAttribs.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
@@ -143,17 +133,16 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements java.a
         annotation.getAttributes().setDefaults(defaultAttribs);
     }
 
-    protected void setupDefaultAttributes(AnnotationAttributes attributes)
-    {
-        java.awt.Color transparentBlack = new java.awt.Color(0, 0, 0, 0);
+    protected void setupDefaultAttributes(AnnotationAttributes attributes) {
+        Color transparentBlack = new Color(0, 0, 0, 0);
 
         attributes.setBackgroundColor(transparentBlack);
         attributes.setBorderColor(transparentBlack);
         attributes.setBorderWidth(0);
         attributes.setCornerRadius(0);
-        attributes.setDrawOffset(new java.awt.Point(0, 0));
+        attributes.setDrawOffset(new Point(0, 0));
         attributes.setHighlightScale(1);
-        attributes.setInsets(new java.awt.Insets(0, 0, 0, 0));
+        attributes.setInsets(new Insets(0, 0, 0, 0));
         attributes.setLeader(AVKey.SHAPE_NONE);
     }
 
@@ -161,14 +150,12 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements java.a
     //********************  Busy Image  ****************************//
     //**************************************************************//
 
-    protected static class BusyImage extends ImageAnnotation
-    {
+    protected static class BusyImage extends ImageAnnotation {
         protected Angle angle;
         protected Angle increment;
         protected long lastFrameTime;
 
-        public BusyImage(Object imageSource)
-        {
+        public BusyImage(Object imageSource) {
             super(imageSource);
             this.setUseMipmaps(false);
 
@@ -176,15 +163,12 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements java.a
             this.increment = Angle.fromDegrees(300);
         }
 
-        public Angle getAngle()
-        {
+        public Angle getAngle() {
             return this.angle;
         }
 
-        public void setAngle(Angle angle)
-        {
-            if (angle == null)
-            {
+        public void setAngle(Angle angle) {
+            if (angle == null) {
                 String message = Logging.getMessage("nullValue.AngleIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
@@ -195,15 +179,12 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements java.a
             this.angle = Angle.fromDegrees(a);
         }
 
-        public Angle getIncrement()
-        {
+        public Angle getIncrement() {
             return this.increment;
         }
 
-        public void setIncrement(Angle angle)
-        {
-            if (angle == null)
-            {
+        public void setIncrement(Angle angle) {
+            if (angle == null) {
                 String message = Logging.getMessage("nullValue.AngleIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
@@ -212,20 +193,18 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements java.a
             this.increment = angle;
         }
 
-        public void drawContent(DrawContext dc, int width, int height, double opacity, Position pickPosition)
-        {
+        public void drawContent(DrawContext dc, int width, int height, double opacity, Position pickPosition) {
             super.drawContent(dc, width, height, opacity, pickPosition);
             this.updateState(dc);
         }
 
         protected void transformBackgroundImageCoordsToAnnotationCoords(DrawContext dc, int width, int height,
-            WWTexture texture)
-        {
+            WWTexture texture) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
             // Rotate around an axis originating from the center of the image and coming out of the screen.
-            double hw = (double) texture.getWidth(dc) / 2d;
-            double hh = (double) texture.getHeight(dc) / 2d;
+            double hw = texture.getWidth(dc) / 2.0d;
+            double hh = texture.getHeight(dc) / 2.0d;
             gl.glTranslated(hw, hh, 0);
             gl.glRotated(-this.getAngle().degrees, 0, 0, 1);
             gl.glTranslated(-hw, -hh, 0);
@@ -233,8 +212,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements java.a
             super.transformBackgroundImageCoordsToAnnotationCoords(dc, width, height, texture);
         }
 
-        protected void updateState(DrawContext dc)
-        {
+        protected void updateState(DrawContext dc) {
             // Increment the angle by a fixed increment each frame.
             Angle increment = this.getIncrement();
             increment = this.adjustAngleIncrement(dc, increment);
@@ -247,8 +225,7 @@ public abstract class DialogAnnotation extends GlobeAnnotation implements java.a
             this.lastFrameTime = dc.getFrameTimeStamp();
         }
 
-        protected Angle adjustAngleIncrement(DrawContext dc, Angle unitsPerSecond)
-        {
+        protected Angle adjustAngleIncrement(DrawContext dc, Angle unitsPerSecond) {
             long millis = dc.getFrameTimeStamp() - this.lastFrameTime;
             double seconds = millis / 1000.0;
             double degrees = seconds * unitsPerSecond.degrees;

@@ -64,7 +64,7 @@ public class ColladaMovingModel extends ColladaViewer
 
         final AppFrame af = (AppFrame) start("WorldWind COLLADA Viewer", AppFrame.class);
 
-        new WorkerThread(new File("testData/collada/duck_triangulate.dae"),
+        new WorkerThread(new File("collada/duck_triangulate.dae"),
             Position.fromDegrees(40.00779229910037, -105.27494931422459, 100), af).start();
     }
 }

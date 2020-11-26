@@ -25,41 +25,18 @@ import java.util.*;
  * @author tag
  * @version $Id: WMSLayersPanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WMSLayersPanel extends JPanel
-{
-    protected static class LayerInfo
-    {
-        protected WMSCapabilities caps;
-        protected AVListImpl params = new AVListImpl();
-
-        protected String getTitle()
-        {
-            return params.getStringValue(AVKey.DISPLAY_NAME);
-        }
-
-        protected String getName()
-        {
-            return params.getStringValue(AVKey.LAYER_NAMES);
-        }
-
-        protected String getAbstract()
-        {
-            return params.getStringValue(AVKey.LAYER_ABSTRACT);
-        }
-    }
-
+public class WMSLayersPanel extends JPanel {
     protected final WorldWindow wwd;
     protected final URI serverURI;
     protected final Dimension size;
     protected final Thread loadingThread;
-    protected final TreeSet<LayerInfo> layerInfos = new TreeSet<>((infoA, infoB) -> {
+    protected final Set<LayerInfo> layerInfos = new TreeSet<>((infoA, infoB) -> {
         String nameA = infoA.getName();
         String nameB = infoB.getName();
         return nameA.compareTo(nameB);
     });
 
-    public WMSLayersPanel(WorldWindow wwd, String server, Dimension size) throws URISyntaxException
-    {
+    public WMSLayersPanel(WorldWindow wwd, String server, Dimension size) throws URISyntaxException {
         super(new BorderLayout());
 
         // See if the server name is a valid URI. Throw an exception if not.
@@ -77,197 +54,7 @@ public class WMSLayersPanel extends JPanel
         this.loadingThread.start();
     }
 
-    protected void load()
-    {
-        WMSCapabilities caps;
-
-        try
-        {
-            caps = WMSCapabilities.retrieve(this.serverURI);
-            caps.parse();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return;
-        }
-
-        // Gather up all the named layers and make a WorldWind layer for each.
-        final List<WMSLayerCapabilities> namedLayerCaps = caps.getNamedLayers();
-        if (namedLayerCaps == null)
-            return;
-
-        try
-        {
-            for (WMSLayerCapabilities lc : namedLayerCaps)
-            {
-                Set<WMSLayerStyle> styles = lc.getStyles();
-                if (styles == null || styles.size() == 0)
-                {
-                    LayerInfo layerInfo = createLayerInfo(caps, lc, null);
-                    WMSLayersPanel.this.layerInfos.add(layerInfo);
-                }
-                else
-                {
-                    for (WMSLayerStyle style : styles)
-                    {
-                        LayerInfo layerInfo = createLayerInfo(caps, lc, style);
-                        WMSLayersPanel.this.layerInfos.add(layerInfo);
-                    }
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return;
-        }
-
-        // Fill the panel with the layer titles.
-        EventQueue.invokeLater(() -> {
-            WMSLayersPanel.this.removeAll();
-            makeLayerInfosPanel(layerInfos);
-        });
-    }
-
-    public String getServerDisplayString()
-    {
-        return this.serverURI.getHost();
-    }
-
-    protected LayerInfo createLayerInfo(WMSCapabilities caps, WMSLayerCapabilities layerCaps, WMSLayerStyle style)
-    {
-        // Create the layer info specified by the layer's capabilities entry and the selected style.
-
-        LayerInfo linfo = new LayerInfo();
-        linfo.caps = caps;
-        linfo.params = new AVListImpl();
-        linfo.params.setValue(AVKey.LAYER_NAMES, layerCaps.getName());
-        if (style != null)
-            linfo.params.setValue(AVKey.STYLE_NAMES, style.getName());
-        String abs = layerCaps.getLayerAbstract();
-        if (!WWUtil.isEmpty(abs))
-            linfo.params.setValue(AVKey.LAYER_ABSTRACT, abs);
-
-        linfo.params.setValue(AVKey.DISPLAY_NAME, makeTitle(caps, linfo));
-
-        return linfo;
-    }
-
-    protected void makeLayerInfosPanel(Collection<LayerInfo> layerInfos)
-    {
-        // Create the panel holding the layer names.
-        JPanel layersPanel = new JPanel(new GridLayout(0, 1, 0, 4));
-        layersPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-        // Add the server's layers to the panel.
-        for (LayerInfo layerInfo : layerInfos)
-        {
-            addLayerInfoPanel(layersPanel, WMSLayersPanel.this.wwd, layerInfo);
-        }
-
-        // Put the name panel in a scroll bar.
-        JScrollPane scrollPane = new JScrollPane(layersPanel);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        scrollPane.setPreferredSize(size);
-
-        // Add the scroll bar and name panel to a titled panel that will resize with the main window.
-        JPanel westPanel = new JPanel(new GridLayout(0, 1, 0, 10));
-        westPanel.setBorder(
-            new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("Layers")));
-        westPanel.add(scrollPane);
-        this.add(westPanel, BorderLayout.CENTER);
-
-        this.revalidate();
-    }
-
-    protected void addLayerInfoPanel(JPanel layersPanel, WorldWindow wwd, LayerInfo linfo)
-    {
-        // Give a layer a button and label and add it to the layer names panel.
-
-        LayerInfoAction action = new LayerInfoAction(linfo, wwd);
-        if (linfo.getAbstract() != null)
-            action.putValue(Action.SHORT_DESCRIPTION, linfo.getAbstract());
-        JCheckBox jcb = new JCheckBox(action);
-        jcb.setSelected(false);
-        layersPanel.add(jcb);
-    }
-
-    protected class LayerInfoAction extends AbstractAction
-    {
-        protected final WorldWindow wwd;
-        protected final LayerInfo layerInfo;
-        protected Object component;
-
-        public LayerInfoAction(LayerInfo linfo, WorldWindow wwd)
-        {
-            super(linfo.getTitle());
-
-            // Capture info we'll need later to control the layer.
-            this.wwd = wwd;
-            this.layerInfo = linfo;
-        }
-
-        public void actionPerformed(ActionEvent actionEvent)
-        {
-            // If the layer is selected, add it to the WorldWindow's current model, else remove it from the model.
-            if (((JCheckBox) actionEvent.getSource()).isSelected())
-            {
-                if (this.component == null)
-                    this.component = createComponent(layerInfo.caps, layerInfo.params);
-
-                updateComponent(this.component, true);
-            }
-            else
-            {
-                if (this.component != null)
-                    updateComponent(this.component, false);
-            }
-
-            // Tell the WorldWindow to update.
-            wwd.redraw();
-        }
-    }
-
-    protected void updateComponent(Object component, boolean enable)
-    {
-        if (component instanceof Layer)
-        {
-            Layer layer = (Layer) component;
-            LayerList layers = this.wwd.getModel().getLayers();
-
-            layer.setEnabled(enable);
-
-            if (enable)
-            {
-                if (!layers.contains(layer))
-                {
-                    ApplicationTemplate.insertBeforePlacenames(this.wwd, layer);
-                    this.firePropertyChange("LayersPanelUpdated", null, layer);
-                }
-            }
-            else
-            {
-                layers.remove(layer);
-                this.firePropertyChange("LayersPanelUpdated", layer, null);
-            }
-        }
-        else if (component instanceof ElevationModel)
-        {
-            ElevationModel model = (ElevationModel) component;
-            CompoundElevationModel compoundModel =
-                (CompoundElevationModel) this.wwd.getModel().getGlobe().getElevationModel();
-
-            if (enable)
-            {
-                if (!compoundModel.getElevationModels().contains(model))
-                    compoundModel.addElevationModel(model);
-            }
-        }
-    }
-
-    protected static Object createComponent(WMSCapabilities caps, AVList params)
-    {
+    protected static Object createComponent(WMSCapabilities caps, AVList params) {
         AVList configParams = params.copy(); // Copy to insulate changes from the caller.
 
         // Some wms servers are slow, so increase the timeouts and limits used by WorldWind's retrievers.
@@ -275,29 +62,24 @@ public class WMSLayersPanel extends JPanel
         configParams.setValue(AVKey.URL_READ_TIMEOUT, 30000);
         configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
 
-        try
-        {
+        try {
             String factoryKey = getFactoryKeyForCapabilities(caps);
             Factory factory = (Factory) WorldWind.createConfigurationComponent(factoryKey);
             return factory.createFromConfigSource(caps, configParams);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Ignore the exception, and just return null.
         }
 
         return null;
     }
 
-    protected static String getFactoryKeyForCapabilities(WMSCapabilities caps)
-    {
+    protected static String getFactoryKeyForCapabilities(WMSCapabilities caps) {
         boolean hasApplicationBilFormat = false;
 
         Set<String> formats = caps.getImageFormats();
-        for (String s : formats)
-        {
-            if (s.contains("application/bil"))
-            {
+        for (String s : formats) {
+            if (s.contains("application/bil")) {
                 hasApplicationBilFormat = true;
                 break;
             }
@@ -306,17 +88,15 @@ public class WMSLayersPanel extends JPanel
         return hasApplicationBilFormat ? AVKey.ELEVATION_MODEL_FACTORY : AVKey.LAYER_FACTORY;
     }
 
-    protected static String makeTitle(WMSCapabilities caps, LayerInfo layerInfo)
-    {
+    protected static String makeTitle(WMSCapabilities caps, LayerInfo layerInfo) {
         String layerNames = layerInfo.params.getStringValue(AVKey.LAYER_NAMES);
         String styleNames = layerInfo.params.getStringValue(AVKey.STYLE_NAMES);
         String[] lNames = layerNames.split(",");
         String[] sNames = styleNames != null ? styleNames.split(",") : null;
 
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < lNames.length; i++)
-        {
-            if (sb.length() > 0)
+        for (int i = 0; i < lNames.length; i++) {
+            if (!sb.isEmpty())
                 sb.append(", ");
 
             String layerName = lNames[i];
@@ -340,8 +120,139 @@ public class WMSLayersPanel extends JPanel
         return sb.toString();
     }
 
-    protected void makeProgressPanel()
-    {
+    protected void load() {
+        WMSCapabilities caps;
+
+        try {
+            caps = WMSCapabilities.retrieve(this.serverURI);
+            caps.parse();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // Gather up all the named layers and make a WorldWind layer for each.
+        final List<WMSLayerCapabilities> namedLayerCaps = caps.getNamedLayers();
+        if (namedLayerCaps == null)
+            return;
+
+        try {
+            for (WMSLayerCapabilities lc : namedLayerCaps) {
+                Set<WMSLayerStyle> styles = lc.getStyles();
+                if (styles == null || styles.isEmpty()) {
+                    LayerInfo layerInfo = createLayerInfo(caps, lc, null);
+                    WMSLayersPanel.this.layerInfos.add(layerInfo);
+                }
+                else {
+                    for (WMSLayerStyle style : styles) {
+                        LayerInfo layerInfo = createLayerInfo(caps, lc, style);
+                        WMSLayersPanel.this.layerInfos.add(layerInfo);
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // Fill the panel with the layer titles.
+        EventQueue.invokeLater(() -> {
+            WMSLayersPanel.this.removeAll();
+            makeLayerInfosPanel(layerInfos);
+        });
+    }
+
+    public String getServerDisplayString() {
+        return this.serverURI.getHost();
+    }
+
+    protected LayerInfo createLayerInfo(WMSCapabilities caps, WMSLayerCapabilities layerCaps, WMSLayerStyle style) {
+        // Create the layer info specified by the layer's capabilities entry and the selected style.
+
+        LayerInfo linfo = new LayerInfo();
+        linfo.caps = caps;
+        linfo.params = new AVListImpl();
+        linfo.params.setValue(AVKey.LAYER_NAMES, layerCaps.getName());
+        if (style != null)
+            linfo.params.setValue(AVKey.STYLE_NAMES, style.getName());
+        String abs = layerCaps.getLayerAbstract();
+        if (!WWUtil.isEmpty(abs))
+            linfo.params.setValue(AVKey.LAYER_ABSTRACT, abs);
+
+        linfo.params.setValue(AVKey.DISPLAY_NAME, makeTitle(caps, linfo));
+
+        return linfo;
+    }
+
+    protected void makeLayerInfosPanel(Iterable<LayerInfo> layerInfos) {
+        // Create the panel holding the layer names.
+        JPanel layersPanel = new JPanel(new GridLayout(0, 1, 0, 4));
+        layersPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        // Add the server's layers to the panel.
+        for (LayerInfo layerInfo : layerInfos) {
+            addLayerInfoPanel(layersPanel, WMSLayersPanel.this.wwd, layerInfo);
+        }
+
+        // Put the name panel in a scroll bar.
+        JScrollPane scrollPane = new JScrollPane(layersPanel);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        scrollPane.setPreferredSize(size);
+
+        // Add the scroll bar and name panel to a titled panel that will resize with the main window.
+        JPanel westPanel = new JPanel(new GridLayout(0, 1, 0, 10));
+        westPanel.setBorder(
+            new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("Layers")));
+        westPanel.add(scrollPane);
+        this.add(westPanel, BorderLayout.CENTER);
+
+        this.revalidate();
+    }
+
+    protected void addLayerInfoPanel(JPanel layersPanel, WorldWindow wwd, LayerInfo linfo) {
+        // Give a layer a button and label and add it to the layer names panel.
+
+        LayerInfoAction action = new LayerInfoAction(linfo, wwd);
+        if (linfo.getAbstract() != null)
+            action.putValue(Action.SHORT_DESCRIPTION, linfo.getAbstract());
+        JCheckBox jcb = new JCheckBox(action);
+        jcb.setSelected(false);
+        layersPanel.add(jcb);
+    }
+
+    protected void updateComponent(Object component, boolean enable) {
+        if (component instanceof Layer) {
+            Layer layer = (Layer) component;
+            LayerList layers = this.wwd.getModel().getLayers();
+
+            layer.setEnabled(enable);
+
+            if (enable) {
+                if (!layers.contains(layer)) {
+                    ApplicationTemplate.insertBeforePlacenames(this.wwd, layer);
+                    this.firePropertyChange("LayersPanelUpdated", null, layer);
+                }
+            }
+            else {
+                layers.remove(layer);
+                this.firePropertyChange("LayersPanelUpdated", layer, null);
+            }
+        }
+        else if (component instanceof ElevationModel) {
+            ElevationModel model = (ElevationModel) component;
+            CompoundElevationModel compoundModel =
+                (CompoundElevationModel) this.wwd.getModel().getGlobe().getElevationModel();
+
+            if (enable) {
+                if (!compoundModel.getElevationModels().contains(model))
+                    compoundModel.addElevationModel(model);
+            }
+        }
+    }
+
+    protected void makeProgressPanel() {
         // Create the panel holding the progress bar during loading.
 
         JPanel outerPanel = new JPanel(new BorderLayout());
@@ -356,10 +267,8 @@ public class WMSLayersPanel extends JPanel
 
         JButton cancelButton = new JButton("Cancel");
         innerPanel.add(cancelButton, BorderLayout.EAST);
-        cancelButton.addActionListener(new AbstractAction()
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
+        cancelButton.addActionListener(new AbstractAction() {
+            public void actionPerformed(ActionEvent actionEvent) {
                 if (loadingThread.isAlive())
                     loadingThread.interrupt();
 
@@ -371,5 +280,53 @@ public class WMSLayersPanel extends JPanel
         outerPanel.add(innerPanel, BorderLayout.NORTH);
         this.add(outerPanel, BorderLayout.CENTER);
         this.revalidate();
+    }
+
+    protected static class LayerInfo {
+        protected WMSCapabilities caps;
+        protected AVList params = new AVListImpl();
+
+        protected String getTitle() {
+            return params.getStringValue(AVKey.DISPLAY_NAME);
+        }
+
+        protected String getName() {
+            return params.getStringValue(AVKey.LAYER_NAMES);
+        }
+
+        protected String getAbstract() {
+            return params.getStringValue(AVKey.LAYER_ABSTRACT);
+        }
+    }
+
+    protected class LayerInfoAction extends AbstractAction {
+        protected final WorldWindow wwd;
+        protected final LayerInfo layerInfo;
+        protected Object component;
+
+        public LayerInfoAction(LayerInfo linfo, WorldWindow wwd) {
+            super(linfo.getTitle());
+
+            // Capture info we'll need later to control the layer.
+            this.wwd = wwd;
+            this.layerInfo = linfo;
+        }
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            // If the layer is selected, add it to the WorldWindow's current model, else remove it from the model.
+            if (((JCheckBox) actionEvent.getSource()).isSelected()) {
+                if (this.component == null)
+                    this.component = createComponent(layerInfo.caps, layerInfo.params);
+
+                updateComponent(this.component, true);
+            }
+            else {
+                if (this.component != null)
+                    updateComponent(this.component, false);
+            }
+
+            // Tell the WorldWindow to update.
+            wwd.redraw();
+        }
     }
 }

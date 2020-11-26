@@ -44,21 +44,26 @@ import java.util.regex.*;
  * @author pabercrombie
  * @version $Id: KMLAbstractBalloon.java 1555 2013-08-20 13:33:12Z pabercrombie $
  */
-public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver, PropertyChangeListener
-{
+public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver, PropertyChangeListener {
     public static final String DISPLAY_MODE_HIDE = "hide";
     public static final String DISPLAY_MODE_DEFAULT = "default";
 
     protected KMLAbstractFeature parent;
     protected String displayMode = DISPLAY_MODE_DEFAULT;
-    /** Indicates that the balloon has default text loaded, rather than text supplied by the BalloonStyle. */
+    /**
+     * Indicates that the balloon has default text loaded, rather than text supplied by the BalloonStyle.
+     */
     protected boolean usingDefaultText;
     protected boolean normalAttributesResolved;
     protected boolean highlightAttributesResolved;
 
-    /** Text when balloon is not highlighted. */
+    /**
+     * Text when balloon is not highlighted.
+     */
     protected String normalText;
-    /** Text when balloon is highlighted. */
+    /**
+     * Text when balloon is highlighted.
+     */
     protected String highlightText;
 
     /**
@@ -66,10 +71,8 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      *
      * @param feature Feature to create balloon annotation for.
      */
-    public KMLAbstractBalloon(KMLAbstractFeature feature)
-    {
-        if (feature == null)
-        {
+    public KMLAbstractBalloon(KMLAbstractFeature feature) {
+        if (feature == null) {
             String msg = Logging.getMessage("nullValue.FeatureIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -83,14 +86,12 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      *
      * @param balloon The balloon contained in this wrapper object.
      */
-    protected void initialize(Balloon balloon)
-    {
+    protected void initialize(Balloon balloon) {
         balloon.setTextDecoder(this.createTextDecoder(this.parent));
         balloon.setValue(AVKey.CONTEXT, this.parent);
 
         // Configure this balloon to resolve relative paths in the KML balloon HTML via its resolve() method.
-        if (balloon instanceof AbstractBrowserBalloon)
-        {
+        if (balloon instanceof AbstractBrowserBalloon) {
             ((AbstractBrowserBalloon) balloon).setResourceResolver(this);
         }
 
@@ -111,15 +112,12 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      *
      * @param dc Draw context
      */
-    public void render(DrawContext dc)
-    {
+    public void render(DrawContext dc) {
         Balloon balloon = this.getBalloon();
-        if (balloon.isHighlighted() && !this.highlightAttributesResolved)
-        {
+        if (balloon.isHighlighted() && !this.highlightAttributesResolved) {
             this.makeAttributesCurrent(KMLConstants.HIGHLIGHT);
         }
-        else if (!this.normalAttributesResolved)
-        {
+        else if (!this.normalAttributesResolved) {
             this.makeAttributesCurrent(KMLConstants.NORMAL);
         }
 
@@ -129,26 +127,24 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
             balloon.render(dc);
     }
 
-    /** Determine the balloon text for this frame, depending on the balloon highlight state. */
-    protected void determineActiveText()
-    {
+    /**
+     * Determine the balloon text for this frame, depending on the balloon highlight state.
+     */
+    protected void determineActiveText() {
         String activeText = null;
 
         // If the balloon is highlighted, use the highlight text.
-        if (this.isHighlighted())
-        {
+        if (this.isHighlighted()) {
             activeText = this.highlightText;
         }
 
         // If the balloon is not highlighted, or there is no highlight text, use the normal text.
-        if (activeText == null)
-        {
+        if (activeText == null) {
             activeText = this.normalText;
         }
 
         // Set the text if it does not match the active text.
-        if (activeText != null && !activeText.equals(this.getText()))
-        {
+        if (activeText != null && !activeText.equals(this.getText())) {
             this.setText(activeText);
         }
     }
@@ -159,8 +155,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * @param attrType Type of attributes to update. Either {@link KMLConstants#NORMAL} or {@link
      *                 KMLConstants#HIGHLIGHT}.
      */
-    protected void makeAttributesCurrent(String attrType)
-    {
+    protected void makeAttributesCurrent(String attrType) {
         BalloonAttributes attrs = this.getInitialBalloonAttributes();
 
         KMLBalloonStyle balloonStyle = (KMLBalloonStyle) this.parent.getSubStyle(new KMLBalloonStyle(null), attrType);
@@ -172,24 +167,21 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
         this.assembleBalloonAttributes(balloonStyle, attrs);
         attrs.setUnresolved(balloonStyle.hasField(AVKey.UNRESOLVED));
 
-        if (KMLConstants.NORMAL.equals(attrType))
-        {
+        if (KMLConstants.NORMAL.equals(attrType)) {
             this.getBalloon().setAttributes(attrs);
 
             // Set balloon text. If the style does not provide text, set the default text, if it has not been set
             // already. We use a field to track if the default text has been set to avoid continually resetting default
             // text if the style cannot be resolved.
             String text = balloonStyle.getText();
-            if (text != null)
-            {
+            if (text != null) {
                 if (this.mustAddHyperlinks(text))
                     text = this.addHyperlinks(text);
 
                 this.getBalloon().setText(text);
                 this.normalText = text;
             }
-            else if (!this.usingDefaultText)
-            {
+            else if (!this.usingDefaultText) {
                 text = this.createDefaultBalloonText();
                 if (this.mustAddHyperlinks(text))
                     text = this.addHyperlinks(text);
@@ -202,8 +194,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
             if (!attrs.isUnresolved() || !balloonStyle.hasFields())
                 this.normalAttributesResolved = true;
         }
-        else
-        {
+        else {
             this.getBalloon().setHighlightAttributes(attrs);
 
             String text = balloonStyle.getText();
@@ -222,8 +213,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      *
      * @return Default balloon text.
      */
-    protected String createDefaultBalloonText()
-    {
+    protected String createDefaultBalloonText() {
         StringBuilder sb = new StringBuilder();
 
         // Create default text for features that have a description
@@ -236,17 +226,14 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
             sb.append("<br/>").append(description);
 
         KMLExtendedData extendedData = this.parent.getExtendedData();
-        if (extendedData != null)
-        {
+        if (extendedData != null) {
             List<KMLData> data = extendedData.getData();
-            if (data != null && !data.isEmpty())
-            {
+            if (data != null && !data.isEmpty()) {
                 this.createDefaultExtendedDataText(sb, data);
             }
 
             List<KMLSchemaData> schemaData = extendedData.getSchemaData();
-            if (schemaData != null && !schemaData.isEmpty())
-            {
+            if (schemaData != null && !schemaData.isEmpty()) {
                 this.createDefaultSchemaDataText(sb, schemaData);
             }
         }
@@ -261,14 +248,11 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * @param sb   Extended data string will be appended to this StringBuilder.
      * @param data The feature's extended data.
      */
-    protected void createDefaultExtendedDataText(StringBuilder sb, List<KMLData> data)
-    {
+    protected void createDefaultExtendedDataText(StringBuilder sb, Iterable<KMLData> data) {
         sb.append("<p/><table border=\"1\">");
-        for (KMLData item : data)
-        {
+        for (KMLData item : data) {
             String value = item.getValue();
-            if (!WWUtil.isEmpty(value))
-            {
+            if (!WWUtil.isEmpty(value)) {
                 String name = item.getName() != null ? item.getName() : "";
                 sb.append("<tr><td>$[").append(name).append("/displayName]</td><td>").append(value).append(
                     "</td></tr>");
@@ -284,28 +268,22 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * @param sb   Extended data string will be appended to this StringBuilder.
      * @param data The feature's schema data.
      */
-    protected void createDefaultSchemaDataText(StringBuilder sb, List<KMLSchemaData> data)
-    {
+    protected void createDefaultSchemaDataText(StringBuilder sb, Iterable<KMLSchemaData> data) {
         sb.append("<p/><table border=\"1\">");
-        for (KMLSchemaData schemaData : data)
-        {
+        for (KMLSchemaData schemaData : data) {
             KMLSchema schema = (KMLSchema) this.parent.getRoot().resolveReference(schemaData.getSchemaUrl());
 
-            for (KMLSimpleData simpleData : schemaData.getSimpleData())
-            {
+            for (KMLSimpleData simpleData : schemaData.getSimpleData()) {
                 String value = simpleData.getCharacters();
 
-                if (!WWUtil.isEmpty(value))
-                {
+                if (!WWUtil.isEmpty(value)) {
                     String dataName = simpleData.getName() != null ? simpleData.getName() : "";
                     sb.append("<tr><td>");
                     // Insert the schema name, if the schema can be resolved. Otherwise just use the data name.
-                    if (schema != null && !WWUtil.isEmpty(schema.getName()) && !WWUtil.isEmpty(dataName))
-                    {
+                    if (schema != null && !WWUtil.isEmpty(schema.getName()) && !WWUtil.isEmpty(dataName)) {
                         sb.append("$[").append(schema.getName()).append("/").append(dataName).append("/displayName]");
                     }
-                    else
-                    {
+                    else {
                         sb.append(dataName);
                     }
 
@@ -322,11 +300,9 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * &lt;html&gt; tag in the content to determine if the content is HTML or plain text.
      *
      * @param text Balloon text to process.
-     *
      * @return True if URLs should be converted links. Returns true if a &lt;html&gt; tag is found in the text.
      */
-    protected boolean mustAddHyperlinks(String text)
-    {
+    protected boolean mustAddHyperlinks(String text) {
         return text != null
             && !text.contains("<html")
             && !text.contains("<HTML");
@@ -344,11 +320,9 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      *
      * @param text Text to process. Each URL in the text will be replaced with &lt;a href="url" target="_blank"&gt; url
      *             &lt;/a&gt;
-     *
      * @return Text with hyperlinks added.
      */
-    protected String addHyperlinks(String text)
-    {
+    protected String addHyperlinks(CharSequence text) {
         // Regular expression to match a http(s) URL, or an entire anchor tag. Note that this does not match all valid
         // URLs. It is designed to match obvious URLs that occur in KML balloons, with minimal chance of matching text
         // the user did not intend to be a link.
@@ -363,13 +337,11 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
 
         StringBuffer sb = new StringBuffer();
         Matcher matcher = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL).matcher(text);
-        while (matcher.find())
-        {
+        while (matcher.find()) {
             // If the match is a URL then group 1 holds the matched URL. If group 1 is null then the match is an anchor
             // tag, in which case we just skip it to avoid adding links to text that is already part of a link.
             String url = matcher.group(1);
-            if (url != null)
-            {
+            if (url != null) {
                 String prefix = url.toLowerCase().startsWith("www") ? "http://" : "";
                 matcher.appendReplacement(sb, "<a href=\"" + prefix + "$1\" target=\"_blank\">$1</a>");
             }
@@ -381,27 +353,23 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
 
     /**
      * Get the default attributes applied to the balloon. These attributes will be modified by {@link
-     * #assembleBalloonAttributes(gov.nasa.worldwind.ogc.kml.KMLBalloonStyle, gov.nasa.worldwind.render.BalloonAttributes)
+     * #assembleBalloonAttributes(KMLBalloonStyle, BalloonAttributes)
      * assembleBalloonAttributes} to reflect the settings in the KML <i>BalloonStyle</i>.
      *
      * @return Initial balloon attributes.
      */
-    protected BalloonAttributes getInitialBalloonAttributes()
-    {
+    protected BalloonAttributes getInitialBalloonAttributes() {
         BalloonAttributes attrs;
 
-        if (this.isHighlighted())
-        {
+        if (this.isHighlighted()) {
             attrs = this.getHighlightAttributes();
 
             // Copy the normal attributes if there are no highlight attributes
-            if (attrs == null && this.getAttributes() != null)
-            {
+            if (attrs == null && this.getAttributes() != null) {
                 attrs = new BasicBalloonAttributes(this.getAttributes());
             }
         }
-        else
-        {
+        else {
             attrs = this.getAttributes();
         }
 
@@ -417,8 +385,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * @param style             KML style to apply.
      * @param balloonAttributes Attributes to modify.
      */
-    protected void assembleBalloonAttributes(KMLBalloonStyle style, BalloonAttributes balloonAttributes)
-    {
+    protected void assembleBalloonAttributes(KMLBalloonStyle style, BalloonAttributes balloonAttributes) {
         // Attempt to use the bgColor property. This is the preferred method for encoding a BalloonStyle's background
         // color since KML 2.1, therefore we give it priority.
         String bgColor = style.getBgColor();
@@ -440,11 +407,9 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * Create the text decoder that will process the text in the balloon.
      *
      * @param feature Feature to decode text for.
-     *
      * @return New text decoder.
      */
-    protected TextDecoder createTextDecoder(KMLAbstractFeature feature)
-    {
+    protected TextDecoder createTextDecoder(KMLAbstractFeature feature) {
         return new KMLBalloonTextDecoder(feature);
     }
 
@@ -452,11 +417,9 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * Get the balloon display mode, either {@link #DISPLAY_MODE_DEFAULT} or {@link #DISPLAY_MODE_HIDE}.
      *
      * @return The current display mode.
-     *
      * @see #setDisplayMode(String)
      */
-    public String getDisplayMode()
-    {
+    public String getDisplayMode() {
         return this.displayMode;
     }
 
@@ -465,13 +428,10 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * is {@link #DISPLAY_MODE_HIDE}, the balloon will not be drawn.
      *
      * @param displayMode New display mode.
-     *
      * @see #getDisplayMode()
      */
-    public void setDisplayMode(String displayMode)
-    {
-        if (displayMode == null)
-        {
+    public void setDisplayMode(String displayMode) {
+        if (displayMode == null) {
             String msg = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -485,30 +445,26 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      * <p>
      * This implementation resolves relative resource paths by calling <code>{@link
      * gov.nasa.worldwind.ogc.kml.io.KMLDoc#getSupportFilePath(String)}</code> on the parent
-     * <code>KMLAbstractFeature's</code> <code>KMLDoc</code>. This is necessary to correctly resolve relative references
-     * in a KMZ archive.
+     * <code>KMLAbstractFeature's</code> <code>KMLDoc</code>. This is necessary to correctly resolve relative
+     * references in a KMZ archive.
      * <p>
      * This returns <code>null</code> if the specified <code>address</code> is <code>null</code>.
      */
-    public URL resolve(String address)
-    {
+    public URL resolve(String address) {
         if (address == null)
             return null;
 
-        try
-        {
+        try {
             // Resolve the relative path against the KMLDoc, and convert it to a URL. We use makeURL variant that
             // accepts a default protocol, because we know the path is an absolute file path. If the path does not
             // define a valid URL, makeURL returns null and the balloon treats this as an unresolved resource.
             String absolutePath = this.parent.getRoot().getKMLDoc().getSupportFilePath(address);
-            if (!WWUtil.isEmpty(absolutePath))
-            {
+            if (!WWUtil.isEmpty(absolutePath)) {
                 File file = new File(absolutePath);
                 return file.toURI().toURL();
             }
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             Logging.logger().log(Level.WARNING, Logging.getMessage("KML.UnableToResolvePath", address), e.getMessage());
         }
 
@@ -520,8 +476,7 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
      *
      * @param evt Event to forward.
      */
-    public void propertyChange(PropertyChangeEvent evt)
-    {
+    public void propertyChange(PropertyChangeEvent evt) {
         this.parent.getRoot().firePropertyChange(evt);
     }
 
@@ -529,141 +484,164 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
     //**********************  Balloon implementation  ***************************//
     //**************************************************************************//
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public boolean isHighlighted()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public boolean isHighlighted() {
         return this.getBalloon().isHighlighted();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void setHighlighted(boolean highlighted)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void setHighlighted(boolean highlighted) {
         this.getBalloon().setHighlighted(highlighted);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public boolean isAlwaysOnTop()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public boolean isAlwaysOnTop() {
         return this.getBalloon().isAlwaysOnTop();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void setAlwaysOnTop(boolean alwaysOnTop)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void setAlwaysOnTop(boolean alwaysOnTop) {
         this.getBalloon().setAlwaysOnTop(alwaysOnTop);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public boolean isPickEnabled()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public boolean isPickEnabled() {
         return this.getBalloon().isPickEnabled();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void setPickEnabled(boolean enable)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void setPickEnabled(boolean enable) {
         this.getBalloon().setPickEnabled(enable);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public String getText()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public String getText() {
         return this.getBalloon().getText();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void setText(String text)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void setText(String text) {
         this.getBalloon().setText(text);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public BalloonAttributes getAttributes()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public BalloonAttributes getAttributes() {
         return this.getBalloon().getAttributes();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void setAttributes(BalloonAttributes attrs)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void setAttributes(BalloonAttributes attrs) {
         this.getBalloon().setAttributes(attrs);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public BalloonAttributes getHighlightAttributes()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public BalloonAttributes getHighlightAttributes() {
         return this.getBalloon().getHighlightAttributes();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void setHighlightAttributes(BalloonAttributes attrs)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void setHighlightAttributes(BalloonAttributes attrs) {
         this.getBalloon().setHighlightAttributes(attrs);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public TextDecoder getTextDecoder()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public TextDecoder getTextDecoder() {
         return this.getBalloon().getTextDecoder();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void setTextDecoder(TextDecoder decoder)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void setTextDecoder(TextDecoder decoder) {
         this.getBalloon().setTextDecoder(decoder);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public Object getDelegateOwner()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public Object getDelegateOwner() {
         return this.getBalloon().getDelegateOwner();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void setDelegateOwner(Object owner)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void setDelegateOwner(Object owner) {
         this.getBalloon().setDelegateOwner(owner);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public boolean isVisible()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public boolean isVisible() {
         return this.getBalloon().isVisible();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void setVisible(boolean visible)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void setVisible(boolean visible) {
         this.getBalloon().setVisible(visible);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public Rectangle getBounds(DrawContext dc)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public Rectangle getBounds(DrawContext dc) {
         return this.getBalloon().getBounds(dc);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public double getMinActiveAltitude()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public double getMinActiveAltitude() {
         return this.getBalloon().getMinActiveAltitude();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void setMinActiveAltitude(double minActiveAltitude)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void setMinActiveAltitude(double minActiveAltitude) {
         this.getBalloon().setMinActiveAltitude(minActiveAltitude);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public double getMaxActiveAltitude()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public double getMaxActiveAltitude() {
         return this.getBalloon().getMaxActiveAltitude();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void setMaxActiveAltitude(double maxActiveAltitude)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void setMaxActiveAltitude(double maxActiveAltitude) {
         this.getBalloon().setMaxActiveAltitude(maxActiveAltitude);
     }
 
@@ -671,99 +649,116 @@ public abstract class KMLAbstractBalloon implements Balloon, WebResourceResolver
     //**********************  AVList implementation  ***************************//
     //**************************************************************************//
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public Object setValue(String key, Object value)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public Object setValue(String key, Object value) {
         return this.getBalloon().setValue(key, value);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public AVList setValues(AVList avList)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public AVList setValues(AVList avList) {
         return this.getBalloon().setValues(avList);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public Object getValue(String key)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public Object getValue(String key) {
         return this.getBalloon().getValue(key);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public Collection<Object> getValues()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     * @return
+     */
+    public Iterable<Object> getValues() {
         return this.getBalloon().getValues();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public String getStringValue(String key)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public String getStringValue(String key) {
         return this.getBalloon().getStringValue(key);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public Set<Map.Entry<String, Object>> getEntries()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public Set<Map.Entry<String, Object>> getEntries() {
         return this.getBalloon().getEntries();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public boolean hasKey(String key)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public boolean hasKey(String key) {
         return this.getBalloon().hasKey(key);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public Object removeKey(String key)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public Object removeKey(String key) {
         return this.getBalloon().removeKey(key);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         this.getBalloon().addPropertyChangeListener(propertyName, listener);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         this.getBalloon().removePropertyChangeListener(propertyName, listener);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void addPropertyChangeListener(PropertyChangeListener listener)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
         this.getBalloon().addPropertyChangeListener(listener);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void removePropertyChangeListener(PropertyChangeListener listener)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         this.getBalloon().removePropertyChangeListener(listener);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void firePropertyChange(String propertyName, Object oldValue, Object newValue)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         this.getBalloon().firePropertyChange(propertyName, oldValue, newValue);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public void firePropertyChange(PropertyChangeEvent propertyChangeEvent)
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public void firePropertyChange(PropertyChangeEvent propertyChangeEvent) {
         this.getBalloon().firePropertyChange(propertyChangeEvent);
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public AVList copy()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public AVList copy() {
         return this.getBalloon().copy();
     }
 
-    /** {@inheritDoc}. This method passes through to the contained balloon. */
-    public AVList clearList()
-    {
+    /**
+     * {@inheritDoc}. This method passes through to the contained balloon.
+     */
+    public AVList clearList() {
         return this.getBalloon().clearList();
     }
 }

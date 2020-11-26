@@ -18,10 +18,7 @@ import java.io.IOException;
  * @author dcollins
  * @version $Id: TiledElevationProducer.java 3042 2015-04-21 23:25:59Z tgaskins $
  */
-public class TiledElevationProducer extends TiledRasterProducer
-{
-    // Extreme elevations computed during production.
-    protected double[] extremes = null;
+public class TiledElevationProducer extends TiledRasterProducer {
     // Default production parameter values.
     protected static final String DEFAULT_IMAGE_FORMAT = "application/bil32";
     protected static final double DEFAULT_MISSING_DATA_SIGNAL = Short.MIN_VALUE;
@@ -35,14 +32,14 @@ public class TiledElevationProducer extends TiledRasterProducer
             new BILRasterReader(),
             new GeotiffRasterReader()
         };
+    // Extreme elevations computed during production.
+    protected double[] extremes = null;
 
-    public TiledElevationProducer(MemoryCache cache, int writeThreadPoolSize)
-    {
+    public TiledElevationProducer(MemoryCache cache, int writeThreadPoolSize) {
         super(cache, writeThreadPoolSize);
     }
 
-    public TiledElevationProducer()
-    {
+    public TiledElevationProducer() {
         super();
     }
 
@@ -50,27 +47,23 @@ public class TiledElevationProducer extends TiledRasterProducer
      * Overridden to initialize this producer's extreme elevations prior to creating and installing elevation tiles.
      *
      * @param parameters the installation parameters.
-     *
      * @throws Exception if production fails for any reason.
      */
     @Override
-    protected void doStartProduction(AVList parameters) throws Exception
-    {
+    protected void doStartProduction(AVList parameters) throws Exception {
         this.extremes = null;
 
         super.doStartProduction(parameters);
     }
 
-    public String getDataSourceDescription()
-    {
+    public String getDataSourceDescription() {
         StringBuilder sb = new StringBuilder();
         sb.append(Logging.getMessage("TiledElevationProducer.Description"));
         sb.append(" (").append(super.getDataSourceDescription()).append(")");
         return sb.toString();
     }
 
-    protected DataRaster createDataRaster(int width, int height, Sector sector, AVList params)
-    {
+    protected DataRaster createDataRaster(int width, int height, Sector sector, AVList params) {
         // Create a BIL elevation raster to hold the tile's data.
         AVList bufferParams = new AVListImpl();
         bufferParams.setValue(AVKey.DATA_TYPE, params.getValue(AVKey.DATA_TYPE));
@@ -81,8 +74,7 @@ public class TiledElevationProducer extends TiledRasterProducer
         // This code expects the string "gov.nasa.worldwind.avkey.MissingDataValue", which now corresponds to the key 
         // MISSING_DATA_REPLACEMENT.
         Object o = params.getValue(AVKey.MISSING_DATA_REPLACEMENT);
-        if (o instanceof Double)
-        {
+        if (o instanceof Double) {
             double missingDataValue = (Double) o;
             bufferRaster.fill(missingDataValue);
             bufferRaster.setTransparentValue(missingDataValue);
@@ -91,13 +83,11 @@ public class TiledElevationProducer extends TiledRasterProducer
         return bufferRaster;
     }
 
-    protected DataRasterReader[] getDataRasterReaders()
-    {
+    protected DataRasterReader[] getDataRasterReaders() {
         return readers;
     }
 
-    protected DataRasterWriter[] getDataRasterWriters()
-    {
+    protected DataRasterWriter[] getDataRasterWriters() {
         return new DataRasterWriter[]
             {
                 // Configure the BIL writer to disable writing of georeference files. Georeferencing files are redundant
@@ -107,22 +97,18 @@ public class TiledElevationProducer extends TiledRasterProducer
             };
     }
 
-    protected String validateDataSource(Object source, AVList params)
-    {
+    protected String validateDataSource(Object source, AVList params) {
         // TiledElevationProducer does not accept null data sources.
-        if (source == null)
-        {
+        if (source == null) {
             return Logging.getMessage("nullValue.SourceIsNull");
         }
 
         // TiledElevationProducer accepts BufferWrapperRaster as a data source. If the data source is a DataRaster, then
         // check that it's a BufferWrapperRaster.
-        if (source instanceof DataRaster)
-        {
+        if (source instanceof DataRaster) {
             DataRaster raster = (DataRaster) source;
 
-            if (!(raster instanceof BufferWrapperRaster))
-            {
+            if (!(raster instanceof BufferWrapperRaster)) {
                 return Logging.getMessage("TiledRasterProducer.UnrecognizedDataSource", raster);
             }
 
@@ -130,24 +116,20 @@ public class TiledElevationProducer extends TiledRasterProducer
         }
         // For any other data source, attempt to find a reader for the data source. If the reader know's the data
         // source's raster type, then check that it's elevation data.
-        else
-        {
+        else {
             DataRasterReader reader = this.getReaderFactory().findReaderFor(source, params,
                 this.getDataRasterReaders());
-            if (reader == null)
-            {
+            if (reader == null) {
                 return Logging.getMessage("TiledRasterProducer.UnrecognizedDataSource", source);
             }
 
             // Copy the parameter list to insulate changes from the caller.
             params = (params != null) ? params.copy() : new AVListImpl();
 
-            try
-            {
+            try {
                 reader.readMetadata(source, params);
             }
-            catch (IOException e)
-            {
+            catch (IOException e) {
                 return Logging.getMessage("TiledRasterProducer.ExceptionWhileReading", source, e.getMessage());
             }
 
@@ -155,10 +137,8 @@ public class TiledElevationProducer extends TiledRasterProducer
         }
     }
 
-    protected String validateDataSourceParams(AVList params, String name)
-    {
-        if (params.hasKey(AVKey.PIXEL_FORMAT) && params.getValue(AVKey.PIXEL_FORMAT) != AVKey.ELEVATION)
-        {
+    protected String validateDataSourceParams(AVList params, String name) {
+        if (params.hasKey(AVKey.PIXEL_FORMAT) && params.getValue(AVKey.PIXEL_FORMAT) != AVKey.ELEVATION) {
             return Logging.getMessage("TiledRasterProducer.UnrecognizedRasterType",
                 params.getValue(AVKey.PIXEL_FORMAT), name);
         }
@@ -166,9 +146,7 @@ public class TiledElevationProducer extends TiledRasterProducer
         if (params.hasKey(AVKey.COORDINATE_SYSTEM)
             && params.getValue(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
             && params.getValue(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_PROJECTED
-            )
-
-        {
+        ) {
             return Logging.getMessage("TiledRasterProducer.UnrecognizedCoordinateSystem",
                 params.getValue(AVKey.COORDINATE_SYSTEM), name);
         }
@@ -176,92 +154,77 @@ public class TiledElevationProducer extends TiledRasterProducer
         if (params.hasKey(AVKey.ELEVATION_UNIT)
             && params.getValue(AVKey.ELEVATION_UNIT) != AVKey.UNIT_METER
             && params.getValue(AVKey.ELEVATION_UNIT) != AVKey.UNIT_FOOT
-            )
-        {
+        ) {
             return Logging.getMessage("TiledElevationProducer.UnrecognizedElevationUnit",
                 params.getValue(AVKey.ELEVATION_UNIT), name);
         }
 
-        if (params.getValue(AVKey.SECTOR) == null)
-        {
+        if (params.getValue(AVKey.SECTOR) == null) {
             return Logging.getMessage("TiledRasterProducer.NoSector", name);
         }
 
         return null;
     }
 
-    protected void initProductionParameters(AVList params)
-    {
+    protected void initProductionParameters(AVList params) {
         // Preserve backward compatibility with previous versions of TiledElevationProducer. If the caller specified a
         // format suffix parameter, use it to compute the image format properties. This gives priority to the format
         // suffix property to ensure applications which use format suffix continue to work.
-        if (params.getValue(AVKey.FORMAT_SUFFIX) != null)
-        {
+        if (params.getValue(AVKey.FORMAT_SUFFIX) != null) {
             String s = WWIO.makeMimeTypeForSuffix(params.getValue(AVKey.FORMAT_SUFFIX).toString());
-            if (s != null)
-            {
+            if (s != null) {
                 params.setValue(AVKey.IMAGE_FORMAT, s);
                 params.setValue(AVKey.AVAILABLE_IMAGE_FORMATS, new String[] {s});
             }
         }
 
-        if (params.getValue(AVKey.PIXEL_FORMAT) == null)
-        {
+        if (params.getValue(AVKey.PIXEL_FORMAT) == null) {
             params.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
         }
 
         // Use the default image format if none exists.
-        if (params.getValue(AVKey.IMAGE_FORMAT) == null)
-        {
+        if (params.getValue(AVKey.IMAGE_FORMAT) == null) {
             params.setValue(AVKey.IMAGE_FORMAT, DEFAULT_IMAGE_FORMAT);
         }
 
         // Compute the available image formats if none exists.
-        if (params.getValue(AVKey.AVAILABLE_IMAGE_FORMATS) == null)
-        {
+        if (params.getValue(AVKey.AVAILABLE_IMAGE_FORMATS) == null) {
             params.setValue(AVKey.AVAILABLE_IMAGE_FORMATS,
                 new String[] {params.getValue(AVKey.IMAGE_FORMAT).toString()});
         }
 
         // Compute the format suffix if none exists.        
-        if (params.getValue(AVKey.FORMAT_SUFFIX) == null)
-        {
+        if (params.getValue(AVKey.FORMAT_SUFFIX) == null) {
             params.setValue(AVKey.FORMAT_SUFFIX,
                 WWIO.makeSuffixForMimeType(params.getValue(AVKey.IMAGE_FORMAT).toString()));
         }
 
         // Compute the data type from the image format.
-        if (params.getValue(AVKey.DATA_TYPE) == null && params.getValue(AVKey.IMAGE_FORMAT) != null)
-        {
+        if (params.getValue(AVKey.DATA_TYPE) == null && params.getValue(AVKey.IMAGE_FORMAT) != null) {
             String s = WWIO.makeDataTypeForMimeType(params.getValue(AVKey.IMAGE_FORMAT).toString());
-            if (s != null)
-            {
+            if (s != null) {
                 params.setValue(AVKey.DATA_TYPE, s);
             }
         }
 
         // Use the default data type if none exists.
-        if (params.getValue(AVKey.DATA_TYPE) == null)
-        {
+        if (params.getValue(AVKey.DATA_TYPE) == null) {
             params.setValue(AVKey.DATA_TYPE, AVKey.INT16);
         }
 
         // Use the default byte order if none exists.
-        if (params.getValue(AVKey.BYTE_ORDER) == null)
-        {
+        if (params.getValue(AVKey.BYTE_ORDER) == null) {
             params.setValue(AVKey.BYTE_ORDER, AVKey.LITTLE_ENDIAN);
         }
 
         // This code expects the string "gov.nasa.worldwind.avkey.MissingDataValue", which now corresponds to the key
         // MISSING_DATA_REPLACEMENT.
-        if (params.getValue(AVKey.MISSING_DATA_REPLACEMENT) == null)
-        {
+        if (params.getValue(AVKey.MISSING_DATA_REPLACEMENT) == null) {
             params.setValue(AVKey.MISSING_DATA_REPLACEMENT, DEFAULT_MISSING_DATA_SIGNAL);
         }
     }
 
-    protected LatLon computeRasterTileDelta(int tileWidth, int tileHeight, Iterable<? extends DataRaster> rasters)
-    {
+    protected LatLon computeRasterTileDelta(int tileWidth, int tileHeight, Iterable<? extends DataRaster> rasters) {
         LatLon pixelSize = this.computeSmallestPixelSize(rasters);
         // Compute the tile size in latitude and longitude, given a raster's sector and dimension, and the tile
         // dimensions. In this computation a pixel is assumed to have no dimension. We measure the distance between
@@ -271,8 +234,7 @@ public class TiledElevationProducer extends TiledRasterProducer
         return LatLon.fromDegrees(latDelta, lonDelta);
     }
 
-    protected LatLon computeRasterPixelSize(DataRaster raster)
-    {
+    protected LatLon computeRasterPixelSize(DataRaster raster) {
         // Compute the raster's pixel dimension in latitude and longitude. In this computation a pixel is assumed to
         // have no dimension. We measure the distance between pixels rather than some pixel dimension.
         return LatLon.fromDegrees(
@@ -288,8 +250,7 @@ public class TiledElevationProducer extends TiledRasterProducer
      * @param params     the installation parameters.
      */
     @Override
-    protected void installTileRasterLater(LevelSet levelSet, Tile tile, DataRaster tileRaster, AVList params)
-    {
+    protected void installTileRasterLater(LevelSet levelSet, Tile tile, DataRaster tileRaster, AVList params) {
         // There used to be code here to update the extremes only when processing tiles in the highest-resolution
         // level. But that caused the extremes not to be determined at all when a full pyramid isn't generated. We
         // now update the extremes for every tile, not just the highest resolution ones.
@@ -298,10 +259,8 @@ public class TiledElevationProducer extends TiledRasterProducer
         super.installTileRasterLater(levelSet, tile, tileRaster, params);
     }
 
-    protected void updateExtremeElevations(DataRaster raster)
-    {
-        if (!(raster instanceof BufferWrapperRaster))
-        {
+    protected void updateExtremeElevations(DataRaster raster) {
+        if (!(raster instanceof BufferWrapperRaster)) {
             String message = Logging.getMessage("DataRaster.IncompatibleRaster", raster);
             Logging.logger().severe(message);
             return;
@@ -310,33 +269,27 @@ public class TiledElevationProducer extends TiledRasterProducer
         // Compute the raster's extreme elevations. If the returned array is null, the tile is either empty or contains
         // only missing data values. In either case, this tile does not contribute to the overall extreme elevations.
 
-        if (this.extremes == null)
-        {
+        if (this.extremes == null) {
             this.extremes = WWUtil.defaultMinMix();
         }
 
         double[] tileExtremes = new double[2];
 
-        if (raster.hasKey(AVKey.ELEVATION_MIN) && raster.hasKey(AVKey.ELEVATION_MAX))
-        {
+        if (raster.hasKey(AVKey.ELEVATION_MIN) && raster.hasKey(AVKey.ELEVATION_MAX)) {
             tileExtremes[0] = (Double) raster.getValue(AVKey.ELEVATION_MAX);
             tileExtremes[1] = (Double) raster.getValue(AVKey.ELEVATION_MIN);
         }
-        else
-        {
+        else {
             tileExtremes = ((BufferWrapperRaster) raster).getExtremes();
-            if (tileExtremes == null || tileExtremes.length < 2)
-            {
+            if (tileExtremes == null || tileExtremes.length < 2) {
                 return;
             }
         }
 
-        if (this.extremes[0] > tileExtremes[0])
-        {
+        if (this.extremes[0] > tileExtremes[0]) {
             this.extremes[0] = tileExtremes[0];
         }
-        if (this.extremes[1] < tileExtremes[1])
-        {
+        if (this.extremes[1] < tileExtremes[1]) {
             this.extremes[1] = tileExtremes[1];
         }
     }
@@ -348,23 +301,19 @@ public class TiledElevationProducer extends TiledRasterProducer
      * null, or if the configuration document cannot be created for any reason.
      *
      * @param params the parameters which describe an ElevationModel configuration document's contents.
-     *
      * @return the configuration document, or null if the parameter list is null or does not contain the required
      * parameters.
      */
-    protected Document createConfigDoc(AVList params)
-    {
+    protected Document createConfigDoc(AVList params) {
         AVList configParams = params.copy();
 
         // Determine a default display name if none exists.
-        if (configParams.getValue(AVKey.DISPLAY_NAME) == null)
-        {
+        if (configParams.getValue(AVKey.DISPLAY_NAME) == null) {
             configParams.setValue(AVKey.DISPLAY_NAME, params.getValue(AVKey.DATASET_NAME));
         }
 
         // Set the SERVICE_NAME and NETWORK_RETRIEVAL_ENABLED parameters to indicate this dataset is offline.
-        if (configParams.getValue(AVKey.SERVICE_NAME) == null)
-        {
+        if (configParams.getValue(AVKey.SERVICE_NAME) == null) {
             configParams.setValue(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_OFFLINE);
         }
 
@@ -380,8 +329,7 @@ public class TiledElevationProducer extends TiledRasterProducer
         // values ELEVATION_MIN and ELEVATION_MAX. If the extremes array is null or has length less than 2, the imported
         // elevations are either empty or contain only missing data values. In either case we cannot determine the
         // extreme values.
-        if (this.extremes != null && this.extremes.length >= 2)
-        {
+        if (this.extremes != null && this.extremes.length >= 2) {
             configParams.setValue(AVKey.ELEVATION_MIN, this.extremes[0]);
             configParams.setValue(AVKey.ELEVATION_MAX, this.extremes[1]);
         }

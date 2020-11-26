@@ -18,7 +18,7 @@ import gov.nasa.worldwind.util.*;
 import java.awt.*;
 
 /**
- * Illustrates how to use the {@link gov.nasa.worldwind.util.PlacemarkClutterFilter} to declutter PointPlacemark labels.
+ * Illustrates how to use the {@link PlacemarkClutterFilter} to declutter PointPlacemark labels.
  * To enable this decluttering a filter has to be specified to the scene controller and each PointPlacemark that
  * participates in decluttering must be enabled for decluttering.
  * <p>
@@ -28,12 +28,13 @@ import java.awt.*;
  * @author tag
  * @version $Id: PlacemarkDecluttering.java 2388 2014-10-15 22:58:36Z tgaskins $
  */
-public class PlacemarkDecluttering extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class PlacemarkDecluttering extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Placemark Decluttering", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             // Specify the decluttering filter to the scene controller.
@@ -41,7 +42,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate
 
             RenderableLayer layer = new RenderableLayer();
 
-            PointPlacemark pp = new PointPlacemark(Position.fromDegrees(28, -102, 1e4));
+            PointPlacemark pp = new PointPlacemark(Position.fromDegrees(28, -102, 1.0e4));
             pp.setEnableDecluttering(true); // enable the placemark for decluttering
             pp.setEnableLabelPicking(true); // enable the placemark for label picking
             pp.setLabelText("Placemark A");
@@ -50,7 +51,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
             attrs.setImageAddress("gov/nasa/worldwindx/examples/images/audioicon-64.png");
-            attrs.setImageColor(new Color(1f, 1f, 1f, 0.6f));
+            attrs.setImageColor(new Color(1.0f, 1.0f, 1.0f, 0.6f));
             attrs.setScale(0.6);
 //            attrs.setImageOffset(new Offset(19d, 8d, AVKey.PIXELS, AVKey.PIXELS));
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
@@ -65,7 +66,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             layer.addRenderable(pp);
 
-            pp = new PointPlacemark(Position.fromDegrees(28, -104, 1e4));
+            pp = new PointPlacemark(Position.fromDegrees(28, -104, 1.0e4));
             pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading 90, Screen relative");
             pp.setLabelText("Placemark B");
             pp.setEnableDecluttering(true);
@@ -73,10 +74,10 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             pp.setLineEnabled(false);
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             attrs = new PointPlacemarkAttributes(attrs);
-            attrs.setHeading(90d);
+            attrs.setHeading(90.0d);
             attrs.setHeadingReference(AVKey.RELATIVE_TO_SCREEN);
             attrs.setScale(0.6);
-            attrs.setImageOffset(new Offset(19d, 8d, AVKey.PIXELS, AVKey.PIXELS));
+            attrs.setImageOffset(new Offset(19.0d, 8.0d, AVKey.PIXELS, AVKey.PIXELS));
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
@@ -93,7 +94,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             // Use a new attributes instance.
             // Note that a new attributes instance must be created for every unique set of attribute values, although
             // the new attributes can be initialized from an existing attributes instance.
-            pp = new PointPlacemark(Position.fromDegrees(29, -104, 2e4));
+            pp = new PointPlacemark(Position.fromDegrees(29, -104, 2.0e4));
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark C");
@@ -102,17 +103,17 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             pp.setAltitudeMode(WorldWind.ABSOLUTE);
             attrs = new PointPlacemarkAttributes();
             attrs.setScale(0.6);
-            attrs.setImageOffset(new Offset(19d, 8d, AVKey.PIXELS, AVKey.PIXELS));
+            attrs.setImageOffset(new Offset(19.0d, 8.0d, AVKey.PIXELS, AVKey.PIXELS));
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             attrs.setLineMaterial(new Material(WWUtil.makeRandomColor(null)));
-            attrs.setLineWidth(2d);
+            attrs.setLineWidth(2.0d);
             attrs.setImageAddress("images/pushpins/plain-red.png");
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
             layer.addRenderable(pp);
 
             // Create a placemark without a leader line.
-            pp = new PointPlacemark(Position.fromDegrees(30, -104.5, 2e4));
+            pp = new PointPlacemark(Position.fromDegrees(30, -104.5, 2.0e4));
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark D");
@@ -125,7 +126,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             layer.addRenderable(pp);
 
             // Create a placemark clamped to ground.
-            pp = new PointPlacemark(Position.fromDegrees(28, -104.5, 2e4));
+            pp = new PointPlacemark(Position.fromDegrees(28, -104.5, 2.0e4));
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark E");
@@ -139,7 +140,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             layer.addRenderable(pp);
 
             // Create a placemark that uses all default values.
-            pp = new PointPlacemark(Position.fromDegrees(30, -103.5, 2e3));
+            pp = new PointPlacemark(Position.fromDegrees(30, -103.5, 2.0e3));
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark F");
@@ -148,7 +149,7 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             layer.addRenderable(pp);
 
             // Create a placemark without an image.
-            pp = new PointPlacemark(Position.fromDegrees(29, -104.5, 2e4));
+            pp = new PointPlacemark(Position.fromDegrees(29, -104.5, 2.0e4));
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark G");
@@ -158,13 +159,13 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             attrs.setLabelColor("ffffffff");
             attrs.setLineColor("ff0000ff");
             attrs.setUsePointAsDefaultImage(true);
-            attrs.setScale(5d);
+            attrs.setScale(5.0d);
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
             layer.addRenderable(pp);
 
             // Create a placemark off the surface and with a line.
-            pp = new PointPlacemark(Position.fromDegrees(30, -104, 2e4));
+            pp = new PointPlacemark(Position.fromDegrees(30, -104, 2.0e4));
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setLabelText("Placemark H");
@@ -174,14 +175,14 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             attrs = new PointPlacemarkAttributes();
             attrs.setLabelColor("ffff0000");
             attrs.setLineMaterial(Material.MAGENTA);
-            attrs.setLineWidth(2d);
+            attrs.setLineWidth(2.0d);
             attrs.setUsePointAsDefaultImage(true);
-            attrs.setScale(10d);
+            attrs.setScale(10.0d);
             pp.setAttributes(attrs);
             this.setHighlightAttributes(pp);
             layer.addRenderable(pp);
 
-            pp = new PointPlacemark(Position.fromDegrees(28, -103, 1e4));
+            pp = new PointPlacemark(Position.fromDegrees(28, -103, 1.0e4));
             pp.setEnableDecluttering(true);
             pp.setEnableLabelPicking(true);
             pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading -45, Globe relative");
@@ -190,11 +191,11 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             attrs = new PointPlacemarkAttributes(attrs);
             attrs.setImageAddress("gov/nasa/worldwindx/examples/images/audioicon-64.png");
-            attrs.setHeading(-45d);
+            attrs.setHeading(-45.0d);
             attrs.setHeadingReference(AVKey.RELATIVE_TO_GLOBE);
             attrs.setScale(0.6);
 //            attrs.setImageOffset(new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION));
-            attrs.setImageOffset(new Offset(19d, 8d, AVKey.PIXELS, AVKey.PIXELS));
+            attrs.setImageOffset(new Offset(19.0d, 8.0d, AVKey.PIXELS, AVKey.PIXELS));
             attrs.setLabelColor("ffffffff");
             attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
             pp.setAttributes(attrs);
@@ -207,15 +208,12 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             // Add a select listener in order to determine when a label is clicked on.
             this.getWwd().addSelectListener(event -> {
                 PickedObject po = event.getTopPickedObject();
-                if (po != null && po.getObject() instanceof PointPlacemark)
-                {
-                    if (event.getEventAction().equals(SelectEvent.LEFT_CLICK))
-                    {
+                if (po != null && po.getObject() instanceof PointPlacemark) {
+                    if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
                         // See if it was the label that was picked. If so, raise an input dialog prompting
                         // for new label text.
                         Object placemarkPiece = po.getValue(AVKey.PICKED_OBJECT_ID);
-                        if (placemarkPiece != null && placemarkPiece.equals(AVKey.LABEL))
-                        {
+                        if (placemarkPiece != null && placemarkPiece.equals(AVKey.LABEL)) {
                             PointPlacemark placemark = (PointPlacemark) po.getObject();
                             String labelText = placemark.getLabelText();
                             System.out.println(labelText);
@@ -226,17 +224,11 @@ public class PlacemarkDecluttering extends ApplicationTemplate
             });
         }
 
-        protected void setHighlightAttributes(PointPlacemark pp)
-        {
+        protected void setHighlightAttributes(PointPlacemark pp) {
             // Change the label color to orange when the placemark is selected.
             PointPlacemarkAttributes highlightAttributes = new PointPlacemarkAttributes(pp.getAttributes());
             highlightAttributes.setLabelMaterial(Material.ORANGE);
             pp.setHighlightAttributes(highlightAttributes);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Placemark Decluttering", AppFrame.class);
     }
 }

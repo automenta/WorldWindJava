@@ -17,8 +17,8 @@ import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 /**
  * Layout that draws a {@link Tree} similar to a file browser tree.
@@ -26,105 +26,138 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: BasicTreeLayout.java 2053 2014-06-10 20:16:57Z tgaskins $
  */
-public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrollable, PreRenderable
-{
-    /** Tree that is drawn by this layout. */
-    protected Tree tree;
-
-    /** Frame that contains the tree. */
-    protected ScrollFrame frame;
-
-    /** Attributes to use when the tree is not highlighted. */
-    protected TreeAttributes normalAttributes = new BasicTreeAttributes();
-    /** Attributes to use when the frame is highlighted. */
-    protected TreeAttributes highlightAttributes = new BasicTreeAttributes();
-    /** Active attributes, either normal or highlight. */
-    protected final TreeAttributes activeAttributes = new BasicTreeAttributes();
-    /** The attributes used if attributes are not specified. */
+public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrollable, PreRenderable {
+    /**
+     * The attributes used if attributes are not specified.
+     */
     protected static final TreeAttributes defaultAttributes;
 
-    /** Indicates whether or not the tree is highlighted. */
-    protected boolean highlighted;
-
-    /** Support for setting up and restoring picking state, and resolving the picked object. */
-    protected final PickSupport pickSupport = new PickSupport();
+    static {
+        defaultAttributes = new BasicTreeAttributes();
+    }
 
     /**
-     * This field is set by {@link #makeVisible(TreePath)}, and read by {@link #scrollToNode(gov.nasa.worldwind.render.DrawContext)}
+     * Active attributes, either normal or highlight.
+     */
+    protected final TreeAttributes activeAttributes = new BasicTreeAttributes();
+    /**
+     * Support for setting up and restoring picking state, and resolving the picked object.
+     */
+    protected final PickSupport pickSupport = new PickSupport();
+    /**
+     * Cache of computed text bounds.
+     */
+    protected final BoundedHashMap<TextCacheKey, Rectangle2D> textCache = new BoundedHashMap<>();
+    /**
+     * Cache of computed node layout data.
+     */
+    protected final BoundedHashMap<TreeNode, NodeLayout> layoutCache = new BoundedHashMap<>();
+    /**
+     * Cache of node layouts. This list is populated when the tree layout is computed.
+     */
+    protected final List<NodeLayout> treeNodes = new ArrayList<>();
+    /**
+     * A little extra space is added to the tree dimensions to give the tree a little bit of separation from the
+     * scrollable frame. This value determines the amount of padding, in pixels.
+     */
+    protected final int padding = 10;
+    /**
+     * Tree that is drawn by this layout.
+     */
+    protected Tree tree;
+    /**
+     * Frame that contains the tree.
+     */
+    protected ScrollFrame frame;
+    /**
+     * Attributes to use when the tree is not highlighted.
+     */
+    protected TreeAttributes normalAttributes = new BasicTreeAttributes();
+    /**
+     * Attributes to use when the frame is highlighted.
+     */
+    protected TreeAttributes highlightAttributes = new BasicTreeAttributes();
+    /**
+     * Indicates whether or not the tree is highlighted.
+     */
+    protected boolean highlighted;
+    /**
+     * This field is set by {@link #makeVisible(TreePath)}, and read by {@link #scrollToNode(DrawContext)}
      * during rendering.
      */
     protected TreeNode scrollToNode;
-
-    /** Cache the rendered size of the tree and recompute when the tree changes. */
+    /**
+     * Cache the rendered size of the tree and recompute when the tree changes.
+     */
     protected Dimension size;
-    /** Indicates that the tree size needs to be computed. */
+    /**
+     * Indicates that the tree size needs to be computed.
+     */
     protected boolean mustRecomputeSize = true;
-    /** Indicates that the tree layout needs to be computed. */
+    /**
+     * Indicates that the tree layout needs to be computed.
+     */
     protected boolean mustRecomputeLayout = true;
-
-    /** Indicates that node description text must be drawn. */
+    /**
+     * Indicates that node description text must be drawn.
+     */
     protected boolean showDescription = true;
-    /** Indicates that a triangle must be drawn to indicate if a group node is expanded or collapsed. */
+    /**
+     * Indicates that a triangle must be drawn to indicate if a group node is expanded or collapsed.
+     */
     protected boolean drawNodeStateSymbol = true;
-    /** Indicates that a checkbox must be drawn for each node to indicate if the node is selected or not. */
+    /**
+     * Indicates that a checkbox must be drawn for each node to indicate if the node is selected or not.
+     */
     protected boolean drawSelectedSymbol = true;
-
-    /** Indicates whether or not the description text will be wrapped to fit the frame. */
+    /**
+     * Indicates whether or not the description text will be wrapped to fit the frame.
+     */
     protected boolean wrapText = true;
     /**
      * Maximum number of lines of wrapped description text to draw. If the description exceeds this it will be cut off
      * at this number of lines, with a trailing "...".
      */
     protected int maxWrappedLines = 2;
-
-    /** Cache of computed text bounds. */
-    protected final BoundedHashMap<TextCacheKey, Rectangle2D> textCache = new BoundedHashMap<>();
-
-    /** Cache of computed node layout data. */
-    protected final BoundedHashMap<TreeNode, NodeLayout> layoutCache = new BoundedHashMap<>();
-
-    /** Cache of node layouts. This list is populated when the tree layout is computed. */
-    protected final java.util.List<NodeLayout> treeNodes = new ArrayList<>();
-
-    /**
-     * A little extra space is added to the tree dimensions to give the tree a little bit of separation from the
-     * scrollable frame. This value determines the amount of padding, in pixels.
-     */
-    protected final int padding = 10;
-
     // Computed each frame
     protected long frameNumber = -1L;
     protected long attributesFrameNumber = -1L;
-    /** Location of the lower left corner of the tree, in GL coordinates. */
+    /**
+     * Location of the lower left corner of the tree, in GL coordinates.
+     */
     protected Point screenLocation;
     /**
      * Time at which the rendered tree last changed. Used to indicate when the ScrollFrame needs to refresh the rendered
      * representation
      */
     protected long updateTime;
-    /** Frame size when the tree layout was last computed. */
+    /**
+     * Frame size when the tree layout was last computed.
+     */
     protected Dimension previousFrameSize;
-    /** Frame size when the tree size was last computed. */
+    /**
+     * Frame size when the tree size was last computed.
+     */
     protected Dimension previousSizeBounds;
-    /** The height of one line of text in the active font. */
+    /**
+     * The height of one line of text in the active font.
+     */
     protected int lineHeight;
-    /** Number of nodes in the tree, used to set a bound on the text cache. */
+    /**
+     * Number of nodes in the tree, used to set a bound on the text cache.
+     */
     protected int nodeCount;
-    /** Indentation in pixels applied to each new level of the tree. */
+    /**
+     * Indentation in pixels applied to each new level of the tree.
+     */
     protected int indent;
-
-    static
-    {
-        defaultAttributes = new BasicTreeAttributes();
-    }
 
     /**
      * Create a layout for a tree.
      *
      * @param tree Tree to create layout for.
      */
-    public BasicTreeLayout(Tree tree)
-    {
+    public BasicTreeLayout(Tree tree) {
         this(tree, null);
     }
 
@@ -135,8 +168,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param x    X coordinate of the upper left corner of the tree frame.
      * @param y    Y coordinate of the upper left corner of the tree frame, measured from the top of the screen.
      */
-    public BasicTreeLayout(Tree tree, int x, int y)
-    {
+    public BasicTreeLayout(Tree tree, int x, int y) {
         this(tree, new Offset((double) x, (double) y, AVKey.PIXELS, AVKey.INSET_PIXELS));
     }
 
@@ -147,8 +179,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param screenLocation The location of the upper left corner of the tree frame. The offset is interpreted relative
      *                       to the lower left corner of the screen.
      */
-    public BasicTreeLayout(Tree tree, Offset screenLocation)
-    {
+    public BasicTreeLayout(Tree tree, Offset screenLocation) {
         this.tree = tree;
         this.frame = this.createFrame();
         this.frame.setContents(this);
@@ -165,8 +196,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
             // Ignore events originated by this TreeLayout, and repaint events. There is no need to recompute the
             // tree layout just because a repaint was triggered.
             if (propertyChangeEvent.getSource() != BasicTreeLayout.this
-                && !AVKey.REPAINT.equals(propertyChangeEvent.getPropertyName()))
-            {
+                && !AVKey.REPAINT.equals(propertyChangeEvent.getPropertyName())) {
                 BasicTreeLayout.this.invalidate();
             }
         });
@@ -181,8 +211,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return {@code true} if the description will be wrapped to fit the frame.
      */
-    public boolean isWrapText()
-    {
+    public boolean isWrapText() {
         return this.wrapText;
     }
 
@@ -192,8 +221,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @param wrapText {@code true} if the description text must be wrapped to fit the frame.
      */
-    public void setWrapText(boolean wrapText)
-    {
+    public void setWrapText(boolean wrapText) {
         this.wrapText = wrapText;
     }
 
@@ -202,8 +230,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return The size of the node state symbol.
      */
-    protected Dimension getNodeStateSymbolSize()
-    {
+    protected Dimension getNodeStateSymbolSize() {
         return new Dimension(12, 12);
     }
 
@@ -212,8 +239,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return The size of the node selection symbol.
      */
-    protected Dimension getSelectedSymbolSize()
-    {
+    protected Dimension getSelectedSymbolSize() {
         return new Dimension(12, 12);
     }
 
@@ -222,8 +248,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return True if the renderer should renderer node descriptions.
      */
-    public boolean isShowDescription()
-    {
+    public boolean isShowDescription() {
         return this.showDescription;
     }
 
@@ -233,8 +258,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param showDescription True if the description should be rendered. False if only the icon and title should be
      *                        rendered.
      */
-    public void setShowDescription(boolean showDescription)
-    {
+    public void setShowDescription(boolean showDescription) {
         this.showDescription = showDescription;
     }
 
@@ -243,8 +267,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return True if the node selected symbol (a checkbox by default) will be drawn.
      */
-    public boolean isDrawSelectedSymbol()
-    {
+    public boolean isDrawSelectedSymbol() {
         return this.drawSelectedSymbol;
     }
 
@@ -254,8 +277,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @param drawSelectedSymbol True if the node selected symbol (a checkbox by default) will be drawn.
      */
-    public void setDrawSelectedSymbol(boolean drawSelectedSymbol)
-    {
+    public void setDrawSelectedSymbol(boolean drawSelectedSymbol) {
         this.drawSelectedSymbol = drawSelectedSymbol;
     }
 
@@ -263,41 +285,10 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * Will the renderer draw a symbol to indicate that the node is expanded or collapsed (applies only to non-leaf
      * nodes). The default symbol is a triangle pointing to the right, for collapsed nodes, or down for expanded nodes.
      *
-     * @return True if the node state symbol (default is a triangle pointing either to the right or down) will be
-     *         drawn.
+     * @return True if the node state symbol (default is a triangle pointing either to the right or down) will be drawn.
      */
-    public boolean isDrawNodeStateSymbol()
-    {
+    public boolean isDrawNodeStateSymbol() {
         return this.drawNodeStateSymbol;
-    }
-
-    /**
-     * Specifies the maximum number of lines of text wrapped description text to draw. If the description exceeds this
-     * number of lines it will be cut off with a trailing "...".
-     *
-     * @return Maximum number of lines of description text that will be drawn.
-     */
-    public int getMaxWrappedLines()
-    {
-        return this.maxWrappedLines;
-    }
-
-    /**
-     * Indicates the maximum number of lines of text wrapped description text to draw. If the description exceeds this
-     * number of lines it will be cut off with a trailing "...".
-     *
-     * @param maxLines Maximum number of lines of description text that will be drawn.
-     */
-    public void setMaxWrappedLines(int maxLines)
-    {
-        if (maxLines != this.maxWrappedLines)
-        {
-            this.maxWrappedLines = maxLines;
-
-            // Need to re-wrap the text because the number of lines changes.
-            this.invalidate();
-            this.invalidateWrappedText();
-        }
     }
 
     /**
@@ -308,14 +299,40 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param drawNodeStateSymbol True if the node state symbol (default is a triangle pointing either to the right or
      *                            down) will be drawn.
      */
-    public void setDrawNodeStateSymbol(boolean drawNodeStateSymbol)
-    {
+    public void setDrawNodeStateSymbol(boolean drawNodeStateSymbol) {
         this.drawNodeStateSymbol = drawNodeStateSymbol;
     }
 
-    /** {@inheritDoc} */
-    public long getUpdateTime()
-    {
+    /**
+     * Specifies the maximum number of lines of text wrapped description text to draw. If the description exceeds this
+     * number of lines it will be cut off with a trailing "...".
+     *
+     * @return Maximum number of lines of description text that will be drawn.
+     */
+    public int getMaxWrappedLines() {
+        return this.maxWrappedLines;
+    }
+
+    /**
+     * Indicates the maximum number of lines of text wrapped description text to draw. If the description exceeds this
+     * number of lines it will be cut off with a trailing "...".
+     *
+     * @param maxLines Maximum number of lines of description text that will be drawn.
+     */
+    public void setMaxWrappedLines(int maxLines) {
+        if (maxLines != this.maxWrappedLines) {
+            this.maxWrappedLines = maxLines;
+
+            // Need to re-wrap the text because the number of lines changes.
+            this.invalidate();
+            this.invalidateWrappedText();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getUpdateTime() {
         return this.updateTime;
     }
 
@@ -324,8 +341,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return A new frame.
      */
-    protected ScrollFrame createFrame()
-    {
+    protected ScrollFrame createFrame() {
         return new ScrollFrame();
     }
 
@@ -334,16 +350,13 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @param dc        Draw context.
      * @param frameSize Size of the frame the tree will be rendered into. May be {@code null}.
-     *
      * @return Size of the rendered tree.
      */
-    public Dimension getSize(DrawContext dc, Dimension frameSize)
-    {
+    public Dimension getSize(DrawContext dc, Dimension frameSize) {
         this.updateAttributes(dc);
 
         // Computing the size of rendered text is expensive, so only recompute the tree size when necessary.
-        if (this.mustRecomputeSize(frameSize))
-        {
+        if (this.mustRecomputeSize(frameSize)) {
             TreeModel model = this.tree.getModel();
             TreeNode root = model.getRoot();
 
@@ -384,8 +397,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param level     Level of this node. Tree root node is level 1, children of the root are level 2, etc.
      */
     protected void computeSize(Tree tree, TreeNode root, DrawContext dc, Dimension frameSize, Dimension size, int x,
-        int level)
-    {
+        int level) {
         this.nodeCount++;
 
         TreeAttributes attributes = this.getActiveAttributes();
@@ -394,8 +406,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
 
         int indent = 0;
 
-        if (this.mustDisplayNode(root, level))
-        {
+        if (this.mustDisplayNode(root, level)) {
             int thisWidth = thisSize.width + x;
 
             if (thisWidth > size.width)
@@ -407,26 +418,26 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
             indent = this.indent;
         }
 
-        if (tree.isNodeExpanded(root))
-        {
-            for (TreeNode child : root.getChildren())
-            {
+        if (tree.isNodeExpanded(root)) {
+            for (TreeNode child : root.getChildren()) {
                 this.computeSize(tree, child, dc, frameSize, size, x + indent, level + 1);
             }
         }
     }
 
-    /** Force the layout to recompute the size of the tree. */
-    public void invalidate()
-    {
+    /**
+     * Force the layout to recompute the size of the tree.
+     */
+    public void invalidate() {
         this.markUpdated();
         this.mustRecomputeSize = true;
         this.mustRecomputeLayout = true;
     }
 
-    /** Set the {@link #updateTime} to the current system time, marking the Scrollable contents as updated. */
-    protected void markUpdated()
-    {
+    /**
+     * Set the {@link #updateTime} to the current system time, marking the Scrollable contents as updated.
+     */
+    protected void markUpdated() {
         this.updateTime = System.currentTimeMillis();
     }
 
@@ -436,26 +447,26 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @param node  Node to test.
      * @param level Level of the node in the tree. The root node is level 1, its children are level 2, etc.
-     *
      * @return True if the node must be displayed.
      */
-    protected boolean mustDisplayNode(TreeNode node, int level)
-    {
+    protected boolean mustDisplayNode(TreeNode node, int level) {
         return node.isVisible() && (level > 1 || this.getActiveAttributes().isRootVisible());
     }
 
-    /** {@inheritDoc} */
-    public void preRender(DrawContext dc)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void preRender(DrawContext dc) {
         // Adjust scroll position if an application has requested that the layout scroll to make a node visible.
         this.scrollToNode(dc);
 
         this.frame.preRender(dc);
     }
 
-    /** {@inheritDoc} */
-    public void render(DrawContext dc)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void render(DrawContext dc) {
         this.frame.render(dc);
     }
 
@@ -465,10 +476,8 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @param dc Draw context.
      */
-    protected synchronized void scrollToNode(DrawContext dc)
-    {
-        if (this.scrollToNode != null)
-        {
+    protected synchronized void scrollToNode(DrawContext dc) {
+        if (this.scrollToNode != null) {
             // Update the frame bounds to make sure that the frame's scroll model includes the full extent of the tree
             ScrollFrame frame = this.getFrame();
             frame.updateBounds(dc);
@@ -486,19 +495,18 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         }
     }
 
-    /** {@inheritDoc} */
-    public void renderScrollable(DrawContext dc, Point location, Dimension frameSize, Rectangle clipBounds)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void renderScrollable(DrawContext dc, Point location, Dimension frameSize, Rectangle clipBounds) {
         TreeModel model = this.tree.getModel();
         TreeNode root = model.getRoot();
 
         this.screenLocation = location;
         this.updateAttributes(dc);
 
-        if (this.frameNumber != dc.getFrameTimeStamp())
-        {
-            if (this.mustRecomputeTreeLayout(frameSize))
-            {
+        if (this.frameNumber != dc.getFrameTimeStamp()) {
+            if (this.mustRecomputeTreeLayout(frameSize)) {
                 this.treeNodes.clear();
 
                 Point drawPoint = new Point(0, this.size.height);
@@ -511,20 +519,16 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
             this.frameNumber = dc.getFrameTimeStamp();
         }
 
-        try
-        {
-            if (dc.isPickingMode())
-            {
+        try {
+            if (dc.isPickingMode()) {
                 this.pickSupport.clearPickList();
                 this.pickSupport.beginPicking(dc);
             }
 
             this.renderNodes(dc, location, treeNodes, clipBounds);
         }
-        finally
-        {
-            if (dc.isPickingMode())
-            {
+        finally {
+            if (dc.isPickingMode()) {
                 this.pickSupport.endPicking(dc);
                 this.pickSupport.resolvePick(dc, dc.getPickPoint(), dc.getCurrentLayer());
             }
@@ -535,11 +539,9 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * Indicates whether or not the tree layout needs to be recomputed.
      *
      * @param frameSize Size of the frame that holds the tree.
-     *
      * @return {@code true} if the layout needs to be recomputed, otherwise {@code false}.
      */
-    protected boolean mustRecomputeTreeLayout(Dimension frameSize)
-    {
+    protected boolean mustRecomputeTreeLayout(Dimension frameSize) {
         return this.mustRecomputeLayout || this.previousFrameSize == null
             || this.previousFrameSize.width != frameSize.width;
     }
@@ -548,11 +550,9 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * Indicates whether or not the tree size needs to be recomputed.
      *
      * @param frameSize Size of the frame that holds the tree. Size may be null if the frame size is not known.
-     *
      * @return {@code true} if the size needs to be recomputed, otherwise {@code false}.
      */
-    protected boolean mustRecomputeSize(Dimension frameSize)
-    {
+    protected boolean mustRecomputeSize(Dimension frameSize) {
         return this.mustRecomputeSize
             || (this.previousSizeBounds == null && frameSize != null)
             || (frameSize != null && this.previousSizeBounds.width != frameSize.width);
@@ -565,10 +565,8 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @param dc Current draw context.
      */
-    protected void updateAttributes(DrawContext dc)
-    {
-        if (dc.getFrameTimeStamp() != this.attributesFrameNumber)
-        {
+    protected void updateAttributes(DrawContext dc) {
+        if (dc.getFrameTimeStamp() != this.attributesFrameNumber) {
             this.determineActiveAttributes();
             this.indent = this.computeIndentation();
             this.lineHeight = this.computeMaxTextHeight(dc);
@@ -582,8 +580,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return indention (in pixels) to apply to each new level in the tree.
      */
-    protected int computeIndentation()
-    {
+    protected int computeIndentation() {
         int iconWidth = this.getActiveAttributes().getIconSize().width;
         int iconSpacing = this.getActiveAttributes().getIconSpace();
         int checkboxWidth = this.getSelectedSymbolSize().width;
@@ -596,11 +593,9 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * Determine the maximum height of a line of text using the active font.
      *
      * @param dc Current draw context.
-     *
      * @return The maximum height of a line of text.
      */
-    protected int computeMaxTextHeight(DrawContext dc)
-    {
+    protected int computeMaxTextHeight(DrawContext dc) {
         TreeAttributes attributes = this.getActiveAttributes();
 
         // Use underscore + capital E with acute accent as max height
@@ -620,13 +615,11 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param clipBounds Pixels outside of this rectangle will be discarded. Any nodes that do not intersect this
      *                   rectangle will not be drawn.
      */
-    protected void renderNodes(DrawContext dc, Point drawPoint, Iterable<NodeLayout> nodes, Rectangle clipBounds)
-    {
+    protected void renderNodes(DrawContext dc, Point drawPoint, Iterable<NodeLayout> nodes, Rectangle clipBounds) {
         // Collect the nodes that are actually visible in the scroll area in a list.
-        List<NodeLayout> visibleNodes = new ArrayList<>();
+        Collection<NodeLayout> visibleNodes = new ArrayList<>();
 
-        for (NodeLayout layout : nodes)
-        {
+        for (NodeLayout layout : nodes) {
             layout.reset(drawPoint);
 
             if (this.intersectsFrustum(dc, layout, clipBounds))
@@ -652,16 +645,14 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         // If not picking, draw text and icons. Otherwise just draw pickable rectangles tagged with the node. Unlike
         // the toggle and select controls, selecting the node does not mean anything to the tree, but it may mean
         // something to an application controller.
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             this.drawIcons(dc, visibleNodes);
             this.drawText(dc, visibleNodes);
 
             if (this.isShowDescription())
                 this.drawDescriptionText(dc, visibleNodes);
         }
-        else
-        {
+        else {
             this.pickTextAndIcon(dc, visibleNodes);
         }
     }
@@ -672,11 +663,9 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param dc           the current draw context.
      * @param layout       node to test intersection of.
      * @param scrollBounds bounds of the area currently visible in the scroll frame.
-     *
      * @return {@code true} If the frame intersects the frustum, otherwise {@code false}.
      */
-    protected boolean intersectsFrustum(DrawContext dc, NodeLayout layout, Rectangle scrollBounds)
-    {
+    protected boolean intersectsFrustum(DrawContext dc, NodeLayout layout, Rectangle scrollBounds) {
         //noinspection SimplifiableIfStatement
         if (!scrollBounds.intersects(layout.screenBounds))
             return false;
@@ -690,24 +679,21 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param dc    Current draw context.
      * @param nodes Visible nodes.
      */
-    protected void pickTextAndIcon(DrawContext dc, Iterable<NodeLayout> nodes)
-    {
+    protected void pickTextAndIcon(DrawContext dc, Iterable<NodeLayout> nodes) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        try
-        {
+        try {
             gl.glBegin(GL2.GL_QUADS);
 
-            for (NodeLayout layout : nodes)
-            {
+            for (NodeLayout layout : nodes) {
                 Color color = dc.getUniquePickColor();
                 PickedObject pickedObject = new PickedObject(color.getRGB(), layout.node);
                 pickedObject.setValue(AVKey.HOT_SPOT, this.getFrame());
                 this.pickSupport.addPickableObject(pickedObject);
                 gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
 
-                float minX = (float) layout.drawPoint.x;
-                float minY = (float) layout.drawPoint.y;
+                float minX = layout.drawPoint.x;
+                float minY = layout.drawPoint.y;
                 float maxX = (float) layout.screenBounds.getMaxX();
                 float maxY = (float) layout.screenBounds.getMaxY();
 
@@ -717,8 +703,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                 gl.glVertex2f(minX, minY);
             }
         }
-        finally
-        {
+        finally {
             gl.glEnd(); // Quads
         }
     }
@@ -729,8 +714,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param dc    Current draw context.
      * @param nodes List of visible nodes.
      */
-    protected void drawText(DrawContext dc, Iterable<NodeLayout> nodes)
-    {
+    protected void drawText(DrawContext dc, Iterable<NodeLayout> nodes) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         TreeAttributes attributes = this.getActiveAttributes();
@@ -742,13 +726,11 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
 
         gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
 
-        try
-        {
+        try {
             textRenderer.begin3DRendering();
             textRenderer.setColor(colorRGB[0], colorRGB[1], colorRGB[2], 1);
 
-            for (NodeLayout layout : nodes)
-            {
+            for (NodeLayout layout : nodes) {
                 String text = this.getText(layout.node);
                 Rectangle2D textBounds = this.getTextBounds(dc, text, attributes.getFont());
 
@@ -760,8 +742,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                 textRenderer.draw(text, layout.drawPoint.x, layout.drawPoint.y + vertAdjust);
             }
         }
-        finally
-        {
+        finally {
             textRenderer.end3DRendering();
         }
     }
@@ -772,8 +753,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param dc    Current draw context.
      * @param nodes List of visible nodes.
      */
-    protected void drawDescriptionText(DrawContext dc, Iterable<NodeLayout> nodes)
-    {
+    protected void drawDescriptionText(DrawContext dc, Iterable<NodeLayout> nodes) {
         TreeAttributes attributes = this.getActiveAttributes();
         Color color = attributes.getColor();
         float[] colorRGB = color.getRGBColorComponents(null);
@@ -782,17 +762,14 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
             attributes.getDescriptionFont(), true, false, false);
         MultiLineTextRenderer mltr = new MultiLineTextRenderer(textRenderer);
 
-        try
-        {
+        try {
             textRenderer.begin3DRendering();
             textRenderer.setColor(colorRGB[0], colorRGB[1], colorRGB[2], 1);
 
-            for (NodeLayout layout : nodes)
-            {
+            for (NodeLayout layout : nodes) {
                 String description = layout.node.getDescription();
 
-                if (description != null)
-                {
+                if (description != null) {
                     String wrappedText = this.computeWrappedText(dc, layout.node, attributes.getDescriptionFont(),
                         (int) (layout.screenBounds.getMaxX() - layout.drawPoint.x));
 
@@ -801,8 +778,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                 }
             }
         }
-        finally
-        {
+        finally {
             textRenderer.end3DRendering();
         }
     }
@@ -813,24 +789,21 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param dc    Current draw context.
      * @param nodes List of visible nodes.
      */
-    protected void drawIcons(DrawContext dc, Iterable<NodeLayout> nodes)
-    {
+    protected void drawIcons(DrawContext dc, Iterable<NodeLayout> nodes) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        try
-        {
+        try {
             gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
             gl.glEnable(GL.GL_TEXTURE_2D);
 
             TreeAttributes attributes = this.getActiveAttributes();
             Dimension iconSize = attributes.getIconSize();
 
-            gl.glColor4d(1d, 1d, 1d, 1);
+            gl.glColor4d(1.0d, 1.0d, 1.0d, 1);
 
             WWTexture activeTexture = null;
 
-            for (NodeLayout layout : nodes)
-            {
+            for (NodeLayout layout : nodes) {
                 WWTexture texture = layout.node.getTexture();
                 if (texture == null)
                     continue;
@@ -839,38 +812,32 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                 // the texture.
                 boolean textureBound;
                 // noinspection SimplifiableIfStatement
-                if ((activeTexture != null) && (texture.getImageSource() == activeTexture.getImageSource()))
-                {
+                if ((activeTexture != null) && (texture.getImageSource() == activeTexture.getImageSource())) {
                     textureBound = true;
                 }
-                else
-                {
+                else {
                     textureBound = texture.bind(dc);
                     if (textureBound)
                         activeTexture = texture;
                 }
 
-                if (textureBound)
-                {
+                if (textureBound) {
                     // If the total node height is greater than the image height, vertically center the image
                     int vertAdjustment = 0;
-                    if (iconSize.height < layout.bounds.height)
-                    {
+                    if (iconSize.height < layout.bounds.height) {
                         vertAdjustment = layout.bounds.height - iconSize.height
                             - (this.lineHeight - iconSize.height) / 2;
                     }
 
-                    try
-                    {
+                    try {
                         gl.glPushMatrix();
 
                         TextureCoords texCoords = activeTexture.getTexCoords();
                         gl.glTranslated(layout.drawPoint.x, layout.drawPoint.y + vertAdjustment, 1.0);
-                        gl.glScaled(iconSize.width, iconSize.width, 1d);
+                        gl.glScaled(iconSize.width, iconSize.width, 1.0d);
                         dc.drawUnitQuad(texCoords);
                     }
-                    finally
-                    {
+                    finally {
                         gl.glPopMatrix();
                     }
 
@@ -878,8 +845,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                 }
             }
         }
-        finally
-        {
+        finally {
             gl.glDisable(GL.GL_TEXTURE_2D);
             gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
         }
@@ -892,8 +858,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param dc    Current draw context.
      * @param nodes List of visible nodes.
      */
-    protected void drawCheckboxes(DrawContext dc, Iterable<NodeLayout> nodes)
-    {
+    protected void drawCheckboxes(DrawContext dc, Iterable<NodeLayout> nodes) {
         // The check boxes are drawn in three passes:
         // 1) Draw filled background for partially selected nodes
         // 2) Draw check marks for selected nodes
@@ -903,15 +868,13 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
 
         Dimension symbolSize;
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             this.drawFilledCheckboxes(dc, nodes); // Draw filled boxes for partially selected nodes
             this.drawCheckmarks(dc, nodes); // Draw check marks for selected nodes
 
             symbolSize = this.getSelectedSymbolSize();
         }
-        else
-        {
+        else {
             // Make the pickable area of the checkbox a little bigger than the actual box so that it is easier to hit.
             symbolSize = new Dimension(this.getSelectedSymbolSize().width + this.getActiveAttributes().getIconSpace(),
                 this.lineHeight + this.getActiveAttributes().getRowSpacing());
@@ -919,14 +882,11 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
 
         // In picking mode all of the boxes can be drawn as filled quads. Otherwise, each box is drawn as a
         // separate line loop
-        if (dc.isPickingMode())
-        {
+        if (dc.isPickingMode()) {
             gl.glBegin(GL2.GL_QUADS);
         }
-        try
-        {
-            for (NodeLayout layout : nodes)
-            {
+        try {
+            for (NodeLayout layout : nodes) {
                 int vertAdjust = layout.bounds.height - symbolSize.height
                     - (this.lineHeight - symbolSize.height) / 2;
 
@@ -934,25 +894,21 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                 int y = layout.drawPoint.y + vertAdjust;
                 int width = symbolSize.width;
 
-                if (!dc.isPickingMode())
-                {
+                if (!dc.isPickingMode()) {
                     // Draw a hollow box uses a line loop
                     gl.glBegin(GL2.GL_LINE_LOOP);
-                    try
-                    {
+                    try {
                         gl.glVertex2f(x + width, y + symbolSize.height + 0.5f);
                         gl.glVertex2f(x, y + symbolSize.height + 0.5f);
                         gl.glVertex2f(x, y);
                         gl.glVertex2f(x + width, y + 0.5f);
                     }
-                    finally
-                    {
+                    finally {
                         gl.glEnd();
                     }
                 }
                 // Otherwise draw a filled quad
-                else
-                {
+                else {
                     Color color = dc.getUniquePickColor();
                     int colorCode = color.getRGB();
                     this.pickSupport.addPickableObject(colorCode, this.createSelectControl(layout.node));
@@ -960,8 +916,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
 
                     // If the node does not have a triangle to the left of the checkbox, make the checkbox pickable
                     // area stretch all the way to the frame on the left hand side, since this is otherwise dead space.
-                    if (layout.node.isLeaf() || !this.isDrawNodeStateSymbol())
-                    {
+                    if (layout.node.isLeaf() || !this.isDrawNodeStateSymbol()) {
                         width = x - this.screenLocation.x + symbolSize.width;
                         x = this.screenLocation.x;
                     }
@@ -975,10 +930,8 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                 layout.drawPoint.x += symbolSize.width + this.getActiveAttributes().getIconSpace();
             }
         }
-        finally
-        {
-            if (dc.isPickingMode())
-            {
+        finally {
+            if (dc.isPickingMode()) {
                 gl.glEnd(); // Quads
             }
         }
@@ -990,8 +943,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param dc    Current draw context.
      * @param nodes List of visible nodes.
      */
-    protected void drawFilledCheckboxes(DrawContext dc, Iterable<NodeLayout> nodes)
-    {
+    protected void drawFilledCheckboxes(DrawContext dc, Iterable<NodeLayout> nodes) {
         Dimension selectedSymbolSize = this.getSelectedSymbolSize();
         TreeAttributes attributes = this.getActiveAttributes();
 
@@ -999,15 +951,13 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
 
         Color[] colors = attributes.getCheckBoxColor();
 
-        try
-        {
-            gl.glLineWidth(1f);
+        try {
+            gl.glLineWidth(1.0f);
             gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
             // Fill box with a diagonal gradient
             gl.glBegin(GL2.GL_QUADS);
 
-            for (NodeLayout layout : nodes)
-            {
+            for (NodeLayout layout : nodes) {
                 int vertAdjust = layout.bounds.height - selectedSymbolSize.height
                     - (this.lineHeight - selectedSymbolSize.height) / 2;
 
@@ -1017,8 +967,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                 String selected = layout.node.isTreeSelected();
                 boolean filled = TreeNode.PARTIALLY_SELECTED.equals(selected);
 
-                if (filled)
-                {
+                if (filled) {
                     OGLUtil.applyColor(gl, colors[0], 1, false);
                     gl.glVertex2f(x + selectedSymbolSize.width, y + selectedSymbolSize.height);
                     gl.glVertex2f(x, y + selectedSymbolSize.height);
@@ -1029,8 +978,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                 }
             }
         }
-        finally
-        {
+        finally {
             gl.glEnd(); // Quads
         }
     }
@@ -1041,8 +989,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param dc    Current draw context.
      * @param nodes List of visible nodes.
      */
-    protected void drawCheckmarks(DrawContext dc, Iterable<NodeLayout> nodes)
-    {
+    protected void drawCheckmarks(DrawContext dc, Iterable<NodeLayout> nodes) {
         Dimension selectedSymbolSize = this.getSelectedSymbolSize();
         TreeAttributes attributes = this.getActiveAttributes();
 
@@ -1052,20 +999,17 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
 
         // Draw checkmarks for selected nodes
         OGLUtil.applyColor(gl, color, 1, false);
-        try
-        {
+        try {
             gl.glEnable(GL.GL_LINE_SMOOTH);
             gl.glBegin(GL2.GL_LINES);
 
-            for (NodeLayout layout : nodes)
-            {
+            for (NodeLayout layout : nodes) {
                 int vertAdjust = layout.bounds.height - selectedSymbolSize.height
                     - (this.lineHeight - selectedSymbolSize.height) / 2;
 
                 String selected = layout.node.isTreeSelected();
                 boolean checked = TreeNode.SELECTED.equals(selected);
-                if (checked)
-                {
+                if (checked) {
                     int x = layout.drawPoint.x;
                     int y = layout.drawPoint.y + vertAdjust;
 
@@ -1077,8 +1021,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                 }
             }
         }
-        finally
-        {
+        finally {
             gl.glEnd(); // Lines
             gl.glDisable(GL.GL_LINE_SMOOTH);
         }
@@ -1090,8 +1033,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param dc    Current draw context.
      * @param nodes Visible nodes.
      */
-    protected void drawTriangles(DrawContext dc, Iterable<NodeLayout> nodes)
-    {
+    protected void drawTriangles(DrawContext dc, Iterable<NodeLayout> nodes) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         Dimension symbolSize = this.getNodeStateSymbolSize();
@@ -1102,41 +1044,34 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         int iconSpace = this.getActiveAttributes().getIconSpace();
         int pickWidth = symbolSize.width + iconSpace;
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             TreeAttributes attributes = this.getActiveAttributes();
 
             Color color = attributes.getColor();
 
             gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
-            gl.glLineWidth(1f);
+            gl.glLineWidth(1.0f);
             OGLUtil.applyColor(gl, color, 1, false);
 
             gl.glBegin(GL2.GL_TRIANGLES);
         }
-        else
-        {
+        else {
             gl.glBegin(GL2.GL_QUADS); // Draw pick areas as rectangles, not triangles
         }
 
-        try
-        {
-            for (NodeLayout layout : nodes)
-            {
+        try {
+            for (NodeLayout layout : nodes) {
 
                 // If the node is not a leaf, draw a symbol to indicate if it is expanded or collapsed
-                if (!layout.node.isLeaf())
-                {
+                if (!layout.node.isLeaf()) {
                     int x = layout.drawPoint.x;
                     int y = layout.drawPoint.y;
 
-                    if (!dc.isPickingMode())
-                    {
+                    if (!dc.isPickingMode()) {
                         x += halfWidth;
                         y += halfHeight;
 
-                        if (this.tree.isNodeExpanded(layout.node))
-                        {
+                        if (this.tree.isNodeExpanded(layout.node)) {
                             int vertAdjust = layout.bounds.height - halfWidth - (this.lineHeight - halfWidth) / 2;
                             y += vertAdjust;
 
@@ -1145,8 +1080,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                             gl.glVertex2i(x, -halfWidth + y);
                             gl.glVertex2i(x + halfHeight, y);
                         }
-                        else
-                        {
+                        else {
                             int vertAdjust = layout.bounds.height - symbolSize.height
                                 - (this.lineHeight - symbolSize.height) / 2;
                             y += vertAdjust;
@@ -1157,8 +1091,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                             gl.glVertex2f(x, halfHeight + y - 0.5f);
                         }
                     }
-                    else
-                    {
+                    else {
                         Color color = dc.getUniquePickColor();
                         int colorCode = color.getRGB();
                         this.pickSupport.addPickableObject(colorCode,
@@ -1181,8 +1114,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                         + this.getActiveAttributes().getIconSpace();
             }
         }
-        finally
-        {
+        finally {
             gl.glEnd(); // Triangles if drawing, quads if picking
         }
     }
@@ -1200,14 +1132,12 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param nodes     List to collect nodes that are currently visible. This method adds nodes to this list.
      */
     protected void computeTreeLayout(TreeNode root, DrawContext dc, Dimension frameSize, Point location, int level,
-        java.util.List<NodeLayout> nodes)
-    {
+        List<NodeLayout> nodes) {
         TreeAttributes attributes = this.getActiveAttributes();
 
         int oldX = location.x;
 
-        if (this.mustDisplayNode(root, level))
-        {
+        if (this.mustDisplayNode(root, level)) {
             Dimension size = this.getNodeSize(dc, frameSize, location.x, root, attributes);
 
             // Adjust y to the bottom of the node area
@@ -1233,10 +1163,8 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         }
 
         // Draw child nodes if the root node is expanded.
-        if (this.tree.isNodeExpanded(root))
-        {
-            for (TreeNode child : root.getChildren())
-            {
+        if (this.tree.isNodeExpanded(root)) {
+            for (TreeNode child : root.getChildren()) {
                 this.computeTreeLayout(child, dc, frameSize, location, level + 1, nodes);
             }
         }
@@ -1253,18 +1181,15 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param location  Point in OpenGL screen coordinates (origin lower left corner) that defines the upper left corner
      *                  of the subtree.
      * @param level     Level of this subtree in the tree. The root node is level 1, its children are level 2, etc.
-     *
      * @return Bounds of the node {@code needle}.
      */
     protected Rectangle findNodeBounds(TreeNode needle, TreeNode haystack, DrawContext dc, Dimension frameSize,
-        Point location, int level)
-    {
+        Point location, int level) {
         TreeAttributes attributes = this.getActiveAttributes();
 
         int oldX = location.x;
 
-        if (level > 1 || attributes.isRootVisible())
-        {
+        if (level > 1 || attributes.isRootVisible()) {
             Dimension size = this.getNodeSize(dc, frameSize, location.x, haystack, attributes);
 
             // Adjust y to the bottom of the node area
@@ -1279,10 +1204,8 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         }
 
         // Draw child nodes if the root node is expanded
-        if (this.tree.isNodeExpanded(haystack))
-        {
-            for (TreeNode child : haystack.getChildren())
-            {
+        if (this.tree.isNodeExpanded(haystack)) {
+            for (TreeNode child : haystack.getChildren()) {
                 Rectangle bounds = this.findNodeBounds(needle, child, dc, frameSize, location, level + 1);
                 if (bounds != null)
                     return bounds;
@@ -1293,16 +1216,16 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         return null;
     }
 
-    /** {@inheritDoc} */
-    public synchronized void makeVisible(TreePath path)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized void makeVisible(TreePath path) {
         TreeNode node = this.tree.getNode(path);
         if (node == null)
             return;
 
         TreeNode parent = node.getParent();
-        while (parent != null)
-        {
+        while (parent != null) {
             this.tree.expandPath(parent.getPath());
             parent = parent.getParent();
         }
@@ -1318,8 +1241,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return Screen location, measured in pixels from the upper left corner of the screen.
      */
-    public Offset getScreenLocation()
-    {
+    public Offset getScreenLocation() {
         return this.frame.getScreenLocation();
     }
 
@@ -1329,22 +1251,22 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @param screenLocation New screen location.
      */
-    public void setScreenLocation(Offset screenLocation)
-    {
+    public void setScreenLocation(Offset screenLocation) {
         frame.setScreenLocation(screenLocation);
     }
 
-    /** {@inheritDoc} */
-    public TreeAttributes getAttributes()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public TreeAttributes getAttributes() {
         return this.normalAttributes;
     }
 
-    /** {@inheritDoc} */
-    public void setAttributes(TreeAttributes attributes)
-    {
-        if (attributes == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void setAttributes(TreeAttributes attributes) {
+        if (attributes == null) {
             String msg = Logging.getMessage("nullValue.AttributesIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1358,8 +1280,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return Attributes to use when tree is highlighted.
      */
-    public TreeAttributes getHighlightAttributes()
-    {
+    public TreeAttributes getHighlightAttributes() {
         return this.highlightAttributes;
     }
 
@@ -1368,10 +1289,8 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @param attributes New highlight attributes.
      */
-    public void setHighlightAttributes(TreeAttributes attributes)
-    {
-        if (attributes == null)
-        {
+    public void setHighlightAttributes(TreeAttributes attributes) {
+        if (attributes == null) {
             String msg = Logging.getMessage("nullValue.AttributesIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1385,22 +1304,20 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return Highlight attributes if the tree is highlighted. Otherwise, the normal attributes.
      */
-    protected TreeAttributes getActiveAttributes()
-    {
+    protected TreeAttributes getActiveAttributes() {
         return this.activeAttributes;
     }
 
-    /** Determines which attributes -- normal, highlight or default -- to use each frame. */
-    protected void determineActiveAttributes()
-    {
+    /**
+     * Determines which attributes -- normal, highlight or default -- to use each frame.
+     */
+    protected void determineActiveAttributes() {
         TreeAttributes newAttributes = defaultAttributes;
 
-        if (this.isHighlighted())
-        {
+        if (this.isHighlighted()) {
             if (this.getHighlightAttributes() != null)
                 newAttributes = this.getHighlightAttributes();
-            else
-            {
+            else {
                 // If no highlight attributes have been specified we will use the normal attributes.
                 if (this.getAttributes() != null)
                     newAttributes = this.getAttributes();
@@ -1408,14 +1325,12 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                     newAttributes = defaultAttributes;
             }
         }
-        else if (this.getAttributes() != null)
-        {
+        else if (this.getAttributes() != null) {
             newAttributes = this.getAttributes();
         }
 
         // If the attributes have changed since the last frame, change the update time since the tree needs to repaint
-        if (!newAttributes.equals(this.activeAttributes))
-        {
+        if (!newAttributes.equals(this.activeAttributes)) {
             this.markUpdated();
         }
 
@@ -1427,8 +1342,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return True if the tree is highlighted.
      */
-    public boolean isHighlighted()
-    {
+    public boolean isHighlighted() {
         return this.highlighted;
     }
 
@@ -1437,8 +1351,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @param highlighted True if the tree should be highlighted.
      */
-    public void setHighlighted(boolean highlighted)
-    {
+    public void setHighlighted(boolean highlighted) {
         this.highlighted = highlighted;
     }
 
@@ -1447,8 +1360,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @return The frame that the tree is drawn on.
      */
-    public ScrollFrame getFrame()
-    {
+    public ScrollFrame getFrame() {
         return this.frame;
     }
 
@@ -1460,16 +1372,13 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param x          Offset in pixels from the left side of the screen to the left most part of the node.
      * @param node       Node for which to compute bounds.
      * @param attributes Attributes to use for bounds calculation.
-     *
      * @return The dimensions of the node.
      */
-    public Dimension getNodeSize(DrawContext dc, Dimension frameSize, int x, TreeNode node, TreeAttributes attributes)
-    {
+    public Dimension getNodeSize(DrawContext dc, Dimension frameSize, int x, TreeNode node, TreeAttributes attributes) {
         Dimension size = new Dimension();
 
         // Find bounds of the node icon.
-        if (node.hasImage())
-        {
+        if (node.hasImage()) {
             Dimension iconSize = attributes.getIconSize();
             if (iconSize.height > size.height)
                 size.height = iconSize.height;
@@ -1494,8 +1403,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
 
         // Find the bounds of the description string, which may be wrapped to multiple lines.
         String description = this.getDescriptionText(node);
-        if (description != null)
-        {
+        if (description != null) {
             Rectangle2D descriptionBounds;
 
             // Compute bounds based on wrapped text, if text is set to wrap
@@ -1512,52 +1420,44 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
                 // edge that the text wraps to. Otherwise, the text will display on one line, so compute the bounds of the
                 // unwrapped text.
                 int width;
-                if (numLines == 1)
-                {
+                if (numLines == 1) {
                     descriptionBounds = this.getMultilineTextBounds(dc, description, attributes.getDescriptionFont());
                     width = (int) Math.min(textAreaWidth, descriptionBounds.getWidth());
                 }
-                else
-                {
+                else {
                     width = textAreaWidth;
                 }
                 descriptionBounds = new Rectangle(width, numLines * this.lineHeight);
 
                 NodeLayout layout = this.layoutCache.get(node);
-                if (layout == null)
-                {
+                if (layout == null) {
                     layout = new NodeLayout(node);
                     this.layoutCache.put(node, layout);
                 }
                 layout.numLines = numLines;
             }
-            else
-            {
+            else {
                 descriptionBounds = this.getMultilineTextBounds(dc, description, attributes.getDescriptionFont());
             }
 
             size.height += (int) Math.abs(descriptionBounds.getHeight());
             size.width += Math.max(textWidth, descriptionBounds.getWidth());
         }
-        else
-        {
+        else {
             size.width += textWidth;
         }
 
         return size;
     }
 
-    protected int estimateWrappedTextLines(DrawContext dc, String text, Font font, int frameWidth)
-    {
+    protected int estimateWrappedTextLines(DrawContext dc, String text, Font font, int frameWidth) {
         boolean containsWhitespace = (text.contains(" ") || text.contains("\t"));
 
         // If there's no whitespace in the string, then the text can't wrap, it must be one line
-        if (!containsWhitespace)
-        {
+        if (!containsWhitespace) {
             return 1;
         }
-        else
-        {
+        else {
             // Compute the bounds of the first 50 characters of the string, and use this to estimate the length of the
             // full string. Computing the length of a very long description string can be very expensive, and all we're
             // really trying to figure out is whether the line will need to wrap or not.
@@ -1577,23 +1477,19 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param node  Node for which to get wrapped text.
      * @param font  Font to use for the description.
      * @param width Width to which to wrap text.
-     *
      * @return The wrapped text as a String. The string will contain newline characters to delimit the lines of wrapped
-     *         text.
+     * text.
      */
-    protected String computeWrappedText(DrawContext dc, TreeNode node, Font font, int width)
-    {
+    protected String computeWrappedText(DrawContext dc, TreeNode node, Font font, int width) {
         NodeLayout layout = this.layoutCache.get(node);
 
-        if (layout == null)
-        {
+        if (layout == null) {
             layout = new NodeLayout(node);
             this.layoutCache.put(node, layout);
         }
 
         String description = node.getDescription();
-        if ((layout.wrappedText == null || layout.textWrapWidth != width) && description != null)
-        {
+        if ((layout.wrappedText == null || layout.textWrapWidth != width) && description != null) {
             TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
             MultiLineTextRenderer mltr = new MultiLineTextRenderer(textRenderer);
 
@@ -1608,11 +1504,11 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         return layout.wrappedText;
     }
 
-    /** Invalidate the computed wrapped text, forcing the text wrap to be recomputed. */
-    protected void invalidateWrappedText()
-    {
-        for (Map.Entry<TreeNode, NodeLayout> entry : this.layoutCache.entrySet())
-        {
+    /**
+     * Invalidate the computed wrapped text, forcing the text wrap to be recomputed.
+     */
+    protected void invalidateWrappedText() {
+        for (Map.Entry<TreeNode, NodeLayout> entry : this.layoutCache.entrySet()) {
             entry.getValue().wrappedText = null;
         }
     }
@@ -1623,27 +1519,21 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @param tree Tree that contains the node.
      * @param node The node to expand or collapse.
-     *
      * @return A {@link TreeHotSpot} that will be added as a pickable object to the screen area occupied by the toggle
-     *         control.
+     * control.
      */
-    protected HotSpot createTogglePathControl(final Tree tree, final TreeNode node)
-    {
-        return new TreeHotSpot(this.getFrame())
-        {
+    protected HotSpot createTogglePathControl(final Tree tree, final TreeNode node) {
+        return new TreeHotSpot(this.getFrame()) {
             @Override
-            public void selected(SelectEvent event)
-            {
+            public void selected(SelectEvent event) {
                 if (event == null || this.isConsumed(event))
                     return;
 
-                if (event.isLeftClick() || event.isLeftDoubleClick())
-                {
+                if (event.isLeftClick() || event.isLeftDoubleClick()) {
                     tree.togglePath(node.getPath());
                     event.consume();
                 }
-                else
-                {
+                else {
                     super.selected(event);
                 }
             }
@@ -1656,27 +1546,21 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * #toggleNodeSelection(TreeNode)}</code> upon a left-click select event.
      *
      * @param node The node to expand or collapse.
-     *
      * @return A {@link TreeHotSpot} that will be added as a pickable object to the screen area occupied by the toggle
-     *         control.
+     * control.
      */
-    protected HotSpot createSelectControl(final TreeNode node)
-    {
-        return new TreeHotSpot(this.getFrame())
-        {
+    protected HotSpot createSelectControl(final TreeNode node) {
+        return new TreeHotSpot(this.getFrame()) {
             @Override
-            public void selected(SelectEvent event)
-            {
+            public void selected(SelectEvent event) {
                 if (event == null || this.isConsumed(event))
                     return;
 
-                if (event.isLeftClick() || event.isLeftDoubleClick())
-                {
+                if (event.isLeftClick() || event.isLeftDoubleClick()) {
                     toggleNodeSelection(node);
                     event.consume();
                 }
-                else
-                {
+                else {
                     super.selected(event);
                 }
             }
@@ -1690,17 +1574,14 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param dc   Draw context.
      * @param text Text to get bounds of.
      * @param font Font applied to the text.
-     *
      * @return A rectangle that describes the node bounds. See com.jogamp.opengl.util.awt.TextRenderer.getBounds for
-     *         information on how this rectangle should be interpreted.
+     * information on how this rectangle should be interpreted.
      */
-    protected Rectangle2D getTextBounds(DrawContext dc, String text, Font font)
-    {
+    protected Rectangle2D getTextBounds(DrawContext dc, String text, Font font) {
         TextCacheKey cacheKey = new TextCacheKey(text, font);
         Rectangle2D bounds = this.textCache.get(cacheKey);
 
-        if (bounds == null)
-        {
+        if (bounds == null) {
             TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
             bounds = textRenderer.getBounds(text);
 
@@ -1717,18 +1598,15 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param dc   Current draw context.
      * @param text Text to find bounds of.
      * @param font Font applied to the text.
-     *
      * @return A rectangle that describes the node bounds. See com.jogamp.opengl.util.awt.TextRenderer.getBounds for
-     *         information on how this rectangle should be interpreted.
+     * information on how this rectangle should be interpreted.
      */
-    protected Rectangle2D getMultilineTextBounds(DrawContext dc, String text, Font font)
-    {
+    protected Rectangle2D getMultilineTextBounds(DrawContext dc, String text, Font font) {
         int width = 0;
         int maxLineHeight = 0;
         String[] lines = text.split("\n");
 
-        for (String line : lines)
-        {
+        for (String line : lines) {
             Rectangle2D lineBounds = this.getTextBounds(dc, line, font);
             width = (int) Math.max(lineBounds.getWidth(), width);
             maxLineHeight = (int) Math.max(lineBounds.getMaxY(), lineHeight);
@@ -1751,8 +1629,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      *
      * @param node the <code>TreeNode</code> who's selection state should be toggled.
      */
-    protected void toggleNodeSelection(TreeNode node)
-    {
+    protected void toggleNodeSelection(TreeNode node) {
         boolean selected = !node.isSelected();
         node.setSelected(selected);
 
@@ -1767,13 +1644,11 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         // the first ancestor with a selected child. This avoids clearing a selected path to another interior or leaf
         // node.
         TreeNode parent = node.getParent();
-        while (parent != null)
-        {
+        while (parent != null) {
             boolean prevSelected = parent.isSelected();
             parent.setSelected(selected);
 
-            if (!selected && !TreeNode.NOT_SELECTED.equals(parent.isTreeSelected()))
-            {
+            if (!selected && !TreeNode.NOT_SELECTED.equals(parent.isTreeSelected())) {
                 parent.setSelected(prevSelected);
                 break;
             }
@@ -1788,10 +1663,8 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * @param node     the <code>TreeNode</code> who descendants selection should be set.
      * @param selected <code>true</code> to mark the descendants and selected, otherwise <code>false</code>.
      */
-    protected void setDescendantsSelected(TreeNode node, boolean selected)
-    {
-        for (TreeNode child : node.getChildren())
-        {
+    protected void setDescendantsSelected(TreeNode node, boolean selected) {
+        for (TreeNode child : node.getChildren()) {
             child.setSelected(selected);
 
             if (!child.isLeaf())
@@ -1803,11 +1676,9 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * Get the text for a node.
      *
      * @param node Node to get text for.
-     *
      * @return Text for node.
      */
-    protected String getText(TreeNode node)
-    {
+    protected String getText(TreeNode node) {
         return node.getText();
     }
 
@@ -1815,22 +1686,27 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
      * Get the description text for a node.
      *
      * @param node Node to get text for.
-     *
      * @return Description text for {@code node}. May return null if there is no description.
      */
-    protected String getDescriptionText(TreeNode node)
-    {
+    protected String getDescriptionText(TreeNode node) {
         return node.getDescription();
     }
 
-    /** Cache key for cache text bound cache. */
-    protected static class TextCacheKey
-    {
-        /** Text string. */
+    /**
+     * Cache key for cache text bound cache.
+     */
+    protected static class TextCacheKey {
+        /**
+         * Text string.
+         */
         protected String text;
-        /** Font used to compute bounds. */
+        /**
+         * Font used to compute bounds.
+         */
         protected Font font;
-        /** Hash code. */
+        /**
+         * Hash code.
+         */
         protected int hash = 0;
 
         /**
@@ -1839,16 +1715,13 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
          * @param text String for which to cache bounds.
          * @param font Font of the rendered string.
          */
-        public TextCacheKey(String text, Font font)
-        {
-            if (text == null)
-            {
+        public TextCacheKey(String text, Font font) {
+            if (text == null) {
                 String message = Logging.getMessage("nullValue.StringIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
-            if (font == null)
-            {
+            if (font == null) {
                 String message = Logging.getMessage("nullValue.FontIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
@@ -1859,8 +1732,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         }
 
         @Override
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (o == null || this.getClass() != o.getClass())
@@ -1872,10 +1744,8 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         }
 
         @Override
-        public int hashCode()
-        {
-            if (this.hash == 0)
-            {
+        public int hashCode() {
+            if (this.hash == 0) {
                 int result;
                 result = this.text.hashCode();
                 result = 31 * result + this.font.hashCode();
@@ -1885,26 +1755,37 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
         }
     }
 
-    /** Class to hold information about how a tree node is laid out. */
-    protected static class NodeLayout
-    {
-        /** Node that this layout applies to. */
+    /**
+     * Class to hold information about how a tree node is laid out.
+     */
+    protected static class NodeLayout {
+        /**
+         * Node that this layout applies to.
+         */
         protected TreeNode node;
-        /** Node bounds, relative to the bottom left corner of the tree. */
+        /**
+         * Node bounds, relative to the bottom left corner of the tree.
+         */
         protected Rectangle bounds;
         protected Rectangle pickBounds;
         /**
          * Node bounds relative to the bottom left corner of the viewport. This field is set by {@link
-         * #reset(java.awt.Point)}.
+         * #reset(Point)}.
          */
         protected Rectangle screenBounds;
         protected Rectangle pickScreenBounds;
 
-        /** Wrapped version of the node description text. Computed once and then cached here. */
+        /**
+         * Wrapped version of the node description text. Computed once and then cached here.
+         */
         protected String wrappedText;
-        /** The width used to wrap the description text. */
+        /**
+         * The width used to wrap the description text.
+         */
         protected int textWrapWidth;
-        /** Number of lines of wrapped description text in this layout. */
+        /**
+         * Number of lines of wrapped description text in this layout.
+         */
         protected int numLines;
 
         /**
@@ -1921,10 +1802,8 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
          *
          * @param node Node that is being laid out.
          */
-        protected NodeLayout(TreeNode node)
-        {
-            if (node == null)
-            {
+        protected NodeLayout(TreeNode node) {
+            if (node == null) {
                 String message = Logging.getMessage("nullValue.TreeNodeIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
@@ -1940,8 +1819,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
          * @param treePoint location of the lower left corner of the tree, measured in GL coordinates (origin lower left
          *                  corner of the screen).
          */
-        protected void reset(Point treePoint)
-        {
+        protected void reset(Point treePoint) {
             this.drawPoint.x = this.bounds.x + treePoint.x;
             this.drawPoint.y = this.bounds.y + treePoint.y;
 

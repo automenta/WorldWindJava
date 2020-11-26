@@ -13,13 +13,12 @@ import java.awt.*;
 
 /**
  * Displays a tool tip annotation at a specified screen position. Typically used in conjunction with {@link
- * gov.nasa.worldwindx.examples.util.ToolTipController}.
+ * ToolTipController}.
  *
  * @author tag
  * @version $Id: ToolTipAnnotation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ToolTipAnnotation extends ScreenAnnotation
-{
+public class ToolTipAnnotation extends ScreenAnnotation {
     private Point tooltipOffset = new Point(5, 5);
 
     /**
@@ -27,19 +26,17 @@ public class ToolTipAnnotation extends ScreenAnnotation
      *
      * @param text the text to display in the tool tip.
      */
-    public ToolTipAnnotation(String text)
-    {
+    public ToolTipAnnotation(String text) {
         super(text, new Point(0, 0)); // (0,0) is a dummy; the actual point is determined when rendering
 
         this.initializeAttributes();
     }
 
-    protected void initializeAttributes()
-    {
+    protected void initializeAttributes() {
         this.attributes.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
         this.attributes.setFrameShape(AVKey.SHAPE_RECTANGLE);
         this.attributes.setTextColor(Color.BLACK);
-        this.attributes.setBackgroundColor(new Color(1f, 1f, 1f, 0.8f));
+        this.attributes.setBackgroundColor(new Color(1.0f, 1.0f, 1.0f, 0.8f));
         this.attributes.setCornerRadius(5);
         this.attributes.setBorderColor(new Color(0xababab));
         this.attributes.setFont(Font.decode("Arial-PLAIN-12"));
@@ -52,8 +49,7 @@ public class ToolTipAnnotation extends ScreenAnnotation
      *
      * @return the tool tip offset.
      */
-    public Point getTooltipOffset()
-    {
+    public Point getTooltipOffset() {
         return tooltipOffset;
     }
 
@@ -62,24 +58,20 @@ public class ToolTipAnnotation extends ScreenAnnotation
      *
      * @param tooltipOffset the tool tip offset. The default is five pixels to the left and up.
      */
-    public void setTooltipOffset(Point tooltipOffset)
-    {
+    public void setTooltipOffset(Point tooltipOffset) {
         this.tooltipOffset = tooltipOffset;
     }
 
-    protected int getOffsetX()
-    {
+    protected int getOffsetX() {
         return this.tooltipOffset != null ? this.tooltipOffset.x : 0;
     }
 
-    protected int getOffsetY()
-    {
+    protected int getOffsetY() {
         return this.tooltipOffset != null ? this.tooltipOffset.y : 0;
     }
 
     @Override
-    protected void doRenderNow(DrawContext dc)
-    {
+    protected void doRenderNow(DrawContext dc) {
         if (dc.getPickPoint() == null)
             return;
 
@@ -91,8 +83,7 @@ public class ToolTipAnnotation extends ScreenAnnotation
         super.doRenderNow(dc);
     }
 
-    protected Point adjustDrawPointToViewport(Point point, Rectangle bounds, Rectangle viewport)
-    {
+    protected Point adjustDrawPointToViewport(Point point, Rectangle bounds, Rectangle viewport) {
         int x = point.x;
         int y = (int) viewport.getHeight() - point.y - 1;
 
@@ -106,6 +97,6 @@ public class ToolTipAnnotation extends ScreenAnnotation
         else if (y < 0)
             y = bounds.height;
 
-        return new java.awt.Point(x, y);
+        return new Point(x, y);
     }
 }

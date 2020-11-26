@@ -20,27 +20,22 @@ import java.util.*;
  * @author tag
  * @version $Id: FileSetTableModel.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
-public class FileSetTableModel extends AbstractTableModel implements PropertyChangeListener
-{
+public class FileSetTableModel extends AbstractTableModel implements PropertyChangeListener {
     protected static final String[] columnTitles =
-        new String[]{"Key", "Preview", "Dataset Name", "Scale", "Type", "Files"};
+        new String[] {"Key", "Preview", "Dataset Name", "Scale", "Type", "Files"};
 
-    protected final Set<FileSet> fileSets = new TreeSet<>(
+    protected final Collection<FileSet> fileSets = new TreeSet<>(
         Comparator.comparing(FileSet::getName));
 
-    public FileSetTableModel(FileSetMap fileSetMap)
-    {
+    public FileSetTableModel(FileSetMap fileSetMap) {
         this.setFileSetMap(fileSetMap);
     }
 
-    public void setFileSetMap(FileSetMap fileSetMap)
-    {
+    public void setFileSetMap(Map<Object, FileSet> fileSetMap) {
         this.clearFileSets();
 
-        if (fileSetMap != null)
-        {
-            for (Map.Entry<Object, FileSet> entry : fileSetMap.entrySet())
-            {
+        if (fileSetMap != null) {
+            for (Map.Entry<Object, FileSet> entry : fileSetMap.entrySet()) {
                 this.fileSets.add(entry.getValue());
                 entry.getValue().addPropertyChangeListener(this);
             }
@@ -50,77 +45,48 @@ public class FileSetTableModel extends AbstractTableModel implements PropertyCha
     }
 
     @Override
-    public int getRowCount()
-    {
+    public int getRowCount() {
         return this.fileSets.size();
     }
 
     @Override
-    public int getColumnCount()
-    {
+    public int getColumnCount() {
         return columnTitles.length;
     }
 
     @Override
-    public String getColumnName(int col)
-    {
+    public String getColumnName(int col) {
         return columnTitles[col];
     }
 
     @Override
-    public Class getColumnClass(int col)
-    {
-        switch (col)
-        {
-            case 0:
-                return Color.class;
-
-            case 1:
-                return ImageIcon.class;
-
-            case 5:
-                return Number.class;
-
-            default:
-                return String.class;
-        }
+    public Class getColumnClass(int col) {
+        return switch (col) {
+            case 0 -> Color.class;
+            case 1 -> ImageIcon.class;
+            case 5 -> Number.class;
+            default -> String.class;
+        };
     }
 
     @Override
-    public Object getValueAt(int row, int col)
-    {
+    public Object getValueAt(int row, int col) {
         FileSet fs = getRow(row);
 
-        switch (col)
-        {
-            case 0:
-                return fs.getColor();
-
-            case 1:
-                return this.getImageIcon(row);
-
-            case 2:
-                return fs.getName() != null ? fs.getName() : "";
-
-            case 3:
-                return fs.getScale() != null ? fs.getScale() : "";
-
-            case 4:
-                return fs.getDataType() != null ? fs.getDataType() : "";
-
-            case 5:
-                return fs.getLength();
-
-            default:
-                return "unknown";
-        }
+        return switch (col) {
+            case 0 -> fs.getColor();
+            case 1 -> this.getImageIcon(row);
+            case 2 -> fs.getName() != null ? fs.getName() : "";
+            case 3 -> fs.getScale() != null ? fs.getScale() : "";
+            case 4 -> fs.getDataType() != null ? fs.getDataType() : "";
+            case 5 -> fs.getLength();
+            default -> "unknown";
+        };
     }
 
-    public Integer getRowForFileSet(FileSet fileSet)
-    {
+    public Integer getRowForFileSet(FileSet fileSet) {
         int index = 0;
-        for (FileSet fs : this.fileSets)
-        {
+        for (FileSet fs : this.fileSets) {
             if (fs == fileSet)
                 return index;
 
@@ -130,20 +96,17 @@ public class FileSetTableModel extends AbstractTableModel implements PropertyCha
         return null;
     }
 
-    public FileSet getRow(int row)
-    {
+    public FileSet getRow(int row) {
         Iterator<FileSet> iter = this.fileSets.iterator();
 
-        for (int i = 0; i < row; i++)
-        {
+        for (int i = 0; i < row; i++) {
             iter.next();
         }
 
         return iter.next();
     }
 
-    protected ImageIcon getImageIcon(final int row)
-    {
+    protected ImageIcon getImageIcon(final int row) {
         FileSet fileSet = this.getRow(row);
 
         if (fileSet.getImageIcon() != null)
@@ -158,10 +121,8 @@ public class FileSetTableModel extends AbstractTableModel implements PropertyCha
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent propertyChangeEvent)
-    {
-        if (propertyChangeEvent.getPropertyName().equals(AVKey.IMAGE))
-        {
+    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        if (propertyChangeEvent.getPropertyName().equals(AVKey.IMAGE)) {
             FileSet fileSet = (FileSet) propertyChangeEvent.getSource();
             fireTableCellUpdated(this.getRowForFileSet(fileSet), 1);
 
@@ -170,12 +131,9 @@ public class FileSetTableModel extends AbstractTableModel implements PropertyCha
         }
     }
 
-    protected void clearFileSets()
-    {
-        if (this.fileSets != null)
-        {
-            for (FileSet fileSet : this.fileSets)
-            {
+    protected void clearFileSets() {
+        if (this.fileSets != null) {
+            for (FileSet fileSet : this.fileSets) {
                 fileSet.clear();
             }
         }

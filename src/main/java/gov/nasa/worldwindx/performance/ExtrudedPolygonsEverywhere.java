@@ -18,19 +18,19 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: ExtrudedPolygonsEverywhere.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class ExtrudedPolygonsEverywhere extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class ExtrudedPolygonsEverywhere extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Very Many Extruded Polygons", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             makeMany();
         }
 
-        protected void makeMany()
-        {
+        protected void makeMany() {
             int altitudeMode = WorldWind.CONSTANT;
 
             double minLat = -50, maxLat = 50, minLon = -140, maxLon = -10;
@@ -59,39 +59,33 @@ public class ExtrudedPolygonsEverywhere extends ApplicationTemplate
             RenderableLayer layer = new RenderableLayer();
 
             int count = 0;
-            for (double lat = minLat; lat <= maxLat; lat += delta)
-            {
-                for (double lon = minLon; lon <= maxLon; lon += delta)
-                {
+            for (double lat = minLat; lat <= maxLat; lat += delta) {
+                for (double lon = minLon; lon <= maxLon; lon += delta) {
                     positions.clear();
                     double innerLat = lat;
                     double innerLon = lon;
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLon += dLon;
-                        positions.add(Position.fromDegrees(innerLat, innerLon, 5e4));
+                        positions.add(Position.fromDegrees(innerLat, innerLon, 5.0e4));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLat += dLat;
-                        positions.add(Position.fromDegrees(innerLat, innerLon, 5e4));
+                        positions.add(Position.fromDegrees(innerLat, innerLon, 5.0e4));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLon -= dLon;
-                        positions.add(Position.fromDegrees(innerLat, innerLon, 5e4));
+                        positions.add(Position.fromDegrees(innerLat, innerLon, 5.0e4));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLat -= dLat;
-                        positions.add(Position.fromDegrees(innerLat, innerLon, 5e4));
+                        positions.add(Position.fromDegrees(innerLat, innerLon, 5.0e4));
                     }
 
-                    ExtrudedPolygon pgon = new ExtrudedPolygon(positions, 5e4);
+                    ExtrudedPolygon pgon = new ExtrudedPolygon(positions, 5.0e4);
                     pgon.setAltitudeMode(altitudeMode);
                     pgon.setEnableSides(true);
                     pgon.setEnableCap(true);
@@ -106,10 +100,5 @@ public class ExtrudedPolygonsEverywhere extends ApplicationTemplate
 
             insertBeforeCompass(getWwd(), layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Very Many Extruded Polygons", AppFrame.class);
     }
 }

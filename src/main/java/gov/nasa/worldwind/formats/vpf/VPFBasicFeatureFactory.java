@@ -15,40 +15,58 @@ import java.util.*;
  * @author dcollins
  * @version $Id: VPFBasicFeatureFactory.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFBasicFeatureFactory implements VPFFeatureFactory
-{
+public class VPFBasicFeatureFactory implements VPFFeatureFactory {
     private final VPFTile tile;
     private final VPFPrimitiveData primitiveData;
 
     /**
      * Constructs an instance of a VPFBasicFeatureFactory which will construct feature data for the specified {@link
-     * gov.nasa.worldwind.formats.vpf.VPFTile} and {@link gov.nasa.worldwind.formats.vpf.VPFPrimitiveData}. The
+     * VPFTile} and {@link VPFPrimitiveData}. The
      * primitive data must contain information for at least those features found in the specified tile.
      *
      * @param tile          the tile which defines the geographic region to construct features for.
      * @param primitiveData the primitive data describing feature information for the geographic region defined by the
      *                      tile.
      */
-    public VPFBasicFeatureFactory(VPFTile tile, VPFPrimitiveData primitiveData)
-    {
+    public VPFBasicFeatureFactory(VPFTile tile, VPFPrimitiveData primitiveData) {
         this.tile = tile;
         this.primitiveData = primitiveData;
     }
 
-    public VPFTile getTile()
-    {
+    protected static VPFRelation findFirstRelation(String table1, String table2, VPFRelation[] relations) {
+        if (relations == null)
+            return null;
+
+        for (VPFRelation rel : relations) {
+            if (rel.getTable1().equalsIgnoreCase(table1) && rel.getTable2().equalsIgnoreCase(table2))
+                return rel;
+        }
+
+        return null;
+    }
+
+    protected static boolean matchesTile(VPFRecord row, VPFTile tile) {
+        Object fk = row.getValue("tile_id");
+        return (fk != null) && (tile.getId() == asInt(fk));
+    }
+
+    protected static int asInt(Object o) {
+        if (o instanceof Number)
+            return ((Number) o).intValue();
+
+        return -1;
+    }
+
+    public VPFTile getTile() {
         return this.tile;
     }
 
-    public VPFPrimitiveData getPrimitiveData()
-    {
+    public VPFPrimitiveData getPrimitiveData() {
         return this.primitiveData;
     }
 
-    public Collection<? extends VPFFeature> createPointFeatures(VPFFeatureClass featureClass)
-    {
-        if (featureClass == null)
-        {
+    public Collection<? extends VPFFeature> createPointFeatures(VPFFeatureClass featureClass) {
+        if (featureClass == null) {
             String message = Logging.getMessage("nullValue.FeatureClassIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -57,10 +75,8 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
         return this.doCreateSimpleFeatures(featureClass);
     }
 
-    public Collection<? extends VPFFeature> createLineFeatures(VPFFeatureClass featureClass)
-    {
-        if (featureClass == null)
-        {
+    public Collection<? extends VPFFeature> createLineFeatures(VPFFeatureClass featureClass) {
+        if (featureClass == null) {
             String message = Logging.getMessage("nullValue.FeatureClassIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -69,10 +85,12 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
         return this.doCreateSimpleFeatures(featureClass);
     }
 
-    public Collection<? extends VPFFeature> createAreaFeatures(VPFFeatureClass featureClass)
-    {
-        if (featureClass == null)
-        {
+    //**************************************************************//
+    //********************  Simple Feature Assembly  ***************//
+    //**************************************************************//
+
+    public Collection<? extends VPFFeature> createAreaFeatures(VPFFeatureClass featureClass) {
+        if (featureClass == null) {
             String message = Logging.getMessage("nullValue.FeatureClassIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -81,10 +99,8 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
         return this.doCreateSimpleFeatures(featureClass);
     }
 
-    public Collection<? extends VPFFeature> createTextFeatures(VPFFeatureClass featureClass)
-    {
-        if (featureClass == null)
-        {
+    public Collection<? extends VPFFeature> createTextFeatures(VPFFeatureClass featureClass) {
+        if (featureClass == null) {
             String message = Logging.getMessage("nullValue.FeatureClassIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -93,10 +109,8 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
         return this.doCreateSimpleFeatures(featureClass);
     }
 
-    public Collection<? extends VPFFeature> createComplexFeatures(VPFFeatureClass featureClass)
-    {
-        if (featureClass == null)
-        {
+    public Collection<? extends VPFFeature> createComplexFeatures(VPFFeatureClass featureClass) {
+        if (featureClass == null) {
             String message = Logging.getMessage("nullValue.FeatureClassIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -105,20 +119,14 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
         return this.doCreateComplexFeatures(featureClass);
     }
 
-    //**************************************************************//
-    //********************  Simple Feature Assembly  ***************//
-    //**************************************************************//
-
-    protected Collection<? extends VPFFeature> doCreateSimpleFeatures(VPFFeatureClass featureClass)
-    {
-        if (this.primitiveData == null)
-        {
+    protected Collection<? extends VPFFeature> doCreateSimpleFeatures(VPFFeatureClass featureClass) {
+        if (this.primitiveData == null) {
             String message = Logging.getMessage("VPF.NoPrimitiveData");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
-        ArrayList<VPFFeature> results = new ArrayList<>();
+        List<VPFFeature> results = new ArrayList<>();
 
         VPFBufferedRecordData featureTable = this.createFeatureTable(featureClass);
         if (featureTable == null)
@@ -127,8 +135,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
         VPFBufferedRecordData joinTable = this.createJoinTable(featureClass);
         Iterable<String> attributeKeys = this.getFeatureAttributeKeys(featureTable);
 
-        for (VPFRecord featureRow : featureTable)
-        {
+        for (VPFRecord featureRow : featureTable) {
             VPFFeature feature = this.doCreateSimpleFeature(featureClass, featureRow, joinTable, attributeKeys);
             if (feature != null)
                 results.add(feature);
@@ -138,21 +145,21 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
     }
 
     protected VPFFeature doCreateSimpleFeature(VPFFeatureClass featureClass, VPFRecord featureRow,
-        VPFBufferedRecordData joinTable, Iterable<String> attributeKeys)
-    {
-        if (joinTable != null)
-        {
+        VPFBufferedRecordData joinTable, Iterable<String> attributeKeys) {
+        if (joinTable != null) {
             return this.createCompoundSimpleFeature(featureClass, featureRow, joinTable, attributeKeys);
         }
-        else
-        {
+        else {
             return this.createSimpleFeature(featureClass, featureRow, attributeKeys);
         }
     }
 
+    //**************************************************************//
+    //********************  Complex Feature Assembly  **************//
+    //**************************************************************//
+
     protected VPFFeature createSimpleFeature(VPFFeatureClass featureClass, VPFRecord featureRow,
-        Iterable<String> attributeKeys)
-    {
+        Iterable<String> attributeKeys) {
         // Feature has a direct 1:1 relation to the primitive table.
 
         if (this.tile != null && !matchesTile(featureRow, this.tile))
@@ -170,9 +177,12 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
             new int[] {primitiveId});
     }
 
+    //**************************************************************//
+    //********************  Common Feature Assembly  ***************//
+    //**************************************************************//
+
     protected VPFFeature createCompoundSimpleFeature(VPFFeatureClass featureClass, VPFRecord featureRow,
-        VPFBufferedRecordData joinTable, Iterable<String> attributeKeys)
-    {
+        VPFBufferedRecordData joinTable, Iterable<String> attributeKeys) {
         // Feature has a direct 1:* relation to the primitive table through a join table.
 
         // Query the number of primitives which match the feature.
@@ -194,31 +204,24 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
 
     protected VPFFeature createFeature(VPFFeatureClass featureClass, VPFRecord featureRow,
         Iterable<String> attributeKeys,
-        VPFBoundingBox bounds, int[] primitiveIds)
-    {
+        VPFBoundingBox bounds, int[] primitiveIds) {
         VPFFeature feature = new VPFFeature(featureClass, featureRow.getId(), bounds, primitiveIds);
         this.setFeatureAttributes(featureRow, attributeKeys, feature);
 
         return feature;
     }
 
-    //**************************************************************//
-    //********************  Complex Feature Assembly  **************//
-    //**************************************************************//
-
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected Collection<? extends VPFFeature> doCreateComplexFeatures(VPFFeatureClass featureClass)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected Collection<? extends VPFFeature> doCreateComplexFeatures(VPFFeatureClass featureClass) {
         throw new UnsupportedOperationException();
     }
 
     //**************************************************************//
-    //********************  Common Feature Assembly  ***************//
+    //********************  Utility Methods  ***********************//
     //**************************************************************//
 
     protected Object getPrimitiveIds(VPFFeatureClass featureClass, VPFRecord featureRow,
-        VPFBufferedRecordData joinTable, int[] primitiveIds, boolean query)
-    {
+        Iterable<VPFRecord> joinTable, int[] primitiveIds, boolean query) {
         // Although a direct link between feature and primitive(s) is provided by the primitive_id column in the join
         // table, a sequential search of the feature_id column must still be performed to find all primitives associated
         // with a selected feature.
@@ -239,8 +242,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
         int numPrimitives = 0;
         VPFBoundingBox bounds = null;
 
-        for (VPFRecord joinRow : joinTable)
-        {
+        for (VPFRecord joinRow : joinTable) {
             if (this.tile != null && !matchesTile(joinRow, this.tile))
                 continue;
 
@@ -248,8 +250,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
             if (featureId != fId)
                 continue;
 
-            if (!query)
-            {
+            if (!query) {
                 int pId = asInt(joinRow.getValue(joinPrimitiveKey));
                 primitiveIds[numPrimitives] = pId;
 
@@ -263,12 +264,10 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
         return query ? numPrimitives : bounds;
     }
 
-    protected Iterable<String> getFeatureAttributeKeys(VPFBufferedRecordData table)
-    {
-        ArrayList<String> keys = new ArrayList<>();
+    protected Iterable<String> getFeatureAttributeKeys(VPFBufferedRecordData table) {
+        List<String> keys = new ArrayList<>();
 
-        for (String name : table.getRecordParameterNames())
-        {
+        for (String name : table.getRecordParameterNames()) {
             if (name.equalsIgnoreCase("id") ||
                 name.equalsIgnoreCase("tile_id") ||
                 name.equalsIgnoreCase("from_to") ||
@@ -277,8 +276,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
                 name.equalsIgnoreCase("cnd_id") ||
                 name.equalsIgnoreCase("edg_id") ||
                 name.equalsIgnoreCase("fac_id") ||
-                name.equalsIgnoreCase("txt_id"))
-            {
+                name.equalsIgnoreCase("txt_id")) {
                 continue;
             }
 
@@ -288,20 +286,13 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
         return keys;
     }
 
-    protected void setFeatureAttributes(VPFRecord row, Iterable<String> attributeKeys, AVList params)
-    {
-        for (String key : attributeKeys)
-        {
+    protected void setFeatureAttributes(VPFRecord row, Iterable<String> attributeKeys, AVList params) {
+        for (String key : attributeKeys) {
             VPFUtils.checkAndSetValue(row, key, key, params);
         }
     }
 
-    //**************************************************************//
-    //********************  Utility Methods  ***********************//
-    //**************************************************************//
-
-    protected VPFBufferedRecordData createFeatureTable(VPFFeatureClass featureClass)
-    {
+    protected VPFBufferedRecordData createFeatureTable(VPFFeatureClass featureClass) {
         StringBuilder sb = new StringBuilder(featureClass.getCoverage().getFilePath());
         sb.append(File.separator);
         sb.append(featureClass.getFeatureTableName());
@@ -309,8 +300,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
         return VPFUtils.readTable(new File(sb.toString()));
     }
 
-    protected VPFBufferedRecordData createJoinTable(VPFFeatureClass featureClass)
-    {
+    protected VPFBufferedRecordData createJoinTable(VPFFeatureClass featureClass) {
         if (featureClass.getJoinTableName() == null)
             return null;
 
@@ -321,49 +311,18 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory
         return VPFUtils.readTable(new File(sb.toString()));
     }
 
-    protected VPFRelation getFeatureToPrimitiveRelation(VPFFeatureClass featureClass)
-    {
+    protected VPFRelation getFeatureToPrimitiveRelation(VPFFeatureClass featureClass) {
         return findFirstRelation(featureClass.getFeatureTableName(), featureClass.getPrimitiveTableName(),
             featureClass.getRelations());
     }
 
-    protected VPFRelation getFeatureToJoinRelation(VPFFeatureClass featureClass)
-    {
+    protected VPFRelation getFeatureToJoinRelation(VPFFeatureClass featureClass) {
         return findFirstRelation(featureClass.getFeatureTableName(), featureClass.getJoinTableName(),
             featureClass.getRelations());
     }
 
-    protected VPFRelation getJoinToPrimitiveRelation(VPFFeatureClass featureClass)
-    {
+    protected VPFRelation getJoinToPrimitiveRelation(VPFFeatureClass featureClass) {
         return findFirstRelation(featureClass.getJoinTableName(), featureClass.getPrimitiveTableName(),
             featureClass.getRelations());
-    }
-
-    protected static VPFRelation findFirstRelation(String table1, String table2, VPFRelation[] relations)
-    {
-        if (relations == null)
-            return null;
-
-        for (VPFRelation rel : relations)
-        {
-            if (rel.getTable1().equalsIgnoreCase(table1) && rel.getTable2().equalsIgnoreCase(table2))
-                return rel;
-        }
-
-        return null;
-    }
-
-    protected static boolean matchesTile(VPFRecord row, VPFTile tile)
-    {
-        Object fk = row.getValue("tile_id");
-        return (fk != null) && (tile.getId() == asInt(fk));
-    }
-
-    protected static int asInt(Object o)
-    {
-        if (o instanceof Number)
-            return ((Number) o).intValue();
-
-        return -1;
     }
 }

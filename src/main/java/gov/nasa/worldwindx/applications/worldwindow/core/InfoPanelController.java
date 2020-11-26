@@ -20,64 +20,52 @@ import java.awt.*;
  * @author tag
  * @version $Id: InfoPanelController.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class InfoPanelController extends AbstractFeature implements SelectListener
-{
+public class InfoPanelController extends AbstractFeature implements SelectListener {
     protected static final String HARD_SPACE = "\u00a0";
     protected static final String INDENT = "\u00a0\u00a0\u00a0\u00a0";
     protected final int maxLineLength = 100;
 
     protected AnnotationLayer annotationLayer;
     protected ScreenAnnotation annotationPanel;
+    protected AVList lastSelectedObject;
 
-    public InfoPanelController(Registry registry)
-    {
+    public InfoPanelController(Registry registry) {
         super("Info Panel", Constants.FEATURE_INFO_PANEL_CONTROLLER, null, registry);
     }
 
-    public void initialize(Controller controller)
-    {
+    public void initialize(Controller controller) {
         super.initialize(controller);
 
         this.controller.getWWd().addSelectListener(this);
     }
 
-    protected AVList lastSelectedObject;
-
-    public void selected(SelectEvent event)
-    {
-        try
-        {
-            if (event.isRollover())
-            {
+    public void selected(SelectEvent event) {
+        try {
+            if (event.isRollover()) {
                 if (this.lastSelectedObject == event.getTopObject())
                     return; // same thing selected
 
-                if (this.lastSelectedObject != null)
-                {
+                if (this.lastSelectedObject != null) {
                     this.hideAnnotationPanel();
                     this.lastSelectedObject = null;
                 }
 
-                if (event.getTopObject() != null && event.getTopObject() instanceof AVList)
-                {
+                if (event.getTopObject() != null && event.getTopObject() instanceof AVList) {
                     String annoText = ((AVList) event.getTopObject()).getStringValue(Constants.INFO_PANEL_TEXT);
-                    if (!WWUtil.isEmpty(annoText))
-                    {
+                    if (!WWUtil.isEmpty(annoText)) {
                         this.lastSelectedObject = (AVList) event.getTopObject();
                         this.showAnnotationPanel(annoText);
                     }
                 }
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Wrap the handler in a try/catch to keep exceptions from bubbling up
             Util.getLogger().warning(e.getMessage() != null ? e.getMessage() : e.toString());
         }
     }
 
-    protected void showAnnotationPanel(String annoText)
-    {
+    protected void showAnnotationPanel(String annoText) {
         String text = this.splitLines(annoText);
 
         AnnotationAttributes attrs = this.getAnnotationPanelAttributes(text);
@@ -92,8 +80,7 @@ public class InfoPanelController extends AbstractFeature implements SelectListen
         this.annotationPanel.setScreenPoint(location);
         this.annotationPanel.setText(text);
 
-        if (this.annotationLayer == null)
-        {
+        if (this.annotationLayer == null) {
             this.annotationLayer = new AnnotationLayer();
             this.annotationLayer.setPickEnabled(false);
         }
@@ -104,32 +91,28 @@ public class InfoPanelController extends AbstractFeature implements SelectListen
             this.controller.addInternalLayer(this.annotationLayer);
     }
 
-    protected void hideAnnotationPanel()
-    {
-        if (this.annotationLayer != null)
-        {
+    protected void hideAnnotationPanel() {
+        if (this.annotationLayer != null) {
             this.annotationLayer.removeAllAnnotations();
             this.controller.getActiveLayers().remove(this.annotationLayer);
             this.annotationLayer.dispose();
             this.annotationLayer = null;
         }
 
-        if (this.annotationPanel != null)
-        {
+        if (this.annotationPanel != null) {
             this.annotationPanel.dispose();
             this.annotationPanel = null;
         }
     }
 
-    protected AnnotationAttributes getAnnotationPanelAttributes(String annoText)
-    {
+    protected AnnotationAttributes getAnnotationPanelAttributes(String annoText) {
         AnnotationAttributes attrs = new AnnotationAttributes();
 
         attrs.setAdjustWidthToText(AVKey.SIZE_FIXED);
         attrs.setSize(this.computePanelSize(annoText));
         attrs.setFrameShape(AVKey.SHAPE_RECTANGLE);
         attrs.setTextColor(Color.WHITE);
-        attrs.setBackgroundColor(new Color(0f, 0f, 0f, 0.6f));
+        attrs.setBackgroundColor(new Color(0.0f, 0.0f, 0.0f, 0.6f));
         attrs.setCornerRadius(10);
         attrs.setInsets(new Insets(10, 10, 0, 0));
         attrs.setBorderColor(new Color(0xababab));
@@ -143,11 +126,9 @@ public class InfoPanelController extends AbstractFeature implements SelectListen
      * Determine the panel size needed to display the full annotation.
      *
      * @param annoText the annotation text.
-     *
      * @return the required panel size.
      */
-    protected Dimension computePanelSize(String annoText)
-    {
+    protected Dimension computePanelSize(String annoText) {
         Dimension lengths = this.computeLengths(annoText);
 
         // The numbers used below are the average width of a character and average height of a line in Arial-Plain-12.
@@ -161,15 +142,12 @@ public class InfoPanelController extends AbstractFeature implements SelectListen
      * Determine the number of lines in the annotation text and the length of the longest line.
      *
      * @param annoText the annotation text.
-     *
      * @return the length of the longest line (width) and number of lines (height).
      */
-    protected Dimension computeLengths(String annoText)
-    {
+    protected Dimension computeLengths(String annoText) {
         String[] lines = Util.splitLines(annoText);
         int lineLength = 0;
-        for (String line : lines)
-        {
+        for (String line : lines) {
             if (line.length() > lineLength)
                 lineLength = line.length();
         }
@@ -181,16 +159,13 @@ public class InfoPanelController extends AbstractFeature implements SelectListen
      * Split a collection of lines into a new collection whose lines are all less than the maximum allowed line length.
      *
      * @param origText the original lines.
-     *
      * @return the new lines.
      */
-    protected String splitLines(String origText)
-    {
+    protected String splitLines(String origText) {
         StringBuilder newText = new StringBuilder();
 
         String[] lines = Util.splitLines(origText);
-        for (String line : lines)
-        {
+        for (String line : lines) {
             // Append the line to the output buffer if it's within size, other wise split it and append the result.
             newText.append(line.length() <= this.maxLineLength ? line : this.splitLine(line)).append("\n");
         }
@@ -202,17 +177,14 @@ public class InfoPanelController extends AbstractFeature implements SelectListen
      * Split a long line into several lines.
      *
      * @param origLine the original line
-     *
      * @return a string with new-line characters at the line-split locations.
      */
-    protected String splitLine(String origLine)
-    {
+    protected String splitLine(String origLine) {
         StringBuilder newLines = new StringBuilder();
 
         // Determine the line's current indent. Any indent added below must be added to it.
         String currentIndent = "";
-        for (int i = 0; i < origLine.length(); i++)
-        {
+        for (int i = 0; i < origLine.length(); i++) {
             if (origLine.charAt(i) == '\u00a0')
                 currentIndent += HARD_SPACE;
             else
@@ -222,11 +194,9 @@ public class InfoPanelController extends AbstractFeature implements SelectListen
         // Add the words of the line to a line builder until adding a word would exceed the max allowed length.
         StringBuilder line = new StringBuilder(currentIndent);
         String[] words = Util.splitWords(origLine, "[\u00a0 ]"); // either hard or soft space
-        for (String word : words)
-        {
-            if (line.length() + 1 + word.length() + currentIndent.length() > this.maxLineLength)
-            {
-                if (newLines.length() == 0)
+        for (String word : words) {
+            if (line.length() + 1 + word.length() + currentIndent.length() > this.maxLineLength) {
+                if (newLines.isEmpty())
                     currentIndent += INDENT; // indent continuation lines
                 newLines.append(line.toString());
                 line = new StringBuilder("\n").append(currentIndent);

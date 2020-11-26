@@ -25,73 +25,19 @@ import java.awt.*;
  * and are shared automatically. But OpenGL resources are not automatically shared. To share them, a reference to a
  * previously created WorldWindow must be specified as a constructor argument for subsequently created WorldWindows.
  * <p>
- * Most WorldWind {@link gov.nasa.worldwind.globes.Globe} and {@link gov.nasa.worldwind.layers.Layer} objects can be
+ * Most WorldWind {@link Globe} and {@link Layer} objects can be
  * shared among WorldWindows. Those that cannot be shared have an operational dependency on the WorldWindow they're
- * associated with. An example is the {@link gov.nasa.worldwind.layers.ViewControlsLayer} layer for on-screen
+ * associated with. An example is the {@link ViewControlsLayer} layer for on-screen
  * navigation. Because this layer responds to input events within a specific WorldWindow, it is not sharable. Refer to
- * the WorldWind Overview page for a list of layers that cannot be shared.
- * // TODO: include the reference to overview.html.
+ * the WorldWind Overview page for a list of layers that cannot be shared. // TODO: include the reference to
+ * overview.html.
  *
  * @author tag
  * @version $Id: MultiFrame.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class MultiFrame
-{
-    // A panel to hold a WorldWindow and status bar.
-    private static class WWPanel extends JPanel
-    {
-        private final WorldWindowGLCanvas wwd;
-
-        public WWPanel(WorldWindowGLCanvas shareWith, int width, int height, Model model)
-        {
-            // To share resources among WorldWindows, pass the first WorldWindow to the constructor of the other
-            // WorldWindows.
-            this.wwd = shareWith != null ? new WorldWindowGLCanvas(shareWith) : new WorldWindowGLCanvas();
-            this.wwd.setSize(new java.awt.Dimension(width, height));
-            this.wwd.setModel(model);
-
-            this.setLayout(new BorderLayout(5, 5));
-            this.add(this.wwd, BorderLayout.CENTER);
-
-            StatusBar statusBar = new StatusBar();
-            statusBar.setEventSource(wwd);
-            this.add(statusBar, BorderLayout.SOUTH);
-        }
-    }
-
-    // A JFrame to hold one WorldWindow panel. Multiple of these are created in main below.
-    private static class CanvasFrame extends javax.swing.JFrame
-    {
-        private final WWPanel wwp;
-
-        public CanvasFrame(WorldWindow shareWith, Model model, String side)
-        {
-            this.getContentPane().setLayout(new BorderLayout(5, 5));
-
-            this.wwp = new WWPanel((WorldWindowGLCanvas) shareWith, 500, 500, model);
-            this.getContentPane().add(wwp, BorderLayout.CENTER);
-
-            this.pack();
-
-            java.awt.Dimension wwSize = this.getPreferredSize();
-            wwSize.setSize(wwSize.getWidth(), 1.1 * wwSize.getHeight());
-            this.setSize(wwSize);
-
-            // Position the windows side-by-side.
-            java.awt.Dimension parentSize;
-            java.awt.Point parentLocation = new java.awt.Point(0, 0);
-            parentSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-            int x = parentLocation.x + (parentSize.width / 2 + (side.equals("left") ? -wwSize.width : 20));
-            int y = parentLocation.y + (parentSize.height - wwSize.height) / 2;
-            this.setLocation(x, y);
-            this.setResizable(true);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        try
-        {
+public class MultiFrame {
+    public static void main(String[] args) {
+        try {
             // Create a Model for each window, starting with the Globe they share.
             Globe earth = new Earth();
 
@@ -136,9 +82,55 @@ public class MultiFrame
             frameB.wwp.wwd.getModel().getLayers().add(viewControlsB);
             frameB.wwp.wwd.addSelectListener(new ViewControlsSelectListener(frameB.wwp.wwd, viewControlsB));
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // A panel to hold a WorldWindow and status bar.
+    private static class WWPanel extends JPanel {
+        private final WorldWindowGLCanvas wwd;
+
+        public WWPanel(WorldWindowGLCanvas shareWith, int width, int height, Model model) {
+            // To share resources among WorldWindows, pass the first WorldWindow to the constructor of the other
+            // WorldWindows.
+            this.wwd = shareWith != null ? new WorldWindowGLCanvas(shareWith) : new WorldWindowGLCanvas();
+            this.wwd.setSize(new Dimension(width, height));
+            this.wwd.setModel(model);
+
+            this.setLayout(new BorderLayout(5, 5));
+            this.add(this.wwd, BorderLayout.CENTER);
+
+            StatusBar statusBar = new StatusBar();
+            statusBar.setEventSource(wwd);
+            this.add(statusBar, BorderLayout.SOUTH);
+        }
+    }
+
+    // A JFrame to hold one WorldWindow panel. Multiple of these are created in main below.
+    private static class CanvasFrame extends JFrame {
+        private final WWPanel wwp;
+
+        public CanvasFrame(WorldWindow shareWith, Model model, String side) {
+            this.getContentPane().setLayout(new BorderLayout(5, 5));
+
+            this.wwp = new WWPanel((WorldWindowGLCanvas) shareWith, 500, 500, model);
+            this.getContentPane().add(wwp, BorderLayout.CENTER);
+
+            this.pack();
+
+            Dimension wwSize = this.getPreferredSize();
+            wwSize.setSize(wwSize.getWidth(), 1.1 * wwSize.getHeight());
+            this.setSize(wwSize);
+
+            // Position the windows side-by-side.
+            Dimension parentSize;
+            Point parentLocation = new Point(0, 0);
+            parentSize = Toolkit.getDefaultToolkit().getScreenSize();
+            int x = parentLocation.x + (parentSize.width / 2 + (side.equals("left") ? -wwSize.width : 20));
+            int y = parentLocation.y + (parentSize.height - wwSize.height) / 2;
+            this.setLocation(x, y);
+            this.setResizable(true);
         }
     }
 }

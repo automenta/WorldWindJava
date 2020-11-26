@@ -16,10 +16,9 @@ import gov.nasa.worldwindx.examples.util.RandomShapeAttributes;
 import java.util.Arrays;
 
 /**
- * Illustrates how to configure and display WorldWind <code>{@link Airspace}</code> shapes. Airspace shapes are
- * extruded 3D volumes defined by geographic coordinates and upper- and lower- altitude boundaries. The interior of
- * airspace shapes always conforms to the curvature of the globe, and optionally also conform to the underlying
- * terrain.
+ * Illustrates how to configure and display WorldWind <code>{@link Airspace}</code> shapes. Airspace shapes are extruded
+ * 3D volumes defined by geographic coordinates and upper- and lower- altitude boundaries. The interior of airspace
+ * shapes always conforms to the curvature of the globe, and optionally also conform to the underlying terrain.
  * <p>
  * This shows how to use all 11 types of standard airspace shapes: <ul> <li><code>{@link Orbit}</code> - a rectangle
  * with rounded end caps.</li> <li><code>{@link Curtain}</code> - a vertically extruded wall.</li> <li><code>{@link
@@ -36,435 +35,7 @@ import java.util.Arrays;
  * @author dcollins
  * @version $Id: Airspaces.java 3423 2015-09-23 20:59:03Z tgaskins $
  */
-public class Airspaces extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        protected final RandomShapeAttributes randomAttrs = new RandomShapeAttributes();
-        protected Airspace lastHighlightAirspace;
-        protected AirspaceAttributes lastAttrs;
-
-        public AppFrame()
-        {
-            insertBeforePlacenames(this.getWwd(), this.makeAGLAirspaces());
-            insertBeforePlacenames(this.getWwd(), this.makeAMSLAirspaces());
-            insertBeforePlacenames(this.getWwd(), this.makeDatelineCrossingAirspaces());
-            insertBeforePlacenames(this.getWwd(), this.makeIntersectingAirspaces());
-            this.initializeSelectionMonitoring();
-        }
-
-        public Layer makeAGLAirspaces()
-        {
-            AirspaceAttributes attrs = this.randomAttrs.nextAttributes().asAirspaceAttributes();
-            RenderableLayer layer = new RenderableLayer();
-            layer.setName("AGL Airspaces");
-
-            // Cylinder.
-            CappedCylinder cyl = new CappedCylinder(attrs);
-            cyl.setCenter(LatLon.fromDegrees(47.7477, -123.6372));
-            cyl.setRadius(30000.0);
-            cyl.setAltitudes(5000.0, 10000.0);
-            cyl.setTerrainConforming(true, true);
-            cyl.setValue(AVKey.DISPLAY_NAME, "30km radius Cylinder with top and bottom terrain conformance");
-            layer.addRenderable(cyl);
-
-            // Radarc
-            // To render a Radarc,
-            // (1) Specify inner radius and outer radius.
-            // (2) Specify start and stop azimuth.
-            PartialCappedCylinder partCyl = new PartialCappedCylinder(attrs);
-            partCyl.setCenter(LatLon.fromDegrees(46.7477, -122.6372));
-            partCyl.setRadii(15000.0, 30000.0);
-            partCyl.setAltitudes(5000.0, 10000.0);
-            partCyl.setAzimuths(Angle.fromDegrees(90.0), Angle.fromDegrees(0.0));
-            partCyl.setTerrainConforming(true, true);
-            partCyl.setValue(AVKey.DISPLAY_NAME, "Partial Cylinder from 90 to 0 degrees");
-            layer.addRenderable(partCyl);
-
-            Cake cake = new Cake(attrs);
-            cake.setLayers(Arrays.asList(
-                new Cake.Layer(LatLon.fromDegrees(36, -121), 10000.0, Angle.fromDegrees(0.0),
-                    Angle.fromDegrees(360.0), 10000.0, 15000.0),
-                new Cake.Layer(LatLon.fromDegrees(36.1, -121.1), 15000.0, Angle.fromDegrees(0.0),
-                    Angle.fromDegrees(360.0), 16000.0, 21000.0),
-                new Cake.Layer(LatLon.fromDegrees(35.9, -120.9), 12500.0, Angle.fromDegrees(0.0),
-                    Angle.fromDegrees(360.0), 22000.0, 27000.0)));
-            cake.getLayers().get(0).setTerrainConforming(true, true);
-            cake.getLayers().get(1).setTerrainConforming(true, true);
-            cake.getLayers().get(2).setTerrainConforming(true, true);
-            cake.setValue(AVKey.DISPLAY_NAME, "3 layer Cake with disjoint layers");
-            layer.addRenderable(cake);
-
-            // Center Orbit
-            Orbit orbit = new Orbit(attrs);
-            orbit.setLocations(LatLon.fromDegrees(45.7477, -123.6372), LatLon.fromDegrees(45.7477, -122.6372));
-            orbit.setAltitudes(15000.0, 25000.0);
-            orbit.setWidth(30000.0);
-            orbit.setOrbitType(Orbit.OrbitType.CENTER);
-            orbit.setTerrainConforming(true, true);
-            orbit.setValue(AVKey.DISPLAY_NAME, "Center Orbit");
-            layer.addRenderable(orbit);
-
-            // Orbit from Los Angeles to New York
-            orbit = new Orbit(attrs);
-            orbit.setLocations(LatLon.fromDegrees(34.0489, -118.2481), LatLon.fromDegrees(40.7137, -74.0065));
-            orbit.setAltitudes(10000.0, 100000.0);
-            orbit.setWidth(500000.0);
-            orbit.setOrbitType(Orbit.OrbitType.CENTER);
-            orbit.setTerrainConforming(true, true);
-            orbit.setValue(AVKey.DISPLAY_NAME, "Orbit from L.A. to N.Y");
-            layer.addRenderable(orbit);
-
-            // Curtain around Snohomish County, WA
-            Curtain curtain = new Curtain(attrs);
-            curtain.setLocations(makeLatLon(SNOHOMISH_COUNTY));
-            curtain.setAltitudes(5000.0, 10000.0);
-            curtain.setTerrainConforming(true, true);
-            curtain.setValue(AVKey.DISPLAY_NAME, "Curtain around Snohomish County, WA");
-            layer.addRenderable(curtain);
-
-            // Curtain around San Juan County, WA
-            curtain = new Curtain(attrs);
-            curtain.setLocations(makeLatLon(SAN_JUAN_COUNTY_2));
-            curtain.setAltitudes(5000.0, 10000.0);
-            curtain.setTerrainConforming(true, true);
-            curtain.setValue(AVKey.DISPLAY_NAME, "Curtain around San Juan County, WA");
-            layer.addRenderable(curtain);
-
-            // Polygons of San Juan County, WA
-            Polygon poly = new Polygon(attrs);
-            poly.setLocations(makeLatLon(SAN_JUAN_COUNTY_1));
-            poly.setAltitudes(5000.0, 10000.0);
-            poly.setTerrainConforming(true, true);
-            poly.setValue(AVKey.DISPLAY_NAME, "Polygon of San Juan County, WA");
-            layer.addRenderable(poly);
-
-            poly = new Polygon(attrs);
-            poly.setLocations(makeLatLon(SAN_JUAN_COUNTY_3));
-            poly.setAltitudes(5000.0, 10000.0);
-            poly.setTerrainConforming(true, true);
-            poly.setValue(AVKey.DISPLAY_NAME, "Polygon of San Juan County, WA");
-            layer.addRenderable(poly);
-
-            // Polygon over the Sierra Nevada mountains.
-            poly = new Polygon(attrs);
-            poly.setLocations(Arrays.asList(
-                LatLon.fromDegrees(40.1323, -122.0911),
-                LatLon.fromDegrees(38.0062, -120.7711),
-                LatLon.fromDegrees(37.0562, -119.6226),
-                LatLon.fromDegrees(36.9231, -118.1829),
-                LatLon.fromDegrees(37.8211, -118.8557),
-                LatLon.fromDegrees(39.0906, -120.0304),
-                LatLon.fromDegrees(40.2609, -120.8295)));
-            poly.setAltitudes(0, 5000);
-            poly.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_REFERENCE);
-            poly.setValue(AVKey.DISPLAY_NAME, "Polygon over the Sierra Nevada mountains");
-            layer.addRenderable(poly);
-
-            // Continent sized polygon.
-            poly = new Polygon(attrs);
-            poly.setLocations(Arrays.asList(
-                LatLon.fromDegrees(-40, 60),
-                LatLon.fromDegrees(-40, 80),
-                LatLon.fromDegrees(40, 100),
-                LatLon.fromDegrees(40, 40)
-            ));
-            poly.setAltitudes(100000.0, 500000.0);
-            poly.setTerrainConforming(true, true);
-            poly.setValue(AVKey.DISPLAY_NAME, "Continent sized Polygon");
-            layer.addRenderable(poly);
-
-            TrackAirspace track = new TrackAirspace(attrs);
-            track.setValue(AVKey.DISPLAY_NAME, "Disconnected Track");
-            double leftWidth = 80000d;
-            double rightWidth = 80000d;
-            double minAlt = 150000d;
-            double maxAlt = 250000d;
-            track.addLeg(LatLon.fromDegrees(29.9970, -108.6046), LatLon.fromDegrees(33.5132, -107.7544), minAlt / 6,
-                maxAlt / 6, leftWidth, rightWidth).setTerrainConforming(false, false);
-            track.addLeg(LatLon.fromDegrees(29.4047, -103.0465), LatLon.fromDegrees(34.4955, -102.2151), minAlt / 4,
-                maxAlt / 4, leftWidth, rightWidth).setTerrainConforming(false, true);
-            track.addLeg(LatLon.fromDegrees(28.9956, -99.8026), LatLon.fromDegrees(36.0133, -98.3489), minAlt / 2,
-                maxAlt / 2, leftWidth, rightWidth).setTerrainConforming(true, true);
-            track.addLeg(LatLon.fromDegrees(28.5986, -96.6126), LatLon.fromDegrees(36.8515, -95.0324), minAlt, maxAlt,
-                leftWidth, rightWidth).setTerrainConforming(true, false);
-            track.addLeg(LatLon.fromDegrees(30.4647, -94.1764), LatLon.fromDegrees(35.5636, -92.9371), minAlt / 2,
-                maxAlt / 2, leftWidth, rightWidth).setTerrainConforming(false, false);
-            track.addLeg(LatLon.fromDegrees(31.0959, -90.9424), LatLon.fromDegrees(35.1470, -89.4267), minAlt / 4,
-                maxAlt / 4, leftWidth, rightWidth).setTerrainConforming(false, true);
-            track.addLeg(LatLon.fromDegrees(31.5107, -88.5723), LatLon.fromDegrees(34.2444, -87.4563), minAlt / 6,
-                maxAlt / 6, leftWidth, rightWidth).setTerrainConforming(true, true);
-            layer.addRenderable(track);
-
-            track = new TrackAirspace(attrs);
-            track.setValue(AVKey.DISPLAY_NAME, "Track with center line independent left/right width");
-            track.setTerrainConforming(true, true);
-            track.setEnableInnerCaps(false);
-            track.setEnableCenterLine(true);
-            track.addLeg(LatLon.fromDegrees(42.95, -122.20), LatLon.fromDegrees(42.94, -122.12), 1000, 1300, 300, 600);
-            track.addLeg(LatLon.fromDegrees(42.94, -122.12), LatLon.fromDegrees(42.97, -121.99), 1000, 1300, 300, 600);
-            track.addLeg(LatLon.fromDegrees(42.97, -121.99), LatLon.fromDegrees(42.90, -121.95), 1000, 1300, 300, 600);
-            track.addLeg(LatLon.fromDegrees(42.90, -121.95), LatLon.fromDegrees(42.80, -122.04), 1000, 1300, 300, 600);
-            layer.addRenderable(track);
-
-            // Sphere
-            SphereAirspace sphere = new SphereAirspace(attrs);
-            sphere.setLocation(LatLon.fromDegrees(47.7477, -122.6372));
-            sphere.setAltitude(5000.0);
-            sphere.setRadius(5000.0);
-            sphere.setTerrainConforming(true);
-            sphere.setValue(AVKey.DISPLAY_NAME, "Sphere centered 5km above terrain");
-            layer.addRenderable(sphere);
-
-            sphere = new SphereAirspace(attrs);
-            sphere.setLocation(LatLon.fromDegrees(47.7477, -121.6372));
-            sphere.setAltitude(0.0);
-            sphere.setRadius(5000.0);
-            sphere.setTerrainConforming(true);
-            sphere.setValue(AVKey.DISPLAY_NAME, "Sphere centered on terrain");
-            layer.addRenderable(sphere);
-
-            CappedEllipticalCylinder ellipticalCylinder = new CappedEllipticalCylinder(attrs);
-            ellipticalCylinder.setCenter(LatLon.fromDegrees(51, -110));
-            ellipticalCylinder.setRadii(10e3, 15e3, 50e3, 75e3);
-            ellipticalCylinder.setAltitudes(100000.0, 500000.0);
-            ellipticalCylinder.setHeading(Angle.fromDegrees(180));
-            ellipticalCylinder.setTerrainConforming(true);
-            ellipticalCylinder.setValue(AVKey.DISPLAY_NAME, "Elliptical Cylinder above terrain");
-            layer.addRenderable(ellipticalCylinder);
-
-            CappedCylinder cappedCylinder = new CappedCylinder(attrs);
-            cappedCylinder.setCenter(LatLon.fromDegrees(51, -105));
-            cappedCylinder.setRadii(15e3, 75e3);
-            cappedCylinder.setAltitudes(100000.0, 500000.0);
-            cappedCylinder.setTerrainConforming(true);
-            cappedCylinder.setValue(AVKey.DISPLAY_NAME, "Capped Cylinder above terrain");
-            layer.addRenderable(cappedCylinder);
-
-            return layer;
-        }
-
-        protected Layer makeAMSLAirspaces()
-        {
-            AirspaceAttributes attrs = randomAttrs.nextAttributes().asAirspaceAttributes();
-            RenderableLayer layer = new RenderableLayer();
-            layer.setName("AMSL Airspaces");
-
-            // Continent-sized cylinder.
-            CappedCylinder cyl = new CappedCylinder(attrs);
-            cyl.setCenter(LatLon.fromDegrees(0.0, 0.0));
-            cyl.setRadii(1000000.0, 3000000.0);
-            cyl.setAltitudes(100000.0, 500000.0);
-            cyl.setTerrainConforming(false, false);
-            cyl.setValue(AVKey.DISPLAY_NAME, "3,000km Cylinder");
-            layer.addRenderable(cyl);
-
-            // Radarc
-            // To render a Radarc,
-            // (1) Specify inner radius and outer radius.
-            // (2) Specify start and stop azimuth.
-            PartialCappedCylinder partCyl = new PartialCappedCylinder(attrs);
-            partCyl.setCenter(LatLon.fromDegrees(46.7477, -123.6372));
-            partCyl.setRadii(15000.0, 30000.0);
-            partCyl.setAltitudes(5000.0, 10000.0);
-            partCyl.setAzimuths(Angle.fromDegrees(0.0), Angle.fromDegrees(90.0));
-            partCyl.setTerrainConforming(false, false);
-            partCyl.setValue(AVKey.DISPLAY_NAME, "Partial Cylinder from 0 to 90 degrees");
-            layer.addRenderable(partCyl);
-
-            // Cake
-            Cake cake = new Cake(attrs);
-            cake.setLayers(Arrays.asList(
-                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 10000.0, Angle.fromDegrees(190.0),
-                    Angle.fromDegrees(170.0), 10000.0, 15000.0),
-                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 15000.0, Angle.fromDegrees(190.0),
-                    Angle.fromDegrees(90.0), 16000.0, 21000.0),
-                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 12500.0, Angle.fromDegrees(270.0),
-                    Angle.fromDegrees(60.0), 22000.0, 27000.0)));
-            cake.getLayers().get(0).setTerrainConforming(false, false);
-            cake.getLayers().get(1).setTerrainConforming(false, false);
-            cake.getLayers().get(2).setTerrainConforming(false, false);
-            cake.setValue(AVKey.DISPLAY_NAME, "3 layer Cake");
-            layer.addRenderable(cake);
-
-            // Left Orbit
-            Orbit orbit = new Orbit(attrs);
-            orbit.setLocations(LatLon.fromDegrees(45.7477, -123.6372), LatLon.fromDegrees(45.7477, -122.6372));
-            orbit.setAltitudes(10000.0, 20000.0);
-            orbit.setWidth(30000.0);
-            orbit.setOrbitType(Orbit.OrbitType.LEFT);
-            orbit.setTerrainConforming(false, false);
-            orbit.setValue(AVKey.DISPLAY_NAME, "Left Orbit");
-            layer.addRenderable(orbit);
-
-            // Right Orbit
-            orbit = new Orbit(attrs);
-            orbit.setLocations(LatLon.fromDegrees(45.7477, -123.6372), LatLon.fromDegrees(45.7477, -122.6372));
-            orbit.setAltitudes(10000.0, 20000.0);
-            orbit.setWidth(30000.0);
-            orbit.setOrbitType(Orbit.OrbitType.RIGHT);
-            orbit.setTerrainConforming(false, false);
-            orbit.setValue(AVKey.DISPLAY_NAME, "Right Orbit");
-            layer.addRenderable(orbit);
-
-            // PolyArc
-            PolyArc polyArc = new PolyArc(attrs);
-            polyArc.setLocations(Arrays.asList(
-                LatLon.fromDegrees(45.5, -122.0),
-                LatLon.fromDegrees(46.0, -122.0),
-                LatLon.fromDegrees(46.0, -121.0),
-                LatLon.fromDegrees(45.5, -121.0)));
-            polyArc.setAltitudes(5000.0, 10000.0);
-            polyArc.setRadius(30000.0);
-            polyArc.setAzimuths(Angle.fromDegrees(-45.0), Angle.fromDegrees(135.0));
-            polyArc.setTerrainConforming(false, false);
-            polyArc.setValue(AVKey.DISPLAY_NAME, "PolyArc with 30km radius from -45 to 135 degrees");
-            layer.addRenderable(polyArc);
-
-            // Route
-            Route route = new Route(attrs);
-            route.setAltitudes(5000.0, 20000.0);
-            route.setWidth(20000.0);
-            route.setLocations(Arrays.asList(
-                LatLon.fromDegrees(43.0, -121.0),
-                LatLon.fromDegrees(44.0, -121.0),
-                LatLon.fromDegrees(44.0, -120.0),
-                LatLon.fromDegrees(43.0, -120.0)));
-            route.setTerrainConforming(false, false);
-            route.setValue(AVKey.DISPLAY_NAME, "Route");
-            layer.addRenderable(route);
-
-            // Track
-            TrackAirspace track = new TrackAirspace(attrs);
-            track.setEnableInnerCaps(false);
-            track.setEnableCenterLine(true);
-            track.setValue(AVKey.DISPLAY_NAME, "Semi-connected Track");
-            double leftWidth = 100000d;
-            double rightWidth = 100000d;
-            double minAlt = 150000d;
-            double maxAlt = 250000d;
-            Box leg;
-            track.addLeg(LatLon.fromDegrees(40.4705, -117.9242), LatLon.fromDegrees(42.6139, -108.3518), minAlt, maxAlt,
-                leftWidth, rightWidth);
-            leg = track.addLeg(LatLon.fromDegrees(42.6139, -108.3518), LatLon.fromDegrees(44.9305, -97.6665),
-                minAlt / 2, maxAlt / 2, leftWidth, rightWidth);
-            leg.setTerrainConforming(false, false);
-            leg = track.addLeg(LatLon.fromDegrees(44.9305, -97.6665), LatLon.fromDegrees(47.0121, -94.9218), minAlt / 2,
-                maxAlt / 2, leftWidth, rightWidth);
-            leg.setTerrainConforming(false, false);
-            leg = track.addLeg(LatLon.fromDegrees(47.0121, -94.9218), LatLon.fromDegrees(44.7964, -68.4230), minAlt / 4,
-                maxAlt / 4, leftWidth, rightWidth);
-            leg.setTerrainConforming(false, false);
-            layer.addRenderable(track);
-
-            return layer;
-        }
-
-        public Layer makeIntersectingAirspaces()
-        {
-            AirspaceAttributes attrs = randomAttrs.nextAttributes().asAirspaceAttributes();
-            RenderableLayer layer = new RenderableLayer();
-            layer.setName("Intersecting Airspaces");
-
-            double bottom = 1000;
-            double top = 10000;
-
-            // Cake with intersecting layers
-            Cake cake = new Cake(attrs);
-            cake.setLayers(Arrays.asList(
-                new Cake.Layer(LatLon.fromDegrees(25, -100), 50000, Angle.ZERO, Angle.ZERO, bottom, top),
-                new Cake.Layer(LatLon.fromDegrees(24, -100), 100000, Angle.ZERO, Angle.ZERO, bottom, top),
-                new Cake.Layer(LatLon.fromDegrees(23, -100), 150000, Angle.ZERO, Angle.ZERO, bottom, top)));
-            cake.getLayers().get(0).setEnableDepthOffset(true);
-            cake.getLayers().get(1).setEnableDepthOffset(true);
-            cake.getLayers().get(2).setEnableDepthOffset(true);
-            cake.setValue(AVKey.DISPLAY_NAME, "Cake with intersecting layers (depth offset enabled)");
-            layer.addRenderable(cake);
-
-            // Orbit intersecting Cylinder
-            Orbit orbit = new Orbit(attrs);
-            orbit.setLocations(LatLon.fromDegrees(20, -100), LatLon.fromDegrees(15, -90));
-            orbit.setAltitudes(bottom, top);
-            orbit.setWidth(400000);
-            orbit.setEnableDepthOffset(true);
-            orbit.setValue(AVKey.DISPLAY_NAME, "Orbit intersecting Cylinder (depth offset enabled)");
-            layer.addRenderable(orbit);
-
-            // Cylinder intersecting Orbit
-            CappedCylinder cyl = new CappedCylinder(attrs);
-            cyl.setCenter(LatLon.fromDegrees(18, -95));
-            cyl.setRadius(400000);
-            cyl.setAltitudes(bottom, top);
-            cyl.setEnableDepthOffset(true);
-            cyl.setValue(AVKey.DISPLAY_NAME, "Cylinder intersecting Orbit (depth offset enabled)");
-            layer.addRenderable(cyl);
-
-            return layer;
-        }
-
-        public Layer makeDatelineCrossingAirspaces()
-        {
-            randomAttrs.nextAttributes(); // skip the yellow attribute
-            AirspaceAttributes attrs = randomAttrs.nextAttributes().asAirspaceAttributes();
-            RenderableLayer layer = new RenderableLayer();
-            layer.setName("Dateline Crossing Airspaces");
-
-            // Curtains of different path types crossing the dateline.
-            Curtain curtain = new Curtain(attrs);
-            curtain.setLocations(Arrays.asList(LatLon.fromDegrees(27.0, -112.0), LatLon.fromDegrees(35.0, 138.0)));
-            curtain.setAltitudes(1000.0, 100000.0);
-            curtain.setTerrainConforming(false, false);
-            curtain.setValue(AVKey.DISPLAY_NAME, "Great-arc Curtain from America to Japan");
-            layer.addRenderable(curtain);
-
-            curtain = new Curtain(attrs);
-            curtain.setLocations(Arrays.asList(LatLon.fromDegrees(27.0, -112.0), LatLon.fromDegrees(35.0, 138.0)));
-            curtain.setPathType(AVKey.RHUMB_LINE);
-            curtain.setAltitudes(1000.0, 100000.0);
-            curtain.setTerrainConforming(false, false);
-            curtain.setValue(AVKey.DISPLAY_NAME, "Rhumb Curtain from America to Japan");
-            layer.addRenderable(curtain);
-
-            // Continent sized sphere
-            SphereAirspace sphere = new SphereAirspace(attrs);
-            sphere.setLocation(LatLon.fromDegrees(0.0, -180.0));
-            sphere.setAltitude(0.0);
-            sphere.setRadius(1000000.0);
-            sphere.setTerrainConforming(false);
-            sphere.setValue(AVKey.DISPLAY_NAME, "1,000km radius Sphere on the antimeridian");
-            layer.addRenderable(sphere);
-
-            return layer;
-        }
-
-        public void initializeSelectionMonitoring()
-        {
-            this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        start("WorldWind Airspaces", AppFrame.class);
-    }
-
-    protected static Iterable<LatLon> makeLatLon(double[] src)
-    {
-        LatLon[] locations = new LatLon[src.length / 2];
-
-        for (int i = 0; i < locations.length; i++)
-        {
-            double lonDegrees = src[2 * i];
-            double latDegrees = src[2 * i + 1];
-            locations[i] = LatLon.fromDegrees(latDegrees, lonDegrees);
-        }
-
-        return Arrays.asList(locations);
-    }
-
-    // Boundary data for San Juan and Snohomish Counties take from
-    // http://www.census.gov/geo/cob/bdy/co/co00ascii/co53_d00_ascii.zip
-
+public class Airspaces extends ApplicationTemplate {
     protected static final double[] SAN_JUAN_COUNTY_1 =
         {
             //-0.123026351250109E+03,       0.487022510493827E+02,
@@ -731,6 +302,9 @@ public class Airspaces extends ApplicationTemplate
             -0.123183803136584E+03, 0.486840975686572E+02,
             -0.123172066000000E+03, 0.486798660000000E+02,
         };
+
+    // Boundary data for San Juan and Snohomish Counties take from
+    // http://www.census.gov/geo/cob/bdy/co/co00ascii/co53_d00_ascii.zip
     protected static final double[] SNOHOMISH_COUNTY =
         {
             //-0.121733244893996E+03,       0.482266785925926E+02,
@@ -1402,4 +976,418 @@ public class Airspaces extends ApplicationTemplate
             -0.121835921000000E+03, 0.482980130000000E+02,
             -0.121835846000000E+03, 0.482980130000000E+02,
         };
+
+    public static void main(String[] args) {
+        start("WorldWind Airspaces", AppFrame.class);
+    }
+
+    protected static Iterable<LatLon> makeLatLon(double[] src) {
+        LatLon[] locations = new LatLon[src.length / 2];
+
+        for (int i = 0; i < locations.length; i++) {
+            double lonDegrees = src[2 * i];
+            double latDegrees = src[2 * i + 1];
+            locations[i] = LatLon.fromDegrees(latDegrees, lonDegrees);
+        }
+
+        return Arrays.asList(locations);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        protected final RandomShapeAttributes randomAttrs = new RandomShapeAttributes();
+        protected Airspace lastHighlightAirspace;
+        protected AirspaceAttributes lastAttrs;
+
+        public AppFrame() {
+            insertBeforePlacenames(this.getWwd(), this.makeAGLAirspaces());
+            insertBeforePlacenames(this.getWwd(), this.makeAMSLAirspaces());
+            insertBeforePlacenames(this.getWwd(), this.makeDatelineCrossingAirspaces());
+            insertBeforePlacenames(this.getWwd(), this.makeIntersectingAirspaces());
+            this.initializeSelectionMonitoring();
+        }
+
+        public Layer makeAGLAirspaces() {
+            AirspaceAttributes attrs = this.randomAttrs.nextAttributes().asAirspaceAttributes();
+            RenderableLayer layer = new RenderableLayer();
+            layer.setName("AGL Airspaces");
+
+            // Cylinder.
+            CappedCylinder cyl = new CappedCylinder(attrs);
+            cyl.setCenter(LatLon.fromDegrees(47.7477, -123.6372));
+            cyl.setRadius(30000.0);
+            cyl.setAltitudes(5000.0, 10000.0);
+            cyl.setTerrainConforming(true, true);
+            cyl.setValue(AVKey.DISPLAY_NAME, "30km radius Cylinder with top and bottom terrain conformance");
+            layer.addRenderable(cyl);
+
+            // Radarc
+            // To render a Radarc,
+            // (1) Specify inner radius and outer radius.
+            // (2) Specify start and stop azimuth.
+            PartialCappedCylinder partCyl = new PartialCappedCylinder(attrs);
+            partCyl.setCenter(LatLon.fromDegrees(46.7477, -122.6372));
+            partCyl.setRadii(15000.0, 30000.0);
+            partCyl.setAltitudes(5000.0, 10000.0);
+            partCyl.setAzimuths(Angle.fromDegrees(90.0), Angle.fromDegrees(0.0));
+            partCyl.setTerrainConforming(true, true);
+            partCyl.setValue(AVKey.DISPLAY_NAME, "Partial Cylinder from 90 to 0 degrees");
+            layer.addRenderable(partCyl);
+
+            Cake cake = new Cake(attrs);
+            cake.setLayers(Arrays.asList(
+                new Cake.Layer(LatLon.fromDegrees(36, -121), 10000.0, Angle.fromDegrees(0.0),
+                    Angle.fromDegrees(360.0), 10000.0, 15000.0),
+                new Cake.Layer(LatLon.fromDegrees(36.1, -121.1), 15000.0, Angle.fromDegrees(0.0),
+                    Angle.fromDegrees(360.0), 16000.0, 21000.0),
+                new Cake.Layer(LatLon.fromDegrees(35.9, -120.9), 12500.0, Angle.fromDegrees(0.0),
+                    Angle.fromDegrees(360.0), 22000.0, 27000.0)));
+            cake.getLayers().get(0).setTerrainConforming(true, true);
+            cake.getLayers().get(1).setTerrainConforming(true, true);
+            cake.getLayers().get(2).setTerrainConforming(true, true);
+            cake.setValue(AVKey.DISPLAY_NAME, "3 layer Cake with disjoint layers");
+            layer.addRenderable(cake);
+
+            // Center Orbit
+            Orbit orbit = new Orbit(attrs);
+            orbit.setLocations(LatLon.fromDegrees(45.7477, -123.6372), LatLon.fromDegrees(45.7477, -122.6372));
+            orbit.setAltitudes(15000.0, 25000.0);
+            orbit.setWidth(30000.0);
+            orbit.setOrbitType(Orbit.OrbitType.CENTER);
+            orbit.setTerrainConforming(true, true);
+            orbit.setValue(AVKey.DISPLAY_NAME, "Center Orbit");
+            layer.addRenderable(orbit);
+
+            // Orbit from Los Angeles to New York
+            orbit = new Orbit(attrs);
+            orbit.setLocations(LatLon.fromDegrees(34.0489, -118.2481), LatLon.fromDegrees(40.7137, -74.0065));
+            orbit.setAltitudes(10000.0, 100000.0);
+            orbit.setWidth(500000.0);
+            orbit.setOrbitType(Orbit.OrbitType.CENTER);
+            orbit.setTerrainConforming(true, true);
+            orbit.setValue(AVKey.DISPLAY_NAME, "Orbit from L.A. to N.Y");
+            layer.addRenderable(orbit);
+
+            // Curtain around Snohomish County, WA
+            Curtain curtain = new Curtain(attrs);
+            curtain.setLocations(makeLatLon(SNOHOMISH_COUNTY));
+            curtain.setAltitudes(5000.0, 10000.0);
+            curtain.setTerrainConforming(true, true);
+            curtain.setValue(AVKey.DISPLAY_NAME, "Curtain around Snohomish County, WA");
+            layer.addRenderable(curtain);
+
+            // Curtain around San Juan County, WA
+            curtain = new Curtain(attrs);
+            curtain.setLocations(makeLatLon(SAN_JUAN_COUNTY_2));
+            curtain.setAltitudes(5000.0, 10000.0);
+            curtain.setTerrainConforming(true, true);
+            curtain.setValue(AVKey.DISPLAY_NAME, "Curtain around San Juan County, WA");
+            layer.addRenderable(curtain);
+
+            // Polygons of San Juan County, WA
+            Polygon poly = new Polygon(attrs);
+            poly.setLocations(makeLatLon(SAN_JUAN_COUNTY_1));
+            poly.setAltitudes(5000.0, 10000.0);
+            poly.setTerrainConforming(true, true);
+            poly.setValue(AVKey.DISPLAY_NAME, "Polygon of San Juan County, WA");
+            layer.addRenderable(poly);
+
+            poly = new Polygon(attrs);
+            poly.setLocations(makeLatLon(SAN_JUAN_COUNTY_3));
+            poly.setAltitudes(5000.0, 10000.0);
+            poly.setTerrainConforming(true, true);
+            poly.setValue(AVKey.DISPLAY_NAME, "Polygon of San Juan County, WA");
+            layer.addRenderable(poly);
+
+            // Polygon over the Sierra Nevada mountains.
+            poly = new Polygon(attrs);
+            poly.setLocations(Arrays.asList(
+                LatLon.fromDegrees(40.1323, -122.0911),
+                LatLon.fromDegrees(38.0062, -120.7711),
+                LatLon.fromDegrees(37.0562, -119.6226),
+                LatLon.fromDegrees(36.9231, -118.1829),
+                LatLon.fromDegrees(37.8211, -118.8557),
+                LatLon.fromDegrees(39.0906, -120.0304),
+                LatLon.fromDegrees(40.2609, -120.8295)));
+            poly.setAltitudes(0, 5000);
+            poly.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_REFERENCE);
+            poly.setValue(AVKey.DISPLAY_NAME, "Polygon over the Sierra Nevada mountains");
+            layer.addRenderable(poly);
+
+            // Continent sized polygon.
+            poly = new Polygon(attrs);
+            poly.setLocations(Arrays.asList(
+                LatLon.fromDegrees(-40, 60),
+                LatLon.fromDegrees(-40, 80),
+                LatLon.fromDegrees(40, 100),
+                LatLon.fromDegrees(40, 40)
+            ));
+            poly.setAltitudes(100000.0, 500000.0);
+            poly.setTerrainConforming(true, true);
+            poly.setValue(AVKey.DISPLAY_NAME, "Continent sized Polygon");
+            layer.addRenderable(poly);
+
+            TrackAirspace track = new TrackAirspace(attrs);
+            track.setValue(AVKey.DISPLAY_NAME, "Disconnected Track");
+            double leftWidth = 80000.0d;
+            double rightWidth = 80000.0d;
+            double minAlt = 150000.0d;
+            double maxAlt = 250000.0d;
+            track.addLeg(LatLon.fromDegrees(29.9970, -108.6046), LatLon.fromDegrees(33.5132, -107.7544), minAlt / 6,
+                maxAlt / 6, leftWidth, rightWidth).setTerrainConforming(false, false);
+            track.addLeg(LatLon.fromDegrees(29.4047, -103.0465), LatLon.fromDegrees(34.4955, -102.2151), minAlt / 4,
+                maxAlt / 4, leftWidth, rightWidth).setTerrainConforming(false, true);
+            track.addLeg(LatLon.fromDegrees(28.9956, -99.8026), LatLon.fromDegrees(36.0133, -98.3489), minAlt / 2,
+                maxAlt / 2, leftWidth, rightWidth).setTerrainConforming(true, true);
+            track.addLeg(LatLon.fromDegrees(28.5986, -96.6126), LatLon.fromDegrees(36.8515, -95.0324), minAlt, maxAlt,
+                leftWidth, rightWidth).setTerrainConforming(true, false);
+            track.addLeg(LatLon.fromDegrees(30.4647, -94.1764), LatLon.fromDegrees(35.5636, -92.9371), minAlt / 2,
+                maxAlt / 2, leftWidth, rightWidth).setTerrainConforming(false, false);
+            track.addLeg(LatLon.fromDegrees(31.0959, -90.9424), LatLon.fromDegrees(35.1470, -89.4267), minAlt / 4,
+                maxAlt / 4, leftWidth, rightWidth).setTerrainConforming(false, true);
+            track.addLeg(LatLon.fromDegrees(31.5107, -88.5723), LatLon.fromDegrees(34.2444, -87.4563), minAlt / 6,
+                maxAlt / 6, leftWidth, rightWidth).setTerrainConforming(true, true);
+            layer.addRenderable(track);
+
+            track = new TrackAirspace(attrs);
+            track.setValue(AVKey.DISPLAY_NAME, "Track with center line independent left/right width");
+            track.setTerrainConforming(true, true);
+            track.setEnableInnerCaps(false);
+            track.setEnableCenterLine(true);
+            track.addLeg(LatLon.fromDegrees(42.95, -122.20), LatLon.fromDegrees(42.94, -122.12), 1000, 1300, 300, 600);
+            track.addLeg(LatLon.fromDegrees(42.94, -122.12), LatLon.fromDegrees(42.97, -121.99), 1000, 1300, 300, 600);
+            track.addLeg(LatLon.fromDegrees(42.97, -121.99), LatLon.fromDegrees(42.90, -121.95), 1000, 1300, 300, 600);
+            track.addLeg(LatLon.fromDegrees(42.90, -121.95), LatLon.fromDegrees(42.80, -122.04), 1000, 1300, 300, 600);
+            layer.addRenderable(track);
+
+            // Sphere
+            SphereAirspace sphere = new SphereAirspace(attrs);
+            sphere.setLocation(LatLon.fromDegrees(47.7477, -122.6372));
+            sphere.setAltitude(5000.0);
+            sphere.setRadius(5000.0);
+            sphere.setTerrainConforming(true);
+            sphere.setValue(AVKey.DISPLAY_NAME, "Sphere centered 5km above terrain");
+            layer.addRenderable(sphere);
+
+            sphere = new SphereAirspace(attrs);
+            sphere.setLocation(LatLon.fromDegrees(47.7477, -121.6372));
+            sphere.setAltitude(0.0);
+            sphere.setRadius(5000.0);
+            sphere.setTerrainConforming(true);
+            sphere.setValue(AVKey.DISPLAY_NAME, "Sphere centered on terrain");
+            layer.addRenderable(sphere);
+
+            CappedEllipticalCylinder ellipticalCylinder = new CappedEllipticalCylinder(attrs);
+            ellipticalCylinder.setCenter(LatLon.fromDegrees(51, -110));
+            ellipticalCylinder.setRadii(10.0e3, 15.0e3, 50.0e3, 75.0e3);
+            ellipticalCylinder.setAltitudes(100000.0, 500000.0);
+            ellipticalCylinder.setHeading(Angle.fromDegrees(180));
+            ellipticalCylinder.setTerrainConforming(true);
+            ellipticalCylinder.setValue(AVKey.DISPLAY_NAME, "Elliptical Cylinder above terrain");
+            layer.addRenderable(ellipticalCylinder);
+
+            CappedCylinder cappedCylinder = new CappedCylinder(attrs);
+            cappedCylinder.setCenter(LatLon.fromDegrees(51, -105));
+            cappedCylinder.setRadii(15.0e3, 75.0e3);
+            cappedCylinder.setAltitudes(100000.0, 500000.0);
+            cappedCylinder.setTerrainConforming(true);
+            cappedCylinder.setValue(AVKey.DISPLAY_NAME, "Capped Cylinder above terrain");
+            layer.addRenderable(cappedCylinder);
+
+            return layer;
+        }
+
+        protected Layer makeAMSLAirspaces() {
+            AirspaceAttributes attrs = randomAttrs.nextAttributes().asAirspaceAttributes();
+            RenderableLayer layer = new RenderableLayer();
+            layer.setName("AMSL Airspaces");
+
+            // Continent-sized cylinder.
+            CappedCylinder cyl = new CappedCylinder(attrs);
+            cyl.setCenter(LatLon.fromDegrees(0.0, 0.0));
+            cyl.setRadii(1000000.0, 3000000.0);
+            cyl.setAltitudes(100000.0, 500000.0);
+            cyl.setTerrainConforming(false, false);
+            cyl.setValue(AVKey.DISPLAY_NAME, "3,000km Cylinder");
+            layer.addRenderable(cyl);
+
+            // Radarc
+            // To render a Radarc,
+            // (1) Specify inner radius and outer radius.
+            // (2) Specify start and stop azimuth.
+            PartialCappedCylinder partCyl = new PartialCappedCylinder(attrs);
+            partCyl.setCenter(LatLon.fromDegrees(46.7477, -123.6372));
+            partCyl.setRadii(15000.0, 30000.0);
+            partCyl.setAltitudes(5000.0, 10000.0);
+            partCyl.setAzimuths(Angle.fromDegrees(0.0), Angle.fromDegrees(90.0));
+            partCyl.setTerrainConforming(false, false);
+            partCyl.setValue(AVKey.DISPLAY_NAME, "Partial Cylinder from 0 to 90 degrees");
+            layer.addRenderable(partCyl);
+
+            // Cake
+            Cake cake = new Cake(attrs);
+            cake.setLayers(Arrays.asList(
+                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 10000.0, Angle.fromDegrees(190.0),
+                    Angle.fromDegrees(170.0), 10000.0, 15000.0),
+                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 15000.0, Angle.fromDegrees(190.0),
+                    Angle.fromDegrees(90.0), 16000.0, 21000.0),
+                new Cake.Layer(LatLon.fromDegrees(46.7477, -121.6372), 12500.0, Angle.fromDegrees(270.0),
+                    Angle.fromDegrees(60.0), 22000.0, 27000.0)));
+            cake.getLayers().get(0).setTerrainConforming(false, false);
+            cake.getLayers().get(1).setTerrainConforming(false, false);
+            cake.getLayers().get(2).setTerrainConforming(false, false);
+            cake.setValue(AVKey.DISPLAY_NAME, "3 layer Cake");
+            layer.addRenderable(cake);
+
+            // Left Orbit
+            Orbit orbit = new Orbit(attrs);
+            orbit.setLocations(LatLon.fromDegrees(45.7477, -123.6372), LatLon.fromDegrees(45.7477, -122.6372));
+            orbit.setAltitudes(10000.0, 20000.0);
+            orbit.setWidth(30000.0);
+            orbit.setOrbitType(Orbit.OrbitType.LEFT);
+            orbit.setTerrainConforming(false, false);
+            orbit.setValue(AVKey.DISPLAY_NAME, "Left Orbit");
+            layer.addRenderable(orbit);
+
+            // Right Orbit
+            orbit = new Orbit(attrs);
+            orbit.setLocations(LatLon.fromDegrees(45.7477, -123.6372), LatLon.fromDegrees(45.7477, -122.6372));
+            orbit.setAltitudes(10000.0, 20000.0);
+            orbit.setWidth(30000.0);
+            orbit.setOrbitType(Orbit.OrbitType.RIGHT);
+            orbit.setTerrainConforming(false, false);
+            orbit.setValue(AVKey.DISPLAY_NAME, "Right Orbit");
+            layer.addRenderable(orbit);
+
+            // PolyArc
+            PolyArc polyArc = new PolyArc(attrs);
+            polyArc.setLocations(Arrays.asList(
+                LatLon.fromDegrees(45.5, -122.0),
+                LatLon.fromDegrees(46.0, -122.0),
+                LatLon.fromDegrees(46.0, -121.0),
+                LatLon.fromDegrees(45.5, -121.0)));
+            polyArc.setAltitudes(5000.0, 10000.0);
+            polyArc.setRadius(30000.0);
+            polyArc.setAzimuths(Angle.fromDegrees(-45.0), Angle.fromDegrees(135.0));
+            polyArc.setTerrainConforming(false, false);
+            polyArc.setValue(AVKey.DISPLAY_NAME, "PolyArc with 30km radius from -45 to 135 degrees");
+            layer.addRenderable(polyArc);
+
+            // Route
+            Route route = new Route(attrs);
+            route.setAltitudes(5000.0, 20000.0);
+            route.setWidth(20000.0);
+            route.setLocations(Arrays.asList(
+                LatLon.fromDegrees(43.0, -121.0),
+                LatLon.fromDegrees(44.0, -121.0),
+                LatLon.fromDegrees(44.0, -120.0),
+                LatLon.fromDegrees(43.0, -120.0)));
+            route.setTerrainConforming(false, false);
+            route.setValue(AVKey.DISPLAY_NAME, "Route");
+            layer.addRenderable(route);
+
+            // Track
+            TrackAirspace track = new TrackAirspace(attrs);
+            track.setEnableInnerCaps(false);
+            track.setEnableCenterLine(true);
+            track.setValue(AVKey.DISPLAY_NAME, "Semi-connected Track");
+            double leftWidth = 100000.0d;
+            double rightWidth = 100000.0d;
+            double minAlt = 150000.0d;
+            double maxAlt = 250000.0d;
+            Box leg;
+            track.addLeg(LatLon.fromDegrees(40.4705, -117.9242), LatLon.fromDegrees(42.6139, -108.3518), minAlt, maxAlt,
+                leftWidth, rightWidth);
+            leg = track.addLeg(LatLon.fromDegrees(42.6139, -108.3518), LatLon.fromDegrees(44.9305, -97.6665),
+                minAlt / 2, maxAlt / 2, leftWidth, rightWidth);
+            leg.setTerrainConforming(false, false);
+            leg = track.addLeg(LatLon.fromDegrees(44.9305, -97.6665), LatLon.fromDegrees(47.0121, -94.9218), minAlt / 2,
+                maxAlt / 2, leftWidth, rightWidth);
+            leg.setTerrainConforming(false, false);
+            leg = track.addLeg(LatLon.fromDegrees(47.0121, -94.9218), LatLon.fromDegrees(44.7964, -68.4230), minAlt / 4,
+                maxAlt / 4, leftWidth, rightWidth);
+            leg.setTerrainConforming(false, false);
+            layer.addRenderable(track);
+
+            return layer;
+        }
+
+        public Layer makeIntersectingAirspaces() {
+            AirspaceAttributes attrs = randomAttrs.nextAttributes().asAirspaceAttributes();
+            RenderableLayer layer = new RenderableLayer();
+            layer.setName("Intersecting Airspaces");
+
+            double bottom = 1000;
+            double top = 10000;
+
+            // Cake with intersecting layers
+            Cake cake = new Cake(attrs);
+            cake.setLayers(Arrays.asList(
+                new Cake.Layer(LatLon.fromDegrees(25, -100), 50000, Angle.ZERO, Angle.ZERO, bottom, top),
+                new Cake.Layer(LatLon.fromDegrees(24, -100), 100000, Angle.ZERO, Angle.ZERO, bottom, top),
+                new Cake.Layer(LatLon.fromDegrees(23, -100), 150000, Angle.ZERO, Angle.ZERO, bottom, top)));
+            cake.getLayers().get(0).setEnableDepthOffset(true);
+            cake.getLayers().get(1).setEnableDepthOffset(true);
+            cake.getLayers().get(2).setEnableDepthOffset(true);
+            cake.setValue(AVKey.DISPLAY_NAME, "Cake with intersecting layers (depth offset enabled)");
+            layer.addRenderable(cake);
+
+            // Orbit intersecting Cylinder
+            Orbit orbit = new Orbit(attrs);
+            orbit.setLocations(LatLon.fromDegrees(20, -100), LatLon.fromDegrees(15, -90));
+            orbit.setAltitudes(bottom, top);
+            orbit.setWidth(400000);
+            orbit.setEnableDepthOffset(true);
+            orbit.setValue(AVKey.DISPLAY_NAME, "Orbit intersecting Cylinder (depth offset enabled)");
+            layer.addRenderable(orbit);
+
+            // Cylinder intersecting Orbit
+            CappedCylinder cyl = new CappedCylinder(attrs);
+            cyl.setCenter(LatLon.fromDegrees(18, -95));
+            cyl.setRadius(400000);
+            cyl.setAltitudes(bottom, top);
+            cyl.setEnableDepthOffset(true);
+            cyl.setValue(AVKey.DISPLAY_NAME, "Cylinder intersecting Orbit (depth offset enabled)");
+            layer.addRenderable(cyl);
+
+            return layer;
+        }
+
+        public Layer makeDatelineCrossingAirspaces() {
+            randomAttrs.nextAttributes(); // skip the yellow attribute
+            AirspaceAttributes attrs = randomAttrs.nextAttributes().asAirspaceAttributes();
+            RenderableLayer layer = new RenderableLayer();
+            layer.setName("Dateline Crossing Airspaces");
+
+            // Curtains of different path types crossing the dateline.
+            Curtain curtain = new Curtain(attrs);
+            curtain.setLocations(Arrays.asList(LatLon.fromDegrees(27.0, -112.0), LatLon.fromDegrees(35.0, 138.0)));
+            curtain.setAltitudes(1000.0, 100000.0);
+            curtain.setTerrainConforming(false, false);
+            curtain.setValue(AVKey.DISPLAY_NAME, "Great-arc Curtain from America to Japan");
+            layer.addRenderable(curtain);
+
+            curtain = new Curtain(attrs);
+            curtain.setLocations(Arrays.asList(LatLon.fromDegrees(27.0, -112.0), LatLon.fromDegrees(35.0, 138.0)));
+            curtain.setPathType(AVKey.RHUMB_LINE);
+            curtain.setAltitudes(1000.0, 100000.0);
+            curtain.setTerrainConforming(false, false);
+            curtain.setValue(AVKey.DISPLAY_NAME, "Rhumb Curtain from America to Japan");
+            layer.addRenderable(curtain);
+
+            // Continent sized sphere
+            SphereAirspace sphere = new SphereAirspace(attrs);
+            sphere.setLocation(LatLon.fromDegrees(0.0, -180.0));
+            sphere.setAltitude(0.0);
+            sphere.setRadius(1000000.0);
+            sphere.setTerrainConforming(false);
+            sphere.setValue(AVKey.DISPLAY_NAME, "1,000km radius Sphere on the antimeridian");
+            layer.addRenderable(sphere);
+
+            return layer;
+        }
+
+        public void initializeSelectionMonitoring() {
+            this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
+        }
+    }
 }

@@ -11,61 +11,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
+import java.util.logging.Level;
 
 /**
  * @author dcollins
  * @version $Id: AboutDialog.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AboutDialog
-{
+public class AboutDialog {
     private Object content;
     private String contentType;
     private Dimension preferredSize;
 
-    public AboutDialog()
-    {
+    public AboutDialog() {
     }
 
-    public Object getContent()
-    {
-        return this.content;
-    }
-
-    public void setContent(Object content)
-    {
-        this.content = content;
-    }
-
-    public String getContentType()
-    {
-        return this.contentType;
-    }
-
-    public void setContentType(String contentType)
-    {
-        this.contentType = contentType;
-    }
-
-    public Dimension getPreferredSize()
-    {
-        return this.preferredSize;
-    }
-
-    public void setPreferredSize(Dimension preferredSize)
-    {
-        this.preferredSize = preferredSize;
-    }
-
-    public void showDialog(Component parentComponent)
-    {
-        Component component = makeContentComponent();
-        showContentDialog(parentComponent, component);
-    }
-
-    private static void showContentDialog(Component parentComponent, Component component)
-    {
-        try
-        {
+    private static void showContentDialog(Component parentComponent, Component component) {
+        try {
             final JDialog dialog;
             if (parentComponent instanceof Dialog)
                 dialog = new JDialog((Dialog) parentComponent);
@@ -90,20 +51,45 @@ public class AboutDialog
             SAR2.centerWindowInDesktop(dialog);
             dialog.setVisible(true);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = "Exception while displaying content dialog";
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
+            Logging.logger().log(Level.SEVERE, message, e);
         }
     }
 
-    private Component makeContentComponent()
-    {
+    public Object getContent() {
+        return this.content;
+    }
+
+    public void setContent(Object content) {
+        this.content = content;
+    }
+
+    public String getContentType() {
+        return this.contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public Dimension getPreferredSize() {
+        return this.preferredSize;
+    }
+
+    public void setPreferredSize(Dimension preferredSize) {
+        this.preferredSize = preferredSize;
+    }
+
+    public void showDialog(Component parentComponent) {
+        Component component = makeContentComponent();
+        showContentDialog(parentComponent, component);
+    }
+
+    private Component makeContentComponent() {
         JEditorPane editor = null;
-        try
-        {
-            if (this.content != null)
-            {
+        try {
+            if (this.content != null) {
                 URL url = getClass().getResource(this.content.toString());
                 editor = new JEditorPane();
                 if (this.contentType != null)
@@ -111,17 +97,15 @@ public class AboutDialog
                 editor.setPage(url);
             }
 
-            if (editor != null)
-            {
+            if (editor != null) {
                 editor.setEditable(false);
                 if (this.preferredSize != null)
                     editor.setPreferredSize(this.preferredSize);
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = "Exception while fetching content";
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
+            Logging.logger().log(Level.SEVERE, message, e);
             editor = null;
         }
         return editor;

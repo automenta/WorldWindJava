@@ -21,8 +21,7 @@ import gov.nasa.worldwindx.examples.ApplicationTemplate;
  * @author tag
  * @version $Id: ToolTipController.java 2365 2014-10-02 23:15:16Z tgaskins $
  */
-public class ToolTipController implements SelectListener, Disposable
-{
+public class ToolTipController implements SelectListener, Disposable {
     protected final WorldWindow wwd;
     protected String hoverKey = AVKey.HOVER_TEXT;
     protected String rolloverKey = AVKey.ROLLOVER_TEXT;
@@ -40,8 +39,7 @@ public class ToolTipController implements SelectListener, Disposable
      * @param hoverKey    the key to use when looking up tool tip text from the shape's AVList when a hover event
      *                    occurs. May be null, in which case a tool tip is not displayed for hover events.
      */
-    public ToolTipController(WorldWindow wwd, String rolloverKey, String hoverKey)
-    {
+    public ToolTipController(WorldWindow wwd, String rolloverKey, String hoverKey) {
         this.wwd = wwd;
         this.hoverKey = hoverKey;
         this.rolloverKey = rolloverKey;
@@ -52,53 +50,44 @@ public class ToolTipController implements SelectListener, Disposable
     /**
      * Create a controller for a specified {@link WorldWindow} that displays "DISPLAY_NAME" on rollover.
      *
-     * @param wwd         the WorldWindow to monitor.
+     * @param wwd the WorldWindow to monitor.
      */
-    public ToolTipController(WorldWindow wwd)
-    {
+    public ToolTipController(WorldWindow wwd) {
         this.wwd = wwd;
         this.rolloverKey = AVKey.DISPLAY_NAME;
 
         this.wwd.addSelectListener(this);
     }
 
-    public void dispose()
-    {
+    public void dispose() {
         this.wwd.removeSelectListener(this);
     }
 
-    protected String getHoverText(SelectEvent event)
-    {
+    protected String getHoverText(SelectEvent event) {
         return event.getTopObject() != null && event.getTopObject() instanceof AVList ?
             ((AVList) event.getTopObject()).getStringValue(this.hoverKey) : null;
     }
 
-    protected String getRolloverText(SelectEvent event)
-    {
+    protected String getRolloverText(SelectEvent event) {
         return event.getTopObject() != null && event.getTopObject() instanceof AVList ?
             ((AVList) event.getTopObject()).getStringValue(this.rolloverKey) : null;
     }
 
-    public void selected(SelectEvent event)
-    {
-        try
-        {
+    public void selected(SelectEvent event) {
+        try {
             if (event.isRollover() && this.rolloverKey != null)
                 this.handleRollover(event);
             else if (event.isHover() && this.hoverKey != null)
                 this.handleHover(event);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Wrap the handler in a try/catch to keep exceptions from bubbling up
             Logging.logger().warning(e.getMessage() != null ? e.getMessage() : e.toString());
         }
     }
 
-    protected void handleRollover(SelectEvent event)
-    {
-        if (this.lastRolloverObject != null)
-        {
+    protected void handleRollover(SelectEvent event) {
+        if (this.lastRolloverObject != null) {
             if (this.lastRolloverObject == event.getTopObject() && !WWUtil.isEmpty(getRolloverText(event)))
                 return;
 
@@ -107,18 +96,15 @@ public class ToolTipController implements SelectListener, Disposable
             this.wwd.redraw();
         }
 
-        if (getRolloverText(event) != null)
-        {
+        if (getRolloverText(event) != null) {
             this.lastRolloverObject = event.getTopObject();
             this.showToolTip(event, getRolloverText(event).replace("\\n", "\n"));
             this.wwd.redraw();
         }
     }
 
-    protected void handleHover(SelectEvent event)
-    {
-        if (this.lastHoverObject != null)
-        {
+    protected void handleHover(SelectEvent event) {
+        if (this.lastHoverObject != null) {
             if (this.lastHoverObject == event.getTopObject())
                 return;
 
@@ -127,28 +113,23 @@ public class ToolTipController implements SelectListener, Disposable
             this.wwd.redraw();
         }
 
-        if (getHoverText(event) != null)
-        {
+        if (getHoverText(event) != null) {
             this.lastHoverObject = event.getTopObject();
             this.showToolTip(event, getHoverText(event).replace("\\n", "\n"));
             this.wwd.redraw();
         }
     }
 
-    protected void showToolTip(SelectEvent event, String text)
-    {
-        if (annotation != null)
-        {
+    protected void showToolTip(SelectEvent event, String text) {
+        if (annotation != null) {
             annotation.setText(text);
             annotation.setScreenPoint(event.getPickPoint());
         }
-        else
-        {
+        else {
             annotation = new ToolTipAnnotation(text);
         }
 
-        if (layer == null)
-        {
+        if (layer == null) {
             layer = new AnnotationLayer();
             layer.setPickEnabled(false);
             layer.setValue(AVKey.IGNORE, true);
@@ -159,31 +140,26 @@ public class ToolTipController implements SelectListener, Disposable
         this.addLayer(layer);
     }
 
-    protected void hideToolTip()
-    {
-        if (this.layer != null)
-        {
+    protected void hideToolTip() {
+        if (this.layer != null) {
             this.layer.removeAllAnnotations();
             this.removeLayer(this.layer);
             this.layer.dispose();
             this.layer = null;
         }
 
-        if (this.annotation != null)
-        {
+        if (this.annotation != null) {
             this.annotation.dispose();
             this.annotation = null;
         }
     }
 
-    protected void addLayer(Layer layer)
-    {
+    protected void addLayer(Layer layer) {
         if (!this.wwd.getModel().getLayers().contains(layer))
             ApplicationTemplate.insertBeforeCompass(this.wwd, layer);
     }
 
-    protected void removeLayer(Layer layer)
-    {
+    protected void removeLayer(Layer layer) {
         this.wwd.getModel().getLayers().remove(layer);
     }
 }

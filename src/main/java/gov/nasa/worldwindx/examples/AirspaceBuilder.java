@@ -28,6 +28,8 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.io.*;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.util.List;
 import java.util.*;
 import java.util.zip.*;
 
@@ -56,8 +58,7 @@ import java.util.zip.*;
  * <h1>Demo Shapes</h1>
  * <p>
  * Select <code>File -&gt; Load Demo Shapes</code> to display a set of polygon airspace shapes built with this editor.
- * The data for these shapes is located in the WorldWind project under
- * src/gov/nasa/worldwindx/examples/data/AirspaceBuilder-DemoShapes.zip.
+ * The data for these shapes is located in the WorldWind project under src/gov/nasa/worldwindx/examples/data/AirspaceBuilder-DemoShapes.zip.
  *
  * @author dcollins
  * @version $Id: AirspaceBuilder.java 2231 2014-08-15 19:03:12Z dcollins $
@@ -76,7 +77,89 @@ public class AirspaceBuilder extends ApplicationTemplate {
     protected static final String SAVE = "AirspaceBuilder.Save";
     protected static final String SELECTION_CHANGED = "AirspaceBuilder.SelectionChanged";
     protected static final String DEMO_AIRSPACES_PATH
-            = "gov/nasa/worldwindx/examples/data/AirspaceBuilder-DemoShapes.zip";
+        = "gov/nasa/worldwindx/examples/data/AirspaceBuilder-DemoShapes.zip";
+    protected static final AirspaceFactory[] defaultAirspaceFactories = new AirspaceFactory[] {
+        new PolygonAirspaceFactory(),
+        new SphereAirspaceFactory()
+    };
+    protected static final double DEFAULT_SHAPE_SIZE_METERS = 200000.0; // 200 km
+    protected static long nextEntryNumber = 1;
+
+    public static AirspaceAttributes getDefaultAttributes() {
+        AirspaceAttributes attributes = new BasicAirspaceAttributes();
+        attributes.setInteriorMaterial(new Material(Color.BLACK, Color.LIGHT_GRAY, Color.DARK_GRAY, Color.BLACK, 0.0f));
+        attributes.setOutlineMaterial(Material.DARK_GRAY);
+        attributes.setDrawOutline(true);
+        attributes.setInteriorOpacity(0.95);
+        attributes.setOutlineOpacity(0.95);
+        attributes.setOutlineWidth(2);
+        return attributes;
+    }
+
+    public static AirspaceAttributes getSelectionAttributes() {
+        AirspaceAttributes attributes = new BasicAirspaceAttributes();
+        attributes.setInteriorMaterial(Material.WHITE);
+        attributes.setOutlineMaterial(Material.BLACK);
+        attributes.setDrawOutline(true);
+        attributes.setInteriorOpacity(0.8);
+        attributes.setOutlineOpacity(0.8);
+        attributes.setOutlineWidth(2);
+        return attributes;
+    }
+
+    public static AirspaceAttributes getIntersectionAttributes() {
+        AirspaceAttributes attributes = new BasicAirspaceAttributes();
+        attributes.setInteriorMaterial(Material.RED);
+        attributes.setInteriorOpacity(0.95);
+        return attributes;
+    }
+
+    public static AirspaceAttributes getSelectionAndIntersectionAttributes() {
+        AirspaceAttributes attributes = new BasicAirspaceAttributes();
+        attributes.setInteriorMaterial(Material.ORANGE);
+        attributes.setInteriorOpacity(0.8);
+        return attributes;
+    }
+
+    public static void setEditorAttributes(AirspaceEditor editor) {
+        editor.setUseRubberBand(true);
+        editor.setKeepControlPointsAboveTerrain(true);
+    }
+
+    public static String getNextName(String base) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(base);
+        sb.append(nextEntryNumber++);
+        return sb.toString();
+    }
+
+    protected static AirspaceEditor getEditorFor(Airspace airspace) {
+        if (airspace instanceof Polygon) {
+            PolygonEditor editor = new PolygonEditor();
+            editor.setPolygon((Polygon) airspace);
+            setEditorAttributes(editor);
+            return editor;
+        }
+        else if (airspace instanceof SphereAirspace) {
+            SphereAirspaceEditor editor = new SphereAirspaceEditor();
+            editor.setSphere((SphereAirspace) airspace);
+            setEditorAttributes(editor);
+            return editor;
+        }
+
+        return null;
+    }
+
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Airspace Builder", AppFrame.class);
+    }
+
+    protected interface AirspaceFactory {
+
+        Airspace createAirspace(WorldWindow wwd, boolean fitShapeToViewport);
+
+        AirspaceEditor createEditor(Airspace airspace);
+    }
 
     //**************************************************************//
     //********************  Airspace Builder Model  ****************//
@@ -161,7 +244,8 @@ public class AirspaceBuilder extends ApplicationTemplate {
         public Object setValue(String key, Object value) {
             if (AVKey.DISPLAY_NAME.equals(key)) {
                 return this.airspace.setValue(key, value);
-            } else {
+            }
+            else {
                 return super.setValue(key, value);
             }
         }
@@ -169,11 +253,14 @@ public class AirspaceBuilder extends ApplicationTemplate {
         protected void updateAttributes() {
             if (this.isSelected() && this.isIntersecting()) {
                 this.airspace.setAttributes(getSelectionAndIntersectionAttributes());
-            } else if (this.isSelected()) {
+            }
+            else if (this.isSelected()) {
                 this.airspace.setAttributes(getSelectionAttributes());
-            } else if (this.isIntersecting()) {
+            }
+            else if (this.isIntersecting()) {
                 this.airspace.setAttributes(getIntersectionAttributes());
-            } else {
+            }
+            else {
                 this.airspace.setAttributes(this.getAttributes());
             }
         }
@@ -275,20 +362,6 @@ public class AirspaceBuilder extends ApplicationTemplate {
         }
     }
 
-    protected static final AirspaceFactory[] defaultAirspaceFactories = new AirspaceFactory[]{
-        new PolygonAirspaceFactory(),
-        new SphereAirspaceFactory()
-    };
-
-    protected static final double DEFAULT_SHAPE_SIZE_METERS = 200000.0; // 200 km
-
-    protected interface AirspaceFactory {
-
-        Airspace createAirspace(WorldWindow wwd, boolean fitShapeToViewport);
-
-        AirspaceEditor createEditor(Airspace airspace);
-    }
-
     protected static class PolygonAirspaceFactory implements AirspaceFactory {
 
         public PolygonAirspaceFactory() {
@@ -320,7 +393,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
             Angle heading = ShapeUtils.getNewShapeHeading(wwd, true);
             double sizeInMeters = fitShapeToViewport
-                    ? ShapeUtils.getViewportScaleFactor(wwd) : DEFAULT_SHAPE_SIZE_METERS;
+                ? ShapeUtils.getViewportScaleFactor(wwd) : DEFAULT_SHAPE_SIZE_METERS;
 
             java.util.List<LatLon> locations = ShapeUtils.createSquareInViewport(wwd, position, heading, sizeInMeters);
 
@@ -374,7 +447,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             // Creates a sphere in the center of the viewport. Attempts to guess at a reasonable size and height.
             Position position = ShapeUtils.getNewShapePosition(wwd);
             double sizeInMeters = fitShapeToViewport
-                    ? ShapeUtils.getViewportScaleFactor(wwd) : DEFAULT_SHAPE_SIZE_METERS;
+                ? ShapeUtils.getViewportScaleFactor(wwd) : DEFAULT_SHAPE_SIZE_METERS;
 
             sphere.setLocation(new LatLon(position));
             sphere.setRadius(sizeInMeters / 2.0);
@@ -385,72 +458,6 @@ public class AirspaceBuilder extends ApplicationTemplate {
             return "Sphere";
         }
     }
-
-    public static AirspaceAttributes getDefaultAttributes() {
-        AirspaceAttributes attributes = new BasicAirspaceAttributes();
-        attributes.setInteriorMaterial(new Material(Color.BLACK, Color.LIGHT_GRAY, Color.DARK_GRAY, Color.BLACK, 0.0f));
-        attributes.setOutlineMaterial(Material.DARK_GRAY);
-        attributes.setDrawOutline(true);
-        attributes.setInteriorOpacity(0.95);
-        attributes.setOutlineOpacity(.95);
-        attributes.setOutlineWidth(2);
-        return attributes;
-    }
-
-    public static AirspaceAttributes getSelectionAttributes() {
-        AirspaceAttributes attributes = new BasicAirspaceAttributes();
-        attributes.setInteriorMaterial(Material.WHITE);
-        attributes.setOutlineMaterial(Material.BLACK);
-        attributes.setDrawOutline(true);
-        attributes.setInteriorOpacity(0.8);
-        attributes.setOutlineOpacity(0.8);
-        attributes.setOutlineWidth(2);
-        return attributes;
-    }
-
-    public static AirspaceAttributes getIntersectionAttributes() {
-        AirspaceAttributes attributes = new BasicAirspaceAttributes();
-        attributes.setInteriorMaterial(Material.RED);
-        attributes.setInteriorOpacity(0.95);
-        return attributes;
-    }
-
-    public static AirspaceAttributes getSelectionAndIntersectionAttributes() {
-        AirspaceAttributes attributes = new BasicAirspaceAttributes();
-        attributes.setInteriorMaterial(Material.ORANGE);
-        attributes.setInteriorOpacity(0.8);
-        return attributes;
-    }
-
-    public static void setEditorAttributes(AirspaceEditor editor) {
-        editor.setUseRubberBand(true);
-        editor.setKeepControlPointsAboveTerrain(true);
-    }
-
-    public static String getNextName(String base) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(base);
-        sb.append(nextEntryNumber++);
-        return sb.toString();
-    }
-
-    protected static AirspaceEditor getEditorFor(Airspace airspace) {
-        if (airspace instanceof Polygon) {
-            PolygonEditor editor = new PolygonEditor();
-            editor.setPolygon((Polygon) airspace);
-            setEditorAttributes(editor);
-            return editor;
-        } else if (airspace instanceof SphereAirspace) {
-            SphereAirspaceEditor editor = new SphereAirspaceEditor();
-            editor.setSphere((SphereAirspace) airspace);
-            setEditorAttributes(editor);
-            return editor;
-        }
-
-        return null;
-    }
-
-    protected static long nextEntryNumber = 1;
 
     //**************************************************************//
     //********************  Airspace Builder Panel  ****************//
@@ -477,7 +484,8 @@ public class AirspaceBuilder extends ApplicationTemplate {
                 for (int index : indices) {
                     this.entryTable.setRowSelectionInterval(index, index);
                 }
-            } else {
+            }
+            else {
                 this.entryTable.clearSelection();
             }
 
@@ -585,7 +593,8 @@ public class AirspaceBuilder extends ApplicationTemplate {
             controller.addPropertyChangeListener((PropertyChangeEvent e) -> {
                 if (SIZE_NEW_SHAPES_TO_VIEWPORT.equals(e.getPropertyName())) {
                     resizeNewShapesCheckBox.setSelected(controller.isResizeNewShapesToViewport());
-                } else if (ENABLE_EDIT.equals(e.getPropertyName())) {
+                }
+                else if (ENABLE_EDIT.equals(e.getPropertyName())) {
                     enableEditCheckBox.setSelected(controller.isEnableEdit());
                 }
             });
@@ -596,13 +605,13 @@ public class AirspaceBuilder extends ApplicationTemplate {
     //********************  Airspace Builder Controller  ***********//
     //**************************************************************//
     protected static class AirspaceBuilderController extends WWObjectImpl implements ActionListener, MouseListener,
-            AirspaceEditListener {
+        AirspaceEditListener {
 
         protected final AppFrame app;
+        protected final AirspaceEditorController editorController;
         protected AirspaceBuilderModel model;
         protected AirspaceBuilderPanel view;
         protected AirspaceEntry selectedEntry;
-        protected final AirspaceEditorController editorController;
         protected boolean enabled = true;
         protected boolean enableEdit = true;
         protected boolean resizeNewShapes;
@@ -702,7 +711,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
                     case OPEN_DEMO_AIRSPACES:
                         this.openFromPath(DEMO_AIRSPACES_PATH);
                         this.zoomTo(LatLon.fromDegrees(47.6584074779224, -122.3059199579634),
-                                Angle.fromDegrees(-152), Angle.fromDegrees(75), 750);
+                            Angle.fromDegrees(-152), Angle.fromDegrees(75), 750);
                         break;
                     case REMOVE_SELECTED:
                         this.removeEntries(Arrays.asList(this.getSelectedEntries()));
@@ -820,7 +829,8 @@ public class AirspaceBuilder extends ApplicationTemplate {
                 }
 
                 selected.setIntersecting(hasIntersection);
-            } else {
+            }
+            else {
                 for (AirspaceEntry entry : this.getModel().getEntries()) {
                     entry.setIntersecting(false);
                 }
@@ -841,9 +851,9 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
                 // We have to compute the 3D coordinates of the sphere's center ourselves here.
                 Vec4 p1 = terrainConforming1 ? this.getSurfacePoint(location1, altitude1)
-                        : this.getPoint(location1, altitude1);
+                    : this.getPoint(location1, altitude1);
                 Vec4 p2 = terrainConforming2 ? this.getSurfacePoint(location2, altitude2)
-                        : this.getPoint(location2, altitude2);
+                    : this.getPoint(location2, altitude2);
                 double r1 = s1.getRadius();
                 double r2 = s2.getRadius();
 
@@ -863,13 +873,13 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
             if (sc.getTerrain() != null) {
                 point = sc.getTerrain().getSurfacePoint(
-                        latlon.getLatitude(), latlon.getLongitude(), elevation * sc.getVerticalExaggeration());
+                    latlon.getLatitude(), latlon.getLongitude(), elevation * sc.getVerticalExaggeration());
             }
 
             if (point == null) {
                 double e = globe.getElevation(latlon.getLatitude(), latlon.getLongitude());
                 point = globe.computePointFromPosition(
-                        latlon.getLatitude(), latlon.getLongitude(), (e + elevation) * sc.getVerticalExaggeration());
+                    latlon.getLatitude(), latlon.getLongitude(), (e + elevation) * sc.getVerticalExaggeration());
             }
 
             return point;
@@ -880,7 +890,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             Globe globe = this.getApp().getWwd().getModel().getGlobe();
             double e = globe.getElevation(latlon.getLatitude(), latlon.getLongitude());
             return globe.computePointFromPosition(
-                    latlon.getLatitude(), latlon.getLongitude(), (e + elevation) * sc.getVerticalExaggeration());
+                latlon.getLatitude(), latlon.getLongitude(), (e + elevation) * sc.getVerticalExaggeration());
         }
 
         public void createNewEntry(AirspaceFactory factory) {
@@ -928,28 +938,6 @@ public class AirspaceBuilder extends ApplicationTemplate {
             return this.selectedEntry;
         }
 
-        public void selectEntry(AirspaceEntry entry, boolean updateView) {
-            this.setSelectedEntry(entry);
-
-            if (updateView) {
-                if (entry != null) {
-                    int index = this.getModel().getIndexForEntry(entry);
-                    this.getView().setSelectedIndices(new int[]{index});
-                } else {
-                    this.getView().setSelectedIndices(new int[0]);
-                }
-            }
-
-            if (this.isEnableEdit()) {
-                if (this.getSelectedEntry() != null && !this.isSelectionEditing()) {
-                    this.setSelectionEditing(true);
-                }
-            }
-
-            this.updateShapeIntersection();
-            this.getApp().getWwd().redraw();
-        }
-
         protected void setSelectedEntry(AirspaceEntry entry) {
             if (this.selectedEntry != null) {
                 if (this.selectedEntry != entry && this.selectedEntry.isEditing()) {
@@ -964,6 +952,29 @@ public class AirspaceBuilder extends ApplicationTemplate {
             if (this.selectedEntry != null) {
                 this.selectedEntry.setSelected(true);
             }
+        }
+
+        public void selectEntry(AirspaceEntry entry, boolean updateView) {
+            this.setSelectedEntry(entry);
+
+            if (updateView) {
+                if (entry != null) {
+                    int index = this.getModel().getIndexForEntry(entry);
+                    this.getView().setSelectedIndices(new int[] {index});
+                }
+                else {
+                    this.getView().setSelectedIndices(new int[0]);
+                }
+            }
+
+            if (this.isEnableEdit()) {
+                if (this.getSelectedEntry() != null && !this.isSelectionEditing()) {
+                    this.setSelectionEditing(true);
+                }
+            }
+
+            this.updateShapeIntersection();
+            this.getApp().getWwd().redraw();
         }
 
         protected boolean isSelectionEditing() {
@@ -987,7 +998,8 @@ public class AirspaceBuilder extends ApplicationTemplate {
             if (editing) {
                 this.editorController.setEditor(editor);
                 insertBeforePlacenames(this.getApp().getWwd(), editor);
-            } else {
+            }
+            else {
                 this.editorController.setEditor(null);
                 this.getApp().getWwd().getModel().getLayers().remove(editor);
             }
@@ -1037,12 +1049,12 @@ public class AirspaceBuilder extends ApplicationTemplate {
             BasicOrbitView view = (BasicOrbitView) this.getApp().getWwd().getView();
             view.stopMovement();
             view.addPanToAnimator(
-                    new Position(latLon, 0), heading, pitch, zoom, true);
+                new Position(latLon, 0), heading, pitch, zoom, true);
         }
 
         protected void openFromURL() {
             Object input = JOptionPane.showInputDialog(this.getApp(), "Enter a URL: ", "Open Shapes from URL",
-                    JOptionPane.QUESTION_MESSAGE, null, null, null);
+                JOptionPane.QUESTION_MESSAGE, null, null, null);
             if (input == null) {
                 return;
             }
@@ -1050,7 +1062,8 @@ public class AirspaceBuilder extends ApplicationTemplate {
             URL url = null;
             try {
                 url = new URL(input.toString());
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
 
@@ -1061,10 +1074,11 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
         protected void openFromPath(final String path) {
             Thread t = new Thread(() -> {
-                final ArrayList<Airspace> airspaces = new ArrayList<>();
+                final Collection<Airspace> airspaces = new ArrayList<>();
                 try {
                     loadAirspacesFromPath(path, airspaces);
-                } finally {
+                }
+                finally {
                     SwingUtilities.invokeLater(() -> {
                         setAirspaces(airspaces);
                         setEnabled(true);
@@ -1090,7 +1104,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
                 ZipEntry entry = null;
                 for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();
-                        entry = e.nextElement()) {
+                    entry = e.nextElement()) {
                     if (entry == null) {
                         continue;
                     }
@@ -1114,11 +1128,13 @@ public class AirspaceBuilder extends ApplicationTemplate {
                         if (tokens.length >= 2) {
                             airspace.setValue(AVKey.DISPLAY_NAME, tokens[1]);
                         }
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 }
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -1143,9 +1159,11 @@ public class AirspaceBuilder extends ApplicationTemplate {
             }
 
             Thread t = new Thread(() -> {
-                final ArrayList<Airspace> airspaces = new ArrayList<>();
+                final List<Airspace> airspaces = new ArrayList<>();
                 try {
-                    File[] files = dir.listFiles((File dir1, String name) -> name.startsWith("gov.nasa.worldwind.render.airspaces") && name.endsWith(".xml"));
+                    File[] files = dir.listFiles(
+                        (File dir1, String name) -> name.startsWith("gov.nasa.worldwind.render.airspaces")
+                            && name.endsWith(".xml"));
 
                     for (File file : files) {
                         String[] name = file.getName().split("-");
@@ -1160,11 +1178,13 @@ public class AirspaceBuilder extends ApplicationTemplate {
                             if (name.length >= 2) {
                                 airspace.setValue(AVKey.DISPLAY_NAME, name[1]);
                             }
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
-                } finally {
+                }
+                finally {
                     SwingUtilities.invokeLater(() -> {
                         setAirspaces(airspaces);
                         setEnabled(true);
@@ -1206,7 +1226,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
             Thread t = new Thread(() -> {
                 try {
-                    java.text.DecimalFormat f = new java.text.DecimalFormat("####");
+                    DecimalFormat f = new DecimalFormat("####");
                     f.setMinimumIntegerDigits(4);
                     int counter = 0;
 
@@ -1219,19 +1239,21 @@ public class AirspaceBuilder extends ApplicationTemplate {
                         if (xmlString != null) {
                             try {
                                 try (PrintWriter of = new PrintWriter(new File(dir,
-                                        a.getClass().getName() + "-" + entry.getName() + "-" + f.format(counter++)
+                                    a.getClass().getName() + "-" + entry.getName() + "-" + f.format(counter++)
                                         + ".xml"))) {
                                     of.write(xmlString);
                                     of.flush();
                                 }
-                            } catch (Exception e) {
+                            }
+                            catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
 
                         a.setAttributes(currentAttribs);
                     }
-                } finally {
+                }
+                finally {
                     SwingUtilities.invokeLater(() -> {
                         setEnabled(true);
                         getApp().setCursor(null);
@@ -1245,7 +1267,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         }
 
         protected void setAirspaces(Iterable<? extends Airspace> airspaces) {
-            ArrayList<AirspaceEntry> entryList = new ArrayList<>(this.getModel().getEntries());
+            Iterable<AirspaceEntry> entryList = new ArrayList<>(this.getModel().getEntries());
             this.removeEntries(entryList);
 
             for (Airspace airspace : airspaces) {
@@ -1284,14 +1306,6 @@ public class AirspaceBuilder extends ApplicationTemplate {
             makeMenuBar(this, this.builderController);
         }
 
-        public AirspaceBuilderPanel getAirspaceBuilderPanel() {
-            return this.builderView;
-        }
-
-        public RenderableLayer getAirspaceLayer() {
-            return this.airspaceLayer;
-        }
-
         public static void makeMenuBar(JFrame frame, final AirspaceBuilderController controller) {
             JMenuBar menuBar = new JMenuBar();
             final JCheckBoxMenuItem resizeNewShapesItem;
@@ -1301,7 +1315,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             {
                 JMenuItem item = new JMenuItem("Open...");
                 item.setAccelerator(KeyStroke.getKeyStroke(
-                        KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+                    KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
                 item.setActionCommand(OPEN);
                 item.addActionListener(controller);
                 menu.add(item);
@@ -1313,7 +1327,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
                 item = new JMenuItem("Save...");
                 item.setAccelerator(KeyStroke.getKeyStroke(
-                        KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+                    KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
                 item.setActionCommand(SAVE);
                 item.addActionListener(controller);
                 menu.add(item);
@@ -1355,7 +1369,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             {
                 JMenuItem item = new JMenuItem("Deselect");
                 item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
                 item.setActionCommand(CLEAR_SELECTION);
                 item.addActionListener(controller);
                 menu.add(item);
@@ -1373,14 +1387,19 @@ public class AirspaceBuilder extends ApplicationTemplate {
             controller.addPropertyChangeListener((PropertyChangeEvent e) -> {
                 if (SIZE_NEW_SHAPES_TO_VIEWPORT.equals((e.getPropertyName()))) {
                     resizeNewShapesItem.setSelected(controller.isResizeNewShapesToViewport());
-                } else if (ENABLE_EDIT.equals(e.getPropertyName())) {
+                }
+                else if (ENABLE_EDIT.equals(e.getPropertyName())) {
                     enableEditItem.setSelected(controller.isEnableEdit());
                 }
             });
         }
-    }
 
-    public static void main(String[] args) {
-        ApplicationTemplate.start("WorldWind Airspace Builder", AppFrame.class);
+        public AirspaceBuilderPanel getAirspaceBuilderPanel() {
+            return this.builderView;
+        }
+
+        public RenderableLayer getAirspaceLayer() {
+            return this.airspaceLayer;
+        }
     }
 }

@@ -12,79 +12,108 @@ import java.util.*;
  * @author dcollins
  * @version $Id: FileTree.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class FileTree implements Iterable<File>
-{
-    private File root;
-    private int mode = FILES_AND_DIRECTORIES;
-
+public class FileTree implements Iterable<File> {
     public static final int FILES_ONLY = 1;
     public static final int DIRECTORIES_ONLY = 2;
     public static final int FILES_AND_DIRECTORIES = 3;
+    private File root;
+    private int mode = FILES_AND_DIRECTORIES;
 
-    public FileTree()
-    {
+    public FileTree() {
         this(null);
     }
 
-    public FileTree(File root)
-    {
+    public FileTree(File root) {
         this.root = root;
     }
 
-    public File getRoot()
-    {
+    private static List<File> makeList(File root, FileFilter fileFilter, int mode) {
+        Queue<File> dirs = new LinkedList<>();
+        if (isDirectory(root))
+            dirs.offer(root);
+
+        LinkedList<File> result = new LinkedList<>();
+        while (dirs.peek() != null) {
+            expand(dirs.poll(), fileFilter, mode, result, dirs);
+        }
+
+        return result;
+    }
+
+    private static void expand(File file, FileFilter fileFilter, int mode,
+        Queue<File> outFiles, Queue<File> outDirs) {
+        if (file != null) {
+            File[] list = file.listFiles();
+            if (list != null) {
+                for (File child : list) {
+                    if (child != null) {
+                        boolean isDir = child.isDirectory();
+                        if (isDir) {
+                            outDirs.offer(child);
+                        }
+
+                        if ((!isDir && isDisplayFiles(mode)) || (isDir && isDisplayDirectories(mode))) {
+                            if (fileFilter == null || fileFilter.accept(child)) {
+                                outFiles.offer(child);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean isDirectory(File file) {
+        return file != null && file.exists() && file.isDirectory();
+    }
+
+    private static boolean isDisplayFiles(int mode) {
+        return mode == FILES_ONLY || mode == FILES_AND_DIRECTORIES;
+    }
+
+    private static boolean isDisplayDirectories(int mode) {
+        return mode == DIRECTORIES_ONLY || mode == FILES_AND_DIRECTORIES;
+    }
+
+    private static boolean validate(int mode) {
+        return mode == FILES_ONLY
+            || mode == DIRECTORIES_ONLY
+            || mode == FILES_AND_DIRECTORIES;
+    }
+
+    public File getRoot() {
         return this.root;
     }
 
-    public void setRoot(File root)
-    {
+    public void setRoot(File root) {
         this.root = root;
     }
 
-    public int getMode()
-    {
+    public int getMode() {
         return this.mode;
     }
 
-    public void setMode(int mode)
-    {
+    public void setMode(int mode) {
         if (!validate(mode))
             throw new IllegalArgumentException("mode:" + mode);
 
         this.mode = mode;
     }
 
-    public List<File> asList()
-    {
+    public List<File> asList() {
         return asList(null);
     }
 
-    public List<File> asList(FileFilter fileFilter)
-    {
+    public List<File> asList(FileFilter fileFilter) {
         return makeList(this.root, fileFilter, this.mode);
     }
 
-    public Iterator<File> iterator()
-    {
+    public Iterator<File> iterator() {
         return iterator(null);
     }
 
-    public Iterator<File> iterator(FileFilter fileFilter)
-    {
+    public Iterator<File> iterator(FileFilter fileFilter) {
         return new FileTreeIterator(this.root, fileFilter, this.mode);
-    }
-
-    private static List<File> makeList(File root, FileFilter fileFilter, int mode)
-    {
-        Queue<File> dirs = new LinkedList<>();
-        if (isDirectory(root))
-            dirs.offer(root);
-
-        LinkedList<File> result = new LinkedList<>();
-        while (dirs.peek() != null)
-            expand(dirs.poll(), fileFilter, mode, result, dirs);
-
-        return result;
     }
 
     private static class FileTreeIterator implements Iterator<File> {
@@ -120,8 +149,9 @@ public class FileTree implements Iterable<File>
         }
 
         private void expandUntilFilesFound() {
-            while (this.dirs.peek() != null && this.files.peek() == null)
+            while (this.dirs.peek() != null && this.files.peek() == null) {
                 expand(this.dirs.poll());
+            }
         }
 
         private void expand(File directory) {
@@ -129,58 +159,5 @@ public class FileTree implements Iterable<File>
                 FileTree.expand(directory, this.fileFilter, this.mode, this.files, this.dirs);
             }
         }
-    }
-
-    private static void expand(File file, FileFilter fileFilter, int mode,
-                               Queue<File> outFiles, Queue<File> outDirs)
-    {
-        if (file != null)
-        {
-            File[] list = file.listFiles();
-            if (list != null)
-            {
-                for (File child : list)
-                {
-                    if (child != null)
-                    {
-                        boolean isDir = child.isDirectory();
-                        if (isDir)
-                        {
-                            outDirs.offer(child);
-                        }
-                        
-                        if ((!isDir && isDisplayFiles(mode)) || (isDir && isDisplayDirectories(mode)))
-                        {
-                            if (fileFilter == null || fileFilter.accept(child))
-                            {
-                                outFiles.offer(child);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private static boolean isDirectory(File file)
-    {
-        return file != null && file.exists() && file.isDirectory();
-    }
-
-    private static boolean isDisplayFiles(int mode)
-    {
-        return mode == FILES_ONLY || mode == FILES_AND_DIRECTORIES;
-    }
-
-    private static boolean isDisplayDirectories(int mode)
-    {
-        return mode == DIRECTORIES_ONLY || mode == FILES_AND_DIRECTORIES;
-    }
-
-    private static boolean validate(int mode)
-    {
-        return mode == FILES_ONLY
-            || mode == DIRECTORIES_ONLY
-            || mode == FILES_AND_DIRECTORIES;
     }
 }

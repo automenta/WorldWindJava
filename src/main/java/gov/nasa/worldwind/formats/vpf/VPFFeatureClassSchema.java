@@ -11,36 +11,30 @@ import java.util.Objects;
  * @author dcollins
  * @version $Id: VPFFeatureClassSchema.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFFeatureClassSchema
-{
+public class VPFFeatureClassSchema {
     protected final String className;
     protected final VPFFeatureType type;
     protected final String featureTableName;
 
-    public VPFFeatureClassSchema(String className, VPFFeatureType type, String featureTableName)
-    {
+    public VPFFeatureClassSchema(String className, VPFFeatureType type, String featureTableName) {
         this.className = className;
         this.type = type;
         this.featureTableName = featureTableName;
     }
 
-    public String getClassName()
-    {
+    public String getClassName() {
         return this.className;
     }
 
-    public VPFFeatureType getType()
-    {
+    public VPFFeatureType getType() {
         return this.type;
     }
 
-    public String getFeatureTableName()
-    {
+    public String getFeatureTableName() {
         return this.featureTableName;
     }
 
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || this.getClass() != o.getClass())
@@ -53,14 +47,13 @@ public class VPFFeatureClassSchema
         if (!Objects.equals(this.featureTableName, that.featureTableName))
             return false;
         //noinspection RedundantIfStatement
-        if (!Objects.equals(this.type, that.type))
+        if (this.type != that.type)
             return false;
 
         return true;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = this.className != null ? this.className.hashCode() : 0;
         result = 31 * result + (this.type != null ? this.type.hashCode() : 0);
         result = 31 * result + (this.featureTableName != null ? this.featureTableName.hashCode() : 0);

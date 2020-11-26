@@ -18,17 +18,18 @@ import gov.nasa.worldwind.geom.*;
  * @author tag
  * @version $Id: AnimatedGlobe.java 1893 2014-04-04 04:31:59Z tgaskins $
  */
-public class AnimatedGlobe extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame implements RenderingListener
-    {
+public class AnimatedGlobe extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Animated Globe", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame implements RenderingListener {
         protected final GLAnimatorControl animator;
         protected final double rotationDegreesPerSecond = 40;
         protected long lastTime;
         protected Position eyePosition = Position.fromDegrees(0, 0, 20000000);
 
-        public AppFrame()
-        {
+        public AppFrame() {
             // Reduce the frequency at which terrain is regenerated.
             getWwd().getModel().getGlobe().getTessellator().setUpdateFrequency(5000);
 
@@ -43,10 +44,8 @@ public class AnimatedGlobe extends ApplicationTemplate
         }
 
         @Override
-        public void stageChanged(RenderingEvent event)
-        {
-            if (event.getStage().equals(RenderingEvent.BEFORE_RENDERING))
-            {
+        public void stageChanged(RenderingEvent event) {
+            if (event.getStage().equals(RenderingEvent.BEFORE_RENDERING)) {
                 // The globe may not be instantiated the first time the listener is called.
                 if (getWwd().getView().getGlobe() == null)
                     return;
@@ -65,10 +64,5 @@ public class AnimatedGlobe extends ApplicationTemplate
                 getWwd().getView().setEyePosition(eyePosition);
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Animated Globe", AppFrame.class);
     }
 }

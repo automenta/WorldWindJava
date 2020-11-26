@@ -8,7 +8,7 @@ package gov.nasa.worldwindx.examples;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Earth;
-import gov.nasa.worldwind.terrain.HighResolutionTerrain;
+import gov.nasa.worldwind.terrain.*;
 
 import java.io.*;
 import java.util.*;
@@ -17,50 +17,43 @@ import java.util.*;
  * @author tag
  * @version $Id: HighResolutionTerrainTest.java 1952 2014-04-20 19:04:18Z tgaskins $
  */
-public class HighResolutionTerrainTest
-{
-    protected static ArrayList<Position> generateReferenceLocations(Sector sector, int numLats, int numLons)
-    {
+public class HighResolutionTerrainTest {
+    protected static ArrayList<Position> generateReferenceLocations(Sector sector, int numLats, int numLons) {
         ArrayList<Position> locations = new ArrayList<>();
-        double dLat = (sector.getMaxLatitude().degrees - sector.getMinLatitude().degrees) / (numLats - 1);
-        double dLon = (sector.getMaxLongitude().degrees - sector.getMinLongitude().degrees) / (numLons - 1);
-        for (int j = 0; j < numLats; j++)
-        {
-            double lat = sector.getMinLatitude().degrees + j * dLat;
+        double dLat = (sector.latMax().degrees - sector.latMin().degrees) / (numLats - 1);
+        double dLon = (sector.lonMax().degrees - sector.lonMin().degrees) / (numLons - 1);
+        for (int j = 0; j < numLats; j++) {
+            double lat = sector.latMin().degrees + j * dLat;
 
-            for (int i = 0; i < numLons; i++)
-            {
-                double lon = sector.getMinLongitude().degrees + i * dLon;
+            for (int i = 0; i < numLons; i++) {
+                double lon = sector.lonMin().degrees + i * dLon;
 
                 // Specify angles to five decimal places.
                 locations.add(
-                    Position.fromDegrees(Math.round(lat * 100000.0) / 100000.0, Math.round(lon * 100000.0) / 100000.0, 0));
+                    Position.fromDegrees(Math.round(lat * 100000.0) / 100000.0, Math.round(lon * 100000.0) / 100000.0,
+                        0));
             }
         }
 
         return locations;
     }
 
-    protected static void writeReferencePositions(String filePath, ArrayList<Position> positions)
-        throws FileNotFoundException
-    {
-        PrintStream os = new PrintStream(new File(filePath));
+    protected static void writeReferencePositions(String filePath, Iterable<Position> positions)
+        throws FileNotFoundException {
+        PrintStream os = new PrintStream(filePath);
 
-        for (Position pos : positions)
-        {
+        for (Position pos : positions) {
             os.format("%.5f %.5f %.4f\n", pos.getLatitude().degrees, pos.getLongitude().degrees, pos.getElevation());
         }
 
         os.flush();
     }
 
-    protected static ArrayList<Position> readReferencePositions(String filePath) throws FileNotFoundException
-    {
+    protected static ArrayList<Position> readReferencePositions(String filePath) throws FileNotFoundException {
         ArrayList<Position> positions = new ArrayList<>();
         Scanner scanner = new Scanner(new File(filePath));
 
-        while (scanner.hasNextDouble())
-        {
+        while (scanner.hasNextDouble()) {
             double lat = scanner.nextDouble();
             double lon = scanner.nextDouble();
             double elevation = scanner.nextDouble();
@@ -70,14 +63,12 @@ public class HighResolutionTerrainTest
         return positions;
     }
 
-    protected static ArrayList<Position> computeElevations(ArrayList<Position> locations)
-    {
+    protected static ArrayList<Position> computeElevations(Iterable<Position> locations) {
         Sector sector = Sector.boundingSector(locations);
-        HighResolutionTerrain hrt = new HighResolutionTerrain(new Earth(), sector, null, 1.0);
+        Terrain hrt = new HighResolutionTerrain(new Earth(), sector, null, 1.0);
 
         ArrayList<Position> computedPositions = new ArrayList<>();
-        for (LatLon latLon : locations)
-        {
+        for (LatLon latLon : locations) {
             Double elevation = hrt.getElevation(latLon);
             computedPositions.add(new Position(latLon, Math.round(elevation * 10000.0) / 10000.0));
         }
@@ -86,12 +77,10 @@ public class HighResolutionTerrainTest
     }
 
     protected static void testPositions(String name, ArrayList<Position> referencePositions,
-        ArrayList<Position> testPositions)
-    {
+        ArrayList<Position> testPositions) {
         int numMatches = 0;
 
-        for (int i = 0; i < referencePositions.size(); i++)
-        {
+        for (int i = 0; i < referencePositions.size(); i++) {
             if (!testPositions.get(i).equals(referencePositions.get(i)))
                 System.out.println(
                     "MISMATCH: reference = " + referencePositions.get(i) + ", test = " + testPositions.get(i));
@@ -102,8 +91,7 @@ public class HighResolutionTerrainTest
         System.out.println(numMatches + " Matches for " + name);
     }
 
-    protected static void generateReferenceValues(String filePath, Sector sector) throws FileNotFoundException
-    {
+    protected static void generateReferenceValues(String filePath, Sector sector) throws FileNotFoundException {
         HighResolutionTerrain hrt = new HighResolutionTerrain(new Earth(), sector, null, 1.0);
 
         ArrayList<Position> referenceLocations = generateReferenceLocations(hrt.getSector(), 5, 5);
@@ -111,30 +99,25 @@ public class HighResolutionTerrainTest
         writeReferencePositions(filePath, referencePositions);
     }
 
-    public static void main(String[] args)
-    {
-        String testDataLocation = "testData/HighResolutionTerrain/";
-        HashMap<String, Sector> sectors = new HashMap<>();
+    public static void main(String[] args) {
+        String testDataLocation = "HighResolutionTerrain/";
+        Map<String, Sector> sectors = new HashMap<>();
         sectors.put(testDataLocation + "HRTOutputTest01.txt", Sector.fromDegrees(37.8, 38.3, -120, -119.3));
         sectors.put(testDataLocation + "HRTOutputTest02.txt",
             Sector.fromDegrees(32.34767, 32.77991, 70.88239, 71.47658));
         sectors.put(testDataLocation + "HRTOutputTest03.txt",
             Sector.fromDegrees(32.37825, 71.21130, 32.50050, 71.37926));
 
-        try
-        {
-            if (args.length > 0 && args[0].equals("-generateTestData"))
-            {
-                for (Map.Entry<String, Sector> sector : sectors.entrySet())
-                {
+        try {
+            if (args.length > 0 && args[0].equals("-generateTestData")) {
+                for (Map.Entry<String, Sector> sector : sectors.entrySet()) {
                     String filePath = sector.getKey();
 
                     generateReferenceValues(filePath, sector.getValue());
                 }
             }
 
-            for (Map.Entry<String, Sector> sector : sectors.entrySet())
-            {
+            for (Map.Entry<String, Sector> sector : sectors.entrySet()) {
                 String filePath = sector.getKey();
 
                 ArrayList<Position> referencePositions = readReferencePositions(filePath);
@@ -142,8 +125,7 @@ public class HighResolutionTerrainTest
                 testPositions(filePath, referencePositions, computedPositions);
             }
         }
-        catch (FileNotFoundException e)
-        {
+        catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }

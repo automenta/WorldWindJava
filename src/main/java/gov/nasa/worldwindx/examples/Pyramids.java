@@ -19,12 +19,13 @@ import gov.nasa.worldwind.render.*;
  * @author ccrick
  * @version $Id: Pyramids.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class Pyramids extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class Pyramids extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Pyramids", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             RenderableLayer layer = new RenderableLayer();
@@ -35,7 +36,7 @@ public class Pyramids extends ApplicationTemplate
             attrs.setInteriorOpacity(0.7);
             attrs.setEnableLighting(true);
             attrs.setOutlineMaterial(Material.RED);
-            attrs.setOutlineWidth(2d);
+            attrs.setOutlineWidth(2.0d);
             attrs.setDrawInterior(true);
             attrs.setDrawOutline(false);
 
@@ -45,7 +46,7 @@ public class Pyramids extends ApplicationTemplate
             attrs2.setInteriorOpacity(1);
             attrs2.setEnableLighting(true);
             attrs2.setOutlineMaterial(Material.WHITE);
-            attrs2.setOutlineWidth(2d);
+            attrs2.setOutlineWidth(2.0d);
             attrs2.setDrawOutline(false);
 
             // ********* sample  Pyramids  *******************
@@ -131,10 +132,5 @@ public class Pyramids extends ApplicationTemplate
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Pyramids", AppFrame.class);
     }
 }

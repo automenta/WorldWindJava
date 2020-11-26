@@ -16,16 +16,13 @@ import java.awt.event.*;
  * @author tag
  * @version $Id: OpenURL.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class OpenURL extends AbstractOpenResourceFeature
-{
-    public OpenURL(Registry registry)
-    {
+public class OpenURL extends AbstractOpenResourceFeature {
+    public OpenURL(Registry registry) {
         super("Open URL...", Constants.FEATURE_OPEN_URL, null, registry);
     }
 
     @Override
-    public void initialize(Controller controller)
-    {
+    public void initialize(Controller controller) {
         super.initialize(controller);
 
         WWMenu fileMenu = (WWMenu) this.getController().getRegisteredObject(Constants.FILE_MENU);
@@ -34,18 +31,14 @@ public class OpenURL extends AbstractOpenResourceFeature
     }
 
     @Override
-    protected void doActionPerformed(ActionEvent actionEvent)
-    {
-        try
-        {
+    protected void doActionPerformed(ActionEvent actionEvent) {
+        try {
             String status = JOptionPane.showInputDialog(getController().getFrame(), "URL");
-            if (!WWUtil.isEmpty(status))
-            {
+            if (!WWUtil.isEmpty(status)) {
                 this.runOpenThread(status);
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
         }
 

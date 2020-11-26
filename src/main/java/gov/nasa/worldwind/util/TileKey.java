@@ -13,8 +13,7 @@ import java.util.Objects;
  * @author tag
  * @version $Id: TileKey.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class TileKey implements Comparable<TileKey>
-{
+public class TileKey implements Comparable<TileKey> {
     private final int level;
     private final int row;
     private final int col;
@@ -22,17 +21,16 @@ public class TileKey implements Comparable<TileKey>
     private final int hash;
 
     /**
-     * @param level Tile level.
-     * @param row Tile row.
-     * @param col Tile col.
+     * @param level     Tile level.
+     * @param row       Tile row.
+     * @param col       Tile col.
      * @param cacheName Cache name.
-     * @throws IllegalArgumentException if <code>level</code>, <code>row</code> or <code>column</code> is negative or if
+     * @throws IllegalArgumentException if <code>level</code>, <code>row</code> or <code>column</code> is negative or
+     *                                  if
      *                                  <code>cacheName</code> is null or empty
      */
-    public TileKey(int level, int row, int col, String cacheName)
-    {
-        if (level < 0)
-        {
+    public TileKey(int level, int row, int col, String cacheName) {
+        if (level < 0) {
             String msg = Logging.getMessage("TileKey.levelIsLessThanZero");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -49,8 +47,7 @@ public class TileKey implements Comparable<TileKey>
 //            Logging.logger().severe(msg);
 //            throw new IllegalArgumentException(msg);
 //        }
-        if (cacheName == null || cacheName.length() < 1)
-        {
+        if (cacheName == null || cacheName.length() < 1) {
             String msg = Logging.getMessage("TileKey.cacheNameIsNullOrEmpty");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -63,22 +60,19 @@ public class TileKey implements Comparable<TileKey>
     }
 
     /**
-     * @param latitude Tile latitude.
-     * @param longitude Tile longitude.
-     * @param levelSet The level set.
+     * @param latitude    Tile latitude.
+     * @param longitude   Tile longitude.
+     * @param levelSet    The level set.
      * @param levelNumber Tile level number.
      * @throws IllegalArgumentException if any parameter is null
      */
-    public TileKey(Angle latitude, Angle longitude, LevelSet levelSet, int levelNumber)
-    {
-        if (latitude == null || longitude == null)
-        {
+    public TileKey(Angle latitude, Angle longitude, LevelSet levelSet, int levelNumber) {
+        if (latitude == null || longitude == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (levelSet == null)
-        {
+        if (levelSet == null) {
             String msg = Logging.getMessage("nullValue.LevelSetIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -86,7 +80,8 @@ public class TileKey implements Comparable<TileKey>
         Level l = levelSet.getLevel(levelNumber);
         this.level = levelNumber;
         this.row = Tile.computeRow(l.getTileDelta().getLatitude(), latitude, levelSet.getTileOrigin().getLatitude());
-        this.col = Tile.computeColumn(l.getTileDelta().getLongitude(), longitude, levelSet.getTileOrigin().getLongitude());
+        this.col = Tile.computeColumn(l.getTileDelta().getLongitude(), longitude,
+            levelSet.getTileOrigin().getLongitude());
         this.cacheName = l.getCacheName();
         this.hash = this.computeHash();
     }
@@ -95,10 +90,8 @@ public class TileKey implements Comparable<TileKey>
      * @param tile The source tile.
      * @throws IllegalArgumentException if <code>tile</code> is null
      */
-    public TileKey(Tile tile)
-    {
-        if (tile == null)
-        {
+    public TileKey(Tile tile) {
+        if (tile == null) {
             String msg = Logging.getMessage("nullValue.TileIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -110,28 +103,23 @@ public class TileKey implements Comparable<TileKey>
         this.hash = this.computeHash();
     }
 
-    public int getLevelNumber()
-    {
+    public int getLevelNumber() {
         return level;
     }
 
-    public int getRow()
-    {
+    public int getRow() {
         return row;
     }
 
-    public int getColumn()
-    {
+    public int getColumn() {
         return col;
     }
 
-    public String getCacheName()
-    {
+    public String getCacheName() {
         return cacheName;
     }
 
-    private int computeHash()
-    {
+    private int computeHash() {
         int result;
         result = this.level;
         result = 29 * result + this.row;
@@ -144,70 +132,48 @@ public class TileKey implements Comparable<TileKey>
      * Compare two tile keys. Keys are ordered based on level, row, and column (in that order).
      *
      * @param key Key to compare with.
-     *
      * @return 0 if the keys are equal. 1 if this key &gt; {@code key}. -1 if this key &lt; {@code key}.
-     *
      * @throws IllegalArgumentException if <code>key</code> is null
      */
-    public final int compareTo(TileKey key)
-    {
-        if (key == null)
-        {
-            String msg = Logging.getMessage("nullValue.KeyIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public final int compareTo(TileKey key) {
+        if (this == key) return 0;
 
-        // No need to compare Sectors because they are redundant with row and column
-        if (key.level == this.level && key.row == this.row && key.col == this.col)
-            return 0;
+        //TEMPORARY
+        if (cacheName.equals(key.cacheName))
+            throw new UnsupportedOperationException();
 
         if (this.level < key.level) // Lower-res levels compare lower than higher-res
             return -1;
         if (this.level > key.level)
             return 1;
 
-        if (this.row < key.row)
-            return -1;
-        if (this.row > key.row)
-            return 1;
+        if (this.row < key.row) return -1;
+        if (this.row > key.row) return 1;
 
-        if (this.col < key.col)
-            return -1;
-
-        return 1; // tile.col must be > this.col because equality was tested above
+        return Integer.compare(col, key.col);
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TileKey)) return false;
 
         final TileKey tileKey = (TileKey) o;
-
-        if (this.col != tileKey.col)
-            return false;
-        if (this.level != tileKey.level)
-            return false;
-        //noinspection SimplifiableIfStatement
-        if (this.row != tileKey.row)
-            return false;
-
-        return Objects.equals(this.cacheName, tileKey.cacheName);
+        return
+            this.hash == tileKey.hash &&
+            this.col == tileKey.col &&
+            this.row == tileKey.row &&
+            this.level == tileKey.level &&
+            Objects.equals(this.cacheName, tileKey.cacheName);
     }
 
     @Override
-    public int hashCode()
-    {
+    public final int hashCode() {
         return this.hash;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.cacheName + "/" + this.level + "/" + this.row + "/" + col;
     }
 }

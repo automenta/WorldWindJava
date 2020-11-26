@@ -16,40 +16,32 @@ import java.util.*;
  * @author tag
  * @version $Id: OWSParameter.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
-public class OWSParameter extends AbstractXMLEventParser
-{
+public class OWSParameter extends AbstractXMLEventParser {
     protected final List<OWSAllowedValues> allowedValues = new ArrayList<>(1);
 
-    public OWSParameter(String namespaceURI)
-    {
+    public OWSParameter(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public String getName()
-    {
+    public String getName() {
         return (String) this.getField("name");
     }
 
-    public List<OWSAllowedValues> getAllowedValues()
-    {
+    public List<OWSAllowedValues> getAllowedValues() {
         return this.allowedValues;
     }
 
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
-        if (ctx.isStartElement(event, "AllowedValues"))
-        {
+        throws XMLStreamException {
+        if (ctx.isStartElement(event, "AllowedValues")) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OWSAllowedValues)
                     this.allowedValues.add((OWSAllowedValues) o);
             }
         }
-        else
-        {
+        else {
             super.doParseEventContent(ctx, event, args);
         }
     }

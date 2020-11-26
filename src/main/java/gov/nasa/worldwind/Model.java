@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind;
 
+import gov.nasa.worldwind.geom.Extent;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.LayerList;
 
@@ -17,14 +18,13 @@ import gov.nasa.worldwind.layers.LayerList;
  * @author Tom Gaskins
  * @version $Id: Model.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface Model extends WWObject
-{
+public interface Model extends WWObject {
     /**
      * Returns the bounding sphere in Cartesian world coordinates of the model.
      *
      * @return the model's bounding sphere in Cartesian coordinates, or null if the extent cannot be determined.
      */
-    gov.nasa.worldwind.geom.Extent getExtent();
+    Extent getExtent();
 
     /**
      * Indicates the globe in this model.
@@ -32,13 +32,6 @@ public interface Model extends WWObject
      * @return The globe associated with this model.
      */
     Globe getGlobe();
-
-    /**
-     * Indicates the layers associated with this model.
-     *
-     * @return List of layers in this model.
-     */
-    LayerList getLayers();
 
     /**
      * Specifies the model's globe.
@@ -49,26 +42,19 @@ public interface Model extends WWObject
     void setGlobe(Globe globe);
 
     /**
+     * Indicates the layers associated with this model.
+     *
+     * @return List of layers in this model.
+     */
+    LayerList getLayers();
+
+    /**
      * Specifies the model's layers.
      *
      * @param layers the model's new layers. May be null, in which case the current layers will be detached from the
      *               model.
      */
     void setLayers(LayerList layers);
-
-    /**
-     * Specifies whether to display as wireframe the interior geometry of the tessellated globe surface.
-     *
-     * @param show true causes the geometry to be shown, false, the default, does not.
-     */
-    void setShowWireframeInterior(boolean show);
-
-    /**
-     * Specifies whether to display as wireframe the exterior geometry of the tessellated globe surface.
-     *
-     * @param show true causes the geometry to be shown, false, the default, does not.
-     */
-    void setShowWireframeExterior(boolean show);
 
     /**
      * Indicates whether the globe surface's interior geometry is to be drawn.
@@ -78,11 +64,25 @@ public interface Model extends WWObject
     boolean isShowWireframeInterior();
 
     /**
+     * Specifies whether to display as wireframe the interior geometry of the tessellated globe surface.
+     *
+     * @param show true causes the geometry to be shown, false, the default, does not.
+     */
+    void setShowWireframeInterior(boolean show);
+
+    /**
      * Indicates whether the globe surface's exterior geometry is to be drawn.
      *
      * @return true if it is to be drawn, otherwise false.
      */
     boolean isShowWireframeExterior();
+
+    /**
+     * Specifies whether to display as wireframe the exterior geometry of the tessellated globe surface.
+     *
+     * @param show true causes the geometry to be shown, false, the default, does not.
+     */
+    void setShowWireframeExterior(boolean show);
 
     /**
      * Indicates whether the bounding volumes of the tessellated globe's surface geometry should be displayed.

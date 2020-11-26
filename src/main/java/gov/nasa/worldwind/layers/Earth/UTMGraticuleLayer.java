@@ -24,21 +24,34 @@ import java.util.ArrayList;
  * @author Patrick Murris
  * @version $Id: UTMGraticuleLayer.java 2153 2014-07-17 17:33:13Z tgaskins $
  */
-public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
-{
-    /** Graticule for the UTM zone grid. */
+public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
+    /**
+     * Graticule for the UTM zone grid.
+     */
     public static final String GRATICULE_UTM_GRID = "Graticule.UTM.Grid";
-    /** Graticule for the 100,000 meter grid, nested inside the UTM grid. */
+    /**
+     * Graticule for the 100,000 meter grid, nested inside the UTM grid.
+     */
     public static final String GRATICULE_100000M = "Graticule.100000m";
-    /** Graticule for the 10,000 meter grid, nested inside the UTM grid. */
+    /**
+     * Graticule for the 10,000 meter grid, nested inside the UTM grid.
+     */
     public static final String GRATICULE_10000M = "Graticule.10000m";
-    /** Graticule for the 1,000 meter grid, nested inside the UTM grid. */
+    /**
+     * Graticule for the 1,000 meter grid, nested inside the UTM grid.
+     */
     public static final String GRATICULE_1000M = "Graticule.1000m";
-    /** Graticule for the 100 meter grid, nested inside the UTM grid. */
+    /**
+     * Graticule for the 100 meter grid, nested inside the UTM grid.
+     */
     public static final String GRATICULE_100M = "Graticule.100m";
-    /** Graticule for the 10 meter grid, nested inside the UTM grid. */
+    /**
+     * Graticule for the 10 meter grid, nested inside the UTM grid.
+     */
     public static final String GRATICULE_10M = "Graticule.10m";
-    /** Graticule for the 1 meter grid, nested inside the UTM grid. */
+    /**
+     * Graticule for the 1 meter grid, nested inside the UTM grid.
+     */
     public static final String GRATICULE_1M = "Graticule.1m";
 
     protected static final int MIN_CELL_SIZE_PIXELS = 40; // TODO: make settable
@@ -47,18 +60,16 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
 
     protected final GraticuleTile[][] gridTiles = new GraticuleTile[GRID_ROWS][GRID_COLS];
 
-    public UTMGraticuleLayer()
-    {
+    public UTMGraticuleLayer() {
         initRenderingParams();
         this.setPickEnabled(false);
         this.setName(Logging.getMessage("layers.Earth.UTMGraticule.Name"));
-        this.metricScaleSupport.setMaxResolution(1e6);
+        this.metricScaleSupport.setMaxResolution(1.0e6);
     }
 
     // --- Graticule Rendering --------------------------------------------------------------
 
-    protected void initRenderingParams()
-    {
+    protected void initRenderingParams() {
         GraticuleRenderingParams params;
         // UTM zone grid
         params = new GraticuleRenderingParams();
@@ -99,8 +110,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
         setRenderingParams(GRATICULE_1M, params);
     }
 
-    protected String[] getOrderedTypes()
-    {
+    protected String[] getOrderedTypes() {
         return new String[] {
             GRATICULE_UTM_GRID,
             GRATICULE_100000M,
@@ -112,8 +122,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
         };
     }
 
-    protected String getTypeFor(int resolution)
-    {
+    protected String getTypeFor(int resolution) {
         if (resolution >= 500000)
             return GRATICULE_UTM_GRID;
         if (resolution >= 100000)
@@ -132,26 +141,22 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
         return null;
     }
 
-    protected void clear(DrawContext dc)
-    {
+    protected void clear(DrawContext dc) {
         super.clear(dc);
         this.applyTerrainConformance();
         this.metricScaleSupport.clear();
         this.metricScaleSupport.computeZone(dc);
     }
 
-    private void applyTerrainConformance()
-    {
+    private void applyTerrainConformance() {
         String[] graticuleType = getOrderedTypes();
-        for (String type : graticuleType)
-        {
+        for (String type : graticuleType) {
             double lineConformance = type.equals(GRATICULE_UTM_GRID) ? 20 : this.terrainConformance;
             getRenderingParams(type).setValue(GraticuleRenderingParams.KEY_LINE_CONFORMANCE, lineConformance);
         }
     }
 
-    protected void selectRenderables(DrawContext dc)
-    {
+    protected void selectRenderables(DrawContext dc) {
         this.selectUTMRenderables(dc);
         this.metricScaleSupport.selectRenderables(dc);
     }
@@ -161,34 +166,26 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
      *
      * @param dc the current <code>DrawContext</code>.
      */
-    protected void selectUTMRenderables(DrawContext dc)
-    {
+    protected void selectUTMRenderables(DrawContext dc) {
         ArrayList<GraticuleTile> tileList = getVisibleTiles(dc);
-        if (tileList.size() > 0)
-        {
-            for (GraticuleTile gt : tileList)
-            {
+        if (!tileList.isEmpty()) {
+            for (GraticuleTile gt : tileList) {
                 // Select tile visible elements
                 gt.selectRenderables(dc);
             }
         }
     }
 
-    protected ArrayList<GraticuleTile> getVisibleTiles(DrawContext dc)
-    {
+    protected ArrayList<GraticuleTile> getVisibleTiles(DrawContext dc) {
         ArrayList<GraticuleTile> tileList = new ArrayList<>();
         Sector vs = dc.getVisibleSector();
-        if (vs != null)
-        {
+        if (vs != null) {
             Rectangle2D gridRectangle = getGridRectangleForSector(vs);
-            if (gridRectangle != null)
-            {
+            if (gridRectangle != null) {
                 for (int row = (int) gridRectangle.getY(); row <= gridRectangle.getY() + gridRectangle.getHeight();
-                    row++)
-                {
+                    row++) {
                     for (int col = (int) gridRectangle.getX(); col <= gridRectangle.getX() + gridRectangle.getWidth();
-                        col++)
-                    {
+                        col++) {
                         if (gridTiles[row][col] == null)
                             gridTiles[row][col] = new GraticuleTile(getGridSector(row, col));
                         if (gridTiles[row][col].isInView(dc))
@@ -202,18 +199,16 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
         return tileList;
     }
 
-    private Rectangle2D getGridRectangleForSector(Sector sector)
-    {
-        int x1 = getGridColumn(sector.getMinLongitude().degrees);
-        int x2 = getGridColumn(sector.getMaxLongitude().degrees);
-        int y1 = getGridRow(sector.getMinLatitude().degrees);
-        int y2 = getGridRow(sector.getMaxLatitude().degrees);
+    private Rectangle2D getGridRectangleForSector(Sector sector) {
+        int x1 = getGridColumn(sector.lonMin().degrees);
+        int x2 = getGridColumn(sector.lonMax().degrees);
+        int y1 = getGridRow(sector.latMin().degrees);
+        int y2 = getGridRow(sector.latMax().degrees);
         return new Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
 
-    private Sector getGridSector(int row, int col)
-    {
-        double deltaLat = UTM_MAX_LATITUDE * 2f / GRID_ROWS;
+    private Sector getGridSector(int row, int col) {
+        double deltaLat = UTM_MAX_LATITUDE * 2.0f / GRID_ROWS;
         double deltaLon = 360.0 / GRID_COLS;
         double minLat = row == 0 ? UTM_MIN_LATITUDE : -UTM_MAX_LATITUDE + deltaLat * row;
         double maxLat = -UTM_MAX_LATITUDE + deltaLat * (row + 1);
@@ -222,28 +217,22 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
         return Sector.fromDegrees(minLat, maxLat, minLon, maxLon);
     }
 
-    private int getGridColumn(double longitude)
-    {
+    private int getGridColumn(double longitude) {
         double deltaLon = 360.0 / GRID_COLS;
         int col = (int) Math.floor((longitude + 180) / deltaLon);
         return Math.min(col, GRID_COLS - 1);
     }
 
-    private int getGridRow(double latitude)
-    {
+    private int getGridRow(double latitude) {
         double deltaLat = UTM_MAX_LATITUDE * 2 / GRID_ROWS;
         int row = (int) Math.floor((latitude + UTM_MAX_LATITUDE) / deltaLat);
         return Math.max(0, Math.min(row, GRID_ROWS - 1));
     }
 
-    protected void clearTiles()
-    {
-        for (int row = 0; row < 2; row++)
-        {
-            for (int col = 0; col < 60; col++)
-            {
-                if (this.gridTiles[row][col] != null)
-                {
+    protected void clearTiles() {
+        for (int row = 0; row < 2; row++) {
+            for (int col = 0; col < 60; col++) {
+                if (this.gridTiles[row][col] != null) {
                     this.gridTiles[row][col].clearRenderables();
                     this.gridTiles[row][col] = null;
                 }
@@ -253,8 +242,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
 
     // --- Graticule tile ----------------------------------------------------------------------
 
-    protected class GraticuleTile
-    {
+    protected class GraticuleTile {
         private final Sector sector;
         private final int zone;
         private final String hemisphere;
@@ -262,21 +250,18 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
         private ArrayList<GridElement> gridElements;
         private ArrayList<SquareZone> squares;
 
-        public GraticuleTile(Sector sector)
-        {
+        public GraticuleTile(Sector sector) {
             this.sector = sector;
             this.zone = getGridColumn(this.sector.getCentroid().getLongitude().degrees) + 1;
             this.hemisphere = this.sector.getCentroid().latitude.degrees > 0 ? AVKey.NORTH : AVKey.SOUTH;
         }
 
-        public Extent getExtent(Globe globe, double ve)
-        {
+        public Extent getExtent(Globe globe, double ve) {
             return Sector.computeBoundingCylinder(globe, ve, this.sector);
         }
 
-        @SuppressWarnings({"RedundantIfStatement"})
-        public boolean isInView(DrawContext dc)
-        {
+        @SuppressWarnings("RedundantIfStatement")
+        public boolean isInView(DrawContext dc) {
             if (!dc.getView().getFrustumInModelCoordinates().intersects(
                 this.getExtent(dc.getGlobe(), dc.getVerticalExaggeration())))
                 return false;
@@ -284,8 +269,7 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
             return true;
         }
 
-        public double getSizeInPixels(DrawContext dc)
-        {
+        public double getSizeInPixels(DrawContext dc) {
             View view = dc.getView();
             Vec4 centerPoint = getSurfacePoint(dc, this.sector.getCentroid().getLatitude(),
                 this.sector.getCentroid().getLongitude());
@@ -294,16 +278,14 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
             return tileSizeMeter / view.computePixelSizeAtDistance(distance);
         }
 
-        public void selectRenderables(DrawContext dc)
-        {
+        public void selectRenderables(DrawContext dc) {
             if (this.gridElements == null)
                 this.createRenderables();
 
             // Select tile grid elements
             int resolution = 500000;  // Top level 6 degrees zones
             String graticuleType = getTypeFor(resolution);
-            for (GridElement ge : this.gridElements)
-            {
+            for (GridElement ge : this.gridElements) {
                 if (ge.isInView(dc))
                     addRenderable(ge.renderable, graticuleType);
             }
@@ -314,10 +296,8 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
             // Select child elements
             if (this.squares == null)
                 createSquares();
-            for (SquareZone sz : this.squares)
-            {
-                if (sz.isInView(dc))
-                {
+            for (SquareZone sz : this.squares) {
+                if (sz.isInView(dc)) {
                     sz.selectRenderables(dc, dc.getVisibleSector());
                 }
                 else
@@ -325,17 +305,13 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
             }
         }
 
-        public void clearRenderables()
-        {
-            if (this.gridElements != null)
-            {
+        public void clearRenderables() {
+            if (this.gridElements != null) {
                 this.gridElements.clear();
                 this.gridElements = null;
             }
-            if (this.squares != null)
-            {
-                for (SquareZone sz : this.squares)
-                {
+            if (this.squares != null) {
+                for (SquareZone sz : this.squares) {
                     sz.clearRenderables();
                 }
                 this.squares.clear();
@@ -343,82 +319,77 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
             }
         }
 
-        private void createSquares()
-        {
-            try
-            {
+        private void createSquares() {
+            try {
                 // Find grid zone easting and northing boundaries
                 UTMCoord UTM;
-                UTM = UTMCoord.fromLatLon(this.sector.getMinLatitude(), this.sector.getCentroid().getLongitude(),
+                UTM = UTMCoord.fromLatLon(this.sector.latMin(), this.sector.getCentroid().getLongitude(),
                     globe);
                 double minNorthing = UTM.getNorthing();
-                UTM = UTMCoord.fromLatLon(this.sector.getMaxLatitude(), this.sector.getCentroid().getLongitude(),
+                UTM = UTMCoord.fromLatLon(this.sector.latMax(), this.sector.getCentroid().getLongitude(),
                     globe);
                 double maxNorthing = UTM.getNorthing();
-                maxNorthing = maxNorthing == 0 ? 10e6 : maxNorthing;
-                UTM = UTMCoord.fromLatLon(this.sector.getMinLatitude(), this.sector.getMinLongitude(), globe);
+                maxNorthing = maxNorthing == 0 ? 10.0e6 : maxNorthing;
+                UTM = UTMCoord.fromLatLon(this.sector.latMin(), this.sector.lonMin(), globe);
                 double minEasting = UTM.getEasting();
-                UTM = UTMCoord.fromLatLon(this.sector.getMaxLatitude(), this.sector.getMinLongitude(), globe);
+                UTM = UTMCoord.fromLatLon(this.sector.latMax(), this.sector.lonMin(), globe);
                 minEasting = Math.min(UTM.getEasting(), minEasting);
-                double maxEasting = 1e6 - minEasting;
+                double maxEasting = 1.0e6 - minEasting;
 
                 // Create squares
                 this.squares = createSquaresGrid(this.zone, this.hemisphere, this.sector, minEasting, maxEasting,
                     minNorthing, maxNorthing);
             }
-            catch (IllegalArgumentException ignore)
-            {
+            catch (IllegalArgumentException ignore) {
             }
         }
 
-        /** Create the grid elements */
-        private void createRenderables()
-        {
+        /**
+         * Create the grid elements
+         */
+        private void createRenderables() {
             this.gridElements = new ArrayList<>();
 
             ArrayList<Position> positions = new ArrayList<>();
 
             // Generate west meridian
-            positions.add(new Position(this.sector.getMinLatitude(), this.sector.getMinLongitude(), 0));
-            positions.add(new Position(this.sector.getMaxLatitude(), this.sector.getMinLongitude(), 0));
+            positions.add(new Position(this.sector.latMin(), this.sector.lonMin(), 0));
+            positions.add(new Position(this.sector.latMax(), this.sector.lonMin(), 0));
             Object polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
-            Sector lineSector = new Sector(this.sector.getMinLatitude(), this.sector.getMaxLatitude(),
-                this.sector.getMinLongitude(), this.sector.getMinLongitude());
+            Sector lineSector = new Sector(this.sector.latMin(), this.sector.latMax(),
+                this.sector.lonMin(), this.sector.lonMin());
             GridElement ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
-            ge.value = this.sector.getMinLongitude().degrees;
+            ge.value = this.sector.lonMin().degrees;
             this.gridElements.add(ge);
 
             // Generate south parallel at south pole and equator
-            if (this.sector.getMinLatitude().degrees == UTM_MIN_LATITUDE || this.sector.getMinLatitude().degrees == 0)
-            {
+            if (this.sector.latMin().degrees == UTM_MIN_LATITUDE || this.sector.latMin().degrees == 0) {
                 positions.clear();
-                positions.add(new Position(this.sector.getMinLatitude(), this.sector.getMinLongitude(), 0));
-                positions.add(new Position(this.sector.getMinLatitude(), this.sector.getMaxLongitude(), 0));
+                positions.add(new Position(this.sector.latMin(), this.sector.lonMin(), 0));
+                positions.add(new Position(this.sector.latMin(), this.sector.lonMax(), 0));
                 polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
-                lineSector = new Sector(this.sector.getMinLatitude(), this.sector.getMinLatitude(),
-                    this.sector.getMinLongitude(), this.sector.getMaxLongitude());
+                lineSector = new Sector(this.sector.latMin(), this.sector.latMin(),
+                    this.sector.lonMin(), this.sector.lonMax());
                 ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
-                ge.value = this.sector.getMinLatitude().degrees;
+                ge.value = this.sector.latMin().degrees;
                 this.gridElements.add(ge);
             }
 
             // Generate north parallel at north pole
-            if (this.sector.getMaxLatitude().degrees == UTM_MAX_LATITUDE)
-            {
+            if (this.sector.latMax().degrees == UTM_MAX_LATITUDE) {
                 positions.clear();
-                positions.add(new Position(this.sector.getMaxLatitude(), this.sector.getMinLongitude(), 0));
-                positions.add(new Position(this.sector.getMaxLatitude(), this.sector.getMaxLongitude(), 0));
+                positions.add(new Position(this.sector.latMax(), this.sector.lonMin(), 0));
+                positions.add(new Position(this.sector.latMax(), this.sector.lonMax(), 0));
                 polyline = createLineRenderable(new ArrayList<>(positions), AVKey.LINEAR);
-                lineSector = new Sector(this.sector.getMaxLatitude(), this.sector.getMaxLatitude(),
-                    this.sector.getMinLongitude(), this.sector.getMaxLongitude());
+                lineSector = new Sector(this.sector.latMax(), this.sector.latMax(),
+                    this.sector.lonMin(), this.sector.lonMax());
                 ge = new GridElement(lineSector, polyline, GridElement.TYPE_LINE);
-                ge.value = this.sector.getMaxLatitude().degrees;
+                ge.value = this.sector.latMax().degrees;
                 this.gridElements.add(ge);
             }
 
             // Add label
-            if (this.hasLabel())
-            {
+            if (this.hasLabel()) {
                 StringBuilder sb = new StringBuilder();
                 sb.append(this.zone).append(AVKey.NORTH.equals(this.hemisphere) ? "N" : "S");
                 GeographicText text = new UserFacingText(sb.toString(), new Position(this.sector.getCentroid(), 0));
@@ -426,16 +397,15 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer
             }
         }
 
-        private boolean hasLabel()
-        {
+        private boolean hasLabel() {
             // Has label if it contains hemisphere mid latitude
             double southLat = UTM_MIN_LATITUDE / 2;
-            boolean southLabel = this.sector.getMinLatitude().degrees < southLat
-                && southLat <= this.sector.getMaxLatitude().degrees;
+            boolean southLabel = this.sector.latMin().degrees < southLat
+                && southLat <= this.sector.latMax().degrees;
 
             double northLat = UTM_MAX_LATITUDE / 2;
-            boolean northLabel = this.sector.getMinLatitude().degrees < northLat
-                && northLat <= this.sector.getMaxLatitude().degrees;
+            boolean northLabel = this.sector.latMin().degrees < northLat
+                && northLat <= this.sector.latMax().degrees;
 
             return southLabel || northLabel;
         }

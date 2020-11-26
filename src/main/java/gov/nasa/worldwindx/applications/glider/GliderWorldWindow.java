@@ -23,22 +23,18 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @author tag
  * @version $Id: GliderWorldWindow.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GliderWorldWindow extends WorldWindowGLCanvas
-{
-    protected final CopyOnWriteArraySet<GliderImage> imageTable = new CopyOnWriteArraySet<>();
-    protected final LayerListener layerListener = new LayerListener();
+public class GliderWorldWindow extends WorldWindowGLCanvas {
+    protected final Set<GliderImage> imageTable = new CopyOnWriteArraySet<>();
+    protected final PropertyChangeListener layerListener = new LayerListener();
 
     /**
      * Adds an image to display on the globe.
      *
      * @param image the image to display
-     *
      * @throws IllegalArgumentException if <code>image</code> is null.
      */
-    public void addImage(GliderImage image)
-    {
-        if (image == null)
-        {
+    public void addImage(GliderImage image) {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -66,13 +62,10 @@ public class GliderWorldWindow extends WorldWindowGLCanvas
      * Removes a specified image from the globe.
      *
      * @param image the image to remove.
-     *
      * @throws IllegalArgumentException if <code>image</code> is null.
      */
-    public void removeImage(GliderImage image)
-    {
-        if (image == null)
-        {
+    public void removeImage(GliderImage image) {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -81,8 +74,7 @@ public class GliderWorldWindow extends WorldWindowGLCanvas
         this.imageTable.remove(image);
 
         Layer layer = (Layer) image.getValue(AVKey.LAYER);
-        if (layer != null)
-        {
+        if (layer != null) {
             image.removeKey(AVKey.LAYER);
             layer.removePropertyChangeListener(this.layerListener);
             this.getModel().getLayers().remove(layer);
@@ -98,10 +90,9 @@ public class GliderWorldWindow extends WorldWindowGLCanvas
      * Returns the set of currently associated images.
      *
      * @return the set of currently associated images. The returned set is not modifiable and cannot be used to
-     *         associate or disassociate an image.
+     * associate or disassociate an image.
      */
-    public Set<GliderImage> getImages()
-    {
+    public Set<GliderImage> getImages() {
         return Collections.unmodifiableSet(this.imageTable);
     }
 
@@ -109,19 +100,15 @@ public class GliderWorldWindow extends WorldWindowGLCanvas
      * Indicates whether a specified image is associated.
      *
      * @param image the image in question.
-     *
      * @return <code>true</code> if the image is associated, <code>false</code> if not or if <code>image</code> is
-     *         null.
+     * null.
      */
-    public boolean containsImage(GliderImage image)
-    {
+    public boolean containsImage(GliderImage image) {
         return image != null && this.imageTable.contains(image);
     }
 
-    protected class LayerListener implements PropertyChangeListener
-    {
-        public void propertyChange(PropertyChangeEvent evt)
-        {
+    protected class LayerListener implements PropertyChangeListener {
+        public void propertyChange(PropertyChangeEvent evt) {
             GliderWorldWindow.this.firePropertyChange(GliderImage.GLIDER_IMAGE_SOURCE, null, this);
             GliderWorldWindow.this.repaint();
         }

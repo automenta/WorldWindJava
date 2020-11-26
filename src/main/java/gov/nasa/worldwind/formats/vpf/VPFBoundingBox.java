@@ -12,85 +12,27 @@ import gov.nasa.worldwind.util.*;
  * @author dcollins
  * @version $Id: VPFBoundingBox.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFBoundingBox
-{
+public class VPFBoundingBox {
     private final double xmin;
     private final double ymin;
     private final double xmax;
     private final double ymax;
 
-    public VPFBoundingBox(double xmin, double ymin, double xmax, double ymax)
-    {
+    public VPFBoundingBox(double xmin, double ymin, double xmax, double ymax) {
         this.xmin = xmin;
         this.ymin = ymin;
         this.xmax = xmax;
         this.ymax = ymax;
     }
 
-    public double getXmin()
-    {
-        return this.xmin;
-    }
-
-    public double getYmin()
-    {
-        return this.ymin;
-    }
-
-    public double getXmax()
-    {
-        return this.xmax;
-    }
-
-    public double getYmax()
-    {
-        return this.ymax;
-    }
-
-    public Sector toSector()
-    {
-        return Sector.fromDegrees(this.ymin, this.ymax, this.xmin, this.xmax);
-    }
-
-    public VPFBoundingBox union(VPFBoundingBox boundingBox)
-    {
-        if (boundingBox == null)
-        {
-            String message = Logging.getMessage("nullValue.BoundingBoxIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return new VPFBoundingBox(
-            Math.min(this.xmin, boundingBox.xmin),
-            Math.min(this.ymin, boundingBox.ymin),
-            Math.max(this.xmax, boundingBox.xmax),
-            Math.max(this.ymax, boundingBox.ymax));
-    }
-
-    public String toString()
-    {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("xmin=").append(this.xmin).append(", ");
-        sb.append("ymin=").append(this.ymin).append(", ");
-        sb.append("xmax=").append(this.xmax).append(", ");
-        sb.append("ymax=").append(this.ymax);
-
-        return sb.toString();
-    }
-
-    public static VPFBoundingBox fromVecBuffer(VecBuffer buffer)
-    {
-        if (buffer == null)
-        {
+    public static VPFBoundingBox fromVecBuffer(VecBuffer buffer) {
+        if (buffer == null) {
             String message = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (buffer.getCoordsPerVec() < 2)
-        {
+        if (buffer.getCoordsPerVec() < 2) {
             String message = Logging.getMessage("generic.BufferIncompatible", buffer);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -104,8 +46,7 @@ public class VPFBoundingBox
         int bufferSize = buffer.getSize();
         double[] compArray = new double[2];
 
-        for (int i = 0; i < bufferSize; i++)
-        {
+        for (int i = 0; i < bufferSize; i++) {
             buffer.get(i, compArray);
 
             if (xmin > compArray[0])
@@ -120,5 +61,50 @@ public class VPFBoundingBox
         }
 
         return new VPFBoundingBox(xmin, ymin, xmax, ymax);
+    }
+
+    public double getXmin() {
+        return this.xmin;
+    }
+
+    public double getYmin() {
+        return this.ymin;
+    }
+
+    public double getXmax() {
+        return this.xmax;
+    }
+
+    public double getYmax() {
+        return this.ymax;
+    }
+
+    public Sector toSector() {
+        return Sector.fromDegrees(this.ymin, this.ymax, this.xmin, this.xmax);
+    }
+
+    public VPFBoundingBox union(VPFBoundingBox boundingBox) {
+        if (boundingBox == null) {
+            String message = Logging.getMessage("nullValue.BoundingBoxIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        return new VPFBoundingBox(
+            Math.min(this.xmin, boundingBox.xmin),
+            Math.min(this.ymin, boundingBox.ymin),
+            Math.max(this.xmax, boundingBox.xmax),
+            Math.max(this.ymax, boundingBox.ymax));
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("xmin=").append(this.xmin).append(", ");
+        sb.append("ymin=").append(this.ymin).append(", ");
+        sb.append("xmax=").append(this.xmax).append(", ");
+        sb.append("ymax=").append(this.ymax);
+
+        return sb.toString();
     }
 }

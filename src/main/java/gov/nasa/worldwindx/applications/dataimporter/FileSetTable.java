@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Displays the data sets available to install.
@@ -17,10 +18,8 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: FileSetTable.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
-public class FileSetTable extends JTable
-{
-    public FileSetTable(FileSetMap fileSetMap)
-    {
+public class FileSetTable extends JTable {
+    public FileSetTable(FileSetMap fileSetMap) {
         this.setModel(new FileSetTableModel(fileSetMap));
 
         this.setIntercellSpacing(new Dimension(10, 1));
@@ -47,22 +46,19 @@ public class FileSetTable extends JTable
         column.setPreferredWidth(20);
     }
 
-    public void setFileSetMap(FileSetMap fileSetMap)
-    {
+    public void setFileSetMap(FileSetMap fileSetMap) {
         ((FileSetTableModel) this.getModel()).setFileSetMap(fileSetMap);
     }
 
-    public java.util.List<FileSet> getSelectedFileSets()
-    {
+    public List<FileSet> getSelectedFileSets() {
         int[] selectedRows = this.getSelectedRows();
 
         if (selectedRows.length == 0)
             return null;
 
-        java.util.List<FileSet> selectedFileSets = new ArrayList<>(selectedRows.length);
+        List<FileSet> selectedFileSets = new ArrayList<>(selectedRows.length);
 
-        for (int selectedRow : selectedRows)
-        {
+        for (int selectedRow : selectedRows) {
             int modelRow = this.convertRowIndexToModel(selectedRow);
             FileSet fileSet = ((FileSetTableModel) this.getModel()).getRow(modelRow);
             selectedFileSets.add(fileSet);
@@ -71,16 +67,14 @@ public class FileSetTable extends JTable
         return selectedFileSets;
     }
 
-    public void scrollToFileSet(FileSet fileSet)
-    {
+    public void scrollToFileSet(FileSet fileSet) {
         Integer row = ((FileSetTableModel) this.getModel()).getRowForFileSet(fileSet);
 
         if (row != null)
             this.scrollToVisible(row, 0);
     }
 
-    public void scrollToVisible(int rowIndex, int vColIndex)
-    {
+    public void scrollToVisible(int rowIndex, int vColIndex) {
         if (!(this.getParent() instanceof JViewport))
             return;
 

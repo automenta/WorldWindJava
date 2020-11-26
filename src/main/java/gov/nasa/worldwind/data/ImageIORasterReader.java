@@ -11,100 +11,99 @@ import gov.nasa.worldwind.formats.worldfile.WorldFile;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.*;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.logging.Level;
+
 /**
  * @author dcollins
  * @version $Id: ImageIORasterReader.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ImageIORasterReader extends AbstractDataRasterReader
-{
-    static
-    {
-        javax.imageio.spi.IIORegistry.getDefaultInstance().registerServiceProvider(GeotiffImageReaderSpi.inst());
+public class ImageIORasterReader extends AbstractDataRasterReader {
+    static {
+        IIORegistry.getDefaultInstance().registerServiceProvider(GeotiffImageReaderSpi.inst());
     }
 
     private boolean generateMipMaps;
 
-    public ImageIORasterReader(boolean generateMipMaps)
-    {
-        super(javax.imageio.ImageIO.getReaderMIMETypes(), getImageIOReaderSuffixes());
+    public ImageIORasterReader(boolean generateMipMaps) {
+        super(ImageIO.getReaderMIMETypes(), getImageIOReaderSuffixes());
         this.generateMipMaps = generateMipMaps;
     }
 
-    public ImageIORasterReader()
-    {
+    public ImageIORasterReader() {
         this(false);
     }
 
-    private static javax.imageio.stream.ImageInputStream createInputStream(Object source) throws java.io.IOException
-    {
+    private static ImageInputStream createInputStream(Object source) throws IOException {
         // ImageIO can create an ImageInputStream automatically from a File references or a standard I/O InputStream
         // reference. If the data source is a URL, or a string file path, then we must open an input stream ourselves.
 
         Object input = source;
 
-        if (source instanceof java.net.URL)
-        {
-            input = ((java.net.URL) source).openStream();
+        if (source instanceof URL) {
+            input = ((URL) source).openStream();
         }
-        else if (source instanceof CharSequence)
-        {
+        else if (source instanceof CharSequence) {
             input = openInputStream(source.toString());
         }
 
-        return javax.imageio.ImageIO.createImageInputStream(input);
+        return ImageIO.createImageInputStream(input);
     }
 
-    private static java.io.InputStream openInputStream(String path) throws java.io.IOException
-    {
+    private static InputStream openInputStream(String path) throws IOException {
         Object streamOrException = WWIO.getFileOrResourceAsStream(path, null);
-        if (streamOrException == null)
-        {
+        if (streamOrException == null) {
             return null;
         }
-        else if (streamOrException instanceof java.io.IOException)
-        {
-            throw (java.io.IOException) streamOrException;
+        else if (streamOrException instanceof IOException) {
+            throw (IOException) streamOrException;
         }
-        else if (streamOrException instanceof Exception)
-        {
+        else if (streamOrException instanceof Exception) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToReadImageFile", path);
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, streamOrException);
-            throw new java.io.IOException(message);
+            Logging.logger().log(Level.SEVERE, message, streamOrException);
+            throw new IOException(message);
         }
 
-        return (java.io.InputStream) streamOrException;
+        return (InputStream) streamOrException;
     }
 
-    private static javax.imageio.ImageReader readerFor(javax.imageio.stream.ImageInputStream iis)
-    {
-        java.util.Iterator<javax.imageio.ImageReader> readers = javax.imageio.ImageIO.getImageReaders(iis);
-        if (!readers.hasNext())
-        {
+    private static ImageReader readerFor(ImageInputStream iis) {
+        Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+        if (!readers.hasNext()) {
             return null;
         }
 
         return readers.next();
     }
 
-    private static String[] getImageIOReaderSuffixes()
-    {
-        java.util.Iterator<javax.imageio.spi.ImageReaderSpi> iter;
-        try
-        {
-            iter = javax.imageio.spi.IIORegistry.getDefaultInstance().getServiceProviders(
-                javax.imageio.spi.ImageReaderSpi.class, true);
+    private static String[] getImageIOReaderSuffixes() {
+        Iterator<ImageReaderSpi> iter;
+        try {
+            iter = IIORegistry.getDefaultInstance().getServiceProviders(
+                ImageReaderSpi.class, true);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             return new String[0];
         }
 
-        java.util.Set<String> set = new java.util.HashSet<>();
-        while (iter.hasNext())
-        {
-            javax.imageio.spi.ImageReaderSpi spi = iter.next();
+        Collection<String> set = new HashSet<>();
+        while (iter.hasNext()) {
+            ImageReaderSpi spi = iter.next();
             String[] names = spi.getFileSuffixes();
-            set.addAll(java.util.Arrays.asList(names));
+            set.addAll(Arrays.asList(names));
         }
 
         String[] array = new String[set.size()];
@@ -112,13 +111,11 @@ public class ImageIORasterReader extends AbstractDataRasterReader
         return array;
     }
 
-    public boolean isGenerateMipMaps()
-    {
+    public boolean isGenerateMipMaps() {
         return this.generateMipMaps;
     }
 
-    public void setGenerateMipMaps(boolean generateMipMaps)
-    {
+    public void setGenerateMipMaps(boolean generateMipMaps) {
         this.generateMipMaps = generateMipMaps;
     }
 
@@ -156,8 +153,7 @@ public class ImageIORasterReader extends AbstractDataRasterReader
     //    return true;
     //}
 
-    protected boolean doCanRead(Object source, AVList params)
-    {
+    protected boolean doCanRead(Object source, AVList params) {
         // Determine whether or not the data source can be read.
         //if (!this.canReadImage(source))
         //    return false;
@@ -165,32 +161,27 @@ public class ImageIORasterReader extends AbstractDataRasterReader
         // If the data source doesn't already have all the necessary metadata, then we determine whether or not
         // the missing metadata can be read.
         Object o = (params != null) ? params.getValue(AVKey.SECTOR) : null;
-        if (!(o instanceof Sector))
-        {
-            if (!this.canReadWorldFiles(source))
-            {
+        if (!(o instanceof Sector)) {
+            if (!this.canReadWorldFiles(source)) {
                 return false;
             }
         }
 
-        if (null != params && !params.hasKey(AVKey.PIXEL_FORMAT))
-        {
+        if (null != params && !params.hasKey(AVKey.PIXEL_FORMAT)) {
             params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
         }
 
         return true;
     }
 
-    protected DataRaster[] doRead(Object source, AVList params) throws java.io.IOException
-    {
-        javax.imageio.stream.ImageInputStream iis = createInputStream(source);
-        java.awt.image.BufferedImage image = javax.imageio.ImageIO.read(iis);
+    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
+        ImageInputStream iis = createInputStream(source);
+        BufferedImage image = ImageIO.read(iis);
         image = ImageUtil.toCompatibleImage(image);
 
         // If the data source doesn't already have all the necessary metadata, then we attempt to read the metadata.
         Object o = (params != null) ? params.getValue(AVKey.SECTOR) : null;
-        if (!(o instanceof Sector))
-        {
+        if (!(o instanceof Sector)) {
             AVList values = new AVListImpl();
             values.setValue(AVKey.IMAGE, image);
             this.readWorldFiles(source, values);
@@ -200,56 +191,44 @@ public class ImageIORasterReader extends AbstractDataRasterReader
         return new DataRaster[] {this.createRaster((Sector) o, image)};
     }
 
-    protected void doReadMetadata(Object source, AVList params) throws java.io.IOException
-    {
+    protected void doReadMetadata(Object source, AVList params) throws IOException {
         Object width = params.getValue(AVKey.WIDTH);
         Object height = params.getValue(AVKey.HEIGHT);
-        if (!(width instanceof Integer) || !(height instanceof Integer))
-        {
+        if (!(width instanceof Integer) || !(height instanceof Integer)) {
             this.readImageDimension(source, params);
         }
 
         Object sector = params.getValue(AVKey.SECTOR);
-        if (!(sector instanceof Sector))
-        {
+        if (!(sector instanceof Sector)) {
             this.readWorldFiles(source, params);
         }
 
-        if (!params.hasKey(AVKey.PIXEL_FORMAT))
-        {
+        if (!params.hasKey(AVKey.PIXEL_FORMAT)) {
             params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
         }
     }
 
-    protected DataRaster createRaster(Sector sector, java.awt.image.BufferedImage image)
-    {
-        if (this.isGenerateMipMaps())
-        {
+    protected DataRaster createRaster(Sector sector, BufferedImage image) {
+        if (this.isGenerateMipMaps()) {
             return new MipMappedBufferedImageRaster(sector, image);
         }
-        else
-        {
+        else {
             return new BufferedImageRaster(sector, image);
         }
     }
 
-    private boolean canReadWorldFiles(Object source)
-    {
-        if (!(source instanceof java.io.File))
-        {
+    private boolean canReadWorldFiles(Object source) {
+        if (!(source instanceof File)) {
             return false;
         }
 
-        try
-        {
-            java.io.File[] worldFiles = WorldFile.getWorldFiles((java.io.File) source);
-            if (worldFiles == null || worldFiles.length == 0)
-            {
+        try {
+            File[] worldFiles = WorldFile.getWorldFiles((File) source);
+            if (worldFiles == null || worldFiles.length == 0) {
                 return false;
             }
         }
-        catch (java.io.IOException e)
-        {
+        catch (IOException e) {
             // Not interested in logging the exception, we only want to report the failure to read.
             return false;
         }
@@ -257,18 +236,15 @@ public class ImageIORasterReader extends AbstractDataRasterReader
         return true;
     }
 
-    private void readImageDimension(Object source, AVList params) throws java.io.IOException
-    {
-        javax.imageio.stream.ImageInputStream iis = createInputStream(source);
-        javax.imageio.ImageReader reader = null;
-        try (iis)
-        {
+    private void readImageDimension(Object source, AVList params) throws IOException {
+        ImageInputStream iis = createInputStream(source);
+        ImageReader reader = null;
+        try (iis) {
             reader = readerFor(iis);
-            if (reader == null)
-            {
+            if (reader == null) {
                 String message = Logging.getMessage("generic.UnrecognizedImageSourceType", source);
                 Logging.logger().severe(message);
-                throw new java.io.IOException(message);
+                throw new IOException(message);
             }
 
             reader.setInput(iis, true, true);
@@ -277,45 +253,38 @@ public class ImageIORasterReader extends AbstractDataRasterReader
             params.setValue(AVKey.WIDTH, width);
             params.setValue(AVKey.HEIGHT, height);
         }
-        finally
-        {
-            if (reader != null)
-            {
+        finally {
+            if (reader != null) {
                 reader.dispose();
             }
         }
     }
 
-    private void readWorldFiles(Object source, AVList params) throws java.io.IOException
-    {
-        if (!(source instanceof java.io.File))
-        {
+    private void readWorldFiles(Object source, AVList params) throws IOException {
+        if (!(source instanceof File)) {
             String message = Logging.getMessage("DataRaster.CannotRead", source);
             Logging.logger().severe(message);
-            throw new java.io.IOException(message);
+            throw new IOException(message);
         }
 
         // If an image is not specified in the metadata values, then attempt to construct the image size from other
         // parameters.
         Object o = params.getValue(AVKey.IMAGE);
-        if (!(o instanceof java.awt.image.BufferedImage))
-        {
+        if (!(o instanceof BufferedImage)) {
             o = params.getValue(WorldFile.WORLD_FILE_IMAGE_SIZE);
-            if (!(o instanceof int[]))
-            {
+            if (!(o instanceof int[])) {
                 // If the image size is specified in the parameters WIDTH and HEIGHT, then translate them to the
                 // WORLD_FILE_IMAGE_SIZE parameter.
                 Object width = params.getValue(AVKey.WIDTH);
                 Object height = params.getValue(AVKey.HEIGHT);
-                if (width instanceof Integer && height instanceof Integer)
-                {
+                if (width instanceof Integer && height instanceof Integer) {
                     int[] size = new int[] {(Integer) width, (Integer) height};
                     params.setValue(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
                 }
             }
         }
 
-        java.io.File[] worldFiles = WorldFile.getWorldFiles((java.io.File) source);
+        File[] worldFiles = WorldFile.getWorldFiles((File) source);
         WorldFile.decodeWorldFiles(worldFiles, params);
     }
 }

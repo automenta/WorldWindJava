@@ -14,8 +14,7 @@ import gov.nasa.worldwind.geom.Position;
  * @author pabercrombie
  * @version $Id: GlobeBalloon.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface GlobeBalloon extends Balloon
-{
+public interface GlobeBalloon extends Balloon {
     /**
      * Get the position of the balloon.
      *

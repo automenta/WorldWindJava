@@ -10,8 +10,7 @@ package gov.nasa.worldwindx.applications.worldwindow.core;
  * @author tag
  * @version $Id: WWMenu.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface WWMenu
-{
+public interface WWMenu {
     void addMenu(String featureID);
 
     void addMenus(String[] featureIDs);

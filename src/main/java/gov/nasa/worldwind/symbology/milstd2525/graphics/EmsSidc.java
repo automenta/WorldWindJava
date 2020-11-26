@@ -16,36 +16,65 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics;
  * @author pabercrombie
  * @version $Id$
  */
-public interface EmsSidc
-{
-    /** Aftershock. */
+public interface EmsSidc {
+    /**
+     * Aftershock.
+     */
     String NATEVT_GEO_AFTSHK = "E-N-AA---------";
-    /** Avalanche. */
+    /**
+     * Avalanche.
+     */
     String NATEVT_GEO_AVL = "E-N-AB---------";
-    /** Earthquake epicenter. */
+    /**
+     * Earthquake epicenter.
+     */
     String NATEVT_GEO_EQKEPI = "E-N-AC---------";
-    /** Landslide. */
+    /**
+     * Landslide.
+     */
     String NATEVT_GEO_LNDSLD = "E-N-AD---------";
-    /** Subsidence. */
+    /**
+     * Subsidence.
+     */
     String NATEVT_GEO_SBSDNC = "E-N-AE---------";
-    /** Volcanic threat. */
+    /**
+     * Volcanic threat.
+     */
     String NATEVT_GEO_VLCTHT = "E-N-AG---------";
-    /** Drought. */
+    /**
+     * Drought.
+     */
     String NATEVT_HYDMET_DRGHT = "E-N-BB---------";
-    /** Flood. */
+    /**
+     * Flood.
+     */
     String NATEVT_HYDMET_FLD = "E-N-BC---------";
-    /** Inversion. */
+    /**
+     * Inversion.
+     */
     String NATEVT_HYDMET_INV = "E-N-BF---------";
-    /** Tsunami. */
+    /**
+     * Tsunami.
+     */
     String NATEVT_HYDMET_TSNMI = "E-N-BM---------";
-    /** Bird infestation. */
+    /**
+     * Bird infestation.
+     */
     String NATEVT_INFST_BIRD = "E-N-CA---------";
-    /** Insect infestation. */
+    /**
+     * Insect infestation.
+     */
     String NATEVT_INFST_INSCT = "E-N-CB---------";
-    /** Microbial infestation. */
+    /**
+     * Microbial infestation.
+     */
     String NATEVT_INFST_MICROB = "E-N-CC---------";
-    /** Reptile infestation. */
+    /**
+     * Reptile infestation.
+     */
     String NATEVT_INFST_REPT = "E-N-CD---------";
-    /** Rodent infestation. */
+    /**
+     * Rodent infestation.
+     */
     String NATEVT_INFST_RDNT = "E-N-CE---------";
 }

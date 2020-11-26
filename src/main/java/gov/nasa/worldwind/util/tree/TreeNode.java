@@ -16,15 +16,20 @@ import gov.nasa.worldwind.render.WWTexture;
  * @version $Id: TreeNode.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see TreeModel
  */
-public interface TreeNode extends WWObject
-{
-    /** All nodes in a subtree are selected. */
+public interface TreeNode extends WWObject {
+    /**
+     * All nodes in a subtree are selected.
+     */
     String SELECTED = "util.tree.Selected";
 
-    /** No nodes in a subtree are selected. */
+    /**
+     * No nodes in a subtree are selected.
+     */
     String NOT_SELECTED = "util.tree.NotSelected";
 
-    /** Some nodes in a subtree are selected, and some are not. */
+    /**
+     * Some nodes in a subtree are selected, and some are not.
+     */
     String PARTIALLY_SELECTED = "util.tree.PartiallySelected";
 
     /**
@@ -53,7 +58,6 @@ public interface TreeNode extends WWObject
      * is {@code null}.
      *
      * @return Parent node, or {@code null} if this the root node.
-     *
      * @see #setParent(TreeNode)
      */
     TreeNode getParent();
@@ -62,7 +66,6 @@ public interface TreeNode extends WWObject
      * Set the parent node.
      *
      * @param node New parent node.
-     *
      * @see #getParent()
      */
     void setParent(TreeNode node);
@@ -71,7 +74,6 @@ public interface TreeNode extends WWObject
      * Get the children of this node.
      *
      * @return Child nodes, or an empty iterator if the node does not have children.
-     *
      * @see #addChild(TreeNode)
      */
     Iterable<TreeNode> getChildren();
@@ -80,7 +82,6 @@ public interface TreeNode extends WWObject
      * Is the node enabled?
      *
      * @return True if the node is enabled.
-     *
      * @see #setEnabled(boolean)
      */
     boolean isEnabled();
@@ -89,7 +90,6 @@ public interface TreeNode extends WWObject
      * Set the node to enabled or not enabled. A node that is not enabled will not respond to user input.
      *
      * @param enabled New enabled state.
-     *
      * @see #isEnabled()
      */
     void setEnabled(boolean enabled);
@@ -98,7 +98,6 @@ public interface TreeNode extends WWObject
      * Is the node selected?
      *
      * @return True if the node is selected.
-     *
      * @see #setSelected(boolean)
      * @see #isTreeSelected()
      */
@@ -108,7 +107,6 @@ public interface TreeNode extends WWObject
      * Set the node to selected or not selected.
      *
      * @param selected New selection value.
-     *
      * @see #isSelected()
      */
     void setSelected(boolean selected);
@@ -124,7 +122,6 @@ public interface TreeNode extends WWObject
      * Is the node visible?
      *
      * @return True if the node is visible.
-     *
      * @see #setVisible(boolean)
      */
     boolean isVisible();
@@ -133,7 +130,6 @@ public interface TreeNode extends WWObject
      * Set the node to visible or not visible. If the node is not visible it will not be drawn by the tree layout.
      *
      * @param visible New visibility setting.
-     *
      * @see #isVisible()
      */
     void setVisible(boolean visible);
@@ -157,7 +153,6 @@ public interface TreeNode extends WWObject
      *
      * @param index Index at which the new child will be inserted.
      * @param child New child.
-     *
      * @throws IndexOutOfBoundsException if {@code index} is less than zero or greater than the number of children
      *                                   already in the list.
      */
@@ -170,7 +165,9 @@ public interface TreeNode extends WWObject
      */
     void removeChild(TreeNode child);
 
-    /** Remove all of the child nodes from this node. */
+    /**
+     * Remove all of the child nodes from this node.
+     */
     void removeAllChildren();
 
     /**

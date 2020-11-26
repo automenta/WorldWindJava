@@ -8,7 +8,7 @@ package gov.nasa.worldwind.wms;
 import org.w3c.dom.*;
 
 import javax.xml.xpath.XPath;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Version-dependent class for gathering information from a wms capabilities document.
@@ -17,16 +17,13 @@ import java.util.ArrayList;
  * @version $Id: CapabilitiesV111.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 
-public class CapabilitiesV111 extends Capabilities
-{
-    public CapabilitiesV111(Document doc, XPath xpath)
-    {
+public class CapabilitiesV111 extends Capabilities {
+    public CapabilitiesV111(Document doc, XPath xpath) {
         super(doc, xpath);
     }
 
     @Override
-    public BoundingBox getLayerGeographicBoundingBox(Element layer)
-    {
+    public BoundingBox getLayerGeographicBoundingBox(Element layer) {
         Element e = this.getElement(layer, "ancestor-or-self::wms:Layer/wms:LatLonBoundingBox");
 
         return e == null ? null : BoundingBox.createFromStrings("CRS:84",
@@ -35,17 +32,15 @@ public class CapabilitiesV111 extends Capabilities
             null, null);
     }
 
-    public BoundingBox[] getLayerBoundingBoxes(Element layer)
-    {
+    public BoundingBox[] getLayerBoundingBoxes(Element layer) {
         Element[] es = this.getElements(layer, "ancestor-or-self::wms:Layer/wms:BoundingBox");
         if (es == null)
             return null;
 
         ArrayList<BoundingBox> bboxes = new ArrayList<>();
-        ArrayList<String> crses = new ArrayList<>();
+        List<String> crses = new ArrayList<>();
 
-        for (Element e : es)
-        {
+        for (Element e : es) {
             if (e == null)
                 continue;
 
@@ -54,29 +49,25 @@ public class CapabilitiesV111 extends Capabilities
                 this.getBoundingBoxMiny(e), this.getBoundingBoxMaxy(e),
                 this.getBoundingBoxResx(e), this.getBoundingBoxResy(e));
 
-            if (bb != null)
-            {
+            if (bb != null) {
                 // Add the bbox only if the ancestor's crs is not one of those in the node's crs.
-                if (bb.getCrs() != null && !crses.contains(bb.getCrs()))
-                {
+                if (bb.getCrs() != null && !crses.contains(bb.getCrs())) {
                     crses.add(bb.getCrs());
                     bboxes.add(bb);
                 }
             }
         }
 
-        return bboxes.size() > 0 ? bboxes.toArray(new BoundingBox[0]) : null;
+        return !bboxes.isEmpty() ? bboxes.toArray(new BoundingBox[0]) : null;
     }
 
     @Override
-    public String getLayerMaxScaleDenominator(Element layer)
-    {
+    public String getLayerMaxScaleDenominator(Element layer) {
         return this.getText(layer, "ancestor-or-self::wms:Layer/wms:ScaleHint/@wms:max");
     }
 
     @Override
-    public String getLayerMinScaleDenominator(Element layer)
-    {
+    public String getLayerMinScaleDenominator(Element layer) {
         return this.getText(layer, "ancestor-or-self::wms:Layer/wms:ScaleHint/@wms:min");
     }
 }

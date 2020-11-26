@@ -14,36 +14,31 @@ import gov.nasa.worldwindx.applications.worldwindow.core.layermanager.LayerPath;
  * @author tag
  * @version $Id: AbstractOnDemandLayerFeature.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractOnDemandLayerFeature extends AbstractFeature
-{
+public abstract class AbstractOnDemandLayerFeature extends AbstractFeature {
     protected final String group;
     protected Layer layer;
     protected boolean on = false;
 
-    protected abstract Layer createLayer();
-
-    public AbstractOnDemandLayerFeature(String s, String featureID, String iconPath, String group, Registry registry)
-    {
+    public AbstractOnDemandLayerFeature(String s, String featureID, String iconPath, String group, Registry registry) {
         super(s, featureID, iconPath, registry);
 
         this.group = group;
     }
 
+    protected abstract Layer createLayer();
+
     @Override
-    public boolean isTwoState()
-    {
+    public boolean isTwoState() {
         return true;
     }
 
     @Override
-    public boolean isOn()
-    {
+    public boolean isOn() {
         return this.on;
     }
 
     @Override
-    public void turnOn(boolean tf)
-    {
+    public void turnOn(boolean tf) {
         if (tf == this.on)
             return;
 
@@ -53,27 +48,23 @@ public abstract class AbstractOnDemandLayerFeature extends AbstractFeature
         if (this.layer == null)
             return;
 
-        if (tf)
-        {
+        if (tf) {
             LayerPath path = new LayerPath(this.group);
             this.addLayer(path);
             this.controller.getLayerManager().selectLayer(this.layer, true);
         }
-        else
-        {
+        else {
             this.removeLayer();
         }
 
         this.on = tf;
     }
 
-    protected void addLayer(LayerPath path)
-    {
+    protected void addLayer(LayerPath path) {
         this.controller.getLayerManager().addLayer(this.layer, path);
     }
 
-    protected void removeLayer()
-    {
+    protected void removeLayer() {
         this.controller.getLayerManager().removeLayer(this.layer);
     }
 }

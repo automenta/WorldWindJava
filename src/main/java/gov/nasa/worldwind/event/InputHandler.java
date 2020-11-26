@@ -9,20 +9,20 @@ import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVList;
 
 import java.awt.event.*;
+import java.beans.PropertyChangeListener;
 
 /**
  * @author tag
  * @version $Id: InputHandler.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface InputHandler extends AVList, java.beans.PropertyChangeListener
-{
-    void setEventSource(WorldWindow newWorldWindow);
-
+public interface InputHandler extends AVList, PropertyChangeListener {
     WorldWindow getEventSource();
 
-    void setHoverDelay(int delay);
+    void setEventSource(WorldWindow newWorldWindow);
 
     int getHoverDelay();
+
+    void setHoverDelay(int delay);
 
     void addSelectListener(SelectListener listener);
 

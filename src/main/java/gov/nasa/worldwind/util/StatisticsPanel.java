@@ -17,24 +17,21 @@ import java.util.Arrays;
 /**
  * @version $Id: StatisticsPanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class StatisticsPanel extends JPanel
-{
+public class StatisticsPanel extends JPanel {
+    private final int updateInterval = 500;
     private JPanel statsPanel;
     private JPanel outerPanel;
     private JScrollPane scrollPane;
     private WorldWindow wwd;
-    private final int updateInterval = 500;
     private long lastUpdate;
 
-    public StatisticsPanel(WorldWindow wwd)
-    {
+    public StatisticsPanel(WorldWindow wwd) {
         // Make a panel at a default size.
         super(new BorderLayout());
         this.makePanel(new Dimension(200, 400));
     }
 
-    public StatisticsPanel(WorldWindow wwd, Dimension size)
-    {
+    public StatisticsPanel(WorldWindow wwd, Dimension size) {
         // Make a panel at a specified size.
         super(new BorderLayout());
 
@@ -45,16 +42,14 @@ public class StatisticsPanel extends JPanel
         wwd.addRenderingListener(event -> {
             long now = System.currentTimeMillis();
             if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)
-                && event.getSource() instanceof WorldWindow && now - lastUpdate > updateInterval)
-            {
+                && event.getSource() instanceof WorldWindow && now - lastUpdate > updateInterval) {
                 EventQueue.invokeLater(this::update);
                 lastUpdate = now;
             }
         });
     }
 
-    private void makePanel(Dimension size)
-    {
+    private void makePanel(Dimension size) {
         // Make and fill the panel holding the statistics.
         this.statsPanel = new JPanel(new GridLayout(0, 1, 0, 15));
         this.statsPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -78,23 +73,20 @@ public class StatisticsPanel extends JPanel
         this.add(outerPanel, BorderLayout.CENTER);
     }
 
-    private void fill(WorldWindow wwd)
-    {
+    private void fill(WorldWindow wwd) {
         if (wwd.getSceneController().getPerFrameStatistics().size() < 1)
             return;
 
         PerformanceStatistic[] pfs = new PerformanceStatistic[wwd.getPerFrameStatistics().size()];
         pfs = wwd.getSceneController().getPerFrameStatistics().toArray(pfs);
         Arrays.sort(pfs);
-        for (PerformanceStatistic stat : pfs)
-        {
+        for (PerformanceStatistic stat : pfs) {
             JLabel jcb = new JLabel(stat.toString());
             this.statsPanel.add(jcb);
         }
     }
 
-    public void update(WorldWindow wwd)
-    {
+    public void update(WorldWindow wwd) {
         // Replace all the statistics in the panel with the current ones.
         this.statsPanel.removeAll();
         this.fill(wwd);
@@ -102,8 +94,7 @@ public class StatisticsPanel extends JPanel
         this.outerPanel.repaint();
     }
 
-    public void update()
-    {
+    public void update() {
         // Replace all the statistics in the panel with the current ones.
         this.statsPanel.removeAll();
         this.fill(this.wwd);
@@ -112,8 +103,7 @@ public class StatisticsPanel extends JPanel
     }
 
     @Override
-    public void setToolTipText(String string)
-    {
+    public void setToolTipText(String string) {
         this.scrollPane.setToolTipText(string);
     }
 }

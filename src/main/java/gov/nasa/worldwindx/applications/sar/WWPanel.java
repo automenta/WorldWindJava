@@ -21,61 +21,31 @@ import java.beans.PropertyChangeListener;
  * @author tag
  * @version $Id: WWPanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WWPanel extends JPanel
-{
-    protected static class FocusablePanel extends JPanel
-    {
-        private final Component focusContext;
-
-        public FocusablePanel(LayoutManager layoutManager, Component focusContext)
-        {
-            super(layoutManager);
-            this.focusContext = focusContext;
-        }
-
-        protected void paintComponent(Graphics graphics)
-        {
-            super.paintComponent(graphics);
-
-            if (this.focusContext.isFocusOwner())
-            {
-                Rectangle bounds = this.getBounds();
-                BasicGraphicsUtils.drawDashedRect(graphics, 0, 0, bounds.width, bounds.height);
-            }
-        }
-    }
-
+public class WWPanel extends JPanel {
     private final FocusablePanel panel;
     private final WorldWindowGLCanvas wwd;
     private final StatusBar statusBar;
-
     private final PropertyChangeListener propertyChangeListener = propertyChangeEvent -> {
         if (propertyChangeEvent.getPropertyName() == SARKey.ELEVATION_UNIT)
             updateElevationUnit(propertyChangeEvent.getNewValue());
         if (propertyChangeEvent.getPropertyName() == SARKey.ANGLE_FORMAT)
             updateAngleFormat(propertyChangeEvent.getNewValue());
     };
-
-    private final FocusListener focusListener = new FocusListener()
-    {
-        public void focusGained(FocusEvent focusEvent)
-        {
+    private final FocusListener focusListener = new FocusListener() {
+        public void focusGained(FocusEvent focusEvent) {
             this.focusChanged(focusEvent);
         }
 
-        public void focusLost(FocusEvent focusEvent)
-        {
+        public void focusLost(FocusEvent focusEvent) {
             this.focusChanged(focusEvent);
         }
 
-        protected void focusChanged(FocusEvent focusEvent)
-        {
+        protected void focusChanged(FocusEvent focusEvent) {
             repaint();
         }
     };
 
-    public WWPanel()
-    {
+    public WWPanel() {
         super(new BorderLayout(0, 0)); // hgap, vgap
 
         this.wwd = new WorldWindowGLCanvas();
@@ -99,29 +69,23 @@ public class WWPanel extends JPanel
         this.add(this.statusBar, BorderLayout.PAGE_END);
     }
 
-    public WorldWindowGLCanvas getWwd()
-    {
+    public WorldWindowGLCanvas getWwd() {
         return wwd;
     }
 
-    public StatusBar getStatusBar()
-    {
+    public StatusBar getStatusBar() {
         return statusBar;
     }
 
-    private void updateElevationUnit(Object newValue)
-    {
-        for (Layer layer : this.wwd.getModel().getLayers())
-        {
-            if (layer instanceof ScalebarLayer)
-            {
+    private void updateElevationUnit(Object newValue) {
+        for (Layer layer : this.wwd.getModel().getLayers()) {
+            if (layer instanceof ScalebarLayer) {
                 if (SAR2.UNIT_IMPERIAL.equals(newValue))
                     ((ScalebarLayer) layer).setUnit(ScalebarLayer.UNIT_IMPERIAL);
                 else // Default to metric units.
                     ((ScalebarLayer) layer).setUnit(ScalebarLayer.UNIT_METRIC);
             }
-            else if (layer instanceof TerrainProfileLayer)
-            {
+            else if (layer instanceof TerrainProfileLayer) {
                 if (SAR2.UNIT_IMPERIAL.equals(newValue))
                     ((TerrainProfileLayer) layer).setUnit(TerrainProfileLayer.UNIT_IMPERIAL);
                 else // Default to metric units.
@@ -135,8 +99,25 @@ public class WWPanel extends JPanel
             this.statusBar.setElevationUnit(StatusBar.UNIT_METRIC);
     }
 
-    private void updateAngleFormat(Object newValue)
-    {
-        this.statusBar.setAngleFormat((String)newValue);
+    private void updateAngleFormat(Object newValue) {
+        this.statusBar.setAngleFormat((String) newValue);
+    }
+
+    protected static class FocusablePanel extends JPanel {
+        private final Component focusContext;
+
+        public FocusablePanel(LayoutManager layoutManager, Component focusContext) {
+            super(layoutManager);
+            this.focusContext = focusContext;
+        }
+
+        protected void paintComponent(Graphics graphics) {
+            super.paintComponent(graphics);
+
+            if (this.focusContext.isFocusOwner()) {
+                Rectangle bounds = this.getBounds();
+                BasicGraphicsUtils.drawDashedRect(graphics, 0, 0, bounds.width, bounds.height);
+            }
+        }
     }
 }

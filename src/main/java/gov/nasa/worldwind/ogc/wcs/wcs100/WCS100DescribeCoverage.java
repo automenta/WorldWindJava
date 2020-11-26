@@ -22,19 +22,23 @@ import java.util.*;
  * @author tag
  * @version $Id: WCS100DescribeCoverage.java 2072 2014-06-21 21:20:25Z tgaskins $
  */
-public class WCS100DescribeCoverage extends AbstractXMLEventParser
-{
+public class WCS100DescribeCoverage extends AbstractXMLEventParser {
     protected final XMLEventReader eventReader;
-    protected XMLEventParserContext parserContext;
     protected final List<WCS100CoverageOffering> coverageOfferings = new ArrayList<>(1);
+    protected XMLEventParserContext parserContext;
 
-    public static WCS100DescribeCoverage retrieve(URI uri, final String coverageName) throws URISyntaxException
-    {
-        Request request = new Request(uri, "WCS")
-        {
+    public WCS100DescribeCoverage(Object docSource) {
+        super(OGCConstants.WCS_1_0_0_NAMESPACE_URI);
+
+        this.eventReader = this.createReader(docSource);
+
+        this.initialize();
+    }
+
+    public static WCS100DescribeCoverage retrieve(URI uri, final String coverageName) throws URISyntaxException {
+        Request request = new Request(uri, "WCS") {
             @Override
-            protected void initialize(String service)
-            {
+            protected void initialize(String service) {
                 super.initialize(service);
                 this.setParam("REQUEST", "DescribeCoverage");
                 this.setParam("VERSION", "1.0.0");
@@ -45,35 +49,22 @@ public class WCS100DescribeCoverage extends AbstractXMLEventParser
         return new WCS100DescribeCoverage(request.toString());
     }
 
-    public WCS100DescribeCoverage(Object docSource)
-    {
-        super(OGCConstants.WCS_1_0_0_NAMESPACE_URI);
-
-        this.eventReader = this.createReader(docSource);
-
-        this.initialize();
-    }
-
-    protected void initialize()
-    {
+    protected void initialize() {
         this.parserContext = this.createParserContext(this.eventReader);
     }
 
-    protected XMLEventReader createReader(Object docSource)
-    {
+    protected XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
     }
 
-    protected XMLEventParserContext createParserContext(XMLEventReader reader)
-    {
+    protected XMLEventParserContext createParserContext(XMLEventReader reader) {
         this.parserContext = new BasicXMLEventParserContext(reader);
         this.parserContext.setDefaultNamespaceURI(this.getNamespaceURI());
 
         return this.parserContext;
     }
 
-    public XMLEventParserContext getParserContext()
-    {
+    public XMLEventParserContext getParserContext() {
         return this.parserContext;
     }
 
@@ -82,8 +73,7 @@ public class WCS100DescribeCoverage extends AbstractXMLEventParser
      *
      * @return the document's version number.
      */
-    public String getVersion()
-    {
+    public String getVersion() {
         return (String) this.getField("version");
     }
 
@@ -92,31 +82,25 @@ public class WCS100DescribeCoverage extends AbstractXMLEventParser
      *
      * @return the document's update sequence.
      */
-    public String getUpdateSequence()
-    {
+    public String getUpdateSequence() {
         return (String) this.getField("updateSequence");
     }
 
-    public List<WCS100CoverageOffering> getCoverageOfferings()
-    {
+    public List<WCS100CoverageOffering> getCoverageOfferings() {
         return this.coverageOfferings;
     }
 
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
-        if (ctx.isStartElement(event, "CoverageOffering"))
-        {
+        throws XMLStreamException {
+        if (ctx.isStartElement(event, "CoverageOffering")) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WCS100CoverageOffering)
                     this.coverageOfferings.add((WCS100CoverageOffering) o);
             }
         }
-        else
-        {
+        else {
             super.doParseEventContent(ctx, event, args);
         }
     }
@@ -126,24 +110,18 @@ public class WCS100DescribeCoverage extends AbstractXMLEventParser
      * DescribeCoverage document has been parsed.
      *
      * @param args optional arguments to pass to parsers of sub-elements.
-     *
      * @return <code>this</code> if parsing is successful, otherwise  null.
-     *
-     * @throws javax.xml.stream.XMLStreamException
-     *          if an exception occurs while attempting to read the event stream.
+     * @throws XMLStreamException if an exception occurs while attempting to read the event stream.
      */
-    public WCS100DescribeCoverage parse(Object... args) throws XMLStreamException
-    {
+    public WCS100DescribeCoverage parse(Object... args) throws XMLStreamException {
         XMLEventParserContext ctx = this.parserContext;
         QName docName = new QName(this.getNamespaceURI(), "CoverageDescription");
 
-        for (XMLEvent event = ctx.nextEvent(); ctx.hasNext(); event = ctx.nextEvent())
-        {
+        for (XMLEvent event = ctx.nextEvent(); ctx.hasNext(); event = ctx.nextEvent()) {
             if (event == null)
                 continue;
 
-            if (event.isStartElement() && event.asStartElement().getName().equals(docName))
-            {
+            if (event.isStartElement() && event.asStartElement().getName().equals(docName)) {
                 // Parse the attributes in order to get the version number.
                 this.doParseEventAttributes(ctx, event);
                 ctx.setDefaultNamespaceURI(this.getNamespaceURI());
@@ -160,8 +138,7 @@ public class WCS100DescribeCoverage extends AbstractXMLEventParser
         return null;
     }
 
-    protected void registerParsers(XMLEventParserContext ctx)
-    {
+    protected void registerParsers(XMLEventParserContext ctx) {
         ctx.addStringParsers(this.getNamespaceURI(), new String[]
             {
                 "description",

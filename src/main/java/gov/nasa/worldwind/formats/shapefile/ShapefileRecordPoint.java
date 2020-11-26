@@ -20,31 +20,29 @@ import java.nio.ByteBuffer;
  * @author Patrick Murris
  * @version $Id: ShapefileRecordPoint.java 2303 2014-09-14 22:33:36Z dcollins $
  */
-public class ShapefileRecordPoint extends ShapefileRecord
-{
+public class ShapefileRecordPoint extends ShapefileRecord {
     protected Double z; // non-null only for Z types
     protected Double m; // non-null only for Measure types with measures specified
 
     /**
-     * Constructs a record instance from the given {@link java.nio.ByteBuffer}. The buffer's current position must be
+     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be
      * the start of the record, and will be the start of the next record when the constructor returns.
      *
      * @param shapeFile the parent {@link Shapefile}.
-     * @param buffer    the shapefile record {@link java.nio.ByteBuffer} to read from.
-     *
-     * @throws IllegalArgumentException if any argument is null or otherwise invalid.
-     * @throws gov.nasa.worldwind.exception.WWRuntimeException
-     *                                  if the record's shape type does not match that of the shapefile.
+     * @param buffer    the shapefile record {@link ByteBuffer} to read from.
+     * @throws IllegalArgumentException                        if any argument is null or otherwise invalid.
+     * @throws gov.nasa.worldwind.exception.WWRuntimeException if the record's shape type does not match that of the
+     *                                                         shapefile.
      */
-    public ShapefileRecordPoint(Shapefile shapeFile, ByteBuffer buffer)
-    {
+    public ShapefileRecordPoint(Shapefile shapeFile, ByteBuffer buffer) {
         super(shapeFile, buffer);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean isPointRecord()
-    {
+    public boolean isPointRecord() {
         return true;
     }
 
@@ -53,8 +51,7 @@ public class ShapefileRecordPoint extends ShapefileRecord
      *
      * @return the point X and Y coordinates.
      */
-    public double[] getPoint()
-    {
+    public double[] getPoint() {
         VecBuffer vb = this.getPointBuffer(0);
         return vb.get(0, new double[vb.getCoordsPerVec()]);
     }
@@ -64,8 +61,7 @@ public class ShapefileRecordPoint extends ShapefileRecord
      *
      * @return the shape's Z value.
      */
-    public Double getZ()
-    {
+    public Double getZ() {
         return this.z;
     }
 
@@ -74,22 +70,23 @@ public class ShapefileRecordPoint extends ShapefileRecord
      *
      * @return the shape's measure, or null if no measure is in the record.
      */
-    public Double getM()
-    {
+    public Double getM() {
         return this.m;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public double[] getBoundingRectangle()
-    {
+    public double[] getBoundingRectangle() {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void doReadFromBuffer(Shapefile shapefile, ByteBuffer buffer)
-    {
+    protected void doReadFromBuffer(Shapefile shapefile, ByteBuffer buffer) {
         // Specify that the record's points should be normalized if the shapefile itself is marked as needing
         // normalization.
         if (shapefile.isNormalizePoints())
@@ -117,8 +114,7 @@ public class ShapefileRecordPoint extends ShapefileRecord
      *
      * @param buffer the record to read from.
      */
-    protected void readZ(ByteBuffer buffer)
-    {
+    protected void readZ(ByteBuffer buffer) {
         double[] zArray = ShapefileUtils.readDoubleArray(buffer, 1);
         this.z = zArray[0];
     }
@@ -128,11 +124,9 @@ public class ShapefileRecordPoint extends ShapefileRecord
      *
      * @param buffer the record buffer to read from.
      */
-    protected void readOptionalMeasure(ByteBuffer buffer)
-    {
+    protected void readOptionalMeasure(ByteBuffer buffer) {
         // Measure values are optional.
-        if (buffer.hasRemaining() && (buffer.limit() - buffer.position()) >= 8)
-        {
+        if (buffer.hasRemaining() && (buffer.limit() - buffer.position()) >= 8) {
             double[] mArray = ShapefileUtils.readDoubleArray(buffer, 1);
             this.m = mArray[0];
         }
@@ -142,12 +136,10 @@ public class ShapefileRecordPoint extends ShapefileRecord
      * Export the record to KML as a {@code <Placemark>} element.
      *
      * @param xmlWriter XML writer to receive the generated KML.
-     *
      * @throws XMLStreamException If an exception occurs while writing the KML
      */
     @Override
-    public void exportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException
-    {
+    public void exportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException {
         xmlWriter.writeStartElement("Placemark");
         xmlWriter.writeStartElement("name");
         xmlWriter.writeCharacters(Integer.toString(this.getRecordNumber()));
@@ -160,8 +152,7 @@ public class ShapefileRecordPoint extends ShapefileRecord
         double[] point = this.getPoint();
         Double z = this.getZ();
 
-        if (z == null)
-        {
+        if (z == null) {
             z = 0.0;
             altitudeMode = "clampToGround";
         }

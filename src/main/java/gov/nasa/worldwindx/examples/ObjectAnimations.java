@@ -18,6 +18,7 @@ import gov.nasa.worldwind.ogc.kml.*;
 import gov.nasa.worldwind.ogc.kml.impl.KMLController;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.airspaces.*;
+import gov.nasa.worldwind.render.airspaces.Polygon;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.AbstractXMLEventParser;
 import gov.nasa.worldwind.view.orbit.OrbitView;
@@ -58,6 +59,10 @@ public class ObjectAnimations extends ApplicationTemplate {
         }
     }
 
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Object Animations", AppFrame.class);
+    }
+
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
         private final ViewControlPanel vcp;
@@ -90,20 +95,22 @@ public class ObjectAnimations extends ApplicationTemplate {
                 //messageDisplay();
 //                 this.addFpsText(layer);
                 wwd.setPerFrameStatisticsKeys(PerformanceStatistic.ALL_STATISTICS_SET);
-
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         private void modelDisplay() throws Exception {
             WorldWindow wwd = this.getWwd();
-            Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04), 25000.0); // DFW
+            Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04),
+                25000.0); // DFW
             RenderableLayer layer = new RenderableLayer();
             wwd.getModel().getLayers().add(layer);
             wwd.getView().setEyePosition(eyePos);
             KMLRoot model1 = openKML("/home/mpeterson/d/temp/aol-data/airbus-popup/Airbus_Popup.kmz");
-            model1.setPosition(new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04), 1500.0));
+            model1.setPosition(
+                new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04), 1500.0));
             model1.setScale(new Vec4(200, 200, 200));
             layer.addRenderable(new KMLController(model1));
 //            KMLRoot model2 = openKML("/home/mpeterson/d/temp/aol-data/octocopter/Octocopter.kmz");
@@ -114,7 +121,8 @@ public class ObjectAnimations extends ApplicationTemplate {
         }
 
         private void messageDisplay() throws Exception {
-            Position eyePos = new Position(Angle.fromDegreesLatitude(39.52616886908606), Angle.fromDegreesLongitude(-119.81207373509578), 6000.0); // Reno
+            Position eyePos = new Position(Angle.fromDegreesLatitude(39.52616886908606),
+                Angle.fromDegreesLongitude(-119.81207373509578), 6000.0); // Reno
             WorldWindow wwd = this.getWwd();
             wwd.getView().setEyePosition(eyePos);
             TestParser messageParser = new TestParser();
@@ -122,7 +130,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             ArrayList<AOLFlightPlan> plans = messageParser.getPlans();
             final Color[] colorMap = {Color.red, Color.YELLOW, Color.white, Color.blue, Color.CYAN};
             HashMap<String, Color> colors = new HashMap<>();
-            HashMap<String, String> callSigns = new HashMap<>();
+            Map<String, String> callSigns = new HashMap<>();
             int colorIdx = 0;
             RenderableLayer layer = new RenderableLayer();
             wwd.getModel().getLayers().add(layer);
@@ -150,7 +158,8 @@ public class ObjectAnimations extends ApplicationTemplate {
                 attrs.setEnableAntialiasing(true);
                 attrs.setEnableLighting(true);
                 for (OperationVolume ov : opVolumes) {
-                    gov.nasa.worldwind.render.airspaces.Polygon poly = new gov.nasa.worldwind.render.airspaces.Polygon(attrs);
+                    Polygon poly = new Polygon(
+                        attrs);
                     GeoJSONPolygon geo = ov.getFlight_geography();
                     GeoJSONPositionArray[] positions = geo.getCoordinates();
                     poly.setLocations(positions[0]);
@@ -178,12 +187,12 @@ public class ObjectAnimations extends ApplicationTemplate {
                 pp.setAttributes(attrs);
                 layer.addRenderable(pp);
             });
-
         }
 
         private void planesOverDFW(int nFlights) throws Exception {
             WorldWindow wwd = this.getWwd();
-            Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04), 25000.0); // DFW
+            Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04),
+                25000.0); // DFW
             wwd.getView().setEyePosition(eyePos);
             RenderableLayer layer = new RenderableLayer();
             wwd.getModel().getLayers().add(layer);
@@ -192,13 +201,13 @@ public class ObjectAnimations extends ApplicationTemplate {
             AnimatedObjectController controller = new AnimatedObjectController(wwd, layer, infoLayer);
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineMaterial(new Material(Color.RED));
-            attrs.setOutlineWidth(2d);
-            Position.PositionList flightPositions = getPositionsFromKml("testData/KML/dfw-path.kml");
+            attrs.setOutlineWidth(2.0d);
+            Position.PositionList flightPositions = getPositionsFromKml("KML/dfw-path.kml");
             int nPositions = flightPositions.list.size();
             //int nFlights = 50;
             double curAltitude = 2500;
             for (int i = 0; i < nFlights; i++) {
-                ColladaRoot planeModel = ColladaRoot.createAndParse("testData/collada/airliner.dae");
+                ColladaRoot planeModel = ColladaRoot.createAndParse("collada/airliner.dae");
                 //ColladaRoot planeModel = ColladaRoot.createAndParse("/home/mpeterson/d/foo/aol-data/airbus-popup/files/model0.dae");
 //                    ColladaRoot planeModel = null;
 //                    if (i == 0) {
@@ -217,18 +226,18 @@ public class ObjectAnimations extends ApplicationTemplate {
                     Position p = flightPositions.list.get(curPos);
                     positions3D.add(new Position(p, curAltitude));
                     switch (posDir) {
-                        case 1:
+                        case 1 -> {
                             curPos++;
                             if (curPos >= nPositions) {
                                 curPos = 0;
                             }
-                            break;
-                        default:
+                        }
+                        default -> {
                             curPos--;
                             if (curPos < 0) {
                                 curPos = nPositions - 1;
                             }
-                            break;
+                        }
                     }
                 }
                 curAltitude += 500;
@@ -255,7 +264,7 @@ public class ObjectAnimations extends ApplicationTemplate {
 
         private void addFpsText(RenderableLayer layer) {
             AnnotationAttributes fpsAttrs = new AnnotationAttributes();
-            fpsAttrs.setBackgroundColor(new Color(0f, 0f, 0f, 0f));
+            fpsAttrs.setBackgroundColor(new Color(0.0f, 0.0f, 0.0f, 0.0f));
             fpsAttrs.setTextColor(Color.YELLOW);
             fpsAttrs.setLeaderGapWidth(14);
             fpsAttrs.setCornerRadius(0);
@@ -276,7 +285,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             wwd.addRenderingListener(event -> {
                 long now = System.currentTimeMillis();
                 if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)
-                        && event.getSource() instanceof WorldWindow && now - lastUpdate > updateInterval) {
+                    && event.getSource() instanceof WorldWindow && now - lastUpdate > updateInterval) {
                     EventQueue.invokeLater(() -> {
                         Collection<PerformanceStatistic> pfs = wwd.getPerFrameStatistics();
                         pfs.forEach((perf) -> {
@@ -299,7 +308,8 @@ public class ObjectAnimations extends ApplicationTemplate {
                         return p;
                     }
                 }
-            } else if (feature instanceof KMLPlacemark) {
+            }
+            else if (feature instanceof KMLPlacemark) {
                 KMLAbstractGeometry geometry = ((KMLPlacemark) feature).getGeometry();
                 if (geometry instanceof KMLPolygon) {
                     return ((KMLPolygon) geometry).getOuterBoundary().getCoordinates();
@@ -386,7 +396,7 @@ public class ObjectAnimations extends ApplicationTemplate {
                 this.add(resetBut);
 
                 this.setBorder(
-                        new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("View")));
+                    new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("View")));
                 this.setToolTipText("View controls");
             }
 
@@ -420,7 +430,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             public void update() {
                 this.suspendEvents = true;
                 {
-                    OrbitView view = (OrbitView) wwd.getView();
+                    View view = wwd.getView();
                     this.pitchSlider.setValue((int) view.getPitch().degrees);
                     this.headingSlider.setValue((int) view.getHeading().degrees);
                     this.fovSlider.setValue((int) view.getFieldOfView().degrees);
@@ -428,9 +438,5 @@ public class ObjectAnimations extends ApplicationTemplate {
                 this.suspendEvents = false;
             }
         }
-    }
-
-    public static void main(String[] args) {
-        ApplicationTemplate.start("WorldWind Object Animations", AppFrame.class);
     }
 }

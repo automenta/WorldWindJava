@@ -24,24 +24,20 @@ import java.awt.*;
  * @version $Id: FlatWorldPanel.java 2419 2014-11-08 04:44:55Z tgaskins $
  */
 @SuppressWarnings("unchecked")
-public class FlatWorldPanel extends JPanel
-{
+public class FlatWorldPanel extends JPanel {
     private final WorldWindow wwd;
     private final Globe roundGlobe;
     private final FlatGlobe flatGlobe;
     private JComboBox projectionCombo;
 
-    public FlatWorldPanel(WorldWindow wwd)
-    {
+    public FlatWorldPanel(WorldWindow wwd) {
         super(new GridLayout(0, 2, 0, 0));
         this.wwd = wwd;
-        if (isFlatGlobe())
-        {
+        if (isFlatGlobe()) {
             this.flatGlobe = (FlatGlobe) wwd.getModel().getGlobe();
             this.roundGlobe = new Earth();
         }
-        else
-        {
+        else {
             this.flatGlobe = new EarthFlat();
             this.roundGlobe = wwd.getModel().getGlobe();
         }
@@ -49,8 +45,7 @@ public class FlatWorldPanel extends JPanel
         this.makePanel();
     }
 
-    private JPanel makePanel()
-    {
+    private JPanel makePanel() {
         JPanel controlPanel = this;
         controlPanel.setBorder(
             new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("Globe")));
@@ -96,8 +91,7 @@ public class FlatWorldPanel extends JPanel
     }
 
     // Update flat globe projection
-    private void updateProjection()
-    {
+    private void updateProjection() {
         if (!isFlatGlobe())
             return;
 
@@ -106,43 +100,37 @@ public class FlatWorldPanel extends JPanel
         this.wwd.redraw();
     }
 
-    private GeographicProjection getProjection()
-    {
+    private GeographicProjection getProjection() {
         String item = (String) projectionCombo.getSelectedItem();
-        return switch (item)
-            {
-                case "Mercator" -> new ProjectionMercator();
-                case "Sinusoidal" -> new ProjectionSinusoidal();
-                case "Modified Sin." -> new ProjectionModifiedSinusoidal();
-                case "Transverse Mercator" -> new ProjectionTransverseMercator(
-                    wwd.getView().getCurrentEyePosition().getLongitude());
-                case "North Polar" -> new ProjectionPolarEquidistant(AVKey.NORTH);
-                case "South Polar" -> new ProjectionPolarEquidistant(AVKey.SOUTH);
-                case "UPS North" -> new ProjectionUPS(AVKey.NORTH);
-                case "UPS South" -> new ProjectionUPS(AVKey.SOUTH);
-                default -> new ProjectionEquirectangular();
-            };
+        return switch (item) {
+            case "Mercator" -> new ProjectionMercator();
+            case "Sinusoidal" -> new ProjectionSinusoidal();
+            case "Modified Sin." -> new ProjectionModifiedSinusoidal();
+            case "Transverse Mercator" -> new ProjectionTransverseMercator(
+                wwd.getView().getCurrentEyePosition().getLongitude());
+            case "North Polar" -> new ProjectionPolarEquidistant(AVKey.NORTH);
+            case "South Polar" -> new ProjectionPolarEquidistant(AVKey.SOUTH);
+            case "UPS North" -> new ProjectionUPS(AVKey.NORTH);
+            case "UPS South" -> new ProjectionUPS(AVKey.SOUTH);
+            default -> new ProjectionEquirectangular();
+        };
         // Default to lat-lon
     }
 
-    public boolean isFlatGlobe()
-    {
+    public boolean isFlatGlobe() {
         return wwd.getModel().getGlobe() instanceof FlatGlobe;
     }
 
-    public void enableFlatGlobe(boolean flat)
-    {
+    public void enableFlatGlobe(boolean flat) {
         if (isFlatGlobe() == flat)
             return;
 
-        if (!flat)
-        {
+        if (!flat) {
             // Switch to round globe
             wwd.getModel().setGlobe(roundGlobe);
             wwd.getView().stopMovement();
         }
-        else
-        {
+        else {
             // Switch to flat globe
             wwd.getModel().setGlobe(flatGlobe);
             wwd.getView().stopMovement();

@@ -12,8 +12,7 @@ package gov.nasa.worldwind.ogc;
  * @author tag
  * @version $Id: OGCConstants.java 2057 2014-06-14 01:13:52Z tgaskins $
  */
-public interface OGCConstants
-{
+public interface OGCConstants {
     /**
      * The name of the OGC Web Service <code>GetCapabilities</code> operation. The <code>GetCapabilities</code>
      * operation returns metadata about the operations and data provided by an OGC Web Service.
@@ -33,7 +32,8 @@ public interface OGCConstants
     String SERVICE = "service";
     /**
      * The name of the OGC Web Service <code>version</code> parameter. The associated value must be the version of the
-     * OGC Web Service protocol to use. The version must be formatted as <code>x.y.z</code>, where <code>x, y</code> and
+     * OGC Web Service protocol to use. The version must be formatted as <code>x.y.z</code>, where <code>x, y</code>
+     * and
      * <code>z</code> are integers in the range 0-99. Used by all versions of all OGC web services.
      */
     String VERSION = "version";

@@ -16,10 +16,10 @@ import java.util.List;
  * unreachable. Users can query instances of classes implementing this interface to determine whether a host has been
  * marked as unreachable.
  * <p>
- * Users are expected to invoke the {@link #logUnavailableHost(java.net.URL)} method when an attempt to contact a host
+ * Users are expected to invoke the {@link #logUnavailableHost(URL)} method when an attempt to contact a host
  * fails. Each invocation increments the failure count by one. When the count exceeds the attempt limit, the host is
  * marked as unreachable. When attempts to contact the host <em>are</em> successful, users should invoke {@link
- * #logAvailableHost(java.net.URL)} method to clear its status.
+ * #logAvailableHost(URL)} method to clear its status.
  * <p>
  * A host may become reachable at a time subsequent to its being logged. To detect this, the implementation marks a host
  * as not unreachable after a specifiable interval of time. If the host is once more logged as unavailable, its entry
@@ -31,8 +31,7 @@ import java.util.List;
  * @author tag
  * @version $Id: NetworkStatus.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface NetworkStatus extends AVList
-{
+public interface NetworkStatus extends AVList {
     String HOST_UNAVAILABLE = "gov.nasa.worldwind.util.NetworkStatus.HostUnavailable";
     String HOST_AVAILABLE = "gov.nasa.worldwind.util.NetworkStatus.HostAvailable";
 
@@ -57,7 +56,6 @@ public interface NetworkStatus extends AVList
      * exceed the specified attempt limit.
      *
      * @param url a url containing the host to check for availability.
-     *
      * @return true if the host is marked as unavailable, otherwise false.
      */
     boolean isHostUnavailable(URL url);
@@ -74,7 +72,6 @@ public interface NetworkStatus extends AVList
      *
      * @param checkInterval the number of milliseconds in the past used to determine whether the server was avaialble
      *                      recently.
-     *
      * @return false if the network can be reached or has been reached in a specified time, otherwise true.
      */
     boolean isNetworkUnavailable(long checkInterval);
@@ -94,12 +91,29 @@ public interface NetworkStatus extends AVList
     int getAttemptLimit();
 
     /**
+     * Sets the number of times a host must be logged as unavailable before it is marked unavailable in this class.
+     *
+     * @param limit the number of log-unavailability invocations necessary to consider the host unreachable.
+     * @throws IllegalArgumentException if the limit is less than 1.
+     */
+    void setAttemptLimit(int limit);
+
+    /**
      * Returns the length of time to wait until a host is marked as not unreachable subsequent to its being marked
      * unreachable.
      *
      * @return the interval, in milliseconds.
      */
     long getTryAgainInterval();
+
+    /**
+     * Sets the length of time to wait until a host is marked as not unreachable subsequent to its being marked
+     * unreachable.
+     *
+     * @param interval The length of time, in milliseconds, to wait to unmark a host as unreachable.
+     * @throws IllegalArgumentException if the interval is less than 0.
+     */
+    void setTryAgainInterval(long interval);
 
     /**
      * Indicates whether WorldWind will attempt to connect to the network to retrieve data or for other reasons.
@@ -117,29 +131,10 @@ public interface NetworkStatus extends AVList
     void setOfflineMode(boolean offlineMode);
 
     /**
-     * Sets the number of times a host must be logged as unavailable before it is marked unavailable in this class.
-     *
-     * @param limit the number of log-unavailability invocations necessary to consider the host unreachable.
-     *
-     * @throws IllegalArgumentException if the limit is less than 1.
-     */
-    void setAttemptLimit(int limit);
-
-    /**
-     * Sets the length of time to wait until a host is marked as not unreachable subsequent to its being marked
-     * unreachable.
-     *
-     * @param interval The length of time, in milliseconds, to wait to unmark a host as unreachable.
-     *
-     * @throws IllegalArgumentException if the interval is less than 0.
-     */
-    void setTryAgainInterval(long interval);
-
-    /**
      * Returns the server domain names of the sites used to test public network availability.
      *
      * @return the list of sites used to check network status. The list is a copy of the internal list, so changes to it
-     *         do not affect instances of this class.
+     * do not affect instances of this class.
      */
     List<String> getNetworkTestSites();
 

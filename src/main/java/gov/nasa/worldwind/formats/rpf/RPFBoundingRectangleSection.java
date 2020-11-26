@@ -17,6 +17,12 @@ import java.util.*;
 
 public class RPFBoundingRectangleSection {
 
+    private final long tableOffset;
+    private final int numberOfRecords;
+    private final int recordLength;
+    private final List<RPFBoundingRectangleRecord> bndRectRecords =
+        new ArrayList<>();
+
     public RPFBoundingRectangleSection(ByteBuffer buffer) {
         // [ bounding rectangle section subheader ]
         this.tableOffset = NITFSUtil.getUInt(buffer);
@@ -31,27 +37,32 @@ public class RPFBoundingRectangleSection {
     }
 
     private void parseBoundsRecords(ByteBuffer buffer) {
-        for (int i=0; i<this.numberOfRecords; i++)
+        for (int i = 0; i < this.numberOfRecords; i++) {
             bndRectRecords.add(new RPFBoundingRectangleRecord(buffer));
+        }
     }
 
     public static class RPFBoundingRectangleRecord {
 
-        public double getMinLon() {
-            return Math.min(this.ulLon, this.llLon);
-        }
-
-        public double getMinLat() {
-            return Math.min(this.llLat, this.lrLat);
-        }
-
-        public double getMaxLon() {
-            return Math.max(this.urLon, this.lrLon);
-        }
-
-        public double getMaxLat() {
-            return Math.max(this.ulLat, this.urLat);
-        }
+        private final String dataType;
+        private final String compressionRatio;
+        private final String scale;
+        private final String zone;
+        private final String producer;
+        private final double ulLat;
+        private final double ulLon;
+        private final double llLat;
+        private final double llLon;
+        private final double urLat;
+        private final double urLon;
+        private final double lrLat;
+        private final double lrLon;
+        private final double nsRes;
+        private final double ewRes;
+        private final double latInterval;
+        private final double lonInterval;
+        private final long numFramesNS;
+        private final long numFramesEW;
 
         public RPFBoundingRectangleRecord(ByteBuffer buffer) {
             this.dataType = NITFSUtil.getString(buffer, 5);
@@ -75,30 +86,20 @@ public class RPFBoundingRectangleSection {
             this.numFramesEW = NITFSUtil.getUInt(buffer);
         }
 
-        private final String dataType;
-        private final String compressionRatio;
-        private final String scale;
-        private final String zone;
-        private final String producer;
-        private final double ulLat;
-        private final double ulLon;
-        private final double llLat;
-        private final double llLon;
-        private final double urLat;
-        private final double urLon;
-        private final double lrLat;
-        private final double lrLon;
-        private final double nsRes;
-        private final double ewRes;
-        private final double latInterval;
-        private final double lonInterval;
-        private final long   numFramesNS;
-        private final long   numFramesEW;
-    }
+        public double getMinLon() {
+            return Math.min(this.ulLon, this.llLon);
+        }
 
-    private final long tableOffset;
-    private final int numberOfRecords;
-    private final int recordLength;
-    private final ArrayList<RPFBoundingRectangleRecord> bndRectRecords =
-        new ArrayList<>();
+        public double getMinLat() {
+            return Math.min(this.llLat, this.lrLat);
+        }
+
+        public double getMaxLon() {
+            return Math.max(this.urLon, this.lrLon);
+        }
+
+        public double getMaxLat() {
+            return Math.max(this.ulLat, this.urLat);
+        }
+    }
 }

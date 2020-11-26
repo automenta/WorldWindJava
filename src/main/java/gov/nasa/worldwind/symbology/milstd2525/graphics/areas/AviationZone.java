@@ -23,18 +23,29 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: AviationZone.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AviationZone extends BasicArea
-{
-    /** Center text block on label position. */
+public class AviationZone extends BasicArea {
+    /**
+     * Center text block on label position.
+     */
     protected final static Offset LABEL_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
+
+    /**
+     * Create a new aviation area.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public AviationZone(String sidc) {
+        super(sidc);
+        // Do not draw "ENY" labels on hostile entities.
+        this.setShowHostileIndicator(false);
+    }
 
     /**
      * Indicates the graphics supported by this class.
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         return Arrays.asList(
             TacGrpSidc.C2GM_AVN_ARS_ROZ,
             TacGrpSidc.C2GM_AVN_ARS_SHRDEZ,
@@ -44,33 +55,18 @@ public class AviationZone extends BasicArea
             TacGrpSidc.C2GM_AVN_ARS_MEZ_HAMEZ);
     }
 
-    /**
-     * Create a new aviation area.
-     *
-     * @param sidc Symbol code the identifies the graphic.
-     */
-    public AviationZone(String sidc)
-    {
-        super(sidc);
-        // Do not draw "ENY" labels on hostile entities.
-        this.setShowHostileIndicator(false);
-    }
-
     @Override
-    protected Offset getDefaultLabelOffset()
-    {
+    protected Offset getDefaultLabelOffset() {
         return LABEL_OFFSET;
     }
 
     @Override
-    protected String getLabelAlignment()
-    {
+    protected String getLabelAlignment() {
         return AVKey.LEFT;
     }
 
     @Override
-    protected String createLabelText()
-    {
+    protected String createLabelText() {
         return doCreateLabelText(true);
     }
 
@@ -80,34 +76,28 @@ public class AviationZone extends BasicArea
      * @param includeAltitude Indicates whether to include altitude information in the label (if the
      *                        SymbologyConstants.ALTITUDE_DEPTH modifier is set). Not all aviation area graphics support
      *                        the altitude modifier.
-     *
      * @return Text for the label, based on the active modifiers.
      */
-    protected String doCreateLabelText(boolean includeAltitude)
-    {
+    protected String doCreateLabelText(boolean includeAltitude) {
         StringBuilder sb = new StringBuilder();
         sb.append(this.getGraphicLabel());
         sb.append("\n");
 
         Object o = this.getModifier(SymbologyConstants.UNIQUE_DESIGNATION);
-        if (o != null)
-        {
+        if (o != null) {
             sb.append(o);
             sb.append("\n");
         }
 
-        if (includeAltitude)
-        {
+        if (includeAltitude) {
             Object[] altitudes = TacticalGraphicUtil.getAltitudeRange(this);
-            if (altitudes[0] != null)
-            {
+            if (altitudes[0] != null) {
                 sb.append("MIN ALT: ");
                 sb.append(altitudes[0]);
                 sb.append("\n");
             }
 
-            if (altitudes[1] != null)
-            {
+            if (altitudes[1] != null) {
                 sb.append("MAX ALT: ");
                 sb.append(altitudes[1]);
                 sb.append("\n");
@@ -115,15 +105,13 @@ public class AviationZone extends BasicArea
         }
 
         Object[] dates = TacticalGraphicUtil.getDateRange(this);
-        if (dates[0] != null)
-        {
+        if (dates[0] != null) {
             sb.append("TIME FROM: ");
             sb.append(dates[0]);
             sb.append("\n");
         }
 
-        if (dates[1] != null)
-        {
+        if (dates[1] != null) {
             sb.append("TIME TO: ");
             sb.append(dates[1]);
         }
@@ -132,8 +120,7 @@ public class AviationZone extends BasicArea
     }
 
     @Override
-    protected String getGraphicLabel()
-    {
+    protected String getGraphicLabel() {
         String code = this.maskedSymbolCode;
 
         if (TacGrpSidc.C2GM_AVN_ARS_ROZ.equalsIgnoreCase(code))

@@ -8,14 +8,14 @@ package gov.nasa.worldwind.formats.rpf;
 
 import gov.nasa.worldwind.formats.nitfs.*;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 
 /**
  * @author Lado Garakanidze
  * @version $Id: RPFFrameFileIndexSection.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RPFFrameFileIndexSection
-{
+public class RPFFrameFileIndexSection {
     // [ frame file index section subheader ]
     private final String highestSecurityClassification;
     private final long frameFileIndexTableOffset;
@@ -26,47 +26,11 @@ public class RPFFrameFileIndexSection
     // [ frame file index subsection ]
 
     //      [ frame file index table ]
-    private final ArrayList<RPFFrameFileIndexRecord> frameFileIndexTable = new ArrayList<>();
+    private final List<RPFFrameFileIndexRecord> frameFileIndexTable = new ArrayList<>();
     //      [ pathname table ]
     // private ArrayList<String> pathnameTable = new ArrayList<String>();
 
-    public String getHighestSecurityClassification()
-    {
-        return highestSecurityClassification;
-    }
-
-    public long getFrameFileIndexTableOffset()
-    {
-        return frameFileIndexTableOffset;
-    }
-
-    public long getNumOfFrameFileIndexRecords()
-    {
-        return numOfFrameFileIndexRecords;
-    }
-
-    public int getNumOfPathnameRecords()
-    {
-        return numOfPathnameRecords;
-    }
-
-    public int getFrameFileIndexRecordLength()
-    {
-        return frameFileIndexRecordLength;
-    }
-
-    public List<RPFFrameFileIndexRecord> getFrameFileIndexTable()
-    {
-        return frameFileIndexTable;
-    }
-
-//    public ArrayList<String> getPathnameTable()
-//    {
-//        return pathnameTable;
-//    }
-
-    public RPFFrameFileIndexSection(java.nio.ByteBuffer buffer)
-    {
+    public RPFFrameFileIndexSection(ByteBuffer buffer) {
         // [ frame file index section subheader ]
         this.highestSecurityClassification = NITFSUtil.getString(buffer, 1);
         this.frameFileIndexTableOffset = NITFSUtil.getUInt(buffer);
@@ -77,27 +41,52 @@ public class RPFFrameFileIndexSection
         this.parseFrameFileIndexAndPathnameTables(buffer);
     }
 
-    private void parseFrameFileIndexAndPathnameTables(java.nio.ByteBuffer buffer)
-    {
+    public String getHighestSecurityClassification() {
+        return highestSecurityClassification;
+    }
+
+    public long getFrameFileIndexTableOffset() {
+        return frameFileIndexTableOffset;
+    }
+
+    public long getNumOfFrameFileIndexRecords() {
+        return numOfFrameFileIndexRecords;
+    }
+
+    public int getNumOfPathnameRecords() {
+        return numOfPathnameRecords;
+    }
+
+    public int getFrameFileIndexRecordLength() {
+        return frameFileIndexRecordLength;
+    }
+
+//    public ArrayList<String> getPathnameTable()
+//    {
+//        return pathnameTable;
+//    }
+
+    public List<RPFFrameFileIndexRecord> getFrameFileIndexTable() {
+        return frameFileIndexTable;
+    }
+
+    private void parseFrameFileIndexAndPathnameTables(ByteBuffer buffer) {
         int theSectionOffset = buffer.position();
         Hashtable<Integer, String> pathnames = new Hashtable<>();
 
-        for (int i = 0; i < this.numOfFrameFileIndexRecords; i++)
-        {
+        for (int i = 0; i < this.numOfFrameFileIndexRecords; i++) {
             this.frameFileIndexTable.add(new RPFFrameFileIndexRecord(buffer));
         }
 
-        for (int i = 0; i < this.numOfPathnameRecords; i++)
-        {
+        for (int i = 0; i < this.numOfPathnameRecords; i++) {
             int relOffset = buffer.position() - theSectionOffset;
             int len = NITFSUtil.getUShort(buffer);
             pathnames.put(relOffset, NITFSUtil.getString(buffer, len));
         }
 
-        if (0 < this.frameFileIndexTable.size() && 0 < pathnames.size())
-        { // update pathname field in every RPFFrameFileIndexRecord
-            for (RPFFrameFileIndexRecord rec : this.frameFileIndexTable)
-            {
+        if (!this.frameFileIndexTable.isEmpty()
+            && !pathnames.isEmpty()) { // update pathname field in every RPFFrameFileIndexRecord
+            for (RPFFrameFileIndexRecord rec : this.frameFileIndexTable) {
                 int offset = (int) rec.getPathnameRecordOffset();
                 if (pathnames.containsKey(offset))
                     rec.setPathname(pathnames.get(offset));
@@ -107,63 +96,7 @@ public class RPFFrameFileIndexSection
         }
     }
 
-    public static class RPFFrameFileIndexRecord
-    {
-        public int getBoundaryRectangleRecordNumber()
-        {
-            return boundaryRectangleRecordNumber;
-        }
-
-        public int getFrameLocationRowNumber()
-        {
-            return frameLocationRowNumber;
-        }
-
-        public int getFrameLocationColumnNumber()
-        {
-            return frameLocationColumnNumber;
-        }
-
-        public String getFrameFileName()
-        {
-            return frameFileName;
-        }
-
-        public String getGeoLocation()
-        {
-            return geoLocation;
-        }
-
-        public String getSecurityClass()
-        {
-            return securityClass;
-        }
-
-        public String getSecurityCountryCode()
-        {
-            return securityCountryCode;
-        }
-
-        public String getSecurityReleaseMark()
-        {
-            return securityReleaseMark;
-        }
-
-        public long getPathnameRecordOffset()
-        {
-            return pathnameRecordOffset;
-        }
-
-        public String getPathname()
-        {
-            return pathname;
-        }
-
-        public void setPathname(String pathname)
-        {
-            this.pathname = pathname;
-        }
-
+    public static class RPFFrameFileIndexRecord {
         private final int boundaryRectangleRecordNumber;
         private final int frameLocationRowNumber;
         private final int frameLocationColumnNumber;
@@ -175,8 +108,7 @@ public class RPFFrameFileIndexSection
         private final String securityReleaseMark;
         private String pathname;   // this field is not part of the NITFS spec
 
-        public RPFFrameFileIndexRecord(java.nio.ByteBuffer buffer)
-        {
+        public RPFFrameFileIndexRecord(ByteBuffer buffer) {
             this.boundaryRectangleRecordNumber = NITFSUtil.getUShort(buffer);
             this.frameLocationRowNumber = NITFSUtil.getUShort(buffer);
             this.frameLocationColumnNumber = NITFSUtil.getUShort(buffer);
@@ -187,6 +119,50 @@ public class RPFFrameFileIndexSection
             this.securityCountryCode = NITFSUtil.getString(buffer, 2);
             this.securityReleaseMark = NITFSUtil.getString(buffer, 2);
             this.pathname = "";
+        }
+
+        public int getBoundaryRectangleRecordNumber() {
+            return boundaryRectangleRecordNumber;
+        }
+
+        public int getFrameLocationRowNumber() {
+            return frameLocationRowNumber;
+        }
+
+        public int getFrameLocationColumnNumber() {
+            return frameLocationColumnNumber;
+        }
+
+        public String getFrameFileName() {
+            return frameFileName;
+        }
+
+        public String getGeoLocation() {
+            return geoLocation;
+        }
+
+        public String getSecurityClass() {
+            return securityClass;
+        }
+
+        public String getSecurityCountryCode() {
+            return securityCountryCode;
+        }
+
+        public String getSecurityReleaseMark() {
+            return securityReleaseMark;
+        }
+
+        public long getPathnameRecordOffset() {
+            return pathnameRecordOffset;
+        }
+
+        public String getPathname() {
+            return pathname;
+        }
+
+        public void setPathname(String pathname) {
+            this.pathname = pathname;
         }
     }
 }

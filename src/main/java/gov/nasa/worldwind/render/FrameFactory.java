@@ -23,21 +23,30 @@ import java.nio.DoubleBuffer;
  * @version $Id: FrameFactory.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see AbstractAnnotation
  */
-public class FrameFactory
-{
-    /** @deprecated Use {@link AVKey#SHAPE_RECTANGLE} instead. */
+public class FrameFactory {
+    /**
+     * @deprecated Use {@link AVKey#SHAPE_RECTANGLE} instead.
+     */
     @Deprecated
     public static final String SHAPE_RECTANGLE = AVKey.SHAPE_RECTANGLE;
-    /** @deprecated Use {@link AVKey#SHAPE_ELLIPSE} instead. */
+    /**
+     * @deprecated Use {@link AVKey#SHAPE_ELLIPSE} instead.
+     */
     @Deprecated
     public static final String SHAPE_ELLIPSE = AVKey.SHAPE_ELLIPSE;
-    /** @deprecated Use {@link AVKey#SHAPE_NONE} instead. */
+    /**
+     * @deprecated Use {@link AVKey#SHAPE_NONE} instead.
+     */
     @Deprecated
     public static final String SHAPE_NONE = AVKey.SHAPE_NONE;
-    /** @deprecated Use {@link AVKey#SHAPE_TRIANGLE} instead. */
+    /**
+     * @deprecated Use {@link AVKey#SHAPE_TRIANGLE} instead.
+     */
     @Deprecated
     public static final String LEADER_TRIANGLE = AVKey.SHAPE_TRIANGLE;
-    /** @deprecated Use {@link AVKey#SHAPE_NONE} instead. */
+    /**
+     * @deprecated Use {@link AVKey#SHAPE_NONE} instead.
+     */
     @Deprecated
     public static final String LEADER_NONE = AVKey.SHAPE_NONE;
 
@@ -57,8 +66,7 @@ public class FrameFactory
      * @param cornerRadius the rounded corners radius. Set to zero for square corners.
      */
     public static void drawShape(DrawContext dc, String shape, double width, double height, int glMode,
-        int cornerRadius)
-    {
+        int cornerRadius) {
         if (!shape.equals(AVKey.SHAPE_NONE))
             drawBuffer(dc, glMode, createShapeBuffer(shape, width, height, cornerRadius, null));
     }
@@ -80,8 +88,7 @@ public class FrameFactory
      * @param cornerRadius   the rounded corners radius. Set to zero for square corners.
      */
     public static void drawShapeWithLeader(DrawContext dc, String shape, double width, double height,
-        Point leaderOffset, double leaderGapWidth, int glMode, int cornerRadius)
-    {
+        Point leaderOffset, double leaderGapWidth, int glMode, int cornerRadius) {
         if (!shape.equals(AVKey.SHAPE_NONE))
             drawBuffer(dc, glMode,
                 createShapeWithLeaderBuffer(shape, width, height, leaderOffset, leaderGapWidth, cornerRadius, null));
@@ -96,19 +103,16 @@ public class FrameFactory
      * @param height       the height of the shape.
      * @param cornerRadius the rounded corners radius. Set to zero for square corners.
      * @param buffer       the buffer to store shape vertices, or null to allocate a new buffer.
-     *
      * @return the vertex buffer.
      */
     public static DoubleBuffer createShapeBuffer(String shape, double width, double height, int cornerRadius,
-        DoubleBuffer buffer)
-    {
+        DoubleBuffer buffer) {
         // default to rectangle if shape unknown
-        return switch (shape)
-            {
-                case AVKey.SHAPE_ELLIPSE -> createEllipseBuffer(width, height, circleSteps, buffer);
-                case AVKey.SHAPE_NONE -> null;
-                default -> createRoundedRectangleBuffer(width, height, cornerRadius, buffer);
-            };
+        return switch (shape) {
+            case AVKey.SHAPE_ELLIPSE -> createEllipseBuffer(width, height, circleSteps, buffer);
+            case AVKey.SHAPE_NONE -> null;
+            default -> createRoundedRectangleBuffer(width, height, cornerRadius, buffer);
+        };
     }
 
     /**
@@ -123,22 +127,19 @@ public class FrameFactory
      * @param leaderGapWidth the starting width of the leader shape.
      * @param cornerRadius   the rounded corners radius. Set to zero for square corners.
      * @param buffer         the buffer to store shape vertices, or null to allocate a new buffer.
-     *
      * @return the vertex buffer.
      */
     public static DoubleBuffer createShapeWithLeaderBuffer(String shape, double width, double height,
-        Point leaderOffset, double leaderGapWidth, int cornerRadius, DoubleBuffer buffer)
-    {
+        Point leaderOffset, double leaderGapWidth, int cornerRadius, DoubleBuffer buffer) {
         // default to rectangle if shape unknown
-        return switch (shape)
-            {
-                case AVKey.SHAPE_ELLIPSE -> createEllipseWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
-                    circleSteps, buffer);
-                case AVKey.SHAPE_NONE -> null;
-                default -> createRoundedRectangleWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
-                    cornerRadius,
-                    buffer);
-            };
+        return switch (shape) {
+            case AVKey.SHAPE_ELLIPSE -> createEllipseWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
+                circleSteps, buffer);
+            case AVKey.SHAPE_NONE -> null;
+            default -> createRoundedRectangleWithLeaderBuffer(width, height, leaderOffset, leaderGapWidth,
+                cornerRadius,
+                buffer);
+        };
     }
 
     /**
@@ -150,16 +151,13 @@ public class FrameFactory
      * @param count the number of vertices to draw.
      * @param verts the vertex buffer to draw.
      */
-    public static void drawBuffer(DrawContext dc, int mode, int count, DoubleBuffer verts)
-    {
-        if (dc == null)
-        {
+    public static void drawBuffer(DrawContext dc, int mode, int count, DoubleBuffer verts) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (verts == null)
-        {
+        if (verts == null) {
             String message = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -186,16 +184,13 @@ public class FrameFactory
      * @param verts  the vertex buffer to draw.
      * @param coords the buffer containing the shape texture coordinates.
      */
-    public static void drawBuffer(DrawContext dc, int mode, int count, DoubleBuffer verts, DoubleBuffer coords)
-    {
-        if (dc == null)
-        {
+    public static void drawBuffer(DrawContext dc, int mode, int count, DoubleBuffer verts, DoubleBuffer coords) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (verts == null || coords == null)
-        {
+        if (verts == null || coords == null) {
             String message = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -214,16 +209,13 @@ public class FrameFactory
         gl.glPopClientAttrib();
     }
 
-    public static void drawBuffer(DrawContext dc, int mode, DoubleBuffer verts)
-    {
-        if (dc == null)
-        {
+    public static void drawBuffer(DrawContext dc, int mode, DoubleBuffer verts) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (verts == null)
-        {
+        if (verts == null) {
             String message = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -237,8 +229,7 @@ public class FrameFactory
     //-- Rectangle ------------------------------------------------------------------
 
     private static DoubleBuffer createRoundedRectangleBuffer(double width, double height, int cornerRadius,
-        DoubleBuffer buffer)
-    {
+        DoubleBuffer buffer) {
         int numVertices = 9 + (cornerRadius < 1 ? 0 : 4 * (cornerSteps - 2));
         buffer = allocateVertexBuffer(numVertices, buffer);
 
@@ -246,9 +237,9 @@ public class FrameFactory
         // Drawing counter clockwise from bottom-left
         // Bottom
         buffer.put(idx++, cornerRadius);
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
         buffer.put(idx++, width - cornerRadius);
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
         idx = drawCorner(width - cornerRadius, cornerRadius, cornerRadius, -Math.PI / 2, 0, cornerSteps, buffer, idx);
         // Right
         buffer.put(idx++, width);
@@ -265,22 +256,21 @@ public class FrameFactory
         idx = drawCorner(cornerRadius, height - cornerRadius, cornerRadius, Math.PI / 2, Math.PI, cornerSteps, buffer,
             idx);
         // Left
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
         buffer.put(idx++, height - cornerRadius);
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
         buffer.put(idx++, cornerRadius);
         idx = drawCorner(cornerRadius, cornerRadius, cornerRadius, Math.PI, Math.PI * 1.5, cornerSteps, buffer, idx);
         // Finish up to starting point
         buffer.put(idx++, cornerRadius);
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
 
         buffer.limit(idx);
         return buffer;
     }
 
     private static DoubleBuffer createRoundedRectangleWithLeaderBuffer(double width, double height, Point leaderOffset,
-        double leaderGapWidth, int cornerRadius, DoubleBuffer buffer)
-    {
+        double leaderGapWidth, int cornerRadius, DoubleBuffer buffer) {
         int numVertices = 12 + (cornerRadius < 1 ? 0 : 4 * (cornerSteps - 2));
         buffer = allocateVertexBuffer(numVertices, buffer);
 
@@ -289,9 +279,9 @@ public class FrameFactory
         // so as to accommodate GL_TRIANGLE_FAN and GL_LINE_STRIP (inside and border)
         // Bottom right
         buffer.put(idx++, width / 2 + leaderGapWidth / 2);
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
         buffer.put(idx++, width - cornerRadius);
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
         idx = drawCorner(width - cornerRadius, cornerRadius, cornerRadius, -Math.PI / 2, 0, cornerSteps, buffer, idx);
         // Right
         buffer.put(idx++, width);
@@ -308,35 +298,33 @@ public class FrameFactory
         idx = drawCorner(cornerRadius, height - cornerRadius, cornerRadius, Math.PI / 2, Math.PI, cornerSteps, buffer,
             idx);
         // Left
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
         buffer.put(idx++, height - cornerRadius);
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
         buffer.put(idx++, cornerRadius);
         idx = drawCorner(cornerRadius, cornerRadius, cornerRadius, Math.PI, Math.PI * 1.5, cornerSteps, buffer, idx);
         // Bottom left
         buffer.put(idx++, cornerRadius);
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
         buffer.put(idx++, width / 2 - leaderGapWidth / 2);
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
         // Draw leader
         buffer.put(idx++, leaderOffset.x);
         buffer.put(idx++, leaderOffset.y);
         buffer.put(idx++, width / 2 + leaderGapWidth / 2);
-        buffer.put(idx++, 0d);
+        buffer.put(idx++, 0.0d);
 
         buffer.limit(idx);
         return buffer;
     }
 
     private static int drawCorner(double x0, double y0, double cornerRadius, double start, double end, int steps,
-        DoubleBuffer buffer, int startIdx)
-    {
+        DoubleBuffer buffer, int startIdx) {
         if (cornerRadius < 1)
             return startIdx;
 
         double step = (end - start) / (steps - 1);
-        for (int i = 1; i < steps - 1; i++)
-        {
+        for (int i = 1; i < steps - 1; i++) {
             double a = start + step * i;
             double x = x0 + Math.cos(a) * cornerRadius;
             double y = y0 + Math.sin(a) * cornerRadius;
@@ -349,8 +337,7 @@ public class FrameFactory
 
     //-- Circle / Ellipse -----------------------------------------------------------
 
-    private static DoubleBuffer createEllipseBuffer(double width, double height, int steps, DoubleBuffer buffer)
-    {
+    private static DoubleBuffer createEllipseBuffer(double width, double height, int steps, DoubleBuffer buffer) {
         int numVertices = steps + 1;
         buffer = allocateVertexBuffer(numVertices, buffer);
 
@@ -361,8 +348,7 @@ public class FrameFactory
         double step = Math.PI * 2 / steps;
 
         int idx = 0;
-        for (int i = 0; i <= steps; i++)
-        {
+        for (int i = 0; i <= steps; i++) {
             double a = step * i - halfPI;
             double x = halfWidth + Math.cos(a) * halfWidth;
             double y = halfHeight + Math.sin(a) * halfHeight;
@@ -375,8 +361,7 @@ public class FrameFactory
     }
 
     private static DoubleBuffer createEllipseWithLeaderBuffer(double width, double height, Point leaderOffset,
-        double leaderGapWidth, int steps, DoubleBuffer buffer)
-    {
+        double leaderGapWidth, int steps, DoubleBuffer buffer) {
         int numVertices = steps + 3;
         buffer = allocateVertexBuffer(numVertices, buffer);
 
@@ -389,8 +374,7 @@ public class FrameFactory
         double halfGap = leaderGapWidth / 2 / halfWidth;
 
         int idx = 0;
-        for (int i = 0; i <= steps; i++)
-        {
+        for (int i = 0; i <= steps; i++) {
             double a = step * i - halfPI;
             if (i == 0)
                 a += halfGap;
@@ -414,8 +398,7 @@ public class FrameFactory
 
     //-- Utility Methods
 
-    private static DoubleBuffer allocateVertexBuffer(int numVertices, DoubleBuffer buffer)
-    {
+    private static DoubleBuffer allocateVertexBuffer(int numVertices, DoubleBuffer buffer) {
         int numCoords = 2 * numVertices;
 
         if (buffer != null)

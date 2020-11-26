@@ -26,22 +26,24 @@ import java.util.*;
  * @author dcollins
  * @version $Id: ShapefileAttributeGroups.java 2348 2014-09-25 23:35:46Z dcollins $
  */
-public class ShapefileAttributeGroups extends ApplicationTemplate
-{
+public class ShapefileAttributeGroups extends ApplicationTemplate {
+    public static void main(String[] args) {
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 30);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 30);
+        start("WorldWind Shapefile Attribute Groups", AppFrame.class);
+    }
+
     public static class AppFrame extends ApplicationTemplate.AppFrame
-        implements ActionListener, ShapefileRenderable.AttributeDelegate
-    {
+        implements ActionListener, ShapefileRenderable.AttributeDelegate {
         protected static final String SHAPEFILE_PATH = "gov/nasa/worldwindx/examples/data/ShapefileAttributeGroups.xml";
         protected final Map<Integer, AttributeGroup> groups = new LinkedHashMap<>();
 
-        public AppFrame()
-        {
+        public AppFrame() {
             this.setupGroups();
             this.loadShapefile();
         }
 
-        protected void setupGroups()
-        {
+        protected void setupGroups() {
             // Create the mapping from region key to group name and color.
             // Continent codes are documented at http://unstats.un.org/unsd/methods/m49/m49regin.htm
             // Continent names and colors are based on https://en.wikipedia.org/wiki/Continent
@@ -65,8 +67,7 @@ public class ShapefileAttributeGroups extends ApplicationTemplate
             groupPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             titlePanel.add(groupPanel);
 
-            for (AttributeGroup group : this.groups.values())
-            {
+            for (AttributeGroup group : this.groups.values()) {
                 JCheckBox jcb = new JCheckBox(group.getDisplayName(), group.isUseGroupColor());
                 jcb.putClientProperty("group", group);
                 jcb.addActionListener(this); // call actionPerformed when the check box selection state changes
@@ -75,16 +76,14 @@ public class ShapefileAttributeGroups extends ApplicationTemplate
         }
 
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             JCheckBox jcb = (JCheckBox) e.getSource();
             AttributeGroup group = (AttributeGroup) jcb.getClientProperty("group");
             group.setUseGroupColor(jcb.isSelected());
             this.getWwd().redraw();
         }
 
-        protected void loadShapefile()
-        {
+        protected void loadShapefile() {
             ShapefileLayerFactory factory = (ShapefileLayerFactory) WorldWind.createConfigurationComponent(
                 AVKey.SHAPEFILE_LAYER_FACTORY);
             factory.setAttributeDelegate(this); // call assignAttributes for each shapefile record
@@ -94,55 +93,46 @@ public class ShapefileAttributeGroups extends ApplicationTemplate
         }
 
         @Override
-        public void assignAttributes(ShapefileRecord shapefileRecord, ShapefileRenderable.Record renderableRecord)
-        {
+        public void assignAttributes(ShapefileRecord shapefileRecord, ShapefileRenderable.Record renderableRecord) {
             Number region = (Number) shapefileRecord.getAttributes().getValue("REGION");
             AttributeGroup group = this.groups.get(region.intValue());
-            if (group != null)
-            {
+            if (group != null) {
                 group.addRecord(renderableRecord);
             }
         }
     }
 
-    public static class AttributeGroup
-    {
+    public static class AttributeGroup {
         protected final String displayName;
         protected final Material groupMaterial;
         protected Material defaultMaterial;
         protected boolean useGroupColor;
         protected ShapeAttributes attributes;
 
-        public AttributeGroup(String displayName, Color color)
-        {
+        public AttributeGroup(String displayName, Color color) {
             this.displayName = displayName;
             this.groupMaterial = new Material(color); // specifies the diffuse color
             this.useGroupColor = true;
         }
 
-        public String getDisplayName()
-        {
+        public String getDisplayName() {
             return this.displayName;
         }
 
-        public Color getColor()
-        {
+        public Color getColor() {
             return this.groupMaterial.getDiffuse();
         }
 
-        public boolean isUseGroupColor()
-        {
+        public boolean isUseGroupColor() {
             return this.useGroupColor;
         }
 
-        public void setUseGroupColor(boolean useGroupColor)
-        {
+        public void setUseGroupColor(boolean useGroupColor) {
             this.useGroupColor = useGroupColor;
             this.updateAttributes();
         }
 
-        public void addRecord(ShapefileRenderable.Record record)
-        {
+        public void addRecord(ShapefileRenderable.Record record) {
             if (this.attributes == null) // use the first record to access the default attributes
             {
                 this.attributes = record.getAttributes().copy(); // use default attrs as a template
@@ -153,19 +143,10 @@ public class ShapefileAttributeGroups extends ApplicationTemplate
             record.setAttributes(this.attributes); // use the group's attributes as the record's normal attributes
         }
 
-        protected void updateAttributes()
-        {
-            if (this.attributes != null)
-            {
+        protected void updateAttributes() {
+            if (this.attributes != null) {
                 this.attributes.setOutlineMaterial(this.useGroupColor ? this.groupMaterial : this.defaultMaterial);
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 30);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 30);
-        start("WorldWind Shapefile Attribute Groups", AppFrame.class);
     }
 }

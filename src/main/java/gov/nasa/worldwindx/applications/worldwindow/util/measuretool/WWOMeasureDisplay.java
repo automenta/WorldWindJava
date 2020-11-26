@@ -20,16 +20,14 @@ import java.awt.geom.*;
  * @author tag
  * @version $Id: WWOMeasureDisplay.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
-{
+public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
     protected final WWOMeasureTool measureTool;
     protected final ScreenAnnotation annotation;
     protected final AnnotationAttributes annotationAttributes;
-    protected final AVListImpl avList = new AVListImpl();
+    protected final AVList avList = new AVListImpl();
     protected UnitsFormat unitsFormat = new UnitsFormat();
 
-    public WWOMeasureDisplay(WWOMeasureTool measureTool)
-    {
+    public WWOMeasureDisplay(WWOMeasureTool measureTool) {
         this.measureTool = measureTool;
 
         this.annotationAttributes = new AnnotationAttributes();
@@ -50,8 +48,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         this.setInitialLabels();
     }
 
-    protected void setInitialLabels()
-    {
+    protected void setInitialLabels() {
         this.setLabel(ACCUMULATED_LABEL, "Accumulated");
         this.setLabel(ANGLE_LABEL, "Angle");
         this.setLabel(AREA_LABEL, "Area");
@@ -69,26 +66,21 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         this.setLabel(WIDTH_LABEL, "Width");
     }
 
-    public void addToLayer(RenderableLayer layer)
-    {
+    public void addToLayer(RenderableLayer layer) {
         layer.addRenderable(this.annotation);
     }
 
-    public void removeFromLayer(RenderableLayer layer)
-    {
+    public void removeFromLayer(RenderableLayer layer) {
         layer.removeRenderable(this.annotation);
     }
 
-    public void setLabel(String labelName, String label)
-    {
-        if (labelName != null && labelName.length() > 0)
+    public void setLabel(String labelName, String label) {
+        if (labelName != null && !labelName.isEmpty())
             this.avList.setValue(labelName, label);
     }
 
-    public String getLabel(String labelName)
-    {
-        if (labelName == null)
-        {
+    public String getLabel(String labelName) {
+        if (labelName == null) {
             String msg = Logging.getMessage("nullValue.LabelName");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -99,23 +91,19 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         return label != null ? label : this.measureTool.getUnitsFormat().getStringValue(labelName);
     }
 
-    public boolean isAnnotation(Object o)
-    {
+    public boolean isAnnotation(Object o) {
         return o == this.annotation;
     }
 
-    public void updateMeasureDisplay(Position position)
-    {
-        if (position == null)
-        {
+    public void updateMeasureDisplay(Position position) {
+        if (position == null) {
             this.annotation.getAttributes().setVisible(false);
             return;
         }
 
         String displayString = this.getDisplayString(position, this.measureTool);
 
-        if (displayString == null)
-        {
+        if (displayString == null) {
             this.annotation.getAttributes().setVisible(false);
             return;
         }
@@ -129,36 +117,28 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         this.annotation.getAttributes().setVisible(true);
     }
 
-    protected String getDisplayString(Position pos, WWOMeasureTool mt)
-    {
+    protected String getDisplayString(Position pos, WWOMeasureTool mt) {
         String displayString = null;
         String shapeType = this.measureTool.getMeasureShapeType();
         Rectangle2D.Double shapeRectangle = this.measureTool.getShapeRectangle();
 
-        if (pos != null)
-        {
-            if (shapeType.equals(AVKey.SHAPE_CIRCLE) && shapeRectangle != null)
-            {
+        if (pos != null) {
+            if (shapeType.equals(AVKey.SHAPE_CIRCLE) && shapeRectangle != null) {
                 displayString = this.formatCircleMeasurements(pos, mt);
             }
-            else if (shapeType.equals(AVKey.SHAPE_SQUARE) && shapeRectangle != null)
-            {
+            else if (shapeType.equals(AVKey.SHAPE_SQUARE) && shapeRectangle != null) {
                 displayString = this.formatSquareMeasurements(pos, mt);
             }
-            else if (shapeType.equals(AVKey.SHAPE_QUAD) && shapeRectangle != null)
-            {
+            else if (shapeType.equals(AVKey.SHAPE_QUAD) && shapeRectangle != null) {
                 displayString = this.formatQuadMeasurements(pos, mt);
             }
-            else if (shapeType.equals(AVKey.SHAPE_ELLIPSE) && shapeRectangle != null)
-            {
+            else if (shapeType.equals(AVKey.SHAPE_ELLIPSE) && shapeRectangle != null) {
                 displayString = this.formatEllipseMeasurements(pos, mt);
             }
-            else if (shapeType.equals(AVKey.SHAPE_LINE) || shapeType.equals(AVKey.SHAPE_PATH))
-            {
+            else if (shapeType.equals(AVKey.SHAPE_LINE) || shapeType.equals(AVKey.SHAPE_PATH)) {
                 displayString = this.formatLineMeasurements(pos, mt);
             }
-            else if (shapeType.equals(AVKey.SHAPE_POLYGON))
-            {
+            else if (shapeType.equals(AVKey.SHAPE_POLYGON)) {
                 displayString = this.formatPolygonMeasurements(pos, mt);
             }
         }
@@ -166,12 +146,10 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         return displayString;
     }
 
-    protected Vec4 computeAnnotationPosition(Position pos, WWOMeasureTool mt)
-    {
+    protected Vec4 computeAnnotationPosition(Position pos, WWOMeasureTool mt) {
         Vec4 surfacePoint = mt.getWwd().getSceneController().getTerrain().getSurfacePoint(
             pos.getLatitude(), pos.getLongitude());
-        if (surfacePoint == null)
-        {
+        if (surfacePoint == null) {
             Globe globe = mt.getWwd().getModel().getGlobe();
             surfacePoint = globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
                 globe.getElevation(pos.getLatitude(), pos.getLongitude()));
@@ -180,30 +158,27 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         return mt.getWwd().getView().project(surfacePoint);
     }
 
-    protected String formatCircleMeasurements(Position pos, WWOMeasureTool mt)
-    {
+    protected String formatCircleMeasurements(Position pos, WWOMeasureTool mt) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(mt.getUnitsFormat().areaNL(mt.getLabel(AREA_LABEL), mt.getArea()));
         sb.append(mt.getUnitsFormat().lengthNL(mt.getLabel(PERIMETER_LABEL), mt.getLength()));
 
         if (mt.getShapeRectangle() != null)
-            sb.append(mt.getUnitsFormat().lengthNL(mt.getLabel(RADIUS_LABEL), mt.getShapeRectangle().width / 2d));
+            sb.append(mt.getUnitsFormat().lengthNL(mt.getLabel(RADIUS_LABEL), mt.getShapeRectangle().width / 2.0d));
 
         this.formatControlPoints(pos, mt, sb);
 
         return sb.toString();
     }
 
-    protected String formatEllipseMeasurements(Position pos, WWOMeasureTool mt)
-    {
+    protected String formatEllipseMeasurements(Position pos, WWOMeasureTool mt) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(mt.getUnitsFormat().areaNL(mt.getLabel(AREA_LABEL), mt.getArea()));
         sb.append(mt.getUnitsFormat().lengthNL(mt.getLabel(PERIMETER_LABEL), mt.getLength()));
 
-        if (mt.getShapeRectangle() != null)
-        {
+        if (mt.getShapeRectangle() != null) {
             sb.append(mt.getUnitsFormat().lengthNL(mt.getLabel(MAJOR_AXIS_LABEL), mt.getShapeRectangle().width));
             sb.append(mt.getUnitsFormat().lengthNL(mt.getLabel(MINOR_AXIS_LABEL), mt.getShapeRectangle().height));
         }
@@ -216,8 +191,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         return sb.toString();
     }
 
-    protected String formatSquareMeasurements(Position pos, WWOMeasureTool mt)
-    {
+    protected String formatSquareMeasurements(Position pos, WWOMeasureTool mt) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(mt.getUnitsFormat().areaNL(mt.getLabel(AREA_LABEL), mt.getArea()));
@@ -234,15 +208,13 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         return sb.toString();
     }
 
-    protected String formatQuadMeasurements(Position pos, WWOMeasureTool mt)
-    {
+    protected String formatQuadMeasurements(Position pos, WWOMeasureTool mt) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(mt.getUnitsFormat().areaNL(mt.getLabel(AREA_LABEL), mt.getArea()));
         sb.append(mt.getUnitsFormat().lengthNL(mt.getLabel(PERIMETER_LABEL), mt.getLength()));
 
-        if (mt.getShapeRectangle() != null)
-        {
+        if (mt.getShapeRectangle() != null) {
             sb.append(mt.getUnitsFormat().lengthNL(mt.getLabel(WIDTH_LABEL), mt.getShapeRectangle().width));
             sb.append(mt.getUnitsFormat().lengthNL(mt.getLabel(HEIGHT_LABEL), mt.getShapeRectangle().height));
         }
@@ -255,8 +227,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         return sb.toString();
     }
 
-    protected String formatPolygonMeasurements(Position pos, WWOMeasureTool mt)
-    {
+    protected String formatPolygonMeasurements(Position pos, WWOMeasureTool mt) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(mt.getUnitsFormat().areaNL(mt.getLabel(AREA_LABEL), mt.getArea()));
@@ -267,8 +238,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         return sb.toString();
     }
 
-    protected String formatLineMeasurements(Position pos, WWOMeasureTool mt)
-    {
+    protected String formatLineMeasurements(Position pos, WWOMeasureTool mt) {
         // TODO: Compute the heading of individual path segments
         StringBuilder sb = new StringBuilder();
 
@@ -286,21 +256,16 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         return sb.toString();
     }
 
-    protected void formatControlPoints(Position pos, WWOMeasureTool mt, StringBuilder sb)
-    {
-        if (mt.getCenterPosition() != null && areLocationsRedundant(mt.getCenterPosition(), pos, mt.getUnitsFormat()))
-        {
+    protected void formatControlPoints(Position pos, WWOMeasureTool mt, StringBuilder sb) {
+        if (mt.getCenterPosition() != null && areLocationsRedundant(mt.getCenterPosition(), pos, mt.getUnitsFormat())) {
             sb.append(
                 mt.getUnitsFormat().angleNL(mt.getLabel(CENTER_LATITUDE_LABEL), mt.getCenterPosition().getLatitude()));
             sb.append(mt.getUnitsFormat().angleNL(mt.getLabel(CENTER_LONGITUDE_LABEL),
                 mt.getCenterPosition().getLongitude()));
         }
-        else
-        {   // See if it's a control point and show it if it is
-            for (int i = 0; i < mt.getControlPoints().size(); i++)
-            {
-                if (this.areLocationsRedundant(pos, mt.getControlPoints().get(i).getPosition(), mt.getUnitsFormat()))
-                {
+        else {   // See if it's a control point and show it if it is
+            for (int i = 0; i < mt.getControlPoints().size(); i++) {
+                if (this.areLocationsRedundant(pos, mt.getControlPoints().get(i).getPosition(), mt.getUnitsFormat())) {
                     sb.append(mt.getUnitsFormat().angleNL(mt.getLabel(LATITUDE_LABEL), pos.getLatitude()));
                     sb.append(mt.getUnitsFormat().angleNL(mt.getLabel(LONGITUDE_LABEL), pos.getLongitude()));
                 }
@@ -308,8 +273,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         }
     }
 
-    protected Double computeAccumulatedLength(LatLon pos, WWOMeasureTool mt)
-    {
+    protected Double computeAccumulatedLength(LatLon pos, WWOMeasureTool mt) {
         if (mt.getPositions().size() < 2)
             return null;
 
@@ -317,16 +281,14 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         double distanceFromStart = 0;
         int segmentIndex = 0;
         LatLon pos1 = mt.getPositions().get(segmentIndex);
-        for (int i = 1; i < mt.getPositions().size(); i++)
-        {
+        for (int i = 1; i < mt.getPositions().size(); i++) {
             LatLon pos2 = mt.getPositions().get(i);
             double segmentLength = LatLon.greatCircleDistance(pos1, pos2).radians * radius;
 
             // Check whether the position is inside the segment
             double length1 = LatLon.greatCircleDistance(pos1, pos).radians * radius;
             double length2 = LatLon.greatCircleDistance(pos2, pos).radians * radius;
-            if (length1 <= segmentLength && length2 <= segmentLength)
-            {
+            if (length1 <= segmentLength && length2 <= segmentLength) {
                 // Compute portion of segment length
                 distanceFromStart += length1 / (length1 + length2) * segmentLength;
                 break;
@@ -341,13 +303,11 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         return distanceFromStart < gcPathLength ? mt.getLength() * (distanceFromStart / gcPathLength) : null;
     }
 
-    protected double computePathLength(WWOMeasureTool mt)
-    {
+    protected double computePathLength(WWOMeasureTool mt) {
         double pathLengthRadians = 0;
 
         LatLon pos1 = null;
-        for (LatLon pos2 : mt.getPositions())
-        {
+        for (LatLon pos2 : mt.getPositions()) {
             if (pos1 != null)
                 pathLengthRadians += LatLon.greatCircleDistance(pos1, pos2).radians;
             pos1 = pos2;
@@ -356,8 +316,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         return pathLengthRadians * mt.getWwd().getModel().getGlobe().getRadius();
     }
 
-    protected Angle computeAngleBetween(LatLon a, LatLon b, LatLon c)
-    {
+    protected Angle computeAngleBetween(LatLon a, LatLon b, LatLon c) {
         Vec4 v0 = new Vec4(
             b.getLatitude().radians - a.getLatitude().radians,
             b.getLongitude().radians - a.getLongitude().radians, 0);
@@ -369,13 +328,11 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay
         return v0.angleBetween3(v1);
     }
 
-    protected boolean lengthsEssentiallyEqual(double l1, double l2)
-    {
+    protected boolean lengthsEssentiallyEqual(double l1, double l2) {
         return Math.abs(l1 - l2) < 0.01; // equal to within a centimeter
     }
 
-    protected boolean areLocationsRedundant(LatLon locA, LatLon locB, UnitsFormat units)
-    {
+    protected boolean areLocationsRedundant(LatLon locA, LatLon locB, UnitsFormat units) {
         if (locA == null || locB == null)
             return false;
 

@@ -18,35 +18,31 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: SpecialInterestArea.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SpecialInterestArea extends BasicArea
-{
+public class SpecialInterestArea extends BasicArea {
+    /**
+     * Create a new area graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public SpecialInterestArea(String sidc) {
+        super(sidc);
+        this.setShowHostileIndicator(false);
+    }
+
     /**
      * Indicates the graphics supported by this class.
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         return Arrays.asList(
             TacGrpSidc.C2GM_SPL_ARA_AOO,
             TacGrpSidc.C2GM_SPL_ARA_NAI,
             TacGrpSidc.C2GM_SPL_ARA_TAI);
     }
 
-    /**
-     * Create a new area graphic.
-     *
-     * @param sidc Symbol code the identifies the graphic.
-     */
-    public SpecialInterestArea(String sidc)
-    {
-        super(sidc);
-        this.setShowHostileIndicator(false);
-    }
-
     @Override
-    protected String getGraphicLabel()
-    {
+    protected String getGraphicLabel() {
         String code = this.maskedSymbolCode;
 
         if (TacGrpSidc.C2GM_SPL_ARA_AOO.equalsIgnoreCase(code))

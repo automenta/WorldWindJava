@@ -9,17 +9,16 @@ package gov.nasa.worldwind.render;
 import java.awt.*;
 
 /**
- * Holds attributes for WorldWind {@link gov.nasa.worldwind.render.Balloon} shapes. Changes made to the attributes are
+ * Holds attributes for WorldWind {@link Balloon} shapes. Changes made to the attributes are
  * applied to the balloon when the <code>WorldWindow</code> renders the next frame. Instances of
- * <code>BalloonAttributes</code> may be shared by many balloons, thereby reducing the memory normally required to store
- * attributes for each balloon.
+ * <code>BalloonAttributes</code> may be shared by many balloons, thereby reducing the memory normally required to
+ * store attributes for each balloon.
  *
  * @author pabercrombie
  * @version $Id: BalloonAttributes.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see Balloon
  */
-public interface BalloonAttributes extends ShapeAttributes
-{
+public interface BalloonAttributes extends ShapeAttributes {
     /**
      * Indicates the width and height of the balloon's shape in the viewport. If the balloon's shape is
      * <code>AVKey.SHAPE_RECTANGLE</code>, then the returned <code>Size</code> indicates the rectangle's width and
@@ -40,11 +39,10 @@ public interface BalloonAttributes extends ShapeAttributes
      * by the balloon's insets.
      *
      * @param size the desired width and height of the balloon's shape in the viewport.
-     *
      * @throws IllegalArgumentException if <code>size</code> is <code>null</code>.
      * @see #getSize()
      * @see #getMaximumSize()
-     * @see #setInsets(java.awt.Insets)
+     * @see #setInsets(Insets)
      */
     void setSize(Size size);
 
@@ -56,15 +54,15 @@ public interface BalloonAttributes extends ShapeAttributes
      * size.
      *
      * @return the maximum width and height of the balloon's shape in the viewport, or <code>null</code> if the balloon
-     *         has no maximum size.
+     * has no maximum size.
      */
     Size getMaximumSize();
 
     /**
      * Specifies the maximum width and height of the balloon's shape in the viewport. If the balloon's shape is
-     * <code>AVKey.SHAPE_RECTANGLE</code>, then <code>size</code> specifies the rectangle's maximum width and height. If
-     * the balloon's shape is <code>AVKey.SHAPE_ELLIPSE</code>, then <code>size</code> specifies the ellipse's maximum
-     * x- and y-radii. Specifying a <code>null</code> size causes the balloon to have no maximum size.
+     * <code>AVKey.SHAPE_RECTANGLE</code>, then <code>size</code> specifies the rectangle's maximum width and height.
+     * If the balloon's shape is <code>AVKey.SHAPE_ELLIPSE</code>, then <code>size</code> specifies the ellipse's
+     * maximum x- and y-radii. Specifying a <code>null</code> size causes the balloon to have no maximum size.
      *
      * @param size the desired maximum width and height of the balloon's shape in the viewport, or <code>null</code> if
      *             the balloon should have no maximum size.
@@ -76,7 +74,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * aligned. The balloon's lower left corner begins at the returned <code>offset</code>.
      *
      * @return the location at which the balloon's lower left corner is aligned.
-     *
      * @see #setOffset(Offset)
      */
     Offset getOffset();
@@ -96,7 +93,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * screen reference point.
      *
      * @param offset a location at which to align the balloon's lower left corner.
-     *
      * @throws IllegalArgumentException if <code>offset</code> is <code>null</code>.
      * @see #getOffset()
      */
@@ -107,8 +103,7 @@ public interface BalloonAttributes extends ShapeAttributes
      * decreases to account for the returned space.
      *
      * @return the padding between the balloon's content and its frame, in pixels.
-     *
-     * @see #setInsets(java.awt.Insets)
+     * @see #setInsets(Insets)
      */
     Insets getInsets();
 
@@ -124,7 +119,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * balloon's content area and the ellipse's top, left, bottom, and right apexes.
      *
      * @param insets the desired padding between the balloon's content and its frame, in pixels.
-     *
      * @throws IllegalArgumentException if <code>insets</code> is <code>null</code>.
      * @see #getInsets()
      */
@@ -134,8 +128,7 @@ public interface BalloonAttributes extends ShapeAttributes
      * Indicates the shape of the balloon's frame.
      *
      * @return the balloon frame's shape, either {@link gov.nasa.worldwind.avlist.AVKey#SHAPE_NONE}, {@link
-     *         gov.nasa.worldwind.avlist.AVKey#SHAPE_RECTANGLE}, or {@link gov.nasa.worldwind.avlist.AVKey#SHAPE_ELLIPSE}.
-     *
+     * gov.nasa.worldwind.avlist.AVKey#SHAPE_RECTANGLE}, or {@link gov.nasa.worldwind.avlist.AVKey#SHAPE_ELLIPSE}.
      * @see #setBalloonShape(String)
      */
     String getBalloonShape();
@@ -160,7 +153,6 @@ public interface BalloonAttributes extends ShapeAttributes
      *
      * @param shape the frame shape to use, either <code>AVKey.SHAPE_NONE</code> <code>AVKey.SHAPE_RECTANGLE</code> or
      *              <code>AVKey.SHAPE_ELLIPSE</code>.
-     *
      * @throws IllegalArgumentException if <code>shape</code> is <code>null</code>.
      * @see #getBalloonShape()
      */
@@ -170,8 +162,7 @@ public interface BalloonAttributes extends ShapeAttributes
      * Indicates the shape of the balloon's leader.
      *
      * @return the balloon leader's shape, either {@link gov.nasa.worldwind.avlist.AVKey#SHAPE_NONE} or {@link
-     *         gov.nasa.worldwind.avlist.AVKey#SHAPE_TRIANGLE}.
-     *
+     * gov.nasa.worldwind.avlist.AVKey#SHAPE_TRIANGLE}.
      * @see #setLeaderShape(String)
      */
     String getLeaderShape();
@@ -188,7 +179,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * the balloon's frame is specified by calling {@link #setLeaderWidth(int)}.
      *
      * @param shape the leader shape to use, either <code>AVKey.SHAPE_NONE</code> or <code>AVKey.SHAPE_TRIANGLE</code>.
-     *
      * @throws IllegalArgumentException if <code>shape</code> is <code>null</code>.
      * @see #getLeaderShape()
      * @see #setLeaderWidth(int)
@@ -199,7 +189,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * Indicates the width of the balloon's leader, in pixels. The returned value is either zero or a positive integer.
      *
      * @return the width of the balloon's leader (in pixels) where it intersects the balloon's frame.
-     *
      * @see #setLeaderWidth(int)
      */
     int getLeaderWidth();
@@ -214,7 +203,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * it intersects the balloon's frame.
      *
      * @param width the desired leader width, in pixels.
-     *
      * @throws IllegalArgumentException if <code>width</code> is less than zero.
      * @see #getLeaderWidth()
      */
@@ -226,7 +214,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * corners. This value is ignored if the balloon's shape is <code>AVKey.SHAPE_ELLIPSE</code>.
      *
      * @return the radius of the rounded corner's on the balloon's on the balloon's rectangular frame, in pixels.
-     *
      * @see #setCornerRadius(int)
      */
     int getCornerRadius();
@@ -238,7 +225,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * <code>AVKey.SHAPE_ELLIPSE</code>.
      *
      * @param radius the desired radius, in pixels.
-     *
      * @throws IllegalArgumentException if <code>radius</code> is less than zero.
      * @see #getCornerRadius()
      */
@@ -249,8 +235,7 @@ public interface BalloonAttributes extends ShapeAttributes
      * HTML.
      *
      * @return the balloon's text font.
-     *
-     * @see #setFont(java.awt.Font)
+     * @see #setFont(Font)
      */
     Font getFont();
 
@@ -259,7 +244,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * balloon's text contains HTML.
      *
      * @param font the font to use for the balloon's text.
-     *
      * @throws IllegalArgumentException if <code>font</code> is <code>null</code>.
      * @see #getFont()
      */
@@ -270,8 +254,7 @@ public interface BalloonAttributes extends ShapeAttributes
      * HTML.
      *
      * @return the balloon's text color.
-     *
-     * @see #setTextColor(java.awt.Color)
+     * @see #setTextColor(Color)
      */
     Color getTextColor();
 
@@ -280,7 +263,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * the balloon's text contains HTML.
      *
      * @param color the color to use for the balloon's text.
-     *
      * @throws IllegalArgumentException if <code>color</code> is <code>null</code>.
      * @see #getTextColor()
      */
@@ -290,8 +272,7 @@ public interface BalloonAttributes extends ShapeAttributes
      * Indicates the location of the balloon's texture (in pixels) relative to the balloon's upper left corner.
      *
      * @return the location of the balloon's texture in pixels.
-     *
-     * @see #setImageOffset(java.awt.Point)
+     * @see #setImageOffset(Point)
      */
     Point getImageOffset();
 
@@ -300,7 +281,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * location is applied to the balloon's texture before the balloon's texture scale is applied.
      *
      * @param offset the location of the balloon's texture source in pixels.
-     *
      * @throws IllegalArgumentException if <code>offset</code> is <code>null</code>.
      * @see #getImageOffset()
      */
@@ -310,7 +290,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * Indicates the opacity of the balloon's texture as a floating-point value in the range 0.0 to 1.0.
      *
      * @return the balloon texture's opacity as a floating-point value from 0.0 to 1.0.
-     *
      * @see #setImageOpacity(double)
      */
     double getImageOpacity();
@@ -322,7 +301,6 @@ public interface BalloonAttributes extends ShapeAttributes
      * between specify a partially transparent texture.
      *
      * @param opacity the balloon texture's opacity as a floating-point value from 0.0 to 1.0.
-     *
      * @throws IllegalArgumentException if <code>opacity</code> is less than 0.0 or greater than 1.0.
      * @see #getImageOpacity()
      */
@@ -332,9 +310,8 @@ public interface BalloonAttributes extends ShapeAttributes
      * Indicates the balloon texture's horizontal and vertical repeat mode.
      *
      * @return the balloon texture's repeat mode, one of {@link gov.nasa.worldwind.avlist.AVKey#REPEAT_NONE}, {@link
-     *         gov.nasa.worldwind.avlist.AVKey#REPEAT_X}, {@link gov.nasa.worldwind.avlist.AVKey#REPEAT_Y}, or {@link
-     *         gov.nasa.worldwind.avlist.AVKey#REPEAT_XY}
-     *
+     * gov.nasa.worldwind.avlist.AVKey#REPEAT_X}, {@link gov.nasa.worldwind.avlist.AVKey#REPEAT_Y}, or {@link
+     * gov.nasa.worldwind.avlist.AVKey#REPEAT_XY}
      * @see #setImageRepeat(String)
      */
     String getImageRepeat();
@@ -349,12 +326,11 @@ public interface BalloonAttributes extends ShapeAttributes
      * offset and scale without any repeating pattern.
      * <p>
      * If <code>repeat</code> is <code>AVKey.REPEAT_X</code>, <code>AVKey.REPEAT_Y</code>, or
-     * <code>AVKey.REPEAT_XY</code>, the balloon's texture is repeated along the X axis, along the Y axis, or along both
-     * the X and Y axes, respectively. The texture is repeated after its offset and scale are applied.
+     * <code>AVKey.REPEAT_XY</code>, the balloon's texture is repeated along the X axis, along the Y axis, or along
+     * both the X and Y axes, respectively. The texture is repeated after its offset and scale are applied.
      *
      * @param repeat the texture's repeat mode to use, one of <code>AVKey.REPEAT_NONE</code>,
      *               <code>AVKey.REPEAT_X</code>, <code>AVKey.REPEAT_Y</code>, or <code>AVKey.REPEAT_XY</code>.
-     *
      * @throws IllegalArgumentException if <code>repeat</code> is <code>null</code>.
      * @see #getImageRepeat()
      */

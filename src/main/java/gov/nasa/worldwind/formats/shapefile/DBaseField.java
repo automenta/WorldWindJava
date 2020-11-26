@@ -9,13 +9,13 @@ import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.Logging;
 
 import java.nio.*;
+import java.util.logging.Level;
 
 /**
  * @author Patrick Murris
  * @version $Id: DBaseField.java 1867 2014-03-14 18:52:11Z dcollins $
  */
-public class DBaseField
-{
+public class DBaseField {
     public static final String TYPE_CHAR = "DBase.FieldTypeChar";
     public static final String TYPE_NUMBER = "DBase.FieldTypeNumber";
     public static final String TYPE_DATE = "DBase.FieldTypeDate";
@@ -28,17 +28,14 @@ public class DBaseField
     private int length;
     private int decimals;
 
-    public DBaseField(DBaseFile dbaseFile, ByteBuffer buffer)
-    {
-        if (dbaseFile == null)
-        {
+    public DBaseField(DBaseFile dbaseFile, ByteBuffer buffer) {
+        if (dbaseFile == null) {
             String message = Logging.getMessage("nullValue.DBaseFileIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (buffer == null)
-        {
+        if (buffer == null) {
             String message = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -47,28 +44,33 @@ public class DBaseField
         this.readFromBuffer(dbaseFile, buffer);
     }
 
-    public String getName()
-    {
+    public static String getFieldType(char type) {
+        return switch (type) {
+            case 'C' -> TYPE_CHAR;
+            case 'D' -> TYPE_DATE;
+            case 'F', 'N' -> TYPE_NUMBER;
+            case 'L' -> TYPE_BOOLEAN;
+            default -> null;
+        };
+    }
+
+    public String getName() {
         return this.name;
     }
 
-    public String getType()
-    {
+    public String getType() {
         return this.type;
     }
 
-    public int getLength()
-    {
+    public int getLength() {
         return this.length;
     }
 
-    public int getDecimals()
-    {
+    public int getDecimals() {
         return this.decimals;
     }
 
-    protected void readFromBuffer(DBaseFile dbaseFile, ByteBuffer buffer)
-    {
+    protected void readFromBuffer(DBaseFile dbaseFile, ByteBuffer buffer) {
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
         int pos = buffer.position();
@@ -79,10 +81,9 @@ public class DBaseField
 
         this.typeCode = (char) buffer.get();
         this.type = getFieldType(this.typeCode);
-        if (this.type == null)
-        {
+        if (this.type == null) {
             String message = Logging.getMessage("SHP.UnsupportedDBaseFieldType", this.typeCode);
-            Logging.logger().log(java.util.logging.Level.SEVERE, message);
+            Logging.logger().log(Level.SEVERE, message);
             throw new WWRuntimeException(message);
         }
 
@@ -95,27 +96,8 @@ public class DBaseField
         buffer.position(pos + DBaseFile.FIELD_DESCRIPTOR_LENGTH); // move to next field
     }
 
-    public static String getFieldType(char type)
-    {
-        switch (type)
-        {
-            case 'C':
-                return TYPE_CHAR;
-            case 'D':
-                return TYPE_DATE;
-            case 'F':
-            case 'N':
-                return TYPE_NUMBER;
-            case 'L':
-                return TYPE_BOOLEAN;
-            default:
-                return null;
-        }
-    }
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.name);
         sb.append("(").append(this.typeCode).append(")");

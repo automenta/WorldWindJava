@@ -15,23 +15,19 @@ import java.util.Objects;
  * @author dcollins
  * @version $Id: VPFTile.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFTile implements ExtentHolder
-{
+public class VPFTile implements ExtentHolder {
     private final int id;
     private final String name;
     private final VPFBoundingBox bounds;
 
-    public VPFTile(int id, String name, VPFBoundingBox bounds)
-    {
-        if (name == null)
-        {
+    public VPFTile(int id, String name, VPFBoundingBox bounds) {
+        if (name == null) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (bounds == null)
-        {
+        if (bounds == null) {
             String message = Logging.getMessage("nullValue.BoundingBoxIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -42,25 +38,20 @@ public class VPFTile implements ExtentHolder
         this.bounds = bounds;
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public VPFBoundingBox getBounds()
-    {
+    public VPFBoundingBox getBounds() {
         return this.bounds;
     }
 
-    public Extent getExtent(Globe globe, double verticalExaggeration)
-    {
-        if (globe == null)
-        {
+    public Extent getExtent(Globe globe, double verticalExaggeration) {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -69,8 +60,7 @@ public class VPFTile implements ExtentHolder
         return Sector.computeBoundingCylinder(globe, verticalExaggeration, this.bounds.toSector());
     }
 
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -89,16 +79,14 @@ public class VPFTile implements ExtentHolder
         return true;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (bounds != null ? bounds.hashCode() : 0);
         return result;
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.id);
         sb.append(": ");

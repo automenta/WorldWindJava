@@ -7,6 +7,7 @@ package gov.nasa.worldwind.event;
 
 import gov.nasa.worldwind.pick.PickedObjectList;
 
+import java.awt.Point;
 import java.awt.event.*;
 
 /**
@@ -16,13 +17,11 @@ import java.awt.event.*;
  * @author tag
  * @version $Id: DragSelectEvent.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class DragSelectEvent extends SelectEvent
-{
-    private final java.awt.Point previousPickPoint;
+public class DragSelectEvent extends SelectEvent {
+    private final Point previousPickPoint;
 
     public DragSelectEvent(Object source, String eventAction, MouseEvent mouseEvent, PickedObjectList pickedObjects,
-        java.awt.Point previousPickPoint)
-    {
+        Point previousPickPoint) {
         super(source, eventAction, mouseEvent, pickedObjects);
         this.previousPickPoint = previousPickPoint;
     }
@@ -32,8 +31,7 @@ public class DragSelectEvent extends SelectEvent
      *
      * @return the screen position of the event just prior to this one.
      */
-    public java.awt.Point getPreviousPickPoint()
-    {
+    public Point getPreviousPickPoint() {
         return this.previousPickPoint;
     }
 }

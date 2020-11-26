@@ -12,13 +12,14 @@ import gov.nasa.worldwind.formats.tiff.GeotiffReader;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.*;
-import gov.nasa.worldwind.globes.Earth;
+import gov.nasa.worldwind.globes.*;
 
 import javax.imageio.*;
 import javax.imageio.stream.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.color.*;
+import java.awt.geom.Point2D;
 import java.awt.image.*;
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -29,10 +30,10 @@ import java.util.*;
  * @author tag
  * @version $Id: ImageUtil.java 1353 2013-05-20 18:43:06Z tgaskins $
  */
-public class ImageUtil
-{
+public class ImageUtil {
     public static final int NEAREST_NEIGHBOR_INTERPOLATION = 1;
     public static final int BILINEAR_INTERPOLATION = 2;
+    private static final int MAX_IMAGE_SIZE_TO_CONVERT = 4096;
     public static int IMAGE_TILE_SIZE = 1024; // default size to make subimages
     public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
@@ -42,34 +43,28 @@ public class ImageUtil
      *
      * @param image  the BufferedImage to draw, potentially scaling or stretching to fit the <code>canvas</code>.
      * @param canvas the BufferedImage to receive the scaled or stretched <code>image</code>.
-     *
      * @throws IllegalArgumentException if either <code>image</code> or <code>canvas</code> is null.
      */
-    public static void getScaledCopy(BufferedImage image, BufferedImage canvas)
-    {
-        if (image == null)
-        {
+    public static void getScaledCopy(BufferedImage image, BufferedImage canvas) {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (canvas == null)
-        {
+        if (canvas == null) {
             String message = Logging.getMessage("nullValue.CanvasIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        java.awt.Graphics2D g2d = canvas.createGraphics();
-        try
-        {
-            g2d.setComposite(java.awt.AlphaComposite.Src);
+        Graphics2D g2d = canvas.createGraphics();
+        try {
+            g2d.setComposite(AlphaComposite.Src);
             g2d.setRenderingHint(
-                java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
             g2d.drawImage(image, 0, 0, canvas.getWidth(), canvas.getHeight(), null);
         }
-        finally
-        {
+        finally {
             g2d.dispose();
         }
     }
@@ -80,26 +75,22 @@ public class ImageUtil
      * @param image                  the source image.
      * @param canvas                 the image to receive the transformed source image.
      * @param canvasToImageTransform <code>Matrix</code> that maps a canvas coordinates to image coordinates.
-     *
      * @throws IllegalArgumentException if any of <code>image</code>, <code>canvas</code>, or <code>canvasToImageTransform</code>
      *                                  are null.
      */
-    public static void warpImageWithTransform(BufferedImage image, BufferedImage canvas, Matrix canvasToImageTransform)
-    {
-        if (image == null)
-        {
+    public static void warpImageWithTransform(BufferedImage image, BufferedImage canvas,
+        Matrix canvasToImageTransform) {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (canvas == null)
-        {
+        if (canvas == null) {
             String message = Logging.getMessage("nullValue.CanvasIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (canvasToImageTransform == null)
-        {
+        if (canvasToImageTransform == null) {
             String message = Logging.getMessage("nullValue.MatrixIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -110,13 +101,10 @@ public class ImageUtil
         int destWidth = canvas.getWidth();
         int destHeight = canvas.getHeight();
 
-        for (int dy = 0; dy < destHeight; dy++)
-        {
-            for (int dx = 0; dx < destWidth; dx++)
-            {
+        for (int dy = 0; dy < destHeight; dy++) {
+            for (int dx = 0; dx < destWidth; dx++) {
                 Vec4 vec = new Vec4(dx, dy, 1).transformBy3(canvasToImageTransform);
-                if (vec.x >= 0 && vec.y >= 0 && vec.x <= (sourceWidth - 1) && vec.y <= (sourceHeight - 1))
-                {
+                if (vec.x >= 0 && vec.y >= 0 && vec.x <= (sourceWidth - 1) && vec.y <= (sourceHeight - 1)) {
                     int x0 = (int) Math.floor(vec.x);
                     int x1 = (int) Math.ceil(vec.x);
                     double xf = vec.x - x0;
@@ -146,37 +134,30 @@ public class ImageUtil
      * @param imagePoints three or four control points in the source image.
      * @param geoPoints   three or four geographic locations corresponding to each source control point.
      * @param destImage   the destination image to receive the transformed source imnage.
-     *
      * @return bounding sector for the geographically aligned destination image.
-     *
      * @throws IllegalArgumentException if any of <code>sourceImage</code>, <code>destImage</code>,
      *                                  <code>imagePoints</code> or <code>geoPoints</code> is null, or if either
      *                                  <code>imagePoints</code> or <code>geoPoints</code> have length less than 3.
      */
-    public static Sector warpImageWithControlPoints(BufferedImage sourceImage, java.awt.geom.Point2D[] imagePoints,
-        LatLon[] geoPoints, BufferedImage destImage)
-    {
-        if (sourceImage == null)
-        {
+    public static Sector warpImageWithControlPoints(BufferedImage sourceImage, Point2D[] imagePoints,
+        LatLon[] geoPoints, BufferedImage destImage) {
+        if (sourceImage == null) {
             String message = Logging.getMessage("nullValue.SourceImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (destImage == null)
-        {
+        if (destImage == null) {
             String message = Logging.getMessage("nullValue.DestinationImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
         String message = validateControlPoints(3, imagePoints, geoPoints);
-        if (message != null)
-        {
+        if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (imagePoints.length >= 4 && geoPoints.length >= 4)
-        {
+        if (imagePoints.length >= 4 && geoPoints.length >= 4) {
             return warpImageWithControlPoints4(sourceImage, imagePoints, geoPoints, destImage);
         }
         else // (imagePoints.length == 3)
@@ -194,31 +175,25 @@ public class ImageUtil
      * @param imagePoints four control points in the source image.
      * @param geoPoints   four geographic locations corresponding to each source control point.
      * @param destImage   the destination image to receive the transformed source imnage.
-     *
      * @return bounding sector for the geographically aligned destination image.
-     *
      * @throws IllegalArgumentException if any of <code>sourceImage</code>, <code>destImage</code>,
      *                                  <code>imagePoints</code> or <code>geoPoints</code> is null, or if either
      *                                  <code>imagePoints</code> or <code>geoPoints</code> have length less than 4.
      */
-    public static Sector warpImageWithControlPoints4(BufferedImage sourceImage, java.awt.geom.Point2D[] imagePoints,
-        LatLon[] geoPoints, BufferedImage destImage)
-    {
-        if (sourceImage == null)
-        {
+    public static Sector warpImageWithControlPoints4(BufferedImage sourceImage, Point2D[] imagePoints,
+        LatLon[] geoPoints, BufferedImage destImage) {
+        if (sourceImage == null) {
             String message = Logging.getMessage("nullValue.SourceImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (destImage == null)
-        {
+        if (destImage == null) {
             String message = Logging.getMessage("nullValue.DestinationImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
         String message = validateControlPoints(4, imagePoints, geoPoints);
-        if (message != null)
-        {
+        if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
@@ -226,7 +201,7 @@ public class ImageUtil
         // We can only create an affine transform from three of the given points. To increase accruacy, we will compute
         // the error for each combination of three points, and choose the combination with the least error.
 
-        java.awt.geom.Point2D[] bestFitImagePoints = new java.awt.geom.Point2D[3];
+        Point2D[] bestFitImagePoints = new Point2D[3];
         LatLon[] bestFitGeoPoints = new LatLon[3];
         computeBestFittingControlPoints4(imagePoints, geoPoints, bestFitImagePoints, bestFitGeoPoints);
 
@@ -242,31 +217,25 @@ public class ImageUtil
      * @param imagePoints three control points in the source image.
      * @param geoPoints   three geographic locations corresponding to each source control point.
      * @param destImage   the destination image to receive the transformed source imnage.
-     *
      * @return bounding sector for the geographically aligned destination image.
-     *
      * @throws IllegalArgumentException if any of <code>sourceImage</code>, <code>destImage</code>,
      *                                  <code>imagePoints</code> or <code>geoPoints</code> is null, or if either
      *                                  <code>imagePoints</code> or <code>geoPoints</code> have length less than 3.
      */
-    public static Sector warpImageWithControlPoints3(BufferedImage sourceImage, java.awt.geom.Point2D[] imagePoints,
-        LatLon[] geoPoints, BufferedImage destImage)
-    {
-        if (sourceImage == null)
-        {
+    public static Sector warpImageWithControlPoints3(BufferedImage sourceImage, Point2D[] imagePoints,
+        LatLon[] geoPoints, BufferedImage destImage) {
+        if (sourceImage == null) {
             String message = Logging.getMessage("nullValue.SourceImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (destImage == null)
-        {
+        if (destImage == null) {
             String message = Logging.getMessage("nullValue.DestinationImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
         String message = validateControlPoints(3, imagePoints, geoPoints);
-        if (message != null)
-        {
+        if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
@@ -280,12 +249,10 @@ public class ImageUtil
         List<LatLon> corners = computeImageCorners(sourceImage.getWidth(), sourceImage.getHeight(), gridToGeographic);
         Sector destSector = Sector.boundingSector(corners);
 
-        if (Sector.isSector(corners) && destSector.isSameSector(corners))
-        {
+        if (Sector.isSector(corners) && destSector.isSameSector(corners)) {
             getScaledCopy(sourceImage, destImage);
         }
-        else
-        {
+        else {
             // Compute a matrix that will map from destination grid coordinates to source grid coordinates. By using
             // matrix multiplication in this order, an incoming vector will be transformed by the last matrix multiplied,
             // then the previous, and so on. So an incoming destination coordinate would be transformed into geographic
@@ -310,37 +277,30 @@ public class ImageUtil
      * @param sourceImage     the source image to transform.
      * @param worldFileParams world file parameters which define an affine transform.
      * @param destImage       the destination image to receive the transformed source imnage.
-     *
      * @return bounding sector for the geographically aligned destination image.
-     *
      * @throws IllegalArgumentException if any of <code>sourceImage</code>, <code>destImage</code> or
      *                                  <code>worldFileParams</code> is null.
      */
     public static Sector warpImageWithWorldFile(BufferedImage sourceImage, AVList worldFileParams,
-        BufferedImage destImage)
-    {
-        if (sourceImage == null)
-        {
+        BufferedImage destImage) {
+        if (sourceImage == null) {
             String message = Logging.getMessage("nullValue.SourceImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (worldFileParams == null)
-        {
+        if (worldFileParams == null) {
             String message = Logging.getMessage("nullValue.ParamsIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (destImage == null)
-        {
+        if (destImage == null) {
             String message = Logging.getMessage("nullValue.DestinationImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Matrix imageToGeographic = Matrix.fromImageToGeographic(worldFileParams);
-        if (imageToGeographic == null)
-        {
+        if (imageToGeographic == null) {
             String message = Logging.getMessage("WorldFile.UnrecognizedValues", "");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -349,12 +309,10 @@ public class ImageUtil
         List<LatLon> corners = computeImageCorners(sourceImage.getWidth(), sourceImage.getHeight(), imageToGeographic);
         Sector destSector = Sector.boundingSector(corners);
 
-        if (Sector.isSector(corners) && destSector.isSameSector(corners))
-        {
+        if (Sector.isSector(corners) && destSector.isSameSector(corners)) {
             getScaledCopy(sourceImage, destImage);
         }
-        else
-        {
+        else {
             Matrix transform = Matrix.IDENTITY;
             transform = transform.multiply(Matrix.fromGeographicToImage(worldFileParams));
             transform = transform.multiply(Matrix.fromImageToGeographic(destImage.getWidth(), destImage.getHeight(),
@@ -375,32 +333,28 @@ public class ImageUtil
      * @param geoPoints      four geographic locations corresponding to the four <code>imagePoints</code>.
      * @param outImagePoints three control points that best estimate the image's location.
      * @param outGeoPoints   three geographic locations corresponding to the three <code>outImagePoints</code>.
-     *
      * @throws IllegalArgumentException if any of <code>imagePoints</code>, <code>geoPoints</code>,
      *                                  <code>outImagePoints</code> or <code>outGeoPoints</code> is null, or if
      *                                  <code>imagePoints</code> or <code>geoPoints</code> have length less than 4, or
      *                                  if <code>outImagePoints</code> or <code>outGeoPoints</code> have length less
      *                                  than 3.
      */
-    public static void computeBestFittingControlPoints4(java.awt.geom.Point2D[] imagePoints, LatLon[] geoPoints,
-        java.awt.geom.Point2D[] outImagePoints, LatLon[] outGeoPoints)
-    {
+    public static void computeBestFittingControlPoints4(Point2D[] imagePoints, LatLon[] geoPoints,
+        Point2D[] outImagePoints, LatLon[] outGeoPoints) {
         String message = validateControlPoints(4, imagePoints, geoPoints);
-        if (message != null)
-        {
+        if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
         message = validateControlPoints(3, outImagePoints, outGeoPoints);
-        if (message != null)
-        {
+        if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         // Compute the error for each combination of three points, and choose the combination with the least error.
 
-        java.awt.geom.Point2D[] bestFitImagePoints = null;
+        Point2D[] bestFitImagePoints = null;
         LatLon[] bestFitGeoPoints = null;
         double minError = Double.MAX_VALUE;
 
@@ -408,16 +362,14 @@ public class ImageUtil
             {0, 1, 2},
             {0, 1, 3},
             {1, 2, 3},
-            {0, 2, 3}})
-        {
-            java.awt.geom.Point2D[] points = new java.awt.geom.Point2D[] {
+            {0, 2, 3}}) {
+            Point2D[] points = new Point2D[] {
                 imagePoints[indices[0]], imagePoints[indices[1]], imagePoints[indices[2]]};
             LatLon[] locations = new LatLon[] {geoPoints[indices[0]], geoPoints[indices[1]], geoPoints[indices[2]]};
             Matrix m = Matrix.fromImageToGeographic(points, locations);
 
             double error = 0.0;
-            for (int j = 0; j < 4; j++)
-            {
+            for (int j = 0; j < 4; j++) {
                 Vec4 vec = new Vec4(imagePoints[j].getX(), imagePoints[j].getY(), 1.0).transformBy3(m);
                 LatLon ll = LatLon.fromDegrees(vec.y, vec.x);
                 LatLon diff = geoPoints[j].subtract(ll);
@@ -426,16 +378,14 @@ public class ImageUtil
                 error += d;
             }
 
-            if (error < minError)
-            {
+            if (error < minError) {
                 bestFitImagePoints = points;
                 bestFitGeoPoints = locations;
                 minError = error;
             }
         }
 
-        if (bestFitImagePoints != null)
-        {
+        if (bestFitImagePoints != null) {
             System.arraycopy(bestFitImagePoints, 0, outImagePoints, 0, 3);
             System.arraycopy(bestFitGeoPoints, 0, outGeoPoints, 0, 3);
         }
@@ -448,28 +398,23 @@ public class ImageUtil
      * @param imageWidth        width of the image grid.
      * @param imageHeight       height of the image grid.
      * @param imageToGeographic Matrix that maps image coordinates to geographic coordinates.
-     *
      * @return List of the image's corner locations in geographic coordinates.
-     *
      * @throws IllegalArgumentException if either <code>imageWidth</code> or <code>imageHeight</code> are less than 1,
      *                                  or if <code>imageToGeographic</code> is null.
      */
-    public static List<LatLon> computeImageCorners(int imageWidth, int imageHeight, Matrix imageToGeographic)
-    {
-        if (imageWidth < 1 || imageHeight < 1)
-        {
+    public static List<LatLon> computeImageCorners(int imageWidth, int imageHeight, Matrix imageToGeographic) {
+        if (imageWidth < 1 || imageHeight < 1) {
             String message = Logging.getMessage("generic.InvalidImageSize", imageWidth, imageHeight);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (imageToGeographic == null)
-        {
+        if (imageToGeographic == null) {
             String message = Logging.getMessage("nullValue.MatrixIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        ArrayList<LatLon> corners = new ArrayList<>();
+        List<LatLon> corners = new ArrayList<>();
 
         // Lower left corner.
         Vec4 vec = new Vec4(0, imageHeight, 1).transformBy3(imageToGeographic);
@@ -488,22 +433,17 @@ public class ImageUtil
     }
 
     private static String validateControlPoints(int numExpected,
-        java.awt.geom.Point2D[] imagePoints, LatLon[] geoPoints)
-    {
-        if (imagePoints == null)
-        {
+        Point2D[] imagePoints, LatLon[] geoPoints) {
+        if (imagePoints == null) {
             return Logging.getMessage("nullValue.ImagePointsIsNull");
         }
-        if (geoPoints == null)
-        {
+        if (geoPoints == null) {
             return Logging.getMessage("nullValue.GeoPointsIsNull");
         }
-        if (imagePoints.length < numExpected)
-        {
+        if (imagePoints.length < numExpected) {
             return Logging.getMessage("generic.ArrayInvalidLength", imagePoints.length);
         }
-        if (geoPoints.length < numExpected)
-        {
+        if (geoPoints.length < numExpected) {
             return Logging.getMessage("generic.ArrayInvalidLength", imagePoints.length);
         }
 
@@ -529,29 +469,24 @@ public class ImageUtil
      * @param image        the image to merge into the canvas.
      * @param canvas       the canvas into which the images are merged. The canvas is not changed if the specified image
      *                     and canvas sectors are disjoint.
-     *
      * @throws IllegalArgumentException if the any of the reference arguments are null or the aspect ratio is less than
      *                                  or equal to zero.
      */
     public static void mergeImage(Sector canvasSector, Sector imageSector, double aspectRatio, BufferedImage image,
-        BufferedImage canvas)
-    {
-        if (canvasSector == null || imageSector == null)
-        {
+        BufferedImage canvas) {
+        if (canvasSector == null || imageSector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
-        if (canvas == null || image == null)
-        {
+        if (canvas == null || image == null) {
             String message = Logging.getMessage("nullValue.ImageSource");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
-        if (aspectRatio <= 0)
-        {
+        if (aspectRatio <= 0) {
             String message = Logging.getMessage("Util.AspectRatioInvalid", aspectRatio);
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -565,18 +500,18 @@ public class ImageUtil
         int subHeight = aspectRatio >= 1 ? (int) Math.ceil((canvas.getHeight() / aspectRatio)) : canvas.getHeight();
 
         // yShift shifts image down to change origin from upper-left to lower-left
-        double yShift = aspectRatio >= 1d ? (1d - 1d / aspectRatio) * canvas.getHeight() : 0d;
+        double yShift = aspectRatio >= 1.0d ? (1.0d - 1.0d / aspectRatio) * canvas.getHeight() : 0.0d;
 
-        double sh = ((double) subHeight / (double) image.getHeight())
+        double sh = ((double) subHeight / image.getHeight())
             * (imageSector.getDeltaLat().divide(canvasSector.getDeltaLat()));
-        double sw = ((double) subWidth / (double) image.getWidth())
+        double sw = ((double) subWidth / image.getWidth())
             * (imageSector.getDeltaLon().divide(canvasSector.getDeltaLon()));
 
         double dh = subHeight *
-            (-imageSector.getMaxLatitude().subtract(canvasSector.getMaxLatitude()).degrees
+            (-imageSector.latMax().subtract(canvasSector.latMax()).degrees
                 / canvasSector.getDeltaLat().degrees);
         double dw = subWidth *
-            (imageSector.getMinLongitude().subtract(canvasSector.getMinLongitude()).degrees
+            (imageSector.lonMin().subtract(canvasSector.lonMin()).degrees
                 / canvasSector.getDeltaLon().degrees);
 
         Graphics2D g = canvas.createGraphics();
@@ -586,8 +521,7 @@ public class ImageUtil
     }
 
     public static Sector positionImage(BufferedImage sourceImage, Point[] imagePoints, LatLon[] geoPoints,
-        BufferedImage destImage)
-    {
+        BufferedImage destImage) {
         if (imagePoints.length == 3)
             return positionImage3(sourceImage, imagePoints, geoPoints, destImage);
         else if (imagePoints.length == 4)
@@ -597,13 +531,12 @@ public class ImageUtil
     }
 
     public static Sector positionImage3(BufferedImage sourceImage, Point[] imagePoints, LatLon[] geoPoints,
-        BufferedImage destImage)
-    {
+        BufferedImage destImage) {
         // TODO: check args
         BarycentricTriangle sourceLatLon = new BarycentricTriangle(geoPoints[0], geoPoints[1], geoPoints[2]);
-        BarycentricTriangle sourcePixels = new BarycentricTriangle(imagePoints[0], imagePoints[1], imagePoints[2]);
+        BarycentricPlanarShape sourcePixels = new BarycentricTriangle(imagePoints[0], imagePoints[1], imagePoints[2]);
 
-        ArrayList<LatLon> extremes = new ArrayList<>(4);
+        List<LatLon> extremes = new ArrayList<>(4);
         // Lower left corner.
         double[] bc = sourcePixels.getBarycentricCoords(new Vec4(0, sourceImage.getHeight(), 0));
         extremes.add(sourceLatLon.getLocation(bc));
@@ -623,13 +556,11 @@ public class ImageUtil
         double width = destImage.getWidth();
         double height = destImage.getHeight();
 
-        for (int row = 0; row < destImage.getHeight(); row++)
-        {
-            double t = (double) row / height;
+        for (int row = 0; row < destImage.getHeight(); row++) {
+            double t = row / height;
 
-            for (int col = 0; col < destImage.getWidth(); col++)
-            {
-                double s = (double) col / width;
+            for (int col = 0; col < destImage.getWidth(); col++) {
+                double s = col / width;
                 LatLon latLon = destLatLon.interpolate(1 - t, s);
                 double[] baryCoords = sourceLatLon.getBarycentricCoords(latLon);
                 Vec4 pixelPostion = sourcePixels.getPoint(baryCoords);
@@ -645,15 +576,14 @@ public class ImageUtil
     }
 
     public static Sector positionImage4(BufferedImage sourceImage, Point[] imagePoints, LatLon[] geoPoints,
-        BufferedImage destImage)
-    {
+        BufferedImage destImage) {
         // TODO: check args
         BarycentricQuadrilateral sourceLatLon = new BarycentricQuadrilateral(geoPoints[0], geoPoints[1], geoPoints[2],
             geoPoints[3]);
-        BarycentricQuadrilateral sourcePixels = new BarycentricQuadrilateral(imagePoints[0], imagePoints[1],
+        BarycentricPlanarShape sourcePixels = new BarycentricQuadrilateral(imagePoints[0], imagePoints[1],
             imagePoints[2], imagePoints[3]);
 
-        ArrayList<LatLon> extremes = new ArrayList<>(4);
+        List<LatLon> extremes = new ArrayList<>(4);
         // Lower left corner.
         double[] bc = sourcePixels.getBarycentricCoords(new Vec4(0, sourceImage.getHeight(), 0));
         extremes.add(sourceLatLon.getLocation(bc));
@@ -673,13 +603,11 @@ public class ImageUtil
         double width = destImage.getWidth();
         double height = destImage.getHeight();
 
-        for (int row = 0; row < destImage.getHeight(); row++)
-        {
-            double t = (double) row / height;
+        for (int row = 0; row < destImage.getHeight(); row++) {
+            double t = row / height;
 
-            for (int col = 0; col < destImage.getWidth(); col++)
-            {
-                double s = (double) col / width;
+            for (int col = 0; col < destImage.getWidth(); col++) {
+                double s = col / width;
                 LatLon latLon = destLatLon.interpolate(1 - t, s);
                 double[] baryCoords = sourceLatLon.getBarycentricCoords(latLon);
                 Vec4 pixelPostion = sourcePixels.getPoint(baryCoords);
@@ -705,23 +633,18 @@ public class ImageUtil
      * @param mipmapImageType the BufferedImage type to use when creating each mipmap image.
      * @param maxLevel        the maximum mip level to create. Specifying zero will return an array containing the
      *                        original image.
-     *
      * @return array of mipmap levels, starting at level 0 and stopping at maxLevel. This array will have length
      * maxLevel + 1.
-     *
      * @throws IllegalArgumentException if <code>image</code> is null, or if <code>maxLevel</code> is less than zero.
      * @see #getMaxMipmapLevel(int, int)
      */
-    public static BufferedImage[] buildMipmaps(BufferedImage image, int mipmapImageType, int maxLevel)
-    {
-        if (image == null)
-        {
+    public static BufferedImage[] buildMipmaps(BufferedImage image, int mipmapImageType, int maxLevel) {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (maxLevel < 0)
-        {
+        if (maxLevel < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "maxLevel < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -731,18 +654,15 @@ public class ImageUtil
 
         // If the image and mipmap type are equivalent, then just pass the original image along. Otherwise, create a
         // copy of the original image with the appropriate image type.
-        if (image.getType() == mipmapImageType)
-        {
+        if (image.getType() == mipmapImageType) {
             mipMapLevels[0] = image;
         }
-        else
-        {
+        else {
             mipMapLevels[0] = new BufferedImage(image.getWidth(), image.getHeight(), mipmapImageType);
             getScaledCopy(image, mipMapLevels[0]);
         }
 
-        for (int level = 1; level <= maxLevel; level++)
-        {
+        for (int level = 1; level <= maxLevel; level++) {
             int width = Math.max(image.getWidth() >> level, 1);
             int height = Math.max(image.getHeight() >> level, 1);
 
@@ -760,15 +680,11 @@ public class ImageUtil
      * <code>getMaxMipmapLevel(image.getWidth(), image.getHeight())</code>.
      *
      * @param image the BufferedImage to build mipmaps for.
-     *
      * @return array of mipmap levels.
-     *
      * @throws IllegalArgumentException if <code>image</code> is null.
      */
-    public static BufferedImage[] buildMipmaps(BufferedImage image)
-    {
-        if (image == null)
-        {
+    public static BufferedImage[] buildMipmaps(BufferedImage image) {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -784,11 +700,9 @@ public class ImageUtil
      * Returns an image type appropriate for generating mipmaps.
      *
      * @param imageType the original BufferedImage type.
-     *
      * @return mipmap image type.
      */
-    public static int getMipmapType(int imageType)
-    {
+    public static int getMipmapType(int imageType) {
         // We cannot create a BufferedImage of type "custom", so we fall back to a default image type.
         if (imageType == BufferedImage.TYPE_CUSTOM)
             return BufferedImage.TYPE_INT_ARGB;
@@ -803,21 +717,16 @@ public class ImageUtil
      *
      * @param width  the level 0 image width.
      * @param height the level 0 image height.
-     *
      * @return maximum mip level for the specified <code>width</code> and <code>height</code>.
-     *
      * @throws IllegalArgumentException if either <code>width</code> or <code>height</code> are less than 1.
      */
-    public static int getMaxMipmapLevel(int width, int height)
-    {
-        if (width < 1)
-        {
+    public static int getMaxMipmapLevel(int width, int height) {
+        if (width < 1) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "width < 1");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (height < 1)
-        {
+        if (height < 1) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "height < 1");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -837,23 +746,18 @@ public class ImageUtil
      *
      * @param image      the BufferedImage to convert to a power of two image.
      * @param scaleToFit true if <code>image</code> should be scaled to fit the new image dimensions; false otherwise.s
-     *
      * @return copy of <code>image</code> with power of two dimensions.
-     *
      * @throws IllegalArgumentException if <code>image</code> is null.
      */
-    public static BufferedImage convertToPowerOfTwoImage(BufferedImage image, boolean scaleToFit)
-    {
-        if (image == null)
-        {
+    public static BufferedImage convertToPowerOfTwoImage(BufferedImage image, boolean scaleToFit) {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         // If the original image is already a power of two in both dimensions, then simply return it.
-        if (WWMath.isPowerOfTwo(image.getWidth()) && WWMath.isPowerOfTwo(image.getHeight()))
-        {
+        if (WWMath.isPowerOfTwo(image.getWidth()) && WWMath.isPowerOfTwo(image.getHeight())) {
             return image;
         }
 
@@ -863,20 +767,16 @@ public class ImageUtil
             BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_3BYTE_BGR);
 
         Graphics2D g2d = potImage.createGraphics();
-        try
-        {
-            if (scaleToFit)
-            {
+        try {
+            if (scaleToFit) {
                 g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
                 g2d.drawImage(image, 0, 0, potImage.getWidth(), potImage.getHeight(), null);
             }
-            else
-            {
+            else {
                 g2d.drawImage(image, 0, 0, null);
             }
         }
-        finally
-        {
+        finally {
             g2d.dispose();
         }
 
@@ -888,15 +788,11 @@ public class ImageUtil
      * to fit its contents.
      *
      * @param image the BufferedImage to trim.
-     *
      * @return copy of <code>image</code> with its transparent borders trimmed
-     *
      * @throws IllegalArgumentException if <code>image</code> is null.
      */
-    public static BufferedImage trimImage(BufferedImage image)
-    {
-        if (image == null)
-        {
+    public static BufferedImage trimImage(BufferedImage image) {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -911,12 +807,10 @@ public class ImageUtil
         int x2 = 0;
         int y2 = 0;
 
-        for (int y = 0; y < height; y++)
-        {
+        for (int y = 0; y < height; y++) {
             image.getRGB(0, y, width, 1, rowPixels, 0, width);
 
-            for (int x = 0; x < width; x++)
-            {
+            for (int x = 0; x < width; x++) {
                 int a = ((rowPixels[x] >> 24) & 0xff);
                 if (a <= 0)
                     continue;
@@ -941,15 +835,11 @@ public class ImageUtil
      * and not the numerous supporting classes a BufferedImage references.
      *
      * @param image the BufferedImage to compute the size of.
-     *
      * @return size of the BufferedImage in bytes.
-     *
      * @throws IllegalArgumentException if <code>image</code> is null.
      */
-    public static long computeSizeInBytes(BufferedImage image)
-    {
-        if (image == null)
-        {
+    public static long computeSizeInBytes(BufferedImage image) {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -957,12 +847,10 @@ public class ImageUtil
 
         long size = 0L;
 
-        java.awt.image.Raster raster = image.getRaster();
-        if (raster != null)
-        {
-            java.awt.image.DataBuffer db = raster.getDataBuffer();
-            if (db != null)
-            {
+        Raster raster = image.getRaster();
+        if (raster != null) {
+            DataBuffer db = raster.getDataBuffer();
+            if (db != null) {
                 size = computeSizeOfDataBuffer(db);
             }
         }
@@ -970,27 +858,24 @@ public class ImageUtil
         return size;
     }
 
-    private static long computeSizeOfDataBuffer(java.awt.image.DataBuffer dataBuffer)
-    {
+    private static long computeSizeOfDataBuffer(DataBuffer dataBuffer) {
         return dataBuffer.getSize() * computeSizeOfBufferDataType(dataBuffer.getDataType());
     }
 
-    private static long computeSizeOfBufferDataType(int bufferDataType)
-    {
-        switch (bufferDataType)
-        {
-            case java.awt.image.DataBuffer.TYPE_BYTE:
+    private static long computeSizeOfBufferDataType(int bufferDataType) {
+        switch (bufferDataType) {
+            case DataBuffer.TYPE_BYTE:
                 return (Byte.SIZE / 8);
-            case java.awt.image.DataBuffer.TYPE_DOUBLE:
+            case DataBuffer.TYPE_DOUBLE:
                 return (Double.SIZE / 8);
-            case java.awt.image.DataBuffer.TYPE_FLOAT:
+            case DataBuffer.TYPE_FLOAT:
                 return (Float.SIZE / 8);
-            case java.awt.image.DataBuffer.TYPE_INT:
+            case DataBuffer.TYPE_INT:
                 return (Integer.SIZE / 8);
-            case java.awt.image.DataBuffer.TYPE_SHORT:
-            case java.awt.image.DataBuffer.TYPE_USHORT:
+            case DataBuffer.TYPE_SHORT:
+            case DataBuffer.TYPE_USHORT:
                 return (Short.SIZE / 8);
-            case java.awt.image.DataBuffer.TYPE_UNDEFINED:
+            case DataBuffer.TYPE_UNDEFINED:
                 break;
         }
         return 0L;
@@ -1001,43 +886,36 @@ public class ImageUtil
      *
      * @param imageFile          source image
      * @param interpolation_mode the interpolation mode if the image is reprojected.
-     *
      * @return AVList
-     *
      * @throws IOException        if there is a problem opening the file.
      * @throws WWRuntimeException if the image type is unsupported.
      */
-    public static AVList openSpatialImage(File imageFile, int interpolation_mode) throws IOException
-    {
+    public static AVList openSpatialImage(File imageFile, int interpolation_mode) throws IOException {
         AVList values = new AVListImpl();
         BufferedImage image;
         Sector sector;
 
         //Check for Geotiff
         if ((imageFile.getName().toLowerCase().endsWith(".tiff") || (imageFile.getName().toLowerCase().endsWith(
-            ".tif"))))
-        {
+            ".tif")))) {
             GeotiffReader reader = new GeotiffReader(imageFile);
             int imageIndex = 0;
             image = reader.read(imageIndex);
-            if (reader.isGeotiff(imageIndex))
-            {
+            if (reader.isGeotiff(imageIndex)) {
                 return handleGeotiff(image, reader, imageIndex, interpolation_mode);
             }
         }
 
         //if not geotiff, contine through for other formats
         image = ImageIO.read(imageFile);
-        if (image == null)
-        {
+        if (image == null) {
             String message = Logging.getMessage("generic.ImageReadFailed", imageFile);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
         }
 
         File[] worldFiles = WorldFile.getWorldFiles(imageFile.getAbsoluteFile());
-        if (worldFiles == null || worldFiles.length == 0)
-        {
+        if (worldFiles == null || worldFiles.length == 0) {
             String message = Logging.getMessage("WorldFile.WorldFileNotFound", imageFile.getAbsolutePath());
             Logging.logger().severe(message);
             throw new FileNotFoundException(message);
@@ -1051,8 +929,7 @@ public class ImageUtil
             ImageUtil.reprojectUtmToGeographic(values, interpolation_mode);
 
         sector = (Sector) values.getValue(AVKey.SECTOR);
-        if (sector == null)
-        {
+        if (sector == null) {
             String message = "Problem generating bounding sector for the image";
             throw new WWRuntimeException(message);
         }
@@ -1066,13 +943,10 @@ public class ImageUtil
      * Opens a spatial image.  Reprojects the image if it is in UTM projection.
      *
      * @param imageFile source image
-     *
      * @return AVList
-     *
      * @throws IOException if there is a problem opening the file.
      */
-    public static AVList openSpatialImage(File imageFile) throws IOException
-    {
+    public static AVList openSpatialImage(File imageFile) throws IOException {
         return openSpatialImage(imageFile, ImageUtil.NEAREST_NEIGHBOR_INTERPOLATION);
     }
 
@@ -1082,13 +956,9 @@ public class ImageUtil
      * @param reader     GeotiffReader
      * @param imageIndex image index (could be a band; GeoTiff file could contain overview images, bands, etc)
      * @param values     AVList
-     *
      * @return values            AVList
-     *
-     * @throws IOException if there is a problem opening the file.
      */
-    public static AVList readGeoKeys(GeotiffReader reader, int imageIndex, AVList values) throws IOException
-    {
+    public static AVList readGeoKeys(GeotiffReader reader, int imageIndex, AVList values) {
         if (null == values)
             values = new AVListImpl();
 
@@ -1105,19 +975,13 @@ public class ImageUtil
      * @param reader             GeotiffReader
      * @param imageIndex         image index (GeoTiff file could contain overview images, bands, etc)
      * @param interpolation_mode the interpolation mode if the image is reprojected.
-     *
      * @return AVList
-     *
-     * @throws IOException if there is a problem opening the file.
      */
     private static AVList handleGeotiff(BufferedImage image, GeotiffReader reader, int imageIndex,
-        int interpolation_mode)
-        throws IOException
-    {
+        int interpolation_mode) {
 
         AVList values = new AVListImpl();
-        if (null != image)
-        {
+        if (null != image) {
             values.setValue(AVKey.IMAGE, image);
             values.setValue(AVKey.WIDTH, image.getWidth());
             values.setValue(AVKey.HEIGHT, image.getHeight());
@@ -1131,66 +995,56 @@ public class ImageUtil
         return values;
     }
 
-    public static Sector calcBoundingBoxForUTM(AVList params) throws IOException
-    {
-        if (null == params)
-        {
+    public static Sector calcBoundingBoxForUTM(AVList params) throws IOException {
+        if (null == params) {
             String message = Logging.getMessage("nullValue.ParamsIsNull");
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        if (!params.hasKey(AVKey.WIDTH))
-        {
+        if (!params.hasKey(AVKey.WIDTH)) {
             String message = Logging.getMessage("Geom.WidthInvalid");
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        if (!params.hasKey(AVKey.HEIGHT))
-        {
+        if (!params.hasKey(AVKey.HEIGHT)) {
             String message = Logging.getMessage("Geom.HeightInvalid");
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        if (!params.hasKey(WorldFile.WORLD_FILE_X_PIXEL_SIZE))
-        {
+        if (!params.hasKey(WorldFile.WORLD_FILE_X_PIXEL_SIZE)) {
             String message = Logging.getMessage("WorldFile.NoPixelSizeSpecified", "X");
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        if (!params.hasKey(WorldFile.WORLD_FILE_Y_PIXEL_SIZE))
-        {
+        if (!params.hasKey(WorldFile.WORLD_FILE_Y_PIXEL_SIZE)) {
             String message = Logging.getMessage("WorldFile.NoPixelSizeSpecified", "Y");
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        if (!params.hasKey(WorldFile.WORLD_FILE_X_LOCATION))
-        {
+        if (!params.hasKey(WorldFile.WORLD_FILE_X_LOCATION)) {
             String message = Logging.getMessage("WorldFile.NoLocationSpecified", "X");
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        if (!params.hasKey(WorldFile.WORLD_FILE_Y_LOCATION))
-        {
+        if (!params.hasKey(WorldFile.WORLD_FILE_Y_LOCATION)) {
             String message = Logging.getMessage("WorldFile.NoLocationSpecified", "Y");
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        if (!params.hasKey(AVKey.PROJECTION_ZONE))
-        {
+        if (!params.hasKey(AVKey.PROJECTION_ZONE)) {
             String message = Logging.getMessage("generic.ZoneIsMissing");
             Logging.logger().severe(message);
             throw new IOException(message);
         }
 
-        if (!params.hasKey(AVKey.PROJECTION_HEMISPHERE))
-        {
+        if (!params.hasKey(AVKey.PROJECTION_HEMISPHERE)) {
             String message = Logging.getMessage("generic.HemisphereIsMissing");
             Logging.logger().severe(message);
             throw new IOException(message);
@@ -1210,8 +1064,8 @@ public class ImageUtil
 
         UTMCoord upperLeft = UTMCoord.fromUTM(zone, hemisphere, xLocation, yLocation);
 
-        UTMCoord utmUpperLeft = UTMCoord.fromUTM(zone, hemisphere, upperLeft.getEasting() - xPixelSize * .5,
-            upperLeft.getNorthing() - yPixelSize * .5);
+        UTMCoord utmUpperLeft = UTMCoord.fromUTM(zone, hemisphere, upperLeft.getEasting() - xPixelSize * 0.5,
+            upperLeft.getNorthing() - yPixelSize * 0.5);
 
         UTMCoord utmLowerRight = UTMCoord.fromUTM(zone, hemisphere, utmUpperLeft.getEasting() + (width * xPixelSize),
             utmUpperLeft.getNorthing() + (height * yPixelSize));
@@ -1241,16 +1095,14 @@ public class ImageUtil
      *               values
      * @param mode   the interpolation mode if the image is reprojected.
      */
-    public static void reprojectUtmToGeographic(AVList values, int mode)
-    {
+    public static void reprojectUtmToGeographic(AVList values, int mode) {
         //TODO pull these const from TMCoord?
         double False_Easting = 500000;
         double False_Northing = 0;
         double Scale = 0.9996;
-        Earth earth = new Earth(); //need globe for TM
+        Globe earth = new Earth(); //need globe for TM
 
-        if (values == null)
-        {
+        if (values == null) {
             String message = Logging.getMessage("nullValue.AVListIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -1262,13 +1114,11 @@ public class ImageUtil
 
         BufferedImage biOut;
         //Note: image type always BufferedImage.TYPE_INT_ARGB to handle transparent no-data areas after reprojection
-        if ((image.getColorModel() != null) && (image.getColorModel() instanceof IndexColorModel))
-        {
+        if ((image.getColorModel() != null) && (image.getColorModel() instanceof IndexColorModel)) {
             biOut = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB,
                 (IndexColorModel) image.getColorModel());
         }
-        else
-        {
+        else {
             biOut = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         }
 
@@ -1290,8 +1140,8 @@ public class ImageUtil
         String hemisphere = (String) values.getValue(AVKey.PROJECTION_HEMISPHERE);
 
         UTMCoord upperLeft = UTMCoord.fromUTM(zone, hemisphere, xLocation, yLocation);
-        UTMCoord utmUpperLeft = UTMCoord.fromUTM(zone, hemisphere, upperLeft.getEasting() - xPixelSize * .5,
-            upperLeft.getNorthing() - yPixelSize * .5);
+        UTMCoord utmUpperLeft = UTMCoord.fromUTM(zone, hemisphere, upperLeft.getEasting() - xPixelSize * 0.5,
+            upperLeft.getNorthing() - yPixelSize * 0.5);
 
         UTMCoord utmLowerRight = UTMCoord.fromUTM(zone, hemisphere, utmUpperLeft.getEasting() + (width * xPixelSize),
             utmUpperLeft.getNorthing() + (height * yPixelSize));
@@ -1312,20 +1162,18 @@ public class ImageUtil
         //moving to center of pixel
         double yPixel = (bottomExtent.getDegrees() - topExtent.getDegrees()) / height;
         double xPixel = (rightExtent.getDegrees() - leftExtent.getDegrees()) / width;
-        double topExtent2 = sector.getMaxLatitude().getDegrees() + (yPixel * .5);
-        double leftExtent2 = sector.getMinLongitude().getDegrees() + (xPixel * .5);
+        double topExtent2 = sector.latMax().getDegrees() + (yPixel * 0.5);
+        double leftExtent2 = sector.lonMin().getDegrees() + (xPixel * 0.5);
 
         TMCoord tmUpperLeft = TMCoord.fromLatLon(utmUpperLeft.getLatitude(), utmUpperLeft.getLongitude(),
             earth, null, null, Angle.fromDegrees(0.0), utmUpperLeft.getCentralMeridian(),
             False_Easting, False_Northing, Scale);
 
-        double srcTop = tmUpperLeft.getNorthing() + (yPixelSize * .5);
-        double srcLeft = tmUpperLeft.getEasting() + (xPixelSize * .5);
+        double srcTop = tmUpperLeft.getNorthing() + (yPixelSize * 0.5);
+        double srcLeft = tmUpperLeft.getEasting() + (xPixelSize * 0.5);
 
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 double yTarget = topExtent2 + y * yPixel;
                 double xTarget = leftExtent2 + x * xPixel;
                 TMCoord TM = TMCoord.fromLatLon(Angle.fromDegreesLatitude(yTarget), Angle.fromDegreesLongitude(xTarget),
@@ -1337,8 +1185,7 @@ public class ImageUtil
                 long rx = Math.round(distFromCornerX / Math.abs(xPixelSize));
                 long ry = Math.round(distFromCornerY / Math.abs(yPixelSize));
 
-                if (mode == ImageUtil.BILINEAR_INTERPOLATION)
-                {
+                if (mode == ImageUtil.BILINEAR_INTERPOLATION) {
                     double rxD = distFromCornerX / Math.abs(xPixelSize);
                     double ryD = distFromCornerY / Math.abs(yPixelSize);
                     int iX = (int) Math.floor(rxD);
@@ -1346,8 +1193,7 @@ public class ImageUtil
                     double dx = rxD - iX;
                     double dy = ryD - iY;
                     if ((iX > 0) && (iY > 0))
-                        if ((iX < width - 1) && (iY < height - 1))
-                        {
+                        if ((iX < width - 1) && (iY < height - 1)) {
                             //get four pixels from image
                             int a = image.getRGB(iX, iY);
                             int b = image.getRGB(iX + 1, iY);
@@ -1385,11 +1231,9 @@ public class ImageUtil
      * @param c1 color at the lower right corner of the quadrilateral.
      * @param c2 color at the pixel upper left corner of the quadrilateral.
      * @param c3 color at the pixel upper right corner of the quadrilateral.
-     *
      * @return int the interpolated color.
      */
-    public static int interpolateColor(double x, double y, int c0, int c1, int c2, int c3)
-    {
+    public static int interpolateColor(double x, double y, int c0, int c1, int c2, int c3) {
         //pull out alpha, red, green, blue values for each pixel
         int a0 = (c0 >> 24) & 0xff;
         int r0 = (c0 >> 16) & 0xff;
@@ -1436,18 +1280,6 @@ public class ImageUtil
         return (a | r | g | b);
     }
 
-    public static class AlignedImage
-    {
-        public final Sector sector;
-        public final BufferedImage image;
-
-        public AlignedImage(BufferedImage image, Sector sector)
-        {
-            this.image = image;
-            this.sector = sector;
-        }
-    }
-
     /**
      * Reprojects an image into an aligned image, one with edges of constant latitude and longitude.
      *
@@ -1458,17 +1290,14 @@ public class ImageUtil
      * @param longitudes  an array identifying the longitude of each pixels if the source image. There must be an entry
      *                    in the array for all pixels. The values are taken to be in row-major order relative to the
      *                    image -- the horizontal component varies fastest.
-     *
      * @return a new image containing the original image but reprojected to align to the bounding sector. Pixels in the
      * new image that have no correspondence with the source image are transparent.
-     *
      * @throws InterruptedException if any thread has interrupted the current thread while alignImage is running. The
      *                              <i>interrupted status</i> of the current thread is cleared when this exception is
      *                              thrown.
      */
     public static AlignedImage alignImage(BufferedImage sourceImage, float[] latitudes, float[] longitudes)
-        throws InterruptedException
-    {
+        throws InterruptedException {
         return alignImage(sourceImage, latitudes, longitudes, null, null);
     }
 
@@ -1484,26 +1313,21 @@ public class ImageUtil
      *                    image -- the horizontal component varies fastest.
      * @param sector      the sector to align the image to. If null, this computes the aligned image's sector.
      * @param dimension   the the aligned image's dimensions. If null, this computes the aligned image's dimension.
-     *
      * @return a new image containing the original image but reprojected to align to the sector. Pixels in the new image
      * that have no correspondence with the source image are transparent.
-     *
      * @throws InterruptedException if any thread has interrupted the current thread while alignImage is running. The
      *                              <i>interrupted status</i> of the current thread is cleared when this exception is
      *                              thrown.
      */
     public static AlignedImage alignImage(BufferedImage sourceImage, float[] latitudes, float[] longitudes,
-        Sector sector, Dimension dimension) throws InterruptedException
-    {
-        if (sourceImage == null)
-        {
+        Sector sector, Dimension dimension) throws InterruptedException {
+        if (sourceImage == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
-        if (latitudes == null || longitudes == null || latitudes.length != longitudes.length)
-        {
+        if (latitudes == null || longitudes == null || latitudes.length != longitudes.length) {
             String message = Logging.getMessage("ImageUtil.FieldArrayInvalid");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -1512,15 +1336,13 @@ public class ImageUtil
         int sourceWidth = sourceImage.getWidth();
         int sourceHeight = sourceImage.getHeight();
 
-        if (sourceWidth < 1 || sourceHeight < 1)
-        {
+        if (sourceWidth < 1 || sourceHeight < 1) {
             String message = Logging.getMessage("ImageUtil.EmptyImage");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
-        if (longitudes.length < sourceWidth * sourceHeight || latitudes.length < sourceWidth * sourceHeight)
-        {
+        if (longitudes.length < sourceWidth * sourceHeight || latitudes.length < sourceWidth * sourceHeight) {
             String message = Logging.getMessage("ImageUtil.FieldArrayTooShort");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -1532,8 +1354,7 @@ public class ImageUtil
         // If the caller did not specify a Sector, then use the image's bounding sector as computed by
         // GeographicImageInterpolator. We let GeographicImageInterpolator perform the computation because it computes
         // the correct sector for images which cross the international dateline.
-        if (sector == null)
-        {
+        if (sector == null) {
             sector = grid.getSector();
         }
 
@@ -1547,8 +1368,7 @@ public class ImageUtil
         // This has the effect of allocating resolution where the aligned image needs it most, and gives the aligned
         // image square pixels in geographic coordinates. Without square pixels the aligned image's resolution can be
         // extremely anisotriopic, causing severe aliasing in one dimension.
-        if (dimension == null)
-        {
+        if (dimension == null) {
             double maxDimension = Math.max(sourceWidth, sourceHeight);
             double maxSectorDelta = Math.max(sector.getDeltaLonDegrees(), sector.getDeltaLatDegrees());
             double pixelsPerDegree = maxDimension / maxSectorDelta;
@@ -1571,8 +1391,7 @@ public class ImageUtil
         // aligned image pixel's as having area, and the location of each pixel's at its center. This loop begins in the
         // center of the upper left hand pixel and continues in row major order across the image, stepping by a pixels
         // geographic size.
-        for (int j = 0; j < dimension.height; j++)
-        {
+        for (int j = 0; j < dimension.height; j++) {
             // Generate an InterruptedException if the current thread is interrupted. Responding to thread interruptions
             // before processing each image row ensures that this method terminates in a reasonable amount of time after
             // the currently executing thread is interrupted, but without consuming unecessary CPU time. Using either
@@ -1580,11 +1399,10 @@ public class ImageUtil
             // total CPU time.
             Thread.sleep(0);
 
-            float lat = (float) (sector.getMaxLatitude().degrees - j * dLat - dLon / 2d);
+            float lat = (float) (sector.latMax().degrees - j * dLat - dLon / 2.0d);
 
-            for (int i = 0; i < dimension.width; i++)
-            {
-                float lon = (float) (sector.getMinLongitude().degrees + i * dLon + dLat / 2d);
+            for (int i = 0; i < dimension.width; i++) {
+                float lon = (float) (sector.lonMin().degrees + i * dLon + dLat / 2.0d);
 
                 // Search for a cell in the source image which contains this aligned image pixel's location.
                 ImageInterpolator.ContainingCell cell = grid.findContainingCell(lon, lat);
@@ -1592,8 +1410,7 @@ public class ImageUtil
                 // If there's a source cell for this location, then write a color to the destination image by linearly
                 // interpolating between the four pixels at the cell's corners. Otherwise, don't change the destination
                 // image. This ensures pixels which don't correspond to the source image remain transparent.
-                if (cell != null)
-                {
+                if (cell != null) {
                     int color = interpolateColor(cell.uv[0], cell.uv[1],
                         sourceColors[cell.fieldIndices[0]],
                         sourceColors[cell.fieldIndices[1]],
@@ -1618,10 +1435,8 @@ public class ImageUtil
         return new AlignedImage(destImage, sector);
     }
 
-    public static void alignImageDump(BufferedImage sourceImage, float[] latitudes, float[] longitudes)
-    {
-        try
-        {
+    public static void alignImageDump(RenderedImage sourceImage, float[] latitudes, float[] longitudes) {
+        try {
             JFileChooser fileChooser = new JFileChooser();
             int status = fileChooser.showSaveDialog(null);
             if (status != JFileChooser.APPROVE_OPTION)
@@ -1638,8 +1453,7 @@ public class ImageUtil
 
             DataOutputStream latsOut = new DataOutputStream(new FileOutputStream(latsFile));
             DataOutputStream lonsOut = new DataOutputStream(new FileOutputStream(lonsFile));
-            for (int i = 0; i < latitudes.length; i++)
-            {
+            for (int i = 0; i < latitudes.length; i++) {
                 latsOut.writeFloat(latitudes[i]);
                 lonsOut.writeFloat(longitudes[i]);
             }
@@ -1649,57 +1463,47 @@ public class ImageUtil
             lonsOut.close();
             System.out.println("FILES SAVED");
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static final int MAX_IMAGE_SIZE_TO_CONVERT = 4096;
-
-    public static BufferedImage toCompatibleImage(BufferedImage image)
-    {
-        if (image == null)
-        {
+    public static BufferedImage toCompatibleImage(BufferedImage image) {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (java.awt.GraphicsEnvironment.isHeadless())
+        if (GraphicsEnvironment.isHeadless())
             return image;
 
         // If the image is not already compatible, and is within the restrictions on dimension, then convert it
         // to a compatible image type.
         if (!isCompatibleImage(image)
             && (image.getWidth() <= MAX_IMAGE_SIZE_TO_CONVERT)
-            && (image.getHeight() <= MAX_IMAGE_SIZE_TO_CONVERT))
-        {
-            java.awt.image.BufferedImage compatibleImage =
+            && (image.getHeight() <= MAX_IMAGE_SIZE_TO_CONVERT)) {
+            BufferedImage compatibleImage =
                 createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
-            java.awt.Graphics2D g2d = compatibleImage.createGraphics();
+            Graphics2D g2d = compatibleImage.createGraphics();
             g2d.drawImage(image, 0, 0, null);
             g2d.dispose();
             return compatibleImage;
         }
         // Otherwise return the original image.
-        else
-        {
+        else {
             return image;
         }
     }
 
-    public static BufferedImage createCompatibleImage(int width, int height, int transparency)
-    {
-        if (width < 1)
-        {
+    public static BufferedImage createCompatibleImage(int width, int height, int transparency) {
+        if (width < 1) {
             String message = Logging.getMessage("generic.InvalidWidth", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (height < 1)
-        {
+        if (height < 1) {
             String message = Logging.getMessage("generic.InvalidHeight", height);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1716,49 +1520,41 @@ public class ImageUtil
 //        return gc.createCompatibleImage(width, height, transparency);
     }
 
-    protected static boolean isCompatibleImage(BufferedImage image)
-    {
-        if (java.awt.GraphicsEnvironment.isHeadless())
+    protected static boolean isCompatibleImage(BufferedImage image) {
+        if (GraphicsEnvironment.isHeadless())
             return false;
 
-        java.awt.GraphicsConfiguration gc = getDefaultGraphicsConfiguration();
-        java.awt.image.ColorModel gcColorModel = gc.getColorModel(image.getTransparency());
+        GraphicsConfiguration gc = getDefaultGraphicsConfiguration();
+        ColorModel gcColorModel = gc.getColorModel(image.getTransparency());
         return image.getColorModel().equals(gcColorModel);
     }
 
-    protected static java.awt.GraphicsConfiguration getDefaultGraphicsConfiguration()
-    {
-        java.awt.GraphicsEnvironment ge = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment();
-        java.awt.GraphicsDevice gd = ge.getDefaultScreenDevice();
+    protected static GraphicsConfiguration getDefaultGraphicsConfiguration() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
         return gd.getDefaultConfiguration();
     }
 
-    public static BufferedImage mapTransparencyColors(ByteBuffer imageBuffer, int[] originalColors)
-    {
-        try
-        {
+    public static BufferedImage mapTransparencyColors(ByteBuffer imageBuffer, int[] originalColors) {
+        try {
             InputStream inputStream = WWIO.getInputStreamFromByteBuffer(imageBuffer);
             BufferedImage image = ImageIO.read(inputStream);
             return mapTransparencyColors(image, originalColors);
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             Logging.logger().finest(e.getMessage());
             return null;
         }
     }
 
-    public static BufferedImage mapTransparencyColors(BufferedImage sourceImage, int[] originalColors)
-    {
-        if (sourceImage == null)
-        {
+    public static BufferedImage mapTransparencyColors(BufferedImage sourceImage, int[] originalColors) {
+        if (sourceImage == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
-        if (originalColors == null)
-        {
+        if (originalColors == null) {
             String message = Logging.getMessage("nullValue.ColorArrayIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -1767,8 +1563,7 @@ public class ImageUtil
         int width = sourceImage.getWidth();
         int height = sourceImage.getHeight();
 
-        if (width < 1 || height < 1)
-        {
+        if (width < 1 || height < 1) {
             String message = Logging.getMessage("ImageUtil.EmptyImage");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -1777,15 +1572,11 @@ public class ImageUtil
         int[] sourceColors = sourceImage.getRGB(0, 0, width, height, null, 0, width);
         int[] destColors = Arrays.copyOf(sourceColors, sourceColors.length);
 
-        for (int j = 0; j < height; j++)
-        {
-            for (int i = 0; i < width; i++)
-            {
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
                 int index = j * width + i;
-                for (int c : originalColors)
-                {
-                    if (sourceColors[index] == c)
-                    {
+                for (int c : originalColors) {
+                    if (sourceColors[index] == c) {
                         destColors[index] = 0;
                         break;
                     }
@@ -1803,32 +1594,26 @@ public class ImageUtil
         return destImage;
     }
 
-    public static BufferedImage mapColors(ByteBuffer imageBuffer, int originalColor, int newColor)
-    {
-        try
-        {
+    public static BufferedImage mapColors(ByteBuffer imageBuffer, int originalColor, int newColor) {
+        try {
             InputStream inputStream = WWIO.getInputStreamFromByteBuffer(imageBuffer);
             BufferedImage image = ImageIO.read(inputStream);
             return mapColors(image, new int[] {originalColor}, new int[] {newColor});
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             Logging.logger().finest(e.getMessage());
             return null;
         }
     }
 
-    public static BufferedImage mapColors(BufferedImage sourceImage, int[] originalColors, int[] newColors)
-    {
-        if (sourceImage == null)
-        {
+    public static BufferedImage mapColors(BufferedImage sourceImage, int[] originalColors, int[] newColors) {
+        if (sourceImage == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
-        if (originalColors == null || newColors == null)
-        {
+        if (originalColors == null || newColors == null) {
             String message = Logging.getMessage("nullValue.ColorArrayIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -1837,8 +1622,7 @@ public class ImageUtil
         int width = sourceImage.getWidth();
         int height = sourceImage.getHeight();
 
-        if (width < 1 || height < 1)
-        {
+        if (width < 1 || height < 1) {
             String message = Logging.getMessage("ImageUtil.EmptyImage");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -1847,13 +1631,10 @@ public class ImageUtil
         int[] sourceColors = sourceImage.getRGB(0, 0, width, height, null, 0, width);
         int[] destColors = Arrays.copyOf(sourceColors, sourceColors.length);
 
-        for (int j = 0; j < height; j++)
-        {
-            for (int i = 0; i < width; i++)
-            {
+        for (int j = 0; j < height; j++) {
+            for (int i = 0; i < width; i++) {
                 int index = j * width + i;
-                for (int c : originalColors)
-                {
+                for (int c : originalColors) {
                     if (sourceColors[index] == originalColors[c])
                         destColors[index] = newColors[c];
                 }
@@ -1870,12 +1651,10 @@ public class ImageUtil
         return destImage;
     }
 
-    public static ByteBuffer asJPEG(DataRaster raster)
-    {
+    public static ByteBuffer asJPEG(DataRaster raster) {
         ByteBuffer buffer = null;
 
-        if (null == raster)
-        {
+        if (null == raster) {
             String msg = Logging.getMessage("nullValue.RasterIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1883,16 +1662,13 @@ public class ImageUtil
 
         BufferedImage image;
 
-        if (raster instanceof BufferedImageRaster)
-        {
+        if (raster instanceof BufferedImageRaster) {
             image = ((BufferedImageRaster) raster).getBufferedImage();
         }
-        else if (raster instanceof BufferWrapperRaster)
-        {
+        else if (raster instanceof BufferWrapperRaster) {
             image = ImageUtil.visualize((BufferWrapperRaster) raster);
         }
-        else
-        {
+        else {
             String msg = Logging.getMessage("generic.UnexpectedRasterType", raster.getClass().getName());
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg);
@@ -1900,24 +1676,20 @@ public class ImageUtil
 
         ImageOutputStream ios = null;
 
-        if (null == image)
-        {
+        if (null == image) {
             String msg = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg);
         }
 
-        try
-        {
+        try {
             ByteArrayOutputStream imageBytes = new ByteArrayOutputStream();
             ios = new MemoryCacheImageOutputStream(imageBytes);
 
             ColorModel cm = image.getColorModel();
-            if (cm instanceof ComponentColorModel)
-            {
+            if (cm instanceof ComponentColorModel) {
                 ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
-                if (null != writer)
-                {
+                if (null != writer) {
                     ImageWriteParam param = writer.getDefaultWriteParam();
                     param.setSourceBands(new int[] {0, 1, 2});
                     cm = new DirectColorModel(24, /*Red*/0x00ff0000, /*Green*/0x0000ff00, /*Blue*/ 0x000000ff,
@@ -1934,24 +1706,20 @@ public class ImageUtil
 
             buffer = ByteBuffer.wrap(imageBytes.toByteArray());
         }
-        catch (Throwable t)
-        {
+        catch (Throwable t) {
             Logging.logger().log(java.util.logging.Level.SEVERE, t.getMessage(), t);
         }
-        finally
-        {
+        finally {
             close(ios);
         }
 
         return buffer;
     }
 
-    public static ByteBuffer asPNG(DataRaster raster)
-    {
+    public static ByteBuffer asPNG(DataRaster raster) {
         ByteBuffer buffer = null;
 
-        if (null == raster)
-        {
+        if (null == raster) {
             String msg = Logging.getMessage("nullValue.RasterIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1959,16 +1727,13 @@ public class ImageUtil
 
         BufferedImage image;
 
-        if (raster instanceof BufferedImageRaster)
-        {
+        if (raster instanceof BufferedImageRaster) {
             image = ((BufferedImageRaster) raster).getBufferedImage();
         }
-        else if (raster instanceof BufferWrapperRaster)
-        {
+        else if (raster instanceof BufferWrapperRaster) {
             image = ImageUtil.visualize((BufferWrapperRaster) raster);
         }
-        else
-        {
+        else {
             String msg = Logging.getMessage("generic.UnexpectedRasterType", raster.getClass().getName());
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg);
@@ -1976,15 +1741,13 @@ public class ImageUtil
 
         ImageOutputStream ios = null;
 
-        if (null == image)
-        {
+        if (null == image) {
             String msg = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg);
         }
 
-        try
-        {
+        try {
             ByteArrayOutputStream imageBytes = new ByteArrayOutputStream();
             ios = new MemoryCacheImageOutputStream(imageBytes);
 
@@ -1992,46 +1755,37 @@ public class ImageUtil
 
             buffer = ByteBuffer.wrap(imageBytes.toByteArray());
         }
-        catch (Throwable t)
-        {
+        catch (Throwable t) {
             Logging.logger().log(java.util.logging.Level.SEVERE, t.getMessage(), t);
         }
-        finally
-        {
+        finally {
             close(ios);
         }
 
         return buffer;
     }
 
-    protected static void close(ImageOutputStream ios)
-    {
-        if (null != ios)
-        {
-            try
-            {
+    protected static void close(Closeable ios) {
+        if (null != ios) {
+            try {
                 ios.close();
             }
-            catch (Throwable t)
-            {
+            catch (Throwable t) {
                 Logging.logger().log(java.util.logging.Level.SEVERE, t.getMessage(), t);
             }
         }
     }
 
     /**
-     * Converts a non-imagery data raster (elevations) to visually representable image raster.
-     * Calculates min and max values, and normalizes pixel value from 0 - 65,535 and creates
-     * a GRAY color image raster with pixel data type of unsigned short.
+     * Converts a non-imagery data raster (elevations) to visually representable image raster. Calculates min and max
+     * values, and normalizes pixel value from 0 - 65,535 and creates a GRAY color image raster with pixel data type of
+     * unsigned short.
      *
      * @param raster non-imagery data raster (elevations) instance of data raster derived from BufferWrapperRaster
-     *
      * @return BufferedImage visual representation of the non-imagery data raster
      */
-    public static BufferedImage visualize(BufferWrapperRaster raster)
-    {
-        if (null == raster)
-        {
+    public static BufferedImage visualize(BufferWrapperRaster raster) {
+        if (null == raster) {
             String message = Logging.getMessage("nullValue.RasterIsNull");
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -2045,7 +1799,7 @@ public class ImageUtil
         Double minElevation = (Double) raster.getValue(AVKey.ELEVATION_MIN);
         Double maxElevation = (Double) raster.getValue(AVKey.ELEVATION_MAX);
 
-        double min = (null != minElevation && minElevation >= Earth.ELEVATION_MIN) ? minElevation : 0d;
+        double min = (null != minElevation && minElevation >= Earth.ELEVATION_MIN) ? minElevation : 0.0d;
         double max = (null != maxElevation && minElevation <= Earth.ELEVATION_MAX) ? maxElevation : Earth.ELEVATION_MAX;
 
         int width = raster.getWidth();
@@ -2061,28 +1815,24 @@ public class ImageUtil
         final int BAND_Y = 0, BAND_ALPHA = 1;
 
         final int ALPHA_OPAQUE = (short) 0xFFFF;
-        final int ALPHA_TRANSLUCENT = (short) 0;
+        final int ALPHA_TRANSLUCENT = 0;
 
         int i = 0;
         boolean hasVoids = false;
-        double norm = (max != min) ? Math.abs(65534d / (max - min)) : 0d;
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
+        double norm = (max != min) ? Math.abs(65534.0d / (max - min)) : 0.0d;
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
                 double v = raster.getDoubleAtPosition(y, x);
                 // set pixel and alpha as zero (transparent) for pixel which is:
                 // - equals to missingDataSignal
                 // - is zero
                 // - greater than max elevation or smaller than min elevation
-                if (v == missingDataSignal || v == 0 || v < min || v > max)
-                {
+                if (v == missingDataSignal || v == 0 || v < min || v > max) {
                     data[BAND_Y][i] = (short) (0xFFFF & missingDataReplacement);
                     data[BAND_ALPHA][i] = ALPHA_TRANSLUCENT;
                     hasVoids = true;
                 }
-                else
-                {
+                else {
                     data[BAND_Y][i] = (short) (0xFFFF & (int) ((v - min) * norm));
                     data[BAND_ALPHA][i] = ALPHA_OPAQUE;
                 }
@@ -2107,6 +1857,16 @@ public class ImageUtil
             DataBuffer.TYPE_USHORT);
 
         return new BufferedImage(cm, wr, false, null);
+    }
+
+    public static class AlignedImage {
+        public final Sector sector;
+        public final BufferedImage image;
+
+        public AlignedImage(BufferedImage image, Sector sector) {
+            this.image = image;
+            this.sector = sector;
+        }
     }
 
 //

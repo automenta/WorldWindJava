@@ -11,15 +11,14 @@ package gov.nasa.worldwind.animation;
  */
 
 /**
- * The <code>Animator</code> interface provides a way to iterate through a series of values.  It can be used with
- * a simple interpolation function, or something more elaborate.  The <code>PropertyAccessor</code> class and its
+ * The <code>Animator</code> interface provides a way to iterate through a series of values.  It can be used with a
+ * simple interpolation function, or something more elaborate.  The <code>PropertyAccessor</code> class and its
  * interfaces can be used to agnostically attach to data members of any class.
-*/
-public interface Animator
-{
+ */
+public interface Animator {
     /**
-     * Iterates to the next value.  The implementation is expected to apply that next value to the property
-     * it is attached to.
+     * Iterates to the next value.  The implementation is expected to apply that next value to the property it is
+     * attached to.
      */
     void next();
 
@@ -42,6 +41,7 @@ public interface Animator
 
     /**
      * Set the value of the attached property to the value associated with this interpolant value.
+     *
      * @param interpolant A value between 0 and 1.
      */
     void set(double interpolant);

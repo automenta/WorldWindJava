@@ -15,23 +15,19 @@ import java.io.File;
  * @author Lado Garakanidze
  * @version $Id: GDALLibraryFinder.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-class GDALLibraryFinder extends GDALAbstractFileFilter
-{
+class GDALLibraryFinder extends GDALAbstractFileFilter {
     protected final String libExtension =
         Configuration.isWindowsOS() ? ".dll" : (Configuration.isMacOS() ? ".jnilib" : ".so");
 
-    public GDALLibraryFinder()
-    {
+    public GDALLibraryFinder() {
         super("gdal");
     }
 
-    public GDALLibraryFinder(String searchPattern)
-    {
+    public GDALLibraryFinder(String searchPattern) {
         super(searchPattern);
     }
 
-    public boolean accept(File pathname)
-    {
+    public boolean accept(File pathname) {
         String filename;
         String dir;
         if (null != pathname
@@ -39,13 +35,12 @@ class GDALLibraryFinder extends GDALAbstractFileFilter
             && null != (dir = pathname.getParent())
             && !this.listFolders.contains(dir)                  // skip already discovered
             && null != (filename = pathname.getName())          // get folder name
-            && !filename.startsWith(".")
+            && !(!filename.isEmpty() && filename.charAt(0) == '.')
             && null != (filename = filename.toLowerCase())      // change to lower case
             && filename.contains(this.searchPattern)
             && filename.endsWith(this.libExtension)
 //            && this.canLoad(pathname.getAbsolutePath())
-            )
-        {
+        ) {
             this.listFolders.add(dir);
             return true;
         }
@@ -58,19 +53,15 @@ class GDALLibraryFinder extends GDALAbstractFileFilter
      * must be a complete path name.
      *
      * @param pathToLibrary - the file to load
-     *
      * @return TRUE if the file is loadable library
      */
-    protected boolean canLoad(String pathToLibrary)
-    {
-        try
-        {
+    protected boolean canLoad(String pathToLibrary) {
+        try {
             System.load(pathToLibrary);
 
             return true;
         }
-        catch (Throwable t)
-        {
+        catch (Throwable t) {
             Logging.logger().finest(WWUtil.extractExceptionReason(t));
         }
         return false;

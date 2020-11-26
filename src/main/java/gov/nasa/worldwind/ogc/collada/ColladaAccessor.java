@@ -19,18 +19,18 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: ColladaAccessor.java 654 2012-06-25 04:15:52Z pabercrombie $
  */
-public class ColladaAccessor extends ColladaAbstractObject
-{
-    /** Parameters used by this accessor. */
-    protected final List<ColladaParam> params = new ArrayList<>();
+public class ColladaAccessor extends ColladaAbstractObject {
+    /**
+     * Parameters used by this accessor.
+     */
+    protected final Collection<ColladaParam> params = new ArrayList<>();
 
     /**
      * Create a new accessor.
      *
      * @param ns Namespace.
      */
-    public ColladaAccessor(String ns)
-    {
+    public ColladaAccessor(String ns) {
         super(ns);
     }
 
@@ -39,8 +39,7 @@ public class ColladaAccessor extends ColladaAbstractObject
      *
      * @return Accessor source.
      */
-    public String getSource()
-    {
+    public String getSource() {
         return (String) this.getField("source");
     }
 
@@ -51,8 +50,7 @@ public class ColladaAccessor extends ColladaAbstractObject
      *
      * @return Number of elements that the accessor can read.
      */
-    public int getCount()
-    {
+    public int getCount() {
         Integer count = (Integer) this.getField("count");
         return count != null ? count : 0;
     }
@@ -63,8 +61,7 @@ public class ColladaAccessor extends ColladaAbstractObject
      *
      * @return Offset at which the accessor starts reading.
      */
-    public int getOffset()
-    {
+    public int getOffset() {
         Integer offset = (Integer) this.getField("offset");
         return offset != null ? offset : 0;
     }
@@ -74,8 +71,7 @@ public class ColladaAccessor extends ColladaAbstractObject
      *
      * @return Offset at which the accessor starts reading.
      */
-    public int getStride()
-    {
+    public int getStride() {
         Integer stride = (Integer) this.getField("stride");
         return stride != null ? stride : 1;
     }
@@ -86,11 +82,9 @@ public class ColladaAccessor extends ColladaAbstractObject
      *
      * @return Number of tokens that the accessor can read.
      */
-    public int size()
-    {
+    public int size() {
         int count = 0;
-        for (ColladaParam param : this.params)
-        {
+        for (ColladaParam param : this.params) {
             if (!WWUtil.isEmpty(param.getName()))
                 count += 1;
         }
@@ -103,8 +97,7 @@ public class ColladaAccessor extends ColladaAbstractObject
      *
      * @return Array of floats. May return null if the data source is not available.
      */
-    public float[] getFloats()
-    {
+    public float[] getFloats() {
         String source = this.getSource();
         if (source == null)
             return null;
@@ -132,10 +125,8 @@ public class ColladaAccessor extends ColladaAbstractObject
         float[] result = new float[this.size()];
         int ri = 0;
 
-        for (int i = 0; i < this.getCount() && index < floats.length; i++)
-        {
-            for (ColladaParam param : this.params)
-            {
+        for (int i = 0; i < this.getCount() && index < floats.length; i++) {
+            for (ColladaParam param : this.params) {
                 if (index >= floats.length)
                     break;
 
@@ -154,21 +145,23 @@ public class ColladaAccessor extends ColladaAbstractObject
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setField(String keyName, Object value)
-    {
+    public void setField(String keyName, Object value) {
         if (keyName.equals("param"))
             this.params.add((ColladaParam) value);
         else
             super.setField(keyName, value);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void doAddEventAttribute(Attribute attr, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         String localName = attr.getName().getLocalPart();
         boolean isIntField = "count".equals(localName) || "offset".equals(localName) || "stride".equals(localName);
 

@@ -8,99 +8,83 @@ package gov.nasa.worldwind.formats.tiff;
 import gov.nasa.worldwind.util.Logging;
 
 import java.nio.*;
-import java.nio.channels.FileChannel;
+import java.nio.channels.SeekableByteChannel;
 
 /**
  * @author Lado Garakanidze
  * @version $Id: TIFFIFDFactory.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-class TIFFIFDFactory
-{
+class TIFFIFDFactory {
     public static final int MASK_USHORT = 0xFFFF;
     public static final long MASK_UINT = 0xFFFFFFFFL;
 
-    private TIFFIFDFactory()
-    {
+    private TIFFIFDFactory() {
 
     }
 
-    public static TiffIFDEntry create(FileChannel fc, ByteOrder tiffFileOrder)
-    {
-        if( null == fc )
+    public static TiffIFDEntry create(SeekableByteChannel fc, ByteOrder tiffFileOrder) {
+        if (null == fc)
             return null;
 
         long savedPosition = 0;
 
+        ByteBuffer header = ByteBuffer.wrap(new byte[12]).order(tiffFileOrder);
 
-        ByteBuffer header = ByteBuffer.wrap(new byte[12]).order( tiffFileOrder );
-
-        try
-        {
-            fc.read( header );
+        try {
+            fc.read(header);
             header.flip();
 
-            int tag = getUnsignedShort( header );
-            int type = getUnsignedShort( header );
-            long count = getUnsignedInt( header );
-
+            int tag = getUnsignedShort(header);
+            int type = getUnsignedShort(header);
+            long count = getUnsignedInt(header);
 
             // To save time and space the Value Offset contains the Value instead of pointing to
             // the Value if and only if the Value fits into 4 bytes. If the Value is shorter than 4 bytes,
             // it is left-justified within the 4-byte Value Offset, i.e., stored in the lowernumbered bytes.
             // Whether the Value fits within 4 bytes is determined by the Type and Count of the field.
 
-            if ( type == Tiff.Type.SHORT && count == 1 )
-            {
+            if (type == Tiff.Type.SHORT && count == 1) {
                 // these get packed left-justified in the bytes...
-                int upper = getUnsignedShort( header );
-                int lower = getUnsignedShort( header );
+                int upper = getUnsignedShort(header);
+                int lower = getUnsignedShort(header);
                 long value = (MASK_USHORT & upper) << 16 | (MASK_USHORT & lower);
 
-                return new TiffIFDEntry(tag, type, value );
+                return new TiffIFDEntry(tag, type, value);
             }
-            else if( count == 1 && (type == Tiff.Type.LONG || type == Tiff.Type.FLOAT))
-            {
+            else if (count == 1 && (type == Tiff.Type.LONG || type == Tiff.Type.FLOAT)) {
                 long value = header.getInt();
-                return new TiffIFDEntry(tag, type, value );
+                return new TiffIFDEntry(tag, type, value);
             }
-            else
-            {
-                long offset = getUnsignedInt( header );
-                int size = MASK_USHORT & (int)calcSize( type, count );
+            else {
+                long offset = getUnsignedInt(header);
+                int size = MASK_USHORT & (int) calcSize(type, count);
 
-                if( size > 0L )
-                {
-                    ByteBuffer data = ByteBuffer.allocateDirect( size ).order( tiffFileOrder );
+                if (size > 0L) {
+                    ByteBuffer data = ByteBuffer.allocateDirect(size).order(tiffFileOrder);
                     savedPosition = fc.position();
-                    fc.position( offset );
-                    fc.read( data );
+                    fc.position(offset);
+                    fc.read(data);
                     data.flip();
 
-                    fc.position( savedPosition );
+                    fc.position(savedPosition);
                     savedPosition = 0;
 
-                    return new TiffIFDEntry(tag, type, count, offset, data );
+                    return new TiffIFDEntry(tag, type, count, offset, data);
                 }
                 else
-                    return new TiffIFDEntry(tag, type, count, offset );
+                    return new TiffIFDEntry(tag, type, count, offset);
             }
         }
-        catch(Exception e)
-        {
-            Logging.logger().finest( e.getMessage() );
-
+        catch (Exception e) {
+            Logging.logger().finest(e.getMessage());
         }
-        finally
-        {
-            if( savedPosition != 0 && fc != null )
-            {
-                try
-                {
-                    fc.position( savedPosition );
+        finally {
+            if (savedPosition != 0 && fc != null) {
+                try {
+                    fc.position(savedPosition);
                 }
-                catch(Exception e2)
-                {
-                    Logging.logger().finest( e2.getMessage() );
+                catch (Exception e2) {
+                    Logging.logger().finest(e2.getMessage());
                 }
             }
         }
@@ -108,46 +92,21 @@ class TIFFIFDFactory
         return null;
     }
 
-
-    private static long calcSize(int type, long count)
-    {
-        switch( type )
-        {
-            case Tiff.Type.BYTE:
-            case Tiff.Type.SBYTE:
-            case Tiff.Type.ASCII:
-                return count;
-
-            case Tiff.Type.SHORT:
-            case Tiff.Type.SSHORT:
-                return count * 2L;
-
-            case Tiff.Type.LONG:
-            case Tiff.Type.SLONG:
-
-            case Tiff.Type.FLOAT:
-                return count * 4L;
-
-            case Tiff.Type.DOUBLE:
-
-            case Tiff.Type.RATIONAL:
-            case Tiff.Type.SRATIONAL:
-                return count * 8L;
-
-            case Tiff.Type.UNDEFINED:
-            default:
-                return 0;
-        }
+    private static long calcSize(int type, long count) {
+        return switch (type) {
+            case Tiff.Type.BYTE, Tiff.Type.SBYTE, Tiff.Type.ASCII -> count;
+            case Tiff.Type.SHORT, Tiff.Type.SSHORT -> count * 2L;
+            case Tiff.Type.LONG, Tiff.Type.SLONG, Tiff.Type.FLOAT -> count * 4L;
+            case Tiff.Type.DOUBLE, Tiff.Type.RATIONAL, Tiff.Type.SRATIONAL -> count * 8L;
+            default -> 0;
+        };
     }
 
-    private static int getUnsignedShort(ByteBuffer bb)
-    {
-        return MASK_USHORT & (int) bb.getShort();
+    private static int getUnsignedShort(ByteBuffer bb) {
+        return MASK_USHORT & bb.getShort();
     }
 
-    private static long getUnsignedInt(ByteBuffer bb)
-    {
+    private static long getUnsignedInt(ByteBuffer bb) {
         return MASK_UINT & bb.getInt();
     }
-
 }

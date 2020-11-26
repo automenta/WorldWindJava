@@ -9,6 +9,8 @@ package gov.nasa.worldwind.render;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.util.TextDecoder;
 
+import java.awt.Rectangle;
+
 /**
  * A text label that can be attached to a point on the screen, or a point on the globe.
  *
@@ -16,8 +18,7 @@ import gov.nasa.worldwind.util.TextDecoder;
  * @version $Id: Balloon.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see BalloonAttributes
  */
-public interface Balloon extends Renderable, Highlightable, AVList
-{
+public interface Balloon extends Renderable, Highlightable, AVList {
     /**
      * Is the balloon always on top?
      *
@@ -50,9 +51,8 @@ public interface Balloon extends Renderable, Highlightable, AVList
      * Get the balloon text. The method returns the raw text, before decoding.
      *
      * @return The balloon text.
-     *
      * @see #getTextDecoder()
-     * @see #setTextDecoder(gov.nasa.worldwind.util.TextDecoder)
+     * @see #setTextDecoder(TextDecoder)
      */
     String getText();
 
@@ -110,14 +110,13 @@ public interface Balloon extends Renderable, Highlightable, AVList
      * object returned during picking. If null, the balloon itself is the pickable object returned during picking.
      *
      * @return the object used as the pickable object returned during picking, or null to indicate the the balloon is
-     *         returned during picking.
+     * returned during picking.
      */
     Object getDelegateOwner();
 
     /**
-     * Specifies the delegate owner of the balloon. If non-null, the delegate owner replaces the balloon as the
-     * pickable object returned during picking. If null, the balloon itself is the pickable object returned during
-     * picking.
+     * Specifies the delegate owner of the balloon. If non-null, the delegate owner replaces the balloon as the pickable
+     * object returned during picking. If null, the balloon itself is the pickable object returned during picking.
      *
      * @param owner the object to use as the pickable object returned during picking, or null to return the balloon.
      */
@@ -138,25 +137,22 @@ public interface Balloon extends Renderable, Highlightable, AVList
     void setVisible(boolean visible);
 
     /**
-     * Get the balloon bounding {@link java.awt.Rectangle} using OGL coordinates - bottom-left corner x and y relative
+     * Get the balloon bounding {@link Rectangle} using OGL coordinates - bottom-left corner x and y relative
      * to the {@link gov.nasa.worldwind.WorldWindow} bottom-left corner, and the balloon callout width and height.
      * <p>
      * The balloon offset from it's reference point is factored in such that the callout leader shape and reference
      * point are included in the bounding rectangle.
      *
      * @param dc the current DrawContext.
-     *
-     * @return the balloon bounding {@link java.awt.Rectangle} using OGL viewport coordinates.
-     *
+     * @return the balloon bounding {@link Rectangle} using OGL viewport coordinates.
      * @throws IllegalArgumentException if <code>dc</code> is null.
      */
-    java.awt.Rectangle getBounds(DrawContext dc);
+    Rectangle getBounds(DrawContext dc);
 
     /**
      * Returns the minimum eye altitude, in meters, for which the balloon is displayed.
      *
      * @return the minimum altitude, in meters, for which the balloon is displayed.
-     *
      * @see #setMinActiveAltitude(double)
      * @see #getMaxActiveAltitude()
      */
@@ -166,7 +162,6 @@ public interface Balloon extends Renderable, Highlightable, AVList
      * Specifies the minimum eye altitude, in meters, for which the balloon is displayed.
      *
      * @param minActiveAltitude the minimum altitude, in meters, for which the balloon is displayed.
-     *
      * @see #getMinActiveAltitude()
      * @see #setMaxActiveAltitude(double)
      */
@@ -176,7 +171,6 @@ public interface Balloon extends Renderable, Highlightable, AVList
      * Returns the maximum eye altitude, in meters, for which the balloon is displayed.
      *
      * @return the maximum altitude, in meters, for which the balloon is displayed.
-     *
      * @see #setMaxActiveAltitude(double)
      * @see #getMinActiveAltitude()
      */
@@ -186,7 +180,6 @@ public interface Balloon extends Renderable, Highlightable, AVList
      * Specifies the maximum eye altitude, in meters, for which the balloon is displayed.
      *
      * @param maxActiveAltitude the maximum altitude, in meters, for which the balloon is displayed.
-     *
      * @see #getMaxActiveAltitude()
      * @see #setMinActiveAltitude(double)
      */

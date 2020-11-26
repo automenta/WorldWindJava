@@ -14,20 +14,17 @@ import gov.nasa.worldwind.util.xml.AbstractXMLEventParser;
  * @author tag
  * @version $Id: KMLSimpleData.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLSimpleData extends AbstractXMLEventParser
-{
+public class KMLSimpleData extends AbstractXMLEventParser {
     /**
      * Construct an instance.
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLSimpleData(String namespaceURI)
-    {
+    public KMLSimpleData(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public String getName()
-    {
+    public String getName() {
         return (String) this.getField("name");
     }
 }

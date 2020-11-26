@@ -18,32 +18,30 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: RectangularPositionArea.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RectangularPositionArea extends AbstractRectangularGraphic
-{
-    /**
-     * Indicates the graphics supported by this class.
-     *
-     * @return List of masked SIDC strings that identify graphics that this class supports.
-     */
-    public static List<String> getSupportedGraphics()
-    {
-        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_C2ARS_PAA_RTG);
-    }
-
+public class RectangularPositionArea extends AbstractRectangularGraphic {
     /**
      * Create a new target.
      *
      * @param sidc Symbol code the identifies the graphic.
      */
-    public RectangularPositionArea(String sidc)
-    {
+    public RectangularPositionArea(String sidc) {
         super(sidc);
     }
 
-    /** Create labels for the start and end of the path. */
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics() {
+        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_C2ARS_PAA_RTG);
+    }
+
+    /**
+     * Create labels for the start and end of the path.
+     */
     @Override
-    protected void createLabels()
-    {
+    protected void createLabels() {
         // This graphic has labels at the top, bottom, left, and right of the quad.
         this.addLabel("PAA");
         this.addLabel("PAA");
@@ -52,8 +50,7 @@ public class RectangularPositionArea extends AbstractRectangularGraphic
     }
 
     @Override
-    protected void determineLabelPositions(DrawContext dc)
-    {
+    protected void determineLabelPositions(DrawContext dc) {
         Iterable<? extends LatLon> corners = this.quad.getLocations(dc.getGlobe());
         if (corners == null)
             return;
@@ -63,8 +60,7 @@ public class RectangularPositionArea extends AbstractRectangularGraphic
         // Position the labels at the midpoint of each side of the quad.
         int i = 0;
         LatLon locA = iterator.next();
-        while (iterator.hasNext() && i < this.labels.size())
-        {
+        while (iterator.hasNext() && i < this.labels.size()) {
             LatLon locB = iterator.next();
 
             // Find the midpoint of the two corners

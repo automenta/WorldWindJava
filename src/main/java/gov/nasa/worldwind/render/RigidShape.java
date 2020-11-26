@@ -24,175 +24,72 @@ import java.util.*;
 /**
  * A general rigid volume defined by a center position and the three axis radii. If A is the radius in the north-south
  * direction, and b is the radius in the east-west direction, and c is the radius in the vertical direction (increasing
- * altitude), then A == B == C defines a unit shape, A == B &gt; C defines a vertically flattened shape (disk-shaped), A ==
- * B &lt; C defines a vertically stretched shape.
+ * altitude), then A == B == C defines a unit shape, A == B &gt; C defines a vertically flattened shape (disk-shaped), A
+ * == B &lt; C defines a vertically stretched shape.
  *
  * @author ccrick
  * @version $Id: RigidShape.java 2990 2015-04-07 19:06:15Z tgaskins $
  */
-public abstract class RigidShape extends AbstractShape
-{
+public abstract class RigidShape extends AbstractShape {
+    // Key values for Level of Detail-related key-value pairs
+    protected static final String GEOMETRY_CACHE_KEY = Geometry.class.getName();
+    protected static final long DEFAULT_GEOMETRY_CACHE_SIZE = 16777216L; // 16 megabytes
+    protected static final String GEOMETRY_CACHE_NAME = "Airspace Geometry"; // use same cache as Airspaces
+    protected final boolean renderExtent = false;
+    protected final GeometryBuilder geometryBuilder = new GeometryBuilder();
     /**
-     * Maintains globe-dependent computed data such as Cartesian vertices and extents. One entry exists for each
-     * distinct globe that this shape encounters in calls to {@link AbstractShape#render(DrawContext)}. See {@link
-     * AbstractShape}.
+     * The image source of the shape's texture.
      */
-    protected static class ShapeData extends AbstractShapeData
-    {
-        /** Holds the computed tessellation of the shape in model coordinates. */
-        protected List<Geometry> meshes = new ArrayList<>();
-        /** The GPU-resource cache keys to use for this entry's VBOs (one for eack LOD), if VBOs are used. */
-        protected final Map<Integer, Object> vboCacheKeys = new HashMap<>();
+    protected final Map<Integer, Object> imageSources = new HashMap<>();
+    /**
+     * The {@link WWTexture} created for the image source, if any.
+     */
+    protected final Map<Integer, WWTexture> textures = new HashMap<>();
+    protected int faceCount = 1;   // number of separate geometric face that comprise this shape
+    protected Position centerPosition = Position.ZERO;
+    protected double northSouthRadius = 1; // radius in the north-south (latitudinal) direction
+    protected double verticalRadius = 1; // radius in the vertical direction
+    protected double eastWestRadius = 1; // radius in the east-west (longitudinal) direction
+    protected Angle heading; // rotation about vertical axis, positive counter-clockwise
+    protected Angle tilt; // rotation about east-west axis, positive counter-clockwise
+    protected Angle roll; // rotation about north-south axis, positive counter-clockwise
+    protected Angle skewNorthSouth = Angle.POS90;
+    protected Angle skewEastWest = Angle.POS90;
+    // Geometry
+    protected double detailHint = 0;
+    // texture coordinate offsets for each piece
+    //protected Map<Integer, Offsets> offsets = new HashMap<Integer, Offsets>();
+    protected Map<Integer, OffsetsList> offsets = new HashMap<>();
+    // texture coordinates for each piece       // TODO: is this necessary?
+    protected Map<Integer, FloatBuffer> offsetTextureCoords = new HashMap<>();
+    // image sources for the textures for each piece of geometry
+    /**
+     * The terrain used in the most recent intersection calculations.
+     */
+    protected Terrain previousIntersectionTerrain;
+    // optional textures for each piece of geometry
+    /**
+     * The globe state key for the globe used in the most recent intersection calculation.
+     */
+    protected Object previousIntersectionGlobeStateKey;
+    /**
+     * The shape data used for the previous intersection calculation.
+     */
+    protected ShapeData previousIntersectionShapeData;
 
-        /** Indicates whether the index buffer needs to be filled because a new buffer is used or some other reason. */
-        protected boolean refillIndexBuffer = true; // set to true if the index buffer needs to be refilled
-        /** Indicates whether the index buffer's VBO needs to be filled because a new buffer is used or other reason. */
-        protected boolean refillIndexVBO = true; // set to true if the index VBO needs to be refilled
-
-        public ShapeData(DrawContext dc, RigidShape shape)
-        {
-            super(dc, shape.minExpiryTime, shape.maxExpiryTime);
-            //super(dc, 0, 0); // specify 0 as expiry time since only size/position transform changes with time
-        }
-
-        public Geometry getMesh()
-        {
-            return meshes.get(0);
-        }
-
-        public Geometry getMesh(int index)
-        {
-            return meshes.get(index);
-        }
-
-        public List<Geometry> getMeshes()
-        {
-            return meshes;
-        }
-
-        public void setMesh(Geometry mesh)
-        {
-            this.addMesh(0, mesh);
-        }
-
-        public void setMeshes(List<Geometry> meshes)
-        {
-            this.meshes = meshes;
-        }
-
-        public void addMesh(Geometry mesh)
-        {
-            this.addMesh(this.meshes.size(), mesh);
-        }
-
-        public void addMesh(int index, Geometry mesh)
-        {
-            this.meshes.add(index, mesh);
-        }
-
-        public Object getVboCacheKey(int index)
-        {
-            return vboCacheKeys.get(index);
-        }
-
-        public void setVboCacheKey(int index, Object vboCacheKey)
-        {
-            this.vboCacheKeys.put(index, vboCacheKey);
-        }
-
-        public int getVboCacheSize()
-        {
-            return this.vboCacheKeys.size();
-        }
-    }
+    // Fields used in intersection calculations
 
     /**
      * Returns the current shape data cache entry.
      *
      * @return the current data cache entry.
      */
-    protected ShapeData getCurrentShapeData()
-    {
+    protected ShapeData getCurrentShapeData() {
         return (ShapeData) this.getCurrentData();
     }
 
-    public static class Offsets
-    {
-        protected final Map<Integer, float[]> offsets;
-
-        public Offsets()
-        {
-            offsets = new HashMap<>();
-
-            // set default values to zero offset
-            float[] zeroOffset = {0.0f, 0.0f};
-            for (int i = 0; i < 4; i++)
-            {
-                offsets.put(i, zeroOffset);
-            }
-        }
-
-        public float[] getOffset(int index)
-        {
-            return offsets.get(index);
-        }
-
-        public void setOffset(int index, float uOffset, float vOffset)
-        {
-            float[] offsetPair = {uOffset, vOffset};
-            offsets.put(index, offsetPair);
-        }
-    }
-
-    protected int faceCount = 1;   // number of separate geometric face that comprise this shape
-
-    protected Position centerPosition = Position.ZERO;
-    protected double northSouthRadius = 1; // radius in the north-south (latitudinal) direction
-    protected double verticalRadius = 1; // radius in the vertical direction
-    protected double eastWestRadius = 1; // radius in the east-west (longitudinal) direction
-
-    protected Angle heading; // rotation about vertical axis, positive counter-clockwise
-    protected Angle tilt; // rotation about east-west axis, positive counter-clockwise
-    protected Angle roll; // rotation about north-south axis, positive counter-clockwise
-
-    protected Angle skewNorthSouth = Angle.POS90;
-    protected Angle skewEastWest = Angle.POS90;
-
-    protected final boolean renderExtent = false;
-
-    // Geometry
-    protected double detailHint = 0;
-    protected final GeometryBuilder geometryBuilder = new GeometryBuilder();
-
-    // Key values for Level of Detail-related key-value pairs
-    protected static final String GEOMETRY_CACHE_KEY = Geometry.class.getName();
-    protected static final long DEFAULT_GEOMETRY_CACHE_SIZE = 16777216L; // 16 megabytes
-    protected static final String GEOMETRY_CACHE_NAME = "Airspace Geometry"; // use same cache as Airspaces
-
-    /** The image source of the shape's texture. */
-    protected final Map<Integer, Object> imageSources = new HashMap<>();
-    // image sources for the textures for each piece of geometry
-    /** The {@link WWTexture} created for the image source, if any. */
-    protected final Map<Integer, WWTexture> textures = new HashMap<>();
-    // optional textures for each piece of geometry
-
-    // texture coordinate offsets for each piece
-    //protected Map<Integer, Offsets> offsets = new HashMap<Integer, Offsets>();
-    protected Map<Integer, OffsetsList> offsets = new HashMap<>();
-    // texture coordinates for each piece       // TODO: is this necessary?
-    protected Map<Integer, FloatBuffer> offsetTextureCoords = new HashMap<>();
-
-    // Fields used in intersection calculations
-    /** The terrain used in the most recent intersection calculations. */
-    protected Terrain previousIntersectionTerrain;
-    /** The globe state key for the globe used in the most recent intersection calculation. */
-    protected Object previousIntersectionGlobeStateKey;
-    /** The shape data used for the previous intersection calculation. */
-    protected ShapeData previousIntersectionShapeData;
-
     @Override
-    protected void reset()
-    {
+    protected void reset() {
         this.previousIntersectionShapeData = null;
         this.previousIntersectionTerrain = null;
         this.previousIntersectionGlobeStateKey = null;
@@ -205,11 +102,9 @@ public abstract class RigidShape extends AbstractShape
      * geometry's image source has not yet been retrieved.
      *
      * @param index the index of the piece of geometry whose texture will be returned.
-     *
      * @return the texture, or null if there is no texture or the texture is not yet available.
      */
-    protected WWTexture getTexture(int index)
-    {
+    protected WWTexture getTexture(int index) {
         return textures.get(index);
     }
 
@@ -219,8 +114,7 @@ public abstract class RigidShape extends AbstractShape
      * @param index   the index of the piece of geometry for which we are setting the texture.
      * @param texture the texture for this shape.
      */
-    protected void setTexture(int index, WWTexture texture)
-    {
+    protected void setTexture(int index, WWTexture texture) {
         this.textures.put(index, texture);
     }
 
@@ -228,11 +122,9 @@ public abstract class RigidShape extends AbstractShape
      * Indicates the image source for this shape's optional texture for the #index piece of geometry.
      *
      * @param index the index of the piece of geometry for which we are retrieving the texture.
-     *
      * @return the image source of #index texture.
      */
-    public Object getImageSource(int index)
-    {
+    public Object getImageSource(int index) {
         return this.imageSources.get(index);
     }
 
@@ -243,12 +135,9 @@ public abstract class RigidShape extends AbstractShape
      *                    {@link java.awt.image.BufferedImage}.
      */
 
-    public void setImageSources(Object imageSource)
-    {
-        if (imageSource != null)
-        {
-            for (int i = 0; i < getFaceCount(); i++)
-            {
+    public void setImageSources(Object imageSource) {
+        if (imageSource != null) {
+            for (int i = 0; i < getFaceCount(); i++) {
                 setImageSource(i, imageSource);
             }
         }
@@ -260,13 +149,10 @@ public abstract class RigidShape extends AbstractShape
      * @param imageSources the list of texture image sources. May be {@link java.io.File}, file path, a stream, a URL or
      *                     a {@link java.awt.image.BufferedImage}.
      */
-    public void setImageSources(Iterable imageSources)
-    {
-        if (imageSources != null)
-        {
+    public void setImageSources(Iterable imageSources) {
+        if (imageSources != null) {
             int index = 0;
-            for (Object imageSource : imageSources)
-            {
+            for (Object imageSource : imageSources) {
                 setImageSource(index, imageSource);
                 index++;
             }
@@ -280,16 +166,12 @@ public abstract class RigidShape extends AbstractShape
      * @param imageSource the texture image source. May be a {@link java.io.File}, file path, a stream, a URL or a
      *                    {@link java.awt.image.BufferedImage}.
      */
-    public void setImageSource(int index, Object imageSource)
-    {
+    public void setImageSource(int index, Object imageSource) {
         // check if a texture has already been created for this imageSource before creating one
-        if (imageSource != null)
-        {
+        if (imageSource != null) {
             WWTexture newTexture = null;
-            for (Map.Entry<Integer, Object> entry : imageSources.entrySet())
-            {
-                if (imageSource.equals(entry.getValue()))
-                {
+            for (Map.Entry<Integer, Object> entry : imageSources.entrySet()) {
+                if (imageSource.equals(entry.getValue())) {
                     newTexture = textures.get(entry.getKey());
                     break;
                 }
@@ -305,8 +187,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return number of faces
      */
-    public int getFaceCount()
-    {
+    public int getFaceCount() {
         return this.faceCount;
     }
 
@@ -315,8 +196,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param faces integer indicating how many different faces this shape has
      */
-    protected void setFaceCount(int faces)
-    {
+    protected void setFaceCount(int faces) {
         this.faceCount = faces;
     }
 
@@ -328,11 +208,9 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param faceIndex   the shape face from which to retrieve the offset pair
      * @param offsetIndex the index of the specific texture coordinate on the face whose offsets we wish to retrieve
-     *
      * @return the specified texture offset pair
      */
-    public float[] getOffsets(int faceIndex, int offsetIndex)
-    {
+    public float[] getOffsets(int faceIndex, int offsetIndex) {
         return this.offsets.get(faceIndex) != null ? this.offsets.get(faceIndex).getOffset(offsetIndex) : null;
     }
 
@@ -344,10 +222,8 @@ public abstract class RigidShape extends AbstractShape
      * @param uOffset     the offset in the u direction
      * @param vOffset     the offset in the v direction
      */
-    public void setOffset(int faceIndex, int offsetIndex, float uOffset, float vOffset)
-    {
-        if (this.offsets.get(faceIndex) != null)
-        {
+    public void setOffset(int faceIndex, int offsetIndex, float uOffset, float vOffset) {
+        if (this.offsets.get(faceIndex) != null) {
             this.offsets.get(faceIndex).setOffset(offsetIndex, uOffset, vOffset);
         }
     }
@@ -357,8 +233,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return this shape's center position.
      */
-    public Position getCenterPosition()
-    {
+    public Position getCenterPosition() {
         return centerPosition;
     }
 
@@ -367,10 +242,8 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param centerPosition this shape's center position.
      */
-    public void setCenterPosition(Position centerPosition)
-    {
-        if (centerPosition == null)
-        {
+    public void setCenterPosition(Position centerPosition) {
+        if (centerPosition == null) {
             String message = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -385,8 +258,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return the centerPosition of the shape
      */
-    public Position getReferencePosition()
-    {
+    public Position getReferencePosition() {
         return this.centerPosition;
     }
 
@@ -395,8 +267,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return this shape's radius in the north-south direction.
      */
-    public double getNorthSouthRadius()
-    {
+    public double getNorthSouthRadius() {
         return northSouthRadius;
     }
 
@@ -405,13 +276,10 @@ public abstract class RigidShape extends AbstractShape
      * than 0.
      *
      * @param northSouthRadius the shape radius in the north-south direction. Must be greater than 0.
-     *
      * @throws IllegalArgumentException if the radius is not greater than 0.
      */
-    public void setNorthSouthRadius(double northSouthRadius)
-    {
-        if (northSouthRadius <= 0)
-        {
+    public void setNorthSouthRadius(double northSouthRadius) {
+        if (northSouthRadius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "northSouthRadius <= 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -427,8 +295,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return this shape's radius in the east-west direction.
      */
-    public double getEastWestRadius()
-    {
+    public double getEastWestRadius() {
         return eastWestRadius;
     }
 
@@ -437,13 +304,10 @@ public abstract class RigidShape extends AbstractShape
      * than 0.
      *
      * @param eastWestRadius the shape radius in the east-west direction. Must be greater than 0.
-     *
      * @throws IllegalArgumentException if the radius is not greater than 0.
      */
-    public void setEastWestRadius(double eastWestRadius)
-    {
-        if (eastWestRadius <= 0)
-        {
+    public void setEastWestRadius(double eastWestRadius) {
+        if (eastWestRadius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "eastWestRadius <= 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -459,8 +323,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return this shape's radius in the vertical direction.
      */
-    public double getVerticalRadius()
-    {
+    public double getVerticalRadius() {
         return verticalRadius;
     }
 
@@ -469,13 +332,10 @@ public abstract class RigidShape extends AbstractShape
      * 0.
      *
      * @param verticalRadius the shape radius in the vertical direction. Must be greater than 0.
-     *
      * @throws IllegalArgumentException if the radius is not greater than 0.
      */
-    public void setVerticalRadius(double verticalRadius)
-    {
-        if (verticalRadius <= 0)
-        {
+    public void setVerticalRadius(double verticalRadius) {
+        if (verticalRadius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "verticalRadius <= 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -492,8 +352,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return this shape's azimuth.
      */
-    public Angle getHeading()
-    {
+    public Angle getHeading() {
         return this.heading;
     }
 
@@ -503,16 +362,13 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param heading the shape's azimuth, in degrees.
      */
-    public void setHeading(Angle heading)
-    {
+    public void setHeading(Angle heading) {
         // constrain values to 0 to 360 (aka 0 to 2PI) for compatibility with KML
         double degrees = heading.getDegrees();
-        while (degrees < 0)
-        {
+        while (degrees < 0) {
             degrees += 360;
         }
-        while (degrees > 360)
-        {
+        while (degrees > 360) {
             degrees -= 360;
         }
 
@@ -526,8 +382,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return this shape's azimuth.
      */
-    public Angle getTilt()
-    {
+    public Angle getTilt() {
         return this.tilt;
     }
 
@@ -536,16 +391,13 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param tilt the shape's pitch, in degrees.
      */
-    public void setTilt(Angle tilt)
-    {
+    public void setTilt(Angle tilt) {
         // constrain values to 0 to 360 (aka 0 to 2PI) for compatibility with KML
         double degrees = tilt.getDegrees();
-        while (degrees < 0)
-        {
+        while (degrees < 0) {
             degrees += 360;
         }
-        while (degrees > 360)
-        {
+        while (degrees > 360) {
             degrees -= 360;
         }
 
@@ -559,8 +411,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return this shape's azimuth.
      */
-    public Angle getRoll()
-    {
+    public Angle getRoll() {
         return this.roll;
     }
 
@@ -570,16 +421,13 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param roll the shape's roll, in degrees.
      */
-    public void setRoll(Angle roll)
-    {
+    public void setRoll(Angle roll) {
         // constrain values to 0 to 360 (aka 0 to 2PI) for compatibility with KML
         double degrees = roll.getDegrees();
-        while (degrees < 0)
-        {
+        while (degrees < 0) {
             degrees += 360;
         }
-        while (degrees > 360)
-        {
+        while (degrees > 360) {
             degrees -= 360;
         }
 
@@ -593,8 +441,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return this shape's North-South skew.
      */
-    public Angle getSkewNorthSouth()
-    {
+    public Angle getSkewNorthSouth() {
         return skewNorthSouth;
     }
 
@@ -604,10 +451,8 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param skew the shape's skew in the North-South direction.
      */
-    public void setSkewNorthSouth(Angle skew)
-    {
-        if (skew.compareTo(Angle.POS180) >= 0 || skew.compareTo(Angle.ZERO) <= 0)
-        {
+    public void setSkewNorthSouth(Angle skew) {
+        if (skew.compareTo(Angle.POS180) >= 0 || skew.compareTo(Angle.ZERO) <= 0) {
             String message = Logging.getMessage("generic.AngleOutOfRange",
                 "skew >= 180 degrees or skew <= 0 degrees");
             Logging.logger().severe(message);
@@ -624,8 +469,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return this shape's East-West skew.
      */
-    public Angle getSkewEastWest()
-    {
+    public Angle getSkewEastWest() {
         return skewEastWest;
     }
 
@@ -635,10 +479,8 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param skew the shape's skew in the East-West direction.
      */
-    public void setSkewEastWest(Angle skew)
-    {
-        if (skew.compareTo(Angle.POS180) >= 0 || skew.compareTo(Angle.ZERO) <= 0)
-        {
+    public void setSkewEastWest(Angle skew) {
+        if (skew.compareTo(Angle.POS180) >= 0 || skew.compareTo(Angle.ZERO) <= 0) {
             String message = Logging.getMessage("generic.AngleOutOfRange",
                 "skew >= 180 degrees or skew <= 0 degrees");
             Logging.logger().severe(message);
@@ -651,8 +493,7 @@ public abstract class RigidShape extends AbstractShape
     }
 
     @Override
-    protected void initialize()
-    {
+    protected void initialize() {
         // Nothing to override
     }
 
@@ -660,11 +501,9 @@ public abstract class RigidShape extends AbstractShape
      * Indicates the shape's detail hint, which is described in {@link #setDetailHint(double)}.
      *
      * @return the detail hint
-     *
      * @see #setDetailHint(double)
      */
-    public double getDetailHint()
-    {
+    public double getDetailHint() {
         return this.detailHint;
     }
 
@@ -678,18 +517,17 @@ public abstract class RigidShape extends AbstractShape
      *                   increase the resolution. Values less than zero decrease the resolution. The default value is
      *                   0.
      */
-    public void setDetailHint(double detailHint)
-    {
+    public void setDetailHint(double detailHint) {
         this.detailHint = detailHint;
 
         reset();
     }
 
-    /** Create the geometry cache supporting the Level of Detail system. */
-    protected void setUpGeometryCache()
-    {
-        if (!WorldWind.getMemoryCacheSet().containsCache(GEOMETRY_CACHE_KEY))
-        {
+    /**
+     * Create the geometry cache supporting the Level of Detail system.
+     */
+    protected void setUpGeometryCache() {
+        if (!WorldWind.getMemoryCacheSet().containsCache(GEOMETRY_CACHE_KEY)) {
             long size = Configuration.getLongValue(AVKey.AIRSPACE_GEOMETRY_CACHE_SIZE, DEFAULT_GEOMETRY_CACHE_SIZE);
             MemoryCache cache = new BasicMemoryCache((long) (0.85 * size), size);
             cache.setName(GEOMETRY_CACHE_NAME);
@@ -702,27 +540,23 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return the geometry cache.
      */
-    protected MemoryCache getGeometryCache()
-    {
+    protected MemoryCache getGeometryCache() {
         return WorldWind.getMemoryCache(GEOMETRY_CACHE_KEY);
     }
 
     @Override
-    protected AbstractShapeData createCacheEntry(DrawContext dc)
-    {
+    protected AbstractShapeData createCacheEntry(DrawContext dc) {
         return new ShapeData(dc, this);
     }
 
     @Override
-    protected boolean mustApplyTexture(DrawContext dc)
-    {
+    protected boolean mustApplyTexture(DrawContext dc) {
         boolean applyTexture = false;
 
-        for (int i = 0; i < getFaceCount(); i++)
-        {
+        for (int i = 0; i < getFaceCount(); i++) {
             // TODO add error checking here?
-            if (this.getTexture(i) != null && this.getCurrentShapeData().getMesh(i).getBuffer(Geometry.TEXTURE) != null)
-            {
+            if (this.getTexture(i) != null
+                && this.getCurrentShapeData().getMesh(i).getBuffer(Geometry.TEXTURE) != null) {
                 applyTexture = true;
                 break;
             }
@@ -730,14 +564,12 @@ public abstract class RigidShape extends AbstractShape
         return applyTexture;
     }
 
-    protected boolean mustApplyTexture(int index)
-    {
+    protected boolean mustApplyTexture(int index) {
         return this.getTexture(index) != null &&
             this.getCurrentShapeData().getMesh(index).getBuffer(Geometry.TEXTURE) != null;
     }
 
-    protected boolean mustRegenerateGeometry(DrawContext dc)
-    {
+    protected boolean mustRegenerateGeometry(DrawContext dc) {
         ShapeData shapedata = this.getCurrentShapeData();
 
         if (shapedata == null || shapedata.getMeshes() == null
@@ -761,8 +593,7 @@ public abstract class RigidShape extends AbstractShape
     }
 
     @Override
-    protected boolean doMakeOrderedRenderable(DrawContext dc)
-    {
+    protected boolean doMakeOrderedRenderable(DrawContext dc) {
         ShapeData shapeData = this.getCurrentShapeData();
 
         Vec4 refPt = this.computeReferencePoint(dc);
@@ -800,18 +631,15 @@ public abstract class RigidShape extends AbstractShape
     }
 
     @Override
-    protected boolean isOrderedRenderableValid(DrawContext dc)
-    {
+    protected boolean isOrderedRenderableValid(DrawContext dc) {
         return this.getCurrentShapeData().getMesh(0).getBuffer(Geometry.VERTEX) != null;
     }
 
     @Override
-    protected OGLStackHandler beginDrawing(DrawContext dc, int attrMask)
-    {
+    protected OGLStackHandler beginDrawing(DrawContext dc, int attrMask) {
         OGLStackHandler ogsh = super.beginDrawing(dc, attrMask);
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             // Push an identity texture matrix. This prevents drawGeometry() from leaking GL texture matrix state. The
             // texture matrix stack is popped from OGLStackHandler.pop().
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
@@ -822,10 +650,8 @@ public abstract class RigidShape extends AbstractShape
     }
 
     @Override
-    protected void doDrawOutline(DrawContext dc)
-    {
-        for (int i = 0; i < getFaceCount(); i++)
-        {
+    protected void doDrawOutline(DrawContext dc) {
+        for (int i = 0; i < getFaceCount(); i++) {
             Geometry mesh = this.getCurrentShapeData().getMesh(i);
 
             // set to draw using GL_LINES
@@ -842,22 +668,19 @@ public abstract class RigidShape extends AbstractShape
     }
 
     @Override
-    protected void doDrawInterior(DrawContext dc)
-    {
+    protected void doDrawInterior(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         // render extent if specified
-        if (this.renderExtent)
-        {
-            Box extent = (Box) this.getCurrentShapeData().getExtent();
+        if (this.renderExtent) {
+            Renderable extent = (Box) this.getCurrentShapeData().getExtent();
             extent.render(dc);
         }
 
         // set up MODELVIEW matrix to properly position, orient and scale this shape
         setModelViewMatrix(dc);
 
-        for (int i = 0; i < getFaceCount(); i++)
-        {
+        for (int i = 0; i < getFaceCount(); i++) {
             // set up the texture if one exists
             if (!dc.isPickingMode() && mustApplyTexture(i) && this.getTexture(i).bind(
                 dc)) // bind initiates retrieval
@@ -874,8 +697,7 @@ public abstract class RigidShape extends AbstractShape
                     FloatBuffer texCoords = (FloatBuffer) mesh.getBuffer(Geometry.TEXTURE);
                     FloatBuffer offsetCoords = Buffers.newDirectFloatBuffer(bufferSize);
 
-                    for (int j = 0; j < bufferSize; j += 2)
-                    {
+                    for (int j = 0; j < bufferSize; j += 2) {
                         float u = texCoords.get(j);
                         float v = texCoords.get(j + 1);
 
@@ -898,8 +720,7 @@ public abstract class RigidShape extends AbstractShape
 
                     gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, offsetCoords.rewind());
                 }
-                else
-                {
+                else {
                     gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, mesh.getBuffer(Geometry.TEXTURE).rewind());
                 }
                 gl.glEnable(GL.GL_TEXTURE_2D);
@@ -908,8 +729,7 @@ public abstract class RigidShape extends AbstractShape
                 gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
                 gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
             }
-            else
-            {
+            else {
                 gl.glDisable(GL.GL_TEXTURE_2D);
                 gl.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
             }
@@ -920,22 +740,20 @@ public abstract class RigidShape extends AbstractShape
 
     /**
      * Computes the shape's extent using a bounding box.
-     *
+     * <p>
      * Code within this class assumes that this shape's extent is computed from the shape's fields rather than its
      * computed geometry. If you override this method, be sure that this lack of dependency on computed geometry is
      * adhered to by the overriding method. See doMakeOrderedRenderable above for a description of why this assumption
      * is made. Also see WWJ-482.
      *
      * @param dc the current drawContext
-     *
      * @return the computed extent.
      */
-    protected Extent computeExtent(DrawContext dc)
-    {
+    protected Extent computeExtent(DrawContext dc) {
         Matrix matrix = computeRenderMatrix(dc);
 
         // create a list of vertices representing the extrema of the unit sphere
-        Vector<Vec4> extrema = new Vector<>(4);
+        List<Vec4> extrema = new Vector<>(4);
         // transform the extrema by the render matrix to get their final positions
         Vec4 point = matrix.transformBy3(matrix, -1, 1, -1);   // far upper left
         extrema.add(point);
@@ -957,15 +775,11 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param globe                the current globe
      * @param verticalExaggeration the current vertical exaggeration
-     *
      * @return the computed extent.
-     *
      * @throws IllegalArgumentException if the globe is null.
      */
-    public Extent getExtent(Globe globe, double verticalExaggeration)
-    {
-        if (globe == null)
-        {
+    public Extent getExtent(Globe globe, double verticalExaggeration) {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -975,7 +789,7 @@ public abstract class RigidShape extends AbstractShape
         Matrix matrix = computeRenderMatrix(globe, verticalExaggeration);
 
         // create a list of vertices representing the extrema of the unit sphere
-        Vector<Vec4> extrema = new Vector<>(4);
+        List<Vec4> extrema = new Vector<>(4);
         // transform the extrema by the render matrix to get their final positions
         Vec4 point = matrix.transformBy3(matrix, -1, 1, -1);   // far upper left
         extrema.add(point);
@@ -1003,8 +817,7 @@ public abstract class RigidShape extends AbstractShape
      *
      * @return the bounding sector for this shape
      */
-    public Sector getSector()
-    {
+    public Sector getSector() {
         return null;
     }
 
@@ -1014,17 +827,14 @@ public abstract class RigidShape extends AbstractShape
      * @param vertices    the buffer of vertices to transform
      * @param numVertices the number of distinct vertices in the buffer (assume 3-space)
      * @param matrix      the matrix for transforming the vertices
-     *
      * @return the transformed vertices.
      */
-    protected FloatBuffer computeTransformedVertices(FloatBuffer vertices, int numVertices, Matrix matrix)
-    {
+    protected FloatBuffer computeTransformedVertices(FloatBuffer vertices, int numVertices, Matrix matrix) {
         int size = numVertices * 3;
         FloatBuffer newVertices = Buffers.newDirectFloatBuffer(size);
 
         // transform all vertices by the render matrix
-        for (int i = 0; i < numVertices; i++)
-        {
+        for (int i = 0; i < numVertices; i++) {
             Vec4 point = matrix.transformBy3(matrix, vertices.get(3 * i), vertices.get(3 * i + 1),
                 vertices.get(3 * i + 2));
             newVertices.put((float) point.getX()).put((float) point.getY()).put((float) point.getZ());
@@ -1039,11 +849,9 @@ public abstract class RigidShape extends AbstractShape
      * Sets the shape's referencePoint, which is essentially its centerPosition in Cartesian coordinates.
      *
      * @param dc the current DrawContext
-     *
      * @return the computed reference point relative to the globe associated with the draw context.
      */
-    public Vec4 computeReferencePoint(DrawContext dc)
-    {
+    public Vec4 computeReferencePoint(DrawContext dc) {
         Position pos = this.getCenterPosition();
         if (pos == null)
             return null;
@@ -1056,11 +864,9 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param globe                the current globe
      * @param verticalExaggeration the current vertical exaggeration
-     *
      * @return the computed reference point, or null if the point could not be computed.
      */
-    protected Vec4 computeReferencePoint(Globe globe, double verticalExaggeration)
-    {
+    protected Vec4 computeReferencePoint(Globe globe, double verticalExaggeration) {
         Position pos = this.getCenterPosition();
         if (pos == null)
             return null;
@@ -1069,7 +875,7 @@ public abstract class RigidShape extends AbstractShape
 
         double height;
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
-            height = 0d + elevation * verticalExaggeration;
+            height = 0.0d + elevation * verticalExaggeration;
         else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
             height = pos.getAltitude() + elevation * verticalExaggeration;
         else    // ABSOLUTE elevation mode
@@ -1087,15 +893,11 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param globe                the current globe
      * @param verticalExaggeration the current vertical exaggeration
-     *
      * @return the modelview transform for this shape
-     *
      * @throws IllegalArgumentException if globe is null
      */
-    public Matrix computeRenderMatrix(Globe globe, double verticalExaggeration)
-    {
-        if (globe == null)
-        {
+    public Matrix computeRenderMatrix(Globe globe, double verticalExaggeration) {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1135,13 +937,10 @@ public abstract class RigidShape extends AbstractShape
      * to its correct shape location, orientation and scale
      *
      * @param dc the current draw context
-     *
      * @return the modelview transform for this shape
-     *
      * @throws IllegalArgumentException if draw context is null or the referencePoint is null
      */
-    public Matrix computeRenderMatrix(DrawContext dc)
-    {
+    public Matrix computeRenderMatrix(DrawContext dc) {
         Matrix matrix = Matrix.IDENTITY;
 
         // translate and orient, accounting for altitude mode
@@ -1179,15 +978,11 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param globe                the current globe
      * @param verticalExaggeration the current vertical exaggeration
-     *
      * @return the inverse of the modelview transform for this shape
-     *
      * @throws IllegalArgumentException if draw context is null or the referencePoint is null
      */
-    public Matrix computeRenderMatrixInverse(Globe globe, double verticalExaggeration)
-    {
-        if (globe == null)
-        {
+    public Matrix computeRenderMatrixInverse(Globe globe, double verticalExaggeration) {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1241,13 +1036,10 @@ public abstract class RigidShape extends AbstractShape
      * shape.
      *
      * @param dc the current DrawContext
-     *
      * @throws IllegalArgumentException if draw context is null or the draw context GL is null
      */
-    protected void setModelViewMatrix(DrawContext dc)
-    {
-        if (dc.getGL() == null)
-        {
+    protected void setModelViewMatrix(DrawContext dc) {
+        if (dc.getGL() == null) {
             String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -1274,10 +1066,8 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param position the position to move the shape to
      */
-    public void moveTo(Position position)
-    {
-        if (position == null)
-        {
+    public void moveTo(Position position) {
+        if (position == null) {
             String msg = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1301,10 +1091,6 @@ public abstract class RigidShape extends AbstractShape
      */
     abstract protected void computeSubdivisions(DrawContext dc, ShapeData shapeData);
 
-    //*****************************************************************//
-    //***********************  Geometry Rendering  ********************//
-    //*****************************************************************//
-
     /**
      * Sets the Geometry mesh for this shape, either by pulling it from the geometryCache, or by creating it anew if the
      * appropriate geometry does not yet exist in the cache.
@@ -1313,10 +1099,13 @@ public abstract class RigidShape extends AbstractShape
      */
     abstract protected void makeGeometry(ShapeData shapeData);
 
-    protected GeometryBuilder getGeometryBuilder()
-    {
+    protected GeometryBuilder getGeometryBuilder() {
         return this.geometryBuilder;
     }
+
+    //*****************************************************************//
+    //***********************  Geometry Rendering  ********************//
+    //*****************************************************************//
 
     /**
      * Renders the Rigid Shape
@@ -1324,15 +1113,12 @@ public abstract class RigidShape extends AbstractShape
      * @param dc        the current draw context
      * @param shapeData the current shape data
      * @param index     the index of the shape face to render
-     *
      * @throws IllegalArgumentException if the draw context is null or the element buffer is null
      */
-    protected void drawGeometry(DrawContext dc, ShapeData shapeData, int index)
-    {
+    protected void drawGeometry(DrawContext dc, ShapeData shapeData, int index) {
         Geometry mesh = shapeData.getMesh(index);
 
-        if (mesh.getBuffer(Geometry.ELEMENT) == null)
-        {
+        if (mesh.getBuffer(Geometry.ELEMENT) == null) {
             String message = "nullValue.ElementBufferIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1363,26 +1149,19 @@ public abstract class RigidShape extends AbstractShape
     abstract protected void drawGeometry(DrawContext dc, int mode, int count, int type, Buffer elementBuffer,
         ShapeData shapeData, int index);
 
-    //*****************************************************************//
-    //*********************        VBOs               *****************//
-    //*****************************************************************//
-
     /**
      * Get or create OpenGL resource IDs for the current data cache entry.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param index the index of the LOD whose VboID's will be retrieved.
      * @param dc    the current draw context.
-     *
      * @return an array containing the coordinate vertex buffer ID in the first position and the index vertex buffer ID
-     *         in the second position.
+     * in the second position.
      */
-    protected int[] getVboIds(int index, DrawContext dc)
-    {
+    protected int[] getVboIds(int index, DrawContext dc) {
         ShapeData data = ((ShapeData) this.getCurrentData());
-        if (data != null)
-        {
+        if (data != null) {
             Object key = data.getVboCacheKey(index);
             if (key != null)
                 return (int[]) dc.getGpuResourceCache().get(key);
@@ -1394,41 +1173,39 @@ public abstract class RigidShape extends AbstractShape
     /**
      * Removes from the GPU resource cache the entry for the current data cache entry's VBOs.
      * <p>
-     * A {@link gov.nasa.worldwind.render.AbstractShape.AbstractShapeData} must be current when this method is called.
+     * A {@link AbstractShape.AbstractShapeData} must be current when this method is called.
      *
      * @param dc the current draw context.
      */
     @Override
-    protected void clearCachedVbos(DrawContext dc)
-    {
-        for (Integer key : ((ShapeData) this.getCurrentData()).vboCacheKeys.keySet())
-        {
+    protected void clearCachedVbos(DrawContext dc) {
+        for (Integer key : ((ShapeData) this.getCurrentData()).vboCacheKeys.keySet()) {
             dc.getGpuResourceCache().remove(((ShapeData) this.getCurrentData()).getVboCacheKey(key));
         }
     }
+
+    //*****************************************************************//
+    //*********************        VBOs               *****************//
+    //*****************************************************************//
 
     /**
      * Fill this shape's vertex buffer objects. If the vertex buffer object resource IDs don't yet exist, create them.
      *
      * @param dc the current draw context.
      */
-    protected void fillVBO(DrawContext dc)
-    {
+    protected void fillVBO(DrawContext dc) {
         GL gl = dc.getGL();
         ShapeData shapeData = this.getCurrentShapeData();
         List<Geometry> meshes = shapeData.getMeshes();
 
         // create the cacheKey for this LOD if it doesn't yet exist
-        if (shapeData.getVboCacheKey(getSubdivisions()) == null)
-        {
+        if (shapeData.getVboCacheKey(getSubdivisions()) == null) {
             shapeData.setVboCacheKey(getSubdivisions(), this.getClass().toString() + getSubdivisions());
         }
         int[] vboIds = (int[]) dc.getGpuResourceCache().get(shapeData.getVboCacheKey(getSubdivisions()));
-        if (vboIds == null)
-        {
+        if (vboIds == null) {
             int size = 0;
-            for (int face = 0; face < getFaceCount(); face++)
-            {
+            for (int face = 0; face < getFaceCount(); face++) {
                 size += meshes.get(face).getBuffer(Geometry.VERTEX).limit() * Buffers.SIZEOF_FLOAT;
                 size += meshes.get(face).getBuffer(Geometry.ELEMENT).limit() * Buffers.SIZEOF_FLOAT;
             }
@@ -1441,12 +1218,9 @@ public abstract class RigidShape extends AbstractShape
             shapeData.refillIndexVBO = true;
         }
 
-        if (shapeData.refillIndexVBO)
-        {
-            try
-            {
-                for (int face = 0; face < getFaceCount(); face++)
-                {
+        if (shapeData.refillIndexVBO) {
+            try {
+                for (int face = 0; face < getFaceCount(); face++) {
                     IntBuffer ib = (IntBuffer) meshes.get(face).getBuffer(Geometry.ELEMENT);
                     gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboIds[2 * face + 1]);
                     gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, ib.limit() * Buffers.SIZEOF_FLOAT, ib.rewind(),
@@ -1455,34 +1229,25 @@ public abstract class RigidShape extends AbstractShape
 
                 shapeData.refillIndexVBO = false;
             }
-            finally
-            {
+            finally {
                 gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
             }
         }
 
-        try
-        {
-            for (int face = 0; face < getFaceCount(); face++)
-            {
+        try {
+            for (int face = 0; face < getFaceCount(); face++) {
                 FloatBuffer vb = (FloatBuffer) meshes.get(face).getBuffer(Geometry.VERTEX);
                 gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboIds[2 * face]);
                 gl.glBufferData(GL.GL_ARRAY_BUFFER, vb.limit() * Buffers.SIZEOF_FLOAT, vb.rewind(),
                     GL.GL_STATIC_DRAW);
             }
         }
-        finally
-        {
+        finally {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
         }
     }
 
-    //*****************************************************************//
-    //*********************       Intersections       *****************//
-    //*****************************************************************//
-
-    protected boolean isSameAsPreviousTerrain(Terrain terrain)
-    {
+    protected boolean isSameAsPreviousTerrain(Terrain terrain) {
         if (terrain == null || this.previousIntersectionTerrain == null || terrain != this.previousIntersectionTerrain)
             return false;
 
@@ -1494,12 +1259,15 @@ public abstract class RigidShape extends AbstractShape
             terrain.getGlobe().getGlobeStateKey().equals(this.previousIntersectionGlobeStateKey);
     }
 
-    public void clearIntersectionGeometry()
-    {
+    public void clearIntersectionGeometry() {
         this.previousIntersectionGlobeStateKey = null;
         this.previousIntersectionShapeData = null;
         this.previousIntersectionTerrain = null;
     }
+
+    //*****************************************************************//
+    //*********************       Intersections       *****************//
+    //*****************************************************************//
 
     /**
      * Compute the intersections of a specified line with this shape. If the shape's altitude mode is other than {@link
@@ -1509,19 +1277,15 @@ public abstract class RigidShape extends AbstractShape
      *
      * @param line    the line to intersect.
      * @param terrain the {@link Terrain} to use when computing the wedge's geometry.
-     *
      * @return a list of intersections identifying where the line intersects the shape, or null if the line does not
-     *         intersect the shape.
-     *
+     * intersect the shape.
      * @see Terrain
      */
-    public List<Intersection> intersect(Line line, Terrain terrain)
-    {
+    public List<Intersection> intersect(Line line, Terrain terrain) {
         List<Intersection> shapeIntersections = new ArrayList<>();
         List<Intersection> faceIntersections;
 
-        for (int i = 0; i < getFaceCount(); i++)
-        {
+        for (int i = 0; i < getFaceCount(); i++) {
             faceIntersections = intersect(line, terrain, i);
             if (faceIntersections != null)
                 shapeIntersections.addAll(faceIntersections);
@@ -1529,8 +1293,7 @@ public abstract class RigidShape extends AbstractShape
         return shapeIntersections;
     }
 
-    public List<Intersection> intersect(Line line, Terrain terrain, int index)
-    {
+    public List<Intersection> intersect(Line line, Terrain terrain, int index) {
         Position refPos = this.getReferencePosition();
         if (refPos == null)
             return null;
@@ -1543,8 +1306,7 @@ public abstract class RigidShape extends AbstractShape
         ShapeData highResShapeData = this.isSameAsPreviousTerrain(terrain) ? this.previousIntersectionShapeData
             : null;
 
-        if (highResShapeData == null)
-        {
+        if (highResShapeData == null) {
             highResShapeData = this.createIntersectionGeometry(terrain);
 
             if (highResShapeData.getMesh(index) == null)
@@ -1563,16 +1325,14 @@ public abstract class RigidShape extends AbstractShape
 
         List<Intersection> shapeIntersections = new ArrayList<>();
 
-        for (int i = 0; i < getFaceCount(); i++)
-        {
+        for (int i = 0; i < getFaceCount(); i++) {
             List<Intersection> intersections = new ArrayList<>();
             this.intersect(localLine, highResShapeData, intersections, index);
 
-            if (intersections.size() == 0)
+            if (intersections.isEmpty())
                 continue;
 
-            for (Intersection intersection : intersections)
-            {
+            for (Intersection intersection : intersections) {
                 Vec4 pt = intersection.getIntersectionPoint().add3(highResShapeData.getReferencePoint());
                 intersection.setIntersectionPoint(pt);
 
@@ -1585,14 +1345,13 @@ public abstract class RigidShape extends AbstractShape
                 intersection.setObject(this);
             }
 
-            if (intersections.size() > 0)
+            if (!intersections.isEmpty())
                 shapeIntersections.addAll(intersections);
         }
         return shapeIntersections;
     }
 
-    protected void intersect(Line line, ShapeData shapeData, List<Intersection> intersections, int index)
-    {
+    protected void intersect(Line line, ShapeData shapeData, Collection<Intersection> intersections, int index) {
 
         IntBuffer indices = (IntBuffer) shapeData.getMesh(index).getBuffer(Geometry.ELEMENT);
         indices.rewind();
@@ -1602,7 +1361,7 @@ public abstract class RigidShape extends AbstractShape
         List<Intersection> ti = Triangle.intersectTriangleTypes(line, vertices, indices,
             GL.GL_TRIANGLES);
 
-        if (ti != null && ti.size() > 0)
+        if (ti != null && !ti.isEmpty())
             intersections.addAll(ti);
     }
 
@@ -1615,13 +1374,10 @@ public abstract class RigidShape extends AbstractShape
      * @param line         the line to intersect.
      * @param index        the index of the face to test for intersections
      * @param renderMatrix the current renderMatrix
-     *
      * @return a list of intersections identifying where the line intersects this shape face, or null if the line does
-     *         not intersect this face.
-     *
+     * not intersect this face.
      */
-    public List<Intersection> intersectFace(Line line, int index, Matrix renderMatrix)
-    {
+    public List<Intersection> intersectFace(Line line, int index, Matrix renderMatrix) {
         final Line localLine = new Line(line.origin.subtract3(this.getCurrentShapeData().getReferencePoint()),
             line.direction);
 
@@ -1633,11 +1389,10 @@ public abstract class RigidShape extends AbstractShape
         List<Intersection> intersections = Triangle.intersectTriangleTypes(localLine, vertices,
             (IntBuffer) mesh.getBuffer(Geometry.ELEMENT), GL.GL_TRIANGLES);
 
-        if (intersections == null || intersections.size() == 0)
+        if (intersections == null || intersections.isEmpty())
             return null;
 
-        for (Intersection intersection : intersections)
-        {
+        for (Intersection intersection : intersections) {
             // translate the intersection to world coordinates
             Vec4 pt = intersection.getIntersectionPoint().add3(this.getCurrentShapeData().getReferencePoint());
             intersection.setIntersectionPoint(pt);
@@ -1648,26 +1403,23 @@ public abstract class RigidShape extends AbstractShape
         return intersections;
     }
 
-    //**************************************************************//
-    //*********************       Restorable       *****************//
-    //**************************************************************//
-
-    public String getRestorableState()
-    {
+    public String getRestorableState() {
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         this.doGetRestorableState(rs, null);
 
         return rs.getStateAsXml();
     }
 
-    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
         // Method is invoked by subclasses to have superclass add its state and only its state
         this.doMyGetRestorableState(rs, context);
     }
 
-    private void doMyGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    //**************************************************************//
+    //*********************       Restorable       *****************//
+    //**************************************************************//
+
+    private void doMyGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.doGetRestorableState(rs, context);
 
         rs.addStateValueAsPosition(context, "centerPosition", this.getCenterPosition());
@@ -1683,22 +1435,18 @@ public abstract class RigidShape extends AbstractShape
         rs.addStateValueAsImageSourceList(context, "imageSources", this.imageSources, getFaceCount());
     }
 
-    public void restoreState(String stateInXml)
-    {
-        if (stateInXml == null)
-        {
+    public void restoreState(String stateInXml) {
+        if (stateInXml == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         RestorableSupport rs;
-        try
-        {
+        try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -1708,14 +1456,12 @@ public abstract class RigidShape extends AbstractShape
         this.doRestoreState(rs, null);
     }
 
-    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         // Method is invoked by subclasses to have superclass add its state and only its state
         this.doMyRestoreState(rs, context);
     }
 
-    private void doMyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    private void doMyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.doRestoreState(rs, context);
 
         Position positionState = rs.getStateValueAsPosition(context, "centerPosition");
@@ -1759,12 +1505,102 @@ public abstract class RigidShape extends AbstractShape
             this.offsets = offsetsListState;
 
         HashMap<Integer, Object> imageSourceListState = rs.getStateValueAsImageSourceList(context, "imageSources");
-        if (imageSourceListState != null)
-        {
-            for (int i = 0; i < imageSourceListState.size(); i++)
-            {
+        if (imageSourceListState != null) {
+            for (int i = 0; i < imageSourceListState.size(); i++) {
                 setImageSource(i, imageSourceListState.get(i));
             }
+        }
+    }
+
+    /**
+     * Maintains globe-dependent computed data such as Cartesian vertices and extents. One entry exists for each
+     * distinct globe that this shape encounters in calls to {@link AbstractShape#render(DrawContext)}. See {@link
+     * AbstractShape}.
+     */
+    protected static class ShapeData extends AbstractShapeData {
+        /**
+         * The GPU-resource cache keys to use for this entry's VBOs (one for eack LOD), if VBOs are used.
+         */
+        protected final Map<Integer, Object> vboCacheKeys = new HashMap<>();
+        /**
+         * Holds the computed tessellation of the shape in model coordinates.
+         */
+        protected List<Geometry> meshes = new ArrayList<>();
+        /**
+         * Indicates whether the index buffer needs to be filled because a new buffer is used or some other reason.
+         */
+        protected boolean refillIndexBuffer = true; // set to true if the index buffer needs to be refilled
+        /**
+         * Indicates whether the index buffer's VBO needs to be filled because a new buffer is used or other reason.
+         */
+        protected boolean refillIndexVBO = true; // set to true if the index VBO needs to be refilled
+
+        public ShapeData(DrawContext dc, RigidShape shape) {
+            super(dc, shape.minExpiryTime, shape.maxExpiryTime);
+            //super(dc, 0, 0); // specify 0 as expiry time since only size/position transform changes with time
+        }
+
+        public Geometry getMesh() {
+            return meshes.get(0);
+        }
+
+        public void setMesh(Geometry mesh) {
+            this.addMesh(0, mesh);
+        }
+
+        public Geometry getMesh(int index) {
+            return meshes.get(index);
+        }
+
+        public List<Geometry> getMeshes() {
+            return meshes;
+        }
+
+        public void setMeshes(List<Geometry> meshes) {
+            this.meshes = meshes;
+        }
+
+        public void addMesh(Geometry mesh) {
+            this.addMesh(this.meshes.size(), mesh);
+        }
+
+        public void addMesh(int index, Geometry mesh) {
+            this.meshes.add(index, mesh);
+        }
+
+        public Object getVboCacheKey(int index) {
+            return vboCacheKeys.get(index);
+        }
+
+        public void setVboCacheKey(int index, Object vboCacheKey) {
+            this.vboCacheKeys.put(index, vboCacheKey);
+        }
+
+        public int getVboCacheSize() {
+            return this.vboCacheKeys.size();
+        }
+    }
+
+    public static class Offsets {
+        protected final Map<Integer, float[]> offsets;
+
+        public Offsets() {
+            offsets = new HashMap<>();
+
+            // set default values to zero offset
+            float[] zeroOffset = {0.0f, 0.0f};
+            for (int i = 0; i < 4; i++) {
+                offsets.put(i, zeroOffset);
+            }
+        }
+
+        public float[] getOffset(int index) {
+            return offsets.get(index);
+        }
+
+        public void setOffset(int index, float uOffset, float vOffset) {
+            float[] offsetPair = {uOffset, vOffset};
+            offsets.put(index, offsetPair);
         }
     }
 }

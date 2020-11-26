@@ -21,8 +21,7 @@ import java.awt.image.*;
  * @author dcollins
  * @version $Id: MilStd2525ModifierRetriever.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class MilStd2525ModifierRetriever extends AbstractIconRetriever
-{
+public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
     protected static final Color DEFAULT_COLOR = Color.BLACK;
 
     protected static final String PATH_PREFIX = "modifiers";
@@ -34,8 +33,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
      *
      * @param retrieverPath File path or URL to the symbol directory, for example "http://myserver.com/milstd2525/".
      */
-    public MilStd2525ModifierRetriever(String retrieverPath)
-    {
+    public MilStd2525ModifierRetriever(String retrieverPath) {
         super(retrieverPath);
     }
 
@@ -46,13 +44,10 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
      *                 MIL-STD-2525C Table A-I, pg. 51).
      * @param params   Parameters that affect icon retrieval. This retriever accepts only one parameter: AVKey.COLOR,
      *                 which determines the color of the modifier (default is black).
-     *
      * @return BufferedImage containing the requested modifier, or null if the modifier cannot be retrieved.
      */
-    public BufferedImage createIcon(String symbolId, AVList params)
-    {
-        if (symbolId == null)
-        {
+    public BufferedImage createIcon(String symbolId, AVList params) {
+        if (symbolId == null) {
             String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -60,23 +55,20 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
 
         // Compose a path from the modifier code and value.
         String path = this.composePath(symbolId, params);
-        if (path == null)
-        {
+        if (path == null) {
             String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolId);
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg);
         }
 
         BufferedImage image = this.readImage(path);
-        if (image == null)
-        {
+        if (image == null) {
             String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolId);
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg);
         }
 
-        if (this.mustApplyColor(symbolId))
-        {
+        if (this.mustApplyColor(symbolId)) {
             // Apply the correct color the modifier.
             Color color = this.getColorFromParams(params);
             if (color == null)
@@ -87,8 +79,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
         return image;
     }
 
-    protected String composePath(String symbolModifierCode, AVList params)
-    {
+    protected String composePath(String symbolModifierCode, AVList params) {
         AVList modifierParams = SymbolCode.parseSymbolModifierCode(symbolModifierCode, null);
         if (modifierParams == null)
             return null;
@@ -100,8 +91,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
         sb.append(PATH_PREFIX).append("/");
         sb.append(symbolModifierCode.toLowerCase());
 
-        if (this.isVariableWidth(modifierParams))
-        {
+        if (this.isVariableWidth(modifierParams)) {
             Integer i = this.chooseBestFittingWidth(modifierParams);
             if (i != null)
                 sb.append("_").append(i);
@@ -111,8 +101,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
         return sb.toString();
     }
 
-    protected boolean isVariableWidth(AVList params)
-    {
+    protected boolean isVariableWidth(AVList params) {
         return params.hasKey(SymbologyConstants.FEINT_DUMMY)
             || params.hasKey(SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE);
     }
@@ -122,16 +111,13 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
      * alternate Operational Condition modifiers, which have their own color.
      *
      * @param symbolId Modifier id.
-     *
      * @return True if color must be applied to the modifier.
      */
-    protected boolean mustApplyColor(String symbolId)
-    {
+    protected boolean mustApplyColor(String symbolId) {
         return !SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_ALL.contains(symbolId.toUpperCase());
     }
 
-    protected Integer chooseBestFittingWidth(AVList params)
-    {
+    protected Integer chooseBestFittingWidth(AVList params) {
         Object o = params.getValue(AVKey.WIDTH);
         if (!(o instanceof Number))
             return null;
@@ -140,11 +126,9 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
         int width = variableWidths[0];
         int minDiff = Math.abs(value - width);
 
-        for (int i = 1; i < variableWidths.length; i++)
-        {
+        for (int i = 1; i < variableWidths.length; i++) {
             int diff = Math.abs(value - variableWidths[i]);
-            if (diff < minDiff)
-            {
+            if (diff < minDiff) {
                 width = variableWidths[i];
                 minDiff = diff;
             }
@@ -157,13 +141,10 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
      * Retrieves the value of the AVKey.COLOR parameter.
      *
      * @param params Parameter list.
-     *
      * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color. Returns
-     *         null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a
-     *         Color.
+     * null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a Color.
      */
-    protected Color getColorFromParams(AVList params)
-    {
+    protected Color getColorFromParams(AVList params) {
         if (params == null)
             return null;
 

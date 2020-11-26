@@ -21,14 +21,19 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: ForwardLineOfOwnTroops.java 545 2012-04-24 22:29:21Z pabercrombie $
  */
-public class ForwardLineOfOwnTroops extends PhaseLine
-{
-    /** Default number of wave lengths for a simple shape. This number is used to compute a default wave length. */
+public class ForwardLineOfOwnTroops extends PhaseLine {
+    /**
+     * Default number of wave lengths for a simple shape. This number is used to compute a default wave length.
+     */
     public static final int DEFAULT_NUM_WAVES = 20;
-    /** Default number of intervals used to draw the arcs. */
+    /**
+     * Default number of intervals used to draw the arcs.
+     */
     public final static int DEFAULT_NUM_INTERVALS = 32;
 
-    /** Original positions specified by the application. */
+    /**
+     * Original positions specified by the application.
+     */
     protected Iterable<? extends Position> positions;
     /**
      * Positions computed from the original positions. This list includes the positions necessary to draw the triangle
@@ -36,44 +41,48 @@ public class ForwardLineOfOwnTroops extends PhaseLine
      */
     protected List<Position> computedPositions;
 
-    /** Indicates wave length (in meters) of the semicircle wave along the graphic boundary. */
-    protected double waveLength;
-    /** Number of intervals used to draw the arcs along the line. */
-    protected int intervals = DEFAULT_NUM_INTERVALS;
-
     /**
-     * Indicates the graphics supported by this class.
-     *
-     * @return List of masked SIDC strings that identify graphics that this class supports.
+     * Indicates wave length (in meters) of the semicircle wave along the graphic boundary.
      */
-    public static List<String> getSupportedGraphics()
-    {
-        return Collections.singletonList(TacGrpSidc.C2GM_GNL_LNE_FLOT);
-    }
+    protected double waveLength;
+    /**
+     * Number of intervals used to draw the arcs along the line.
+     */
+    protected int intervals = DEFAULT_NUM_INTERVALS;
 
     /**
      * Create a new graphic.
      *
      * @param sidc MIL-STD-2525C identifier code.
      */
-    public ForwardLineOfOwnTroops(String sidc)
-    {
+    public ForwardLineOfOwnTroops(String sidc) {
         super(sidc);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void setPositions(Iterable<? extends Position> positions)
-    {
-        this.positions = positions;
-        this.computedPositions = null;
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics() {
+        return Collections.singletonList(TacGrpSidc.C2GM_GNL_LNE_FLOT);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Iterable<? extends Position> getPositions()
-    {
+    public Iterable<? extends Position> getPositions() {
         return this.positions;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPositions(Iterable<? extends Position> positions) {
+        this.positions = positions;
+        this.computedPositions = null;
     }
 
     /**
@@ -88,8 +97,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine
      *
      * @return The wave length, in meters.
      */
-    public double getWaveLength()
-    {
+    public double getWaveLength() {
         return this.waveLength;
     }
 
@@ -99,8 +107,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine
      *
      * @param waveLength The wavelength, in meters.
      */
-    public void setWaveLength(int waveLength)
-    {
+    public void setWaveLength(int waveLength) {
         this.waveLength = waveLength;
         this.onShapeChanged();
     }
@@ -110,8 +117,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine
      *
      * @return Intervals used to draw arc.
      */
-    public int getIntervals()
-    {
+    public int getIntervals() {
         return this.intervals;
     }
 
@@ -121,10 +127,8 @@ public class ForwardLineOfOwnTroops extends PhaseLine
      *
      * @param intervals Number of intervals for drawing the arc.
      */
-    public void setIntervals(int intervals)
-    {
-        if (intervals < 1)
-        {
+    public void setIntervals(int intervals) {
+        if (intervals < 1) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", intervals);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -134,12 +138,12 @@ public class ForwardLineOfOwnTroops extends PhaseLine
         this.onShapeChanged();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void moveTo(Position position)
-    {
-        if (position == null)
-        {
+    public void moveTo(Position position) {
+        if (position == null) {
             String msg = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -159,20 +163,19 @@ public class ForwardLineOfOwnTroops extends PhaseLine
         this.path.moveTo(position);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void computeGeometry(DrawContext dc)
-    {
-        if (this.computedPositions == null && this.positions != null)
-        {
+    protected void computeGeometry(DrawContext dc) {
+        if (this.computedPositions == null && this.positions != null) {
             this.generateIntermediatePositions(dc, this.positions);
             this.path.setPositions(this.computedPositions);
         }
         super.computeGeometry(dc);
     }
 
-    protected void onShapeChanged()
-    {
+    protected void onShapeChanged() {
         this.computedPositions = null; // Need to recompute paths
     }
 
@@ -182,8 +185,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine
      * @param dc        Current draw context.
      * @param positions Positions that define the polygon boundary.
      */
-    protected void generateIntermediatePositions(DrawContext dc, Iterable<? extends Position> positions)
-    {
+    protected void generateIntermediatePositions(DrawContext dc, Iterable<? extends Position> positions) {
         Globe globe = dc.getGlobe();
 
         double waveLength = this.getWaveLength();
@@ -191,21 +193,19 @@ public class ForwardLineOfOwnTroops extends PhaseLine
             waveLength = this.computeDefaultWavelength(positions, globe);
         double radius = (waveLength / 2.0) / globe.getRadius();
 
-        PositionIterator iterator = new PositionIterator(positions, waveLength, globe);
+        Iterator<Position> iterator = new PositionIterator(positions, waveLength, globe);
         this.computedPositions = this.generateWavePositions(iterator, radius, false);
     }
 
     protected List<Position> generateWavePositions(Iterator<? extends Position> iterator, double radius,
-        boolean reverse)
-    {
+        boolean reverse) {
         List<Position> wavePositions = new ArrayList<>();
 
         int intervals = this.getIntervals();
         int sign = reverse ? -1 : 1;
 
         Position posB = iterator.next();
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             Position posA = iterator.next();
             if (posA == null) // Iterator returns null if there is not enough room for a full wave.
                 continue;
@@ -215,8 +215,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine
 
             // Generate positions for a semicircle centered on the midpoint.
             double delta = Angle.POS180.radians / intervals;
-            for (int i = 0; i < intervals; i++)
-            {
+            for (int i = 0; i < intervals; i++) {
                 LatLon ll = LatLon.greatCircleEndPosition(midPoint, azimuth.radians + delta * i * sign, radius);
                 wavePositions.add(new Position(ll, 0));
             }
@@ -226,24 +225,20 @@ public class ForwardLineOfOwnTroops extends PhaseLine
         return wavePositions;
     }
 
-    protected double computeDefaultWavelength(Iterable<? extends Position> positions, Globe globe)
-    {
+    protected double computeDefaultWavelength(Iterable<? extends Position> positions, Extent globe) {
         Sector sector = Sector.boundingSector(positions);
         double diagonal = Math.hypot(sector.getDeltaLatRadians(), sector.getDeltaLonRadians());
 
         return (diagonal * globe.getRadius()) / DEFAULT_NUM_WAVES;
     }
 
-    protected Angle computeGreatCirclePathLength(Iterable<? extends Position> positions)
-    {
+    protected Angle computeGreatCirclePathLength(Iterable<? extends Position> positions) {
         double length = 0;
 
         // Compute the number of vertices and the length of the path.
         Position prev = null;
-        for (Position pos : positions)
-        {
-            if (prev != null)
-            {
+        for (Position pos : positions) {
+            if (prev != null) {
                 Angle dist = LatLon.greatCircleDistance(pos, prev);
                 length += dist.radians;
             }
@@ -255,11 +250,9 @@ public class ForwardLineOfOwnTroops extends PhaseLine
     }
 
     @Override
-    protected String getGraphicLabel()
-    {
+    protected String getGraphicLabel() {
         StringBuilder sb = new StringBuilder();
-        if (this.mustShowHostileIndicator())
-        {
+        if (this.mustShowHostileIndicator()) {
             sb.append(SymbologyConstants.HOSTILE_ENEMY);
             sb.append("\n");
         }
@@ -267,20 +260,26 @@ public class ForwardLineOfOwnTroops extends PhaseLine
         return sb.toString();
     }
 
-    /** Iterator to generate equally spaced positions along a control line. */
-    protected static class PositionIterator implements Iterator<Position>
-    {
-        /** Control positions. */
-        protected Iterator<? extends Position> positions;
-
-        /** Wavelength, as a geographic angle. */
-        protected Angle interval;
-
+    /**
+     * Iterator to generate equally spaced positions along a control line.
+     */
+    protected static class PositionIterator implements Iterator<Position> {
         protected final double tolerance = 0.25;
-
-        /** Current position. */
+        /**
+         * Control positions.
+         */
+        protected Iterator<? extends Position> positions;
+        /**
+         * Wavelength, as a geographic angle.
+         */
+        protected Angle interval;
+        /**
+         * Current position.
+         */
         protected Position thisPosition;
-        /** Position of the next control point. */
+        /**
+         * Position of the next control point.
+         */
         protected Position nextControlPosition;
 
         /**
@@ -290,24 +289,20 @@ public class ForwardLineOfOwnTroops extends PhaseLine
          * @param interval  Generate positions along the control line at this interval.
          * @param globe     Globe used to compute geographic positions.
          */
-        protected PositionIterator(Iterable<? extends Position> positions, double interval, Globe globe)
-        {
-            if (positions == null)
-            {
+        protected PositionIterator(Iterable<? extends Position> positions, double interval, Extent globe) {
+            if (positions == null) {
                 String message = Logging.getMessage("nullValue.PositionsListIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
-            if (globe == null)
-            {
+            if (globe == null) {
                 String message = Logging.getMessage("nullValue.GlobeIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
-            if (interval <= 0)
-            {
+            if (interval <= 0) {
                 String message = Logging.getMessage("generic.LengthIsInvalid");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
@@ -319,18 +314,19 @@ public class ForwardLineOfOwnTroops extends PhaseLine
             this.nextControlPosition = this.positions.next();
         }
 
-        /** {@inheritDoc} */
-        public boolean hasNext()
-        {
+        /**
+         * {@inheritDoc}
+         */
+        public boolean hasNext() {
             return this.nextControlPosition != null;
         }
 
-        /** {@inheritDoc} */
-        public Position next()
-        {
+        /**
+         * {@inheritDoc}
+         */
+        public Position next() {
             // thisPosition is null the first time that next() is called.
-            if (this.thisPosition == null)
-            {
+            if (this.thisPosition == null) {
                 this.thisPosition = this.nextControlPosition;
                 return this.thisPosition;
             }
@@ -339,15 +335,12 @@ public class ForwardLineOfOwnTroops extends PhaseLine
             double thisStep = this.interval.degrees;
             double diff = distToNext.degrees - thisStep;
 
-            while (diff < 0)
-            {
-                if (this.positions.hasNext())
-                {
+            while (diff < 0) {
+                if (this.positions.hasNext()) {
                     this.thisPosition = this.nextControlPosition;
                     this.nextControlPosition = this.positions.next();
                 }
-                else
-                {
+                else {
                     Position next = this.nextControlPosition;
                     this.nextControlPosition = null;
 
@@ -371,9 +364,10 @@ public class ForwardLineOfOwnTroops extends PhaseLine
             return this.thisPosition;
         }
 
-        /** Not supported. */
-        public void remove()
-        {
+        /**
+         * Not supported.
+         */
+        public void remove() {
             throw new UnsupportedOperationException();
         }
     }

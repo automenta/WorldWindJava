@@ -16,15 +16,13 @@ import java.awt.*;
  * @author pabercrombie
  * @version $Id: ColladaEffect.java 654 2012-06-25 04:15:52Z pabercrombie $
  */
-public class ColladaEffect extends ColladaAbstractParamContainer
-{
+public class ColladaEffect extends ColladaAbstractParamContainer {
     /**
      * Construct an instance.
      *
      * @param ns the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public ColladaEffect(String ns)
-    {
+    public ColladaEffect(String ns) {
         super(ns);
     }
 
@@ -33,8 +31,7 @@ public class ColladaEffect extends ColladaAbstractParamContainer
      *
      * @return The value of the <i>profile_COMMON</i> field, or null if the field is not set.
      */
-    public ColladaProfileCommon getProfileCommon()
-    {
+    public ColladaProfileCommon getProfileCommon() {
         return (ColladaProfileCommon) this.getField("profile_COMMON");
     }
 
@@ -44,8 +41,7 @@ public class ColladaEffect extends ColladaAbstractParamContainer
      *
      * @return The texture specified by this effect, or null if the texture cannot be resolved.
      */
-    public ColladaTexture getTexture()
-    {
+    public ColladaTexture getTexture() {
         ColladaProfileCommon profile = this.getProfileCommon();
         if (profile == null)
             return null;
@@ -71,8 +67,7 @@ public class ColladaEffect extends ColladaAbstractParamContainer
      *
      * @return The material for this effect, or null if the material cannot be resolved.
      */
-    public Material getMaterial()
-    {
+    public Material getMaterial() {
         ColladaProfileCommon profile = this.getProfileCommon();
         if (profile == null)
             return null;
@@ -117,13 +112,14 @@ public class ColladaEffect extends ColladaAbstractParamContainer
         if (specular == null)
             specular = new Color(255, 255, 255, diffuse.getAlpha());
 
-        return new Material(specular, diffuse, ambient, emission, 1f);
+        return new Material(specular, diffuse, ambient, emission, 1.0f);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ColladaNewParam getParam(String sid)
-    {
+    public ColladaNewParam getParam(String sid) {
         ColladaNewParam param = super.getParam(sid);
         if (param != null)
             return param;

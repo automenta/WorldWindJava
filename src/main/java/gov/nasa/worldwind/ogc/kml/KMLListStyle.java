@@ -19,8 +19,7 @@ import java.util.*;
  * @author tag
  * @version $Id: KMLListStyle.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLListStyle extends KMLAbstractSubStyle
-{
+public class KMLListStyle extends KMLAbstractSubStyle {
     protected final List<KMLItemIcon> itemIcons = new ArrayList<>();
 
     /**
@@ -28,51 +27,42 @@ public class KMLListStyle extends KMLAbstractSubStyle
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLListStyle(String namespaceURI)
-    {
+    public KMLListStyle(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         if (o instanceof KMLItemIcon)
             this.addItemIcon((KMLItemIcon) o);
         else
             super.doAddEventContent(o, ctx, event, args);
     }
 
-    public String getListItemType()
-    {
+    public String getListItemType() {
         return (String) this.getField("listItemType");
     }
 
-    public String getBgColor()
-    {
+    public String getBgColor() {
         return (String) this.getField("bgColor");
     }
 
-    protected void addItemIcon(KMLItemIcon o)
-    {
+    protected void addItemIcon(KMLItemIcon o) {
         this.itemIcons.add(o);
     }
 
-    public List<KMLItemIcon> getItemIcons()
-    {
+    public List<KMLItemIcon> getItemIcons() {
         return this.itemIcons;
     }
 
-    public Integer getMaxSnippetLines()
-    {
+    public Integer getMaxSnippetLines() {
         return (Integer) this.getField("maxSnippetLines");
     }
 
     @Override
-    public void applyChange(KMLAbstractObject sourceValues)
-    {
-        if (!(sourceValues instanceof KMLListStyle))
-        {
+    public void applyChange(KMLAbstractObject sourceValues) {
+        if (!(sourceValues instanceof KMLListStyle)) {
             String message = Logging.getMessage("KML.InvalidElementType", sourceValues.getClass().getName());
             Logging.logger().warning(message);
             throw new IllegalArgumentException(message);
@@ -80,7 +70,7 @@ public class KMLListStyle extends KMLAbstractSubStyle
 
         KMLListStyle sourceStyle = (KMLListStyle) sourceValues;
 
-        if (sourceStyle.getItemIcons() != null && sourceStyle.getItemIcons().size() > 0)
+        if (sourceStyle.getItemIcons() != null && !sourceStyle.getItemIcons().isEmpty())
             this.mergeItemIcons(sourceStyle);
 
         super.applyChange(sourceValues);
@@ -92,22 +82,17 @@ public class KMLListStyle extends KMLAbstractSubStyle
      *
      * @param sourceStyle the incoming item icons.
      */
-    protected void mergeItemIcons(KMLListStyle sourceStyle)
-    {
+    protected void mergeItemIcons(KMLListStyle sourceStyle) {
         // Make a copy of the existing list so we can modify it as we traverse the copy.
         List<KMLItemIcon> itemIconsCopy = new ArrayList<>(this.getItemIcons().size());
         Collections.copy(itemIconsCopy, this.getItemIcons());
 
-        for (KMLItemIcon sourceItemIcon : sourceStyle.getItemIcons())
-        {
+        for (KMLItemIcon sourceItemIcon : sourceStyle.getItemIcons()) {
             String id = sourceItemIcon.getId();
-            if (!WWUtil.isEmpty(id))
-            {
-                for (KMLItemIcon existingItemIcon : itemIconsCopy)
-                {
+            if (!WWUtil.isEmpty(id)) {
+                for (KMLItemIcon existingItemIcon : itemIconsCopy) {
                     String currentId = existingItemIcon.getId();
-                    if (!WWUtil.isEmpty(currentId) && currentId.equals(id))
-                    {
+                    if (!WWUtil.isEmpty(currentId) && currentId.equals(id)) {
                         this.getItemIcons().remove(existingItemIcon);
                     }
                 }

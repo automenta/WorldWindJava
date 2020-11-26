@@ -11,29 +11,24 @@ import gov.nasa.worldwind.geom.*;
  * @author jym
  * @version $Id: PropertyAccessor.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class PropertyAccessor
-{
+public class PropertyAccessor {
 
-    public PropertyAccessor()
-    {
+    public PropertyAccessor() {
     }
 
-    public interface AngleAccessor
-    {
+    public interface AngleAccessor {
         Angle getAngle();
 
         boolean setAngle(Angle value);
     }
 
-    public interface DoubleAccessor
-    {
+    public interface DoubleAccessor {
         Double getDouble();
 
         boolean setDouble(Double value);
     }
 
-    public interface PositionAccessor
-    {
+    public interface PositionAccessor {
         Position getPosition();
 
         boolean setPosition(Position value);

@@ -28,7 +28,8 @@ import java.net.*;
  * @author pabercrombie
  * @version $Id: ColladaRoot.java 1696 2013-10-31 18:46:55Z tgaskins $
  */
-public class ColladaRoot extends ColladaAbstractObject implements ColladaRenderable, XMLRoot, Highlightable, Animatable {
+public class ColladaRoot extends ColladaAbstractObject
+    implements ColladaRenderable, XMLRoot, Highlightable, Animatable {
 
     /**
      * Reference to the ColladaDoc representing the COLLADA file.
@@ -116,9 +117,8 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * either files or input streams.
      *
      * @param docSource the XMLDoc instance representing the COLLADA document.
-     *
      * @throws IllegalArgumentException if the document source is null.
-     * @throws IOException if an error occurs while reading the COLLADA document.
+     * @throws IOException              if an error occurs while reading the COLLADA document.
      */
     public ColladaRoot(XMLDoc docSource) throws IOException {
         super(ColladaConstants.COLLADA_NAMESPACE);
@@ -137,9 +137,8 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * Create a new <code>ColladaRoot</code> for a {@link File}.
      *
      * @param docSource the File containing the document.
-     *
      * @throws IllegalArgumentException if the document source is null.
-     * @throws IOException if an error occurs while reading the Collada document.
+     * @throws IOException              if an error occurs while reading the Collada document.
      */
     public ColladaRoot(File docSource) throws IOException {
         super(ColladaConstants.COLLADA_NAMESPACE);
@@ -159,9 +158,8 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * Create a new <code>ColladaRoot</code> for a {@link URL}.
      *
      * @param docSource the URL of the document.
-     *
      * @throws IllegalArgumentException if the document source is null.
-     * @throws IOException if an error occurs while reading the Collada document.
+     * @throws IOException              if an error occurs while reading the Collada document.
      */
     public ColladaRoot(URL docSource) throws IOException {
         super(ColladaConstants.COLLADA_NAMESPACE);
@@ -182,9 +180,8 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * Create a new <code>ColladaRoot</code> for a {@link InputStream}.
      *
      * @param docSource the URL of the document.
-     *
      * @throws IllegalArgumentException if the document source is null.
-     * @throws IOException if an error occurs while reading the Collada document.
+     * @throws IOException              if an error occurs while reading the Collada document.
      */
     public ColladaRoot(InputStream docSource) throws IOException {
         super(ColladaConstants.COLLADA_NAMESPACE);
@@ -205,11 +202,9 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * identifying either a file path or a {@link URL}. Null is returned if the source type is not recognized.
      *
      * @param docSource either a {@link File} or a {@link String} identifying a file path or {@link URL}.
-     *
      * @return a new {@link ColladaRoot} for the specified source, or null if the source type is not supported.
-     *
      * @throws IllegalArgumentException if the source is null.
-     * @throws IOException if an error occurs while reading the source.
+     * @throws IOException              if an error occurs while reading the source.
      */
     public static ColladaRoot create(Object docSource) throws IOException {
         if (docSource == null) {
@@ -220,9 +215,11 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
 
         if (docSource instanceof File) {
             return new ColladaRoot((File) docSource);
-        } else if (docSource instanceof URL) {
+        }
+        else if (docSource instanceof URL) {
             return new ColladaRoot((URL) docSource);
-        } else if (docSource instanceof String) {
+        }
+        else if (docSource instanceof String) {
             File file = new File((String) docSource);
             if (file.exists()) {
                 return new ColladaRoot(file);
@@ -232,7 +229,8 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
             if (url != null) {
                 return new ColladaRoot(url);
             }
-        } else if (docSource instanceof InputStream) {
+        }
+        else if (docSource instanceof InputStream) {
             return new ColladaRoot((InputStream) docSource);
         }
 
@@ -240,24 +238,21 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
     }
 
     /**
-     * Creates and parses a Collada root for an untyped source.The source must be either a {@link File} or a
-     * {@link String} identifying either a file path or a {@link URL}. Null is returned if the source type is not
-     * recognized.
+     * Creates and parses a Collada root for an untyped source.The source must be either a {@link File} or a {@link
+     * String} identifying either a file path or a {@link URL}. Null is returned if the source type is not recognized.
      *
      * @param docSource either a {@link File} or a {@link String} identifying a file path or {@link URL}.
-     *
      * @return a new {@link ColladaRoot} for the specified source, or null if the source type is not supported.
-     *
-     * @throws IllegalArgumentException if the source is null.
-     * @throws javax.xml.stream.XMLStreamException if the XML stream is not readable.
-     * @throws IOException if an error occurs while reading the source.
+     * @throws IllegalArgumentException            if the source is null.
+     * @throws XMLStreamException if the XML stream is not readable.
+     * @throws IOException                         if an error occurs while reading the source.
      */
     public static ColladaRoot createAndParse(Object docSource) throws IOException, XMLStreamException {
         ColladaRoot colladaRoot = ColladaRoot.create(docSource);
 
         if (colladaRoot == null) {
             String message = Logging.getMessage("generic.UnrecognizedSourceTypeOrUnavailableSource",
-                    docSource.toString());
+                docSource.toString());
             throw new IllegalArgumentException(message);
         }
 
@@ -270,7 +265,7 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * Called just before the constructor returns. If overriding this method be sure to invoke
      * <code>super.initialize()</code>.
      *
-     * @throws java.io.IOException if an I/O error occurs attempting to open the document source.
+     * @throws IOException if an I/O error occurs attempting to open the document source.
      */
     protected void initialize() throws IOException {
         this.eventStream = new BufferedInputStream(this.getColladaDoc().getInputStream());
@@ -304,7 +299,6 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * Specifies this shape's geographic position. The position's altitude is relative to this shape's altitude mode.
      *
      * @param position this shape's geographic position.
-     *
      * @throws IllegalArgumentException if the position is null.
      */
     public void setPosition(Position position) {
@@ -321,7 +315,6 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * Returns this shape's altitude mode.
      *
      * @return this shape's altitude mode.
-     *
      * @see #setAltitudeMode(int)
      */
     public int getAltitudeMode() {
@@ -377,7 +370,7 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * axis.
      *
      * @param pitch this shape's pitch. Positive values are clockwise as observed looking along the model's X axis
-     * toward the model's origin. May be null.
+     *              toward the model's origin. May be null.
      */
     public void setPitch(Angle pitch) {
         this.pitch = pitch;
@@ -398,7 +391,7 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * Specifies this shape's roll, the angle to rotate this shape's model about its Y axis.
      *
      * @param roll this shape's roll. May be null. Positive values are clockwise as observed looking along the model's Y
-     * axis toward the origin.
+     *             axis toward the origin.
      */
     public void setRoll(Angle roll) {
         this.roll = roll;
@@ -465,11 +458,9 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * ColladaRoot.
      *
      * @param link the address of the document or element to resolve. This may be a full URL, a URL fragment that
-     * identifies an element in the current document ("#myElement"), or a URL and a fragment identifier
-     * ("http://server.com/model.dae#myElement").
-     *
+     *             identifies an element in the current document ("#myElement"), or a URL and a fragment identifier
+     *             ("http://server.com/model.dae#myElement").
      * @return the requested element, or null if the element is not found.
-     *
      * @throws IllegalArgumentException if the address is null.
      */
     public Object resolveReference(String link) {
@@ -485,10 +476,8 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * ColladaRoot} for the COLLADA file identified by {@code linkBase}. Otherwise, {@code linkBase} is returned.
      *
      * @param linkBase the address of the document containing the requested element.
-     * @param linkRef the element's identifier.
-     *
+     * @param linkRef  the element's identifier.
      * @return the requested element, or null if the element is not found.
-     *
      * @throws IllegalArgumentException if the address is null.
      */
     public Object resolveLocalReference(String linkBase, String linkRef) {
@@ -520,10 +509,12 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
             // Now check the newly opened COLLADA file for the referenced item, if a reference was specified.
             if (linkRef != null) {
                 return refRoot.getItemByID(linkRef);
-            } else {
+            }
+            else {
                 return refRoot;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + "/" + linkRef);
             Logging.logger().warning(message);
             return null;
@@ -542,11 +533,9 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * the file in the file cache.
      *
      * @param linkBase the address of the document containing the requested element.
-     * @param linkRef the element's identifier.
-     *
+     * @param linkRef  the element's identifier.
      * @return URL to the requested file, parsed ColladaRoot, or COLLADA element. Returns null if the document is not
      * yet available in the FileStore.
-     *
      * @throws IllegalArgumentException if the {@code linkBase} is null.
      */
     public Object resolveRemoteReference(String linkBase, String linkRef, boolean cacheRemoteFile) {
@@ -594,10 +583,12 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
             // Now check the newly opened COLLADA file for the referenced item, if a reference was specified.
             if (linkRef != null) {
                 return refRoot.getItemByID(linkRef);
-            } else {
+            }
+            else {
                 return refRoot;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             String message = Logging.getMessage("generic.UnableToResolveReference", linkBase + "/" + linkRef);
             Logging.logger().warning(message);
             return null;
@@ -609,27 +600,24 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * "text/plain" and "text/xml".
      *
      * @param mimeType Type to test. May be null.
-     *
      * @return {@code true} if {@code mimeType} can be parsed as COLLADA.
      */
     protected boolean canParseContentType(String mimeType) {
         return ColladaConstants.COLLADA_MIME_TYPE.equals(mimeType)
-                || "text/plain".equals(mimeType) || "text/xml".equals(mimeType);
+            || "text/plain".equals(mimeType) || "text/xml".equals(mimeType);
     }
 
     /**
      * Open and parse the specified file expressed as a file: URL..
      *
-     * @param url the URL of the file to open, expressed as a URL with a scheme of "file".
+     * @param url      the URL of the file to open, expressed as a URL with a scheme of "file".
      * @param linkBase the original address of the document if the file is a retrieved and cached file.
-     *
      * @return A {@code ColladaRoot} representing the file's COLLADA contents.
-     *
-     * @throws IOException if an I/O error occurs during opening and parsing.
+     * @throws IOException        if an I/O error occurs during opening and parsing.
      * @throws XMLStreamException if a server parsing error is encountered.
      */
     protected ColladaRoot parseCachedColladaFile(URL url, String linkBase)
-            throws IOException, XMLStreamException {
+        throws IOException, XMLStreamException {
         XMLDoc colladaDoc;
 
         InputStream refStream = url.openStream();
@@ -640,7 +628,8 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
             ColladaRoot refRoot = new ColladaRoot(colladaDoc);
             refRoot.parse(); // also closes the URL's stream
             return refRoot;
-        } catch (XMLStreamException e) {
+        }
+        catch (XMLStreamException e) {
             refStream.close(); // parsing failed, so explicitly close the stream
             throw e;
         }
@@ -650,8 +639,7 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * Creates the event reader. Called from the constructor.
      *
      * @param docSource the document source to create a reader for. The type can be any of those supported by {@link
-     *                  gov.nasa.worldwind.util.WWXML#openEventReader(Object)}.
-     *
+     *                  WWXML#openEventReader(Object)}.
      * @return a new event reader, or null if the source type cannot be determined.
      */
     protected XMLEventReader createReader(Object docSource) {
@@ -660,22 +648,23 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
 
     /**
      * Invoked during {@link #initialize()} to create the parser context. The parser context is created by the global
-     * {@link gov.nasa.worldwind.util.xml.XMLEventParserContextFactory}.
+     * {@link XMLEventParserContextFactory}.
      *
      * @param reader the reader to associate with the parser context.
-     *
      * @return a new parser context.
      */
     protected ColladaParserContext createParserContext(XMLEventReader reader) {
-        ColladaParserContext ctx = (ColladaParserContext) XMLEventParserContextFactory.createParserContext(ColladaConstants.COLLADA_MIME_TYPE,
-                this.getNamespaceURI());
+        ColladaParserContext ctx = (ColladaParserContext) XMLEventParserContextFactory.createParserContext(
+            ColladaConstants.COLLADA_MIME_TYPE,
+            this.getNamespaceURI());
 
         if (ctx == null) {
             // Register a parser context for this root's default namespace
-            String[] mimeTypes = new String[]{ColladaConstants.COLLADA_MIME_TYPE};
+            String[] mimeTypes = new String[] {ColladaConstants.COLLADA_MIME_TYPE};
             XMLEventParserContextFactory.addParserContext(mimeTypes, new ColladaParserContext(this.getNamespaceURI()));
-            ctx = (ColladaParserContext) XMLEventParserContextFactory.createParserContext(ColladaConstants.COLLADA_MIME_TYPE,
-                    this.getNamespaceURI());
+            ctx = (ColladaParserContext) XMLEventParserContextFactory.createParserContext(
+                ColladaConstants.COLLADA_MIME_TYPE,
+                this.getNamespaceURI());
         }
 
         ctx.setEventReader(reader);
@@ -688,9 +677,7 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * has been parsed.
      *
      * @param args optional arguments to pass to parsers of sub-elements.
-     *
      * @return <code>this</code> if parsing is successful, otherwise null.
-     *
      * @throws XMLStreamException if an exception occurs while attempting to read the event stream.
      */
     public ColladaRoot parse(Object... args) throws XMLStreamException {
@@ -708,7 +695,8 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
                     return this;
                 }
             }
-        } finally {
+        }
+        finally {
             ctx.getEventReader().close();
             this.closeEventStream();
         }
@@ -722,7 +710,8 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
         try {
             this.eventStream.close();
             this.eventStream = null;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             String message = Logging.getMessage("generic.ExceptionClosingXmlEventReader");
             Logging.logger().warning(message);
         }
@@ -877,7 +866,6 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * Finds a named element in the document.
      *
      * @param id the element's identifier. If null, null is returned.
-     *
      * @return the element requested, or null if there is no corresponding element in the document.
      */
     public Object getItemByID(String id) {
@@ -890,9 +878,7 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
      * document's file path or URL.
      *
      * @param link Relative path to resolve.
-     *
      * @return Absolute path of the resource, or null if the resource cannot be resolved.
-     *
      * @throws IOException If an error occurs while attempting to resolve the resource.
      */
     public String getSupportFilePath(String link) throws IOException {
@@ -921,5 +907,4 @@ public class ColladaRoot extends ColladaAbstractObject implements ColladaRendera
     public void setRedrawRequested(int redrawRequested) {
         this.redrawRequested = redrawRequested;
     }
-
 }

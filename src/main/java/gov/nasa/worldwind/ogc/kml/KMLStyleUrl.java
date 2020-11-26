@@ -13,15 +13,13 @@ import gov.nasa.worldwind.util.*;
  * @author tag
  * @version $Id: KMLStyleUrl.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLStyleUrl extends KMLAbstractObject
-{
+public class KMLStyleUrl extends KMLAbstractObject {
     /**
      * Construct an instance.
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLStyleUrl(String namespaceURI)
-    {
+    public KMLStyleUrl(String namespaceURI) {
         super(namespaceURI);
     }
 
@@ -33,8 +31,7 @@ public class KMLStyleUrl extends KMLAbstractObject
      *
      * @return the style or style map referred to by the style URL.
      */
-    public KMLAbstractStyleSelector resolveStyleUrl()
-    {
+    public KMLAbstractStyleSelector resolveStyleUrl() {
         if (WWUtil.isEmpty(this.getCharacters()))
             return null;
 
@@ -43,10 +40,8 @@ public class KMLStyleUrl extends KMLAbstractObject
     }
 
     @Override
-    public void applyChange(KMLAbstractObject sourceValues)
-    {
-        if (!(sourceValues instanceof KMLStyleUrl))
-        {
+    public void applyChange(KMLAbstractObject sourceValues) {
+        if (!(sourceValues instanceof KMLStyleUrl)) {
             String message = Logging.getMessage("KML.InvalidElementType", sourceValues.getClass().getName());
             Logging.logger().warning(message);
             throw new IllegalArgumentException(message);

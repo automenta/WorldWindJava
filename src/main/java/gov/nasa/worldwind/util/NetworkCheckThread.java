@@ -16,13 +16,11 @@ import java.util.concurrent.atomic.*;
  * @author tag
  * @version $Id: NetworkCheckThread.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class NetworkCheckThread extends Thread
-{
+public class NetworkCheckThread extends Thread {
     protected static final long DEFAULT_NET_CHECK_INTERVAL = 1000; // milliseconds
-
+    protected final AtomicLong netChecInterval = new AtomicLong(DEFAULT_NET_CHECK_INTERVAL);
     protected AtomicBoolean showNetStatus;
     protected AtomicBoolean isNetAvailable;
-    protected final AtomicLong netChecInterval = new AtomicLong(DEFAULT_NET_CHECK_INTERVAL);
 
     /**
      * Constructs a new instance of this class. Once started, the thread checks network availability at a specified
@@ -36,17 +34,14 @@ public class NetworkCheckThread extends Thread
      * @param interval       the interval at which to perform the network check, or null if the default interval of one
      *                       second is to be used.
      */
-    public NetworkCheckThread(AtomicBoolean showNetStatus, AtomicBoolean isNetAvailable, Long interval)
-    {
-        if (showNetStatus == null)
-        {
+    public NetworkCheckThread(AtomicBoolean showNetStatus, AtomicBoolean isNetAvailable, Long interval) {
+        if (showNetStatus == null) {
             String msg = Logging.getMessage("nullValue.StatusReferenceIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (isNetAvailable == null)
-        {
+        if (isNetAvailable == null) {
             String msg = Logging.getMessage("nullValue.ReturnReferenceIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -60,18 +55,14 @@ public class NetworkCheckThread extends Thread
     }
 
     @Override
-    public void run()
-    {
-        while (showNetStatus.get() && !Thread.currentThread().isInterrupted())
-        {
+    public void run() {
+        while (showNetStatus.get() && !Thread.currentThread().isInterrupted()) {
             //noinspection EmptyCatchBlock
-            try
-            {
+            try {
                 Thread.sleep(DEFAULT_NET_CHECK_INTERVAL);
                 this.isNetAvailable.set(!WorldWind.getNetworkStatus().isNetworkUnavailable());
             }
-            catch (InterruptedException e)
-            {
+            catch (InterruptedException e) {
                 // Intentionally empty
             }
         }

@@ -18,18 +18,15 @@ import java.util.List;
  * @author tag
  * @version $Id: FBOTexture.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class FBOTexture extends FramebufferTexture
-{
-    public FBOTexture(WWTexture imageSource, Sector sector, List<LatLon> corners)
-    {
+public class FBOTexture extends FramebufferTexture {
+    public FBOTexture(WWTexture imageSource, Sector sector, List<LatLon> corners) {
         super(imageSource, sector, corners);
 
         this.width = 1024;
         this.height = 1024;
     }
 
-    protected Texture initializeTexture(DrawContext dc)
-    {
+    protected Texture initializeTexture(DrawContext dc) {
         // Bind actually binds the source texture only if the image source is available, otherwise it initiates image
         // source retrieval. If bind returns false, the image source is not yet available.
         if (this.sourceTexture == null || !this.sourceTexture.bind(dc))
@@ -53,8 +50,7 @@ public class FBOTexture extends FramebufferTexture
         int[] fbo = new int[1];
         gl.glGenFramebuffers(1, fbo, 0);
 
-        try
-        {
+        try {
             gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, fbo[0]);
 
             TextureData td = new TextureData(gl.getGLProfile(), GL.GL_RGBA, this.width, this.height, 0, GL.GL_RGBA,
@@ -72,12 +68,10 @@ public class FBOTexture extends FramebufferTexture
                 t.getTextureObject(gl), 0);
 
             int status = gl.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);
-            if (status == GL.GL_FRAMEBUFFER_COMPLETE)
-            {
+            if (status == GL.GL_FRAMEBUFFER_COMPLETE) {
                 this.generateTexture(dc, this.width, this.height);
             }
-            else
-            {
+            else {
                 String msg = Logging.getMessage("FBOTexture.TextureNotCreated");
                 throw new IllegalStateException(msg);
             }
@@ -86,8 +80,7 @@ public class FBOTexture extends FramebufferTexture
 
             return t;
         }
-        finally
-        {
+        finally {
             gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, previousFbo[0]);
             gl.glDeleteFramebuffers(1, fbo, 0);
         }

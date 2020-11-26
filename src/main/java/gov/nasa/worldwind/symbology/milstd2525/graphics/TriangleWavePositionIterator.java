@@ -26,39 +26,66 @@ import java.util.Iterator;
  * @author pabercrombie
  * @version $Id: TriangleWavePositionIterator.java 423 2012-03-02 21:43:57Z pabercrombie $
  */
-public class TriangleWavePositionIterator implements Iterator
-{
-    /** Initial state. */
+public class TriangleWavePositionIterator implements Iterator {
+    /**
+     * Initial state.
+     */
     protected static final int STATE_FIRST = 0;
-    /** Drawing connecting line between waves. */
+    /**
+     * Drawing connecting line between waves.
+     */
     protected static final int STATE_LINE = 1;
-    /** About to draw wave. */
+    /**
+     * About to draw wave.
+     */
     protected static final int STATE_WAVE_START = 2;
-    /** At peak of wave. */
+    /**
+     * At peak of wave.
+     */
     protected static final int STATE_TOOTH_PEAK = 3;
-    /** Current state of the state machine. */
+    /**
+     * Current state of the state machine.
+     */
     protected int state = STATE_FIRST;
 
-    /** Control positions. */
+    /**
+     * Control positions.
+     */
     protected Iterator<? extends Position> positions;
 
-    /** Globe used to compute geographic positions. */
+    /**
+     * Globe used to compute geographic positions.
+     */
     protected Globe globe;
-    /** Amplitude of the wave, in meters. */
+    /**
+     * Amplitude of the wave, in meters.
+     */
     protected double amplitude;
-    /** Wavelength, as a geographic angle. */
+    /**
+     * Wavelength, as a geographic angle.
+     */
     protected Angle halfWaveLength;
 
-    /** Current position. */
+    /**
+     * Current position.
+     */
     protected Position thisPosition;
-    /** Position of the next control point. */
+    /**
+     * Position of the next control point.
+     */
     protected Position nextControlPosition;
-    /** First position along the line. */
+    /**
+     * First position along the line.
+     */
     protected Position firstPosition;
-    /** End position for the current wave. */
+    /**
+     * End position for the current wave.
+     */
     protected Position waveEndPosition;
 
-    /** Distance (in meters) to the next wave start or end. */
+    /**
+     * Distance (in meters) to the next wave start or end.
+     */
     protected double thisStep;
 
     /**
@@ -71,24 +98,20 @@ public class TriangleWavePositionIterator implements Iterator
      * @param globe      Globe used to compute geographic positions.
      */
     public TriangleWavePositionIterator(Iterable<? extends Position> positions, double waveLength, double amplitude,
-        Globe globe)
-    {
-        if (positions == null)
-        {
+        Globe globe) {
+        if (positions == null) {
             String message = Logging.getMessage("nullValue.PositionsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (globe == null)
-        {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (waveLength <= 0 || amplitude <= 0)
-        {
+        if (waveLength <= 0 || amplitude <= 0) {
             String message = Logging.getMessage("generic.LengthIsInvalid");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -106,15 +129,17 @@ public class TriangleWavePositionIterator implements Iterator
         this.nextControlPosition = this.thisPosition;
     }
 
-    /** {@inheritDoc} */
-    public boolean hasNext()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean hasNext() {
         return this.nextControlPosition != null;
     }
 
-    /** {@inheritDoc} */
-    public Position next()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Position next() {
         Position ret;
 
         // The iterator is implemented as a state machine. For each call to next() we return the appropriate
@@ -133,50 +158,36 @@ public class TriangleWavePositionIterator implements Iterator
         //              |
         //              Line
 
-        switch (this.state)
-        {
-            // First call to the iterator. Just return the starting position.
-            case STATE_FIRST:
+        // First call to the iterator. Just return the starting position.
+        // Draw a straight segment between waves. Compute the next point and return.
+        // Draw a wave. Compute the end position of the wave, then compute and return the peak position.
+        // Compute the two points that form the tooth.
+        // Return previously computed wave end position, and transition to Line state.
+        switch (this.state) {
+            case STATE_FIRST -> {
                 ret = this.thisPosition;
                 this.state = STATE_LINE;
-                break;
-
-            // Draw a straight segment between waves. Compute the next point and return.
-            case STATE_LINE:
-                ret = this.computeNext();
-                break;
-
-            // Draw a wave. Compute the end position of the wave, then compute and return the peak position.
-            case STATE_WAVE_START:
+            }
+            case STATE_LINE -> ret = this.computeNext();
+            case STATE_WAVE_START -> {
                 Position prevPos = this.thisPosition; // Keep track of where the wave starts
                 this.waveEndPosition = this.computeNext();
-
                 Vec4 thisPoint = this.globe.computePointFromLocation(prevPos);
                 Vec4 pNext = this.globe.computePointFromLocation(this.waveEndPosition);
-
                 LatLon ll = LatLon.interpolateGreatCircle(0.5, prevPos, this.waveEndPosition);
                 Vec4 midPoint = this.globe.computePointFromLocation(ll);
-
                 Vec4 vAB = pNext.subtract3(thisPoint);
-
                 Vec4 normal = this.globe.computeSurfaceNormalAtLocation(ll.latitude, ll.longitude);
                 Vec4 perpendicular = vAB.cross3(normal);
                 perpendicular = perpendicular.normalize3().multiply3(this.amplitude);
-
-                // Compute the two points that form the tooth.
                 Vec4 toothPoint = midPoint.add3(perpendicular);
-
                 ret = this.globe.computePositionFromPoint(toothPoint);
-                break;
-
-            // Return previously computed wave end position, and transition to Line state.
-            case STATE_TOOTH_PEAK:
+            }
+            case STATE_TOOTH_PEAK -> {
                 ret = this.waveEndPosition;
                 this.state = STATE_LINE;
-                break;
-
-            default:
-                throw new IllegalStateException();
+            }
+            default -> throw new IllegalStateException();
         }
 
         return ret;
@@ -195,42 +206,35 @@ public class TriangleWavePositionIterator implements Iterator
      *
      * @return next position along the line.
      */
-    protected Position computeNext()
-    {
+    protected Position computeNext() {
         Angle distToNext = LatLon.greatCircleDistance(this.thisPosition, this.nextControlPosition);
         double diff = distToNext.degrees - this.thisStep;
 
-        while (diff < 0)
-        {
-            if (this.positions.hasNext())
-            {
+        while (diff < 0) {
+            if (this.positions.hasNext()) {
                 this.thisPosition = this.nextControlPosition;
                 this.nextControlPosition = this.positions.next();
 
                 // If we're drawing a line segment between waves then return the current control point and do not
                 // transition states. We retain all of the control points between waves in order to keep the line
                 // as close to the application's specification as possible.
-                if (this.state == STATE_LINE)
-                {
+                if (this.state == STATE_LINE) {
                     this.thisStep -= distToNext.degrees;
                     return this.thisPosition;
                 }
             }
             // Handle a polygon that is not closed.
-            else if (this.firstPosition != null && !this.firstPosition.equals(this.nextControlPosition))
-            {
+            else if (this.firstPosition != null && !this.firstPosition.equals(this.nextControlPosition)) {
                 this.thisPosition = this.nextControlPosition;
                 this.nextControlPosition = this.firstPosition;
                 this.firstPosition = null;
 
-                if (this.state == STATE_LINE)
-                {
+                if (this.state == STATE_LINE) {
                     this.thisStep -= distToNext.degrees;
                     return this.thisPosition;
                 }
             }
-            else
-            {
+            else {
                 Position next = this.nextControlPosition;
                 this.nextControlPosition = null;
                 return next;
@@ -248,16 +252,10 @@ public class TriangleWavePositionIterator implements Iterator
 
         // Transition to the next state. If we were drawing a line we are now drawing a wave. If we were starting a
         // wave, we're now at the wave peak.
-        switch (this.state)
-        {
-            case STATE_LINE:
-                this.state = STATE_WAVE_START;
-                break;
-            case STATE_WAVE_START:
-                this.state = STATE_TOOTH_PEAK;
-                break;
-            default:
-                throw new IllegalStateException();
+        switch (this.state) {
+            case STATE_LINE -> this.state = STATE_WAVE_START;
+            case STATE_WAVE_START -> this.state = STATE_TOOTH_PEAK;
+            default -> throw new IllegalStateException();
         }
 
         this.thisStep = this.halfWaveLength.degrees;
@@ -266,9 +264,10 @@ public class TriangleWavePositionIterator implements Iterator
         return this.thisPosition;
     }
 
-    /** Not supported. */
-    public void remove()
-    {
+    /**
+     * Not supported.
+     */
+    public void remove() {
         throw new UnsupportedOperationException();
     }
 }

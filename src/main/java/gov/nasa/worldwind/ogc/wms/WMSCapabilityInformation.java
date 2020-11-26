@@ -20,8 +20,7 @@ import java.util.*;
  * @author tag
  * @version $Id: WMSCapabilityInformation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WMSCapabilityInformation extends OGCCapabilityInformation
-{
+public class WMSCapabilityInformation extends OGCCapabilityInformation {
     private static final String[] rNames = new String[]
         {
             "GetCapabilities", "GetMap", "GetFeatureInfo", "DescribeLayer", "GetLegendGraphic"
@@ -32,20 +31,17 @@ public class WMSCapabilityInformation extends OGCCapabilityInformation
     protected List<QName> requestNames;
     protected List<WMSLayerCapabilities> layerCapabilities;
 
-    public WMSCapabilityInformation(String namespaceURI)
-    {
+    public WMSCapabilityInformation(String namespaceURI) {
         super(namespaceURI);
 
         this.initialize();
     }
 
-    private void initialize()
-    {
+    private void initialize() {
         LAYER = new QName(this.getNamespaceURI(), "Layer");
 
         this.requestNames = new ArrayList<>(rNames.length);
-        for (String name : rNames)
-        {
+        for (String name : rNames) {
             this.requestNames.add(new QName(this.getNamespaceURI(), name));
         }
 
@@ -53,8 +49,7 @@ public class WMSCapabilityInformation extends OGCCapabilityInformation
     }
 
     @Override
-    public XMLEventParser allocate(XMLEventParserContext ctx, XMLEvent event)
-    {
+    public XMLEventParser allocate(XMLEventParserContext ctx, XMLEvent event) {
         if (ctx.isStartElement(event, LAYER))
             return ctx.allocate(event, new WMSLayerCapabilities(this.getNamespaceURI()));
         else
@@ -63,16 +58,12 @@ public class WMSCapabilityInformation extends OGCCapabilityInformation
 
     @Override
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
-        if (ctx.isStartElement(event, LAYER))
-        {
+        throws XMLStreamException {
+        if (ctx.isStartElement(event, LAYER)) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
-                if (o instanceof WMSLayerCapabilities)
-                {
+                if (o instanceof WMSLayerCapabilities) {
                     WMSLayerCapabilities caps = (WMSLayerCapabilities) o;
                     caps.setEnclosingCapabilityInformation(this);
                     caps.resolveAttributes(null);
@@ -80,16 +71,13 @@ public class WMSCapabilityInformation extends OGCCapabilityInformation
                 }
             }
         }
-        else
-        {
+        else {
             super.doParseEventContent(ctx, event, args);
         }
     }
 
-    protected boolean isRequestName(XMLEventParserContext ctx, QName name)
-    {
-        for (QName requestName : this.requestNames)
-        {
+    protected boolean isRequestName(XMLEventParserContext ctx, QName name) {
+        for (QName requestName : this.requestNames) {
             if (ctx.isSameName(requestName, name))
                 return true;
         }
@@ -97,21 +85,17 @@ public class WMSCapabilityInformation extends OGCCapabilityInformation
         return false;
     }
 
-    public List<WMSLayerCapabilities> getLayerCapabilities()
-    {
+    public List<WMSLayerCapabilities> getLayerCapabilities() {
         return layerCapabilities;
     }
 
-    protected void setLayerCapabilities(List<WMSLayerCapabilities> layerCapabilities)
-    {
+    protected void setLayerCapabilities(List<WMSLayerCapabilities> layerCapabilities) {
         this.layerCapabilities = layerCapabilities;
     }
 
-    public Set<String> getImageFormats()
-    {
+    public Set<String> getImageFormats() {
         Set<OGCRequestDescription> requestDescriptions = this.getRequestDescriptions();
-        for (OGCRequestDescription rd : requestDescriptions)
-        {
+        for (OGCRequestDescription rd : requestDescriptions) {
             if (rd.getRequestName().equals("GetMap"))
                 return rd.getFormats();
         }

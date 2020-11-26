@@ -18,8 +18,7 @@ import java.awt.*;
  * @author Patrick Murris
  * @version $Id: ScreenElevationLine.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ScreenElevationLine implements Renderable
-{
+public class ScreenElevationLine implements Renderable {
     private double elevation = 0;
     private Color color = Color.WHITE;
     private boolean enabled = true;
@@ -29,8 +28,7 @@ public class ScreenElevationLine implements Renderable
      *
      * @return the line current elevation.
      */
-    public double getElevation()
-    {
+    public double getElevation() {
         return this.elevation;
     }
 
@@ -39,8 +37,7 @@ public class ScreenElevationLine implements Renderable
      *
      * @param elevation the line elevation.
      */
-    public void setElevation(double elevation)
-    {
+    public void setElevation(double elevation) {
         this.elevation = elevation;
     }
 
@@ -49,8 +46,7 @@ public class ScreenElevationLine implements Renderable
      *
      * @return the line color.
      */
-    public Color getColor()
-    {
+    public Color getColor() {
         return this.color;
     }
 
@@ -59,10 +55,8 @@ public class ScreenElevationLine implements Renderable
      *
      * @param color the line color.
      */
-    public void setColor(Color color)
-    {
-        if (color == null)
-        {
+    public void setColor(Color color) {
+        if (color == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -71,42 +65,20 @@ public class ScreenElevationLine implements Renderable
         this.color = color;
     }
 
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return this.enabled;
     }
 
-    public void setEnabled(boolean state)
-    {
+    public void setEnabled(boolean state) {
         this.enabled = state;
     }
 
-    public void render(DrawContext dc)
-    {
+    public void render(DrawContext dc) {
         if (this.isEnabled())
             dc.addOrderedRenderable(new OrderedItem());
     }
 
-    private class OrderedItem implements OrderedRenderable
-    {
-        public double getDistanceFromEye()
-        {
-            return 1;
-        }
-
-        public void render(DrawContext dc)
-        {
-            draw(dc);
-        }
-
-        public void pick(DrawContext dc, Point pickPoint)
-        {
-            draw(dc);
-        }
-    }
-
-    private void draw(DrawContext dc)
-    {
+    private void draw(DrawContext dc) {
         Double lineY = computeLineY(dc);
         if (lineY == null)
             return;
@@ -117,8 +89,7 @@ public class ScreenElevationLine implements Renderable
         boolean modelviewPushed = false;
         boolean projectionPushed = false;
 
-        try
-        {
+        try {
             gl.glPushAttrib(GL2.GL_DEPTH_BUFFER_BIT
                 | GL2.GL_COLOR_BUFFER_BIT
                 | GL2.GL_ENABLE_BIT
@@ -138,15 +109,14 @@ public class ScreenElevationLine implements Renderable
             gl.glPushMatrix();
             projectionPushed = true;
             gl.glLoadIdentity();
-            gl.glOrtho(0d, viewport.width, 0d, viewport.height, -1, 1);
+            gl.glOrtho(0.0d, viewport.width, 0.0d, viewport.height, -1, 1);
 
             gl.glMatrixMode(GL2.GL_MODELVIEW);
             gl.glPushMatrix();
             modelviewPushed = true;
             gl.glLoadIdentity();
 
-            if (!dc.isPickingMode())
-            {
+            if (!dc.isPickingMode()) {
                 // Set color
                 gl.glColor4ub((byte) this.color.getRed(), (byte) this.color.getGreen(),
                     (byte) this.color.getBlue(), (byte) this.color.getAlpha());
@@ -158,15 +128,12 @@ public class ScreenElevationLine implements Renderable
             gl.glVertex3d(viewport.width, lineY, 0);
             gl.glEnd();
         }
-        finally
-        {
-            if (projectionPushed)
-            {
+        finally {
+            if (projectionPushed) {
                 gl.glMatrixMode(GL2.GL_PROJECTION);
                 gl.glPopMatrix();
             }
-            if (modelviewPushed)
-            {
+            if (modelviewPushed) {
                 gl.glMatrixMode(GL2.GL_MODELVIEW);
                 gl.glPopMatrix();
             }
@@ -175,18 +142,30 @@ public class ScreenElevationLine implements Renderable
         }
     }
 
-    private Double computeLineY(DrawContext dc)
-    {
+    private Double computeLineY(DrawContext dc) {
         Vec4 point = dc.getGlobe().computePointFromPosition(
             new Position(dc.getView().getEyePosition(), this.elevation));
         Vec4 direction = dc.getView().getForwardVector().perpendicularTo3(point); // Round globe only
         Vec4 intersection = dc.getView().getFrustumInModelCoordinates().getNear().intersect(new Line(point, direction));
-        if (intersection != null)
-        {
+        if (intersection != null) {
             Vec4 screenPoint = dc.getView().project(intersection);
             if (screenPoint != null)
                 return screenPoint.y;
         }
         return null;
+    }
+
+    private class OrderedItem implements OrderedRenderable {
+        public double getDistanceFromEye() {
+            return 1;
+        }
+
+        public void render(DrawContext dc) {
+            draw(dc);
+        }
+
+        public void pick(DrawContext dc, Point pickPoint) {
+            draw(dc);
+        }
     }
 }

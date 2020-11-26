@@ -25,41 +25,34 @@ import java.util.logging.Level;
  * @author tag
  * @version $Id: ImageTiler.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ImageTiler
-{
+public class ImageTiler {
     public static final int DEFAULT_IMAGE_TILE_SIZE = 2048; // default size to make subimages
 
     private int tileWidth = DEFAULT_IMAGE_TILE_SIZE;
     private int tileHeight = DEFAULT_IMAGE_TILE_SIZE;
     private Color transparencyColor = new Color(0, 0, 0, 0);
 
-    public int getTileWidth()
-    {
+    public int getTileWidth() {
         return tileWidth;
     }
 
-    public void setTileWidth(int tileWidth)
-    {
+    public void setTileWidth(int tileWidth) {
         this.tileWidth = tileWidth;
     }
 
-    public int getTileHeight()
-    {
+    public int getTileHeight() {
         return tileHeight;
     }
 
-    public void setTileHeight(int tileHeight)
-    {
+    public void setTileHeight(int tileHeight) {
         this.tileHeight = tileHeight;
     }
 
-    public Color getTransparencyColor()
-    {
+    public Color getTransparencyColor() {
         return transparencyColor;
     }
 
-    public void setTransparencyColor(Color transparencyColor)
-    {
+    public void setTransparencyColor(Color transparencyColor) {
         this.transparencyColor = transparencyColor;
     }
 
@@ -71,42 +64,35 @@ public class ImageTiler
      * @param baseImage  the image to tile.
      * @param baseSector the sector defining the geographic extent of the base image.
      * @param listener   the listener to invoke when each new tile is created.
-     *
      * @see ImageTilerListener
      */
-    public void tileImage(BufferedImage baseImage, Sector baseSector, ImageTilerListener listener)
-    {
-        if (baseImage == null)
-        {
+    public void tileImage(BufferedImage baseImage, Sector baseSector, ImageTilerListener listener) {
+        if (baseImage == null) {
             String message = Logging.getMessage("nullValue.ImageSource");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (baseSector == null)
-        {
+        if (baseSector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (baseImage.getWidth() <= 0 || baseImage.getHeight() <= 0)
-        {
+        if (baseImage.getWidth() <= 0 || baseImage.getHeight() <= 0) {
             String message = Logging.getMessage("generic.InvalidImageSize");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (listener == null)
-        {
+        if (listener == null) {
             String message = Logging.getMessage("nullValue.ListenerIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         // Just return the input image if it's already the desired subimage size
-        if (baseImage.getWidth() == this.getTileWidth() && baseImage.getHeight() == this.getTileHeight())
-        {
+        if (baseImage.getWidth() == this.getTileWidth() && baseImage.getHeight() == this.getTileHeight()) {
             listener.newTile(baseImage, baseSector);
             return;
         }
@@ -119,27 +105,23 @@ public class ImageTiler
         int rows = (int) Math.ceil((double) N / b);
         boolean hasAlpha = baseImage.getColorModel().hasAlpha();
 
-        for (int j = 0; j < rows; j++)
-        {
+        for (int j = 0; j < rows; j++) {
             int y = j * b;
             int h = y + b <= N ? b : N - y;
 
             double t0 = (double) (y + this.getTileHeight()) / N;
             double t1 = (double) y / N;
-            Angle minLat = baseSector.getMaxLatitude().subtract(baseSector.getDeltaLat().multiply(t0));
-            Angle maxLat = baseSector.getMaxLatitude().subtract(baseSector.getDeltaLat().multiply(t1));
+            Angle minLat = baseSector.latMax().subtract(baseSector.getDeltaLat().multiply(t0));
+            Angle maxLat = baseSector.latMax().subtract(baseSector.getDeltaLat().multiply(t1));
 
-            for (int i = 0; i < cols; i++)
-            {
+            for (int i = 0; i < cols; i++) {
                 int x = i * a;
                 int w = x + a <= M ? a : M - x;
 
                 BufferedImage image;
-                if (w == this.getTileWidth() && h == this.getTileHeight())
-                {
+                if (w == this.getTileWidth() && h == this.getTileHeight()) {
                     // The source image fills this tile entirely,
-                    if (!hasAlpha)
-                    {
+                    if (!hasAlpha) {
                         // If the source image does not have an alpha channel, create a tile with no alpha channel.
                         image = new BufferedImage(this.getTileWidth(), this.getTileHeight(),
                             BufferedImage.TYPE_3BYTE_BGR);
@@ -148,8 +130,7 @@ public class ImageTiler
                         Graphics2D g = image.createGraphics();
                         g.drawImage(baseImage.getSubimage(x, y, w, h), 0, 0, w, h, null);
                     }
-                    else
-                    {
+                    else {
                         // The source image has an alpha channel, create a tile with an alpha channel.
                         image = new BufferedImage(this.getTileWidth(), this.getTileHeight(),
                             BufferedImage.TYPE_4BYTE_ABGR);
@@ -164,14 +145,13 @@ public class ImageTiler
                     // Compute the sector for this tile
                     double s0 = (double) x / M;
                     double s1 = ((double) x + this.getTileWidth()) / M;
-                    Angle minLon = baseSector.getMinLongitude().add(baseSector.getDeltaLon().multiply(s0));
-                    Angle maxLon = baseSector.getMinLongitude().add(baseSector.getDeltaLon().multiply(s1));
+                    Angle minLon = baseSector.lonMin().add(baseSector.getDeltaLon().multiply(s0));
+                    Angle maxLon = baseSector.lonMin().add(baseSector.getDeltaLon().multiply(s1));
 
 //                    System.out.println(new Sector(minLat, maxLat, minLon, maxLon));
                     listener.newTile(image, new Sector(minLat, maxLat, minLon, maxLon));
                 }
-                else
-                {
+                else {
                     // The source image does not fill this tile, so create a smaller tile with an alpha channel.
                     int shortWidth = w == this.getTileWidth() ? this.getTileWidth() : WWMath.powerOfTwoCeiling(w);
                     int shortheight = h == this.getTileHeight() ? this.getTileHeight() : WWMath.powerOfTwoCeiling(h);
@@ -187,12 +167,12 @@ public class ImageTiler
                     // Compute the sector for this tile
                     double s0 = (double) x / M;
                     double s1 = ((double) x + image.getWidth()) / M;
-                    Angle minLon = baseSector.getMinLongitude().add(baseSector.getDeltaLon().multiply(s0));
-                    Angle maxLon = baseSector.getMinLongitude().add(baseSector.getDeltaLon().multiply(s1));
+                    Angle minLon = baseSector.lonMin().add(baseSector.getDeltaLon().multiply(s0));
+                    Angle maxLon = baseSector.lonMin().add(baseSector.getDeltaLon().multiply(s1));
 
                     // Must recalculate t0 to account for short tile height.
                     double t00 = (double) (y + image.getHeight()) / N;
-                    Angle minLat0 = baseSector.getMaxLatitude().subtract(baseSector.getDeltaLat().multiply(t00));
+                    Angle minLat0 = baseSector.latMax().subtract(baseSector.getDeltaLat().multiply(t00));
 
 //                    System.out.println(new Sector(minLat0, maxLat, minLon, maxLon));
                     listener.newTile(image, new Sector(minLat0, maxLat, minLon, maxLon));
@@ -201,49 +181,41 @@ public class ImageTiler
         }
     }
 
-    public void tileImage(BufferedImage image, java.util.List<? extends LatLon> corners,ImageTilerListener listener)
-    {
-        if (image == null)
-        {
+    public void tileImage(BufferedImage image, java.util.List<? extends LatLon> corners, ImageTilerListener listener) {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageSource");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (corners == null)
-        {
+        if (corners == null) {
             String message = Logging.getMessage("nullValue.LocationsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (image.getWidth() <= 0 || image.getHeight() <= 0)
-        {
+        if (image.getWidth() <= 0 || image.getHeight() <= 0) {
             String message = Logging.getMessage("generic.InvalidImageSize");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (listener == null)
-        {
+        if (listener == null) {
             String message = Logging.getMessage("nullValue.ListenerIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         // Just return the input image if it's already the desired subimage size
-        if (image.getWidth() == this.getTileWidth() && image.getHeight() == this.getTileHeight())
-        {
+        if (image.getWidth() == this.getTileWidth() && image.getHeight() == this.getTileHeight()) {
             listener.newTile(image, corners);
             return;
         }
 
         // Count the corners and check for nulls
         int numCorners = 0;
-        for (LatLon c : corners)
-        {
-            if (c == null)
-            {
+        for (LatLon c : corners) {
+            if (c == null) {
                 String message = Logging.getMessage("nullValue.LocationInListIsNull");
                 Logging.logger().log(Level.SEVERE, message);
                 throw new IllegalArgumentException(message);
@@ -253,8 +225,7 @@ public class ImageTiler
                 break;
         }
 
-        if (numCorners < 4)
-        {
+        if (numCorners < 4) {
             String message = Logging.getMessage("nullValue.LocationInListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -270,38 +241,33 @@ public class ImageTiler
         int rows = (int) Math.ceil((double) N / b);
         boolean hasAlpha = image.getColorModel().hasAlpha();
 
-        for (int j = 0; j < rows; j++)
-        {
+        for (int j = 0; j < rows; j++) {
             LatLon se, sw, ne, nw;
 
             int y = j * b;
             int h = y + b <= N ? b : N - y;
 
-            double t0 = 1d - (double) (y + this.getTileHeight()) / N;
-            double t1 = 1d - (double) y / N;
+            double t0 = 1.0d - (double) (y + this.getTileHeight()) / N;
+            double t1 = 1.0d - (double) y / N;
 
-            for (int i = 0; i < cols; i++)
-            {
+            for (int i = 0; i < cols; i++) {
                 int x = i * a;
                 int w = x + a <= M ? a : M - x;
 
                 BufferedImage subImage;
-                if (w == this.getTileWidth() && h == this.getTileHeight())
-                {
+                if (w == this.getTileWidth() && h == this.getTileHeight()) {
 
                     // The source image fills this tile entirely,
-                    if (!hasAlpha)
-                    {
+                    if (!hasAlpha) {
                         // If the source image does not have an alpha channel, create a tile with no alpha channel.
                         subImage = new BufferedImage(this.getTileWidth(), this.getTileHeight(),
                             BufferedImage.TYPE_3BYTE_BGR);
                         Graphics2D g = subImage.createGraphics();
                         g.drawImage(image.getSubimage(x, y, w, h), 0, 0, w, h, null);
-                        
+
                         continue;
                     }
-                    else
-                    {
+                    else {
                         // The source image has an alpha channel, create a tile with an alpha channel.
                         subImage = new BufferedImage(this.getTileWidth(), this.getTileHeight(),
                             BufferedImage.TYPE_4BYTE_ABGR);
@@ -320,8 +286,7 @@ public class ImageTiler
                     ne = geoQuad.interpolate(t1, s1);
                     nw = geoQuad.interpolate(t1, s0);
                 }
-                else
-                {
+                else {
                     // The source image does not fill this tile, so create a smaller tile with an alpha channel.
                     int shortWidth = w == this.getTileWidth() ? this.getTileWidth() : WWMath.powerOfTwoCeiling(w);
                     int shortheight = h == this.getTileHeight() ? this.getTileHeight() : WWMath.powerOfTwoCeiling(h);
@@ -337,7 +302,7 @@ public class ImageTiler
                     double s1 = ((double) x + subImage.getWidth()) / M;
 
                     // Must recalculate t0 to account for short tile height.
-                    double t0b = 1d - (double) (y + subImage.getHeight()) / N;
+                    double t0b = 1.0d - (double) (y + subImage.getHeight()) / N;
 
                     sw = geoQuad.interpolate(t0b, s0);
                     se = geoQuad.interpolate(t0b, s1);
@@ -348,13 +313,12 @@ public class ImageTiler
 //                System.out.printf("%d: (%d, %d) : SW %s; SE %s; NE %s; NW %s\n",
 //                    System.currentTimeMillis(), x, y, sw, se, ne, nw);
 
-                listener.newTile(subImage, Arrays.asList(sw,se, ne, nw));
+                listener.newTile(subImage, Arrays.asList(sw, se, ne, nw));
             }
         }
     }
 
-    public abstract static class ImageTilerListener
-    {
+    public abstract static class ImageTilerListener {
         public abstract void newTile(BufferedImage tileImage, Sector tileSector);
 
         public abstract void newTile(BufferedImage tileImage, List<? extends LatLon> corners);

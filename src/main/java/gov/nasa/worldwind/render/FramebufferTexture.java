@@ -17,39 +17,36 @@ import java.util.List;
  * @author tag
  * @version $Id: FramebufferTexture.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class FramebufferTexture implements WWTexture
-{
+public class FramebufferTexture implements WWTexture {
+    /**
+     * The default density of texture coordinates to specify for the quadrilateral the texture's applied to.
+     */
+    protected static final int DEFAULT_TESSELLATION_DENSITY = 32;
+    protected final TextureCoords textureCoords = new TextureCoords(0.0f, 0.0f, 1.0f, 1.0f);
     protected WWTexture sourceTexture;
     protected Sector sector;
     protected List<LatLon> corners;
-
     protected int width;
     protected int height;
-    protected final TextureCoords textureCoords = new TextureCoords(0f, 0f, 1f, 1f);
-    /** The density of explicit texture coordinates to specify for the quadrilateral the texture's applied to. */
+    /**
+     * The density of explicit texture coordinates to specify for the quadrilateral the texture's applied to.
+     */
     protected int tessellationDensity;
 
-    /** The default density of texture coordinates to specify for the quadrilateral the texture's applied to. */
-    protected static final int DEFAULT_TESSELLATION_DENSITY = 32;
-
-    public FramebufferTexture(WWTexture imageSource, Sector sector, List<LatLon> corners)
-    {
-        if (imageSource == null)
-        {
+    public FramebufferTexture(WWTexture imageSource, Sector sector, List<LatLon> corners) {
+        if (imageSource == null) {
             String message = Logging.getMessage("nullValue.ImageSource");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (sector == null)
-        {
+        if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (corners == null)
-        {
+        if (corners == null) {
             String message = Logging.getMessage("nullValue.LocationsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -62,50 +59,40 @@ public class FramebufferTexture implements WWTexture
         this.tessellationDensity = DEFAULT_TESSELLATION_DENSITY;
     }
 
-    public int getWidth(DrawContext dc)
-    {
+    public int getWidth(DrawContext dc) {
         return width;
     }
 
-    public int getHeight(DrawContext dc)
-    {
+    public int getHeight(DrawContext dc) {
         return height;
     }
 
-    public Sector getSector()
-    {
+    public Sector getSector() {
         return sector;
     }
 
-    public List<LatLon> getCorners()
-    {
+    public List<LatLon> getCorners() {
         return corners;
     }
 
-    public boolean isTextureCurrent(DrawContext dc)
-    {
+    public boolean isTextureCurrent(DrawContext dc) {
         return dc.getTextureCache().getTexture(this) != null;
     }
 
-    public Object getImageSource()
-    {
+    public Object getImageSource() {
         return this.sourceTexture;
     }
 
-    public TextureCoords getTexCoords()
-    {
+    public TextureCoords getTexCoords() {
         return this.textureCoords;
     }
 
-    public boolean isTextureInitializationFailed()
-    {
+    public boolean isTextureInitializationFailed() {
         return this.sourceTexture != null && this.sourceTexture.isTextureInitializationFailed();
     }
 
-    public boolean bind(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public boolean bind(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -122,18 +109,15 @@ public class FramebufferTexture implements WWTexture
         return t != null;
     }
 
-    public void applyInternalTransform(DrawContext dc)
-    {
+    public void applyInternalTransform(DrawContext dc) {
         // Framebuffer textures don't have an internal transform.
     }
 
-    protected int getTessellationDensity()
-    {
+    protected int getTessellationDensity() {
         return this.tessellationDensity;
     }
 
-    protected Texture initializeTexture(DrawContext dc)
-    {
+    protected Texture initializeTexture(DrawContext dc) {
         // The frame buffer can be used only during pre-rendering.
         if (!dc.isPreRenderMode())
             return null;
@@ -176,22 +160,20 @@ public class FramebufferTexture implements WWTexture
         return t;
     }
 
-    protected boolean generateTexture(DrawContext dc, int width, int height)
-    {
+    protected boolean generateTexture(DrawContext dc, int width, int height) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
 
         Matrix geoToCartesian = this.computeGeographicToCartesianTransform(this.sector);
 
-        try
-        {
+        try {
             ogsh.pushAttrib(gl, GL2.GL_COLOR_BUFFER_BIT
                 | GL2.GL_ENABLE_BIT
                 | GL2.GL_TRANSFORM_BIT
                 | GL2.GL_VIEWPORT_BIT);
 
             // Fill the frame buffer with transparent black.
-            gl.glClearColor(0f, 0f, 0f, 0f);
+            gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
             gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
             gl.glDisable(GL.GL_BLEND);
@@ -203,15 +185,13 @@ public class FramebufferTexture implements WWTexture
             // vertices are rasterized without any rounding error.
             ogsh.pushProjectionIdentity(gl);
             gl.glViewport(0, 0, width, height);
-            gl.glOrtho(-1d, 1d, -1d, 1d, -1d, 1d);
+            gl.glOrtho(-1.0d, 1.0d, -1.0d, 1.0d, -1.0d, 1.0d);
 
             ogsh.pushModelviewIdentity(gl);
             ogsh.pushTextureIdentity(gl);
 
-            if (this.sourceTexture != null)
-            {
-                try
-                {
+            if (this.sourceTexture != null) {
+                try {
                     gl.glEnable(GL.GL_TEXTURE_2D);
                     if (!this.sourceTexture.bind(dc))
                         return false;
@@ -224,31 +204,28 @@ public class FramebufferTexture implements WWTexture
                     int tessellationDensity = this.getTessellationDensity();
                     this.drawQuad(dc, geoToCartesian, tessellationDensity, tessellationDensity);
                 }
-                finally
-                {
+                finally {
                     gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, OGLUtil.DEFAULT_TEX_ENV_MODE);
                     gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
                 }
             }
         }
-        finally
-        {
+        finally {
             ogsh.pop(gl);
         }
 
         return true;
     }
 
-    protected Matrix computeGeographicToCartesianTransform(Sector sector)
-    {
+    protected Matrix computeGeographicToCartesianTransform(Sector sector) {
         // Compute a transform that will map the geographic region defined by sector onto a cartesian region of width
         // and height 2.0 centered at the origin.
 
         double sx = 2.0 / sector.getDeltaLonDegrees();
         double sy = 2.0 / sector.getDeltaLatDegrees();
 
-        double tx = -sector.getMinLongitude().degrees;
-        double ty = -sector.getMinLatitude().degrees;
+        double tx = -sector.lonMin().degrees;
+        double ty = -sector.latMin().degrees;
 
         Matrix transform = Matrix.IDENTITY;
         transform = transform.multiply(Matrix.fromTranslation(-1.0, -1.0, 0.0));
@@ -258,13 +235,11 @@ public class FramebufferTexture implements WWTexture
         return transform;
     }
 
-    protected Vec4 transformToQuadCoordinates(Matrix geoToCartesian, LatLon latLon)
-    {
+    protected Vec4 transformToQuadCoordinates(Matrix geoToCartesian, LatLon latLon) {
         return new Vec4(latLon.getLongitude().degrees, latLon.getLatitude().degrees, 0.0).transformBy4(geoToCartesian);
     }
 
-    protected void drawQuad(DrawContext dc, Matrix geoToCartesian, int slices, int stacks)
-    {
+    protected void drawQuad(DrawContext dc, Matrix geoToCartesian, int slices, int stacks) {
         Vec4 ll = this.transformToQuadCoordinates(geoToCartesian, this.corners.get(0));
         Vec4 lr = this.transformToQuadCoordinates(geoToCartesian, this.corners.get(1));
         Vec4 ur = this.transformToQuadCoordinates(geoToCartesian, this.corners.get(2));
@@ -274,31 +249,26 @@ public class FramebufferTexture implements WWTexture
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glBegin(GL2.GL_TRIANGLE_STRIP);
-        try
-        {
+        try {
             this.drawQuad(dc, interp, slices, stacks);
         }
-        finally
-        {
+        finally {
             gl.glEnd();
         }
     }
 
-    protected void drawQuad(DrawContext dc, BilinearInterpolator interp, int slices, int stacks)
-    {
+    protected void drawQuad(DrawContext dc, BilinearInterpolator interp, int slices, int stacks) {
         double[] compArray = new double[4];
-        double du = 1.0f / (float) slices;
-        double dv = 1.0f / (float) stacks;
+        double du = 1.0f / slices;
+        double dv = 1.0f / stacks;
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        for (int vi = 0; vi < stacks; vi++)
-        {
+        for (int vi = 0; vi < stacks; vi++) {
             double v = vi * dv;
             double vn = (vi + 1) * dv;
 
-            if (vi != 0)
-            {
+            if (vi != 0) {
                 interp.interpolate(slices * du, v, compArray);
                 gl.glTexCoord2d(slices * du, v);
                 gl.glVertex3dv(compArray, 0);
@@ -308,8 +278,7 @@ public class FramebufferTexture implements WWTexture
                 gl.glVertex3dv(compArray, 0);
             }
 
-            for (int ui = 0; ui <= slices; ui++)
-            {
+            for (int ui = 0; ui <= slices; ui++) {
                 double u = ui * du;
 
                 interp.interpolate(u, v, compArray);

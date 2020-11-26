@@ -12,7 +12,7 @@ import gov.nasa.worldwind.layers.MarkerLayer;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.markers.*;
 
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Displays markers (small shapes) in different shapes and colors. Markers can be configured to have an orientation,
@@ -23,31 +23,31 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: Markers.java 2280 2014-08-29 21:45:02Z tgaskins $
  */
-public class Markers extends ApplicationTemplate
-{
-    private static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+public class Markers extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Markers", AppFrame.class);
+    }
+
+    private static class AppFrame extends ApplicationTemplate.AppFrame {
         private static final MarkerAttributes[] attrs = new BasicMarkerAttributes[]
             {
-                new BasicMarkerAttributes(Material.BLACK, BasicMarkerShape.SPHERE, 1d, 10, 5),
-                new BasicMarkerAttributes(Material.MAGENTA, BasicMarkerShape.CUBE, 1d, 10, 5),
-                new BasicMarkerAttributes(Material.YELLOW, BasicMarkerShape.CONE, 1d, 10, 5),
-                new BasicMarkerAttributes(Material.LIGHT_GRAY, BasicMarkerShape.CYLINDER, 1d, 10, 5),
-                new BasicMarkerAttributes(Material.GRAY, BasicMarkerShape.HEADING_ARROW, 1d, 10, 5),
-                new BasicMarkerAttributes(Material.WHITE, BasicMarkerShape.HEADING_LINE, 1d, 10, 5),
+                new BasicMarkerAttributes(Material.BLACK, BasicMarkerShape.SPHERE, 1.0d, 10, 5),
+                new BasicMarkerAttributes(Material.MAGENTA, BasicMarkerShape.CUBE, 1.0d, 10, 5),
+                new BasicMarkerAttributes(Material.YELLOW, BasicMarkerShape.CONE, 1.0d, 10, 5),
+                new BasicMarkerAttributes(Material.LIGHT_GRAY, BasicMarkerShape.CYLINDER, 1.0d, 10, 5),
+                new BasicMarkerAttributes(Material.GRAY, BasicMarkerShape.HEADING_ARROW, 1.0d, 10, 5),
+                new BasicMarkerAttributes(Material.WHITE, BasicMarkerShape.HEADING_LINE, 1.0d, 10, 5),
                 new BasicMarkerAttributes(Material.RED, BasicMarkerShape.ORIENTED_CONE_LINE, 0.7),
                 new BasicMarkerAttributes(Material.YELLOW, BasicMarkerShape.ORIENTED_CYLINDER_LINE, 0.9),
                 new BasicMarkerAttributes(Material.CYAN, BasicMarkerShape.ORIENTED_SPHERE_LINE, 0.7),
-                new BasicMarkerAttributes(Material.GREEN, BasicMarkerShape.ORIENTED_CONE, 1d),
+                new BasicMarkerAttributes(Material.GREEN, BasicMarkerShape.ORIENTED_CONE, 1.0d),
                 new BasicMarkerAttributes(Material.PINK, BasicMarkerShape.ORIENTED_SPHERE, 0.8),
                 new BasicMarkerAttributes(Material.BLUE, BasicMarkerShape.ORIENTED_CYLINDER, 0.6),
-                new BasicMarkerAttributes(Material.RED, BasicMarkerShape.ORIENTED_CUBE, 1d)
+                new BasicMarkerAttributes(Material.RED, BasicMarkerShape.ORIENTED_CUBE, 1.0d)
             };
 
-        static
-        {
-            for (MarkerAttributes attr : attrs)
-            {
+        static {
+            for (MarkerAttributes attr : attrs) {
                 String shapeType = attr.getShapeType();
                 //noinspection StringEquality
                 if (shapeType == BasicMarkerShape.ORIENTED_SPHERE)
@@ -61,19 +61,16 @@ public class Markers extends ApplicationTemplate
         private Marker lastHighlit;
         private BasicMarkerAttributes lastAttrs;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             super(true, true, false);
 
             double minLat = -60, maxLat = 60, latDelta = 2;
             double minLon = -179, maxLon = 180, lonDelta = 10;
 
             int i = 0;
-            ArrayList<Marker> markers = new ArrayList<>();
-            for (double lat = minLat; lat <= maxLat; lat += latDelta)
-            {
-                for (double lon = minLon; lon <= maxLon; lon += lonDelta)
-                {
+            List<Marker> markers = new ArrayList<>();
+            for (double lat = minLat; lat <= maxLat; lat += latDelta) {
+                for (double lon = minLon; lon <= maxLon; lon += lonDelta) {
                     Marker marker = new BasicMarker(Position.fromDegrees(lat, lon, 0), attrs[i % attrs.length]);
                     marker.setPosition(Position.fromDegrees(lat, lon, 0));
                     marker.setHeading(Angle.fromDegrees(0));
@@ -89,14 +86,13 @@ public class Markers extends ApplicationTemplate
             final MarkerLayer layer = new MarkerLayer();
             layer.setOverrideMarkerElevation(true);
             layer.setKeepSeparated(false);
-            layer.setElevation(1000d);
+            layer.setElevation(1000.0d);
             layer.setMarkers(markers);
             insertBeforePlacenames(this.getWwd(), layer);
 
             this.getWwd().addSelectListener(event -> {
                 if (lastHighlit != null
-                    && (event.getTopObject() == null || !event.getTopObject().equals(lastHighlit)))
-                {
+                    && (event.getTopObject() == null || !event.getTopObject().equals(lastHighlit))) {
                     lastHighlit.setAttributes(lastAttrs);
                     lastHighlit = null;
                 }
@@ -110,23 +106,17 @@ public class Markers extends ApplicationTemplate
                 if (event.getTopPickedObject().getParentLayer() != layer)
                     return;
 
-                if (lastHighlit == null && event.getTopObject() instanceof Marker)
-                {
+                if (lastHighlit == null && event.getTopObject() instanceof Marker) {
                     lastHighlit = (Marker) event.getTopObject();
                     lastAttrs = (BasicMarkerAttributes) lastHighlit.getAttributes();
                     MarkerAttributes highliteAttrs = new BasicMarkerAttributes(lastAttrs);
                     highliteAttrs.setMaterial(Material.WHITE);
-                    highliteAttrs.setOpacity(1d);
+                    highliteAttrs.setOpacity(1.0d);
                     highliteAttrs.setMarkerPixels(lastAttrs.getMarkerPixels() * 1.4);
                     highliteAttrs.setMinMarkerSize(lastAttrs.getMinMarkerSize() * 1.4);
                     lastHighlit.setAttributes(highliteAttrs);
                 }
             });
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Markers", AppFrame.class);
     }
 }

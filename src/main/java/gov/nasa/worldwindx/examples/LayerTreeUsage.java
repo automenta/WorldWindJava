@@ -20,17 +20,18 @@ import java.awt.*;
  * @author pabercrombie
  * @version $Id: LayerTreeUsage.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class LayerTreeUsage extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+public class LayerTreeUsage extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Layer Tree", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
         protected final LayerTree layerTree;
         protected final RenderableLayer hiddenLayer;
 
         protected final HotSpotController controller;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             super(true, false, false); // Don't include the layer panel; we're using the on-screen layer tree.
 
             this.layerTree = new LayerTree();
@@ -57,10 +58,5 @@ public class LayerTreeUsage extends ApplicationTemplate
             this.pack();
             WWUtil.alignComponent(null, this, AVKey.CENTER);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Layer Tree", AppFrame.class);
     }
 }

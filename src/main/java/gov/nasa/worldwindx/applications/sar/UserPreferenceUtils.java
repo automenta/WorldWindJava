@@ -14,17 +14,15 @@ import org.w3c.dom.*;
 import javax.xml.xpath.XPath;
 import java.io.File;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * @author dcollins
  * @version $Id: UserPreferenceUtils.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class UserPreferenceUtils
-{
-    public static Document createUserPreferencesDocument(AVList params)
-    {
-        if (params == null)
-        {
+public class UserPreferenceUtils {
+    public static Document createUserPreferencesDocument(AVList params) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -41,17 +39,14 @@ public class UserPreferenceUtils
         return doc;
     }
 
-    public static void getUserPreferences(Element domElement, AVList params)
-    {
-        if (domElement == null)
-        {
+    public static void getUserPreferences(Element domElement, AVList params) {
+        if (domElement == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -64,17 +59,14 @@ public class UserPreferenceUtils
             getPropertyList(el, params, xpath);
     }
 
-    public static void createUserPreferenceElements(AVList params, Element domElement)
-    {
-        if (params == null)
-        {
+    public static void createUserPreferenceElements(AVList params, Element domElement) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (domElement == null)
-        {
+        if (domElement == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -84,18 +76,15 @@ public class UserPreferenceUtils
         createPropertyList(params, el);
     }
 
-    public static String getDefaultUserPreferencesPath()
-    {
+    public static String getDefaultUserPreferencesPath() {
         String path = Configuration.getUserHomeDirectory();
         String name = ".sarapp/UserPreferences.xml";
 
         return path + File.separator + name;
     }
 
-    public static void getDefaultUserPreferences(AVList params)
-    {
-        if (params == null)
-        {
+    public static void getDefaultUserPreferences(AVList params) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -108,8 +97,7 @@ public class UserPreferenceUtils
         params.setValue(SARKey.ELEVATION_UNIT, SAR2.UNIT_IMPERIAL);
     }
 
-    public static boolean getBooleanValue(AVList avList, String key)
-    {
+    public static boolean getBooleanValue(AVList avList, String key) {
         Object o = avList.getValue(key);
         if (o == null)
             return false;
@@ -121,34 +109,29 @@ public class UserPreferenceUtils
         if (v == null)
             return false;
 
-        try
-        {
+        try {
             return Boolean.parseBoolean(v);
         }
-        catch (NumberFormatException e)
-        {
-            Logging.logger().log(java.util.logging.Level.SEVERE, "Configuration.ConversionError", v);
+        catch (NumberFormatException e) {
+            Logging.logger().log(Level.SEVERE, "Configuration.ConversionError", v);
             return false;
         }
     }
 
-    protected static void getPropertyList(Element domElement, AVList params, XPath xpath)
-    {
+    protected static void getPropertyList(Element domElement, AVList params, XPath xpath) {
         Element[] els = WWXML.getElements(domElement, "Property", xpath);
         if (els == null || els.length == 0)
             return;
 
-        for (Element el : els)
-        {
+        for (Element el : els) {
             if (el == null)
                 continue;
-            
+
             getProperty(el, params, xpath);
         }
     }
 
-    protected static void getProperty(Element domElement, AVList params, XPath xpath)
-    {
+    protected static void getProperty(Element domElement, AVList params, XPath xpath) {
         String key = WWXML.getText(domElement, "@key", xpath);
         String value = WWXML.getText(domElement, "@value", xpath);
         if (key == null || value == null)
@@ -157,10 +140,8 @@ public class UserPreferenceUtils
         params.setValue(key, value);
     }
 
-    protected static void createPropertyList(AVList params, Element domElement)
-    {
-        for (Map.Entry<String, Object> entry : params.getEntries())
-        {
+    protected static void createPropertyList(AVList params, Element domElement) {
+        for (Map.Entry<String, Object> entry : params.getEntries()) {
             if (entry == null || entry.getKey() == null || entry.getValue() == null)
                 continue;
 
@@ -168,8 +149,7 @@ public class UserPreferenceUtils
         }
     }
 
-    protected static void createProperty(Map.Entry<String, Object> entry, Element domElement)
-    {
+    protected static void createProperty(Map.Entry<String, Object> entry, Element domElement) {
         String s = entry.getValue().toString();
         if (s == null)
             return;

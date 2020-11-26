@@ -18,18 +18,18 @@ import java.awt.*;
  * @author dcollins
  * @version $Id: BasicWebViewFactory.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class BasicWebViewFactory implements WebViewFactory
-{
-    /** Create the factory. */
-    public BasicWebViewFactory()
-    {
+public class BasicWebViewFactory implements WebViewFactory {
+    /**
+     * Create the factory.
+     */
+    public BasicWebViewFactory() {
     }
 
-    /** {@inheritDoc} */
-    public WebView createWebView(Dimension frameSize)
-    {
-        if (frameSize == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public WebView createWebView(Dimension frameSize) {
+        if (frameSize == null) {
             String message = Logging.getMessage("nullValue.SizeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -52,13 +52,10 @@ public class BasicWebViewFactory implements WebViewFactory
      * this method to add Linux support to the factory.
      *
      * @param frameSize The size in pixels of the WebView's window frame.
-     *
      * @return WebView for Linux.
-     *
      * @throws UnsupportedOperationException Linux WebView is not supported at this time.
      */
-    protected WebView createLinuxWebView(Dimension frameSize)
-    {
+    protected WebView createLinuxWebView(Dimension frameSize) {
         return this.createUnknownOSWebView(frameSize); // TODO: implement native WebView for Linux.
     }
 
@@ -66,11 +63,9 @@ public class BasicWebViewFactory implements WebViewFactory
      * Create a WebView for Mac OS.
      *
      * @param frameSize The size in pixels of the WebView's window frame.
-     *
      * @return WebView instance for Mac.
      */
-    protected WebView createMacWebView(Dimension frameSize)
-    {
+    protected WebView createMacWebView(Dimension frameSize) {
         return new MacWebView(frameSize);
     }
 
@@ -78,11 +73,9 @@ public class BasicWebViewFactory implements WebViewFactory
      * Create a WebView for Windows.
      *
      * @param frameSize The size in pixels of the WebView's window frame.
-     *
      * @return WebView instance for Windows.
      */
-    protected WebView createWindowsWebView(Dimension frameSize)
-    {
+    protected WebView createWindowsWebView(Dimension frameSize) {
         return new WindowsWebView(frameSize);
     }
 
@@ -92,14 +85,11 @@ public class BasicWebViewFactory implements WebViewFactory
      * the factory.
      *
      * @param frameSize The size in pixels of the WebView's window frame.
-     *
      * @return WebView instance
-     *
      * @throws UnsupportedOperationException WebView is only implemented for Windows and Mac at this time.
      */
-    @SuppressWarnings( {"UnusedDeclaration"})
-    protected WebView createUnknownOSWebView(Dimension frameSize)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected WebView createUnknownOSWebView(Dimension frameSize) {
         String message = Logging.getMessage("NativeLib.UnsupportedOperatingSystem", "WebView",
             System.getProperty("os.name"));
         Logging.logger().severe(message);

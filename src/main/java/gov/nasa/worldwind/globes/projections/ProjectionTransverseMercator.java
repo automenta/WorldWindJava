@@ -15,7 +15,7 @@ import gov.nasa.worldwind.util.*;
  * Provides a Transverse Mercator ellipsoidal projection using the WGS84 ellipsoid. The projection's central meridian
  * may be specified and defaults to the Prime Meridian (0 longitude). By default, the projection computes values for 30
  * degrees either side of the central meridian. This may be changed via the {@link
- * #setWidth(gov.nasa.worldwind.geom.Angle)} method, but the projection may fail for large widths.
+ * #setWidth(Angle)} method, but the projection may fail for large widths.
  * <p>
  * The projection limits are modified to reflect the central meridian and the width, however the projection limits are
  * clamped to a minimum of -180 degrees and a maximum of +180 degrees. It's therefore not possible to display a band
@@ -24,8 +24,7 @@ import gov.nasa.worldwind.util.*;
  * @author tag
  * @version $Id: ProjectionTransverseMercator.java 2393 2014-10-20 20:21:55Z tgaskins $
  */
-public class ProjectionTransverseMercator extends AbstractGeographicProjection
-{
+public class ProjectionTransverseMercator extends AbstractGeographicProjection {
     protected static final Angle DEFAULT_WIDTH = Angle.fromDegrees(30);
     protected static final Angle DEFAULT_CENTRAL_MERIDIAN = Angle.ZERO;
     protected static final Angle DEFAULT_CENTRAL_LATITUDE = Angle.ZERO;
@@ -34,9 +33,10 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
     protected Angle centralMeridian = DEFAULT_CENTRAL_MERIDIAN;
     protected Angle centralLatitude = DEFAULT_CENTRAL_LATITUDE;
 
-    /** Creates a projection whose central meridian is the Prime Meridian and central latitude is 0. */
-    public ProjectionTransverseMercator()
-    {
+    /**
+     * Creates a projection whose central meridian is the Prime Meridian and central latitude is 0.
+     */
+    public ProjectionTransverseMercator() {
         super(makeProjectionLimits(DEFAULT_CENTRAL_MERIDIAN, DEFAULT_WIDTH));
     }
 
@@ -45,12 +45,10 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
      *
      * @param centralMeridian The projection's central meridian.
      */
-    public ProjectionTransverseMercator(Angle centralMeridian)
-    {
+    public ProjectionTransverseMercator(Angle centralMeridian) {
         super(makeProjectionLimits(centralMeridian, DEFAULT_WIDTH));
 
-        if (centralMeridian == null)
-        {
+        if (centralMeridian == null) {
             String message = Logging.getMessage("nullValue.CentralMeridianIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -65,19 +63,16 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
      * @param centralMeridian The projection's central meridian.
      * @param centralLatitude The projection's central latitude.
      */
-    public ProjectionTransverseMercator(Angle centralMeridian, Angle centralLatitude)
-    {
+    public ProjectionTransverseMercator(Angle centralMeridian, Angle centralLatitude) {
         super(makeProjectionLimits(centralMeridian, DEFAULT_WIDTH));
 
-        if (centralMeridian == null)
-        {
+        if (centralMeridian == null) {
             String message = Logging.getMessage("nullValue.CentralMeridianIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (centralLatitude == null)
-        {
+        if (centralLatitude == null) {
             String message = Logging.getMessage("nullValue.CentralLatitudeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -87,9 +82,20 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
         this.centralLatitude = centralLatitude;
     }
 
+    protected static Sector makeProjectionLimits(Angle centralMeridian, Angle width) {
+        double minLon = centralMeridian.degrees - width.degrees;
+        if (minLon < -180)
+            minLon = -180;
+
+        double maxLon = centralMeridian.degrees + width.degrees;
+        if (maxLon > 180)
+            maxLon = 180;
+
+        return Sector.fromDegrees(-90, 90, minLon, maxLon);
+    }
+
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "Transverse Mercator";
     }
 
@@ -98,8 +104,7 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
      *
      * @return This projection's central meridian.
      */
-    public Angle getCentralMeridian()
-    {
+    public Angle getCentralMeridian() {
         return centralMeridian;
     }
 
@@ -108,10 +113,8 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
      *
      * @param centralMeridian This projection's central meridian. The default is 0.
      */
-    public void setCentralMeridian(Angle centralMeridian)
-    {
-        if (centralMeridian == null)
-        {
+    public void setCentralMeridian(Angle centralMeridian) {
+        if (centralMeridian == null) {
             String message = Logging.getMessage("nullValue.CentralMeridianIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -126,8 +129,7 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
      *
      * @return This projection's central latitude.
      */
-    public Angle getCentralLatitude()
-    {
+    public Angle getCentralLatitude() {
         return centralLatitude;
     }
 
@@ -136,10 +138,8 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
      *
      * @param centralLatitude This projection's central latitude. The default is 0.
      */
-    public void setCentralLatitude(Angle centralLatitude)
-    {
-        if (centralLatitude == null)
-        {
+    public void setCentralLatitude(Angle centralLatitude) {
+        if (centralLatitude == null) {
             String message = Logging.getMessage("nullValue.CentralLatitudeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -154,8 +154,7 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
      *
      * @return This projection's width.
      */
-    public Angle getWidth()
-    {
+    public Angle getWidth() {
         return width;
     }
 
@@ -165,10 +164,8 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
      *
      * @param width This projection's width.
      */
-    public void setWidth(Angle width)
-    {
-        if (width == null)
-        {
+    public void setWidth(Angle width) {
+        if (width == null) {
             String message = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -178,27 +175,13 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
         this.setProjectionLimits(makeProjectionLimits(this.getCentralMeridian(), this.getWidth()));
     }
 
-    protected static Sector makeProjectionLimits(Angle centralMeridian, Angle width)
-    {
-        double minLon = centralMeridian.degrees - width.degrees;
-        if (minLon < -180)
-            minLon = -180;
-
-        double maxLon = centralMeridian.degrees + width.degrees;
-        if (maxLon > 180)
-            maxLon = 180;
-
-        return Sector.fromDegrees(-90, 90, minLon, maxLon);
-    }
-
-    protected double getScale()
-    {
+    protected double getScale() {
         return 1.0;
     }
 
     @Override
-    public Vec4 geographicToCartesian(Globe globe, Angle latitude, Angle longitude, double metersElevation, Vec4 offset)
-    {
+    public Vec4 geographicToCartesian(Globe globe, Angle latitude, Angle longitude, double metersElevation,
+        Vec4 offset) {
         if (latitude.degrees > 86)
             latitude = Angle.fromDegrees(86);
         else if (latitude.degrees < -82)
@@ -217,12 +200,11 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
 
     @Override
     public void geographicToCartesian(Globe globe, Sector sector, int numLat, int numLon, double[] metersElevation,
-        Vec4 offset, Vec4[] out)
-    {
-        double minLat = sector.getMinLatitude().radians;
-        double maxLat = sector.getMaxLatitude().radians;
-        double minLon = sector.getMinLongitude().radians;
-        double maxLon = sector.getMaxLongitude().radians;
+        Vec4 offset, Vec4[] out) {
+        double minLat = sector.latMin().radians;
+        double maxLat = sector.latMax().radians;
+        double minLon = sector.lonMin().radians;
+        double maxLon = sector.lonMax().radians;
         double deltaLat = (maxLat - minLat) / (numLat > 1 ? numLat - 1 : 1);
         double deltaLon = (maxLon - minLon) / (numLon > 1 ? numLon - 1 : 1);
         double minLatLimit = -82 * Math.PI / 180;
@@ -234,15 +216,13 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
         // Iterate over the latitude and longitude coordinates in the specified sector, computing the Cartesian point
         // corresponding to each latitude and longitude.
         double lat = minLat;
-        for (int j = 0; j < numLat; j++, lat += deltaLat)
-        {
+        for (int j = 0; j < numLat; j++, lat += deltaLat) {
             if (j == numLat - 1) // explicitly set the last lat to the max latitude to ensure alignment
                 lat = maxLat;
             lat = WWMath.clamp(lat, minLatLimit, maxLatLimit); // limit lat to projection limits
 
             double lon = minLon;
-            for (int i = 0; i < numLon; i++, lon += deltaLon)
-            {
+            for (int i = 0; i < numLon; i++, lon += deltaLon) {
                 if (i == numLon - 1) // explicitly set the last lon to the max longitude to ensure alignment
                     lon = maxLon;
                 lon = WWMath.clamp(lon, minLonLimit, maxLonLimit); // limit lon to projection limits
@@ -258,8 +238,7 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
     }
 
     @Override
-    public Position cartesianToGeographic(Globe globe, Vec4 cart, Vec4 offset)
-    {
+    public Position cartesianToGeographic(Globe globe, Vec4 cart, Vec4 offset) {
         TMCoord tm = TMCoord.fromTM(cart.x, cart.y, globe, this.centralLatitude, this.centralMeridian, 0, 0,
             this.getScale());
 
@@ -300,8 +279,7 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
 //    }
 
     @Override
-    public Vec4 northPointingTangent(Globe globe, Angle latitude, Angle longitude)
-    {
+    public Vec4 northPointingTangent(Globe globe, Angle latitude, Angle longitude) {
         // Choose a small angle that we'll use as an increment in order to estimate the north pointing tangent by
         // computing the vector resulting from a small increment in latitude. Using 1e-7 in radians gives a tangent
         // resolution of approximately 1/2 meter. We specify the value in radians since geodeticToCartesian performs
@@ -329,14 +307,12 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
     }
 
     @Override
-    public boolean isContinuous()
-    {
+    public boolean isContinuous() {
         return false;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -352,8 +328,7 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = width.hashCode();
         result = 31 * result + centralMeridian.hashCode();
         result = 31 * result + centralLatitude.hashCode();

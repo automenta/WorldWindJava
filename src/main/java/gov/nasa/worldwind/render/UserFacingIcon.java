@@ -18,8 +18,11 @@ import java.util.Map;
  * @author tag
  * @version $Id: UserFacingIcon.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Draggable
-{
+public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Draggable {
+    protected BasicWWTexture imageTexture;
+    protected BasicWWTexture backgroundTexture;
+    protected boolean dragEnabled = true;
+    protected DraggableSupport draggableSupport = null;
     //    private final String iconPath;
     private Position iconPosition; // may be null because placement may be relative
     private Dimension iconSize; // may be null to indicate "use native image size"
@@ -31,22 +34,14 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
     private Vec4 toolTipOffset;
     private boolean showToolTip = false;
     private boolean alwaysOnTop = false;
-    private java.awt.Color textColor;
+    private Color textColor;
     private double backgroundScale;
 
-    protected BasicWWTexture imageTexture;
-    protected BasicWWTexture backgroundTexture;
-    protected boolean dragEnabled = true;
-    protected DraggableSupport draggableSupport = null;
-
-    public UserFacingIcon()
-    {
+    public UserFacingIcon() {
     }
 
-    public UserFacingIcon(String iconPath, Position iconPosition)
-    {
-        if (iconPath == null)
-        {
+    public UserFacingIcon(String iconPath, Position iconPosition) {
+        if (iconPath == null) {
             String message = Logging.getMessage("nullValue.IconFilePath");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -57,10 +52,8 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         this.iconPosition = iconPosition;
     }
 
-    public UserFacingIcon(Object imageSource, Position iconPosition)
-    {
-        if (imageSource == null)
-        {
+    public UserFacingIcon(Object imageSource, Position iconPosition) {
+        if (imageSource == null) {
             String message = Logging.getMessage("nullValue.IconFilePath");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -71,49 +64,40 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         this.iconPosition = iconPosition;
     }
 
-    public BasicWWTexture getImageTexture()
-    {
+    public BasicWWTexture getImageTexture() {
         return imageTexture;
     }
 
-    public BasicWWTexture getBackgroundTexture()
-    {
+    public BasicWWTexture getBackgroundTexture() {
         return backgroundTexture;
     }
 
-    public Object getImageSource()
-    {
+    public Object getImageSource() {
         return this.getImageTexture() != null ? this.getImageTexture().getImageSource() : null;
     }
 
-    public void setImageSource(Object imageSource)
-    {
+    public void setImageSource(Object imageSource) {
         this.imageTexture = new BasicWWTexture(imageSource, true);
         this.imageTexture.setUseAnisotropy(false);
     }
 
-    public String getPath()
-    {
+    public String getPath() {
         return this.getImageSource() instanceof String ? (String) this.getImageSource() : null;
     }
 
-    public Position getPosition()
-    {
+    public Position getPosition() {
         return this.iconPosition;
     }
 
-    public void setPosition(Position iconPosition)
-    {
+    public void setPosition(Position iconPosition) {
         this.iconPosition = iconPosition;
     }
 
-    public boolean isHighlighted()
-    {
+    public boolean isHighlighted() {
         return isHighlighted;
     }
 
-    public void setHighlighted(boolean highlighted)
-    {
+    public void setHighlighted(boolean highlighted) {
         isHighlighted = highlighted;
     }
 
@@ -122,105 +106,84 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
      *
      * @return the icon's highlight scale. The default scale is 1.2.
      */
-    public double getHighlightScale()
-    {
+    public double getHighlightScale() {
         return highlightScale;
     }
 
-    public void setHighlightScale(double highlightScale)
-    {
+    public void setHighlightScale(double highlightScale) {
         this.highlightScale = highlightScale;
     }
 
-    public Dimension getSize()
-    {
+    public Dimension getSize() {
         return this.iconSize;
     }
 
-    public void setSize(Dimension size)
-    {
+    public void setSize(Dimension size) {
         this.iconSize = size;
     }
 
-    public boolean isVisible()
-    {
+    public boolean isVisible() {
         return isVisible;
     }
 
-    public void setVisible(boolean visible)
-    {
+    public void setVisible(boolean visible) {
         isVisible = visible;
     }
 
-    public String getToolTipText()
-    {
+    public String getToolTipText() {
         return toolTipText;
     }
 
-    public void setToolTipText(String toolTipText)
-    {
+    public void setToolTipText(String toolTipText) {
         this.toolTipText = toolTipText;
     }
 
-    public Font getToolTipFont()
-    {
+    public Font getToolTipFont() {
         return toolTipFont;
     }
 
-    public void setToolTipFont(Font toolTipFont)
-    {
+    public void setToolTipFont(Font toolTipFont) {
         this.toolTipFont = toolTipFont;
     }
 
-    public Vec4 getToolTipOffset()
-    {
+    public Vec4 getToolTipOffset() {
         return toolTipOffset;
     }
 
-    public void setToolTipOffset(Vec4 toolTipOffset)
-    {
+    public void setToolTipOffset(Vec4 toolTipOffset) {
         this.toolTipOffset = toolTipOffset;
     }
 
-    public boolean isShowToolTip()
-    {
+    public boolean isShowToolTip() {
         return showToolTip;
     }
 
-    public void setShowToolTip(boolean showToolTip)
-    {
+    public void setShowToolTip(boolean showToolTip) {
         this.showToolTip = showToolTip;
     }
 
-    public Color getToolTipTextColor()
-    {
+    public Color getToolTipTextColor() {
         return textColor;
     }
 
-    public void setToolTipTextColor(Color textColor)
-    {
+    public void setToolTipTextColor(Color textColor) {
         this.textColor = textColor;
     }
 
-    public boolean isAlwaysOnTop()
-    {
+    public boolean isAlwaysOnTop() {
         return alwaysOnTop;
     }
 
-    public void setAlwaysOnTop(boolean alwaysOnTop)
-    {
+    public void setAlwaysOnTop(boolean alwaysOnTop) {
         this.alwaysOnTop = alwaysOnTop;
     }
 
-    public Object getBackgroundImage()
-    {
+    public Object getBackgroundImage() {
         return this.getBackgroundTexture() != null ? this.getBackgroundTexture().getImageSource() : null;
     }
 
-    public void setBackgroundImage(Object background)
-    {
-        if (background != null)
-        {
+    public void setBackgroundImage(Object background) {
+        if (background != null) {
             this.backgroundTexture = new BasicWWTexture(background, true);
             this.backgroundTexture.setUseAnisotropy(false);
         }
@@ -228,20 +191,16 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
             this.backgroundTexture = null;
     }
 
-    public double getBackgroundScale()
-    {
+    public double getBackgroundScale() {
         return backgroundScale;
     }
 
-    public void setBackgroundScale(double backgroundScale)
-    {
+    public void setBackgroundScale(double backgroundScale) {
         this.backgroundScale = backgroundScale;
     }
 
-    public void move(Position position)
-    {
-        if (position == null)
-        {
+    public void move(Position position) {
+        if (position == null) {
             String msg = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -250,10 +209,8 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         this.iconPosition = this.iconPosition.add(position);
     }
 
-    public void moveTo(Position position)
-    {
-        if (position == null)
-        {
+    public void moveTo(Position position) {
+        if (position == null) {
             String msg = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -262,26 +219,22 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         this.iconPosition = position;
     }
 
-    public Position getReferencePosition()
-    {
+    public Position getReferencePosition() {
         return this.iconPosition;
     }
 
     @Override
-    public boolean isDragEnabled()
-    {
+    public boolean isDragEnabled() {
         return this.dragEnabled;
     }
 
     @Override
-    public void setDragEnabled(boolean enabled)
-    {
+    public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
 
     @Override
-    public void drag(DragContext dragContext)
-    {
+    public void drag(DragContext dragContext) {
         if (!this.dragEnabled)
             return;
 
@@ -291,13 +244,11 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         this.doDrag(dragContext);
     }
 
-    protected void doDrag(DragContext dragContext)
-    {
+    protected void doDrag(DragContext dragContext) {
         this.draggableSupport.dragScreenSizeConstant(dragContext);
     }
 
-    public String toString()
-    {
+    public String toString() {
         return this.getImageSource() != null ? this.getImageSource().toString() : this.getClass().getName();
     }
 
@@ -306,8 +257,7 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
      *
      * @return XML state document string describing this UserFacingIcon.
      */
-    public String getRestorableState()
-    {
+    public String getRestorableState() {
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
         if (rs == null)
@@ -323,11 +273,9 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         // We will not save a partial iconPosition (for example, just the elevation).
         if (this.iconPosition != null
             && this.iconPosition.getLatitude() != null
-            && this.iconPosition.getLongitude() != null)
-        {
+            && this.iconPosition.getLongitude() != null) {
             RestorableSupport.StateObject positionStateObj = rs.addStateObject("position");
-            if (positionStateObj != null)
-            {
+            if (positionStateObj != null) {
                 rs.addStateValueAsDouble(positionStateObj, "latitude",
                     this.iconPosition.getLatitude().degrees);
                 rs.addStateValueAsDouble(positionStateObj, "longitude",
@@ -337,11 +285,9 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
             }
         }
 
-        if (this.iconSize != null)
-        {
+        if (this.iconSize != null) {
             RestorableSupport.StateObject sizeStateObj = rs.addStateObject("size");
-            if (sizeStateObj != null)
-            {
+            if (sizeStateObj != null) {
                 rs.addStateValueAsDouble(sizeStateObj, "width", this.iconSize.getWidth());
                 rs.addStateValueAsDouble(sizeStateObj, "height", this.iconSize.getHeight());
             }
@@ -352,19 +298,16 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
 
         // Save the name, style, and size of the font. These will be used to restore the font using the
         // constructor: new Font(name, style, size).
-        if (this.toolTipFont != null)
-        {
+        if (this.toolTipFont != null) {
             RestorableSupport.StateObject toolTipFontStateObj = rs.addStateObject("toolTipFont");
-            if (toolTipFontStateObj != null)
-            {
+            if (toolTipFontStateObj != null) {
                 rs.addStateValueAsString(toolTipFontStateObj, "name", this.toolTipFont.getName());
                 rs.addStateValueAsInteger(toolTipFontStateObj, "style", this.toolTipFont.getStyle());
                 rs.addStateValueAsInteger(toolTipFontStateObj, "size", this.toolTipFont.getSize());
             }
         }
 
-        if (this.textColor != null)
-        {
+        if (this.textColor != null) {
             String encodedColor = RestorableSupport.encodeColor(this.textColor);
             if (encodedColor != null)
                 rs.addStateValueAsString("toolTipTextColor", encodedColor);
@@ -373,8 +316,7 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         // Save the backgroundImage property only when it is a simple String path. If the backgroundImage property is a
         // BufferedImage (or some other object), we make no effort to save that state. We save under the name
         // "backgroundImagePath" to denote that it is a special case of "backgroundImage".
-        if (this.getBackgroundTexture() != null && this.getBackgroundTexture().getImageSource() instanceof String)
-        {
+        if (this.getBackgroundTexture() != null && this.getBackgroundTexture().getImageSource() instanceof String) {
             String backgroundImagePath = (String) this.getBackgroundTexture().getImageSource();
             rs.addStateValueAsString("backgroundImagePath", backgroundImagePath, true);
         }
@@ -387,8 +329,7 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         rs.addStateValueAsDouble("backgroundScale", this.backgroundScale);
 
         RestorableSupport.StateObject so = rs.addStateObject(null, "avlist");
-        for (Map.Entry<String, Object> avp : this.getEntries())
-        {
+        for (Map.Entry<String, Object> avp : this.getEntries()) {
             this.getRestorableStateForAVPair(avp.getKey(), avp.getValue() != null ? avp.getValue() : "", rs, so);
         }
 
@@ -402,26 +343,21 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
      * ignored.
      *
      * @param stateInXml an XML document String describing a UserFacingIcon.
-     *
      * @throws IllegalArgumentException If <code>stateInXml</code> is null, or if <code>stateInXml</code> is not a well
      *                                  formed XML document String.
      */
-    public void restoreState(String stateInXml)
-    {
-        if (stateInXml == null)
-        {
+    public void restoreState(String stateInXml) {
+        if (stateInXml == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         RestorableSupport restorableSupport;
-        try
-        {
+        try {
             restorableSupport = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -438,8 +374,7 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         // Restore the position property only if all parts are available.
         // We will not restore a partial position (for example, just the elevation).
         RestorableSupport.StateObject so = restorableSupport.getStateObject("position");
-        if (so != null)
-        {
+        if (so != null) {
             Double lat = restorableSupport.getStateValueAsDouble(so, "latitude");
             Double lon = restorableSupport.getStateValueAsDouble(so, "longitude");
             Double elev = restorableSupport.getStateValueAsDouble(so, "elevation");
@@ -450,8 +385,7 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         // Restore the size property only if all parts are available.
         // We will not restore a partial size (for example, just the width).
         so = restorableSupport.getStateObject("size");
-        if (so != null)
-        {
+        if (so != null) {
             Double width = restorableSupport.getStateValueAsDouble(so, "width");
             Double height = restorableSupport.getStateValueAsDouble(so, "height");
             if (width != null && height != null)
@@ -465,8 +399,7 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         // Restore the toolTipFont property only if all parts are available.
         // We will not restore a partial toolTipFont (for example, just the size).
         so = restorableSupport.getStateObject("toolTipFont");
-        if (so != null)
-        {
+        if (so != null) {
             // The "font name" of toolTipFont.
             String name = restorableSupport.getStateValueAsString(so, "name");
             // The style attributes.
@@ -478,8 +411,7 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
         }
 
         s = restorableSupport.getStateValueAsString("toolTipTextColor");
-        if (s != null)
-        {
+        if (s != null) {
             Color color = RestorableSupport.decodeColor(s);
             if (color != null)
                 this.setToolTipTextColor(color);
@@ -518,13 +450,10 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
             this.setBackgroundScale(d);
 
         so = restorableSupport.getStateObject(null, "avlist");
-        if (so != null)
-        {
+        if (so != null) {
             RestorableSupport.StateObject[] avpairs = restorableSupport.getAllStateObjects(so, "");
-            if (avpairs != null)
-            {
-                for (RestorableSupport.StateObject avp : avpairs)
-                {
+            if (avpairs != null) {
+                for (RestorableSupport.StateObject avp : avpairs) {
                     if (avp != null)
                         this.setValue(avp.getName(), avp.getValue());
                 }

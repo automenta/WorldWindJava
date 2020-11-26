@@ -16,6 +16,11 @@ import java.nio.*;
  * @version $Id: TiffIFDEntry.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
+    // package visibility is intended...
+    final int tag;
+    final int type;
+    final long count;
+    final long valOffset;
     private ByteBuffer data = null;
 
     public TiffIFDEntry(int tag, int type, long count, long valOffset) throws IllegalArgumentException {
@@ -26,7 +31,8 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
         this(tag, type, 1, value, null);
     }
 
-    public TiffIFDEntry(int tag, int type, long count, long valOffset, ByteBuffer data) throws IllegalArgumentException {
+    public TiffIFDEntry(int tag, int type, long count, long valOffset, ByteBuffer data)
+        throws IllegalArgumentException {
         this.tag = tag;
         this.type = type;
         this.count = count;
@@ -37,7 +43,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
     public long asLong() throws IllegalStateException {
         if (this.type != Tiff.Type.SHORT && this.type != Tiff.Type.LONG)
             throw new IllegalStateException("Attempt to access Tiff IFD-entry as int: tag/type="
-                    + Long.toHexString(tag) + "/" + type);
+                + Long.toHexString(tag) + "/" + type);
 
         if (this.type == Tiff.Type.SHORT && this.count == 1)
             return 0xFFFFL & (valOffset >> 16);
@@ -45,34 +51,22 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
             return valOffset;
     }
 
-    public Double getAsDouble()
-    {
+    public Double getAsDouble() {
         Double value = null;
 
         switch (this.type) {
-            case Tiff.Type.SHORT:
-            case Tiff.Type.SSHORT:
-                value = (double) this.asShort();
-                break;
-
-            case Tiff.Type.LONG:
-            case Tiff.Type.SLONG:
-                value = (double) this.asLong();
-                break;
-
-            case Tiff.Type.FLOAT: {
+            case Tiff.Type.SHORT, Tiff.Type.SSHORT -> value = (double) this.asShort();
+            case Tiff.Type.LONG, Tiff.Type.SLONG -> value = (double) this.asLong();
+            case Tiff.Type.FLOAT -> {
                 float[] values = this.getFloats();
                 if (null != values)
                     value = (double) values[0];
             }
-            break;
-
-            case Tiff.Type.DOUBLE: {
+            case Tiff.Type.DOUBLE -> {
                 double[] values = this.getDoubles();
                 if (null != values)
                     value = values[0];
             }
-            break;
         }
 
         return value;
@@ -100,6 +94,11 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
         throw new IllegalArgumentException(message);
     }
 
+    /*
+     * Reads and returns an array of doubles from the file.
+     *
+     */
+
     public int asShort(int index) throws IllegalStateException {
         if (this.type != Tiff.Type.SHORT) {
             String message = Logging.getMessage("GeotiffReader.InvalidType", "short", this.tag, this.type);
@@ -126,7 +125,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
         }
 
         if (this.count == 1)
-            return new int[]{this.asShort()};
+            return new int[] {this.asShort()};
 
         if (this.count > 0 && null != this.data) {
             int[] array = new int[(int) this.count];
@@ -151,10 +150,10 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
             throw new IllegalArgumentException(message);
         }
 
-
         if (this.count == 1) {
-            return new long[]{this.asLong()};
-        } else if (this.count > 1 && null != this.data) {
+            return new long[] {this.asLong()};
+        }
+        else if (this.count > 1 && null != this.data) {
             long[] array = new long[(int) this.count];
 
             if (this.type == Tiff.Type.SHORT) {
@@ -164,7 +163,8 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
                 while (sb.hasRemaining()) {
                     array[i++] = 0xFFFFL & sb.get();
                 }
-            } else if (this.type == Tiff.Type.LONG) {
+            }
+            else if (this.type == Tiff.Type.LONG) {
                 IntBuffer sb = this.data.rewind().asIntBuffer();
                 this.data.rewind();
                 int i = 0;
@@ -178,6 +178,11 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
         return null;
     }
 
+//  1 = BYTE 8-bit unsigned integer.
+//  2 = ASCII 8-bit byte that contains a 7-bit ASCII code; the last byte must be NUL (binary zero).
+//  3 = SHORT 16-bit (2-byte) unsigned integer.
+//  4 = LONG 32-bit (4-byte) unsigned integer.
+
     public short[] getShorts() {
         if (this.type != Tiff.Type.SHORT) {
             String message = Logging.getMessage("GeotiffReader.InvalidType", "short", this.tag, this.type);
@@ -186,7 +191,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
         }
 
         if (this.count == 1)
-            return new short[]{(short) this.asShort()};
+            return new short[] {(short) this.asShort()};
 
         if (this.count > 0 && null != this.data) {
             ShortBuffer sb = this.data.rewind().asShortBuffer();
@@ -202,13 +207,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
         return null;
     }
 
-    /*
-     * Reads and returns an array of doubles from the file.
-     *
-     */
-
-    public double[] getDoubles()
-    {
+    public double[] getDoubles() {
         if (this.type != Tiff.Type.DOUBLE) {
             String message = Logging.getMessage("GeotiffReader.InvalidType", "double", this.tag, this.type);
             Logging.logger().severe(message);
@@ -230,8 +229,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
         return array;
     }
 
-    public float[] getFloats()
-    {
+    public float[] getFloats() {
         if (this.type != Tiff.Type.FLOAT) {
             String message = Logging.getMessage("GeotiffReader.InvalidType", "float", this.tag, this.type);
             Logging.logger().severe(message);
@@ -243,7 +241,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
 
         if (this.count == 1) {
             int num = (int) (0xFFFFFFFFL & this.valOffset);
-            return new float[]{Float.intBitsToFloat(num)};
+            return new float[] {Float.intBitsToFloat(num)};
         }
 
         if (null == this.data)
@@ -275,20 +273,9 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
         return cbuf.toString();
     }
 
-//  1 = BYTE 8-bit unsigned integer.
-//  2 = ASCII 8-bit byte that contains a 7-bit ASCII code; the last byte must be NUL (binary zero).
-//  3 = SHORT 16-bit (2-byte) unsigned integer.
-//  4 = LONG 32-bit (4-byte) unsigned integer.
-
     public long asOffset() {
         return valOffset;
     }
-
-    // package visibility is intended...
-    final int tag;
-    final int type;
-    final long count;
-    final long valOffset;
 
     public int compareTo(TiffIFDEntry o) {
         final int BEFORE = -1;

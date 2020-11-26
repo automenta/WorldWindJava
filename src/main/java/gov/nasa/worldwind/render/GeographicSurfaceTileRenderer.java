@@ -14,29 +14,26 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: GeographicSurfaceTileRenderer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GeographicSurfaceTileRenderer extends SurfaceTileRenderer
-{
+public class GeographicSurfaceTileRenderer extends SurfaceTileRenderer {
     private double sgWidth;
     private double sgHeight;
     private double sgMinWE;
     private double sgMinSN;
 
-    protected void preComputeTextureTransform(DrawContext dc, SectorGeometry sg, Transform t)
-    {
+    protected void preComputeTextureTransform(DrawContext dc, SectorGeometry sg, Transform t) {
         Sector st = sg.getSector();
         this.sgWidth = st.getDeltaLonRadians();
         this.sgHeight = st.getDeltaLatRadians();
-        this.sgMinWE = st.getMinLongitude().radians;
-        this.sgMinSN = st.getMinLatitude().radians;
+        this.sgMinWE = st.lonMin().radians;
+        this.sgMinSN = st.latMin().radians;
     }
 
-    protected void computeTextureTransform(DrawContext dc, SurfaceTile tile, Transform t)
-    {
+    protected void computeTextureTransform(DrawContext dc, SurfaceTile tile, Transform t) {
         Sector st = tile.getSector();
         double tileWidth = st.getDeltaLonRadians();
         double tileHeight = st.getDeltaLatRadians();
-        double minLon = st.getMinLongitude().radians;
-        double minLat = st.getMinLatitude().radians;
+        double minLon = st.lonMin().radians;
+        double minLat = st.latMin().radians;
 
         t.VScale = tileHeight > 0 ? this.sgHeight / tileHeight : 1;
         t.HScale = tileWidth > 0 ? this.sgWidth / tileWidth : 1;
@@ -45,12 +42,10 @@ public class GeographicSurfaceTileRenderer extends SurfaceTileRenderer
     }
 
     protected Iterable<SurfaceTile> getIntersectingTiles(DrawContext dc, SectorGeometry sg,
-        Iterable<? extends SurfaceTile> tiles)
-    {
+        Iterable<? extends SurfaceTile> tiles) {
         ArrayList<SurfaceTile> intersectingTiles = null;
 
-        for (SurfaceTile tile : tiles)
-        {
+        for (SurfaceTile tile : tiles) {
             if (!tile.getSector().intersectsInterior(sg.getSector()))
                 continue;
 

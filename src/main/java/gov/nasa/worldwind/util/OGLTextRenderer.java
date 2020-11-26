@@ -7,12 +7,13 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.render.*;
 
+import java.awt.Font;
+
 /**
  * @author dcollins
  * @version $Id: OGLTextRenderer.java 2053 2014-06-10 20:16:57Z tgaskins $
  */
-public class OGLTextRenderer extends TextRenderer
-{
+public class OGLTextRenderer extends TextRenderer {
     // By default enable antialiasing, mipmapping, and smoothing, but disable fractional metrics and vertex arrays.
     // * For the common case where text is rendered without scaling at integral screen coordinates, smoothing and
     //   mipmapping have no effect on the rendering of text. However smoothing and mipmapping will blur text
@@ -24,68 +25,49 @@ public class OGLTextRenderer extends TextRenderer
     // * Vertex arrays are problematic on some graphics cards. Disable this feature by default to maximize
     //   compatibility.
 
-    protected static final java.awt.Font DEFAULT_FONT = java.awt.Font.decode("Arial-PLAIN-12");
+    protected static final Font DEFAULT_FONT = Font.decode("Arial-PLAIN-12");
     protected static final boolean DEFAULT_ANTIALIAS = true;
     protected static final boolean DEFAULT_USE_FRACTIONAL_METRICS = false;
     protected static final boolean DEFAULT_MIPMAP = true;
     protected static final boolean DEFAULT_SMOOTHING = true;
     protected static final boolean DEFAULT_USE_VERTEX_ARRAYS = false;
 
-    public OGLTextRenderer(java.awt.Font font, boolean antialiased, boolean useFractionalMetrics,
-        RenderDelegate renderDelegate, boolean mipmap)
-    {
+    public OGLTextRenderer(Font font, boolean antialiased, boolean useFractionalMetrics,
+        RenderDelegate renderDelegate, boolean mipmap) {
         super(font, antialiased, useFractionalMetrics, renderDelegate, mipmap);
         this.initialize();
     }
 
-    public OGLTextRenderer(java.awt.Font font, boolean antialiased, boolean useFractionalMetrics,
-        RenderDelegate renderDelegate)
-    {
+    public OGLTextRenderer(Font font, boolean antialiased, boolean useFractionalMetrics,
+        RenderDelegate renderDelegate) {
         this(font, antialiased, useFractionalMetrics, renderDelegate, DEFAULT_MIPMAP);
     }
 
-    public OGLTextRenderer(java.awt.Font font, boolean antialiased, boolean useFractionalMetrics)
-    {
+    public OGLTextRenderer(Font font, boolean antialiased, boolean useFractionalMetrics) {
         this(font, antialiased, useFractionalMetrics, null, DEFAULT_MIPMAP);
     }
 
-    public OGLTextRenderer(java.awt.Font font, boolean mipmap)
-    {
+    public OGLTextRenderer(Font font, boolean mipmap) {
         this(font, DEFAULT_ANTIALIAS, DEFAULT_USE_FRACTIONAL_METRICS, null, mipmap);
     }
 
-    public OGLTextRenderer(java.awt.Font font)
-    {
+    public OGLTextRenderer(Font font) {
         this(font, DEFAULT_ANTIALIAS, DEFAULT_USE_FRACTIONAL_METRICS, null, DEFAULT_MIPMAP);
     }
 
-    public OGLTextRenderer()
-    {
+    public OGLTextRenderer() {
         this(DEFAULT_FONT, DEFAULT_ANTIALIAS, DEFAULT_USE_FRACTIONAL_METRICS, null, DEFAULT_MIPMAP);
     }
 
-    protected void initialize()
-    {
-        this.setSmoothing(DEFAULT_SMOOTHING);
-        this.setUseVertexArrays(DEFAULT_USE_VERTEX_ARRAYS);
-    }
-
-    //**************************************************************//
-    //********************  Common Utilities  **********************//
-    //**************************************************************//
-
     public static TextRenderer getOrCreateTextRenderer(TextRendererCache cache,
-        java.awt.Font font, boolean antialiased, boolean useFractionalMetrics, boolean mipmap)
-    {
-        if (cache == null)
-        {
+        Font font, boolean antialiased, boolean useFractionalMetrics, boolean mipmap) {
+        if (cache == null) {
             String message = Logging.getMessage("nullValue.CacheIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (font == null)
-        {
+        if (font == null) {
             String message = Logging.getMessage("nullValue.FontIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -95,8 +77,7 @@ public class OGLTextRenderer extends TextRenderer
             mipmap);
 
         TextRenderer value = cache.get(key);
-        if (value == null)
-        {
+        if (value == null) {
             value = new OGLTextRenderer(font, antialiased, useFractionalMetrics, null, mipmap);
             cache.put(key, value);
         }
@@ -104,22 +85,28 @@ public class OGLTextRenderer extends TextRenderer
         return value;
     }
 
-    public static TextRenderer getOrCreateTextRenderer(TextRendererCache cache, java.awt.Font font)
-    {
-        if (cache == null)
-        {
+    //**************************************************************//
+    //********************  Common Utilities  **********************//
+    //**************************************************************//
+
+    public static TextRenderer getOrCreateTextRenderer(TextRendererCache cache, Font font) {
+        if (cache == null) {
             String message = Logging.getMessage("nullValue.CacheIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (font == null)
-        {
+        if (font == null) {
             String message = Logging.getMessage("nullValue.FontIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         return getOrCreateTextRenderer(cache, font, DEFAULT_ANTIALIAS, DEFAULT_USE_FRACTIONAL_METRICS, DEFAULT_MIPMAP);
+    }
+
+    protected void initialize() {
+        this.setSmoothing(DEFAULT_SMOOTHING);
+        this.setUseVertexArrays(DEFAULT_USE_VERTEX_ARRAYS);
     }
 }

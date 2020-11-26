@@ -35,9 +35,9 @@ import java.util.*;
 public class LengthMeasurer implements MeasurableLength {
 
     private static final double DEFAULT_TERRAIN_SAMPLING_STEPS = 128; // number of samples when following terrain
-    private static final double DEFAULT_MAX_SEGMENT_LENGTH = 100e3; // size above which segments are subdivided
+    private static final double DEFAULT_MAX_SEGMENT_LENGTH = 100.0e3; // size above which segments are subdivided
     private static final double DEFAULT_MIN_SEGMENT_LENGTH = 30; // minimum length of a terrain following subdivision
-
+    protected double length = -1;
     private ArrayList<? extends Position> positions;
     private ArrayList<? extends Position> subdividedPositions;
     private boolean followTerrain = false;
@@ -45,7 +45,6 @@ public class LengthMeasurer implements MeasurableLength {
     private double maxSegmentLength = DEFAULT_MAX_SEGMENT_LENGTH;
     private Sector sector;
     private double lengthTerrainSamplingSteps = DEFAULT_TERRAIN_SAMPLING_STEPS;
-    protected double length = -1;
 
     public LengthMeasurer() {
     }
@@ -58,6 +57,121 @@ public class LengthMeasurer implements MeasurableLength {
         this.setPositions(positions);
     }
 
+    /**
+     * Subdivide a list of positions so that no segment is longer then the provided maxLength.
+     * <p>
+     * If needed, new intermediate positions will be created along lines that follow the given PathType - one of
+     * AVKey.LINEAR, AVKey.RHUMB_LINE or AVKey.GREAT_CIRCLE. All position elevations will be either at the terrain
+     * surface if followTerrain is true, or interpolated according to the original elevations.</p>
+     *
+     * @param globe         the globe to draw elevations and points from.
+     * @param positions     the original position list
+     * @param maxLength     the maximum length for one segment.
+     * @param followTerrain true if the positions should be on the terrain surface.
+     * @param avkeyPathType the type of path to use in between two positions.
+     * @return a list of positions with no segment longer then maxLength and elevations following terrain or not.
+     */
+    protected static ArrayList<? extends Position> subdividePositions(Globe globe,
+        ArrayList<? extends Position> positions,
+        double maxLength, boolean followTerrain, String avkeyPathType) {
+        return subdividePositions(globe, positions, maxLength, followTerrain, avkeyPathType, 0, positions.size());
+    }
+
+    /**
+     * Subdivide a list of positions so that no segment is longer then the provided maxLength. Only the positions
+     * between start and start + count - 1 will be processed.
+     * <p>
+     * If needed, new intermediate positions will be created along lines that follow the given pathType - one of
+     * AVKey.LINEAR, AVKey.RHUMB_LINE or AVKey.GREAT_CIRCLE. All position elevations will be either at the terrain
+     * surface if followTerrain is true, or interpolated according to the original elevations.</p>
+     *
+     * @param globe         the globe to draw elevations and points from.
+     * @param positions     the original position list
+     * @param maxLength     the maximum length for one segment.
+     * @param followTerrain true if the positions should be on the terrain surface.
+     * @param pathType      the type of path to use in between two positions.
+     * @param start         the first position index in the original list.
+     * @param count         how many positions from the original list have to be processed and returned.
+     * @return a list of positions with no segment longer then maxLength and elevations following terrain or not.
+     */
+    protected static ArrayList<? extends Position> subdividePositions(Globe globe,
+        ArrayList<? extends Position> positions,
+        double maxLength, boolean followTerrain, String pathType,
+        int start, int count) {
+        if (positions == null || positions.size() < start + count) {
+            return positions;
+        }
+
+        ArrayList<Position> newPositions = new ArrayList<>();
+        // Add first position
+        Position pos1 = positions.get(start);
+        if (followTerrain) {
+            newPositions.add(new Position(pos1, globe.getElevation(pos1.getLatitude(), pos1.getLongitude())));
+        }
+        else {
+            newPositions.add(pos1);
+        }
+        for (int i = 1; i < count; i++) {
+            Position pos2 = positions.get(start + i);
+            double arcLengthRadians = LatLon.greatCircleDistance(pos1, pos2).radians;
+            double arcLength = arcLengthRadians * globe.getRadiusAt(LatLon.interpolate(0.5, pos1, pos2));
+            if (arcLength > maxLength) {
+                // if necessary subdivide segment at regular intervals smaller then maxLength
+                Angle segmentAzimuth = null;
+                Angle segmentDistance = null;
+                int steps = (int) Math.ceil(arcLength / maxLength);  // number of intervals - at least two
+                for (int j = 1; j < steps; j++) {
+                    float s = (float) j / steps;
+                    LatLon destLatLon;
+                    switch (pathType) {
+                        case AVKey.LINEAR -> destLatLon = LatLon.interpolate(s, pos1, pos2);
+                        case AVKey.RHUMB_LINE -> {
+                            if (segmentAzimuth == null) {
+                                segmentAzimuth = LatLon.rhumbAzimuth(pos1, pos2);
+                                segmentDistance = LatLon.rhumbDistance(pos1, pos2);
+                            }
+                            destLatLon = LatLon.rhumbEndPosition(pos1, segmentAzimuth.radians,
+                                s * segmentDistance.radians);
+                        }
+                        case AVKey.GREAT_CIRCLE -> {
+                            if (segmentAzimuth == null) {
+                                segmentAzimuth = LatLon.greatCircleAzimuth(pos1, pos2);
+                                segmentDistance = LatLon.greatCircleDistance(pos1, pos2);
+                            }
+                            destLatLon = LatLon.greatCircleEndPosition(pos1, segmentAzimuth.radians,
+                                s * segmentDistance.radians);
+                        }
+                        default -> {
+                            String message = Logging.getMessage("generic.ArgumentOutOfRange");
+                            Logging.logger().severe(message);
+                            throw new IllegalArgumentException(message);
+                        }
+                    }
+                    // Set elevation
+                    double elevation;
+                    if (followTerrain) {
+                        elevation = globe.getElevation(destLatLon.getLatitude(), destLatLon.getLongitude());
+                    }
+                    else {
+                        elevation = pos1.getElevation() * (1 - s) + pos2.getElevation() * s;
+                    }
+                    // Add new position
+                    newPositions.add(new Position(destLatLon, elevation));
+                }
+            }
+            // Finally add the segment end position
+            if (followTerrain) {
+                newPositions.add(new Position(pos2, globe.getElevation(pos2.getLatitude(), pos2.getLongitude())));
+            }
+            else {
+                newPositions.add(pos2);
+            }
+            // Prepare for next segment
+            pos1 = pos2;
+        }
+        return newPositions;
+    }
+
     protected void clearCachedValues() {
         this.subdividedPositions = null;
         this.length = -1;
@@ -65,19 +179,6 @@ public class LengthMeasurer implements MeasurableLength {
 
     public ArrayList<? extends Position> getPositions() {
         return this.positions;
-    }
-
-    public void setPositions(ArrayList<? extends LatLon> positions, double elevation) {
-        if (positions == null) {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        ArrayList<Position> newPositions = new ArrayList<>();
-        positions.forEach((pos) -> newPositions.add(new Position(pos, elevation)));
-
-        setPositions(newPositions);
     }
 
     public void setPositions(Position[] positions) {
@@ -115,11 +216,25 @@ public class LengthMeasurer implements MeasurableLength {
         this.positions = positions;
         if (this.positions.size() > 2) {
             this.sector = Sector.boundingSector(this.positions);
-        } else {
+        }
+        else {
             this.sector = null;
         }
 
         clearCachedValues();
+    }
+
+    public void setPositions(Iterable<? extends LatLon> positions, double elevation) {
+        if (positions == null) {
+            String message = Logging.getMessage("nullValue.PositionsListIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        ArrayList<Position> newPositions = new ArrayList<>();
+        positions.forEach((pos) -> newPositions.add(new Position(pos, elevation)));
+
+        setPositions(newPositions);
     }
 
     public boolean isFollowTerrain() {
@@ -163,17 +278,6 @@ public class LengthMeasurer implements MeasurableLength {
     }
 
     /**
-     * Get the type of path used when subdividing long segments, one of AVKey.GREAT_CIRCLE, which draws segments as a
-     * great circle, AVKey.LINEAR, which determines the intermediate positions between segments by interpolating the
-     * segment endpoints, or AVKey.RHUMB_LINE, which draws segments as a line of constant heading.
-     *
-     * @return The path type
-     */
-    public String getAVKeyPathType() {
-        return this.pathType;
-    }
-
-    /**
      * Sets the type of path used when subdividing long segments, one of AVKey.GREAT_CIRCLE, which draws segments as a
      * great circle, AVKey.LINEAR, which determines the intermediate positions between segments by interpolating the
      * segment endpoints, or AVKey.RHUMB_LINE, which draws segments as a line of constant heading.
@@ -185,19 +289,14 @@ public class LengthMeasurer implements MeasurableLength {
     public void setPathType(int pathType) {
         String mappedPathType = this.pathType;
         switch (pathType) {
-            case Polyline.LINEAR:
-                mappedPathType = AVKey.LINEAR;
-                break;
-            case Polyline.RHUMB_LINE:
-                mappedPathType = AVKey.RHUMB_LINE;
-                break;
-            case Polyline.GREAT_CIRCLE:
-                mappedPathType = AVKey.GREAT_CIRCLE;
-                break;
-            default:
+            case Polyline.LINEAR -> mappedPathType = AVKey.LINEAR;
+            case Polyline.RHUMB_LINE -> mappedPathType = AVKey.RHUMB_LINE;
+            case Polyline.GREAT_CIRCLE -> mappedPathType = AVKey.GREAT_CIRCLE;
+            default -> {
                 String message = Logging.getMessage("generic.ArgumentOutOfRange");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
+            }
         }
         if (!this.pathType.equals(mappedPathType)) {
             this.pathType = mappedPathType;
@@ -217,6 +316,17 @@ public class LengthMeasurer implements MeasurableLength {
             this.pathType = pathType;
             clearCachedValues();
         }
+    }
+
+    /**
+     * Get the type of path used when subdividing long segments, one of AVKey.GREAT_CIRCLE, which draws segments as a
+     * great circle, AVKey.LINEAR, which determines the intermediate positions between segments by interpolating the
+     * segment endpoints, or AVKey.RHUMB_LINE, which draws segments as a line of constant heading.
+     *
+     * @return The path type
+     */
+    public String getAVKeyPathType() {
+        return this.pathType;
     }
 
     /**
@@ -255,14 +365,15 @@ public class LengthMeasurer implements MeasurableLength {
     }
 
     /**
-     * Returns true if the current position list describe a closed path - one which last position is equal to the first.
+     * Returns true if the current position list describe a closed path - one which last position is equal to the
+     * first.
      *
      * @return true if the current position list describe a closed path.
      */
     public boolean isClosedShape() {
         return this.positions != null
-                && this.positions.size() > 1
-                && this.positions.get(0).equals(this.positions.get(this.positions.size() - 1));
+            && this.positions.size() > 1
+            && this.positions.get(0).equals(this.positions.get(this.positions.size() - 1));
     }
 
     /**
@@ -302,7 +413,6 @@ public class LengthMeasurer implements MeasurableLength {
      * positions.</p>
      *
      * @param globe the globe to draw terrain information from.
-     *
      * @return the current path length or -1 if the position list is too short.
      */
     @Override
@@ -337,7 +447,7 @@ public class LengthMeasurer implements MeasurableLength {
                 maxLength = Math.min(Math.max(maxLength, DEFAULT_MIN_SEGMENT_LENGTH), getMaxSegmentLength());
             }
             this.subdividedPositions = subdividePositions(globe, this.positions, maxLength,
-                    followTerrain, this.pathType);
+                followTerrain, this.pathType);
         }
 
         // Sum each segment length
@@ -350,120 +460,5 @@ public class LengthMeasurer implements MeasurableLength {
         }
 
         return length;
-    }
-
-    /**
-     * Subdivide a list of positions so that no segment is longer then the provided maxLength.
-     * <p>
-     * If needed, new intermediate positions will be created along lines that follow the given PathType - one of
-     * AVKey.LINEAR, AVKey.RHUMB_LINE or AVKey.GREAT_CIRCLE. All position elevations will be either at the terrain
-     * surface if followTerrain is true, or interpolated according to the original elevations.</p>
-     *
-     * @param globe the globe to draw elevations and points from.
-     * @param positions the original position list
-     * @param maxLength the maximum length for one segment.
-     * @param followTerrain true if the positions should be on the terrain surface.
-     * @param avkeyPathType the type of path to use in between two positions.
-     *
-     * @return a list of positions with no segment longer then maxLength and elevations following terrain or not.
-     */
-    protected static ArrayList<? extends Position> subdividePositions(Globe globe,
-            ArrayList<? extends Position> positions,
-            double maxLength, boolean followTerrain, String avkeyPathType) {
-        return subdividePositions(globe, positions, maxLength, followTerrain, avkeyPathType, 0, positions.size());
-    }
-
-    /**
-     * Subdivide a list of positions so that no segment is longer then the provided maxLength. Only the positions
-     * between start and start + count - 1 will be processed.
-     * <p>
-     * If needed, new intermediate positions will be created along lines that follow the given pathType - one of
-     * AVKey.LINEAR, AVKey.RHUMB_LINE or AVKey.GREAT_CIRCLE. All position elevations will be either at the terrain
-     * surface if followTerrain is true, or interpolated according to the original elevations.</p>
-     *
-     * @param globe the globe to draw elevations and points from.
-     * @param positions the original position list
-     * @param maxLength the maximum length for one segment.
-     * @param followTerrain true if the positions should be on the terrain surface.
-     * @param pathType the type of path to use in between two positions.
-     * @param start the first position index in the original list.
-     * @param count how many positions from the original list have to be processed and returned.
-     *
-     * @return a list of positions with no segment longer then maxLength and elevations following terrain or not.
-     */
-    protected static ArrayList<? extends Position> subdividePositions(Globe globe,
-            ArrayList<? extends Position> positions,
-            double maxLength, boolean followTerrain, String pathType,
-            int start, int count) {
-        if (positions == null || positions.size() < start + count) {
-            return positions;
-        }
-
-        ArrayList<Position> newPositions = new ArrayList<>();
-        // Add first position
-        Position pos1 = positions.get(start);
-        if (followTerrain) {
-            newPositions.add(new Position(pos1, globe.getElevation(pos1.getLatitude(), pos1.getLongitude())));
-        } else {
-            newPositions.add(pos1);
-        }
-        for (int i = 1; i < count; i++) {
-            Position pos2 = positions.get(start + i);
-            double arcLengthRadians = LatLon.greatCircleDistance(pos1, pos2).radians;
-            double arcLength = arcLengthRadians * globe.getRadiusAt(LatLon.interpolate(.5, pos1, pos2));
-            if (arcLength > maxLength) {
-                // if necessary subdivide segment at regular intervals smaller then maxLength
-                Angle segmentAzimuth = null;
-                Angle segmentDistance = null;
-                int steps = (int) Math.ceil(arcLength / maxLength);  // number of intervals - at least two
-                for (int j = 1; j < steps; j++) {
-                    float s = (float) j / steps;
-                    LatLon destLatLon;
-                    switch (pathType) {
-                        case AVKey.LINEAR:
-                            destLatLon = LatLon.interpolate(s, pos1, pos2);
-                            break;
-                        case AVKey.RHUMB_LINE:
-                            if (segmentAzimuth == null) {
-                                segmentAzimuth = LatLon.rhumbAzimuth(pos1, pos2);
-                                segmentDistance = LatLon.rhumbDistance(pos1, pos2);
-                            }
-                            destLatLon = LatLon.rhumbEndPosition(pos1, segmentAzimuth.radians,
-                                    s * segmentDistance.radians);
-                            break;
-                        case AVKey.GREAT_CIRCLE:
-                            if (segmentAzimuth == null) {
-                                segmentAzimuth = LatLon.greatCircleAzimuth(pos1, pos2);
-                                segmentDistance = LatLon.greatCircleDistance(pos1, pos2);
-                            }
-                            destLatLon = LatLon.greatCircleEndPosition(pos1, segmentAzimuth.radians,
-                                    s * segmentDistance.radians);
-                            break;
-                        default:
-                            String message = Logging.getMessage("generic.ArgumentOutOfRange");
-                            Logging.logger().severe(message);
-                            throw new IllegalArgumentException(message);
-                    }
-                    // Set elevation
-                    double elevation;
-                    if (followTerrain) {
-                        elevation = globe.getElevation(destLatLon.getLatitude(), destLatLon.getLongitude());
-                    } else {
-                        elevation = pos1.getElevation() * (1 - s) + pos2.getElevation() * s;
-                    }
-                    // Add new position
-                    newPositions.add(new Position(destLatLon, elevation));
-                }
-            }
-            // Finally add the segment end position
-            if (followTerrain) {
-                newPositions.add(new Position(pos2, globe.getElevation(pos2.getLatitude(), pos2.getLongitude())));
-            } else {
-                newPositions.add(pos2);
-            }
-            // Prepare for next segment
-            pos1 = pos2;
-        }
-        return newPositions;
     }
 }

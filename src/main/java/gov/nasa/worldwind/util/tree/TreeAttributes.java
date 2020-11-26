@@ -16,19 +16,18 @@ import java.awt.*;
  * @version $Id: TreeAttributes.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see TreeLayout
  */
-public interface TreeAttributes
-{
+public interface TreeAttributes {
     /**
-     * Returns a new TreeAttributes instance of the same type as this TreeAttributes, who's properties are
-     * configured exactly as this TreeAttributes.
+     * Returns a new TreeAttributes instance of the same type as this TreeAttributes, who's properties are configured
+     * exactly as this TreeAttributes.
      *
      * @return a copy of this TreeAttributes.
      */
     TreeAttributes copy();
 
     /**
-     * Copies the specified TreeAttributes' properties into this object's properties. This does nothing if the
-     * specified attributes is null.
+     * Copies the specified TreeAttributes' properties into this object's properties. This does nothing if the specified
+     * attributes is null.
      *
      * @param attributes the attributes to copy.
      */
@@ -38,7 +37,6 @@ public interface TreeAttributes
      * Should be root node be drawn?
      *
      * @return True if the root node should be drawn.
-     *
      * @see #setRootVisible(boolean)
      */
     boolean isRootVisible();
@@ -47,7 +45,6 @@ public interface TreeAttributes
      * Set the root node to visibile or not visible.
      *
      * @param visible True if the root node should be drawn.
-     *
      * @see #isRootVisible()
      */
     void setRootVisible(boolean visible);
@@ -56,8 +53,7 @@ public interface TreeAttributes
      * Get the color of the text in the tree.
      *
      * @return Text color.
-     *
-     * @see #setColor(java.awt.Color)
+     * @see #setColor(Color)
      */
     Color getColor();
 
@@ -65,22 +61,21 @@ public interface TreeAttributes
      * Set the color of the text in the tree.
      *
      * @param textColor New text color.
-     *
      * @see #getColor()
      */
     void setColor(Color textColor);
 
     /**
-     * Get the color of filled checkboxes that indicate if nodes are selected. The checkboxes are drawn as a gradient
-     * of two colors.
+     * Get the color of filled checkboxes that indicate if nodes are selected. The checkboxes are drawn as a gradient of
+     * two colors.
      *
      * @return two element array of the colors that make up the checkbox gradient.
      */
     Color[] getCheckBoxColor();
 
     /**
-     * Set the color of filled checkboxes that indicate if a node is selected. The checkboxes are drawn as a gradient
-     * of two colors.
+     * Set the color of filled checkboxes that indicate if a node is selected. The checkboxes are drawn as a gradient of
+     * two colors.
      *
      * @param color1 first color in the checkbox gradient.
      * @param color2 second color in the checkbox gradient.
@@ -91,10 +86,17 @@ public interface TreeAttributes
      * Get the font used to render text.
      *
      * @return Tree font.
-     *
-     * @see #setFont(java.awt.Font)
+     * @see #setFont(Font)
      */
     Font getFont();
+
+    /**
+     * Set the font used to render text.
+     *
+     * @param font New tree font.
+     * @see #getFont()
+     */
+    void setFont(Font font);
 
     /**
      * Get the font used to render the node description.
@@ -111,19 +113,9 @@ public interface TreeAttributes
     void setDescriptionFont(Font font);
 
     /**
-     * Set the font used to render text.
-     *
-     * @param font New tree font.
-     *
-     * @see #getFont()
-     */
-    void setFont(Font font);
-
-    /**
      * Get the space, in pixels, to leave between rows in the tree.
      *
      * @return Space in pixels between rows.
-     *
      * @see #setRowSpacing(int)
      */
     int getRowSpacing();
@@ -132,7 +124,6 @@ public interface TreeAttributes
      * Set the space, in pixels, to leave between rows in the tree.
      *
      * @param spacing Row spacing.
-     *
      * @see #getRowSpacing()
      */
     void setRowSpacing(int spacing);
@@ -141,8 +132,7 @@ public interface TreeAttributes
      * Get the size of each icon in the tree. If the icon images do not match this size, they will be scaled to fit.
      *
      * @return Icon size.
-     *
-     * @see #setIconSize(java.awt.Dimension)
+     * @see #setIconSize(Dimension)
      */
     Dimension getIconSize();
 
@@ -150,7 +140,6 @@ public interface TreeAttributes
      * Set the size of each icon in the tree.
      *
      * @param size New size.
-     *
      * @see #getIconSize()
      */
     void setIconSize(Dimension size);
@@ -159,7 +148,6 @@ public interface TreeAttributes
      * Get the amount of space, in pixels, to leave between an icon in the tree and surrounding text and shapes.
      *
      * @return Icon space in pixels.
-     *
      * @see #setIconSpace(int)
      */
     int getIconSpace();
@@ -168,7 +156,6 @@ public interface TreeAttributes
      * Set the amount of space, in pixels, to leave between an icon in the tree and surrounding text and shapes.
      *
      * @param iconSpace Icon space in pixels.
-     *
      * @see #getIconSpace()
      */
     void setIconSpace(int iconSpace);

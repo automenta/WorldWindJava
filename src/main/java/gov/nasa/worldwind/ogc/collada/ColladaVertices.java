@@ -14,9 +14,10 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: ColladaVertices.java 654 2012-06-25 04:15:52Z pabercrombie $
  */
-public class ColladaVertices extends ColladaAbstractObject
-{
-    /** Inputs to the vertices element. */
+public class ColladaVertices extends ColladaAbstractObject {
+    /**
+     * Inputs to the vertices element.
+     */
     protected final List<ColladaInput> inputs = new ArrayList<>();
 
     /**
@@ -24,8 +25,7 @@ public class ColladaVertices extends ColladaAbstractObject
      *
      * @param ns the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public ColladaVertices(String ns)
-    {
+    public ColladaVertices(String ns) {
         super(ns);
     }
 
@@ -34,8 +34,7 @@ public class ColladaVertices extends ColladaAbstractObject
      *
      * @return Vertex inputs. May return an empty list, but never returns null.
      */
-    public List<ColladaInput> getInputs()
-    {
+    public List<ColladaInput> getInputs() {
         return this.inputs;
     }
 
@@ -44,26 +43,23 @@ public class ColladaVertices extends ColladaAbstractObject
      *
      * @return The input labeled with semantic "POSITION", or null if no such input is set.
      */
-    public ColladaInput getPositionInput()
-    {
-        for (ColladaInput input : this.getInputs())
-        {
+    public ColladaInput getPositionInput() {
+        for (ColladaInput input : this.getInputs()) {
             if ("POSITION".equals(input.getSemantic()))
                 return input;
         }
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setField(String keyName, Object value)
-    {
-        if (keyName.equals("input"))
-        {
+    public void setField(String keyName, Object value) {
+        if (keyName.equals("input")) {
             this.inputs.add((ColladaInput) value);
         }
-        else
-        {
+        else {
             super.setField(keyName, value);
         }
     }

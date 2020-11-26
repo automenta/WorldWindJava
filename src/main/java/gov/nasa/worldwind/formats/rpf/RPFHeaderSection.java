@@ -8,27 +8,27 @@ package gov.nasa.worldwind.formats.rpf;
 
 import gov.nasa.worldwind.formats.nitfs.NITFSUtil;
 
+import java.nio.ByteBuffer;
+
 /**
  * @author Lado Garakanidze
  * @version $Id: RPFHeaderSection.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-class RPFHeaderSection
-{
+class RPFHeaderSection {
     public static final String DATA_TAG = "RPFHDR";
 
-    public final boolean  endianIndicator;
-    public final short    headerLength;
-    public final String   filename;
-    public final short    updateIndicator; // new | replacement | update
-    public final String   govSpecNumber;
-    public final String   govSpecDate;
-    public final String   securityClass;
-    public final String   securityCountryCode;
-    public final String   securityReleaseMark;
-    public final int      locationSectionLocation;
+    public final boolean endianIndicator;
+    public final short headerLength;
+    public final String filename;
+    public final short updateIndicator; // new | replacement | update
+    public final String govSpecNumber;
+    public final String govSpecDate;
+    public final String securityClass;
+    public final String securityCountryCode;
+    public final String securityReleaseMark;
+    public final int locationSectionLocation;
 
-    public RPFHeaderSection(java.nio.ByteBuffer buffer)
-    {
+    public RPFHeaderSection(ByteBuffer buffer) {
         this.endianIndicator = ((byte) 0 != buffer.get());         // reads 1 byte, 0 for big endian
         this.headerLength = buffer.getShort();                     // reads 2 bytes
         this.filename = NITFSUtil.getString(buffer, 12);

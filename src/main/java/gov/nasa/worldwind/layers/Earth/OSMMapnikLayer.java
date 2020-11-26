@@ -15,15 +15,12 @@ import java.net.*;
 /**
  * @version $Id: OSMMapnikLayer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class OSMMapnikLayer extends BasicMercatorTiledImageLayer
-{
-    public OSMMapnikLayer()
-    {
+public class OSMMapnikLayer extends BasicMercatorTiledImageLayer {
+    public OSMMapnikLayer() {
         super(makeLevels());
     }
 
-    private static LevelSet makeLevels()
-    {
+    private static LevelSet makeLevels() {
         AVList params = new AVListImpl();
 
         params.setValue(AVKey.TILE_WIDTH, 256);
@@ -35,27 +32,24 @@ public class OSMMapnikLayer extends BasicMercatorTiledImageLayer
         params.setValue(AVKey.NUM_LEVELS, 16);
         params.setValue(AVKey.NUM_EMPTY_LEVELS, 0);
         params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(Angle
-            .fromDegrees(22.5d), Angle.fromDegrees(45d)));
+            .fromDegrees(22.5d), Angle.fromDegrees(45.0d)));
         params.setValue(AVKey.SECTOR, new MercatorSector(-1.0, 1.0, Angle.NEG180, Angle.POS180));
         params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder());
 
         return new LevelSet(params);
     }
 
-    private static class URLBuilder implements TileUrlBuilder
-    {
+    @Override
+    public String toString() {
+        return "OpenStreetMap";
+    }
+
+    private static class URLBuilder implements TileUrlBuilder {
         public URL getURL(Tile tile, String imageFormat)
-            throws MalformedURLException
-        {
+            throws MalformedURLException {
             return new URL(tile.level.getService()
                 + (tile.getLevelNumber() + 3) + "/" + tile.column + "/"
                 + ((1 << (tile.getLevelNumber()) + 3) - 1 - tile.row) + ".png");
         }
-    }
-
-    @Override
-    public String toString()
-    {
-        return "OpenStreetMap";
     }
 }

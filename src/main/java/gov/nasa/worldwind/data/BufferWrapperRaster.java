@@ -11,28 +11,29 @@ import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.*;
 
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.util.Arrays;
+
 /**
  * @author dcollins
  * @version $Id: BufferWrapperRaster.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable, Disposable
-{
+public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable, Disposable {
     protected BufferWrapper buffer;
 
-    public BufferWrapperRaster(int width, int height, Sector sector, BufferWrapper buffer, AVList list)
-    {
+    public BufferWrapperRaster(int width, int height, Sector sector, BufferWrapper buffer, AVList list) {
         super(width, height, sector, list);
 
-        if (buffer == null)
-        {
+        if (buffer == null) {
             String message = Logging.getMessage("nullValue.BufferNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         int expectedValues = width * height;
-        if (buffer.length() < expectedValues)
-        {
+        if (buffer.length() < expectedValues) {
             String message = Logging.getMessage("generic.BufferSize", "buffer.length() < " + expectedValues);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -41,29 +42,41 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         this.buffer = buffer;
     }
 
-    public BufferWrapperRaster(int width, int height, Sector sector, BufferWrapper buffer)
-    {
+    public BufferWrapperRaster(int width, int height, Sector sector, BufferWrapper buffer) {
         this(width, height, sector, buffer, null);
     }
 
-    public BufferWrapper getBuffer()
-    {
+    protected static void sample(double[] source, int x1, int x2, double xf, int y1, int y2, double yf, int width,
+        double transparent, double[] dest, int destPos) {
+        double ul = source[x1 + y1 * width];
+        double ll = source[x1 + y2 * width];
+        double lr = source[x2 + y2 * width];
+        double ur = source[x2 + y1 * width];
+
+        // If all four sample values are not transparent (or missing), then write the interpolated value to the
+        // destination buffer.
+        if ((ul != transparent) && (ur != transparent) && (lr != transparent) && (ll != transparent)) {
+            dest[destPos] =
+                ((1.0 - xf) * (1.0 - yf) * ul)
+                    + ((1.0 - xf) * (yf) * ll)
+                    + ((xf) * (yf) * lr)
+                    + ((xf) * (1.0 - yf) * ur);
+        }
+    }
+
+    public BufferWrapper getBuffer() {
         return this.buffer;
     }
 
-    public long getSizeInBytes()
-    {
+    public long getSizeInBytes() {
         return this.buffer.getSizeInBytes();
     }
 
-    public void dispose()
-    {
+    public void dispose() {
     }
 
-    public double getDoubleAtPosition(int row, int col)
-    {
-        if ((row < 0) || (col < 0) || (row > (this.getHeight() - 1)) || (col > (this.getWidth() - 1)))
-        {
+    public double getDoubleAtPosition(int row, int col) {
+        if ((row < 0) || (col < 0) || (row > (this.getHeight() - 1)) || (col > (this.getWidth() - 1))) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", String.format("%d, %d", row, col));
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -72,10 +85,8 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         return this.getBuffer().getDouble(indexFor(col, row));
     }
 
-    public void setDoubleAtPosition(int row, int col, double value)
-    {
-        if ((row < 0) || (col < 0) || (row > (this.getHeight() - 1)) || (col > (this.getWidth() - 1)))
-        {
+    public void setDoubleAtPosition(int row, int col, double value) {
+        if ((row < 0) || (col < 0) || (row > (this.getHeight() - 1)) || (col > (this.getWidth() - 1))) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", String.format("%d, %d", row, col));
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -84,10 +95,8 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         this.getBuffer().putDouble(indexFor(col, row), value);
     }
 
-    public double getTransparentValue()
-    {
-        if (this.hasKey(AVKey.MISSING_DATA_SIGNAL))
-        {
+    public double getTransparentValue() {
+        if (this.hasKey(AVKey.MISSING_DATA_SIGNAL)) {
             Object o = this.getValue(AVKey.MISSING_DATA_SIGNAL);
             if (o instanceof Double)
                 return (Double) o;
@@ -95,8 +104,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         return Double.MAX_VALUE;
     }
 
-    public void setTransparentValue(double transparentValue)
-    {
+    public void setTransparentValue(double transparentValue) {
         this.setValue(AVKey.MISSING_DATA_SIGNAL, transparentValue);
     }
 
@@ -106,10 +114,9 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
      * missing-data.
      *
      * @return a two-element array containing this raster's extreme values, or null if none exist. Entry 0 contains the
-     *         minimum value; entry 1 contains the maximum value.
+     * minimum value; entry 1 contains the maximum value.
      */
-    public double[] getExtremes()
-    {
+    public double[] getExtremes() {
         // Create local variables to store the raster's dimensions and missing data signal to eliminate any overhead in
         // the loops below.
         int width = this.getWidth();
@@ -122,12 +129,10 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         // Allocate a buffer to hold the extreme values.
         double[] extremes = null;
 
-        for (int j = 0; j < height; j++)
-        {
+        for (int j = 0; j < height; j++) {
             this.get(0, j, width, buffer, 0); // Get the row starting at (0, j).
 
-            for (int i = 0; i < width; i++)
-            {
+            for (int i = 0; i < width; i++) {
                 if (buffer[i] == missingDataSignal) // Ignore values marked as missing-data.
                     continue;
 
@@ -145,31 +150,26 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         return extremes;
     }
 
-    public void fill(double value)
-    {
+    public void fill(double value) {
         int width = this.getWidth();
         int height = this.getHeight();
         double[] samples = new double[width];
-        java.util.Arrays.fill(samples, value);
+        Arrays.fill(samples, value);
 
         // Fill each row of this raster with the clear color.
-        for (int j = 0; j < height; j++)
-        {
+        for (int j = 0; j < height; j++) {
             this.put(0, j, samples, 0, width);
         }
     }
 
-    public void drawOnTo(DataRaster canvas)
-    {
-        if (canvas == null)
-        {
+    public void drawOnTo(DataRaster canvas) {
+        if (canvas == null) {
             String message = Logging.getMessage("nullValue.DestinationIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (!(canvas instanceof BufferWrapperRaster))
-        {
+        if (!(canvas instanceof BufferWrapperRaster)) {
             String message = Logging.getMessage("DataRaster.IncompatibleRaster", canvas);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -179,8 +179,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
     }
 
     @Override
-    DataRaster doGetSubRaster(int width, int height, Sector sector, AVList params)
-    {
+    DataRaster doGetSubRaster(int width, int height, Sector sector, AVList params) {
         DataRaster canvas = this.createSubRaster(width, height, sector, params);
         this.drawOnTo(canvas);
         return canvas;
@@ -191,24 +190,21 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
      * to create the sub-raster instance before populating its contents. This does not place any restrictions on the
      * specified <code>width</code>, <code>height</code>, <code>sector</code> or <code>params</code>.
      * <p>
-     * This returns a <code>{@link gov.nasa.worldwind.util.BufferWrapper.ByteBufferWrapper}</code>, a subclass of
+     * This returns a <code>{@link BufferWrapper.ByteBufferWrapper}</code>, a subclass of
      * BufferWrapperRaster backed by a ByteBuffer.
      *
      * @param width  the width of the sub-raster, in pixels.
      * @param height the height of the sub-raster, in pixels.
      * @param sector the sector the sub-raster occupies.
      * @param params the parameters associated with the sub-raster.
-     *
      * @return a new sub-raster initialized with the specified <code>width</code>, <code>height</code>,
-     *         <code>sector</code> and <code>params</code>.
+     * <code>sector</code> and <code>params</code>.
      */
-    protected BufferWrapperRaster createSubRaster(int width, int height, Sector sector, AVList params)
-    {
+    protected BufferWrapperRaster createSubRaster(int width, int height, Sector sector, AVList params) {
         return new ByteBufferRaster(width, height, sector, params);
     }
 
-    protected void doDrawOnTo(BufferWrapperRaster canvas)
-    {
+    protected void doDrawOnTo(BufferWrapperRaster canvas) {
         if (!this.getSector().intersects(canvas.getSector()))
             return;
 
@@ -219,14 +215,14 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         double thisTransparentValue = this.getTransparentValue();
 
         // Compute the transform from the canvas' coordinate system to this raster's coordinate system.
-        java.awt.geom.AffineTransform canvasToThis = this.computeSourceToDestTransform(
+        AffineTransform canvasToThis = this.computeSourceToDestTransform(
             canvasWidth, canvasHeight, canvas.getSector(),
             thisWidth, thisHeight, this.getSector());
 
         /// Compute the region of the destination raster to be be clipped by the specified clipping sector. If no
         // clipping sector is specified, then perform no clipping. We compute the clip region for the destination
         // raster because this region is used to limit which pixels are rasterized to the destination.
-        java.awt.Rectangle clipRect = new java.awt.Rectangle(0, 0, canvasWidth - 1, canvasHeight - 1);
+        Rectangle clipRect = new Rectangle(0, 0, canvasWidth - 1, canvasHeight - 1);
 //        if (clipSector != null)
 //        {
 //            java.awt.Rectangle rect = this.computeClipRect(clipSector, canvas);
@@ -263,11 +259,9 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         double xf, yf;
 
         // Iterate over each canvas row, filling canvas pixels with samples from this raster.
-        for (int j = clipRect.y; j <= (clipRect.y + clipRect.height); j++)
-        {
+        for (int j = clipRect.y; j <= (clipRect.y + clipRect.height); j++) {
             // If the interpolant lookup table has an entry for "j", then process this row.
-            if (lut.getInterpolantY(j, yParams))
-            {
+            if (lut.getInterpolantY(j, yParams)) {
                 y1 = (int) yParams[0];
                 y2 = (int) yParams[1];
                 yf = yParams[2];
@@ -278,11 +272,9 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
                 canvas.get(0, j, canvasWidth, canvasSamples, 0);
 
                 // Iterate over each canvas column, sampling canvas pixels.
-                for (int i = clipRect.x; i <= (clipRect.x + clipRect.width); i++)
-                {
+                for (int i = clipRect.x; i <= (clipRect.x + clipRect.width); i++) {
                     // If the interpolant lookup table has an entry for "i", then process this column.
-                    if (lut.getInterpolantX(i, xParams))
-                    {
+                    if (lut.getInterpolantX(i, xParams)) {
                         x1 = (int) xParams[0] - xParamMin;
                         x2 = (int) xParams[1] - xParamMin;
                         xf = xParams[2];
@@ -298,139 +290,137 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
         }
     }
 
-    protected void get(int x, int y, int length, double[] buffer, int pos)
-    {
+    protected void get(int x, int y, int length, double[] buffer, int pos) {
         int index = this.indexFor(x, y);
         this.getBuffer().getDouble(index, buffer, pos, length);
     }
 
-    protected void put(int x, int y, double[] buffer, int pos, int length)
-    {
+    protected void put(int x, int y, double[] buffer, int pos, int length) {
         int index = this.indexFor(x, y);
         this.getBuffer().putDouble(index, buffer, pos, length);
     }
 
-    protected final int indexFor(int x, int y)
-    {
+    protected final int indexFor(int x, int y) {
         // Map raster coordinates to buffer coordinates.
         return x + y * this.getWidth();
     }
 
     @Override
-    protected java.awt.geom.AffineTransform computeSourceToDestTransform(
+    protected AffineTransform computeSourceToDestTransform(
         int sourceWidth, int sourceHeight, Sector sourceSector,
-        int destWidth, int destHeight, Sector destSector)
-    {
+        int destWidth, int destHeight, Sector destSector) {
         // Compute the the transform from source to destination coordinates. In this computation a pixel is assumed
         // to have no dimension. We measure the distance between pixels rather than some pixel dimension.
 
-        double ty = (destHeight - 1) * -(sourceSector.getMaxLatitude().degrees - destSector.getMaxLatitude().degrees)
+        double ty = (destHeight - 1) * -(sourceSector.latMax().degrees - destSector.latMax().degrees)
             / destSector.getDeltaLatDegrees();
-        double tx = (destWidth - 1) * (sourceSector.getMinLongitude().degrees - destSector.getMinLongitude().degrees)
+        double tx = (destWidth - 1) * (sourceSector.lonMin().degrees - destSector.lonMin().degrees)
             / destSector.getDeltaLonDegrees();
 
-        double sy = ((double) (destHeight - 1) / (double) (sourceHeight - 1))
+        double sy = ((double) (destHeight - 1) / (sourceHeight - 1))
             * (sourceSector.getDeltaLatDegrees() / destSector.getDeltaLatDegrees());
-        double sx = ((double) (destWidth - 1) / (double) (sourceWidth - 1))
+        double sx = ((double) (destWidth - 1) / (sourceWidth - 1))
             * (sourceSector.getDeltaLonDegrees() / destSector.getDeltaLonDegrees());
 
-        java.awt.geom.AffineTransform transform = new java.awt.geom.AffineTransform();
+        AffineTransform transform = new AffineTransform();
         transform.translate(tx, ty);
         transform.scale(sx, sy);
         return transform;
     }
 
     @Override
-    protected java.awt.geom.AffineTransform computeGeographicToRasterTransform(int width, int height, Sector sector)
-    {
+    protected AffineTransform computeGeographicToRasterTransform(int width, int height, Sector sector) {
         // Compute the the transform from geographic to raster coordinates. In this computation a pixel is assumed
         // to have no dimension. We measure the distance between pixels rather than some pixel dimension.
 
-        double ty = -sector.getMaxLatitude().degrees;
-        double tx = -sector.getMinLongitude().degrees;
+        double ty = -sector.latMax().degrees;
+        double tx = -sector.lonMin().degrees;
 
         double sy = -((height - 1) / sector.getDeltaLatDegrees());
         double sx = ((width - 1) / sector.getDeltaLonDegrees());
 
-        java.awt.geom.AffineTransform transform = new java.awt.geom.AffineTransform();
+        AffineTransform transform = new AffineTransform();
         transform.scale(sx, sy);
         transform.translate(tx, ty);
         return transform;
     }
 
-    protected static void sample(double[] source, int x1, int x2, double xf, int y1, int y2, double yf, int width,
-        double transparent, double[] dest, int destPos)
-    {
-        double ul = source[x1 + y1 * width];
-        double ll = source[x1 + y2 * width];
-        double lr = source[x2 + y2 * width];
-        double ur = source[x2 + y1 * width];
+    protected InterpolantLookupTable createLookupTable(int width, int height,
+        double xMin, double xMax, double yMin, double yMax, AffineTransform lookupTransform) {
+        // Compute the interpolation values for each transformed x- and y-coordinate. This assumes that the transform
+        // is composed of translations and scales (no rotations or shears). Therefore the transformed coordinates of
+        // each row or column would be identical.
 
-        // If all four sample values are not transparent (or missing), then write the interpolated value to the
-        // destination buffer.
-        if ((ul != transparent) && (ur != transparent) && (lr != transparent) && (ll != transparent))
-        {
-            dest[destPos] =
-                ((1.0 - xf) * (1.0 - yf) * ul)
-                    + ((1.0 - xf) * (yf) * ll)
-                    + ((xf) * (yf) * lr)
-                    + ((xf) * (1.0 - yf) * ur);
+        InterpolantLookupTable lut = new InterpolantLookupTable(width, height);
+
+        double threshold = -1.0e-6; // Numerical roundoff error threshold.
+        boolean haveXParam = false;
+        boolean haveYParam = false;
+
+        Point2D thisPoint = new Point2D.Double();
+        Point2D canvasPoint = new Point2D.Double();
+        double x, y;
+        int index;
+
+        for (int i = 0; i < width; i++) {
+            canvasPoint.setLocation(i, 0);
+            lookupTransform.transform(canvasPoint, thisPoint);
+            x = thisPoint.getX();
+            if (((x - xMin) > threshold) && ((xMax - x) > threshold)) {
+                x = (x < xMin) ? xMin : (Math.min(x, xMax));
+                index = 3 * i;
+                lut.xParams[index] = Math.floor(x);
+                lut.xParams[index + 1] = Math.ceil(x);
+                lut.xParams[index + 2] = x - lut.xParams[index];
+
+                haveXParam = true;
+            }
         }
+
+        for (int j = 0; j < height; j++) {
+            canvasPoint.setLocation(0, j);
+            lookupTransform.transform(canvasPoint, thisPoint);
+            y = thisPoint.getY();
+            if (((y - yMin) > threshold) && ((yMax - y) > threshold)) {
+                y = (y < yMin) ? yMin : (Math.min(y, yMax));
+                index = 3 * j;
+                lut.yParams[index] = Math.floor(y);
+                lut.yParams[index + 1] = Math.ceil(y);
+                lut.yParams[index + 2] = y - lut.yParams[index];
+
+                haveYParam = true;
+            }
+        }
+
+        if (haveXParam && haveYParam) {
+            return lut;
+        }
+
+        return null;
     }
 
-    protected static class InterpolantLookupTable
-    {
+    protected static class InterpolantLookupTable {
         protected final int width;
         protected final int height;
         protected final double[] xParams;
         protected final double[] yParams;
 
-        public InterpolantLookupTable(int width, int height)
-        {
+        public InterpolantLookupTable(int width, int height) {
             this.width = width;
             this.height = height;
             this.xParams = new double[3 * width];
             this.yParams = new double[3 * height];
-            java.util.Arrays.fill(this.xParams, -1d);
-            java.util.Arrays.fill(this.yParams, -1d);
+            Arrays.fill(this.xParams, -1.0d);
+            Arrays.fill(this.yParams, -1.0d);
         }
 
-        public final boolean getInterpolantX(int x, double[] params)
-        {
-            params[0] = this.xParams[3 * x];
-            params[1] = this.xParams[3 * x + 1];
-            params[2] = this.xParams[3 * x + 2];
-            return params[0] != -1d;
-        }
-
-        public final boolean getInterpolantY(int y, double[] params)
-        {
-            params[0] = this.yParams[3 * y];
-            params[1] = this.yParams[3 * y + 1];
-            params[2] = this.yParams[3 * y + 2];
-            return params[0] != -1d;
-        }
-
-        public final void computeRangeX(double[] params)
-        {
-            computeInterpolantRange(this.xParams, this.width, params);
-        }
-
-        public final void computeRangeY(double[] params)
-        {
-            computeInterpolantRange(this.yParams, this.height, params);
-        }
-
-        protected static void computeInterpolantRange(double[] params, int size, double[] result)
-        {
+        protected static void computeInterpolantRange(double[] params, int size, double[] result) {
             double min = Double.MAX_VALUE;
             double max = -Double.MIN_VALUE;
             int index;
-            for (int i = 0; i < size; i++)
-            {
+            for (int i = 0; i < size; i++) {
                 index = 3 * i;
-                if (params[index] != -1d)
-                {
+                if (params[index] != -1.0d) {
                     // Compute the minimum first parameter (x1 or y1).
                     if (params[index] < min)
                         min = params[index];
@@ -442,65 +432,27 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
             result[0] = min;
             result[1] = max;
         }
-    }
 
-    protected InterpolantLookupTable createLookupTable(int width, int height,
-        double xMin, double xMax, double yMin, double yMax, java.awt.geom.AffineTransform lookupTransform)
-    {
-        // Compute the interpolation values for each transformed x- and y-coordinate. This assumes that the transform
-        // is composed of translations and scales (no rotations or shears). Therefore the transformed coordinates of
-        // each row or column would be identical.
-
-        InterpolantLookupTable lut = new InterpolantLookupTable(width, height);
-
-        double threshold = -1e-6; // Numerical roundoff error threshold.
-        boolean haveXParam = false;
-        boolean haveYParam = false;
-
-        java.awt.geom.Point2D thisPoint = new java.awt.geom.Point2D.Double();
-        java.awt.geom.Point2D canvasPoint = new java.awt.geom.Point2D.Double();
-        double x, y;
-        int index;
-
-        for (int i = 0; i < width; i++)
-        {
-            canvasPoint.setLocation(i, 0);
-            lookupTransform.transform(canvasPoint, thisPoint);
-            x = thisPoint.getX();
-            if (((x - xMin) > threshold) && ((xMax - x) > threshold))
-            {
-                x = (x < xMin) ? xMin : (Math.min(x, xMax));
-                index = 3 * i;
-                lut.xParams[index] = Math.floor(x);
-                lut.xParams[index + 1] = Math.ceil(x);
-                lut.xParams[index + 2] = x - lut.xParams[index];
-
-                haveXParam = true;
-            }
+        public final boolean getInterpolantX(int x, double[] params) {
+            params[0] = this.xParams[3 * x];
+            params[1] = this.xParams[3 * x + 1];
+            params[2] = this.xParams[3 * x + 2];
+            return params[0] != -1.0d;
         }
 
-        for (int j = 0; j < height; j++)
-        {
-            canvasPoint.setLocation(0, j);
-            lookupTransform.transform(canvasPoint, thisPoint);
-            y = thisPoint.getY();
-            if (((y - yMin) > threshold) && ((yMax - y) > threshold))
-            {
-                y = (y < yMin) ? yMin : (Math.min(y, yMax));
-                index = 3 * j;
-                lut.yParams[index] = Math.floor(y);
-                lut.yParams[index + 1] = Math.ceil(y);
-                lut.yParams[index + 2] = y - lut.yParams[index];
-
-                haveYParam = true;
-            }
+        public final boolean getInterpolantY(int y, double[] params) {
+            params[0] = this.yParams[3 * y];
+            params[1] = this.yParams[3 * y + 1];
+            params[2] = this.yParams[3 * y + 2];
+            return params[0] != -1.0d;
         }
 
-        if (haveXParam && haveYParam)
-        {
-            return lut;
+        public final void computeRangeX(double[] params) {
+            computeInterpolantRange(this.xParams, this.width, params);
         }
 
-        return null;
+        public final void computeRangeY(double[] params) {
+            computeInterpolantRange(this.yParams, this.height, params);
+        }
     }
 }

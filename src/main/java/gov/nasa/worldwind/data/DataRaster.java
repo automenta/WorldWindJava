@@ -19,8 +19,7 @@ import gov.nasa.worldwind.geom.Sector;
  * @author dcollins
  * @version $Id: DataRaster.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface DataRaster extends AVList, Disposable
-{
+public interface DataRaster extends AVList, Disposable {
     /**
      * Returns the raster's width in raster units.
      *
@@ -57,9 +56,7 @@ public interface DataRaster extends AVList, Disposable
      * @param params a list of parameters that specify the width, height and sector of the region to return. Specify
      *               these values using {@link gov.nasa.worldwind.avlist.AVKey#WIDTH}, {@link
      *               gov.nasa.worldwind.avlist.AVKey#HEIGHT} and {@link gov.nasa.worldwind.avlist.AVKey#SECTOR}.
-     *
      * @return the requested raster, or null if the raster could not be created.
-     *
      * @throws IllegalArgumentException if the specified parameter list is missing the width, height or sector keys or
      *                                  any of those values are invalid.
      */
@@ -75,9 +72,7 @@ public interface DataRaster extends AVList, Disposable
      * @param params a list of parameters that specify the width, height and sector of the region to return. Specify
      *               these values using {@link gov.nasa.worldwind.avlist.AVKey#WIDTH}, {@link
      *               gov.nasa.worldwind.avlist.AVKey#HEIGHT} and {@link gov.nasa.worldwind.avlist.AVKey#SECTOR}.
-     *
      * @return the requested raster, or null if the raster could not be created.
-     *
      * @throws IllegalArgumentException if the sector is null or the width, height or sector are invalid.
      */
     DataRaster getSubRaster(int width, int height, Sector sector, AVList params);

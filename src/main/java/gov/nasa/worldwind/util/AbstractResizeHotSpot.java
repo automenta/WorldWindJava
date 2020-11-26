@@ -26,8 +26,7 @@ import java.awt.event.*;
  * @author pabercrombie
  * @version $Id: AbstractResizeHotSpot.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractResizeHotSpot extends AbstractHotSpot
-{
+public abstract class AbstractResizeHotSpot extends AbstractHotSpot {
     protected static final int NORTH = 1;
     protected static final int SOUTH = 2;
     protected static final int EAST = 4;
@@ -51,7 +50,9 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
      * is being dragged, the window should move to keep that corner under the cursor.
      */
     protected boolean adjustLocationX;
-    /** True if the window needs to be moved in the Y direction as it is resized. */
+    /**
+     * True if the window needs to be moved in the Y direction as it is resized.
+     */
     protected boolean adjustLocationY;
 
     protected int xSign = 1;
@@ -59,8 +60,7 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
 
     protected int cursor;
 
-    protected void setDirection(String direction)
-    {
+    protected void setDirection(String direction) {
         int dir = 0;
         if (AVKey.NORTH.equals(direction))
             dir = NORTH;
@@ -82,8 +82,7 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
         this.setDirection(dir);
     }
 
-    protected void setDirection(int direction)
-    {
+    protected void setDirection(int direction) {
         this.adjustLocationX =
             NORTH == direction
                 || WEST == direction
@@ -95,18 +94,15 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
                 || NORTHWEST == direction
                 || NORTHEAST == direction;
 
-        if (NORTH == direction || SOUTH == direction)
-        {
+        if (NORTH == direction || SOUTH == direction) {
             this.allowVerticalResize = true;
             this.allowHorizontalResize = false;
         }
-        else if (EAST == direction || WEST == direction)
-        {
+        else if (EAST == direction || WEST == direction) {
             this.allowVerticalResize = false;
             this.allowHorizontalResize = true;
         }
-        else
-        {
+        else {
             this.allowVerticalResize = true;
             this.allowHorizontalResize = true;
         }
@@ -145,8 +141,7 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
      *
      * @param pickPoint The point on the frame that was picked.
      */
-    protected void setDirectionFromPoint(Point pickPoint)
-    {
+    protected void setDirectionFromPoint(Point pickPoint) {
         Point topLeft = this.getScreenPoint();
         Dimension size = this.getSize();
 
@@ -188,31 +183,26 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
      *
      * @return True if the control is dragging.
      */
-    public boolean isDragging()
-    {
+    public boolean isDragging() {
         return this.dragging;
     }
 
     /**
-     * Handle a {@link gov.nasa.worldwind.event.SelectEvent} and call {@link #beginDrag}, {@link #drag}, {@link
+     * Handle a {@link SelectEvent} and call {@link #beginDrag}, {@link #drag}, {@link
      * #endDrag} as appropriate. Subclasses may override this method if they need to handle events other than drag
      * events.
      *
      * @param event Select event.
      */
     @Override
-    public void selected(SelectEvent event)
-    {
+    public void selected(SelectEvent event) {
         if (event == null || this.isConsumed(event))
             return;
 
         Point pickPoint = event.getPickPoint();
-        if (pickPoint != null)
-        {
-            if (event.isDrag())
-            {
-                if (!this.isDragging())
-                {
+        if (pickPoint != null) {
+            if (event.isDrag()) {
+                if (!this.isDragging()) {
                     this.dragging = true;
                     this.beginDrag(pickPoint);
                 }
@@ -223,8 +213,7 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
             }
         }
 
-        if (event.isDragEnd())
-        {
+        if (event.isDragEnd()) {
             this.dragging = false;
             this.endDrag();
 
@@ -238,23 +227,20 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
      * @param e Mouse event.
      */
     @Override
-    public void mouseMoved(MouseEvent e)
-    {
+    public void mouseMoved(MouseEvent e) {
         if (e == null || e.isConsumed())
             return;
-        
+
         this.setDirectionFromPoint(e.getPoint());
     }
 
-    protected void beginDrag(Point point)
-    {
+    protected void beginDrag(Point point) {
         this.dragRefPoint = point;
         this.refSize = this.getSize();
         this.refLocation = this.getScreenPoint();
     }
 
-    public void drag(Point point)
-    {
+    public void drag(Point point) {
         int deltaX = 0;
         int deltaY = 0;
 
@@ -269,12 +255,10 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
         int width = this.refSize.width + deltaX;
         int height = this.refSize.height + deltaY;
 
-        if (this.isValidSize(width, height))
-        {
+        if (this.isValidSize(width, height)) {
             this.setSize(new Dimension(width, height));
 
-            if (this.adjustLocationX || this.adjustLocationY)
-            {
+            if (this.adjustLocationX || this.adjustLocationY) {
                 double x = this.refLocation.x - (this.adjustLocationX ? deltaX : 0);
                 double y = this.refLocation.y - (this.adjustLocationY ? deltaY : 0);
                 this.setScreenPoint(new Point((int) x, (int) y));
@@ -282,9 +266,10 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
         }
     }
 
-    /** Called when a drag action ends. This implementation sets {@link #dragRefPoint} to null. */
-    protected void endDrag()
-    {
+    /**
+     * Called when a drag action ends. This implementation sets {@link #dragRefPoint} to null.
+     */
+    protected void endDrag() {
         this.dragRefPoint = null;
     }
 
@@ -294,21 +279,19 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
      * @return New cursor.
      */
     @Override
-    public Cursor getCursor()
-    {
+    public Cursor getCursor() {
         return Cursor.getPredefinedCursor(this.cursor);
     }
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Overridden to reset state when the mouse leaves the resize area.
      *
      * @param active {@code true} if the HotSpot is being activated, {@code false} if it is being deactivated.
      */
     @Override
-    public void setActive(boolean active)
-    {
+    public void setActive(boolean active) {
         // If the resize area is being deactivated, reset the cursor so that the next time the HotSpot becomes active
         // we won't show the wrong cursor.
         if (!active)
@@ -323,13 +306,10 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
      *
      * @param width  Frame width.
      * @param height Frame height.
-     *
      * @return True if this frame size is valid.
-     *
      * @see #getMinimumSize()
      */
-    protected boolean isValidSize(int width, int height)
-    {
+    protected boolean isValidSize(int width, int height) {
         Dimension minSize = this.getMinimumSize();
         return width >= minSize.width && height >= minSize.height;
     }
@@ -339,11 +319,9 @@ public abstract class AbstractResizeHotSpot extends AbstractHotSpot
      * implementation returns 0, 0.
      *
      * @return Minimum frame size.
-     *
      * @see #isValidSize(int, int)
      */
-    protected Dimension getMinimumSize()
-    {
+    protected Dimension getMinimumSize() {
         return new Dimension(0, 0);
     }
 

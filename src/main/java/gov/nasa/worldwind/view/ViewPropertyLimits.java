@@ -15,23 +15,21 @@ import gov.nasa.worldwind.util.RestorableSupport;
  * @author jym
  * @version $Id: ViewPropertyLimits.java 2253 2014-08-22 16:33:46Z dcollins $
  */
-public interface ViewPropertyLimits
-{
-    /**
-     * Sets the Sector which will limit a view's eye latitude and longitude.
-     *
-     * @param sector Sector which will limit the eye latitude and longitude.
-     *
-     * @throws IllegalArgumentException if sector is null.
-     */
-    void setEyeLocationLimits(Sector sector);
-
+public interface ViewPropertyLimits {
     /**
      * Returns the Sector which limits a view's eye latitude and longitude.
      *
      * @return Sector which limits the eye latitude and longitude.
      */
     Sector getEyeLocationLimits();
+
+    /**
+     * Sets the Sector which will limit a view's eye latitude and longitude.
+     *
+     * @param sector Sector which will limit the eye latitude and longitude.
+     * @throws IllegalArgumentException if sector is null.
+     */
+    void setEyeLocationLimits(Sector sector);
 
     /**
      * Returns the minimum and maximum values for a view's eye elevation.
@@ -60,7 +58,6 @@ public interface ViewPropertyLimits
      *
      * @param minAngle the minimum allowable angle for heading.
      * @param maxAngle the maximum allowable angle for heading.
-     *
      * @throws IllegalArgumentException if either minAngle or maxAngle is null.
      */
     void setHeadingLimits(Angle minAngle, Angle maxAngle);
@@ -77,7 +74,6 @@ public interface ViewPropertyLimits
      *
      * @param minAngle the minimum allowable angle for pitch.
      * @param maxAngle the maximum allowable angle for pitch.
-     *
      * @throws IllegalArgumentException if either minAngle or maxAngle is null.
      */
     void setPitchLimits(Angle minAngle, Angle maxAngle);
@@ -94,12 +90,13 @@ public interface ViewPropertyLimits
      *
      * @param minAngle the minimum allowable angle for roll.
      * @param maxAngle the maximum allowable angle for roll.
-     *
      * @throws IllegalArgumentException if either minAngle or maxAngle is null.
      */
     void setRollLimits(Angle minAngle, Angle maxAngle);
 
-    /** Resets all property limits to their default values. */
+    /**
+     * Resets all property limits to their default values.
+     */
     void reset();
 
     /**
@@ -109,9 +106,7 @@ public interface ViewPropertyLimits
      *
      * @param view     the view associated with the center position and the property limits.
      * @param position position to clamp to the allowed range.
-     *
      * @return The clamped position.
-     *
      * @throws IllegalArgumentException if any argument is null.
      */
     Position limitEyePosition(View view, Position position);
@@ -122,9 +117,7 @@ public interface ViewPropertyLimits
      *
      * @param view  the view associated with the heading angle and the property limits.
      * @param angle angle to clamp to the allowed range.
-     *
      * @return The clamped angle.
-     *
      * @throws IllegalArgumentException if any argument is null.
      */
     Angle limitHeading(View view, Angle angle);
@@ -135,9 +128,7 @@ public interface ViewPropertyLimits
      *
      * @param view  the view associated with the pitch angle and the property limits.
      * @param angle angle to clamp to the allowed range.
-     *
      * @return The clamped angle.
-     *
      * @throws IllegalArgumentException if any argument is null.
      */
     Angle limitPitch(View view, Angle angle);
@@ -148,9 +139,7 @@ public interface ViewPropertyLimits
      *
      * @param view  the view associated with the roll angle and the property limits.
      * @param angle angle to clamp to the allowed range.
-     *
      * @return The clamped angle.
-     *
      * @throws IllegalArgumentException if any argument is null.
      */
     Angle limitRoll(View view, Angle angle);

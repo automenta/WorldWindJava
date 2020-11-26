@@ -21,9 +21,10 @@ import javax.xml.stream.events.XMLEvent;
  * @author pabercrombie
  * @version $Id: ColladaP.java 662 2012-06-26 19:05:46Z pabercrombie $
  */
-public class ColladaP extends ColladaAbstractObject
-{
-    /** Indices contained in this element. */
+public class ColladaP extends ColladaAbstractObject {
+    /**
+     * Indices contained in this element.
+     */
     protected int[] indices;
 
     /**
@@ -31,8 +32,7 @@ public class ColladaP extends ColladaAbstractObject
      *
      * @param ns the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public ColladaP(String ns)
-    {
+    public ColladaP(String ns) {
         super(ns);
     }
 
@@ -41,19 +41,18 @@ public class ColladaP extends ColladaAbstractObject
      *
      * @return Array of indices defined by this element.
      */
-    public int[] getIndices()
-    {
+    public int[] getIndices() {
         return this.indices;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Object parse(XMLEventParserContext ctx, XMLEvent event, Object... args) throws XMLStreamException
-    {
+    public Object parse(XMLEventParserContext ctx, XMLEvent event, Object... args) throws XMLStreamException {
         super.parse(ctx, event, args);
 
-        if (this.hasField(CHARACTERS_CONTENT))
-        {
+        if (this.hasField(CHARACTERS_CONTENT)) {
             String s = (String) this.getField(CHARACTERS_CONTENT);
             if (!WWUtil.isEmpty(s))
                 this.indices = this.parseInts(s);
@@ -69,17 +68,14 @@ public class ColladaP extends ColladaAbstractObject
      * Parse an string of integers into an array.
      *
      * @param intArrayString String of integers separated by spaces.
-     *
      * @return Array of integers parsed from the input string.
      */
-    protected int[] parseInts(String intArrayString)
-    {
+    protected int[] parseInts(String intArrayString) {
         String[] arrayOfNumbers = intArrayString.split("\\s");
         int[] ints = new int[arrayOfNumbers.length];
 
         int i = 0;
-        for (String s : arrayOfNumbers)
-        {
+        for (String s : arrayOfNumbers) {
             if (!WWUtil.isEmpty(s))
                 ints[i++] = Integer.parseInt(s);
         }

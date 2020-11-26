@@ -11,6 +11,7 @@ import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwindx.examples.util.RandomShapeAttributes;
 
 import javax.swing.*;
+import java.util.logging.Level;
 
 /**
  * Illustrates how to import ESRI Shapefiles into WorldWind. This uses a <code>{@link ShapefileLayerFactory}</code> to
@@ -18,26 +19,26 @@ import javax.swing.*;
  *
  * @version $Id: Shapefiles.java 3212 2015-06-18 02:45:56Z tgaskins $
  */
-public class Shapefiles extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class Shapefiles extends ApplicationTemplate {
+    public static void main(String[] args) {
+        start("WorldWind Shapefiles", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             ShapefileLayerFactory factory = new ShapefileLayerFactory();
 
             // Specify an attribute delegate to assign random attributes to each shapefile record.
             final RandomShapeAttributes randomAttrs = new RandomShapeAttributes();
             factory.setAttributeDelegate(
-                (shapefileRecord, renderableRecord) -> renderableRecord.setAttributes(randomAttrs.nextAttributes().asShapeAttributes()));
+                (shapefileRecord, renderableRecord) -> renderableRecord.setAttributes(
+                    randomAttrs.nextAttributes().asShapeAttributes()));
 
             // Load the shapefile. Define the completion callback.
-            factory.createFromShapefileSource("testData/shapefiles/TM_WORLD_BORDERS-0.3.shp",
-                new ShapefileLayerFactory.CompletionCallback()
-                {
+            factory.createFromShapefileSource("shapefiles/TM_WORLD_BORDERS-0.3.shp",
+                new ShapefileLayerFactory.CompletionCallback() {
                     @Override
-                    public void completion(Object result)
-                    {
+                    public void completion(Object result) {
                         final Layer layer = (Layer) result; // the result is the layer the factory created
                         layer.setName(WWIO.getFilename(layer.getName()));
 
@@ -46,16 +47,10 @@ public class Shapefiles extends ApplicationTemplate
                     }
 
                     @Override
-                    public void exception(Exception e)
-                    {
-                        Logging.logger().log(java.util.logging.Level.SEVERE, e.getMessage(), e);
+                    public void exception(Exception e) {
+                        Logging.logger().log(Level.SEVERE, e.getMessage(), e);
                     }
                 });
         }
-    }
-
-    public static void main(String[] args)
-    {
-        start("WorldWind Shapefiles", AppFrame.class);
     }
 }

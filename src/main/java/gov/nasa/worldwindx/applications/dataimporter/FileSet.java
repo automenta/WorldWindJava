@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwindx.applications.dataimporter;
 
+import gov.nasa.worldwind.Disposable;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.Layer;
@@ -25,37 +26,29 @@ import java.util.concurrent.*;
  * @author tag
  * @version $Id: FileSet.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
-public class FileSet extends AVListImpl
-{
-    protected static final int MAX_FILES_FOR_PREVIEW_IMAGE = 20;
-    protected static final int PREVIEW_IMAGE_SIZE = 1024;
-    protected static final int ICON_IMAGE_SIZE = 32;
-
+public class FileSet extends AVListImpl {
     public static final String FILE_SET_CODE = "gov.nasa.worldwindx.dataimport.FileSet.FileSetCode";
     public static final String FILE_SET_ABBREVIATION = "gov.nasa.worldwindx.dataimport.FileSet.FileSetAbbreviation";
     public static final String FILE_SET_SCALE = "gov.nasa.worldwindx.dataimport.FileSet.FileSetScale";
     public static final String FILE_SET_GSD = "gov.nasa.worldwindx.dataimport.FileSet.FileSetGSD";
-
     public static final String SECTOR_LIST = "SectorList";
     public static final String IMAGE_ICON = "ImageIcon";
     public static final String IMAGE_IN_PROGRESS = "ImageInProgress";
-
+    protected static final int MAX_FILES_FOR_PREVIEW_IMAGE = 20;
+    protected static final int PREVIEW_IMAGE_SIZE = 1024;
+    protected static final int ICON_IMAGE_SIZE = 32;
+    // This thread pool is for preview image generation.
+    static protected final ExecutorService threadPoolExecutor = new ThreadPoolExecutor(5, 5, 1L, TimeUnit.SECONDS,
+        new LinkedBlockingQueue<>(200));
     final List<File> files = new ArrayList<>();
 
-    // This thread pool is for preview image generation.
-    static protected final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(5, 5, 1L, TimeUnit.SECONDS,
-        new LinkedBlockingQueue<>(200));
-
-    public FileSet()
-    {
+    public FileSet() {
         this.setValue(AVKey.COLOR, ColorAllocator.getNextColor());
     }
 
-    public void clear()
-    {
-        Layer layer = (Layer) this.getValue(AVKey.LAYER);
-        if (layer != null)
-        {
+    public void clear() {
+        Disposable layer = (Layer) this.getValue(AVKey.LAYER);
+        if (layer != null) {
             layer.dispose();
             this.removeKey(AVKey.LAYER);
         }
@@ -69,95 +62,77 @@ public class FileSet extends AVListImpl
      *
      * @return the number of files in the file set.
      */
-    public int getLength()
-    {
+    public int getLength() {
         return this.files.size();
     }
 
-    public void addFile(File file)
-    {
+    public void addFile(File file) {
         this.files.add(file);
     }
 
-    public List<File> getFiles()
-    {
+    public List<File> getFiles() {
         return this.files;
     }
 
-    public boolean isImagery()
-    {
+    public boolean isImagery() {
         return DataInstaller.IMAGERY.equals(this.getDataType());
     }
 
-    public boolean isElevation()
-    {
+    public boolean isElevation() {
         return DataInstaller.ELEVATION.equals(this.getDataType());
     }
 
-    public String getDataType()
-    {
+    public String getDataType() {
         return this.getStringValue(AVKey.DATA_TYPE);
     }
 
-    public void setDataType(String dataType)
-    {
+    public void setDataType(String dataType) {
         this.setValue(AVKey.DATA_TYPE, dataType);
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.getStringValue(AVKey.DISPLAY_NAME);
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         if (name != null)
             this.setValue(AVKey.DISPLAY_NAME, name);
     }
 
-    public String getDatasetType()
-    {
+    public String getDatasetType() {
         return this.getStringValue(AVKey.DATASET_TYPE);
     }
 
-    public void setDatasetType(String datasetType)
-    {
+    public void setDatasetType(String datasetType) {
         if (datasetType != null)
             this.setValue(AVKey.DATASET_TYPE, datasetType);
     }
 
-    public String getScale()
-    {
+    public String getScale() {
         return this.getStringValue(FileSet.FILE_SET_SCALE);
     }
 
-    public void setScale(String scale)
-    {
+    public void setScale(String scale) {
         if (scale != null)
             this.setValue(FileSet.FILE_SET_SCALE, scale);
     }
 
-    public Sector getSector()
-    {
+    public Sector getSector() {
         return (Sector) this.getValue(AVKey.SECTOR);
     }
 
-    public void setSector(Sector sector)
-    {
+    public void setSector(Sector sector) {
         this.setValue(AVKey.SECTOR, sector);
     }
 
-    public Object[] getSectorList()
-    {
+    public Object[] getSectorList() {
         return (Object[]) this.getValue(FileSet.SECTOR_LIST);
     }
 
-    public void addSectorList(Object[] sectorList)
-    {
+    public void addSectorList(Object[] sectorList) {
         Object[] current = (Object[]) this.getValue(FileSet.SECTOR_LIST);
 
-        if (current == null)
-        {
+        if (current == null) {
             this.setValue(FileSet.SECTOR_LIST, sectorList);
             return;
         }
@@ -169,31 +144,26 @@ public class FileSet extends AVListImpl
         this.setValue(FileSet.SECTOR_LIST, newList.toArray());
     }
 
-    public Color getColor()
-    {
+    public Color getColor() {
         return (Color) this.getValue(AVKey.COLOR);
     }
 
-    public void setColor(Color color)
-    {
+    public void setColor(Color color) {
         this.setValue(AVKey.COLOR, color);
     }
 
-    public int getMaxFilesForPreviewImage()
-    {
+    public int getMaxFilesForPreviewImage() {
         return MAX_FILES_FOR_PREVIEW_IMAGE;
     }
 
-    public ImageIcon getImageIcon()
-    {
+    public ImageIcon getImageIcon() {
         if (this.getValue(IMAGE_ICON) != null)
             return (ImageIcon) this.getValue(IMAGE_ICON);
 
         return this.makeImageIcon();
     }
 
-    public BufferedImage getImage()
-    {
+    public BufferedImage getImage() {
         if (!this.isImagery() || this.getLength() > this.getMaxFilesForPreviewImage())
             return null;
 
@@ -205,23 +175,23 @@ public class FileSet extends AVListImpl
         return null;
     }
 
-    public void setImage(BufferedImage image)
-    {
+    public void setImage(BufferedImage image) {
         this.setValue(AVKey.IMAGE, image);
         this.removeKey(IMAGE_IN_PROGRESS);
 
         this.firePropertyChange(new PropertyChangeEvent(this, AVKey.IMAGE, false, true));
     }
 
-    /** Causes the preview image to be built. */
-    protected void makeImage()
-    {
+    /**
+     * Causes the preview image to be built.
+     */
+    protected void makeImage() {
         if (this.getValue(IMAGE_IN_PROGRESS) != null) // don't generate more than one image at a time for this data set
             return;
 
         this.setValue(IMAGE_IN_PROGRESS, true);
 
-        FileSetPreviewImageGenerator tg =
+        Runnable tg =
             new FileSetPreviewImageGenerator(this, PREVIEW_IMAGE_SIZE, PREVIEW_IMAGE_SIZE);
         threadPoolExecutor.submit(tg);
     }
@@ -231,8 +201,7 @@ public class FileSet extends AVListImpl
      *
      * @return the preview thumbnail, or null if it's not yet available.
      */
-    protected ImageIcon makeImageIcon()
-    {
+    protected ImageIcon makeImageIcon() {
         // The thumbnail is a reduced size image of the preview image.
 
         BufferedImage image = this.getImage();
@@ -243,8 +212,7 @@ public class FileSet extends AVListImpl
 
         Graphics2D g = (Graphics2D) iconImage.getGraphics();
 
-        while (!g.drawImage(image, 0, 0, ICON_IMAGE_SIZE, ICON_IMAGE_SIZE, null))
-        {
+        while (!g.drawImage(image, 0, 0, ICON_IMAGE_SIZE, ICON_IMAGE_SIZE, null)) {
             continue;
         }
 

@@ -15,23 +15,19 @@ import gov.nasa.worldwind.util.Logging;
  * @author tag
  * @version $Id: KMLAbstractSubStyle.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class KMLAbstractSubStyle extends KMLAbstractObject
-{
+public abstract class KMLAbstractSubStyle extends KMLAbstractObject {
     /**
      * Construct an instance.
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    protected KMLAbstractSubStyle(String namespaceURI)
-    {
+    protected KMLAbstractSubStyle(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
-    public void applyChange(KMLAbstractObject sourceValues)
-    {
-        if (!(sourceValues instanceof KMLAbstractSubStyle))
-        {
+    public void applyChange(KMLAbstractObject sourceValues) {
+        if (!(sourceValues instanceof KMLAbstractSubStyle)) {
             String message = Logging.getMessage("KML.InvalidElementType", sourceValues.getClass().getName());
             Logging.logger().warning(message);
             throw new IllegalArgumentException(message);

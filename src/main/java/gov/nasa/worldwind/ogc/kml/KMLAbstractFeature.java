@@ -22,17 +22,18 @@ import java.util.*;
  * Represents the KML <i>Feature</i> element and provides access to its contents.
  * <p>
  * <code>KMLAbstractFeature</code> implements the <code>KMLRenderable</code> interface, but does not actually render
- * anything. Subclasses should override the methods <code>{@link #doPreRender(gov.nasa.worldwind.ogc.kml.impl.KMLTraversalContext,
- * gov.nasa.worldwind.render.DrawContext)}</code> and <code>{@link #doRender(gov.nasa.worldwind.ogc.kml.impl.KMLTraversalContext,
- * gov.nasa.worldwind.render.DrawContext)}</code> to render their contents. If the <code>visibility</code> property is
+ * anything. Subclasses should override the methods <code>{@link #doPreRender(KMLTraversalContext,
+ * DrawContext)}</code> and <code>{@link #doRender(KMLTraversalContext,
+ * DrawContext)}</code> to render their contents. If the <code>visibility</code> property is
  * set to <code>false</code>, this does not call <code>doPreRender</code> and <code>doRender</code> during rendering.
  *
  * @author tag
  * @version $Id: KMLAbstractFeature.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class KMLAbstractFeature extends KMLAbstractObject implements KMLRenderable
-{
-    /** The style selectors specified in the KML Feature element. Is empty if no selectors were specified. */
+public abstract class KMLAbstractFeature extends KMLAbstractObject implements KMLRenderable {
+    /**
+     * The style selectors specified in the KML Feature element. Is empty if no selectors were specified.
+     */
     protected final List<KMLAbstractStyleSelector> styleSelectors = new ArrayList<>();
     /**
      * The visibility flag for the feature. This field is determined from the visibility element of the KML feature
@@ -40,9 +41,13 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      * <code>fields</code> table.
      */
     protected Boolean visibility; // may be different from the visibility field if application has set it explicitly
-    /** The region specified in the KML Feature element. Is null if no region was specified. */
+    /**
+     * The region specified in the KML Feature element. Is null if no region was specified.
+     */
     protected KMLRegion region;
-    /** A balloon explicitly associated with this feature by the client. This is not a KML field of the Feature element. */
+    /**
+     * A balloon explicitly associated with this feature by the client. This is not a KML field of the Feature element.
+     */
     protected Balloon balloon; // not a KML schema field, merely a convenience field of this class
 
     /**
@@ -50,15 +55,13 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    protected KMLAbstractFeature(String namespaceURI)
-    {
+    protected KMLAbstractFeature(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         if (o instanceof KMLAbstractView)
             this.setView((KMLAbstractView) o);
         else if (o instanceof KMLAbstractTimePrimitive)
@@ -73,8 +76,7 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
             super.doAddEventContent(o, ctx, event, args);
     }
 
-    public String getName()
-    {
+    public String getName() {
         return (String) this.getField("name");
     }
 
@@ -83,12 +85,10 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      * if no visibility is specified. This indicates the default visibility of <code>true</code> should be used.
      *
      * @return <code>true</code> or <code>null</code> to draw feature shape, otherwise <code>false</code>. The default
-     *         value is <code>true</code>.
-     *
+     * value is <code>true</code>.
      * @see #setVisibility(Boolean)
      */
-    public Boolean getVisibility()
-    {
+    public Boolean getVisibility() {
         return this.visibility;
     }
 
@@ -97,46 +97,37 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      *
      * @param visibility <code>true</code> or <code>null</code> to draw this feature, otherwise <code>false</code>. The
      *                   default value is <code>true</code>.
-     *
      * @see #getVisibility()
      */
-    public void setVisibility(Boolean visibility)
-    {
+    public void setVisibility(Boolean visibility) {
         this.visibility = visibility;
     }
 
-    public Boolean getOpen()
-    {
+    public Boolean getOpen() {
         return (Boolean) this.getField("open");
     }
 
-    public AtomPerson getAuthor()
-    {
+    public AtomPerson getAuthor() {
         return (AtomPerson) this.getField("author");
     }
 
-    public AtomLink getLink()
-    {
+    public AtomLink getLink() {
         return (AtomLink) this.getField("link");
     }
 
-    public String getAddress()
-    {
+    public String getAddress() {
         return (String) this.getField("address");
     }
 
-    public XALAddressDetails getAddressDetails()
-    {
+    public XALAddressDetails getAddressDetails() {
         return (XALAddressDetails) this.getField("AddressDetails");
     }
 
-    public String getPhoneNumber()
-    {
+    public String getPhoneNumber() {
         return (String) this.getField("phoneNumber");
     }
 
-    public Object getSnippet()
-    {
+    public Object getSnippet() {
         Object o = this.getField("snippet");
         if (o != null)
             return o;
@@ -144,8 +135,7 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
         return this.getField("Snippet");
     }
 
-    public String getSnippetText()
-    {
+    public String getSnippetText() {
         Object o = this.getField("snippet");
         if (o != null)
             return ((String) o).trim();
@@ -157,69 +147,65 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
         return null;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return (String) this.getField("description");
     }
 
-    protected void setView(KMLAbstractView o)
-    {
-        this.setField("AbstractView", o);
-    }
-
-    public KMLAbstractView getView()
-    {
+    public KMLAbstractView getView() {
         return (KMLAbstractView) this.getField("AbstractView");
     }
 
-    protected void setTimePrimitive(KMLAbstractTimePrimitive o)
-    {
-        this.setField("AbstractTimePrimitive", o);
+    protected void setView(KMLAbstractView o) {
+        this.setField("AbstractView", o);
     }
 
-    public KMLAbstractTimePrimitive getTimePrimitive()
-    {
+    public KMLAbstractTimePrimitive getTimePrimitive() {
         return (KMLAbstractTimePrimitive) this.getField("AbstractTimePrimitive");
     }
 
-    public KMLStyleUrl getStyleUrl()
-    {
+    protected void setTimePrimitive(KMLAbstractTimePrimitive o) {
+        this.setField("AbstractTimePrimitive", o);
+    }
+
+    public KMLStyleUrl getStyleUrl() {
         return (KMLStyleUrl) this.getField("styleUrl");
     }
 
-    protected void addStyleSelector(KMLAbstractStyleSelector o)
-    {
+    protected void addStyleSelector(KMLAbstractStyleSelector o) {
         this.styleSelectors.add(o);
     }
 
-    public List<KMLAbstractStyleSelector> getStyleSelectors()
-    {
+    public List<KMLAbstractStyleSelector> getStyleSelectors() {
         return this.styleSelectors;
     }
 
-    public boolean hasStyleSelectors()
-    {
-        return this.getStyleSelectors() != null && this.getStyleSelectors().size() > 0;
+    public boolean hasStyleSelectors() {
+        return this.getStyleSelectors() != null && !this.getStyleSelectors().isEmpty();
     }
 
-    public boolean hasStyle()
-    {
+    public boolean hasStyle() {
         return this.hasStyleSelectors() || this.getStyleUrl() != null;
     }
 
-    public KMLRegion getRegion()
-    {
+    public KMLRegion getRegion() {
         return this.region;
     }
 
-    protected void setRegion(KMLRegion region)
-    {
+    protected void setRegion(KMLRegion region) {
         this.region = region;
     }
 
-    public KMLExtendedData getExtendedData()
-    {
+    public KMLExtendedData getExtendedData() {
         return (KMLExtendedData) this.getField("ExtendedData");
+    }
+
+    /**
+     * Get the balloon associated with this feature, if any.
+     *
+     * @return The balloon associated with the feature. Returns null if there is no associated balloon.
+     */
+    public Balloon getBalloon() {
+        return this.balloon;
     }
 
     /**
@@ -230,33 +216,21 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      *
      * @param balloon New balloon.
      */
-    public void setBalloon(Balloon balloon)
-    {
+    public void setBalloon(Balloon balloon) {
         this.balloon = balloon;
     }
 
     /**
-     * Get the balloon associated with this feature, if any.
-     *
-     * @return The balloon associated with the feature. Returns null if there is no associated balloon.
+     * {@inheritDoc}
      */
-    public Balloon getBalloon()
-    {
-        return this.balloon;
-    }
-
-    /** {@inheritDoc} */
-    public void preRender(KMLTraversalContext tc, DrawContext dc)
-    {
-        if (tc == null)
-        {
+    public void preRender(KMLTraversalContext tc, DrawContext dc) {
+        if (tc == null) {
             String message = Logging.getMessage("nullValue.TraversalContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (dc == null)
-        {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -268,18 +242,17 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
         this.doPreRender(tc, dc);
     }
 
-    /** {@inheritDoc} */
-    public void render(KMLTraversalContext tc, DrawContext dc)
-    {
-        if (tc == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void render(KMLTraversalContext tc, DrawContext dc) {
+        if (tc == null) {
             String message = Logging.getMessage("nullValue.TraversalContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (dc == null)
-        {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -306,11 +279,9 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      *
      * @param tc the current KML traversal context. Specifies an inherited Region (if any) and a detail hint.
      * @param dc the current draw context. Used to determine whether this feature's Region is active.
-     *
      * @return <code>true</code> if this feature should be rendered, otherwise <code>false</code>.
      */
-    protected boolean isFeatureActive(KMLTraversalContext tc, DrawContext dc)
-    {
+    protected boolean isFeatureActive(KMLTraversalContext tc, DrawContext dc) {
         if (this.getVisibility() != null && !this.getVisibility())
             return false;
 
@@ -328,8 +299,7 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      * @param tc the current KML traversal context.
      * @param dc the current draw context.
      */
-    protected void doPreRender(KMLTraversalContext tc, DrawContext dc)
-    {
+    protected void doPreRender(KMLTraversalContext tc, DrawContext dc) {
         // Subclasses override to implement render behavior.
     }
 
@@ -340,21 +310,19 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      * @param tc the current KML traversal context.
      * @param dc the current draw context.
      */
-    protected void doRender(KMLTraversalContext tc, DrawContext dc)
-    {
+    protected void doRender(KMLTraversalContext tc, DrawContext dc) {
         // Subclasses override to implement render behavior.
     }
 
     /**
-     * Draws the <code>{@link gov.nasa.worldwind.render.Balloon}</code> associated with this KML feature. This does
+     * Draws the <code>{@link Balloon}</code> associated with this KML feature. This does
      * nothing if there is no <code>Balloon</code> associated with this feature.
      *
      * @param tc the current KML traversal context.
      * @param dc the current draw context.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void renderBalloon(KMLTraversalContext tc, DrawContext dc)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected void renderBalloon(KMLTraversalContext tc, DrawContext dc) {
         if (this.getBalloon() != null)
             this.getBalloon().render(dc);
     }
@@ -369,26 +337,22 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      * StyleMap style selector contains a reference to an external Style and that reference has not been resolved.
      *
      * @param styleState the style mode, either \"normal\" or \"highlight\".
-     * @param subStyle   an instance of the sub-style desired, such as {@link gov.nasa.worldwind.ogc.kml.KMLIconStyle}.
+     * @param subStyle   an instance of the sub-style desired, such as {@link KMLIconStyle}.
      *                   The effective sub-style values are accumulated and merged into this instance. The instance
      *                   should not be one from within the KML document because its values are overridden and augmented;
      *                   it's just an independent variable in which to return the merged attribute values. For
      *                   convenience, the instance specified is returned as the return value of this method.
-     *
      * @return the sub-style values for the specified type and state. The reference returned is the one passed in as the
-     *         <code>subStyle</code> argument.
+     * <code>subStyle</code> argument.
      */
-    public KMLAbstractSubStyle getSubStyle(KMLAbstractSubStyle subStyle, String styleState)
-    {
+    public KMLAbstractSubStyle getSubStyle(KMLAbstractSubStyle subStyle, String styleState) {
         return KMLAbstractStyleSelector.mergeSubStyles(this.getStyleUrl(), this.getStyleSelectors(), styleState,
             subStyle);
     }
 
     @Override
-    public void applyChange(KMLAbstractObject sourceValues)
-    {
-        if (!(sourceValues instanceof KMLAbstractFeature))
-        {
+    public void applyChange(KMLAbstractObject sourceValues) {
+        if (!(sourceValues instanceof KMLAbstractFeature)) {
             String message = Logging.getMessage("KML.InvalidElementType", sourceValues.getClass().getName());
             Logging.logger().warning(message);
             throw new IllegalArgumentException(message);
@@ -404,8 +368,7 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
         if (sourceFeature.getRegion() != null)
             this.setRegion(sourceFeature.getRegion());
 
-        if (sourceFeature.getStyleSelectors() != null && sourceFeature.getStyleSelectors().size() > 0)
-        {
+        if (sourceFeature.getStyleSelectors() != null && !sourceFeature.getStyleSelectors().isEmpty()) {
             this.mergeStyleSelectors(sourceFeature);
             this.onChange(new Message(KMLAbstractObject.MSG_STYLE_CHANGED, this));
         }
@@ -417,23 +380,18 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
      *
      * @param sourceFeature the incoming style selectors.
      */
-    protected void mergeStyleSelectors(KMLAbstractFeature sourceFeature)
-    {
+    protected void mergeStyleSelectors(KMLAbstractFeature sourceFeature) {
         // Make a copy of the existing list so we can modify it as we traverse the copy.
-        List<KMLAbstractStyleSelector> styleSelectorsCopy =
+        Collection<KMLAbstractStyleSelector> styleSelectorsCopy =
             new ArrayList<>(this.getStyleSelectors().size());
         styleSelectorsCopy.addAll(this.getStyleSelectors());
 
-        for (KMLAbstractStyleSelector sourceSelector : sourceFeature.getStyleSelectors())
-        {
+        for (KMLAbstractStyleSelector sourceSelector : sourceFeature.getStyleSelectors()) {
             String id = sourceSelector.getId();
-            if (!WWUtil.isEmpty(id))
-            {
-                for (KMLAbstractStyleSelector existingSelector : styleSelectorsCopy)
-                {
+            if (!WWUtil.isEmpty(id)) {
+                for (KMLAbstractStyleSelector existingSelector : styleSelectorsCopy) {
                     String currentId = existingSelector.getId();
-                    if (!WWUtil.isEmpty(currentId) && currentId.equals(id))
-                    {
+                    if (!WWUtil.isEmpty(currentId) && currentId.equals(id)) {
                         this.getStyleSelectors().remove(existingSelector);
                     }
                 }

@@ -43,7 +43,7 @@ public class SimpleImporter {
     protected void addLayer(final Layer layer, final LayerPath pathToParent) {
         SwingUtilities.invokeLater(() -> {
             LayerPath path = new LayerPath(pathToParent != null ? pathToParent : getDefaultPathToParent(),
-                    layer.getName());
+                layer.getName());
             doAddLayer(layer, path);
         });
     }
@@ -83,9 +83,11 @@ public class SimpleImporter {
 
         if (this.isKML(this.source)) {
             this.openKML(this.source);
-        } else if (this.isShapfile(this.source)) {
+        }
+        else if (this.isShapfile(this.source)) {
             this.openShapefile(this.source);
-        } else {
+        }
+        else {
             String message = Logging.getMessage("generic.UnrecognizedSourceType", source.toString());
             throw new IllegalArgumentException(message);
         }
@@ -102,7 +104,7 @@ public class SimpleImporter {
             KMLRoot kmlRoot = KMLRoot.create(source);
             if (kmlRoot == null) {
                 String message = Logging.getMessage("generic.UnrecognizedSourceType", source.toString(),
-                        source.toString());
+                    source.toString());
                 throw new IllegalArgumentException(message);
             }
 
@@ -112,7 +114,8 @@ public class SimpleImporter {
             layer.addRenderable(kmlController);
             layer.setName(formName(source, null));
             this.addLayer(layer, null);
-        } catch (IOException | XMLStreamException e) {
+        }
+        catch (IOException | XMLStreamException e) {
             e.printStackTrace();
         }
     }

@@ -5,12 +5,13 @@
  */
 package gov.nasa.worldwind.render;
 
+import java.awt.Point;
+
 /**
  * @author tag
  * @version $Id: OrderedRenderable.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface OrderedRenderable extends Renderable
-{
+public interface OrderedRenderable extends Renderable {
     /**
      * Returns the ordered renderable's distance from the current view's eye point. Intended to be used only to sort a
      * list of ordered renderables according to eye distance, and only during frame generation when a view is active.
@@ -25,5 +26,5 @@ public interface OrderedRenderable extends Renderable
      * @param dc        the current draw context.
      * @param pickPoint the pick point.
      */
-    void pick(DrawContext dc, java.awt.Point pickPoint);
+    void pick(DrawContext dc, Point pickPoint);
 }

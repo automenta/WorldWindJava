@@ -22,6 +22,7 @@ import java.awt.event.*;
 import java.io.File;
 import java.text.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Illustrates how to configure and display a 3D geographic grid of scalar data using the WorldWind <code>{@link
@@ -36,41 +37,17 @@ import java.util.ArrayList;
  * @author dcollins
  * @version $Id: AnalyticSurfaceDemo.java 2425 2014-11-13 19:44:19Z dcollins $
  */
-public class AnalyticSurfaceDemo extends ApplicationTemplate
-{
+public class AnalyticSurfaceDemo extends ApplicationTemplate {
     protected static final String DATA_PATH = "gov/nasa/worldwindx/examples/data/wa-precip-24hmam-5km.tif";
+    protected static final int DEFAULT_RANDOM_ITERATIONS = 1000;
+    protected static final double DEFAULT_RANDOM_SMOOTHING = 0.5d;
 
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        protected static final double HUE_BLUE = 240d / 360d;
-        protected static final double HUE_RED = 0d / 360d;
-        protected RenderableLayer analyticSurfaceLayer;
-
-        public AppFrame()
-        {
-            this.initAnalyticSurfaceLayer();
-        }
-
-        protected void initAnalyticSurfaceLayer()
-        {
-            this.analyticSurfaceLayer = new RenderableLayer();
-            this.analyticSurfaceLayer.setPickEnabled(false);
-            this.analyticSurfaceLayer.setName("Analytic Surfaces");
-            insertBeforePlacenames(this.getWwd(), this.analyticSurfaceLayer);
-
-            createRandomAltitudeSurface(HUE_BLUE, HUE_RED, 40, 40, this.analyticSurfaceLayer);
-            createRandomColorSurface(HUE_BLUE, HUE_RED, 40, 40, this.analyticSurfaceLayer);
-
-            // Load the static precipitation data. Since it comes over the network, load it in a separate thread to
-            // avoid blocking the example if the load is slow or fails.
-            Thread t = new Thread(() -> createPrecipitationSurface(HUE_BLUE, HUE_RED, analyticSurfaceLayer));
-            t.start();
-        }
-    }
+    //**************************************************************//
+    //********************  Random Altitude Surface  ***************//
+    //**************************************************************//
 
     protected static Renderable createLegendRenderable(final AnalyticSurface surface, final double surfaceMinScreenSize,
-        final AnalyticSurfaceLegend legend)
-    {
+        final Renderable legend) {
         return dc -> {
             Extent extent = surface.getExtent(dc);
             if (!extent.intersects(dc.getView().getFrustumInModelCoordinates()))
@@ -83,25 +60,20 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
         };
     }
 
-    //**************************************************************//
-    //********************  Random Altitude Surface  ***************//
-    //**************************************************************//
-
     protected static void createRandomAltitudeSurface(double minHue, double maxHue, int width, int height,
-        RenderableLayer outLayer)
-    {
-        double minValue = -200e3;
-        double maxValue = 200e3;
+        RenderableLayer outLayer) {
+        double minValue = -200.0e3;
+        double maxValue = 200.0e3;
 
         AnalyticSurface surface = new AnalyticSurface();
         surface.setSector(Sector.fromDegrees(25, 35, -90, -80));
-        surface.setAltitude(400e3);
+        surface.setAltitude(400.0e3);
         surface.setDimensions(width, height);
         surface.setClientLayer(outLayer);
         outLayer.addRenderable(surface);
 
         BufferWrapper firstBuffer = randomGridValues(width, height, minValue, maxValue);
-        BufferWrapper secondBuffer = randomGridValues(width, height, minValue * 2d, maxValue / 2d);
+        BufferWrapper secondBuffer = randomGridValues(width, height, minValue * 2.0d, maxValue / 2.0d);
         mixValuesOverTime(2000L, firstBuffer, secondBuffer, minValue, maxValue, minHue, maxHue, surface);
 
         AnalyticSurfaceAttributes attr = new AnalyticSurfaceAttributes();
@@ -110,10 +82,8 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
 
         final double altitude = surface.getAltitude();
         final double verticalScale = surface.getVerticalScale();
-        Format legendLabelFormat = new DecimalFormat("# km")
-        {
-            public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition)
-            {
+        Format legendLabelFormat = new DecimalFormat("# km") {
+            public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition) {
                 double altitudeMeters = altitude + verticalScale * number;
                 double altitudeKm = altitudeMeters * WWMath.METERS_TO_KILOMETERS;
                 return super.format(altitudeKm, result, fieldPosition);
@@ -129,10 +99,9 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
     }
 
     protected static void createRandomColorSurface(double minHue, double maxHue, int width, int height,
-        RenderableLayer outLayer)
-    {
-        double minValue = -200e3;
-        double maxValue = 200e3;
+        RenderableLayer outLayer) {
+        double minValue = -200.0e3;
+        double maxValue = 200.0e3;
 
         AnalyticSurface surface = new AnalyticSurface();
         surface.setSector(Sector.fromDegrees(25, 35, -110, -100));
@@ -142,7 +111,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
         outLayer.addRenderable(surface);
 
         BufferWrapper firstBuffer = randomGridValues(width, height, minValue, maxValue);
-        BufferWrapper secondBuffer = randomGridValues(width, height, minValue * 2d, maxValue / 2d);
+        BufferWrapper secondBuffer = randomGridValues(width, height, minValue * 2.0d, maxValue / 2.0d);
         mixValuesOverTime(2000L, firstBuffer, secondBuffer, minValue, maxValue, minHue, maxHue, surface);
 
         AnalyticSurfaceAttributes attr = new AnalyticSurfaceAttributes();
@@ -156,23 +125,20 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
         final long timeToMix,
         final BufferWrapper firstBuffer, final BufferWrapper secondBuffer,
         final double minValue, final double maxValue, final double minHue, final double maxHue,
-        final AnalyticSurface surface)
-    {
-        Timer timer = new Timer(20, new ActionListener()
-        {
+        final AnalyticSurface surface) {
+        Timer timer = new Timer(20, new ActionListener() {
             protected long startTime = -1;
 
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 if (this.startTime < 0)
                     this.startTime = System.currentTimeMillis();
 
-                double t = (double) (e.getWhen() - this.startTime) / (double) timeToMix;
+                double t = (double) (e.getWhen() - this.startTime) / timeToMix;
                 int ti = (int) Math.floor(t);
 
                 double a = t - ti;
                 if ((ti % 2) == 0)
-                    a = 1d - a;
+                    a = 1.0d - a;
 
                 surface.setValues(createMixedColorGradientGridValues(
                     a, firstBuffer, secondBuffer, minValue, maxValue, minHue, maxHue));
@@ -184,16 +150,18 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
         timer.start();
     }
 
+    //**************************************************************//
+    //********************  Precipitation Surface  *****************//
+    //**************************************************************//
+
     public static Iterable<? extends AnalyticSurface.GridPointAttributes> createMixedColorGradientGridValues(double a,
         BufferWrapper firstBuffer, BufferWrapper secondBuffer, double minValue, double maxValue,
-        double minHue, double maxHue)
-    {
-        ArrayList<AnalyticSurface.GridPointAttributes> attributesList
+        double minHue, double maxHue) {
+        List<AnalyticSurface.GridPointAttributes> attributesList
             = new ArrayList<>();
 
         long length = Math.min(firstBuffer.length(), secondBuffer.length());
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             double value = WWMath.mixSmooth(a, firstBuffer.getDouble(i), secondBuffer.getDouble(i));
             attributesList.add(
                 AnalyticSurface.createColorGradientAttributes(value, minValue, maxValue, minHue, maxHue));
@@ -202,12 +170,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
         return attributesList;
     }
 
-    //**************************************************************//
-    //********************  Precipitation Surface  *****************//
-    //**************************************************************//
-
-    protected static void createPrecipitationSurface(double minHue, double maxHue, final RenderableLayer outLayer)
-    {
+    protected static void createPrecipitationSurface(double minHue, double maxHue, final RenderableLayer outLayer) {
         BufferWrapperRaster raster = loadRasterElevations(DATA_PATH);
         if (raster == null)
             return;
@@ -221,7 +184,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
         surface.setDimensions(raster.getWidth(), raster.getHeight());
         surface.setValues(AnalyticSurface.createColorGradientValues(
             raster.getBuffer(), raster.getTransparentValue(), extremes[0], extremes[1], minHue, maxHue));
-        surface.setVerticalScale(5e3);
+        surface.setVerticalScale(5.0e3);
 
         AnalyticSurfaceAttributes attr = new AnalyticSurfaceAttributes();
         attr.setDrawOutline(false);
@@ -229,10 +192,8 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
         attr.setInteriorOpacity(0.6);
         surface.setSurfaceAttributes(attr);
 
-        Format legendLabelFormat = new DecimalFormat("# ft")
-        {
-            public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition)
-            {
+        Format legendLabelFormat = new DecimalFormat("# ft") {
+            public StringBuffer format(double number, StringBuffer result, FieldPosition fieldPosition) {
                 double valueInFeet = number * WWMath.METERS_TO_FEET;
                 return super.format(valueInFeet, result, fieldPosition);
             }
@@ -252,8 +213,11 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
         });
     }
 
-    protected static BufferWrapperRaster loadRasterElevations(String path)
-    {
+    //**************************************************************//
+    //********************  Random Grid Construction  **************//
+    //**************************************************************//
+
+    protected static BufferWrapperRaster loadRasterElevations(String path) {
         // Download the data and save it in a temp file.
         File file = ExampleUtil.saveResourceToTempFile(path, "." + WWIO.getSuffix(path));
 
@@ -262,12 +226,10 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
             AVKey.DATA_RASTER_READER_FACTORY_CLASS_NAME);
         DataRasterReader reader = readerFactory.findReaderFor(file, null);
 
-        try
-        {
+        try {
             // Before reading the raster, verify that the file contains elevations.
             AVList metadata = reader.readMetadata(file, null);
-            if (metadata == null || !AVKey.ELEVATION.equals(metadata.getStringValue(AVKey.PIXEL_FORMAT)))
-            {
+            if (metadata == null || !AVKey.ELEVATION.equals(metadata.getStringValue(AVKey.PIXEL_FORMAT))) {
                 String msg = Logging.getMessage("ElevationModel.SourceNotElevations", file.getAbsolutePath());
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
@@ -275,8 +237,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
 
             // Read the file into the raster.
             DataRaster[] rasters = reader.read(file, null);
-            if (rasters == null || rasters.length == 0)
-            {
+            if (rasters == null || rasters.length == 0) {
                 String msg = Logging.getMessage("ElevationModel.CannotReadElevations", file.getAbsolutePath());
                 Logging.logger().severe(msg);
                 throw new WWRuntimeException(msg);
@@ -285,8 +246,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
             // Determine the sector covered by the elevations. This information is in the GeoTIFF file or auxiliary
             // files associated with the elevations file.
             Sector sector = (Sector) rasters[0].getValue(AVKey.SECTOR);
-            if (sector == null)
-            {
+            if (sector == null) {
                 String msg = Logging.getMessage("DataRaster.MissingMetadata", AVKey.SECTOR);
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
@@ -300,8 +260,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
             DataRaster subRaster = rasters[0].getSubRaster(width, height, sector, rasters[0]);
 
             // Verify that the sub-raster can create a ByteBuffer, then create one.
-            if (!(subRaster instanceof BufferWrapperRaster))
-            {
+            if (!(subRaster instanceof BufferWrapperRaster)) {
                 String msg = Logging.getMessage("ElevationModel.CannotCreateElevationBuffer", path);
                 Logging.logger().severe(msg);
                 throw new WWRuntimeException(msg);
@@ -309,23 +268,14 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
 
             return (BufferWrapperRaster) subRaster;
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    //**************************************************************//
-    //********************  Random Grid Construction  **************//
-    //**************************************************************//
-
-    protected static final int DEFAULT_RANDOM_ITERATIONS = 1000;
-    protected static final double DEFAULT_RANDOM_SMOOTHING = 0.5d;
-
     public static BufferWrapper randomGridValues(int width, int height, double min, double max, int numIterations,
-        double smoothness, BufferFactory factory)
-    {
+        double smoothness, BufferFactory factory) {
         double[] values = ExampleUtil.createRandomGridValues(width, height, min, max, numIterations, smoothness);
         BufferWrapper wrapper = factory.newBuffer(values.length);
         wrapper.putDouble(0, values, 0, values.length);
@@ -333,14 +283,37 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate
         return wrapper;
     }
 
-    public static BufferWrapper randomGridValues(int width, int height, double min, double max)
-    {
+    public static BufferWrapper randomGridValues(int width, int height, double min, double max) {
         return randomGridValues(width, height, min, max, DEFAULT_RANDOM_ITERATIONS, DEFAULT_RANDOM_SMOOTHING,
             new BufferFactory.DoubleBufferFactory());
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         ApplicationTemplate.start("WorldWind Analytic Surface", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        protected static final double HUE_BLUE = 240.0d / 360.0d;
+        protected static final double HUE_RED = 0.0d / 360.0d;
+        protected RenderableLayer analyticSurfaceLayer;
+
+        public AppFrame() {
+            this.initAnalyticSurfaceLayer();
+        }
+
+        protected void initAnalyticSurfaceLayer() {
+            this.analyticSurfaceLayer = new RenderableLayer();
+            this.analyticSurfaceLayer.setPickEnabled(false);
+            this.analyticSurfaceLayer.setName("Analytic Surfaces");
+            insertBeforePlacenames(this.getWwd(), this.analyticSurfaceLayer);
+
+            createRandomAltitudeSurface(HUE_BLUE, HUE_RED, 40, 40, this.analyticSurfaceLayer);
+            createRandomColorSurface(HUE_BLUE, HUE_RED, 40, 40, this.analyticSurfaceLayer);
+
+            // Load the static precipitation data. Since it comes over the network, load it in a separate thread to
+            // avoid blocking the example if the load is slow or fails.
+            Thread t = new Thread(() -> createPrecipitationSurface(HUE_BLUE, HUE_RED, analyticSurfaceLayer));
+            t.start();
+        }
     }
 }

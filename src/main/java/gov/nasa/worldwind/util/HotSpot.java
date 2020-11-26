@@ -17,21 +17,21 @@ import java.awt.event.*;
  * @author dcollins
  * @version $Id: HotSpot.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface HotSpot extends SelectListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener
-{
-    /**
-     * Called when this HotSpot is activated or deactivated. The HotSpot only receives input events when it is active.
-     *
-     * @param active {@code true} if this HotSpot is being activated. {@code false} if this HotSpot is being deactivated.
-     */
-    void setActive(boolean active);
-
+public interface HotSpot extends SelectListener, KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
     /**
      * Indicates whether or not this HotSpot is active.
      *
      * @return {@code true} if this HotSpot is active, {@code false} if not.
      */
     boolean isActive();
+
+    /**
+     * Called when this HotSpot is activated or deactivated. The HotSpot only receives input events when it is active.
+     *
+     * @param active {@code true} if this HotSpot is being activated. {@code false} if this HotSpot is being
+     *               deactivated.
+     */
+    void setActive(boolean active);
 
     /**
      * Called when the HotSpot is selected in the WorldWindow.
@@ -118,7 +118,7 @@ public interface HotSpot extends SelectListener, KeyListener, MouseListener, Mou
     void mouseWheelMoved(MouseWheelEvent event);
 
     /**
-     * Returns the AWT {@link java.awt.Cursor} representation to display when the HotSpot is active, or {@code null} to
+     * Returns the AWT {@link Cursor} representation to display when the HotSpot is active, or {@code null} to
      * use the default Cursor.
      *
      * @return The Cursor representation associated with the HotSpot. May return {@code null}.

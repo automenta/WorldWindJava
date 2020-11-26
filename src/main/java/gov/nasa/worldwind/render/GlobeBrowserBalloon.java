@@ -15,26 +15,14 @@ import gov.nasa.worldwind.util.Logging;
 import java.awt.*;
 
 /**
- * A <code>{@link gov.nasa.worldwind.render.GlobeBalloon}</code> that displays HTML, JavaScript, and Flash content using
+ * A <code>{@link GlobeBalloon}</code> that displays HTML, JavaScript, and Flash content using
  * the system's native browser, and who's origin is located at a position on the <code>Globe</code>.
  *
  * @author pabercrombie
  * @version $Id: GlobeBrowserBalloon.java 2272 2014-08-25 23:24:45Z tgaskins $
- * @see gov.nasa.worldwind.render.AbstractBrowserBalloon
+ * @see AbstractBrowserBalloon
  */
-public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements GlobeBalloon
-{
-    protected class OrderedGlobeBrowserBalloon extends OrderedBrowserBalloon
-    {
-        /** The model-coordinate point corresponding to this balloon's position. May be <code>null</code>. */
-        protected Vec4 placePoint;
-        /**
-         * The projection of this balloon's <code>placePoint</code> in the viewport (on the screen). May be
-         * <code>null</code>.
-         */
-        protected Vec4 screenPlacePoint;
-    }
-
+public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements GlobeBalloon {
     /**
      * Indicates this balloon's geographic position. The position's altitude is interpreted relative to this balloon's
      * <code>altitudeMode</code>. Initialized to a non-<code>null</code> value at construction.
@@ -52,15 +40,12 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
      *
      * @param text     the balloon's initial text content.
      * @param position the balloon's initial position.
-     *
      * @throws IllegalArgumentException if either <code>text</code> or <code>position</code> are <code>null</code>.
      */
-    public GlobeBrowserBalloon(String text, Position position)
-    {
+    public GlobeBrowserBalloon(String text, Position position) {
         super(text);
 
-        if (position == null)
-        {
+        if (position == null) {
             String message = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -69,17 +54,18 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
         this.position = position;
     }
 
-    /** {@inheritDoc} */
-    public Position getPosition()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Position getPosition() {
         return this.position;
     }
 
-    /** {@inheritDoc} */
-    public void setPosition(Position position)
-    {
-        if (position == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void setPosition(Position position) {
+        if (position == null) {
             String message = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -88,21 +74,22 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
         this.position = position;
     }
 
-    /** {@inheritDoc} */
-    public int getAltitudeMode()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public int getAltitudeMode() {
         return altitudeMode;
     }
 
-    /** {@inheritDoc} */
-    public void setAltitudeMode(int altitudeMode)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void setAltitudeMode(int altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 
     @Override
-    protected OrderedBrowserBalloon createOrderedRenderable()
-    {
+    protected OrderedBrowserBalloon createOrderedRenderable() {
         return new OrderedGlobeBrowserBalloon();
     }
 
@@ -120,8 +107,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
      *
      * @param dc the current draw context.
      */
-    protected void computeBalloonPoints(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void computeBalloonPoints(DrawContext dc, OrderedBrowserBalloon obb) {
         OrderedGlobeBrowserBalloon ogpm = (OrderedGlobeBrowserBalloon) obb;
 
         ogpm.placePoint = null;
@@ -133,13 +119,11 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
         obb.webViewRect = null;
         obb.eyeDistance = 0;
 
-        if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe())
-        {
+        if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || dc.is2DGlobe()) {
             ogpm.placePoint = dc.computeTerrainPoint(
                 this.position.getLatitude(), this.position.getLongitude(), 0);
         }
-        else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND)
-        {
+        else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             ogpm.placePoint = dc.computeTerrainPoint(
                 this.position.getLatitude(), this.position.getLongitude(), this.position.getAltitude());
         }
@@ -183,28 +167,27 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
         obb.eyeDistance = this.isAlwaysOnTop() ? 0 : dc.getView().getEyePoint().distanceTo3(ogpm.placePoint);
     }
 
-    /** {@inheritDoc} */
-    protected void setupDepthTest(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    protected void setupDepthTest(DrawContext dc, OrderedBrowserBalloon obb) {
         OrderedGlobeBrowserBalloon ogpm = (OrderedGlobeBrowserBalloon) obb;
 
         GL gl = dc.getGL();
 
         if (!this.isAlwaysOnTop() && ogpm.screenPlacePoint != null
             && dc.getView().getEyePosition().getElevation() < (dc.getGlobe().getMaxElevation()
-            * dc.getVerticalExaggeration()))
-        {
+            * dc.getVerticalExaggeration())) {
             gl.glEnable(GL.GL_DEPTH_TEST);
             gl.glDepthMask(false);
 
             // Adjust depth of image to bring it slightly forward
-            double depth = ogpm.screenPlacePoint.z - (8d * 0.00048875809d);
-            depth = depth < 0d ? 0d : (Math.min(depth, 1d));
+            double depth = ogpm.screenPlacePoint.z - (8.0d * 0.00048875809d);
+            depth = depth < 0.0d ? 0.0d : (Math.min(depth, 1.0d));
             gl.glDepthFunc(GL.GL_LESS);
             gl.glDepthRange(depth, depth);
         }
-        else
-        {
+        else {
             gl.glDisable(GL.GL_DEPTH_TEST);
         }
     }
@@ -217,8 +200,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
      * class' behavior.
      */
     @Override
-    protected boolean intersectsFrustum(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected boolean intersectsFrustum(DrawContext dc, OrderedBrowserBalloon obb) {
         OrderedGlobeBrowserBalloon ogpm = (OrderedGlobeBrowserBalloon) obb;
 
         View view = dc.getView();
@@ -228,8 +210,7 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
         //noinspection SimplifiableIfStatement
         if (ogpm.placePoint != null
             && (frustum.getNear().distanceTo(ogpm.placePoint) < 0
-            || frustum.getFar().distanceTo(ogpm.placePoint) < 0))
-        {
+            || frustum.getFar().distanceTo(ogpm.placePoint) < 0)) {
             return false;
         }
 
@@ -242,12 +223,23 @@ public class GlobeBrowserBalloon extends AbstractBrowserBalloon implements Globe
      * Overridden to use this balloon's position as the picked object's position.
      */
     @Override
-    protected PickedObject createPickedObject(DrawContext dc, Color pickColor)
-    {
+    protected PickedObject createPickedObject(DrawContext dc, Color pickColor) {
         PickedObject po = super.createPickedObject(dc, pickColor);
         // Set the picked object's position to the balloon's position.
         po.setPosition(this.position);
 
         return po;
+    }
+
+    protected class OrderedGlobeBrowserBalloon extends OrderedBrowserBalloon {
+        /**
+         * The model-coordinate point corresponding to this balloon's position. May be <code>null</code>.
+         */
+        protected Vec4 placePoint;
+        /**
+         * The projection of this balloon's <code>placePoint</code> in the viewport (on the screen). May be
+         * <code>null</code>.
+         */
+        protected Vec4 screenPlacePoint;
     }
 }

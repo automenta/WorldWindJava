@@ -8,51 +8,44 @@ package gov.nasa.worldwindx.applications.sar.tracks;
 import gov.nasa.worldwind.util.*;
 
 import java.io.File;
+import java.io.FileFilter;
 
 /**
  * @author dcollins
  * @version $Id: SaveTrackFilter.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SaveTrackFilter extends javax.swing.filechooser.FileFilter implements java.io.FileFilter
-{
+public class SaveTrackFilter extends javax.swing.filechooser.FileFilter implements FileFilter {
     private final int format;
     private final String description;
     private final String[] suffixes;
 
-    public SaveTrackFilter(int format, String description, String[] suffixes)
-    {
+    public SaveTrackFilter(int format, String description, String[] suffixes) {
         this.format = format;
         this.description = description;
         this.suffixes = new String[suffixes.length];
         System.arraycopy(suffixes, 0, this.suffixes, 0, suffixes.length);
     }
 
-    public int getFormat()
-    {
+    public int getFormat() {
         return this.format;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return this.description;
     }
 
-    public String[] getSuffixes()
-    {
+    public String[] getSuffixes() {
         String[] copy = new String[this.suffixes.length];
         System.arraycopy(this.suffixes, 0, copy, 0, this.suffixes.length);
         return copy;
     }
 
-    public boolean accept(java.io.File file)
-    {
+    public boolean accept(File file) {
         return true;
     }
 
-    public java.io.File appendSuffix(java.io.File file)
-    {
-        if (file == null)
-        {
+    public File appendSuffix(File file) {
+        if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -61,8 +54,7 @@ public class SaveTrackFilter extends javax.swing.filechooser.FileFilter implemen
         String path = file.getPath();
 
         String lowerCasePath = path.toLowerCase();
-        for (String suffix : this.suffixes)
-        {
+        for (String suffix : this.suffixes) {
             if (lowerCasePath.endsWith(suffix))
                 return file;
         }

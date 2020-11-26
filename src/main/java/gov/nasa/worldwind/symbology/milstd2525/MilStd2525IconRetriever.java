@@ -29,7 +29,7 @@ import java.util.*;
  * retriever will return an image that contains a circle, either black or filled with the icon fill color (depending on
  * the state of SHOW_FILL).
  * <p>
- * {@link #createIcon(String, gov.nasa.worldwind.avlist.AVList) createIcon} accepts the following parameters:
+ * {@link #createIcon(String, AVList) createIcon} accepts the following parameters:
  * <table><caption style="font-weight: bold;">createIcon Parameters</caption> <tr><th>Key</th><th>Type</th><td><th>Description</th></tr> <tr><td>SymbologyConstants.SHOW_ICON</td><td>Boolean</td><td>Determines
  * if the symbol will be created with an icon.</td></tr> <tr><td>SymbologyConstants.SHOW_FRAME</td><td>Boolean</td><td>Determines
  * if the symbol will be created with a frame.</td></tr> <tr><td>SymbologyConstants.SHOW_FILL</td><td>Boolean</td><td>Determines
@@ -41,8 +41,7 @@ import java.util.*;
  * @author ccrick
  * @version $Id: MilStd2525IconRetriever.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class MilStd2525IconRetriever extends AbstractIconRetriever
-{
+public class MilStd2525IconRetriever extends AbstractIconRetriever {
     protected static final String FILLS_PATH = "fills";
     protected static final String FRAMES_PATH = "frames";
     protected static final String ICONS_PATH = "icons";
@@ -71,9 +70,13 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     protected static final Color DEFAULT_ICON_COLOR = Color.BLACK;
     protected static final String DEFAULT_IMAGE_FORMAT = "image/png";
 
-    /** Radius (in pixels) of circle that is drawn to the represent the symbol when both frame and icon are off. */
+    /**
+     * Radius (in pixels) of circle that is drawn to the represent the symbol when both frame and icon are off.
+     */
     protected static final int CIRCLE_RADIUS = 16;
-    /** Line width used to stroke circle when fill is turned off. */
+    /**
+     * Line width used to stroke circle when fill is turned off.
+     */
     protected static final int CIRCLE_LINE_WIDTH = 2;
 
     // Static maps and sets providing fast access to attributes about a symbol ID. These data structures are populated
@@ -82,502 +85,11 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     protected static final Map<String, Color> fillColorMap = new HashMap<>();
     protected static final Map<String, Color> frameColorMap = new HashMap<>();
     protected static final Map<String, Color> iconColorMap = new HashMap<>();
-    protected static final Set<String> unfilledIconMap = new HashSet<>();
-    protected static final Set<String> unframedIconMap = new HashSet<>();
-    protected static final Set<String> emsEquipment = new HashSet<>();
-
-    /**
-     * Create a new retriever that will retrieve icons from the specified location. The retrieval path may be a file URL
-     * to a directory on the local file system (for example, file:///symbols/mil-std-2525). A URL to a network resource
-     * (http://myserver.com/milstd2525/), or a URL to a JAR or ZIP file (jar:file:milstd2525-symbols.zip!).
-     *
-     * @param retrieverPath File path or URL to the symbol directory, for example "http://myserver.com/milstd2525/".
-     */
-    public MilStd2525IconRetriever(String retrieverPath)
-    {
-        super(retrieverPath);
-    }
-
-    /**
-     * Create an icon for a MIL-STD-2525C symbol. By default the symbol will include a filled frame and an icon. The
-     * fill, frame, and icon can be turned off by setting retrieval parameters. If both frame and icon are turned off
-     * then this method will return an image containing a circle.
-     *
-     * @param sidc   SIDC identifier for the symbol.
-     * @param params Parameters that affect icon retrieval. See <a href="#parameters">Parameters</a> in class
-     *               documentation.
-     *
-     * @return An BufferedImage containing the icon for the requested symbol, or null if the icon cannot be retrieved.
-     */
-    public BufferedImage createIcon(String sidc, AVList params)
-    {
-        if (sidc == null)
-        {
-            String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        SymbolCode symbolCode = new SymbolCode(sidc);
-        BufferedImage image = null;
-
-        boolean mustDrawFill = this.mustDrawFill(symbolCode, params);
-        boolean mustDrawIcon = this.mustDrawIcon(symbolCode, params);
-        boolean mustDrawFrame = this.mustDrawFrame(symbolCode, params);
-
-        if (mustDrawFrame || mustDrawIcon)
-        {
-            if (mustDrawFill && mustDrawFrame)
-                image = this.drawFill(symbolCode, params, null);
-
-            if (mustDrawFrame)
-                image = this.drawFrame(symbolCode, params, image);
-
-            if (mustDrawIcon)
-                image = this.drawIcon(symbolCode, params, image);
-        }
-
-        // Draw a dot if both frame and icon are turned off
-        if (image == null)
-            image = this.drawCircle(symbolCode, params, image);
-
-        return image;
-    }
-
-    protected boolean mustDrawFill(SymbolCode symbolCode, AVList params)
-    {
-        String maskedCode = symbolCode.toMaskedString().toLowerCase();
-        if (unfilledIconMap.contains(maskedCode))
-            return false;
-
-        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_FILL) : null;
-        return o == null || o.equals(Boolean.TRUE);
-    }
-
-    protected boolean mustDrawFrame(SymbolCode symbolCode, AVList params)
-    {
-        String maskedCode = symbolCode.toMaskedString().toLowerCase();
-        if (unframedIconMap.contains(maskedCode))
-            return false;
-
-        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_FRAME) : null;
-        return o == null || o.equals(Boolean.TRUE);
-    }
-
-    @SuppressWarnings({"UnusedParameters"})
-    protected boolean mustDrawIcon(SymbolCode symbolCode, AVList params)
-    {
-        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_ICON) : null;
-        return o == null || o.equals(Boolean.TRUE);
-    }
-
-    protected BufferedImage drawFill(SymbolCode symbolCode, AVList params, BufferedImage dest)
-    {
-        String path = this.composeFillPath(symbolCode);
-        Color color = this.getFillColor(symbolCode, params);
-
-        return path != null ? this.drawIconComponent(path, color, dest) : dest;
-    }
-
-    protected BufferedImage drawFrame(SymbolCode symbolCode, AVList params, BufferedImage dest)
-    {
-        String path = this.composeFramePath(symbolCode);
-        Color color = this.getFrameColor(symbolCode, params);
-
-        return path != null ? this.drawIconComponent(path, color, dest) : dest;
-    }
-
-    protected BufferedImage drawIcon(SymbolCode symbolCode, AVList params, BufferedImage dest)
-    {
-        String path = this.composeIconPath(symbolCode, params);
-        Color color = this.getIconColor(symbolCode, params);
-
-        return path != null ? this.drawIconComponent(path, color, dest) : dest;
-    }
-
-    protected BufferedImage drawCircle(SymbolCode symbolCode, AVList params, BufferedImage dest)
-    {
-        Color fillColor = this.mustDrawFill(symbolCode, params) ? this.getFillColor(symbolCode, params)
-            : DEFAULT_ICON_COLOR;
-
-        if (dest == null)
-        {
-            int diameter = CIRCLE_RADIUS * 2;
-            dest = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
-        }
-
-        Graphics2D g = null;
-        try
-        {
-            g = dest.createGraphics();
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            int upperLeft = (int) (dest.getWidth() / 2.0 - CIRCLE_RADIUS + CIRCLE_LINE_WIDTH);
-            int width = CIRCLE_RADIUS * 2 - CIRCLE_LINE_WIDTH * 2;
-            @SuppressWarnings({"SuspiciousNameCombination"})
-            Ellipse2D circle = new Ellipse2D.Double(upperLeft, upperLeft, width, width);
-
-            // Draw filled circle
-            g.setColor(fillColor);
-            g.fill(circle);
-
-            // Draw the circle's border. Always draw the circle with a solid border, even if the status is not Present.
-            // MIL-STD-2525C section 5.3.1.4 (pg. 18) states: "Planned status cannot be shown if the symbol is [...]
-            // displayed as a dot."
-            g.setColor(DEFAULT_FRAME_COLOR);
-            g.setStroke(new BasicStroke(CIRCLE_LINE_WIDTH));
-            g.draw(circle);
-        }
-        finally
-        {
-            if (g != null)
-                g.dispose();
-        }
-
-        return dest;
-    }
-
-    protected BufferedImage drawIconComponent(String path, Color color, BufferedImage dest)
-    {
-        BufferedImage image = this.readImage(path);
-        if (image == null)
-        {
-            String msg = Logging.getMessage("Symbology.MissingIconComponent", path);
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (color != null)
-            this.multiply(image, color);
-
-        if (dest != null)
-            image = this.drawImage(image, dest);
-
-        return image;
-    }
-
-    protected String composeFillPath(SymbolCode symbolCode)
-    {
-        String maskedCode = this.getMaskedFillCode(symbolCode);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(FILLS_PATH).append("/");
-        sb.append(TACTICAL_SYMBOLS_PATH).append("/");
-        sb.append(maskedCode.toLowerCase());
-        sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
-
-        return sb.toString();
-    }
-
-    protected String composeFramePath(SymbolCode symbolCode)
-    {
-        String maskedCode = this.getMaskedFrameCode(symbolCode);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(FRAMES_PATH).append("/");
-        sb.append(TACTICAL_SYMBOLS_PATH).append("/");
-        sb.append(maskedCode.toLowerCase());
-        sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
-
-        return sb.toString();
-    }
-
-    protected String composeIconPath(SymbolCode symbolCode, AVList params)
-    {
-        String scheme = symbolCode.getScheme();
-        String bd = symbolCode.getBattleDimension();
-
-        if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN))
-        {
-            String maskedCode = this.getMaskedUnknownIconCode(symbolCode, params);
-            StringBuilder sb = new StringBuilder();
-            sb.append(ICONS_PATH).append("/");
-            sb.append(UNKNOWN_PATH).append("/");
-            sb.append(maskedCode.toLowerCase());
-            sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
-            return sb.toString();
-        }
-        else
-        {
-            if (SymbolCode.isFieldEmpty(symbolCode.getFunctionId()))
-                return null; // Don't draw an icon if the function ID is empty.
-
-            String maskedCode = this.getMaskedIconCode(symbolCode, params);
-            StringBuilder sb = new StringBuilder();
-            sb.append(ICONS_PATH).append("/");
-            sb.append(schemePathMap.get(scheme.toLowerCase())).append("/");
-            sb.append(maskedCode.toLowerCase());
-            sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
-            return sb.toString();
-        }
-    }
-
-    protected Color getFillColor(SymbolCode symbolCode, AVList params)
-    {
-        Color color = this.getColorFromParams(params);
-        return color != null ? color : fillColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
-    }
-
-    protected Color getFrameColor(SymbolCode symbolCode, AVList params)
-    {
-        if (this.isDashedFrame(symbolCode))
-            return null; // Dashed pending or exercise frames are not colored.
-
-        if (this.mustDrawFill(symbolCode, params))
-            return DEFAULT_FRAME_COLOR; // Use the default color if the fill is on.
-
-        Color color = this.getColorFromParams(params);
-        return color != null ? color : frameColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
-    }
-
-    protected Color getIconColor(SymbolCode symbolCode, AVList params)
-    {
-        String maskedCode = symbolCode.toMaskedString().toLowerCase();
-
-        if (this.mustDrawFrame(symbolCode, params))
-        {
-            // When the frame is enabled, we draw the icon in either its specified custom color or the default color. In
-            // this case the app-specified color override (if any) is applied to the frame, and does apply to the icon.
-            return iconColorMap.getOrDefault(maskedCode, DEFAULT_ICON_COLOR);
-        }
-        else if (this.mustDrawFill(symbolCode, params))
-        {
-            // When the frame is disabled and the fill is enabled, we draw the icon in its corresponding standard
-            // identity color (or app-specified color override).
-            Color color = this.getColorFromParams(params);
-            return color != null ? color : fillColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
-        }
-        else
-        {
-            // When the frame is disabled and the fill is disabled, we draw the icon in either its specified custom
-            // color or the default color. In this case the app-specified color override (if any) is ignored.
-            return iconColorMap.getOrDefault(maskedCode, DEFAULT_ICON_COLOR);
-        }
-    }
-
-    /**
-     * Retrieves the value of the AVKey.COLOR parameter.
-     *
-     * @param params Parameter list.
-     *
-     * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color. Returns
-     *         null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a
-     *         Color.
-     */
-    protected Color getColorFromParams(AVList params)
-    {
-        if (params == null)
-            return null;
-
-        Object o = params.getValue(AVKey.COLOR);
-        return (o instanceof Color) ? (Color) o : null;
-    }
-
-    protected String getMaskedFillCode(SymbolCode symbolCode)
-    {
-        // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
-        // the generic fill shape lookup logic used by Warfighting symbols.
-        symbolCode = this.transformToWarfightingScheme(symbolCode);
-
-        String si = this.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile
-        String bd = symbolCode.getBattleDimension();
-        String fid = this.getGroundFunctionId(symbolCode);
-
-        StringBuilder sb = new StringBuilder();
-        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
-        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
-        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
-        SymbolCode.appendFieldValue(sb, null, 1); // Status
-        SymbolCode.appendFieldValue(sb, fid, 6); // Function ID
-        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
-        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
-        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
-
-        return sb.toString();
-    }
-
-    protected String getMaskedFrameCode(SymbolCode symbolCode)
-    {
-        // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
-        // the generic fill shape lookup logic used by Warfighting symbols.
-        symbolCode = this.transformToWarfightingScheme(symbolCode);
-
-        String si = symbolCode.getStandardIdentity();
-        String bd = symbolCode.getBattleDimension();
-        String status = this.getSimpleStatus(symbolCode); // Either Present or Anticipated
-        String fid = this.getGroundFunctionId(symbolCode); // Either "U-----", "E-----", "I-----", or null
-
-        StringBuilder sb = new StringBuilder();
-        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
-        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
-        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
-        SymbolCode.appendFieldValue(sb, status, 1); // Status
-        SymbolCode.appendFieldValue(sb, fid, 6); // Function ID
-        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
-        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
-        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
-
-        return sb.toString();
-    }
-
-    protected SymbolCode transformToWarfightingScheme(SymbolCode symbolCode)
-    {
-        String maskedCode = symbolCode.toMaskedString().toLowerCase();
-        String scheme = symbolCode.getScheme();
-        String bd = symbolCode.getBattleDimension();
-
-        SymbolCode newCode = new SymbolCode();
-        newCode.setScheme(SymbologyConstants.SCHEME_WARFIGHTING);
-        newCode.setStandardIdentity(symbolCode.getStandardIdentity());
-        newCode.setStatus(symbolCode.getStatus());
-
-        if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_INTELLIGENCE))
-        {
-            newCode.setBattleDimension(bd);
-
-            // Signals Intelligence ground symbols are equivalent to Warfighting ground equipment.
-            if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))
-                newCode.setFunctionId("E-----");
-
-            return newCode;
-        }
-        else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS))
-        {
-            // Stability Operations symbols frames are equivalent to Warfighting ground units.
-            newCode.setBattleDimension(SymbologyConstants.BATTLE_DIMENSION_GROUND);
-            newCode.setFunctionId("U-----");
-
-            return newCode;
-        }
-        else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT))
-        {
-            // Emergency Management symbol frames are equivalent to either Warfighting ground units or ground equipment.
-            newCode.setBattleDimension(SymbologyConstants.BATTLE_DIMENSION_GROUND);
-            newCode.setFunctionId(emsEquipment.contains(maskedCode) ? "E-----" : "U-----");
-
-            return newCode;
-        }
-        else
-        {
-            return symbolCode;
-        }
-    }
-
-    protected String getMaskedIconCode(SymbolCode symbolCode, AVList params)
-    {
-        String si = this.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
-        String status = this.getSimpleStatus(symbolCode); // Either Present or Anticipated.
-
-        if (this.mustDrawFrame(symbolCode, params))
-            status = SymbologyConstants.STATUS_PRESENT;
-
-        SymbolCode maskedCode = new SymbolCode(symbolCode.toString());
-        maskedCode.setStandardIdentity(si);
-        maskedCode.setStatus(status);
-        maskedCode.setSymbolModifier(null); // Ignore the Symbol Modifier field.
-        maskedCode.setCountryCode(null); // Ignore the Country Code field.
-        maskedCode.setOrderOfBattle(null); // Ignore the Order of Battle field.
-
-        return maskedCode.toString();
-    }
-
-    protected String getMaskedUnknownIconCode(SymbolCode symbolCode, AVList params)
-    {
-        String si = this.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
-        String bd = symbolCode.getBattleDimension();
-        String status = this.getSimpleStatus(symbolCode); // Either Present or Anticipated.
-
-        if (this.mustDrawFrame(symbolCode, params))
-            status = SymbologyConstants.STATUS_PRESENT;
-
-        StringBuilder sb = new StringBuilder();
-        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
-        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
-        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
-        SymbolCode.appendFieldValue(sb, status, 1); // Status
-        SymbolCode.appendFieldValue(sb, null, 6); // Function ID
-        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
-        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
-        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
-
-        return sb.toString();
-    }
-
-    protected boolean isDashedFrame(SymbolCode symbolCode)
-    {
-        String si = symbolCode.getStandardIdentity();
-        return si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_PENDING)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_SUSPECT)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND));
-    }
-
-    protected String getSimpleStandardIdentity(SymbolCode symbolCode)
-    {
-        String si = symbolCode.getStandardIdentity();
-        if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_PENDING)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_UNKNOWN)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_UNKNOWN)))
-        {
-            return SymbologyConstants.STANDARD_IDENTITY_UNKNOWN;
-        }
-        else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FRIEND)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_FRIEND)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_JOKER)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FAKER)))
-        {
-            return SymbologyConstants.STANDARD_IDENTITY_FRIEND;
-        }
-        else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_NEUTRAL)
-            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL)))
-        {
-            return SymbologyConstants.STANDARD_IDENTITY_NEUTRAL;
-        }
-        else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_HOSTILE) ||
-            si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_SUSPECT)))
-        {
-            return SymbologyConstants.STANDARD_IDENTITY_HOSTILE;
-        }
-
-        return si;
-    }
-
-    protected String getSimpleStatus(SymbolCode symbolCode)
-    {
-        String status = symbolCode.getStatus();
-
-        if (status != null && status.equalsIgnoreCase(SymbologyConstants.STATUS_ANTICIPATED))
-            return SymbologyConstants.STATUS_ANTICIPATED;
-        else
-            return SymbologyConstants.STATUS_PRESENT;
-    }
-
-    protected String getGroundFunctionId(SymbolCode symbolCode)
-    {
-        String scheme = symbolCode.getScheme();
-        String bd = symbolCode.getBattleDimension();
-        String fid = symbolCode.getFunctionId();
-
-        if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
-            && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))
-        {
-            if (fid != null && fid.toLowerCase().startsWith("u"))
-                return "u-----";
-            else if (fid != null && fid.toLowerCase().startsWith("e"))
-                return "e-----";
-            else if (fid != null && fid.toLowerCase().startsWith("i"))
-                return "i-----";
-        }
-
-        return null;
-    }
-
-    static
-    {
+    protected static final Collection<String> unfilledIconMap = new HashSet<>();
+    protected static final Collection<String> unframedIconMap = new HashSet<>();
+    protected static final Collection<String> emsEquipment = new HashSet<>();
+
+    static {
         schemePathMap.put("s", "war"); // Scheme Warfighting
         schemePathMap.put("i", "sigint"); // Scheme Signals Intelligence
         schemePathMap.put("o", "stbops"); // Scheme Stability Operations
@@ -921,6 +433,447 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         emsEquipment.add("e-f-ba---------");
         emsEquipment.add("e-f-ma---------");
         emsEquipment.add("e-f-mc---------");
+    }
+
+    /**
+     * Create a new retriever that will retrieve icons from the specified location. The retrieval path may be a file URL
+     * to a directory on the local file system (for example, file:///symbols/mil-std-2525). A URL to a network resource
+     * (http://myserver.com/milstd2525/), or a URL to a JAR or ZIP file (jar:file:milstd2525-symbols.zip!).
+     *
+     * @param retrieverPath File path or URL to the symbol directory, for example "http://myserver.com/milstd2525/".
+     */
+    public MilStd2525IconRetriever(String retrieverPath) {
+        super(retrieverPath);
+    }
+
+    /**
+     * Create an icon for a MIL-STD-2525C symbol. By default the symbol will include a filled frame and an icon. The
+     * fill, frame, and icon can be turned off by setting retrieval parameters. If both frame and icon are turned off
+     * then this method will return an image containing a circle.
+     *
+     * @param sidc   SIDC identifier for the symbol.
+     * @param params Parameters that affect icon retrieval. See <a href="#parameters">Parameters</a> in class
+     *               documentation.
+     * @return An BufferedImage containing the icon for the requested symbol, or null if the icon cannot be retrieved.
+     */
+    public BufferedImage createIcon(String sidc, AVList params) {
+        if (sidc == null) {
+            String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        SymbolCode symbolCode = new SymbolCode(sidc);
+        BufferedImage image = null;
+
+        boolean mustDrawFill = this.mustDrawFill(symbolCode, params);
+        boolean mustDrawIcon = this.mustDrawIcon(symbolCode, params);
+        boolean mustDrawFrame = this.mustDrawFrame(symbolCode, params);
+
+        if (mustDrawFrame || mustDrawIcon) {
+            if (mustDrawFill && mustDrawFrame)
+                image = this.drawFill(symbolCode, params, null);
+
+            if (mustDrawFrame)
+                image = this.drawFrame(symbolCode, params, image);
+
+            if (mustDrawIcon)
+                image = this.drawIcon(symbolCode, params, image);
+        }
+
+        // Draw a dot if both frame and icon are turned off
+        if (image == null)
+            image = this.drawCircle(symbolCode, params, image);
+
+        return image;
+    }
+
+    protected boolean mustDrawFill(SymbolCode symbolCode, AVList params) {
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
+        if (unfilledIconMap.contains(maskedCode))
+            return false;
+
+        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_FILL) : null;
+        return o == null || o.equals(Boolean.TRUE);
+    }
+
+    protected boolean mustDrawFrame(SymbolCode symbolCode, AVList params) {
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
+        if (unframedIconMap.contains(maskedCode))
+            return false;
+
+        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_FRAME) : null;
+        return o == null || o.equals(Boolean.TRUE);
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    protected boolean mustDrawIcon(SymbolCode symbolCode, AVList params) {
+        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_ICON) : null;
+        return o == null || o.equals(Boolean.TRUE);
+    }
+
+    protected BufferedImage drawFill(SymbolCode symbolCode, AVList params, BufferedImage dest) {
+        String path = this.composeFillPath(symbolCode);
+        Color color = this.getFillColor(symbolCode, params);
+
+        return path != null ? this.drawIconComponent(path, color, dest) : dest;
+    }
+
+    protected BufferedImage drawFrame(SymbolCode symbolCode, AVList params, BufferedImage dest) {
+        String path = this.composeFramePath(symbolCode);
+        Color color = this.getFrameColor(symbolCode, params);
+
+        return path != null ? this.drawIconComponent(path, color, dest) : dest;
+    }
+
+    protected BufferedImage drawIcon(SymbolCode symbolCode, AVList params, BufferedImage dest) {
+        String path = this.composeIconPath(symbolCode, params);
+        Color color = this.getIconColor(symbolCode, params);
+
+        return path != null ? this.drawIconComponent(path, color, dest) : dest;
+    }
+
+    protected BufferedImage drawCircle(SymbolCode symbolCode, AVList params, BufferedImage dest) {
+        Color fillColor = this.mustDrawFill(symbolCode, params) ? this.getFillColor(symbolCode, params)
+            : DEFAULT_ICON_COLOR;
+
+        if (dest == null) {
+            int diameter = CIRCLE_RADIUS * 2;
+            dest = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
+        }
+
+        Graphics2D g = null;
+        try {
+            g = dest.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            int upperLeft = (int) (dest.getWidth() / 2.0 - CIRCLE_RADIUS + CIRCLE_LINE_WIDTH);
+            int width = CIRCLE_RADIUS * 2 - CIRCLE_LINE_WIDTH * 2;
+            @SuppressWarnings("SuspiciousNameCombination")
+            Shape circle = new Ellipse2D.Double(upperLeft, upperLeft, width, width);
+
+            // Draw filled circle
+            g.setColor(fillColor);
+            g.fill(circle);
+
+            // Draw the circle's border. Always draw the circle with a solid border, even if the status is not Present.
+            // MIL-STD-2525C section 5.3.1.4 (pg. 18) states: "Planned status cannot be shown if the symbol is [...]
+            // displayed as a dot."
+            g.setColor(DEFAULT_FRAME_COLOR);
+            g.setStroke(new BasicStroke(CIRCLE_LINE_WIDTH));
+            g.draw(circle);
+        }
+        finally {
+            if (g != null)
+                g.dispose();
+        }
+
+        return dest;
+    }
+
+    protected BufferedImage drawIconComponent(String path, Color color, BufferedImage dest) {
+        BufferedImage image = this.readImage(path);
+        if (image == null) {
+            String msg = Logging.getMessage("Symbology.MissingIconComponent", path);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (color != null)
+            this.multiply(image, color);
+
+        if (dest != null)
+            image = this.drawImage(image, dest);
+
+        return image;
+    }
+
+    protected String composeFillPath(SymbolCode symbolCode) {
+        String maskedCode = this.getMaskedFillCode(symbolCode);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(FILLS_PATH).append("/");
+        sb.append(TACTICAL_SYMBOLS_PATH).append("/");
+        sb.append(maskedCode.toLowerCase());
+        sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
+
+        return sb.toString();
+    }
+
+    protected String composeFramePath(SymbolCode symbolCode) {
+        String maskedCode = this.getMaskedFrameCode(symbolCode);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(FRAMES_PATH).append("/");
+        sb.append(TACTICAL_SYMBOLS_PATH).append("/");
+        sb.append(maskedCode.toLowerCase());
+        sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
+
+        return sb.toString();
+    }
+
+    protected String composeIconPath(SymbolCode symbolCode, AVList params) {
+        String scheme = symbolCode.getScheme();
+        String bd = symbolCode.getBattleDimension();
+
+        if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN)) {
+            String maskedCode = this.getMaskedUnknownIconCode(symbolCode, params);
+            StringBuilder sb = new StringBuilder();
+            sb.append(ICONS_PATH).append("/");
+            sb.append(UNKNOWN_PATH).append("/");
+            sb.append(maskedCode.toLowerCase());
+            sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
+            return sb.toString();
+        }
+        else {
+            if (SymbolCode.isFieldEmpty(symbolCode.getFunctionId()))
+                return null; // Don't draw an icon if the function ID is empty.
+
+            String maskedCode = this.getMaskedIconCode(symbolCode, params);
+            StringBuilder sb = new StringBuilder();
+            sb.append(ICONS_PATH).append("/");
+            sb.append(schemePathMap.get(scheme.toLowerCase())).append("/");
+            sb.append(maskedCode.toLowerCase());
+            sb.append(WWIO.makeSuffixForMimeType(DEFAULT_IMAGE_FORMAT));
+            return sb.toString();
+        }
+    }
+
+    protected Color getFillColor(SymbolCode symbolCode, AVList params) {
+        Color color = this.getColorFromParams(params);
+        return color != null ? color : fillColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
+    }
+
+    protected Color getFrameColor(SymbolCode symbolCode, AVList params) {
+        if (this.isDashedFrame(symbolCode))
+            return null; // Dashed pending or exercise frames are not colored.
+
+        if (this.mustDrawFill(symbolCode, params))
+            return DEFAULT_FRAME_COLOR; // Use the default color if the fill is on.
+
+        Color color = this.getColorFromParams(params);
+        return color != null ? color : frameColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
+    }
+
+    protected Color getIconColor(SymbolCode symbolCode, AVList params) {
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
+
+        if (this.mustDrawFrame(symbolCode, params)) {
+            // When the frame is enabled, we draw the icon in either its specified custom color or the default color. In
+            // this case the app-specified color override (if any) is applied to the frame, and does apply to the icon.
+            return iconColorMap.getOrDefault(maskedCode, DEFAULT_ICON_COLOR);
+        }
+        else if (this.mustDrawFill(symbolCode, params)) {
+            // When the frame is disabled and the fill is enabled, we draw the icon in its corresponding standard
+            // identity color (or app-specified color override).
+            Color color = this.getColorFromParams(params);
+            return color != null ? color : fillColorMap.get(symbolCode.getStandardIdentity().toLowerCase());
+        }
+        else {
+            // When the frame is disabled and the fill is disabled, we draw the icon in either its specified custom
+            // color or the default color. In this case the app-specified color override (if any) is ignored.
+            return iconColorMap.getOrDefault(maskedCode, DEFAULT_ICON_COLOR);
+        }
+    }
+
+    /**
+     * Retrieves the value of the AVKey.COLOR parameter.
+     *
+     * @param params Parameter list.
+     * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color. Returns
+     * null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a Color.
+     */
+    protected Color getColorFromParams(AVList params) {
+        if (params == null)
+            return null;
+
+        Object o = params.getValue(AVKey.COLOR);
+        return (o instanceof Color) ? (Color) o : null;
+    }
+
+    protected String getMaskedFillCode(SymbolCode symbolCode) {
+        // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
+        // the generic fill shape lookup logic used by Warfighting symbols.
+        symbolCode = this.transformToWarfightingScheme(symbolCode);
+
+        String si = this.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile
+        String bd = symbolCode.getBattleDimension();
+        String fid = this.getGroundFunctionId(symbolCode);
+
+        StringBuilder sb = new StringBuilder();
+        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
+        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
+        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
+        SymbolCode.appendFieldValue(sb, null, 1); // Status
+        SymbolCode.appendFieldValue(sb, fid, 6); // Function ID
+        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
+        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
+        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
+
+        return sb.toString();
+    }
+
+    protected String getMaskedFrameCode(SymbolCode symbolCode) {
+        // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
+        // the generic fill shape lookup logic used by Warfighting symbols.
+        symbolCode = this.transformToWarfightingScheme(symbolCode);
+
+        String si = symbolCode.getStandardIdentity();
+        String bd = symbolCode.getBattleDimension();
+        String status = this.getSimpleStatus(symbolCode); // Either Present or Anticipated
+        String fid = this.getGroundFunctionId(symbolCode); // Either "U-----", "E-----", "I-----", or null
+
+        StringBuilder sb = new StringBuilder();
+        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
+        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
+        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
+        SymbolCode.appendFieldValue(sb, status, 1); // Status
+        SymbolCode.appendFieldValue(sb, fid, 6); // Function ID
+        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
+        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
+        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
+
+        return sb.toString();
+    }
+
+    protected SymbolCode transformToWarfightingScheme(SymbolCode symbolCode) {
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
+        String scheme = symbolCode.getScheme();
+        String bd = symbolCode.getBattleDimension();
+
+        SymbolCode newCode = new SymbolCode();
+        newCode.setScheme(SymbologyConstants.SCHEME_WARFIGHTING);
+        newCode.setStandardIdentity(symbolCode.getStandardIdentity());
+        newCode.setStatus(symbolCode.getStatus());
+
+        if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_INTELLIGENCE)) {
+            newCode.setBattleDimension(bd);
+
+            // Signals Intelligence ground symbols are equivalent to Warfighting ground equipment.
+            if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))
+                newCode.setFunctionId("E-----");
+
+            return newCode;
+        }
+        else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS)) {
+            // Stability Operations symbols frames are equivalent to Warfighting ground units.
+            newCode.setBattleDimension(SymbologyConstants.BATTLE_DIMENSION_GROUND);
+            newCode.setFunctionId("U-----");
+
+            return newCode;
+        }
+        else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT)) {
+            // Emergency Management symbol frames are equivalent to either Warfighting ground units or ground equipment.
+            newCode.setBattleDimension(SymbologyConstants.BATTLE_DIMENSION_GROUND);
+            newCode.setFunctionId(emsEquipment.contains(maskedCode) ? "E-----" : "U-----");
+
+            return newCode;
+        }
+        else {
+            return symbolCode;
+        }
+    }
+
+    protected String getMaskedIconCode(SymbolCode symbolCode, AVList params) {
+        String si = this.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
+        String status = this.getSimpleStatus(symbolCode); // Either Present or Anticipated.
+
+        if (this.mustDrawFrame(symbolCode, params))
+            status = SymbologyConstants.STATUS_PRESENT;
+
+        SymbolCode maskedCode = new SymbolCode(symbolCode.toString());
+        maskedCode.setStandardIdentity(si);
+        maskedCode.setStatus(status);
+        maskedCode.setSymbolModifier(null); // Ignore the Symbol Modifier field.
+        maskedCode.setCountryCode(null); // Ignore the Country Code field.
+        maskedCode.setOrderOfBattle(null); // Ignore the Order of Battle field.
+
+        return maskedCode.toString();
+    }
+
+    protected String getMaskedUnknownIconCode(SymbolCode symbolCode, AVList params) {
+        String si = this.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
+        String bd = symbolCode.getBattleDimension();
+        String status = this.getSimpleStatus(symbolCode); // Either Present or Anticipated.
+
+        if (this.mustDrawFrame(symbolCode, params))
+            status = SymbologyConstants.STATUS_PRESENT;
+
+        StringBuilder sb = new StringBuilder();
+        SymbolCode.appendFieldValue(sb, null, 1); // Scheme
+        SymbolCode.appendFieldValue(sb, si, 1); // Standard Identity
+        SymbolCode.appendFieldValue(sb, bd, 1); // Battle Dimension
+        SymbolCode.appendFieldValue(sb, status, 1); // Status
+        SymbolCode.appendFieldValue(sb, null, 6); // Function ID
+        SymbolCode.appendFieldValue(sb, null, 2); // Symbol Modifier
+        SymbolCode.appendFieldValue(sb, null, 2); // Country Code
+        SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
+
+        return sb.toString();
+    }
+
+    protected boolean isDashedFrame(SymbolCode symbolCode) {
+        String si = symbolCode.getStandardIdentity();
+        return si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_PENDING)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_SUSPECT)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND));
+    }
+
+    protected String getSimpleStandardIdentity(SymbolCode symbolCode) {
+        String si = symbolCode.getStandardIdentity();
+        if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_PENDING)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_UNKNOWN)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_UNKNOWN))) {
+            return SymbologyConstants.STANDARD_IDENTITY_UNKNOWN;
+        }
+        else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FRIEND)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_FRIEND)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_JOKER)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FAKER))) {
+            return SymbologyConstants.STANDARD_IDENTITY_FRIEND;
+        }
+        else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_NEUTRAL)
+            || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL))) {
+            return SymbologyConstants.STANDARD_IDENTITY_NEUTRAL;
+        }
+        else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_HOSTILE) ||
+            si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_SUSPECT))) {
+            return SymbologyConstants.STANDARD_IDENTITY_HOSTILE;
+        }
+
+        return si;
+    }
+
+    protected String getSimpleStatus(SymbolCode symbolCode) {
+        String status = symbolCode.getStatus();
+
+        if (status != null && status.equalsIgnoreCase(SymbologyConstants.STATUS_ANTICIPATED))
+            return SymbologyConstants.STATUS_ANTICIPATED;
+        else
+            return SymbologyConstants.STATUS_PRESENT;
+    }
+
+    protected String getGroundFunctionId(SymbolCode symbolCode) {
+        String scheme = symbolCode.getScheme();
+        String bd = symbolCode.getBattleDimension();
+        String fid = symbolCode.getFunctionId();
+
+        if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
+            && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)) {
+            if (fid != null && !fid.toLowerCase().isEmpty() && fid.toLowerCase().charAt(0) == 'u')
+                return "u-----";
+            else if (fid != null && !fid.toLowerCase().isEmpty() && fid.toLowerCase().charAt(0) == 'e')
+                return "e-----";
+            else if (fid != null && !fid.toLowerCase().isEmpty() && fid.toLowerCase().charAt(0) == 'i')
+                return "i-----";
+        }
+
+        return null;
     }
 }
 

@@ -18,36 +18,222 @@ import java.util.*;
  * @author dcollins
  * @version $Id: Geometry.java 2210 2014-08-08 22:06:02Z tgaskins $
  */
-public class Geometry extends AVListImpl implements Cacheable
-{
-    public static class CacheKey
-    {
+public class Geometry extends AVListImpl implements Cacheable {
+    public static final int TEXTURE = 0;
+    public static final int ELEMENT = 1;
+    public static final int VERTEX = 2;
+    public static final int NORMAL = 3;
+    private final int[] mode;
+    private final int[] count;
+    private final int[] size;
+    private final int[] glType;
+    private final int[] stride;
+    private final Buffer[] buffer;
+
+    public Geometry() {
+        this.mode = new int[4];
+        this.count = new int[4];
+        this.size = new int[4];
+        this.glType = new int[4];
+        this.stride = new int[4];
+        this.buffer = new Buffer[4];
+    }
+
+    public int getMode(int object) {
+        return this.mode[object];
+    }
+
+    public void setMode(int type, int mode) {
+        this.mode[type] = mode;
+    }
+
+    public int getCount(int type) {
+        return this.count[type];
+    }
+
+    public int getSize(int type) {
+        return this.size[type];
+    }
+
+    public int getGLType(int type) {
+        return this.glType[type];
+    }
+
+    public int getStride(int type) {
+        return this.stride[type];
+    }
+
+    public Buffer getBuffer(int type) {
+        return this.buffer[type];
+    }
+
+    public void setData(int type, int size, int glType, int stride, int count, int[] src, int srcPos) {
+        this.size[type] = size;
+        this.glType[type] = glType;
+        this.stride[type] = stride;
+        this.count[type] = count;
+
+        int numCoords = size * count;
+        if (this.buffer[type] == null
+            || this.buffer[type].capacity() < numCoords
+            || !(this.buffer[type] instanceof IntBuffer)) {
+            this.buffer[type] = Buffers.newDirectIntBuffer(numCoords);
+        }
+
+        this.bufferCopy(src, srcPos, (IntBuffer) this.buffer[type], 0, numCoords);
+    }
+
+    public void setData(int type, int size, int stride, int count, float[] src, int srcPos) {
+        this.size[type] = size;
+        this.glType[type] = GL.GL_FLOAT;
+        this.stride[type] = stride;
+        this.count[type] = count;
+
+        int numCoords = size * count;
+        if (this.buffer[type] == null
+            || this.buffer[type].capacity() < numCoords
+            || !(this.buffer[type] instanceof FloatBuffer)) {
+            this.buffer[type] = Buffers.newDirectFloatBuffer(numCoords);
+        }
+
+        this.bufferCopy(src, srcPos, (FloatBuffer) this.buffer[type], 0, numCoords);
+    }
+
+    // version using float buffer instead of array
+    public void setData(int type, int size, int stride, int count, FloatBuffer src) {
+        this.size[type] = size;
+        this.glType[type] = GL.GL_FLOAT;
+        this.stride[type] = stride;
+        this.count[type] = count;
+
+        int numCoords = size * count;
+        if (this.buffer[type] == null
+            || this.buffer[type].capacity() < numCoords
+            || !(this.buffer[type] instanceof FloatBuffer)) {
+            this.buffer[type] = src;
+        }
+    }
+
+    public void setElementData(int mode, int count, int[] src) {
+        this.setMode(ELEMENT, mode);
+        this.setData(ELEMENT, 1, GL.GL_UNSIGNED_INT, 0, count, src, 0);
+    }
+
+    // version using buffer instead of array
+    public void setElementData(int mode, int count, IntBuffer src) {
+        this.setMode(ELEMENT, mode);
+        this.buffer[ELEMENT] = src;
+        this.size[ELEMENT] = 1;
+        this.glType[ELEMENT] = GL.GL_UNSIGNED_INT;
+        this.stride[ELEMENT] = 0;
+        this.count[ELEMENT] = count;
+    }
+
+    public void setVertexData(int count, float[] src) {
+        this.setData(VERTEX, 3, 0, count, src, 0);
+    }
+
+    // version using float buffer
+    public void setVertexData(int count, FloatBuffer src) {
+        this.buffer[VERTEX] = src;
+        this.size[VERTEX] = 3;
+        this.glType[VERTEX] = GL.GL_FLOAT;
+        this.stride[VERTEX] = 0;
+        this.count[VERTEX] = count;
+    }
+
+    public void setNormalData(int count, float[] src) {
+        this.setData(NORMAL, 3, 0, count, src, 0);
+    }
+
+    // version using float buffer
+    public void setNormalData(int count, FloatBuffer src) {
+        this.buffer[NORMAL] = src;
+        this.size[NORMAL] = 3;
+        this.glType[NORMAL] = GL.GL_FLOAT;
+        this.stride[NORMAL] = 0;
+        this.count[NORMAL] = count;
+    }
+
+    public void setTextureCoordData(int count, float[] src) {
+        this.setData(TEXTURE, 2, 0, count, src, 0);
+    }
+
+    // version using float buffer
+    public void setTextureCoordData(int count, FloatBuffer src) {
+        this.buffer[TEXTURE] = src;
+        this.size[NORMAL] = 2;
+        this.glType[NORMAL] = GL.GL_FLOAT;
+        this.stride[NORMAL] = 0;
+        this.count[NORMAL] = count;
+    }
+
+    public void clear(int type) {
+        this.mode[type] = 0;
+        this.count[type] = 0;
+        this.size[type] = 0;
+        this.glType[type] = 0;
+        this.stride[type] = 0;
+        this.buffer[type] = null;
+    }
+
+    public long getSizeInBytes() {
+        return this.bufferSize(ELEMENT) + this.bufferSize(VERTEX) + this.bufferSize(NORMAL);
+    }
+
+    private long bufferSize(int bufferType) {
+        long size = 0L;
+        if (this.buffer[bufferType] != null)
+            size = this.sizeOf(this.glType[bufferType]) * this.buffer[bufferType].capacity();
+        return size;
+    }
+
+    private long sizeOf(int glType) {
+        long size = switch (glType) {
+            case GL2.GL_BYTE -> 1L;
+            case GL2.GL_SHORT, GL2.GL_UNSIGNED_SHORT -> 2L;
+            case GL2.GL_INT, GL2.GL_UNSIGNED_INT, GL2.GL_FLOAT -> 4L;
+            case GL2.GL_DOUBLE -> 8L;
+            default -> 0L;
+        };
+        return size;
+    }
+
+    private void bufferCopy(int[] src, int srcPos, IntBuffer dest, int destPos, int length) {
+        dest.position(destPos);
+        dest.put(src, srcPos, length);
+        dest.position(destPos);
+    }
+
+    private void bufferCopy(float[] src, int srcPos, FloatBuffer dest, int destPos, int length) {
+        dest.position(destPos);
+        dest.put(src, srcPos, length);
+        dest.position(destPos);
+    }
+
+    public static class CacheKey {
         private final GlobeStateKey globeStateKey;
         private final Class cls;
         private final String key;
         private final Object[] params;
         private int hash = 0;
 
-        public CacheKey(Globe globe, Class cls, String key, Object... params)
-        {
+        public CacheKey(Globe globe, Class cls, String key, Object... params) {
             this.globeStateKey = globe != null ? globe.getGlobeStateKey() : null;
             this.cls = cls;
             this.key = key;
             this.params = params;
         }
 
-        public CacheKey(Class cls, String key, Object... params)
-        {
+        public CacheKey(Class cls, String key, Object... params) {
             this(null, cls, key, params);
         }
 
-        public CacheKey(String key, Object... params)
-        {
+        public CacheKey(String key, Object... params) {
             this(null, null, key, params);
         }
 
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (o == null || this.getClass() != o.getClass())
@@ -68,10 +254,8 @@ public class Geometry extends AVListImpl implements Cacheable
             return true;
         }
 
-        public int hashCode()
-        {
-            if (this.hash == 0)
-            {
+        public int hashCode() {
+            if (this.hash == 0) {
                 int result;
                 result = (this.globeStateKey != null ? this.globeStateKey.hashCode() : 0);
                 result = 31 * result + (this.cls != null ? this.cls.hashCode() : 0);
@@ -82,238 +266,5 @@ public class Geometry extends AVListImpl implements Cacheable
 
             return this.hash;
         }
-    }
-
-    public static final int TEXTURE = 0;
-    public static final int ELEMENT = 1;
-    public static final int VERTEX = 2;
-    public static final int NORMAL = 3;
-
-    private final int[] mode;
-    private final int[] count;
-    private final int[] size;
-    private final int[] glType;
-    private final int[] stride;
-    private final Buffer[] buffer;
-
-    public Geometry()
-    {
-        this.mode = new int[4];
-        this.count = new int[4];
-        this.size = new int[4];
-        this.glType = new int[4];
-        this.stride = new int[4];
-        this.buffer = new Buffer[4];
-    }
-
-    public int getMode(int object)
-    {
-        return this.mode[object];
-    }
-
-    public void setMode(int type, int mode)
-    {
-        this.mode[type] = mode;
-    }
-
-    public int getCount(int type)
-    {
-        return this.count[type];
-    }
-
-    public int getSize(int type)
-    {
-        return this.size[type];
-    }
-
-    public int getGLType(int type)
-    {
-        return this.glType[type];
-    }
-
-    public int getStride(int type)
-    {
-        return this.stride[type];
-    }
-
-    public Buffer getBuffer(int type)
-    {
-        return this.buffer[type];
-    }
-
-    public void setData(int type, int size, int glType, int stride, int count, int[] src, int srcPos)
-    {
-        this.size[type] = size;
-        this.glType[type] = glType;
-        this.stride[type] = stride;
-        this.count[type] = count;
-
-        int numCoords = size * count;
-        if (this.buffer[type] == null
-            || this.buffer[type].capacity() < numCoords
-            || !(this.buffer[type] instanceof IntBuffer))
-        {
-            this.buffer[type] = Buffers.newDirectIntBuffer(numCoords);
-        }
-
-        this.bufferCopy(src, srcPos, (IntBuffer) this.buffer[type], 0, numCoords);
-    }
-
-    public void setData(int type, int size, int stride, int count, float[] src, int srcPos)
-    {
-        this.size[type] = size;
-        this.glType[type] = GL.GL_FLOAT;
-        this.stride[type] = stride;
-        this.count[type] = count;
-
-        int numCoords = size * count;
-        if (this.buffer[type] == null
-            || this.buffer[type].capacity() < numCoords
-            || !(this.buffer[type] instanceof FloatBuffer))
-        {
-            this.buffer[type] = Buffers.newDirectFloatBuffer(numCoords);
-        }
-
-        this.bufferCopy(src, srcPos, (FloatBuffer) this.buffer[type], 0, numCoords);
-    }
-
-    // version using float buffer instead of array
-    public void setData(int type, int size, int stride, int count, FloatBuffer src)
-    {
-        this.size[type] = size;
-        this.glType[type] = GL.GL_FLOAT;
-        this.stride[type] = stride;
-        this.count[type] = count;
-
-        int numCoords = size * count;
-        if (this.buffer[type] == null
-            || this.buffer[type].capacity() < numCoords
-            || !(this.buffer[type] instanceof FloatBuffer))
-        {
-            this.buffer[type] = src;
-        }
-    }
-
-    public void setElementData(int mode, int count, int[] src)
-    {
-        this.setMode(ELEMENT, mode);
-        this.setData(ELEMENT, 1, GL.GL_UNSIGNED_INT, 0, count, src, 0);
-    }
-
-    // version using buffer instead of array
-    public void setElementData(int mode, int count, IntBuffer src)
-    {
-        this.setMode(ELEMENT, mode);
-        this.buffer[ELEMENT] = src;
-        this.size[ELEMENT] = 1;
-        this.glType[ELEMENT] = GL.GL_UNSIGNED_INT;
-        this.stride[ELEMENT] = 0;
-        this.count[ELEMENT] = count;
-    }
-
-    public void setVertexData(int count, float[] src)
-    {
-        this.setData(VERTEX, 3, 0, count, src, 0);
-    }
-
-    // version using float buffer
-    public void setVertexData(int count, FloatBuffer src)
-    {
-        this.buffer[VERTEX] = src;
-        this.size[VERTEX] = 3;
-        this.glType[VERTEX] = GL.GL_FLOAT;
-        this.stride[VERTEX] = 0;
-        this.count[VERTEX] = count;
-    }
-
-    public void setNormalData(int count, float[] src)
-    {
-        this.setData(NORMAL, 3, 0, count, src, 0);
-    }
-
-    // version using float buffer
-    public void setNormalData(int count, FloatBuffer src)
-    {
-        this.buffer[NORMAL] = src;
-        this.size[NORMAL] = 3;
-        this.glType[NORMAL] = GL.GL_FLOAT;
-        this.stride[NORMAL] = 0;
-        this.count[NORMAL] = count;
-    }
-
-    public void setTextureCoordData(int count, float[] src)
-    {
-        this.setData(TEXTURE, 2, 0, count, src, 0);
-    }
-
-    // version using float buffer
-    public void setTextureCoordData(int count, FloatBuffer src)
-    {
-        this.buffer[TEXTURE] = src;
-        this.size[NORMAL] = 2;
-        this.glType[NORMAL] = GL.GL_FLOAT;
-        this.stride[NORMAL] = 0;
-        this.count[NORMAL] = count;
-    }
-
-    public void clear(int type)
-    {
-        this.mode[type] = 0;
-        this.count[type] = 0;
-        this.size[type] = 0;
-        this.glType[type] = 0;
-        this.stride[type] = 0;
-        this.buffer[type] = null;
-    }
-
-    public long getSizeInBytes()
-    {
-        return this.bufferSize(ELEMENT) + this.bufferSize(VERTEX) + this.bufferSize(NORMAL);
-    }
-
-    private long bufferSize(int bufferType)
-    {
-        long size = 0L;
-        if (this.buffer[bufferType] != null)
-            size = this.sizeOf(this.glType[bufferType]) * this.buffer[bufferType].capacity();
-        return size;
-    }
-
-    private long sizeOf(int glType)
-    {
-        long size = 0L;
-        switch (glType)
-        {
-            case GL2.GL_BYTE:
-                size = 1L;
-                break;
-            case GL2.GL_SHORT:
-            case GL2.GL_UNSIGNED_SHORT:
-                size = 2L;
-                break;
-            case GL2.GL_INT:
-            case GL2.GL_UNSIGNED_INT:
-            case GL2.GL_FLOAT:
-                size = 4L;
-                break;
-            case GL2.GL_DOUBLE:
-                size = 8L;
-                break;
-        }
-        return size;
-    }
-
-    private void bufferCopy(int[] src, int srcPos, IntBuffer dest, int destPos, int length)
-    {
-        dest.position(destPos);
-        dest.put(src, srcPos, length);
-        dest.position(destPos);
-    }
-
-    private void bufferCopy(float[] src, int srcPos, FloatBuffer dest, int destPos, int length)
-    {
-        dest.position(destPos);
-        dest.put(src, srcPos, length);
-        dest.position(destPos);
     }
 }

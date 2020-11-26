@@ -22,12 +22,13 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: Polygons.java 2291 2014-08-30 21:38:47Z tgaskins $
  */
-public class Polygons extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class Polygons extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Polygons", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             // Add a dragger to enable shape dragging
@@ -53,24 +54,24 @@ public class Polygons extends ApplicationTemplate
 
             // Create a polygon, set some of its properties and set its attributes.
             ArrayList<Position> pathPositions = new ArrayList<>();
-            pathPositions.add(Position.fromDegrees(28, -106, 3e4));
-            pathPositions.add(Position.fromDegrees(35, -104, 3e4));
-            pathPositions.add(Position.fromDegrees(35, -107, 9e4));
-            pathPositions.add(Position.fromDegrees(28, -107, 9e4));
-            pathPositions.add(Position.fromDegrees(28, -106, 3e4));
+            pathPositions.add(Position.fromDegrees(28, -106, 3.0e4));
+            pathPositions.add(Position.fromDegrees(35, -104, 3.0e4));
+            pathPositions.add(Position.fromDegrees(35, -107, 9.0e4));
+            pathPositions.add(Position.fromDegrees(28, -107, 9.0e4));
+            pathPositions.add(Position.fromDegrees(28, -106, 3.0e4));
             Polygon pgon = new Polygon(pathPositions);
             pgon.setValue(AVKey.DISPLAY_NAME, "Has a hole\nRotated -170\u00b0");
 
             pathPositions.clear();
-            pathPositions.add(Position.fromDegrees(29, -106.4, 4e4));
-            pathPositions.add(Position.fromDegrees(30, -106.4, 4e4));
-            pathPositions.add(Position.fromDegrees(29, -106.8, 7e4));
-            pathPositions.add(Position.fromDegrees(29, -106.4, 4e4));
+            pathPositions.add(Position.fromDegrees(29, -106.4, 4.0e4));
+            pathPositions.add(Position.fromDegrees(30, -106.4, 4.0e4));
+            pathPositions.add(Position.fromDegrees(29, -106.8, 7.0e4));
+            pathPositions.add(Position.fromDegrees(29, -106.4, 4.0e4));
             pgon.addInnerBoundary(pathPositions);
             pgon.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pgon.setAttributes(normalAttributes);
             pgon.setHighlightAttributes(highlightAttributes);
-            pgon.setRotation(-170d);
+            pgon.setRotation(-170.0d);
             layer.addRenderable(pgon);
 
 //            ArrayList<Position> pathLocations = new ArrayList<Position>();
@@ -133,10 +134,5 @@ public class Polygons extends ApplicationTemplate
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Polygons", AppFrame.class);
     }
 }

@@ -16,36 +16,28 @@ import java.util.*;
  * @author dcollins
  * @version $Id: ShapeUtils.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ShapeUtils
-{
-    public static double getViewportScaleFactor(WorldWindow wwd)
-    {
+public class ShapeUtils {
+    public static double getViewportScaleFactor(WorldWindow wwd) {
         return ((OrbitView) wwd.getView()).getZoom() / 8.0;
     }
 
-    public static Position getNewShapePosition(WorldWindow wwd)
-    {
+    public static Position getNewShapePosition(WorldWindow wwd) {
         Line ray = new Line(wwd.getView().getEyePoint(), wwd.getView().getForwardVector());
         Intersection[] intersection = wwd.getSceneController().getTerrain().intersect(ray);
 
-        if (intersection != null && intersection.length != 0)
-        {
+        if (intersection != null && intersection.length != 0) {
             return wwd.getModel().getGlobe().computePositionFromPoint(intersection[0].getIntersectionPoint());
         }
-        else if (wwd.getView() instanceof OrbitView)
-        {
+        else if (wwd.getView() instanceof OrbitView) {
             return ((OrbitView) wwd.getView()).getCenterPosition();
         }
 
         return Position.ZERO;
     }
 
-    public static Angle getNewShapeHeading(WorldWindow wwd, boolean matchViewHeading)
-    {
-        if (matchViewHeading)
-        {
-            if (wwd.getView() instanceof OrbitView)
-            {
+    public static Angle getNewShapeHeading(WorldWindow wwd, boolean matchViewHeading) {
+        if (matchViewHeading) {
+            if (wwd.getView() instanceof OrbitView) {
                 return wwd.getView().getHeading();
             }
         }
@@ -54,8 +46,7 @@ public class ShapeUtils
     }
 
     public static List<LatLon> createSquareInViewport(WorldWindow wwd, Position position, Angle heading,
-        double sizeInMeters)
-    {
+        double sizeInMeters) {
         Globe globe = wwd.getModel().getGlobe();
         Matrix transform = Matrix.IDENTITY;
         transform = transform.multiply(globe.computeSurfaceOrientationAtPosition(position));
@@ -72,8 +63,7 @@ public class ShapeUtils
             };
 
         LatLon[] locations = new LatLon[points.length];
-        for (int i = 0; i < locations.length; i++)
-        {
+        for (int i = 0; i < locations.length; i++) {
             locations[i] = new LatLon(globe.computePositionFromPoint(points[i]));
         }
 
@@ -81,8 +71,7 @@ public class ShapeUtils
     }
 
     public static List<Position> createPositionSquareInViewport(WorldWindow wwd, Position position, Angle heading,
-        double sizeInMeters)
-    {
+        double sizeInMeters) {
         Globe globe = wwd.getModel().getGlobe();
         Matrix transform = Matrix.IDENTITY;
         transform = transform.multiply(globe.computeSurfaceOrientationAtPosition(position));
@@ -100,8 +89,7 @@ public class ShapeUtils
             };
 
         Position[] locations = new Position[points.length];
-        for (int i = 0; i < locations.length; i++)
-        {
+        for (int i = 0; i < locations.length; i++) {
             locations[i] = globe.computePositionFromPoint(points[i]);
         }
 

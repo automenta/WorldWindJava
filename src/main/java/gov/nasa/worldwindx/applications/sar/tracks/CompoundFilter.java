@@ -7,38 +7,35 @@ package gov.nasa.worldwindx.applications.sar.tracks;
 
 import gov.nasa.worldwind.util.Logging;
 
+import java.io.File;
+import java.io.FileFilter;
+
 /**
  * @author dcollins
  * @version $Id: CompoundFilter.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class CompoundFilter extends javax.swing.filechooser.FileFilter implements java.io.FileFilter
-{
-    private final java.io.FileFilter[] filters;
+public class CompoundFilter extends javax.swing.filechooser.FileFilter implements FileFilter {
+    private final FileFilter[] filters;
     private final String description;
 
-    public CompoundFilter(java.io.FileFilter[] filters, String description)
-    {
-        this.filters = new java.io.FileFilter[filters.length];
+    public CompoundFilter(FileFilter[] filters, String description) {
+        this.filters = new FileFilter[filters.length];
         System.arraycopy(filters, 0, this.filters, 0, filters.length);
         this.description = description;
     }
 
-    public java.io.FileFilter[] getFilters()
-    {
-        java.io.FileFilter[] copy = new java.io.FileFilter[this.filters.length];
+    public FileFilter[] getFilters() {
+        FileFilter[] copy = new FileFilter[this.filters.length];
         System.arraycopy(this.filters, 0, copy, 0, this.filters.length);
         return copy;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return this.description;
     }
 
-    public boolean accept(java.io.File file)
-    {
-        if (file == null)
-        {
+    public boolean accept(File file) {
+        if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -47,8 +44,7 @@ public class CompoundFilter extends javax.swing.filechooser.FileFilter implement
         if (file.isDirectory())
             return true;
 
-        for (java.io.FileFilter filter : this.filters)
-        {
+        for (FileFilter filter : this.filters) {
             if (filter.accept(file))
                 return true;
         }

@@ -23,30 +23,30 @@ import java.util.zip.*;
  * @author tag
  * @version $Id: KMZFile.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMZFile extends XMLDoc
-{
-    /** The {@link ZipFile} reference specified to the constructor. */
-    protected ZipFile zipFile;
-
-    /** A mapping of the files in the KMZ file to their location in the temporary directory. */
+public class KMZFile extends XMLDoc {
+    /**
+     * A mapping of the files in the KMZ file to their location in the temporary directory.
+     */
     protected final Map<String, File> files = new HashMap<>();
-
-    /** The directory to hold files copied from the KMZ file. The directory and the files copied there are temporary. */
+    /**
+     * The {@link ZipFile} reference specified to the constructor.
+     */
+    protected ZipFile zipFile;
+    /**
+     * The directory to hold files copied from the KMZ file. The directory and the files copied there are temporary.
+     */
     protected File tempDir;
 
     /**
      * Construct a KMZFile instance.
      *
      * @param file path to the KMZ file.
-     *
      * @throws IOException              if an error occurs while attempting to query or open the file.
      * @throws IllegalArgumentException if the specified file is null.
      * @throws ZipException             if a Zip error occurs.
      */
-    public KMZFile(File file) throws IOException
-    {
-        if (file == null)
-        {
+    public KMZFile(File file) throws IOException {
+        if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -60,8 +60,7 @@ public class KMZFile extends XMLDoc
      *
      * @return the file specified to the constructor, as a <code>ZipFile</code>.
      */
-    public ZipFile getZipFile()
-    {
+    public ZipFile getZipFile() {
         return this.zipFile;
     }
 
@@ -69,16 +68,13 @@ public class KMZFile extends XMLDoc
      * Returns an {@link InputStream} to the first KML file in the KMZ file.
      *
      * @return an input stream positioned to the first KML file in the KMZ file, or null if the KMZ file does not
-     *         contain a KML file.
+     * contain a KML file.
      */
-    public synchronized InputStream getInputStream() throws IOException
-    {
+    public synchronized InputStream getInputStream() throws IOException {
         Enumeration<? extends ZipEntry> zipEntries = this.zipFile.entries();
-        while (zipEntries.hasMoreElements())
-        {
+        while (zipEntries.hasMoreElements()) {
             ZipEntry entry = zipEntries.nextElement();
-            if (entry.getName().toLowerCase().endsWith(".kml"))
-            {
+            if (entry.getName().toLowerCase().endsWith(".kml")) {
                 return this.zipFile.getInputStream(entry);
             }
         }
@@ -94,32 +90,26 @@ public class KMZFile extends XMLDoc
      * references like this: <i>../other.kmz/file.png</i>.
      *
      * @param path the path of the requested file.
-     *
      * @return an input stream positioned to the start of the requested file, or null if the file does not exist or the
-     *         specified path is absolute.
-     *
+     * specified path is absolute.
      * @throws IllegalArgumentException if the path is null.
      * @throws IOException              if an error occurs while attempting to create or open the input stream.
      */
-    public synchronized InputStream getSupportFileStream(String path) throws IOException
-    {
+    public synchronized InputStream getSupportFileStream(String path) throws IOException {
         // This method is called by the native WebView implementation to resolve resources in KMZ balloons. It may
         // not perform any synchronization with the EDT (such as calling invokeAndWait), or it will introduce a
         // potential deadlock when called by the WebView's native UI thread.
 
-        if (path == null)
-        {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Enumeration<? extends ZipEntry> zipEntries = this.zipFile.entries();
-        while (zipEntries.hasMoreElements())
-        {
+        while (zipEntries.hasMoreElements()) {
             ZipEntry entry = zipEntries.nextElement();
-            if (entry.getName().equals(path))
-            {
+            if (entry.getName().equals(path)) {
                 return this.zipFile.getInputStream(entry);
             }
         }
@@ -135,10 +125,8 @@ public class KMZFile extends XMLDoc
      * references like this: <i>../other.kmz/file.png</i>. // TODO
      *
      * @param path the path of the requested file.
-     *
      * @return an absolute path to the requested file, or null if the file does not exist or the specified path is
-     *         absolute.
-     *
+     * absolute.
      * @throws IllegalArgumentException if the path is null.
      * @throws IOException              if an error occurs while attempting to create a temporary file.
      */
@@ -167,7 +155,8 @@ public class KMZFile extends XMLDoc
             ZipEntry entry = zipEntries.nextElement();
             if (entry.getName().equals(path)) {
                 requestedFilePath = this.copyEntryToTempDir(entry);
-            } else {
+            }
+            else {
                 Path entryFolder = Path.of(entry.getName()).getParent();
                 entryFolder = (entryFolder == null) ? root : entryFolder;
                 if (entryFolder.equals(requestedFolder)) {
@@ -183,13 +172,10 @@ public class KMZFile extends XMLDoc
      * Copies a zip entry to a temporary file. This method should only be called by a synchronized public method.
      *
      * @param entry the entry to copy.
-     *
      * @return the path to the file, or null if the entry is a directory or the temporary directory cannot be created.
-     *
      * @throws IOException if an error occurs during the copy.
      */
-    protected String copyEntryToTempDir(ZipEntry entry) throws IOException
-    {
+    protected String copyEntryToTempDir(ZipEntry entry) throws IOException {
         if (entry.isDirectory())
             return null;
 

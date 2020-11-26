@@ -14,21 +14,22 @@ import java.awt.*;
 import java.util.Arrays;
 
 /**
- * Illustrates how to enable shape dragging in WorldWind by using a <code>{@link gov.nasa.worldwind.util.BasicDragger}</code>. This creates
- * multiple shapes on the surface terrain that can be dragged to a new location on the terrain. The shapes retain their
- * form when dragged.
+ * Illustrates how to enable shape dragging in WorldWind by using a <code>{@link BasicDragger}</code>.
+ * This creates multiple shapes on the surface terrain that can be dragged to a new location on the terrain. The shapes
+ * retain their form when dragged.
  *
  * @author dcollins
  * @version $Id: DraggingShapes.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class DraggingShapes extends ApplicationTemplate
-{
-    protected static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+public class DraggingShapes extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Dragging Shapes", AppFrame.class);
+    }
+
+    protected static class AppFrame extends ApplicationTemplate.AppFrame {
         protected static final String SURFACE_POLYGON_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/georss.png";
 
-        public AppFrame()
-        {
+        public AppFrame() {
             // Add a basic dragger to the WorldWindow's select listeners to enable shape dragging.
             this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
 
@@ -36,8 +37,7 @@ public class DraggingShapes extends ApplicationTemplate
             this.makeShapes();
         }
 
-        protected void makeShapes()
-        {
+        protected void makeShapes() {
             RenderableLayer layer = new RenderableLayer();
             layer.setName("Surface Shapes");
 
@@ -93,7 +93,7 @@ public class DraggingShapes extends ApplicationTemplate
             attrs.setOutlineOpacity(0.8);
             attrs.setOutlineWidth(3);
 
-            shape = new SurfaceEllipse(LatLon.fromDegrees(38, -104), 1.5e5, 1e5, Angle.fromDegrees(15));
+            shape = new SurfaceEllipse(LatLon.fromDegrees(38, -104), 1.5e5, 1.0e5, Angle.fromDegrees(15));
             shape.setAttributes(attrs);
             layer.addRenderable(shape);
 
@@ -105,12 +105,12 @@ public class DraggingShapes extends ApplicationTemplate
             attrs.setOutlineOpacity(0.8);
             attrs.setOutlineWidth(3);
 
-            shape = new SurfaceCircle(LatLon.fromDegrees(36, -104), 1e5);
+            shape = new SurfaceCircle(LatLon.fromDegrees(36, -104), 1.0e5);
             shape.setAttributes(attrs);
             layer.addRenderable(shape);
 
             // Surface circle over the North Pole
-            shape = new SurfaceCircle(LatLon.fromDegrees(90, 0), 1e6);
+            shape = new SurfaceCircle(LatLon.fromDegrees(90, 0), 1.0e6);
             shape.setAttributes(attrs);
             layer.addRenderable(shape);
 
@@ -122,7 +122,7 @@ public class DraggingShapes extends ApplicationTemplate
             attrs.setOutlineOpacity(0.8);
             attrs.setOutlineWidth(3);
 
-            shape = new SurfaceQuad(LatLon.fromDegrees(42, -104), 1e5, 1.3e5, Angle.fromDegrees(20));
+            shape = new SurfaceQuad(LatLon.fromDegrees(42, -104), 1.0e5, 1.3e5, Angle.fromDegrees(20));
             shape.setAttributes(attrs);
             layer.addRenderable(shape);
 
@@ -134,7 +134,7 @@ public class DraggingShapes extends ApplicationTemplate
             attrs.setOutlineOpacity(0.8);
             attrs.setOutlineWidth(3);
 
-            shape = new SurfaceSquare(LatLon.fromDegrees(45, -104), 1e5);
+            shape = new SurfaceSquare(LatLon.fromDegrees(45, -104), 1.0e5);
             shape.setAttributes(attrs);
             layer.addRenderable(shape);
 
@@ -183,10 +183,5 @@ public class DraggingShapes extends ApplicationTemplate
             // Add the layer to the model and update the layer panel.
             insertBeforeCompass(this.getWwd(), layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Dragging Shapes", AppFrame.class);
     }
 }

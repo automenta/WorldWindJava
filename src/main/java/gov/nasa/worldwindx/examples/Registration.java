@@ -10,15 +10,9 @@ public class Registration {
     public Registration(AVList attrs) {
         attrs.getEntries().forEach((e) -> {
             switch (e.getKey()) {
-                case "registration_id":
-                    this.registration_id = e.getValue().toString();
-                    break;
-                case "registration_location":
-                    this.registration_location = e.getValue().toString();
-                    break;
-                default:
-                    System.out.println("Unknown attribute.");
-                    break;
+                case "registration_id" -> this.registration_id = e.getValue().toString();
+                case "registration_location" -> this.registration_location = e.getValue().toString();
+                default -> System.out.println("Unknown attribute.");
             }
         });
     }

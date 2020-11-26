@@ -7,6 +7,5 @@
 /**
  * <p>
  * Provides classes for parsing the Atom namespace.</p>
- *
  */
 package gov.nasa.worldwind.util.xml.atom;

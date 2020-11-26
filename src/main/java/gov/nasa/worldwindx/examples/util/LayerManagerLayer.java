@@ -23,17 +23,21 @@ import java.awt.*;
  * @author Patrick Murris
  * @version $Id: LayerManagerLayer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class LayerManagerLayer extends RenderableLayer implements SelectListener
-{
+public class LayerManagerLayer extends RenderableLayer implements SelectListener {
+    protected final Color dragColor = Color.RED;
     protected WorldWindow wwd;
     protected boolean update = true;
-
-    private ScreenAnnotation annotation;
     protected Dimension size;
+    protected boolean draggingComponent = false;
+    protected boolean draggingLayer = false;
+    protected Point dragRefCursorPoint;
+    protected Point dragRefPoint;
+    protected int dragRefIndex = -1;
+    private ScreenAnnotation annotation;
     private int selectedIndex = -1;
     private Color color = Color.decode("#b0b0b0");
     private Color highlightColor = Color.decode("#ffffff");
-    private double minOpacity = .6;
+    private double minOpacity = 0.6;
     private double maxOpacity = 1;
     private char layerEnabledSymbol = '\u25a0';
     private char layerDisabledSymbol = '\u25a1';
@@ -43,22 +47,13 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
     private String position = AVKey.SOUTHWEST; // TODO: make configurable
     private Vec4 locationCenter = null;
     private Vec4 locationOffset = null;
-
     // Dragging
     private boolean componentDragEnabled = true;
     private boolean layerDragEnabled = true;
     private boolean snapToCorners = true;
-    protected boolean draggingComponent = false;
-    protected boolean draggingLayer = false;
-    protected Point dragRefCursorPoint;
-    protected Point dragRefPoint;
-    protected int dragRefIndex = -1;
-    protected final Color dragColor = Color.RED;
 
-    public LayerManagerLayer(WorldWindow wwd)
-    {
-        if (wwd == null)
-        {
+    public LayerManagerLayer(WorldWindow wwd) {
+        if (wwd == null) {
             String msg = Logging.getMessage("nullValue.WorldWindow");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -68,8 +63,11 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         this.initialize();
     }
 
-    protected void initialize()
-    {
+    protected static String encodeHTMLColor(Color c) {
+        return String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
+    }
+
+    protected void initialize() {
         // Set up screen annotation that will display the layer list
         this.annotation = new ScreenAnnotation("", new Point(0, 0));
 
@@ -83,7 +81,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         this.annotation.getAttributes().setFont(this.font);
         this.annotation.getAttributes().setHighlightScale(1);
         this.annotation.getAttributes().setTextColor(Color.WHITE);
-        this.annotation.getAttributes().setBackgroundColor(new Color(0f, 0f, 0f, .5f));
+        this.annotation.getAttributes().setBackgroundColor(new Color(0.0f, 0.0f, 0.0f, 0.5f));
         this.annotation.getAttributes().setInsets(new Insets(6, 6, 6, 6));
         this.annotation.getAttributes().setBorderWidth(1);
         this.addRenderable(this.annotation);
@@ -97,19 +95,16 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the <code>ScreenAnnotation</code> used to display the layer list.
      */
-    public ScreenAnnotation getAnnotation()
-    {
+    public ScreenAnnotation getAnnotation() {
         return this.annotation;
     }
 
-    public void setEnabled(boolean enabled)
-    {
-        this.setMinimized(!enabled);
+    public boolean isEnabled() {
+        return !this.isMinimized();
     }
 
-    public boolean isEnabled()
-    {
-        return !this.isMinimized();
+    public void setEnabled(boolean enabled) {
+        this.setMinimized(!enabled);
     }
 
     /**
@@ -117,8 +112,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the <code>Font</code> used to draw the layer list text.
      */
-    public Font getFont()
-    {
+    public Font getFont() {
         return this.font;
     }
 
@@ -127,17 +121,14 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param font the <code>Font</code> used to draw the layer list text.
      */
-    public void setFont(Font font)
-    {
-        if (font == null)
-        {
+    public void setFont(Font font) {
+        if (font == null) {
             String message = Logging.getMessage("nullValue.FontIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (!this.font.equals(font))
-        {
+        if (!this.font.equals(font)) {
             this.font = font;
             this.annotation.getAttributes().setFont(font);
             this.update();
@@ -149,8 +140,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the <code>Color</code> used to draw the layer names and the frame border when they are not highlighted.
      */
-    public Color getColor()
-    {
+    public Color getColor() {
         return this.color;
     }
 
@@ -160,10 +150,8 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      * @param color the <code>Color</code> used to draw the layer names and the frame border when they are not
      *              highlighted.
      */
-    public void setColor(Color color)
-    {
-        if (color == null)
-        {
+    public void setColor(Color color) {
+        if (color == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -178,8 +166,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the <code>Color</code> used to draw the layer names and the frame border when they are highlighted.
      */
-    public Color getHighlightColor()
-    {
+    public Color getHighlightColor() {
         return this.highlightColor;
     }
 
@@ -188,10 +175,8 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param color the <code>Color</code> used to draw the layer names and the frame border when they are highlighted.
      */
-    public void setHighlightColor(Color color)
-    {
-        if (color == null)
-        {
+    public void setHighlightColor(Color color) {
+        if (color == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -206,8 +191,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the opacity applied to the layer list when the cursor is outside it's frame.
      */
-    public double getMinOpacity()
-    {
+    public double getMinOpacity() {
         return this.minOpacity;
     }
 
@@ -217,8 +201,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param opacity the opacity applied to the layer list when the cursor is outside it's frame.
      */
-    public void setMinOpacity(double opacity)
-    {
+    public void setMinOpacity(double opacity) {
         this.minOpacity = opacity;
         this.update();
     }
@@ -228,8 +211,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the opacity applied to the layer list when the cursor is inside it's frame.
      */
-    public double getMaxOpacity()
-    {
+    public double getMaxOpacity() {
         return this.maxOpacity;
     }
 
@@ -239,8 +221,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param opacity the opacity applied to the layer list when the cursor is inside it's frame.
      */
-    public void setMaxOpacity(double opacity)
-    {
+    public void setMaxOpacity(double opacity) {
         this.maxOpacity = opacity;
         this.update();
     }
@@ -250,8 +231,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the character used to denote an enabled layer.
      */
-    public char getLayerEnabledSymbol()
-    {
+    public char getLayerEnabledSymbol() {
         return this.layerEnabledSymbol;
     }
 
@@ -260,8 +240,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param c the character used to denote an enabled layer.
      */
-    public void setLayerEnabledSymbol(char c)
-    {
+    public void setLayerEnabledSymbol(char c) {
         this.layerEnabledSymbol = c;
         this.update();
     }
@@ -271,8 +250,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the character used to denote a disabled layer.
      */
-    public char getLayerDisabledSymbol()
-    {
+    public char getLayerDisabledSymbol() {
         return this.layerDisabledSymbol;
     }
 
@@ -281,8 +259,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param c the character used to denote a disabled layer.
      */
-    public void setLayerDisabledSymbol(char c)
-    {
+    public void setLayerDisabledSymbol(char c) {
         this.layerDisabledSymbol = c;
         this.update();
     }
@@ -291,10 +268,9 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      * Get the layer manager frame offset from the viewport borders.
      *
      * @return the number of pixels to offset the layer manager frame from the borders indicated by {@link
-     *         #setPosition(String)}.
+     * #setPosition(String)}.
      */
-    public int getBorderWidth()
-    {
+    public int getBorderWidth() {
         return borderWidth;
     }
 
@@ -304,8 +280,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      * @param borderWidth the number of pixels to offset the layer manager frame from the borders indicated by {@link
      *                    #setPosition(String)}.
      */
-    public void setBorderWidth(int borderWidth)
-    {
+    public void setBorderWidth(int borderWidth) {
         this.borderWidth = borderWidth;
         this.update();
     }
@@ -315,8 +290,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the current layer manager frame position
      */
-    public String getPosition()
-    {
+    public String getPosition() {
         return position;
     }
 
@@ -327,10 +301,8 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param position the desired layer manager position
      */
-    public void setPosition(String position)
-    {
-        if (position == null)
-        {
+    public void setPosition(String position) {
+        if (position == null) {
             String message = Logging.getMessage("nullValue.ScreenPositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -344,8 +316,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the current location center. May be null.
      */
-    public Vec4 getLocationCenter()
-    {
+    public Vec4 getLocationCenter() {
         return locationCenter;
     }
 
@@ -357,12 +328,10 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      * non-null location offset has been specified (see {@link #setLocationOffset(Vec4)}).
      *
      * @param locationCenter the location center. May be null.
-     *
      * @see #setPosition(String)
-     * @see #setLocationOffset(gov.nasa.worldwind.geom.Vec4)
+     * @see #setLocationOffset(Vec4)
      */
-    public void setLocationCenter(Vec4 locationCenter)
-    {
+    public void setLocationCenter(Vec4 locationCenter) {
         this.locationCenter = locationCenter;
         this.update();
     }
@@ -372,8 +341,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the location offset. Will be null if no offset has been specified.
      */
-    public Vec4 getLocationOffset()
-    {
+    public Vec4 getLocationOffset() {
         return locationOffset;
     }
 
@@ -383,12 +351,10 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      * @param locationOffset the number of pixels to shift the layer manager frame from its specified screen position. A
      *                       positive X value shifts the frame to the right. A positive Y value shifts the frame up. If
      *                       null, no offset is applied. The default offset is null.
-     *
-     * @see #setLocationCenter(gov.nasa.worldwind.geom.Vec4)
+     * @see #setLocationCenter(Vec4)
      * @see #setPosition(String)
      */
-    public void setLocationOffset(Vec4 locationOffset)
-    {
+    public void setLocationOffset(Vec4 locationOffset) {
         this.locationOffset = locationOffset;
         this.update();
     }
@@ -399,8 +365,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return <code>true</code> if the layer list frame is minimized.
      */
-    public boolean isMinimized()
-    {
+    public boolean isMinimized() {
         return this.minimized;
     }
 
@@ -410,8 +375,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param minimized <code>true</code> if the layer list frame sould be minimized.
      */
-    public void setMinimized(boolean minimized)
-    {
+    public void setMinimized(boolean minimized) {
         this.minimized = minimized;
         this.update();
     }
@@ -425,8 +389,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return <code>true</code> if the layer list can be moved or dragged with the mouse cursor.
      */
-    public boolean isComponentDragEnabled()
-    {
+    public boolean isComponentDragEnabled() {
         return this.componentDragEnabled;
     }
 
@@ -439,8 +402,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param enabled <code>true</code> if the layer list can be moved or dragged with the mouse cursor.
      */
-    public void setComponentDragEnabled(boolean enabled)
-    {
+    public void setComponentDragEnabled(boolean enabled) {
         this.componentDragEnabled = enabled;
     }
 
@@ -450,8 +412,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return <code>true</code> if a layer can be moved or dragged within the list.
      */
-    public boolean isLayerDragEnabled()
-    {
+    public boolean isLayerDragEnabled() {
         return this.layerDragEnabled;
     }
 
@@ -461,8 +422,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param enabled <code>true</code> if a layer can be moved or dragged within the list.
      */
-    public void setLayerDragEnabled(boolean enabled)
-    {
+    public void setLayerDragEnabled(boolean enabled) {
         this.layerDragEnabled = enabled;
     }
 
@@ -475,8 +435,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return <code>true</code> if the layer list snaps to the viewport sides and corners while being dragged.
      */
-    public boolean isSnapToCorners()
-    {
+    public boolean isSnapToCorners() {
         return this.snapToCorners;
     }
 
@@ -490,8 +449,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      * @param enabled <code>true</code> if the layer list should snaps to the viewport sides and corners while being
      *                dragged.
      */
-    public void setSnapToCorners(boolean enabled)
-    {
+    public void setSnapToCorners(boolean enabled) {
         this.snapToCorners = enabled;
     }
 
@@ -501,8 +459,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @return the selected layer index number or -1 if none is selected.
      */
-    public int getSelectedIndex()
-    {
+    public int getSelectedIndex() {
         return this.selectedIndex;
     }
 
@@ -512,8 +469,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param index the selected layer index number.
      */
-    public void setSelectedIndex(int index)
-    {
+    public void setSelectedIndex(int index) {
         this.selectedIndex = index;
         this.update();
     }
@@ -523,49 +479,39 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param event the current <code>SelectEvent</code>
      */
-    public void selected(SelectEvent event)
-    {
-        if (event.hasObjects() && event.getTopObject() == this.annotation)
-        {
+    public void selected(SelectEvent event) {
+        if (event.hasObjects() && event.getTopObject() == this.annotation) {
             boolean update = false;
             if (event.getEventAction().equals(SelectEvent.ROLLOVER)
-                || event.getEventAction().equals(SelectEvent.LEFT_CLICK))
-            {
+                || event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
                 // Highlight annotation
-                if (!this.annotation.getAttributes().isHighlighted())
-                {
+                if (!this.annotation.getAttributes().isHighlighted()) {
                     this.annotation.getAttributes().setHighlighted(true);
                     update = true;
                 }
                 // Check for text or url
                 PickedObject po = event.getTopPickedObject();
-                if (po.getValue(AVKey.URL) != null)
-                {
+                if (po.getValue(AVKey.URL) != null) {
                     // Set cursor hand on hyperlinks
                     ((Component) this.wwd).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     int i = Integer.parseInt((String) po.getValue(AVKey.URL));
                     // Select current hyperlink
-                    if (this.selectedIndex != i)
-                    {
+                    if (this.selectedIndex != i) {
                         this.selectedIndex = i;
                         update = true;
                     }
                     // Enable/disable layer on left click
-                    if (event.getEventAction().equals(SelectEvent.LEFT_CLICK))
-                    {
+                    if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
                         LayerList layers = wwd.getModel().getLayers();
-                        if (i >= 0 && i < layers.size())
-                        {
+                        if (i >= 0 && i < layers.size()) {
                             layers.get(i).setEnabled(!layers.get(i).isEnabled());
                             update = true;
                         }
                     }
                 }
-                else
-                {
+                else {
                     // Unselect if not on an hyperlink
-                    if (this.selectedIndex != -1)
-                    {
+                    if (this.selectedIndex != -1) {
                         this.selectedIndex = -1;
                         update = true;
                     }
@@ -577,11 +523,9 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
                 }
             }
             if (event.getEventAction().equals(SelectEvent.DRAG)
-                || event.getEventAction().equals(SelectEvent.DRAG_END))
-            {
+                || event.getEventAction().equals(SelectEvent.DRAG_END)) {
                 // Handle dragging
-                if (this.isComponentDragEnabled() || this.isLayerDragEnabled())
-                {
+                if (this.isComponentDragEnabled() || this.isLayerDragEnabled()) {
                     boolean wasDraggingLayer = this.draggingLayer;
                     this.drag(event);
                     // Update list if dragging a layer, otherwise just redraw the WorldWindow
@@ -596,8 +540,8 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
             if (update)
                 this.update();
         }
-        else if (event.getEventAction().equals(SelectEvent.ROLLOVER) && this.annotation.getAttributes().isHighlighted())
-        {
+        else if (event.getEventAction().equals(SelectEvent.ROLLOVER)
+            && this.annotation.getAttributes().isHighlighted()) {
             // de-highlight annotation
             this.annotation.getAttributes().setHighlighted(false);
             ((Component) this.wwd).setCursor(Cursor.getDefaultCursor());
@@ -605,16 +549,12 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         }
     }
 
-    protected void drag(SelectEvent event)
-    {
-        if (event.getEventAction().equals(SelectEvent.DRAG))
-        {
+    protected void drag(SelectEvent event) {
+        if (event.getEventAction().equals(SelectEvent.DRAG)) {
             if ((this.isComponentDragEnabled() && this.selectedIndex == -1 && this.dragRefIndex == -1)
-                || this.draggingComponent)
-            {
+                || this.draggingComponent) {
                 // Dragging the whole list
-                if (!this.draggingComponent)
-                {
+                if (!this.draggingComponent) {
                     this.dragRefCursorPoint = event.getMouseEvent().getPoint();
                     this.dragRefPoint = this.annotation.getScreenPoint();
                     this.draggingComponent = true;
@@ -626,16 +566,13 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
                 this.moveTo(targetPoint);
                 event.consume();
             }
-            else if (this.isLayerDragEnabled())
-            {
+            else if (this.isLayerDragEnabled()) {
                 // Dragging a layer inside the list
-                if (!this.draggingLayer)
-                {
+                if (!this.draggingLayer) {
                     this.dragRefIndex = this.selectedIndex;
                     this.draggingLayer = true;
                 }
-                if (this.selectedIndex != -1 && this.dragRefIndex != -1 && this.dragRefIndex != this.selectedIndex)
-                {
+                if (this.selectedIndex != -1 && this.dragRefIndex != -1 && this.dragRefIndex != this.selectedIndex) {
                     // Move dragged layer
                     LayerList layers = this.wwd.getModel().getLayers();
                     int insertIndex = this.dragRefIndex > this.selectedIndex ?
@@ -649,16 +586,14 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
                 }
             }
         }
-        else if (event.getEventAction().equals(SelectEvent.DRAG_END))
-        {
+        else if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
             this.draggingComponent = false;
             this.draggingLayer = false;
             this.dragRefIndex = -1;
         }
     }
 
-    protected void moveTo(Point targetPoint)
-    {
+    protected void moveTo(Point targetPoint) {
         Point refPoint = this.annotation.getScreenPoint();
         if (this.locationOffset == null)
             this.locationOffset = Vec4.ZERO;
@@ -678,8 +613,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
             this.snapToCorners();
     }
 
-    protected void snapToCorners()
-    {
+    protected void snapToCorners() {
         // TODO: handle annotation scaling
         int width = this.size.width;
         int height = this.size.height;
@@ -696,30 +630,24 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
 
         // Adjust offset if position changed
         int x = 0, y = 0;
-        if (newPos.equals(this.getPosition()))
-        {
+        if (newPos.equals(this.getPosition())) {
             x = (int) this.locationOffset.x;
             y = (int) this.locationOffset.y;
         }
-        else
-        {
-            if (newPos.equals(AVKey.NORTHEAST))
-            {
+        else {
+            if (newPos.equals(AVKey.NORTHEAST)) {
                 x = refPoint.x - (viewport.width - width - this.borderWidth);
                 y = refPoint.y - (viewport.height - height - this.borderWidth);
             }
-            else if (newPos.equals(AVKey.SOUTHEAST))
-            {
+            else if (newPos.equals(AVKey.SOUTHEAST)) {
                 x = refPoint.x - (viewport.width - width - this.borderWidth);
                 y = refPoint.y - this.borderWidth;
             }
-            if (newPos.equals(AVKey.NORTHWEST))
-            {
+            if (newPos.equals(AVKey.NORTHWEST)) {
                 x = refPoint.x - this.borderWidth;
                 y = refPoint.y - (viewport.height - height - this.borderWidth);
             }
-            else if (newPos.equals(AVKey.SOUTHWEST))
-            {
+            else if (newPos.equals(AVKey.SOUTHWEST)) {
                 x = refPoint.x - this.borderWidth;
                 y = refPoint.y - this.borderWidth;
             }
@@ -733,9 +661,10 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         this.locationOffset = new Vec4(x, y, 0);
     }
 
-    /** Schedule the layer list for redrawing before the next render pass. */
-    public void update()
-    {
+    /**
+     * Schedule the layer list for redrawing before the next render pass.
+     */
+    public void update() {
         this.update = true;
         this.wwd.redraw();
     }
@@ -745,14 +674,12 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      * selected layer colors and opacity.
      *
      * @param dc the current {@link DrawContext}.
-     *
      * @see #setMinOpacity(double)
      * @see #setMaxOpacity(double)
-     * @see #setColor(java.awt.Color)
-     * @see #setHighlightColor(java.awt.Color)
+     * @see #setColor(Color)
+     * @see #setHighlightColor(Color)
      */
-    public void updateNow(DrawContext dc)
-    {
+    public void updateNow(DrawContext dc) {
         // Adjust annotation appearance to highlighted state
         this.highlight(this.annotation.getAttributes().isHighlighted());
 
@@ -774,16 +701,13 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      *
      * @param highlighted <code>true</code> if the annotation should appear highlighted.
      */
-    protected void highlight(boolean highlighted)
-    {
+    protected void highlight(boolean highlighted) {
         // Adjust border color and annotation opacity
-        if (highlighted)
-        {
+        if (highlighted) {
             this.annotation.getAttributes().setBorderColor(this.highlightColor);
             this.annotation.getAttributes().setOpacity(this.maxOpacity);
         }
-        else
-        {
+        else {
             this.annotation.getAttributes().setBorderColor(this.color);
             this.annotation.getAttributes().setOpacity(this.minOpacity);
         }
@@ -793,19 +717,15 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      * Compose the annotation text from the given <code>LayerList</code>.
      *
      * @param layers the <code>LayerList</code> to draw names from.
-     *
      * @return the annotation text to be displayed.
      */
-    protected String makeAnnotationText(LayerList layers)
-    {
+    protected String makeAnnotationText(Iterable<Layer> layers) {
         // Compose html text
         StringBuilder text = new StringBuilder();
         Color color;
         int i = 0;
-        for (Layer layer : layers)
-        {
-            if (!this.isMinimized() || layer == this)
-            {
+        for (Layer layer : layers) {
+            if (!this.isMinimized() || layer == this) {
                 color = (i == this.selectedIndex) ? this.highlightColor : this.color;
                 color = (i == this.dragRefIndex) ? dragColor : color;
                 text.append("<a href=\"");
@@ -825,13 +745,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         return text.toString();
     }
 
-    protected static String encodeHTMLColor(Color c)
-    {
-        return String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
-    }
-
-    public void render(DrawContext dc)
-    {
+    public void render(DrawContext dc) {
         if (this.update)
             this.updateNow(dc);
 
@@ -845,11 +759,9 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
      * #setLocationCenter(Vec4)}, and border distance from the viewport edges - see {@link #setBorderWidth(int)}.
      *
      * @param viewport the current <code>Viewport</code> rectangle.
-     *
      * @return the draw frame south-west corner screen location.
      */
-    protected Point computeLocation(Rectangle viewport)
-    {
+    protected Point computeLocation(Rectangle viewport) {
         // TODO: handle annotation scaling
         int width = this.size.width;
         int height = this.size.height;
@@ -857,29 +769,24 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
         int x;
         int y;
 
-        if (this.locationCenter != null)
-        {
+        if (this.locationCenter != null) {
             x = (int) this.locationCenter.x - width / 2;
             y = (int) this.locationCenter.y - height / 2;
         }
-        else if (this.position.equals(AVKey.NORTHEAST))
-        {
+        else if (this.position.equals(AVKey.NORTHEAST)) {
             x = (int) viewport.getWidth() - width - this.borderWidth;
             y = (int) viewport.getHeight() - height - this.borderWidth;
         }
-        else if (this.position.equals(AVKey.SOUTHEAST))
-        {
+        else if (this.position.equals(AVKey.SOUTHEAST)) {
             x = (int) viewport.getWidth() - width - this.borderWidth;
             //noinspection SuspiciousNameCombination
             y = this.borderWidth;
         }
-        else if (this.position.equals(AVKey.NORTHWEST))
-        {
+        else if (this.position.equals(AVKey.NORTHWEST)) {
             x = this.borderWidth;
             y = (int) viewport.getHeight() - height - this.borderWidth;
         }
-        else if (this.position.equals(AVKey.SOUTHWEST))
-        {
+        else if (this.position.equals(AVKey.SOUTHWEST)) {
             x = this.borderWidth;
             //noinspection SuspiciousNameCombination
             y = this.borderWidth;
@@ -890,8 +797,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
             y = (int) viewport.getHeight() - height - this.borderWidth;
         }
 
-        if (this.locationOffset != null)
-        {
+        if (this.locationOffset != null) {
             x += this.locationOffset.x;
             y += this.locationOffset.y;
         }
@@ -900,8 +806,7 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return Logging.getMessage("layers.LayerManagerLayer.Name");
     }
 }

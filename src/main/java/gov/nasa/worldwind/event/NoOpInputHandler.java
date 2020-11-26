@@ -16,76 +16,58 @@ import java.awt.event.*;
  * @author tag
  * @version $Id: NoOpInputHandler.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class NoOpInputHandler extends WWObjectImpl implements InputHandler
-{
-    public void setEventSource(WorldWindow newWorldWindow)
-    {
-    }
-
-    public WorldWindow getEventSource()
-    {
+public class NoOpInputHandler extends WWObjectImpl implements InputHandler {
+    public WorldWindow getEventSource() {
         return null;
     }
 
-    public void setHoverDelay(int delay)
-    {
+    public void setEventSource(WorldWindow newWorldWindow) {
     }
 
-    public int getHoverDelay()
-    {
+    public int getHoverDelay() {
         return 0;
     }
 
-    public void addSelectListener(SelectListener listener)
-    {
+    public void setHoverDelay(int delay) {
     }
 
-    public void removeSelectListener(SelectListener listener)
-    {
+    public void addSelectListener(SelectListener listener) {
     }
 
-    public void addKeyListener(KeyListener listener)
-    {
+    public void removeSelectListener(SelectListener listener) {
     }
 
-    public void removeKeyListener(KeyListener listener)
-    {
+    public void addKeyListener(KeyListener listener) {
     }
 
-    public void addMouseListener(MouseListener listener)
-    {
+    public void removeKeyListener(KeyListener listener) {
     }
 
-    public void removeMouseListener(MouseListener listener)
-    {
+    public void addMouseListener(MouseListener listener) {
     }
 
-    public void addMouseMotionListener(MouseMotionListener listener)
-    {
+    public void removeMouseListener(MouseListener listener) {
     }
 
-    public void removeMouseMotionListener(MouseMotionListener listener)
-    {
+    public void addMouseMotionListener(MouseMotionListener listener) {
     }
 
-    public void addMouseWheelListener(MouseWheelListener listener)
-    {
+    public void removeMouseMotionListener(MouseMotionListener listener) {
     }
 
-    public void removeMouseWheelListener(MouseWheelListener listener)
-    {
+    public void addMouseWheelListener(MouseWheelListener listener) {
     }
 
-    public void dispose()
-    {
+    public void removeMouseWheelListener(MouseWheelListener listener) {
     }
 
-    public boolean isForceRedrawOnMousePressed()
-    {
+    public void dispose() {
+    }
+
+    public boolean isForceRedrawOnMousePressed() {
         return false;
     }
 
-    public void setForceRedrawOnMousePressed(boolean forceRedrawOnMousePressed)
-    {
+    public void setForceRedrawOnMousePressed(boolean forceRedrawOnMousePressed) {
     }
 }

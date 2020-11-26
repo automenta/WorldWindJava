@@ -21,39 +21,42 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: CircularRangeFan.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implements PreRenderable
-{
-    protected final static Offset LABEL_OFFSET = Offset.fromFraction(0d, 0d);
-
-    /** Position of the center of the range fan. */
-    protected Position position;
-    /** Rings that make up the range fan. */
-    protected final List<SurfaceCircle> rings;
-
-    /** Symbol drawn at the center of the range fan. */
-    protected TacticalSymbol symbol;
-    /** Attributes applied to the symbol. */
-    protected TacticalSymbolAttributes symbolAttributes;
-
+public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implements PreRenderable {
+    protected final static Offset LABEL_OFFSET = Offset.fromFraction(0.0d, 0.0d);
     /**
-     * Indicates the graphics supported by this class.
-     *
-     * @return List of masked SIDC strings that identify graphics that this class supports.
+     * Rings that make up the range fan.
      */
-    public static List<String> getSupportedGraphics()
-    {
-        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_WPNRF_CIRCLR);
-    }
+    protected final List<SurfaceCircle> rings;
+    /**
+     * Position of the center of the range fan.
+     */
+    protected Position position;
+    /**
+     * Symbol drawn at the center of the range fan.
+     */
+    protected TacticalSymbol symbol;
+    /**
+     * Attributes applied to the symbol.
+     */
+    protected TacticalSymbolAttributes symbolAttributes;
 
     /**
      * Create the range fan.
      *
      * @param sidc Symbol code the identifies the graphic.
      */
-    public CircularRangeFan(String sidc)
-    {
+    public CircularRangeFan(String sidc) {
         super(sidc);
         this.rings = new ArrayList<>();
+    }
+
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics() {
+        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_WPNRF_CIRCLR);
     }
 
     /**
@@ -61,8 +64,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
      *
      * @return The range fan center position.
      */
-    public Position getPosition()
-    {
+    public Position getPosition() {
         return this.getReferencePosition();
     }
 
@@ -71,88 +73,45 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
      *
      * @param position The new center position.
      */
-    public void setPosition(Position position)
-    {
+    public void setPosition(Position position) {
         this.moveTo(position);
     }
 
     /**
      * {@inheritDoc}
-     *
-     * @param positions Control points. This graphic uses only one control point, which determines the center of the
-     *                  circle.
      */
-    public void setPositions(Iterable<? extends Position> positions)
-    {
-        if (positions == null)
-        {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        Iterator<? extends Position> iterator = positions.iterator();
-        if (!iterator.hasNext())
-        {
-            String message = Logging.getMessage("generic.InsufficientPositions");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        this.position = iterator.next();
-
-        for (SurfaceCircle ring : this.rings)
-        {
-            ring.setCenter(this.position);
-        }
-
-        if (this.symbol != null)
-        {
-            this.symbol.setPosition(this.position);
-        }
-    }
-
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
-    public void setModifier(String modifier, Object value)
-    {
-        if (SymbologyConstants.DISTANCE.equals(modifier))
-        {
-            if (value instanceof Iterable)
-            {
+    public void setModifier(String modifier, Object value) {
+        if (SymbologyConstants.DISTANCE.equals(modifier)) {
+            if (value instanceof Iterable) {
                 //noinspection unchecked
                 this.setRadii((Iterable) value);
             }
-            else if (value instanceof Double)
-            {
+            else if (value instanceof Double) {
                 this.setRadii(Collections.singletonList((Double) value));
             }
         }
-        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String)
-        {
+        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String) {
             this.setSymbol((String) value);
         }
-        else
-        {
+        else {
             super.setModifier(modifier, value);
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Object getModifier(String modifier)
-    {
-        if (SymbologyConstants.DISTANCE.equals(modifier))
-        {
+    public Object getModifier(String modifier) {
+        if (SymbologyConstants.DISTANCE.equals(modifier)) {
             return this.getRadii();
         }
-        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier))
-        {
+        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier)) {
             return this.getSymbol();
         }
-        else
-        {
+        else {
             return super.getModifier(modifier);
         }
     }
@@ -162,11 +121,9 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
      *
      * @return List of radii, in meters. If there are no rings this returns an empty list.
      */
-    public List<Double> getRadii()
-    {
+    public List<Double> getRadii() {
         List<Double> radii = new ArrayList<>();
-        for (SurfaceCircle ring : this.rings)
-        {
+        for (SurfaceCircle ring : this.rings) {
             radii.add(ring.getRadius());
         }
         return radii;
@@ -177,18 +134,14 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
      *
      * @param radii List of radii, in meters. A circle will be created for each radius.
      */
-    public void setRadii(Iterable<Double> radii)
-    {
+    public void setRadii(Iterable<Double> radii) {
         this.rings.clear();
 
-        for (Double d : radii)
-        {
-            if (d != null)
-            {
+        for (Double d : radii) {
+            if (d != null) {
                 SurfaceCircle ring = this.createCircle();
                 ring.setRadius(d);
-                if (this.position != null)
-                {
+                if (this.position != null) {
                     ring.setCenter(this.position);
                 }
 
@@ -204,8 +157,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
      *
      * @return The symbol drawn at the center of the range fan. May be null.
      */
-    public String getSymbol()
-    {
+    public String getSymbol() {
         return this.symbol != null ? this.symbol.getIdentifier() : null;
     }
 
@@ -217,17 +169,14 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
      * @param sidc Identifier for a MIL-STD-2525C symbol to draw at the center of the range fan. May be null to indicate
      *             that no symbol is drawn.
      */
-    public void setSymbol(String sidc)
-    {
-        if (sidc != null)
-        {
+    public void setSymbol(String sidc) {
+        if (sidc != null) {
             if (this.symbolAttributes == null)
                 this.symbolAttributes = new BasicTacticalSymbolAttributes();
 
             this.symbol = this.createSymbol(sidc, this.getPosition(), this.symbolAttributes);
         }
-        else
-        {
+        else {
             // Null value indicates no symbol.
             this.symbol = null;
             this.symbolAttributes = null;
@@ -235,30 +184,62 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
         this.onModifierChanged();
     }
 
-    /** {@inheritDoc} */
-    public Iterable<? extends Position> getPositions()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Iterable<? extends Position> getPositions() {
         return Collections.singletonList(this.position);
     }
 
-    /** {@inheritDoc} */
-    public Position getReferencePosition()
-    {
+    /**
+     * {@inheritDoc}
+     *
+     * @param positions Control points. This graphic uses only one control point, which determines the center of the
+     *                  circle.
+     */
+    public void setPositions(Iterable<? extends Position> positions) {
+        if (positions == null) {
+            String message = Logging.getMessage("nullValue.PositionsListIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        Iterator<? extends Position> iterator = positions.iterator();
+        if (!iterator.hasNext()) {
+            String message = Logging.getMessage("generic.InsufficientPositions");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.position = iterator.next();
+
+        for (SurfaceCircle ring : this.rings) {
+            ring.setCenter(this.position);
+        }
+
+        if (this.symbol != null) {
+            this.symbol.setPosition(this.position);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Position getReferencePosition() {
         return this.position;
     }
 
-    /** {@inheritDoc} */
-    public void preRender(DrawContext dc)
-    {
-        if (!this.isVisible())
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void preRender(DrawContext dc) {
+        if (!this.isVisible()) {
             return;
         }
 
         this.determineActiveAttributes();
 
-        for (SurfaceCircle ring : this.rings)
-        {
+        for (SurfaceCircle ring : this.rings) {
             ring.preRender(dc);
         }
     }
@@ -268,56 +249,50 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
      *
      * @param dc Current draw context.
      */
-    protected void doRenderGraphic(DrawContext dc)
-    {
-        for (SurfaceCircle ring : this.rings)
-        {
+    protected void doRenderGraphic(DrawContext dc) {
+        for (SurfaceCircle ring : this.rings) {
             ring.render(dc);
         }
     }
 
-    /** {@inheritDoc} Overridden to render symbol at the center of the range fan. */
+    /**
+     * {@inheritDoc} Overridden to render symbol at the center of the range fan.
+     */
     @Override
-    protected void doRenderGraphicModifiers(DrawContext dc)
-    {
+    protected void doRenderGraphicModifiers(DrawContext dc) {
         super.doRenderGraphicModifiers(dc);
 
-        if (this.symbol != null)
-        {
+        if (this.symbol != null) {
             this.symbol.render(dc);
         }
     }
 
-    /** Create labels for the start and end of the path. */
+    /**
+     * Create labels for the start and end of the path.
+     */
     @Override
-    protected void createLabels()
-    {
+    protected void createLabels() {
         Iterator altIterator = null;
 
         // See if the altitude modifier is set. If so, use it's value to construct altitude labels.
         Object modifier = this.getModifier(SymbologyConstants.ALTITUDE_DEPTH);
-        if (modifier instanceof Iterable)
-        {
+        if (modifier instanceof Iterable) {
             altIterator = ((Iterable) modifier).iterator();
         }
-        else if (modifier != null)
-        {
+        else if (modifier != null) {
             // Use the modifier as the altitude of the first ring
             altIterator = Collections.singletonList(modifier).iterator();
         }
 
         // Create a label for each ring
-        for (int i = 0; i < this.rings.size(); i++)
-        {
+        for (int i = 0; i < this.rings.size(); i++) {
             SurfaceCircle ring = this.rings.get(i);
             StringBuilder sb = new StringBuilder();
 
-            if (i == 0)
-            {
+            if (i == 0) {
                 sb.append("MIN RG ");
             }
-            else
-            {
+            else {
                 sb.append("MAX RG(");
                 sb.append(i);
                 sb.append(") ");
@@ -325,8 +300,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
             sb.append(ring.getRadius());
 
             // Append the altitude, if available
-            if (altIterator != null && altIterator.hasNext())
-            {
+            if (altIterator != null && altIterator.hasNext()) {
                 Object alt = altIterator.next();
                 sb.append("\n");
                 sb.append("ALT ");
@@ -338,16 +312,16 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void determineLabelPositions(DrawContext dc)
-    {
+    protected void determineLabelPositions(DrawContext dc) {
         double dueSouth = Angle.POS180.radians;
         double globeRadius = dc.getGlobe().getRadius();
 
         int i = 0;
-        for (SurfaceCircle ring : this.rings)
-        {
+        for (SurfaceCircle ring : this.rings) {
             double radius = ring.getRadius();
 
             // Position the label at the Southern edge of the ring
@@ -358,29 +332,29 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
         }
     }
 
-    /** {@inheritDoc} Overridden to update symbol attributes. */
+    /**
+     * {@inheritDoc} Overridden to update symbol attributes.
+     */
     @Override
-    protected void determineActiveAttributes()
-    {
+    protected void determineActiveAttributes() {
         super.determineActiveAttributes();
 
         // Apply active attributes to the symbol.
-        if (this.symbolAttributes != null)
-        {
+        if (this.symbolAttributes != null) {
             ShapeAttributes activeAttributes = this.getActiveShapeAttributes();
             this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
             this.symbolAttributes.setScale(this.activeOverrides.getScale());
         }
     }
 
-    /** {@inheritDoc} */
-    protected void applyDelegateOwner(Object owner)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    protected void applyDelegateOwner(Object owner) {
         if (this.rings == null)
             return;
 
-        for (SurfaceCircle ring : this.rings)
-        {
+        for (SurfaceCircle ring : this.rings) {
             ring.setDelegateOwner(owner);
         }
     }
@@ -390,8 +364,7 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
      *
      * @return New circle.
      */
-    protected SurfaceCircle createCircle()
-    {
+    protected SurfaceCircle createCircle() {
         SurfaceCircle circle = new SurfaceCircle();
         circle.setDelegateOwner(this.getActiveDelegateOwner());
         circle.setAttributes(this.activeShapeAttributes);

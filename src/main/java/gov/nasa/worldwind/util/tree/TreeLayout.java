@@ -16,8 +16,7 @@ import gov.nasa.worldwind.render.*;
  * @version $Id: TreeLayout.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see Tree
  */
-public interface TreeLayout extends WWObject, Renderable
-{
+public interface TreeLayout extends WWObject, Renderable {
     /**
      * Render a tree.
      *
@@ -26,22 +25,20 @@ public interface TreeLayout extends WWObject, Renderable
     void render(DrawContext dc);
 
     /**
-     * Set the tree attributes.
-     *
-     * @param attributes New attributes.
-     *
-     * @see #getAttributes()
-     */
-    void setAttributes(TreeAttributes attributes);
-
-    /**
      * Get the tree attributes.
      *
      * @return Tree attributes.
-     *
      * @see #setAttributes(TreeAttributes)
      */
     TreeAttributes getAttributes();
+
+    /**
+     * Set the tree attributes.
+     *
+     * @param attributes New attributes.
+     * @see #getAttributes()
+     */
+    void setAttributes(TreeAttributes attributes);
 
     /**
      * Make a node in the tree visible in the rendered tree. For example, scroll the tree viewport so that a path is

@@ -10,21 +10,22 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.util.*;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.util.Iterator;
+
 /**
  * @author dcollins
  * @version $Id: AnnotationFlowLayout.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AnnotationFlowLayout extends AbstractAnnotationLayout
-{
+public class AnnotationFlowLayout extends AbstractAnnotationLayout {
     private String orientation;
     private String alignment;
     private int hgap;
     private int vgap;
 
-    public AnnotationFlowLayout(String orientation, String alignment, int hgap, int vgap)
-    {
-        if (orientation == null)
-        {
+    public AnnotationFlowLayout(String orientation, String alignment, int hgap, int vgap) {
+        if (orientation == null) {
             String message = Logging.getMessage("nullValue.AlignmentIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -39,52 +40,42 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout
         this.vgap = vgap;
     }
 
-    public AnnotationFlowLayout(String orientation, int hgap, int vgap)
-    {
+    public AnnotationFlowLayout(String orientation, int hgap, int vgap) {
         this(orientation, null, hgap, vgap);
     }
 
-    @SuppressWarnings({"StringEquality"})
-    protected static String getDefaultAlignment(String orientation)
-    {
-        if (orientation == null)
-        {
+    public AnnotationFlowLayout(String orientation) {
+        this(orientation, 0, 0);
+    }
+
+    public AnnotationFlowLayout() {
+        this(AVKey.HORIZONTAL);
+    }
+
+    @SuppressWarnings("StringEquality")
+    protected static String getDefaultAlignment(String orientation) {
+        if (orientation == null) {
             String message = Logging.getMessage("nullValue.OrientationIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (orientation == AVKey.HORIZONTAL)
-        {
+        if (orientation == AVKey.HORIZONTAL) {
             return AVKey.BOTTOM;
         }
-        else if (orientation == AVKey.VERTICAL)
-        {
+        else if (orientation == AVKey.VERTICAL) {
             return AVKey.LEFT;
         }
 
         return null;
     }
 
-    public AnnotationFlowLayout(String orientation)
-    {
-        this(orientation, 0, 0);
-    }
-
-    public AnnotationFlowLayout()
-    {
-        this(AVKey.HORIZONTAL);
-    }
-
-    public String getOrientation()
-    {
+    public String getOrientation() {
         return this.orientation;
     }
 
-    public void setOrientation(String orientation)
-    {
-        if (orientation == null)
-        {
+    public void setOrientation(String orientation) {
+        if (orientation == null) {
             String message = Logging.getMessage("nullValue.OrientationIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -93,114 +84,94 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout
         this.orientation = orientation;
     }
 
-    public String getAlignment()
-    {
+    public String getAlignment() {
         return this.alignment;
     }
 
-    public void setAlignment(String alignment)
-    {
+    public void setAlignment(String alignment) {
         // A null alignment is permitted. This tells the layout to choose the default alignment for the current
         // orientation.
         this.alignment = alignment;
     }
 
-    public int getHorizontalGap()
-    {
+    public int getHorizontalGap() {
         return this.hgap;
     }
 
-    public void setHorizontalGap(int hgap)
-    {
+    public void setHorizontalGap(int hgap) {
         this.hgap = hgap;
     }
 
-    public int getVerticalGap()
-    {
+    public int getVerticalGap() {
         return this.vgap;
     }
 
-    public void setVerticalGap(int vgap)
-    {
+    public void setVerticalGap(int vgap) {
         this.vgap = vgap;
     }
 
-    @SuppressWarnings({"StringEquality"})
-    public java.awt.Dimension getPreferredSize(DrawContext dc, Iterable<? extends Annotation> annotations)
-    {
-        if (dc == null)
-        {
+    @SuppressWarnings("StringEquality")
+    public Dimension getPreferredSize(DrawContext dc, Iterable<? extends Annotation> annotations) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (annotations == null)
-        {
+        if (annotations == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (this.orientation == AVKey.HORIZONTAL)
-        {
+        if (this.orientation == AVKey.HORIZONTAL) {
             return this.horizontalPreferredSize(dc, annotations);
         }
-        else if (this.orientation == AVKey.VERTICAL)
-        {
+        else if (this.orientation == AVKey.VERTICAL) {
             return this.verticalPerferredSize(dc, annotations);
         }
 
         return null;
     }
 
-    @SuppressWarnings({"StringEquality"})
-    public void drawAnnotations(DrawContext dc, java.awt.Rectangle bounds,
-        Iterable<? extends Annotation> annotations, double opacity, Position pickPosition)
-    {
-        if (dc == null)
-        {
+    @SuppressWarnings("StringEquality")
+    public void drawAnnotations(DrawContext dc, Rectangle bounds,
+        Iterable<? extends Annotation> annotations, double opacity, Position pickPosition) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (bounds == null)
-        {
+        if (bounds == null) {
             String message = Logging.getMessage("nullValue.RectangleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (annotations == null)
-        {
+        if (annotations == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (this.orientation == AVKey.HORIZONTAL)
-        {
+        if (this.orientation == AVKey.HORIZONTAL) {
             this.drawHorizontal(dc, bounds, annotations, opacity, pickPosition);
         }
-        else if (this.orientation == AVKey.VERTICAL)
-        {
+        else if (this.orientation == AVKey.VERTICAL) {
             this.drawVertical(dc, bounds, annotations, opacity, pickPosition);
         }
     }
 
-    @SuppressWarnings({"StringEquality"})
-    public void beginDrawAnnotations(DrawContext dc, java.awt.Rectangle bounds)
-    {
-        if (dc == null)
-        {
+    @SuppressWarnings("StringEquality")
+    public void beginDrawAnnotations(DrawContext dc, Rectangle bounds) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (bounds == null)
-        {
+        if (bounds == null) {
             String message = Logging.getMessage("nullValue.RectangleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -208,31 +179,26 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout
 
         super.beginDrawAnnotations(dc, bounds);
 
-        if (this.orientation == AVKey.HORIZONTAL)
-        {
+        if (this.orientation == AVKey.HORIZONTAL) {
             this.beginHorizontal(dc, bounds);
         }
-        else if (this.orientation == AVKey.VERTICAL)
-        {
+        else if (this.orientation == AVKey.VERTICAL) {
             this.beginVertical(dc, bounds);
         }
     }
 
-    protected java.awt.Dimension horizontalPreferredSize(DrawContext dc, Iterable<? extends Annotation> annotations)
-    {
+    protected Dimension horizontalPreferredSize(DrawContext dc, Iterable<? extends Annotation> annotations) {
         int preferredWidth = 0;
         int preferredHeight = 0;
 
-        java.util.Iterator<? extends Annotation> iter = annotations.iterator();
+        Iterator<? extends Annotation> iter = annotations.iterator();
         if (!iter.hasNext())
-            return new java.awt.Dimension(preferredWidth, preferredHeight);
+            return new Dimension(preferredWidth, preferredHeight);
 
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             Annotation annotation = iter.next();
-            java.awt.Dimension size = this.getAnnotationSize(dc, annotation);
-            if (size != null)
-            {
+            Dimension size = this.getAnnotationSize(dc, annotation);
+            if (size != null) {
                 preferredWidth += size.width;
 
                 if (preferredHeight < size.height)
@@ -243,24 +209,21 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout
             }
         }
 
-        return new java.awt.Dimension(preferredWidth, preferredHeight);
+        return new Dimension(preferredWidth, preferredHeight);
     }
 
-    protected java.awt.Dimension verticalPerferredSize(DrawContext dc, Iterable<? extends Annotation> annotations)
-    {
+    protected Dimension verticalPerferredSize(DrawContext dc, Iterable<? extends Annotation> annotations) {
         int preferredWidth = 0;
         int preferredHeight = 0;
 
-        java.util.Iterator<? extends Annotation> iter = annotations.iterator();
+        Iterator<? extends Annotation> iter = annotations.iterator();
         if (!iter.hasNext())
-            return new java.awt.Dimension(preferredWidth, preferredHeight);
+            return new Dimension(preferredWidth, preferredHeight);
 
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             Annotation annotation = iter.next();
-            java.awt.Dimension size = this.getAnnotationSize(dc, annotation);
-            if (size != null)
-            {
+            Dimension size = this.getAnnotationSize(dc, annotation);
+            if (size != null) {
                 preferredHeight += size.height;
 
                 if (preferredWidth < size.width)
@@ -271,24 +234,21 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout
             }
         }
 
-        return new java.awt.Dimension(preferredWidth, preferredHeight);
+        return new Dimension(preferredWidth, preferredHeight);
     }
 
-    protected void drawHorizontal(DrawContext dc, java.awt.Rectangle bounds,
-        Iterable<? extends Annotation> annotations, double opacity, Position pickPosition)
-    {
+    protected void drawHorizontal(DrawContext dc, Rectangle bounds,
+        Iterable<? extends Annotation> annotations, double opacity, Position pickPosition) {
         String align = this.getAlignment();
-        if (align == null)
-        {
+        if (align == null) {
             align = getDefaultAlignment(AVKey.HORIZONTAL);
         }
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler stackHandler = new OGLStackHandler();
 
-        for (Annotation annotation : annotations)
-        {
-            java.awt.Dimension size = annotation.getPreferredSize(dc);
+        for (Annotation annotation : annotations) {
+            Dimension size = annotation.getPreferredSize(dc);
 
             stackHandler.pushModelview(gl);
             this.alignHorizontal(dc, bounds, size, align);
@@ -300,21 +260,18 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout
         }
     }
 
-    protected void drawVertical(DrawContext dc, java.awt.Rectangle bounds,
-        Iterable<? extends Annotation> annotations, double opacity, Position pickPosition)
-    {
+    protected void drawVertical(DrawContext dc, Rectangle bounds,
+        Iterable<? extends Annotation> annotations, double opacity, Position pickPosition) {
         String align = this.getAlignment();
-        if (align == null)
-        {
+        if (align == null) {
             align = getDefaultAlignment(AVKey.VERTICAL);
         }
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler stackHandler = new OGLStackHandler();
 
-        for (Annotation annotation : annotations)
-        {
-            java.awt.Dimension size = annotation.getPreferredSize(dc);
+        for (Annotation annotation : annotations) {
+            Dimension size = annotation.getPreferredSize(dc);
             gl.glTranslated(0, -size.height, 0);
 
             stackHandler.pushModelview(gl);
@@ -326,56 +283,46 @@ public class AnnotationFlowLayout extends AbstractAnnotationLayout
         }
     }
 
-    @SuppressWarnings({"StringEquality"})
-    protected void alignHorizontal(DrawContext dc, java.awt.Rectangle bounds, java.awt.Dimension size, String align)
-    {
+    @SuppressWarnings("StringEquality")
+    protected void alignHorizontal(DrawContext dc, Rectangle bounds, Dimension size, String align) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (align == AVKey.BOTTOM)
-        {
+        if (align == AVKey.BOTTOM) {
             // This is the default.
         }
-        else if (align == AVKey.TOP)
-        {
+        else if (align == AVKey.TOP) {
             int dy = bounds.height - size.height;
             gl.glTranslated(0, dy, 0);
         }
-        else if (align == AVKey.CENTER)
-        {
+        else if (align == AVKey.CENTER) {
             int dy = (bounds.height / 2) - (size.height / 2);
             gl.glTranslated(0, dy, 0);
         }
     }
 
-    @SuppressWarnings({"StringEquality"})
-    protected void alignVertical(DrawContext dc, java.awt.Rectangle bounds, java.awt.Dimension size, String align)
-    {
+    @SuppressWarnings("StringEquality")
+    protected void alignVertical(DrawContext dc, Rectangle bounds, Dimension size, String align) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (align == AVKey.LEFT)
-        {
+        if (align == AVKey.LEFT) {
             // This is the default.
         }
-        if (align == AVKey.RIGHT)
-        {
+        if (align == AVKey.RIGHT) {
             int dx = bounds.width - size.width;
             gl.glTranslated(dx, 0, 0);
         }
-        else if (align == AVKey.CENTER)
-        {
+        else if (align == AVKey.CENTER) {
             int dx = (bounds.width / 2) - (size.width / 2);
             gl.glTranslated(dx, 0, 0);
         }
     }
 
-    protected void beginHorizontal(DrawContext dc, java.awt.Rectangle bounds)
-    {
+    protected void beginHorizontal(DrawContext dc, Rectangle bounds) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glTranslated(bounds.getMinX(), bounds.getMinY(), 0);
     }
 
-    protected void beginVertical(DrawContext dc, java.awt.Rectangle bounds)
-    {
+    protected void beginVertical(DrawContext dc, Rectangle bounds) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glTranslated(bounds.getMinX(), bounds.getMaxY(), 0);
     }

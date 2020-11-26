@@ -23,43 +23,26 @@ import java.util.logging.Level;
 
 /**
  * Synchronous file upload using HTTP POST as a multi-part form data
- * @deprecated 
+ *
+ * @deprecated
  */
 @Deprecated
 public class HTTPFileUpload {
 
-    private final PropertyChangeSupport propertyChangeSupport;
-
     protected static final String CR_LF = "\r\n";
     protected static final String TWO_HYPHENS = "--";
     protected static final String BOUNDARY = "*********NASA_World_Wind_HTTP_File_Upload_Separator**********";
-    protected int maxBufferSize = 1024 * 1024; // default is 1M
-
     protected final URL url;
-
-    protected final ArrayList<FileInfo> filesToUpload = new ArrayList<>();
-
-    protected String requestMethod = "POST";
+    protected final List<FileInfo> filesToUpload = new ArrayList<>();
     protected final AVList requestProperties = new AVListImpl();
-
+    private final PropertyChangeSupport propertyChangeSupport;
+    protected int maxBufferSize = 1024 * 1024; // default is 1M
+    protected String requestMethod = "POST";
     protected long totalBytesToUpload = 0;
     protected long totalBytesUploaded = 0;
     protected int totalFilesUploaded = 0;
     protected int totalFilesFailed = 0;
     protected float lastProgress = 0;
-
-    protected static class FileInfo {
-
-        protected final String uploadName;
-        protected final Object uploadItem;
-        protected final AVList properties;
-
-        public FileInfo(String name, Object item, AVList properties) {
-            this.uploadName = name;
-            this.uploadItem = item;
-            this.properties = properties;
-        }
-    }
 
     public HTTPFileUpload(URL url) {
         if (url == null) {
@@ -105,6 +88,15 @@ public class HTTPFileUpload {
     }
 
     /**
+     * Returns the HTTP request method - POST or GET
+     *
+     * @return POST or GET
+     */
+    public String getRequestMethod() {
+        return this.requestMethod;
+    }
+
+    /**
      * Sets a HTTP request method - POST or GET
      *
      * @param method POST or GET
@@ -112,22 +104,15 @@ public class HTTPFileUpload {
     public void setRequestMethod(String method) {
         if ("POST".equalsIgnoreCase(method)) {
             this.requestMethod = "POST";
-        } else if ("GET".equalsIgnoreCase(method)) {
+        }
+        else if ("GET".equalsIgnoreCase(method)) {
             this.requestMethod = "GET";
-        } else {
+        }
+        else {
             String message = Logging.getMessage("generic.UnknownValueForKey", method, "method={POST|GET}");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-    }
-
-    /**
-     * Returns the HTTP request method - POST or GET
-     *
-     * @return POST or GET
-     */
-    public String getRequestMethod() {
-        return this.requestMethod;
     }
 
     public void setRequestProperty(String name, String value) {
@@ -165,35 +150,37 @@ public class HTTPFileUpload {
     /**
      * Adds a file to the HTTP File Uploader.
      *
-     * @param file The file to upload, must exist
-     * @param name The desired name of the file
+     * @param file   The file to upload, must exist
+     * @param name   The desired name of the file
      * @param params AVList of parameters
-     *
      * @throws FileNotFoundException if the file was not found or does not exist
      */
     public void add(File file, String name, AVList params) throws FileNotFoundException {
         if (null != file && file.exists()) {
             this.totalBytesToUpload += file.length();
             this.filesToUpload.add(new FileInfo(name, file, params));
-        } else {
+        }
+        else {
             throw new FileNotFoundException((file != null) ? file.getName() : "");
         }
     }
 
-    public void send()
-    {
+    public void send() {
         for (FileInfo info : this.filesToUpload) {
             try {
                 if (info.uploadItem instanceof File) {
                     send((File) info.uploadItem, info.uploadName, info.properties);
-                } else if (info.uploadItem instanceof ByteBuffer) {
+                }
+                else if (info.uploadItem instanceof ByteBuffer) {
                     send((ByteBuffer) info.uploadItem, info.uploadName, info.properties);
-                } else if (info.uploadItem instanceof String) {
+                }
+                else if (info.uploadItem instanceof String) {
                     send((String) info.uploadItem, info.uploadName, info.properties);
                 }
 
                 this.totalFilesUploaded++;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 this.totalFilesFailed++;
 
                 String reason = WWUtil.extractExceptionReason(e);
@@ -206,7 +193,7 @@ public class HTTPFileUpload {
     }
 
     protected void send(File fileToUpload, String uploadName, AVList params)
-            throws IOException, NullPointerException {
+        throws IOException, NullPointerException {
         if (null == fileToUpload || !fileToUpload.exists()) {
             throw new FileNotFoundException();
         }
@@ -260,7 +247,8 @@ public class HTTPFileUpload {
             dos.flush();
 
             this.handleResponse(conn);
-        } finally {
+        }
+        finally {
             WWIO.closeStream(fis, null);
             WWIO.closeStream(dos, null);
             this.disconnect(conn, this.url.toString());
@@ -276,7 +264,8 @@ public class HTTPFileUpload {
                 String reason = "(" + code + ") :" + message;
                 throw new IOException(reason);
             }
-        } else {
+        }
+        else {
             throw new IOException(Logging.getMessage("nullValue.ConnectionIsNull"));
         }
     }
@@ -285,7 +274,8 @@ public class HTTPFileUpload {
         if (null != conn) {
             try {
                 conn.disconnect();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 String message = Logging.getMessage("WWIO.ErrorTryingToClose", name);
                 Logging.logger().log(Level.WARNING, message, e);
             }
@@ -353,7 +343,8 @@ public class HTTPFileUpload {
             dos.flush();
 
             this.handleResponse(conn);
-        } finally {
+        }
+        finally {
             WWIO.closeStream(dos, null);
             this.disconnect(conn, this.url.toString());
         }
@@ -403,7 +394,8 @@ public class HTTPFileUpload {
             dos.flush();
 
             this.handleResponse(conn);
-        } finally {
+        }
+        finally {
             WWIO.closeStream(dos, null);
             this.disconnect(conn, this.url.toString());
         }
@@ -423,17 +415,18 @@ public class HTTPFileUpload {
      * Writes HTTP request' properties (HTTP headers)
      *
      * @param conn HttpURLConnection connection
-     *
      * @throws IOException if there is any problem with a connection
      */
     protected void writeRequestProperties(HttpURLConnection conn) throws IOException {
         if (null != conn) {
             conn.setRequestMethod(this.getRequestMethod());
-            this.requestProperties.getEntries().forEach((requestProperty) -> conn.setRequestProperty(requestProperty.getKey(), (String) requestProperty.getValue()));
+            this.requestProperties.getEntries().forEach(
+                (requestProperty) -> conn.setRequestProperty(requestProperty.getKey(),
+                    (String) requestProperty.getValue()));
         }
     }
 
-    protected void writeContentDisposition(DataOutputStream dos, String filename) throws IOException {
+    protected void writeContentDisposition(DataOutput dos, String filename) throws IOException {
         if (null != dos) {
             dos.writeBytes(TWO_HYPHENS + BOUNDARY + CR_LF);
             dos.writeBytes("Content-Disposition: attachment; filename=\"" + filename + "\"" + CR_LF);
@@ -442,7 +435,8 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void writeContentDisposition(DataOutputStream dos, String paramName, String paramValue) throws IOException {
+    protected void writeContentDisposition(DataOutput dos, String paramName, String paramValue)
+        throws IOException {
         if (null != dos && null != paramName) {
             dos.writeBytes(TWO_HYPHENS + BOUNDARY + CR_LF);
             dos.writeBytes("Content-Disposition: form-data; name=\"" + paramName + "\"" + CR_LF);
@@ -450,7 +444,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void writeContentSeparator(DataOutputStream dos) throws IOException {
+    protected void writeContentSeparator(DataOutput dos) throws IOException {
         if (null != dos) {
             // send multipart form data necesssary after file data...
             dos.writeBytes(CR_LF + TWO_HYPHENS + BOUNDARY + TWO_HYPHENS + CR_LF);
@@ -466,11 +460,24 @@ public class HTTPFileUpload {
     }
 
     protected void notifyProgress() {
-        float progress = (float) 100 * (float) this.totalBytesUploaded / (float) this.totalBytesToUpload;
+        float progress = (float) 100 * this.totalBytesUploaded / this.totalBytesToUpload;
 
         if (progress != lastProgress) {
             this.propertyChangeSupport.firePropertyChange("progress", lastProgress, progress);
             lastProgress = progress;
+        }
+    }
+
+    protected static class FileInfo {
+
+        protected final String uploadName;
+        protected final Object uploadItem;
+        protected final AVList properties;
+
+        public FileInfo(String name, Object item, AVList properties) {
+            this.uploadName = name;
+            this.uploadItem = item;
+            this.properties = properties;
         }
     }
 }

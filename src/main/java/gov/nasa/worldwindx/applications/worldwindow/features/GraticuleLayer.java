@@ -14,18 +14,15 @@ import gov.nasa.worldwindx.applications.worldwindow.core.layermanager.LayerPath;
  * @author tag
  * @version $Id: GraticuleLayer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class GraticuleLayer extends AbstractOnDemandLayerFeature
-{
-    protected abstract Layer doCreateLayer();
-
-    public GraticuleLayer(String name, String featureID, String iconPath, String group, Registry registry)
-    {
+public abstract class GraticuleLayer extends AbstractOnDemandLayerFeature {
+    public GraticuleLayer(String name, String featureID, String iconPath, String group, Registry registry) {
         super(name, featureID, iconPath, group, registry);
     }
 
+    protected abstract Layer doCreateLayer();
+
     @Override
-    protected Layer createLayer()
-    {
+    protected Layer createLayer() {
         Layer layer = this.doCreateLayer();
 
         layer.setPickEnabled(false);
@@ -34,14 +31,12 @@ public abstract class GraticuleLayer extends AbstractOnDemandLayerFeature
     }
 
     @Override
-    protected void addLayer(LayerPath path)
-    {
+    protected void addLayer(LayerPath path) {
         controller.addInternalActiveLayer(this.layer);
     }
 
     @Override
-    protected void removeLayer()
-    {
+    protected void removeLayer() {
         this.controller.getWWPanel().removeLayer(this.layer);
     }
 }

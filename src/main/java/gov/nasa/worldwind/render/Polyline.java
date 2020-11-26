@@ -25,14 +25,13 @@ import java.util.*;
  * @author tag
  * @version $Id: Polyline.java 2188 2014-07-30 15:01:16Z tgaskins $
  * @deprecated Use {@link Path} instead.
- *             <p>
- *             When drawn on a 2D globe, this shape uses either a {@link SurfacePolyline} or {@link SurfacePolygon} to
- *             represent itself.
+ * <p>
+ * When drawn on a 2D globe, this shape uses either a {@link SurfacePolyline} or {@link SurfacePolygon} to represent
+ * itself.
  */
 @Deprecated
 public class Polyline extends AVListImpl implements Renderable, OrderedRenderable, Movable, Restorable,
-    MeasurableLength, ExtentHolder, PreRenderable, Highlightable, Draggable
-{
+    MeasurableLength, ExtentHolder, PreRenderable, Highlightable, Draggable {
     public final static int GREAT_CIRCLE = WorldWind.GREAT_CIRCLE;
     public final static int LINEAR = WorldWind.LINEAR;
     public final static int RHUMB_LINE = WorldWind.RHUMB_LINE;
@@ -41,7 +40,9 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     public final static int ANTIALIAS_DONT_CARE = WorldWind.ANTIALIAS_DONT_CARE;
     public final static int ANTIALIAS_FASTEST = WorldWind.ANTIALIAS_FASTEST;
     public final static int ANTIALIAS_NICEST = WorldWind.ANTIALIAS_NICEST;
-
+    protected final LengthMeasurer measurer = new LengthMeasurer();
+    protected final PickSupport pickSupport = new PickSupport();
+    protected final HashMap<Globe, ExtentInfo> extents = new HashMap<>(2); // usually only 1, but few at most
     protected ArrayList<Position> positions;
     protected Vec4 referenceCenterPoint;
     protected int antiAliasHint = GL.GL_FASTEST;
@@ -60,80 +61,58 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     protected boolean highlighted = false;
     protected boolean dragEnabled = true;
     protected DraggableSupport draggableSupport = null;
-    protected Color highlightColor = new Color(1f, 1f, 1f, 0.5f);
+    protected Color highlightColor = new Color(1.0f, 1.0f, 1.0f, 0.5f);
     protected Object delegateOwner;
-    protected final LengthMeasurer measurer = new LengthMeasurer();
     protected long geomGenTimeStamp = -Long.MAX_VALUE;
     protected double geomGenVE = 1;
     protected double eyeDistance;
-    protected final PickSupport pickSupport = new PickSupport();
     protected long frameNumber = -1; // identifies frame used to calculate these values
     protected Layer pickLayer;
-    protected SurfaceShape surfaceShape;
     // Manage an extent for each globe the polyline's associated with.
+    protected SurfaceShape surfaceShape;
 
-    protected static class ExtentInfo
-    {
-        // The extent depends on the state of the globe used to compute it, and the vertical exaggeration.
-        protected final Extent extent;
-        protected final double verticalExaggeration;
-        protected final Globe globe;
-        protected final Object globeStateKey;
-
-        public ExtentInfo(Extent extent, DrawContext dc)
-        {
-            this.extent = extent;
-            this.verticalExaggeration = dc.getVerticalExaggeration();
-            this.globe = dc.getGlobe();
-            this.globeStateKey = dc.getGlobe().getStateKey(dc);
-        }
-
-        protected boolean isValid(DrawContext dc)
-        {
-            return this.verticalExaggeration == dc.getVerticalExaggeration() && this.globe == dc.getGlobe()
-                && globeStateKey.equals(dc.getGlobe().getStateKey(dc));
-        }
-    }
-
-    protected final HashMap<Globe, ExtentInfo> extents = new HashMap<>(2); // usually only 1, but few at most
-
-    public Polyline()
-    {
+    public Polyline() {
         this.setPositions(null);
         this.measurer.setFollowTerrain(this.followTerrain);
         this.measurer.setPathType(this.pathType);
     }
 
-    public Polyline(Iterable<? extends Position> positions)
-    {
+    public Polyline(Iterable<? extends Position> positions) {
         this.setPositions(positions);
         this.measurer.setFollowTerrain(this.followTerrain);
         this.measurer.setPathType(this.pathType);
     }
 
-    public Polyline(Iterable<? extends LatLon> positions, double elevation)
-    {
+    public Polyline(Iterable<? extends LatLon> positions, double elevation) {
         this.setPositions(positions, elevation);
         this.measurer.setFollowTerrain(this.followTerrain);
         this.measurer.setPathType(this.pathType);
     }
 
-    private void reset()
-    {
+    protected static double[] computeElevationExtremes(Iterable<? extends Position> positions) {
+        double[] extremes = new double[] {Double.MAX_VALUE, -Double.MAX_VALUE};
+        for (Position pos : positions) {
+            if (extremes[0] > pos.getElevation())
+                extremes[0] = pos.getElevation(); // min
+            if (extremes[1] < pos.getElevation())
+                extremes[1] = pos.getElevation(); // max
+        }
+
+        return extremes;
+    }
+
+    private void reset() {
         if (this.currentSpans != null)
             this.currentSpans.clear();
         this.currentSpans = null;
     }
 
-    public Color getColor()
-    {
+    public Color getColor() {
         return color;
     }
 
-    public void setColor(Color color)
-    {
-        if (color == null)
-        {
+    public void setColor(Color color) {
+        if (color == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -141,26 +120,21 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
 
         this.color = color;
 
-        if (this.surfaceShape != null)
-        {
+        if (this.surfaceShape != null) {
             ShapeAttributes attrs = this.surfaceShape.getAttributes();
             attrs.setOutlineMaterial(new Material(this.color));
             attrs.setOutlineOpacity(this.color.getAlpha() / 255.0);
             attrs.setInteriorMaterial(attrs.getOutlineMaterial());
             attrs.setInteriorOpacity(attrs.getOutlineOpacity());
         }
-
     }
 
-    public int getAntiAliasHint()
-    {
+    public int getAntiAliasHint() {
         return antiAliasHint;
     }
 
-    public void setAntiAliasHint(int hint)
-    {
-        if (!(hint == ANTIALIAS_DONT_CARE || hint == ANTIALIAS_FASTEST || hint == ANTIALIAS_NICEST))
-        {
+    public void setAntiAliasHint(int hint) {
+        if (!(hint == ANTIALIAS_DONT_CARE || hint == ANTIALIAS_FASTEST || hint == ANTIALIAS_NICEST)) {
             String msg = Logging.getMessage("generic.InvalidHint");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -169,15 +143,12 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         this.antiAliasHint = hint;
     }
 
-    public boolean isFilled()
-    {
+    public boolean isFilled() {
         return filled;
     }
 
-    public void setFilled(boolean filled)
-    {
-        if (this.surfaceShape != null && filled != this.filled)
-        {
+    public void setFilled(boolean filled) {
+        if (this.surfaceShape != null && filled != this.filled) {
             if (filled)
                 this.surfaceShape = new SurfacePolygon(this.getPositions());
             else
@@ -189,15 +160,8 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         this.filled = filled;
     }
 
-    public int getPathType()
-    {
+    public int getPathType() {
         return pathType;
-    }
-
-    public String getPathTypeString()
-    {
-        return this.getPathType() == GREAT_CIRCLE ? AVKey.GREAT_CIRCLE
-            : this.getPathType() == RHUMB_LINE ? AVKey.RHUMB_LINE : AVKey.LINEAR;
     }
 
     /**
@@ -206,17 +170,15 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      * segment endpoints, or {@link #RHUMB_LINE}, which draws each segment of the path as a line of constant heading.
      *
      * @param pathType the type of path to draw.
-     *
      * @see <a href="{@docRoot}/overview-summary.html#path-types">Path Types</a>
      */
-    public void setPathType(int pathType)
-    {
+    public void setPathType(int pathType) {
         this.reset();
         this.pathType = pathType;
         this.measurer.setPathType(pathType);
         if (this.surfaceShape != null)
             this.surfaceShape.setPathType(this.pathType == GREAT_CIRCLE ? AVKey.GREAT_CIRCLE
-            : pathType == RHUMB_LINE ? AVKey.RHUMB_LINE : AVKey.LINEAR);
+                : pathType == RHUMB_LINE ? AVKey.RHUMB_LINE : AVKey.LINEAR);
     }
 
     /**
@@ -226,13 +188,10 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      * heading.
      *
      * @param pathType the type of path to draw.
-     *
      * @see <a href="{@docRoot}/overview-summary.html#path-types">Path Types</a>
      */
-    public void setPathType(String pathType)
-    {
-        if (pathType == null)
-        {
+    public void setPathType(String pathType) {
+        if (pathType == null) {
             String msg = Logging.getMessage("nullValue.PathTypeIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -242,8 +201,12 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             : pathType.equals(AVKey.RHUMB_LINE) || pathType.equals(AVKey.LOXODROME) ? RHUMB_LINE : LINEAR);
     }
 
-    public boolean isFollowTerrain()
-    {
+    public String getPathTypeString() {
+        return this.getPathType() == GREAT_CIRCLE ? AVKey.GREAT_CIRCLE
+            : this.getPathType() == RHUMB_LINE ? AVKey.RHUMB_LINE : AVKey.LINEAR;
+    }
+
+    public boolean isFollowTerrain() {
         return followTerrain;
     }
 
@@ -255,16 +218,14 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      *
      * @param followTerrain <code>true</code> to follow the terrain, otherwise <code>false</code>.
      */
-    public void setFollowTerrain(boolean followTerrain)
-    {
+    public void setFollowTerrain(boolean followTerrain) {
         this.reset();
         this.followTerrain = followTerrain;
         this.measurer.setFollowTerrain(followTerrain);
         this.extents.clear();
     }
 
-    public double getOffset()
-    {
+    public double getOffset() {
         return offset;
     }
 
@@ -274,15 +235,13 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      *
      * @param offset the path pffset in meters.
      */
-    public void setOffset(double offset)
-    {
+    public void setOffset(double offset) {
         this.reset();
         this.offset = offset;
         this.extents.clear();
     }
 
-    public double getTerrainConformance()
-    {
+    public double getTerrainConformance() {
         return terrainConformance;
     }
 
@@ -293,18 +252,15 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      *
      * @param terrainConformance the path conformance in pixels.
      */
-    public void setTerrainConformance(double terrainConformance)
-    {
+    public void setTerrainConformance(double terrainConformance) {
         this.terrainConformance = terrainConformance;
     }
 
-    public double getLineWidth()
-    {
+    public double getLineWidth() {
         return this.lineWidth;
     }
 
-    public void setLineWidth(double lineWidth)
-    {
+    public void setLineWidth(double lineWidth) {
         this.lineWidth = lineWidth;
 
         if (this.surfaceShape != null)
@@ -318,25 +274,21 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      *
      * @return the path's length in meters.
      */
-    public double getLength()
-    {
+    public double getLength() {
         Iterator<ExtentInfo> infos = this.extents.values().iterator();
         return infos.hasNext() ? this.measurer.getLength(infos.next().globe) : 0;
     }
 
-    public double getLength(Globe globe)
-    {
+    public double getLength(Globe globe) {
         // The length measurer will throw an exception and log the error if globe is null
         return this.measurer.getLength(globe);
     }
 
-    public LengthMeasurer getMeasurer()
-    {
+    public LengthMeasurer getMeasurer() {
         return this.measurer;
     }
 
-    public short getStipplePattern()
-    {
+    public short getStipplePattern() {
         return stipplePattern;
     }
 
@@ -347,16 +299,14 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      *
      * @param stipplePattern the stipple pattern.
      */
-    public void setStipplePattern(short stipplePattern)
-    {
+    public void setStipplePattern(short stipplePattern) {
         this.stipplePattern = stipplePattern;
 
         if (this.surfaceShape != null)
             this.surfaceShape.getAttributes().setOutlineStipplePattern(this.stipplePattern);
     }
 
-    public int getStippleFactor()
-    {
+    public int getStippleFactor() {
         return stippleFactor;
     }
 
@@ -367,16 +317,14 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      *
      * @param stippleFactor the stipple factor.
      */
-    public void setStippleFactor(int stippleFactor)
-    {
+    public void setStippleFactor(int stippleFactor) {
         this.stippleFactor = stippleFactor;
 
         if (this.surfaceShape != null)
             this.surfaceShape.getAttributes().setOutlineStippleFactor(this.stippleFactor);
     }
 
-    public int getNumSubsegments()
-    {
+    public int getNumSubsegments() {
         return numSubsegments;
     }
 
@@ -386,31 +334,25 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      *
      * @param numSubsegments the number of intermediate subsegments.
      */
-    public void setNumSubsegments(int numSubsegments)
-    {
+    public void setNumSubsegments(int numSubsegments) {
         this.reset();
         this.numSubsegments = numSubsegments;
     }
 
-    public boolean isHighlighted()
-    {
+    public boolean isHighlighted() {
         return highlighted;
     }
 
-    public void setHighlighted(boolean highlighted)
-    {
+    public void setHighlighted(boolean highlighted) {
         this.highlighted = highlighted;
     }
 
-    public Color getHighlightColor()
-    {
+    public Color getHighlightColor() {
         return this.highlightColor;
     }
 
-    public void setHighlightColor(Color highlightColor)
-    {
-        if (highlightColor == null)
-        {
+    public void setHighlightColor(Color highlightColor) {
+        if (highlightColor == null) {
             String message = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -423,50 +365,17 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     }
 
     /**
-     * Specifies the path's positions.
-     *
-     * @param inPositions the path positions.
-     */
-    public void setPositions(Iterable<? extends Position> inPositions)
-    {
-        this.reset();
-        this.positions = new ArrayList<>();
-        this.extents.clear();
-        if (inPositions != null)
-        {
-            for (Position position : inPositions)
-            {
-                this.positions.add(position);
-            }
-            this.measurer.setPositions(this.positions);
-
-            if (this.surfaceShape != null)
-                this.setSurfaceShapeLocations();
-        }
-
-        if ((this.filled && this.positions.size() < 3))
-        {
-            String msg = Logging.getMessage("generic.InsufficientPositions");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-    }
-
-    /**
      * Sets the paths positions as latitude and longitude values at a constant altitude.
      *
      * @param inPositions the latitudes and longitudes of the positions.
      * @param altitude    the elevation to assign each position.
      */
-    public void setPositions(Iterable<? extends LatLon> inPositions, double altitude)
-    {
+    public void setPositions(Iterable<? extends LatLon> inPositions, double altitude) {
         this.reset();
         this.positions = new ArrayList<>();
         this.extents.clear();
-        if (inPositions != null)
-        {
-            for (LatLon position : inPositions)
-            {
+        if (inPositions != null) {
+            for (LatLon position : inPositions) {
                 this.positions.add(new Position(position, altitude));
             }
             this.measurer.setPositions(this.positions);
@@ -475,26 +384,48 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
                 this.setSurfaceShapeLocations();
         }
 
-        if (this.filled && this.positions.size() < 3)
-        {
+        if (this.filled && this.positions.size() < 3) {
             String msg = Logging.getMessage("generic.InsufficientPositions");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
     }
 
-    public Iterable<Position> getPositions()
-    {
+    public Iterable<Position> getPositions() {
         return this.positions;
     }
 
-    public boolean isClosed()
-    {
+    /**
+     * Specifies the path's positions.
+     *
+     * @param inPositions the path positions.
+     */
+    public void setPositions(Iterable<? extends Position> inPositions) {
+        this.reset();
+        this.positions = new ArrayList<>();
+        this.extents.clear();
+        if (inPositions != null) {
+            for (Position position : inPositions) {
+                this.positions.add(position);
+            }
+            this.measurer.setPositions(this.positions);
+
+            if (this.surfaceShape != null)
+                this.setSurfaceShapeLocations();
+        }
+
+        if ((this.filled && this.positions.size() < 3)) {
+            String msg = Logging.getMessage("generic.InsufficientPositions");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+    }
+
+    public boolean isClosed() {
         return closed;
     }
 
-    public void setClosed(boolean closed)
-    {
+    public void setClosed(boolean closed) {
         this.closed = closed;
     }
 
@@ -504,10 +435,9 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      * picking.
      *
      * @return the object used as the pickable object returned during picking, or null to indicate that the Polyline is
-     *         returned during picking.
+     * returned during picking.
      */
-    public Object getDelegateOwner()
-    {
+    public Object getDelegateOwner() {
         return this.delegateOwner;
     }
 
@@ -518,27 +448,22 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      *
      * @param owner the object to use as the pickable object returned during picking, or null to return the Polyline.
      */
-    public void setDelegateOwner(Object owner)
-    {
+    public void setDelegateOwner(Object owner) {
         this.delegateOwner = owner;
     }
 
     /**
-     * Returns this Polyline's enclosing volume as an {@link gov.nasa.worldwind.geom.Extent} in model coordinates, given
-     * a specified {@link gov.nasa.worldwind.globes.Globe} and vertical exaggeration (see {@link
-     * gov.nasa.worldwind.SceneController#getVerticalExaggeration()}.
+     * Returns this Polyline's enclosing volume as an {@link Extent} in model coordinates, given
+     * a specified {@link Globe} and vertical exaggeration (see {@link
+     * SceneController#getVerticalExaggeration()}.
      *
      * @param globe                the Globe this Polyline is related to.
      * @param verticalExaggeration the vertical exaggeration to apply.
-     *
      * @return this Polyline's Extent in model coordinates.
-     *
      * @throws IllegalArgumentException if the Globe is null.
      */
-    public Extent getExtent(Globe globe, double verticalExaggeration)
-    {
-        if (globe == null)
-        {
+    public Extent getExtent(Globe globe, double verticalExaggeration) {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -548,58 +473,48 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     }
 
     /**
-     * Returns this Polyline's enclosing volume as an {@link gov.nasa.worldwind.geom.Extent} in model coordinates, given
-     * a specified {@link gov.nasa.worldwind.render.DrawContext}. The returned Extent may be different than the Extent
-     * returned by calling {@link #getExtent(gov.nasa.worldwind.globes.Globe, double)} with the DrawContext's Globe and
+     * Returns this Polyline's enclosing volume as an {@link Extent} in model coordinates, given
+     * a specified {@link DrawContext}. The returned Extent may be different than the Extent
+     * returned by calling {@link #getExtent(Globe, double)} with the DrawContext's Globe and
      * vertical exaggeration. Additionally, this may cache the computed extent and is therefore potentially faster than
-     * calling {@link #getExtent(gov.nasa.worldwind.globes.Globe, double)}.
+     * calling {@link #getExtent(Globe, double)}.
      *
      * @param dc the current DrawContext.
-     *
      * @return this Polyline's Extent in model coordinates.
-     *
      * @throws IllegalArgumentException if the DrawContext is null, or if the Globe held by the DrawContext is null.
      */
-    public Extent getExtent(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public Extent getExtent(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (dc.getGlobe() == null)
-        {
+        if (dc.getGlobe() == null) {
             String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         ExtentInfo extentInfo = this.extents.get(dc.getGlobe());
-        if (extentInfo != null && extentInfo.isValid(dc))
-        {
+        if (extentInfo != null && extentInfo.isValid(dc)) {
             return extentInfo.extent;
         }
-        else
-        {
+        else {
             extentInfo = new ExtentInfo(this.computeExtent(dc), dc);
             this.extents.put(dc.getGlobe(), extentInfo);
             return extentInfo.extent;
         }
     }
 
-    protected Extent computeExtent(Globe globe, double verticalExaggeration)
-    {
+    protected Extent computeExtent(Globe globe, double verticalExaggeration) {
         Sector sector = Sector.boundingSector(this.getPositions());
 
         double[] minAndMaxElevations;
-        if (this.isFollowTerrain())
-        {
+        if (this.isFollowTerrain()) {
             minAndMaxElevations = globe.getMinAndMaxElevations(sector);
         }
-        else
-        {
+        else {
             minAndMaxElevations = computeElevationExtremes(this.getPositions());
         }
         minAndMaxElevations[0] += this.getOffset();
@@ -609,32 +524,15 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             minAndMaxElevations[1]);
     }
 
-    protected Extent computeExtent(DrawContext dc)
-    {
+    protected Extent computeExtent(DrawContext dc) {
         return this.computeExtent(dc.getGlobe(), dc.getVerticalExaggeration());
     }
 
-    protected static double[] computeElevationExtremes(Iterable<? extends Position> positions)
-    {
-        double[] extremes = new double[] {Double.MAX_VALUE, -Double.MAX_VALUE};
-        for (Position pos : positions)
-        {
-            if (extremes[0] > pos.getElevation())
-                extremes[0] = pos.getElevation(); // min
-            if (extremes[1] < pos.getElevation())
-                extremes[1] = pos.getElevation(); // max
-        }
-
-        return extremes;
-    }
-
-    public double getDistanceFromEye()
-    {
+    public double getDistanceFromEye() {
         return this.eyeDistance;
     }
 
-    protected void setSurfaceShapeAttributes()
-    {
+    protected void setSurfaceShapeAttributes() {
         ShapeAttributes attrs = new BasicShapeAttributes();
         attrs.setOutlineMaterial(new Material(this.color));
         attrs.setOutlineOpacity(this.color.getAlpha() / 255.0);
@@ -651,20 +549,16 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         this.surfaceShape.setHighlightAttributes(attrs);
     }
 
-    protected void setSurfaceShapeLocations()
-    {
+    protected void setSurfaceShapeLocations() {
         Iterable<Position> locations;
 
-        if (!this.isClosed())
-        {
+        if (!this.isClosed()) {
             locations = this.getPositions();
         }
-        else
-        {
-            ArrayList<Position> temp = new ArrayList<>();
+        else {
+            List<Position> temp = new ArrayList<>();
             Position firstPosition = null;
-            for (Position pos : this.getPositions())
-            {
+            for (Position pos : this.getPositions()) {
                 temp.add(pos);
 
                 if (firstPosition == null)
@@ -682,12 +576,9 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             ((SurfacePolyline) this.surfaceShape).setLocations(locations);
     }
 
-    public void preRender(DrawContext dc)
-    {
-        if (dc.is2DGlobe())
-        {
-            if (this.surfaceShape == null)
-            {
+    public void preRender(DrawContext dc) {
+        if (dc.is2DGlobe()) {
+            if (this.surfaceShape == null) {
                 if (this.isFilled())
                     this.surfaceShape = new SurfacePolygon();
                 else
@@ -696,7 +587,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
                 this.setSurfaceShapeLocations();
                 this.setSurfaceShapeAttributes();
                 this.surfaceShape.setPathType(this.pathType == GREAT_CIRCLE ? AVKey.GREAT_CIRCLE
-                : pathType == RHUMB_LINE ? AVKey.RHUMB_LINE : AVKey.LINEAR);
+                    : pathType == RHUMB_LINE ? AVKey.RHUMB_LINE : AVKey.LINEAR);
             }
 
             this.surfaceShape.setHighlighted(this.isHighlighted());
@@ -707,32 +598,27 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         }
     }
 
-    public void pick(DrawContext dc, Point pickPoint)
-    {
+    public void pick(DrawContext dc, Point pickPoint) {
         // This method is called only when ordered renderables are being drawn.
         // Arg checked within call to render.
 
         this.pickSupport.clearPickList();
-        try
-        {
+        try {
             this.pickSupport.beginPicking(dc);
             this.render(dc);
         }
-        finally
-        {
+        finally {
             this.pickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
 
-    public void render(DrawContext dc)
-    {
+    public void render(DrawContext dc) {
         // This render method is called three times during frame generation. It's first called as a {@link Renderable}
         // during <code>Renderable</code> picking. It's called again during normal rendering. And it's called a third
         // time as an OrderedRenderable. The first two calls determine whether to add the polyline to the ordered
         // renderable list during pick and render. The third call just draws the ordered renderable.
-        if (dc == null)
-        {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -741,8 +627,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         if (dc.getSurfaceGeometry() == null)
             return;
 
-        if (dc.is2DGlobe() && this.surfaceShape != null)
-        {
+        if (dc.is2DGlobe() && this.surfaceShape != null) {
             this.surfaceShape.render(dc);
             return;
         }
@@ -760,10 +645,8 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      *
      * @param dc the current draw context.
      */
-    protected void draw(DrawContext dc)
-    {
-        if (dc.isOrderedRenderingMode())
-        {
+    protected void draw(DrawContext dc) {
+        if (dc.isOrderedRenderingMode()) {
             this.drawOrderedRenderable(dc);
             return;
         }
@@ -775,8 +658,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
 
         // vertices potentially computed every frame to follow terrain changes
         if (this.currentSpans == null || (this.followTerrain && this.geomGenTimeStamp != dc.getFrameTimeStamp())
-            || this.geomGenVE != dc.getVerticalExaggeration())
-        {
+            || this.geomGenVE != dc.getVerticalExaggeration()) {
             // Reference center must be computed prior to computing vertices.
             this.computeReferenceCenter(dc);
             this.eyeDistance = this.referenceCenterPoint.distanceTo3(dc.getView().getEyePoint());
@@ -788,8 +670,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         if (this.currentSpans == null || this.currentSpans.size() < 1)
             return;
 
-        if (this.intersectsFrustum(dc))
-        {
+        if (this.intersectsFrustum(dc)) {
             if (dc.isPickingMode())
                 this.pickLayer = dc.getCurrentLayer();
 
@@ -797,13 +678,11 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         }
     }
 
-    protected void drawOrderedRenderable(DrawContext dc)
-    {
+    protected void drawOrderedRenderable(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attrBits = GL2.GL_HINT_BIT | GL2.GL_CURRENT_BIT | GL2.GL_LINE_BIT;
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             if (this.color.getAlpha() != 255)
                 attrBits |= GL.GL_COLOR_BUFFER_BIT;
         }
@@ -813,20 +692,16 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
 
         boolean projectionOffsetPushed = false; // keep track for error recovery
 
-        try
-        {
-            if (!dc.isPickingMode())
-            {
-                if (this.color.getAlpha() != 255)
-                {
+        try {
+            if (!dc.isPickingMode()) {
+                if (this.color.getAlpha() != 255) {
                     gl.glEnable(GL.GL_BLEND);
                     gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
                 }
                 gl.glColor4ub((byte) this.color.getRed(), (byte) this.color.getGreen(),
                     (byte) this.color.getBlue(), (byte) this.color.getAlpha());
             }
-            else
-            {
+            else {
                 // We cannot depend on the layer to set a pick color for us because this Polyline is picked during ordered
                 // rendering. Therefore we set the pick color ourselves.
                 Color pickColor = dc.getUniquePickColor();
@@ -835,13 +710,11 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
                 gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
             }
 
-            if (this.stippleFactor > 0)
-            {
+            if (this.stippleFactor > 0) {
                 gl.glEnable(GL2.GL_LINE_STIPPLE);
                 gl.glLineStipple(this.stippleFactor, this.stipplePattern);
             }
-            else
-            {
+            else {
                 gl.glDisable(GL2.GL_LINE_STIPPLE);
             }
 
@@ -859,8 +732,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             else
                 gl.glLineWidth((float) this.getLineWidth());
 
-            if (this.followTerrain)
-            {
+            if (this.followTerrain) {
                 dc.pushProjectionOffest(0.99);
                 projectionOffsetPushed = true;
             }
@@ -868,8 +740,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             if (this.currentSpans == null)
                 return;
 
-            for (List<Vec4> span : this.currentSpans)
-            {
+            for (List<Vec4> span : this.currentSpans) {
                 if (span == null)
                     continue;
 
@@ -877,19 +748,15 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
                 // overhead of batched rendering, e.g., gl.glDrawArrays, is too high because it requires copying
                 // the vertices into a DoubleBuffer, and DoubleBuffer creation and access performs relatively poorly.
                 gl.glBegin(primType);
-                for (Vec4 p : span)
-                {
+                for (Vec4 p : span) {
                     gl.glVertex3d(p.x, p.y, p.z);
                 }
                 gl.glEnd();
             }
 
-            if (this.isHighlighted())
-            {
-                if (!dc.isPickingMode())
-                {
-                    if (this.highlightColor.getAlpha() != 255)
-                    {
+            if (this.isHighlighted()) {
+                if (!dc.isPickingMode()) {
+                    if (this.highlightColor.getAlpha() != 255) {
                         gl.glEnable(GL.GL_BLEND);
                         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
                     }
@@ -897,14 +764,12 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
                         (byte) this.highlightColor.getBlue(), (byte) this.highlightColor.getAlpha());
 
                     gl.glLineWidth((float) this.getLineWidth() + 2);
-                    for (List<Vec4> span : this.currentSpans)
-                    {
+                    for (List<Vec4> span : this.currentSpans) {
                         if (span == null)
                             continue;
 
                         gl.glBegin(primType);
-                        for (Vec4 p : span)
-                        {
+                        for (Vec4 p : span) {
                             gl.glVertex3d(p.x, p.y, p.z);
                         }
                         gl.glEnd();
@@ -912,8 +777,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
                 }
             }
         }
-        finally
-        {
+        finally {
             if (projectionOffsetPushed)
                 dc.popProjectionOffest();
 
@@ -926,11 +790,9 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      * Indicates whether the shape is visible in the current view.
      *
      * @param dc the draw context.
-     *
      * @return true if the shape is visible, otherwise false.
      */
-    protected boolean intersectsFrustum(DrawContext dc)
-    {
+    protected boolean intersectsFrustum(DrawContext dc) {
         Extent extent = this.getExtent(dc);
         if (extent == null)
             return true; // don't know the visibility, shape hasn't been computed yet
@@ -941,8 +803,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         return dc.getView().getFrustumInModelCoordinates().intersects(extent);
     }
 
-    protected void makeVertices(DrawContext dc)
-    {
+    protected void makeVertices(DrawContext dc) {
         if (this.currentSpans == null)
             this.currentSpans = new ArrayList<>();
         else
@@ -953,8 +814,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
 
         Position posA = this.positions.get(0);
         Vec4 ptA = this.computePoint(dc, posA, true);
-        for (int i = 1; i <= this.positions.size(); i++)
-        {
+        for (int i = 1; i <= this.positions.size(); i++) {
             Position posB;
             if (i < this.positions.size())
                 posB = this.positions.get(i);
@@ -965,8 +825,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
 
             Vec4 ptB = this.computePoint(dc, posB, true);
 
-            if (this.followTerrain && !this.isSegmentVisible(dc, posA, posB, ptA, ptB))
-            {
+            if (this.followTerrain && !this.isSegmentVisible(dc, posA, posB, ptA, ptB)) {
                 posA = posB;
                 ptA = ptB;
                 continue;
@@ -983,14 +842,12 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         }
     }
 
-    protected void addSpan(ArrayList<Vec4> span)
-    {
-        if (span != null && span.size() > 0)
+    protected void addSpan(List<Vec4> span) {
+        if (span != null && !span.isEmpty())
             this.currentSpans.add(span);
     }
 
-    protected boolean isSegmentVisible(DrawContext dc, Position posA, Position posB, Vec4 ptA, Vec4 ptB)
-    {
+    protected boolean isSegmentVisible(DrawContext dc, Position posA, Position posB, Vec4 ptA, Vec4 ptB) {
         Frustum f = dc.getView().getFrustumInModelCoordinates();
 
         if (f.contains(ptA))
@@ -1008,46 +865,39 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             return true;
 
         double r = Line.distanceToSegment(ptA, ptB, ptC);
-        Cylinder cyl = new Cylinder(ptA, ptB, r == 0 ? 1 : r);
+        Extent cyl = new Cylinder(ptA, ptB, r == 0 ? 1 : r);
         return cyl.intersects(dc.getView().getFrustumInModelCoordinates());
     }
 
-    protected Vec4 computePoint(DrawContext dc, Position pos, boolean applyOffset)
-    {
-        if (this.followTerrain)
-        {
+    protected Vec4 computePoint(DrawContext dc, Position pos, boolean applyOffset) {
+        if (this.followTerrain) {
             double height = !applyOffset ? 0 : this.offset;
             // computeTerrainPoint will apply vertical exaggeration
             return dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), height);
         }
-        else
-        {
+        else {
             double height = pos.getElevation() + (applyOffset ? this.offset : 0);
             return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(),
                 height * dc.getVerticalExaggeration());
         }
     }
 
-    protected double computeSegmentLength(DrawContext dc, Position posA, Position posB)
-    {
+    protected double computeSegmentLength(DrawContext dc, Position posA, Position posB) {
         LatLon llA = new LatLon(posA.getLatitude(), posA.getLongitude());
         LatLon llB = new LatLon(posB.getLatitude(), posB.getLongitude());
 
         Angle ang = LatLon.greatCircleDistance(llA, llB);
 
-        if (this.followTerrain)
-        {
+        if (this.followTerrain) {
             return ang.radians * (dc.getGlobe().getRadius() + this.offset * dc.getVerticalExaggeration());
         }
-        else
-        {
+        else {
             double height = this.offset + 0.5 * (posA.getElevation() + posB.getElevation());
             return ang.radians * (dc.getGlobe().getRadius() + height * dc.getVerticalExaggeration());
         }
     }
 
-    protected ArrayList<Vec4> makeSegment(DrawContext dc, Position posA, Position posB, Vec4 ptA, Vec4 ptB)
-    {
+    protected ArrayList<Vec4> makeSegment(DrawContext dc, Position posA, Position posB, Vec4 ptA, Vec4 ptB) {
         ArrayList<Vec4> span = null;
 
         double arcLength = this.computeSegmentLength(dc, posA, posB);
@@ -1062,8 +912,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         Angle segmentAzimuth = null;
         Angle segmentDistance = null;
 
-        for (double s = 0, p = 0; s < 1; )
-        {
+        for (double s = 0, p = 0; s < 1; ) {
             if (this.followTerrain)
                 p += this.terrainConformance * dc.getView().computePixelSizeAtDistance(
                     ptA.distanceTo3(dc.getView().getEyePoint()));
@@ -1073,14 +922,11 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             s = p / arcLength;
 
             Position pos;
-            if (s >= 1)
-            {
+            if (s >= 1) {
                 pos = posB;
             }
-            else if (this.pathType == LINEAR)
-            {
-                if (segmentAzimuth == null)
-                {
+            else if (this.pathType == LINEAR) {
+                if (segmentAzimuth == null) {
                     segmentAzimuth = LatLon.linearAzimuth(posA, posB);
                     segmentDistance = LatLon.linearDistance(posA, posB);
                 }
@@ -1091,8 +937,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             else if (this.pathType
                 == RHUMB_LINE) // or LOXODROME (note that loxodrome is translated to RHUMB_LINE in setPathType)
             {
-                if (segmentAzimuth == null)
-                {
+                if (segmentAzimuth == null) {
                     segmentAzimuth = LatLon.rhumbAzimuth(posA, posB);
                     segmentDistance = LatLon.rhumbDistance(posA, posB);
                 }
@@ -1102,8 +947,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             }
             else // GREAT_CIRCLE
             {
-                if (segmentAzimuth == null)
-                {
+                if (segmentAzimuth == null) {
                     segmentAzimuth = LatLon.greatCircleAzimuth(posA, posB);
                     segmentDistance = LatLon.greatCircleDistance(posA, posB);
                 }
@@ -1121,9 +965,8 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         return span;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected ArrayList<Vec4> clipAndAdd(DrawContext dc, Vec4 ptA, Vec4 ptB, ArrayList<Vec4> span)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected ArrayList<Vec4> clipAndAdd(DrawContext dc, Vec4 ptA, Vec4 ptB, ArrayList<Vec4> span) {
         // Line clipping appears to be useful only for long lines with few segments. It's costly otherwise.
         // TODO: Investigate trade-off of line clipping.
 //        if (Line.clipToFrustum(ptA, ptB, dc.getView().getFrustumInModelCoordinates()) == null)
@@ -1142,8 +985,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         return this.addPointToSpan(ptB, span);
     }
 
-    protected ArrayList<Vec4> addPointToSpan(Vec4 p, ArrayList<Vec4> span)
-    {
+    protected ArrayList<Vec4> addPointToSpan(Vec4 p, ArrayList<Vec4> span) {
         if (span == null)
             span = new ArrayList<>();
 
@@ -1152,8 +994,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         return span;
     }
 
-    protected void computeReferenceCenter(DrawContext dc)
-    {
+    protected void computeReferenceCenter(DrawContext dc) {
         // The reference position is null if this Polyline has no positions. In this case computing the Polyline's
         // Cartesian reference point is meaningless because the Polyline has no geographic location. Therefore we exit
         // without updating the reference point.
@@ -1165,26 +1006,20 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             this.offset);
     }
 
-    public Position getReferencePosition()
-    {
-        if (this.positions.size() < 1)
-        {
+    public Position getReferencePosition() {
+        if (this.positions.size() < 1) {
             return null;
         }
-        else if (this.positions.size() < 3)
-        {
+        else if (this.positions.size() < 3) {
             return this.positions.get(0);
         }
-        else
-        {
+        else {
             return this.positions.get(this.positions.size() / 2);
         }
     }
 
-    public void move(Position delta)
-    {
-        if (delta == null)
-        {
+    public void move(Position delta) {
+        if (delta == null) {
             String msg = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1201,10 +1036,8 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         this.moveTo(refPos.add(delta));
     }
 
-    public void moveTo(Position position)
-    {
-        if (position == null)
-        {
+    public void moveTo(Position position) {
+        if (position == null) {
             String msg = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -1223,8 +1056,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
 
         double elevDelta = position.getElevation() - oldRef.getElevation();
 
-        for (int i = 0; i < this.positions.size(); i++)
-        {
+        for (int i = 0; i < this.positions.size(); i++) {
             Position pos = this.positions.get(i);
 
             Angle distance = LatLon.greatCircleDistance(oldRef, pos);
@@ -1237,20 +1069,17 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     }
 
     @Override
-    public boolean isDragEnabled()
-    {
+    public boolean isDragEnabled() {
         return this.dragEnabled;
     }
 
     @Override
-    public void setDragEnabled(boolean enabled)
-    {
+    public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
 
     @Override
-    public void drag(DragContext dragContext)
-    {
+    public void drag(DragContext dragContext) {
         if (!this.dragEnabled)
             return;
 
@@ -1261,8 +1090,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         this.doDrag(dragContext);
     }
 
-    protected void doDrag(DragContext dragContext)
-    {
+    protected void doDrag(DragContext dragContext) {
         this.draggableSupport.dragGlobeSizeConstant(dragContext);
     }
 
@@ -1271,44 +1099,36 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      *
      * @return XML state document string describing this Polyline.
      */
-    public String getRestorableState()
-    {
+    public String getRestorableState() {
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
         if (rs == null)
             return null;
 
-        if (this.color != null)
-        {
+        if (this.color != null) {
             String encodedColor = RestorableSupport.encodeColor(this.color);
             if (encodedColor != null)
                 rs.addStateValueAsString("color", encodedColor);
         }
 
-        if (this.highlightColor != null)
-        {
+        if (this.highlightColor != null) {
             String encodedColor = RestorableSupport.encodeColor(this.highlightColor);
             if (encodedColor != null)
                 rs.addStateValueAsString("highlightColor", encodedColor);
         }
 
-        if (this.positions != null)
-        {
+        if (this.positions != null) {
             // Create the base "positions" state object.
             RestorableSupport.StateObject positionsStateObj = rs.addStateObject("positions");
-            if (positionsStateObj != null)
-            {
-                for (Position p : this.positions)
-                {
+            if (positionsStateObj != null) {
+                for (Position p : this.positions) {
                     // Save each position only if all parts (latitude, longitude, and elevation) can be
                     // saved. We will not save a partial iconPosition (for example, just the elevation).
-                    if (p != null && p.getLatitude() != null && p.getLongitude() != null)
-                    {
+                    if (p != null && p.getLatitude() != null && p.getLongitude() != null) {
                         // Create a nested "position" element underneath the base "positions".
                         RestorableSupport.StateObject pStateObj =
                             rs.addStateObject(positionsStateObj, "position");
-                        if (pStateObj != null)
-                        {
+                        if (pStateObj != null) {
                             rs.addStateValueAsDouble(pStateObj, "latitudeDegrees",
                                 p.getLatitude().degrees);
                             rs.addStateValueAsDouble(pStateObj, "longitudeDegrees",
@@ -1335,8 +1155,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         rs.addStateValueAsInteger("numSubsegments", this.numSubsegments);
 
         RestorableSupport.StateObject so = rs.addStateObject(null, "avlist");
-        for (Map.Entry<String, Object> avp : this.getEntries())
-        {
+        for (Map.Entry<String, Object> avp : this.getEntries()) {
             this.getRestorableStateForAVPair(avp.getKey(), avp.getValue() != null ? avp.getValue() : "", rs, so);
         }
 
@@ -1350,26 +1169,21 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      * ignored.
      *
      * @param stateInXml an XML document String describing a Polyline.
-     *
      * @throws IllegalArgumentException If <code>stateInXml</code> is null, or if <code>stateInXml</code> is not a well
      *                                  formed XML document String.
      */
-    public void restoreState(String stateInXml)
-    {
-        if (stateInXml == null)
-        {
+    public void restoreState(String stateInXml) {
+        if (stateInXml == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         RestorableSupport restorableSupport;
-        try
-        {
+        try {
             restorableSupport = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -1377,16 +1191,14 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         }
 
         String colorState = restorableSupport.getStateValueAsString("color");
-        if (colorState != null)
-        {
+        if (colorState != null) {
             Color color = RestorableSupport.decodeColor(colorState);
             if (color != null)
                 setColor(color);
         }
 
         colorState = restorableSupport.getStateValueAsString("highlightColor");
-        if (colorState != null)
-        {
+        if (colorState != null) {
             Color color = RestorableSupport.decodeColor(colorState);
             if (color != null)
                 setHighlightColor(color);
@@ -1394,18 +1206,14 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
 
         // Get the base "positions" state object.
         RestorableSupport.StateObject positionsStateObj = restorableSupport.getStateObject("positions");
-        if (positionsStateObj != null)
-        {
-            ArrayList<Position> newPositions = new ArrayList<>();
+        if (positionsStateObj != null) {
+            List<Position> newPositions = new ArrayList<>();
             // Get the nested "position" states beneath the base "positions".
             RestorableSupport.StateObject[] positionStateArray =
                 restorableSupport.getAllStateObjects(positionsStateObj, "position");
-            if (positionStateArray != null && positionStateArray.length != 0)
-            {
-                for (RestorableSupport.StateObject pStateObj : positionStateArray)
-                {
-                    if (pStateObj != null)
-                    {
+            if (positionStateArray != null && positionStateArray.length != 0) {
+                for (RestorableSupport.StateObject pStateObj : positionStateArray) {
+                    if (pStateObj != null) {
                         // Restore each position only if all parts are available.
                         // We will not restore a partial position (for example, just the elevation).
                         Double latitudeState = restorableSupport.getStateValueAsDouble(pStateObj, "latitudeDegrees");
@@ -1471,17 +1279,34 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             setNumSubsegments(numSubsegmentsState);
 
         RestorableSupport.StateObject so = restorableSupport.getStateObject(null, "avlist");
-        if (so != null)
-        {
+        if (so != null) {
             RestorableSupport.StateObject[] avpairs = restorableSupport.getAllStateObjects(so, "");
-            if (avpairs != null)
-            {
-                for (RestorableSupport.StateObject avp : avpairs)
-                {
+            if (avpairs != null) {
+                for (RestorableSupport.StateObject avp : avpairs) {
                     if (avp != null)
                         this.setValue(avp.getName(), avp.getValue());
                 }
             }
+        }
+    }
+
+    protected static class ExtentInfo {
+        // The extent depends on the state of the globe used to compute it, and the vertical exaggeration.
+        protected final Extent extent;
+        protected final double verticalExaggeration;
+        protected final Globe globe;
+        protected final Object globeStateKey;
+
+        public ExtentInfo(Extent extent, DrawContext dc) {
+            this.extent = extent;
+            this.verticalExaggeration = dc.getVerticalExaggeration();
+            this.globe = dc.getGlobe();
+            this.globeStateKey = dc.getGlobe().getStateKey(dc);
+        }
+
+        protected boolean isValid(DrawContext dc) {
+            return this.verticalExaggeration == dc.getVerticalExaggeration() && this.globe == dc.getGlobe()
+                && globeStateKey.equals(dc.getGlobe().getStateKey(dc));
         }
     }
 }

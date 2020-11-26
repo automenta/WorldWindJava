@@ -18,8 +18,7 @@ import javax.xml.stream.events.*;
  * @author tag
  * @version $Id: KMLVec2.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLVec2 extends KMLAbstractObject
-{
+public class KMLVec2 extends KMLAbstractObject {
     protected Double x;
     protected Double y;
 
@@ -28,15 +27,13 @@ public class KMLVec2 extends KMLAbstractObject
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLVec2(String namespaceURI)
-    {
+    public KMLVec2(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
     protected void doAddEventAttribute(Attribute attr, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         if ("x".equals(attr.getName().getLocalPart()))
             this.setX(WWUtil.makeDouble(attr.getValue()));
         else if ("y".equals(attr.getName().getLocalPart()))
@@ -45,33 +42,27 @@ public class KMLVec2 extends KMLAbstractObject
             super.doAddEventAttribute(attr, ctx, event, args);
     }
 
-    protected void setX(Double o)
-    {
-        this.x = o;
-    }
-
-    public Double getX()
-    {
+    public Double getX() {
         return this.x;
     }
 
-    protected void setY(Double o)
-    {
-        this.y = o;
+    protected void setX(Double o) {
+        this.x = o;
     }
 
-    public Double getY()
-    {
+    public Double getY() {
         return this.y;
     }
 
-    public String getXunits()
-    {
+    protected void setY(Double o) {
+        this.y = o;
+    }
+
+    public String getXunits() {
         return (String) this.getField("xunits");
     }
 
-    public String getYunits()
-    {
+    public String getYunits() {
         return (String) this.getField("yunits");
     }
 }

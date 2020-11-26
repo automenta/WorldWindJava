@@ -17,33 +17,52 @@ import gov.nasa.worldwind.util.*;
  * @author Tom Gaskins
  * @version $Id: Sphere.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public final class Sphere implements Extent, Renderable
-{
+public final class Sphere implements Extent, Renderable {
     public final static Sphere UNIT_SPHERE = new Sphere(Vec4.ZERO, 1);
 
     protected final Vec4 center;
     protected final double radius;
 
     /**
+     * Creates a new <code>Sphere</code> from a given center and radius. <code>radius</code> must be positive (that is,
+     * greater than zero), and <code>center</code> may not be null.
+     *
+     * @param center the center of the new sphere
+     * @param radius the radius of the new sphere
+     * @throws IllegalArgumentException if <code>center</code> is null or if <code>radius</code> is non-positive
+     */
+    public Sphere(Vec4 center, double radius) {
+        if (center == null) {
+            String message = Logging.getMessage("nullValue.CenterIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (radius <= 0) {
+            String message = Logging.getMessage("Geom.Sphere.RadiusIsZeroOrNegative", radius);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.center = center;
+        this.radius = radius;
+    }
+
+    /**
      * Creates a sphere that completely contains a set of points.
      *
      * @param points the <code>Vec4</code>s to be enclosed by the new Sphere
-     *
      * @return a <code>Sphere</code> encompassing the given array of <code>Vec4</code>s
-     *
      * @throws IllegalArgumentException if <code>points</code> is null or empty
      */
-    public static Sphere createBoundingSphere(Vec4[] points)
-    {
-        if (points == null)
-        {
+    public static Sphere createBoundingSphere(Vec4[] points) {
+        if (points == null) {
             String message = Logging.getMessage("nullValue.PointsArrayIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (points.length < 1)
-        {
+        if (points.length < 1) {
             String message = Logging.getMessage("Geom.Sphere.NoPointsSpecified");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -64,22 +83,17 @@ public final class Sphere implements Extent, Renderable
      * Creates a sphere that completely contains a set of points.
      *
      * @param buffer the Cartesian coordinates to be enclosed by the new Sphere.
-     *
      * @return a <code>Sphere</code> encompassing the given coordinates.
-     *
      * @throws IllegalArgumentException if <code>buffer</code> is null or contains fewer than three values.
      */
-    public static Sphere createBoundingSphere(BufferWrapper buffer)
-    {
-        if (buffer == null)
-        {
+    public static Sphere createBoundingSphere(BufferWrapper buffer) {
+        if (buffer == null) {
             String message = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (buffer.getBackingBuffer().position() > buffer.getBackingBuffer().limit() - 3)
-        {
+        if (buffer.getBackingBuffer().position() > buffer.getBackingBuffer().limit() - 3) {
             String message = Logging.getMessage("Geom.Sphere.NoPointsSpecified");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -104,15 +118,11 @@ public final class Sphere implements Extent, Renderable
      * specified Extents.
      *
      * @param extents the extends to be enclosed by the new Sphere.
-     *
      * @return a new Sphere encompassing the given Extents.
-     *
      * @throws IllegalArgumentException if the Iterable is null.
      */
-    public static Sphere createBoundingSphere(Iterable<? extends Extent> extents)
-    {
-        if (extents == null)
-        {
+    public static Sphere createBoundingSphere(Iterable<? extends Extent> extents) {
+        if (extents == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -123,8 +133,7 @@ public final class Sphere implements Extent, Renderable
         int count = 0;
 
         // Compute the mean center point of the specified extents.
-        for (Extent e : extents)
-        {
+        for (Extent e : extents) {
             if (e == null)
                 continue;
 
@@ -141,8 +150,7 @@ public final class Sphere implements Extent, Renderable
 
         // Compute the maximum distance from the mean center point to the outermost point on each extent. This is
         // the radius of the enclosing extent.
-        for (Extent e : extents)
-        {
+        for (Extent e : extents) {
             if (e == null)
                 continue;
 
@@ -155,32 +163,17 @@ public final class Sphere implements Extent, Renderable
     }
 
     /**
-     * Creates a new <code>Sphere</code> from a given center and radius. <code>radius</code> must be positive (that is,
-     * greater than zero), and <code>center</code> may not be null.
+     * Calculates a discriminant. A discriminant is useful to determine the number of roots to a quadratic equation. If
+     * the discriminant is less than zero, there are no roots. If it equals zero, there is one root. If it is greater
+     * than zero, there are two roots.
      *
-     * @param center the center of the new sphere
-     * @param radius the radius of the new sphere
-     *
-     * @throws IllegalArgumentException if <code>center</code> is null or if <code>radius</code> is non-positive
+     * @param a the coefficient of the second order pronumeral
+     * @param b the coefficient of the first order pronumeral
+     * @param c the constant parameter in the quadratic equation
+     * @return the discriminant "b squared minus 4ac"
      */
-    public Sphere(Vec4 center, double radius)
-    {
-        if (center == null)
-        {
-            String message = Logging.getMessage("nullValue.CenterIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (radius <= 0)
-        {
-            String message = Logging.getMessage("Geom.Sphere.RadiusIsZeroOrNegative", radius);
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        this.center = center;
-        this.radius = radius;
+    private static double discriminant(double a, double b, double c) {
+        return b * b - 4 * a * c;
     }
 
     /**
@@ -190,8 +183,7 @@ public final class Sphere implements Extent, Renderable
      *
      * @return the radius of this sphere
      */
-    public final double getRadius()
-    {
+    public final double getRadius() {
         return this.radius;
     }
 
@@ -200,8 +192,7 @@ public final class Sphere implements Extent, Renderable
      *
      * @return the diameter of this <code>Sphere</code>
      */
-    public final double getDiameter()
-    {
+    public final double getDiameter() {
         return 2 * this.radius;
     }
 
@@ -210,14 +201,14 @@ public final class Sphere implements Extent, Renderable
      *
      * @return the <code>Vec4</code> situated at the center of this <code>Sphere</code>
      */
-    public final Vec4 getCenter()
-    {
+    public final Vec4 getCenter() {
         return this.center;
     }
 
-    /** {@inheritDoc} */
-    public double getEffectiveRadius(Plane plane)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public double getEffectiveRadius(Plane plane) {
         return this.getRadius();
     }
 
@@ -225,15 +216,11 @@ public final class Sphere implements Extent, Renderable
      * Computes a point on the sphere corresponding to a specified location.
      *
      * @param location the location to compute the point for.
-     *
      * @return the Cartesian coordinates of the corresponding location on the sphere.
-     *
      * @throws IllegalArgumentException if the location is null.
      */
-    public Vec4 getPointOnSphere(LatLon location)
-    {
-        if (location == null)
-        {
+    public Vec4 getPointOnSphere(LatLon location) {
+        if (location == null) {
             String msg = Logging.getMessage("nullValue.LocationIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -254,15 +241,11 @@ public final class Sphere implements Extent, Renderable
      * intersections are marked as such. <code>line</code> is considered to have infinite length in both directions.
      *
      * @param line the <code>Line</code> with which to intersect this <code>Sphere</code>
-     *
      * @return an array containing all the intersections of this <code>Sphere</code> and <code>line</code>
-     *
      * @throws IllegalArgumentException if <code>line</code> is null
      */
-    public final Intersection[] intersect(Line line)
-    {
-        if (line == null)
-        {
+    public final Intersection[] intersect(Line line) {
+        if (line == null) {
             String message = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -277,8 +260,7 @@ public final class Sphere implements Extent, Renderable
             return null;
 
         double discriminantRoot = Math.sqrt(discriminant);
-        if (discriminant == 0)
-        {
+        if (discriminant == 0) {
             Vec4 p = line.getPointAt((-b - discriminantRoot) / (2 * a));
             return new Intersection[] {new Intersection(p, true)};
         }
@@ -291,34 +273,14 @@ public final class Sphere implements Extent, Renderable
     }
 
     /**
-     * Calculates a discriminant. A discriminant is useful to determine the number of roots to a quadratic equation. If
-     * the discriminant is less than zero, there are no roots. If it equals zero, there is one root. If it is greater
-     * than zero, there are two roots.
-     *
-     * @param a the coefficient of the second order pronumeral
-     * @param b the coefficient of the first order pronumeral
-     * @param c the constant parameter in the quadratic equation
-     *
-     * @return the discriminant "b squared minus 4ac"
-     */
-    private static double discriminant(double a, double b, double c)
-    {
-        return b * b - 4 * a * c;
-    }
-
-    /**
      * Indicates whether a specified {@link Frustum} intersects this sphere.
      *
      * @param frustum the frustum to test.
-     *
      * @return true if the specified frustum intersects this sphere, otherwise false.
-     *
      * @throws IllegalArgumentException if the frustum is null.
      */
-    public final boolean intersects(Frustum frustum)
-    {
-        if (frustum == null)
-        {
+    public final boolean intersects(Frustum frustum) {
+        if (frustum == null) {
             String message = Logging.getMessage("nullValue.FrustumIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -353,15 +315,11 @@ public final class Sphere implements Extent, Renderable
      * Tests for intersection with a <code>Line</code>.
      *
      * @param line the <code>Line</code> with which to test for intersection
-     *
      * @return true if <code>line</code> intersects or makes a tangent with the surface of this <code>Sphere</code>
-     *
      * @throws IllegalArgumentException if <code>line</code> is null
      */
-    public boolean intersects(Line line)
-    {
-        if (line == null)
-        {
+    public boolean intersects(Line line) {
+        if (line == null) {
             String msg = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -373,15 +331,11 @@ public final class Sphere implements Extent, Renderable
      * Tests for intersection with a <code>Plane</code>.
      *
      * @param plane the <code>Plane</code> with which to test for intersection
-     *
      * @return true if <code>plane</code> intersects or makes a tangent with the surface of this <code>Sphere</code>
-     *
      * @throws IllegalArgumentException if <code>plane</code> is null
      */
-    public boolean intersects(Plane plane)
-    {
-        if (plane == null)
-        {
+    public boolean intersects(Plane plane) {
+        if (plane == null) {
             String msg = Logging.getMessage("nullValue.PlaneIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -391,11 +345,11 @@ public final class Sphere implements Extent, Renderable
         return dq1 <= this.radius;
     }
 
-    /** {@inheritDoc} */
-    public double getProjectedArea(View view)
-    {
-        if (view == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public double getProjectedArea(View view) {
+        if (view == null) {
             String message = Logging.getMessage("nullValue.ViewIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -409,13 +363,10 @@ public final class Sphere implements Extent, Renderable
      * not be null.
      *
      * @param dc the <code>DrawContext</code> to be used
-     *
      * @throws IllegalArgumentException if <code>dc</code> is null
      */
-    public void render(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void render(DrawContext dc) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -438,20 +389,18 @@ public final class Sphere implements Extent, Renderable
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Sphere: center = " + this.center.toString() + " radius = " + this.radius;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
 
-        final gov.nasa.worldwind.geom.Sphere sphere = (gov.nasa.worldwind.geom.Sphere) o;
+        final Sphere sphere = (Sphere) o;
 
         if (Double.compare(sphere.radius, radius) != 0)
             return false;
@@ -463,8 +412,7 @@ public final class Sphere implements Extent, Renderable
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
         long temp;
         result = center.hashCode();

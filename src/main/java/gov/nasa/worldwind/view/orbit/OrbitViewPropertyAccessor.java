@@ -13,23 +13,16 @@ import gov.nasa.worldwind.view.ViewPropertyAccessor;
  * @author dcollins
  * @version $Id: OrbitViewPropertyAccessor.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class OrbitViewPropertyAccessor extends ViewPropertyAccessor
-{
-    
-    private OrbitViewPropertyAccessor()
-    {
+public class OrbitViewPropertyAccessor extends ViewPropertyAccessor {
+
+    private OrbitViewPropertyAccessor() {
     }
 
-
-    public static PropertyAccessor.PositionAccessor createCenterPositionAccessor(OrbitView view)
-    {
+    public static PropertyAccessor.PositionAccessor createCenterPositionAccessor(OrbitView view) {
         return new CenterPositionAccessor(view);
     }
 
-
-
-    public static PropertyAccessor.DoubleAccessor createZoomAccessor(OrbitView view)
-    {
+    public static PropertyAccessor.DoubleAccessor createZoomAccessor(OrbitView view) {
         return new ZoomAccessor(view);
     }
 
@@ -42,75 +35,60 @@ public class OrbitViewPropertyAccessor extends ViewPropertyAccessor
     // ============== Implementation ======================= //
     // ============== Implementation ======================= //
 
-    private static class CenterPositionAccessor implements PropertyAccessor.PositionAccessor
-    {
+    private static class CenterPositionAccessor implements PropertyAccessor.PositionAccessor {
         private final OrbitView orbitView;
-        public CenterPositionAccessor(OrbitView view)
-        {
+
+        public CenterPositionAccessor(OrbitView view) {
             this.orbitView = view;
         }
 
-        public Position getPosition()
-        {
+        public Position getPosition() {
             if (this.orbitView == null)
                 return null;
 
             return orbitView.getCenterPosition();
-
         }
 
-        public boolean setPosition(Position value)
-        {
-             //noinspection SimplifiableIfStatement
+        public boolean setPosition(Position value) {
+            //noinspection SimplifiableIfStatement
             if (this.orbitView == null || value == null)
                 return false;
 
-
-            try
-            {
+            try {
 
                 this.orbitView.setCenterPosition(value);
                 return true;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 return false;
             }
         }
     }
 
-
-
-    private static class ZoomAccessor implements PropertyAccessor.DoubleAccessor
-    {
+    private static class ZoomAccessor implements PropertyAccessor.DoubleAccessor {
         final OrbitView orbitView;
-        public ZoomAccessor(OrbitView orbitView)
-        {
+
+        public ZoomAccessor(OrbitView orbitView) {
             this.orbitView = orbitView;
         }
-        public final Double getDouble()
-        {
+
+        public final Double getDouble() {
             if (this.orbitView == null)
                 return null;
 
             return this.orbitView.getZoom();
-
         }
 
-        public final boolean setDouble(Double value)
-        {
+        public final boolean setDouble(Double value) {
             //noinspection SimplifiableIfStatement
             if (this.orbitView == null || value == null)
                 return false;
 
-            try
-            {
+            try {
                 this.orbitView.setZoom(value);
                 return true;
-
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 return false;
             }
         }

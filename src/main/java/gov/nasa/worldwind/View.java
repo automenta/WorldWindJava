@@ -13,6 +13,8 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.view.ViewPropertyLimits;
 
+import java.awt.Rectangle;
+
 /**
  * The <code>View</code> interface provides a coordinate transformation from model coordinates to eye coordinates. This
  * follows the OpenGL convention of a right-handed coordinate system with the origin at the eye point and looking down
@@ -20,39 +22,39 @@ import gov.nasa.worldwind.view.ViewPropertyLimits;
  * following the OpenGL convention of an origin in the lower left hand screen corner.
  * <p>
  * Most of the accessor and computation methods on <code>View</code> will use viewing state computed in the last call to
- * {@link #apply(gov.nasa.worldwind.render.DrawContext) apply}.
+ * {@link #apply(DrawContext) apply}.
  * <p>
  * The following methods return state values <i>updated in the most recent call to apply</i>. <ul>
  * <li>getEyePosition</li> <li>getEyePoint</li> <li>getUpVector</li> <li>getForwardVector</li>
  * <li>getModelviewMatrix</li> <li>getViewport</li> <li>getFrustum</li> <li>getFrustumInModelCoordinates</li>
- * <li>getProjectionMatrix</li> </ul> 
+ * <li>getProjectionMatrix</li> </ul>
  * <p>
  * The following methods return computed values using state that was updated in the most recent call to
  * <code>apply</code>.  <ul> <li>project</li> <li>unproject</li> <li>computeRayFromScreenPoint</li>
  * <li>computePositionFromScreenPoint</li> <li>computePixelSizeAtDistance</li> <li>computeHorizonDistance</li> </ul>
- * 
  *
  * @author Paul Collins
  * @version $Id: View.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see gov.nasa.worldwind.view.orbit.OrbitView
  */
-public interface View extends WWObject, Restorable
-{
+public interface View extends WWObject, Restorable {
 
     String VIEW_STOPPED = "gov.nasa.worldwind.View.ViewStopped";
 
-    /** Stops any movement associated with this <code>View</code>. */
+    /**
+     * Stops any movement associated with this <code>View</code>.
+     */
     void stopMovement();
 
     /**
      * Returns the current geographic coordinates of this view's eye position, as computed for the most recent model
      * traversal.
      * <p>
-     * Note: The value returned is not necessarily the value specified to {@link #setEyePosition(gov.nasa.worldwind.geom.Position)}
+     * Note: The value returned is not necessarily the value specified to {@link #setEyePosition(Position)}
      * but is the eye position corresponding to this view's most recently applied state.
      *
      * @return the position of the eye corresponding to the most recent application of this view, or null if the view
-     *         has not yet been applied.
+     * has not yet been applied.
      */
     Position getEyePosition();
 
@@ -60,7 +62,6 @@ public interface View extends WWObject, Restorable
      * Sets the geographic position of the eye.
      *
      * @param eyePosition the eye position.
-     *
      * @throws IllegalArgumentException If <code>eyePosition</code> is null.
      */
     void setEyePosition(Position eyePosition);
@@ -69,7 +70,7 @@ public interface View extends WWObject, Restorable
      * Returns the current geographic coordinates of this view's eye position, as determined from this view's current
      * parameters.
      * <p>
-     * Note: The value returned is not necessarily the value specified to {@link #setEyePosition(gov.nasa.worldwind.geom.Position)}
+     * Note: The value returned is not necessarily the value specified to {@link #setEyePosition(Position)}
      * but is the eye position corresponding to this view's current parameters.
      *
      * @return the position of the eye corresponding to the current parameters of this view.
@@ -89,20 +90,6 @@ public interface View extends WWObject, Restorable
     void setOrientation(Position eyePosition, Position centerPosition);
 
     /**
-     * Sets the heading of the view.  The implementation may interpret this command in whatever way it chooses.
-     *
-     * @param heading The direction to aim the view in degrees
-     */
-    void setHeading(Angle heading);
-
-    /**
-     * Sets the pitch of the view.  The implementation may interpret pitch as it chooses
-     *
-     * @param pitch The pitch of the view.
-     */
-    void setPitch(Angle pitch);
-
-    /**
      * Returns the view's current heading.
      *
      * @return Angle of the view's heading.
@@ -110,11 +97,25 @@ public interface View extends WWObject, Restorable
     Angle getHeading();
 
     /**
+     * Sets the heading of the view.  The implementation may interpret this command in whatever way it chooses.
+     *
+     * @param heading The direction to aim the view in degrees
+     */
+    void setHeading(Angle heading);
+
+    /**
      * Returns the view's current pitch.
      *
      * @return Angle of the view's pitch.
      */
     Angle getPitch();
+
+    /**
+     * Sets the pitch of the view.  The implementation may interpret pitch as it chooses
+     *
+     * @param pitch The pitch of the view.
+     */
+    void setPitch(Angle pitch);
 
     /**
      * Returns this View's current roll.
@@ -193,7 +194,6 @@ public interface View extends WWObject, Restorable
      * may be ignored if the implementation that do not support a field-of-view.
      *
      * @param fieldOfView the horizontal field-of-view angle.
-     *
      * @throws IllegalArgumentException If the implementation supports field-of-view, and <code>fieldOfView</code> is
      *                                  null.
      */
@@ -205,7 +205,7 @@ public interface View extends WWObject, Restorable
      *
      * @return the Rectangle of the viewport.
      */
-    java.awt.Rectangle getViewport();
+    Rectangle getViewport();
 
     /**
      * Returns the near clipping plane distance, in eye coordinates.  Implementations of the <code>View</code> interface
@@ -263,7 +263,6 @@ public interface View extends WWObject, Restorable
      * matrix and viewing frustum.
      *
      * @param dc the current WorldWind DrawContext on which <code>View</code> will apply its state.
-     *
      * @throws IllegalArgumentException If <code>dc</code> is null, or if the <code>Globe</code> or <code>GL</code>
      *                                  instances in <code>dc</code> are null.
      */
@@ -275,9 +274,7 @@ public interface View extends WWObject, Restorable
      * the model point cannot be successfully mapped, this will return null.
      *
      * @param modelPoint the model coordinate <code>Point</code> to project.
-     *
      * @return the mapped screen coordinate <code>Point</code>.
-     *
      * @throws IllegalArgumentException if <code>modelPoint</code> is null.
      */
     Vec4 project(Vec4 modelPoint);
@@ -288,9 +285,7 @@ public interface View extends WWObject, Restorable
      * cannot be successfully mapped, this will return null.
      *
      * @param windowPoint the window coordinate <code>Point</code> to project.
-     *
      * @return the mapped screen coordinate <code>Point</code>.
-     *
      * @throws IllegalArgumentException if <code>windowPoint</code> is null.
      */
     Vec4 unProject(Vec4 windowPoint);
@@ -299,15 +294,13 @@ public interface View extends WWObject, Restorable
      * Defines and applies a new model-view matrix in which the world origin is located at <code>referenceCenter</code>.
      * Geometry rendered after a call to <code>pushReferenceCenter</code> should be transformed with respect to
      * <code>referenceCenter</code>, rather than the canonical origin (0, 0, 0). Calls to
-     * <code>pushReferenceCenter</code> must be followed by {@link #popReferenceCenter(gov.nasa.worldwind.render.DrawContext)
+     * <code>pushReferenceCenter</code> must be followed by {@link #popReferenceCenter(DrawContext)
      * popReferenceCenter} after rendering is complete. Note that calls to {@link #getModelviewMatrix} will not return
      * reference-center model-view matrix, but the original matrix.
      *
      * @param dc              the current WorldWind drawing context on which new model-view state will be applied.
      * @param referenceCenter the location to become the new world origin.
-     *
      * @return a new model-view matrix with origin is at <code>referenceCenter</code>, or null if this method failed.
-     *
      * @throws IllegalArgumentException if <code>referenceCenter</code> is null, if <code>dc</code> is null, or if the
      *                                  <code>Globe</code> or <code>GL</code> instances in <code>dc</code> are null.
      */
@@ -317,7 +310,6 @@ public interface View extends WWObject, Restorable
      * Removes the model-view matrix on top of the matrix stack, and restores the original matrix.
      *
      * @param dc the current WorldWind drawing context on which the original matrix will be restored.
-     *
      * @throws IllegalArgumentException if <code>dc</code> is null, or if the <code>Globe</code> or <code>GL</code>
      *                                  instances in <code>dc</code> are null.
      */
@@ -328,12 +320,10 @@ public interface View extends WWObject, Restorable
      *
      * @param dc              the drawing context.
      * @param referenceCenter the new reference center
-     *
      * @return a new model-view matrix with origin is at <code>referenceCenter</code>, or null if this method failed.
-     *
      * @throws IllegalArgumentException if <code>referenceCenter</code> is null, if <code>dc</code> is null, or if the
      *                                  <code>Globe</code> or <code>GL</code> instances in <code>dc</code> are null.
-     * @see #pushReferenceCenter(gov.nasa.worldwind.render.DrawContext, gov.nasa.worldwind.geom.Vec4)
+     * @see #pushReferenceCenter(DrawContext, Vec4)
      */
     Matrix setReferenceCenter(DrawContext dc, Vec4 referenceCenter);
 
@@ -343,9 +333,8 @@ public interface View extends WWObject, Restorable
      *
      * @param x the horizontal coordinate originating from the left side of <code>View's</code> projection plane.
      * @param y the vertical coordinate originating from the top of <code>View's</code> projection plane.
-     *
      * @return a line beginning at the <code>View's</code> eye point and passing through (x, y) transformed into model
-     *         space.
+     * space.
      */
     Line computeRayFromScreenPoint(double x, double y);
 
@@ -355,7 +344,6 @@ public interface View extends WWObject, Restorable
      *
      * @param x the horizontal coordinate originating from the left side of <code>View's</code> projection plane.
      * @param y the vertical coordinate originating from the top of <code>View's</code> projection plane.
-     *
      * @return the point on the surface in polar coordinates.
      */
     Position computePositionFromScreenPoint(double x, double y);
@@ -367,9 +355,7 @@ public interface View extends WWObject, Restorable
      *
      * @param distance the distance in meters from the eye point. This value must be positive but is otherwise
      *                 unbounded.
-     *
      * @return the dimension of a pixel in meters at the given distance.
-     *
      * @throws IllegalArgumentException if <code>distance</code> is negative.
      */
     double computePixelSizeAtDistance(double distance);
@@ -397,7 +383,9 @@ public interface View extends WWObject, Restorable
      */
     ViewInputHandler getViewInputHandler();
 
-    /** Stops any animations that are active in this <code>View</code> */
+    /**
+     * Stops any animations that are active in this <code>View</code>
+     */
     void stopAnimations();
 
     /**
@@ -432,10 +420,10 @@ public interface View extends WWObject, Restorable
 
     /**
      * Add an animator to the <code>View</code>. This method does not start the {@link
-     * gov.nasa.worldwind.animation.Animator}.  Starting the {@link gov.nasa.worldwind.animation.Animator} is the
+     * Animator}.  Starting the {@link Animator} is the
      * responsibility of the application.
      *
-     * @param animator the {@link gov.nasa.worldwind.animation.Animator} to be added
+     * @param animator the {@link Animator} to be added
      */
     void addAnimator(Animator animator);
 

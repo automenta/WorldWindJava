@@ -5,7 +5,6 @@
  */
 
 /**
- *
  * Provides classes for loading web content, laying out and rendering the content as an OpenGL texture, and interacting
  * with the rendered content.
  * <p>
@@ -26,7 +25,5 @@
  * gov.nasa.worldwind.util.webview.WebView#sendEvent}
  * </li>
  * </ul>
- *
- *
  */
 package gov.nasa.worldwind.util.webview;

@@ -22,17 +22,11 @@ import java.nio.ByteBuffer;
  */
 public class ShapefileRecordMultiPatch extends ShapefileRecord {
 
-    public enum PartType {
-        TriangleStrip, TriangleFan, OuterRing, InnerRing, FirstRing, Ring
-    }
-
     protected double[] boundingRectangle;
     protected double[] zRange; // non-null only for Z types
     protected double[] zValues; // non-null only for Z types
     protected double[] mRange; // will be null if no measures
     protected double[] mValues; // will be null if no measures
-    // Multipatch shapefiles need a specialized type for each part which can be:
-
     // VALUE  PART TYPE
     // 0      Triangle Strip
     // 1      Triangle Fan
@@ -41,17 +35,17 @@ public class ShapefileRecordMultiPatch extends ShapefileRecord {
     // 4      First Ring
     // 5      Ring
     protected PartType[] partTypes;
+    // Multipatch shapefiles need a specialized type for each part which can be:
 
     /**
-     * Constructs a record instance from the given {@link java.nio.ByteBuffer}. The buffer's current position must be
+     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be
      * the start of the record, and will be the start of the next record when the constructor returns.
      *
      * @param shapeFile the parent {@link Shapefile}.
-     * @param buffer the shapefile record {@link java.nio.ByteBuffer} to read from.
-     *
-     * @throws IllegalArgumentException if any argument is null or otherwise invalid.
+     * @param buffer    the shapefile record {@link ByteBuffer} to read from.
+     * @throws IllegalArgumentException                        if any argument is null or otherwise invalid.
      * @throws gov.nasa.worldwind.exception.WWRuntimeException if the record's shape type does not match that of the
-     * shapefile.
+     *                                                         shapefile.
      */
     public ShapefileRecordMultiPatch(Shapefile shapeFile, ByteBuffer buffer) {
         super(shapeFile, buffer);
@@ -70,7 +64,6 @@ public class ShapefileRecordMultiPatch extends ShapefileRecord {
      * start at zero.
      *
      * @param partNumber the number of the part of this record - zero based.
-     *
      * @return an {@link Iterable} over the points X and Y coordinates.
      */
     public Iterable<double[]> getPoints(int partNumber) {
@@ -94,7 +87,7 @@ public class ShapefileRecordMultiPatch extends ShapefileRecord {
     public double[] getZValues() {
         return this.zValues;
     }
-    
+
     public PartType[] getPartTypes() {
         return this.partTypes;
     }
@@ -157,7 +150,7 @@ public class ShapefileRecordMultiPatch extends ShapefileRecord {
 
             for (int i = 0; i < this.numberOfParts; i++) {
                 int length = (i == this.numberOfParts - 1) ? this.numberOfPoints - partPositions[i]
-                        : partPositions[i + 1] - partPositions[i];
+                    : partPositions[i + 1] - partPositions[i];
 
                 // Add the record's points to the Shapefile's point buffer, and record this record's part offset in the
                 // Shapefile's point buffer.
@@ -207,8 +200,7 @@ public class ShapefileRecordMultiPatch extends ShapefileRecord {
      * Export the record to KML as a {@code <Placemark>} element.
      *
      * @param xmlWriter XML writer to receive the generated KML.
-     *
-     * @throws javax.xml.stream.XMLStreamException If an exception occurs while writing the KML
+     * @throws XMLStreamException If an exception occurs while writing the KML
      */
     @Override
     public void exportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException {
@@ -251,5 +243,9 @@ public class ShapefileRecordMultiPatch extends ShapefileRecord {
         xmlWriter.writeEndElement(); // Placemark
 
         xmlWriter.flush();
+    }
+
+    public enum PartType {
+        TriangleStrip, TriangleFan, OuterRing, InnerRing, FirstRing, Ring
     }
 }

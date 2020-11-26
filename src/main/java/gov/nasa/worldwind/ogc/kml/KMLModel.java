@@ -14,12 +14,13 @@ import gov.nasa.worldwind.geom.*;
  * @author tag
  * @version $Id: KMLModel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLModel extends KMLAbstractGeometry implements KMLMutable
-{
-    private static final String LOCATION_KEY="Location";
-    private static final String SCALE_KEY="Scale";
-    
-    /** Flag to indicate that the link has been fetched from the hash map. */
+public class KMLModel extends KMLAbstractGeometry implements KMLMutable {
+    private static final String LOCATION_KEY = "Location";
+    private static final String SCALE_KEY = "Scale";
+
+    /**
+     * Flag to indicate that the link has been fetched from the hash map.
+     */
     protected boolean linkFetched = false;
     protected KMLLink link;
 
@@ -28,62 +29,54 @@ public class KMLModel extends KMLAbstractGeometry implements KMLMutable
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLModel(String namespaceURI)
-    {
+    public KMLModel(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public String getAltitudeMode()
-    {
+    public String getAltitudeMode() {
         return (String) this.getField("altitudeMode");
     }
-    
+
+    public KMLLocation getLocation() {
+        return (KMLLocation) this.getField(LOCATION_KEY);
+    }
+
     public void setLocation(KMLLocation loc) {
         this.setField(LOCATION_KEY, loc);
     }
 
-    public KMLLocation getLocation()
-    {
-        return (KMLLocation) this.getField(LOCATION_KEY);
-    }
-
-    public KMLOrientation getOrientation()
-    {
+    public KMLOrientation getOrientation() {
         return (KMLOrientation) this.getField("Orientation");
     }
-    
-    public void setScale(KMLScale scale) {
-        this.setField(SCALE_KEY, scale);
-    }
-    
-    public KMLScale getScale()
-    {
+
+    public KMLScale getScale() {
         return (KMLScale) this.getField(SCALE_KEY);
     }
 
-    public KMLLink getLink()
-    {
-        if (!this.linkFetched)
-        {
+    public void setScale(KMLScale scale) {
+        this.setField(SCALE_KEY, scale);
+    }
+
+    @Override
+    public void setScale(Vec4 scale) {
+        KMLScale curScale = this.getScale();
+        if (curScale == null) {
+            curScale = new KMLScale(this.getNamespaceURI());
+            setScale(curScale);
+        }
+        curScale.setScale(scale);
+    }
+
+    public KMLLink getLink() {
+        if (!this.linkFetched) {
             this.link = (KMLLink) this.getField("Link");
             this.linkFetched = true;
         }
         return this.link;
     }
 
-    public KMLResourceMap getResourceMap()
-    {
+    public KMLResourceMap getResourceMap() {
         return (KMLResourceMap) this.getField("ResourceMap");
-    }
-
-    @Override
-    public void setPosition(Position position) {
-        KMLLocation loc = this.getLocation();
-        if (loc == null) {
-            loc = new KMLLocation(this.getNamespaceURI());
-            this.setLocation(loc);
-        }
-        loc.setPosition(position);
     }
 
     @Override
@@ -97,12 +90,12 @@ public class KMLModel extends KMLAbstractGeometry implements KMLMutable
     }
 
     @Override
-    public void setScale(Vec4 scale) {
-        KMLScale curScale = this.getScale();
-        if (curScale == null) {
-            curScale = new KMLScale(this.getNamespaceURI());
-            setScale(curScale);
+    public void setPosition(Position position) {
+        KMLLocation loc = this.getLocation();
+        if (loc == null) {
+            loc = new KMLLocation(this.getNamespaceURI());
+            this.setLocation(loc);
         }
-        curScale.setScale(scale);
+        loc.setPosition(position);
     }
 }

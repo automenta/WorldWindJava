@@ -15,20 +15,16 @@ import org.w3c.dom.Document;
  * @version $Id: USDANAIPWMSImageLayer.java 2257 2014-08-22 18:02:19Z tgaskins $
  */
 
-public class USDANAIPWMSImageLayer extends WMSTiledImageLayer
-{
-    public USDANAIPWMSImageLayer()
-    {
+public class USDANAIPWMSImageLayer extends WMSTiledImageLayer {
+    public USDANAIPWMSImageLayer() {
         super(getConfigurationDocument(), null);
     }
 
-    protected static Document getConfigurationDocument()
-    {
+    protected static Document getConfigurationDocument() {
         return WWXML.openDocumentFile("config/Earth/USDANAIPWMSImageLayer.xml", null);
     }
 
-    public String toString()
-    {
+    public String toString() {
         String o = this.getStringValue(AVKey.DISPLAY_NAME);
         return o != null ? o : "USDA FSA Imagery";
     }

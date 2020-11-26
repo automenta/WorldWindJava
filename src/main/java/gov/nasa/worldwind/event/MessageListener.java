@@ -12,8 +12,7 @@ package gov.nasa.worldwind.event;
  * @author pabercrombie
  * @version $Id: MessageListener.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface MessageListener
-{
+public interface MessageListener {
     /**
      * Invoked when a message is received.
      *

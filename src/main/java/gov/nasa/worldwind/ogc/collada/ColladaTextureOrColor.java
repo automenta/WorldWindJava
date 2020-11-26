@@ -14,15 +14,13 @@ import java.awt.*;
  * @author pabercrombie
  * @version $Id: ColladaTextureOrColor.java 654 2012-06-25 04:15:52Z pabercrombie $
  */
-public class ColladaTextureOrColor extends ColladaAbstractObject
-{
+public class ColladaTextureOrColor extends ColladaAbstractObject {
     /**
      * Construct an instance.
      *
      * @param ns the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public ColladaTextureOrColor(String ns)
-    {
+    public ColladaTextureOrColor(String ns) {
         super(ns);
     }
 
@@ -31,8 +29,7 @@ public class ColladaTextureOrColor extends ColladaAbstractObject
      *
      * @return The value of the texture field, or null if the field is not set.
      */
-    public ColladaTexture getTexture()
-    {
+    public ColladaTexture getTexture() {
         return (ColladaTexture) this.getField("texture");
     }
 
@@ -41,8 +38,7 @@ public class ColladaTextureOrColor extends ColladaAbstractObject
      *
      * @return The value of the color field, or null if the field is not set.
      */
-    public Color getColor()
-    {
+    public Color getColor() {
         ColladaColor color = (ColladaColor) this.getField("color");
         if (color == null)
             return null;
@@ -62,17 +58,14 @@ public class ColladaTextureOrColor extends ColladaAbstractObject
      * Parse a string of floats into a float[]
      *
      * @param floatArrayString String of floats, separated by whitespace.
-     *
      * @return Parsed float[].
      */
-    protected float[] parseFloatArray(String floatArrayString)
-    {
+    protected float[] parseFloatArray(String floatArrayString) {
         String[] arrayOfNumbers = floatArrayString.trim().split("\\s+");
         float[] floats = new float[arrayOfNumbers.length];
 
         int i = 0;
-        for (String s : arrayOfNumbers)
-        {
+        for (String s : arrayOfNumbers) {
             floats[i++] = Float.parseFloat(s);
         }
 

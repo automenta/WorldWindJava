@@ -23,50 +23,32 @@ import java.util.ArrayList;
  * @author Jeff Addison
  * @version $Id: PickFrustum.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class PickFrustum extends ApplicationTemplate
-{
-    public static class PickFrustumLayer extends RenderableLayer
-    {
-        protected final OrderedIcon orderedImage = new OrderedIcon();
+public class PickFrustum extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Picking Frustum", AppFrame.class);
+    }
 
-        protected class OrderedIcon implements OrderedRenderable
-        {
-            public double getDistanceFromEye()
-            {
-                return 0;
-            }
+    public static class PickFrustumLayer extends RenderableLayer {
+        protected final OrderedRenderable orderedImage = new OrderedIcon();
 
-            public void pick(DrawContext dc, Point pickPoint)
-            {
-                PickFrustumLayer.this.draw(dc);
-            }
-
-            public void render(DrawContext dc)
-            {
-                PickFrustumLayer.this.draw(dc);
-            }
-        }
-
-        /** A RenderableLayer that displays a box around the PickPointFrustum */
-        public PickFrustumLayer()
-        {
+        /**
+         * A RenderableLayer that displays a box around the PickPointFrustum
+         */
+        public PickFrustumLayer() {
         }
 
         @Override
-        public void doRender(DrawContext dc)
-        {
+        public void doRender(DrawContext dc) {
             dc.addOrderedRenderable(this.orderedImage);
         }
 
         @Override
-        public void doPick(DrawContext dc, Point pickPoint)
-        {
+        public void doPick(DrawContext dc, Point pickPoint) {
             // Delegate drawing to the ordered renderable list
             dc.addOrderedRenderable(this.orderedImage);
         }
 
-        public void draw(DrawContext dc)
-        {
+        public void draw(DrawContext dc) {
             GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
             boolean attribsPushed = false;
             boolean modelviewPushed = false;
@@ -77,8 +59,7 @@ public class PickFrustum extends ApplicationTemplate
             if (frustums == null)
                 return;
 
-            try
-            {
+            try {
                 gl.glPushAttrib(GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_ENABLE_BIT
                     | GL2.GL_TRANSFORM_BIT | GL2.GL_VIEWPORT_BIT | GL2.GL_CURRENT_BIT);
                 attribsPushed = true;
@@ -89,24 +70,23 @@ public class PickFrustum extends ApplicationTemplate
 
                 // Load a parallel projection with xy dimensions (viewportWidth, viewportHeight)
                 // into the GL projection matrix.
-                java.awt.Rectangle viewport = dc.getView().getViewport();
+                Rectangle viewport = dc.getView().getViewport();
                 gl.glMatrixMode(GL2.GL_PROJECTION);
                 gl.glPushMatrix();
                 projectionPushed = true;
                 gl.glLoadIdentity();
-                gl.glOrtho(0d, viewport.width, 0d, viewport.height, -1, 1);
+                gl.glOrtho(0.0d, viewport.width, 0.0d, viewport.height, -1, 1);
 
                 gl.glMatrixMode(GL2.GL_MODELVIEW);
                 gl.glPushMatrix();
                 modelviewPushed = true;
                 gl.glLoadIdentity();
 
-                gl.glLineWidth(2f);
+                gl.glLineWidth(2.0f);
 
-                gl.glColor3f(1.0f, 0f, 0f);
+                gl.glColor3f(1.0f, 0.0f, 0.0f);
 
-                for (PickPointFrustum frustum : frustums)
-                {
+                for (PickPointFrustum frustum : frustums) {
                     Rectangle rect = frustum.getScreenRect();
 
                     gl.glBegin(GL2.GL_LINE_STRIP);
@@ -118,15 +98,12 @@ public class PickFrustum extends ApplicationTemplate
                     gl.glEnd();
                 }
             }
-            finally
-            {
-                if (projectionPushed)
-                {
+            finally {
+                if (projectionPushed) {
                     gl.glMatrixMode(GL2.GL_PROJECTION);
                     gl.glPopMatrix();
                 }
-                if (modelviewPushed)
-                {
+                if (modelviewPushed) {
                     gl.glMatrixMode(GL2.GL_MODELVIEW);
                     gl.glPopMatrix();
                 }
@@ -134,10 +111,24 @@ public class PickFrustum extends ApplicationTemplate
                     gl.glPopAttrib();
             }
         }
+
+        protected class OrderedIcon implements OrderedRenderable {
+            public double getDistanceFromEye() {
+                return 0;
+            }
+
+            public void pick(DrawContext dc, Point pickPoint) {
+                PickFrustumLayer.this.draw(dc);
+            }
+
+            public void render(DrawContext dc) {
+                PickFrustumLayer.this.draw(dc);
+            }
+        }
     }
 
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        protected final Layer frustumLayer = new PickFrustumLayer();
         protected JLabel lblDimension;
         protected JLabel frustumDimensionLabel;
         protected JPanel panel;
@@ -147,18 +138,14 @@ public class PickFrustum extends ApplicationTemplate
         protected JToggleButton butToggleViewClipping;
         protected WWIcon lastPickedIcon;
         protected IconLayer iconLayer = null;
-        protected final PickFrustumLayer frustumLayer = new PickFrustumLayer();
 
-        public AppFrame()
-        {
+        public AppFrame() {
             super(true, false, false);
 
             getWwd().addSelectListener(event -> {
-                if (isEnabled())
-                {
+                if (isEnabled()) {
                     // Have rollover events highlight the rolled-over object.
-                    if (event.getEventAction().equals(SelectEvent.ROLLOVER))
-                    {
+                    if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
                         highlight(event.getTopObject());
                     }
                 }
@@ -168,11 +155,9 @@ public class PickFrustum extends ApplicationTemplate
             iconLayer.setViewClippingEnabled(true);
             iconLayer.setPickFrustumClippingEnabled(true);
 
-            for (int x = -180; x < 180; x += 5)
-            {
-                for (int y = -90; y < 90; y += 5)
-                {
-                    UserFacingIcon icon = new UserFacingIcon("gov/nasa/worldwindx/examples/images/georss.png",
+            for (int x = -180; x < 180; x += 5) {
+                for (int y = -90; y < 90; y += 5) {
+                    WWIcon icon = new UserFacingIcon("gov/nasa/worldwindx/examples/images/georss.png",
                         new Position(Angle.fromDegrees(y), Angle
                             .fromDegrees(x), 0));
                     icon.setSize(new Dimension(32, 32));
@@ -189,29 +174,25 @@ public class PickFrustum extends ApplicationTemplate
             this.getContentPane().add(this.makeControlPanel(), BorderLayout.WEST);
         }
 
-        protected void highlight(Object o)
-        {
+        protected void highlight(Object o) {
             // Manage highlighting of icons.
             if (this.lastPickedIcon == o)
                 return; // same thing selected
 
             // Turn off highlight if on.
-            if (this.lastPickedIcon != null)
-            {
+            if (this.lastPickedIcon != null) {
                 this.lastPickedIcon.setHighlighted(false);
                 this.lastPickedIcon = null;
             }
 
             // Turn on highlight if object selected.
-            if (o instanceof WWIcon)
-            {
+            if (o instanceof WWIcon) {
                 this.lastPickedIcon = (WWIcon) o;
                 this.lastPickedIcon.setHighlighted(true);
             }
         }
 
-        protected JPanel makeControlPanel()
-        {
+        protected JPanel makeControlPanel() {
             //Assumes square Frustum
             Dimension dim = getWwd().getSceneController().getDrawContext().getPickPointFrustumDimension();
             int frustumWidth = dim.width;
@@ -224,14 +205,12 @@ public class PickFrustum extends ApplicationTemplate
 
             butToggleViewClipping = new JToggleButton();
             butToggleViewClipping.addActionListener(e -> {
-                if (butToggleViewClipping.isSelected())
-                {
+                if (butToggleViewClipping.isSelected()) {
 //                        System.out.println("layer.setViewClippingEnabled(true);");
                     iconLayer.setViewClippingEnabled(true);
                     butToggleViewClipping.setText("Disable View Clipping");
                 }
-                else
-                {
+                else {
 //                        System.out.println("layer.setViewClippingEnabled(false);");
                     iconLayer.setViewClippingEnabled(false);
                     butToggleViewClipping.setText("Enable View Clipping");
@@ -245,13 +224,11 @@ public class PickFrustum extends ApplicationTemplate
 
             butTogglePickingClipping = new JToggleButton();
             butTogglePickingClipping.addActionListener(e -> {
-                if (butTogglePickingClipping.isSelected())
-                {
+                if (butTogglePickingClipping.isSelected()) {
                     iconLayer.setPickFrustumClippingEnabled(true);
                     butTogglePickingClipping.setText("Disable Picking Clipping");
                 }
-                else
-                {
+                else {
                     iconLayer.setPickFrustumClippingEnabled(false);
                     butTogglePickingClipping.setText("Enable Picking Clipping");
                 }
@@ -264,13 +241,11 @@ public class PickFrustum extends ApplicationTemplate
 
             butShowPickingFrustum = new JToggleButton();
             butShowPickingFrustum.addActionListener(e -> {
-                if (butShowPickingFrustum.isSelected())
-                {
+                if (butShowPickingFrustum.isSelected()) {
                     frustumLayer.setEnabled(true);
                     butShowPickingFrustum.setText("Hide Picking Frustum");
                 }
-                else
-                {
+                else {
                     frustumLayer.setEnabled(false);
                     butShowPickingFrustum.setText("Show Picking Frustum");
                 }
@@ -284,8 +259,7 @@ public class PickFrustum extends ApplicationTemplate
             slider.addChangeListener(e -> {
                 int val = slider.getValue();
 
-                if (lblDimension != null)
-                {
+                if (lblDimension != null) {
                     lblDimension.setText("(" + val + "," + val + ")");
                     getWwd().getSceneController().getDrawContext().setPickPointFrustumDimension(
                         new Dimension(val, val));
@@ -315,10 +289,5 @@ public class PickFrustum extends ApplicationTemplate
             p2.setBorder(new EmptyBorder(10, 10, 10, 10));
             return p2;
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Picking Frustum", AppFrame.class);
     }
 }

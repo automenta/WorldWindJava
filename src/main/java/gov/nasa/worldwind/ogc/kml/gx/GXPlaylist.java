@@ -17,32 +17,27 @@ import java.util.*;
  * @author tag
  * @version $Id: GXPlaylist.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GXPlaylist extends KMLAbstractObject
-{
+public class GXPlaylist extends KMLAbstractObject {
     protected final List<GXAbstractTourPrimitive> tourPrimitives = new ArrayList<>();
 
-    public GXPlaylist(String namespaceURI)
-    {
+    public GXPlaylist(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         if (o instanceof GXAbstractTourPrimitive)
             this.addTourPrimitive((GXAbstractTourPrimitive) o);
         else
             super.doAddEventContent(o, ctx, event, args);
     }
 
-    protected void addTourPrimitive(GXAbstractTourPrimitive o)
-    {
+    protected void addTourPrimitive(GXAbstractTourPrimitive o) {
         this.tourPrimitives.add(o);
     }
 
-    public List<GXAbstractTourPrimitive> getTourPrimitives()
-    {
+    public List<GXAbstractTourPrimitive> getTourPrimitives() {
         return this.tourPrimitives;
     }
 }

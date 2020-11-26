@@ -36,7 +36,8 @@
     <Feature className="gov.nasa.worldwindx.applications.worldwindow.features.WMSDialog"/>
     <Feature className="gov.nasa.worldwindx.applications.worldwindow.features.YahooGazetteer"/>
     <Feature className="gov.nasa.worldwindx.applications.worldwindow.features.ImportedDataDialog"/>
-    <Feature className="gov.nasa.worldwindx.applications.worldwindow.features.MeasurementDialog" featureID="gov.nasa.worldwindx.applications.worldwindow.feature.MeasurementDialog" actuate="onDemand"/>
+    <Feature className="gov.nasa.worldwindx.applications.worldwindow.features.MeasurementDialog"
+             featureID="gov.nasa.worldwindx.applications.worldwindow.feature.MeasurementDialog" actuate="onDemand"/>
     <!--<Feature className="gov.nasa.worldwindx.applications.worldwindow.features.NASACopyrightDialog"/>-->
     <Feature className="gov.nasa.worldwindx.applications.worldwindow.features.Navigation"/>
     <Feature className="gov.nasa.worldwindx.applications.worldwindow.features.Graticule"/>

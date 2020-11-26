@@ -15,18 +15,14 @@ import gov.nasa.worldwind.formats.rpf.RPFDataSeries;
  * @author tag
  * @version $Id: FileSetRPF.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
-public class FileSetRPF extends FileSet
-{
-    FileSetRPF(String rpfSuffixCode)
-    {
+public class FileSetRPF extends FileSet {
+    FileSetRPF(String rpfSuffixCode) {
         this.assignRPFMetadata(rpfSuffixCode);
     }
 
-    public void assignRPFMetadata(String rpfSuffixCode)
-    {
+    public void assignRPFMetadata(String rpfSuffixCode) {
         RPFDataSeries series = RPFDataSeries.dataSeriesFor(rpfSuffixCode);
-        if (series != null)
-        {
+        if (series != null) {
             this.setValue(FileSet.FILE_SET_CODE, series.seriesCode);
             this.setValue(FileSet.FILE_SET_ABBREVIATION, series.seriesAbbreviation);
             this.setValue(FileSet.FILE_SET_SCALE, series.scaleOrResolution);

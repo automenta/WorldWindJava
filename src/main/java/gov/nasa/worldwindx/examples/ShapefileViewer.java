@@ -18,6 +18,7 @@ import javax.swing.filechooser.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.util.logging.Level;
 
 /**
  * Illustrates how to import ESRI Shapefiles into WorldWind. This uses a <code>{@link ShapefileLayerFactory}</code> to
@@ -27,20 +28,66 @@ import java.io.File;
  * @author Patrick Murris
  * @version $Id: ShapefileViewer.java 3212 2015-06-18 02:45:56Z tgaskins $
  */
-public class ShapefileViewer extends ApplicationTemplate
-{
+public class ShapefileViewer extends ApplicationTemplate {
+    protected static void makeMenu(final AppFrame appFrame) {
+        final JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setMultiSelectionEnabled(true);
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Shapefile", "shp"));
+        fileChooser.setFileFilter(fileChooser.getChoosableFileFilters()[1]);
+
+        JMenuBar menuBar = new JMenuBar();
+        appFrame.setJMenuBar(menuBar);
+        JMenu fileMenu = new JMenu("File");
+        menuBar.add(fileMenu);
+
+        JMenuItem openFileMenuItem = new JMenuItem(new AbstractAction("Open File...") {
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    int status = fileChooser.showOpenDialog(appFrame);
+                    if (status == JFileChooser.APPROVE_OPTION) {
+                        for (File file : fileChooser.getSelectedFiles()) {
+                            appFrame.loadShapefile(file);
+                        }
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        fileMenu.add(openFileMenuItem);
+
+        JMenuItem openURLMenuItem = new JMenuItem(new AbstractAction("Open URL...") {
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    String status = JOptionPane.showInputDialog(appFrame, "URL");
+                    if (!WWUtil.isEmpty(status)) {
+                        appFrame.loadShapefile(status.trim());
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        fileMenu.add(openURLMenuItem);
+    }
+
+    public static void main(String[] args) {
+        start("WorldWind Shapefile Viewer", AppFrame.class);
+    }
+
     public static class AppFrame extends ApplicationTemplate.AppFrame
-        implements ShapefileLayerFactory.CompletionCallback
-    {
+        implements ShapefileLayerFactory.CompletionCallback {
         protected final RandomShapeAttributes randomAttrs = new RandomShapeAttributes();
 
-        public AppFrame()
-        {
+        public AppFrame() {
             makeMenu(this);
         }
 
-        public void loadShapefile(Object source)
-        {
+        public void loadShapefile(Object source) {
             this.randomAttrs.nextAttributes(); // display each shapefile in different attributes
 
             ShapefileLayerFactory factory = (ShapefileLayerFactory) WorldWind.createConfigurationComponent(
@@ -53,10 +100,8 @@ public class ShapefileViewer extends ApplicationTemplate
         }
 
         @Override
-        public void completion(final Object result)
-        {
-            if (!SwingUtilities.isEventDispatchThread())
-            {
+        public void completion(final Object result) {
+            if (!SwingUtilities.isEventDispatchThread()) {
                 SwingUtilities.invokeLater(() -> completion(result));
                 return;
             }
@@ -66,8 +111,7 @@ public class ShapefileViewer extends ApplicationTemplate
             this.getWwd().getModel().getLayers().add(layer);
 
             Sector sector = (Sector) layer.getValue(AVKey.SECTOR);
-            if (sector != null)
-            {
+            if (sector != null) {
                 ExampleUtil.goTo(this.getWwd(), sector);
             }
 
@@ -75,72 +119,8 @@ public class ShapefileViewer extends ApplicationTemplate
         }
 
         @Override
-        public void exception(Exception e)
-        {
-            Logging.logger().log(java.util.logging.Level.SEVERE, e.getMessage(), e);
+        public void exception(Exception e) {
+            Logging.logger().log(Level.SEVERE, e.getMessage(), e);
         }
-    }
-
-    protected static void makeMenu(final AppFrame appFrame)
-    {
-        final JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setMultiSelectionEnabled(true);
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Shapefile", "shp"));
-        fileChooser.setFileFilter(fileChooser.getChoosableFileFilters()[1]);
-
-        JMenuBar menuBar = new JMenuBar();
-        appFrame.setJMenuBar(menuBar);
-        JMenu fileMenu = new JMenu("File");
-        menuBar.add(fileMenu);
-
-        JMenuItem openFileMenuItem = new JMenuItem(new AbstractAction("Open File...")
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                try
-                {
-                    int status = fileChooser.showOpenDialog(appFrame);
-                    if (status == JFileChooser.APPROVE_OPTION)
-                    {
-                        for (File file : fileChooser.getSelectedFiles())
-                        {
-                            appFrame.loadShapefile(file);
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        fileMenu.add(openFileMenuItem);
-
-        JMenuItem openURLMenuItem = new JMenuItem(new AbstractAction("Open URL...")
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                try
-                {
-                    String status = JOptionPane.showInputDialog(appFrame, "URL");
-                    if (!WWUtil.isEmpty(status))
-                    {
-                        appFrame.loadShapefile(status.trim());
-                    }
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        fileMenu.add(openURLMenuItem);
-    }
-
-    public static void main(String[] args)
-    {
-        start("WorldWind Shapefile Viewer", AppFrame.class);
     }
 }

@@ -7,6 +7,5 @@
 /**
  * <p>
  * Provides classes for KML and KMZ file and stream I/O and relative-path resolution.</p>
- *
  */
 package gov.nasa.worldwind.ogc.kml.io;

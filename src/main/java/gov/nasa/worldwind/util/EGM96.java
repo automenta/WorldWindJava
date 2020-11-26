@@ -25,60 +25,11 @@ import java.io.*;
  * @author tag
  * @version $Id: EGM96.java 770 2012-09-13 02:48:23Z tgaskins $
  */
-public class EGM96
-{
+public class EGM96 {
+    protected static final Angle INTERVAL = Angle.fromDegrees(15.0d / 60.0d); // 15' angle delta
+    protected static final int NUM_ROWS = 721;
+    protected static final int NUM_COLS = 1440;
     protected String offsetsFilePath;
-    protected BufferWrapper deltas;
-
-    /**
-     * Construct an instance.
-     *
-     * @param offsetsFilePath a path pointing to a file with the geoid offsets. See the class description above for a
-     *                        description of the file.
-     * @throws java.io.IOException if there's a problem reading the file.
-     */
-    public EGM96(String offsetsFilePath) throws IOException
-    {
-        if (offsetsFilePath == null)
-        {
-            String msg = Logging.getMessage("nullValue.PathIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.offsetsFilePath = offsetsFilePath;
-
-        this.loadOffsetFile();
-    }
-
-    protected void loadOffsetFile() throws IOException
-    {
-        InputStream is = WWIO.openFileOrResourceStream(this.offsetsFilePath, EGM96.class);
-        if (is == null)
-        {
-            String msg = Logging.getMessage("generic.CannotOpenFile", this.offsetsFilePath);
-            Logging.logger().severe(msg);
-            throw new WWRuntimeException(msg);
-        }
-
-        try
-        {
-            AVList bufferParams = new AVListImpl();
-            bufferParams.setValue(AVKey.DATA_TYPE, AVKey.INT16);
-            bufferParams.setValue(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
-            this.deltas = BufferWrapper.wrap(WWIO.readStreamToBuffer(is, true), bufferParams);
-        }
-        catch (IOException e)
-        {
-            String msg = Logging.getMessage("generic.ExceptionAttemptingToReadFile", this.offsetsFilePath);
-            Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
-            throw e;
-        }
-        finally
-        {
-            WWIO.closeStream(is, this.offsetsFilePath);
-        }
-    }
 
     // Description of the EGMA96 offsets file:
     // See http://earth-info.nga.mil/GandG/wgs84/gravitymod/egm96/binary/binarygeoid.html
@@ -92,15 +43,53 @@ public class EGM96
     //    of the Prime Meridian (359.75 E). On file, the geoid heights are in units
     //    of centimeters. While retrieving the Integer*2 values on file, divide by
     //    100 and this will produce a geoid height in meters.
+    protected BufferWrapper deltas;
 
-    protected static final Angle INTERVAL = Angle.fromDegrees(15d / 60d); // 15' angle delta
-    protected static final int NUM_ROWS = 721;
-    protected static final int NUM_COLS = 1440;
+    /**
+     * Construct an instance.
+     *
+     * @param offsetsFilePath a path pointing to a file with the geoid offsets. See the class description above for a
+     *                        description of the file.
+     * @throws IOException if there's a problem reading the file.
+     */
+    public EGM96(String offsetsFilePath) throws IOException {
+        if (offsetsFilePath == null) {
+            String msg = Logging.getMessage("nullValue.PathIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
 
-    public double getOffset(Angle latitude, Angle longitude)
-    {
-        if (latitude == null || longitude == null)
-        {
+        this.offsetsFilePath = offsetsFilePath;
+
+        this.loadOffsetFile();
+    }
+
+    protected void loadOffsetFile() throws IOException {
+        InputStream is = WWIO.openFileOrResourceStream(this.offsetsFilePath, EGM96.class);
+        if (is == null) {
+            String msg = Logging.getMessage("generic.CannotOpenFile", this.offsetsFilePath);
+            Logging.logger().severe(msg);
+            throw new WWRuntimeException(msg);
+        }
+
+        try {
+            AVList bufferParams = new AVListImpl();
+            bufferParams.setValue(AVKey.DATA_TYPE, AVKey.INT16);
+            bufferParams.setValue(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
+            this.deltas = BufferWrapper.wrap(WWIO.readStreamToBuffer(is, true), bufferParams);
+        }
+        catch (IOException e) {
+            String msg = Logging.getMessage("generic.ExceptionAttemptingToReadFile", this.offsetsFilePath);
+            Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
+            throw e;
+        }
+        finally {
+            WWIO.closeStream(is, this.offsetsFilePath);
+        }
+    }
+
+    public double getOffset(Angle latitude, Angle longitude) {
+        if (latitude == null || longitude == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -124,8 +113,7 @@ public class EGM96
         // last column of the grid.
         int leftCol = (int) (lon / INTERVAL.degrees);
         int rightCol = leftCol + 1;
-        if (lon >= 360 - INTERVAL.degrees)
-        {
+        if (lon >= 360 - INTERVAL.degrees) {
             leftCol = NUM_COLS - 1;
             rightCol = 0;
         }
@@ -148,11 +136,10 @@ public class EGM96
 
         double offset = pll * ll + plr * lr + pur * ur + pul * ul;
 
-        return offset / 100d; // convert centimeters to meters
+        return offset / 100.0d; // convert centimeters to meters
     }
 
-    protected double gePostOffset(int row, int col)
-    {
+    protected double gePostOffset(int row, int col) {
         int k = row * NUM_COLS + col;
 
         if (k >= this.deltas.length())

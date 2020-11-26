@@ -17,26 +17,21 @@ import java.util.logging.Level;
  * @version $Id: DXT1Decompressor.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 
-public class DXT1Decompressor implements DXTDecompressor
-{
+public class DXT1Decompressor implements DXTDecompressor {
     public static final int DXT1_BLOCK_SIZE = 4;
 
-    public DXT1Decompressor()
-    {
+    public DXT1Decompressor() {
 
     }
 
-    public BufferedImage decompress(ByteBuffer buffer, int width, int height) throws IllegalArgumentException
-    {
-        if (null == buffer)
-        {
+    public BufferedImage decompress(ByteBuffer buffer, int width, int height) throws IllegalArgumentException {
+        if (null == buffer) {
             String message = Logging.getMessage("nullValue.ByteBufferIsNull");
             Logging.logger().fine(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (width <= 0 || height <= 0)
-        {
+        if (width <= 0 || height <= 0) {
             String message = Logging.getMessage("generic.InvalidImageSize", width, height);
             Logging.logger().fine(message);
             throw new IllegalArgumentException(message);
@@ -48,26 +43,21 @@ public class DXT1Decompressor implements DXTDecompressor
     }
 
     protected BufferedImage decodeDxt1Buffer(ByteBuffer buffer, int width, int height)
-            throws IllegalArgumentException
-    {
-        if (null == buffer)
-        {
+        throws IllegalArgumentException {
+        if (null == buffer) {
             String message = Logging.getMessage("nullValue.ByteBufferIsNull");
             Logging.logger().fine(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (width < DXT1_BLOCK_SIZE || height < DXT1_BLOCK_SIZE)
-        {
+        if (width < DXT1_BLOCK_SIZE || height < DXT1_BLOCK_SIZE) {
             String message = Logging.getMessage("generic.InvalidImageSize", width, height);
             Logging.logger().fine(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
-            if (buffer.order() != ByteOrder.LITTLE_ENDIAN)
-            {
+        try {
+            if (buffer.order() != ByteOrder.LITTLE_ENDIAN) {
                 buffer.order(ByteOrder.LITTLE_ENDIAN);
             }
 
@@ -79,18 +69,15 @@ public class DXT1Decompressor implements DXTDecompressor
 
             BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-            for (int row = 0; row < numTilesHigh; row++)
-            {
-                for (int col = 0; col < numTilesWide; col++)
-                {
+            for (int row = 0; row < numTilesHigh; row++) {
+                for (int col = 0; col < numTilesWide; col++) {
                     short minColor = buffer.getShort();
                     short maxColor = buffer.getShort();
                     int colorIndexMask = buffer.getInt();
 
                     Color24[] lookupTable = Color24.expandLookupTable(minColor, maxColor);
 
-                    for (int k = DXT1_BLOCK_SIZE * DXT1_BLOCK_SIZE - 1; k >= 0; k--)
-                    {
+                    for (int k = DXT1_BLOCK_SIZE * DXT1_BLOCK_SIZE - 1; k >= 0; k--) {
                         int h = k / DXT1_BLOCK_SIZE, w = k % DXT1_BLOCK_SIZE;
                         int pixelIndex = h * width + (col * DXT1_BLOCK_SIZE + w);
 
@@ -104,8 +91,7 @@ public class DXT1Decompressor implements DXTDecompressor
             }
             return result;
         }
-        catch (Throwable t)
-        {
+        catch (Throwable t) {
             String message = t.getMessage();
             message = (null == message) ? t.getCause().getMessage() : message;
             Logging.logger().log(Level.FINEST, message, t);
@@ -113,5 +99,4 @@ public class DXT1Decompressor implements DXTDecompressor
 
         return null;
     }
-
 }

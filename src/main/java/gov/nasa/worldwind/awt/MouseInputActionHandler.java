@@ -5,18 +5,20 @@
  */
 package gov.nasa.worldwind.awt;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+
 /**
  * @author jym
  * @version $Id: MouseInputActionHandler.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface MouseInputActionHandler
-{
+public interface MouseInputActionHandler {
     boolean inputActionPerformed(KeyEventState keys, String target,
         ViewInputAttributes.ActionAttributes viewAction);
 
     boolean inputActionPerformed(AbstractViewInputHandler inputHandler,
-        java.awt.event.MouseEvent mouseEvent, ViewInputAttributes.ActionAttributes viewAction);
+        MouseEvent mouseEvent, ViewInputAttributes.ActionAttributes viewAction);
 
     boolean inputActionPerformed(AbstractViewInputHandler inputHandler,
-        java.awt.event.MouseWheelEvent mouseWheelEvent, ViewInputAttributes.ActionAttributes viewAction);
+        MouseWheelEvent mouseWheelEvent, ViewInputAttributes.ActionAttributes viewAction);
 }

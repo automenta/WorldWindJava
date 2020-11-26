@@ -24,20 +24,18 @@ import java.util.Arrays;
  * @author tag
  * @version $Id: SARTrackExtensionTool.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SARTrackExtensionTool implements MouseListener, PositionListener, PropertyChangeListener
-{
-    private boolean armed;
-    private WorldWindow wwd; // Can be null.
-    private SARTrack track; // Can be null.
+public class SARTrackExtensionTool implements MouseListener, PositionListener, PropertyChangeListener {
     protected final SARSegmentPlane segmentPlane;
+    protected final SegmentPlaneAttributes.GeometryAttributes segmentEndGeomAttribs;
+    protected final SegmentPlaneAttributes.LabelAttributes segmentEndLabelAttribs;
     protected Position potentialNextPosition;
     protected boolean waitingForNextPosition = true;
     protected boolean ignoreTrackChangeEvents = false;
-    protected final SegmentPlaneAttributes.GeometryAttributes segmentEndGeomAttribs;
-    protected final SegmentPlaneAttributes.LabelAttributes segmentEndLabelAttribs;
+    private boolean armed;
+    private WorldWindow wwd; // Can be null.
+    private SARTrack track; // Can be null.
 
-    public SARTrackExtensionTool()
-    {
+    public SARTrackExtensionTool() {
         this.segmentPlane = new SARSegmentPlane();
         this.segmentPlane.addPropertyChangeListener(this);
 
@@ -47,39 +45,32 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
             this.segmentPlane.getAttributes().getLabelAttributes(SegmentPlane.SEGMENT_END).copy();
     }
 
-    public boolean isArmed()
-    {
+    public boolean isArmed() {
         return this.armed;
     }
 
-    public void setArmed(boolean armed)
-    {
+    public void setArmed(boolean armed) {
         boolean wasArmed = this.armed;
         this.armed = armed;
         this.segmentPlane.setArmed(armed);
 
-        if (!wasArmed && this.armed)
-        {
+        if (!wasArmed && this.armed) {
             this.start();
         }
-        else if (wasArmed && !this.armed)
-        {
+        else if (wasArmed && !this.armed) {
             this.stop();
         }
     }
 
-    public WorldWindow getWwd()
-    {
+    public WorldWindow getWwd() {
         return this.wwd;
     }
 
-    public void setWorldWindow(WorldWindow wwd)
-    {
+    public void setWorldWindow(WorldWindow wwd) {
         if (this.wwd == wwd)
             return;
 
-        if (this.wwd != null)
-        {
+        if (this.wwd != null) {
             this.wwd.getInputHandler().removeMouseListener(this);
             this.wwd.removePositionListener(this);
         }
@@ -87,57 +78,48 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         this.wwd = wwd;
         this.segmentPlane.setWorldWindow(wwd);
 
-        if (this.wwd != null)
-        {
+        if (this.wwd != null) {
             this.wwd.getInputHandler().addMouseListener(this);
             this.wwd.addPositionListener(this);
         }
     }
 
-    public SARTrack getTrack()
-    {
+    public SARTrack getTrack() {
         return this.track;
     }
 
-    public void setTrack(SARTrack track)
-    {
+    public void setTrack(SARTrack track) {
         if (this.track == track)
             return;
 
-        if (this.track != null)
-        {
+        if (this.track != null) {
             this.track.removePropertyChangeListener(this);
         }
 
         this.track = track;
         this.onTrackChanged();
 
-        if (this.track != null)
-        {
+        if (this.track != null) {
             this.track.addPropertyChangeListener(this);
         }
     }
 
-    public boolean canMoveToNextTrackPoint()
-    {
+    public boolean canMoveToNextTrackPoint() {
         return this.track != null && !this.waitingForNextPosition;
     }
 
-    public void moveToNextTrackPoint()
-    {
+    public void moveToNextTrackPoint() {
         if (this.track == null || this.waitingForNextPosition)
             return;
 
         this.start();
     }
 
-    public boolean canRemoveLastTrackPoint()
-    {
+    public boolean canRemoveLastTrackPoint() {
         return this.track != null && this.track.size() != 0;
     }
 
-    public void removeLastTrackPoint()
-    {
+    public void removeLastTrackPoint() {
         if (this.track == null || this.track.size() == 0)
             return;
 
@@ -146,37 +128,30 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         this.waitingForNextPosition = true;
     }
 
-    protected void start()
-    {
-        if (this.track.size() >= 1)
-        {
+    protected void start() {
+        if (this.track.size() >= 1) {
             this.snapPlaneToLastTrackPoint();
             this.segmentPlane.setVisible(true);
         }
-        else
-        {
+        else {
             this.segmentPlane.setVisible(false);
         }
 
         this.waitingForNextPosition = true;
     }
 
-    protected void stop()
-    {
+    protected void stop() {
         this.segmentPlane.setVisible(false);
     }
 
-    protected void setNextPosition(Position position)
-    {
+    protected void setNextPosition(Position position) {
         SARPosition trackPosition = this.positionToTrackPosition(position);
 
         this.ignoreTrackChangeEvents = true;
-        try
-        {
+        try {
             this.track.appendPosition(trackPosition);
         }
-        finally
-        {
+        finally {
             this.ignoreTrackChangeEvents = false;
         }
 
@@ -188,12 +163,10 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         this.snapPlaneToLastTrackSegment();
     }
 
-    protected void setPotentialNextPosition(Position position)
-    {
+    protected void setPotentialNextPosition(Position position) {
         this.potentialNextPosition = position;
 
-        if (this.potentialNextPosition != null)
-        {
+        if (this.potentialNextPosition != null) {
             Position[] segmentPositions = this.segmentPlane.getSegmentPositions();
 
             this.segmentPlane.setSegmentPositions(segmentPositions[0], this.potentialNextPosition);
@@ -205,14 +178,12 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
 
             this.showSegmentEndPoint(true);
         }
-        else
-        {
+        else {
             this.showSegmentEndPoint(false);
         }
     }
 
-    protected PickedObject getTopPickedObject()
-    {
+    protected PickedObject getTopPickedObject() {
         return (this.wwd.getSceneController().getPickedObjectList() != null) ?
             this.wwd.getSceneController().getPickedObjectList().getTopPickedObject() : null;
     }
@@ -221,28 +192,21 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
     //********************  Mouse Events  **************************//
     //**************************************************************//
 
-    public void mouseClicked(MouseEvent e)
-    {
+    public void mouseClicked(MouseEvent e) {
     }
 
-    public void mousePressed(MouseEvent e)
-    {
-        if (e == null || e.isConsumed())
-        {
+    public void mousePressed(MouseEvent e) {
+        if (e == null || e.isConsumed()) {
             return;
         }
 
-        if (!this.armed || this.wwd == null)
-        {
+        if (!this.armed || this.wwd == null) {
             return;
         }
 
-        if (e.getButton() == MouseEvent.BUTTON1)
-        {
-            if (this.waitingForNextPosition)
-            {
-                if (this.potentialNextPosition != null)
-                {
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            if (this.waitingForNextPosition) {
+                if (this.potentialNextPosition != null) {
                     this.setNextPosition(this.potentialNextPosition);
                     this.waitingForNextPosition = false;
                 }
@@ -250,45 +214,36 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         }
     }
 
-    public void mouseReleased(MouseEvent e)
-    {
+    public void mouseReleased(MouseEvent e) {
     }
 
-    public void mouseEntered(MouseEvent e)
-    {
+    public void mouseEntered(MouseEvent e) {
     }
 
-    public void mouseExited(MouseEvent e)
-    {
+    public void mouseExited(MouseEvent e) {
     }
 
     //**************************************************************//
     //********************  Position Events  ***********************//
     //**************************************************************//
 
-    public void moved(PositionEvent e)
-    {
-        if (e == null)
-        {
+    public void moved(PositionEvent e) {
+        if (e == null) {
             return;
         }
 
-        if (!this.armed || this.wwd == null)
-        {
+        if (!this.armed || this.wwd == null) {
             return;
         }
 
-        if (this.waitingForNextPosition)
-        {
+        if (this.waitingForNextPosition) {
             Position nextPosition = null;
 
             PickedObject po = this.getTopPickedObject();
-            if (po != null)
-            {
+            if (po != null) {
                 Object id = po.getValue(AVKey.PICKED_OBJECT_ID);
                 if (id == SegmentPlane.PLANE_BACKGROUND ||
-                    (this.segmentPlane.isSnapToGrid() && id == SegmentPlane.PLANE_GRID))
-                {
+                    (this.segmentPlane.isSnapToGrid() && id == SegmentPlane.PLANE_GRID)) {
                     nextPosition = po.getPosition();
                 }
             }
@@ -301,19 +256,15 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
     //********************  Property Change Events  ****************//
     //**************************************************************//
 
-    @SuppressWarnings({"StringEquality"})
-    public void propertyChange(PropertyChangeEvent e)
-    {
+    @SuppressWarnings("StringEquality")
+    public void propertyChange(PropertyChangeEvent e) {
         String propertyName = e.getPropertyName();
 
-        if (propertyName == SegmentPlane.SEGMENT_END)
-        {
+        if (propertyName == SegmentPlane.SEGMENT_END) {
             this.snapTrackPointToPlanePoint(propertyName);
         }
-        else if (propertyName == TrackController.TRACK_MODIFY || propertyName == TrackController.TRACK_OFFSET)
-        {
-            if (!this.ignoreTrackChangeEvents)
-            {
+        else if (propertyName == TrackController.TRACK_MODIFY || propertyName == TrackController.TRACK_OFFSET) {
+            if (!this.ignoreTrackChangeEvents) {
                 this.start();
             }
         }
@@ -323,21 +274,18 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
     //********************  Track/Plane Synchronization  ***********//
     //**************************************************************//
 
-    protected void onTrackChanged()
-    {
+    protected void onTrackChanged() {
         SegmentPlaneAttributes.LabelAttributes labelAttrib = this.segmentPlane.getAttributes().getLabelAttributes(
             SegmentPlane.HORIZONTAL_AXIS_LABELS);
-        if (labelAttrib != null)
-        {
+        if (labelAttrib != null) {
             Color labelColor = (this.track != null) ? WWUtil.makeColorBrighter(this.track.getColor())
                 : WWUtil.makeColorBrighter(Color.RED);
             labelAttrib.setColor(labelColor);
         }
     }
 
-    @SuppressWarnings({"StringEquality"})
-    protected void snapTrackPointToPlanePoint(String planePoint)
-    {
+    @SuppressWarnings("StringEquality")
+    protected void snapTrackPointToPlanePoint(String planePoint) {
         if (this.track == null)
             return;
 
@@ -350,23 +298,19 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         Position[] segmentPositions = this.segmentPlane.getSegmentPositions();
 
         this.ignoreTrackChangeEvents = true;
-        try
-        {
-            if (planePoint == SegmentPlane.SEGMENT_END)
-            {
+        try {
+            if (planePoint == SegmentPlane.SEGMENT_END) {
                 int lastIndex = this.track.size() - 1;
                 SARPosition trackPosition = this.positionToTrackPosition(segmentPositions[1]);
                 this.track.set(lastIndex, trackPosition);
             }
         }
-        finally
-        {
+        finally {
             this.ignoreTrackChangeEvents = false;
         }
     }
 
-    protected void snapPlaneToLastTrackPoint()
-    {
+    protected void snapPlaneToLastTrackPoint() {
         if (this.track == null)
             return;
 
@@ -393,8 +337,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         this.wwd.redraw();
     }
 
-    protected void snapPlaneToLastTrackSegment()
-    {
+    protected void snapPlaneToLastTrackSegment() {
         if (this.track == null)
             return;
 
@@ -419,8 +362,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         this.wwd.redraw();
     }
 
-    protected void showSegmentEndPoint(boolean show)
-    {
+    protected void showSegmentEndPoint(boolean show) {
         this.segmentPlane.setObjectVisible(SegmentPlane.SEGMENT_END, show, show);
         this.segmentPlane.setObjectVisible(SegmentPlane.ALTIMETER, show, false);
     }
@@ -429,8 +371,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
     //********************  Utility Methods  ***********************//
     //**************************************************************//
 
-    protected SARPosition computeNextTrackPosition(Point mousePoint)
-    {
+    protected SARPosition computeNextTrackPosition(Point mousePoint) {
         View view = this.wwd.getView();
         Line ray = view.computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Position position = this.segmentPlane.getIntersectionPosition(ray);
@@ -438,10 +379,8 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         return this.positionToTrackPosition(position);
     }
 
-    protected SARPosition computeNextTrackPosition()
-    {
-        if (this.track.size() < 2)
-        {
+    protected SARPosition computeNextTrackPosition() {
+        if (this.track.size() < 2) {
             return null;
         }
 
@@ -465,14 +404,12 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         return new SARPosition(nextLocation.getLatitude(), nextLocation.getLongitude(), lastPosition.getElevation());
     }
 
-    protected SARPosition positionToTrackPosition(Position position)
-    {
+    protected SARPosition positionToTrackPosition(Position position) {
         double trackOffset = this.track.getOffset();
         return new SARPosition(position.getLatitude(), position.getLongitude(), position.getElevation() - trackOffset);
     }
 
-    protected Position trackPositionToPosition(Position position)
-    {
+    protected Position trackPositionToPosition(Position position) {
         double trackOffset = this.track.getOffset();
         return new Position(position.getLatitude(), position.getLongitude(), position.getElevation() + trackOffset);
     }
@@ -481,8 +418,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
     //********************  Mouse Events  **************************//
     //**************************************************************//
 
-    protected SegmentPlaneAttributes.GeometryAttributes createPotentialNextPositionGeomAttributes()
-    {
+    protected SegmentPlaneAttributes.GeometryAttributes createPotentialNextPositionGeomAttributes() {
         SegmentPlaneAttributes.GeometryAttributes geometryAttributes = new SegmentPlaneAttributes.GeometryAttributes(
             Material.BLUE, 1.0);
         geometryAttributes.setSize(8);
@@ -491,8 +427,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         return geometryAttributes;
     }
 
-    protected SegmentPlaneAttributes.LabelAttributes createPotentialNextPositionLabelAttributes()
-    {
+    protected SegmentPlaneAttributes.LabelAttributes createPotentialNextPositionLabelAttributes() {
         SARSegmentPlane.MessageLabelAttributes labelAttributes = new SARSegmentPlane.MessageLabelAttributes(
             Color.WHITE, Font.decode("Arial-18"), AVKey.LEFT, AVKey.CENTER, "Click to add");
         labelAttributes.setOffset(new Vec4(15, 0, 0));

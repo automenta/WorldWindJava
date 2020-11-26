@@ -12,7 +12,7 @@ import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.tree.BasicTreeNode;
 
 /**
- * A <code>TreeNode</code> that represents a <code>{@link gov.nasa.worldwind.layers.Layer}</code>.
+ * A <code>TreeNode</code> that represents a <code>{@link Layer}</code>.
  * <p>
  * The node's selection state is synchronized with its <code>Layer</code>'s enabled state. <code>{@link
  * #isSelected()}</code> returns whether the node's <code>Layer</code> is enabled. Calling <code>{@link
@@ -22,9 +22,10 @@ import gov.nasa.worldwind.util.tree.BasicTreeNode;
  * @author pabercrombie
  * @version $Id: LayerTreeNode.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class LayerTreeNode extends BasicTreeNode
-{
-    /** The layer node's default icon path. */
+public class LayerTreeNode extends BasicTreeNode {
+    /**
+     * The layer node's default icon path.
+     */
     protected static final String DEFAULT_IMAGE = "images/16x16-icon-earth.png";
 
     /**
@@ -38,15 +39,12 @@ public class LayerTreeNode extends BasicTreeNode
      * layer's name.
      *
      * @param layer the <code>Layer</code> this node represents.
-     *
      * @throws IllegalArgumentException if the <code>layer</code> is <code>null</code>.
      */
-    public LayerTreeNode(Layer layer)
-    {
+    public LayerTreeNode(Layer layer) {
         super(layer != null ? layer.getName() : "");
 
-        if (layer == null)
-        {
+        if (layer == null) {
             String message = Logging.getMessage("nullValue.LayerIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -56,9 +54,10 @@ public class LayerTreeNode extends BasicTreeNode
         this.initialize();
     }
 
-    /** Initializes this node's image source. */
-    protected void initialize()
-    {
+    /**
+     * Initializes this node's image source.
+     */
+    protected void initialize() {
         Object imageSource = this.layer.getValue(AVKey.IMAGE);
         if (imageSource == null)
             imageSource = DEFAULT_IMAGE;
@@ -71,8 +70,7 @@ public class LayerTreeNode extends BasicTreeNode
      * @return <code>true</code> if the <code>Layer</code> is enabled, otherwise <code>false</code>.
      */
     @Override
-    public boolean isSelected()
-    {
+    public boolean isSelected() {
         return this.layer.isEnabled();
     }
 
@@ -83,8 +81,7 @@ public class LayerTreeNode extends BasicTreeNode
      * @param selected <code>true</code> to enable the <code>Layer</code>, otherwise <code>false</code>.
      */
     @Override
-    public void setSelected(boolean selected)
-    {
+    public void setSelected(boolean selected) {
         super.setSelected(selected);
         this.layer.setEnabled(selected);
     }

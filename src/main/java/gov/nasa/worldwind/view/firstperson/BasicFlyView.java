@@ -13,6 +13,8 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.view.*;
 
+import java.awt.Rectangle;
+
 /**
  * This is a basic view that implements a yaw-pitch-roll model that can be applied to first-person style view
  * applications (such as flight simulation).
@@ -120,7 +122,7 @@ public class BasicFlyView extends BasicView {
         Vec4 forward = newCenterPoint.subtract3(newEyePoint).normalize3();
         if (forward.cross3(up).getLength3() < 0.001) {
             Matrix modelview = ViewUtil.computeTransformMatrix(this.globe, eyePosition, this.heading, Angle.ZERO,
-                    Angle.ZERO);
+                Angle.ZERO);
             if (modelview != null) {
                 Matrix modelviewInv = modelview.getInverse();
                 if (modelviewInv != null) {
@@ -167,7 +169,7 @@ public class BasicFlyView extends BasicView {
         Vec4 forward = newCenterPoint.subtract3(newEyePoint).normalize3();
         if (forward.cross3(up).getLength3() < 0.001) {
             Matrix modelview = ViewUtil.computeTransformMatrix(this.globe, eyePosition, this.heading, Angle.ZERO,
-                    Angle.ZERO);
+                Angle.ZERO);
             if (modelview != null) {
                 Matrix modelviewInv = modelview.getInverse();
                 if (modelviewInv != null) {
@@ -212,7 +214,7 @@ public class BasicFlyView extends BasicView {
         //========== modelview matrix state ==========//
         // Compute the current modelview matrix.
         this.modelview = ViewUtil.computeTransformMatrix(this.globe, this.eyePosition, this.heading, this.pitch,
-                this.roll);
+            this.roll);
         if (this.modelview == null) {
             this.modelview = Matrix.IDENTITY;
         }
@@ -227,7 +229,7 @@ public class BasicFlyView extends BasicView {
         // Get the current OpenGL viewport state.
         int[] viewportArray = new int[4];
         this.dc.getGL().glGetIntegerv(GL.GL_VIEWPORT, viewportArray, 0);
-        this.viewport = new java.awt.Rectangle(viewportArray[0], viewportArray[1], viewportArray[2], viewportArray[3]);
+        this.viewport = new Rectangle(viewportArray[0], viewportArray[1], viewportArray[2], viewportArray[3]);
 
         // Compute the current clip plane distances. The near distance depends on the far distance, so we must compute
         // the far distance first.
@@ -240,11 +242,11 @@ public class BasicFlyView extends BasicView {
 
         // Compute the current projection matrix.
         this.projection = Matrix.fromPerspective(this.fieldOfView, viewportWidth, viewportHeight, this.nearClipDistance,
-                this.farClipDistance);
+            this.farClipDistance);
 
         // Compute the current frustum.
         this.frustum = Frustum.fromPerspective(this.fieldOfView, (int) viewportWidth, (int) viewportHeight,
-                this.nearClipDistance, this.farClipDistance);
+            this.nearClipDistance, this.farClipDistance);
 
         //========== load GL matrix state ==========//
         loadGLViewState(dc, this.modelview, this.projection);
@@ -313,6 +315,6 @@ public class BasicFlyView extends BasicView {
     public void setViewPropertyLimits(ViewPropertyLimits limits) {
         this.viewLimits = limits;
         this.setViewState(new ViewUtil.ViewState(this.getEyePosition(),
-                this.getHeading(), this.getPitch(), Angle.ZERO));
+            this.getHeading(), this.getPitch(), Angle.ZERO));
     }
 }

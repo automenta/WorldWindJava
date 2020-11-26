@@ -22,14 +22,16 @@ import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacticalGraphicSy
  * @author pabercrombie
  * @version $Id: DefaultLabelLayouts.java 552 2012-04-25 16:51:16Z pabercrombie $
  */
-public class DefaultLabelLayouts
-{
-    /** Map to hold layouts. */
+public class DefaultLabelLayouts {
+    /**
+     * Map to hold layouts.
+     */
     protected final Map<String, List<LabelLayout>> layouts = new HashMap<>();
 
-    /** Create the map and populate it with the default layouts. */
-    public DefaultLabelLayouts()
-    {
+    /**
+     * Create the map and populate it with the default layouts.
+     */
+    public DefaultLabelLayouts() {
         this.populateMap();
     }
 
@@ -37,21 +39,19 @@ public class DefaultLabelLayouts
      * Indicates the layout for a particular type of graphic.
      *
      * @param sidc Symbol code of the graphic.
-     *
      * @return Map that represents the label layout. The keys indicate the modifier key (unique designation, additional
-     *         info, etc.). The values are lists of LabelLayout. Most modifiers will only specify a single layout, but
-     *         some graphics support multiple instances of the same modifier, in which case the list will contain
-     *         multiple layouts.
+     * info, etc.). The values are lists of LabelLayout. Most modifiers will only specify a single layout, but some
+     * graphics support multiple instances of the same modifier, in which case the list will contain multiple layouts.
      */
-    public List<LabelLayout> get(String sidc)
-    {
+    public List<LabelLayout> get(String sidc) {
         List<LabelLayout> layout = this.layouts.get(sidc);
         return layout != null ? layout : Collections.emptyList();
     }
 
-    /** Populate the map with the default layouts. */
-    protected void populateMap()
-    {
+    /**
+     * Populate the map with the default layouts.
+     */
+    protected void populateMap() {
         // The C2GM.GNL.PNT.HBR graphic supports the H modifier in the center of the graphic.
         this.layouts.put(C2GM_GNL_PNT_HBR,
             this.createLayout(SymbologyConstants.ADDITIONAL_INFORMATION, Offset.CENTER, Offset.CENTER));
@@ -227,11 +227,9 @@ public class DefaultLabelLayouts
      * @param key     Modifier key.
      * @param offset  Offset within the image at which to place the label.
      * @param hotspot Offset within the label to align with the label point in the image.
-     *
      * @return New map, populated with one entry for the key/value pair specified in the parameters.
      */
-    protected List<LabelLayout> createLayout(String key, Offset offset, Offset hotspot)
-    {
+    protected List<LabelLayout> createLayout(String key, Offset offset, Offset hotspot) {
         LabelLayout layout = new LabelLayout(key);
         layout.add(offset, hotspot);
 
@@ -246,21 +244,17 @@ public class DefaultLabelLayouts
      * @param offsets    List of offsets from which to create one or more LabelLayout objects. The offsets are specified
      *                   in pairs: first the image offset and then the label offset. If multiple pairs are provided,
      *                   then multiple LabelLayouts will be created and added to the map.
-     *
      * @throws IllegalArgumentException if offsets does not have even length.
      */
-    protected void addLayout(List<LabelLayout> layoutList, String key, Offset... offsets)
-    {
-        if (offsets.length % 2 != 0)
-        {
+    protected void addLayout(Collection<LabelLayout> layoutList, String key, Offset... offsets) {
+        if (offsets.length % 2 != 0) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", offsets.length);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         LabelLayout layout = new LabelLayout(key);
-        for (int i = 0; i < offsets.length; i += 2)
-        {
+        for (int i = 0; i < offsets.length; i += 2) {
             Offset offset = offsets[i];
             Offset hotspot = offsets[i + 1];
 
@@ -276,10 +270,8 @@ public class DefaultLabelLayouts
      * @param value Value to add.
      * @param keys  Keys that map to the value.
      */
-    protected void putAll(List<LabelLayout> value, String... keys)
-    {
-        for (String sidc : keys)
-        {
+    protected void putAll(List<LabelLayout> value, String... keys) {
+        for (String sidc : keys) {
             this.layouts.put(sidc, value);
         }
     }

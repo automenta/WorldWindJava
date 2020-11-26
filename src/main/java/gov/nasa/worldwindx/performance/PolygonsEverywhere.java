@@ -18,19 +18,19 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: PolygonsEverywhere.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class PolygonsEverywhere extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class PolygonsEverywhere extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Very Many Polygons", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             makeMany();
         }
 
-        protected void makeMany()
-        {
+        protected void makeMany() {
             int altitudeMode = WorldWind.ABSOLUTE;
 
             double minLat = -50, maxLat = 50, minLon = -140, maxLon = -10;
@@ -45,36 +45,30 @@ public class PolygonsEverywhere extends ApplicationTemplate
             layer.setPickEnabled(false);
 
             int count = 0;
-            for (double lat = minLat; lat <= maxLat; lat += delta)
-            {
-                for (double lon = minLon; lon <= maxLon; lon += delta)
-                {
+            for (double lat = minLat; lat <= maxLat; lat += delta) {
+                for (double lon = minLon; lon <= maxLon; lon += delta) {
                     positions.clear();
                     double innerLat = lat;
                     double innerLon = lon;
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLon += dLon;
-                        positions.add(Position.fromDegrees(innerLat, innerLon, 5e4));
+                        positions.add(Position.fromDegrees(innerLat, innerLon, 5.0e4));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLat += dLat;
-                        positions.add(Position.fromDegrees(innerLat, innerLon, 5e4));
+                        positions.add(Position.fromDegrees(innerLat, innerLon, 5.0e4));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLon -= dLon;
-                        positions.add(Position.fromDegrees(innerLat, innerLon, 5e4));
+                        positions.add(Position.fromDegrees(innerLat, innerLon, 5.0e4));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLat -= dLat;
-                        positions.add(Position.fromDegrees(innerLat, innerLon, 5e4));
+                        positions.add(Position.fromDegrees(innerLat, innerLon, 5.0e4));
                     }
 
                     Polygon pgon = new Polygon(positions);
@@ -93,10 +87,5 @@ public class PolygonsEverywhere extends ApplicationTemplate
 
             insertBeforeCompass(getWwd(), layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Very Many Polygons", AppFrame.class);
     }
 }

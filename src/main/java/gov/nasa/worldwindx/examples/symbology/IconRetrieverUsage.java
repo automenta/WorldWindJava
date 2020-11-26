@@ -18,24 +18,36 @@ import java.awt.image.*;
 /**
  * Example of using {@link IconRetriever} to retrieve the icon for a MIL-STD-2525C symbol. This example retrieves
  * several symbology icons as BufferedImages and displays them in a JFrame. See the <a
- * href="https://worldwind.arc.nasa.gov/java/tutorials/icon-retriever/" target="_blank">Icon Retriever Usage
- * Guide</a> for more information on using IconRetriever.
+ * href="https://worldwind.arc.nasa.gov/java/tutorials/icon-retriever/" target="_blank">Icon Retriever Usage Guide</a>
+ * for more information on using IconRetriever.
  *
  * @author pabercrombie
  * @version $Id: IconRetrieverUsage.java 521 2012-04-13 17:53:42Z pabercrombie $
  */
-public class IconRetrieverUsage
-{
+public class IconRetrieverUsage {
     // An inner class is used rather than directly subclassing JFrame in the main class so
     // that the main can configure system properties prior to invoking Swing. This is
     // necessary for instance on OS X (Macs) so that the application name can be specified.
 
-    private static class AppFrame extends javax.swing.JFrame
-    {
+    public static void main(String[] args) {
+        if (Configuration.isMacOS()) {
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Icon Retriever");
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            // Create an AppFrame and immediately make it visible. As per Swing convention, this
+            // is done within an invokeLater call so that it executes on an AWT thread.
+            JFrame appFrame = new AppFrame();
+            appFrame.setTitle("WorldWind Icon Retriever");
+            appFrame.setVisible(true);
+            appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        });
+    }
+
+    private static class AppFrame extends JFrame {
         protected final IconRetriever iconRetriever;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             this.getContentPane().setLayout(new FlowLayout());
 
             // Create an icon retriever using the path specified in the config file, or the default path.
@@ -72,8 +84,7 @@ public class IconRetrieverUsage
             });
         }
 
-        protected void addLater(final BufferedImage image, final String text)
-        {
+        protected void addLater(final BufferedImage image, final String text) {
             // Add labels to the frame on the Event Dispatch Thread.
             SwingUtilities.invokeLater(() -> {
                 JLabel label = new JLabel(new ImageIcon(image));
@@ -82,22 +93,5 @@ public class IconRetrieverUsage
                 pack();
             });
         }
-    }
-
-    public static void main(String[] args)
-    {
-        if (Configuration.isMacOS())
-        {
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Icon Retriever");
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            // Create an AppFrame and immediately make it visible. As per Swing convention, this
-            // is done within an invokeLater call so that it executes on an AWT thread.
-            JFrame appFrame = new AppFrame();
-            appFrame.setTitle("WorldWind Icon Retriever");
-            appFrame.setVisible(true);
-            appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        });
     }
 }

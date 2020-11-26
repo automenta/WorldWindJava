@@ -15,112 +15,45 @@ import gov.nasa.worldwind.view.*;
 import gov.nasa.worldwind.view.orbit.OrbitViewPropertyAccessor;
 
 import java.awt.event.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jym
  * @version $Id: FlyViewInputHandler.java 2179 2014-07-25 21:43:39Z dcollins $
  */
-public class FlyViewInputHandler extends BasicViewInputHandler
-{
-    public class ResetPitchActionListener extends ViewInputActionHandler
-    {
-        public boolean inputActionPerformed(AbstractViewInputHandler inputHandler, java.awt.event.KeyEvent event,
-            ViewInputAttributes.ActionAttributes viewAction)
-        {
-            java.util.List keyList = viewAction.getKeyActions();
-            for (Object k : keyList)
-            {
-                ViewInputAttributes.ActionAttributes.KeyAction keyAction =
-                    (ViewInputAttributes.ActionAttributes.KeyAction) k;
-                if (event.getKeyCode() == keyAction.keyCode)
-                {
-                    onResetPitch(viewAction);
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    /** Input handler to handle user input that changes Roll. */
-    public class RollActionListener extends ViewInputActionHandler
-    {
-        public boolean inputActionPerformed(AbstractViewInputHandler inputHandler, KeyEventState keys, String target,
-            ViewInputAttributes.ActionAttributes viewAction)
-        {
-            java.util.List keyList = viewAction.getKeyActions();
-            double rollInput = 0;
-
-            for (Object k : keyList)
-            {
-                ViewInputAttributes.ActionAttributes.KeyAction keyAction =
-                    (ViewInputAttributes.ActionAttributes.KeyAction) k;
-                if (keys.isKeyDown(keyAction.keyCode))
-                {
-                    rollInput += keyAction.sign;
-                }
-            }
-
-            if (rollInput == 0)
-            {
-                return false;
-            }
-
-            //noinspection StringEquality
-            if (target == GENERATE_EVENTS)
-            {
-                ViewInputAttributes.DeviceAttributes deviceAttributes =
-                    inputHandler.getAttributes().getDeviceAttributes(ViewInputAttributes.DEVICE_KEYBOARD);
-
-                onRoll(rollInput, deviceAttributes, viewAction);
-            }
-            return true;
-        }
-    }    
-
-    final AnimationController uiAnimControl = new AnimationController();
-    final AnimationController gotoAnimControl = new AnimationController();
-
+public class FlyViewInputHandler extends BasicViewInputHandler {
     protected static final String VIEW_ANIM_HEADING = "ViewAnimHeading";
     protected static final String VIEW_ANIM_PITCH = "ViewAnimPitch";
     protected static final String VIEW_ANIM_ROLL = "ViewAnimRoll";
     protected static final String VIEW_ANIM_POSITION = "ViewAnimPosition";
     protected static final String VIEW_ANIM_PAN = "ViewAnimPan";
     protected static final String VIEW_ANIM_APP = "ViewAnimApp";
-
     protected static final String ACTION_RESET_PITCH = "ResetPitch";
-
     protected static final double DEFAULT_MOUSE_ROTATE_MIN_VALUE = 0.014; // Speed in degrees per mouse movement
     protected static final double DEFAULT_MOUSE_ROTATE_MAX_VALUE = 0.018; // Speed in degrees per mouse movement
-
     // Keyboard/Action calibration values for extensible view/navigation support
     //protected static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE = 10;
-    protected static final double DEFAULT_KEY_TRANSLATE_SMOOTHING_VALUE = .9;
+    protected static final double DEFAULT_KEY_TRANSLATE_SMOOTHING_VALUE = 0.9;
     protected static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE = 1000000.0;
     protected static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE = 100;
-
     protected static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE_SLOW = 1;
     protected static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE_SLOW = 100000.0;
-
     protected static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MIN_VALUE = 5;
     protected static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE = 50000.0;
     protected static final double DEFAULT_MOUSE_VERTICAL_TRANSLATE_MIN_VALUE = 1;
-        // Speed in log-meters per mouse movement
+    // Speed in log-meters per mouse movement
     protected static final double DEFAULT_MOUSE_VERTICAL_TRANSLATE_MAX_VALUE = 30000;
-        // Speed in log-meters per mouse movement
-
     protected static final double DEFAULT_KEY_VERTICAL_TRANSLATE_MIN_VALUE = 5;
     protected static final double DEFAULT_KEY_VERTICAL_TRANSLATE_MAX_VALUE = 5000;
-
     protected static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MIN_OSX = 10;
-        // Speed in log-meters per wheel movement
+    // Speed in log-meters per wheel movement
     protected static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MAX_OSX = 900000;
-        // Speed in log-meters per wheel movement
+    // Speed in log-meters per mouse movement
+    // Speed in log-meters per wheel movement
     protected static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MIN = 100;
-        // Speed in log-meters per wheel movement
+    // Speed in log-meters per wheel movement
     protected static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MAX = 100000;
-        // Speed in log-meters per wheel movement
-
     // Reset Heading
     protected static final ViewInputAttributes.ActionAttributes.KeyAction
         DEFAULT_RESET_PITCH_KEY_ACT =
@@ -130,11 +63,12 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         {
             DEFAULT_RESET_PITCH_KEY_ACT
         };
-
+    final AnimationController uiAnimControl = new AnimationController();
+    final AnimationController gotoAnimControl = new AnimationController();
+    // Speed in log-meters per wheel movement
     final double speed = 10.0;
 
-    public FlyViewInputHandler()
-    {
+    public FlyViewInputHandler() {
         // Mouse Button Horizontal Translate Events
         // Button 1
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_MOUSE,
@@ -182,7 +116,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         RollActionListener rollActionListener = new RollActionListener();
         this.getAttributes().setActionListener(
             ViewInputAttributes.DEVICE_KEYBOARD, ViewInputAttributes.VIEW_ROLL_KEYS, rollActionListener);
-        
+
         // Arrow Keys horizontal translate
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_KEYBOARD,
             ViewInputAttributes.VIEW_HORIZONTAL_TRANS_KEYS,
@@ -213,15 +147,13 @@ public class FlyViewInputHandler extends BasicViewInputHandler
             DEFAULT_KEY_VERTICAL_TRANSLATE_MIN_VALUE, DEFAULT_KEY_VERTICAL_TRANSLATE_MAX_VALUE);
 
         // Mouse Wheel vertical translate
-        if (Configuration.isMacOS())
-        {
+        if (Configuration.isMacOS()) {
             this.getAttributes().setValues(ViewInputAttributes.DEVICE_MOUSE_WHEEL,
                 ViewInputAttributes.VIEW_VERTICAL_TRANSLATE,
                 DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MIN_OSX,
                 DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MAX_OSX);
         }
-        else
-        {
+        else {
             this.getAttributes().setValues(ViewInputAttributes.DEVICE_MOUSE_WHEEL,
                 ViewInputAttributes.VIEW_VERTICAL_TRANSLATE,
                 DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_MIN,
@@ -243,8 +175,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
 
     protected void onMoveTo(Position focalPosition,
         ViewInputAttributes.DeviceAttributes deviceAttributes,
-        ViewInputAttributes.ActionAttributes actionAttribs)
-    {
+        ViewInputAttributes.ActionAttributes actionAttribs) {
         BasicFlyView view = (BasicFlyView) this.getView();
         if (view == null) // include this test to ensure any derived implementation performs it
         {
@@ -259,8 +190,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
             smoothing = 0.0;
 
         Vec4 currentLookAtPt = view.getCenterPoint();
-        if (currentLookAtPt == null)
-        {
+        if (currentLookAtPt == null) {
             currentLookAtPt = view.
 
                 getGlobe().computePointFromPosition(focalPosition);
@@ -289,8 +219,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         double elevation = ((FlyViewLimits)
             view.getViewPropertyLimits()).limitEyeElevation(
             newPosition, view.getGlobe());
-        if (elevation != newPosition.getElevation())
-        {
+        if (elevation != newPosition.getElevation()) {
             newPosition = new Position(newPosition, elevation);
         }
         this.gotoAnimControl.put(VIEW_ANIM_POSITION,
@@ -304,21 +233,18 @@ public class FlyViewInputHandler extends BasicViewInputHandler
     protected void onHorizontalTranslateRel(double forwardInput, double sideInput,
         double totalForwardInput, double totalSideInput,
         ViewInputAttributes.DeviceAttributes deviceAttributes,
-        ViewInputAttributes.ActionAttributes actionAttributes)
-    {
+        ViewInputAttributes.ActionAttributes actionAttributes) {
         Angle forwardChange;
         Angle sideChange;
 
         this.stopGoToAnimators();
-        if (actionAttributes.getMouseActions() != null)
-        {
+        if (actionAttributes.getMouseActions() != null) {
             forwardChange = Angle.fromDegrees(-totalForwardInput
                 * getScaleValueElevation(deviceAttributes, actionAttributes));
             sideChange = Angle.fromDegrees(totalSideInput
                 * getScaleValueElevation(deviceAttributes, actionAttributes));
         }
-        else
-        {
+        else {
             forwardChange = Angle.fromDegrees(
                 forwardInput * speed * getScaleValueElevation(deviceAttributes, actionAttributes));
             sideChange = Angle.fromDegrees(
@@ -328,21 +254,18 @@ public class FlyViewInputHandler extends BasicViewInputHandler
     }
 
     protected void onHorizontalTranslateRel(Angle forwardChange, Angle sideChange,
-        ViewInputAttributes.ActionAttributes actionAttribs)
-    {
+        ViewInputAttributes.ActionAttributes actionAttribs) {
         View view = this.getView();
         if (view == null) // include this test to ensure any derived implementation performs it
         {
             return;
         }
 
-        if (forwardChange.equals(Angle.ZERO) && sideChange.equals(Angle.ZERO))
-        {
+        if (forwardChange.equals(Angle.ZERO) && sideChange.equals(Angle.ZERO)) {
             return;
         }
 
-        if (view instanceof BasicFlyView)
-        {
+        if (view instanceof BasicFlyView) {
 
             Vec4 forward = view.getForwardVector();
             Vec4 up = view.getUpVector();
@@ -359,8 +282,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         }
     }
 
-    protected void onResetHeading(ViewInputAttributes.ActionAttributes actionAttribs)
-    {
+    protected void onResetHeading(ViewInputAttributes.ActionAttributes actionAttribs) {
 
         View view = this.getView();
         if (view == null) // include this test to ensure any derived implementation performs it
@@ -377,8 +299,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         view.firePropertyChange(AVKey.VIEW, null, view);
     }
 
-    protected void onResetPitch(ViewInputAttributes.ActionAttributes actionAttribs)
-    {
+    protected void onResetPitch(ViewInputAttributes.ActionAttributes actionAttribs) {
 
         View view = this.getView();
         if (view == null) // include this test to ensure any derived implementation performs it
@@ -395,8 +316,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         view.firePropertyChange(AVKey.VIEW, null, view);
     }
 
-    protected void onResetHeadingPitchRoll(ViewInputAttributes.ActionAttributes actionAttribs)
-    {
+    protected void onResetHeadingPitchRoll(ViewInputAttributes.ActionAttributes actionAttribs) {
         View view = this.getView();
         if (view == null) // include this test to ensure any derived implementation performs it
         {
@@ -421,8 +341,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
     protected void onRotateView(double headingInput, double pitchInput,
         double totalHeadingInput, double totalPitchInput,
         ViewInputAttributes.DeviceAttributes deviceAttributes,
-        ViewInputAttributes.ActionAttributes actionAttributes)
-    {
+        ViewInputAttributes.ActionAttributes actionAttributes) {
 
         Angle headingChange;
         Angle pitchChange;
@@ -435,8 +354,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
     }
 
     protected void onRotateView(Angle headingChange, Angle pitchChange,
-        ViewInputAttributes.ActionAttributes actionAttribs)
-    {
+        ViewInputAttributes.ActionAttributes actionAttribs) {
 
         View view = this.getView();
         if (view == null) // include this test to ensure any derived implementation performs it
@@ -444,9 +362,8 @@ public class FlyViewInputHandler extends BasicViewInputHandler
             return;
         }
 
-        if (view instanceof BasicFlyView)
-        {
-            BasicFlyView flyView = (BasicFlyView) view;
+        if (view instanceof BasicFlyView) {
+            View flyView = view;
             this.setPitch(flyView, this.uiAnimControl, flyView.getPitch().add(pitchChange),
                 actionAttribs);
             this.setHeading(flyView, this.uiAnimControl, flyView.getHeading().add(headingChange),
@@ -463,8 +380,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
      * @param actionAttributes Action that caused the change.
      */
     protected void onRoll(double rollInput, ViewInputAttributes.DeviceAttributes deviceAttributes,
-        ViewInputAttributes.ActionAttributes actionAttributes)
-    {
+        ViewInputAttributes.ActionAttributes actionAttributes) {
         Angle rollChange;
         this.stopGoToAnimators();
 
@@ -479,17 +395,15 @@ public class FlyViewInputHandler extends BasicViewInputHandler
      * @param rollChange    Change in roll.
      * @param actionAttribs Action that caused the change.
      */
-    protected void onRoll(Angle rollChange, ViewInputAttributes.ActionAttributes actionAttribs)
-    {
+    protected void onRoll(Angle rollChange, ViewInputAttributes.ActionAttributes actionAttribs) {
         View view = this.getView();
         if (view == null) // include this test to ensure any derived implementation performs it
         {
             return;
         }
 
-        if (view instanceof BasicFlyView)
-        {
-            BasicFlyView flyView = (BasicFlyView) view;
+        if (view instanceof BasicFlyView) {
+            View flyView = view;
             this.setRoll(flyView, this.uiAnimControl, flyView.getRoll().add(rollChange), actionAttribs);
 
             view.firePropertyChange(AVKey.VIEW, null, view);
@@ -498,8 +412,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
 
     protected void onVerticalTranslate(double translateChange, double totalTranslateChange,
         ViewInputAttributes.DeviceAttributes deviceAttributes,
-        ViewInputAttributes.ActionAttributes actionAttribs)
-    {
+        ViewInputAttributes.ActionAttributes actionAttribs) {
         this.stopGoToAnimators();
         double elevChange = -(totalTranslateChange * getScaleValueElevation(deviceAttributes, actionAttribs));
         View view = this.getView();
@@ -510,53 +423,46 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         view.firePropertyChange(AVKey.VIEW, null, view);
     }
 
-    public void apply()
-    {
+    public void apply() {
         super.apply();
 
         View view = this.getView();
-        if (view == null)
-        {
+        if (view == null) {
             return;
         }
-        if (this.gotoAnimControl.stepAnimators())
-        {
+        if (this.gotoAnimControl.stepAnimators()) {
             view.firePropertyChange(AVKey.VIEW, null, view);
         }
-        if (this.uiAnimControl.stepAnimators())
-        {
+        if (this.uiAnimControl.stepAnimators()) {
             view.firePropertyChange(AVKey.VIEW, null, view);
         }
     }
 
-    protected void handleViewStopped()
-    {
+    protected void handleViewStopped() {
         this.stopAnimators();
     }
 
     protected void setHeading(View view,
-        AnimationController animControl,
-        Angle heading, ViewInputAttributes.ActionAttributes attrib)
-    {
+        Map<Object, Animator> animControl,
+        Angle heading, ViewInputAttributes.ActionAttributes attrib) {
         double smoothing = attrib.getSmoothingValue();
         if (!(attrib.isEnableSmoothing() && this.isEnableSmoothing()))
             smoothing = 0.0;
 
-        AngleAnimator angleAnimator = new RotateToAngleAnimator(
+        Animator angleAnimator = new RotateToAngleAnimator(
             view.getHeading(), heading, smoothing,
             ViewPropertyAccessor.createHeadingAccessor(view));
         animControl.put(VIEW_ANIM_HEADING, angleAnimator);
     }
 
     protected void setPitch(View view,
-        AnimationController animControl,
-        Angle pitch, ViewInputAttributes.ActionAttributes attrib)
-    {
+        Map<Object, Animator> animControl,
+        Angle pitch, ViewInputAttributes.ActionAttributes attrib) {
         double smoothing = attrib.getSmoothingValue();
         if (!(attrib.isEnableSmoothing() && this.isEnableSmoothing()))
             smoothing = 0.0;
 
-        AngleAnimator angleAnimator = new RotateToAngleAnimator(
+        Animator angleAnimator = new RotateToAngleAnimator(
             view.getPitch(), pitch, smoothing,
             ViewPropertyAccessor.createPitchAccessor(view));
         animControl.put(VIEW_ANIM_PITCH, angleAnimator);
@@ -571,22 +477,20 @@ public class FlyViewInputHandler extends BasicViewInputHandler
      * @param attrib      action that caused the roll to change.
      */
     protected void setRoll(View view,
-        AnimationController animControl,
-        Angle roll, ViewInputAttributes.ActionAttributes attrib)
-    {
+        Map<Object, Animator> animControl,
+        Angle roll, ViewInputAttributes.ActionAttributes attrib) {
         double smoothing = attrib.getSmoothingValue();
         if (!(attrib.isEnableSmoothing() && this.isEnableSmoothing()))
             smoothing = 0.0;
 
-        AngleAnimator angleAnimator = new RotateToAngleAnimator(
+        Animator angleAnimator = new RotateToAngleAnimator(
             view.getRoll(), roll, smoothing,
             ViewPropertyAccessor.createRollAccessor(view));
         animControl.put(VIEW_ANIM_ROLL, angleAnimator);
     }
 
     protected void setEyePosition(AnimationController animControl, View view, Position position,
-        ViewInputAttributes.ActionAttributes attrib)
-    {
+        ViewInputAttributes.ActionAttributes attrib) {
 
         MoveToPositionAnimator posAnimator = (MoveToPositionAnimator)
             animControl.get(VIEW_ANIM_POSITION);
@@ -595,25 +499,21 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         if (!(attrib.isEnableSmoothing() && this.isEnableSmoothing()))
             smoothing = 0.0;
 
-        if (smoothing != 0.0)
-        {
+        if (smoothing != 0.0) {
 
             double elevation = ((FlyViewLimits)
                 view.getViewPropertyLimits()).limitEyeElevation(
                 position, view.getGlobe());
-            if (elevation != position.getElevation())
-            {
+            if (elevation != position.getElevation()) {
                 position = new Position(position, elevation);
             }
-            if (posAnimator == null)
-            {
+            if (posAnimator == null) {
                 posAnimator = new MoveToPositionAnimator(
                     view.getEyePosition(), position, smoothing,
                     OrbitViewPropertyAccessor.createEyePositionAccessor(view));
                 animControl.put(VIEW_ANIM_POSITION, posAnimator);
             }
-            else
-            {
+            else {
                 posAnimator.setEnd(position);
                 posAnimator.start();
             }
@@ -621,8 +521,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         view.firePropertyChange(AVKey.VIEW, null, view);
     }
 
-    public void goTo(Position lookAtPos, double distance)
-    {
+    public void goTo(Position lookAtPos, double distance) {
 
         Globe globe = this.getView().getGlobe();
         BasicFlyView view = (BasicFlyView) this.getView();
@@ -648,22 +547,19 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         this.getView().firePropertyChange(AVKey.VIEW, null, this.getView());
     }
 
-    public void lookAt(Position lookAtPos, long timeToMove)
-    {
+    public void lookAt(Position lookAtPos, long timeToMove) {
         BasicFlyView view = (BasicFlyView) this.getView();
         Vec4 lookDirection;
         double distanceToSurface;
         Vec4 currentLookAtPt = view.getCenterPoint();
         Position newPosition;
-        if (currentLookAtPt == null)
-        {
+        if (currentLookAtPt == null) {
             view.getGlobe().computePointFromPosition(lookAtPos);
             double elevAtLookAtPos = view.getGlobe().getElevation(
                 lookAtPos.getLatitude(), lookAtPos.getLongitude());
             newPosition = new Position(lookAtPos, elevAtLookAtPos + 10000);
         }
-        else
-        {
+        else {
             Vec4 currentEyePt = view.getEyePoint();
             distanceToSurface = currentEyePt.distanceTo3(currentLookAtPt);
             lookDirection = currentLookAtPt.subtract3(currentEyePt).normalize3();
@@ -687,24 +583,20 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         view.firePropertyChange(AVKey.VIEW, null, view);
     }
 
-    public void stopAnimators()
-    {
+    public void stopAnimators() {
         this.stopGoToAnimators();
         this.stopUserInputAnimators();
     }
 
-    public boolean isAnimating()
-    {
+    public boolean isAnimating() {
         return (this.uiAnimControl.hasActiveAnimation() || this.gotoAnimControl.hasActiveAnimation());
     }
 
-    public void addAnimator(Animator animator)
-    {
+    public void addAnimator(Animator animator) {
         this.gotoAnimControl.put(VIEW_ANIM_APP, animator);
     }
 
-    protected void stopGoToAnimators()
-    {
+    protected void stopGoToAnimators() {
         // Explicitly stop all 'go to' animators, then clear the data structure which holds them. If we remove an
         // animator from this data structure without invoking stop(), the animator has no way of knowing it was forcibly
         // stopped. An animator's owner - likely an application object other - may need to know if an animator has been
@@ -713,13 +605,60 @@ public class FlyViewInputHandler extends BasicViewInputHandler
         this.gotoAnimControl.clear();
     }
 
-    protected void stopUserInputAnimators()
-    {
+    protected void stopUserInputAnimators() {
         // Explicitly stop all 'ui' animator, then clear the data structure which holds them. If we remove an animator
         // from this data structure without invoking stop(), the animator has no way of knowing it was forcibly stopped.
         // Though applications cannot access the 'ui' animator data structure, stopping the animators here is the correct
         // action.
         this.uiAnimControl.stopAnimations();
         this.uiAnimControl.clear();
+    }
+
+    public class ResetPitchActionListener extends ViewInputActionHandler {
+        public boolean inputActionPerformed(AbstractViewInputHandler inputHandler, KeyEvent event,
+            ViewInputAttributes.ActionAttributes viewAction) {
+            List keyList = viewAction.getKeyActions();
+            for (Object k : keyList) {
+                ViewInputAttributes.ActionAttributes.KeyAction keyAction =
+                    (ViewInputAttributes.ActionAttributes.KeyAction) k;
+                if (event.getKeyCode() == keyAction.keyCode) {
+                    onResetPitch(viewAction);
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Input handler to handle user input that changes Roll.
+     */
+    public class RollActionListener extends ViewInputActionHandler {
+        public boolean inputActionPerformed(AbstractViewInputHandler inputHandler, KeyEventState keys, String target,
+            ViewInputAttributes.ActionAttributes viewAction) {
+            List keyList = viewAction.getKeyActions();
+            double rollInput = 0;
+
+            for (Object k : keyList) {
+                ViewInputAttributes.ActionAttributes.KeyAction keyAction =
+                    (ViewInputAttributes.ActionAttributes.KeyAction) k;
+                if (keys.isKeyDown(keyAction.keyCode)) {
+                    rollInput += keyAction.sign;
+                }
+            }
+
+            if (rollInput == 0) {
+                return false;
+            }
+
+            //noinspection StringEquality
+            if (target == GENERATE_EVENTS) {
+                ViewInputAttributes.DeviceAttributes deviceAttributes =
+                    inputHandler.getAttributes().getDeviceAttributes(ViewInputAttributes.DEVICE_KEYBOARD);
+
+                onRoll(rollInput, deviceAttributes, viewAction);
+            }
+            return true;
+        }
     }
 }

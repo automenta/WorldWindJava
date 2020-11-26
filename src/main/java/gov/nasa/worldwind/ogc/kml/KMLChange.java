@@ -19,8 +19,7 @@ import java.util.*;
  * @author tag
  * @version $Id: KMLChange.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLChange extends AbstractXMLEventParser implements KMLUpdateOperation
-{
+public class KMLChange extends AbstractXMLEventParser implements KMLUpdateOperation {
     protected final List<KMLAbstractObject> objects = new ArrayList<>();
 
     /**
@@ -28,35 +27,29 @@ public class KMLChange extends AbstractXMLEventParser implements KMLUpdateOperat
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLChange(String namespaceURI)
-    {
+    public KMLChange(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         if (o instanceof KMLAbstractObject)
             this.addObject((KMLAbstractObject) o);
         else
             super.doAddEventContent(o, ctx, event, args);
     }
 
-    protected void addObject(KMLAbstractObject o)
-    {
+    protected void addObject(KMLAbstractObject o) {
         this.objects.add(o);
     }
 
-    public List<KMLAbstractObject> getObjects()
-    {
+    public List<KMLAbstractObject> getObjects() {
         return this.objects;
     }
 
-    public void applyOperation(KMLRoot targetRoot)
-    {
-        for (KMLAbstractObject sourceValues : this.objects)
-        {
+    public void applyOperation(KMLRoot targetRoot) {
+        for (KMLAbstractObject sourceValues : this.objects) {
             String targetId = sourceValues.getTargetId();
             if (WWUtil.isEmpty(targetId))
                 continue;

@@ -33,27 +33,27 @@ public class HTTPRetriever extends URLRetriever {
     }
 
     protected ByteBuffer doRead(URLConnection connection) throws Exception {
-        if (connection == null) {
-            String msg = Logging.getMessage("nullValue.ConnectionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (connection == null) {
+//            String msg = Logging.getMessage("nullValue.ConnectionIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         HttpURLConnection htpc = (HttpURLConnection) connection;
-        this.responseCode = htpc.getResponseCode();
+        try {
+            this.responseCode = htpc.getResponseCode();
+        } catch (SocketTimeoutException e) {
+            throw e;
+        }
         this.responseMessage = htpc.getResponseMessage();
         String contentType = connection.getContentType();
 
         Logging.logger().log(Level.FINE, "HTTPRetriever.response",
-            new Object[]{this.responseCode,
-            connection.getContentLength(),
-            contentType != null ? contentType : "content type not returned",
-            connection.getURL()});
+            new Object[] {this.responseCode,
+                connection.getContentLength(),
+                contentType != null ? contentType : "content type not returned",
+                connection.getURL()});
 
-        if (this.responseCode == HttpURLConnection.HTTP_OK) {
-            return super.doRead(connection);
-        }
-
-        return null;
+        return this.responseCode == HttpURLConnection.HTTP_OK ? super.doRead(connection) : null;
     }
 }

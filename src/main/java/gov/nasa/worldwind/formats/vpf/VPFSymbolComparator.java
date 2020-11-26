@@ -72,22 +72,17 @@ import java.util.Comparator;
  * @author dcollins
  * @version $Id: VPFSymbolComparator.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFSymbolComparator implements Comparator<VPFSymbol>
-{
-    public VPFSymbolComparator()
-    {
+public class VPFSymbolComparator implements Comparator<VPFSymbol> {
+    public VPFSymbolComparator() {
     }
 
     /**
      * @param a Symbol to compare.
      * @param b Symbol to compare.
-     *
      * @return The relationship between a and b.
      */
-    public int compare(VPFSymbol a, VPFSymbol b)
-    {
-        if (a == null || b == null)
-        {
+    public int compare(VPFSymbol a, VPFSymbol b) {
+        if (a == null || b == null) {
             String message = Logging.getMessage("nullValue.SymbolIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -120,18 +115,12 @@ public class VPFSymbolComparator implements Comparator<VPFSymbol>
         return i;
     }
 
-    protected int getFeatureTypePriority(VPFFeatureType type)
-    {
-        switch (type)
-        {
-            case POINT:
-                return 3;
-            case LINE:
-                return 2;
-            case AREA:
-                return 1;
-            default:
-                return 0;
-        }
+    protected int getFeatureTypePriority(VPFFeatureType type) {
+        return switch (type) {
+            case POINT -> 3;
+            case LINE -> 2;
+            case AREA -> 1;
+            default -> 0;
+        };
     }
 }

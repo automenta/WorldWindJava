@@ -16,198 +16,10 @@ import java.util.*;
  * @author Patrick Murris
  * @version $Id: VPFSymbolAttributes.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFSymbolAttributes extends BasicShapeAttributes
-{
-    public static class LabelAttributes
-    {
-        private Font font;
-        private Color color;
-        private Color backgroundColor;
-        private double offset;
-        private Angle offsetAngle;
-        private String prepend;
-        private String append;
-        private String attributeName;
-        private int abbreviationTableId;
-
-        public LabelAttributes()
-        {
-            this.font = defaultFont;
-            this.color = defaultColor;
-            this.backgroundColor = defaultBackgroundColor;
-        }
-
-        public LabelAttributes(LabelAttributes attributes)
-        {
-            if (attributes == null)
-            {
-                String message = Logging.getMessage("nullValue.AttributesIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.font = attributes.getFont();
-            this.color = attributes.getColor();
-            this.backgroundColor = attributes.getBackgroundColor();
-            this.offset = attributes.getOffset();
-            this.offsetAngle = attributes.getOffsetAngle();
-            this.prepend = attributes.getPrepend();
-            this.append = attributes.getAppend();
-            this.attributeName = attributes.getAttributeName();
-            this.abbreviationTableId = attributes.getAbbreviationTableId();
-        }
-
-        public LabelAttributes copy()
-        {
-            return new LabelAttributes(this);
-        }
-
-        public Font getFont()
-        {
-            return this.font;
-        }
-
-        public void setFont(Font font)
-        {
-            this.font = font;
-        }
-
-        public Color getColor()
-        {
-            return this.color;
-        }
-
-        public void setColor(Color color)
-        {
-            this.color = color;
-        }
-
-        public Color getBackgroundColor()
-        {
-            return this.backgroundColor;
-        }
-
-        public void setBackgroundColor(Color color)
-        {
-            this.backgroundColor = color;
-        }
-
-        public double getOffset()
-        {
-            return offset;
-        }
-
-        public void setOffset(double offset)
-        {
-            this.offset = offset;
-        }
-
-        public Angle getOffsetAngle()
-        {
-            return this.offsetAngle;
-        }
-
-        public void setOffsetAngle(Angle angle)
-        {
-            this.offsetAngle = angle;
-        }
-
-        public String getPrepend()
-        {
-            return this.prepend;
-        }
-
-        public void setPrepend(String text)
-        {
-            this.prepend = text;
-        }
-
-        public String getAppend()
-        {
-            return this.append;
-        }
-
-        public void setAppend(String text)
-        {
-            this.append = text;
-        }
-
-        public String getAttributeName()
-        {
-            return this.attributeName;
-        }
-
-        public void setAttributeName(String name)
-        {
-            this.attributeName = name;
-        }
-
-        public int getAbbreviationTableId()
-        {
-            return this.abbreviationTableId;
-        }
-
-        public void setAbbreviationTableId(int tableId)
-        {
-            this.abbreviationTableId = tableId;
-        }
-
-        @SuppressWarnings({"RedundantIfStatement"})
-        @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-
-            LabelAttributes that = (LabelAttributes) o;
-
-            if (this.abbreviationTableId != that.abbreviationTableId)
-                return false;
-            if (Double.compare(this.offset, that.offset) != 0)
-                return false;
-            if (!Objects.equals(this.append, that.append))
-                return false;
-            if (!Objects.equals(this.attributeName, that.attributeName))
-                return false;
-            if (!Objects.equals(this.backgroundColor, that.backgroundColor))
-                return false;
-            if (!Objects.equals(this.color, that.color))
-                return false;
-            if (!Objects.equals(this.font, that.font))
-                return false;
-            if (!Objects.equals(this.offsetAngle, that.offsetAngle))
-                return false;
-            if (!Objects.equals(this.prepend, that.prepend))
-                return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            int result;
-            long temp;
-            result = this.font != null ? this.font.hashCode() : 0;
-            result = 31 * result + (this.color != null ? this.color.hashCode() : 0);
-            result = 31 * result + (this.backgroundColor != null ? this.backgroundColor.hashCode() : 0);
-            temp = this.offset != +0.0d ? Double.doubleToLongBits(this.offset) : 0L;
-            result = 31 * result + (int) (temp ^ (temp >>> 32));
-            result = 31 * result + (this.offsetAngle != null ? this.offsetAngle.hashCode() : 0);
-            result = 31 * result + (this.prepend != null ? this.prepend.hashCode() : 0);
-            result = 31 * result + (this.append != null ? this.append.hashCode() : 0);
-            result = 31 * result + (this.attributeName != null ? this.attributeName.hashCode() : 0);
-            result = 31 * result + this.abbreviationTableId;
-            return result;
-        }
-    }
-
+public class VPFSymbolAttributes extends BasicShapeAttributes {
     private static final Font defaultFont = Font.decode("Arial-PLAIN-12");
     private static final Color defaultColor = Color.WHITE;
     private static final Color defaultBackgroundColor = Color.BLACK;
-
     private VPFFeatureType featureType;
     private VPFSymbolKey symbolKey;
     private Object iconImageSource;
@@ -218,16 +30,14 @@ public class VPFSymbolAttributes extends BasicShapeAttributes
     private String orientationAttributeName;
     private String description;
 
-    public VPFSymbolAttributes()
-    {
+    public VPFSymbolAttributes() {
     }
 
-    public VPFSymbolAttributes(VPFFeatureType featureType, VPFSymbolKey symbolKey)
-    {
+    public VPFSymbolAttributes(VPFFeatureType featureType, VPFSymbolKey symbolKey) {
         this.featureType = featureType;
         this.symbolKey = symbolKey;
         this.iconImageSource = null;
-        this.iconImageScale = 1d;
+        this.iconImageScale = 1.0d;
         this.mipMapIconImage = true;
         this.labelAttributes = null;
         this.displayPriority = 0;
@@ -235,8 +45,7 @@ public class VPFSymbolAttributes extends BasicShapeAttributes
         this.description = null;
     }
 
-    public VPFSymbolAttributes(VPFSymbolAttributes attributes)
-    {
+    public VPFSymbolAttributes(VPFSymbolAttributes attributes) {
         super(attributes);
         this.featureType = attributes.getFeatureType();
         this.symbolKey = attributes.getSymbolKey();
@@ -247,32 +56,31 @@ public class VPFSymbolAttributes extends BasicShapeAttributes
         this.orientationAttributeName = attributes.getOrientationAttributeName();
         this.description = attributes.getDescription();
 
-        if (attributes.getLabelAttributes() != null)
-        {
+        if (attributes.getLabelAttributes() != null) {
             LabelAttributes[] array = attributes.getLabelAttributes();
             int numLabelAttributes = array.length;
             this.labelAttributes = new LabelAttributes[numLabelAttributes];
 
-            for (int i = 0; i < numLabelAttributes; i++)
-            {
+            for (int i = 0; i < numLabelAttributes; i++) {
                 this.labelAttributes[i] = (array[i] != null) ? array[i].copy() : null;
             }
         }
     }
 
-    /** {@inheritDoc} */
-    public ShapeAttributes copy()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public ShapeAttributes copy() {
         return new VPFSymbolAttributes(this);
     }
 
-    /** {@inheritDoc} */
-    public void copy(ShapeAttributes attributes)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void copy(ShapeAttributes attributes) {
         super.copy(attributes);
 
-        if (attributes instanceof VPFSymbolAttributes)
-        {
+        if (attributes instanceof VPFSymbolAttributes) {
             VPFSymbolAttributes vpfAttrs = (VPFSymbolAttributes) attributes;
             this.featureType = vpfAttrs.getFeatureType();
             this.symbolKey = vpfAttrs.getSymbolKey();
@@ -283,104 +91,85 @@ public class VPFSymbolAttributes extends BasicShapeAttributes
             this.orientationAttributeName = vpfAttrs.getOrientationAttributeName();
             this.description = vpfAttrs.getDescription();
 
-            if (vpfAttrs.getLabelAttributes() != null)
-            {
+            if (vpfAttrs.getLabelAttributes() != null) {
                 LabelAttributes[] array = vpfAttrs.getLabelAttributes();
                 int numLabelAttributes = array.length;
                 this.labelAttributes = new LabelAttributes[numLabelAttributes];
 
-                for (int i = 0; i < numLabelAttributes; i++)
-                {
+                for (int i = 0; i < numLabelAttributes; i++) {
                     this.labelAttributes[i] = (array[i] != null) ? array[i].copy() : null;
                 }
             }
         }
     }
 
-    public VPFFeatureType getFeatureType()
-    {
+    public VPFFeatureType getFeatureType() {
         return this.featureType;
     }
 
-    public VPFSymbolKey getSymbolKey()
-    {
+    public VPFSymbolKey getSymbolKey() {
         return this.symbolKey;
     }
 
-    public Object getIconImageSource()
-    {
+    public Object getIconImageSource() {
         return this.iconImageSource;
     }
 
-    public void setIconImageSource(Object imageSource)
-    {
+    public void setIconImageSource(Object imageSource) {
         this.iconImageSource = imageSource;
     }
 
-    public double getIconImageScale()
-    {
+    public double getIconImageScale() {
         return this.iconImageScale;
     }
 
-    public void setIconImageScale(double scale)
-    {
+    public void setIconImageScale(double scale) {
         this.iconImageScale = scale;
     }
 
-    public boolean isMipMapIconImage()
-    {
+    public boolean isMipMapIconImage() {
         return this.mipMapIconImage;
     }
 
-    public void setMipMapIconImage(boolean mipMap)
-    {
+    public void setMipMapIconImage(boolean mipMap) {
         this.mipMapIconImage = mipMap;
     }
 
-    public LabelAttributes[] getLabelAttributes()
-    {
+    public LabelAttributes[] getLabelAttributes() {
         return this.labelAttributes;
     }
 
-    public void setLabelAttributes(LabelAttributes[] attributes)
-    {
+    public void setLabelAttributes(LabelAttributes[] attributes) {
         this.labelAttributes = attributes;
     }
 
-    public double getDisplayPriority()
-    {
+    public double getDisplayPriority() {
         return this.displayPriority;
     }
 
-    public void setDisplayPriority(double displayPriority)
-    {
+    public void setDisplayPriority(double displayPriority) {
         this.displayPriority = displayPriority;
     }
 
-    public String getOrientationAttributeName()
-    {
+    public String getOrientationAttributeName() {
         return this.orientationAttributeName;
     }
 
-    public void setOrientationAttributeName(String name)
-    {
+    public void setOrientationAttributeName(String name) {
         this.orientationAttributeName = name;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return this.description;
     }
 
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    @SuppressWarnings({"RedundantIfStatement"})
+    @SuppressWarnings("RedundantIfStatement")
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -413,8 +202,7 @@ public class VPFSymbolAttributes extends BasicShapeAttributes
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = super.hashCode();
         long temp;
         result = 31 * result + (this.featureType != null ? this.featureType.hashCode() : 0);
@@ -429,5 +217,166 @@ public class VPFSymbolAttributes extends BasicShapeAttributes
         result = 31 * result + (this.orientationAttributeName != null ? this.orientationAttributeName.hashCode() : 0);
         result = 31 * result + (this.description != null ? this.description.hashCode() : 0);
         return result;
+    }
+
+    public static class LabelAttributes {
+        private Font font;
+        private Color color;
+        private Color backgroundColor;
+        private double offset;
+        private Angle offsetAngle;
+        private String prepend;
+        private String append;
+        private String attributeName;
+        private int abbreviationTableId;
+
+        public LabelAttributes() {
+            this.font = defaultFont;
+            this.color = defaultColor;
+            this.backgroundColor = defaultBackgroundColor;
+        }
+
+        public LabelAttributes(LabelAttributes attributes) {
+            if (attributes == null) {
+                String message = Logging.getMessage("nullValue.AttributesIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.font = attributes.getFont();
+            this.color = attributes.getColor();
+            this.backgroundColor = attributes.getBackgroundColor();
+            this.offset = attributes.getOffset();
+            this.offsetAngle = attributes.getOffsetAngle();
+            this.prepend = attributes.getPrepend();
+            this.append = attributes.getAppend();
+            this.attributeName = attributes.getAttributeName();
+            this.abbreviationTableId = attributes.getAbbreviationTableId();
+        }
+
+        public LabelAttributes copy() {
+            return new LabelAttributes(this);
+        }
+
+        public Font getFont() {
+            return this.font;
+        }
+
+        public void setFont(Font font) {
+            this.font = font;
+        }
+
+        public Color getColor() {
+            return this.color;
+        }
+
+        public void setColor(Color color) {
+            this.color = color;
+        }
+
+        public Color getBackgroundColor() {
+            return this.backgroundColor;
+        }
+
+        public void setBackgroundColor(Color color) {
+            this.backgroundColor = color;
+        }
+
+        public double getOffset() {
+            return offset;
+        }
+
+        public void setOffset(double offset) {
+            this.offset = offset;
+        }
+
+        public Angle getOffsetAngle() {
+            return this.offsetAngle;
+        }
+
+        public void setOffsetAngle(Angle angle) {
+            this.offsetAngle = angle;
+        }
+
+        public String getPrepend() {
+            return this.prepend;
+        }
+
+        public void setPrepend(String text) {
+            this.prepend = text;
+        }
+
+        public String getAppend() {
+            return this.append;
+        }
+
+        public void setAppend(String text) {
+            this.append = text;
+        }
+
+        public String getAttributeName() {
+            return this.attributeName;
+        }
+
+        public void setAttributeName(String name) {
+            this.attributeName = name;
+        }
+
+        public int getAbbreviationTableId() {
+            return this.abbreviationTableId;
+        }
+
+        public void setAbbreviationTableId(int tableId) {
+            this.abbreviationTableId = tableId;
+        }
+
+        @SuppressWarnings("RedundantIfStatement")
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            LabelAttributes that = (LabelAttributes) o;
+
+            if (this.abbreviationTableId != that.abbreviationTableId)
+                return false;
+            if (Double.compare(this.offset, that.offset) != 0)
+                return false;
+            if (!Objects.equals(this.append, that.append))
+                return false;
+            if (!Objects.equals(this.attributeName, that.attributeName))
+                return false;
+            if (!Objects.equals(this.backgroundColor, that.backgroundColor))
+                return false;
+            if (!Objects.equals(this.color, that.color))
+                return false;
+            if (!Objects.equals(this.font, that.font))
+                return false;
+            if (!Objects.equals(this.offsetAngle, that.offsetAngle))
+                return false;
+            if (!Objects.equals(this.prepend, that.prepend))
+                return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result;
+            long temp;
+            result = this.font != null ? this.font.hashCode() : 0;
+            result = 31 * result + (this.color != null ? this.color.hashCode() : 0);
+            result = 31 * result + (this.backgroundColor != null ? this.backgroundColor.hashCode() : 0);
+            temp = this.offset != +0.0d ? Double.doubleToLongBits(this.offset) : 0L;
+            result = 31 * result + (int) (temp ^ (temp >>> 32));
+            result = 31 * result + (this.offsetAngle != null ? this.offsetAngle.hashCode() : 0);
+            result = 31 * result + (this.prepend != null ? this.prepend.hashCode() : 0);
+            result = 31 * result + (this.append != null ? this.append.hashCode() : 0);
+            result = 31 * result + (this.attributeName != null ? this.attributeName.hashCode() : 0);
+            result = 31 * result + this.abbreviationTableId;
+            return result;
+        }
     }
 }

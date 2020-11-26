@@ -20,38 +20,34 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: Airhead.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Airhead extends BasicArea
-{
+public class Airhead extends BasicArea {
     /**
      * Default offset to apply to the label. The default aligns the top center of the label with the label's geographic
      * position, in order to keep the text South of the area.
      */
-    public final static Offset DEFAULT_OFFSET = new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION);
-
-    /**
-     * Indicates the graphics supported by this class.
-     *
-     * @return List of masked SIDC strings that identify graphics that this class supports.
-     */
-    public static List<String> getSupportedGraphics()
-    {
-        return Collections.singletonList(TacGrpSidc.C2GM_SPL_ARA_AHD);
-    }
+    public final static Offset DEFAULT_OFFSET = new Offset(0.0d, 0.0d, AVKey.FRACTION, AVKey.FRACTION);
 
     /**
      * Create a new area graphic.
      *
      * @param sidc Symbol code the identifies the graphic.
      */
-    public Airhead(String sidc)
-    {
+    public Airhead(String sidc) {
         super(sidc);
         this.setShowHostileIndicator(false);
     }
 
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics() {
+        return Collections.singletonList(TacGrpSidc.C2GM_SPL_ARA_AHD);
+    }
+
     @Override
-    protected String createLabelText()
-    {
+    protected String createLabelText() {
         String text = this.getText();
 
         StringBuilder sb = new StringBuilder();
@@ -59,8 +55,7 @@ public class Airhead extends BasicArea
         sb.append("AIRHEAD LINE\n");
         sb.append("(PL ");
 
-        if (!WWUtil.isEmpty(text))
-        {
+        if (!WWUtil.isEmpty(text)) {
             sb.append(text);
         }
         sb.append(")");
@@ -73,29 +68,28 @@ public class Airhead extends BasicArea
      * label. If there are more lines, they will be arranged South of the first line.
      *
      * @param dc Current draw context.
-     *
      * @return Position for the graphic's main label.
      */
     @Override
-    protected Position determineMainLabelPosition(DrawContext dc)
-    {
+    protected Position determineMainLabelPosition(DrawContext dc) {
         Iterable<? extends LatLon> locations = this.polygon.getLocations();
         if (locations == null)
             return null;
 
         Sector sector = Sector.boundingSector(locations);
 
-        Angle minLat = sector.getMinLatitude();
+        Angle minLat = sector.latMin();
         Angle avgLon = sector.getCentroid().longitude;
 
         // Place the label at Southern edge of the area, at the average longitude.
         return new Position(minLat, avgLon, 0);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected Offset getDefaultLabelOffset()
-    {
+    protected Offset getDefaultLabelOffset() {
         return DEFAULT_OFFSET;
     }
 }

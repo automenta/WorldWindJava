@@ -21,12 +21,17 @@ import java.util.ArrayList;
  * @author pabercrombie
  * @version $Id: PathsWithDirection.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class PathsWithDirection extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class PathsWithDirection extends ApplicationTemplate {
+    public static void main(String[] args) {
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 49.06);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.77);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 22000);
+
+        ApplicationTemplate.start("WorldWind Paths With Direction", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             RenderableLayer layer = new RenderableLayer();
@@ -34,7 +39,7 @@ public class PathsWithDirection extends ApplicationTemplate
             // Create and set an attribute bundle.
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineMaterial(Material.RED);
-            attrs.setOutlineWidth(2d);
+            attrs.setOutlineWidth(2.0d);
 
             // Create a path, set some of its properties and set its attributes.
             ArrayList<Position> pathPositions = new ArrayList<>();
@@ -62,14 +67,5 @@ public class PathsWithDirection extends ApplicationTemplate
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 49.06);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.77);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 22000);
-
-        ApplicationTemplate.start("WorldWind Paths With Direction", AppFrame.class);
     }
 }

@@ -19,85 +19,28 @@ import java.util.*;
  */
 public class ShapefileMultiPatch { //extends ShapefileRenderable implements OrderedRenderable {
 
-    public static class Record { // extends ShapefileRenderable.Record {
-
-        // Record properties.
-        // protected Double height; // may be null
-        // Data structures supporting drawing.
-//        protected Tile tile;
-//        protected IntBuffer interiorIndices;
-//        protected IntBuffer outlineIndices;
-        protected final int firstPartNumber;
-        protected final int numberOfParts;
-        protected final int numberOfPoints;
-        protected final double[] zValues;
-        protected final CompoundVecBuffer pointBuffer;
-        final ShapefileRecordMultiPatch.PartType[] partTypes;
-
-        public Record(ShapefileRecord shapefileRecord) {
-            //super(shapefileRenderable, shapefileRecord);
-            this.firstPartNumber = shapefileRecord.getFirstPartNumber();
-            this.numberOfParts = shapefileRecord.getNumberOfParts();
-            this.numberOfPoints = shapefileRecord.getNumberOfPoints();
-            this.pointBuffer = shapefileRecord.getShapeFile().getPointBuffer();
-            this.zValues = ((ShapefileRecordMultiPatch) shapefileRecord).getZValues();
-            this.partTypes = ((ShapefileRecordMultiPatch) shapefileRecord).getPartTypes();
-//            this.height = ShapefileUtils.extractHeightAttribute(shapefileRecord); // may be null
-        }
-
-        public int getBoundaryCount() {
-            return this.numberOfParts;
-        }
-
-        public VecBuffer getBoundaryPoints(int index) {
-            if (index < 0 || index >= this.numberOfParts) {
-                String msg = Logging.getMessage("generic.indexOutOfRange", index);
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
-
-            synchronized (this.pointBuffer) // synchronize access to the Shapefile's shared pointBuffer
-            {
-                return this.pointBuffer.subBuffer(this.firstPartNumber + index);
-            }
-        }
-//        public Double getHeight() {
-//            return this.height;
-//        }
-//        public List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException {
-//            if (line == null) {
-//                String msg = Logging.getMessage("nullValue.LineIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
-//
-//            if (terrain == null) {
-//                String msg = Logging.getMessage("nullValue.TerrainIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
-//
-//            if (!this.visible) // records marked as not visible don't intersect anything
-//            {
-//                return null;
-//            }
-//
-//            ArrayList<Intersection> intersections = new ArrayList<Intersection>();
-//            ((ShapefileMultiPatch) this.shapefileRenderable).intersectTileRecord(line, terrain, this,
-//                    intersections);
-//
-//            return intersections.size() > 0 ? intersections : null;
-//        }
-
-        public double[] getZValues() {
-            return this.zValues;
-        }
-
-        public ShapefileRecordMultiPatch.PartType getBoundaryType(int partNo) {
-            return this.partTypes[partNo];
-        }
-    }
-//
+    //    protected static int VERTEX_STRIDE = 3;
+//    // Properties.
+//    protected double defaultHeight;
+//    protected double defaultBaseDepth;
+//    protected double maxHeight;
+//    // Tile quadtree structures.
+//    protected Tile rootTile;
+//    protected int tileMaxLevel = 3;
+//    protected int tileMaxCapacity = 10000;
+//    // Data structures supporting polygon tessellation and drawing.
+//    protected ArrayList<Tile> currentTiles = new ArrayList<Tile>();
+//    protected PolygonTessellator tess = new PolygonTessellator();
+//    protected byte[] colorByteArray = new byte[6];
+//    protected float[] colorFloatArray = new float[3];
+//    protected double[] matrixArray = new double[16];
+//    // Data structures supporting picking.
+//    protected Layer pickLayer;
+//    protected PickSupport pickSupport = new PickSupport();
+//    protected ByteBuffer pickColors;
+//    protected Object pickColorsVboKey = new Object();
+    protected ShapeAttributes initNormalAttrs;
+    //
 //    protected static class RecordGroup {
 //
 //        // Record group properties.
@@ -185,28 +128,6 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
 //            this.tessellationValid = valid;
 //        }
 //    }
-
-//    protected static int VERTEX_STRIDE = 3;
-//    // Properties.
-//    protected double defaultHeight;
-//    protected double defaultBaseDepth;
-//    protected double maxHeight;
-//    // Tile quadtree structures.
-//    protected Tile rootTile;
-//    protected int tileMaxLevel = 3;
-//    protected int tileMaxCapacity = 10000;
-//    // Data structures supporting polygon tessellation and drawing.
-//    protected ArrayList<Tile> currentTiles = new ArrayList<Tile>();
-//    protected PolygonTessellator tess = new PolygonTessellator();
-//    protected byte[] colorByteArray = new byte[6];
-//    protected float[] colorFloatArray = new float[3];
-//    protected double[] matrixArray = new double[16];
-//    // Data structures supporting picking.
-//    protected Layer pickLayer;
-//    protected PickSupport pickSupport = new PickSupport();
-//    protected ByteBuffer pickColors;
-//    protected Object pickColorsVboKey = new Object();
-    protected ShapeAttributes initNormalAttrs;
     protected ShapeAttributes initHighlightAttrs;
     protected ArrayList<Record> records;
     protected ArrayList<Renderable> polygons;
@@ -215,11 +136,10 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
      * Creates a new ShapefileMultiPatch with the specified shapefile. The normal attributes and the highlight
      * attributes for each ShapefileRenderable.Record are assigned default values. In order to modify
      * ShapefileRenderable.Record shape attributes or key-value attributes during construction, use {@link
-     * #ShapefileMultiPatch(Shapefile, gov.nasa.worldwind.render.ShapeAttributes,
-     * gov.nasa.worldwind.render.ShapeAttributes, gov.nasa.worldwind.formats.shapefile.ShapefileRenderable.AttributeDelegate)}.
+     * #ShapefileMultiPatch(Shapefile, ShapeAttributes, ShapeAttributes,
+     * ShapefileRenderable.AttributeDelegate)}.
      *
      * @param shapefile The shapefile to display.
-     *
      * @throws IllegalArgumentException if the shapefile is null.
      */
     public ShapefileMultiPatch(Shapefile shapefile) {
@@ -239,18 +159,17 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
      * enables callbacks during creation of each ShapefileRenderable.Record. See {@link AttributeDelegate} for more
      * information.
      *
-     * @param shapefile The shapefile to display.
-     * @param normalAttrs The normal attributes for each ShapefileRenderable.Record. May be null to use the default
-     * attributes.
-     * @param highlightAttrs The highlight attributes for each ShapefileRenderable.Record. May be null to use the
-     * default highlight attributes.
+     * @param shapefile         The shapefile to display.
+     * @param normalAttrs       The normal attributes for each ShapefileRenderable.Record. May be null to use the
+     *                          default attributes.
+     * @param highlightAttrs    The highlight attributes for each ShapefileRenderable.Record. May be null to use the
+     *                          default highlight attributes.
      * @param attributeDelegate Optional callback for configuring each ShapefileRenderable.Record's shape attributes and
-     * key-value attributes. May be null.
-     *
+     *                          key-value attributes. May be null.
      * @throws IllegalArgumentException if the shapefile is null.
      */
     public ShapefileMultiPatch(Shapefile shapefile, ShapeAttributes normalAttrs, ShapeAttributes highlightAttrs,
-            ShapefileRenderable.AttributeDelegate attributeDelegate) {
+        ShapefileRenderable.AttributeDelegate attributeDelegate) {
         if (shapefile == null) {
             String msg = Logging.getMessage("nullValue.ShapefileIsNull");
             Logging.logger().severe(msg);
@@ -262,18 +181,18 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
 
     protected void generatePolygon(Position[] locations) {
         ArrayList<Position> positions = new ArrayList<>(Arrays.asList(locations));
-        polygons.add(new gov.nasa.worldwind.render.Polygon(positions));
+        polygons.add(new Polygon(positions));
     }
 
     protected void generateTriangleStrip(Position[] locations) {
         for (int i = 0; i < locations.length - 2; i++) {
-            generatePolygon(new Position[]{locations[i], locations[i + 1], locations[i + 2]});
+            generatePolygon(new Position[] {locations[i], locations[i + 1], locations[i + 2]});
         }
     }
 
     protected void generateTriangleFan(Position[] locations) {
         for (int i = 1; i < locations.length - 1; i++) {
-            generatePolygon(new Position[]{locations[0], locations[i], locations[i + 1]});
+            generatePolygon(new Position[] {locations[0], locations[i], locations[i + 1]});
         }
     }
 
@@ -288,28 +207,21 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
                     Position[] locations = new Position[points.getSize()];
                     for (int j = 0; j < points.getSize(); j++) {
                         points.get(j, location);
-                        locations[j] = new Position(Angle.fromDegrees(location[1]), Angle.fromDegrees(location[0]), zValues[j]);
+                        locations[j] = new Position(Angle.fromDegrees(location[1]), Angle.fromDegrees(location[0]),
+                            zValues[j]);
                     }
                     switch (record.getBoundaryType(i)) {
-                        case TriangleStrip:
-                            generateTriangleStrip(locations);
-                            break;
-                        case TriangleFan:
-                            generateTriangleFan(locations);
-                            break;
-                        case OuterRing:
-                        case InnerRing:
-                        case FirstRing:
-                        case Ring:
-                            generatePolygon(locations);
-                            break;
-                        default:
-                            String message = Logging.getMessage("generic.UnrecognizedDataType", record.getBoundaryType(i));
+                        case TriangleStrip -> generateTriangleStrip(locations);
+                        case TriangleFan -> generateTriangleFan(locations);
+                        case OuterRing, InnerRing, FirstRing, Ring -> generatePolygon(locations);
+                        default -> {
+                            String message = Logging.getMessage("generic.UnrecognizedDataType",
+                                record.getBoundaryType(i));
                             Logging.logger().severe(message);
                             throw new IllegalArgumentException(message);
+                        }
                     }
                 }
-
             }
         }
 
@@ -317,7 +229,7 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
     }
 
     private void init(Shapefile shapefile, ShapeAttributes normalAttrs, ShapeAttributes highlightAttrs,
-            ShapefileRenderable.AttributeDelegate attributeDelegate) {
+        ShapefileRenderable.AttributeDelegate attributeDelegate) {
         double[] boundingRect = shapefile.getBoundingRectangle();
         if (boundingRect == null) // suppress record assembly for empty shapefiles
         {
@@ -338,22 +250,34 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
         while (shapefile.hasNext()) {
             ShapefileRecord shapefileRecord = shapefile.nextRecord();
 
-//            if (shapeNo>4000 && shapeNo<6000) 
+//            if (shapeNo>4000 && shapeNo<6000)
             {
 //            if (shapeNo>8000 && shapeNo<10000) {
 //            if (shapeNo>12000 && shapeNo<14000) {
 //            if (shapeNo>82000 && shapeNo<92000) {
-            //if (shapeNo>92000 && shapeNo<102000) {
-            //if (shapeNo>92000 && shapeNo<102000) {
-            if (this.mustAssembleRecord(shapefileRecord)) {
-                this.assembleRecord(shapefileRecord);
-            shapeNo++;
-                  }
+                //if (shapeNo>92000 && shapeNo<102000) {
+                //if (shapeNo>92000 && shapeNo<102000) {
+                if (this.mustAssembleRecord(shapefileRecord)) {
+                    this.assembleRecord(shapefileRecord);
+                    shapeNo++;
+                }
             }
         }
 
         System.out.println(shapeNo);
         this.records.trimToSize(); // Reduce memory overhead from unused ArrayList capacity.
+    }
+
+    protected boolean mustAssembleRecord(ShapefileRecord shapefileRecord) {
+        double[] bounds = shapefileRecord.getBoundingRectangle();
+        Sector aoi = new Sector(Angle.fromDegreesLatitude(42.36), Angle.fromDegreesLatitude(42.37),
+            Angle.fromDegreesLongitude(-71.075), Angle.fromDegreesLongitude(-71.055));
+        if (!aoi.contains(LatLon.fromDegrees(bounds[0], bounds[2]))) {
+            return false;
+        }
+        return shapefileRecord.getNumberOfParts() > 0
+            && shapefileRecord.getNumberOfPoints() > 0
+            && !shapefileRecord.isNullRecord();
     }
 //    protected void assembleRecords(Shapefile shapefile) {
 //        this.rootTile = new Tile(this.sector, 0);
@@ -366,17 +290,6 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
 //
 //        this.rootTile.records.trimToSize(); // Reduce memory overhead from unused ArrayList capacity.
 //    }
-
-    protected boolean mustAssembleRecord(ShapefileRecord shapefileRecord) {
-        double[] bounds = shapefileRecord.getBoundingRectangle();
-        Sector aoi = new Sector(Angle.fromDegreesLatitude(42.36), Angle.fromDegreesLatitude(42.37), Angle.fromDegreesLongitude(-71.075), Angle.fromDegreesLongitude(-71.055));
-        if (!aoi.contains(LatLon.fromDegrees(bounds[0], bounds[2]))) {
-            return false;
-        }
-        return shapefileRecord.getNumberOfParts() > 0
-                && shapefileRecord.getNumberOfPoints() > 0
-                && !shapefileRecord.isNullRecord();
-    }
 
     protected void addRecord(ShapefileRecord shapefileRecord, Record renderableRecord) {
 //        renderableRecord.setAttributes(this.initNormalAttrs);
@@ -402,7 +315,7 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
         return new Record(shapefileRecord);
     }
 
-//    protected boolean mustSplitTile(Tile tile) {
+    //    protected boolean mustSplitTile(Tile tile) {
 //        return tile.level < this.tileMaxLevel && tile.records.size() > this.tileMaxCapacity;
 //    }
 //    protected void splitTile(Tile tile) {
@@ -648,13 +561,14 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
 //    }
     protected void tessellateTriangleStrip(Terrain terrain, FloatBuffer vertices, Position[] locations, Vec4 refPt) {
         for (int i = 0; i < locations.length - 2; i++) {
-            tessellateContour(terrain, vertices, new Position[]{locations[i], locations[i + 1], locations[i + 2]}, refPt);
+            tessellateContour(terrain, vertices, new Position[] {locations[i], locations[i + 1], locations[i + 2]},
+                refPt);
         }
     }
 
     protected void tessellateTriangleFan(Terrain terrain, FloatBuffer vertices, Position[] locations, Vec4 refPt) {
         for (int i = 1; i < locations.length - 1; i++) {
-            tessellateContour(terrain, vertices, new Position[]{locations[0], locations[i], locations[i + 1]}, refPt);
+            tessellateContour(terrain, vertices, new Position[] {locations[0], locations[i], locations[i + 1]}, refPt);
         }
     }
 
@@ -779,6 +693,85 @@ public class ShapefileMultiPatch { //extends ShapefileRenderable implements Orde
 //        shapeData.referencePoint = refPt;
 //        shapeData.transformMatrix = Matrix.fromTranslation(refPt.x, refPt.y, refPt.z);
 //        shapeData.vboExpired = true;
+    }
+
+    public static class Record { // extends ShapefileRenderable.Record {
+
+        // Record properties.
+        // protected Double height; // may be null
+        // Data structures supporting drawing.
+//        protected Tile tile;
+//        protected IntBuffer interiorIndices;
+//        protected IntBuffer outlineIndices;
+        protected final int firstPartNumber;
+        protected final int numberOfParts;
+        protected final int numberOfPoints;
+        protected final double[] zValues;
+        protected final CompoundVecBuffer pointBuffer;
+        final ShapefileRecordMultiPatch.PartType[] partTypes;
+
+        public Record(ShapefileRecord shapefileRecord) {
+            //super(shapefileRenderable, shapefileRecord);
+            this.firstPartNumber = shapefileRecord.getFirstPartNumber();
+            this.numberOfParts = shapefileRecord.getNumberOfParts();
+            this.numberOfPoints = shapefileRecord.getNumberOfPoints();
+            this.pointBuffer = shapefileRecord.getShapeFile().getPointBuffer();
+            this.zValues = ((ShapefileRecordMultiPatch) shapefileRecord).getZValues();
+            this.partTypes = ((ShapefileRecordMultiPatch) shapefileRecord).getPartTypes();
+//            this.height = ShapefileUtils.extractHeightAttribute(shapefileRecord); // may be null
+        }
+
+        public int getBoundaryCount() {
+            return this.numberOfParts;
+        }
+
+        public VecBuffer getBoundaryPoints(int index) {
+            if (index < 0 || index >= this.numberOfParts) {
+                String msg = Logging.getMessage("generic.indexOutOfRange", index);
+                Logging.logger().severe(msg);
+                throw new IllegalArgumentException(msg);
+            }
+
+            synchronized (this.pointBuffer) // synchronize access to the Shapefile's shared pointBuffer
+            {
+                return this.pointBuffer.subBuffer(this.firstPartNumber + index);
+            }
+        }
+//        public Double getHeight() {
+//            return this.height;
+//        }
+//        public List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException {
+//            if (line == null) {
+//                String msg = Logging.getMessage("nullValue.LineIsNull");
+//                Logging.logger().severe(msg);
+//                throw new IllegalArgumentException(msg);
+//            }
+//
+//            if (terrain == null) {
+//                String msg = Logging.getMessage("nullValue.TerrainIsNull");
+//                Logging.logger().severe(msg);
+//                throw new IllegalArgumentException(msg);
+//            }
+//
+//            if (!this.visible) // records marked as not visible don't intersect anything
+//            {
+//                return null;
+//            }
+//
+//            ArrayList<Intersection> intersections = new ArrayList<Intersection>();
+//            ((ShapefileMultiPatch) this.shapefileRenderable).intersectTileRecord(line, terrain, this,
+//                    intersections);
+//
+//            return intersections.size() > 0 ? intersections : null;
+//        }
+
+        public double[] getZValues() {
+            return this.zValues;
+        }
+
+        public ShapefileRecordMultiPatch.PartType getBoundaryType(int partNo) {
+            return this.partTypes[partNo];
+        }
     }
 
 //    protected void assembleRecordIndices(PolygonTessellator tessellator, Record record) {

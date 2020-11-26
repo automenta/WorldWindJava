@@ -19,8 +19,7 @@ import java.util.*;
  * @author tag
  * @version $Id: KMLCreate.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLCreate extends AbstractXMLEventParser implements KMLUpdateOperation
-{
+public class KMLCreate extends AbstractXMLEventParser implements KMLUpdateOperation {
     protected final List<KMLAbstractContainer> containers = new ArrayList<>();
 
     /**
@@ -28,35 +27,29 @@ public class KMLCreate extends AbstractXMLEventParser implements KMLUpdateOperat
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLCreate(String namespaceURI)
-    {
+    public KMLCreate(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         if (o instanceof KMLAbstractContainer)
             this.addContainer((KMLAbstractContainer) o);
         else
             super.doAddEventContent(o, ctx, event, args);
     }
 
-    protected void addContainer(KMLAbstractContainer o)
-    {
+    protected void addContainer(KMLAbstractContainer o) {
         this.containers.add(o);
     }
 
-    public List<KMLAbstractContainer> getContainers()
-    {
+    public List<KMLAbstractContainer> getContainers() {
         return this.containers;
     }
 
-    public void applyOperation(KMLRoot targetRoot)
-    {
-        for (KMLAbstractContainer container : this.containers)
-        {
+    public void applyOperation(KMLRoot targetRoot) {
+        for (KMLAbstractContainer container : this.containers) {
             String targetId = container.getTargetId();
             if (WWUtil.isEmpty(targetId))
                 continue;
@@ -67,8 +60,7 @@ public class KMLCreate extends AbstractXMLEventParser implements KMLUpdateOperat
 
             KMLAbstractContainer receivingContainer = (KMLAbstractContainer) o;
 
-            for (KMLAbstractFeature feature : container.getFeatures())
-            {
+            for (KMLAbstractFeature feature : container.getFeatures()) {
                 receivingContainer.addFeature(feature);
             }
         }

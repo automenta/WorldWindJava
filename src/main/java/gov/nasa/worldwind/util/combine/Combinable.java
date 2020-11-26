@@ -9,7 +9,7 @@ package gov.nasa.worldwind.util.combine;
  * Interface for shapes that can be combined into a complex set of contours by using boolean operations. Combinable
  * shapes implement the single method combine(CombineContext). This method is typically called by a controller that
  * operates on one or more combinable shapes and implements the boolean operation that is applied to those shapes, such
- * as {@link gov.nasa.worldwind.util.combine.ShapeCombiner}. When combine is called, the Combinable draws its contours
+ * as {@link ShapeCombiner}. When combine is called, the Combinable draws its contours
  * using the GLU tessellator attached to the provided CombineContext. When the CombineContext is in bounding sector
  * mode, the Combinable adds its geographic bounding sector to the CombineContext's bounding sector list.
  * <h2>Drawing Contours</h2> Shapes are combined into a complex set of contours by drawing their individual contours
@@ -75,20 +75,18 @@ package gov.nasa.worldwind.util.combine;
  *
  * @author dcollins
  * @version $Id: Combinable.java 2411 2014-10-30 21:27:00Z dcollins $
- * @see gov.nasa.worldwind.util.combine.CombineContext
- * @see gov.nasa.worldwind.util.combine.ShapeCombiner
+ * @see CombineContext
+ * @see ShapeCombiner
  */
-public interface Combinable
-{
+public interface Combinable {
     /**
      * Causes this Combinable to draw its contours using the GLU tessellator attached to the provided CombineContext.
      * When the CombineContext is in bounding sector mode, this adds the Combinable's geographic bounding sector to the
      * CombineContext's bounding sector list. See the interface documentation for more information.
      *
      * @param cc the CombineContext to be used.
-     *
-     * @throws java.lang.IllegalArgumentException if the CombineContext is null.
-     * @see gov.nasa.worldwind.util.combine.CombineContext
+     * @throws IllegalArgumentException if the CombineContext is null.
+     * @see CombineContext
      */
     void combine(CombineContext cc);
 }

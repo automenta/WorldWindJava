@@ -18,13 +18,11 @@ import java.util.logging.Level;
  * @author dcollins
  * @version $Id: WebViewTexture.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WebViewTexture extends BasicWWTexture
-{
+public class WebViewTexture extends BasicWWTexture {
     protected final Dimension frameSize;
     protected final boolean flipVertically;
 
-    public WebViewTexture(Dimension frameSize, boolean useMipMaps, boolean flipVertically)
-    {
+    public WebViewTexture(Dimension frameSize, boolean useMipMaps, boolean flipVertically) {
         // Create a new unique object to use as the cache key.
         super(new Object(), useMipMaps); // Do not generate mipmaps for the texture.
 
@@ -33,10 +31,8 @@ public class WebViewTexture extends BasicWWTexture
     }
 
     @Override
-    public boolean bind(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public boolean bind(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -44,8 +40,7 @@ public class WebViewTexture extends BasicWWTexture
 
         boolean isBound = super.bind(dc);
 
-        if (isBound)
-        {
+        if (isBound) {
             this.updateIfNeeded(dc);
         }
 
@@ -53,10 +48,8 @@ public class WebViewTexture extends BasicWWTexture
     }
 
     @Override
-    protected Texture initializeTexture(DrawContext dc, Object imageSource)
-    {
-        if (dc == null)
-        {
+    protected Texture initializeTexture(DrawContext dc, Object imageSource) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -68,8 +61,7 @@ public class WebViewTexture extends BasicWWTexture
         Texture t;
         GL gl = dc.getGL();
 
-        try
-        {
+        try {
             // Allocate a texture with the proper dimensions and texture internal format, but with no data.
             TextureData td = new TextureData(
                 gl.getGLProfile(), // GL profile
@@ -96,8 +88,7 @@ public class WebViewTexture extends BasicWWTexture
             gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL2.GL_CLAMP_TO_BORDER);
             gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL2.GL_CLAMP_TO_BORDER);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // TODO: refactor as generic.ExceptionDuringTextureInitialization
             String message = Logging.getMessage("generic.IOExceptionDuringTextureInitialization");
             Logging.logger().log(Level.SEVERE, message, e);
@@ -112,7 +103,6 @@ public class WebViewTexture extends BasicWWTexture
         return t;
     }
 
-    protected void updateIfNeeded(DrawContext dc)
-    {
+    protected void updateIfNeeded(DrawContext dc) {
     }
 }

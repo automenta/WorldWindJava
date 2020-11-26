@@ -15,39 +15,31 @@ import java.util.logging.Level;
  * @author tag
  * @version $Id: WCS100SingleValue.java 2066 2014-06-20 20:41:46Z tgaskins $
  */
-public class WCS100SingleValue extends AbstractXMLEventParser
-{
-    public WCS100SingleValue(String namespaceURI)
-    {
+public class WCS100SingleValue extends AbstractXMLEventParser {
+    public WCS100SingleValue(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public String getType()
-    {
+    public String getType() {
         return (String) this.getField("type");
     }
 
-    public String getSemantic()
-    {
+    public String getSemantic() {
         return (String) this.getField("semantic");
     }
 
-    public String getSingleValueString()
-    {
+    public String getSingleValueString() {
         return (String) this.getField("CharactersContent");
     }
 
-    public Double getSingleValue()
-    {
+    public Double getSingleValue() {
         if (this.getSingleValueString() == null)
             return null;
 
-        try
-        {
+        try {
             return Double.parseDouble(this.getSingleValueString());
         }
-        catch (NumberFormatException e)
-        {
+        catch (NumberFormatException e) {
             String message = Logging.getMessage("generic.NumberFormatException");
             Logging.logger().log(Level.WARNING, message, e);
             return null;

@@ -15,8 +15,8 @@ import gov.nasa.worldwind.util.UnitsFormat;
 /**
  * TacticalGraphic provides a common interface for displaying a graphic from a symbology set. A graphic can be an icon
  * that is drawn a geographic position, a vector graphic that is positioned using one or more control points, or a line
- * or polygon that is styled according to the symbol set's specification. See the TacticalGraphic 
- * <a href="https://worldwind.arc.nasa.gov/java/tutorials/tactical-graphics/" target="_blank">Tutorial</a> 
+ * or polygon that is styled according to the symbol set's specification. See the TacticalGraphic
+ * <a href="https://worldwind.arc.nasa.gov/java/tutorials/tactical-graphics/" target="_blank">Tutorial</a>
  * for instructions on using TacticalGraphic in an application.
  * <p>
  * See the {@link gov.nasa.worldwindx.examples.symbology.Symbology} and {@link gov.nasa.worldwindx.examples.symbology.TacticalGraphics}
@@ -133,8 +133,7 @@ import gov.nasa.worldwind.util.UnitsFormat;
  * @version $Id: TacticalGraphic.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see TacticalGraphicFactory
  */
-public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVList
-{
+public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVList {
     /**
      * Indicates whether this graphic is drawn when in view.
      *
@@ -153,7 +152,6 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
      * Indicates the current value of a text or graphic modifier.
      *
      * @param modifier Key that identifies the modifier to retrieve. The possible modifiers depends on the symbol set.
-     *
      * @return The value of the modifier, or {@code null} if the modifier is not set.
      */
     Object getModifier(String modifier);
@@ -198,8 +196,7 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
      * Indicates whether or not the graphic should display its location as a text modifier. Not all graphics support the
      * location modifier.
      *
-     * @return true if the graphic will display the location modifier. Note that not all graphics support this
-     *         modifier.
+     * @return true if the graphic will display the location modifier. Note that not all graphics support this modifier.
      */
     boolean isShowLocation();
 
@@ -217,8 +214,8 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
      * See comments on {@link #setShowHostileIndicator(boolean) setShowHostileIndicator} for more information.
      *
      * @return true if an indicator may be drawn when this graphic represents a hostile entity, if supported by the
-     *         graphic implementation. Note that some graphics may not display an indicator, even when representing a
-     *         hostile entity.
+     * graphic implementation. Note that some graphics may not display an indicator, even when representing a hostile
+     * entity.
      */
     boolean isShowHostileIndicator();
 
@@ -242,30 +239,28 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
     String getIdentifier();
 
     /**
-     * Convenience method to specify a text modifier for the graphic. Calling this method is equivalent to calling
-     * <code>setModifier(SymbologyConstants.UNIQUE_DESIGNATION, text)</code>.
-     *
-     * @param text New text modifier. May be null.
-     *
-     * @see #setModifier(String, Object)
-     */
-    void setText(String text);
-
-    /**
      * Convenience method to access the text modifier of the graphic. Calling this method is equivalent to calling
      * <code>getModifier(SymbologyConstants.UNIQUE_DESIGNATION)</code>.
      *
      * @return Descriptive text for this graphic.
-     *
      * @see #getModifier(String)
      */
     String getText();
 
     /**
+     * Convenience method to specify a text modifier for the graphic. Calling this method is equivalent to calling
+     * <code>setModifier(SymbologyConstants.UNIQUE_DESIGNATION, text)</code>.
+     *
+     * @param text New text modifier. May be null.
+     * @see #setModifier(String, Object)
+     */
+    void setText(String text);
+
+    /**
      * Indicates the positions of the control points that place and orient the graphic.
      *
      * @return positions that orient the graphic. How many positions are returned depends on the type of graphic. Some
-     *         graphics require only a single position, others require many.
+     * graphics require only a single position, others require many.
      */
     Iterable<? extends Position> getPositions();
 
@@ -316,7 +311,7 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
 
     /**
      * Indicates an offset used to position the graphic's main label relative to the label's geographic position. See
-     * comments on {@link #setLabelOffset(gov.nasa.worldwind.render.Offset) setLabelOffset} for more information.
+     * comments on {@link #setLabelOffset(Offset) setLabelOffset} for more information.
      *
      * @return The offset that determines how the graphic's label is placed relative to the graphic.
      */
@@ -340,7 +335,7 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
      * object returned during picking. If null, the graphic itself is the pickable object returned during picking.
      *
      * @return the object used as the pickable object returned during picking, or null to indicate the the graphic is
-     *         returned during picking.
+     * returned during picking.
      */
     Object getDelegateOwner();
 

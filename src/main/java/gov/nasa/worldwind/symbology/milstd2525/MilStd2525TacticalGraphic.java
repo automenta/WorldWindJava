@@ -10,10 +10,11 @@ import gov.nasa.worldwind.symbology.TacticalGraphic;
 
 /**
  * Interface to describe tactical graphics defined by <a href="http://www.assistdocs.com/search/document_details.cfm?ident_number=114934">MIL-STD-2525</a>.
- * See the TacticalGraphic <a href="https://worldwind.arc.nasa.gov/java/tutorials/tactical-graphics/" target="_blank">Tutorial</a>
- * for instructions on using TacticalGraphic in an application.
+ * See the TacticalGraphic <a href="https://worldwind.arc.nasa.gov/java/tutorials/tactical-graphics/"
+ * target="_blank">Tutorial</a> for instructions on using TacticalGraphic in an application.
  * <p>
- * The following table lists the modifiers supported by 2525 graphics. Note that not all graphics support all modifiers.
+ * The following table lists the modifiers supported by 2525 graphics. Note that not all graphics support all
+ * modifiers.
  * <table> <caption style="font-weight: bold;">2525 Graphics Modifiers</caption><tr><th>Field</th><th>Modifier key</th><th>Data type</th><th>Description</th></tr>
  * <tr><td>A</td><td>SymbologyConstants.SYMBOL</td><td>String</td><td>SIDC for a MIL-STD-2525 Tactical Symbol</td></tr>
  * <tr><td>B</td><td>SymbologyConstants.ECHELON</td><td>String</td><td>Echelon</td></tr>
@@ -55,13 +56,11 @@ import gov.nasa.worldwind.symbology.TacticalGraphic;
  * @author pabercrombie
  * @version $Id: MilStd2525TacticalGraphic.java 555 2012-04-25 18:59:29Z pabercrombie $
  */
-public interface MilStd2525TacticalGraphic extends TacticalGraphic
-{
+public interface MilStd2525TacticalGraphic extends TacticalGraphic {
     /**
      * Indicates the current value of graphic's Status/Operational Condition field.
      *
      * @return this graphic's Status/Operational Condition field.
-     *
      * @see #setStatus(String)
      */
     String getStatus();
@@ -81,7 +80,6 @@ public interface MilStd2525TacticalGraphic extends TacticalGraphic
      * <ul> <li>STATUS_ANTICIPATED</li> <li>STATUS_PRESENT</li> </ul>
      *
      * @param value the new value for the Status/Operational Condition field.
-     *
      * @throws IllegalArgumentException if the specified value is <code>null</code> or is not one of the accepted status
      *                                  values.
      */

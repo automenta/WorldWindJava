@@ -8,11 +8,14 @@ package gov.nasa.worldwindx.examples;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.Version;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Map;
+import java.util.List;
+import java.util.*;
 
 /**
  * @author tag
@@ -20,8 +23,34 @@ import java.util.Map;
  */
 public class WorldWindDiagnostics {
 
+    static {
+        if (Configuration.isMacOS()) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Diagnostic Program");
+            System.setProperty("com.apple.mrj.application.growbox.intrudes", "false");
+        }
+    }
+
+    public static void main(String[] arg) {
+        final MainFrame frame = new MainFrame();
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+
     private static class GLFrame extends JFrame implements GLEventListener {
 
+        private static final Attr[] attrs = new Attr[] {
+            new Attr(GL.GL_STENCIL_BITS, "stencil bits"),
+            new Attr(GL.GL_DEPTH_BITS, "depth bits"),
+            new Attr(GL2.GL_MAX_TEXTURE_UNITS, "max texture units"),
+            new Attr(GL2.GL_MAX_TEXTURE_IMAGE_UNITS_ARB, "max texture image units"),
+            new Attr(GL2.GL_MAX_TEXTURE_COORDS_ARB, "max texture coords"),
+            new Attr(GL.GL_MAX_TEXTURE_SIZE, "max texture size"),
+            new Attr(GL2.GL_MAX_ELEMENTS_INDICES, "max elements indices"),
+            new Attr(GL2.GL_MAX_ELEMENTS_VERTICES, "max elements vertices"),
+            new Attr(GL2.GL_MAX_LIGHTS, "max lights"),
+            new Attr(GL2.GL_LINE_WIDTH_RANGE, "line width range")
+        };
         private final JTextArea outputArea;
 
         GLFrame(JTextArea outputArea) {
@@ -37,35 +66,11 @@ public class WorldWindDiagnostics {
             this.setSize(200, 200);
         }
 
-        private static class Attr {
-
-            private Attr(Object attr, String name) {
-                this.attr = attr;
-                this.name = name;
-            }
-
-            private final Object attr;
-            private final String name;
-        }
-
-        private static final Attr[] attrs = new Attr[]{
-            new Attr(GL.GL_STENCIL_BITS, "stencil bits"),
-            new Attr(GL.GL_DEPTH_BITS, "depth bits"),
-            new Attr(GL2.GL_MAX_TEXTURE_UNITS, "max texture units"),
-            new Attr(GL2.GL_MAX_TEXTURE_IMAGE_UNITS_ARB, "max texture image units"),
-            new Attr(GL2.GL_MAX_TEXTURE_COORDS_ARB, "max texture coords"),
-            new Attr(GL.GL_MAX_TEXTURE_SIZE, "max texture size"),
-            new Attr(GL2.GL_MAX_ELEMENTS_INDICES, "max elements indices"),
-            new Attr(GL2.GL_MAX_ELEMENTS_VERTICES, "max elements vertices"),
-            new Attr(GL2.GL_MAX_LIGHTS, "max lights"),
-            new Attr(GL2.GL_LINE_WIDTH_RANGE, "line width range")
-        };
-
         @Override
         public void init(GLAutoDrawable glAutoDrawable) {
             StringBuilder sb = new StringBuilder();
 
-            sb.append(gov.nasa.worldwind.Version.getVersion()).append("\n");
+            sb.append(Version.getVersion()).append("\n");
 
             sb.append("\nSystem Properties\n");
             sb.append("Processors: ").append(Runtime.getRuntime().availableProcessors()).append("\n");
@@ -117,7 +122,8 @@ public class WorldWindDiagnostics {
                 Package p = getClass().getClassLoader().getDefinedPackage(pkgName);
                 if (p == null) {
                     sb.append("WARNING: Package.getPackage(").append(pkgName).append(") is null\n");
-                } else {
+                }
+                else {
                     sb.append(p).append("\n");
                     sb.append("Specification Title = ").append(p.getSpecificationTitle()).append("\n");
                     sb.append("Specification Vendor = ").append(p.getSpecificationVendor()).append("\n");
@@ -125,7 +131,8 @@ public class WorldWindDiagnostics {
                     sb.append("Implementation Vendor = ").append(p.getImplementationVendor()).append("\n");
                     sb.append("Implementation Version = ").append(p.getImplementationVersion()).append("\n");
                 }
-            } catch (ClassNotFoundException e) {
+            }
+            catch (ClassNotFoundException e) {
                 sb.append("Unable to load ").append(pkgName).append("\n");
             }
 
@@ -143,30 +150,25 @@ public class WorldWindDiagnostics {
         @Override
         public void reshape(GLAutoDrawable glAutoDrawable, int x, int y, int width, int height) {
         }
+
+        private static class Attr {
+
+            private final Object attr;
+            private final String name;
+
+            private Attr(Object attr, String name) {
+                this.attr = attr;
+                this.name = name;
+            }
+        }
     }
 
     private static class MainFrame extends JFrame {
 
         private static final JTextArea outputArea = new JTextArea(20, 80);
-
-        private static class RunAction extends AbstractAction {
-
-            public RunAction() {
-                super("Re-run Test");
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                outputArea.setText("");
-                GLFrame glFrame = new GLFrame(outputArea);
-                glFrame.setVisible(true);
-            }
-        }
-
-        private static final Action[] operations = new Action[]{
+        private static final Action[] operations = new Action[] {
             new RunAction()
         };
-
         private final JPanel mainPanel = new JPanel();
         private final JPanel controlContainer = new JPanel(new BorderLayout());
         private final JPanel outputContainer = new JPanel();
@@ -175,19 +177,19 @@ public class WorldWindDiagnostics {
             try {
                 mainPanel.setLayout(new BorderLayout());
                 mainPanel.setBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9));
-                mainPanel.add(outputContainer, java.awt.BorderLayout.CENTER);
+                mainPanel.add(outputContainer, BorderLayout.CENTER);
                 outputArea.setLineWrap(true);
-                outputContainer.add(new JScrollPane(outputArea), java.awt.BorderLayout.CENTER);
-                outputContainer.setBorder(new javax.swing.border.TitledBorder("Results"));
+                outputContainer.add(new JScrollPane(outputArea), BorderLayout.CENTER);
+                outputContainer.setBorder(new TitledBorder("Results"));
 
-                this.getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
+                this.getContentPane().add(mainPanel, BorderLayout.CENTER);
 
-                java.util.ArrayList<JButton> btns = new java.util.ArrayList<>();
+                List<JButton> btns = new ArrayList<>();
                 {
                     JPanel westPanel = new JPanel(new GridLayout(0, 1, 0, 10));
                     westPanel.setBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9));
                     JPanel opsPanel = new JPanel(new GridLayout(6, 1));
-                    opsPanel.setBorder(new javax.swing.border.TitledBorder("Operations"));
+                    opsPanel.setBorder(new TitledBorder("Operations"));
 
                     for (Action action : operations) {
                         JPanel p = new JPanel(new BorderLayout());
@@ -209,46 +211,47 @@ public class WorldWindDiagnostics {
                     btn.setPreferredSize(dim);
                 }
 
-                java.awt.Dimension prefSize = this.getPreferredSize();
+                Dimension prefSize = this.getPreferredSize();
                 prefSize.setSize(prefSize.getWidth(), 1.1 * prefSize.getHeight());
                 this.setSize(prefSize);
 
-                java.awt.Dimension parentSize;
-                java.awt.Point parentLocation = new java.awt.Point(0, 0);
-                parentSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+                Dimension parentSize;
+                Point parentLocation = new Point(0, 0);
+                parentSize = Toolkit.getDefaultToolkit().getScreenSize();
                 int x = parentLocation.x + (parentSize.width - prefSize.width) / 2;
                 int y = parentLocation.y + (parentSize.height - prefSize.height) / 2;
                 this.setLocation(x, y);
                 this.setResizable(true);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         @Override
-        protected void processWindowEvent(java.awt.event.WindowEvent e) {
+        protected void processWindowEvent(WindowEvent e) {
             super.processWindowEvent(e);
 
-            if (e.getID() != java.awt.event.WindowEvent.WINDOW_OPENED) //noinspection UnnecessaryReturnStatement
+            if (e.getID() != WindowEvent.WINDOW_OPENED) //noinspection UnnecessaryReturnStatement
             {
                 return;
             }
             GLFrame glFrame = new GLFrame(outputArea);
             glFrame.setVisible(true);
         }
-    }
 
-    static {
-        if (Configuration.isMacOS()) {
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Diagnostic Program");
-            System.setProperty("com.apple.mrj.application.growbox.intrudes", "false");
+        private static class RunAction extends AbstractAction {
+
+            public RunAction() {
+                super("Re-run Test");
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                outputArea.setText("");
+                GLFrame glFrame = new GLFrame(outputArea);
+                glFrame.setVisible(true);
+            }
         }
-    }
-
-    public static void main(String[] arg) {
-        final MainFrame frame = new MainFrame();
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setVisible(true);
     }
 }

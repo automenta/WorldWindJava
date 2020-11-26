@@ -26,13 +26,12 @@ import java.util.*;
  * @author tag
  * @version $Id: FileSetHighlighter.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
-public class FileSetHighlighter implements ListSelectionListener, SelectListener, PropertyChangeListener
-{
+public class FileSetHighlighter implements ListSelectionListener, SelectListener, PropertyChangeListener {
     protected final FileSetPanel fileSetPanel;
     protected final WorldWindow wwd;
+    final Collection<FileSet> currentlyHighlightedSets = new ArrayList<>();
 
-    public FileSetHighlighter(WorldWindow wwd, FileSetPanel panel)
-    {
+    public FileSetHighlighter(WorldWindow wwd, FileSetPanel panel) {
         this.wwd = wwd;
         this.fileSetPanel = panel;
 
@@ -40,9 +39,13 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         this.fileSetPanel.addSelectionListener(this);
     }
 
+    protected static Sector normalizeSector(Sector sector) {
+        return new Sector(sector.latMin().normalizedLatitude(), sector.latMax().normalizedLatitude(),
+            sector.lonMin().normalizedLongitude(), sector.lonMax().normalizedLongitude());
+    }
+
     @Override
-    public void valueChanged(ListSelectionEvent listSelectionEvent)
-    {
+    public void valueChanged(ListSelectionEvent listSelectionEvent) {
         // Called when the data-install panel table's selection changes.
 
         if (listSelectionEvent.getValueIsAdjusting())
@@ -51,43 +54,29 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         this.handleSelection(this.fileSetPanel.getSelectedFileSets());
     }
 
-    final List<FileSet> currentlyHighlightedSets = new ArrayList<>();
-
-    protected void handleSelection(List<FileSet> selectedFileSets)
-    {
+    protected void handleSelection(List<FileSet> selectedFileSets) {
         this.unHighlightSelectedSets();
 
-        if (selectedFileSets == null || selectedFileSets.size() == 0)
+        if (selectedFileSets == null || selectedFileSets.isEmpty())
             return;
 
         Sector overallSector = this.highlightSelectedSets(selectedFileSets);
-        if (overallSector != null)
-        {
+        if (overallSector != null) {
             // Sometimes the overall sector goes out of limits, so normalize it if it does.
             if (!overallSector.isWithinLatLonLimits())
                 overallSector = normalizeSector(overallSector);
 
             ExampleUtil.goTo(this.wwd, overallSector);
         }
-        else
-        {
+        else {
             this.wwd.redraw();
         }
     }
 
-    protected static Sector normalizeSector(Sector sector)
-    {
-        return new Sector(sector.getMinLatitude().normalizedLatitude(), sector.getMaxLatitude().normalizedLatitude(),
-            sector.getMinLongitude().normalizedLongitude(), sector.getMaxLongitude().normalizedLongitude());
-    }
-
-    protected void unHighlightSelectedSets()
-    {
-        for (FileSet fileSet : this.currentlyHighlightedSets)
-        {
+    protected void unHighlightSelectedSets() {
+        for (FileSet fileSet : this.currentlyHighlightedSets) {
             Layer layer = (Layer) fileSet.getValue(AVKey.LAYER);
-            if (layer != null)
-            {
+            if (layer != null) {
                 this.wwd.getModel().getLayers().remove(layer);
             }
         }
@@ -95,15 +84,12 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         this.currentlyHighlightedSets.clear();
     }
 
-    protected Sector highlightSelectedSets(List<FileSet> fileSets)
-    {
+    protected Sector highlightSelectedSets(Iterable<FileSet> fileSets) {
         Sector overallSector = null;
 
-        for (FileSet fileSet : fileSets)
-        {
+        for (FileSet fileSet : fileSets) {
             Layer layer = (Layer) fileSet.getValue(AVKey.LAYER);
-            if (layer == null)
-            {
+            if (layer == null) {
                 layer = createSectorLayer(fileSet);
                 layer.setValue("FileSet", fileSet);
             }
@@ -119,8 +105,7 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         return overallSector;
     }
 
-    protected Layer createSectorLayer(FileSet fileSet)
-    {
+    protected Layer createSectorLayer(FileSet fileSet) {
         RenderableLayer layer = new RenderableLayer();
         fileSet.setValue(AVKey.LAYER, layer);
         layer.setValue(AVKey.IGNORE, true);
@@ -131,22 +116,19 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         return layer;
     }
 
-    protected void populateLayer(FileSet fileSet, RenderableLayer layer)
-    {
+    protected void populateLayer(FileSet fileSet, RenderableLayer layer) {
         Object[] sectors = fileSet.getSectorList();
 
         // Add a Path for each sector in the file set.
-        for (Object o : sectors)
-        {
-            BasicShapeAttributes attrs = new BasicShapeAttributes();
+        for (Object o : sectors) {
+            ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineMaterial(new Material(fileSet.getColor()));
             attrs.setOutlineWidth(2);
 
             Sector sector = (Sector) o;
             List<LatLon> locations = sector.asList();
             List<Position> positions = new ArrayList<>(5);
-            for (LatLon location : locations)
-            {
+            for (LatLon location : locations) {
                 positions.add(new Position(location, 0));
             }
             positions.add(new Position(locations.get(0), 0)); // to form a closed path
@@ -166,8 +148,7 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
     }
 
     @Override
-    public void selected(SelectEvent event)
-    {
+    public void selected(SelectEvent event) {
         // Called when the sector is selected in the WorldWindow. Ensures that the selected data set's entry in the
         // data set table is visible.
 
@@ -184,32 +165,28 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         this.fileSetPanel.scrollToFileSet(fileSet);
     }
 
-    public void addImage(final FileSet fileSet)
-    {
+    public void addImage(final FileSet fileSet) {
         BufferedImage image = fileSet.getImage();
-        if (image != null)
-        {
+        if (image != null) {
             fileSet.removePropertyChangeListener(AVKey.IMAGE, this); // notification no longer needed
 
             // Add a surface image for the preview image to the file set's layer.
             Sector sector = (Sector) fileSet.getValue(AVKey.SECTOR);
-            SurfaceImage surfaceImage = new SurfaceImage(image, sector);
+            Renderable surfaceImage = new SurfaceImage(image, sector);
 
             RenderableLayer layer = (RenderableLayer) fileSet.getValue(AVKey.LAYER);
             layer.addRenderable(surfaceImage);
 
             this.wwd.redraw();
         }
-        else
-        {
+        else {
             // Register to be notified when the image is available.
             fileSet.addPropertyChangeListener(AVKey.IMAGE, this);
         }
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent event)
-    {
+    public void propertyChange(PropertyChangeEvent event) {
         // Adds a file set's newly created image to the file set's layer.
 
         if (!event.getPropertyName().equals(AVKey.IMAGE))

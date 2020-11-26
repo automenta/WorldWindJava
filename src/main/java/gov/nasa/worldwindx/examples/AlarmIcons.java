@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Illustrates how to display an icon with an alarm state using a WorldWind <code>{@link WWIcon}</code>. This applies a
@@ -27,15 +28,16 @@ import java.util.ArrayList;
  * @author Tom Gaskins
  * @version $Id: AlarmIcons.java 2139 2014-07-10 18:52:17Z tgaskins $
  */
-public class AlarmIcons extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        private final UserFacingIcon icon;
-        private final ArrayList<Action> alarmTypes = new ArrayList<>();
+public class AlarmIcons extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Alarm Icons", AppFrame.class);
+    }
 
-        public AppFrame()
-        {
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        private final UserFacingIcon icon;
+        private final List<Action> alarmTypes = new ArrayList<>();
+
+        public AppFrame() {
             super(true, true, false);
 
             IconLayer layer = new IconLayer();
@@ -68,13 +70,11 @@ public class AlarmIcons extends ApplicationTemplate
             this.getControlPanel().add(this.makeControlPanel(), BorderLayout.SOUTH);
         }
 
-        private JPanel makeControlPanel()
-        {
+        private JPanel makeControlPanel() {
             JPanel controlPanel = new JPanel(new GridLayout(0, 1, 10, 10));
 
             ButtonGroup bg = new ButtonGroup();
-            for (Action a : alarmTypes)
-            {
+            for (Action a : alarmTypes) {
                 final JRadioButton b = new JRadioButton(a);
                 bg.add(b);
                 controlPanel.add(b);
@@ -90,8 +90,7 @@ public class AlarmIcons extends ApplicationTemplate
         }
 
         // Create a blurred pattern bitmap
-        private BufferedImage createBitmap(String pattern, Color color)
-        {
+        private BufferedImage createBitmap(String pattern, Color color) {
             // Create bitmap with pattern
             BufferedImage image = PatternFactory.createPattern(pattern, new Dimension(128, 128), 0.7f,
                 color, new Color(color.getRed(), color.getGreen(), color.getBlue(), 0));
@@ -103,28 +102,24 @@ public class AlarmIcons extends ApplicationTemplate
             return image;
         }
 
-        private class StaticAlarmAction extends AbstractAction
-        {
+        private class StaticAlarmAction extends AbstractAction {
             private final Object bgIconPath;
             private final double bgScale;
 
-            private StaticAlarmAction(String name, Object bgIconPath, double bgScale)
-            {
+            private StaticAlarmAction(String name, Object bgIconPath, double bgScale) {
                 super(name);
                 this.bgIconPath = bgIconPath;
                 this.bgScale = bgScale;
             }
 
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 icon.setBackgroundImage(bgIconPath);
                 icon.setBackgroundScale(bgScale);
                 getWwd().redraw();
             }
         }
 
-        private class PulsingAlarmAction extends AbstractAction
-        {
+        private class PulsingAlarmAction extends AbstractAction {
             protected final Object bgIconPath;
             protected final int frequency;
             protected int scaleIndex = 0;
@@ -132,23 +127,19 @@ public class AlarmIcons extends ApplicationTemplate
                 2.75, 2.5, 2.25, 2, 1.75, 1.5};
             protected Timer timer;
 
-            private PulsingAlarmAction(String name, Object bgp, int frequency)
-            {
+            private PulsingAlarmAction(String name, Object bgp, int frequency) {
                 super(name);
                 this.bgIconPath = bgp;
                 this.frequency = frequency;
             }
 
-            private PulsingAlarmAction(String name, Object bgp, int frequency, double[] scales)
-            {
+            private PulsingAlarmAction(String name, Object bgp, int frequency, double[] scales) {
                 this(name, bgp, frequency);
                 this.scales = scales;
             }
 
-            public void actionPerformed(ActionEvent e)
-            {
-                if (timer == null)
-                {
+            public void actionPerformed(ActionEvent e) {
+                if (timer == null) {
                     timer = new Timer(frequency, e12 -> {
                         icon.setBackgroundScale(scales[++scaleIndex % scales.length]);
                         getWwd().redraw();
@@ -165,17 +156,10 @@ public class AlarmIcons extends ApplicationTemplate
             }
         }
 
-        private class FlashingAlarmAction extends PulsingAlarmAction
-        {
-            private FlashingAlarmAction(String name, Object bgp, int frequency)
-            {
+        private class FlashingAlarmAction extends PulsingAlarmAction {
+            private FlashingAlarmAction(String name, Object bgp, int frequency) {
                 super(name, bgp, frequency, new double[] {2, 0.5});
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Alarm Icons", AppFrame.class);
     }
 }

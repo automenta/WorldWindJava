@@ -18,25 +18,13 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: Aviation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Aviation extends AbstractAxisArrow
-{
-    /**
-     * Indicates the graphics supported by this class.
-     *
-     * @return List of masked SIDC strings that identify graphics that this class supports.
-     */
-    public static List<String> getSupportedGraphics()
-    {
-        return Collections.singletonList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_AVN);
-    }
-
+public class Aviation extends AbstractAxisArrow {
     /**
      * Create a new Aviation graphic.
      *
      * @param sidc Symbol code the identifies the graphic.
      */
-    public Aviation(String sidc)
-    {
+    public Aviation(String sidc) {
         this(sidc, 1);
     }
 
@@ -47,22 +35,30 @@ public class Aviation extends AbstractAxisArrow
      * @param sidc     Symbol code the identifies the graphic.
      * @param numPaths Number of paths to create.
      */
-    protected Aviation(String sidc, int numPaths)
-    {
+    protected Aviation(String sidc, int numPaths) {
         super(sidc, numPaths);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics() {
+        return Collections.singletonList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_AVN);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected double createArrowHeadPositions(List<Position> leftPositions, List<Position> rightPositions,
-        List<Position> arrowHeadPositions, Globe globe)
-    {
+        List<Position> arrowHeadPositions, Globe globe) {
         double halfWidth = super.createArrowHeadPositions(leftPositions, rightPositions, arrowHeadPositions, globe);
 
         // Aviation graphic is the same as the base graphic, except that the left and right lines cross between
         // points 1 and 2. Swap the control points in the left and right lists to achieve this effect.
-        if (rightPositions.size() > 0 && leftPositions.size() > 0)
-        {
+        if (!rightPositions.isEmpty() && !leftPositions.isEmpty()) {
             Position temp = leftPositions.get(0);
 
             leftPositions.set(0, rightPositions.get(0));

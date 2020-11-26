@@ -22,8 +22,7 @@ import java.util.logging.Level;
  * @author Tom Gaskins
  * @version $Id: WorldWind.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public final class WorldWind
-{
+public final class WorldWind {
 
     public static final String SHUTDOWN_EVENT = "gov.nasa.worldwind.ShutDown";
 
@@ -57,11 +56,6 @@ public final class WorldWind
 
     private WorldWind() // Singleton, prevent public instantiation.
     {
-        this.initialize();
-    }
-
-    private void initialize()
-    {
         this.wwo = new WWObjectImpl();
         this.remoteRetrievalService =
             (RetrievalService) createConfigurationComponent(AVKey.RETRIEVAL_SERVICE_CLASS_NAME);
@@ -78,22 +72,6 @@ public final class WorldWind
         IIORegistry.getDefaultInstance().registerServiceProvider(GeotiffImageReaderSpi.inst());
     }
 
-    private void dispose()
-    {
-        if (this.taskService != null)
-            this.taskService.shutdown(true);
-        if (this.remoteRetrievalService != null)
-            this.remoteRetrievalService.shutdown(true);
-        if (this.localRetrievalService != null)
-            this.localRetrievalService.shutdown(true);
-        if (this.memoryCacheSet != null)
-            this.memoryCacheSet.clear();
-        if (this.sessionCache != null)
-            this.sessionCache.clear();
-        if (this.scheduledTaskService != null)
-            this.scheduledTaskService.shutdown(true);
-    }
-
     /**
      * Reinitialize WorldWind to its initial ready state. Shut down and restart all WorldWind services and clear all
      * WorldWind memory caches. Cache memory will be released at the next JVM garbage collection.
@@ -106,45 +84,37 @@ public final class WorldWind
      * <p>
      * WorldWind can continue to be used after calling this method.
      */
-    public static synchronized void shutDown()
-    {
+    public static synchronized void shutDown() {
         instance.wwo.firePropertyChange(SHUTDOWN_EVENT, null, -1);
         instance.dispose();
         instance = new WorldWind();
     }
 
-    public static MemoryCacheSet getMemoryCacheSet()
-    {
+    public static MemoryCacheSet getMemoryCacheSet() {
         return instance.memoryCacheSet;
     }
 
-    public static synchronized MemoryCache getMemoryCache(String key)
-    {
+    public static synchronized MemoryCache getMemoryCache(String key) {
         return instance.memoryCacheSet.getCache(key);
     }
 
-    public static FileStore getDataFileStore()
-    {
+    public static FileStore getDataFileStore() {
         return instance.dataFileStore;
     }
 
-    public static RetrievalService getRetrievalService()
-    {
+    public static RetrievalService getRetrievalService() {
         return instance.remoteRetrievalService;
     }
 
-    public static RetrievalService getRemoteRetrievalService()
-    {
+    public static RetrievalService getRemoteRetrievalService() {
         return instance.remoteRetrievalService;
     }
 
-    public static RetrievalService getLocalRetrievalService()
-    {
+    public static RetrievalService getLocalRetrievalService() {
         return instance.localRetrievalService;
     }
 
-    public static TaskService getTaskService()
-    {
+    public static TaskService getTaskService() {
         return instance.taskService;
     }
 
@@ -154,18 +124,15 @@ public final class WorldWind
      *
      * @return the scheduled task service.
      */
-    public static ScheduledTaskService getScheduledTaskService()
-    {
+    public static ScheduledTaskService getScheduledTaskService() {
         return instance.scheduledTaskService;
     }
 
-    public static NetworkStatus getNetworkStatus()
-    {
+    public static NetworkStatus getNetworkStatus() {
         return instance.networkStatus;
     }
 
-    public static SessionCache getSessionCache()
-    {
+    public static SessionCache getSessionCache() {
         return instance.sessionCache;
     }
 
@@ -173,11 +140,9 @@ public final class WorldWind
      * Indicates whether WorldWind will attempt to connect to the network to retrieve data or for other reasons.
      *
      * @return <code>true</code> if WorldWind is in off-line mode, <code>false</code> if not.
-     *
      * @see NetworkStatus
      */
-    public static boolean isOfflineMode()
-    {
+    public static boolean isOfflineMode() {
         return getNetworkStatus().isOfflineMode();
     }
 
@@ -186,42 +151,33 @@ public final class WorldWind
      * default value for this attribute is <code>false</code>, indicating that the network should be used.
      *
      * @param offlineMode <code>true</code> if WorldWind should use the network, <code>false</code> otherwise
-     *
      * @see NetworkStatus
      */
-    public static void setOfflineMode(boolean offlineMode)
-    {
+    public static void setOfflineMode(boolean offlineMode) {
         getNetworkStatus().setOfflineMode(offlineMode);
     }
 
     /**
      * @param className the full name, including package names, of the component to create
-     *
      * @return the new component
-     *
      * @throws WWRuntimeException       if the <code>Object</code> could not be created
      * @throws IllegalArgumentException if <code>className</code> is null or zero length
      */
-    public static Object createComponent(String className) throws WWRuntimeException
-    {
-        if (className == null || className.length() == 0)
-        {
+    public static Object createComponent(String className) throws WWRuntimeException {
+        if (className == null || className.isEmpty()) {
             Logging.logger().severe("nullValue.ClassNameIsNull");
             throw new IllegalArgumentException(Logging.getMessage("nullValue.ClassNameIsNull"));
         }
 
-        try
-        {
+        try {
             Class<?> c = Class.forName(className.trim());
             return c.getConstructor().newInstance();
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             Logging.logger().log(Level.SEVERE, "WorldWind.ExceptionCreatingComponent", className);
             throw new WWRuntimeException(Logging.getMessage("WorldWind.ExceptionCreatingComponent", className), e);
         }
-        catch (Throwable t)
-        {
+        catch (Throwable t) {
             Logging.logger().log(Level.SEVERE, "WorldWind.ErrorCreatingComponent", className);
             throw new WWRuntimeException(Logging.getMessage("WorldWind.ErrorCreatingComponent", className), t);
         }
@@ -229,89 +185,87 @@ public final class WorldWind
 
     /**
      * @param classNameKey the key identifying the component
-     *
      * @return the new component
-     *
      * @throws IllegalStateException    if no name could be found which corresponds to <code>classNameKey</code>
      * @throws IllegalArgumentException if <code>classNameKey</code> is null
      * @throws WWRuntimeException       if the component could not be created
      */
     public static Object createConfigurationComponent(String classNameKey)
-        throws IllegalStateException, IllegalArgumentException
-    {
-        if (classNameKey == null || classNameKey.length() == 0)
-        {
+        throws IllegalStateException, IllegalArgumentException {
+        if (classNameKey == null || classNameKey.isEmpty()) {
             Logging.logger().severe("nullValue.ClassNameKeyNullZero");
             throw new IllegalArgumentException(Logging.getMessage("nullValue.ClassNameKeyNullZero"));
         }
 
         String name = Configuration.getStringValue(classNameKey);
-        if (name == null)
-        {
+        if (name == null) {
             Logging.logger().log(Level.SEVERE, "WorldWind.NoClassNameInConfigurationForKey", classNameKey);
             throw new WWRuntimeException(
                 Logging.getMessage("WorldWind.NoClassNameInConfigurationForKey", classNameKey));
         }
 
-        try
-        {
+        try {
             return WorldWind.createComponent(name.trim());
         }
-        catch (Throwable e)
-        {
+        catch (Throwable e) {
             Logging.logger().log(Level.SEVERE, "WorldWind.UnableToCreateClassForConfigurationKey", name);
             throw new IllegalStateException(
                 Logging.getMessage("WorldWind.UnableToCreateClassForConfigurationKey", name), e);
         }
     }
 
-    public static void setValue(String key, Object value)
-    {
+    public static void setValue(String key, Object value) {
         instance.wwo.setValue(key, value);
     }
 
-    public static void setValue(String key, String value)
-    {
+    public static void setValue(String key, String value) {
         instance.wwo.setValue(key, value);
     }
 
-    public static Object getValue(String key)
-    {
+    public static Object getValue(String key) {
         return instance.wwo.getValue(key);
     }
 
-    public static String getStringValue(String key)
-    {
+    public static String getStringValue(String key) {
         return instance.wwo.getStringValue(key);
     }
 
-    public static boolean hasKey(String key)
-    {
+    public static boolean hasKey(String key) {
         return instance.wwo.hasKey(key);
     }
 
-    public static void removeKey(String key)
-    {
+    public static void removeKey(String key) {
         instance.wwo.removeKey(key);
     }
 
-    public static void addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
-    {
+    public static void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         instance.wwo.addPropertyChangeListener(propertyName, listener);
     }
 
-    public static void removePropertyChangeListener(String propertyName, PropertyChangeListener listener)
-    {
+    public static void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         instance.wwo.removePropertyChangeListener(propertyName, listener);
     }
 
-    public static void addPropertyChangeListener(PropertyChangeListener listener)
-    {
+    public static void addPropertyChangeListener(PropertyChangeListener listener) {
         instance.wwo.addPropertyChangeListener(listener);
     }
 
-    public static void removePropertyChangeListener(PropertyChangeListener listener)
-    {
+    public static void removePropertyChangeListener(PropertyChangeListener listener) {
         instance.wwo.removePropertyChangeListener(listener);
+    }
+
+    private void dispose() {
+        if (this.taskService != null)
+            this.taskService.shutdown(true);
+        if (this.remoteRetrievalService != null)
+            this.remoteRetrievalService.shutdown(true);
+        if (this.localRetrievalService != null)
+            this.localRetrievalService.shutdown(true);
+        if (this.memoryCacheSet != null)
+            this.memoryCacheSet.clear();
+        if (this.sessionCache != null)
+            this.sessionCache.clear();
+        if (this.scheduledTaskService != null)
+            this.scheduledTaskService.shutdown(true);
     }
 }

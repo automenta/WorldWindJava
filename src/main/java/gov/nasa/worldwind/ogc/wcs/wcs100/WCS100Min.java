@@ -12,20 +12,16 @@ import gov.nasa.worldwind.util.xml.AbstractXMLEventParser;
  * @author tag
  * @version $Id: WCS100Min.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
-public class WCS100Min extends AbstractXMLEventParser
-{
-    public WCS100Min(String namespaceURI)
-    {
+public class WCS100Min extends AbstractXMLEventParser {
+    public WCS100Min(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public String getClosure()
-    {
+    public String getClosure() {
         return (String) this.getField("closure");
     }
 
-    public String getMin()
-    {
+    public String getMin() {
         return (String) this.getField("CharactersContent");
     }
 }

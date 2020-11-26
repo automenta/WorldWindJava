@@ -12,20 +12,16 @@ import gov.nasa.worldwind.util.xml.AbstractXMLEventParser;
  * @author tag
  * @version $Id: WCS100Max.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
-public class WCS100Max extends AbstractXMLEventParser
-{
-    public WCS100Max(String namespaceURI)
-    {
+public class WCS100Max extends AbstractXMLEventParser {
+    public WCS100Max(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public String getClosure()
-    {
+    public String getClosure() {
         return (String) this.getField("closure");
     }
 
-    public String getMax()
-    {
+    public String getMax() {
         return (String) this.getField("CharactersContent");
     }
 }

@@ -24,22 +24,30 @@ import java.awt.*;
  * @author tag
  * @version $Id: DeclutterTacticalSymbols.java 2366 2014-10-02 23:16:31Z tgaskins $
  */
-public class DeclutterTacticalSymbols extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+public class DeclutterTacticalSymbols extends ApplicationTemplate {
+    public static void main(String[] args) {
+        // Configure the initial view parameters so that this example starts looking at the symbols.
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 32.49);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 63.455);
+        Configuration.setValue(AVKey.INITIAL_HEADING, 22);
+        Configuration.setValue(AVKey.INITIAL_PITCH, 82);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 20000);
+
+        start("WorldWind Tactical Symbol Decluttering", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
         protected final RenderableLayer symbolLayer;
         protected final TacticalSymbolAttributes sharedHighlightAttrs;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             /**
              * Define an LOD selector to adjust a symbol's attributes and properties during rendering in order to
              * declutter symbols.
              */
             TacticalSymbol.LODSelector lodSelector = (dc, symbol, eyeDistance) -> {
                 // Show text modifiers only when eye distance is less than 50 km.
-                symbol.setShowTextModifiers(eyeDistance < 50e3);
+                symbol.setShowTextModifiers(eyeDistance < 50.0e3);
 
                 // Scale the symbol when the eye distance is between 1 and 100 km. The symbol is scaled between
                 // 100% and 25% of its normal size.
@@ -49,28 +57,24 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate
                 TacticalSymbolAttributes attributes = symbol.isHighlighted()
                     ? symbol.getHighlightAttributes() : symbol.getAttributes();
 
-                double minScaleDistance = 1e3;
-                double maxScaleDistance = 100e3;
+                double minScaleDistance = 1.0e3;
+                double maxScaleDistance = 100.0e3;
 
-                if (eyeDistance > minScaleDistance && eyeDistance < maxScaleDistance)
-                {
+                if (eyeDistance > minScaleDistance && eyeDistance < maxScaleDistance) {
                     double scale = 0.25 + (maxScaleDistance - eyeDistance) / (maxScaleDistance - minScaleDistance);
                     attributes.setScale(scale);
                 }
-                else
-                {
+                else {
                     attributes.setScale(1.0);
                 }
 
                 // Show only the symbol's alternate representation when the eye distance is greater than 100 km.
-                if (eyeDistance < 100e3)
-                {
+                if (eyeDistance < 100.0e3) {
                     symbol.setShowGraphicModifiers(true);
                     ((MilStd2525TacticalSymbol) symbol).setShowFrame(true);
                     ((MilStd2525TacticalSymbol) symbol).setShowIcon(true);
                 }
-                else
-                {
+                else {
                     // Setting the symbol's show-frame and  show-icon properties to false causes the symbol's
                     // alternate representation to be drawn. The alternate representation is a filled circle.
                     symbol.setShowGraphicModifiers(false);
@@ -91,7 +95,7 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate
             // Create an air tactical symbol for the MIL-STD-2525 symbology set.
             TacticalSymbolAttributes attributes = new BasicTacticalSymbolAttributes();
             attributes.setTextModifierMaterial(Material.RED);
-            MilStd2525TacticalSymbol airSymbol = new MilStd2525TacticalSymbol("SFAPMFQM--GIUSA",
+            TacticalSymbol airSymbol = new MilStd2525TacticalSymbol("SFAPMFQM--GIUSA",
                 Position.fromDegrees(32.4520, 63.44553, 3000));
             airSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly SOF Drone Aircraft"); // Tool tip text.
             airSymbol.setAttributes(attributes);
@@ -104,7 +108,7 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate
             // Create a ground tactical symbol for the MIL-STD-2525 symbology set.
             attributes = new BasicTacticalSymbolAttributes();
             attributes.setTextModifierMaterial(Material.RED);
-            MilStd2525TacticalSymbol groundSymbol = new MilStd2525TacticalSymbol("SHGXUCFRMS----G",
+            TacticalSymbol groundSymbol = new MilStd2525TacticalSymbol("SHGXUCFRMS----G",
                 Position.fromDegrees(32.4014, 63.3894, 0));
             groundSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Hostile Self-Propelled Rocket Launchers");
             groundSymbol.setAttributes(attributes);
@@ -118,7 +122,7 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate
             // Create a ground tactical symbol for the MIL-STD-2525 symbology set.
             attributes = new BasicTacticalSymbolAttributes();
             attributes.setTextModifierMaterial(Material.RED);
-            MilStd2525TacticalSymbol machineGunSymbol = new MilStd2525TacticalSymbol("SFGPEWRH--MTUSG",
+            TacticalSymbol machineGunSymbol = new MilStd2525TacticalSymbol("SFGPEWRH--MTUSG",
                 Position.fromDegrees(32.3902, 63.4161, 0));
             machineGunSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly Heavy Machine Gun");
             machineGunSymbol.setAttributes(attributes);
@@ -141,17 +145,5 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate
             this.pack();
             WWUtil.alignComponent(null, this, AVKey.CENTER);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        // Configure the initial view parameters so that this example starts looking at the symbols.
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 32.49);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 63.455);
-        Configuration.setValue(AVKey.INITIAL_HEADING, 22);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 82);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 20000);
-
-        start("WorldWind Tactical Symbol Decluttering", AppFrame.class);
     }
 }

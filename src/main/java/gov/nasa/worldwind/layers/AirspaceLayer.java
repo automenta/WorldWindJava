@@ -9,6 +9,12 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.airspaces.Airspace;
 import gov.nasa.worldwind.util.Logging;
 
+import java.awt.Point;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Level;
+
 /**
  * AirspaceLayer manages a list of airspaces for rendering and picking. AirspaceLayer was originally designed as a
  * special purpose layer for {@link Airspace} shapes, but is now a redundant with {@link RenderableLayer}. Usage of
@@ -20,14 +26,14 @@ import gov.nasa.worldwind.util.Logging;
  * @deprecated Use {@link RenderableLayer} instead.
  */
 @Deprecated
-public class AirspaceLayer extends AbstractLayer
-{
-    private final java.util.Collection<Airspace> airspaces = new java.util.concurrent.ConcurrentLinkedQueue<>();
+public class AirspaceLayer extends AbstractLayer {
+    private final Collection<Airspace> airspaces = new ConcurrentLinkedQueue<>();
     private Iterable<Airspace> airspacesOverride;
 
-    /** Creates a new <code>Airspace</code> with an empty collection of Airspaces. */
-    public AirspaceLayer()
-    {
+    /**
+     * Creates a new <code>Airspace</code> with an empty collection of Airspaces.
+     */
+    public AirspaceLayer() {
     }
 
     /**
@@ -35,23 +41,19 @@ public class AirspaceLayer extends AbstractLayer
      * has been overridden with a call to {@link #setAirspaces(Iterable)}, this will throw an exception.
      *
      * @param airspace the airspace to add.
-     *
      * @throws IllegalArgumentException if the airspace is null.
      * @throws IllegalStateException    if a custom Iterable has been specified by a call to setRenderables.
      * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#addRenderable(gov.nasa.worldwind.render.Renderable)}
-     *             instead.
+     * instead.
      */
     @Deprecated
-    public void addAirspace(Airspace airspace)
-    {
-        if (airspace == null)
-        {
+    public void addAirspace(Airspace airspace) {
+        if (airspace == null) {
             String msg = "nullValue.AirspaceIsNull";
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (this.airspacesOverride != null)
-        {
+        if (this.airspacesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
             Logging.logger().severe(msg);
             throw new IllegalStateException(msg);
@@ -66,29 +68,24 @@ public class AirspaceLayer extends AbstractLayer
      * exception.
      *
      * @param airspaces the airspaces to add.
-     *
      * @throws IllegalArgumentException if the iterable is null.
      * @throws IllegalStateException    if a custom Iterable has been specified by a call to setRenderables.
      * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#addRenderables(Iterable)} instead.
      */
     @Deprecated
-    public void addAirspaces(Iterable<Airspace> airspaces)
-    {
-        if (airspaces == null)
-        {
+    public void addAirspaces(Iterable<Airspace> airspaces) {
+        if (airspaces == null) {
             String msg = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (this.airspacesOverride != null)
-        {
+        if (this.airspacesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
             Logging.logger().severe(msg);
             throw new IllegalStateException(msg);
         }
 
-        for (Airspace airspace : airspaces)
-        {
+        for (Airspace airspace : airspaces) {
             // Internal list of airspaces does not accept null values.
             if (airspace != null)
                 this.airspaces.add(airspace);
@@ -101,23 +98,19 @@ public class AirspaceLayer extends AbstractLayer
      * exception.
      *
      * @param airspace the airspace to remove.
-     *
      * @throws IllegalArgumentException if the airspace is null.
      * @throws IllegalStateException    if a custom Iterable has been specified by a call to setRenderables.
      * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#removeRenderable(gov.nasa.worldwind.render.Renderable)}
-     *             instead.
+     * instead.
      */
     @Deprecated
-    public void removeAirspace(Airspace airspace)
-    {
-        if (airspace == null)
-        {
+    public void removeAirspace(Airspace airspace) {
+        if (airspace == null) {
             String msg = "nullValue.AirspaceIsNull";
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (this.airspacesOverride != null)
-        {
+        if (this.airspacesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
             Logging.logger().severe(msg);
             throw new IllegalStateException(msg);
@@ -134,10 +127,8 @@ public class AirspaceLayer extends AbstractLayer
      * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#removeAllRenderables()} instead.
      */
     @Deprecated
-    public void removeAllAirspaces()
-    {
-        if (this.airspacesOverride != null)
-        {
+    public void removeAllAirspaces() {
+        if (this.airspacesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
             Logging.logger().severe(msg);
             throw new IllegalStateException(msg);
@@ -146,9 +137,8 @@ public class AirspaceLayer extends AbstractLayer
         clearAirspaces();
     }
 
-    private void clearAirspaces()
-    {
-        if (this.airspaces != null && this.airspaces.size() > 0)
+    private void clearAirspaces() {
+        if (this.airspaces != null && !this.airspaces.isEmpty())
             this.airspaces.clear();
     }
 
@@ -159,41 +149,17 @@ public class AirspaceLayer extends AbstractLayer
      * view of this layer's internal collection of Airspaces.
      *
      * @return Iterable of currently active Airspaces.
-     *
      * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#getRenderables()} instead.
      */
     @Deprecated
-    public Iterable<Airspace> getAirspaces()
-    {
-        if (this.airspacesOverride != null)
-        {
+    public Iterable<Airspace> getAirspaces() {
+        if (this.airspacesOverride != null) {
             return this.airspacesOverride;
         }
-        else
-        {
+        else {
             // Return an unmodifiable reference to the internal list of airspaces.
             // This prevents callers from changing this list and invalidating any invariants we have established.
-            return java.util.Collections.unmodifiableCollection(this.airspaces);
-        }
-    }
-
-    /**
-     * Returns the Iterable of currently active Airspaces. If the caller has specified a custom Iterable via {@link
-     * #setAirspaces(Iterable)}, this will returns a reference to that Iterable. If the caller passed
-     * <code>setAirspaces</code> a null parameter, or if <code>setAirspaces</code> has not been called, this returns a
-     * view of this layer's internal collection of Airspaces.
-     *
-     * @return Iterable of currently active Airspaces.
-     */
-    private Iterable<Airspace> getActiveAirspaces()
-    {
-        if (this.airspacesOverride != null)
-        {
-            return this.airspacesOverride;
-        }
-        else
-        {
-            return this.airspaces;
+            return Collections.unmodifiableCollection(this.airspaces);
         }
     }
 
@@ -207,28 +173,41 @@ public class AirspaceLayer extends AbstractLayer
      * collection.
      *
      * @param airspaceIterable Iterable to use instead of this layer's internal collection, or null to use this layer's
-     *
      * @deprecated Use {@link RenderableLayer} and {@link RenderableLayer#setRenderables(Iterable)} instead.
      */
     @Deprecated
-    public void setAirspaces(Iterable<Airspace> airspaceIterable)
-    {
+    public void setAirspaces(Iterable<Airspace> airspaceIterable) {
         this.airspacesOverride = airspaceIterable;
         // Clear the internal collection of Airspaces.
         clearAirspaces();
     }
 
     /**
+     * Returns the Iterable of currently active Airspaces. If the caller has specified a custom Iterable via {@link
+     * #setAirspaces(Iterable)}, this will returns a reference to that Iterable. If the caller passed
+     * <code>setAirspaces</code> a null parameter, or if <code>setAirspaces</code> has not been called, this returns a
+     * view of this layer's internal collection of Airspaces.
+     *
+     * @return Iterable of currently active Airspaces.
+     */
+    private Iterable<Airspace> getActiveAirspaces() {
+        if (this.airspacesOverride != null) {
+            return this.airspacesOverride;
+        }
+        else {
+            return this.airspaces;
+        }
+    }
+
+    /**
      * Returns false.
      *
      * @return false
-     *
      * @deprecated Use {@link gov.nasa.worldwind.render.ShapeAttributes#isEnableAntialiasing()} on each Airspace
-     *             instance in the layer.
+     * instance in the layer.
      */
     @Deprecated
-    public boolean isEnableAntialiasing()
-    {
+    public boolean isEnableAntialiasing() {
         return false; // deprecated method
     }
 
@@ -236,13 +215,11 @@ public class AirspaceLayer extends AbstractLayer
      * Does nothing.
      *
      * @param enable ignored.
-     *
      * @deprecated Use {@link gov.nasa.worldwind.render.ShapeAttributes#setEnableAntialiasing(boolean)} on each Airspace
-     *             instance in the layer.
+     * instance in the layer.
      */
     @Deprecated
-    public void setEnableAntialiasing(boolean enable)
-    {
+    public void setEnableAntialiasing(boolean enable) {
         // deprecated method
     }
 
@@ -250,13 +227,11 @@ public class AirspaceLayer extends AbstractLayer
      * Returns false.
      *
      * @return false
-     *
      * @deprecated Control over airspace blending is no longer supported. Airspaces implicitly blend themselves with
-     *             other objects in the scene.
+     * other objects in the scene.
      */
     @Deprecated
-    public boolean isEnableBlending()
-    {
+    public boolean isEnableBlending() {
         return false; // deprecated method
     }
 
@@ -264,13 +239,11 @@ public class AirspaceLayer extends AbstractLayer
      * Does nothing.
      *
      * @param enable ignored.
-     *
      * @deprecated Control over airspace blending is no longer supported. Airspaces implicitly blend themselves with
-     *             other objects in the scene.
+     * other objects in the scene.
      */
     @Deprecated
-    public void setEnableBlending(boolean enable)
-    {
+    public void setEnableBlending(boolean enable) {
         // deprecated method
     }
 
@@ -278,13 +251,11 @@ public class AirspaceLayer extends AbstractLayer
      * Returns false.
      *
      * @return false
-     *
-     * @deprecated Use {@link gov.nasa.worldwind.render.airspaces.Airspace#isEnableDepthOffset()} on each Airspace
-     *             instance in the layer.
+     * @deprecated Use {@link Airspace#isEnableDepthOffset()} on each Airspace
+     * instance in the layer.
      */
     @Deprecated
-    public boolean isEnableDepthOffset()
-    {
+    public boolean isEnableDepthOffset() {
         return false; // deprecated method
     }
 
@@ -292,13 +263,11 @@ public class AirspaceLayer extends AbstractLayer
      * Does nothing.
      *
      * @param enable ignored.
-     *
-     * @deprecated Use {@link gov.nasa.worldwind.render.airspaces.Airspace#setEnableDepthOffset(boolean)} on each
-     *             Airspace instance in the layer.
+     * @deprecated Use {@link Airspace#setEnableDepthOffset(boolean)} on each
+     * Airspace instance in the layer.
      */
     @Deprecated
-    public void setEnableDepthOffset(boolean enable)
-    {
+    public void setEnableDepthOffset(boolean enable) {
         // deprecated method
     }
 
@@ -306,13 +275,11 @@ public class AirspaceLayer extends AbstractLayer
      * Returns false.
      *
      * @return false
-     *
      * @deprecated Use {@link gov.nasa.worldwind.render.ShapeAttributes#isEnableLighting()} on each Airspace instance in
-     *             the layer.
+     * the layer.
      */
     @Deprecated
-    public boolean isEnableLighting()
-    {
+    public boolean isEnableLighting() {
         return false; // deprecated method
     }
 
@@ -320,13 +287,11 @@ public class AirspaceLayer extends AbstractLayer
      * Does nothing.
      *
      * @param enable ignored.
-     *
      * @deprecated Use {@link gov.nasa.worldwind.render.ShapeAttributes#isEnableLighting()} on each Airspace instance in
-     *             the layer.
+     * the layer.
      */
     @Deprecated
-    public void setEnableLighting(boolean enable)
-    {
+    public void setEnableLighting(boolean enable) {
         // deprecated method
     }
 
@@ -334,12 +299,10 @@ public class AirspaceLayer extends AbstractLayer
      * Returns false.
      *
      * @return false
-     *
      * @deprecated Control over drawing Airspace extents is no longer supported.
      */
     @Deprecated
-    public boolean isDrawExtents()
-    {
+    public boolean isDrawExtents() {
         return false; // deprecated method
     }
 
@@ -347,12 +310,10 @@ public class AirspaceLayer extends AbstractLayer
      * Does nothing.
      *
      * @param draw ignored
-     *
      * @deprecated Control over drawing Airspace extents is no longer supported.
      */
     @Deprecated
-    public void setDrawExtents(boolean draw)
-    {
+    public void setDrawExtents(boolean draw) {
         // deprecated method
     }
 
@@ -360,12 +321,10 @@ public class AirspaceLayer extends AbstractLayer
      * Returns false.
      *
      * @return false
-     *
      * @deprecated Control over drawing Airspace in wireframe mode is no longer supported.
      */
     @Deprecated
-    public boolean isDrawWireframe()
-    {
+    public boolean isDrawWireframe() {
         return false; // deprecated method
     }
 
@@ -373,12 +332,10 @@ public class AirspaceLayer extends AbstractLayer
      * Does nothing.
      *
      * @param draw ignored
-     *
      * @deprecated Control over drawing Airspace in wireframe mode is no longer supported.
      */
     @Deprecated
-    public void setDrawWireframe(boolean draw)
-    {
+    public void setDrawWireframe(boolean draw) {
         // deprecated method
     }
 
@@ -386,27 +343,23 @@ public class AirspaceLayer extends AbstractLayer
      * Returns 0.
      *
      * @return 0
-     *
      * @deprecated Control over Airspace depth offset is no longer supported. See {@link
-     *             gov.nasa.worldwind.render.airspaces.Airspace#setEnableDepthOffset(boolean)}.
+     * Airspace#setEnableDepthOffset(boolean)}.
      */
     @Deprecated
-    public Double getDepthOffsetFactor()
-    {
-        return 0d; // deprecated method
+    public Double getDepthOffsetFactor() {
+        return 0.0d; // deprecated method
     }
 
     /**
      * Does nothing.
      *
      * @param factor ignored
-     *
      * @deprecated Control over Airspace depth factor is no longer supported. See {@link
-     *             gov.nasa.worldwind.render.airspaces.Airspace#setEnableDepthOffset(boolean)}.
+     * Airspace#setEnableDepthOffset(boolean)}.
      */
     @Deprecated
-    public void setDepthOffsetFactor(Double factor)
-    {
+    public void setDepthOffsetFactor(Double factor) {
         // deprecated method
     }
 
@@ -414,27 +367,23 @@ public class AirspaceLayer extends AbstractLayer
      * Returns 0.
      *
      * @return 0
-     *
      * @deprecated Control over Airspace depth units is no longer supported. See {@link
-     *             gov.nasa.worldwind.render.airspaces.Airspace#setEnableDepthOffset(boolean)}.
+     * Airspace#setEnableDepthOffset(boolean)}.
      */
     @Deprecated
-    public Double getDepthOffsetUnits()
-    {
-        return 0d; // deprecated method
+    public Double getDepthOffsetUnits() {
+        return 0.0d; // deprecated method
     }
 
     /**
      * Does nothing.
      *
      * @param units ignored
-     *
      * @deprecated Control over Airspace depth units is no longer supported. See {@link
-     *             gov.nasa.worldwind.render.airspaces.Airspace#setEnableDepthOffset(boolean)}.
+     * Airspace#setEnableDepthOffset(boolean)}.
      */
     @Deprecated
-    public void setDepthOffsetUnits(Double units)
-    {
+    public void setDepthOffsetUnits(Double units) {
         // deprecated method
     }
 
@@ -442,13 +391,11 @@ public class AirspaceLayer extends AbstractLayer
      * Returns false.
      *
      * @return false
-     *
-     * @deprecated Use {@link gov.nasa.worldwind.render.airspaces.Airspace#isEnableBatchRendering()} on each Airspace
-     *             instance in the layer.
+     * @deprecated Use {@link Airspace#isEnableBatchRendering()} on each Airspace
+     * instance in the layer.
      */
     @Deprecated
-    public boolean isEnableBatchRendering()
-    {
+    public boolean isEnableBatchRendering() {
         return false; // deprecated method
     }
 
@@ -456,13 +403,11 @@ public class AirspaceLayer extends AbstractLayer
      * Does nothing.
      *
      * @param enableBatchRendering ignored
-     *
-     * @deprecated Use {@link gov.nasa.worldwind.render.airspaces.Airspace#setEnableBatchRendering(boolean)} on each
-     *             Airspace instance in the layer.
+     * @deprecated Use {@link Airspace#setEnableBatchRendering(boolean)} on each
+     * Airspace instance in the layer.
      */
     @Deprecated
-    public void setEnableBatchRendering(boolean enableBatchRendering)
-    {
+    public void setEnableBatchRendering(boolean enableBatchRendering) {
         // deprecated method
     }
 
@@ -470,13 +415,11 @@ public class AirspaceLayer extends AbstractLayer
      * Returns false.
      *
      * @return false
-     *
-     * @deprecated Use {@link gov.nasa.worldwind.render.airspaces.Airspace#isEnableBatchPicking()} on each Airspace
-     *             instance in the layer.
+     * @deprecated Use {@link Airspace#isEnableBatchPicking()} on each Airspace
+     * instance in the layer.
      */
     @Deprecated
-    public boolean isEnableBatchPicking()
-    {
+    public boolean isEnableBatchPicking() {
         return false; // deprecated method
     }
 
@@ -484,57 +427,46 @@ public class AirspaceLayer extends AbstractLayer
      * Does nothing.
      *
      * @param enableBatchPicking ignored
-     *
-     * @deprecated Use {@link gov.nasa.worldwind.render.airspaces.Airspace#setEnableBatchPicking(boolean)} on each
-     *             Airspace instance in the layer.
+     * @deprecated Use {@link Airspace#setEnableBatchPicking(boolean)} on each
+     * Airspace instance in the layer.
      */
     @Deprecated
-    public void setEnableBatchPicking(boolean enableBatchPicking)
-    {
+    public void setEnableBatchPicking(boolean enableBatchPicking) {
         // deprecated method
     }
 
     @Override
-    protected void doPick(DrawContext dc, java.awt.Point pickPoint)
-    {
-        for (Airspace airspace : this.getActiveAirspaces())
-        {
-            try
-            {
+    protected void doPick(DrawContext dc, Point pickPoint) {
+        for (Airspace airspace : this.getActiveAirspaces()) {
+            try {
                 if (airspace != null) // caller-specified Iterables can include null elements
                     airspace.render(dc);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 String msg = Logging.getMessage("generic.ExceptionWhileRenderingAirspace");
-                Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
+                Logging.logger().log(Level.SEVERE, msg, e);
                 // continue to next airspace
             }
         }
     }
 
     @Override
-    protected void doRender(DrawContext dc)
-    {
-        for (Airspace airspace : this.getActiveAirspaces())
-        {
-            try
-            {
+    protected void doRender(DrawContext dc) {
+        for (Airspace airspace : this.getActiveAirspaces()) {
+            try {
                 if (airspace != null) // caller-specified Iterables can include null elements
                     airspace.render(dc);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 String msg = Logging.getMessage("generic.ExceptionWhileRenderingAirspace");
-                Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
+                Logging.logger().log(Level.SEVERE, msg, e);
                 // continue to next airspace
             }
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return Logging.getMessage("layers.AirspaceLayer.Name");
     }
 }

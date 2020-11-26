@@ -11,14 +11,11 @@ import gov.nasa.worldwind.formats.json.*;
  * @author dcollins
  * @version $Id: GeoJSONEventParser.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GeoJSONEventParser extends BasicJSONEventParser
-{
-    public GeoJSONEventParser()
-    {
+public class GeoJSONEventParser extends BasicJSONEventParser {
+    public GeoJSONEventParser() {
     }
 
-    protected Object resolveObject(JSONEventParserContext ctx, JSONEvent event)
-    {
+    protected Object resolveObject(JSONEventParserContext ctx, JSONEvent event) {
         if (this.fields == null)
             return super.resolveObject(ctx, event);
 
@@ -55,10 +52,9 @@ public class GeoJSONEventParser extends BasicJSONEventParser
             return super.resolveObject(ctx, event);
     }
 
-    @SuppressWarnings({"SuspiciousToArrayCall"})
+    @SuppressWarnings("SuspiciousToArrayCall")
     @Override
-    protected Object resolveArray(JSONEventParserContext ctx, JSONEvent event)
-    {
+    protected Object resolveArray(JSONEventParserContext ctx, JSONEvent event) {
         if (GeoJSONConstants.FIELD_FEATURES.equals(ctx.getCurrentFieldName()))
             return this.array.toArray(new GeoJSONFeature[0]);
 

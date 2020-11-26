@@ -19,13 +19,9 @@ import javax.xml.stream.events.XMLEvent;
  * @author tag
  * @version $Id: OWSCapabilities.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
-public abstract class OWSCapabilities extends AbstractXMLEventParser
-{
-    abstract protected void determineNamespaces();
-
-    protected String owsNamespaceURI;
-
+public abstract class OWSCapabilities extends AbstractXMLEventParser {
     protected final XMLEventReader eventReader;
+    protected String owsNamespaceURI;
     protected XMLEventParserContext parserContext;
 
     /**
@@ -34,11 +30,9 @@ public abstract class OWSCapabilities extends AbstractXMLEventParser
      * @param namespaceURI the default namespace URI.
      * @param docSource    the XML source. May be a filename, file, stream or other type allowed by {@link
      *                     WWXML#openEventReader(Object)}.
-     *
      * @throws IllegalArgumentException if the document source is null.
      */
-    public OWSCapabilities(String namespaceURI, Object docSource)
-    {
+    public OWSCapabilities(String namespaceURI, Object docSource) {
         super(namespaceURI);
 
         this.eventReader = this.createReader(docSource);
@@ -46,26 +40,24 @@ public abstract class OWSCapabilities extends AbstractXMLEventParser
         this.initialize();
     }
 
-    protected void initialize()
-    {
+    abstract protected void determineNamespaces();
+
+    protected void initialize() {
         this.parserContext = this.createParserContext(this.eventReader);
     }
 
-    protected XMLEventReader createReader(Object docSource)
-    {
+    protected XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
     }
 
-    protected XMLEventParserContext createParserContext(XMLEventReader reader)
-    {
+    protected XMLEventParserContext createParserContext(XMLEventReader reader) {
         this.parserContext = new BasicXMLEventParserContext(reader);
         this.parserContext.setDefaultNamespaceURI(this.getNamespaceURI());
 
         return this.parserContext;
     }
 
-    public XMLEventParserContext getParserContext()
-    {
+    public XMLEventParserContext getParserContext() {
         return this.parserContext;
     }
 
@@ -74,8 +66,7 @@ public abstract class OWSCapabilities extends AbstractXMLEventParser
      *
      * @return the document's version number.
      */
-    public String getVersion()
-    {
+    public String getVersion() {
         return (String) this.getField("version");
     }
 
@@ -84,23 +75,19 @@ public abstract class OWSCapabilities extends AbstractXMLEventParser
      *
      * @return the document's update sequence.
      */
-    public String getUpdateSequence()
-    {
+    public String getUpdateSequence() {
         return (String) this.getField("updateSequence");
     }
 
-    public OWSServiceIdentification getServiceIdentification()
-    {
+    public OWSServiceIdentification getServiceIdentification() {
         return (OWSServiceIdentification) this.getField("ServiceIdentification");
     }
 
-    public OWSServiceProvider getServiceProvider()
-    {
+    public OWSServiceProvider getServiceProvider() {
         return (OWSServiceProvider) this.getField("ServiceProvider");
     }
 
-    public OWSOperationsMetadata getOperationsMetadata()
-    {
+    public OWSOperationsMetadata getOperationsMetadata() {
         return (OWSOperationsMetadata) this.getField("OperationsMetadata");
     }
 
@@ -109,24 +96,18 @@ public abstract class OWSCapabilities extends AbstractXMLEventParser
      * document has been parsed.
      *
      * @param args optional arguments to pass to parsers of sub-elements.
-     *
      * @return <code>this</code> if parsing is successful, otherwise  null.
-     *
-     * @throws javax.xml.stream.XMLStreamException
-     *          if an exception occurs while attempting to read the event stream.
+     * @throws XMLStreamException if an exception occurs while attempting to read the event stream.
      */
-    public OWSCapabilities parse(Object... args) throws XMLStreamException
-    {
+    public OWSCapabilities parse(Object... args) throws XMLStreamException {
         XMLEventParserContext ctx = this.parserContext;
         QName capsName = new QName(this.getNamespaceURI(), "Capabilities");
 
-        for (XMLEvent event = ctx.nextEvent(); ctx.hasNext(); event = ctx.nextEvent())
-        {
+        for (XMLEvent event = ctx.nextEvent(); ctx.hasNext(); event = ctx.nextEvent()) {
             if (event == null)
                 continue;
 
-            if (event.isStartElement() && event.asStartElement().getName().equals(capsName))
-            {
+            if (event.isStartElement() && event.asStartElement().getName().equals(capsName)) {
                 // Parse the attributes in order to get the version number in order to determine the namespaces.
                 this.doParseEventAttributes(ctx, event);
                 this.determineNamespaces(); // calls the subclass to do this
@@ -143,18 +124,15 @@ public abstract class OWSCapabilities extends AbstractXMLEventParser
         return null;
     }
 
-    protected void setOWSNamespaceURI(String ns)
-    {
-        this.owsNamespaceURI = ns;
-    }
-
-    public String getOWSNamespaceURI()
-    {
+    public String getOWSNamespaceURI() {
         return owsNamespaceURI;
     }
 
-    protected void registerParsers(XMLEventParserContext ctx)
-    {
+    protected void setOWSNamespaceURI(String ns) {
+        this.owsNamespaceURI = ns;
+    }
+
+    protected void registerParsers(XMLEventParserContext ctx) {
         ctx.addStringParsers(this.getOWSNamespaceURI(), new String[]
             {
                 "Abstract",

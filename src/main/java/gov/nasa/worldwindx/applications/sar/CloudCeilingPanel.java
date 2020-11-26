@@ -22,8 +22,7 @@ import java.util.ArrayList;
  * @version $Id: CloudCeilingPanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 @SuppressWarnings({"FieldCanBeLocal", "UnusedParameters", "unchecked"})
-public class CloudCeilingPanel extends JPanel implements Restorable
-{
+public class CloudCeilingPanel extends JPanel implements Restorable {
     public static final String CLOUD_CEILING_OPEN = "CloudCeilingPanel.CloudCeilingOpen";
     public static final String CLOUD_CEILING_CHANGE = "CloudCeilingPanel.CloudCeilingChange";
 
@@ -79,30 +78,24 @@ public class CloudCeilingPanel extends JPanel implements Restorable
     private JSpinner opacitySpinner;
     private JButton colorButton;
 
-
-    public CloudCeilingPanel()
-    {
+    public CloudCeilingPanel() {
         this.initComponents();
     }
 
-    public CloudCeiling getCloudCeiling()
-    {
+    public CloudCeiling getCloudCeiling() {
         return this.cloudCeiling;
     }
 
-    public void setCloudCeiling(CloudCeiling cloudCeiling)
-    {
+    public void setCloudCeiling(CloudCeiling cloudCeiling) {
         this.cloudCeiling = cloudCeiling;
         this.updateCloudCeiling();
     }
 
-    public SARTrack getTrack()
-    {
+    public SARTrack getTrack() {
         return this.track;
     }
 
-    public void setTrack(SARTrack track)
-    {
+    public void setTrack(SARTrack track) {
         this.track = track;
         this.trackCurrentPositionNumber = this.clampTrackCurrentPosition(this.trackCurrentPositionNumber, track);
         this.updateSegmentSpinnersList();
@@ -110,14 +103,12 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         this.cloudCeiling.relocateLayerOnTop();
     }
 
-    public void setTrackCurrentPositionNumber(int positionNumber)
-    {
+    public void setTrackCurrentPositionNumber(int positionNumber) {
         if (this.trackCurrentPositionNumber == positionNumber)
             return;
 
         this.trackCurrentPositionNumber = positionNumber;
-        if (this.currentSegmentCheckBox.isSelected())
-        {
+        if (this.currentSegmentCheckBox.isSelected()) {
             this.suspendEvents = true;
             this.setSegmentSpinnerValue(this.segmentStartSpinner, positionNumber);
             this.setSegmentSpinnerValue(this.segmentEndSpinner, positionNumber);
@@ -126,21 +117,17 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         }
     }
 
-    public String getElevationUnit()
-    {
+    public String getElevationUnit() {
         return this.elevationUnit;
     }
 
-    public void setElevationUnit(String elevationUnit)
-    {
-        if (!this.elevationUnit.equals(elevationUnit))
-        {
+    public void setElevationUnit(String elevationUnit) {
+        if (!this.elevationUnit.equals(elevationUnit)) {
             this.cloudCeiling.setElevationUnit(elevationUnit);
             double baseElevation = getNumberValue(this.baseElevationTextField.getText());
             double deltaElevation = getNumberValue(this.deltaElevationTextField.getText());
             double incrementedElevation = getNumberValue(this.incrementedBaseLabel.getText());
-            if (SAR2.UNIT_IMPERIAL.equals(this.elevationUnit))
-            {
+            if (SAR2.UNIT_IMPERIAL.equals(this.elevationUnit)) {
                 baseElevation = SAR2.feetToMeters(baseElevation);
                 deltaElevation = SAR2.feetToMeters(deltaElevation);
                 incrementedElevation = SAR2.feetToMeters(incrementedElevation);
@@ -150,8 +137,7 @@ public class CloudCeilingPanel extends JPanel implements Restorable
                 this.elevationUnitLabel1.setText("m");
                 this.elevationUnitLabel2.setText("m");
             }
-            else
-            {
+            else {
                 baseElevation = SAR2.metersToFeet(baseElevation);
                 deltaElevation = SAR2.metersToFeet(deltaElevation);
                 incrementedElevation = SAR2.metersToFeet(incrementedElevation);
@@ -165,54 +151,48 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         }
     }
 
-    private int clampTrackCurrentPosition(int position, SARTrack track)
-    {
+    private int clampTrackCurrentPosition(int position, SARTrack track) {
         if (track.size() == 0)
             return 0;
 
         return WWMath.clamp(position, 0, track.size() - 1);
     }
 
-    private void descriptionTextFieldActionPerformed(ActionEvent event)
-    {
+    private void descriptionTextFieldActionPerformed(ActionEvent event) {
         updateCloudCeiling();
     }
 
-    private void enabledCheckBoxActionPerformed(ActionEvent event)
-    {
+    private void enabledCheckBoxActionPerformed(ActionEvent event) {
         updateCloudCeiling();
     }
 
-    private void baseElevationTextFieldActionPerformed(ActionEvent event)
-    {
+    private void baseElevationTextFieldActionPerformed(ActionEvent event) {
         Double baseElevation = getNumberValue(this.baseElevationTextField.getText());
         this.baseElevationTextField.setText(String.format("%.0f", baseElevation));
         this.incrementedBaseLabel.setText(String.format("%.0f", baseElevation));
         updateCloudCeiling();
     }
 
-    private void deltaElevationTextFieldActionPerformed(ActionEvent event)
-    {
+    private void deltaElevationTextFieldActionPerformed(ActionEvent event) {
         this.deltaElevationTextField.setText(String.format("%.0f",
             getNumberValue(this.deltaElevationTextField.getText())));
         updateCloudCeiling();
     }
 
-    private void deltaModeRadioButtonActionPerformed(ActionEvent event) {updateCloudCeiling();}
+    private void deltaModeRadioButtonActionPerformed(ActionEvent event) {
+        updateCloudCeiling();
+    }
 
-    private void advancedButtonActionPerformed(ActionEvent event)
-    {
+    private void advancedButtonActionPerformed(ActionEvent event) {
         Dimension topSize = this.getTopLevelAncestor().getSize();
         int marginH = topSize.width - this.getPreferredSize().width;
         int marginV = topSize.height - this.getPreferredSize().height;
 
-        if (this.advancedPanel.isVisible())
-        {
+        if (this.advancedPanel.isVisible()) {
             this.advancedPanel.setVisible(false);
             this.advancedButton.setText("Advanced...");
         }
-        else
-        {
+        else {
             this.advancedPanel.setVisible(true);
             this.advancedButton.setText("...Simple");
         }
@@ -222,10 +202,9 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         this.getTopLevelAncestor().validate();
     }
 
-    private void segmentSpinnerStateChanged(ChangeEvent event)
-    {
-        int start = Integer.parseInt(((String)this.segmentStartSpinner.getValue()).trim());
-        int end = Integer.parseInt(((String)this.segmentEndSpinner.getValue()).trim());
+    private void segmentSpinnerStateChanged(ChangeEvent event) {
+        int start = Integer.parseInt(((String) this.segmentStartSpinner.getValue()).trim());
+        int end = Integer.parseInt(((String) this.segmentEndSpinner.getValue()).trim());
         if (start > end)
             if (event.getSource().equals(this.segmentStartSpinner))
                 setSegmentSpinnerValue(this.segmentEndSpinner, start);
@@ -238,13 +217,10 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         updateCloudCeiling();
     }
 
-    private void wholeTrackCheckBoxActionPerformed(ActionEvent event)
-    {
-        if (this.wholeTrackCheckBox.isSelected())
-        {
+    private void wholeTrackCheckBoxActionPerformed(ActionEvent event) {
+        if (this.wholeTrackCheckBox.isSelected()) {
             this.currentSegmentCheckBox.setSelected(false);
-            if (this.track != null && this.track.size() > 0)
-            {
+            if (this.track != null && this.track.size() > 0) {
                 this.suspendEvents = true;
                 setSegmentSpinnerValue(this.segmentStartSpinner, 0);
                 setSegmentSpinnerValue(this.segmentEndSpinner, this.track.size() - 1);
@@ -254,13 +230,10 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         }
     }
 
-    private void currentSegmentCheckBoxActionPerformed(ActionEvent event)
-    {
-        if (this.currentSegmentCheckBox.isSelected())
-        {
+    private void currentSegmentCheckBoxActionPerformed(ActionEvent event) {
+        if (this.currentSegmentCheckBox.isSelected()) {
             this.wholeTrackCheckBox.setSelected(false);
-            if (this.track != null && this.track.size() > 0)
-            {
+            if (this.track != null && this.track.size() > 0) {
                 this.suspendEvents = true;
                 setSegmentSpinnerValue(this.segmentStartSpinner, this.trackCurrentPositionNumber);
                 setSegmentSpinnerValue(this.segmentEndSpinner, this.trackCurrentPositionNumber);
@@ -270,17 +243,14 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         }
     }
 
-    private void incrementButtonActionPerformed(ActionEvent event)
-    {
+    private void incrementButtonActionPerformed(ActionEvent event) {
         Double baseElevation;
-        if (event.getSource().equals(this.incrementResetButton))
-        {
+        if (event.getSource().equals(this.incrementResetButton)) {
             baseElevation = getNumberValue(this.baseElevationTextField.getText());
         }
-        else
-        {
+        else {
             baseElevation = getNumberValue(this.incrementedBaseLabel.getText());
-            int step = Integer.parseInt(((String)this.incrementSpinner.getValue()).trim());
+            int step = Integer.parseInt(((String) this.incrementSpinner.getValue()).trim());
             if (event.getSource().equals(this.incrementPlusButton))
                 baseElevation += step;
             else
@@ -290,59 +260,53 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         updateCloudCeiling();
     }
 
-    private void colorButtonActionPerformed(ActionEvent event)
-    {
-        Color c = JColorChooser.showDialog(this, "Choose a color...", ((JButton)event.getSource()).getBackground());
-        if (c != null)
-        {
-            ((JButton)event.getSource()).setBackground(c);
+    private void colorButtonActionPerformed(ActionEvent event) {
+        Color c = JColorChooser.showDialog(this, "Choose a color...", ((JButton) event.getSource()).getBackground());
+        if (c != null) {
+            ((JButton) event.getSource()).setBackground(c);
             updateCloudCeiling();
         }
     }
 
-    private void patternComboActionPerformed(ActionEvent event)
-    {
+    private void patternComboActionPerformed(ActionEvent event) {
         updateCloudCeiling();
     }
 
-    private void patternSizeComboActionPerformed(ActionEvent event)
-    {
+    private void patternSizeComboActionPerformed(ActionEvent event) {
         updateCloudCeiling();
     }
 
-    private void opacitySpinnerChanged(ChangeEvent event)
-    {
+    private void opacitySpinnerChanged(ChangeEvent event) {
         updateCloudCeiling();
     }
 
-    private Double getNumberValue(String s)
-    {
+    private Double getNumberValue(String s) {
         double value;
-        try
-        {
+        try {
             value = Double.parseDouble(s);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             value = 0;
         }
         return value;
     }
 
-    private void updateSegmentSpinnersList()
-    {
+    private void updateSegmentSpinnersList() {
         String[] strings = new String[this.track != null ? this.track.size() : 0];
 
-        for (int i = 0; i < strings.length; i++)
+        for (int i = 0; i < strings.length; i++) {
             strings[i] = String.format("%,4d", i);
+        }
 
         if (strings.length == 0)
             strings = new String[] {"   0"};
 
         this.suspendEvents = true;
         {
-            int start = Math.min(Integer.parseInt(((String)this.segmentStartSpinner.getValue()).trim()), strings.length - 1);
-            int end = Math.min(Integer.parseInt(((String)this.segmentEndSpinner.getValue()).trim()), strings.length - 1);
+            int start = Math.min(Integer.parseInt(((String) this.segmentStartSpinner.getValue()).trim()),
+                strings.length - 1);
+            int end = Math.min(Integer.parseInt(((String) this.segmentEndSpinner.getValue()).trim()),
+                strings.length - 1);
             this.segmentStartSpinner.setModel(new SpinnerListModel(strings));
             this.segmentStartSpinner.setValue(strings[start]);
             this.segmentEndSpinner.setModel(new SpinnerListModel(strings));
@@ -356,13 +320,11 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         this.suspendEvents = false;
     }
 
-    private void setSegmentSpinnerValue(JSpinner spinner, int n)
-    {
+    private void setSegmentSpinnerValue(JSpinner spinner, int n) {
         spinner.setValue(String.format("%,4d", n));
     }
 
-    private void updateCloudCeiling()
-    {
+    private void updateCloudCeiling() {
         if (this.cloudCeiling == null)
             return;
         // Update cloud ceiling
@@ -379,19 +341,18 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         this.cloudCeiling.setColor(this.colorButton.getBackground());
         this.cloudCeiling.setPattern(this.getPattern());
         this.cloudCeiling.setPatternSize(this.getPatternSize());
-        this.cloudCeiling.setPlaneOpacity(Double.parseDouble((String)this.opacitySpinner.getValue()) / 10);
+        this.cloudCeiling.setPlaneOpacity(Double.parseDouble((String) this.opacitySpinner.getValue()) / 10);
         // Track positions
-        if (this.track != null && this.track.getPositions().size() > 0)
-        {
-            int start = Integer.parseInt(((String)this.segmentStartSpinner.getValue()).trim());
-            int end = Integer.parseInt(((String)this.segmentEndSpinner.getValue()).trim());
+        if (this.track != null && !this.track.getPositions().isEmpty()) {
+            int start = Integer.parseInt(((String) this.segmentStartSpinner.getValue()).trim());
+            int end = Integer.parseInt(((String) this.segmentEndSpinner.getValue()).trim());
             if (end < this.track.getPositions().size() - 1)
                 end++;
             ArrayList<LatLon> positions = new ArrayList<>(end - start + 1);
-            for (int i = start; i <= end; i++)
+            for (int i = start; i <= end; i++) {
                 positions.add(this.track.getPositions().get(i));
+            }
             this.cloudCeiling.setPositions(positions);
-
         }
         // Fire change event
         this.firePropertyChange(CLOUD_CEILING_CHANGE, -1, 0);
@@ -399,9 +360,8 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         enableComponents(this.enabledCheckBox.isSelected());
     }
 
-    private String getPattern()
-    {
-        String value = (String)this.patternCombo.getSelectedItem();
+    private String getPattern() {
+        String value = (String) this.patternCombo.getSelectedItem();
         if (PATTERN_CROSS_HATCHED.equals(value))
             return PatternFactory.PATTERN_HVLINE;
         else if (PATTERN_DOTS.equals(value))
@@ -410,9 +370,8 @@ public class CloudCeilingPanel extends JPanel implements Restorable
             return PatternFactory.PATTERN_HLINE;
     }
 
-    private double getPatternSize()
-    {
-        String value = (String)this.patternSizeCombo.getSelectedItem();
+    private double getPatternSize() {
+        String value = (String) this.patternSizeCombo.getSelectedItem();
         if (SIZE_SMALL.equals(value))
             return 50;
         else if (SIZE_LARGE.equals(value))
@@ -421,8 +380,7 @@ public class CloudCeilingPanel extends JPanel implements Restorable
             return 150;
     }
 
-    private void initComponents()
-    {
+    private void initComponents() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
         // Control panel
@@ -612,7 +570,6 @@ public class CloudCeilingPanel extends JPanel implements Restorable
                         wholeTrackCheckBoxActionPerformed(event);
                 });
                 segmentsPanel.add(this.wholeTrackCheckBox);
-
             }
             advancedPanel.add(segmentsPanel);
             advancedPanel.add(Box.createVerticalStrut(10));
@@ -660,10 +617,8 @@ public class CloudCeilingPanel extends JPanel implements Restorable
                         colorButtonActionPerformed(event);
                 });
                 patternPanel.add(this.colorButton);
-
             }
             advancedPanel.add(patternPanel);
-
         }
 
         this.add(this.controlPanel);
@@ -671,11 +626,9 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         this.advancedPanel.setVisible(false);
 
         enableComponents(this.enabledCheckBox.isSelected());
-        
     }
 
-    private void enableComponents(boolean state)
-    {
+    private void enableComponents(boolean state) {
         this.descriptionTextField.setEnabled(state);
         this.baseElevationTextField.setEnabled(state);
         this.deltaElevationTextField.setEnabled(state);
@@ -698,30 +651,25 @@ public class CloudCeilingPanel extends JPanel implements Restorable
 
     // *** Restorable interface ***
 
-    public String getRestorableState()
-    {
+    public String getRestorableState() {
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         this.doGetRestorableState(rs, null);
 
         return rs.getStateAsXml();
     }
 
-    public void restoreState(String stateInXml)
-    {
-        if (stateInXml == null)
-        {
+    public void restoreState(String stateInXml) {
+        if (stateInXml == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         RestorableSupport rs;
-        try
-        {
+        try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -731,8 +679,7 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         this.doRestoreState(rs, null);
     }
 
-    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
         // Add state values
         rs.addStateValueAsString(context, "description", this.descriptionTextField.getText());
         rs.addStateValueAsBoolean(context, "enabled", this.enabledCheckBox.isSelected());
@@ -755,22 +702,20 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         rs.addStateValueAsBoolean(context, "deltaPlus", this.deltaPlusRadioButton.isSelected());
         rs.addStateValueAsBoolean(context, "deltaMinus", this.deltaMinusRadioButton.isSelected());
         rs.addStateValueAsBoolean(context, "deltaBoth", this.deltaBothRadioButton.isSelected());
-        rs.addStateValueAsString(context, "segmentStart", (String)this.segmentStartSpinner.getValue());
-        rs.addStateValueAsString(context, "segmentEnd", (String)this.segmentEndSpinner.getValue());
+        rs.addStateValueAsString(context, "segmentStart", (String) this.segmentStartSpinner.getValue());
+        rs.addStateValueAsString(context, "segmentEnd", (String) this.segmentEndSpinner.getValue());
         rs.addStateValueAsBoolean(context, "currentSegment", this.currentSegmentCheckBox.isSelected());
         rs.addStateValueAsBoolean(context, "wholeTrack", this.wholeTrackCheckBox.isSelected());
-        rs.addStateValueAsString(context, "increment", (String)this.incrementSpinner.getValue());
-        rs.addStateValueAsString(context, "pattern", (String)this.patternCombo.getSelectedItem());
-        rs.addStateValueAsString(context, "patternSize", (String)this.patternSizeCombo.getSelectedItem());
-        rs.addStateValueAsString(context, "opacity", (String)this.opacitySpinner.getValue());
+        rs.addStateValueAsString(context, "increment", (String) this.incrementSpinner.getValue());
+        rs.addStateValueAsString(context, "pattern", (String) this.patternCombo.getSelectedItem());
+        rs.addStateValueAsString(context, "patternSize", (String) this.patternSizeCombo.getSelectedItem());
+        rs.addStateValueAsString(context, "opacity", (String) this.opacitySpinner.getValue());
         String encodedColor = RestorableSupport.encodeColor(this.colorButton.getBackground());
         if (encodedColor != null)
             rs.addStateValueAsString(context, "color", encodedColor);
-
     }
 
-    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         this.suspendEvents = true;
         {
             // Retrieve state values
@@ -783,24 +728,21 @@ public class CloudCeilingPanel extends JPanel implements Restorable
                 this.enabledCheckBox.setSelected(enabledState);
 
             Double baseState = rs.getStateValueAsDouble(context, "base");
-            if (baseState != null)
-            {
+            if (baseState != null) {
                 if (this.elevationUnit.equals(SAR2.UNIT_IMPERIAL))
                     baseState = SAR2.metersToFeet(baseState); // convert to feet if needed
                 this.baseElevationTextField.setText(String.format("%.0f", baseState));
             }
 
             Double deltaState = rs.getStateValueAsDouble(context, "delta");
-            if (deltaState != null)
-            {
+            if (deltaState != null) {
                 if (this.elevationUnit.equals(SAR2.UNIT_IMPERIAL))
                     deltaState = SAR2.metersToFeet(deltaState); // convert to feet if needed
                 this.deltaElevationTextField.setText(String.format("%.0f", deltaState));
             }
 
             Double incrementedBaseState = rs.getStateValueAsDouble(context, "incrementedBase");
-            if (incrementedBaseState != null)
-            {
+            if (incrementedBaseState != null) {
                 if (this.elevationUnit.equals(SAR2.UNIT_IMPERIAL))
                     incrementedBaseState = SAR2.metersToFeet(incrementedBaseState); // convert to feet if needed
                 this.incrementedBaseLabel.setText(String.format("%.0f", incrementedBaseState));
@@ -851,8 +793,7 @@ public class CloudCeilingPanel extends JPanel implements Restorable
                 this.opacitySpinner.setValue(opacityState);
 
             String colorState = rs.getStateValueAsString(context, "color");
-            if (colorState != null)
-            {
+            if (colorState != null) {
                 Color color = RestorableSupport.decodeColor(colorState);
                 if (color != null)
                     this.colorButton.setBackground(color);
@@ -861,6 +802,4 @@ public class CloudCeilingPanel extends JPanel implements Restorable
         this.suspendEvents = false;
         this.updateCloudCeiling();
     }
-
-
 }

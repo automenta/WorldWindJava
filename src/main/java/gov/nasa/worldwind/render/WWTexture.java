@@ -18,8 +18,7 @@ import com.jogamp.opengl.util.texture.TextureCoords;
  * @author tag
  * @version $Id: WWTexture.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface WWTexture
-{
+public interface WWTexture {
     /**
      * Returns the texture's image source.
      *
@@ -37,7 +36,6 @@ public interface WWTexture
      * whether the texture was bound or was not bound due to a failure during creation.
      *
      * @param dc the current draw context.
-     *
      * @return true if the texture was bound, otherwise false.
      */
     boolean bind(DrawContext dc);
@@ -47,7 +45,6 @@ public interface WWTexture
      * mapping texture coordinates from a flipped or non-square state to conventionally oriented OpenGL values.
      *
      * @param dc the current draw context.
-     *
      * @throws IllegalArgumentException if the draw context is null.
      */
     void applyInternalTransform(DrawContext dc);
@@ -56,9 +53,7 @@ public interface WWTexture
      * Indicates whether the texture is currently available for use without regenerating it from its image source.
      *
      * @param dc the current draw context
-     *
      * @return true if the texture is available and consistent with its image source, otherwise false.
-     *
      * @throws IllegalArgumentException if the draw context is null.
      */
     boolean isTextureCurrent(DrawContext dc);
@@ -67,7 +62,6 @@ public interface WWTexture
      * Returns the texture's width.
      *
      * @param dc the current draw context
-     *
      * @return the texture's width, or 0 if the texture's size is currently unknown.
      */
     int getWidth(DrawContext dc);
@@ -76,7 +70,6 @@ public interface WWTexture
      * Returns the texture's height
      *
      * @param dc the current draw context
-     *
      * @return the texture's height, or 0 if the texture's size is currently unknown.
      */
     int getHeight(DrawContext dc);

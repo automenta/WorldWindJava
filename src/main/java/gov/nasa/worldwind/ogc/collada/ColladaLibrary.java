@@ -20,23 +20,23 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: ColladaLibrary.java 654 2012-06-25 04:15:52Z pabercrombie $
  */
-public class ColladaLibrary<T> extends ColladaAbstractObject
-{
+public class ColladaLibrary<T> extends ColladaAbstractObject {
+    /**
+     * Elements in the library.
+     */
+    protected final List<T> elements = new ArrayList<>();
     /**
      * Local name of the elements in the library. This is determined from the name of the library element. For example,
      * if the library element is "library_nodes" then the element name is "node".
      */
     protected String elementName;
-    /** Elements in the library. */
-    protected final List<T> elements = new ArrayList<>();
 
     /**
      * Construct an instance.
      *
      * @param ns the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public ColladaLibrary(String ns)
-    {
+    public ColladaLibrary(String ns) {
         super(ns);
     }
 
@@ -45,40 +45,37 @@ public class ColladaLibrary<T> extends ColladaAbstractObject
      *
      * @return Elements in the library. Returns an empty list if the library is empty.
      */
-    public List<T> getElements()
-    {
+    public List<T> getElements() {
         return this.elements;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Object parse(XMLEventParserContext context, XMLEvent event, Object... args) throws XMLStreamException
-    {
-        if (event.isStartDocument())
-        {
+    public Object parse(XMLEventParserContext context, XMLEvent event, Object... args) throws XMLStreamException {
+        if (event.isStartDocument()) {
             String name = event.asStartElement().getName().getLocalPart();
             this.elementName = this.getElementName(name);
         }
         return super.parse(context, event, args);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
-    public void setField(String keyName, Object value)
-    {
-        if (keyName.equals(this.elementName))
-        {
+    public void setField(String keyName, Object value) {
+        if (keyName.equals(this.elementName)) {
             this.elements.add((T) value);
         }
-        else
-        {
+        else {
             super.setField(keyName, value);
         }
     }
 
-    protected String getElementName(String libraryName)
-    {
+    protected String getElementName(String libraryName) {
         if ("library_nodes".equals(libraryName))
             return "node";
         else if ("library_effects".equals(libraryName))

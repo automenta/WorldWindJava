@@ -16,7 +16,8 @@ import gov.nasa.worldwindx.applications.worldwindow.util.Util;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.*;
 
 /**
  * Illustrates how to attach context (popup) menus to shapes. The example creates several <code>{@link
@@ -28,6 +29,10 @@ import java.util.ArrayList;
  * @version $Id: ContextMenusOnShapes.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class ContextMenusOnShapes extends ApplicationTemplate {
+
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Context Menus on Shapes", AppFrame.class);
+    }
 
     /**
      * The Controller listens for selection events and either highlights a selected item or shows its context menu.
@@ -41,16 +46,18 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
             try {
                 if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
                     highlight(event, event.getTopObject());
-                } else if (event.getEventAction().equals(SelectEvent.RIGHT_PRESS)) // Could do RIGHT_CLICK instead
+                }
+                else if (event.getEventAction().equals(SelectEvent.RIGHT_PRESS)) // Could do RIGHT_CLICK instead
                 {
                     showContextMenu(event);
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Util.getLogger().warning(e.getMessage() != null ? e.getMessage() : e.toString());
             }
         }
 
-        @SuppressWarnings({"UnusedDeclaration"})
+        @SuppressWarnings("UnusedDeclaration")
         protected void highlight(SelectEvent event, Object o) {
             if (this.lastPickedPlacemark == o) {
                 return; // same thing selected
@@ -102,8 +109,8 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
 
         protected final ContextMenuInfo ctxMenuInfo;
         protected final Component sourceComponent;
+        protected final List<JMenuItem> menuItems = new ArrayList<>();
         protected JMenuItem menuTitleItem;
-        protected final ArrayList<JMenuItem> menuItems = new ArrayList<>();
 
         public ContextMenu(Component sourceComponent, ContextMenuInfo contextMenuInfo) {
             this.sourceComponent = sourceComponent;
@@ -193,41 +200,41 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
             PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
             attrs.setAntiAliasHint(WorldWind.ANTIALIAS_FASTEST);
             attrs.setLineMaterial(Material.WHITE);
-            attrs.setLineWidth(2d);
+            attrs.setLineWidth(2.0d);
             attrs.setImageAddress("images/pushpins/push-pin-yellow.png");
             attrs.setScale(0.6);
-            attrs.setImageOffset(new Offset(19d, 11d, AVKey.PIXELS, AVKey.PIXELS));
+            attrs.setImageOffset(new Offset(19.0d, 11.0d, AVKey.PIXELS, AVKey.PIXELS));
 
             PointPlacemarkAttributes highlightAttrs = new PointPlacemarkAttributes(attrs);
             highlightAttrs.setScale(0.7);
 
-            ContextMenuItemInfo[] itemActionNames = new ContextMenuItemInfo[]{
+            ContextMenuItemInfo[] itemActionNames = new ContextMenuItemInfo[] {
                 new ContextMenuItemInfo("Do This"),
                 new ContextMenuItemInfo("Do That"),
                 new ContextMenuItemInfo("Do the Other Thing"),};
 
-            PointPlacemark pp = new PointPlacemark(Position.fromDegrees(28, -102, 1e4));
+            PointPlacemark pp = new PointPlacemark(Position.fromDegrees(28, -102, 1.0e4));
             pp.setAttributes(attrs);
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark A", itemActionNames));
             layer.addRenderable(pp);
 
-            pp = new PointPlacemark(Position.fromDegrees(29, -104, 2e4));
+            pp = new PointPlacemark(Position.fromDegrees(29, -104, 2.0e4));
             pp.setAttributes(attrs);
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark B", itemActionNames));
             layer.addRenderable(pp);
 
-            pp = new PointPlacemark(Position.fromDegrees(30, -104.5, 2e4));
+            pp = new PointPlacemark(Position.fromDegrees(30, -104.5, 2.0e4));
             pp.setAttributes(attrs);
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark C", itemActionNames));
             layer.addRenderable(pp);
 
-            pp = new PointPlacemark(Position.fromDegrees(28, -104.5, 2e4));
+            pp = new PointPlacemark(Position.fromDegrees(28, -104.5, 2.0e4));
             pp.setAttributes(attrs);
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
@@ -235,7 +242,7 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
             layer.addRenderable(pp);
 
             // Create a placemark that uses all default values.
-            pp = new PointPlacemark(Position.fromDegrees(30, -103.5, 2e3));
+            pp = new PointPlacemark(Position.fromDegrees(30, -103.5, 2.0e3));
             pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark E", itemActionNames));
             layer.addRenderable(pp);
 
@@ -243,12 +250,8 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
             insertBeforeCompass(getWwd(), layer);
 
             // Set up the context menu
-            ContextMenuController contextMenuController = new ContextMenuController();
+            SelectListener contextMenuController = new ContextMenuController();
             getWwd().addSelectListener(contextMenuController);
         }
-    }
-
-    public static void main(String[] args) {
-        ApplicationTemplate.start("WorldWind Context Menus on Shapes", AppFrame.class);
     }
 }

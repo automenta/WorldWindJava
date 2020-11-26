@@ -20,13 +20,11 @@ import java.awt.event.*;
  * @author tag
  * @version $Id: DashboardDialog.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class DashboardDialog extends JDialog
-{
+public class DashboardDialog extends JDialog {
     private WorldWindow wwd;
     private boolean runContinuously = false;
 
-    public DashboardDialog(Frame parent, WorldWindow wwd) throws HeadlessException
-    {
+    public DashboardDialog(Frame parent, WorldWindow wwd) throws HeadlessException {
         super(parent, "WWJ Dashboard");
 
         this.wwd = wwd;
@@ -40,52 +38,33 @@ public class DashboardDialog extends JDialog
 
         wwd.addRenderingListener(event -> {
             if (runContinuously && event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)
-                && event.getSource() instanceof WorldWindow)
-            {
+                && event.getSource() instanceof WorldWindow) {
                 ((WorldWindow) event.getSource()).redraw();
             }
         });
     }
 
     @Override
-    public void dispose()
-    {
+    public void dispose() {
         super.dispose();
 
         this.wwd = null;
     }
 
-    public void raiseDialog()
-    {
+    public void raiseDialog() {
         makeCurrent();
         WWUtil.alignComponent(this.getParent(), this, AVKey.RIGHT);
         this.setVisible(true);
     }
 
-    public void lowerDialog()
-    {
+    public void lowerDialog() {
         setVisible(false);
     }
 
-    private void makeCurrent()
-    {
+    private void makeCurrent() {
     }
 
-    private class OkayAction extends AbstractAction
-    {
-        public OkayAction()
-        {
-            super("Okay");
-        }
-
-        public void actionPerformed(ActionEvent e)
-        {
-            lowerDialog();
-        }
-    }
-
-    private JTabbedPane createControls()
-    {
+    private JTabbedPane createControls() {
         JTabbedPane tabPane = new JTabbedPane();
 
         JPanel panel = new JPanel(new BorderLayout(10, 20));
@@ -99,8 +78,7 @@ public class DashboardDialog extends JDialog
         return tabPane;
     }
 
-    private JPanel makeControlPanel()
-    {
+    private JPanel makeControlPanel() {
         JPanel panel = new JPanel(new FlowLayout(SwingConstants.VERTICAL));
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
@@ -109,8 +87,7 @@ public class DashboardDialog extends JDialog
         return panel;
     }
 
-    private JPanel makeTerrainControlPanel()
-    {
+    private JPanel makeTerrainControlPanel() {
         JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
 
         panel.setBorder(new CompoundBorder(new TitledBorder("Terrain"), new EmptyBorder(10, 10, 10, 10)));
@@ -134,20 +111,17 @@ public class DashboardDialog extends JDialog
             boolean tris = triangleButton.isSelected();
             boolean skirts = skirtsButton.isSelected();
 
-            if (tris && e.getSource() == triangleButton)
-            {
+            if (tris && e.getSource() == triangleButton) {
                 wwd.getModel().setShowWireframeInterior(true);
                 wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(false);
                 skirtsButton.setSelected(false);
             }
-            else if (skirts && e.getSource() == skirtsButton)
-            {
+            else if (skirts && e.getSource() == skirtsButton) {
                 wwd.getModel().setShowWireframeInterior(true);
                 wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(true);
                 triangleButton.setSelected(false);
             }
-            else
-            {
+            else {
                 wwd.getModel().setShowWireframeInterior(false);
                 wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(true);
             }
@@ -188,13 +162,22 @@ public class DashboardDialog extends JDialog
         return panel;
     }
 
-    private JPanel makeOkayCancelPanel()
-    {
+    private JPanel makeOkayCancelPanel() {
         JPanel panel = new JPanel(new GridLayout(1, 3, 10, 10));
 
         panel.add(new JLabel(""));
         panel.add(new JButton(new OkayAction()));
 
         return panel;
+    }
+
+    private class OkayAction extends AbstractAction {
+        public OkayAction() {
+            super("Okay");
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            lowerDialog();
+        }
     }
 }

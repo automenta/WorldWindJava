@@ -20,22 +20,20 @@ import java.io.*;
  * @author tag
  * @version $Id: KMLFile.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLFile extends XMLDoc
-{
-    /** The {@link File} reference specified to the constructor. */
+public class KMLFile extends XMLDoc {
+    /**
+     * The {@link File} reference specified to the constructor.
+     */
     protected File kmlFile;
 
     /**
      * Construct a KMLFile instance.
      *
      * @param file path to the KML file.
-     *
      * @throws IllegalArgumentException if the specified file is null.
      */
-    public KMLFile(File file)
-    {
-        if (file == null)
-        {
+    public KMLFile(File file) {
+        if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -49,8 +47,7 @@ public class KMLFile extends XMLDoc
      *
      * @return the file specified to the constructor.
      */
-    public File getZipFile()
-    {
+    public File getZipFile() {
         return this.kmlFile;
     }
 
@@ -58,11 +55,9 @@ public class KMLFile extends XMLDoc
      * Returns an {@link InputStream} to the KML file.
      *
      * @return an input stream positioned to the start of the KML file.
-     *
      * @throws IOException if an error occurs attempting to create the input stream.
      */
-    public InputStream getInputStream() throws IOException
-    {
+    public InputStream getInputStream() throws IOException {
         return new FileInputStream(this.kmlFile);
     }
 
@@ -70,15 +65,11 @@ public class KMLFile extends XMLDoc
      * Returns an {@link InputStream} to a file indicated by a path relative to the KML file's location.
      *
      * @param path the path of the requested file.
-     *
      * @return an input stream positioned to the start of the file, or null if the file does not exist.
-     *
      * @throws IOException if an error occurs while attempting to query or open the file.
      */
-    public InputStream getSupportFileStream(String path) throws IOException
-    {
-        if (path == null)
-        {
+    public InputStream getSupportFileStream(String path) throws IOException {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -93,10 +84,8 @@ public class KMLFile extends XMLDoc
         return pathFile.exists() ? new FileInputStream(pathFile) : null;
     }
 
-    public String getSupportFilePath(String path)
-    {
-        if (path == null)
-        {
+    public String getSupportFilePath(String path) {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);

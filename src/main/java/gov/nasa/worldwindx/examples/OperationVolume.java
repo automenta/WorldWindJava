@@ -18,40 +18,20 @@ public class OperationVolume {
     public OperationVolume(AVList attrs) {
         attrs.getEntries().forEach((e) -> {
             switch (e.getKey()) {
-                case "volume_type":
-                    this.volumn_type = e.getValue().toString();
-                    break;
-                case "min_altitude":
-                    this.min_altitude = new AltitudeBound((AVList) e.getValue());
-                    break;
-                case "max_altitude":
-                    this.max_altitude = new AltitudeBound((AVList) e.getValue());
-                    break;
-                case "effective_time_begin":
-                    this.effective_time_begin = e.getValue().toString();
-                    break;
-                case "effective_time_end":
-                    this.effective_time_end = e.getValue().toString();
-                    break;
-                case "beyond_visual_line_of_sight":
-                    this.beyond_visual_line_of_sight = (boolean) e.getValue();
-                    break;
-                case "flight_geography":
-                    this.flight_geography = (GeoJSONPolygon) e.getValue();
-                    break;
-                case "ordinal":
-                    this.ordinal = e.getValue().toString();
-                    break;
-                case "near_structure":
-                    this.near_structure = e.getValue().toString();
-                    break;
-                default:
-                    System.out.println(e.getKey() + "," + e.getValue());
-                    break;
+                case "volume_type" -> this.volumn_type = e.getValue().toString();
+                case "min_altitude" -> this.min_altitude = new AltitudeBound((AVList) e.getValue());
+                case "max_altitude" -> this.max_altitude = new AltitudeBound((AVList) e.getValue());
+                case "effective_time_begin" -> this.effective_time_begin = e.getValue().toString();
+                case "effective_time_end" -> this.effective_time_end = e.getValue().toString();
+                case "beyond_visual_line_of_sight" -> this.beyond_visual_line_of_sight = (boolean) e.getValue();
+                case "flight_geography" -> this.flight_geography = (GeoJSONPolygon) e.getValue();
+                case "ordinal" -> this.ordinal = e.getValue().toString();
+                case "near_structure" -> this.near_structure = e.getValue().toString();
+                default -> System.out.println(e.getKey() + "," + e.getValue());
             }
         });
     }
-    
+
     /**
      * @return the min_altitude
      */
@@ -72,5 +52,4 @@ public class OperationVolume {
     public GeoJSONPolygon getFlight_geography() {
         return flight_geography;
     }
-
 }

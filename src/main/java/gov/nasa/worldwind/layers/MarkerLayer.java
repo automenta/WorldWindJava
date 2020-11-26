@@ -11,83 +11,61 @@ import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.Logging;
 
+import java.awt.Point;
+
 /**
  * @author tag
  * @version $Id: MarkerLayer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class MarkerLayer extends AbstractLayer
-{
+public class MarkerLayer extends AbstractLayer {
     private MarkerRenderer markerRenderer = new MarkerRenderer();
     private Iterable<Marker> markers;
 
-    public MarkerLayer()
-    {
+    public MarkerLayer() {
     }
 
-    public MarkerLayer(Iterable<Marker> markers)
-    {
+    public MarkerLayer(Iterable<Marker> markers) {
         this.markers = markers;
     }
 
-    public Iterable<Marker> getMarkers()
-    {
+    public Iterable<Marker> getMarkers() {
         return markers;
     }
 
-    public void setMarkers(Iterable<Marker> markers)
-    {
+    public void setMarkers(Iterable<Marker> markers) {
         this.markers = markers;
     }
 
-    public double getElevation()
-    {
+    public double getElevation() {
         return this.getMarkerRenderer().getElevation();
     }
 
-    public void setElevation(double elevation)
-    {
+    public void setElevation(double elevation) {
         this.getMarkerRenderer().setElevation(elevation);
     }
 
-    public boolean isOverrideMarkerElevation()
-    {
+    public boolean isOverrideMarkerElevation() {
         return this.getMarkerRenderer().isOverrideMarkerElevation();
     }
 
-    public void setOverrideMarkerElevation(boolean overrideMarkerElevation)
-    {
+    public void setOverrideMarkerElevation(boolean overrideMarkerElevation) {
         this.getMarkerRenderer().setOverrideMarkerElevation(overrideMarkerElevation);
     }
 
-    public boolean isKeepSeparated()
-    {
+    public boolean isKeepSeparated() {
         return this.getMarkerRenderer().isKeepSeparated();
     }
 
-    public void setKeepSeparated(boolean keepSeparated)
-    {
+    public void setKeepSeparated(boolean keepSeparated) {
         this.getMarkerRenderer().setKeepSeparated(keepSeparated);
     }
 
-    public boolean isEnablePickSizeReturn()
-    {
+    public boolean isEnablePickSizeReturn() {
         return this.getMarkerRenderer().isEnablePickSizeReturn();
     }
 
-    public void setEnablePickSizeReturn(boolean enablePickSizeReturn)
-    {
+    public void setEnablePickSizeReturn(boolean enablePickSizeReturn) {
         this.getMarkerRenderer().setEnablePickSizeReturn(enablePickSizeReturn);
-    }
-
-    /**
-     * Opacity is not applied to layers of this type because each marker has an attribute set with opacity control.
-     *
-     * @param opacity the current opacity value, which is ignored by this layer.
-     */
-    @Override
-    public void setOpacity(double opacity)
-    {
-        super.setOpacity(opacity);
     }
 
     /**
@@ -97,34 +75,38 @@ public class MarkerLayer extends AbstractLayer
      * @return The layer opacity, a value between 0 and 1.
      */
     @Override
-    public double getOpacity()
-    {
+    public double getOpacity() {
         return super.getOpacity();
     }
 
-    protected MarkerRenderer getMarkerRenderer()
-    {
+    /**
+     * Opacity is not applied to layers of this type because each marker has an attribute set with opacity control.
+     *
+     * @param opacity the current opacity value, which is ignored by this layer.
+     */
+    @Override
+    public void setOpacity(double opacity) {
+        super.setOpacity(opacity);
+    }
+
+    protected MarkerRenderer getMarkerRenderer() {
         return markerRenderer;
     }
 
-    protected void setMarkerRenderer(MarkerRenderer markerRenderer)
-    {
+    protected void setMarkerRenderer(MarkerRenderer markerRenderer) {
         this.markerRenderer = markerRenderer;
     }
 
-    protected void doRender(DrawContext dc)
-    {
+    protected void doRender(DrawContext dc) {
         this.draw(dc, null);
     }
 
     @Override
-    protected void doPick(DrawContext dc, java.awt.Point pickPoint)
-    {
+    protected void doPick(DrawContext dc, Point pickPoint) {
         this.draw(dc, pickPoint);
     }
 
-    protected void draw(DrawContext dc, java.awt.Point pickPoint)
-    {
+    protected void draw(DrawContext dc, Point pickPoint) {
         if (this.markers == null)
             return;
 
@@ -141,8 +123,7 @@ public class MarkerLayer extends AbstractLayer
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return Logging.getMessage("layers.MarkerLayer.Name");
     }
 }

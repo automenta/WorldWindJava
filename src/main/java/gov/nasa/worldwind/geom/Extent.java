@@ -14,8 +14,7 @@ import gov.nasa.worldwind.View;
  * @author Tom Gaskins
  * @version $Id: Extent.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface Extent
-{
+public interface Extent {
     /**
      * Returns the extent's center point.
      *
@@ -44,7 +43,6 @@ public interface Extent
      * these two objects intersect, including the case where either object wholly contains the other, false otherwise.
      *
      * @param frustum the <code>Frustum</code> with which to test for intersection.
-     *
      * @return true if there is an intersection, false otherwise.
      */
     boolean intersects(Frustum frustum);
@@ -55,11 +53,10 @@ public interface Extent
      * marked as such. <code>line</code> is considered to have infinite length in both directions.
      *
      * @param line the <code>Line</code> with which to intersect this <code>Extent</code>.
-     *
      * @return an array of intersections representing all the points where <code>line</code> enters or leave this
-     *         <code>Extent</code>.
+     * <code>Extent</code>.
      */
-    gov.nasa.worldwind.geom.Intersection[] intersect(gov.nasa.worldwind.geom.Line line);
+    Intersection[] intersect(Line line);
 
     /**
      * Determines whether or not <code>line</code> intersects this <code>Extent</code>. This method may be faster than
@@ -68,25 +65,22 @@ public interface Extent
      * one element.
      *
      * @param line the <code>Line</code> with which to test for intersection.
-     *
      * @return true if an intersection is found, false otherwise.
      */
-    boolean intersects(gov.nasa.worldwind.geom.Line line);
+    boolean intersects(Line line);
 
     /**
      * Calculate whether or not this <code>Extent</code> is intersected by <code>plane</code>.
      *
      * @param plane the <code>Plane</code> with which to test for intersection.
-     *
      * @return true if <code>plane</code> is found to intersect this <code>Extent</code>.
      */
-    boolean intersects(gov.nasa.worldwind.geom.Plane plane);
+    boolean intersects(Plane plane);
 
     /**
      * Computes the effective radius of the extent relative to a specified plane.
      *
      * @param plane the plane.
-     *
      * @return the effective radius, or 0 if the plane is null.
      */
     double getEffectiveRadius(Plane plane);
@@ -95,7 +89,8 @@ public interface Extent
      * Computes the area in square pixels of this <code>Extent</code> after it is projected into the specified
      * <code>view's</code> viewport. The returned value is the screen area that this <code>Extent</code> covers in the
      * infinite plane defined by the <code>view's</code> viewport. This area is not limited to the size of the
-     * <code>view's</code> viewport, and portions of this <code>Extent</code> are not clipped by the <code>view's</code>
+     * <code>view's</code> viewport, and portions of this <code>Extent</code> are not clipped by the
+     * <code>view's</code>
      * frustum.
      * <p>
      * This returns <code>Double.POSITIVE_INFINITY</code> if the <code>view's</code> eye point is inside this
@@ -103,11 +98,9 @@ public interface Extent
      * <code>Extent</code> has no finite projection on the <code>view</code>.
      *
      * @param view the <code>View</code> for which to compute a projected screen area.
-     *
      * @return the projected screen area of this <code>Extent</code> in square pixels, or
-     *         <code>Double.POSITIVE_INFINITY</code> if the <code>view's</code> eye point is inside this
-     *         <code>Extent</code> or part of this <code>Extent</code> is behind the <code>view's</code> eye point.
-     *
+     * <code>Double.POSITIVE_INFINITY</code> if the <code>view's</code> eye point is inside this
+     * <code>Extent</code> or part of this <code>Extent</code> is behind the <code>view's</code> eye point.
      * @throws IllegalArgumentException if the <code>view</code> is <code>null</code>.
      */
     double getProjectedArea(View view);

@@ -32,12 +32,9 @@ import java.awt.*;
  * @author tag
  * @version $Id: ViewViewVolume.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ViewViewVolume extends JFrame
-{
-    static
-    {
-        if (gov.nasa.worldwind.Configuration.isMacOS())
-        {
+public class ViewViewVolume extends JFrame {
+    static {
+        if (Configuration.isMacOS()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Multi-Window Analysis");
             System.setProperty("com.apple.mrj.application.growbox.intrudes", "false");
@@ -46,8 +43,7 @@ public class ViewViewVolume extends JFrame
 
     protected WWPanel wwp;
 
-    public ViewViewVolume()
-    {
+    public ViewViewVolume() {
         this.getContentPane().setLayout(new BorderLayout(5, 5));
 
         this.wwp = new WWPanel(new Dimension(650, 500));
@@ -58,15 +54,27 @@ public class ViewViewVolume extends JFrame
 
         WWUtil.alignComponent(null, this, AVKey.CENTER);
 
-        this.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    protected static class WWPanel extends JPanel
-    {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            // Make a WorldWindow to observe
+            ViewViewVolume vvv = new ViewViewVolume();
+            vvv.setVisible(true);
+
+            // Make the observer
+            ViewVolumeViewer vvViewer = new ViewVolumeViewer(vvv.wwp.wwd, new Dimension(500, 500));
+            Point p = vvv.getLocation();
+            vvViewer.setLocation(p.x + vvv.getWidth() + 20, p.y);
+            vvViewer.setVisible(true);
+        });
+    }
+
+    protected static class WWPanel extends JPanel {
         final WorldWindowGLCanvas wwd;
 
-        public WWPanel(Dimension size)
-        {
+        public WWPanel(Dimension size) {
             this.wwd = new WorldWindowGLCanvas();
             this.wwd.setSize(size);
 
@@ -79,20 +87,5 @@ public class ViewViewVolume extends JFrame
             statusBar.setEventSource(wwd);
             this.add(statusBar, BorderLayout.SOUTH);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        SwingUtilities.invokeLater(() -> {
-            // Make a WorldWindow to observe
-            ViewViewVolume vvv = new ViewViewVolume();
-            vvv.setVisible(true);
-
-            // Make the observer
-            ViewVolumeViewer vvViewer = new ViewVolumeViewer(vvv.wwp.wwd, new Dimension(500, 500));
-            Point p = vvv.getLocation();
-            vvViewer.setLocation(p.x + vvv.getWidth() + 20, p.y);
-            vvViewer.setVisible(true);
-        });
     }
 }

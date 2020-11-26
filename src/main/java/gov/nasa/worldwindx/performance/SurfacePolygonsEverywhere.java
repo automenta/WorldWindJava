@@ -17,19 +17,19 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: SurfacePolygonsEverywhere.java 3235 2015-06-22 20:52:18Z tgaskins $
  */
-public class SurfacePolygonsEverywhere extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class SurfacePolygonsEverywhere extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Very Many Surface Polygons", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             makeMany();
         }
 
-        protected void makeMany()
-        {
+        protected void makeMany() {
             double minLat = -50, maxLat = 50, minLon = -140, maxLon = -10;
             double delta = 1.5;
             double intervals = 5;
@@ -42,39 +42,33 @@ public class SurfacePolygonsEverywhere extends ApplicationTemplate
             layer.setPickEnabled(false);
 
             int count = 0;
-            for (double lat = minLat; lat <= maxLat; lat += delta)
-            {
-                for (double lon = minLon; lon <= maxLon; lon += delta)
-                {
+            for (double lat = minLat; lat <= maxLat; lat += delta) {
+                for (double lon = minLon; lon <= maxLon; lon += delta) {
                     positions = new ArrayList<>();
                     double innerLat = lat;
                     double innerLon = lon;
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLon += dLon;
                         positions.add(LatLon.fromDegrees(innerLat, innerLon));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLat += dLat;
                         positions.add(LatLon.fromDegrees(innerLat, innerLon));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLon -= dLon;
                         positions.add(LatLon.fromDegrees(innerLat, innerLon));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLat -= dLat;
                         positions.add(LatLon.fromDegrees(innerLat, innerLon));
                     }
 
-                    SurfacePolygon pgon = new SurfacePolygon(positions);
+                    SurfaceShape pgon = new SurfacePolygon(positions);
                     ShapeAttributes attrs = new BasicShapeAttributes();
                     attrs.setDrawOutline(true);
                     attrs.setInteriorMaterial(Material.RED);
@@ -88,10 +82,5 @@ public class SurfacePolygonsEverywhere extends ApplicationTemplate
 
             insertBeforeCompass(getWwd(), layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Very Many Surface Polygons", AppFrame.class);
     }
 }

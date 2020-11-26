@@ -12,23 +12,23 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.*;
+
 /**
  * This class of static methods provides the interface to logging for WorldWind components. Logging is performed via
- * {@link java.util.logging.Logger}. The default logger name is <code>gov.nasa.worldwind</code>. The logger name is
- * configurable via {@link gov.nasa.worldwind.Configuration}.
+ * {@link Logger}. The default logger name is <code>gov.nasa.worldwind</code>. The logger name is
+ * configurable via {@link Configuration}.
  *
  * @author tag
  * @version $Id: Logging.java 1171 2013-02-11 21:45:02Z dcollins $
- * @see gov.nasa.worldwind.Configuration
- * @see java.util.logging.Logger
+ * @see Configuration
+ * @see Logger
  */
-public class Logging
-{
+public class Logging {
     protected static final String MESSAGE_BUNDLE_NAME = Logging.class.getPackage().getName() + ".MessageStrings";
     protected static final int MAX_MESSAGE_REPEAT = Configuration.getIntegerValue(AVKey.MAX_MESSAGE_REPEAT, 10);
+    static final Locale LOCALE = Locale.getDefault();
 
-    private Logging()
-    {
+    private Logging() {
     } // Prevent instantiation
 
     /**
@@ -36,53 +36,43 @@ public class Logging
      *
      * @return The logger.
      */
-    public static Logger logger()
-    {
-        try
-        {
+    public static Logger logger() {
+        try {
             // The Configuration singleton may not be established yet, so catch the exception that occurs if it's not
             // and use the default logger name.
             String loggerName = Configuration.getStringValue(AVKey.LOGGER_NAME, Configuration.DEFAULT_LOGGER_NAME);
             return logger(loggerName);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             return logger(Configuration.DEFAULT_LOGGER_NAME);
         }
     }
 
     /**
-     * Returns a specific logger. Does not access {@link gov.nasa.worldwind.Configuration} to determine the configured
+     * Returns a specific logger. Does not access {@link Configuration} to determine the configured
      * WorldWind logger.
      * <p>
-     * This is needed by {@link gov.nasa.worldwind.Configuration} to avoid calls back into itself when its singleton
+     * This is needed by {@link Configuration} to avoid calls back into itself when its singleton
      * instance is not yet instantiated.
      *
      * @param loggerName the name of the logger to use.
-     *
      * @return The logger.
      */
-    public static Logger logger(String loggerName)
-    {
+    public static Logger logger(String loggerName) {
         return Logger.getLogger(loggerName != null ? loggerName : "", MESSAGE_BUNDLE_NAME);
     }
-
-    static final Locale LOCALE = Locale.getDefault();
 
     /**
      * Retrieves a message from the WorldWind message resource bundle.
      *
      * @param property the property identifying which message to retrieve.
-     *
      * @return The requested message.
      */
     public static String getMessage(String property) {
-        try
-        {
+        try {
             return (String) PropertyResourceBundle.getBundle(MESSAGE_BUNDLE_NAME, LOCALE).getObject(property);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = "Exception looking up message from bundle " + MESSAGE_BUNDLE_NAME;
             logger().log(java.util.logging.Level.SEVERE, message, e);
             return message;
@@ -91,53 +81,43 @@ public class Logging
 
     /**
      * Retrieves a message from the WorldWind message resource bundle formatted with a single argument. The argument is
-     * inserted into the message via {@link java.text.MessageFormat}.
+     * inserted into the message via {@link MessageFormat}.
      *
      * @param property the property identifying which message to retrieve.
      * @param arg      the single argument referenced by the format string identified <code>property</code>.
-     *
      * @return The requested string formatted with the argument.
-     *
-     * @see java.text.MessageFormat
+     * @see MessageFormat
      */
-    public static String getMessage(String property, String arg)
-    {
+    public static String getMessage(String property, String arg) {
         return arg != null ? getMessage(property, (Object) arg) : getMessage(property);
     }
 
     /**
      * Retrieves a message from the WorldWind message resource bundle formatted with specified arguments. The arguments
-     * are inserted into the message via {@link java.text.MessageFormat}.
+     * are inserted into the message via {@link MessageFormat}.
      *
      * @param property the property identifying which message to retrieve.
      * @param args     the arguments referenced by the format string identified <code>property</code>.
-     *
      * @return The requested string formatted with the arguments.
-     *
-     * @see java.text.MessageFormat
+     * @see MessageFormat
      */
-    public static String getMessage(String property, Object... args)
-    {
+    public static String getMessage(String property, Object... args) {
         String message;
 
-        try
-        {
+        try {
             message = (String) ResourceBundle.getBundle(MESSAGE_BUNDLE_NAME, Locale.getDefault()).getObject(property);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             message = "Exception looking up message from bundle " + MESSAGE_BUNDLE_NAME;
             logger().log(Level.SEVERE, message, e);
             return message;
         }
 
-        try
-        {
+        try {
             // TODO: This is no longer working with more than one arg in the message string, e.g., {1}
             return args == null ? message : MessageFormat.format(message, args);
         }
-        catch (IllegalArgumentException e)
-        {
+        catch (IllegalArgumentException e) {
             message = "Message arguments do not match format string: " + property;
             logger().log(Level.SEVERE, message, e);
             return message;
@@ -150,8 +130,7 @@ public class Logging
      *
      * @return the maximum number of times to repeat a message.
      */
-    public static int getMaxMessageRepeatCount()
-    {
+    public static int getMaxMessageRepeatCount() {
         return MAX_MESSAGE_REPEAT;
     }
 }

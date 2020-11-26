@@ -39,13 +39,6 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
     protected final List<ColladaInput> inputs = new ArrayList<>();
 
     /**
-     * Indicates the number of vertices per shape in the geometry.
-     *
-     * @return The number of vertices in each shape.
-     */
-    protected abstract int getVerticesPerShape();
-
-    /**
      * Create a new instance.
      *
      * @param ns the qualifying namespace URI. May be null to indicate no namespace qualification.
@@ -53,6 +46,13 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
     public ColladaAbstractGeometry(String ns) {
         super(ns);
     }
+
+    /**
+     * Indicates the number of vertices per shape in the geometry.
+     *
+     * @return The number of vertices in each shape.
+     */
+    protected abstract int getVerticesPerShape();
 
     /**
      * Indicates the inputs that provide vertices, textures coordinates, etc. to the geometry.
@@ -102,9 +102,9 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
     /**
      * Retrieves the texture coordinates of vertices in this geometry.
      *
-     * @param buffer Buffer to receive coordinates.
+     * @param buffer   Buffer to receive coordinates.
      * @param semantic String to identify which input holds the texture coordinates. May be null, in which case the
-     * "TEXCOORD" is used.
+     *                 "TEXCOORD" is used.
      */
     public void getTextureCoordinates(FloatBuffer buffer, String semantic) {
         if (semantic == null) {
@@ -117,13 +117,13 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
     /**
      * Retrieve numbers from an accessor.
      *
-     * @param buffer Buffer to receive floats.
-     * @param accessor Accessor that will provide floats.
-     * @param semantic Semantic that identifiers the set of indices to use (for example, "VERTEX" or "NORMAL").
+     * @param buffer          Buffer to receive floats.
+     * @param accessor        Accessor that will provide floats.
+     * @param semantic        Semantic that identifiers the set of indices to use (for example, "VERTEX" or "NORMAL").
      * @param floatsPerVertex Number of floats to read for each vertex.
      */
     protected void getFloatFromAccessor(FloatBuffer buffer, ColladaAccessor accessor, String semantic,
-            int floatsPerVertex) {
+        int floatsPerVertex) {
         if (buffer == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
@@ -141,7 +141,8 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
         int[] indices = new int[0];
         try {
             indices = this.getIndices(semantic);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
         }
         float[] vertexCoords = accessor.getFloats();
@@ -176,7 +177,8 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
         int sourcesStride = this.getInputs().size();
 
         // if only half the required data is supplied duplicate it appropriately
-        int reqDataLen = offset + (this.getCount() - 1) * (vertsPerShape * sourcesStride) + vertsPerShape * sourcesStride;
+        int reqDataLen = offset + (this.getCount() - 1) * (vertsPerShape * sourcesStride)
+            + vertsPerShape * sourcesStride;
         if ((reqDataLen / sourcesStride) == intData.length) {
             int[] adjustedIntData = new int[reqDataLen];
             for (int i = 0; i < intData.length; i++) {
@@ -248,8 +250,7 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
      * Indicates the accessor for texture coordinates.
      *
      * @param semantic Semantic that identifies the texture coordinates. May be null, in which case the semantic
-     * "TEXCOORD" is used.
-     *
+     *                 "TEXCOORD" is used.
      * @return The texture coordinates accessor, or null if the accessor cannot be resolved.
      */
     public ColladaAccessor getTexCoordAccessor(String semantic) {
@@ -280,7 +281,8 @@ public abstract class ColladaAbstractGeometry extends ColladaAbstractObject {
     public void setField(String keyName, Object value) {
         if (keyName.equals("input")) {
             this.inputs.add((ColladaInput) value);
-        } else {
+        }
+        else {
             super.setField(keyName, value);
         }
     }

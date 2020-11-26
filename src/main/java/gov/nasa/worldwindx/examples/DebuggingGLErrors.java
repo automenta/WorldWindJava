@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 
 /**
  * Illustrates how to capture OpenGL errors into the log during development. By defining a custom <code>{@link
- * gov.nasa.worldwind.WorldWindowGLDrawable}</code> and installing JOGL's {@link com.jogamp.opengl.DebugGL2},
+ * WorldWindowGLDrawable}</code> and installing JOGL's {@link DebugGL2},
  * applications can receive log error messages when an OpenGL error occurs. This technique is intended for use during
  * application development, and should not be used in a deployed application.
  *
@@ -40,9 +40,13 @@ public class DebuggingGLErrors extends ApplicationTemplate {
         Configuration.setValue(AVKey.WORLD_WINDOW_CLASS_NAME, MyGLAutoDrawable.class.getName());
     }
 
+    public static void main(String[] args) {
+        start("WorldWind Debugging GL Errors", AppFrame.class);
+    }
+
     /**
-     * Subclass of {@link gov.nasa.worldwind.WorldWindowGLAutoDrawable} which overrides the method {@link
-     * gov.nasa.worldwind.WorldWindowGLAutoDrawable#init(com.jogamp.opengl.GLAutoDrawable)} to configure the OpenGL
+     * Subclass of {@link WorldWindowGLAutoDrawable} which overrides the method {@link
+     * WorldWindowGLAutoDrawable#init(GLAutoDrawable)} to configure the OpenGL
      * error logger.
      */
     public static class MyGLAutoDrawable extends WorldWindowGLAutoDrawable {
@@ -55,7 +59,7 @@ public class DebuggingGLErrors extends ApplicationTemplate {
 
         /**
          * Overridden to configure the OpenGL features used by the WorldWind SDK. See {@link
-         * com.jogamp.opengl.GLEventListener#init(com.jogamp.opengl.GLAutoDrawable)}.
+         * GLEventListener#init(GLAutoDrawable)}.
          *
          * @param glAutoDrawable the drawable
          */
@@ -71,9 +75,5 @@ public class DebuggingGLErrors extends ApplicationTemplate {
             // application.
             glAutoDrawable.setGL(new DebugGL2(glAutoDrawable.getGL().getGL2()));
         }
-    }
-
-    public static void main(String[] args) {
-        start("WorldWind Debugging GL Errors", AppFrame.class);
     }
 }

@@ -7,27 +7,74 @@ package gov.nasa.worldwind.formats.gcps;
 
 import gov.nasa.worldwind.util.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * @author dcollins
  * @version $Id: GCPSReader.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GCPSReader
-{
+public class GCPSReader {
     private String delimiter = "[\\s]";
 
-    public GCPSReader()
-    {
+    public GCPSReader() {
     }
 
-    public String getDelimiter()
-    {
+    public static File getGCPSFileFor(File file) {
+        if (file == null) {
+            String message = Logging.getMessage("nullValue.FileIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        File parent = file.getParentFile();
+        if (parent == null)
+            return null;
+
+        String tabFilename = WWIO.replaceSuffix(file.getName(), ".gcps");
+
+        // The file already has a TAB extension. Rather than returning a self reference, we return null to deonte that
+        // a TAB file does not associate with itself.
+        if (file.getName().equalsIgnoreCase(tabFilename)) {
+            return null;
+        }
+
+        // Find the first sibling with the matching filename, and TAB extension.
+        for (File child : parent.listFiles()) {
+            if (!child.equals(file) && child.getName().equalsIgnoreCase(tabFilename)) {
+                return child;
+            }
+        }
+
+        return null;
+    }
+
+    private static Double parseDouble(String s) {
+        if (s == null || s.isEmpty())
+            return null;
+
+        try {
+            return Double.parseDouble(s);
+        }
+        catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public String getDelimiter() {
         return this.delimiter;
     }
 
-    public void setDelimiter(String delimiter)
-    {
-        if (delimiter == null || delimiter.length() == 0)
-        {
+    public void setDelimiter(String delimiter) {
+        if (delimiter == null || delimiter.isEmpty()) {
             String message = Logging.getMessage("nullValue.DelimiterIsNullOrEmpty");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -36,59 +83,21 @@ public class GCPSReader
         this.delimiter = delimiter;
     }
 
-    public static java.io.File getGCPSFileFor(java.io.File file)
-    {
-        if (file == null)
-        {
-            String message = Logging.getMessage("nullValue.FileIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        java.io.File parent = file.getParentFile();
-        if (parent == null)
-            return null;
-
-        String tabFilename = WWIO.replaceSuffix(file.getName(), ".gcps");
-
-        // The file already has a TAB extension. Rather than returning a self reference, we return null to deonte that
-        // a TAB file does not associate with itself.
-        if (file.getName().equalsIgnoreCase(tabFilename))
-        {
-            return null;
-        }
-
-        // Find the first sibling with the matching filename, and TAB extension.
-        for (java.io.File child : parent.listFiles())
-        {
-            if (!child.equals(file) && child.getName().equalsIgnoreCase(tabFilename))
-            {
-                return child;
-            }
-        }
-
-        return null;
-    }
-
-    public boolean canRead(java.io.File file)
-    {
+    public boolean canRead(File file) {
         if (file == null || !file.exists() || !file.canRead())
             return false;
 
-        try (java.io.FileReader fileReader = new java.io.FileReader(file))
-        {
+        try (FileReader fileReader = new FileReader(file)) {
             RasterControlPointList controlPoints = new RasterControlPointList();
             return this.doCanRead(fileReader, controlPoints);
         }
-        catch (Exception ignored)
-        {
+        catch (Exception ignored) {
             return false;
         }
         //noinspection EmptyCatchBlock
     }
 
-    public boolean canRead(String path)
-    {
+    public boolean canRead(String path) {
         if (path == null)
             return false;
 
@@ -96,185 +105,154 @@ public class GCPSReader
         if (streamOrException == null || streamOrException instanceof Exception)
             return false;
 
-        java.io.InputStream stream = (java.io.InputStream) streamOrException;
-        try
-        {
-            java.io.InputStreamReader streamReader = new java.io.InputStreamReader(stream);
+        InputStream stream = (InputStream) streamOrException;
+        try {
+            InputStreamReader streamReader = new InputStreamReader(stream);
             RasterControlPointList controlPoints = new RasterControlPointList();
             return this.doCanRead(streamReader, controlPoints);
         }
-        catch (Exception ignored)
-        {
+        catch (Exception ignored) {
             return false;
         }
-        finally
-        {
-            try
-            {
+        finally {
+            try {
                 stream.close();
             }
-            catch (java.io.IOException e)
-            {
+            catch (IOException e) {
                 String message = Logging.getMessage("generic.ExceptionClosingStream", stream);
                 Logging.logger().severe(message);
             }
         }
     }
-    
-    public RasterControlPointList read(java.io.File file) throws java.io.IOException
-    {
-        if (file == null)
-        {
+
+    public RasterControlPointList read(File file) throws IOException {
+        if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (!file.exists())
-        {
+        if (!file.exists()) {
             String message = Logging.getMessage("generic.FileNotFound", file);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (!file.canRead())
-        {
+        if (!file.canRead()) {
             String message = Logging.getMessage("generic.FileNoReadPermission", file);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        java.io.FileReader fileReader = null;
-        try
-        {
-            fileReader = new java.io.FileReader(file);
+        FileReader fileReader = null;
+        try {
+            fileReader = new FileReader(file);
             RasterControlPointList controlPoints = new RasterControlPointList();
             this.doRead(fileReader, controlPoints);
             return controlPoints;
         }
-        finally
-        {
-            try
-            {
+        finally {
+            try {
                 if (fileReader != null)
                     fileReader.close();
             }
-            catch (java.io.IOException e)
-            {
+            catch (IOException e) {
                 String message = Logging.getMessage("generic.ExceptionClosingStream", file);
                 Logging.logger().severe(message);
             }
         }
     }
 
-    public RasterControlPointList read(String path) throws java.io.IOException
-    {
-        if (path == null)
-        {
+    public RasterControlPointList read(String path) throws IOException {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object streamOrException = WWIO.getFileOrResourceAsStream(path, this.getClass());
-        if (streamOrException == null || streamOrException instanceof Exception)
-        {
+        if (streamOrException == null || streamOrException instanceof Exception) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToReadFile",
                 (streamOrException != null) ? streamOrException : path);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        java.io.InputStream stream = (java.io.InputStream) streamOrException;
-        try
-        {
-            java.io.InputStreamReader streamReader = new java.io.InputStreamReader(stream);
+        InputStream stream = (InputStream) streamOrException;
+        try {
+            InputStreamReader streamReader = new InputStreamReader(stream);
             RasterControlPointList controlPoints = new RasterControlPointList();
             this.doRead(streamReader, controlPoints);
             return controlPoints;
         }
-        finally
-        {
-            try
-            {
+        finally {
+            try {
                 stream.close();
             }
-            catch (java.io.IOException e)
-            {
+            catch (IOException e) {
                 String message = Logging.getMessage("generic.ExceptionClosingStream", stream);
                 Logging.logger().severe(message);
             }
         }
     }
 
-    protected boolean doCanRead(java.io.Reader reader, RasterControlPointList controlPoints)
-    {
-        if (reader == null)
-        {
+    protected boolean doCanRead(Reader reader, RasterControlPointList controlPoints) {
+        if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (controlPoints == null)
-        {
+        if (controlPoints == null) {
             String message = Logging.getMessage("nullValue.RasterControlPointListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
-            java.io.BufferedReader br = new java.io.BufferedReader(reader);
+        try {
+            BufferedReader br = new BufferedReader(reader);
             String line = this.nextLine(br);
-            java.util.regex.Pattern pattern = this.createPattern();
+            Pattern pattern = this.createPattern();
 
             return pattern.matcher(line).matches();
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             return false;
         }
     }
 
-    protected void doRead(java.io.Reader reader, RasterControlPointList controlPoints) throws java.io.IOException
-    {
-        if (reader == null)
-        {
+    protected void doRead(Reader reader, RasterControlPointList controlPoints) throws IOException {
+        if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (controlPoints == null)
-        {
+        if (controlPoints == null) {
             String message = Logging.getMessage("nullValue.RasterControlPointListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        java.io.BufferedReader br = new java.io.BufferedReader(reader);
+        BufferedReader br = new BufferedReader(reader);
         this.readControlPoints(br, controlPoints);
     }
 
-    protected void readControlPoints(java.io.BufferedReader reader, RasterControlPointList controlPoints)
-        throws java.io.IOException
-    {
-        if (reader == null)
-        {
+    protected void readControlPoints(BufferedReader reader,
+        List<RasterControlPointList.ControlPoint> controlPoints)
+        throws IOException {
+        if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (controlPoints == null)
-        {
+        if (controlPoints == null) {
             String message = Logging.getMessage("nullValue.RasterControlPointListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        java.util.regex.Pattern pattern = this.createPattern();
+        Pattern pattern = this.createPattern();
 
         String line;
-        java.util.regex.Matcher matcher;
-        while ((line = this.nextLine(reader)) != null && (matcher = pattern.matcher(line)).matches())
-        {
+        Matcher matcher;
+        while ((line = this.nextLine(reader)) != null && (matcher = pattern.matcher(line)).matches()) {
             String swx = matcher.group(1);
             String swy = matcher.group(2);
             String srx = matcher.group(3);
@@ -285,8 +263,7 @@ public class GCPSReader
             Double rx = parseDouble(srx);
             Double ry = parseDouble(sry);
 
-            if (wx != null && wy != null && rx != null && ry != null)
-            {
+            if (wx != null && wy != null && rx != null && ry != null) {
                 RasterControlPointList.ControlPoint controlPoint =
                     new RasterControlPointList.ControlPoint(wx, wy, rx, ry);
                 controlPoints.add(controlPoint);
@@ -294,8 +271,7 @@ public class GCPSReader
         }
     }
 
-    protected java.util.regex.Pattern createPattern()
-    {
+    protected Pattern createPattern() {
         String delim = this.getDelimiter();
 
         StringBuilder sb = new StringBuilder();
@@ -307,33 +283,16 @@ public class GCPSReader
         sb.append(delim).append("+");
         sb.append("(.+)");
 
-        return java.util.regex.Pattern.compile(sb.toString());
+        return Pattern.compile(sb.toString());
     }
 
-    protected String nextLine(java.io.BufferedReader reader) throws java.io.IOException
-    {
+    protected String nextLine(BufferedReader reader) throws IOException {
         // Read until the next non-whitespace line.
 
         String line;
-        while ((line = reader.readLine()) != null && line.trim().length() == 0)
-        {
+        while ((line = reader.readLine()) != null && line.trim().isEmpty()) {
         }
 
         return (line != null) ? line.trim() : null;
-    }
-
-    private static Double parseDouble(String s)
-    {
-        if (s == null || s.length() == 0)
-            return null;
-
-        try
-        {
-            return Double.parseDouble(s);
-        }
-        catch (NumberFormatException e)
-        {
-            return null;
-        }
     }
 }

@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * Abstract implementation of SurfaceObject that participates in the {@link gov.nasa.worldwind.SceneController}'s bulk
  * rendering of SurfaceObjects. The SceneControllers bulk renders all SurfaceObjects added to the {@link
- * gov.nasa.worldwind.render.DrawContext}'s ordered surface renderable queue during the preRendering pass. While
+ * DrawContext}'s ordered surface renderable queue during the preRendering pass. While
  * building the composite representation the SceneController invokes {@link #render(DrawContext)} in ordered rendering
  * mode. To avoid overloading the purpose of the render method, AbstractSurfaceObject does not add itself to the
  * DrawContext's ordered surface renderable queue during rendering.
@@ -42,30 +42,30 @@ import java.util.*;
  * @author dcollins
  * @version $Id: AbstractSurfaceObject.java 3240 2015-06-22 23:38:49Z tgaskins $
  */
-public abstract class AbstractSurfaceObject extends WWObjectImpl implements SurfaceObject
-{
+public abstract class AbstractSurfaceObject extends WWObjectImpl implements SurfaceObject {
+    /* The next unique ID. This property is shared by all instances of AbstractSurfaceObject. */
+    protected static long nextUniqueId = 1;
+    protected final long uniqueId;
+    protected final Map<Object, CacheEntry> extentCache = new HashMap<>();
+    protected final PickSupport pickSupport = new PickSupport();
     // Public interface properties.
     protected boolean visible;
-    protected final long uniqueId;
     protected long lastModifiedTime;
     protected Object delegateOwner;
     protected boolean enableBatchPicking;
     protected boolean drawBoundingSectors;
-    protected final Map<Object, CacheEntry> extentCache = new HashMap<>();
     // Picking properties.
     protected Layer pickLayer;
-    protected final PickSupport pickSupport = new PickSupport();
-    /** Support class used to build surface tiles used to draw the pick representation. */
+    /**
+     * Support class used to build surface tiles used to draw the pick representation.
+     */
     protected SurfaceObjectTileBuilder pickTileBuilder;
-    /* The next unique ID. This property is shared by all instances of AbstractSurfaceObject. */
-    protected static long nextUniqueId = 1;
 
     /**
      * Creates a new AbstractSurfaceObject, assigning it a unique ID and initializing its last modified time to the
      * current system time.
      */
-    public AbstractSurfaceObject()
-    {
+    public AbstractSurfaceObject() {
         this.visible = true;
         this.uniqueId = nextUniqueId();
         this.lastModifiedTime = System.currentTimeMillis();
@@ -77,8 +77,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      *
      * @param source the shape to copy.
      */
-    public AbstractSurfaceObject(AbstractSurfaceObject source)
-    {
+    public AbstractSurfaceObject(AbstractSurfaceObject source) {
         super(source);
 
         this.visible = source.visible;
@@ -95,45 +94,50 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      *
      * @return the next unique integer.
      */
-    protected static synchronized long nextUniqueId()
-    {
+    protected static synchronized long nextUniqueId() {
         return nextUniqueId++;
     }
 
-    /** {@inheritDoc} */
-    public boolean isVisible()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVisible() {
         return this.visible;
     }
 
-    /** {@inheritDoc} */
-    public void setVisible(boolean visible)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void setVisible(boolean visible) {
         this.visible = visible;
         this.updateModifiedTime();
     }
 
-    /** {@inheritDoc} */
-    public Object getStateKey(DrawContext dc)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Object getStateKey(DrawContext dc) {
         return new SurfaceObjectStateKey(this.getUniqueId(), this.lastModifiedTime);
     }
 
-    /** {@inheritDoc} */
-    public double getDistanceFromEye()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public double getDistanceFromEye() {
         return 0;
     }
 
-    /** {@inheritDoc} */
-    public Object getDelegateOwner()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Object getDelegateOwner() {
         return this.delegateOwner;
     }
 
-    /** {@inheritDoc} */
-    public void setDelegateOwner(Object owner)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void setDelegateOwner(Object owner) {
         this.delegateOwner = owner;
     }
 
@@ -141,11 +145,9 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * Indicates whether the SurfaceObject draws its bounding sector.
      *
      * @return <code>true</code> if the shape draws its outline; <code>false</code> otherwise.
-     *
      * @see #setDrawBoundingSectors(boolean)
      */
-    public boolean isDrawBoundingSectors()
-    {
+    public boolean isDrawBoundingSectors() {
         return this.drawBoundingSectors;
     }
 
@@ -155,52 +157,52 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      *
      * @param draw <code>true</code> to draw the shape's outline; <code>false</code> otherwise.
      */
-    public void setDrawBoundingSectors(boolean draw)
-    {
+    public void setDrawBoundingSectors(boolean draw) {
         this.drawBoundingSectors = draw;
         // Update the modified time so the object's composite representation is updated. We draw the bounding sector
         // along with the object's composite representation.
         this.updateModifiedTime();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean isEnableBatchPicking()
-    {
+    public boolean isEnableBatchPicking() {
         return this.enableBatchPicking;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setEnableBatchPicking(boolean enable)
-    {
+    public void setEnableBatchPicking(boolean enable) {
         this.enableBatchPicking = enable;
     }
 
-    /** {@inheritDoc} */
-    public Extent getExtent(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public Extent getExtent(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         CacheEntry entry = this.extentCache.get(dc.getGlobe().getGlobeStateKey());
-        if (entry == null)
-        {
+        if (entry == null) {
             entry = new CacheEntry(this.computeExtent(dc), dc);
             this.extentCache.put(dc.getGlobe().getGlobeStateKey(), entry);
         }
         return (Extent) entry.object;
     }
 
-    /** {@inheritDoc} */
-    public void preRender(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void preRender(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -215,11 +217,11 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             this.makeOrderedPreRenderable(dc);
     }
 
-    /** {@inheritDoc} */
-    public void pick(DrawContext dc, Point pickPoint)
-    {
-        if (dc == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void pick(DrawContext dc, Point pickPoint) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -235,26 +237,24 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             return;
 
         this.pickSupport.clearPickList();
-        try
-        {
+        try {
             this.pickSupport.beginPicking(dc);
             this.pickOrderedRenderable(dc, this.pickSupport);
 
             if (this.isEnableBatchPicking())
                 this.pickBatched(dc, this.pickSupport);
         }
-        finally
-        {
+        finally {
             this.pickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
 
-    /** {@inheritDoc} */
-    public void render(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void render(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -275,8 +275,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      *
      * @return the surface object's unique identifier.
      */
-    protected long getUniqueId()
-    {
+    protected long getUniqueId() {
         return this.uniqueId;
     }
 
@@ -284,20 +283,19 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * Sets the SurfaceObject's modified time to the current system time. This causes cached representations of this
      * SurfaceObject to be refreshed.
      */
-    protected void updateModifiedTime()
-    {
+    protected void updateModifiedTime() {
         this.lastModifiedTime = System.currentTimeMillis();
     }
 
-    /** Clears this SurfaceObject's internal extent cache. */
-    protected void clearCaches()
-    {
+    /**
+     * Clears this SurfaceObject's internal extent cache.
+     */
+    protected void clearCaches() {
         this.extentCache.clear();
     }
 
     /* Updates this SurfaceObject's modified time and clears its internal caches. */
-    protected void onShapeChanged()
-    {
+    protected void onShapeChanged() {
         this.updateModifiedTime();
         this.clearCaches();
     }
@@ -312,11 +310,9 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * object has no sectors.
      *
      * @param dc the draw context the extent relates to.
-     *
      * @return the surface object's extent. Returns null if the surface object has no sectors.
      */
-    protected Extent computeExtent(DrawContext dc)
-    {
+    protected Extent computeExtent(DrawContext dc) {
         List<Sector> sectors = this.getSectors(dc);
         if (sectors == null)
             return null;
@@ -326,38 +322,32 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
 
     /**
      * Computes an extent bounding the the specified sectors on the specified Globe's surface. If the list contains a
-     * single sector this returns a box created by calling {@link gov.nasa.worldwind.geom.Sector#computeBoundingBox(gov.nasa.worldwind.globes.Globe,
-     * double, gov.nasa.worldwind.geom.Sector)}. If the list contains more than one sector this returns a {@link
+     * single sector this returns a box created by calling {@link Sector#computeBoundingBox(Globe,
+     * double, Sector)}. If the list contains more than one sector this returns a {@link
      * gov.nasa.worldwind.geom.Box} containing the corners of the boxes bounding each sector. This returns null if the
      * sector list is empty.
      *
      * @param globe                the globe the extent relates to.
      * @param verticalExaggeration the globe's vertical surface exaggeration.
      * @param sectors              the sectors to bound.
-     *
      * @return an extent for the specified sectors on the specified Globe.
      */
-    protected Extent computeExtent(Globe globe, double verticalExaggeration, List<Sector> sectors)
-    {
+    protected Extent computeExtent(Globe globe, double verticalExaggeration, List<Sector> sectors) {
         // This should never happen, but we check anyway.
-        if (sectors.size() == 0)
-        {
+        if (sectors.isEmpty()) {
             return null;
         }
         // This surface shape does not cross the international dateline, and therefore has a single bounding sector.
         // Return the box which contains that sector.
-        else if (sectors.size() == 1)
-        {
+        else if (sectors.size() == 1) {
             return Sector.computeBoundingBox(globe, verticalExaggeration, sectors.get(0));
         }
         // This surface crosses the international dateline, and its bounding sectors are split along the dateline.
         // Return a box which contains the corners of the boxes bounding each sector.
-        else
-        {
-            ArrayList<Vec4> boxCorners = new ArrayList<>();
+        else {
+            List<Vec4> boxCorners = new ArrayList<>();
 
-            for (Sector s : sectors)
-            {
+            for (Sector s : sectors) {
                 Box box = Sector.computeBoundingBox(globe, verticalExaggeration, s);
                 boxCorners.addAll(Arrays.asList(box.getCorners()));
             }
@@ -372,11 +362,9 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * against the draw context's viewing frustum.
      *
      * @param dc the draw context the SurfaceObject is related to.
-     *
      * @return true if this SurfaceObject intersects the draw context's frustum; false otherwise.
      */
-    protected boolean intersectsFrustum(DrawContext dc)
-    {
+    protected boolean intersectsFrustum(DrawContext dc) {
         // A null extent indicates an object which has no location.
         Extent extent = this.getExtent(dc);
         if (extent == null)
@@ -394,11 +382,9 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * Test if this SurfaceObject intersects the specified draw context's pick frustums.
      *
      * @param dc the draw context the SurfaceObject is related to.
-     *
      * @return true if this SurfaceObject intersects any of the draw context's pick frustums; false otherwise.
      */
-    protected boolean intersectsPickFrustum(DrawContext dc)
-    {
+    protected boolean intersectsPickFrustum(DrawContext dc) {
         // Test this object's extent against the pick frustum list. A null extent indicates the object has no location.
         Extent extent = this.getExtent(dc);
         return extent != null && dc.getPickFrustums().intersectsAny(extent);
@@ -409,11 +395,9 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * context's visible sector is null.
      *
      * @param dc draw context the SurfaceObject is related to.
-     *
      * @return true if this SurfaceObject intersects the draw context's visible sector; false otherwise.
      */
-    protected boolean intersectsVisibleSector(DrawContext dc)
-    {
+    protected boolean intersectsVisibleSector(DrawContext dc) {
         if (dc.getVisibleSector() == null)
             return false;
 
@@ -421,8 +405,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         if (sectors == null)
             return false;
 
-        for (Sector s : sectors)
-        {
+        for (Sector s : sectors) {
             if (s.intersects(dc.getVisibleSector()))
                 return true;
         }
@@ -435,7 +418,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     //**************************************************************//
 
     /**
-     * Prepares the SurfaceObject as an {@link gov.nasa.worldwind.render.OrderedRenderable} and adds it to the
+     * Prepares the SurfaceObject as an {@link OrderedRenderable} and adds it to the
      * DrawContext's ordered surface renderable list. Additionally, this prepares the SurfaceObject's pickable
      * representation if the SurfaceObject's containing layer is enabled for picking and the SurfaceObject intersects
      * one of the DrawContext's picking frustums.
@@ -447,8 +430,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      *
      * @param dc the DrawContext to add to.
      */
-    protected void makeOrderedPreRenderable(DrawContext dc)
-    {
+    protected void makeOrderedPreRenderable(DrawContext dc) {
         // Test for visibility against the draw context's visible sector prior to preparing this object for
         // preRendering.
         if (!this.intersectsVisibleSector(dc))
@@ -471,18 +453,17 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     }
 
     /**
-     * Prepares the SurfaceObject as an {@link gov.nasa.worldwind.render.OrderedRenderable} and adds it to the
+     * Prepares the SurfaceObject as an {@link OrderedRenderable} and adds it to the
      * DrawContext's ordered surface renderable list. We ignore this call during rendering mode to suppress calls to
      * {@link #render(DrawContext)} during ordered rendering mode. The SceneController already invokes render during
      * ordered picking mode to build a composite representation of the SurfaceObjects.
      * <p>
      * During ordered picking, the {@link gov.nasa.worldwind.SceneController} invokes the SurfaceObject's {@link
-     * #pick(DrawContext, java.awt.Point)} method.
+     * #pick(DrawContext, Point)} method.
      *
      * @param dc the DrawContext to add to.
      */
-    protected void makeOrderedRenderable(DrawContext dc)
-    {
+    protected void makeOrderedRenderable(DrawContext dc) {
         // Add this object to the draw context's ordered surface renderable queue only during picking mode. This queue
         // is processed by the SceneController during each rendering pass as follows:
         //
@@ -512,8 +493,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * @param dc          the current DrawContext.
      * @param pickSupport the PickSupport to add the SurfaceObject to.
      */
-    protected void pickOrderedRenderable(DrawContext dc, PickSupport pickSupport)
-    {
+    protected void pickOrderedRenderable(DrawContext dc, PickSupport pickSupport) {
         // Register a unique pick color with the PickSupport. We define the pickable object to be the caller specified
         // delegate owner, or this object if the delegate owner is null. We define the picked position to be the
         // terrain's picked position to maintain backwards compatibility with previous implementations of SurfaceObject.
@@ -528,16 +508,14 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     }
 
     /**
-     * Create a {@link gov.nasa.worldwind.pick.PickedObject} for this surface object. The PickedObject created by this
+     * Create a {@link PickedObject} for this surface object. The PickedObject created by this
      * method will be added to the pick list to represent the current surface object.
      *
      * @param dc        Active draw context.
      * @param pickColor Unique color for this PickedObject.
-     *
      * @return A new picked object.
      */
-    protected PickedObject createPickedObject(DrawContext dc, Color pickColor)
-    {
+    protected PickedObject createPickedObject(DrawContext dc, Color pickColor) {
         Object pickedObject = this.getDelegateOwner() != null ? this.getDelegateOwner() : this;
         Position pickedPos = dc.getPickedObjects().getTerrainObject() != null
             ? dc.getPickedObjects().getTerrainObject().getPosition() : null;
@@ -554,13 +532,11 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * @param dc          the current DrawContext.
      * @param pickSupport the PickSupport to add the SurfaceObject to.
      */
-    protected void pickBatched(DrawContext dc, PickSupport pickSupport)
-    {
+    protected void pickBatched(DrawContext dc, PickSupport pickSupport) {
         // Draw as many as we can in a batch to save pick resolution.
         Object nextItem = dc.getOrderedSurfaceRenderables().peek();
 
-        while (nextItem instanceof AbstractSurfaceObject)
-        {
+        while (nextItem instanceof AbstractSurfaceObject) {
             AbstractSurfaceObject so = (AbstractSurfaceObject) nextItem;
 
             // Batch pick only within a single layer, and for objects which are enabled for batch picking.
@@ -576,16 +552,15 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
 
     /**
      * Causes the SurfaceObject to render itself. SurfaceObjects are drawn in geographic coordinates into offscreen
-     * surface tiles. This attempts to get a {@link gov.nasa.worldwind.util.SurfaceTileDrawContext} from the
-     * DrawContext's AVList by querying the key {@link gov.nasa.worldwind.avlist.AVKey#SURFACE_TILE_DRAW_CONTEXT}. If
+     * surface tiles. This attempts to get a {@link SurfaceTileDrawContext} from the
+     * DrawContext's AVList by querying the key {@link AVKey#SURFACE_TILE_DRAW_CONTEXT}. If
      * the DrawContext has a SurfaceTileDrawContext attached under that key, this calls {@link
-     * #drawGeographic(DrawContext, gov.nasa.worldwind.util.SurfaceTileDrawContext)} with the SurfaceTileDrawContext.
+     * #drawGeographic(DrawContext, SurfaceTileDrawContext)} with the SurfaceTileDrawContext.
      * Otherwise this logs a warning and returns.
      *
      * @param dc the current DrawContext.
      */
-    protected void drawOrderedRenderable(DrawContext dc)
-    {
+    protected void drawOrderedRenderable(DrawContext dc) {
         // This method is invoked by the SceneController during ordered rendering mode while building a composite
         // representation of the SurfaceObjects during ordered preRendering. Since we use this method to draw a
         // composite representation during preRendering, we prevent this method from being invoked during ordered
@@ -593,8 +568,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // instead.
 
         SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.getValue(AVKey.SURFACE_TILE_DRAW_CONTEXT);
-        if (sdc == null)
-        {
+        if (sdc == null) {
             Logging.logger().warning(Logging.getMessage("nullValue.SurfaceTileDrawContextIsNull"));
             return;
         }
@@ -625,8 +599,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      *
      * @param dc the draw context to build a representation for.
      */
-    protected void buildPickRepresentation(DrawContext dc)
-    {
+    protected void buildPickRepresentation(DrawContext dc) {
         // Lazily create the support object used to build the pick representation.  We keep a reference to the
         // SurfaceObjectTileBuilder used to build the tiles because it acts as a cache key to the tiles and determines
         // when the tiles must be updated.
@@ -639,8 +612,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         // the pick frustum.
         boolean prevPickingMode = dc.isPickingMode();
         boolean prevOrderedRenderingMode = dc.isOrderedRenderingMode();
-        try
-        {
+        try {
             if (!prevPickingMode)
                 dc.enablePickingMode();
             dc.setOrderedRenderingMode(true);
@@ -648,8 +620,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             // Build the pick representation as a list of surface tiles.
             this.pickTileBuilder.buildTiles(dc, Collections.singletonList(this));
         }
-        finally
-        {
+        finally {
             // Restore the DrawContext's previous picking and ordered rendering modes.
             if (!prevPickingMode)
                 dc.disablePickingMode();
@@ -662,8 +633,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      *
      * @param dc the current DrawContext.
      */
-    protected void drawPickRepresentation(DrawContext dc)
-    {
+    protected void drawPickRepresentation(DrawContext dc) {
         // The pick representation is stored as a list of surface tiles. If the list is empty, then this surface object
         // was not picked. This method might be called when the list is null or empty because of an upstream
         // exception that prevented creation of the list.
@@ -674,16 +644,14 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushAttrib(gl, GL2.GL_POLYGON_BIT); // For cull face enable, cull face, polygon mode.
-        try
-        {
+        try {
             gl.glEnable(GL.GL_CULL_FACE);
             gl.glCullFace(GL.GL_BACK);
             gl.glPolygonMode(GL2.GL_FRONT, GL2.GL_FILL);
 
             dc.getGeographicSurfaceTileRenderer().renderTiles(dc, this.pickTileBuilder.getTiles(dc));
         }
-        finally
-        {
+        finally {
             ogsh.pop(gl);
             // Clear the list of pick tiles to avoid retaining references to them in case we're never picked again.
             this.pickTileBuilder.clearTiles(dc);
@@ -698,8 +666,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      *
      * @return a SurfaceObjectTileBuilder used for building and drawing the surface object's pickable representation.
      */
-    protected SurfaceObjectTileBuilder createPickTileBuilder()
-    {
+    protected SurfaceObjectTileBuilder createPickTileBuilder() {
         return new SurfaceObjectTileBuilder(new Dimension(512, 512), GL2.GL_ALPHA8, false, false);
     }
 
@@ -715,11 +682,9 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      *
      * @param dc  the current DrawContext.
      * @param sdc the context containing a geographic region and screen viewport corresponding to a surface tile.
-     *
      * @see #getSectors(DrawContext)
      */
-    protected void drawBoundingSectors(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected void drawBoundingSectors(DrawContext dc, SurfaceTileDrawContext sdc) {
         List<Sector> sectors = this.getSectors(dc);
         if (sectors == null)
             return;
@@ -734,22 +699,20 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushAttrib(gl, attributeMask);
         ogsh.pushModelview(gl);
-        try
-        {
+        try {
             gl.glEnable(GL.GL_BLEND);
             OGLUtil.applyBlending(gl, false);
 
             gl.glDisable(GL.GL_LINE_SMOOTH);
-            gl.glLineWidth(1f);
+            gl.glLineWidth(1.0f);
 
-            gl.glColor4f(1f, 1f, 1f, 0.5f);
+            gl.glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 
             // Set the model-view matrix to transform from geographic coordinates to viewport coordinates.
             Matrix matrix = sdc.getModelviewMatrix();
             gl.glMultMatrixd(matrix.toArray(new double[16], 0, false), 0);
 
-            for (Sector s : sectors)
-            {
+            for (Sector s : sectors) {
                 LatLon[] corners = s.getCorners();
                 gl.glBegin(GL2.GL_LINE_LOOP);
                 gl.glVertex2f((float) corners[0].getLongitude().degrees, (float) corners[0].getLatitude().degrees);
@@ -759,8 +722,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
                 gl.glEnd();
             }
         }
-        finally
-        {
+        finally {
             ogsh.pop(gl);
         }
     }
@@ -773,16 +735,19 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * Represents a surface object's current state. StateKey uniquely identifies a surface object's current state as
      * follows: <ul> <li>The StateKey class distinguishes the key from other object types.</li> <li>The object's unique
      * ID distinguishes one surface object instances from another.</li> <li>The object's modified time distinguishes an
-     * object's internal state from any of its previous states.</li> </ul> Using the unique ID to distinguish between objects
-     * ensures that the StateKey does not store dangling references to the surface object itself. Should the StateKey
-     * live longer than the surface object that created it, the StateKey does not prevent the object from being garbage
-     * collected.
+     * object's internal state from any of its previous states.</li> </ul> Using the unique ID to distinguish between
+     * objects ensures that the StateKey does not store dangling references to the surface object itself. Should the
+     * StateKey live longer than the surface object that created it, the StateKey does not prevent the object from being
+     * garbage collected.
      */
-    protected static class SurfaceObjectStateKey implements Cacheable
-    {
-        /** The SurfaceObject's unique ID. This is unique to all instances of SurfaceObject. */
+    protected static class SurfaceObjectStateKey implements Cacheable {
+        /**
+         * The SurfaceObject's unique ID. This is unique to all instances of SurfaceObject.
+         */
         protected final long uniqueId;
-        /** The SurfaceObject's modified time. */
+        /**
+         * The SurfaceObject's modified time.
+         */
         protected final long modifiedTime;
 
         /**
@@ -791,16 +756,14 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
          * @param uniqueId     the SurfaceObject's unique ID.
          * @param modifiedTime the SurfaceObject's modified time.
          */
-        public SurfaceObjectStateKey(long uniqueId, long modifiedTime)
-        {
+        public SurfaceObjectStateKey(long uniqueId, long modifiedTime) {
             this.uniqueId = uniqueId;
             this.modifiedTime = modifiedTime;
         }
 
         @Override
-        @SuppressWarnings({"SimplifiableIfStatement"})
-        public boolean equals(Object o)
-        {
+        @SuppressWarnings("SimplifiableIfStatement")
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (o == null || this.getClass() != o.getClass())
@@ -811,8 +774,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return 31 * (int) (this.uniqueId ^ (this.uniqueId >>> 32))
                 + (int) (this.modifiedTime ^ (this.modifiedTime >>> 32));
         }
@@ -822,8 +784,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
          *
          * @return the state key's size in bytes.
          */
-        public long getSizeInBytes()
-        {
+        public long getSizeInBytes() {
             return 16; // Return the size of two long integers.
         }
     }
@@ -832,14 +793,14 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     //********************  Cache Entry  ***************************//
     //**************************************************************//
 
-    /** Represents a globe dependent cache entry. */
-    protected static class CacheEntry
-    {
+    /**
+     * Represents a globe dependent cache entry.
+     */
+    protected static class CacheEntry {
         public final Object object;
         protected final Object globeStateKey;
 
-        public CacheEntry(Object object, DrawContext dc)
-        {
+        public CacheEntry(Object object, DrawContext dc) {
             this.object = object;
             this.globeStateKey = dc.getGlobe().getStateKey(dc);
         }

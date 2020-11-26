@@ -24,8 +24,7 @@ import java.io.IOException;
  * @author pabercrombie
  * @version $Id: Exportable.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface Exportable
-{
+public interface Exportable {
     /**
      * Returned by {@link #isExportFormatSupported(String)} if the object does support export to the given format.
      */
@@ -47,9 +46,7 @@ public interface Exportable
      * Does this object support a certain export format?
      *
      * @param mimeType Desired export format.
-     *
      * @return One of {@link #FORMAT_SUPPORTED}, {@link #FORMAT_NOT_SUPPORTED}, or {@link #FORMAT_PARTIALLY_SUPPORTED}.
-     *
      * @see #export(String, Object)
      */
     String isExportFormatSupported(String mimeType);
@@ -64,7 +61,6 @@ public interface Exportable
      *                 All formats should support {@code java.io.OutputStream}. Text based format (for example, XML
      *                 formats) should also support {@code java.io.Writer}. Certain formats may also support other
      *                 object types.
-     *
      * @throws IOException                   if an exception occurs while exporting the data.
      * @throws UnsupportedOperationException if the format is not supported by this object, or if the {@code output}
      *                                       argument is not of a supported type.

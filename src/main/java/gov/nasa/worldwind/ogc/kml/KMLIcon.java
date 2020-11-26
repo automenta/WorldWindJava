@@ -12,15 +12,13 @@ package gov.nasa.worldwind.ogc.kml;
  * @author tag
  * @version $Id: KMLIcon.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLIcon extends KMLLink
-{
+public class KMLIcon extends KMLLink {
     /**
      * Construct an instance.
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLIcon(String namespaceURI)
-    {
+    public KMLIcon(String namespaceURI) {
         super(namespaceURI);
     }
 }

@@ -19,34 +19,27 @@ import java.util.logging.Level;
  * @version $Id: DDSRasterReader.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 
-public class DDSRasterReader extends AbstractDataRasterReader
-{
-    protected static final String[] ddsMimeTypes = new String[]{"image/dds"};
-    protected static final String[] ddsSuffixes = new String[]{"dds"};
+public class DDSRasterReader extends AbstractDataRasterReader {
+    protected static final String[] ddsMimeTypes = new String[] {"image/dds"};
+    protected static final String[] ddsSuffixes = new String[] {"dds"};
 
-    public DDSRasterReader()
-    {
+    public DDSRasterReader() {
         super(ddsMimeTypes, ddsSuffixes);
     }
 
     @Override
-    protected boolean doCanRead(Object source, AVList params)
-    {
-        try
-        {
+    protected boolean doCanRead(Object source, AVList params) {
+        try {
             DDSHeader header = DDSHeader.readFrom(source);
-            if (null != header && header.getWidth() > 0 && header.getHeight() > 0)
-            {
-                if (null != params && !params.hasKey(AVKey.PIXEL_FORMAT))
-                {
+            if (null != header && header.getWidth() > 0 && header.getHeight() > 0) {
+                if (null != params && !params.hasKey(AVKey.PIXEL_FORMAT)) {
                     params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
                 }
 
                 return true;
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = e.getMessage();
             message = (null == message && null != e.getCause()) ? e.getCause().getMessage() : message;
             Logging.logger().log(Level.FINEST, message, e);
@@ -55,10 +48,8 @@ public class DDSRasterReader extends AbstractDataRasterReader
     }
 
     @Override
-    protected DataRaster[] doRead(Object source, AVList params) throws IOException
-    {
-        if (null == params || !params.hasKey(AVKey.SECTOR))
-        {
+    protected DataRaster[] doRead(Object source, AVList params) throws IOException {
+        if (null == params || !params.hasKey(AVKey.SECTOR)) {
             String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -66,45 +57,37 @@ public class DDSRasterReader extends AbstractDataRasterReader
 
         DataRaster raster = null;
 
-        try
-        {
+        try {
             DDSDecompressor decompressor = new DDSDecompressor();
             raster = decompressor.decompress(source, params);
-            if (null != raster)
-            {
+            if (null != raster) {
                 raster.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
             }
         }
-        catch (WWRuntimeException wwe)
-        {
+        catch (WWRuntimeException wwe) {
             throw new IOException(wwe.getMessage());
         }
-        catch (Throwable t)
-        {
+        catch (Throwable t) {
             String message = t.getMessage();
             message = (WWUtil.isEmpty(message) && null != t.getCause()) ? t.getCause().getMessage() : message;
             Logging.logger().log(Level.FINEST, message, t);
             throw new IOException(message);
         }
 
-        return (null != raster) ? new DataRaster[]{raster} : null;
+        return (null != raster) ? new DataRaster[] {raster} : null;
     }
 
     @Override
-    protected void doReadMetadata(Object source, AVList params) throws IOException
-    {
-        try
-        {
+    protected void doReadMetadata(Object source, AVList params) throws IOException {
+        try {
             DDSHeader header = DDSHeader.readFrom(source);
-            if (null != header && null != params)
-            {
+            if (null != header && null != params) {
                 params.setValue(AVKey.WIDTH, header.getWidth());
                 params.setValue(AVKey.HEIGHT, header.getHeight());
                 params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = e.getMessage();
             message = (WWUtil.isEmpty(message) && null != e.getCause()) ? e.getCause().getMessage() : message;
             Logging.logger().log(Level.FINEST, message, e);

@@ -16,36 +16,38 @@ import java.beans.PropertyChangeEvent;
  * @author tag
  * @version $Id: Navigation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Navigation extends AbstractFeatureLayer
-{
-    public static final String POSITION_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.PostionProperty";
-    public static final String ORIENTATION_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.OrientationProperty";
+public class Navigation extends AbstractFeatureLayer {
+    public static final String POSITION_PROPERTY
+        = "gov.nasa.worldwindowx.applications.features.Navegacion.PostionProperty";
+    public static final String ORIENTATION_PROPERTY
+        = "gov.nasa.worldwindowx.applications.features.Navegacion.OrientationProperty";
     public static final String SIZE_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.SizeProperty";
-    public static final String OPACITY_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.OpacityProperty";
+    public static final String OPACITY_PROPERTY
+        = "gov.nasa.worldwindowx.applications.features.Navegacion.OpacityProperty";
 
-    public static final String PAN_CONTROLS_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.PanControlS";
-    public static final String ZOOM_CONTROLS_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.ZoomControlS";
-    public static final String TILT_CONTROLS_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.TiltControlS";
-    public static final String HEADING_CONTROLS_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.HeadingControlS";
+    public static final String PAN_CONTROLS_PROPERTY
+        = "gov.nasa.worldwindowx.applications.features.Navegacion.PanControlS";
+    public static final String ZOOM_CONTROLS_PROPERTY
+        = "gov.nasa.worldwindowx.applications.features.Navegacion.ZoomControlS";
+    public static final String TILT_CONTROLS_PROPERTY
+        = "gov.nasa.worldwindowx.applications.features.Navegacion.TiltControlS";
+    public static final String HEADING_CONTROLS_PROPERTY
+        = "gov.nasa.worldwindowx.applications.features.Navegacion.HeadingControlS";
 
-    public Navigation()
-    {
+    public Navigation() {
         this(null);
     }
 
-    public Navigation(Registry registry)
-    {
+    public Navigation(Registry registry) {
         super("Navigation", Constants.FEATURE_NAVIGATION,
             "gov/nasa/worldwindx/applications/worldwindow/images/navegacion-64x64.png", true, registry);
     }
 
-    public void initialize(Controller controller)
-    {
+    public void initialize(Controller controller) {
         super.initialize(controller);
     }
 
-    protected Layer doAddLayer()
-    {
+    protected Layer doAddLayer() {
         ViewControlsLayer layer = new ViewControlsLayer();
 
         layer.setValue(Constants.SCREEN_LAYER, true);
@@ -63,54 +65,45 @@ public class Navigation extends AbstractFeatureLayer
         return layer;
     }
 
-    private ViewControlsLayer getLayer()
-    {
+    private ViewControlsLayer getLayer() {
         return (ViewControlsLayer) this.layer;
     }
 
     @Override
-    public void doPropertyChange(PropertyChangeEvent event)
-    {
-        switch (event.getPropertyName())
-        {
+    public void doPropertyChange(PropertyChangeEvent event) {
+        switch (event.getPropertyName()) {
             case POSITION_PROPERTY:
-                if (event.getNewValue() != null && event.getNewValue() instanceof String)
-                {
+                if (event.getNewValue() != null && event.getNewValue() instanceof String) {
                     this.getLayer().setPosition((String) event.getNewValue());
                     this.controller.redraw();
                 }
                 break;
             case ORIENTATION_PROPERTY:
-                if (event.getNewValue() != null && event.getNewValue() instanceof String)
-                {
+                if (event.getNewValue() != null && event.getNewValue() instanceof String) {
                     this.getLayer().setLayout((String) event.getNewValue());
                     this.controller.redraw();
                 }
                 break;
             case PAN_CONTROLS_PROPERTY:
-                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
-                {
+                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean) {
                     this.getLayer().setShowPanControls((Boolean) event.getNewValue());
                     this.controller.redraw();
                 }
                 break;
             case ZOOM_CONTROLS_PROPERTY:
-                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
-                {
+                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean) {
                     this.getLayer().setShowZoomControls((Boolean) event.getNewValue());
                     this.controller.redraw();
                 }
                 break;
             case HEADING_CONTROLS_PROPERTY:
-                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
-                {
+                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean) {
                     this.getLayer().setShowHeadingControls((Boolean) event.getNewValue());
                     this.controller.redraw();
                 }
                 break;
             case TILT_CONTROLS_PROPERTY:
-                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean)
-                {
+                if (event.getNewValue() != null && event.getNewValue() instanceof Boolean) {
                     this.getLayer().setShowPitchControls((Boolean) event.getNewValue());
                     this.controller.redraw();
                 }
@@ -118,43 +111,35 @@ public class Navigation extends AbstractFeatureLayer
         }
     }
 
-    public double getSize()
-    {
+    public double getSize() {
         return this.layer.getScale();
     }
 
-    public double getOpacity()
-    {
+    public double getOpacity() {
         return this.layer.getOpacity();
     }
 
-    public String getOrientation()
-    {
+    public String getOrientation() {
         return this.getLayer().getLayout();
     }
 
-    public String getPosition()
-    {
+    public String getPosition() {
         return this.getLayer().getPosition();
     }
 
-    public boolean isShowPan()
-    {
+    public boolean isShowPan() {
         return this.getLayer().isShowPanControls();
     }
 
-    public boolean isShowZoom()
-    {
+    public boolean isShowZoom() {
         return this.getLayer().isShowZoomControls();
     }
 
-    public boolean isShowTilt()
-    {
+    public boolean isShowTilt() {
         return this.getLayer().isShowPitchControls();
     }
 
-    public boolean isShowHeading()
-    {
+    public boolean isShowHeading() {
         return this.getLayer().isShowHeadingControls();
     }
 }

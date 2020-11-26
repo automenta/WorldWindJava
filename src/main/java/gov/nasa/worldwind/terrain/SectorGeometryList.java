@@ -21,16 +21,18 @@ import java.util.*;
  * @author tag
  * @version $Id: SectorGeometryList.java 1537 2013-08-07 19:58:01Z dcollins $
  */
-public class SectorGeometryList extends ArrayList<SectorGeometry>
-{
-    /** The spanning sector of all sector geometries contained in this list. */
-    protected Sector sector;
+public class SectorGeometryList extends ArrayList<SectorGeometry> {
     protected final PickSupport pickSupport = new PickSupport();
     protected final HashMap<SectorGeometry, ArrayList<Point>> pickSectors = new HashMap<>();
+    /**
+     * The spanning sector of all sector geometries contained in this list.
+     */
+    protected Sector sector;
 
-    /** Constructs an empty sector geometry list. */
-    public SectorGeometryList()
-    {
+    /**
+     * Constructs an empty sector geometry list.
+     */
+    public SectorGeometryList() {
     }
 
     /**
@@ -38,8 +40,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
      *
      * @param list the secter geometries to place in the list.
      */
-    public SectorGeometryList(SectorGeometryList list)
-    {
+    public SectorGeometryList(Collection<SectorGeometry> list) {
         super(list);
     }
 
@@ -48,8 +49,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
      *
      * @return a sector that is the union of all sectors of entries in this list.
      */
-    public Sector getSector()
-    {
+    public Sector getSector() {
         return sector;
     }
 
@@ -58,21 +58,18 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
      *
      * @param sector the sector spanned by this list.
      */
-    public void setSector(Sector sector)
-    {
+    public void setSector(Sector sector) {
         this.sector = sector;
     }
 
     /**
      * Indicates that this list's sectors are about to be rendered. When rendering is complete, the {@link
-     * #endRendering(gov.nasa.worldwind.render.DrawContext)} must be called.
+     * #endRendering(DrawContext)} must be called.
      *
      * @param dc the  current draw context.
      */
-    public void beginRendering(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void beginRendering(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -84,14 +81,12 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
     }
 
     /**
-     * Restores state established by {@link #beginRendering(gov.nasa.worldwind.render.DrawContext)}.
+     * Restores state established by {@link #beginRendering(DrawContext)}.
      *
      * @param dc the current draw context.
      */
-    public void endRendering(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void endRendering(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -104,16 +99,14 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
     /**
      * Detects the locations of the sector geometries in this list that intersect a specified screen point.
      * <p>
-     * Note: Prior to calling this method, {@link #beginRendering(gov.nasa.worldwind.render.DrawContext)} must be
+     * Note: Prior to calling this method, {@link #beginRendering(DrawContext)} must be
      * called.
      *
      * @param dc        the current draw context.
      * @param pickPoint the screen point to test.
      */
-    public void pick(DrawContext dc, java.awt.Point pickPoint)
-    {
-        if (dc == null)
-        {
+    public void pick(DrawContext dc, Point pickPoint) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -128,12 +121,10 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glShadeModel(GL2.GL_FLAT);
 
-        try
-        {
+        try {
             // render each sector in unique color
             this.beginRendering(dc);
-            for (SectorGeometry sector : this)
-            {
+            for (SectorGeometry sector : this) {
                 Color color = dc.getUniquePickColor();
                 gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
                 sector.render(dc);
@@ -149,8 +140,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
             SectorGeometry sector = (SectorGeometry) pickedSector.getObject();
             sector.pick(dc, pickPoint);
         }
-        finally
-        {
+        finally {
             this.endSectorGeometryPicking(dc);
             this.endRendering(dc);
             gl.glShadeModel(GL2.GL_SMOOTH); // restore to default explicitly to avoid more expensive pushAttrib
@@ -164,18 +154,15 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
      * Detects the locations of the sector geometries in this list that intersect any of the points in a specified list
      * of screen points.
      * <p>
-     * Note: Prior to calling this method, {@link #beginRendering(gov.nasa.worldwind.render.DrawContext)} must be
+     * Note: Prior to calling this method, {@link #beginRendering(DrawContext)} must be
      * called.
      *
      * @param dc         the current draw context.
      * @param pickPoints the points to test.
-     *
      * @return an array of picked objects that intersect one or more of the specified screen points.
      */
-    public List<PickedObject> pick(DrawContext dc, List<Point> pickPoints)
-    {
-        if (dc == null)
-        {
+    public List<PickedObject> pick(DrawContext dc, Collection<Point> pickPoints) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -190,12 +177,10 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glShadeModel(GL2.GL_FLAT);
 
-        try
-        {
+        try {
             // render each sector in a unique color
             this.beginRendering(dc);
-            for (SectorGeometry sector : this)
-            {
+            for (SectorGeometry sector : this) {
                 Color color = dc.getUniquePickColor();
                 gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
                 sector.render(dc);
@@ -206,21 +191,18 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
             // Determine the sectors underneath the pick points. Assemble a pick-points per sector map.
             // Several pick points might intersect the same sector.
             this.pickSectors.clear();
-            for (Point pickPoint : pickPoints)
-            {
+            for (Point pickPoint : pickPoints) {
                 PickedObject pickedSector = this.pickSupport.getTopObject(dc, pickPoint);
                 if (pickedSector == null || pickedSector.getObject() == null)
                     continue;
 
                 SectorGeometry sector = (SectorGeometry) pickedSector.getObject();
                 ArrayList<Point> sectorPickPoints;
-                if (!this.pickSectors.containsKey(sector))
-                {
+                if (!this.pickSectors.containsKey(sector)) {
                     sectorPickPoints = new ArrayList<>();
                     this.pickSectors.put(sector, sectorPickPoints);
                 }
-                else
-                {
+                else {
                     sectorPickPoints = this.pickSectors.get(sector);
                 }
                 sectorPickPoints.add(pickPoint);
@@ -231,16 +213,14 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
 
             // Now have each sector determine the pick position for each intersecting pick point.
             this.beginSectorGeometryPicking(dc);
-            ArrayList<PickedObject> pickedObjects = new ArrayList<>();
-            for (Map.Entry<SectorGeometry, ArrayList<Point>> sector : this.pickSectors.entrySet())
-            {
+            List<PickedObject> pickedObjects = new ArrayList<>();
+            for (Map.Entry<SectorGeometry, ArrayList<Point>> sector : this.pickSectors.entrySet()) {
                 ArrayList<Point> sectorPickPoints = sector.getValue();
                 PickedObject[] pos = sector.getKey().pick(dc, sectorPickPoints);
                 if (pos == null)
                     continue;
 
-                for (PickedObject po : pos)
-                {
+                for (PickedObject po : pos) {
                     if (po != null)
                         pickedObjects.add(po);
                 }
@@ -248,8 +228,7 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
 
             return pickedObjects;
         }
-        finally
-        {
+        finally {
             this.endSectorGeometryPicking(dc);
             this.endRendering(dc);
             gl.glShadeModel(GL2.GL_SMOOTH); // restore to default explicitly to avoid more expensive pushAttrib
@@ -262,12 +241,11 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
     /**
      * Indicates that sector geometry picking is about to be performed. Configures the state necessary to correctly draw
      * sector geometry in a second pass using unique per-triangle colors. When picking is complete, {@link
-     * #endSectorGeometryPicking(gov.nasa.worldwind.render.DrawContext)} must be called.
+     * #endSectorGeometryPicking(DrawContext)} must be called.
      *
      * @param dc the current draw context.
      */
-    protected void beginSectorGeometryPicking(DrawContext dc)
-    {
+    protected void beginSectorGeometryPicking(DrawContext dc) {
         GL gl = dc.getGL();
 
         gl.glDepthFunc(GL.GL_LEQUAL);
@@ -276,30 +254,27 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
         // color geometry's depth values toward the eye and disable depth buffer writes. This works around an issue
         // where the VMware driver breaks OpenGL's invariance requirement when per-vertex colors are enabled.
         // See WWJ-425.
-        if (dc.getGLRuntimeCapabilities().isVMwareSVGA3D())
-        {
+        if (dc.getGLRuntimeCapabilities().isVMwareSVGA3D()) {
             gl.glDepthMask(false);
             gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-            gl.glPolygonOffset(-1f, -1f);
+            gl.glPolygonOffset(-1.0f, -1.0f);
         }
     }
 
     /**
-     * Restores state established by {@link #beginSectorGeometryPicking(gov.nasa.worldwind.render.DrawContext)}.
+     * Restores state established by {@link #beginSectorGeometryPicking(DrawContext)}.
      *
      * @param dc the current draw context.
      */
-    protected void endSectorGeometryPicking(DrawContext dc)
-    {
+    protected void endSectorGeometryPicking(DrawContext dc) {
         GL gl = dc.getGL();
 
         gl.glDepthFunc(GL.GL_LESS); // restore to default explicitly to avoid more expensive pushAttrib
 
-        if (dc.getGLRuntimeCapabilities().isVMwareSVGA3D())
-        {
+        if (dc.getGLRuntimeCapabilities().isVMwareSVGA3D()) {
             gl.glDepthMask(true);
             gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
-            gl.glPolygonOffset(0f, 0f);
+            gl.glPolygonOffset(0.0f, 0.0f);
         }
     }
 
@@ -308,12 +283,10 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
      *
      * @param position the position to compute the Cartesian point for. The altitude element of the position is
      *                 considered to be distance above the terrain at the position's latitude and longitude.
-     *
      * @return the Cartesian point, in meters, relative to an origin of (0, 0, 0). Will be null if there is no sector
-     *         geometry in this list for the specifed latitude and longitude.
+     * geometry in this list for the specifed latitude and longitude.
      */
-    public Vec4 getSurfacePoint(Position position)
-    {
+    public Vec4 getSurfacePoint(Position position) {
         return this.getSurfacePoint(position.getLatitude(), position.getLongitude(), position.getElevation());
     }
 
@@ -321,13 +294,11 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
      * Computes a Cartesian point at a specified location on the terrain.
      *
      * @param latLon the location of the point to compute.
-     *
      * @return the Cartesian point, in meters, relative to an origin of (0, 0, 0). Will be null if there is no sector
-     *         geometry in this list for the specifed latitude and longitude.
+     * geometry in this list for the specifed latitude and longitude.
      */
-    public Vec4 getSurfacePoint(LatLon latLon)
-    {
-        return this.getSurfacePoint(latLon.getLatitude(), latLon.getLongitude(), 0d);
+    public Vec4 getSurfacePoint(LatLon latLon) {
+        return this.getSurfacePoint(latLon.getLatitude(), latLon.getLongitude(), 0.0d);
     }
 
     /**
@@ -335,13 +306,11 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
      *
      * @param latitude  the latitude of the point to compute.
      * @param longitude the longitude of the point to compute.
-     *
      * @return the Cartesian point, in meters, relative to an origin of (0, 0, 0). Will be null if there is no sector
-     *         geometry in this list for the specifed latitude and longitude.
+     * geometry in this list for the specifed latitude and longitude.
      */
-    public Vec4 getSurfacePoint(Angle latitude, Angle longitude)
-    {
-        return this.getSurfacePoint(latitude, longitude, 0d);
+    public Vec4 getSurfacePoint(Angle latitude, Angle longitude) {
+        return this.getSurfacePoint(latitude, longitude, 0.0d);
     }
 
     /**
@@ -350,23 +319,18 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
      * @param latitude     the latitude of the point to compute.
      * @param longitude    the longitude of the point to compute.
      * @param metersOffset the distance above the terrain of the point to compute.
-     *
      * @return the Cartesian point, in meters, relative to an origin of (0, 0, 0). Will be null if there is no sector
-     *         geometry in this list for the specifed latitude and longitude.
+     * geometry in this list for the specifed latitude and longitude.
      */
-    public Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset)
-    {
-        if (latitude == null || longitude == null)
-        {
+    public Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset) {
+        if (latitude == null || longitude == null) {
             String msg = Logging.getMessage("nullValue.LatLonIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        for (SectorGeometry sg : this)
-        {
-            if (sg.getSector().contains(latitude, longitude))
-            {
+        for (SectorGeometry sg : this) {
+            if (sg.getSector().contains(latitude, longitude)) {
                 Vec4 point = sg.getSurfacePoint(latitude, longitude, metersOffset);
                 if (point != null)
                     return point;
@@ -380,25 +344,21 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
      * Determines if and where a ray intersects the geometry.
      *
      * @param line the <code>Line</code> for which an intersection is to be found.
-     *
      * @return the &lt;Vec4&gt; point closest to the ray origin where an intersection has been found or null if no
-     *         intersection was found.
+     * intersection was found.
      */
-    public Intersection[] intersect(Line line)
-    {
-        if (line == null)
-        {
+    public Intersection[] intersect(Line line) {
+        if (line == null) {
             String msg = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        ArrayList<SectorGeometry> sglist = new ArrayList<>(this);
+        Iterable<SectorGeometry> sglist = new ArrayList<>(this);
 
         Intersection[] hits;
-        ArrayList<Intersection> list = new ArrayList<>();
-        for (SectorGeometry sg : sglist)
-        {
+        List<Intersection> list = new ArrayList<>();
+        for (SectorGeometry sg : sglist) {
             if (sg.getExtent().intersects(line))
                 if ((hits = sg.intersect(line)) != null)
                     list.addAll(Arrays.asList(hits));
@@ -440,24 +400,20 @@ public class SectorGeometryList extends ArrayList<SectorGeometry>
      *
      * @param elevation the elevation for which intersections are to be found.
      * @param sector    the sector inside which intersections are to be found.
-     *
      * @return a list of <code>Intersection</code> pairs/segments describing a contour line at the given elevation.
      */
-    public Intersection[] intersect(double elevation, Sector sector)
-    {
-        if (sector == null)
-        {
+    public Intersection[] intersect(double elevation, Sector sector) {
+        if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        ArrayList<SectorGeometry> sglist = new ArrayList<>(this);
+        Iterable<SectorGeometry> sglist = new ArrayList<>(this);
 
         Intersection[] hits;
-        ArrayList<Intersection> list = new ArrayList<>();
-        for (SectorGeometry sg : sglist)
-        {
+        List<Intersection> list = new ArrayList<>();
+        for (SectorGeometry sg : sglist) {
             if (sector.intersects(sg.getSector()))
                 if ((hits = sg.intersect(elevation)) != null)
                     list.addAll(Arrays.asList(hits));

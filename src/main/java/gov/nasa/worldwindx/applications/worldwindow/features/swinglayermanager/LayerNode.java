@@ -13,8 +13,7 @@ import gov.nasa.worldwindx.applications.worldwindow.core.WMSLayerInfo;
  * @author tag
  * @version $Id: LayerNode.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface LayerNode
-{
+public interface LayerNode {
     Object getID();
 
     String getTitle();
@@ -35,9 +34,9 @@ public interface LayerNode
 
     void setToolTipText(String toolTipText);
 
-    void setEnableSelectionBox(boolean tf);
-
     boolean isEnableSelectionBox();
+
+    void setEnableSelectionBox(boolean tf);
 
     void setAllowsChildren(boolean tf);
 }

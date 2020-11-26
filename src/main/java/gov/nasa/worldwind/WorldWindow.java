@@ -22,8 +22,14 @@ import java.util.*;
  * @author Tom Gaskins
  * @version $Id: WorldWindow.java 2047 2014-06-06 22:48:33Z tgaskins $
  */
-public interface WorldWindow extends AVList
-{
+public interface WorldWindow extends AVList {
+    /**
+     * Returns the window's current model.
+     *
+     * @return the window's current model.
+     */
+    Model getModel();
+
     /**
      * Sets the model to display in this window. If <code>null</code> is specified for the model, the current model, if
      * any, is disassociated with the window.
@@ -33,11 +39,11 @@ public interface WorldWindow extends AVList
     void setModel(Model model);
 
     /**
-     * Returns the window's current model.
+     * Returns this window's current view.
      *
-     * @return the window's current model.
+     * @return the window's current view.
      */
-    Model getModel();
+    View getView();
 
     /**
      * Sets the view to use when displaying this window's model. If <code>null</code> is specified for the view, the
@@ -46,13 +52,6 @@ public interface WorldWindow extends AVList
      * @param view the view to use to display this window's model. May be null.
      */
     void setView(View view);
-
-    /**
-     * Returns this window's current view.
-     *
-     * @return the window's current view.
-     */
-    View getView();
 
     /**
      * Sets the model to display in this window and the view used to display it. If <code>null</code> is specified for
@@ -68,7 +67,7 @@ public interface WorldWindow extends AVList
      * Returns the scene controller associated with this instance.
      *
      * @return The scene controller associated with the instance, or <code>null</code> if no scene controller is
-     *         associated.
+     * associated.
      */
     SceneController getSceneController();
 
@@ -77,10 +76,9 @@ public interface WorldWindow extends AVList
      * controller with a {@link View}, {@link Model} and any desired per-frame statistics keys.
      *
      * @param sceneController the new scene controller.
-     *
      * @see SceneController#setView(View)
      * @see SceneController#setModel(Model)
-     * @see SceneController#setPerFrameStatisticsKeys(java.util.Set)
+     * @see SceneController#setPerFrameStatisticsKeys(Set)
      */
     void setSceneController(SceneController sceneController);
 
@@ -152,8 +150,8 @@ public interface WorldWindow extends AVList
     void redraw();
 
     /**
-     * Immediately repaints the WorldWindow without waiting for a window system repaint event. This is not the
-     * preferred way to cause a repaint, but is provided for the rare cases that require it.
+     * Immediately repaints the WorldWindow without waiting for a window system repaint event. This is not the preferred
+     * way to cause a repaint, but is provided for the rare cases that require it.
      */
     void redrawNow();
 
@@ -175,9 +173,9 @@ public interface WorldWindow extends AVList
     PickedObjectList getObjectsAtCurrentPosition();
 
     /**
-     * Returns the WorldWind objects intersecting the current selection box. The list of objects in the selection box
-     * is determined each time the WorldWindow  is repainted. This method returns the list of objects determined when
-     * the most recent repaint was performed.
+     * Returns the WorldWind objects intersecting the current selection box. The list of objects in the selection box is
+     * determined each time the WorldWindow  is repainted. This method returns the list of objects determined when the
+     * most recent repaint was performed.
      *
      * @return The list of objects intersecting the selection box, or <code>null</code> if no objects are in the box.
      */
@@ -211,8 +209,7 @@ public interface WorldWindow extends AVList
     Collection<PerformanceStatistic> getPerFrameStatistics(); // TODO: move the constants from AVKey to this interface.
 
     /**
-     * Causes resources used by the WorldWindow to be freed. The WorldWindow cannot be used once this method is
-     * called.
+     * Causes resources used by the WorldWindow to be freed. The WorldWindow cannot be used once this method is called.
      */
     void shutdown();
 
@@ -249,10 +246,11 @@ public interface WorldWindow extends AVList
      * Specifies whether to reinitialize the GPU resource cache when this window is reinitialized. A value of
      * <code>true</code> indicates that the GPU resource cache this window is using should be cleared when its init()
      * method is called, typically when re-parented. Set this to <code>false</code> when this window is sharing context
-     * with other windows and is likely to be re-parented. It prevents the flashing caused by clearing and
-     * re-populating the GPU resource cache during re-parenting. The default value is <code>true</code>.
+     * with other windows and is likely to be re-parented. It prevents the flashing caused by clearing and re-populating
+     * the GPU resource cache during re-parenting. The default value is <code>true</code>.
      *
-     * @param enableGpuCacheReinitialization <code>true</code> to enable reinitialization, otherwise <code>false</code>.
+     * @param enableGpuCacheReinitialization <code>true</code> to enable reinitialization, otherwise
+     *                                       <code>false</code>.
      */
     void setEnableGpuCacheReinitialization(boolean enableGpuCacheReinitialization);
 }

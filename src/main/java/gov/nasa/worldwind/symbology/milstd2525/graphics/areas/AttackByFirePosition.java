@@ -23,11 +23,14 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: AttackByFirePosition.java 555 2012-04-25 18:59:29Z pabercrombie $
  */
-public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
-{
-    /** Default length of the arrowhead, as a fraction of the total line length. */
+public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic {
+    /**
+     * Default length of the arrowhead, as a fraction of the total line length.
+     */
     public final static double DEFAULT_ARROWHEAD_LENGTH = 0.2;
-    /** Default angle of the arrowhead. */
+    /**
+     * Default angle of the arrowhead.
+     */
     public final static Angle DEFAULT_ARROWHEAD_ANGLE = Angle.fromDegrees(70.0);
     /**
      * Default length of the legs of the graphic's base, as a fraction of the distance between the control points the
@@ -35,9 +38,13 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      */
     public final static double DEFAULT_LEG_LENGTH = 0.25;
 
-    /** Length of the arrowhead from base to tip, as a fraction of the total line length. */
+    /**
+     * Length of the arrowhead from base to tip, as a fraction of the total line length.
+     */
     protected Angle arrowAngle = DEFAULT_ARROWHEAD_ANGLE;
-    /** Angle of the arrowhead. */
+    /**
+     * Angle of the arrowhead.
+     */
     protected double arrowLength = DEFAULT_ARROWHEAD_LENGTH;
     /**
      * Length of the legs on the graphic's base, as a fraction of the distance between the control points that define
@@ -45,34 +52,40 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      */
     protected double legLength = DEFAULT_LEG_LENGTH;
 
-    /** First control point. */
+    /**
+     * First control point.
+     */
     protected Position position1;
-    /** Second control point. */
+    /**
+     * Second control point.
+     */
     protected Position position2;
-    /** Third control point. */
+    /**
+     * Third control point.
+     */
     protected Position position3;
 
-    /** Path used to render the graphic. */
-    protected Path[] paths;
-
     /**
-     * Indicates the graphics supported by this class.
-     *
-     * @return List of masked SIDC strings that identify graphics that this class supports.
+     * Path used to render the graphic.
      */
-    public static List<String> getSupportedGraphics()
-    {
-        return Collections.singletonList(TacGrpSidc.C2GM_OFF_ARS_AFP);
-    }
+    protected Path[] paths;
 
     /**
      * Create a new arrow graphic.
      *
      * @param sidc Symbol code the identifies the graphic.
      */
-    public AttackByFirePosition(String sidc)
-    {
+    public AttackByFirePosition(String sidc) {
         super(sidc);
+    }
+
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics() {
+        return Collections.singletonList(TacGrpSidc.C2GM_OFF_ARS_AFP);
     }
 
     /**
@@ -80,8 +93,7 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      *
      * @return Angle of the arrowhead in the graphic.
      */
-    public Angle getArrowAngle()
-    {
+    public Angle getArrowAngle() {
         return this.arrowAngle;
     }
 
@@ -90,17 +102,14 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      *
      * @param arrowAngle The angle of the arrowhead. Must be greater than zero degrees and less than 90 degrees.
      */
-    public void setArrowAngle(Angle arrowAngle)
-    {
-        if (arrowAngle == null)
-        {
+    public void setArrowAngle(Angle arrowAngle) {
+        if (arrowAngle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (arrowAngle.degrees <= 0 || arrowAngle.degrees >= 90)
-        {
+        if (arrowAngle.degrees <= 0 || arrowAngle.degrees >= 90) {
             String msg = Logging.getMessage("generic.AngleOutOfRange");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -114,8 +123,7 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      *
      * @return The length of the arrowhead as a fraction of the total line length.
      */
-    public double getArrowLength()
-    {
+    public double getArrowLength() {
         return this.arrowLength;
     }
 
@@ -125,10 +133,8 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      * @param arrowLength Length of the arrowhead as a fraction of the total line length. If the arrowhead length is
      *                    0.25, then the arrowhead length will be one quarter of the total line length.
      */
-    public void setArrowLength(double arrowLength)
-    {
-        if (arrowLength < 0)
-        {
+    public void setArrowLength(double arrowLength) {
+        if (arrowLength < 0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -141,10 +147,9 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      * Indicates the length of legs of the graphic's base.
      *
      * @return The length of the legs of the base, as a fraction of the distance between the control points that define
-     *         the base.
+     * the base.
      */
-    public double getLegLength()
-    {
+    public double getLegLength() {
         return this.arrowLength;
     }
 
@@ -154,10 +159,8 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      * @param legLength Length of the legs of the graphic's base, as a fraction of the distance between the control
      *                  points that define the base.
      */
-    public void setLegLength(double legLength)
-    {
-        if (legLength < 0)
-        {
+    public void setLegLength(double legLength) {
+        if (legLength < 0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -168,27 +171,30 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
 
     /**
      * {@inheritDoc}
+     */
+    public Iterable<? extends Position> getPositions() {
+        return Arrays.asList(this.position1, this.position2, this.position3);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @param positions Control points that orient the graphic. Must provide at least three points.
      */
-    public void setPositions(Iterable<? extends Position> positions)
-    {
-        if (positions == null)
-        {
+    public void setPositions(Iterable<? extends Position> positions) {
+        if (positions == null) {
             String message = Logging.getMessage("nullValue.PositionsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             Iterator<? extends Position> iterator = positions.iterator();
             this.position1 = iterator.next();
             this.position2 = iterator.next();
             this.position3 = iterator.next();
         }
-        catch (NoSuchElementException e)
-        {
+        catch (NoSuchElementException e) {
             String message = Logging.getMessage("generic.InsufficientPositions");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -197,40 +203,34 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
         this.paths = null; // Need to recompute path for the new control points
     }
 
-    /** {@inheritDoc} */
-    public Iterable<? extends Position> getPositions()
-    {
-        return Arrays.asList(this.position1, this.position2, this.position3);
-    }
-
-    /** {@inheritDoc} */
-    public Position getReferencePosition()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Position getReferencePosition() {
         return this.position1;
     }
 
-    /** {@inheritDoc} */
-    protected void doRenderGraphic(DrawContext dc)
-    {
-        if (this.paths == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    protected void doRenderGraphic(DrawContext dc) {
+        if (this.paths == null) {
             this.createShapes(dc);
         }
 
-        for (Path path : this.paths)
-        {
+        for (Path path : this.paths) {
             path.render(dc);
         }
     }
 
-    /** {@inheritDoc} */
-    protected void applyDelegateOwner(Object owner)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    protected void applyDelegateOwner(Object owner) {
         if (this.paths == null)
             return;
 
-        for (Path path : this.paths)
-        {
+        for (Path path : this.paths) {
             path.setDelegateOwner(owner);
         }
     }
@@ -240,8 +240,7 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      *
      * @param dc Current draw context.
      */
-    protected void createShapes(DrawContext dc)
-    {
+    protected void createShapes(DrawContext dc) {
         this.paths = new Path[3];
 
         Position baseMidpoint = new Position(LatLon.interpolate(0.5, this.position2, this.position3), 0);
@@ -265,12 +264,10 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      * @param position2      The second control point that defines the graphic base.
      * @param orientationPos A point on the arrow head side of the graphic. The legs of the base will point away from
      *                       this position.
-     *
      * @return Positions that define the graphic's base.
      */
     protected List<Position> computeBasePositions(DrawContext dc, Position position1, Position position2,
-        Position orientationPos)
-    {
+        Position orientationPos) {
         Globe globe = dc.getGlobe();
         //   A \
         //      \
@@ -325,11 +322,9 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      * @param dc   Current draw context.
      * @param base Position of the arrow's starting point.
      * @param tip  Position of the arrow head tip.
-     *
      * @return Positions that define the arrowhead.
      */
-    protected List<Position> computeArrowheadPositions(DrawContext dc, Position base, Position tip)
-    {
+    protected List<Position> computeArrowheadPositions(DrawContext dc, Position base, Position tip) {
         Globe globe = dc.getGlobe();
         //                  _
         //             A\    | 1/2 width
@@ -371,11 +366,9 @@ public class AttackByFirePosition extends AbstractMilStd2525TacticalGraphic
      * Create and configure the Path used to render this graphic.
      *
      * @param positions Positions that define the path.
-     *
      * @return New path configured with defaults appropriate for this type of graphic.
      */
-    protected Path createPath(List<Position> positions)
-    {
+    protected Path createPath(List<Position> positions) {
         Path path = new Path(positions);
         path.setSurfacePath(true);
         path.setPathType(AVKey.GREAT_CIRCLE);

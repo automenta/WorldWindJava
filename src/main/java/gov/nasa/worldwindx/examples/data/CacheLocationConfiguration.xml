@@ -12,13 +12,15 @@
         <!-- The read locations are searched, in the given order, when WorldWind needs a data or image file. -->
         <!-- The write location selected from the writeLocations list is searched before these locations. -->
         <location property="gov.nasa.worldwind.platform.alluser.store" wwDir="WorldWindData"/>
-        <location property="gov.nasa.worldwind.platform.user.store"    wwDir="WorldWindData"/>
-        <location property="user.dir"  wwDir="WorldWindData"/>
+        <location property="gov.nasa.worldwind.platform.user.store" wwDir="WorldWindData"/>
+        <location property="user.dir" wwDir="WorldWindData"/>
         <location property="user.home" wwDir="WorldWindData"/>
         <!-- The standard install locations are searched after the standard read locations. -->
-        <location property="gov.nasa.worldwind.platform.alluser.store" wwDir="WorldWindInstalled" isInstall="true" isMarkWhenUsed="true"/>
-        <location property="gov.nasa.worldwind.platform.user.store"    wwDir="WorldWindInstalled" isInstall="true" isMarkWhenUsed="true"/>
-        <location property="user.dir"  wwDir="WorldWindInstalled" isInstall="true" isMarkWhenUsed="true"/>
+        <location property="gov.nasa.worldwind.platform.alluser.store" wwDir="WorldWindInstalled" isInstall="true"
+                  isMarkWhenUsed="true"/>
+        <location property="gov.nasa.worldwind.platform.user.store" wwDir="WorldWindInstalled" isInstall="true"
+                  isMarkWhenUsed="true"/>
+        <location property="user.dir" wwDir="WorldWindInstalled" isInstall="true" isMarkWhenUsed="true"/>
         <location property="user.home" wwDir="WorldWindInstalled" isInstall="true" isMarkWhenUsed="true"/>
     </readLocations>
     <writeLocations>

@@ -12,25 +12,15 @@ public class AltitudeBound {
     public AltitudeBound(AVList attrs) {
         attrs.getEntries().forEach((e) -> {
             switch (e.getKey()) {
-                case "altitude_value":
-                    this.altitude_value = (double) e.getValue();
-                    break;
-                case "vertical_reference":
-                    this.vertical_reference=e.getValue().toString();
-                    break;
-                case "units_of_measure":
-                    this.units_of_measure=e.getValue().toString();
-                    break;
-                case "source":
-                    this.source=e.getValue().toString();
-                    break;
-                default:
-                    System.out.println("Unknown attribute.");
-                    break;
+                case "altitude_value" -> this.altitude_value = (double) e.getValue();
+                case "vertical_reference" -> this.vertical_reference = e.getValue().toString();
+                case "units_of_measure" -> this.units_of_measure = e.getValue().toString();
+                case "source" -> this.source = e.getValue().toString();
+                default -> System.out.println("Unknown attribute.");
             }
         });
     }
-    
+
     public double getAltitudeValue() {
         return altitude_value;
     }

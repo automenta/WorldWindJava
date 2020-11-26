@@ -28,8 +28,6 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
 
     public static final String TERRAIN_PROFILE_OPEN = "TerrainProfilePanel.Open";
     public static final String TERRAIN_PROFILE_CHANGE = "TerrainProfilePanel.Change";
-
-    private final TerrainProfileController controller;
     private static final String GRAPH_SIZE_SMALL_TEXT = "Small Graph";
     private static final String GRAPH_SIZE_MEDIUM_TEXT = "Medium Graph";
     private static final String GRAPH_SIZE_LARGE_TEXT = "Large Graph";
@@ -38,6 +36,29 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
     //private static final String FOLLOW_EYE_TEXT    = "Profile Under Eye";
     private static final String FOLLOW_OBJECT_TEXT = "Profile Under Aircraft";
     private static final String FOLLOW_NONE_TEXT = "No Profile";
+    private final TerrainProfileController controller;
+    private JPanel panel1;
+    private JPanel panel2;
+    private JPanel panel6;
+    private JPanel panel5;
+    private JComboBox sizeComboBox;
+    private JPanel panel7;
+    private JComboBox followComboBox;
+    private JPanel panel3;
+    private JCheckBox proportionalCheckBox;
+    private JCheckBox showEyeCheckBox;
+    private JCheckBox zeroBaseCheckBox;
+    private JPanel panel4;
+    private JSpinner profileWidthSpinner;
+    private JLabel profileWidthLabel;
+    private JPanel panel8;
+    private JPanel panel4b;
+    private JSpinner profileLengthSpinner;
+    private JLabel profileLengthLabel;
+    private JPanel panel4c;
+    private JCheckBox profilesSameSize;
+    private JPanel panel4d;
+    private JCheckBox profileFollowPath;
 
     public TerrainProfilePanel() {
         initComponents();
@@ -60,17 +81,17 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
         this.controller.setShowEyePosition(this.showEyeCheckBox.isSelected());
         this.controller.setZeroBased(this.zeroBaseCheckBox.isSelected());
         this.controller.setProfileWidthFactor(
-                Double.parseDouble(((String) this.profileWidthSpinner.getValue()).replace("x", "")));
+            Double.parseDouble(((String) this.profileWidthSpinner.getValue()).replace("x", "")));
         this.controller.setProfileLengthFactor(
-                Double.parseDouble(((String) this.profileLengthSpinner.getValue()).replace("x", "")));
+            Double.parseDouble(((String) this.profileLengthSpinner.getValue()).replace("x", "")));
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     private void sizeComboBoxActionPerformed(ActionEvent e) {
         this.controller.setProfileSize((String) this.sizeComboBox.getSelectedItem());
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     private void followComboBoxActionPerformed(ActionEvent e) {
         this.setFollow();
     }
@@ -83,7 +104,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
         this.followComboBox.getModel().setSelectedItem(FOLLOW_OBJECT_TEXT);
     }
 
-    @SuppressWarnings({"StringEquality"})
+    @SuppressWarnings("StringEquality")
     private void setFollow() {
         this.controller.setFollow((String) this.followComboBox.getSelectedItem());
         String follow = this.controller.getFollow();
@@ -98,7 +119,8 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
             if (this.profileLengthSpinner.isEnabled()) {
                 this.profileLengthSpinner.setEnabled(false);
             }
-        } else if (follow == TerrainProfileLayer.FOLLOW_CURSOR) {
+        }
+        else if (follow == TerrainProfileLayer.FOLLOW_CURSOR) {
             if (this.showEyeCheckBox.isEnabled()) {
                 this.showEyeCheckBox.setEnabled(false);
             }
@@ -127,7 +149,8 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
             if (!this.profileLengthSpinner.isEnabled()) {
                 this.profileLengthSpinner.setEnabled(true);
             }
-        } else if (follow == TerrainProfileLayer.FOLLOW_NONE) {
+        }
+        else if (follow == TerrainProfileLayer.FOLLOW_NONE) {
             if (this.showEyeCheckBox.isEnabled()) {
                 this.showEyeCheckBox.setEnabled(false);
             }
@@ -237,7 +260,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                         this.panel5.setLayout(new BorderLayout(5, 5));
 
                         //---- sizeComboBox ----
-                        this.sizeComboBox.setModel(new DefaultComboBoxModel(new String[]{
+                        this.sizeComboBox.setModel(new DefaultComboBoxModel(new String[] {
                             GRAPH_SIZE_SMALL_TEXT,
                             GRAPH_SIZE_MEDIUM_TEXT,
                             GRAPH_SIZE_LARGE_TEXT
@@ -253,7 +276,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                         this.panel7.setLayout(new BorderLayout(5, 5));
 
                         //---- followComboBox ----
-                        this.followComboBox.setModel(new DefaultComboBoxModel(new String[]{
+                        this.followComboBox.setModel(new DefaultComboBoxModel(new String[] {
                             FOLLOW_VIEW_TEXT,
                             FOLLOW_CURSOR_TEXT,
                             //FOLLOW_EYE_TEXT,
@@ -304,7 +327,7 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
             //======== panel8 ========
             {
                 this.panel8.setLayout(new GridLayout(2, 2, 20, 10));
-                String[] profileSizeValues = new String[]{"x1", "x2", "x3", "x4", "x5", "x7", "x10"};
+                String[] profileSizeValues = new String[] {"x1", "x2", "x3", "x4", "x5", "x7", "x10"};
 
                 //======== panel4 ========
                 {
@@ -369,207 +392,10 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
                     this.panel4d.add(this.profileFollowPath, BorderLayout.CENTER);
                 }
                 this.panel8.add(this.panel4d);
-
             }
             this.panel1.add(this.panel8, BorderLayout.SOUTH);
         }
         add(this.panel1, BorderLayout.CENTER);
-    }
-
-    private JPanel panel1;
-    private JPanel panel2;
-    private JPanel panel6;
-    private JPanel panel5;
-    private JComboBox sizeComboBox;
-    private JPanel panel7;
-    private JComboBox followComboBox;
-    private JPanel panel3;
-    private JCheckBox proportionalCheckBox;
-    private JCheckBox showEyeCheckBox;
-    private JCheckBox zeroBaseCheckBox;
-    private JPanel panel4;
-    private JSpinner profileWidthSpinner;
-    private JLabel profileWidthLabel;
-    private JPanel panel8;
-    private JPanel panel4b;
-    private JSpinner profileLengthSpinner;
-    private JLabel profileLengthLabel;
-    private JPanel panel4c;
-    private JCheckBox profilesSameSize;
-    private JPanel panel4d;
-    private JCheckBox profileFollowPath;
-
-    private static class TerrainProfileController {
-
-        private static final HashMap<String, Dimension> sizes = new HashMap<>();
-
-        public static String[] getSizeKeys() {
-            return sizes.keySet().toArray(new String[1]);
-        }
-
-        static {
-            sizes.put(GRAPH_SIZE_SMALL_TEXT, new Dimension(250, 100));
-            sizes.put(GRAPH_SIZE_MEDIUM_TEXT, new Dimension(450, 140));
-            sizes.put(GRAPH_SIZE_LARGE_TEXT, new Dimension(655, 240));
-        }
-
-        private static final HashMap<String, String> follows = new HashMap<>();
-
-        public static String[] getFollowKeys() {
-            return follows.keySet().toArray(new String[1]);
-        }
-
-        static {
-            follows.put(FOLLOW_VIEW_TEXT, TerrainProfileLayer.FOLLOW_VIEW);
-            follows.put(FOLLOW_CURSOR_TEXT, TerrainProfileLayer.FOLLOW_CURSOR);
-            //follows.put(FOLLOW_EYE_TEXT, TerrainProfileLayer.FOLLOW_EYE);
-            follows.put(FOLLOW_OBJECT_TEXT, TerrainProfileLayer.FOLLOW_OBJECT);
-            follows.put(FOLLOW_NONE_TEXT, TerrainProfileLayer.FOLLOW_NONE);
-        }
-
-        private WorldWindow wwd;
-        private final TerrainProfileLayer tpl;  // Perpendicular to track
-        private final TerrainProfileLayer tpl2; // Parallel to the track
-        private boolean wholeTrackLength = false;
-
-        public TerrainProfileController() {
-            this.tpl = new TerrainProfileLayer();
-            this.tpl.setZeroBased(true);
-            this.tpl2 = new TerrainProfileLayer();
-            this.tpl2.setZeroBased(true);
-            this.tpl2.setPosition(AVKey.SOUTHEAST);
-        }
-
-        public WorldWindow getWwd() {
-            return wwd;
-        }
-
-        public void setWwd(WorldWindow wwd) {
-            this.wwd = wwd;
-            if (this.wwd != null) {
-                ApplicationTemplate.insertBeforeCompass(wwd, tpl);
-                this.tpl.setEventSource(wwd);
-                ApplicationTemplate.insertBeforeCompass(wwd, tpl2);
-                this.tpl2.setEventSource(wwd);
-                this.tpl2.setPathType(AVKey.RHUMB_LINE);
-                // Move scalebar to north west
-                for (Layer layer : wwd.getModel().getLayers()) {
-                    if (layer instanceof ScalebarLayer) {
-                        ((ScalebarLayer) layer).setPosition(AVKey.NORTHWEST);
-                    }
-                }
-                update();
-            }
-        }
-
-        private void update() {
-            if (this.wwd != null) {
-                this.wwd.redraw();
-            }
-        }
-
-        public void setShowEyePosition(boolean showEye) {
-            this.tpl.setShowEyePosition(showEye);
-            this.tpl2.setShowEyePosition(showEye);
-            this.update();
-        }
-
-        public boolean getShowEyePosition() {
-            return this.tpl.getShowEyePosition();
-        }
-
-        public void setZeroBased(boolean keepProportions) {
-            this.tpl.setZeroBased(keepProportions);
-            this.tpl2.setZeroBased(keepProportions);
-            this.update();
-        }
-
-        public boolean getShowZeroBased() {
-            return this.tpl.getZeroBased();
-        }
-
-        public void setKeepProportions(boolean keepProportions) {
-            this.tpl.setKeepProportions(keepProportions);
-            this.tpl2.setKeepProportions(keepProportions);
-            this.update();
-        }
-
-        public boolean getKeepProportions() {
-            return this.tpl.getKeepProportions();
-        }
-
-        public void setProfileSize(String size) {
-            Dimension dim = sizes.get(size);
-            if (dim != null) {
-                this.tpl.setSize(dim);
-                this.tpl2.setSize(dim);
-                this.update();
-            }
-        }
-
-        public Dimension getProfileSize() {
-            return this.tpl.getSize();
-        }
-
-        public void setFollow(String followName) {
-            String follow = follows.get(followName);
-            if (follow != null) {
-                this.tpl.setFollow(follow);
-                if (follow.equals(TerrainProfileLayer.FOLLOW_OBJECT) || follow.equals(TerrainProfileLayer.FOLLOW_EYE)) {
-                    this.tpl2.setFollow(
-                            this.wholeTrackLength ? TerrainProfileLayer.FOLLOW_PATH : TerrainProfileLayer.FOLLOW_OBJECT);
-                } else {
-                    this.tpl2.setFollow(TerrainProfileLayer.FOLLOW_NONE);
-                }
-                this.update();
-            }
-        }
-
-        public String getFollow() {
-            return this.tpl.getFollow();
-        }
-
-        public void setWholeTrackLength(boolean state) {
-            if (this.wholeTrackLength != state) {
-                this.wholeTrackLength = state;
-                if (!this.tpl2.getFollow().equals(TerrainProfileLayer.FOLLOW_NONE)) {
-                    this.tpl2.setFollow(
-                            this.wholeTrackLength ? TerrainProfileLayer.FOLLOW_PATH : TerrainProfileLayer.FOLLOW_OBJECT);
-                }
-                this.update();
-            }
-        }
-
-        public void setProfileWidthFactor(double factor) {
-            this.tpl.setProfileLengthFactor(factor);  // perpendicular profile
-            this.update();
-        }
-
-        public void setProfileLengthFactor(double factor) {
-            this.tpl2.setProfileLengthFactor(factor);   // along track rofile
-            this.update();
-        }
-
-        public double getProfileWidthFactor() {
-            return this.tpl.getProfileLenghtFactor();
-        }
-
-        public double getProfileLengthFactor() {
-            return this.tpl2.getProfileLenghtFactor();
-        }
-
-        public void updatePosition(Position position, Angle heading) {
-            this.tpl.setObjectPosition(position);
-            this.tpl.setObjectHeading(heading);
-            this.tpl2.setObjectPosition(position);
-            this.tpl2.setObjectHeading(heading.addDegrees(-90));
-            this.update();
-        }
-
-        public void updatePath(ArrayList<? extends LatLon> positions) {
-            this.tpl2.setPathPositions(positions);
-            this.update();
-        }
     }
 
     // *** Restorable interface ***
@@ -590,7 +416,8 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
         RestorableSupport rs;
         try {
             rs = RestorableSupport.parse(stateInXml);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -661,4 +488,176 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
         }
     }
 
+    private static class TerrainProfileController {
+
+        private static final HashMap<String, Dimension> sizes = new HashMap<>();
+        private static final HashMap<String, String> follows = new HashMap<>();
+
+        static {
+            sizes.put(GRAPH_SIZE_SMALL_TEXT, new Dimension(250, 100));
+            sizes.put(GRAPH_SIZE_MEDIUM_TEXT, new Dimension(450, 140));
+            sizes.put(GRAPH_SIZE_LARGE_TEXT, new Dimension(655, 240));
+        }
+
+        static {
+            follows.put(FOLLOW_VIEW_TEXT, TerrainProfileLayer.FOLLOW_VIEW);
+            follows.put(FOLLOW_CURSOR_TEXT, TerrainProfileLayer.FOLLOW_CURSOR);
+            //follows.put(FOLLOW_EYE_TEXT, TerrainProfileLayer.FOLLOW_EYE);
+            follows.put(FOLLOW_OBJECT_TEXT, TerrainProfileLayer.FOLLOW_OBJECT);
+            follows.put(FOLLOW_NONE_TEXT, TerrainProfileLayer.FOLLOW_NONE);
+        }
+
+        private final TerrainProfileLayer tpl;  // Perpendicular to track
+        private final TerrainProfileLayer tpl2; // Parallel to the track
+        private WorldWindow wwd;
+        private boolean wholeTrackLength = false;
+
+        public TerrainProfileController() {
+            this.tpl = new TerrainProfileLayer();
+            this.tpl.setZeroBased(true);
+            this.tpl2 = new TerrainProfileLayer();
+            this.tpl2.setZeroBased(true);
+            this.tpl2.setPosition(AVKey.SOUTHEAST);
+        }
+
+        public static String[] getSizeKeys() {
+            return sizes.keySet().toArray(new String[1]);
+        }
+
+        public static String[] getFollowKeys() {
+            return follows.keySet().toArray(new String[1]);
+        }
+
+        public WorldWindow getWwd() {
+            return wwd;
+        }
+
+        public void setWwd(WorldWindow wwd) {
+            this.wwd = wwd;
+            if (this.wwd != null) {
+                ApplicationTemplate.insertBeforeCompass(wwd, tpl);
+                this.tpl.setEventSource(wwd);
+                ApplicationTemplate.insertBeforeCompass(wwd, tpl2);
+                this.tpl2.setEventSource(wwd);
+                this.tpl2.setPathType(AVKey.RHUMB_LINE);
+                // Move scalebar to north west
+                for (Layer layer : wwd.getModel().getLayers()) {
+                    if (layer instanceof ScalebarLayer) {
+                        ((ScalebarLayer) layer).setPosition(AVKey.NORTHWEST);
+                    }
+                }
+                update();
+            }
+        }
+
+        private void update() {
+            if (this.wwd != null) {
+                this.wwd.redraw();
+            }
+        }
+
+        public boolean getShowEyePosition() {
+            return this.tpl.getShowEyePosition();
+        }
+
+        public void setShowEyePosition(boolean showEye) {
+            this.tpl.setShowEyePosition(showEye);
+            this.tpl2.setShowEyePosition(showEye);
+            this.update();
+        }
+
+        public void setZeroBased(boolean keepProportions) {
+            this.tpl.setZeroBased(keepProportions);
+            this.tpl2.setZeroBased(keepProportions);
+            this.update();
+        }
+
+        public boolean getShowZeroBased() {
+            return this.tpl.getZeroBased();
+        }
+
+        public boolean getKeepProportions() {
+            return this.tpl.getKeepProportions();
+        }
+
+        public void setKeepProportions(boolean keepProportions) {
+            this.tpl.setKeepProportions(keepProportions);
+            this.tpl2.setKeepProportions(keepProportions);
+            this.update();
+        }
+
+        public Dimension getProfileSize() {
+            return this.tpl.getSize();
+        }
+
+        public void setProfileSize(String size) {
+            Dimension dim = sizes.get(size);
+            if (dim != null) {
+                this.tpl.setSize(dim);
+                this.tpl2.setSize(dim);
+                this.update();
+            }
+        }
+
+        public String getFollow() {
+            return this.tpl.getFollow();
+        }
+
+        public void setFollow(String followName) {
+            String follow = follows.get(followName);
+            if (follow != null) {
+                this.tpl.setFollow(follow);
+                if (follow.equals(TerrainProfileLayer.FOLLOW_OBJECT) || follow.equals(TerrainProfileLayer.FOLLOW_EYE)) {
+                    this.tpl2.setFollow(
+                        this.wholeTrackLength ? TerrainProfileLayer.FOLLOW_PATH : TerrainProfileLayer.FOLLOW_OBJECT);
+                }
+                else {
+                    this.tpl2.setFollow(TerrainProfileLayer.FOLLOW_NONE);
+                }
+                this.update();
+            }
+        }
+
+        public void setWholeTrackLength(boolean state) {
+            if (this.wholeTrackLength != state) {
+                this.wholeTrackLength = state;
+                if (!this.tpl2.getFollow().equals(TerrainProfileLayer.FOLLOW_NONE)) {
+                    this.tpl2.setFollow(
+                        this.wholeTrackLength ? TerrainProfileLayer.FOLLOW_PATH : TerrainProfileLayer.FOLLOW_OBJECT);
+                }
+                this.update();
+            }
+        }
+
+        public double getProfileWidthFactor() {
+            return this.tpl.getProfileLenghtFactor();
+        }
+
+        public void setProfileWidthFactor(double factor) {
+            this.tpl.setProfileLengthFactor(factor);  // perpendicular profile
+            this.update();
+        }
+
+        public double getProfileLengthFactor() {
+            return this.tpl2.getProfileLenghtFactor();
+        }
+
+        public void setProfileLengthFactor(double factor) {
+            this.tpl2.setProfileLengthFactor(factor);   // along track rofile
+            this.update();
+        }
+
+        public void updatePosition(Position position, Angle heading) {
+            this.tpl.setObjectPosition(position);
+            this.tpl.setObjectHeading(heading);
+            this.tpl2.setObjectPosition(position);
+            this.tpl2.setObjectHeading(heading.addDegrees(-90));
+            this.update();
+        }
+
+        public void updatePath(ArrayList<? extends LatLon> positions) {
+            this.tpl2.setPathPositions(positions);
+            this.update();
+        }
+    }
 }

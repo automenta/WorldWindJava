@@ -23,69 +23,57 @@ import java.util.logging.Level;
  * @author tag
  * @version $Id: MarkerRenderer.java 2325 2014-09-17 21:55:48Z tgaskins $
  */
-public class MarkerRenderer
-{
-    private double elevation = 10d;
+public class MarkerRenderer {
+    protected final PickSupport pickSupport = new PickSupport();
+    private final ArrayList<Vec4> surfacePoints = new ArrayList<>();
+    private double elevation = 10.0d;
     private boolean overrideMarkerElevation = false;
     private boolean keepSeparated = true;
     private boolean enablePickSizeReturn = false;
     // Rendering state.
     private long frameTimeStamp = 0;
-    private final ArrayList<Vec4> surfacePoints = new ArrayList<>();
     private MarkerAttributes previousAttributes; // used only by drawSeparated and drawMarker
-    protected final PickSupport pickSupport = new PickSupport();
 
-    public double getElevation()
-    {
+    public double getElevation() {
         return elevation;
     }
 
-    public void setElevation(double elevation)
-    {
+    public void setElevation(double elevation) {
         this.elevation = elevation;
     }
 
-    public boolean isOverrideMarkerElevation()
-    {
+    public boolean isOverrideMarkerElevation() {
         return overrideMarkerElevation;
     }
 
-    public void setOverrideMarkerElevation(boolean overrideMarkerElevation)
-    {
+    public void setOverrideMarkerElevation(boolean overrideMarkerElevation) {
         this.overrideMarkerElevation = overrideMarkerElevation;
     }
 
-    public boolean isKeepSeparated()
-    {
+    public boolean isKeepSeparated() {
         return keepSeparated;
     }
 
-    public void setKeepSeparated(boolean keepSeparated)
-    {
+    public void setKeepSeparated(boolean keepSeparated) {
         this.keepSeparated = keepSeparated;
     }
 
-    public boolean isEnablePickSizeReturn()
-    {
+    public boolean isEnablePickSizeReturn() {
         return enablePickSizeReturn;
     }
 
-    public void setEnablePickSizeReturn(boolean enablePickSizeReturn)
-    {
+    public void setEnablePickSizeReturn(boolean enablePickSizeReturn) {
         this.enablePickSizeReturn = enablePickSizeReturn;
     }
 
-    public void render(DrawContext dc, Iterable<Marker> markers)
-    {
-        if (dc == null)
-        {
+    public void render(DrawContext dc, Iterable<Marker> markers) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
-        if (markers == null)
-        {
+        if (markers == null) {
             String message = Logging.getMessage("nullValue.MarkerListIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -98,31 +86,26 @@ public class MarkerRenderer
     //********************  Rendering  *****************************//
     //**************************************************************//
 
-    protected void draw(DrawContext dc, Iterable<Marker> markers)
-    {
+    protected void draw(DrawContext dc, Iterable<Marker> markers) {
         if (this.isKeepSeparated())
             this.drawSeparated(dc, markers);
         else
             this.drawAll(dc, markers);
     }
 
-    protected void drawSeparated(DrawContext dc, Iterable<Marker> markers)
-    {
+    protected void drawSeparated(DrawContext dc, Iterable<Marker> markers) {
         List<Marker> markerList;
-        if (markers instanceof List)
-        {
+        if (markers instanceof List) {
             markerList = (List<Marker>) markers;
         }
-        else
-        {
+        else {
             markerList = new ArrayList<>();
-            for (Marker m : markers)
-            {
+            for (Marker m : markers) {
                 markerList.add(m);
             }
         }
 
-        if (markerList.size() == 0)
+        if (markerList.isEmpty())
             return;
 
         Layer parentLayer = dc.getCurrentLayer();
@@ -153,8 +136,7 @@ public class MarkerRenderer
     }
 
     private void drawInBetweenMarkers(DrawContext dc, int im1, Vec4 p1, double r1, int im2, Vec4 p2, double r2,
-        List<Marker> markerList, Layer parentLayer, Vec4 eyePoint)
-    {
+        List<Marker> markerList, Layer parentLayer, Vec4 eyePoint) {
         if (im2 == im1 + 1)
             return;
 
@@ -167,14 +149,12 @@ public class MarkerRenderer
         double r = this.computeMarkerRadius(dc, p, m);
 
         boolean b1 = false, b2 = false;
-        if (p.distanceTo3(p1) > r + r1)
-        {
+        if (p.distanceTo3(p1) > r + r1) {
             this.drawInBetweenMarkers(dc, im1, p1, r1, im, p, r, markerList, parentLayer, eyePoint);
             b1 = true;
         }
 
-        if (p.distanceTo3(p2) > r + r2)
-        {
+        if (p.distanceTo3(p2) > r + r2) {
             this.drawInBetweenMarkers(dc, im, p, r, im2, p2, r2, markerList, parentLayer, eyePoint);
             b2 = true;
         }
@@ -183,15 +163,13 @@ public class MarkerRenderer
             dc.addOrderedRenderable(new OrderedMarker(im, m, p, r, parentLayer, eyePoint.distanceTo3(p)));
     }
 
-    private void drawMarker(DrawContext dc, int index, Marker marker, Vec4 point, double radius)
-    {
+    private void drawMarker(DrawContext dc, int index, Marker marker, Vec4 point, double radius) {
         // This method is called from OrderedMarker's render and pick methods. We don't perform culling here, because
         // the marker has already been culled against the appropriate frustum prior adding OrderedMarker to the draw
         // context.
 
-        if (dc.isPickingMode())
-        {
-            java.awt.Color color = dc.getUniquePickColor();
+        if (dc.isPickingMode()) {
+            Color color = dc.getUniquePickColor();
             int colorCode = color.getRGB();
             PickedObject po = new PickedObject(colorCode, marker, marker.getPosition(), false);
             po.setValue(AVKey.PICKED_OBJECT_ID, index);
@@ -212,15 +190,12 @@ public class MarkerRenderer
         marker.render(dc, point, radius);
     }
 
-    protected void computeSurfacePoints(DrawContext dc, Iterable<? extends Marker> markers)
-    {
+    protected void computeSurfacePoints(DrawContext dc, Iterable<? extends Marker> markers) {
         surfacePoints.clear();
-        for (Marker marker : markers)
-        {
+        for (Marker marker : markers) {
             // If the marker is null, add a null reference to the surfacePoints cache array so that it is
             // the same size as the marker iterator.
-            if (marker == null)
-            {
+            if (marker == null) {
                 surfacePoints.add(null);
                 continue;
             }
@@ -230,8 +205,7 @@ public class MarkerRenderer
             // Check to see that the point is within the frustum.  If it is not, place a null reference in the
             // surfacePoints array.  This will let the drawAll method know not to render it on the 2nd pass. We always
             // cull against the view frustum here, because these points are used during both picking and rendering.
-            if (!dc.getView().getFrustumInModelCoordinates().contains(point))
-            {
+            if (!dc.getView().getFrustumInModelCoordinates().contains(point)) {
                 surfacePoints.add(null);
                 continue;
             }
@@ -240,21 +214,18 @@ public class MarkerRenderer
         }
     }
 
-    protected void drawAll(DrawContext dc, Iterable<Marker> markers)
-    {
+    protected void drawAll(DrawContext dc, Iterable<Marker> markers) {
         Layer parentLayer = dc.getCurrentLayer();
         Vec4 eyePoint = dc.getView().getEyePoint();
 
         // If this is a new frame, recompute surface points.
-        if (dc.getFrameTimeStamp() != this.frameTimeStamp || dc.isContinuous2DGlobe())
-        {
+        if (dc.getFrameTimeStamp() != this.frameTimeStamp || dc.isContinuous2DGlobe()) {
             this.frameTimeStamp = dc.getFrameTimeStamp();
             this.computeSurfacePoints(dc, markers);
         }
 
         Iterator<Marker> markerIterator = markers.iterator();
-        for (int index = 0; markerIterator.hasNext(); index++)
-        {
+        for (int index = 0; markerIterator.hasNext(); index++) {
             Marker marker = markerIterator.next();
             Vec4 point = this.surfacePoints.get(index); // TODO: check performance of this buffer access
             // The surface point is null if the marker in this position is null or if the surface point is not in the
@@ -274,38 +245,33 @@ public class MarkerRenderer
         }
     }
 
-    protected void begin(DrawContext dc)
-    {
+    protected void begin(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         Vec4 cameraPosition = dc.getView().getEyePoint();
 
-        if (dc.isPickingMode())
-        {
+        if (dc.isPickingMode()) {
             this.pickSupport.beginPicking(dc);
 
             gl.glPushAttrib(GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT | GL2.GL_TRANSFORM_BIT);
             gl.glDisable(GL2.GL_COLOR_MATERIAL);
         }
-        else
-        {
+        else {
             gl.glPushAttrib(GL2.GL_ENABLE_BIT | GL2.GL_CURRENT_BIT | GL2.GL_LIGHTING_BIT | GL2.GL_TRANSFORM_BIT
                 | GL2.GL_COLOR_BUFFER_BIT);
 
             float[] lightPosition = new float[4];
 
-            if (dc.is2DGlobe())
-            {
+            if (dc.is2DGlobe()) {
                 lightPosition[0] = 0.2f;
                 lightPosition[1] = -0.5f;
-                lightPosition[2] = 1f;
-                lightPosition[3] = 0f;
+                lightPosition[2] = 1.0f;
+                lightPosition[3] = 0.0f;
             }
-            else
-            {
+            else {
                 lightPosition[0] = (float) cameraPosition.x * 2;
                 lightPosition[1] = (float) cameraPosition.y() / 2;
                 lightPosition[2] = (float) cameraPosition.z();
-                lightPosition[3] = 0f;
+                lightPosition[3] = 0.0f;
             }
 
             float[] lightDiffuse = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -337,19 +303,16 @@ public class MarkerRenderer
         this.previousAttributes = null;
     }
 
-    protected void end(DrawContext dc)
-    {
+    protected void end(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glPopMatrix();
 
-        if (dc.isPickingMode())
-        {
+        if (dc.isPickingMode()) {
             this.pickSupport.endPicking(dc);
         }
-        else
-        {
+        else {
             gl.glDisable(GL2.GL_LIGHT1);
             gl.glEnable(GL2.GL_LIGHT0);
             gl.glDisable(GL2.GL_LIGHTING);
@@ -363,8 +326,7 @@ public class MarkerRenderer
     //********************  Rendering Utilities  *******************//
     //**************************************************************//
 
-    protected boolean intersectsFrustum(DrawContext dc, Vec4 point, double radius)
-    {
+    protected boolean intersectsFrustum(DrawContext dc, Vec4 point, double radius) {
         if (dc.isPickingMode())
             return dc.getPickFrustums().intersectsAny(new Sphere(point, radius));
 
@@ -372,8 +334,7 @@ public class MarkerRenderer
         return dc.getView().getFrustumInModelCoordinates().contains(point);
     }
 
-    protected Vec4 computeSurfacePoint(DrawContext dc, Position pos)
-    {
+    protected Vec4 computeSurfacePoint(DrawContext dc, Position pos) {
         double ve = dc.getVerticalExaggeration();
         if (!this.overrideMarkerElevation)
             return dc.getGlobe().computePointFromPosition(pos, dc.is2DGlobe() ? 0 : pos.getElevation() * ve);
@@ -389,8 +350,7 @@ public class MarkerRenderer
         return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), effectiveElevation * ve);
     }
 
-    protected double computeMarkerRadius(DrawContext dc, Vec4 point, Marker marker)
-    {
+    protected double computeMarkerRadius(DrawContext dc, Vec4 point, Marker marker) {
         double d = point.distanceTo3(dc.getView().getEyePoint());
         double radius = marker.getAttributes().getMarkerPixels() * dc.getView().computePixelSizeAtDistance(d);
         if (radius < marker.getAttributes().getMinMarkerSize() && marker.getAttributes().getMinMarkerSize() > 0)
@@ -405,8 +365,38 @@ public class MarkerRenderer
     //********************  Ordered Renderable  ********************//
     //**************************************************************//
 
-    protected class OrderedMarker implements OrderedRenderable
-    {
+    protected void drawOrderedMarkers(DrawContext dc, OrderedMarker uMarker) {
+        this.drawMarker(dc, uMarker.index, uMarker.marker, uMarker.point, uMarker.radius);
+
+        // Draw as many as we can in a batch to save ogl state switching.
+        Object next = dc.peekOrderedRenderables();
+        while (next instanceof OrderedMarker && ((OrderedMarker) next).getRenderer() == this) {
+            dc.pollOrderedRenderables(); // take it off the queue
+
+            OrderedMarker om = (OrderedMarker) next;
+            this.drawMarker(dc, om.index, om.marker, om.point, om.radius);
+
+            next = dc.peekOrderedRenderables();
+        }
+    }
+
+    protected void pickOrderedMarkers(DrawContext dc, OrderedMarker uMarker) {
+        this.drawMarker(dc, uMarker.index, uMarker.marker, uMarker.point, uMarker.radius);
+
+        // Draw as many as we can in a batch to save ogl state switching.
+        Object next = dc.peekOrderedRenderables();
+        while (next instanceof OrderedMarker && ((OrderedMarker) next).getRenderer() == this
+            && ((OrderedMarker) next).layer == uMarker.layer) {
+            dc.pollOrderedRenderables(); // take it off the queue
+
+            OrderedMarker om = (OrderedMarker) next;
+            this.drawMarker(dc, om.index, om.marker, om.point, om.radius);
+
+            next = dc.peekOrderedRenderables();
+        }
+    }
+
+    protected class OrderedMarker implements OrderedRenderable {
         protected final int index;
         protected final Marker marker;
         protected final Vec4 point;
@@ -414,8 +404,7 @@ public class MarkerRenderer
         protected final Layer layer;
         protected final double eyeDistance;
 
-        public OrderedMarker(int index, Marker marker, Vec4 point, double radius, Layer layer, double eyeDistance)
-        {
+        public OrderedMarker(int index, Marker marker, Vec4 point, double radius, Layer layer, double eyeDistance) {
             this.index = index;
             this.marker = marker;
             this.point = point;
@@ -424,86 +413,41 @@ public class MarkerRenderer
             this.eyeDistance = eyeDistance;
         }
 
-        public MarkerRenderer getRenderer()
-        {
+        public MarkerRenderer getRenderer() {
             return MarkerRenderer.this;
         }
 
-        public double getDistanceFromEye()
-        {
+        public double getDistanceFromEye() {
             return this.eyeDistance;
         }
 
-        public void pick(DrawContext dc, Point pickPoint)
-        {
+        public void pick(DrawContext dc, Point pickPoint) {
             MarkerRenderer.this.begin(dc); // Calls pickSupport.beginPicking when in picking mode.
-            try
-            {
+            try {
                 MarkerRenderer.this.pickOrderedMarkers(dc, this);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Logging.logger().log(Level.SEVERE, Logging.getMessage("generic.ExceptionWhilePickingMarker", this),
                     e);
             }
-            finally
-            {
+            finally {
                 MarkerRenderer.this.end(dc); // Calls pickSupport.endPicking when in picking mode.
                 MarkerRenderer.this.pickSupport.resolvePick(dc, pickPoint, this.layer); // Also clears the pick list.
             }
         }
 
-        public void render(DrawContext dc)
-        {
+        public void render(DrawContext dc) {
             MarkerRenderer.this.begin(dc);
-            try
-            {
+            try {
                 MarkerRenderer.this.drawOrderedMarkers(dc, this);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Logging.logger().log(Level.SEVERE, Logging.getMessage("generic.ExceptionWhileRenderingMarker", this),
                     e);
             }
-            finally
-            {
+            finally {
                 MarkerRenderer.this.end(dc);
             }
-        }
-    }
-
-    protected void drawOrderedMarkers(DrawContext dc, OrderedMarker uMarker)
-    {
-        this.drawMarker(dc, uMarker.index, uMarker.marker, uMarker.point, uMarker.radius);
-
-        // Draw as many as we can in a batch to save ogl state switching.
-        Object next = dc.peekOrderedRenderables();
-        while (next instanceof OrderedMarker && ((OrderedMarker) next).getRenderer() == this)
-        {
-            dc.pollOrderedRenderables(); // take it off the queue
-
-            OrderedMarker om = (OrderedMarker) next;
-            this.drawMarker(dc, om.index, om.marker, om.point, om.radius);
-
-            next = dc.peekOrderedRenderables();
-        }
-    }
-
-    protected void pickOrderedMarkers(DrawContext dc, OrderedMarker uMarker)
-    {
-        this.drawMarker(dc, uMarker.index, uMarker.marker, uMarker.point, uMarker.radius);
-
-        // Draw as many as we can in a batch to save ogl state switching.
-        Object next = dc.peekOrderedRenderables();
-        while (next instanceof OrderedMarker && ((OrderedMarker) next).getRenderer() == this
-            && ((OrderedMarker) next).layer == uMarker.layer)
-        {
-            dc.pollOrderedRenderables(); // take it off the queue
-
-            OrderedMarker om = (OrderedMarker) next;
-            this.drawMarker(dc, om.index, om.marker, om.point, om.radius);
-
-            next = dc.peekOrderedRenderables();
         }
     }
 }

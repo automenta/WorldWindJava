@@ -10,7 +10,7 @@ import javax.xml.namespace.NamespaceContext;
 import java.util.*;
 
 /**
- * BasicNamespaceContext provides a mutable implementation of the {@link javax.xml.namespace.NamespaceContext}
+ * BasicNamespaceContext provides a mutable implementation of the {@link NamespaceContext}
  * interface.
  *
  * @author dcollins
@@ -43,9 +43,8 @@ public class BasicNamespaceContext implements NamespaceContext {
     /**
      * Adds a namepsace binding to this XML namespace context. The specified URI is bound to the specified prefix.
      *
-     * @param prefix the namespace prefix.
+     * @param prefix       the namespace prefix.
      * @param namespaceURI the namespace URI.
-     *
      * @throws IllegalArgumentException if either the prefix or the namepsace URI are null.
      */
     public synchronized void addNamespace(String prefix, String namespaceURI) {
@@ -65,7 +64,8 @@ public class BasicNamespaceContext implements NamespaceContext {
 
         if (this.prefixesByURI.containsKey(namespaceURI)) {
             this.prefixesByURI.get(namespaceURI).add(prefix);
-        } else {
+        }
+        else {
             Set<String> set = new HashSet<>();
             set.add(prefix);
             this.prefixesByURI.put(namespaceURI, set);
@@ -114,7 +114,8 @@ public class BasicNamespaceContext implements NamespaceContext {
         Set<String> returnSet;
         if (this.prefixesByURI.containsKey(namespaceURI)) {
             returnSet = this.prefixesByURI.get(namespaceURI);
-        } else {
+        }
+        else {
             returnSet = new HashSet<>();
         }
         return Collections.unmodifiableSet(returnSet).iterator();

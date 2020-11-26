@@ -22,15 +22,22 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: RoutePoint.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint, PreRenderable
-{
+public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint, PreRenderable {
+    /**
+     * Create a new control point.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public RoutePoint(String sidc) {
+        super(sidc);
+    }
+
     /**
      * Indicates the graphics supported by this class.
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         return Arrays.asList(
             TacGrpSidc.C2GM_AVN_PNT_ACP,
             TacGrpSidc.C2GM_AVN_PNT_COMMCP
@@ -38,28 +45,16 @@ public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint
     }
 
     /**
-     * Create a new control point.
-     *
-     * @param sidc Symbol code the identifies the graphic.
-     */
-    public RoutePoint(String sidc)
-    {
-        super(sidc);
-    }
-
-    /**
      * Create the text for the main label on this graphic.
      *
      * @return Text for the main label. May return null if there is no text.
      */
-    protected String createLabelText()
-    {
+    protected String createLabelText() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.getGraphicLabel());
 
         String text = this.getText();
-        if (!WWUtil.isEmpty(text))
-        {
+        if (!WWUtil.isEmpty(text)) {
             sb.append("\n");
             sb.append(this.getText());
         }
@@ -67,8 +62,7 @@ public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint
         return sb.toString();
     }
 
-    protected String getGraphicLabel()
-    {
+    protected String getGraphicLabel() {
         String code = this.maskedSymbolCode;
 
         if (TacGrpSidc.C2GM_AVN_PNT_ACP.equalsIgnoreCase(code))
@@ -80,11 +74,9 @@ public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint
     }
 
     @Override
-    protected void createLabels()
-    {
+    protected void createLabels() {
         String labelText = this.createLabelText();
-        if (!WWUtil.isEmpty(labelText))
-        {
+        if (!WWUtil.isEmpty(labelText)) {
             this.addLabel(labelText);
         }
     }
@@ -95,8 +87,7 @@ public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint
      * @param dc Current draw context.
      */
     @Override
-    protected void determineLabelPositions(DrawContext dc)
-    {
+    protected void determineLabelPositions(DrawContext dc) {
         LatLon center = this.circle.getCenter();
         this.labels.get(0).setPosition(new Position(center, 0));
     }

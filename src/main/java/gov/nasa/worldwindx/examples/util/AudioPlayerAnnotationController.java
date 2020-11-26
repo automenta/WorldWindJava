@@ -9,75 +9,65 @@ import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 
 import javax.sound.sampled.*;
+import javax.swing.Timer;
 import java.awt.event.*;
 
 /**
  * @author dcollins
  * @version $Id: AudioPlayerAnnotationController.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AudioPlayerAnnotationController extends DialogAnnotationController implements LineListener
-{
+public class AudioPlayerAnnotationController extends DialogAnnotationController implements LineListener {
     protected static final long PLAYER_UPDATE_DELAY_MILLIS = 20;
 
     private AudioPlayer audioPlayer;
-    private javax.swing.Timer playerUpdateTimer;
+    private Timer playerUpdateTimer;
 
-    public AudioPlayerAnnotationController(WorldWindow worldWindow, AudioPlayerAnnotation audioAnnotation, Clip clip)
-    {
+    public AudioPlayerAnnotationController(WorldWindow worldWindow, AudioPlayerAnnotation audioAnnotation, Clip clip) {
         super(worldWindow, audioAnnotation);
 
         this.setAudioPlayer(new AudioPlayer());
         this.setClip(clip);
     }
 
-    public AudioPlayerAnnotationController(WorldWindow worldWindow, AudioPlayerAnnotation audioAnnotation)
-    {
+    public AudioPlayerAnnotationController(WorldWindow worldWindow, AudioPlayerAnnotation audioAnnotation) {
         this(worldWindow, audioAnnotation, null);
     }
 
-    public Clip getClip()
-    {
+    public Clip getClip() {
         return this.audioPlayer.getClip();
     }
 
-    public void setClip(Clip clip)
-    {
+    public void setClip(Clip clip) {
         this.audioPlayer.setClip(clip);
         this.updateAudioAnnotation();
     }
 
-    protected AudioPlayer getAudioPlayer()
-    {
+    protected AudioPlayer getAudioPlayer() {
         return this.audioPlayer;
     }
 
-    protected void setAudioPlayer(AudioPlayer audioPlayer)
-    {
+    protected void setAudioPlayer(AudioPlayer audioPlayer) {
         if (this.audioPlayer == audioPlayer)
             return;
 
         this.stopPlayerUpdate();
 
-        if (this.audioPlayer != null)
-        {
+        if (this.audioPlayer != null) {
             this.audioPlayer.removeLineListener(this);
         }
 
         this.audioPlayer = audioPlayer;
 
-        if (this.audioPlayer != null)
-        {
+        if (this.audioPlayer != null) {
             this.audioPlayer.addLineListener(this);
         }
     }
 
-    public String getClipStatus()
-    {
+    public String getClipStatus() {
         return (this.audioPlayer != null) ? this.audioPlayer.getStatus() : null;
     }
 
-    public void startClip()
-    {
+    public void startClip() {
         if (this.audioPlayer == null)
             return;
 
@@ -85,8 +75,7 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
         this.updateAudioAnnotation();
     }
 
-    public void stopClip()
-    {
+    public void stopClip() {
         if (this.audioPlayer == null)
             return;
 
@@ -94,8 +83,7 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
         this.updateAudioAnnotation();
     }
 
-    public void pauseClip()
-    {
+    public void pauseClip() {
         if (this.audioPlayer == null)
             return;
 
@@ -103,26 +91,22 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
         this.updateAudioAnnotation();
     }
 
-    protected void updateAudioAnnotation()
-    {
+    protected void updateAudioAnnotation() {
         if (this.getAnnotation() == null)
             return;
 
-        if (this.audioPlayer != null)
-        {
+        if (this.audioPlayer != null) {
             long pos = this.audioPlayer.getMillisecondPosition();
             long length = this.audioPlayer.getMillisecondLength();
             boolean haveClip = (this.audioPlayer.getClip() != null);
             this.doUpdateAudioAnnotation(pos, length, haveClip);
         }
-        else
-        {
+        else {
             this.doUpdateAudioAnnotation(0, 0, false);
         }
     }
 
-    protected void doUpdateAudioAnnotation(long position, long length, boolean haveClip)
-    {
+    protected void doUpdateAudioAnnotation(long position, long length, boolean haveClip) {
         AudioPlayerAnnotation audioAnnotation = (AudioPlayerAnnotation) this.getAnnotation();
         audioAnnotation.setClipPosition(position);
         audioAnnotation.setClipLength(length);
@@ -136,23 +120,19 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
     //********************  Action Listener  ***********************//
     //**************************************************************//
 
-    @SuppressWarnings({"StringEquality"})
-    public void onActionPerformed(ActionEvent e)
-    {
+    @SuppressWarnings("StringEquality")
+    public void onActionPerformed(ActionEvent e) {
         super.onActionPerformed(e);
 
-        if (e.getActionCommand() == AVKey.PLAY)
-        {
+        if (e.getActionCommand() == AVKey.PLAY) {
             this.playPressed(e);
         }
-        else if (e.getActionCommand() == AVKey.STOP)
-        {
+        else if (e.getActionCommand() == AVKey.STOP) {
             this.stopPressed(e);
         }
     }
 
-    protected void playPressed(ActionEvent e)
-    {
+    protected void playPressed(ActionEvent e) {
         if (e == null)
             return;
 
@@ -162,8 +142,7 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
         this.onPlayPressed(e);
     }
 
-    protected void stopPressed(ActionEvent e)
-    {
+    protected void stopPressed(ActionEvent e) {
         if (e == null)
             return;
 
@@ -174,25 +153,21 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
     }
 
     @SuppressWarnings({"UnusedDeclaration", "StringEquality"})
-    protected void onPlayPressed(ActionEvent e)
-    {
+    protected void onPlayPressed(ActionEvent e) {
         String status = this.getClipStatus();
         if (status == null)
             return;
 
-        if (status == AVKey.PLAY)
-        {
+        if (status == AVKey.PLAY) {
             this.pauseClip();
         }
-        else if (status == AVKey.STOP || status == AVKey.PAUSE)
-        {
+        else if (status == AVKey.STOP || status == AVKey.PAUSE) {
             this.startClip();
         }
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void onStopPressed(ActionEvent e)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected void onStopPressed(ActionEvent e) {
         this.stopClip();
     }
 
@@ -200,36 +175,31 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
     //********************  Line Listener  *************************//
     //**************************************************************//
 
-    public void update(LineEvent e)
-    {
+    public void update(LineEvent e) {
         if (e == null)
             return;
 
         if (this.getAnnotation() == null)
             return;
-        
-        if (e.getType() == LineEvent.Type.START)
-        {
+
+        if (e.getType() == LineEvent.Type.START) {
             this.onClipStart(e);
         }
-        else if (e.getType() == LineEvent.Type.STOP)
-        {
+        else if (e.getType() == LineEvent.Type.STOP) {
             this.onClipStop(e);
         }
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void onClipStart(LineEvent e)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected void onClipStart(LineEvent e) {
         AudioPlayerAnnotation audioAnnotation = (AudioPlayerAnnotation) this.getAnnotation();
         audioAnnotation.setPlayButtonState(AVKey.PAUSE);
         this.startPlayerUpdate();
         this.updateAudioAnnotation();
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void onClipStop(LineEvent e)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected void onClipStop(LineEvent e) {
         AudioPlayerAnnotation audioAnnotation = (AudioPlayerAnnotation) this.getAnnotation();
         audioAnnotation.setPlayButtonState(AVKey.PLAY);
         this.stopPlayerUpdate();
@@ -240,22 +210,18 @@ public class AudioPlayerAnnotationController extends DialogAnnotationController 
     //********************  Player Update Timer  *******************//
     //**************************************************************//
 
-    protected void onPlayerUpdate()
-    {
+    protected void onPlayerUpdate() {
         this.updateAudioAnnotation();
     }
 
-    protected void startPlayerUpdate()
-    {
-        this.playerUpdateTimer = new javax.swing.Timer((int) PLAYER_UPDATE_DELAY_MILLIS,
+    protected void startPlayerUpdate() {
+        this.playerUpdateTimer = new Timer((int) PLAYER_UPDATE_DELAY_MILLIS,
             actionEvent -> onPlayerUpdate());
         this.playerUpdateTimer.start();
     }
 
-    protected void stopPlayerUpdate()
-    {
-        if (this.playerUpdateTimer != null)
-        {
+    protected void stopPlayerUpdate() {
+        if (this.playerUpdateTimer != null) {
             this.playerUpdateTimer.stop();
         }
 

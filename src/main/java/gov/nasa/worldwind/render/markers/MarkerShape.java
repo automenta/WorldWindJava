@@ -13,10 +13,9 @@ import gov.nasa.worldwind.render.DrawContext;
  * @author tag
  * @version $Id: MarkerShape.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface MarkerShape
-{
+public interface MarkerShape {
     String getShapeType();
-    
+
     void render(DrawContext dc, Marker marker, Vec4 point, double radius);
 
     void render(DrawContext dc, Marker marker, Vec4 point, double radius, boolean isRelative);

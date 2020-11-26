@@ -17,8 +17,7 @@ import java.util.*;
  * @author tag
  * @version $Id: KMLSchemaData.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLSchemaData extends KMLAbstractObject
-{
+public class KMLSchemaData extends KMLAbstractObject {
     protected final List<KMLSimpleData> simpleData = new ArrayList<>();
 
     /**
@@ -26,30 +25,25 @@ public class KMLSchemaData extends KMLAbstractObject
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLSchemaData(String namespaceURI)
-    {
+    public KMLSchemaData(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
-    protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-    {
+    protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args) {
         if (o instanceof KMLSimpleData)
             this.addSimpleData((KMLSimpleData) o);
     }
 
-    public String getSchemaUrl()
-    {
+    public String getSchemaUrl() {
         return (String) this.getField("schemaUrl");
     }
 
-    protected void addSimpleData(KMLSimpleData o)
-    {
+    protected void addSimpleData(KMLSimpleData o) {
         this.simpleData.add(o);
     }
 
-    public List<KMLSimpleData> getSimpleData()
-    {
+    public List<KMLSimpleData> getSimpleData() {
         return this.simpleData;
     }
 }

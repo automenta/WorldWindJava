@@ -27,29 +27,39 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: Route.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Route extends AbstractMilStd2525TacticalGraphic implements TacticalRoute, PreRenderable
-{
-    /** Width of the route if no width is specified in the modifiers. */
+public class Route extends AbstractMilStd2525TacticalGraphic implements TacticalRoute, PreRenderable {
+    /**
+     * Width of the route if no width is specified in the modifiers.
+     */
     public static final double DEFAULT_WIDTH = 2000;
 
     protected static final Offset DEFAULT_OFFSET = Offset.fromFraction(-0.5, -0.5d);
 
-    /** Path used to render the route. */
+    /**
+     * Path used to render the route.
+     */
     protected List<Path> paths;
 
-    /** Control points that define the shape. */
+    /**
+     * Control points that define the shape.
+     */
     protected Iterable<? extends Position> positions;
 
-    /** Graphics drawn at the route control points. */
+    /**
+     * Graphics drawn at the route control points.
+     */
     protected Iterable<? extends TacticalPoint> children;
+
+    public Route(String sidc) {
+        super(sidc);
+    }
 
     /**
      * Indicates the graphics supported by this class.
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         return Arrays.asList(
             TacGrpSidc.C2GM_AVN_LNE_ACDR,
             TacGrpSidc.C2GM_AVN_LNE_MRR,
@@ -58,44 +68,39 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
             TacGrpSidc.C2GM_AVN_LNE_LLTR);
     }
 
-    public Route(String sidc)
-    {
-        super(sidc);
-    }
-
-    /** {@inheritDoc} Overridden to apply the highlight state to child graphics. */
+    /**
+     * {@inheritDoc} Overridden to apply the highlight state to child graphics.
+     */
     @Override
-    public void setHighlighted(boolean highlighted)
-    {
+    public void setHighlighted(boolean highlighted) {
         super.setHighlighted(highlighted);
 
         // Apply the highlight state to the child graphics
-        if (this.children != null)
-        {
-            for (TacticalGraphic child : this.children)
-            {
+        if (this.children != null) {
+            for (TacticalGraphic child : this.children) {
                 child.setHighlighted(highlighted);
             }
         }
     }
 
-    /** {@inheritDoc} */
-    public Iterable<? extends TacticalPoint> getControlPoints()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Iterable<? extends TacticalPoint> getControlPoints() {
         return this.children;
     }
 
-    /** {@inheritDoc} */
-    public void setControlPoints(Iterable<? extends TacticalPoint> points)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void setControlPoints(Iterable<? extends TacticalPoint> points) {
         this.children = points;
 
-        List<Position> newPositions = new ArrayList<>();
+        Collection<Position> newPositions = new ArrayList<>();
 
         double radius = this.getWidth() / 2.0;
 
-        for (TacticalPoint p : points)
-        {
+        for (TacticalPoint p : points) {
             // Set the circle's radius to the width of the route
             p.setModifier(SymbologyConstants.DISTANCE, radius);
 
@@ -112,17 +117,14 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
      * Indicates the width of the route, in meters.
      *
      * @return If the SymbologyConstants.DISTANCE modifier set, and is a Double, returns the value of this modifier.
-     *         Otherwise returns a default width.
+     * Otherwise returns a default width.
      */
-    public double getWidth()
-    {
+    public double getWidth() {
         Object widthModifier = this.getModifier(SymbologyConstants.DISTANCE);
-        if (widthModifier instanceof Double)
-        {
+        if (widthModifier instanceof Double) {
             return (Double) widthModifier;
         }
-        else
-        {
+        else {
             return DEFAULT_WIDTH;
         }
     }
@@ -133,9 +135,15 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
      *
      * @param width Width of the route, in meters.
      */
-    public void setWidth(double width)
-    {
+    public void setWidth(double width) {
         this.setModifier(SymbologyConstants.DISTANCE, width);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Iterable<? extends Position> getPositions() {
+        return this.positions;
     }
 
     /**
@@ -143,10 +151,8 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
      *
      * @param positions Control points that orient the graphic. Must provide at least three points.
      */
-    public void setPositions(Iterable<? extends Position> positions)
-    {
-        if (positions == null)
-        {
+    public void setPositions(Iterable<? extends Position> positions) {
+        if (positions == null) {
             String message = Logging.getMessage("nullValue.PositionsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -157,143 +163,123 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
         // Move the control points to the new route positions
         Iterator<? extends Position> positionIterator = positions.iterator();
         Iterator<? extends TacticalPoint> childIterator = this.getControlPoints().iterator();
-        while (positionIterator.hasNext() && childIterator.hasNext())
-        {
+        while (positionIterator.hasNext() && childIterator.hasNext()) {
             childIterator.next().setPosition(positionIterator.next());
         }
 
         this.paths = null; // Need to regenerate paths
     }
 
-    /** {@inheritDoc} */
-    public Iterable<? extends Position> getPositions()
-    {
-        return this.positions;
-    }
-
-    /** {@inheritDoc} */
-    public Position getReferencePosition()
-    {
-        if (this.positions != null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public Position getReferencePosition() {
+        if (this.positions != null) {
             return this.positions.iterator().next(); // use the first position
         }
         return null;
     }
 
-    /** {@inheritDoc} Overridden to apply new attributes to route control points. */
+    /**
+     * {@inheritDoc} Overridden to apply new attributes to route control points.
+     */
     @Override
-    public void setAttributes(TacticalGraphicAttributes attributes)
-    {
+    public void setAttributes(TacticalGraphicAttributes attributes) {
         super.setAttributes(attributes);
 
         // Apply the highlight state to the child graphics
-        if (this.children != null)
-        {
-            for (TacticalGraphic child : this.children)
-            {
+        if (this.children != null) {
+            for (TacticalGraphic child : this.children) {
                 child.setAttributes(attributes);
             }
         }
     }
 
-    /** {@inheritDoc} Overridden to apply new attributes to route control points. */
+    /**
+     * {@inheritDoc} Overridden to apply new attributes to route control points.
+     */
     @Override
-    public void setHighlightAttributes(TacticalGraphicAttributes attributes)
-    {
+    public void setHighlightAttributes(TacticalGraphicAttributes attributes) {
         super.setHighlightAttributes(attributes);
 
         // Apply the highlight state to the child graphics
-        if (this.children != null)
-        {
-            for (TacticalGraphic child : this.children)
-            {
+        if (this.children != null) {
+            for (TacticalGraphic child : this.children) {
                 child.setHighlightAttributes(attributes);
             }
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setStatus(String status)
-    {
+    public void setStatus(String status) {
         super.setStatus(status);
 
-        if (this.children != null)
-        {
-            for (TacticalGraphic child : this.children)
-            {
-                if (child instanceof MilStd2525TacticalGraphic)
-                {
+        if (this.children != null) {
+            for (TacticalGraphic child : this.children) {
+                if (child instanceof MilStd2525TacticalGraphic) {
                     ((MilStd2525TacticalGraphic) child).setStatus(status);
                 }
             }
         }
     }
 
-    /** {@inheritDoc} */
-    public void preRender(DrawContext dc)
-    {
-        if (!this.isVisible())
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void preRender(DrawContext dc) {
+        if (!this.isVisible()) {
             return;
         }
 
         this.determineActiveAttributes();
 
-        if (this.children != null)
-        {
-            for (TacticalGraphic child : this.children)
-            {
-                if (child instanceof PreRenderable)
-                {
+        if (this.children != null) {
+            for (TacticalGraphic child : this.children) {
+                if (child instanceof PreRenderable) {
                     ((PreRenderable) child).preRender(dc);
                 }
             }
         }
     }
 
-    /** {@inheritDoc} */
-    protected void doRenderGraphic(DrawContext dc)
-    {
-        if (this.paths == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    protected void doRenderGraphic(DrawContext dc) {
+        if (this.paths == null) {
             this.createPaths(dc);
         }
 
-        for (Path path : this.paths)
-        {
+        for (Path path : this.paths) {
             path.render(dc);
         }
 
-        if (this.children != null)
-        {
-            for (TacticalGraphic child : this.children)
-            {
+        if (this.children != null) {
+            for (TacticalGraphic child : this.children) {
                 child.render(dc);
             }
         }
     }
 
-    /** {@inheritDoc} */
-    protected void applyDelegateOwner(Object owner)
-    {
-        if (this.paths != null)
-        {
-            for (Path path : this.paths)
-            {
+    /**
+     * {@inheritDoc}
+     */
+    protected void applyDelegateOwner(Object owner) {
+        if (this.paths != null) {
+            for (Path path : this.paths) {
                 path.setDelegateOwner(owner);
             }
         }
 
-        if (this.children != null)
-        {
+        if (this.children != null) {
             boolean showTextModifiers = this.isShowTextModifiers();
             boolean showGraphicModifiers = this.isShowGraphicModifiers();
             boolean showHostile = this.isShowHostileIndicator();
 
-            for (TacticalGraphic child : this.children)
-            {
+            for (TacticalGraphic child : this.children) {
                 child.setDelegateOwner(owner);
                 child.setShowTextModifiers(showTextModifiers);
                 child.setShowGraphicModifiers(showGraphicModifiers);
@@ -307,8 +293,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
      *
      * @param dc Current draw context.
      */
-    protected void createPaths(DrawContext dc)
-    {
+    protected void createPaths(DrawContext dc) {
         Globe globe = dc.getGlobe();
 
         this.paths = new ArrayList<>();
@@ -324,8 +309,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
 
         Vec4 normal = globe.computeSurfaceNormalAtPoint(pA);
 
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             Position posB = iterator.next();
             pB = globe.computePointFromPosition(posB);
 
@@ -357,8 +341,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
 
         // Apply width to the control points.
         double radius = this.getWidth() / 2.0;
-        for (TacticalPoint p : this.getControlPoints())
-        {
+        for (TacticalPoint p : this.getControlPoints()) {
             p.setModifier(SymbologyConstants.DISTANCE, radius);
         }
     }
@@ -368,21 +351,18 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
      *
      * @return Text for the main label. May return null if there is no text.
      */
-    protected String createLabelText()
-    {
+    protected String createLabelText() {
         StringBuilder sb = new StringBuilder();
 
         Object o = this.getModifier(SymbologyConstants.UNIQUE_DESIGNATION);
-        if (o != null)
-        {
+        if (o != null) {
             sb.append("Name: ");
             sb.append(o);
             sb.append("\n");
         }
 
         o = this.getModifier(SymbologyConstants.DISTANCE);
-        if (o != null)
-        {
+        if (o != null) {
             sb.append("Width: ");
             sb.append(o);
             sb.append(" m");
@@ -390,30 +370,26 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
         }
 
         Object[] altitudes = TacticalGraphicUtil.getAltitudeRange(this);
-        if (altitudes[0] != null)
-        {
+        if (altitudes[0] != null) {
             sb.append("Min Alt: ");
             sb.append(altitudes[0]);
             sb.append("\n");
         }
 
-        if (altitudes[1] != null)
-        {
+        if (altitudes[1] != null) {
             sb.append("Max Alt: ");
             sb.append(altitudes[1]);
             sb.append("\n");
         }
 
         Object[] dates = TacticalGraphicUtil.getDateRange(this);
-        if (dates[0] != null)
-        {
+        if (dates[0] != null) {
             sb.append("DTG Start: ");
             sb.append(dates[0]);
             sb.append("\n");
         }
 
-        if (dates[1] != null)
-        {
+        if (dates[1] != null) {
             sb.append("DTG End: ");
             sb.append(dates[1]);
         }
@@ -422,11 +398,9 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
     }
 
     @Override
-    protected void createLabels()
-    {
+    protected void createLabels() {
         String labelText = this.createLabelText();
-        if (labelText == null)
-        {
+        if (labelText == null) {
             return;
         }
 
@@ -437,19 +411,16 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
         Iterator<? extends Position> iterator = this.getPositions().iterator();
 
         // Create a label for each segment of the route
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             iterator.next();
 
             // Add a label if this is not the last control point
-            if (iterator.hasNext())
-            {
+            if (iterator.hasNext()) {
                 StringBuilder sb = new StringBuilder();
                 sb.append(this.getGraphicLabel());
 
                 String text = this.getText();
-                if (!WWUtil.isEmpty(text))
-                {
+                if (!WWUtil.isEmpty(text)) {
                     sb.append(" ");
                     sb.append(text);
                 }
@@ -463,8 +434,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
      *
      * @return The string the determines the type of route, such as "AC" for "Air Corridor".
      */
-    protected String getGraphicLabel()
-    {
+    protected String getGraphicLabel() {
         String code = this.maskedSymbolCode;
 
         if (TacGrpSidc.C2GM_AVN_LNE_ACDR.equalsIgnoreCase(code))
@@ -489,23 +459,20 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
      * @param dc Current draw context.
      */
     @Override
-    protected void determineLabelPositions(DrawContext dc)
-    {
+    protected void determineLabelPositions(DrawContext dc) {
         Iterator<? extends Position> iterator = this.getPositions().iterator();
 
         Position posA = iterator.next();
 
         int i = 0;
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             Position posB = iterator.next();
             Position midpoint = Position.interpolate(0.5, posA, posB);
 
             TacticalGraphicLabel label = this.labels.get(i);
 
             // Compute the main label position on the first iteration
-            if (i == 0)
-            {
+            if (i == 0) {
                 // The position of the main label is computed to keep the label a constant screen distance from the
                 // route. However, in order to determine the label size the label needs to have a position, so give it a
                 // temporary position of the route reference position.
@@ -530,8 +497,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
     }
 
     @Override
-    protected Offset getDefaultLabelOffset()
-    {
+    protected Offset getDefaultLabelOffset() {
         return DEFAULT_OFFSET;
     }
 
@@ -543,12 +509,10 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
      * @param label    Label for which to compute position.
      * @param midpoint Midpoint of the first route segment.
      * @param posB     End point of the first route segment.
-     *
      * @return The position of the main label.
      */
     protected Position computeMainLabelPosition(DrawContext dc, TacticalGraphicLabel label, Position midpoint,
-        Position posB)
-    {
+        Position posB) {
         Globe globe = dc.getGlobe();
 
         Vec4 pMid = globe.computePointFromPosition(midpoint);
@@ -563,7 +527,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
         // Position the label a constant pixel distance from the route. Compute the pixel distance as half of the
         // label's diagonal dimension.
         Rectangle labelBounds = label.getBounds(dc);
-        double labelDiagonal = labelBounds != null ? Math.hypot(labelBounds.width, labelBounds.height) : 0d;
+        double labelDiagonal = labelBounds != null ? Math.hypot(labelBounds.width, labelBounds.height) : 0.0d;
         double pixelDistance = labelDiagonal / 2.0;
 
         // Compute a vector perpendicular to the route, at the midpoint of the first two control points
@@ -581,11 +545,9 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
      *
      * @param start First position
      * @param end   Second position
-     *
      * @return New path configured with defaults appropriate for this type of graphic.
      */
-    protected Path createPath(Position start, Position end)
-    {
+    protected Path createPath(Position start, Position end) {
         Path path = new Path(start, end);
         path.setSurfacePath(true);
         path.setPathType(AVKey.GREAT_CIRCLE);

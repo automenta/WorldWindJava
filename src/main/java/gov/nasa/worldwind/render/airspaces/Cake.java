@@ -22,52 +22,18 @@ import java.util.*;
  * @author tag
  * @version $Id: Cake.java 2331 2014-09-19 19:45:55Z tgaskins $
  */
-public class Cake extends AbstractAirspace
-{
-    /** An inner class of {@link Cake} defining the parameters of one of the cake's cylinders. */
-    public static class Layer extends PartialCappedCylinder
-    {
-        public Layer(LatLon location, double radius, Angle leftAzimuth, Angle rightAzimuth,
-            double lowerAltitude, double upperAltitude)
-        {
-            super(location, radius, leftAzimuth, rightAzimuth);
-            this.setAltitudes(lowerAltitude, upperAltitude);
-        }
-
-        public Layer(LatLon location, double radius, Angle leftAzimuth, Angle rightAzimuth)
-        {
-            super(location, radius, leftAzimuth, rightAzimuth);
-        }
-
-        public Layer(LatLon location, double radius)
-        {
-            super(location, radius);
-        }
-
-        public Layer(AirspaceAttributes attributes)
-        {
-            super(attributes);
-        }
-
-        public Layer()
-        {
-        }
-    }
-
+public class Cake extends AbstractAirspace {
     private final List<Layer> layers = new ArrayList<>();
 
-    public Cake(Collection<Layer> layers)
-    {
+    public Cake(Iterable<Layer> layers) {
         this.addLayers(layers);
     }
 
-    public Cake(AirspaceAttributes attributes)
-    {
+    public Cake(AirspaceAttributes attributes) {
         super(attributes);
     }
 
-    public Cake()
-    {
+    public Cake() {
     }
 
     /**
@@ -75,8 +41,7 @@ public class Cake extends AbstractAirspace
      *
      * @return the cylinders comprising the shape, or an empty list if the shape contains no layers.
      */
-    public List<Layer> getLayers()
-    {
+    public List<Layer> getLayers() {
         return Collections.unmodifiableList(this.layers);
     }
 
@@ -84,21 +49,16 @@ public class Cake extends AbstractAirspace
      * Set the partial cylinders comprising the shape.
      *
      * @param layers the cylinders comprising the shape. May be an empty list.
-     *
      * @throws IllegalArgumentException if the list reference is null.
      */
-    public void setLayers(Collection<Layer> layers)
-    {
+    public void setLayers(Iterable<Layer> layers) {
         this.layers.clear();
         this.addLayers(layers);
     }
 
-    protected void addLayers(Iterable<Layer> newLayers)
-    {
-        if (newLayers != null)
-        {
-            for (Layer l : newLayers)
-            {
+    protected void addLayers(Iterable<Layer> newLayers) {
+        if (newLayers != null) {
+            for (Layer l : newLayers) {
                 if (l != null)
                     this.layers.add(l);
             }
@@ -107,41 +67,33 @@ public class Cake extends AbstractAirspace
         this.invalidateAirspaceData();
     }
 
-    public void setEnableCaps(boolean enable)
-    {
-        for (Layer l : this.layers)
-        {
+    public void setEnableCaps(boolean enable) {
+        for (Layer l : this.layers) {
             l.setEnableCaps(enable);
         }
     }
 
-    public void setEnableDepthOffset(boolean enable)
-    {
-        for (Layer l : this.layers)
-        {
+    public void setEnableDepthOffset(boolean enable) {
+        for (Layer l : this.layers) {
             l.setEnableDepthOffset(enable);
         }
     }
 
-    public void setTerrainConforming(boolean lowerTerrainConformant, boolean upperTerrainConformant)
-    {
+    public void setTerrainConforming(boolean lowerTerrainConformant, boolean upperTerrainConformant) {
         super.setTerrainConforming(lowerTerrainConformant, upperTerrainConformant);
-        for (Layer l : this.layers)
-        {
+        for (Layer l : this.layers) {
             l.setTerrainConforming(lowerTerrainConformant, upperTerrainConformant);
         }
     }
 
-    public boolean isAirspaceVisible(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public boolean isAirspaceVisible(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        // If the parent Cake is not visible, then return false immediately without testing the child layers.        
+        // If the parent Cake is not visible, then return false immediately without testing the child layers.
         if (!super.isAirspaceVisible(dc))
             return false;
 
@@ -149,10 +101,8 @@ public class Cake extends AbstractAirspace
 
         // The parent Cake is visible. Since the parent Cake's extent potentially contains volumes where no child
         // geometry exists, test that at least one of the child layers are visible.
-        for (Layer l : this.layers)
-        {
-            if (l.isAirspaceVisible(dc))
-            {
+        for (Layer l : this.layers) {
+            if (l.isAirspaceVisible(dc)) {
                 visible = true;
                 break;
             }
@@ -161,35 +111,28 @@ public class Cake extends AbstractAirspace
         return visible;
     }
 
-    public Position getReferencePosition()
-    {
-        ArrayList<LatLon> locations = new ArrayList<>(this.layers.size());
-        for (Layer l : this.layers)
-        {
+    public Position getReferencePosition() {
+        List<LatLon> locations = new ArrayList<>(this.layers.size());
+        for (Layer l : this.layers) {
             locations.add(l.getCenter());
         }
 
         return this.computeReferencePosition(locations, this.getAltitudes());
     }
 
-    protected Extent computeExtent(Globe globe, double verticalExaggeration)
-    {
+    protected Extent computeExtent(Globe globe, double verticalExaggeration) {
         List<Layer> cakeLayers = this.getLayers();
 
-        if (cakeLayers == null || cakeLayers.isEmpty())
-        {
+        if (cakeLayers == null || cakeLayers.isEmpty()) {
             return null;
         }
-        else if (cakeLayers.size() == 1)
-        {
+        else if (cakeLayers.size() == 1) {
             return cakeLayers.get(0).computeExtent(globe, verticalExaggeration);
         }
-        else
-        {
-            ArrayList<Box> extents = new ArrayList<>();
+        else {
+            List<Box> extents = new ArrayList<>();
 
-            for (Layer layer : cakeLayers)
-            {
+            for (Layer layer : cakeLayers) {
                 extents.add(layer.computeExtent(globe, verticalExaggeration));
             }
 
@@ -198,21 +141,17 @@ public class Cake extends AbstractAirspace
     }
 
     @Override
-    protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration)
-    {
+    protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration) {
         return null; // Cake is a geometry container, and therefore has no geometry itself.
     }
 
-    protected void doMoveTo(Globe globe, Position oldRef, Position newRef)
-    {
-        if (oldRef == null)
-        {
+    protected void doMoveTo(Globe globe, Position oldRef, Position newRef) {
+        if (oldRef == null) {
             String message = "nullValue.OldRefIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (newRef == null)
-        {
+        if (newRef == null) {
             String message = "nullValue.NewRefIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -220,24 +159,20 @@ public class Cake extends AbstractAirspace
 
         super.doMoveTo(oldRef, newRef);
 
-        for (Layer l : this.layers)
-        {
+        for (Layer l : this.layers) {
             l.doMoveTo(globe, oldRef, newRef);
         }
 
         this.invalidateAirspaceData();
     }
 
-    protected void doMoveTo(Position oldRef, Position newRef)
-    {
-        if (oldRef == null)
-        {
+    protected void doMoveTo(Position oldRef, Position newRef) {
+        if (oldRef == null) {
             String message = "nullValue.OldRefIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (newRef == null)
-        {
+        if (newRef == null) {
             String message = "nullValue.NewRefIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -245,23 +180,16 @@ public class Cake extends AbstractAirspace
 
         super.doMoveTo(oldRef, newRef);
 
-        for (Layer l : this.layers)
-        {
+        for (Layer l : this.layers) {
             l.doMoveTo(oldRef, newRef);
         }
 
         this.invalidateAirspaceData();
     }
 
-    //**************************************************************//
-    //********************  Geometry Rendering  ********************//
-    //**************************************************************//
-
     @Override
-    public void preRender(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void preRender(DrawContext dc) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -272,8 +200,7 @@ public class Cake extends AbstractAirspace
 
         this.determineActiveAttributes(dc);
 
-        for (Layer layer : this.layers)
-        {
+        for (Layer layer : this.layers) {
             // Synchronize the layer's attributes with this cake's attributes, and setup this cake as the layer's pick
             // delegate.
             layer.setAttributes(this.getActiveAttributes());
@@ -282,11 +209,13 @@ public class Cake extends AbstractAirspace
         }
     }
 
+    //**************************************************************//
+    //********************  Geometry Rendering  ********************//
+    //**************************************************************//
+
     @Override
-    public void render(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void render(DrawContext dc) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -298,16 +227,25 @@ public class Cake extends AbstractAirspace
         if (!this.isAirspaceVisible(dc))
             return;
 
-        for (Layer layer : this.layers)
-        {
+        for (Layer layer : this.layers) {
             layer.render(dc);
         }
     }
 
     @Override
-    protected void doRenderGeometry(DrawContext dc, String drawStyle)
-    {
+    protected void doRenderGeometry(DrawContext dc, String drawStyle) {
         // Intentionally left blank.
+    }
+
+    @Override
+    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
+        super.doGetRestorableState(rs, context);
+
+        RestorableSupport.StateObject so = rs.addStateObject(context, "layers");
+        for (Layer layer : this.layers) {
+            RestorableSupport.StateObject lso = rs.addStateObject(so, "layer");
+            layer.doGetRestorableState(rs, lso);
+        }
     }
 
     //**************************************************************//
@@ -315,21 +253,7 @@ public class Cake extends AbstractAirspace
     //**************************************************************//
 
     @Override
-    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
-        super.doGetRestorableState(rs, context);
-
-        RestorableSupport.StateObject so = rs.addStateObject(context, "layers");
-        for (Layer layer : this.layers)
-        {
-            RestorableSupport.StateObject lso = rs.addStateObject(so, "layer");
-            layer.doGetRestorableState(rs, lso);
-        }
-    }
-
-    @Override
-    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.doRestoreState(rs, context);
 
         RestorableSupport.StateObject so = rs.getStateObject(context, "layers");
@@ -340,12 +264,10 @@ public class Cake extends AbstractAirspace
         if (lsos == null || lsos.length == 0)
             return;
 
-        ArrayList<Layer> layerList = new ArrayList<>(lsos.length);
+        List<Layer> layerList = new ArrayList<>(lsos.length);
 
-        for (RestorableSupport.StateObject lso : lsos)
-        {
-            if (lso != null)
-            {
+        for (RestorableSupport.StateObject lso : lsos) {
+            if (lso != null) {
                 Layer layer = new Layer();
                 layer.doRestoreState(rs, lso);
                 layerList.add(layer);
@@ -353,5 +275,31 @@ public class Cake extends AbstractAirspace
         }
 
         this.setLayers(layerList);
+    }
+
+    /**
+     * An inner class of {@link Cake} defining the parameters of one of the cake's cylinders.
+     */
+    public static class Layer extends PartialCappedCylinder {
+        public Layer(LatLon location, double radius, Angle leftAzimuth, Angle rightAzimuth,
+            double lowerAltitude, double upperAltitude) {
+            super(location, radius, leftAzimuth, rightAzimuth);
+            this.setAltitudes(lowerAltitude, upperAltitude);
+        }
+
+        public Layer(LatLon location, double radius, Angle leftAzimuth, Angle rightAzimuth) {
+            super(location, radius, leftAzimuth, rightAzimuth);
+        }
+
+        public Layer(LatLon location, double radius) {
+            super(location, radius);
+        }
+
+        public Layer(AirspaceAttributes attributes) {
+            super(attributes);
+        }
+
+        public Layer() {
+        }
     }
 }

@@ -22,20 +22,18 @@ import java.util.*;
  */
 public class ContourLine implements Renderable {
 
+    // Segments connection criteria
+    protected final int maxConnectingDistance = 10; // meters
+    // Geometry update support.
+    final TimedExpirySupport expirySupport = new TimedExpirySupport(1000, 2000);
+    private final List<Renderable> renderables = new ArrayList<>();
+    protected Object globeStateKey;
     private double elevation;
     private Sector sector;
     private Color color = Color.CYAN;
     private double lineWidth = 1;
     private boolean enabled = true;
-    private final ArrayList<Renderable> renderables = new ArrayList<>();
     private boolean viewClippingEnabled = false;
-    protected Object globeStateKey;
-
-    // Geometry update support.
-    final TimedExpirySupport expirySupport = new TimedExpirySupport(1000, 2000);
-
-    // Segments connection criteria
-    protected final int maxConnectingDistance = 10; // meters
 
     public ContourLine() {
         this(0, Sector.FULL_SPHERE);
@@ -45,7 +43,7 @@ public class ContourLine implements Renderable {
         this(elevation, Sector.FULL_SPHERE);
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public ContourLine(Sector sector) {
         this(0, sector);
     }
@@ -186,9 +184,9 @@ public class ContourLine implements Renderable {
      * Set whether view volume clipping is performed.
      *
      * @param viewClippingEnabled <code>true</code> if view clipping should be performed, otherwise <code>false</code>
-     * (the default).
+     *                            (the default).
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public void setViewClippingEnabled(boolean viewClippingEnabled) {
         this.viewClippingEnabled = viewClippingEnabled;
     }
@@ -259,7 +257,7 @@ public class ContourLine implements Renderable {
 
         if (interArray != null) {
             ArrayList<Intersection> inter = new ArrayList<>(
-                    Arrays.asList(interArray));
+                Arrays.asList(interArray));
 
             // Filter intersection segment list
             if (isViewClippingEnabled()) {
@@ -275,9 +273,8 @@ public class ContourLine implements Renderable {
     /**
      * Filters the given intersection segments list according to the current view frustum.
      *
-     * @param dc the current <code>DrawContext</code>
+     * @param dc   the current <code>DrawContext</code>
      * @param list the list of <code>Intersection</code> to be filtered.
-     *
      * @return the filtered list.
      */
     protected ArrayList<Intersection> filterIntersectionsOnViewFrustum(DrawContext dc, ArrayList<Intersection> list) {
@@ -285,10 +282,11 @@ public class ContourLine implements Renderable {
         int i = 0;
         while (i < list.size()) {
             if (vf.contains(list.get(i).getIntersectionPoint())
-                    || vf.contains(list.get(i + 1).getIntersectionPoint())) // Keep segment
+                || vf.contains(list.get(i + 1).getIntersectionPoint())) // Keep segment
             {
                 i += 2;
-            } else {
+            }
+            else {
                 // Remove segment
                 list.remove(i);
                 list.remove(i);
@@ -301,9 +299,8 @@ public class ContourLine implements Renderable {
      * Filters the given intersection segments list according to some criteria - here the inclusion inside the bounding
      * sector.
      *
-     * @param dc the current <code>DrawContext</code>
+     * @param dc   the current <code>DrawContext</code>
      * @param list the list of <code>Intersection</code> to be filtered.
-     *
      * @return the filtered list.
      */
     protected ArrayList<Intersection> filterIntersections(DrawContext dc, ArrayList<Intersection> list) {
@@ -316,10 +313,11 @@ public class ContourLine implements Renderable {
         int i = 0;
         while (i < list.size()) {
             if (s.contains(globe.computePositionFromPoint(list.get(i).getIntersectionPoint()))
-                    && s.contains(globe.computePositionFromPoint(list.get(i + 1).getIntersectionPoint()))) // Keep segment
+                && s.contains(globe.computePositionFromPoint(list.get(i + 1).getIntersectionPoint()))) // Keep segment
             {
                 i += 2;
-            } else {
+            }
+            else {
                 // Remove segment
                 list.remove(i);
                 list.remove(i);
@@ -332,13 +330,12 @@ public class ContourLine implements Renderable {
      * Add a set of <code>Path</code> objects to the contour line renderable list by connecting as much as possible the
      * segments from the given <code>Intersection</code> array.
      *
-     * @param dc the current <code>DrawContext</code>.
-     * @param inter the list of <code>Intersection</code> to sort out.
+     * @param dc        the current <code>DrawContext</code>.
+     * @param inter     the list of <code>Intersection</code> to sort out.
      * @param tolerance how far in meter can two points be considered connected.
-     *
      * @return the number of <code>Path</code> objects added.
      */
-    protected int makePathsConnected(DrawContext dc, ArrayList<Intersection> inter, int tolerance) {
+    protected int makePathsConnected(DrawContext dc, List<Intersection> inter, int tolerance) {
         if (inter == null) {
             return 0;
         }
@@ -348,7 +345,7 @@ public class ContourLine implements Renderable {
         Path line;
         int tolerance2 = tolerance * tolerance; // distance squared in meters
         int count = 0;
-        while (inter.size() > 0) {
+        while (!inter.isEmpty()) {
             ArrayList<Position> positions = new ArrayList<>();
             // Start with first segment
             start = inter.remove(0).getIntersectionPoint();
@@ -356,7 +353,7 @@ public class ContourLine implements Renderable {
             positions.add(globe.computePositionFromPoint(start));
             positions.add(globe.computePositionFromPoint(end));
             // Try to connect remaining segments
-            for (int i = 0; i < inter.size();) {
+            for (int i = 0; i < inter.size(); ) {
                 // Try segment start point
                 p = inter.get(i).getIntersectionPoint();
                 if (p.distanceToSquared3(start) < tolerance2) {
@@ -400,7 +397,7 @@ public class ContourLine implements Renderable {
             line = new Path(positions);
             line.setNumSubsegments(0);
             line.setSurfacePath(true);
-            var attrs = new BasicShapeAttributes();
+            ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineWidth(this.getLineWidth());
             attrs.setOutlineMaterial(new Material(this.getColor()));
             line.setAttributes(attrs);

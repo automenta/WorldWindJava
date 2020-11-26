@@ -20,40 +20,42 @@ import java.util.Locale;
  * @author brownrigg
  * @version $Id: GeotiffImageReaderSpi.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GeotiffImageReaderSpi extends ImageReaderSpi
-{
+public class GeotiffImageReaderSpi extends ImageReaderSpi {
 
-    public static GeotiffImageReaderSpi inst()
-    {
-        if (theInstance == null)
-            theInstance = new GeotiffImageReaderSpi();
-        return theInstance;
-    }
+    private static final String vendorName = Version.getVersionName();
+    private static final String version = Version.getVersionNumber();
+    private static final String[] names = {"tiff", "GTiff", "geotiff"};
+    private static final String[] suffixes = {"tif", "tiff", "gtif"};
+    private static final String[] mimeTypes = {"image/tiff", "image/geotiff"};
+    private static final String readerClassname = "gov.nasa.worldwind.servers.wms.utilities.TiffImageReader";
+    private static GeotiffImageReaderSpi theInstance = null;
 
-    private GeotiffImageReaderSpi()
-    {
+    private GeotiffImageReaderSpi() {
         super(vendorName, version, names, suffixes, mimeTypes,
             readerClassname, new Class[] {ImageInputStream.class},
             null, false, null, null, null, null,
             false, null, null, null, null);
     }
 
+    public static GeotiffImageReaderSpi inst() {
+        if (theInstance == null)
+            theInstance = new GeotiffImageReaderSpi();
+        return theInstance;
+    }
+
     @Override
-    public boolean canDecodeInput(Object source)
-    {
+    public boolean canDecodeInput(Object source) {
         if (!(source instanceof ImageInputStream))
             return false;
 
         ImageInputStream inp = (ImageInputStream) source;
         byte[] ifh = new byte[8];  // Tiff image-file header
-        try
-        {
+        try {
             inp.mark();
             inp.readFully(ifh);
             inp.reset();
         }
-        catch (IOException ex)
-        {
+        catch (IOException ex) {
             return false;
         }
 
@@ -62,23 +64,12 @@ public class GeotiffImageReaderSpi extends ImageReaderSpi
     }
 
     @Override
-    public ImageReader createReaderInstance(Object extension)
-    {
+    public ImageReader createReaderInstance(Object extension) {
         return new GeotiffImageReader(this);
     }
 
     @Override
-    public String getDescription(Locale locale)
-    {
+    public String getDescription(Locale locale) {
         return "NASA WorldWind Geotiff Image Reader";
     }
-
-    private static GeotiffImageReaderSpi theInstance = null;
-
-    private static final String vendorName = Version.getVersionName();
-    private static final String version = Version.getVersionNumber();
-    private static final String[] names = {"tiff", "GTiff", "geotiff"};
-    private static final String[] suffixes = {"tif", "tiff", "gtif"};
-    private static final String[] mimeTypes = {"image/tiff", "image/geotiff"};
-    private static final String readerClassname = "gov.nasa.worldwind.servers.wms.utilities.TiffImageReader";
 }

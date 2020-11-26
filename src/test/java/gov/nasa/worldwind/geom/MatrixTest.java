@@ -77,6 +77,7 @@ public class MatrixTest
         double m31 = random.nextDouble(), m32 = random.nextDouble(), m33 = random.nextDouble(), m34
             = random.nextDouble();
         double f1 = 1.4, f2 = -4.02, f3 = 0.3;
+//        double f1 = 1, f2 = -4, f3 = 2;
         double m41 = f1 * m11 + f2 * m21 + f3 * m31;
         double m42 = f1 * m12 + f2 * m22 + f3 * m32;
         double m43 = f1 * m13 + f2 * m23 + f3 * m33;

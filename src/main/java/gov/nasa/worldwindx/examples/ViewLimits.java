@@ -26,8 +26,7 @@ import java.io.File;
  * @author dcollins
  * @version $Id: ViewLimits.java 2259 2014-08-22 23:03:59Z dcollins $
  */
-public class ViewLimits extends ApplicationTemplate
-{
+public class ViewLimits extends ApplicationTemplate {
     protected static final String SECTOR_LIMITS_CHANGED = "SectorLimitsChanged";
     protected static final String HEADING_LIMITS_CHANGED = "HeadingLimitsChanged";
     protected static final String PITCH_LIMITS_CHANGED = "PitchLimitsChanged";
@@ -35,8 +34,11 @@ public class ViewLimits extends ApplicationTemplate
     protected static final String SAVE = "Save";
     protected static final String LOAD = "Load";
 
-    public static class AppFrame extends ApplicationTemplate.AppFrame implements ActionListener
-    {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("View Limits", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame implements ActionListener {
         private final Controller controller;
         // UI components.
         private JSpinner minLatitude;
@@ -51,45 +53,38 @@ public class ViewLimits extends ApplicationTemplate
         private JSpinner maxZoom;
         private boolean ignoreComponentEvents = false;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             this.controller = new Controller(this);
             this.initComponents();
             this.updateComponents();
         }
 
-        public Sector getSectorLimits()
-        {
+        public Sector getSectorLimits() {
             return Sector.fromDegrees(
                 (Double) this.minLatitude.getValue(), (Double) this.maxLatitude.getValue(),
                 (Double) this.minLongitude.getValue(), (Double) this.maxLongitude.getValue());
         }
 
-        public void setSectorLimits(Sector sector)
-        {
-            if (sector == null)
-            {
+        public void setSectorLimits(Sector sector) {
+            if (sector == null) {
                 String message = Logging.getMessage("nullValue.SectorIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
             this.ignoreComponentEvents = true;
-            try
-            {
-                this.minLatitude.setValue(sector.getMinLatitude().degrees);
-                this.maxLatitude.setValue(sector.getMaxLatitude().degrees);
-                this.minLongitude.setValue(sector.getMinLongitude().degrees);
-                this.maxLongitude.setValue(sector.getMaxLongitude().degrees);
+            try {
+                this.minLatitude.setValue(sector.latMin().degrees);
+                this.maxLatitude.setValue(sector.latMax().degrees);
+                this.minLongitude.setValue(sector.lonMin().degrees);
+                this.maxLongitude.setValue(sector.lonMax().degrees);
             }
-            finally
-            {
+            finally {
                 this.ignoreComponentEvents = false;
             }
         }
 
-        public Angle[] getHeadingLimits()
-        {
+        public Angle[] getHeadingLimits() {
             return new Angle[]
                 {
                     Angle.fromDegrees((Double) this.minHeading.getValue()),
@@ -97,29 +92,24 @@ public class ViewLimits extends ApplicationTemplate
                 };
         }
 
-        public void setHeadingLimits(Angle min, Angle max)
-        {
-            if (min == null || max == null)
-            {
+        public void setHeadingLimits(Angle min, Angle max) {
+            if (min == null || max == null) {
                 String message = Logging.getMessage("nullValue.MinOrMaxAngleIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
             this.ignoreComponentEvents = true;
-            try
-            {
+            try {
                 this.minHeading.setValue(min.degrees);
                 this.maxHeading.setValue(max.degrees);
             }
-            finally
-            {
+            finally {
                 this.ignoreComponentEvents = false;
             }
         }
 
-        public Angle[] getPitchLimits()
-        {
+        public Angle[] getPitchLimits() {
             return new Angle[]
                 {
                     Angle.fromDegrees((Double) this.minPitch.getValue()),
@@ -127,29 +117,24 @@ public class ViewLimits extends ApplicationTemplate
                 };
         }
 
-        public void setPitchLimits(Angle min, Angle max)
-        {
-            if (min == null || max == null)
-            {
+        public void setPitchLimits(Angle min, Angle max) {
+            if (min == null || max == null) {
                 String message = Logging.getMessage("nullValue.MinOrMaxAngleIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
             this.ignoreComponentEvents = true;
-            try
-            {
+            try {
                 this.minPitch.setValue(min.degrees);
                 this.maxPitch.setValue(max.degrees);
             }
-            finally
-            {
+            finally {
                 this.ignoreComponentEvents = false;
             }
         }
 
-        public double[] getZoomLimits()
-        {
+        public double[] getZoomLimits() {
             return new double[]
                 {
                     (Double) this.minZoom.getValue(),
@@ -157,32 +142,26 @@ public class ViewLimits extends ApplicationTemplate
                 };
         }
 
-        public void setZoomLimits(double min, double max)
-        {
-            try
-            {
+        public void setZoomLimits(double min, double max) {
+            try {
                 this.minZoom.setValue(min);
                 this.maxZoom.setValue(max);
             }
-            finally
-            {
+            finally {
                 this.ignoreComponentEvents = false;
             }
         }
 
-        public void actionPerformed(ActionEvent actionEvent)
-        {
+        public void actionPerformed(ActionEvent actionEvent) {
             if (this.ignoreComponentEvents)
                 return;
 
-            if (this.controller != null)
-            {
+            if (this.controller != null) {
                 this.controller.actionPerformed(actionEvent);
             }
         }
 
-        public void updateComponents()
-        {
+        public void updateComponents() {
             OrbitView view = this.controller.getOrbitView();
             if (view == null)
                 return;
@@ -208,8 +187,7 @@ public class ViewLimits extends ApplicationTemplate
                 this.setZoomLimits(values[0], values[1]);
         }
 
-        protected void initComponents()
-        {
+        protected void initComponents() {
             this.minLatitude = this.createAngleSpinner(SECTOR_LIMITS_CHANGED, Angle.NEG90, Angle.NEG90, Angle.POS90);
             this.maxLatitude = this.createAngleSpinner(SECTOR_LIMITS_CHANGED, Angle.POS90, Angle.NEG90, Angle.POS90);
             this.minLongitude = this.createAngleSpinner(SECTOR_LIMITS_CHANGED, Angle.NEG180, Angle.NEG180,
@@ -306,8 +284,8 @@ public class ViewLimits extends ApplicationTemplate
             this.setJMenuBar(menuBar);
         }
 
-        protected JSpinner createDoubleSpinner(final String actionCommand, double initialValue, double min, double max)
-        {
+        protected JSpinner createDoubleSpinner(final String actionCommand, double initialValue, double min,
+            double max) {
             final JSpinner spinner = new JSpinner(new SpinnerNumberModel(
                 initialValue, min, max, 0.01));
             spinner.addChangeListener(changeEvent -> {
@@ -322,22 +300,18 @@ public class ViewLimits extends ApplicationTemplate
             return spinner;
         }
 
-        protected JSpinner createAngleSpinner(final String actionCommand, Angle initialValue, Angle min, Angle max)
-        {
+        protected JSpinner createAngleSpinner(final String actionCommand, Angle initialValue, Angle min, Angle max) {
             return createDoubleSpinner(actionCommand, initialValue.degrees, min.degrees, max.degrees);
         }
     }
 
-    public static class Controller implements ActionListener
-    {
+    public static class Controller implements ActionListener {
+        protected static final Sector DEFAULT_SECTOR_LIMITS = Sector.fromDegrees(40, 50, -130, -120);
         protected final AppFrame appFrame;
         protected final SurfaceSector surfaceSector;
         protected final RenderableLayer layer;
 
-        protected static final Sector DEFAULT_SECTOR_LIMITS = Sector.fromDegrees(40, 50, -130, -120);
-
-        public Controller(AppFrame appFrame)
-        {
+        public Controller(AppFrame appFrame) {
             this.appFrame = appFrame;
 
             this.surfaceSector = new SurfaceSector();
@@ -357,37 +331,31 @@ public class ViewLimits extends ApplicationTemplate
             insertBeforePlacenames(this.appFrame.getWwd(), this.layer);
 
             OrbitView view = this.getOrbitView();
-            if (view != null)
-            {
+            if (view != null) {
                 view.getOrbitViewLimits().setCenterLocationLimits(DEFAULT_SECTOR_LIMITS);
-                view.getOrbitViewLimits().setZoomLimits(0, 20e6);
+                view.getOrbitViewLimits().setZoomLimits(0, 20.0e6);
             }
         }
 
-        @SuppressWarnings( {"StringEquality"})
-        public void actionPerformed(ActionEvent actionEvent)
-        {
-            if (actionEvent == null)
-            {
+        @SuppressWarnings("StringEquality")
+        public void actionPerformed(ActionEvent actionEvent) {
+            if (actionEvent == null) {
                 return;
             }
 
             String actionCommand = actionEvent.getActionCommand();
-            if (actionCommand == null)
-            {
+            if (actionCommand == null) {
                 return;
             }
 
-            switch (actionCommand)
-            {
+            switch (actionCommand) {
                 case SECTOR_LIMITS_CHANGED, HEADING_LIMITS_CHANGED, PITCH_LIMITS_CHANGED, ZOOM_LIMITS_CHANGED -> this.updateViewLimits();
                 case LOAD -> this.loadObjects();
                 case SAVE -> this.saveObjects();
             }
         }
 
-        public void updateViewLimits()
-        {
+        public void updateViewLimits() {
             OrbitView view = this.getOrbitView();
             if (view == null)
                 return;
@@ -415,8 +383,7 @@ public class ViewLimits extends ApplicationTemplate
             this.updateRenderables();
         }
 
-        public void saveObjects()
-        {
+        public void saveObjects() {
             JFileChooser fc = new JFileChooser();
             fc.setCurrentDirectory(new File(Configuration.getUserHomeDirectory()));
 
@@ -436,8 +403,7 @@ public class ViewLimits extends ApplicationTemplate
             WWIO.writeTextFile(xmlString, file);
         }
 
-        public void loadObjects()
-        {
+        public void loadObjects() {
             JFileChooser fc = new JFileChooser();
             fc.setCurrentDirectory(new File(Configuration.getUserHomeDirectory()));
 
@@ -458,17 +424,14 @@ public class ViewLimits extends ApplicationTemplate
             this.appFrame.updateComponents();
         }
 
-        public OrbitView getOrbitView()
-        {
+        public OrbitView getOrbitView() {
             View view = this.appFrame.getWwd().getView();
             return (view instanceof OrbitView) ? (OrbitView) view : null;
         }
 
-        public void updateRenderables()
-        {
+        public void updateRenderables() {
             View view = this.appFrame.getWwd().getView();
-            if (!(view instanceof OrbitView))
-            {
+            if (!(view instanceof OrbitView)) {
                 return;
             }
 
@@ -479,10 +442,5 @@ public class ViewLimits extends ApplicationTemplate
 
             this.appFrame.getWwd().redraw();
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("View Limits", AppFrame.class);
     }
 }

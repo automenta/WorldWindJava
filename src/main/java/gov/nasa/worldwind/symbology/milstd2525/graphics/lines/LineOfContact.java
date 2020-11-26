@@ -21,36 +21,36 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: LineOfContact.java 545 2012-04-24 22:29:21Z pabercrombie $
  */
-public class LineOfContact extends ForwardLineOfOwnTroops
-{
-    /** Line of Contact is drawn with two paths. The super class manages the first path; this is the second. */
-    protected final Path path2;
-
+public class LineOfContact extends ForwardLineOfOwnTroops {
     /**
-     * Indicates the graphics supported by this class.
-     *
-     * @return List of masked SIDC strings that identify graphics that this class supports.
+     * Line of Contact is drawn with two paths. The super class manages the first path; this is the second.
      */
-    public static List<String> getSupportedGraphics()
-    {
-        return Collections.singletonList(TacGrpSidc.C2GM_GNL_LNE_LOC);
-    }
+    protected final Path path2;
 
     /**
      * Create a new graphic.
      *
      * @param sidc MIL-STD-2525C identifier code.
      */
-    public LineOfContact(String sidc)
-    {
+    public LineOfContact(String sidc) {
         super(sidc);
         this.path2 = this.createPath();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics() {
+        return Collections.singletonList(TacGrpSidc.C2GM_GNL_LNE_LOC);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void moveTo(Position position)
-    {
+    public void moveTo(Position position) {
         Position delta;
         Position ref1 = this.path.getReferencePosition();
         Position ref2 = this.path2.getReferencePosition();
@@ -67,18 +67,15 @@ public class LineOfContact extends ForwardLineOfOwnTroops
     }
 
     @Override
-    protected void doRenderGraphic(DrawContext dc)
-    {
+    protected void doRenderGraphic(DrawContext dc) {
         super.doRenderGraphic(dc);
         this.path2.render(dc);
     }
 
     @Override
-    protected String getGraphicLabel()
-    {
+    protected String getGraphicLabel() {
         StringBuilder sb = new StringBuilder();
-        if (this.mustShowHostileIndicator())
-        {
+        if (this.mustShowHostileIndicator()) {
             sb.append(SymbologyConstants.HOSTILE_ENEMY);
             sb.append("\n");
         }
@@ -92,14 +89,12 @@ public class LineOfContact extends ForwardLineOfOwnTroops
      * @param positions Positions that define the polygon boundary.
      */
     @Override
-    protected void generateIntermediatePositions(DrawContext dc, Iterable<? extends Position> positions)
-    {
+    protected void generateIntermediatePositions(DrawContext dc, Iterable<? extends Position> positions) {
         Globe globe = dc.getGlobe();
 
         boolean useDefaultWaveLength = false;
         double waveLength = this.getWaveLength();
-        if (waveLength == 0)
-        {
+        if (waveLength == 0) {
             waveLength = this.computeDefaultWavelength(positions, globe);
             useDefaultWaveLength = true;
         }
@@ -137,8 +132,7 @@ public class LineOfContact extends ForwardLineOfOwnTroops
      * @param globe          Current globe.
      */
     public void generateParallelLines(Iterator<? extends Position> iterator, List<Position> leftPositions,
-        List<Position> rightPositions, double halfWidth, Globe globe)
-    {
+        List<Position> rightPositions, double halfWidth, Globe globe) {
         // Starting at the start of the line, take points three at a time. B is the current control point, A is the next
         // point in the line, and C is the previous point. We need to a find a vector that bisects angle ABC.
         //       B
@@ -158,8 +152,7 @@ public class LineOfContact extends ForwardLineOfOwnTroops
         // Compute side points at the start of the line.
         this.generateParallelPoints(ptB, null, ptA, leftPositions, rightPositions, halfWidth, globe);
 
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             posA = iterator.next();
 
             ptC = ptB;
@@ -185,23 +178,19 @@ public class LineOfContact extends ForwardLineOfOwnTroops
      * @param halfWidth      Distance from the center line to the left or right lines.
      * @param globe          Current globe.
      */
-    protected void generateParallelPoints(Vec4 point, Vec4 prev, Vec4 next, List<Position> leftPositions,
-        List<Position> rightPositions, double halfWidth, Globe globe)
-    {
-        if ((point == null) || (prev == null && next == null))
-        {
+    protected void generateParallelPoints(Vec4 point, Vec4 prev, Vec4 next, Collection<Position> leftPositions,
+        Collection<Position> rightPositions, double halfWidth, Globe globe) {
+        if ((point == null) || (prev == null && next == null)) {
             String message = Logging.getMessage("nullValue.PointIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (leftPositions == null || rightPositions == null)
-        {
+        if (leftPositions == null || rightPositions == null) {
             String message = Logging.getMessage("nullValue.PositionListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (globe == null)
-        {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -218,8 +207,7 @@ public class LineOfContact extends ForwardLineOfOwnTroops
 
         double length;
         // If both next and previous points are supplied then calculate the angle that bisects the angle current, next, prev.
-        if (next != null && prev != null && !Vec4.areColinear(prev, point, next))
-        {
+        if (next != null && prev != null && !Vec4.areColinear(prev, point, next)) {
             // Compute vector in the forward direction.
             Vec4 forward = next.subtract3(point);
 
@@ -230,8 +218,7 @@ public class LineOfContact extends ForwardLineOfOwnTroops
             // Compute the scalar triple product of the vector BC, the normal vector, and the offset vector to
             // determine if the offset points to the left or the right of the control line.
             double tripleProduct = perpendicular.dot3(offset);
-            if (tripleProduct < 0)
-            {
+            if (tripleProduct < 0) {
                 offset = offset.multiply3(-1);
             }
 
@@ -243,8 +230,7 @@ public class LineOfContact extends ForwardLineOfOwnTroops
             else
                 length = halfWidth;
         }
-        else
-        {
+        else {
             offset = perpendicular.normalize3();
             length = halfWidth;
         }

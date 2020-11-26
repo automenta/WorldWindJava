@@ -17,9 +17,10 @@ import java.io.*;
  * @author pabercrombie
  * @version $Id: ColladaFile.java 660 2012-06-26 16:13:11Z pabercrombie $
  */
-public class ColladaFile extends XMLDoc
-{
-    /** File from which COLLADA content is read. */
+public class ColladaFile extends XMLDoc {
+    /**
+     * File from which COLLADA content is read.
+     */
     protected File colladaFile;
 
     /**
@@ -27,10 +28,8 @@ public class ColladaFile extends XMLDoc
      *
      * @param file COLLADA file from which to read content.
      */
-    public ColladaFile(File file)
-    {
-        if (file == null)
-        {
+    public ColladaFile(File file) {
+        if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -39,17 +38,18 @@ public class ColladaFile extends XMLDoc
         this.colladaFile = file;
     }
 
-    /** {@inheritDoc} */
-    public InputStream getInputStream() throws IOException
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public InputStream getInputStream() throws IOException {
         return new FileInputStream(this.colladaFile);
     }
 
-    /** {@inheritDoc} */
-    public String getSupportFilePath(String path)
-    {
-        if (path == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public String getSupportFilePath(String path) {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -65,8 +65,7 @@ public class ColladaFile extends XMLDoc
     }
 
     @Override
-    public InputStream getSupportFileStream(String path)
-    {
+    public InputStream getSupportFileStream(String path) {
         return null;
     }
 }

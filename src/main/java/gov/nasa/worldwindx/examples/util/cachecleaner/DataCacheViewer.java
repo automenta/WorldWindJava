@@ -27,8 +27,13 @@ import java.util.*;
  * @version $Id: DataCacheViewer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 @SuppressWarnings("unchecked")
-public class DataCacheViewer
-{
+public class DataCacheViewer {
+    static {
+        if (Configuration.isMacOS()) {
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Cache Cleaner");
+        }
+    }
+
     protected JPanel panel;
     protected CacheTable table;
     protected JButton delBtn;
@@ -36,8 +41,7 @@ public class DataCacheViewer
     protected JComboBox ageUnit;
     protected JLabel deleteSizeLabel;
 
-    public DataCacheViewer(File cacheRoot)
-    {
+    public DataCacheViewer(File cacheRoot) {
         this.panel = new JPanel(new BorderLayout(5, 5));
 
         JLabel rootLabel = new JLabel("Cache Root: " + cacheRoot.getPath());
@@ -91,24 +95,20 @@ public class DataCacheViewer
         this.delBtn.addActionListener(e -> {
             panel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             Thread t = new Thread(() -> {
-                try
-                {
+                try {
                     List<FileStoreDataSet> dataSets = table.getSelectedDataSets();
                     int age = Integer.parseInt(ageSpinner.getValue().toString());
                     String unit = getUnitKey();
 
-                    for (FileStoreDataSet ds : dataSets)
-                    {
+                    for (FileStoreDataSet ds : dataSets) {
                         ds.deleteOutOfScopeFiles(unit, age, false);
-                        if (ds.getSize() == 0)
-                        {
+                        if (ds.getSize() == 0) {
                             table.deleteDataSet(ds);
                             ds.delete(false);
                         }
                     }
                 }
-                finally
-                {
+                finally {
                     update();
                     SwingUtilities.invokeLater(() -> panel.setCursor(Cursor.getDefaultCursor()));
                 }
@@ -119,59 +119,7 @@ public class DataCacheViewer
         quitButton.addActionListener(e -> System.exit(0));
     }
 
-    protected void update()
-    {
-        java.util.List<FileStoreDataSet> dataSets = this.table.getSelectedDataSets();
-        int age = Integer.parseInt(this.ageSpinner.getValue().toString());
-
-        if (dataSets.size() == 0)
-        {
-            this.deleteSizeLabel.setText("Total to delete: 0 MB");
-            this.delBtn.setEnabled(false);
-            return;
-        }
-
-        String unit = this.getUnitKey();
-
-        long totalSize = 0;
-        for (FileStoreDataSet ds : dataSets)
-        {
-            totalSize += ds.getOutOfScopeSize(unit, age);
-        }
-
-        Formatter formatter = new Formatter();
-        formatter.format("%5.1f", ((float) totalSize) / 1e6);
-        this.deleteSizeLabel.setText("Total to delete: " + formatter.toString() + " MB");
-
-        this.delBtn.setEnabled(true);
-    }
-
-    protected String getUnitKey()
-    {
-        String unit = null;
-        String unitString = (String) this.ageUnit.getSelectedItem();
-        switch (unitString)
-        {
-            case "Hours" -> unit = FileStoreDataSet.HOUR;
-            case "Days" -> unit = FileStoreDataSet.DAY;
-            case "Weeks" -> unit = FileStoreDataSet.WEEK;
-            case "Months" -> unit = FileStoreDataSet.MONTH;
-            case "Years" -> unit = FileStoreDataSet.YEAR;
-        }
-
-        return unit;
-    }
-
-    static
-    {
-        if (Configuration.isMacOS())
-        {
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Cache Cleaner");
-        }
-    }
-
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame();
             frame.setPreferredSize(new Dimension(800, 300));
@@ -193,5 +141,43 @@ public class DataCacheViewer
             frame.setLocation(x, y);
             frame.setVisible(true);
         });
+    }
+
+    protected void update() {
+        java.util.List<FileStoreDataSet> dataSets = this.table.getSelectedDataSets();
+        int age = Integer.parseInt(this.ageSpinner.getValue().toString());
+
+        if (dataSets.isEmpty()) {
+            this.deleteSizeLabel.setText("Total to delete: 0 MB");
+            this.delBtn.setEnabled(false);
+            return;
+        }
+
+        String unit = this.getUnitKey();
+
+        long totalSize = 0;
+        for (FileStoreDataSet ds : dataSets) {
+            totalSize += ds.getOutOfScopeSize(unit, age);
+        }
+
+        Formatter formatter = new Formatter();
+        formatter.format("%5.1f", ((float) totalSize) / 1.0e6);
+        this.deleteSizeLabel.setText("Total to delete: " + formatter.toString() + " MB");
+
+        this.delBtn.setEnabled(true);
+    }
+
+    protected String getUnitKey() {
+        String unit = null;
+        String unitString = (String) this.ageUnit.getSelectedItem();
+        switch (unitString) {
+            case "Hours" -> unit = FileStoreDataSet.HOUR;
+            case "Days" -> unit = FileStoreDataSet.DAY;
+            case "Weeks" -> unit = FileStoreDataSet.WEEK;
+            case "Months" -> unit = FileStoreDataSet.MONTH;
+            case "Years" -> unit = FileStoreDataSet.YEAR;
+        }
+
+        return unit;
     }
 }

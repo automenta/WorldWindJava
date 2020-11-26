@@ -11,18 +11,19 @@ import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwindx.examples.util.ScreenShotAction;
 
 import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.EventQueue;
 
 /**
- * This example demonstrates how to take screenshots with WWJ using the {@link gov.nasa.worldwindx.examples.util.ScreenShotAction}
+ * This example demonstrates how to take screenshots with WWJ using the {@link ScreenShotAction}
  * class.
  *
  * @author tag
  * @version $Id: ScreenShots.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ScreenShots extends JFrame
-{
-    static
-    {
+public class ScreenShots extends JFrame {
+    static {
         // Ensure that menus and tooltips interact successfully with the WWJ window.
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
@@ -30,17 +31,28 @@ public class ScreenShots extends JFrame
 
     private final WorldWindow wwd;
 
-    public ScreenShots()
-    {
+    public ScreenShots() {
         WorldWindowGLCanvas wwd = new WorldWindowGLCanvas();
         this.wwd = wwd;
-        wwd.setPreferredSize(new java.awt.Dimension(1000, 800));
-        this.getContentPane().add(wwd, java.awt.BorderLayout.CENTER);
+        wwd.setPreferredSize(new Dimension(1000, 800));
+        this.getContentPane().add(wwd, BorderLayout.CENTER);
         wwd.setModel(new BasicModel());
     }
 
-    private JMenuBar createMenuBar()
-    {
+    public static void main(String[] args) {
+        // Swing components should always be instantiated on the event dispatch thread.
+        EventQueue.invokeLater(() -> {
+            ScreenShots frame = new ScreenShots();
+
+            frame.setJMenuBar(frame.createMenuBar()); // Create menu and associate with frame
+
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.pack();
+            frame.setVisible(true);
+        });
+    }
+
+    private JMenuBar createMenuBar() {
         JMenu menu = new JMenu("File");
 
         JMenuItem snapItem = new JMenuItem("Save Snapshot...");
@@ -51,19 +63,5 @@ public class ScreenShots extends JFrame
         menuBar.add(menu);
 
         return menuBar;
-    }
-
-    public static void main(String[] args)
-    {
-        // Swing components should always be instantiated on the event dispatch thread.
-        java.awt.EventQueue.invokeLater(() -> {
-            ScreenShots frame = new ScreenShots();
-
-            frame.setJMenuBar(frame.createMenuBar()); // Create menu and associate with frame
-
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.pack();
-            frame.setVisible(true);
-        });
     }
 }

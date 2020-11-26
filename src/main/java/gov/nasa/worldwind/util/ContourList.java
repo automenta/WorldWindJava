@@ -16,19 +16,15 @@ import java.util.ArrayList;
  * @author dcollins
  * @version $Id: ContourList.java 2405 2014-10-29 23:33:08Z dcollins $
  */
-public class ContourList extends WWObjectImpl implements Combinable
-{
+public class ContourList extends WWObjectImpl implements Combinable {
     protected final ArrayList<Iterable<? extends LatLon>> contours = new ArrayList<>();
     protected Sector sector;
 
-    public ContourList()
-    {
+    public ContourList() {
     }
 
-    public ContourList(ContourList that)
-    {
-        if (that == null)
-        {
+    public ContourList(ContourList that) {
+        if (that == null) {
             String msg = Logging.getMessage("nullValue.ContourListIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -38,15 +34,12 @@ public class ContourList extends WWObjectImpl implements Combinable
         this.sector = that.sector;
     }
 
-    public int getContourCount()
-    {
+    public int getContourCount() {
         return this.contours.size();
     }
 
-    public Iterable<? extends LatLon> getContour(int index)
-    {
-        if (index < 0 || index >= this.contours.size())
-        {
+    public Iterable<? extends LatLon> getContour(int index) {
+        if (index < 0 || index >= this.contours.size()) {
             String msg = Logging.getMessage("generic.indexOutOfRange", index);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -55,17 +48,14 @@ public class ContourList extends WWObjectImpl implements Combinable
         return this.contours.get(index);
     }
 
-    public void setContour(int index, Iterable<? extends LatLon> contour)
-    {
-        if (index < 0 || index >= this.contours.size())
-        {
+    public void setContour(int index, Iterable<? extends LatLon> contour) {
+        if (index < 0 || index >= this.contours.size()) {
             String msg = Logging.getMessage("generic.indexOutOfRange", index);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (contour == null)
-        {
+        if (contour == null) {
             String msg = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -75,10 +65,8 @@ public class ContourList extends WWObjectImpl implements Combinable
         this.computeSector();
     }
 
-    public void addContour(Iterable<? extends LatLon> contour)
-    {
-        if (contour == null)
-        {
+    public void addContour(Iterable<? extends LatLon> contour) {
+        if (contour == null) {
             String msg = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -90,10 +78,8 @@ public class ContourList extends WWObjectImpl implements Combinable
         this.sector = (this.sector != null ? this.sector.union(contourSector) : contourSector);
     }
 
-    public void addAllContours(ContourList that)
-    {
-        if (that == null)
-        {
+    public void addAllContours(ContourList that) {
+        if (that == null) {
             String msg = Logging.getMessage("nullValue.ContourListIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -103,34 +89,30 @@ public class ContourList extends WWObjectImpl implements Combinable
         this.sector = (this.sector != null ? this.sector.union(that.sector) : that.sector);
     }
 
-    public void removeAllContours()
-    {
+    public void removeAllContours() {
         this.contours.clear();
         this.sector = null;
     }
 
-    public Sector getSector()
-    {
+    public Sector getSector() {
         return this.sector;
     }
 
-    protected void computeSector()
-    {
+    protected void computeSector() {
         this.sector = null;
 
-        for (Iterable<? extends LatLon> contour : this.contours)
-        {
+        for (Iterable<? extends LatLon> contour : this.contours) {
             Sector contourSector = Sector.boundingSector(contour);
             this.sector = (this.sector != null ? this.sector.union(contourSector) : contourSector);
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void combine(CombineContext cc)
-    {
-        if (cc == null)
-        {
+    public void combine(CombineContext cc) {
+        if (cc == null) {
             String msg = Logging.getMessage("nullValue.CombineContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -142,16 +124,14 @@ public class ContourList extends WWObjectImpl implements Combinable
             this.combineContours(cc);
     }
 
-    protected void combineBounds(CombineContext cc)
-    {
+    protected void combineBounds(CombineContext cc) {
         if (this.sector == null)
             return; // no contours
 
         cc.addBoundingSector(this.sector);
     }
 
-    protected void combineContours(CombineContext cc)
-    {
+    protected void combineContours(CombineContext cc) {
         if (this.sector == null)
             return; // no contours
 
@@ -161,24 +141,19 @@ public class ContourList extends WWObjectImpl implements Combinable
         this.doCombineContours(cc);
     }
 
-    protected void doCombineContours(CombineContext cc)
-    {
+    protected void doCombineContours(CombineContext cc) {
         GLUtessellator tess = cc.getTessellator();
 
-        for (Iterable<? extends LatLon> contour : this.contours)
-        {
-            try
-            {
+        for (Iterable<? extends LatLon> contour : this.contours) {
+            try {
                 GLU.gluTessBeginContour(tess);
 
-                for (LatLon location : contour)
-                {
+                for (LatLon location : contour) {
                     double[] vertex = {location.longitude.degrees, location.latitude.degrees, 0};
                     GLU.gluTessVertex(tess, vertex, 0, vertex);
                 }
             }
-            finally
-            {
+            finally {
                 GLU.gluTessEndContour(tess);
             }
         }

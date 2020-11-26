@@ -11,30 +11,31 @@ import gov.nasa.worldwind.WWObject;
  * @author Tom Gaskins
  * @version $Id: RetrievalService.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface RetrievalService extends WWObject
-{
-    RetrievalFuture runRetriever(Retriever retriever);
+public interface RetrievalService extends WWObject {
 
-    RetrievalFuture runRetriever(Retriever retriever, double priority);
-
-    void setRetrieverPoolSize(int poolSize);
+    RetrievalFuture run(Retriever retriever, double priority);
 
     int getRetrieverPoolSize();
+
+    void setRetrieverPoolSize(int poolSize);
 
     boolean hasActiveTasks();
 
     boolean isAvailable();
 
-    boolean contains(Retriever retriever);
+//    boolean contains(Retriever retriever);
 
-    int getNumRetrieversPending();
+//    int getNumRetrieversPending();
 
     void shutdown(boolean immediately);
 
-    interface SSLExceptionListener
-    {
-        void onException(Throwable e, String path);
-    }
+    /**
+     * Indicates the listener to be called when {@link javax.net.ssl.SSLHandshakeException}s are thrown during resource
+     * retrieval.
+     *
+     * @return the exception listener, or null if no listener has been specified.
+     */
+    SSLExceptionListener getSSLExceptionListener();
 
     /**
      * Specifies the listener called when a {@link javax.net.ssl.SSLHandshakeException} is thrown during resource
@@ -44,11 +45,7 @@ public interface RetrievalService extends WWObject
      */
     void setSSLExceptionListener(SSLExceptionListener listener);
 
-    /**
-     * Indicates the listener to be called when {@link javax.net.ssl.SSLHandshakeException}s are thrown during resource
-     * retrieval.
-     *
-     * @return the exception listener, or null if no listener has been specified.
-     */
-    SSLExceptionListener getSSLExceptionListener();
+    interface SSLExceptionListener {
+        void onException(Throwable e, String path);
+    }
 }

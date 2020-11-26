@@ -12,6 +12,7 @@ import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.*;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.logging.Level;
 
@@ -24,23 +25,14 @@ import java.util.logging.Level;
  * @author Lado Garakanidze
  * @version $Id: CachedDataRaster.java 3037 2015-04-17 23:08:47Z tgaskins $
  */
-public class CachedDataRaster extends AVListImpl implements DataRaster
-{
-    protected enum ErrorHandlerMode
-    {
-        ALLOW_EXCEPTIONS, DISABLE_EXCEPTIONS
-    }
-
-    protected Object dataSource = null;
-    protected DataRasterReader dataReader = null;
-
-    protected MemoryCache rasterCache = null;
-    protected MemoryCache.CacheListener cacheListener = null;
-
+public class CachedDataRaster extends AVListImpl implements DataRaster {
     protected final Object rasterUsageLock = new Object();
     protected final Object rasterRetrievalLock = new Object();
-
     protected final String[] requiredKeys = new String[] {AVKey.SECTOR, AVKey.PIXEL_FORMAT};
+    protected Object dataSource = null;
+    protected DataRasterReader dataReader = null;
+    protected MemoryCache rasterCache = null;
+    protected MemoryCache.CacheListener cacheListener = null;
 
     /**
      * Create a cached data raster.
@@ -53,22 +45,18 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
      *               the source using the reader.
      * @param reader A reference to a DataRasterReader instance
      * @param cache  A reference to a MemoryCache instance
-     *
-     * @throws java.io.IOException      thrown if there is an error to read metadata from the source
+     * @throws IOException      thrown if there is an error to read metadata from the source
      * @throws IllegalArgumentException thrown when a source or a reader are null
      */
     public CachedDataRaster(Object source, AVList params, DataRasterReader reader, MemoryCache cache)
-        throws java.io.IOException, IllegalArgumentException
-    {
-        if (source == null)
-        {
+        throws IOException, IllegalArgumentException {
+        if (source == null) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (reader == null)
-        {
+        if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -82,35 +70,42 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
         this.setValues(params.copy());
 
         this.rasterCache = cache;
-        if (this.rasterCache != null)
-        {
+        if (this.rasterCache != null) {
             this.cacheListener = new CacheListener(this.dataSource);
             this.rasterCache.addCacheListener(this.cacheListener);
         }
     }
 
+    protected static void disposeRasters(DataRaster[] rasters) {
+        if (rasters != null) {
+            for (DataRaster raster : rasters) {
+                raster.dispose();
+            }
+        }
+    }
+
+    protected static long getTotalUsedMemory() {
+        Runtime runtime = Runtime.getRuntime();
+        return (runtime.totalMemory() - runtime.freeMemory());
+    }
+
     protected void assembleMetadata(Object source, AVList params, DataRasterReader reader)
-        throws java.io.IOException, IllegalArgumentException
-    {
-        if (!this.hasRequiredMetadata(params, ErrorHandlerMode.DISABLE_EXCEPTIONS))
-        {
-            if (!reader.canRead(source, params))
-            {
+        throws IOException, IllegalArgumentException {
+        if (!this.hasRequiredMetadata(params, ErrorHandlerMode.DISABLE_EXCEPTIONS)) {
+            if (!reader.canRead(source, params)) {
                 String message = Logging.getMessage("DataRaster.CannotRead", source);
                 Logging.logger().severe(message);
-                throw new java.io.IOException(message);
+                throw new IOException(message);
             }
 
-            if (!this.hasRequiredMetadata(params, ErrorHandlerMode.DISABLE_EXCEPTIONS))
-            {
+            if (!this.hasRequiredMetadata(params, ErrorHandlerMode.DISABLE_EXCEPTIONS)) {
                 reader.readMetadata(source, params);
                 this.hasRequiredMetadata(params, ErrorHandlerMode.ALLOW_EXCEPTIONS);
             }
         }
     }
 
-    protected String[] getRequiredKeysList()
-    {
+    protected String[] getRequiredKeysList() {
         return this.requiredKeys;
     }
 
@@ -119,32 +114,24 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
      *
      * @param params         AVList of key/value pairs
      * @param throwException specifies weather to throw exception when a key/value is missing, or just return false.
-     *
      * @return TRUE, if all required keys are present in the params list, or both params and required keys are empty,
-     *         otherwise returns FALSE (if throwException is false)
-     *
+     * otherwise returns FALSE (if throwException is false)
      * @throws IllegalArgumentException If a key/value is missing and throwException is set to TRUE
      */
     protected boolean hasRequiredMetadata(AVList params, ErrorHandlerMode throwException)
-        throws IllegalArgumentException
-    {
+        throws IllegalArgumentException {
         String[] keys = this.getRequiredKeysList();
 
-        if (null == params || params.getEntries().size() == 0)
-        {
+        if (null == params || params.getEntries().isEmpty()) {
             // return TRUE if required keys is empty, otherwise return FALSE
             return (null == keys || keys.length == 0);
         }
 
-        if (null != keys && keys.length > 0)
-        {
-            for (String key : keys)
-            {
+        if (null != keys && keys.length > 0) {
+            for (String key : keys) {
                 Object value = params.getValue(key);
-                if (WWUtil.isEmpty(value))
-                {
-                    if (throwException == ErrorHandlerMode.ALLOW_EXCEPTIONS)
-                    {
+                if (WWUtil.isEmpty(value)) {
+                    if (throwException == ErrorHandlerMode.ALLOW_EXCEPTIONS) {
                         String message = Logging.getMessage("generic.MissingRequiredParameter", key);
                         Logging.logger().finest(message);
                         throw new IllegalArgumentException(message);
@@ -158,61 +145,51 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
         return true;
     }
 
-    public int getWidth()
-    {
+    public int getWidth() {
         Object o = this.getValue(AVKey.WIDTH);
         if (o instanceof Integer)
             return (Integer) o;
         throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.WIDTH));
     }
 
-    public int getHeight()
-    {
+    public int getHeight() {
         Object o = this.getValue(AVKey.HEIGHT);
         if (o instanceof Integer)
             return (Integer) o;
         throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.HEIGHT));
     }
 
-    public Sector getSector()
-    {
+    public Sector getSector() {
         Object o = this.getValue(AVKey.SECTOR);
         if (o instanceof Sector)
             return (Sector) o;
         throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR));
     }
 
-    public Object getDataSource()
-    {
+    public Object getDataSource() {
         return this.dataSource;
     }
 
-    public AVList getParams()
-    {
+    public AVList getParams() {
         return this.getMetadata();
     }
 
-    public AVList getMetadata()
-    {
+    public AVList getMetadata() {
         return this.copy();
     }
 
-    public DataRasterReader getDataRasterReader()
-    {
+    public DataRasterReader getDataRasterReader() {
         return this.dataReader;
     }
 
-    public void dispose()
-    {
+    public void dispose() {
         String message = Logging.getMessage("generic.ExceptionWhileDisposing", this.dataSource);
         Logging.logger().severe(message);
         throw new IllegalStateException(message);
     }
 
-    protected DataRaster[] getDataRasters() throws WWRuntimeException
-    {
-        synchronized (this.rasterRetrievalLock)
-        {
+    protected DataRaster[] getDataRasters() throws WWRuntimeException {
+        synchronized (this.rasterRetrievalLock) {
             DataRaster[] rasters = (this.rasterCache != null)
                 ? (DataRaster[]) this.rasterCache.getObject(this.dataSource) : null;
 
@@ -220,22 +197,18 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
                 return rasters;
 
             // prevent an attempt to re-read rasters which failed to load
-            if (this.rasterCache == null || !this.rasterCache.contains(this.dataSource))
-            {
+            if (this.rasterCache == null || !this.rasterCache.contains(this.dataSource)) {
                 long memoryDelta = 0L;
 
-                try
-                {
+                try {
                     AVList rasterParams = this.copy();
 
-                    try
-                    {
+                    try {
                         long before = getTotalUsedMemory();
                         rasters = this.dataReader.read(this.getDataSource(), rasterParams);
                         memoryDelta = getTotalUsedMemory() - before;
                     }
-                    catch (OutOfMemoryError e)
-                    {
+                    catch (OutOfMemoryError e) {
                         Logging.logger().finest(this.composeExceptionReason(e));
                         this.releaseMemory();
                         // let's retry after the finalization and GC
@@ -245,19 +218,16 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
                         memoryDelta = getTotalUsedMemory() - before;
                     }
                 }
-                catch (Throwable t)
-                {
+                catch (Throwable t) {
                     disposeRasters(rasters); // cleanup in case of exception
                     rasters = null;
                     String message = Logging.getMessage("DataRaster.CannotRead", this.composeExceptionReason(t));
                     Logging.logger().severe(message);
                     throw new WWRuntimeException(message);
                 }
-                finally
-                {
+                finally {
                     // Add rasters to the cache, even if "rasters" is null to prevent multiple failed reads.
-                    if (this.rasterCache != null)
-                    {
+                    if (this.rasterCache != null) {
                         long totalBytes = getSizeInBytes(rasters);
                         totalBytes = Math.max(memoryDelta, totalBytes);
                         if (totalBytes > 0L)
@@ -266,8 +236,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
                 }
             }
 
-            if (null == rasters || rasters.length == 0)
-            {
+            if (null == rasters || rasters.length == 0) {
                 String message = Logging.getMessage("generic.CannotCreateRaster", this.getDataSource());
                 Logging.logger().severe(message);
                 throw new WWRuntimeException(message);
@@ -277,55 +246,42 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
         }
     }
 
-    public void drawOnTo(DataRaster canvas)
-    {
-        synchronized (this.rasterUsageLock)
-        {
-            try
-            {
+    public void drawOnTo(DataRaster canvas) {
+        synchronized (this.rasterUsageLock) {
+            try {
                 DataRaster[] rasters;
-                try
-                {
+                try {
                     rasters = this.getDataRasters();
-                    for (DataRaster raster : rasters)
-                    {
+                    for (DataRaster raster : rasters) {
                         raster.drawOnTo(canvas);
                     }
                 }
-                catch (OutOfMemoryError e)
-                {
+                catch (OutOfMemoryError e) {
                     Logging.logger().finest(this.composeExceptionReason(e));
                     this.releaseMemory();
 
                     rasters = this.getDataRasters();
-                    for (DataRaster raster : rasters)
-                    {
+                    for (DataRaster raster : rasters) {
                         raster.drawOnTo(canvas);
                     }
                 }
             }
-            catch (Throwable t)
-            {
+            catch (Throwable t) {
                 String reason = this.composeExceptionReason(t);
                 Logging.logger().log(Level.SEVERE, reason, t);
             }
         }
     }
 
-    public DataRaster getSubRaster(AVList params)
-    {
-        synchronized (this.rasterUsageLock)
-        {
-            try
-            {
+    public DataRaster getSubRaster(AVList params) {
+        synchronized (this.rasterUsageLock) {
+            try {
                 DataRaster[] rasters;
-                try
-                {
+                try {
                     rasters = this.getDataRasters();
                     return rasters[0].getSubRaster(params);
                 }
-                catch (OutOfMemoryError e)
-                {
+                catch (OutOfMemoryError e) {
                     Logging.logger().finest(this.composeExceptionReason(e));
                     this.releaseMemory();
 
@@ -334,8 +290,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
                     return rasters[0].getSubRaster(params);
                 }
             }
-            catch (Throwable t)
-            {
+            catch (Throwable t) {
                 String reason = this.composeExceptionReason(t);
                 Logging.logger().log(Level.SEVERE, reason, t);
             }
@@ -346,8 +301,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
         }
     }
 
-    public DataRaster getSubRaster(int width, int height, Sector sector, AVList params)
-    {
+    public DataRaster getSubRaster(int width, int height, Sector sector, AVList params) {
         if (null == params)
             params = new AVListImpl();
 
@@ -358,8 +312,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
         return this.getSubRaster(params);
     }
 
-    protected void releaseMemory()
-    {
+    protected void releaseMemory() {
         if (this.rasterCache != null)
             this.rasterCache.clear();
 
@@ -370,8 +323,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
         Thread.yield();
     }
 
-    protected String composeExceptionReason(Throwable t)
-    {
+    protected String composeExceptionReason(Throwable t) {
         StringBuilder sb = new StringBuilder();
 
         if (null != this.dataSource)
@@ -382,14 +334,11 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
         return sb.toString();
     }
 
-    protected long getSizeInBytes(DataRaster[] rasters)
-    {
+    protected long getSizeInBytes(DataRaster[] rasters) {
         long totalBytes = 0L;
 
-        if (rasters != null)
-        {
-            for (DataRaster raster : rasters)
-            {
+        if (rasters != null) {
+            for (DataRaster raster : rasters) {
                 if (raster instanceof Cacheable)
                     totalBytes += ((Cacheable) raster).getSizeInBytes();
             }
@@ -398,61 +347,41 @@ public class CachedDataRaster extends AVListImpl implements DataRaster
         return totalBytes;
     }
 
-    protected static void disposeRasters(DataRaster[] rasters)
-    {
-        if (rasters != null)
-        {
-            for (DataRaster raster : rasters)
-            {
-                raster.dispose();
-            }
-        }
+    protected enum ErrorHandlerMode {
+        ALLOW_EXCEPTIONS, DISABLE_EXCEPTIONS
     }
 
-    private static class CacheListener implements MemoryCache.CacheListener
-    {
+    private static class CacheListener implements MemoryCache.CacheListener {
         private final Object key;
 
-        private CacheListener(Object key)
-        {
+        private CacheListener(Object key) {
             this.key = key;
         }
 
-        public void entryRemoved(Object key, Object clientObject)
-        {
+        public void entryRemoved(Object key, Object clientObject) {
             if (key != this.key)
                 return;
 
-            if (!(clientObject instanceof DataRaster[]))
-            {
+            if (!(clientObject instanceof DataRaster[])) {
                 String message = MessageFormat.format("Cannot dispose {0}", clientObject);
                 Logging.logger().warning(message);
                 return;
             }
 
-            try
-            {
+            try {
                 disposeRasters((DataRaster[]) clientObject);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 String message = Logging.getMessage("generic.ExceptionWhileDisposing", clientObject);
                 Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             }
         }
 
-        public void removalException(Throwable t, Object key, Object clientObject)
-        {
+        public void removalException(Throwable t, Object key, Object clientObject) {
             String reason = t.getMessage();
             reason = (WWUtil.isEmpty(reason) && null != t.getCause()) ? t.getCause().getMessage() : reason;
             String msg = Logging.getMessage("BasicMemoryCache.ExceptionFromRemovalListener", reason);
             Logging.logger().info(msg);
         }
-    }
-
-    protected static long getTotalUsedMemory()
-    {
-        Runtime runtime = Runtime.getRuntime();
-        return (runtime.totalMemory() - runtime.freeMemory());
     }
 }

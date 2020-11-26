@@ -17,10 +17,8 @@ import java.awt.*;
  * @version $Id: ActiveLayersList.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 @SuppressWarnings("unchecked")
-public class ActiveLayersList extends JList
-{
-    public ActiveLayersList(ListModel listModel)
-    {
+public class ActiveLayersList extends JList {
+    public ActiveLayersList(ListModel listModel) {
         super(listModel);
 
         this.setOpaque(false);
@@ -29,14 +27,12 @@ public class ActiveLayersList extends JList
 
     // Indicates whether internal layers, those whose attribute-value list contains {@link Constants#INTERNAL_LAYER}
     // are shown.
-    public boolean isIncludeInternalLayers()
-    {
+    public boolean isIncludeInternalLayers() {
         return ((LayerCellRenderer) this.getCellRenderer()).isIncludeInternalLayers();
     }
 
     // Indicates whether internal layer should be shown.
-    public void setIncludeInternalLayers(boolean includeInternalLayers)
-    {
+    public void setIncludeInternalLayers(boolean includeInternalLayers) {
         if (includeInternalLayers == this.isIncludeInternalLayers())
             return;
 
@@ -44,8 +40,7 @@ public class ActiveLayersList extends JList
     }
 
     // The class provides the cell renderer that enables the layer's check box to be edited.
-    private static class LayerCellRenderer extends DefaultListCellRenderer
-    {
+    private static class LayerCellRenderer extends DefaultListCellRenderer {
         private final LayerTree.CellPanel renderer = new LayerTree.CellPanel();
         private final JPanel zeroSizeComponent;
         private final Color selectionForeground;
@@ -54,8 +49,7 @@ public class ActiveLayersList extends JList
         private final Color textBackground;
         private boolean includeInternalLayers = false;
 
-        public LayerCellRenderer()
-        {
+        public LayerCellRenderer() {
             selectionForeground = UIManager.getColor("List.selectionForeground");
             selectionBackground = UIManager.getColor("List.selectionBackground");
             textForeground = UIManager.getColor("List.textForeground");
@@ -66,24 +60,20 @@ public class ActiveLayersList extends JList
             this.zeroSizeComponent.setPreferredSize(new Dimension(0, 0));
         }
 
-        public boolean isIncludeInternalLayers()
-        {
+        public boolean isIncludeInternalLayers() {
             return includeInternalLayers;
         }
 
-        public void setIncludeInternalLayers(boolean includeInternalLayers)
-        {
+        public void setIncludeInternalLayers(boolean includeInternalLayers) {
             this.includeInternalLayers = includeInternalLayers;
         }
 
-        protected LayerTree.CellPanel getRenderer()
-        {
+        protected LayerTree.CellPanel getRenderer() {
             return this.renderer;
         }
 
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean selected,
-            boolean hasFocus)
-        {
+            boolean hasFocus) {
             if (!(value instanceof Layer))
                 return this.zeroSizeComponent; // Do not display anything but layers
 

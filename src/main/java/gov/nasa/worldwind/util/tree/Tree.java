@@ -18,49 +18,43 @@ import gov.nasa.worldwind.render.OrderedRenderable;
  * @see TreeModel
  * @see TreeLayout
  */
-public interface Tree extends WWObject, OrderedRenderable
-{
-    /**
-     * Set the tree layout. The layout determines how the tree will be rendered.
-     *
-     * @param layout New layout.
-     *
-     * @see #getLayout()
-     */
-    void setLayout(TreeLayout layout);
-
+public interface Tree extends WWObject, OrderedRenderable {
     /**
      * Get the tree layout. The layout determines how the tree will be rendered.
      *
      * @return The tree layout.
-     *
      * @see #setLayout(TreeLayout)
      */
     TreeLayout getLayout();
 
     /**
-     * Set the tree model. The model determines the contents of the tree.
+     * Set the tree layout. The layout determines how the tree will be rendered.
      *
-     * @param model New tree model.
-     *
-     * @see #getModel()
+     * @param layout New layout.
+     * @see #getLayout()
      */
-    void setModel(TreeModel model);
+    void setLayout(TreeLayout layout);
 
     /**
      * Get the tree model. The model determines the contents of the tree.
      *
      * @return the tree model.
-     *
      * @see #setModel(TreeModel)
      */
     TreeModel getModel();
 
     /**
+     * Set the tree model. The model determines the contents of the tree.
+     *
+     * @param model New tree model.
+     * @see #getModel()
+     */
+    void setModel(TreeModel model);
+
+    /**
      * Locate a node in the tree.
      *
      * @param path Path to the node.
-     *
      * @return Node identified by {@code path} if it exists in the tree.
      */
     TreeNode getNode(TreePath path);
@@ -99,7 +93,6 @@ public interface Tree extends WWObject, OrderedRenderable
      * Is a path expanded in the tree?
      *
      * @param path Path to test.
-     *
      * @return true if the path is expanded, false if collapsed. Always returns false for leaf nodes.
      */
     boolean isPathExpanded(TreePath path);
@@ -108,7 +101,6 @@ public interface Tree extends WWObject, OrderedRenderable
      * Is a node expanded?
      *
      * @param node Node to test.
-     *
      * @return true if the node is expanded, false if collapsed. Always returns false for leaf nodes.
      */
     boolean isNodeExpanded(TreeNode node);

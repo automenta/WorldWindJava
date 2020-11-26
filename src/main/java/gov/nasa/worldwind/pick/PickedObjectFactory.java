@@ -16,13 +16,11 @@ package gov.nasa.worldwind.pick;
  * @author dcollins
  * @version $Id: PickedObjectFactory.java 2281 2014-08-29 23:08:04Z dcollins $
  */
-public interface PickedObjectFactory
-{
+public interface PickedObjectFactory {
     /**
      * Create a picked object from the specified pick color code.
      *
      * @param colorCode the pick color code to associate with the picked object.
-     *
      * @return the new picked object.
      */
     PickedObject createPickedObject(int colorCode);

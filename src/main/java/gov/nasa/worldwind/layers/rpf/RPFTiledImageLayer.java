@@ -18,6 +18,8 @@ import gov.nasa.worldwind.util.*;
 
 import java.awt.image.*;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -25,101 +27,21 @@ import java.util.*;
  * @author dcollins
  * @version $Id: RPFTiledImageLayer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RPFTiledImageLayer extends TiledImageLayer
-{
+public class RPFTiledImageLayer extends TiledImageLayer {
+    public static final String RPF_ROOT_PATH = "rpf.RootPath";
+    public static final String RPF_DATA_SERIES_ID = "rpf.DataSeriesId";
     private final AVList creationParams;
     private final RPFGenerator rpfGenerator;
     private final Object fileLock = new Object();
 
-    public static final String RPF_ROOT_PATH = "rpf.RootPath";
-    public static final String RPF_DATA_SERIES_ID = "rpf.DataSeriesId";
-
-    static Collection<Tile> createTopLevelTiles(AVList params)
-    {
-        if (params == null)
-        {
-            String message = Logging.getMessage("nullValue.LayerConfigParams");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        LevelSet levels = new LevelSet(initParams(params));
-        Sector sector = levels.getSector();
-
-        Level level = levels.getFirstLevel();
-        Angle dLat = level.getTileDelta().getLatitude();
-        Angle dLon = level.getTileDelta().getLongitude();
-        Angle latOrigin = levels.getTileOrigin().getLatitude();
-        Angle lonOrigin = levels.getTileOrigin().getLongitude();
-
-        // Determine the row and column offset from the common WorldWind global tiling origin.
-        int firstRow = Tile.computeRow(dLat, sector.getMinLatitude(), latOrigin);
-        int firstCol = Tile.computeColumn(dLon, sector.getMinLongitude(), lonOrigin);
-        int lastRow = Tile.computeRow(dLat, sector.getMaxLatitude(), latOrigin);
-        int lastCol = Tile.computeColumn(dLon, sector.getMaxLongitude(), lonOrigin);
-
-        int nLatTiles = lastRow - firstRow + 1;
-        int nLonTiles = lastCol - firstCol + 1;
-
-        ArrayList<Tile> topLevels = new ArrayList<>(nLatTiles * nLonTiles);
-
-        Angle p1 = Tile.computeRowLatitude(firstRow, dLat, latOrigin);
-        for (int row = firstRow; row <= lastRow; row++)
-        {
-            Angle p2;
-            p2 = p1.add(dLat);
-
-            Angle t1 = Tile.computeColumnLongitude(firstCol, dLon, lonOrigin);
-            for (int col = firstCol; col <= lastCol; col++)
-            {
-                Angle t2;
-                t2 = t1.add(dLon);
-
-                topLevels.add(new Tile(new Sector(p1, p2, t1, t2), level, row, col));
-                t1 = t2;
-            }
-            p1 = p2;
-        }
-
-        return topLevels;
-    }
-
-    static String getFileIndexCachePath(String rootPath, String dataSeriesId)
-    {
-        String path = null;
-        if (rootPath != null && dataSeriesId != null)
-        {
-            path = WWIO.formPath(
-                rootPath,
-                dataSeriesId,
-                "rpf_file_index.idx");
-        }
-        return path;
-    }
-
-    public static RPFTiledImageLayer fromRestorableState(String stateInXml)
-    {
-        if (stateInXml == null)
-        {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return new RPFTiledImageLayer(stateInXml);
-    }
-
-    public RPFTiledImageLayer(String stateInXml)
-    {
+    public RPFTiledImageLayer(String stateInXml) {
         this(xmlStateToParams(stateInXml));
 
         RestorableSupport rs;
-        try
-        {
+        try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -155,13 +77,10 @@ public class RPFTiledImageLayer extends TiledImageLayer
             this.setUseTransparentTextures(b);
 
         RestorableSupport.StateObject so = rs.getStateObject("avlist");
-        if (so != null)
-        {
+        if (so != null) {
             RestorableSupport.StateObject[] avpairs = rs.getAllStateObjects(so, "");
-            if (avpairs != null)
-            {
-                for (RestorableSupport.StateObject avp : avpairs)
-                {
+            if (avpairs != null) {
+                for (RestorableSupport.StateObject avp : avpairs) {
                     if (avp != null)
                         setValue(avp.getName(), avp.getValue());
                 }
@@ -169,8 +88,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
         }
     }
 
-    public RPFTiledImageLayer(AVList params)
-    {
+    public RPFTiledImageLayer(AVList params) {
         super(new LevelSet(initParams(params)));
 
         this.initRPFFileIndex(params);
@@ -183,64 +101,89 @@ public class RPFTiledImageLayer extends TiledImageLayer
         this.setName(makeTitle(params));
     }
 
-    protected void initRPFFileIndex(AVList params)
-    {
-        // Load the RPFFileIndex associated with this RPFTiledImageLayer, and update the layer's expiry time according
-        // to the last modified time on the RPFFileIndex.
+    static Collection<Tile> createTopLevelTiles(AVList params) {
+        if (params == null) {
+            String message = Logging.getMessage("nullValue.LayerConfigParams");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
 
-        FileStore fileStore = WorldWind.getDataFileStore();
+        LevelSet levels = new LevelSet(initParams(params));
+        Sector sector = levels.getSector();
 
-        // Root path and data series ID parameters should have already been validated in initParams().
-        String rootPath = params.getStringValue(RPF_ROOT_PATH);
-        String dataSeriesId = params.getStringValue(RPF_DATA_SERIES_ID);
-        File file = fileStore.newFile(getFileIndexCachePath(rootPath, dataSeriesId));
+        Level level = levels.getFirstLevel();
+        Angle dLat = level.getTileDelta().getLatitude();
+        Angle dLon = level.getTileDelta().getLongitude();
+        Angle latOrigin = levels.getTileOrigin().getLatitude();
+        Angle lonOrigin = levels.getTileOrigin().getLongitude();
 
-        RPFFileIndex fileIndex = (RPFFileIndex) params.getValue(RPFGenerator.RPF_FILE_INDEX);
-        if (fileIndex == null)
-        {
-            fileIndex = initFileIndex(file);
-            if (fileIndex == null)
-            {
-                String message = Logging.getMessage("nullValue.RPFFileIndexIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
+        // Determine the row and column offset from the common WorldWind global tiling origin.
+        int firstRow = Tile.computeRow(dLat, sector.latMin(), latOrigin);
+        int firstCol = Tile.computeColumn(dLon, sector.lonMin(), lonOrigin);
+        int lastRow = Tile.computeRow(dLat, sector.latMax(), latOrigin);
+        int lastCol = Tile.computeColumn(dLon, sector.lonMax(), lonOrigin);
+
+        int nLatTiles = lastRow - firstRow + 1;
+        int nLonTiles = lastCol - firstCol + 1;
+
+        List<Tile> topLevels = new ArrayList<>(nLatTiles * nLonTiles);
+
+        Angle p1 = Tile.computeRowLatitude(firstRow, dLat, latOrigin);
+        for (int row = firstRow; row <= lastRow; row++) {
+            Angle p2;
+            p2 = p1.add(dLat);
+
+            Angle t1 = Tile.computeColumnLongitude(firstCol, dLon, lonOrigin);
+            for (int col = firstCol; col <= lastCol; col++) {
+                Angle t2;
+                t2 = t1.add(dLon);
+
+                topLevels.add(new Tile(new Sector(p1, p2, t1, t2), level, row, col));
+                t1 = t2;
             }
-            params.setValue(RPFGenerator.RPF_FILE_INDEX, fileIndex);
+            p1 = p2;
         }
 
-        // Default to expiring data on the date the DDS converter was updated. If the RPFFileIndex's last-modified time
-        // is newer than the default expiry time, then use newer of the two. This ensures that layer imagery always
-        // reflects whats in the RPFFileIndex. If the layer has been re-imported (data has been added, or data has been
-        // removed), then all previously created layer imagery will be expired (but not necessarily the preprocessed
-        // data).
-        long expiryTime = new GregorianCalendar(2009, Calendar.FEBRUARY, 25).getTimeInMillis();
-        if (file != null && file.lastModified() > expiryTime)
-        {
-            expiryTime = file.lastModified();
-        }
-        this.setExpiryTime(expiryTime);
+        return topLevels;
     }
 
-    private static AVList initParams(AVList params)
-    {
-        if (params == null)
-        {
+    static String getFileIndexCachePath(String rootPath, String dataSeriesId) {
+        String path = null;
+        if (rootPath != null && dataSeriesId != null) {
+            path = WWIO.formPath(
+                rootPath,
+                dataSeriesId,
+                "rpf_file_index.idx");
+        }
+        return path;
+    }
+
+    public static RPFTiledImageLayer fromRestorableState(String stateInXml) {
+        if (stateInXml == null) {
+            String message = Logging.getMessage("nullValue.StringIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        return new RPFTiledImageLayer(stateInXml);
+    }
+
+    private static AVList initParams(AVList params) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.LayerConfigParams");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         String rootPath = params.getStringValue(RPF_ROOT_PATH);
-        if (rootPath == null)
-        {
+        if (rootPath == null) {
             String message = Logging.getMessage("nullValue.RPFRootPath");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         String dataSeriesId = params.getStringValue(RPF_DATA_SERIES_ID);
-        if (dataSeriesId == null)
-        {
+        if (dataSeriesId == null) {
             String message = Logging.getMessage("nullValue.RPFDataSeriesIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -254,8 +197,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
         if (params.getValue(AVKey.DATASET_NAME) == null)
             params.setValue(AVKey.DATASET_NAME, dataSeriesId);
 
-        if (params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA) == null)
-        {
+        if (params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
             Angle delta = Angle.fromDegrees(36);
             params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
         }
@@ -277,14 +219,12 @@ public class RPFTiledImageLayer extends TiledImageLayer
         // state XML. In the first case, either the sector parameter or the RPFFileIndex parameter are specified by the
         // processor. In the latter case, the sector is restored as part of the state xml.
         Sector sector = (Sector) params.getValue(AVKey.SECTOR);
-        if (sector == null)
-        {
+        if (sector == null) {
             RPFFileIndex fileIndex = (RPFFileIndex) params.getValue(RPFGenerator.RPF_FILE_INDEX);
             if (fileIndex != null && fileIndex.getIndexProperties() != null)
                 sector = fileIndex.getIndexProperties().getBoundingSector();
 
-            if (sector == null)
-            {
+            if (sector == null) {
                 String message = Logging.getMessage("RPFTiledImageLayer.NoGeographicBoundingBox");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
@@ -293,8 +233,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
             params.setValue(AVKey.SECTOR, sector);
         }
 
-        if (params.getValue(AVKey.DATA_CACHE_NAME) == null)
-        {
+        if (params.getValue(AVKey.DATA_CACHE_NAME) == null) {
             String cacheName = WWIO.formPath(rootPath, dataSeriesId);
             params.setValue(AVKey.DATA_CACHE_NAME, cacheName);
         }
@@ -302,31 +241,25 @@ public class RPFTiledImageLayer extends TiledImageLayer
         return params;
     }
 
-    private static RPFFileIndex initFileIndex(File file)
-    {
+    private static RPFFileIndex initFileIndex(File file) {
         ByteBuffer buffer;
-        try
-        {
+        try {
             buffer = WWIO.mapFile(file);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = "Exception while attempting to map file: " + file;
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             buffer = null;
         }
 
         RPFFileIndex fileIndex = null;
-        try
-        {
-            if (buffer != null)
-            {
+        try {
+            if (buffer != null) {
                 fileIndex = new RPFFileIndex();
                 fileIndex.load(buffer);
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = "Exception while attempting to load RPFFileIndex: " + file;
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             fileIndex = null;
@@ -335,16 +268,13 @@ public class RPFTiledImageLayer extends TiledImageLayer
         return fileIndex;
     }
 
-    private static String makeTitle(AVList params)
-    {
+    private static String makeTitle(AVList params) {
         StringBuilder sb = new StringBuilder();
 
         Object o = params.getValue(RPFGenerator.RPF_FILE_INDEX);
-        if (o instanceof RPFFileIndex)
-        {
+        if (o instanceof RPFFileIndex) {
             RPFFileIndex fileIndex = (RPFFileIndex) o;
-            if (fileIndex.getIndexProperties() != null)
-            {
+            if (fileIndex.getIndexProperties() != null) {
                 if (fileIndex.getIndexProperties().getDescription() != null)
                     sb.append(fileIndex.getIndexProperties().getDescription());
                 else
@@ -352,12 +282,10 @@ public class RPFTiledImageLayer extends TiledImageLayer
             }
         }
 
-        if (sb.length() == 0)
-        {
+        if (sb.isEmpty()) {
             String rootPath = params.getStringValue(RPF_ROOT_PATH);
             String dataSeriesId = params.getStringValue(RPF_DATA_SERIES_ID);
-            if (rootPath != null && dataSeriesId != null)
-            {
+            if (rootPath != null && dataSeriesId != null) {
                 sb.append(rootPath).append(":").append(dataSeriesId);
             }
         }
@@ -365,89 +293,18 @@ public class RPFTiledImageLayer extends TiledImageLayer
         return sb.toString();
     }
 
-    protected void checkResources()
-    {
-        // Intentionally left blank.
-    }
-
-    private RestorableSupport makeRestorableState(AVList params)
-    {
-        RestorableSupport rs = RestorableSupport.newRestorableSupport();
-        // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (rs == null)
-            return null;
-
-        for (Map.Entry<String, Object> p : params.getEntries())
-        {
-            if (p.getValue() instanceof LatLon)
-            {
-                rs.addStateValueAsDouble(p.getKey() + ".Latitude", ((LatLon) p.getValue()).getLatitude().degrees);
-                rs.addStateValueAsDouble(p.getKey() + ".Longitude", ((LatLon) p.getValue()).getLongitude().degrees);
-            }
-            else if (p.getValue() instanceof Sector)
-            {
-                rs.addStateValueAsDouble(p.getKey() + ".MinLatitude", ((Sector) p.getValue()).getMinLatitude().degrees);
-                rs.addStateValueAsDouble(p.getKey() + ".MaxLatitude", ((Sector) p.getValue()).getMaxLatitude().degrees);
-                rs.addStateValueAsDouble(p.getKey() + ".MinLongitude",
-                    ((Sector) p.getValue()).getMinLongitude().degrees);
-                rs.addStateValueAsDouble(p.getKey() + ".MaxLongitude",
-                    ((Sector) p.getValue()).getMaxLongitude().degrees);
-            }
-            else if (p.getValue() instanceof URLBuilder)
-            {
-                // Intentionally left blank. URLBuilder will be created from scratch in fromRestorableState().
-            }
-            else if (p.getKey().equals(RPFGenerator.RPF_FILE_INDEX))
-            {
-                // Intentionally left blank.
-            }
-            else
-            {
-                super.getRestorableStateForAVPair(p.getKey(), p.getValue(), rs, null);
-            }
-        }
-
-        rs.addStateValueAsBoolean("rpf.LayerEnabled", this.isEnabled());
-        rs.addStateValueAsDouble("rpf.Opacity", this.getOpacity());
-        rs.addStateValueAsDouble("rpf.MinActiveAltitude", this.getMinActiveAltitude());
-        rs.addStateValueAsDouble("rpf.MaxActiveAltitude", this.getMaxActiveAltitude());
-        rs.addStateValueAsString("rpf.LayerName", this.getName());
-        rs.addStateValueAsBoolean("rpf.UseMipMaps", this.isUseMipMaps());
-        rs.addStateValueAsBoolean("rpf.UseTransparentTextures", this.isUseTransparentTextures());
-
-        RestorableSupport.StateObject so = rs.addStateObject("avlist");
-        for (Map.Entry<String, Object> p : this.getEntries())
-        {
-            if (p.getKey().equals(AVKey.CONSTRUCTION_PARAMETERS))
-                continue;
-
-            super.getRestorableStateForAVPair(p.getKey(), p.getValue(), rs, so);
-        }
-
-        return rs;
-    }
-
-    public String getRestorableState()
-    {
-        return this.makeRestorableState(this.creationParams).getStateAsXml();
-    }
-
-    public static AVList xmlStateToParams(String stateInXml)
-    {
-        if (stateInXml == null)
-        {
+    public static AVList xmlStateToParams(String stateInXml) {
+        if (stateInXml == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         RestorableSupport rs;
-        try
-        {
+        try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -535,122 +392,146 @@ public class RPFTiledImageLayer extends TiledImageLayer
         return params;
     }
 
-    public void restoreState(String stateInXml)
-    {
+    private static TextureData readTexture(URL url, boolean useMipMaps) {
+        try {
+            return OGLUtil.newTextureData(Configuration.getMaxCompatibleGLProfile(), url, useMipMaps);
+        }
+        catch (Exception e) {
+            String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile", url.toString());
+            Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
+            return null;
+        }
+    }
+
+    private static ByteBuffer createImage(RPFGenerator.RPFServiceInstance service, URL url)
+        throws IOException {
+        ByteBuffer buffer = null;
+        BufferedImage bufferedImage = service.serviceRequest(url);
+        if (bufferedImage != null) {
+            buffer = DDSCompressor.compressImage(bufferedImage);
+        }
+
+        return buffer;
+    }
+
+    protected void initRPFFileIndex(AVList params) {
+        // Load the RPFFileIndex associated with this RPFTiledImageLayer, and update the layer's expiry time according
+        // to the last modified time on the RPFFileIndex.
+
+        FileStore fileStore = WorldWind.getDataFileStore();
+
+        // Root path and data series ID parameters should have already been validated in initParams().
+        String rootPath = params.getStringValue(RPF_ROOT_PATH);
+        String dataSeriesId = params.getStringValue(RPF_DATA_SERIES_ID);
+        File file = fileStore.newFile(getFileIndexCachePath(rootPath, dataSeriesId));
+
+        RPFFileIndex fileIndex = (RPFFileIndex) params.getValue(RPFGenerator.RPF_FILE_INDEX);
+        if (fileIndex == null) {
+            fileIndex = initFileIndex(file);
+            if (fileIndex == null) {
+                String message = Logging.getMessage("nullValue.RPFFileIndexIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+            params.setValue(RPFGenerator.RPF_FILE_INDEX, fileIndex);
+        }
+
+        // Default to expiring data on the date the DDS converter was updated. If the RPFFileIndex's last-modified time
+        // is newer than the default expiry time, then use newer of the two. This ensures that layer imagery always
+        // reflects whats in the RPFFileIndex. If the layer has been re-imported (data has been added, or data has been
+        // removed), then all previously created layer imagery will be expired (but not necessarily the preprocessed
+        // data).
+        long expiryTime = new GregorianCalendar(2009, Calendar.FEBRUARY, 25).getTimeInMillis();
+        if (file != null && file.lastModified() > expiryTime) {
+            expiryTime = file.lastModified();
+        }
+        this.setExpiryTime(expiryTime);
+    }
+
+    protected void checkResources() {
+        // Intentionally left blank.
+    }
+
+    private RestorableSupport makeRestorableState(AVList params) {
+        RestorableSupport rs = RestorableSupport.newRestorableSupport();
+        // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
+        if (rs == null)
+            return null;
+
+        for (Map.Entry<String, Object> p : params.getEntries()) {
+            if (p.getValue() instanceof LatLon) {
+                rs.addStateValueAsDouble(p.getKey() + ".Latitude", ((LatLon) p.getValue()).getLatitude().degrees);
+                rs.addStateValueAsDouble(p.getKey() + ".Longitude", ((LatLon) p.getValue()).getLongitude().degrees);
+            }
+            else if (p.getValue() instanceof Sector) {
+                rs.addStateValueAsDouble(p.getKey() + ".MinLatitude", ((Sector) p.getValue()).latMin().degrees);
+                rs.addStateValueAsDouble(p.getKey() + ".MaxLatitude", ((Sector) p.getValue()).latMax().degrees);
+                rs.addStateValueAsDouble(p.getKey() + ".MinLongitude",
+                    ((Sector) p.getValue()).lonMin().degrees);
+                rs.addStateValueAsDouble(p.getKey() + ".MaxLongitude",
+                    ((Sector) p.getValue()).lonMax().degrees);
+            }
+            else if (p.getValue() instanceof URLBuilder) {
+                // Intentionally left blank. URLBuilder will be created from scratch in fromRestorableState().
+            }
+            else if (p.getKey().equals(RPFGenerator.RPF_FILE_INDEX)) {
+                // Intentionally left blank.
+            }
+            else {
+                super.getRestorableStateForAVPair(p.getKey(), p.getValue(), rs, null);
+            }
+        }
+
+        rs.addStateValueAsBoolean("rpf.LayerEnabled", this.isEnabled());
+        rs.addStateValueAsDouble("rpf.Opacity", this.getOpacity());
+        rs.addStateValueAsDouble("rpf.MinActiveAltitude", this.getMinActiveAltitude());
+        rs.addStateValueAsDouble("rpf.MaxActiveAltitude", this.getMaxActiveAltitude());
+        rs.addStateValueAsString("rpf.LayerName", this.getName());
+        rs.addStateValueAsBoolean("rpf.UseMipMaps", this.isUseMipMaps());
+        rs.addStateValueAsBoolean("rpf.UseTransparentTextures", this.isUseTransparentTextures());
+
+        RestorableSupport.StateObject so = rs.addStateObject("avlist");
+        for (Map.Entry<String, Object> p : this.getEntries()) {
+            if (p.getKey().equals(AVKey.CONSTRUCTION_PARAMETERS))
+                continue;
+
+            super.getRestorableStateForAVPair(p.getKey(), p.getValue(), rs, so);
+        }
+
+        return rs;
+    }
+
+    public String getRestorableState() {
+        return this.makeRestorableState(this.creationParams).getStateAsXml();
+    }
+
+    public void restoreState(String stateInXml) {
         String message = Logging.getMessage("RestorableSupport.RestoreRequiresConstructor");
         Logging.logger().severe(message);
         throw new UnsupportedOperationException(message);
     }
 
-    private static class URLBuilder implements TileUrlBuilder
-    {
-        public String URLTemplate = null;
+    protected void forceTextureLoad(TextureTile tile) {
+        final URL textureURL = WorldWind.getDataFileStore().findFile(tile.getPath(), true);
 
-        private URLBuilder()
-        {
-        }
-
-        public java.net.URL getURL(Tile tile, String imageFormat) throws java.net.MalformedURLException
-        {
-            StringBuffer sb;
-            if (this.URLTemplate == null)
-            {
-                sb = new StringBuffer(tile.level.getService());
-                sb.append("dataset=");
-                sb.append(tile.level.getDataset());
-                sb.append("&width=");
-                sb.append(tile.level.getTileWidth());
-                sb.append("&height=");
-                sb.append(tile.level.getTileHeight());
-
-                this.URLTemplate = sb.toString();
-            }
-            else
-            {
-                sb = new StringBuffer(this.URLTemplate);
-            }
-
-            Sector s = tile.sector;
-            sb.append("&bbox=");
-            sb.append(s.getMinLongitude().getDegrees());
-            sb.append(",");
-            sb.append(s.getMinLatitude().getDegrees());
-            sb.append(",");
-            sb.append(s.getMaxLongitude().getDegrees());
-            sb.append(",");
-            sb.append(s.getMaxLatitude().getDegrees());
-            sb.append("&"); // terminate the query string
-
-            return new java.net.URL(sb.toString().replace(" ", "%20"));
-        }
-    }
-
-    protected void forceTextureLoad(TextureTile tile)
-    {
-        final java.net.URL textureURL = WorldWind.getDataFileStore().findFile(tile.getPath(), true);
-
-        if (textureURL != null)
-        {
+        if (textureURL != null) {
             this.loadTexture(tile, textureURL);
         }
     }
 
-    protected void requestTexture(DrawContext dc, TextureTile tile)
-    {
+    protected void requestTexture(DrawContext dc, TextureTile tile) {
         Vec4 centroid = tile.getCentroidPoint(dc.getGlobe());
         Vec4 referencePoint = this.getReferencePoint(dc);
         if (referencePoint != null)
-            tile.setPriority(centroid.distanceTo3(referencePoint));
+            tile.setPriorityDistance(centroid.distanceTo3(referencePoint));
 
-        RequestTask task = new RequestTask(tile, this);
-        this.getRequestQ().add(task);
+        this.getRequestQ().add(new RequestTask(tile, this));
     }
 
-    private static class RequestTask extends TileTask
-    {
-        private final RPFTiledImageLayer layer;
-
-        private RequestTask(TextureTile tile, RPFTiledImageLayer layer)
-        {
-            super(tile);
-            this.layer = layer;
-        }
-
-        public void run()
-        {
-            final TextureTile tile = getTile();
-
-            // TODO: check to ensure load is still needed
-
-            final java.net.URL textureURL = WorldWind.getDataFileStore().findFile(tile.getPath(), false);
-            if (textureURL != null)
-            {
-                if (this.layer.loadTexture(tile, textureURL))
-                {
-                    layer.getLevels().unmarkResourceAbsent(tile);
-                    this.layer.firePropertyChange(AVKey.LAYER, null, this);
-                    return;
-                }
-                else
-                {
-                    // Assume that something's wrong with the file and delete it.
-                    gov.nasa.worldwind.WorldWind.getDataFileStore().removeFile(textureURL);
-                    layer.getLevels().markResourceAbsent(tile);
-                    String message = Logging.getMessage("generic.DeletedCorruptDataFile", textureURL);
-                    Logging.logger().info(message);
-                }
-            }
-
-            this.layer.downloadTexture(tile);
-        }
-    }
-
-    private boolean loadTexture(TextureTile tile, java.net.URL textureURL)
-    {
-        if (WWIO.isFileOutOfDate(textureURL, tile.level.getExpiryTime()))
-        {
+    private boolean loadTexture(TextureTile tile, URL textureURL) {
+        if (WWIO.isFileOutOfDate(textureURL, tile.level.getExpiryTime())) {
             // The file has expired. Delete it then request download of newer.
-            gov.nasa.worldwind.WorldWind.getDataFileStore().removeFile(textureURL);
+            WorldWind.getDataFileStore().removeFile(textureURL);
             String message = Logging.getMessage("generic.DataFileExpired", textureURL);
             Logging.logger().fine(message);
             return false;
@@ -658,8 +539,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
 
         TextureData textureData;
 
-        synchronized (this.fileLock)
-        {
+        synchronized (this.fileLock) {
             textureData = readTexture(textureURL, this.isUseMipMaps());
         }
 
@@ -673,94 +553,144 @@ public class RPFTiledImageLayer extends TiledImageLayer
         return true;
     }
 
-    private static TextureData readTexture(java.net.URL url, boolean useMipMaps)
-    {
-        try
-        {
-            return OGLUtil.newTextureData(Configuration.getMaxCompatibleGLProfile(), url, useMipMaps);
-        }
-        catch (Exception e)
-        {
-            String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile", url.toString());
-            Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
-            return null;
-        }
-    }
-
-    private void addTileToCache(TextureTile tile)
-    {
+    private void addTileToCache(TextureTile tile) {
         TextureTile.getMemoryCache().add(tile.tileKey, tile);
     }
 
-    protected void downloadTexture(final TextureTile tile)
-    {
+    protected void downloadTexture(final TextureTile tile) {
         RPFGenerator.RPFServiceInstance service = this.rpfGenerator.getServiceInstance();
         if (service == null)
             return;
 
-        java.net.URL url;
-        try
-        {
+        URL url;
+        try {
             url = tile.getResourceURL();
         }
-        catch (java.net.MalformedURLException e)
-        {
+        catch (MalformedURLException e) {
             Logging.logger().log(java.util.logging.Level.SEVERE,
                 Logging.getMessage("layers.TextureLayer.ExceptionCreatingTextureUrl", tile), e);
             return;
         }
 
-        if (WorldWind.getRetrievalService().isAvailable())
-        {
+        if (WorldWind.getRetrievalService().isAvailable()) {
             Retriever retriever = new RPFRetriever(service, url, new DownloadPostProcessor(tile, this));
             // Apply any overridden timeouts.
             Integer srl = AVListImpl.getIntegerValue(this, AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT);
             if (srl != null && srl > 0)
                 retriever.setStaleRequestLimit(srl);
-            WorldWind.getRetrievalService().runRetriever(retriever, tile.getPriority());
+            WorldWind.getRetrievalService().run(retriever, tile.getPriority());
         }
-        else
-        {
-            DownloadTask task = new DownloadTask(service, url, tile, this);
-            this.getRequestQ().add(task);
+        else {
+            this.getRequestQ().add(new DownloadTask(service, url, tile, this));
         }
     }
 
-    private static class DownloadPostProcessor extends AbstractRetrievalPostProcessor
-    {
+    private void saveBuffer(ByteBuffer buffer, File outFile) throws IOException {
+        synchronized (this.fileLock) // sychronized with read of file in RequestTask.run()
+        {
+            WWIO.saveBuffer(buffer, outFile);
+        }
+    }
+
+    private static class URLBuilder implements TileUrlBuilder {
+        public String URLTemplate = null;
+
+        private URLBuilder() {
+        }
+
+        public URL getURL(Tile tile, String imageFormat) throws MalformedURLException {
+            StringBuffer sb;
+            if (this.URLTemplate == null) {
+                sb = new StringBuffer(tile.level.getService());
+                sb.append("dataset=");
+                sb.append(tile.level.getDataset());
+                sb.append("&width=");
+                sb.append(tile.level.getTileWidth());
+                sb.append("&height=");
+                sb.append(tile.level.getTileHeight());
+
+                this.URLTemplate = sb.toString();
+            }
+            else {
+                sb = new StringBuffer(this.URLTemplate);
+            }
+
+            Sector s = tile.sector;
+            sb.append("&bbox=");
+            sb.append(s.lonMin().getDegrees());
+            sb.append(",");
+            sb.append(s.latMin().getDegrees());
+            sb.append(",");
+            sb.append(s.lonMax().getDegrees());
+            sb.append(",");
+            sb.append(s.latMax().getDegrees());
+            sb.append("&"); // terminate the query string
+
+            return new URL(sb.toString().replace(" ", "%20"));
+        }
+    }
+
+    private static class RequestTask extends TileTask {
+        private final RPFTiledImageLayer layer;
+
+        private RequestTask(TextureTile tile, RPFTiledImageLayer layer) {
+            super(tile);
+            this.layer = layer;
+        }
+
+        public void run() {
+            final TextureTile tile = getTile();
+
+            // TODO: check to ensure load is still needed
+
+            final URL textureURL = WorldWind.getDataFileStore().findFile(tile.getPath(), false);
+            if (textureURL != null) {
+                if (this.layer.loadTexture(tile, textureURL)) {
+                    layer.getLevels().has(tile);
+                    this.layer.firePropertyChange(AVKey.LAYER, null, this);
+                    return;
+                }
+                else {
+                    // Assume that something's wrong with the file and delete it.
+                    WorldWind.getDataFileStore().removeFile(textureURL);
+                    layer.getLevels().miss(tile);
+                    String message = Logging.getMessage("generic.DeletedCorruptDataFile", textureURL);
+                    Logging.logger().info(message);
+                }
+            }
+
+            this.layer.downloadTexture(tile);
+        }
+    }
+
+    private static class DownloadPostProcessor extends AbstractRetrievalPostProcessor {
         private final TextureTile tile;
         private final RPFTiledImageLayer layer;
 
-        public DownloadPostProcessor(TextureTile tile, RPFTiledImageLayer layer)
-        {
+        public DownloadPostProcessor(TextureTile tile, RPFTiledImageLayer layer) {
             this.tile = tile;
             this.layer = layer;
         }
 
         @Override
-        protected void markResourceAbsent()
-        {
-            this.layer.getLevels().markResourceAbsent(this.tile);
+        protected void markResourceAbsent() {
+            this.layer.getLevels().miss(this.tile);
         }
 
         @Override
-        protected Object getFileLock()
-        {
+        protected Object getFileLock() {
             return this.layer.fileLock;
         }
 
-        protected File doGetOutputFile()
-        {
+        protected File doGetOutputFile() {
             return WorldWind.getDataFileStore().newFile(this.tile.getPath());
         }
 
         @Override
-        protected ByteBuffer handleSuccessfulRetrieval()
-        {
+        protected ByteBuffer handleSuccessfulRetrieval() {
             ByteBuffer buffer = super.handleSuccessfulRetrieval();
 
-            if (buffer != null)
-            {
+            if (buffer != null) {
                 // Fire a property change to denote that the layer's backing data has changed.
                 this.layer.firePropertyChange(AVKey.LAYER, null, this);
             }
@@ -769,8 +699,7 @@ public class RPFTiledImageLayer extends TiledImageLayer
         }
 
         @Override
-        protected boolean validateResponseCode()
-        {
+        protected boolean validateResponseCode() {
             if (this.getRetriever() instanceof RPFRetriever)
                 return ((RPFRetriever) this.getRetriever()).getResponseCode() == RPFRetriever.RESPONSE_CODE_OK;
             else
@@ -778,130 +707,89 @@ public class RPFTiledImageLayer extends TiledImageLayer
         }
 
         @Override
-        protected ByteBuffer handleTextContent() throws IOException
-        {
+        protected ByteBuffer handleTextContent() throws IOException {
             this.markResourceAbsent();
 
             return super.handleTextContent();
         }
     }
 
-    private static class DownloadTask extends TileTask
-    {
+    private static class DownloadTask extends TileTask {
         private final RPFGenerator.RPFServiceInstance service;
-        private final java.net.URL url;
+        private final URL url;
         private final RPFTiledImageLayer layer;
 
-        private DownloadTask(RPFGenerator.RPFServiceInstance service, java.net.URL url, TextureTile tile,
-            RPFTiledImageLayer layer)
-        {
+        private DownloadTask(RPFGenerator.RPFServiceInstance service, URL url, TextureTile tile,
+            RPFTiledImageLayer layer) {
             super(tile);
             this.service = service;
             this.url = url;
             this.layer = layer;
         }
 
-        public void run()
-        {
+        public void run() {
             final TextureTile tile = getTile();
-            try
-            {
+            try {
                 ByteBuffer buffer = createImage(this.service, this.url);
-                if (buffer != null)
-                {
+                if (buffer != null) {
                     final File outFile = WorldWind.getDataFileStore().newFile(tile.getPath());
-                    if (outFile != null)
-                    {
+                    if (outFile != null) {
                         this.layer.saveBuffer(buffer, outFile);
                     }
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Logging.logger().log(
                     java.util.logging.Level.SEVERE, "layers.TextureLayer.ExceptionAttemptingToCreateTileImage", e);
-                this.layer.getLevels().markResourceAbsent(tile);
+                this.layer.getLevels().miss(tile);
             }
         }
     }
 
-    private static ByteBuffer createImage(RPFGenerator.RPFServiceInstance service, java.net.URL url)
-        throws java.io.IOException
-    {
-        ByteBuffer buffer = null;
-        BufferedImage bufferedImage = service.serviceRequest(url);
-        if (bufferedImage != null)
-        {
-            buffer = DDSCompressor.compressImage(bufferedImage);
-        }
-
-        return buffer;
-    }
-
-    private void saveBuffer(ByteBuffer buffer, File outFile) throws java.io.IOException
-    {
-        synchronized (this.fileLock) // sychronized with read of file in RequestTask.run()
-        {
-            WWIO.saveBuffer(buffer, outFile);
-        }
-    }
-
-    private static class TileTask implements Runnable, Comparable<TileTask>
-    {
+    private static class TileTask implements Runnable, Comparable<TileTask> {
         private final TextureTile tile;
 
-        private TileTask(TextureTile tile)
-        {
+        private TileTask(TextureTile tile) {
             this.tile = tile;
         }
 
-        public final TextureTile getTile()
-        {
+        public final TextureTile getTile() {
             return this.tile;
         }
 
-        public void run()
-        {
+        public void run() {
         }
 
         /**
          * @param that the task to compare
-         *
          * @return -1 if <code>this</code> less than <code>that</code>, 1 if greater than, 0 if equal
-         *
          * @throws IllegalArgumentException if <code>that</code> is null
          */
-        public int compareTo(TileTask that)
-        {
-            if (that == null)
-            {
-                String msg = Logging.getMessage("nullValue.RequestTaskIsNull");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
-            return Double.compare(this.tile.getPriority(), that.tile.getPriority());
+        @Override public int compareTo(TileTask that) {
+            if (this==that) return 0;
+//            if (that == null) {
+//                String msg = Logging.getMessage("nullValue.RequestTaskIsNull");
+//                Logging.logger().severe(msg);
+//                throw new IllegalArgumentException(msg);
+//            }
+            return Double.compare(that.tile.getPriority(), this.tile.getPriority());
         }
 
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (o == null || getClass() != o.getClass())
                 return false;
 
-            final TileTask that = (TileTask) o;
-
             // Don't include layer in comparison so that requests are shared among layers
-            return Objects.equals(tile, that.tile);
+            return Objects.equals(tile, ((TileTask) o).tile);
         }
 
-        public int hashCode()
-        {
+        public int hashCode() {
             return (tile != null ? tile.hashCode() : 0);
         }
 
-        public String toString()
-        {
+        public String toString() {
             return this.tile.getPath();
         }
     }

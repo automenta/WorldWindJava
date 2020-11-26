@@ -18,20 +18,18 @@ package gov.nasa.worldwind.geom.coords;
  *
  * @author Garrett Headley, Patrick Murris
  */
-class TMCoordConverter
-{
+class TMCoordConverter {
     public final static int TRANMERC_NO_ERROR = 0x0000;
-    private final static int TRANMERC_LAT_ERROR = 0x0001;
-    private final static int TRANMERC_LON_ERROR = 0x0002;
     public final static int TRANMERC_EASTING_ERROR = 0x0004;
     public final static int TRANMERC_NORTHING_ERROR = 0x0008;
+    public final static int TRANMERC_LON_WARNING = 0x0200;
+    private final static int TRANMERC_LAT_ERROR = 0x0001;
+    private final static int TRANMERC_LON_ERROR = 0x0002;
     private final static int TRANMERC_ORIGIN_LAT_ERROR = 0x0010;
     private final static int TRANMERC_CENT_MER_ERROR = 0x0020;
     private final static int TRANMERC_A_ERROR = 0x0040;
     private final static int TRANMERC_INV_F_ERROR = 0x0080;
     private final static int TRANMERC_SCALE_FACTOR_ERROR = 0x0100;
-    public final static int TRANMERC_LON_WARNING = 0x0200;
-
     private final static double PI = 3.14159265358979323; /* PI     */
     public final static double PI_OVER = (PI / 2.0);            /* PI over 2 */
     private final static double MAX_LAT = ((PI * 89.99) / 180.0);    /* 90 degrees in radians */
@@ -68,17 +66,14 @@ class TMCoordConverter
     private double Longitude;
     private double Latitude;
 
-    TMCoordConverter()
-    {
+    TMCoordConverter() {
     }
 
-    public double getA()
-    {
+    public double getA() {
         return TranMerc_a;
     }
 
-    public double getF()
-    {
+    public double getF() {
         return TranMerc_f;
     }
 
@@ -94,13 +89,11 @@ class TMCoordConverter
      * @param False_Easting    Easting/X at the center of the projection
      * @param False_Northing   Northing/Y at the center of the projection
      * @param Scale_Factor     Projection scale factor
-     *
      * @return error code
      */
     public long setTransverseMercatorParameters(double a, double f, double Origin_Latitude,
         double Central_Meridian,
-        double False_Easting, double False_Northing, double Scale_Factor)
-    {
+        double False_Easting, double False_Northing, double Scale_Factor) {
         double tn;        /* True Meridianal distance constant  */
         double tn2;
         double tn3;
@@ -110,28 +103,22 @@ class TMCoordConverter
         double inv_f = 1 / f;
         long Error_Code = TRANMERC_NO_ERROR;
 
-        if (a <= 0.0)
-        { /* Semi-major axis must be greater than zero */
+        if (a <= 0.0) { /* Semi-major axis must be greater than zero */
             Error_Code |= TRANMERC_A_ERROR;
         }
-        if ((inv_f < 250) || (inv_f > 350))
-        { /* Inverse flattening must be between 250 and 350 */
+        if ((inv_f < 250) || (inv_f > 350)) { /* Inverse flattening must be between 250 and 350 */
             Error_Code |= TRANMERC_INV_F_ERROR;
         }
-        if ((Origin_Latitude < -MAX_LAT) || (Origin_Latitude > MAX_LAT))
-        { /* origin latitude out of range */
+        if ((Origin_Latitude < -MAX_LAT) || (Origin_Latitude > MAX_LAT)) { /* origin latitude out of range */
             Error_Code |= TRANMERC_ORIGIN_LAT_ERROR;
         }
-        if ((Central_Meridian < -PI) || (Central_Meridian > (2 * PI)))
-        { /* origin longitude out of range */
+        if ((Central_Meridian < -PI) || (Central_Meridian > (2 * PI))) { /* origin longitude out of range */
             Error_Code |= TRANMERC_CENT_MER_ERROR;
         }
-        if ((Scale_Factor < MIN_SCALE_FACTOR) || (Scale_Factor > MAX_SCALE_FACTOR))
-        {
+        if ((Scale_Factor < MIN_SCALE_FACTOR) || (Scale_Factor > MAX_SCALE_FACTOR)) {
             Error_Code |= TRANMERC_SCALE_FACTOR_ERROR;
         }
-        if (Error_Code == TRANMERC_NO_ERROR)
-        { /* no errors */
+        if (Error_Code == TRANMERC_NO_ERROR) { /* no errors */
             TranMerc_a = a;
             TranMerc_f = f;
             TranMerc_Origin_Lat = 0;
@@ -153,13 +140,13 @@ class TMCoordConverter
             tn4 = tn3 * tn;
             tn5 = tn4 * tn;
 
-            TranMerc_ap = TranMerc_a * (1.e0 - tn + 5.e0 * (tn2 - tn3) / 4.e0
-                + 81.e0 * (tn4 - tn5) / 64.e0);
-            TranMerc_bp = 3.e0 * TranMerc_a * (tn - tn2 + 7.e0 * (tn3 - tn4)
-                / 8.e0 + 55.e0 * tn5 / 64.e0) / 2.e0;
-            TranMerc_cp = 15.e0 * TranMerc_a * (tn2 - tn3 + 3.e0 * (tn4 - tn5) / 4.e0) / 16.0;
-            TranMerc_dp = 35.e0 * TranMerc_a * (tn3 - tn4 + 11.e0 * tn5 / 16.e0) / 48.e0;
-            TranMerc_ep = 315.e0 * TranMerc_a * (tn4 - tn5) / 512.e0;
+            TranMerc_ap = TranMerc_a * (1.0e0 - tn + 5.0e0 * (tn2 - tn3) / 4.0e0
+                + 81.0e0 * (tn4 - tn5) / 64.0e0);
+            TranMerc_bp = 3.0e0 * TranMerc_a * (tn - tn2 + 7.0e0 * (tn3 - tn4)
+                / 8.0e0 + 55.0e0 * tn5 / 64.0e0) / 2.0e0;
+            TranMerc_cp = 15.0e0 * TranMerc_a * (tn2 - tn3 + 3.0e0 * (tn4 - tn5) / 4.0e0) / 16.0;
+            TranMerc_dp = 35.0e0 * TranMerc_a * (tn3 - tn4 + 11.0e0 * tn5 / 16.0e0) / 48.0e0;
+            TranMerc_ep = 315.0e0 * TranMerc_a * (tn4 - tn5) / 512.0e0;
 
             convertGeodeticToTransverseMercator(MAX_LAT, MAX_DELTA_LONG);
 
@@ -188,11 +175,9 @@ class TMCoordConverter
      *
      * @param Latitude  Latitude in radians
      * @param Longitude Longitude in radians
-     *
      * @return error code
      */
-    public long convertGeodeticToTransverseMercator(double Latitude, double Longitude)
-    {
+    public long convertGeodeticToTransverseMercator(double Latitude, double Longitude) {
         double c;       /* Cosine of latitude                          */
         double c2;
         double c3;
@@ -226,15 +211,13 @@ class TMCoordConverter
         double temp_Origin;
         double temp_Long;
 
-        if ((Latitude < -MAX_LAT) || (Latitude > MAX_LAT))
-        {  /* Latitude out of range */
+        if ((Latitude < -MAX_LAT) || (Latitude > MAX_LAT)) {  /* Latitude out of range */
             Error_Code |= TRANMERC_LAT_ERROR;
         }
         if (Longitude > PI)
             Longitude -= (2 * PI);
         if ((Longitude < (TranMerc_Origin_Long - MAX_DELTA_LONG))
-            || (Longitude > (TranMerc_Origin_Long + MAX_DELTA_LONG)))
-        {
+            || (Longitude > (TranMerc_Origin_Long + MAX_DELTA_LONG))) {
             if (Longitude < 0)
                 temp_Long = Longitude + 2 * PI;
             else
@@ -247,15 +230,14 @@ class TMCoordConverter
                 || (temp_Long > (temp_Origin + MAX_DELTA_LONG)))
                 Error_Code |= TRANMERC_LON_ERROR;
         }
-        if (Error_Code == TRANMERC_NO_ERROR)
-        { /* no errors */
+        if (Error_Code == TRANMERC_NO_ERROR) { /* no errors */
             /*
              *  Delta Longitude
              */
             dlam = Longitude - TranMerc_Origin_Long;
 
-            if (Math.abs(dlam) > (9.0 * PI / 180))
-            { /* Distortion will result if Longitude is more than 9 degrees from the Central Meridian */
+            if (Math.abs(dlam) > (9.0 * PI
+                / 180)) { /* Distortion will result if Longitude is more than 9 degrees from the Central Meridian */
                 Error_Code |= TRANMERC_LON_WARNING;
             }
 
@@ -263,7 +245,7 @@ class TMCoordConverter
                 dlam -= (2 * PI);
             if (dlam < -PI)
                 dlam += (2 * PI);
-            if (Math.abs(dlam) < 2.e-10)
+            if (Math.abs(dlam) < 2.0e-10)
                 dlam = 0.0;
 
             s = Math.sin(Latitude);
@@ -285,7 +267,7 @@ class TMCoordConverter
 
             /* radius of curvature in prime vertical */
             // sn = SPHSN(Latitude);
-            sn = TranMerc_a / Math.sqrt(1 - TranMerc_es * Math.pow(Math.sin(Latitude), 2));
+            sn = TranMerc_a * Math.pow(1 - TranMerc_es * Math.pow(Math.sin(Latitude), 2), -0.5);
 
             /* True Meridianal Distances */
             // tmd = SPHTMD(Latitude);
@@ -305,46 +287,48 @@ class TMCoordConverter
 
             /* northing */
             t1 = (tmd - tmdo) * TranMerc_Scale_Factor;
-            t2 = sn * s * c * TranMerc_Scale_Factor / 2.e0;
-            t3 = sn * s * c3 * TranMerc_Scale_Factor * (5.e0 - tan2 + 9.e0 * eta
-                + 4.e0 * eta2) / 24.e0;
+            t2 = sn * s * c * TranMerc_Scale_Factor / 2.0e0;
+            t3 = sn * s * c3 * TranMerc_Scale_Factor * (5.0e0 - tan2 + 9.0e0 * eta
+                + 4.0e0 * eta2) / 24.0e0;
 
-            t4 = sn * s * c5 * TranMerc_Scale_Factor * (61.e0 - 58.e0 * tan2
-                + tan4 + 270.e0 * eta - 330.e0 * tan2 * eta + 445.e0 * eta2
-                + 324.e0 * eta3 - 680.e0 * tan2 * eta2 + 88.e0 * eta4
-                - 600.e0 * tan2 * eta3 - 192.e0 * tan2 * eta4) / 720.e0;
+            t4 = sn * s * c5 * TranMerc_Scale_Factor * (61.0e0 - 58.0e0 * tan2
+                + tan4 + 270.0e0 * eta - 330.0e0 * tan2 * eta + 445.0e0 * eta2
+                + 324.0e0 * eta3 - 680.0e0 * tan2 * eta2 + 88.0e0 * eta4
+                - 600.0e0 * tan2 * eta3 - 192.0e0 * tan2 * eta4) / 720.0e0;
 
-            t5 = sn * s * c7 * TranMerc_Scale_Factor * (1385.e0 - 3111.e0 *
-                tan2 + 543.e0 * tan4 - tan6) / 40320.e0;
+            t5 = sn * s * c7 * TranMerc_Scale_Factor * (1385.0e0 - 3111.0e0 *
+                tan2 + 543.0e0 * tan4 - tan6) / 40320.0e0;
 
-            Northing = TranMerc_False_Northing + t1 + Math.pow(dlam, 2.e0) * t2
-                + Math.pow(dlam, 4.e0) * t3 + Math.pow(dlam, 6.e0) * t4
-                + Math.pow(dlam, 8.e0) * t5;
+            Northing = TranMerc_False_Northing + t1 + Math.pow(dlam, 2.0e0) * t2
+                + Math.pow(dlam, 4.0e0) * t3 + Math.pow(dlam, 6.0e0) * t4
+                + Math.pow(dlam, 8.0e0) * t5;
 
             /* Easting */
             t6 = sn * c * TranMerc_Scale_Factor;
-            t7 = sn * c3 * TranMerc_Scale_Factor * (1.e0 - tan2 + eta) / 6.e0;
-            t8 = sn * c5 * TranMerc_Scale_Factor * (5.e0 - 18.e0 * tan2 + tan4
-                + 14.e0 * eta - 58.e0 * tan2 * eta + 13.e0 * eta2 + 4.e0 * eta3
-                - 64.e0 * tan2 * eta2 - 24.e0 * tan2 * eta3) / 120.e0;
-            t9 = sn * c7 * TranMerc_Scale_Factor * (61.e0 - 479.e0 * tan2
-                + 179.e0 * tan4 - tan6) / 5040.e0;
+            t7 = sn * c3 * TranMerc_Scale_Factor * (1.0e0 - tan2 + eta) / 6.0e0;
+            t8 = sn * c5 * TranMerc_Scale_Factor * (5.0e0 - 18.0e0 * tan2 + tan4
+                + 14.0e0 * eta - 58.0e0 * tan2 * eta + 13.0e0 * eta2 + 4.0e0 * eta3
+                - 64.0e0 * tan2 * eta2 - 24.0e0 * tan2 * eta3) / 120.0e0;
+            t9 = sn * c7 * TranMerc_Scale_Factor * (61.0e0 - 479.0e0 * tan2
+                + 179.0e0 * tan4 - tan6) / 5040.0e0;
 
-            Easting = TranMerc_False_Easting + dlam * t6 + Math.pow(dlam, 3.e0) * t7
-                + Math.pow(dlam, 5.e0) * t8 + Math.pow(dlam, 7.e0) * t9;
+            Easting = TranMerc_False_Easting + dlam * t6 + Math.pow(dlam, 3.0e0) * t7
+                + Math.pow(dlam, 5.0e0) * t8 + Math.pow(dlam, 7.0e0) * t9;
         }
         return (Error_Code);
     }
 
-    /** @return Easting/X at the center of the projection */
-    public double getEasting()
-    {
+    /**
+     * @return Easting/X at the center of the projection
+     */
+    public double getEasting() {
         return Easting;
     }
 
-    /** @return Northing/Y at the center of the projection */
-    public double getNorthing()
-    {
+    /**
+     * @return Northing/Y at the center of the projection
+     */
+    public double getNorthing() {
         return Northing;
     }
 
@@ -356,11 +340,9 @@ class TMCoordConverter
      *
      * @param Easting  Easting/X in meters
      * @param Northing Northing/Y in meters
-     *
      * @return error code
      */
-    public long convertTransverseMercatorToGeodetic(double Easting, double Northing)
-    {
+    public long convertTransverseMercatorToGeodetic(double Easting, double Northing) {
         double c;       /* Cosine of latitude                          */
         double de;      /* Delta easting - Difference in Easting (Easting-Fe)    */
         double dlam;    /* Delta longitude - Difference in Longitude       */
@@ -389,18 +371,15 @@ class TMCoordConverter
         long Error_Code = TRANMERC_NO_ERROR;
 
         if ((Easting < (TranMerc_False_Easting - TranMerc_Delta_Easting))
-            || (Easting > (TranMerc_False_Easting + TranMerc_Delta_Easting)))
-        { /* Easting out of range  */
+            || (Easting > (TranMerc_False_Easting + TranMerc_Delta_Easting))) { /* Easting out of range  */
             Error_Code |= TRANMERC_EASTING_ERROR;
         }
         if ((Northing < (TranMerc_False_Northing - TranMerc_Delta_Northing))
-            || (Northing > (TranMerc_False_Northing + TranMerc_Delta_Northing)))
-        { /* Northing out of range */
+            || (Northing > (TranMerc_False_Northing + TranMerc_Delta_Northing))) { /* Northing out of range */
             Error_Code |= TRANMERC_NORTHING_ERROR;
         }
 
-        if (Error_Code == TRANMERC_NO_ERROR)
-        {
+        if (Error_Code == TRANMERC_NO_ERROR) {
             /* True Meridional Distances for latitude of origin */
             // tmdo = SPHTMD(TranMerc_Origin_Lat);
             tmdo = TranMerc_ap * TranMerc_Origin_Lat
@@ -414,13 +393,12 @@ class TMCoordConverter
 
             /* First Estimate */
             //sr = SPHSR(0.e0);
-            sr = TranMerc_a * (1.e0 - TranMerc_es) /
-                Math.pow(Math.sqrt(1.e0 - TranMerc_es * Math.pow(Math.sin(0.e0), 2)), 3);
+            sr = TranMerc_a * (1.0e0 - TranMerc_es) /
+                Math.pow(Math.sqrt(1.0e0 - TranMerc_es * Math.pow(Math.sin(0.0e0), 2)), 3);
 
             ftphi = tmd / sr;
 
-            for (i = 0; i < 5; i++)
-            {
+            for (i = 0; i < 5; i++) {
                 // t10 = SPHTMD (ftphi);
                 t10 = TranMerc_ap * ftphi
                     - TranMerc_bp * Math.sin(2.0 * ftphi)
@@ -428,19 +406,19 @@ class TMCoordConverter
                     - TranMerc_dp * Math.sin(6.0 * ftphi)
                     + TranMerc_ep * Math.sin(8.0 * ftphi);
                 // sr = SPHSR(ftphi);
-                sr = TranMerc_a * (1.e0 - TranMerc_es) /
-                    Math.pow(Math.sqrt(1.e0 - TranMerc_es * Math.pow(Math.sin(ftphi), 2)), 3);
+                sr = TranMerc_a * (1.0e0 - TranMerc_es) /
+                    Math.pow(Math.sqrt(1.0e0 - TranMerc_es * Math.pow(Math.sin(ftphi), 2)), 3);
                 ftphi = ftphi + (tmd - t10) / sr;
             }
 
             /* Radius of Curvature in the meridian */
             // sr = SPHSR(ftphi);
-            sr = TranMerc_a * (1.e0 - TranMerc_es) /
-                Math.pow(Math.sqrt(1.e0 - TranMerc_es * Math.pow(Math.sin(ftphi), 2)), 3);
+            sr = TranMerc_a * (1.0e0 - TranMerc_es) /
+                Math.pow(Math.sqrt(1.0e0 - TranMerc_es * Math.pow(Math.sin(ftphi), 2)), 3);
 
             /* Radius of Curvature in the meridian */
             // sn = SPHSN(ftphi);
-            sn = TranMerc_a / Math.sqrt(1.e0 - TranMerc_es * Math.pow(Math.sin(ftphi), 2));
+            sn = TranMerc_a * Math.pow(1.0e0 - TranMerc_es * Math.pow(Math.sin(ftphi), 2), -0.5);
 
             /* Sine Cosine terms */
             s = Math.sin(ftphi);
@@ -459,34 +437,34 @@ class TMCoordConverter
                 de = 0.0;
 
             /* Latitude */
-            t10 = t / (2.e0 * sr * sn * Math.pow(TranMerc_Scale_Factor, 2));
-            t11 = t * (5.e0 + 3.e0 * tan2 + eta - 4.e0 * Math.pow(eta, 2)
-                - 9.e0 * tan2 * eta) / (24.e0 * sr * Math.pow(sn, 3)
+            t10 = t / (2.0e0 * sr * sn * Math.pow(TranMerc_Scale_Factor, 2));
+            t11 = t * (5.0e0 + 3.0e0 * tan2 + eta - 4.0e0 * Math.pow(eta, 2)
+                - 9.0e0 * tan2 * eta) / (24.0e0 * sr * Math.pow(sn, 3)
                 * Math.pow(TranMerc_Scale_Factor, 4));
-            t12 = t * (61.e0 + 90.e0 * tan2 + 46.e0 * eta + 45.E0 * tan4
-                - 252.e0 * tan2 * eta - 3.e0 * eta2 + 100.e0
-                * eta3 - 66.e0 * tan2 * eta2 - 90.e0 * tan4
-                * eta + 88.e0 * eta4 + 225.e0 * tan4 * eta2
-                + 84.e0 * tan2 * eta3 - 192.e0 * tan2 * eta4)
-                / (720.e0 * sr * Math.pow(sn, 5) * Math.pow(TranMerc_Scale_Factor, 6));
-            t13 = t * (1385.e0 + 3633.e0 * tan2 + 4095.e0 * tan4 + 1575.e0
-                * Math.pow(t, 6)) / (40320.e0 * sr * Math.pow(sn, 7) * Math.pow(TranMerc_Scale_Factor, 8));
+            t12 = t * (61.0e0 + 90.0e0 * tan2 + 46.0e0 * eta + 45.0E0 * tan4
+                - 252.0e0 * tan2 * eta - 3.0e0 * eta2 + 100.0e0
+                * eta3 - 66.0e0 * tan2 * eta2 - 90.0e0 * tan4
+                * eta + 88.0e0 * eta4 + 225.0e0 * tan4 * eta2
+                + 84.0e0 * tan2 * eta3 - 192.0e0 * tan2 * eta4)
+                / (720.0e0 * sr * Math.pow(sn, 5) * Math.pow(TranMerc_Scale_Factor, 6));
+            t13 = t * (1385.0e0 + 3633.0e0 * tan2 + 4095.0e0 * tan4 + 1575.0e0
+                * Math.pow(t, 6)) / (40320.0e0 * sr * Math.pow(sn, 7) * Math.pow(TranMerc_Scale_Factor, 8));
             Latitude = ftphi - Math.pow(de, 2) * t10 + Math.pow(de, 4) * t11 - Math.pow(de, 6) * t12
                 + Math.pow(de, 8) * t13;
 
-            t14 = 1.e0 / (sn * c * TranMerc_Scale_Factor);
+            t14 = 1.0e0 / (sn * c * TranMerc_Scale_Factor);
 
-            t15 = (1.e0 + 2.e0 * tan2 + eta) / (6.e0 * Math.pow(sn, 3) * c *
+            t15 = (1.0e0 + 2.0e0 * tan2 + eta) / (6.0e0 * Math.pow(sn, 3) * c *
                 Math.pow(TranMerc_Scale_Factor, 3));
 
-            t16 = (5.e0 + 6.e0 * eta + 28.e0 * tan2 - 3.e0 * eta2
-                + 8.e0 * tan2 * eta + 24.e0 * tan4 - 4.e0
-                * eta3 + 4.e0 * tan2 * eta2 + 24.e0
-                * tan2 * eta3) / (120.e0 * Math.pow(sn, 5) * c
+            t16 = (5.0e0 + 6.0e0 * eta + 28.0e0 * tan2 - 3.0e0 * eta2
+                + 8.0e0 * tan2 * eta + 24.0e0 * tan4 - 4.0e0
+                * eta3 + 4.0e0 * tan2 * eta2 + 24.0e0
+                * tan2 * eta3) / (120.0e0 * Math.pow(sn, 5) * c
                 * Math.pow(TranMerc_Scale_Factor, 5));
 
-            t17 = (61.e0 + 662.e0 * tan2 + 1320.e0 * tan4 + 720.e0
-                * Math.pow(t, 6)) / (5040.e0 * Math.pow(sn, 7) * c
+            t17 = (61.0e0 + 662.0e0 * tan2 + 1320.0e0 * tan4 + 720.0e0
+                * Math.pow(t, 6)) / (5040.0e0 * Math.pow(sn, 7) * c
                 * Math.pow(TranMerc_Scale_Factor, 7));
 
             /* Difference in Longitude */
@@ -498,15 +476,14 @@ class TMCoordConverter
             if (Math.abs(Latitude) > (90.0 * PI / 180.0))
                 Error_Code |= TRANMERC_NORTHING_ERROR;
 
-            if ((Longitude) > (PI))
-            {
+            if ((Longitude) > (PI)) {
                 Longitude -= (2 * PI);
                 if (Math.abs(Longitude) > PI)
                     Error_Code |= TRANMERC_EASTING_ERROR;
             }
 
-            if (Math.abs(dlam) > (9.0 * PI / 180) * Math.cos(Latitude))
-            { /* Distortion will result if Longitude is more than 9 degrees from the Central Meridian at the equator */
+            if (Math.abs(dlam) > (9.0 * PI / 180) * Math.cos(
+                Latitude)) { /* Distortion will result if Longitude is more than 9 degrees from the Central Meridian at the equator */
                 /* and decreases to 0 degrees at the poles */
                 /* As you move towards the poles, distortion will become more significant */
                 Error_Code |= TRANMERC_LON_WARNING;
@@ -518,15 +495,17 @@ class TMCoordConverter
         return (Error_Code);
     }
 
-    /** @return Latitude in radians. */
-    public double getLatitude()
-    {
+    /**
+     * @return Latitude in radians.
+     */
+    public double getLatitude() {
         return Latitude;
     }
 
-    /** @return Longitude in radians. */
-    public double getLongitude()
-    {
+    /**
+     * @return Longitude in radians.
+     */
+    public double getLongitude() {
         return Longitude;
     }
 } // end TMConverter class

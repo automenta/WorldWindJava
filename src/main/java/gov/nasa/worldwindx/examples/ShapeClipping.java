@@ -19,9 +19,10 @@ import gov.nasa.worldwind.util.combine.Combinable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.logging.Level;
 
 /**
- * Shows how to use the {@link gov.nasa.worldwind.util.combine.Combinable} interface and the {@link
+ * Shows how to use the {@link Combinable} interface and the {@link
  * gov.nasa.worldwind.util.combine.ShapeCombiner} class to compute the intersection of a WorldWind surface shapes with
  * Earth's land and water.
  * <p>
@@ -35,16 +36,17 @@ import java.awt.event.*;
  * @author dcollins
  * @version $Id: ShapeClipping.java 2411 2014-10-30 21:27:00Z dcollins $
  */
-public class ShapeClipping extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame implements SelectListener
-    {
+public class ShapeClipping extends ApplicationTemplate {
+    public static void main(String[] args) {
+        start("WorldWind Shape Clipping", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame implements SelectListener {
+        protected final ShapeClippingPanel clippingPanel;
         protected ShapeEditor editor;
         protected ShapeAttributes lastAttrs;
-        protected final ShapeClippingPanel clippingPanel;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             this.clippingPanel = new ShapeClippingPanel(this.getWwd());
             this.getControlPanel().add(this.clippingPanel, BorderLayout.SOUTH);
 
@@ -52,19 +54,15 @@ public class ShapeClipping extends ApplicationTemplate
             this.createClipShape();
         }
 
-        protected void createLandShape()
-        {
+        protected void createLandShape() {
             ShapefileLayerFactory factory = (ShapefileLayerFactory) WorldWind.createConfigurationComponent(
                 AVKey.SHAPEFILE_LAYER_FACTORY);
 
-            factory.createFromShapefileSource("testData/shapefiles/ne_10m_land.shp",
-                new ShapefileLayerFactory.CompletionCallback()
-                {
+            factory.createFromShapefileSource("shapefiles/ne_10m_land.shp",
+                new ShapefileLayerFactory.CompletionCallback() {
                     @Override
-                    public void completion(final Object result)
-                    {
-                        if (!SwingUtilities.isEventDispatchThread())
-                        {
+                    public void completion(final Object result) {
+                        if (!SwingUtilities.isEventDispatchThread()) {
                             SwingUtilities.invokeLater(() -> completion(result));
                             return;
                         }
@@ -75,15 +73,13 @@ public class ShapeClipping extends ApplicationTemplate
                     }
 
                     @Override
-                    public void exception(Exception e)
-                    {
-                        Logging.logger().log(java.util.logging.Level.SEVERE, e.getMessage(), e);
+                    public void exception(Exception e) {
+                        Logging.logger().log(Level.SEVERE, e.getMessage(), e);
                     }
                 });
         }
 
-        protected void createClipShape()
-        {
+        protected void createClipShape() {
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setInteriorOpacity(0.3);
             attrs.setOutlineMaterial(new Material(Color.RED));
@@ -94,7 +90,7 @@ public class ShapeClipping extends ApplicationTemplate
             highlightAttrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(Color.RED)));
             highlightAttrs.setOutlineWidth(4);
 
-            SurfaceCircle circle = new SurfaceCircle(attrs, LatLon.fromDegrees(42.5, -116), 1e6);
+            SurfaceCircle circle = new SurfaceCircle(attrs, LatLon.fromDegrees(42.5, -116), 1.0e6);
             circle.setHighlightAttributes(highlightAttrs);
             this.clippingPanel.setClipShape(circle);
 
@@ -106,26 +102,21 @@ public class ShapeClipping extends ApplicationTemplate
         }
 
         @Override
-        public void selected(SelectEvent event)
-        {
+        public void selected(SelectEvent event) {
             // This select method identifies the shape to edit.
 
             PickedObject topObject = event.getTopPickedObject();
 
-            if (event.getEventAction().equals(SelectEvent.LEFT_CLICK))
-            {
-                if (topObject != null && topObject.getObject() instanceof Renderable)
-                {
-                    if (this.editor == null)
-                    {
+            if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
+                if (topObject != null && topObject.getObject() instanceof Renderable) {
+                    if (this.editor == null) {
                         // Enable editing of the selected shape.
                         this.editor = new ShapeEditor(getWwd(), (Renderable) topObject.getObject());
                         this.editor.setArmed(true);
                         this.keepShapeHighlighted(true);
                         event.consume();
                     }
-                    else if (this.editor.getShape() != event.getTopObject())
-                    {
+                    else if (this.editor.getShape() != event.getTopObject()) {
                         // Switch editor to a different shape.
                         this.keepShapeHighlighted(false);
                         this.editor.setArmed(false);
@@ -135,8 +126,7 @@ public class ShapeClipping extends ApplicationTemplate
                         event.consume();
                     }
                     else if ((event.getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) == 0
-                        && (event.getMouseEvent().getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == 0)
-                    {
+                        && (event.getMouseEvent().getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == 0) {
                         // Disable editing of the current shape. Shift and Alt are used by the editor, so ignore
                         // events with those buttons down.
                         this.editor.setArmed(false);
@@ -148,23 +138,15 @@ public class ShapeClipping extends ApplicationTemplate
             }
         }
 
-        protected void keepShapeHighlighted(boolean tf)
-        {
-            if (tf)
-            {
+        protected void keepShapeHighlighted(boolean tf) {
+            if (tf) {
                 this.lastAttrs = ((Attributable) this.editor.getShape()).getAttributes();
                 ((Attributable) this.editor.getShape()).setAttributes(
                     ((Attributable) this.editor.getShape()).getHighlightAttributes());
             }
-            else
-            {
+            else {
                 ((Attributable) this.editor.getShape()).setAttributes(this.lastAttrs);
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        start("WorldWind Shape Clipping", AppFrame.class);
     }
 }

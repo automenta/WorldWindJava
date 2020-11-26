@@ -21,28 +21,26 @@ import javax.swing.event.*;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Enumeration;
+import java.util.List;
+import java.util.*;
 
 /**
  * @author tag
  * @version $Id: LayerManagerPanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class LayerManagerPanel extends AbstractFeaturePanel implements LayerManager, TreeModelListener
-{
+public class LayerManagerPanel extends AbstractFeaturePanel implements LayerManager, TreeModelListener {
     private static final String TOOL_TIP = "Select layers to add to the active layer list.";
     private static final String ICON_PATH
         = "gov/nasa/worldwindx/applications/worldwindow/images/layer-manager-64x64.png";
     private LayerTree layerTree;
     private boolean on = false;
 
-    public LayerManagerPanel(Registry registry)
-    {
+    public LayerManagerPanel(Registry registry) {
         super("Layer Manager", Constants.FEATURE_LAYER_MANAGER, ICON_PATH, new ShadedPanel(new BorderLayout()),
             registry);
     }
 
-    public void initialize(final Controller controller)
-    {
+    public void initialize(final Controller controller) {
         super.initialize(controller);
 
         LayerList layerList = controller.getWWd().getModel().getLayers();
@@ -74,15 +72,13 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
                 ((LayerTreeModel) layerTree.getModel()).refresh((LayerList) event.getSource());
                 controller.redraw();
             }
-            else if (event.getSource() instanceof Layer)
-            {
+            else if (event.getSource() instanceof Layer) {
                 // Just the state of the layer changed.
                 layerTree.repaint();
             }
         });
 
-        this.panel.addComponentListener(new ComponentAdapter()
-        {
+        this.panel.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent componentEvent) // TODO: how is this used?
             {
                 on = panel.isVisible() && panel.getSize().width > 0 && panel.getSize().height > 0;
@@ -91,37 +87,31 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         });
     }
 
-    protected LayerTreeModel getModel()
-    {
+    protected LayerTreeModel getModel() {
         return (LayerTreeModel) this.layerTree.getModel();
     }
 
-    public void redraw()
-    {
+    public void redraw() {
         this.layerTree.repaint();
     }
 
     @Override
-    public boolean isTwoState()
-    {
+    public boolean isTwoState() {
         return true;
     }
 
     @Override
-    public boolean isOn()
-    {
+    public boolean isOn() {
         return this.on;
     }
 
     @Override
-    public void turnOn(boolean tf)
-    {
+    public void turnOn(boolean tf) {
         this.firePropertyChange("ShowLayerManager", this.on, tf); // TODO: remove if no longer used
         this.on = !this.on;
     }
 
-    public void scrollToLayer(Layer layer)
-    {
+    public void scrollToLayer(Layer layer) {
         // Make the specified layer visible in the layer tree.
         LayerTreeNode layerNode = this.getModel().findLayer(layer, null);
 
@@ -131,53 +121,43 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         this.layerTree.scrollPathToVisible(new TreePath(layerNode.getPath()));
     }
 
-    public void expandGroup(String groupName)
-    {
+    public void expandGroup(String groupName) {
         LayerTreeNode groupNode = this.getModel().findByTitle(groupName);
-        if (groupNode != null)
-        {
+        if (groupNode != null) {
             this.layerTree.expandPath(new TreePath(groupNode.getPath()));
         }
     }
 
-    public void expandPath(LayerPath path)
-    {
+    public void expandPath(LayerPath path) {
         LayerTreeNode groupNode = (LayerTreeNode) this.getNode(path);
-        if (groupNode != null)
-        {
+        if (groupNode != null) {
             this.layerTree.expandPath(new TreePath(groupNode.getPath()));
         }
     }
 
-    public void enableGroupSelection(LayerPath path, boolean tf)
-    {
+    public void enableGroupSelection(LayerPath path, boolean tf) {
         LayerNode groupNode = this.getModel().getLastNode(path);
-        if (groupNode != null)
-        {
+        if (groupNode != null) {
             groupNode.setEnableSelectionBox(tf);
             this.layerTree.repaint();
         }
     }
 
     // Called when the user selects or deselects a cell's check box
-    public void treeNodesChanged(TreeModelEvent event)
-    {
+    public void treeNodesChanged(TreeModelEvent event) {
         Object[] changedNodes = event.getChildren();
-        if (changedNodes != null && changedNodes.length > 0)
-        {
+        if (changedNodes != null && changedNodes.length > 0) {
             LayerList layerList = this.controller.getWWd().getModel().getLayers();
             if (layerList == null)
                 return;
 
-            for (Object o : changedNodes)
-            {
+            for (Object o : changedNodes) {
                 if (!(o instanceof LayerNode))
                     continue;
 
                 if (o instanceof LayerTreeGroupNode)
                     this.handleGroupSelection((LayerTreeGroupNode) o, layerList);
-                else
-                {
+                else {
                     this.handleLayerSelection((LayerTreeNode) o, layerList);
                 }
             }
@@ -188,14 +168,12 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         }
     }
 
-    protected void handleLayerSelection(LayerTreeNode treeNode, LayerList layerList)
-    {
+    protected void handleLayerSelection(LayerTreeNode treeNode, LayerList layerList) {
         // Many layers do not exist until they're selected. This eliminates the overhead of layers never used.
         if (treeNode.getLayer() == null)
             this.createLayer(treeNode);
 
-        if (treeNode.getLayer() == null)
-        {
+        if (treeNode.getLayer() == null) {
             // unable to create the layer
             Util.getLogger().warning("Unable to create the layer named " + treeNode.getTitle());
             return;
@@ -203,24 +181,20 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
 
         // Update the active layers list: Add a missing layer to the list if selected, remove a layer that is
         // not selected.
-        if (treeNode.isSelected() && !layerList.contains(treeNode.getLayer()))
-        {
+        if (treeNode.isSelected() && !layerList.contains(treeNode.getLayer())) {
             this.performSmartInsertion(treeNode, layerList);
             treeNode.getLayer().setEnabled(true);
         }
-        else if (!treeNode.isSelected() && layerList.contains(treeNode.getLayer()))
-        {
+        else if (!treeNode.isSelected() && layerList.contains(treeNode.getLayer())) {
             layerList.remove(treeNode.getLayer());
         }
     }
 
-    protected void updateGroupSelections()
-    {
+    protected void updateGroupSelections() {
         // Ensure that group nodes have their selection box checked if any sub-layer is selected, or does not have
         // its selection box checked if no sub-layer is active.
         Enumeration iter = ((LayerTreeModel) this.layerTree.getModel()).getRootNode().depthFirstEnumeration();
-        while (iter.hasMoreElements())
-        {
+        while (iter.hasMoreElements()) {
             LayerTreeNode node = (LayerTreeNode) iter.nextElement();
             if (!(node instanceof LayerTreeGroupNode))
                 continue;
@@ -229,17 +203,14 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         }
     }
 
-    protected void updateGroupSelection(LayerTreeNode groupNode)
-    {
+    protected void updateGroupSelection(LayerTreeNode groupNode) {
         // Ensure that group nodes have their selection box checked if any child is selected, or does not have
         // its selection box checked if no child is active.
         if (groupNode == null || groupNode == ((LayerTreeModel) layerTree.getModel()).getDefaultGroupNode())
             return;
 
-        for (int i = 0; i < groupNode.getChildCount(); i++)
-        {
-            if (((LayerNode) groupNode.getChildAt(i)).isSelected())
-            {
+        for (int i = 0; i < groupNode.getChildCount(); i++) {
+            if (((LayerNode) groupNode.getChildAt(i)).isSelected()) {
                 groupNode.setSelected(true);
                 return;
             }
@@ -248,11 +219,9 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         groupNode.setSelected(false);
     }
 
-    protected void handleGroupSelection(LayerTreeNode group, LayerList layerList)
-    {
+    protected void handleGroupSelection(LayerTreeNode group, LayerList layerList) {
         Enumeration iter = group.breadthFirstEnumeration();
-        while (iter.hasMoreElements())
-        {
+        while (iter.hasMoreElements()) {
             Object o = iter.nextElement();
             if (!(o instanceof LayerNode) || (o instanceof LayerTreeGroupNode))
                 continue;
@@ -264,8 +233,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
     }
 
     // Insert a layer into the active layers list at its same position relative to its siblings in the layer tree.
-    protected void performSmartInsertion(LayerTreeNode treeNode, LayerList layerList)
-    {
+    protected void performSmartInsertion(LayerTreeNode treeNode, LayerList layerList) {
         if (this.insertAfterPreviousSibling(treeNode, layerList))
             return;
 
@@ -276,14 +244,11 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         layerList.add(treeNode.getLayer());
     }
 
-    protected boolean insertAfterPreviousSibling(LayerTreeNode treeNode, LayerList layerList)
-    {
+    protected boolean insertAfterPreviousSibling(LayerTreeNode treeNode, List<Layer> layerList) {
         LayerTreeNode previousTreeNode = (LayerTreeNode) treeNode.getPreviousSibling();
-        while (previousTreeNode != null)
-        {
+        while (previousTreeNode != null) {
             int index = layerList.indexOf(previousTreeNode.getLayer());
-            if (index >= 0)
-            {
+            if (index >= 0) {
                 layerList.add(index + 1, treeNode.getLayer());
                 return true;
             }
@@ -293,14 +258,11 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         return false;
     }
 
-    protected boolean insertBeforeSubsequentSibling(LayerTreeNode treeNode, LayerList layerList)
-    {
+    protected boolean insertBeforeSubsequentSibling(LayerTreeNode treeNode, List<Layer> layerList) {
         LayerTreeNode subsequentTreeNode = (LayerTreeNode) treeNode.getNextSibling();
-        while (subsequentTreeNode != null)
-        {
+        while (subsequentTreeNode != null) {
             int index = layerList.indexOf(subsequentTreeNode.getLayer());
-            if (index >= 0)
-            {
+            if (index >= 0) {
                 layerList.add(index, treeNode.getLayer());
                 return true;
             }
@@ -310,62 +272,50 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         return false;
     }
 
-    public void treeNodesInserted(TreeModelEvent event)
-    {
+    public void treeNodesInserted(TreeModelEvent event) {
     }
 
-    public void treeNodesRemoved(TreeModelEvent event)
-    {
+    public void treeNodesRemoved(TreeModelEvent event) {
     }
 
-    public void treeStructureChanged(TreeModelEvent event)
-    {
+    public void treeStructureChanged(TreeModelEvent event) {
     }
 
-    public String getDefaultGroupName()
-    {
+    public String getDefaultGroupName() {
         return this.getModel().getDefaultGroupNode().getTitle();
     }
 
-    public LayerPath getDefaultGroupPath()
-    {
+    public LayerPath getDefaultGroupPath() {
         return new LayerPath(this.getDefaultGroupName());
     }
 
     // Add a new group node to the layer tree.
-    public void addGroup(LayerPath pathToGroup)
-    {
+    public void addGroup(LayerPath pathToGroup) {
         this.createPath(pathToGroup);
     }
 
-    public boolean containsPath(LayerPath pathToGroup)
-    {
+    public boolean containsPath(LayerPath pathToGroup) {
         return this.getNode(pathToGroup) != null;
     }
 
-    public LayerNode getNode(LayerPath path)
-    {
+    public LayerNode getNode(LayerPath path) {
         return this.getModel().getLastNode(path);
     }
 
     // Change a layer's selection state, which determines whether it's in the active layers list.
-    public void selectLayer(Layer layer, boolean tf)
-    {
+    public void selectLayer(Layer layer, boolean tf) {
         this.getModel().selectLayer(layer, tf);
     }
 
     // Find a named layer that is a descendant of a specified layer tree group.
-    public Layer findLayerByTitle(String layerTitle, String groupTitle)
-    {
+    public Layer findLayerByTitle(String layerTitle, String groupTitle) {
         LayerNode treeNode = this.getModel().findByTitle(layerTitle, groupTitle);
         return treeNode != null ? treeNode.getLayer() : null;
     }
 
     // Add a layer to a specified group in the layer tree.
-    public void addLayer(Layer layer, LayerPath pathToParent)
-    {
-        if (layer == null)
-        {
+    public void addLayer(Layer layer, LayerPath pathToParent) {
+        if (layer == null) {
             String msg = "Layer is null";
             Util.getLogger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -376,10 +326,8 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
     }
 
     // Add a layer to a specified group in the layer tree.
-    public void addLayer(LayerNode layerNode, LayerPath pathToParent)
-    {
-        if (layerNode == null || layerNode.getLayer() == null)
-        {
+    public void addLayer(LayerNode layerNode, LayerPath pathToParent) {
+        if (layerNode == null || layerNode.getLayer() == null) {
             String msg = "LayerNode or Layer is null";
             Util.getLogger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -403,15 +351,13 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
     }
 
     // Ensure that each group in a specified path exists.
-    protected LayerTreeNode createPath(LayerPath path)
-    {
+    protected LayerTreeNode createPath(LayerPath path) {
         LayerTreeNode parent = this.getModel().getRootNode();
 
         if (LayerPath.isEmptyPath(path))
             return parent;
 
-        for (String nodeName : path)
-        {
+        for (String nodeName : path) {
             LayerTreeNode groupNode = this.getModel().findChild(nodeName, parent);
             if (groupNode == null) // path element does not exist, so create it
             {
@@ -419,12 +365,10 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
                 this.getModel().insertNodeInto(groupNode, parent, parent.getChildCount());
                 parent = groupNode;
             }
-            else if (groupNode instanceof LayerTreeGroupNode)
-            {
+            else if (groupNode instanceof LayerTreeGroupNode) {
                 parent = groupNode; // path element exists, skip to next one.
             }
-            else
-            {
+            else {
                 throw new IllegalArgumentException("Path element is not a group");
             }
         }
@@ -433,14 +377,12 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
     }
 
     // Remove all instances of a layer from the layer tree.
-    public void removeLayer(Layer layer)
-    {
+    public void removeLayer(Layer layer) {
         java.util.List<LayerTreeNode> instances = this.getModel().findLayerInstances(layer, null);
         if (instances == null)
             return;
 
-        for (LayerNode layerNode : instances)
-        {
+        for (LayerNode layerNode : instances) {
             if (layerNode != null)
                 this.removeLayer(layerNode);
         }
@@ -448,8 +390,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
 
     // Remove a node, not necessarily a node with a layer, from the layer tree. Remove any ancestors who would then
     // resolve only to the removed node.
-    public void removeLayer(LayerNode layerNode)
-    {
+    public void removeLayer(LayerNode layerNode) {
         if (layerNode == null)
             return;
 
@@ -459,7 +400,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         // Remove any ancestors whose descendants have no leaf node but the one removed.
         for (int i = pathFromRoot.length - 2; i >= 1; i--) // length - 2 ==> don't remove root node
         {
-            LayerTreeNode groupNode = (LayerTreeNode) pathFromRoot[i];
+            MutableTreeNode groupNode = (LayerTreeNode) pathFromRoot[i];
 
             // Don't delete the default group node (or its ancestors).
             if (groupNode == this.getModel().getDefaultGroupNode())
@@ -470,8 +411,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         }
 
         // Remove layer from the WWJ layer list, which causes it to be removed from the active-layers panel.
-        if (layerNode.getLayer() != null)
-        {
+        if (layerNode.getLayer() != null) {
             LayerList layerList = this.controller.getWWd().getModel().getLayers();
             if (layerList != null)
                 layerList.remove(layerNode.getLayer());
@@ -481,21 +421,18 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
     }
 
     // Remove all layers in a specified list of layers in the branch identified by the layer list's display name.
-    public void removeLayers(LayerList layerList)
-    {
+    public void removeLayers(LayerList layerList) {
         if (layerList == null)
             return;
 
         LayerTreeGroupNode branchRoot = this.getModel().getRootNode();
-        if (WWUtil.isEmpty(layerList.getDisplayName()))
-        {
+        if (WWUtil.isEmpty(layerList.getDisplayName())) {
             LayerNode groupNode = this.getModel().findChild(layerList.getDisplayName(), this.getModel().getRootNode());
             if (groupNode instanceof LayerTreeGroupNode)
                 branchRoot = (LayerTreeGroupNode) groupNode;
         }
 
-        for (Layer layer : layerList)
-        {
+        for (Layer layer : layerList) {
             LayerNode layerNode = this.getModel().findLayer(layer, branchRoot);
             if (layerNode != null)
                 this.removeLayer(layerNode);
@@ -503,31 +440,26 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
     }
 
     // Remove one instance of a layer from the layer tree. Will also work for group nodes.
-    public void removeLayer(LayerPath path)
-    {
+    public void removeLayer(LayerPath path) {
         LayerNode layerNode = this.getModel().getLastNode(path);
         if (layerNode != null)// && layerNode.getLayer() != null)
             this.removeLayer(layerNode);
     }
 
     // Get the layer at the end of a specific path.
-    public Layer getLayerFromPath(LayerPath path)
-    {
+    public Layer getLayerFromPath(LayerPath path) {
         LayerNode layerNode = this.getModel().getLastNode(path);
         return layerNode != null && layerNode.getLayer() != null ? layerNode.getLayer() : null;
     }
 
-    protected void createLayer(LayerNode layerNode)
-    {
-        if (layerNode == null)
-        {
+    protected void createLayer(LayerNode layerNode) {
+        if (layerNode == null) {
             String msg = "LayerNode is null";
             Util.getLogger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (layerNode.getWmsLayerInfo() != null)
-        {
+        if (layerNode.getWmsLayerInfo() != null) {
             WMSLayerInfo wmsInfo = layerNode.getWmsLayerInfo();
             AVList configParams = wmsInfo.getParams().copy(); // Copy to insulate changes from the caller.
 

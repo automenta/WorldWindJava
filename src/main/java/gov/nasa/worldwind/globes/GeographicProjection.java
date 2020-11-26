@@ -18,8 +18,7 @@ import gov.nasa.worldwind.geom.*;
  * @author tag
  * @version $Id: GeographicProjection.java 2277 2014-08-28 21:19:37Z dcollins $
  */
-public interface GeographicProjection
-{
+public interface GeographicProjection {
     /**
      * Returns the projection name.
      *
@@ -32,7 +31,7 @@ public interface GeographicProjection
      * controller will make the globe using the projection appear to scroll continuously horizontally.
      *
      * @return <code>true</code> if it makes sense to treat this projection as continuous, otherwise
-     *         <code>false</code>.
+     * <code>false</code>.
      */
     boolean isContinuous();
 
@@ -47,7 +46,6 @@ public interface GeographicProjection
      * Specifies the limits for this projection.
      *
      * @param projectionLimits The projection limits.
-     *
      * @throws IllegalArgumentException if the specified limits is null or the limits are outside the normal range of
      *                                  latitude or longitude.
      */
@@ -66,10 +64,8 @@ public interface GeographicProjection
      * @param offset          An optional offset to be applied to the Cartesian output. Typically only projections that
      *                        are continuous (see {@link #isContinuous()} apply this offset. Others ignore it. May be
      *                        null.
-     *
      * @return The Cartesian point, in meters, corresponding to the input position.
-     *
-     * @see #cartesianToGeographic(Globe, gov.nasa.worldwind.geom.Vec4, gov.nasa.worldwind.geom.Vec4)
+     * @see #cartesianToGeographic(Globe, Vec4, Vec4)
      */
     Vec4 geographicToCartesian(Globe globe, Angle latitude, Angle longitude, double metersElevation, Vec4 offset);
 
@@ -113,11 +109,9 @@ public interface GeographicProjection
      * @param offset An optional offset to be applied to the Cartesian input prior to converting it. Typically only
      *               projections that are continuous (see {@link #isContinuous()} apply this offset. Others ignore it.
      *               May be null.
-     *
      * @return The geographic position corresponding to the input point.
-     *
-     * @see #geographicToCartesian(Globe, gov.nasa.worldwind.geom.Angle, gov.nasa.worldwind.geom.Angle, double,
-     *      gov.nasa.worldwind.geom.Vec4)
+     * @see #geographicToCartesian(Globe, Angle, Angle, double,
+     * Vec4)
      */
     Position cartesianToGeographic(Globe globe, Vec4 cart, Vec4 offset);
 
@@ -128,7 +122,6 @@ public interface GeographicProjection
      * @param globe     The globe this projection is applied to.
      * @param latitude  The latitude of the location.
      * @param longitude The longitude of the location.
-     *
      * @return The north pointing tangent corresponding to the input location.
      */
     Vec4 northPointingTangent(Globe globe, Angle latitude, Angle longitude);

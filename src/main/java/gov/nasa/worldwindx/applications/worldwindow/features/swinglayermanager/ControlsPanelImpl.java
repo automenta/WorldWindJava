@@ -17,21 +17,18 @@ import java.awt.*;
  * @author tag
  * @version $Id: ControlsPanelImpl.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ControlsPanelImpl extends AbstractFeature implements ControlsPanel
-{
+public class ControlsPanelImpl extends AbstractFeature implements ControlsPanel {
     private static final int DEFAULT_DIVIDER_LOCATION = 250;
 
     private final JPanel panel;
 
-    public ControlsPanelImpl(Registry registry)
-    {
+    public ControlsPanelImpl(Registry registry) {
         super("Controls Panel", Constants.CONTROLS_PANEL, registry);
 
         this.panel = new JPanel(new BorderLayout());
     }
 
-    public void initialize(Controller controller)
-    {
+    public void initialize(Controller controller) {
         super.initialize(controller);
 
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -58,8 +55,7 @@ public class ControlsPanelImpl extends AbstractFeature implements ControlsPanel
         this.panel.add(splitPane, BorderLayout.CENTER);
     }
 
-    public JPanel getJPanel()
-    {
+    public JPanel getJPanel() {
         return this.panel;
     }
 }

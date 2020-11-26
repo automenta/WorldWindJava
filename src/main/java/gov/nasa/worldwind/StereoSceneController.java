@@ -17,8 +17,16 @@ import gov.nasa.worldwind.geom.Angle;
  * @author Tom Gaskins
  * @version $Id: StereoSceneController.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface StereoSceneController extends SceneController
-{
+public interface StereoSceneController extends SceneController {
+    /**
+     * Indicates the current stereo mode of this controller.
+     *
+     * @return the current stereo mode. See this class' description for the possible modes. This method does not return
+     * null. If a null mode was passed to {@link #setStereoMode(String)}, this instance's mode was set to {@link
+     * gov.nasa.worldwind.avlist.AVKey#STEREO_MODE_NONE}.
+     */
+    String getStereoMode();
+
     /**
      * Specifies the technique used to provide a stereo effect. Defined options are {@link
      * gov.nasa.worldwind.avlist.AVKey#STEREO_MODE_DEVICE} to request device supported stereo, {@link
@@ -36,13 +44,11 @@ public interface StereoSceneController extends SceneController
     void setStereoMode(String mode);
 
     /**
-     * Indicates the current stereo mode of this controller.
+     * Returns this controller's focus angle, the angle difference between the left and right eye direction.
      *
-     * @return the current stereo mode. See this class' description for the possible modes. This method does not return
-     *         null. If a null mode was passed to {@link #setStereoMode(String)}, this instance's mode was set to {@link
-     *         gov.nasa.worldwind.avlist.AVKey#STEREO_MODE_NONE}.
+     * @return this controller's focus angle.
      */
-    String getStereoMode();
+    Angle getFocusAngle();
 
     /**
      * Specifies the angle difference between the left and right eye direction. Larger angles increase the stereo
@@ -53,11 +59,11 @@ public interface StereoSceneController extends SceneController
     void setFocusAngle(Angle a);
 
     /**
-     * Returns this controller's focus angle, the angle difference between the left and right eye direction.
+     * Indicates whether to switch the left/right stereo images.
      *
-     * @return this controller's focus angle.
+     * @return true to switch the images, otherwise false
      */
-    Angle getFocusAngle();
+    boolean isSwapEyes();
 
     /**
      * Specifies whether to draw the right eye image in the left eye's position and the left eye's image in the right
@@ -66,13 +72,6 @@ public interface StereoSceneController extends SceneController
      * @param swapEyes true to switch the left/right stereo images, otherwise false.
      */
     void setSwapEyes(boolean swapEyes);
-
-    /**
-     * Indicates whether to switch the left/right stereo images.
-     *
-     * @return true to switch the images, otherwise false
-     */
-    boolean isSwapEyes();
 
     /**
      * Indicates whether stereo is being implemented directly by the display device rather than software.

@@ -19,17 +19,13 @@ import java.util.List;
  * @author tag
  * @version $Id: WMSLayerTree.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WMSLayerTree extends LayerTree
-{
-    public WMSLayerTree(Controller controller)
-    {
+public class WMSLayerTree extends LayerTree {
+    public WMSLayerTree(Controller controller) {
         super(controller);
     }
 
-    public void createLayers(Object infoItem, AVList commonLayerParams)
-    {
-        if (infoItem instanceof WMSCapabilities)
-        {
+    public void createLayers(Object infoItem, AVList commonLayerParams) {
+        if (infoItem instanceof WMSCapabilities) {
             WMSCapabilities capsDoc = (WMSCapabilities) infoItem;
 
             String serviceTitle = capsDoc.getServiceInformation().getServiceTitle();
@@ -40,8 +36,7 @@ public class WMSLayerTree extends LayerTree
             if (layerCaps == null)
                 return; // TODO: issue warning
 
-            for (WMSLayerCapabilities caps : layerCaps)
-            {
+            for (WMSLayerCapabilities caps : layerCaps) {
                 LayerTree subTree = this.createSubTree(capsDoc, caps, commonLayerParams);
                 if (subTree != null)
                     this.children.add(subTree);
@@ -49,8 +44,7 @@ public class WMSLayerTree extends LayerTree
         }
     }
 
-    public LayerTree createSubTree(WMSCapabilities capsDoc, WMSLayerCapabilities layerCaps, AVList commonLayerParams)
-    {
+    public LayerTree createSubTree(WMSCapabilities capsDoc, WMSLayerCapabilities layerCaps, AVList commonLayerParams) {
         WMSLayerTree tree = new WMSLayerTree(this.controller);
 
         // Determine the tree's display name.
@@ -62,8 +56,7 @@ public class WMSLayerTree extends LayerTree
             tree.setDisplayName("No name");
 
         // Create an image layer if this is a named layer.
-        if (layerCaps.getName() != null)
-        {
+        if (layerCaps.getName() != null) {
             TiledImageLayer layer = tree.createImageLayer(capsDoc, layerCaps, commonLayerParams);
             if (layer == null)
                 return null;
@@ -72,18 +65,14 @@ public class WMSLayerTree extends LayerTree
         }
 
         // Create any sublayers.
-        if (layerCaps.getLayers() != null)
-        {
-            for (WMSLayerCapabilities subLayerCaps : layerCaps.getLayers())
-            {
-                if (subLayerCaps.isLeaf())
-                {
+        if (layerCaps.getLayers() != null) {
+            for (WMSLayerCapabilities subLayerCaps : layerCaps.getLayers()) {
+                if (subLayerCaps.isLeaf()) {
                     TiledImageLayer layer = tree.createImageLayer(capsDoc, subLayerCaps, commonLayerParams);
                     if (layer != null)
                         tree.getLayers().add(layer);
                 }
-                else
-                {
+                else {
                     LayerTree subTree = this.createSubTree(capsDoc, subLayerCaps, commonLayerParams);
                     if (subTree != null)
                         tree.children.add(subTree);
@@ -95,8 +84,7 @@ public class WMSLayerTree extends LayerTree
     }
 
     protected TiledImageLayer createImageLayer(WMSCapabilities capsDoc, WMSLayerCapabilities layerCaps,
-        AVList commonLayerParams)
-    {
+        AVList commonLayerParams) {
         AVList layerParams = new AVListImpl();
         if (commonLayerParams != null)
             layerParams.setValues(commonLayerParams);

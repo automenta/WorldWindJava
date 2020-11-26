@@ -17,8 +17,7 @@ import java.util.*;
  * @author Patrick Murris
  * @version $Id: GeoSymStyleProvider.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GeoSymStyleProvider
-{
+public class GeoSymStyleProvider {
     //private static String TYPE_POINT = "Point";
     private static final String TYPE_LINE_PLAIN = "LinePlain";
     private static final String TYPE_LINE_COMPLEX = "LineComplex";
@@ -33,29 +32,23 @@ public class GeoSymStyleProvider
     private static final int STIPPLE_PATTERN = 4;
     private static final int STIPPLE_FACTOR = 5;
     private static final int FILL_COLOR = 6;
-
+    private final double lineWidthFactor = 3.0d; // mm to pixels
     private Map<String, VPFSymbolAttributes> attributes;
-    private final double lineWidthFactor = 3d; // mm to pixels
 
-    public GeoSymStyleProvider(String filePath)
-    {
-        try
-        {
+    public GeoSymStyleProvider(String filePath) {
+        try {
             this.loadStylesFromFile(filePath);
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             String message = Logging.getMessage("generic.ExceptionWhileReading", filePath);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
         }
     }
 
-    protected void loadStylesFromFile(String filePath) throws IOException
-    {
+    protected void loadStylesFromFile(String filePath) throws IOException {
         InputStream inputStream = WWIO.openFileOrResourceStream(filePath, this.getClass());
-        if (inputStream == null)
-        {
+        if (inputStream == null) {
             String message = Logging.getMessage("generic.ExceptionWhileReading", filePath);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -63,10 +56,9 @@ public class GeoSymStyleProvider
 
         this.attributes = new HashMap<>();
         Scanner scanner = new Scanner(inputStream);
-        while (scanner.hasNextLine())
-        {
+        while (scanner.hasNextLine()) {
             String s = scanner.nextLine().trim();
-            if (s.length() == 0 || s.startsWith("#"))
+            if (s.isEmpty() || !s.isEmpty() && s.charAt(0) == '#')
                 continue;
 
             String[] tokens = s.split(",");
@@ -79,23 +71,18 @@ public class GeoSymStyleProvider
         inputStream.close();
     }
 
-    private VPFSymbolAttributes getAttributes(String[] tokens)
-    {
+    private VPFSymbolAttributes getAttributes(String[] tokens) {
         VPFSymbolAttributes attr = new VPFSymbolAttributes(null, null);
-        if (tokens[TYPE].equals(TYPE_AREA_PLAIN) || tokens[TYPE].equals(TYPE_AREA_PATTERN))
-        {
+        if (tokens[TYPE].equals(TYPE_AREA_PLAIN) || tokens[TYPE].equals(TYPE_AREA_PATTERN)) {
             attr.setInteriorMaterial(new Material(Color.decode(tokens[FILL_COLOR])));
-            if (tokens[TYPE].equals(TYPE_AREA_PATTERN))
-            {
+            if (tokens[TYPE].equals(TYPE_AREA_PATTERN)) {
                 attr.setImageSource(tokens[CODE]);
             }
         }
-        else if (tokens[TYPE].equals(TYPE_LINE_PLAIN) || tokens[TYPE].equals(TYPE_LINE_COMPLEX))
-        {
+        else if (tokens[TYPE].equals(TYPE_LINE_PLAIN) || tokens[TYPE].equals(TYPE_LINE_COMPLEX)) {
             attr.setOutlineMaterial(new Material(Color.decode(tokens[LINE_COLOR])));
             attr.setOutlineWidth(Double.parseDouble(tokens[LINE_WIDTH]) * this.lineWidthFactor);
-            if (tokens[TYPE].equals(TYPE_LINE_COMPLEX))
-            {
+            if (tokens[TYPE].equals(TYPE_LINE_COMPLEX)) {
                 attr.setOutlineStipplePattern(Integer.decode(tokens[STIPPLE_PATTERN]).shortValue());
                 attr.setOutlineStippleFactor(Integer.parseInt(tokens[STIPPLE_FACTOR]));
             }
@@ -104,8 +91,7 @@ public class GeoSymStyleProvider
         return attr;
     }
 
-    public VPFSymbolAttributes getAttributes(String code)
-    {
+    public VPFSymbolAttributes getAttributes(String code) {
         return this.attributes.get(code);
     }
 }

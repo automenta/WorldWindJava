@@ -26,57 +26,26 @@ import java.util.logging.Level;
  * @author tag
  * @version $Id: BasicGpuResourceCache.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class BasicGpuResourceCache implements GpuResourceCache
-{
-    public static class CacheEntry implements Cacheable
-    {
-        protected final String resourceType;
-        protected final Object resource;
-        protected long resourceSize;
-
-        public CacheEntry(Object resource, String resourceType)
-        {
-            this.resource = resource;
-            this.resourceType = resourceType;
-        }
-
-        public CacheEntry(Object resource, String resourceType, long size)
-        {
-            this.resource = resource;
-            this.resourceType = resourceType;
-            this.resourceSize = size;
-        }
-
-        public long getSizeInBytes()
-        {
-            return this.resourceSize;
-        }
-    }
-
+public class BasicGpuResourceCache implements GpuResourceCache {
     protected final BasicMemoryCache resources;
 
-    public BasicGpuResourceCache(long loWater, long hiWater)
-    {
+    public BasicGpuResourceCache(long loWater, long hiWater) {
         this.resources = new BasicMemoryCache(loWater, hiWater);
         this.resources.setName("GPU Resource Cache");
-        this.resources.addCacheListener(new MemoryCache.CacheListener()
-        {
-            public void entryRemoved(Object key, Object clientObject)
-            {
+        this.resources.addCacheListener(new MemoryCache.CacheListener() {
+            public void entryRemoved(Object key, Object clientObject) {
                 onEntryRemoved(key, clientObject);
             }
 
-            public void removalException(Throwable e, Object key, Object clientObject)
-            {
+            public void removalException(Throwable e, Object key, Object clientObject) {
                 String msg = Logging.getMessage("BasicMemoryCache.ExceptionFromRemovalListener", e.getMessage());
                 Logging.logger().log(Level.INFO, msg);
             }
         });
     }
 
-    @SuppressWarnings({"UnusedParameters"})
-    protected void onEntryRemoved(Object key, Object clientObject)
-    {
+    @SuppressWarnings("UnusedParameters")
+    protected void onEntryRemoved(Object key, Object clientObject) {
         GLContext context = GLContext.getCurrent();
         if (context == null || context.getGL() == null)
             return;
@@ -87,97 +56,65 @@ public class BasicGpuResourceCache implements GpuResourceCache
         CacheEntry entry = (CacheEntry) clientObject;
         GL2 gl = context.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (entry.resourceType == TEXTURE)
-        {
+        if (entry.resourceType == TEXTURE) {
             // Unbind a tile's texture when the tile leaves the cache.
             ((Texture) entry.resource).destroy(gl);
         }
-        else if (entry.resourceType == VBO_BUFFERS)
-        {
+        else if (entry.resourceType == VBO_BUFFERS) {
             int[] ids = (int[]) entry.resource;
             gl.glDeleteBuffers(ids.length, ids, 0);
         }
-        else if (entry.resourceType == DISPLAY_LISTS)
-        {
+        else if (entry.resourceType == DISPLAY_LISTS) {
             // Delete display list ids. They're in a two-element int array, with the id at 0 and the count at 1
             int[] ids = (int[]) entry.resource;
             gl.glDeleteLists(ids[0], ids[1]);
         }
     }
 
-    public void put(Object key, Texture texture)
-    {
+    public void put(Object key, Texture texture) {
         CacheEntry te = this.createCacheEntry(texture, TEXTURE);
         this.resources.add(key, te);
     }
 
-    public void put(Object key, Object resource, String resourceType, long size)
-    {
+    public void put(Object key, Object resource, String resourceType, long size) {
         CacheEntry te = this.createCacheEntry(resource, resourceType, size);
         this.resources.add(key, te);
     }
 
-    protected CacheEntry createCacheEntry(Object resource, String resourceType)
-    {
+    protected CacheEntry createCacheEntry(Object resource, String resourceType) {
         CacheEntry entry = new CacheEntry(resource, resourceType);
         entry.resourceSize = this.computeEntrySize(entry);
 
         return entry;
     }
 
-    protected CacheEntry createCacheEntry(Object resource, String resourceType, long size)
-    {
+    protected CacheEntry createCacheEntry(Object resource, String resourceType, long size) {
         CacheEntry entry = new CacheEntry(resource, resourceType, size);
         entry.resourceSize = size;
 
         return entry;
     }
 
-    public Object get(Object key)
-    {
+    public Object get(Object key) {
         CacheEntry entry = (CacheEntry) this.resources.getObject(key);
         return entry != null ? entry.resource : null;
     }
 
-    public Texture getTexture(Object key)
-    {
+    public Texture getTexture(Object key) {
         CacheEntry entry = (CacheEntry) this.resources.getObject(key);
         return entry != null && entry.resourceType == TEXTURE ? (Texture) entry.resource : null;
     }
 
-    public void remove(Object key)
-    {
+    public void remove(Object key) {
         this.resources.remove(key);
     }
 
-    public int getNumObjects()
-    {
+    public int getNumObjects() {
         return this.resources.getNumObjects();
     }
 
-    public long getCapacity()
-    {
+    public long getCapacity() {
         return this.resources.getCapacity();
-    }
-
-    public long getUsedCapacity()
-    {
-        return this.resources.getUsedCapacity();
-    }
-
-    public long getFreeCapacity()
-    {
-        return this.resources.getFreeCapacity();
-    }
-
-    public boolean contains(Object key)
-    {
-        return this.resources.contains(key);
-    }
-
-    public void clear()
-    {
-        this.resources.clear();
     }
 
     /**
@@ -189,9 +126,34 @@ public class BasicGpuResourceCache implements GpuResourceCache
      *
      * @param newCapacity the new capacity of the cache.
      */
-    public synchronized void setCapacity(long newCapacity)
-    {
+    public synchronized void setCapacity(long newCapacity) {
         this.resources.setCapacity(newCapacity);
+    }
+
+    public long getUsedCapacity() {
+        return this.resources.getUsedCapacity();
+    }
+
+    public long getFreeCapacity() {
+        return this.resources.getFreeCapacity();
+    }
+
+    public boolean contains(Object key) {
+        return this.resources.contains(key);
+    }
+
+    public void clear() {
+        this.resources.clear();
+    }
+
+    /**
+     * Returns the low water level in bytes. When the cache fills, it removes items until it reaches the low water
+     * level.
+     *
+     * @return the low water level in bytes.
+     */
+    public long getLowWater() {
+        return this.resources.getLowWater();
     }
 
     /**
@@ -204,32 +166,18 @@ public class BasicGpuResourceCache implements GpuResourceCache
      *
      * @param loWater the new low water level in bytes.
      */
-    public synchronized void setLowWater(long loWater)
-    {
+    public synchronized void setLowWater(long loWater) {
         this.resources.setLowWater(loWater);
     }
 
-    /**
-     * Returns the low water level in bytes. When the cache fills, it removes items until it reaches the low water
-     * level.
-     *
-     * @return the low water level in bytes.
-     */
-    public long getLowWater()
-    {
-        return this.resources.getLowWater();
-    }
-
-    protected long computeEntrySize(CacheEntry entry)
-    {
+    protected long computeEntrySize(CacheEntry entry) {
         if (entry.resourceType == TEXTURE)
             return this.computeTextureSize(entry);
 
         return 0;
     }
 
-    protected long computeTextureSize(CacheEntry entry)
-    {
+    protected long computeTextureSize(CacheEntry entry) {
         Texture texture = (Texture) entry.resource;
 
         long size = texture.getEstimatedMemorySize();
@@ -239,5 +187,26 @@ public class BasicGpuResourceCache implements GpuResourceCache
             size = texture.getHeight() * texture.getWidth() * 4;
 
         return size;
+    }
+
+    public static class CacheEntry implements Cacheable {
+        protected final String resourceType;
+        protected final Object resource;
+        protected long resourceSize;
+
+        public CacheEntry(Object resource, String resourceType) {
+            this.resource = resource;
+            this.resourceType = resourceType;
+        }
+
+        public CacheEntry(Object resource, String resourceType, long size) {
+            this.resource = resource;
+            this.resourceType = resourceType;
+            this.resourceSize = size;
+        }
+
+        public long getSizeInBytes() {
+            return this.resourceSize;
+        }
     }
 }

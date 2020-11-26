@@ -13,8 +13,7 @@ package gov.nasa.worldwind.globes;
  * @author tag
  * @version $Id: GlobeStateKey.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface GlobeStateKey
-{
+public interface GlobeStateKey {
     /**
      * Indicates the globe associated with this state key.
      *

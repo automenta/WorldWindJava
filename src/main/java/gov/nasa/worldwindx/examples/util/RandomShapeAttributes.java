@@ -15,20 +15,17 @@ import java.awt.*;
  * @author dcollins
  * @version $Id: RandomShapeAttributes.java 2326 2014-09-17 22:35:45Z dcollins $
  */
-public class RandomShapeAttributes
-{
+public class RandomShapeAttributes {
     protected int attrIndex = -1;
     protected PointPlacemarkAttributes[] pointAttrs;
     protected ShapeAttributes[] shapeAttrs;
     protected AirspaceAttributes[] airspaceAttrs;
 
-    public RandomShapeAttributes()
-    {
+    public RandomShapeAttributes() {
         this.initialize();
     }
 
-    protected void initialize()
-    {
+    protected void initialize() {
         Color[] shapeColors = {
             new Color(255, 9, 84), // red
             new Color(255, 133, 0), // orange
@@ -42,47 +39,40 @@ public class RandomShapeAttributes
         this.shapeAttrs = new ShapeAttributes[shapeColors.length];
         this.airspaceAttrs = new AirspaceAttributes[shapeColors.length];
 
-        for (int i = 0; i < shapeColors.length; i++)
-        {
+        for (int i = 0; i < shapeColors.length; i++) {
             this.pointAttrs[i] = this.createPointAttributes(shapeColors[i]);
             this.shapeAttrs[i] = this.createShapeAttributes(shapeColors[i]);
             this.airspaceAttrs[i] = this.createAirspaceAttributes(shapeColors[i]);
         }
     }
 
-    public RandomShapeAttributes nextAttributes()
-    {
+    public RandomShapeAttributes nextAttributes() {
         this.attrIndex++;
 
         return this;
     }
 
-    public PointPlacemarkAttributes asPointAttributes()
-    {
+    public PointPlacemarkAttributes asPointAttributes() {
         return this.pointAttrs[this.attrIndex % this.pointAttrs.length];
     }
 
-    public ShapeAttributes asShapeAttributes()
-    {
+    public ShapeAttributes asShapeAttributes() {
         return this.shapeAttrs[this.attrIndex % this.shapeAttrs.length];
     }
 
-    public AirspaceAttributes asAirspaceAttributes()
-    {
+    public AirspaceAttributes asAirspaceAttributes() {
         return this.airspaceAttrs[this.attrIndex % this.airspaceAttrs.length];
     }
 
-    protected PointPlacemarkAttributes createPointAttributes(Color color)
-    {
+    protected PointPlacemarkAttributes createPointAttributes(Color color) {
         PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
         attrs.setUsePointAsDefaultImage(true);
         attrs.setLineMaterial(new Material(color));
-        attrs.setScale(7d);
+        attrs.setScale(7.0d);
         return attrs;
     }
 
-    protected ShapeAttributes createShapeAttributes(Color color)
-    {
+    protected ShapeAttributes createShapeAttributes(Color color) {
         ShapeAttributes attrs = new BasicShapeAttributes();
         attrs.setInteriorMaterial(new Material(color));
         attrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(color)));
@@ -91,8 +81,7 @@ public class RandomShapeAttributes
         return attrs;
     }
 
-    protected AirspaceAttributes createAirspaceAttributes(Color color)
-    {
+    protected AirspaceAttributes createAirspaceAttributes(Color color) {
         AirspaceAttributes attrs = new BasicAirspaceAttributes();
         attrs.setInteriorMaterial(new Material(color));
         attrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(color)));

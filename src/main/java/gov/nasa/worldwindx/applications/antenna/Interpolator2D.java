@@ -20,8 +20,9 @@ import java.util.regex.Pattern;
  * @author tag
  * @version $Id: Interpolator2D.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Interpolator2D
-{
+public class Interpolator2D {
+    // Retain the input tuples in a sorted map of sorted maps. The outer map represents the S axis, the inner the T.
+    protected final TreeMap<Double, TreeMap<Double, Double>> map = new TreeMap<>();
     protected boolean wrapS = false;
     protected boolean wrapT = false;
     protected Double minS;
@@ -31,9 +32,6 @@ public class Interpolator2D
     protected Double minValue;
     protected Double maxValue;
 
-    // Retain the input tuples in a sorted map of sorted maps. The outer map represents the S axis, the inner the T.
-    protected final TreeMap<Double, TreeMap<Double, Double>> map = new TreeMap<>();
-
     /**
      * Indicates whether this interpolator interpolates between maximum and minimum first coordinates if a first
      * coordinate outside the current range of first coordinates is specified. See {@link #setWrapS(boolean)} for a
@@ -41,8 +39,7 @@ public class Interpolator2D
      *
      * @return the first coordinate's wrap flag.
      */
-    public boolean isWrapS()
-    {
+    public boolean isWrapS() {
         return wrapS;
     }
 
@@ -57,11 +54,9 @@ public class Interpolator2D
      * The default wrap S flag is <code>false</code>.
      *
      * @param wrapS the first coordinate's wrap flag.
-     *
      * @see #setWrapS(boolean)
      */
-    public void setWrapS(boolean wrapS)
-    {
+    public void setWrapS(boolean wrapS) {
         this.wrapS = wrapS;
     }
 
@@ -71,11 +66,9 @@ public class Interpolator2D
      * description of wrapping and the use of wrap flags.
      *
      * @return the second coordinate's wrap flag.
-     *
      * @see #setWrapS(boolean)
      */
-    public boolean isWrapT()
-    {
+    public boolean isWrapT() {
         return wrapT;
     }
 
@@ -87,11 +80,9 @@ public class Interpolator2D
      * The default T wrap flag is <code>false</code>.
      *
      * @param wrapT the second coordinate's wrap flag.
-     *
      * @see #setWrapS(boolean)
      */
-    public void setWrapT(boolean wrapT)
-    {
+    public void setWrapT(boolean wrapT) {
         this.wrapT = wrapT;
     }
 
@@ -102,8 +93,7 @@ public class Interpolator2D
      * @param t the value's second coordinate.
      * @param r the value to add.
      */
-    public void addValue(double s, double t, double r)
-    {
+    public void addValue(double s, double t, double r) {
         TreeMap<Double, Double> tMap = this.map.computeIfAbsent(s, k -> new TreeMap<>());
 
         tMap.put(t, r);
@@ -132,8 +122,7 @@ public class Interpolator2D
      *
      * @return this interpolator's minimum value, or null if the interpolator contains no values.
      */
-    public Double getMinValue()
-    {
+    public Double getMinValue() {
         return minValue;
     }
 
@@ -142,8 +131,7 @@ public class Interpolator2D
      *
      * @return this interpolator's maximum value, or null if the interpolator contains no values.
      */
-    public Double getMaxValue()
-    {
+    public Double getMaxValue() {
         return maxValue;
     }
 
@@ -152,8 +140,7 @@ public class Interpolator2D
      *
      * @return this interpolator's minimum first coordinate, or null if the interpolator contains no values.
      */
-    public Double getMinS()
-    {
+    public Double getMinS() {
         return minS;
     }
 
@@ -162,8 +149,7 @@ public class Interpolator2D
      *
      * @return this interpolator's maximum first coordinate, or null if the interpolator contains no values.
      */
-    public Double getMaxS()
-    {
+    public Double getMaxS() {
         return maxS;
     }
 
@@ -172,8 +158,7 @@ public class Interpolator2D
      *
      * @return this interpolator's minimum second coordinate, or null if the interpolator contains no values.
      */
-    public Double getMinT()
-    {
+    public Double getMinT() {
         return minT;
     }
 
@@ -182,8 +167,7 @@ public class Interpolator2D
      *
      * @return this interpolator's maximum second coordinate, or null if the interpolator contains no values.
      */
-    public Double getMaxT()
-    {
+    public Double getMaxT() {
         return maxT;
     }
 
@@ -192,15 +176,12 @@ public class Interpolator2D
      *
      * @param s the first coordinate.
      * @param t the second coordinate.
-     *
      * @return the value at the specified coordinates, or null if a specified coordinate is outside the range  of this
-     *         interpolator and the corresponding wrap flag is false.
-     *
+     * interpolator and the corresponding wrap flag is false.
      * @see #setWrapS(boolean)
      * @see #setWrapT(boolean)
      */
-    public Double getValue(double s, double t)
-    {
+    public Double getValue(double s, double t) {
         // Use bi-linear interpolation to determine the value at the specified coordinates.
 
         Map.Entry<Double, TreeMap<Double, Double>> sMinEntry = this.map.floorEntry(s);
@@ -259,8 +240,7 @@ public class Interpolator2D
         return at * rs1 + (1 - at) * rs0;
     }
 
-    public void addFromStream(InputStream is)
-    {
+    public void addFromStream(InputStream is) {
         if (is == null)
             return;
 
@@ -269,13 +249,10 @@ public class Interpolator2D
         String fp = "[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?"; // float pattern
         Pattern pattern = Pattern.compile("\\s*" + fp + "\\s+" + fp + "\\s+" + fp);
 
-        try (Scanner scanner = new Scanner(is))
-        {
-            while (scanner.hasNextLine())
-            {
+        try (Scanner scanner = new Scanner(is)) {
+            while (scanner.hasNextLine()) {
                 String scannedLine = scanner.findInLine(pattern);
-                if (scannedLine == null)
-                {
+                if (scannedLine == null) {
                     scanner.nextLine();
                     continue;
                 }
@@ -296,8 +273,7 @@ public class Interpolator2D
         }
     }
 
-    public void addFromFile(File file) throws FileNotFoundException
-    {
+    public void addFromFile(File file) throws FileNotFoundException {
         if (file == null || !file.exists())
             return;
 

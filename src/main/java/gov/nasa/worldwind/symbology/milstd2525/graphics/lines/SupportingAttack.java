@@ -16,20 +16,17 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: SupportingAttack.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SupportingAttack extends AbstractAxisArrow
-{
+public class SupportingAttack extends AbstractAxisArrow {
+    public SupportingAttack(String sidc) {
+        super(sidc);
+    }
+
     /**
      * Indicates the graphics supported by this class.
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         return Collections.singletonList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_GRD_SUPATK);
-    }
-
-    public SupportingAttack(String sidc)
-    {
-        super(sidc);
     }
 }

@@ -19,29 +19,36 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: SupportByFirePosition.java 545 2012-04-24 22:29:21Z pabercrombie $
  */
-public class SupportByFirePosition extends AttackByFirePosition
-{
-    /** Fourth control point. */
-    protected Position position4;
-
+public class SupportByFirePosition extends AttackByFirePosition {
     /**
-     * Indicates the graphics supported by this class.
-     *
-     * @return List of masked SIDC strings that identify graphics that this class supports.
+     * Fourth control point.
      */
-    public static List<String> getSupportedGraphics()
-    {
-        return Collections.singletonList(TacGrpSidc.C2GM_OFF_ARS_SFP);
-    }
+    protected Position position4;
 
     /**
      * Create a new graphic.
      *
      * @param sidc Symbol code the identifies the graphic.
      */
-    public SupportByFirePosition(String sidc)
-    {
+    public SupportByFirePosition(String sidc) {
         super(sidc);
+    }
+
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics() {
+        return Collections.singletonList(TacGrpSidc.C2GM_OFF_ARS_SFP);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterable<? extends Position> getPositions() {
+        return Arrays.asList(this.position1, this.position2, this.position3, this.position4);
     }
 
     /**
@@ -50,25 +57,21 @@ public class SupportByFirePosition extends AttackByFirePosition
      * @param positions Control points that orient the graphic. Must provide at least four points.
      */
     @Override
-    public void setPositions(Iterable<? extends Position> positions)
-    {
-        if (positions == null)
-        {
+    public void setPositions(Iterable<? extends Position> positions) {
+        if (positions == null) {
             String message = Logging.getMessage("nullValue.PositionsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             Iterator<? extends Position> iterator = positions.iterator();
             this.position1 = iterator.next();
             this.position2 = iterator.next();
             this.position3 = iterator.next();
             this.position4 = iterator.next();
         }
-        catch (NoSuchElementException e)
-        {
+        catch (NoSuchElementException e) {
             String message = Logging.getMessage("generic.InsufficientPositions");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -77,21 +80,13 @@ public class SupportByFirePosition extends AttackByFirePosition
         this.paths = null; // Need to recompute path for the new control points
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Iterable<? extends Position> getPositions()
-    {
-        return Arrays.asList(this.position1, this.position2, this.position3, this.position4);
-    }
-
     /**
      * Create the paths necessary to draw the graphic.
      *
      * @param dc Current draw context.
      */
     @Override
-    protected void createShapes(DrawContext dc)
-    {
+    protected void createShapes(DrawContext dc) {
         this.paths = new Path[5];
 
         // Create a path for the line parts of the arrows

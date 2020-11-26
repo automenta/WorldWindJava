@@ -20,6 +20,7 @@ import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.*;
 
 /**
@@ -30,8 +31,7 @@ import java.util.regex.*;
  * @version $Id: GazetteerPanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 @SuppressWarnings("unchecked")
-public class GazetteerPanel extends JPanel
-{
+public class GazetteerPanel extends JPanel {
     private final WorldWindow wwd;
     private final Gazetteer gazeteer;
     private final JPanel resultsPanel;
@@ -43,16 +43,17 @@ public class GazetteerPanel extends JPanel
      * @param wwd                WorldWindow to animate when a search is performed.
      * @param gazetteerClassName Name of the gazetteer class to instantiate. If this parameter is {@code null} a {@link
      *                           YahooGazetteer} is instantiated.
-     *
-     * @throws IllegalAccessException if the gazetteer class does not expose a publicly accessible no-arg constructor.
-     * @throws InstantiationException if an exception occurs while instantiating the the gazetteer class.
-     * @throws ClassNotFoundException if the gazetteer class cannot be found.
-     * @throws java.lang.NoSuchMethodException if the gazetteer class doesn't have a default constructor.
-     * @throws java.lang.reflect.InvocationTargetException if the gazetteer class construction fails.
+     * @throws IllegalAccessException                      if the gazetteer class does not expose a publicly accessible
+     *                                                     no-arg constructor.
+     * @throws InstantiationException                      if an exception occurs while instantiating the the gazetteer
+     *                                                     class.
+     * @throws ClassNotFoundException                      if the gazetteer class cannot be found.
+     * @throws NoSuchMethodException             if the gazetteer class doesn't have a default constructor.
+     * @throws InvocationTargetException if the gazetteer class construction fails.
      */
     public GazetteerPanel(final WorldWindow wwd, String gazetteerClassName)
-        throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException
-    {
+        throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException,
+        InvocationTargetException {
         super(new BorderLayout());
 
         if (gazetteerClassName != null)
@@ -71,26 +72,22 @@ public class GazetteerPanel extends JPanel
         // The text field
         final JTextField field = new JTextField("Name or Lat,Lon?");
         field.addActionListener(actionEvent -> EventQueue.invokeLater(() -> {
-            try
-            {
+            try {
                 handleEntryAction(actionEvent);
             }
-            catch (NoItemException e)
-            {
+            catch (NoItemException e) {
                 JOptionPane.showMessageDialog(GazetteerPanel.this,
                     "Location not available \"" + (field.getText() != null ? field.getText() : "") + "\"\n"
                         + "(" + e.getMessage() + ")",
                     "Location Not Available", JOptionPane.ERROR_MESSAGE);
             }
-            catch (IllegalArgumentException e)
-            {
+            catch (IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(GazetteerPanel.this,
                     "Error parsing input \"" + (field.getText() != null ? field.getText() : "") + "\"\n"
                         + e.getMessage(),
                     "Lookup Failure", JOptionPane.ERROR_MESSAGE);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(GazetteerPanel.this,
                     "Error looking up \"" + (field.getText() != null ? field.getText() : "") + "\"\n"
@@ -124,10 +121,9 @@ public class GazetteerPanel extends JPanel
     }
 
     private Gazetteer constructGazetteer(String className)
-        throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException
-    {
-        if (className == null || className.length() == 0)
-        {
+        throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException,
+        InvocationTargetException {
+        if (className == null || className.isEmpty()) {
             throw new IllegalArgumentException("Gazetteer class name is null");
         }
 
@@ -141,8 +137,7 @@ public class GazetteerPanel extends JPanel
     }
 
     private void handleEntryAction(ActionEvent actionEvent) throws
-        NoItemException, IllegalArgumentException
-    {
+        NoItemException, IllegalArgumentException {
         String lookupString = null;
 
         //hide any previous results
@@ -153,19 +148,15 @@ public class GazetteerPanel extends JPanel
         if (lookupString == null || lookupString.length() < 1)
             return;
 
-        java.util.List<PointOfInterest> poi = parseSearchValues(lookupString);
+        List<PointOfInterest> poi = parseSearchValues(lookupString);
 
-        if (poi != null)
-        {
-            if (poi.size() == 1)
-            {
+        if (poi != null) {
+            if (poi.size() == 1) {
                 this.moveToLocation(poi.get(0));
             }
-            else
-            {
+            else {
                 resultsBox.removeAllItems();
-                for (PointOfInterest p : poi)
-                {
+                for (PointOfInterest p : poi) {
                     resultsBox.addItem(p);
                 }
                 resultsPanel.setVisible(true);
@@ -179,13 +170,11 @@ public class GazetteerPanel extends JPanel
     39.53, -119.816  (Reno, NV)
     21 10 14 N, 86 51 0 W (Cancun)
      */
-    private java.util.List<PointOfInterest> parseSearchValues(String searchStr)
-    {
+    private List<PointOfInterest> parseSearchValues(String searchStr) {
         String sepRegex = "[,]"; //other separators??
         searchStr = searchStr.trim();
         String[] searchValues = searchStr.split(sepRegex);
-        if (searchValues.length == 1)
-        {
+        if (searchValues.length == 1) {
             return queryService(searchValues[0].trim());
         }
         else if (searchValues.length == 2) //possible coordinates
@@ -195,23 +184,19 @@ public class GazetteerPanel extends JPanel
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(
                 searchValues[1]); //Street Address may have numbers in first field so use 2nd
-            if (matcher.find())
-            {
-                java.util.List<PointOfInterest> list = new ArrayList<>();
+            if (matcher.find()) {
+                List<PointOfInterest> list = new ArrayList<>();
                 list.add(parseCoordinates(searchValues));
                 return list;
             }
-            else
-            {
+            else {
                 return queryService(searchValues[0].trim() + "+" + searchValues[1].trim());
             }
         }
-        else
-        {
+        else {
             //build search string and send to service
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < searchValues.length; i++)
-            {
+            for (int i = 0; i < searchValues.length; i++) {
                 sb.append(searchValues[i].trim());
                 if (i < searchValues.length - 1)
                     sb.append("+");
@@ -221,20 +206,17 @@ public class GazetteerPanel extends JPanel
         }
     }
 
-    private java.util.List<PointOfInterest> queryService(String queryString)
-    {
-        java.util.List<PointOfInterest> results = this.gazeteer.findPlaces(queryString);
-        if (results == null || results.size() == 0)
+    private List<PointOfInterest> queryService(String queryString) {
+        List<PointOfInterest> results = this.gazeteer.findPlaces(queryString);
+        if (results == null || results.isEmpty())
             return null;
         else
             return results;
     }
 
     //throws IllegalArgumentException
-    private PointOfInterest parseCoordinates(String[] coords)
-    {
-        if (isDecimalDegrees(coords))
-        {
+    private PointOfInterest parseCoordinates(String[] coords) {
+        if (isDecimalDegrees(coords)) {
             double d1 = Double.parseDouble(coords[0].trim());
             double d2 = Double.parseDouble(coords[1].trim());
 
@@ -249,42 +231,35 @@ public class GazetteerPanel extends JPanel
         }
     }
 
-    private boolean isDecimalDegrees(String[] coords)
-    {
-        try
-        {
+    private boolean isDecimalDegrees(String[] coords) {
+        try {
             Double.parseDouble(coords[0].trim());
             Double.parseDouble(coords[1].trim());
         }
-        catch (NumberFormatException nfe)
-        {
+        catch (NumberFormatException nfe) {
             return false;
         }
 
         return true;
     }
 
-    public void moveToLocation(PointOfInterest location)
-    {
+    public void moveToLocation(PointOfInterest location) {
         // Use a PanToIterator to iterate view to target position
-        this.wwd.getView().goTo(new Position(location.getLatlon(), 0), 25e3);
+        this.wwd.getView().goTo(new Position(location.getLatlon(), 0), 25.0e3);
     }
 
-    public void moveToLocation(Sector sector, Double altitude)
-    {
+    public void moveToLocation(Sector sector, Double altitude) {
         OrbitView view = (OrbitView) this.wwd.getView();
 
         Globe globe = this.wwd.getModel().getGlobe();
 
-        if (altitude == null || altitude == 0)
-        {
+        if (altitude == null || altitude == 0) {
             double t = Math.min(sector.getDeltaLonRadians(), sector.getDeltaLonRadians());
             double w = 0.5 * t * 6378137.0;
             altitude = w / this.wwd.getView().getFieldOfView().tanHalfAngle();
         }
 
-        if (globe != null && view != null)
-        {
+        if (globe != null && view != null) {
             this.wwd.getView().goTo(new Position(sector.getCentroid(), 0), altitude);
         }
     }

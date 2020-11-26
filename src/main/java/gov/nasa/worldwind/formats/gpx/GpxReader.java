@@ -8,8 +8,22 @@ package gov.nasa.worldwind.formats.gpx;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.tracks.*;
 import gov.nasa.worldwind.util.Logging;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author tag
@@ -17,12 +31,11 @@ import java.util.Iterator;
  */
 public class GpxReader // TODO: I18N, proper exception handling, remove stack-trace prints
 {
-    private final javax.xml.parsers.SAXParser parser;
-    private final java.util.List<Track> tracks = new java.util.ArrayList<>();
+    private final SAXParser parser;
+    private final List<Track> tracks = new ArrayList<>();
 
-    public GpxReader() throws javax.xml.parsers.ParserConfigurationException, org.xml.sax.SAXException
-    {
-        javax.xml.parsers.SAXParserFactory factory = javax.xml.parsers.SAXParserFactory.newInstance();
+    public GpxReader() throws ParserConfigurationException, SAXException {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
 
         this.parser = factory.newSAXParser();
@@ -31,40 +44,35 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
     /**
      * @param path The file spec to read from.
      * @throws IllegalArgumentException if <code>path</code> is null
-     * @throws java.io.IOException      if no file exists at the location specified by <code>path</code>
-     * @throws org.xml.sax.SAXException if a parsing error occurs.
+     * @throws IOException      if no file exists at the location specified by <code>path</code>
+     * @throws SAXException if a parsing error occurs.
      */
-    public void readFile(String path) throws java.io.IOException, org.xml.sax.SAXException
-    {
-        if (path == null)
-        {
+    public void readFile(String path) throws IOException, SAXException {
+        if (path == null) {
             String msg = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        java.io.File file = new java.io.File(path);
-        if (!file.exists())
-        {
+        File file = new File(path);
+        if (!file.exists()) {
             String msg = Logging.getMessage("generic.FileNotFound", path);
             Logging.logger().severe(msg);
-            throw new java.io.FileNotFoundException(path);
+            throw new FileNotFoundException(path);
         }
 
-        java.io.FileInputStream fis = new java.io.FileInputStream(file);
+        FileInputStream fis = new FileInputStream(file);
         this.doRead(fis);
     }
 
     /**
      * @param stream The stream to read from.
      * @throws IllegalArgumentException if <code>stream</code> is null
-     * @throws java.io.IOException if a problem is encountered reading the stream.
-     * @throws org.xml.sax.SAXException if a parsing error occurs.
+     * @throws IOException      if a problem is encountered reading the stream.
+     * @throws SAXException if a parsing error occurs.
      */
-    public void readStream(java.io.InputStream stream) throws java.io.IOException, org.xml.sax.SAXException
-    {
-        if (stream == null)
-        {
+    public void readStream(InputStream stream) throws IOException, SAXException {
+        if (stream == null) {
             String msg = Logging.getMessage("nullValue.InputStreamIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -73,91 +81,74 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
         this.doRead(stream);
     }
 
-    public java.util.List<Track> getTracks()
-    {
+    public List<Track> getTracks() {
         return this.tracks;
     }
 
-    public Iterator<Position> getTrackPositionIterator()
-    {
-        return new Iterator<>()
-        {
-            private final TrackPointIterator trackPoints = new TrackPointIteratorImpl(GpxReader.this.tracks);
+    public Iterator<Position> getTrackPositionIterator() {
+        return new Iterator<>() {
+            private final Iterator<TrackPoint> trackPoints = new TrackPointIteratorImpl(GpxReader.this.tracks);
 
-            public boolean hasNext()
-            {
+            public boolean hasNext() {
                 return this.trackPoints.hasNext();
             }
 
-            public Position next()
-            {
+            public Position next() {
                 return this.trackPoints.next().getPosition();
             }
 
-            public void remove()
-            {
+            public void remove() {
                 this.trackPoints.remove();
             }
         };
     }
 
-    private void doRead(java.io.InputStream fis) throws java.io.IOException, org.xml.sax.SAXException
-    {
+    private void doRead(InputStream fis) throws IOException, SAXException {
         this.parser.parse(fis, new Handler());
     }
 
-    private class Handler extends org.xml.sax.helpers.DefaultHandler
-    {
+    private class Handler extends DefaultHandler {
         // this is a private class used solely by the containing class, so no validation occurs in it.
 
-        private gov.nasa.worldwind.formats.gpx.ElementParser currentElement = null;
+        private ElementParser currentElement = null;
+        private boolean firstElement = true;
 
         @Override
-        public void warning(org.xml.sax.SAXParseException saxParseException) throws org.xml.sax.SAXException
-        {
+        public void warning(SAXParseException saxParseException) throws SAXException {
             saxParseException.printStackTrace();
             super.warning(saxParseException);
         }
 
         @Override
-        public void error(org.xml.sax.SAXParseException saxParseException) throws org.xml.sax.SAXException
-        {
+        public void error(SAXParseException saxParseException) throws SAXException {
             saxParseException.printStackTrace();
             super.error(saxParseException);
         }
 
         @Override
-        public void fatalError(org.xml.sax.SAXParseException saxParseException) throws org.xml.sax.SAXException
-        {
+        public void fatalError(SAXParseException saxParseException) throws SAXException {
             saxParseException.printStackTrace();
             super.fatalError(saxParseException);
         }
 
-        private boolean firstElement = true;
-
         @Override
-        public void startElement(String uri, String lname, String qname, org.xml.sax.Attributes attributes)
-        {
-            if (this.firstElement)
-            {
+        public void startElement(String uri, String lname, String qname, Attributes attributes) {
+            if (this.firstElement) {
                 if (!lname.equalsIgnoreCase("gpx"))
                     throw new IllegalArgumentException(Logging.getMessage("formats.notGPX", uri));
                 else
                     this.firstElement = false;
             }
 
-            if (this.currentElement != null)
-            {
+            if (this.currentElement != null) {
                 this.currentElement.startElement(uri, lname, qname, attributes);
             }
-            else if (lname.equalsIgnoreCase("trk"))
-            {
+            else if (lname.equalsIgnoreCase("trk")) {
                 GpxTrack track = new GpxTrack(uri, lname, qname, attributes);
                 this.currentElement = track;
                 GpxReader.this.tracks.add(track);
             }
-            else if (lname.equalsIgnoreCase("rte"))
-            {
+            else if (lname.equalsIgnoreCase("rte")) {
                 GpxRoute route = new GpxRoute(uri, lname, qname, attributes);
                 this.currentElement = route;
                 GpxReader.this.tracks.add(route);
@@ -165,10 +156,8 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
         }
 
         @Override
-        public void endElement(String uri, String lname, String qname)
-        {
-            if (this.currentElement != null)
-            {
+        public void endElement(String uri, String lname, String qname) {
+            if (this.currentElement != null) {
                 this.currentElement.endElement(uri, lname, qname);
 
                 if (lname.equalsIgnoreCase(this.currentElement.getElementName()))
@@ -177,8 +166,7 @@ public class GpxReader // TODO: I18N, proper exception handling, remove stack-tr
         }
 
         @Override
-        public void characters(char[] data, int start, int length)
-        {
+        public void characters(char[] data, int start, int length) {
             if (this.currentElement != null)
                 this.currentElement.characters(data, start, length);
         }

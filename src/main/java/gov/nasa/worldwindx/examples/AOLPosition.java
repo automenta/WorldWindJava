@@ -19,40 +19,20 @@ public class AOLPosition {
     public AOLPosition(AVList attrs) {
         attrs.getEntries().forEach((e) -> {
             switch (e.getKey()) {
-                case "callsign":
-                    this.callsign = e.getValue().toString();
-                    break;
-                case "gufi":
-                    this.gufi = e.getValue().toString();
-                    break;
-                case "hpr":
-                    this.hpr = e.getValue().toString();
-                    break;
-                case "lla":
+                case "callsign" -> this.callsign = e.getValue().toString();
+                case "gufi" -> this.gufi = e.getValue().toString();
+                case "hpr" -> this.hpr = e.getValue().toString();
+                case "lla" -> {
                     Object[] coords = (Object[]) e.getValue();
                     this.lla = Position.fromDegrees((Double) coords[0], (Double) coords[1], (Double) coords[2]);
-                    break;
-                case "groundSpeed":
-                    this.groundSpeed = e.getValue().toString();
-                    break;
-                case "misc":
-                    this.misc = e.getValue().toString();
-                    break;
-                case "time":
-                    this.time = e.getValue().toString();
-                    break;
-                case "time_measured":
-                    this.time_measured = e.getValue().toString();
-                    break;
-                case "time_sent":
-                    this.time_sent = e.getValue().toString();
-                    break;
-                case "uss_name":
-                    this.uss_name = e.getValue().toString();
-                    break;
-                default:
-                    System.out.println("Unknown attribute");
-                    break;
+                }
+                case "groundSpeed" -> this.groundSpeed = e.getValue().toString();
+                case "misc" -> this.misc = e.getValue().toString();
+                case "time" -> this.time = e.getValue().toString();
+                case "time_measured" -> this.time_measured = e.getValue().toString();
+                case "time_sent" -> this.time_sent = e.getValue().toString();
+                case "uss_name" -> this.uss_name = e.getValue().toString();
+                default -> System.out.println("Unknown attribute");
             }
         });
     }
@@ -64,5 +44,4 @@ public class AOLPosition {
     public Position getLLA() {
         return this.lla;
     }
-
 }

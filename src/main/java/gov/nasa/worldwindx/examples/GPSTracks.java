@@ -27,24 +27,23 @@ import java.util.*;
  * @author tag
  * @version $Id: GPSTracks.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class GPSTracks extends ApplicationTemplate
-{
+public class GPSTracks extends ApplicationTemplate {
     protected static final String TRACK_PATH = "gov/nasa/worldwindx/examples/data/tuolumne.gpx";
 
-    protected static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Tracks", AppFrame.class);
+    }
+
+    protected static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             MarkerLayer layer = this.buildTracksLayer();
             insertBeforeCompass(this.getWwd(), layer);
 
             this.getWwd().addSelectListener(event -> {
-                if (event.getTopObject() != null)
-                {
-                    if (event.getTopPickedObject().getParentLayer() instanceof MarkerLayer)
-                    {
+                if (event.getTopObject() != null) {
+                    if (event.getTopPickedObject().getParentLayer() instanceof MarkerLayer) {
                         PickedObject po = event.getTopPickedObject();
                         //noinspection RedundantCast
                         System.out.printf("Track position %s, %s, size = %f\n",
@@ -55,20 +54,17 @@ public class GPSTracks extends ApplicationTemplate
             });
         }
 
-        protected MarkerLayer buildTracksLayer()
-        {
-            try
-            {
+        protected MarkerLayer buildTracksLayer() {
+            try {
                 GpxReader reader = new GpxReader();
                 reader.readStream(WWIO.openFileOrResourceStream(TRACK_PATH, this.getClass()));
                 Iterator<Position> positions = reader.getTrackPositionIterator();
 
                 BasicMarkerAttributes attrs =
-                    new BasicMarkerAttributes(Material.WHITE, BasicMarkerShape.SPHERE, 1d);
+                    new BasicMarkerAttributes(Material.WHITE, BasicMarkerShape.SPHERE, 1.0d);
 
                 ArrayList<Marker> markers = new ArrayList<>();
-                while (positions.hasNext())
-                {
+                while (positions.hasNext()) {
                     markers.add(new BasicMarker(positions.next(), attrs));
                 }
 
@@ -79,17 +75,11 @@ public class GPSTracks extends ApplicationTemplate
 
                 return layer;
             }
-            catch (ParserConfigurationException | IOException | SAXException e)
-            {
+            catch (ParserConfigurationException | IOException | SAXException e) {
                 e.printStackTrace();
             }
 
             return null;
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Tracks", AppFrame.class);
     }
 }

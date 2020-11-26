@@ -23,18 +23,19 @@ import java.io.IOException;
  * @author tag
  * @version $Id: KMLPointPlacemarkImpl.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderable
-{
+public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderable {
+    public static final double DEFAULT_LABEL_SCALE_THRESHOLD = 1.0;
     protected final KMLPlacemark parent;
     protected boolean highlightAttributesResolved = false;
     protected boolean normalAttributesResolved = false;
-
-    /** Indicates the time at which the image source was specified. */
+    /**
+     * Indicates the time at which the image source was specified.
+     */
     protected long iconRetrievalTime;
-    /** Indicates the time at which the highlight image source was specified. */
+    /**
+     * Indicates the time at which the highlight image source was specified.
+     */
     protected long highlightIconRetrievalTime;
-
-    public static final double DEFAULT_LABEL_SCALE_THRESHOLD = 1.0;
     /**
      * Placemark labels with a scale less than this threshold will only be drawn when the placemark is highlighted. This
      * logic supports KML files with many placemarks with small labels, and drawing all the labels would be too
@@ -48,23 +49,19 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
      * @param tc        the current {@link KMLTraversalContext}.
      * @param placemark the <i>Placemark</i> element containing the <i>Point</i>.
      * @param geom      the {@link KMLPoint} geometry.
-     *
      * @throws NullPointerException     if the geometry is null.
      * @throws IllegalArgumentException if the parent placemark or the traversal context is null.
      */
-    public KMLPointPlacemarkImpl(KMLTraversalContext tc, KMLPlacemark placemark, KMLAbstractGeometry geom)
-    {
+    public KMLPointPlacemarkImpl(KMLTraversalContext tc, KMLPlacemark placemark, KMLAbstractGeometry geom) {
         super(((KMLPoint) geom).getCoordinates());
 
-        if (tc == null)
-        {
+        if (tc == null) {
             String msg = Logging.getMessage("nullValue.TraversalContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (placemark == null)
-        {
+        if (placemark == null) {
             String msg = Logging.getMessage("nullValue.ParentIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -80,10 +77,8 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
             this.setLineEnabled(true);
 
         String altMode = point.getAltitudeMode();
-        if (!WWUtil.isEmpty(altMode))
-        {
-            switch (altMode)
-            {
+        if (!WWUtil.isEmpty(altMode)) {
+            switch (altMode) {
                 case "clampToGround" -> this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
                 case "relativeToGround" -> this.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
                 case "absolute" -> this.setAltitudeMode(WorldWind.ABSOLUTE);
@@ -93,8 +88,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         if (this.parent.getVisibility() != null)
             this.setVisible(this.parent.getVisibility());
 
-        if (placemark.getName() != null)
-        {
+        if (placemark.getName() != null) {
             this.setLabelText(placemark.getName());
             this.setValue(AVKey.DISPLAY_NAME, placemark.getName());
         }
@@ -109,32 +103,25 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         this.setValue(AVKey.CONTEXT, this.parent);
     }
 
-    public void preRender(KMLTraversalContext tc, DrawContext dc)
-    {
+    public void preRender(KMLTraversalContext tc, DrawContext dc) {
         // Intentionally left blank; KML point placemark does nothing during the preRender phase.
     }
 
-    public void render(KMLTraversalContext tc, DrawContext dc)
-    {
+    public void render(KMLTraversalContext tc, DrawContext dc) {
         // If the attributes are not inline or internal then they might not be resolved until the external KML
         // document is resolved. Therefore check to see if resolution has occurred.
 
-        if (this.isHighlighted())
-        {
-            if (!this.highlightAttributesResolved)
-            {
+        if (this.isHighlighted()) {
+            if (!this.highlightAttributesResolved) {
                 PointPlacemarkAttributes a = this.getHighlightAttributes();
-                if (a == null || a.isUnresolved())
-                {
+                if (a == null || a.isUnresolved()) {
                     a = this.makeAttributesCurrent(KMLConstants.HIGHLIGHT);
-                    if (a != null)
-                    {
+                    if (a != null) {
                         this.setHighlightAttributes(a);
                         if (!a.isUnresolved())
                             this.highlightAttributesResolved = true;
                     }
-                    else
-                    {
+                    else {
                         // There are no highlight attributes, so we can stop looking for them. Note that this is
                         // different from having unresolved highlight attributes (handled above).
                         this.highlightAttributesResolved = true;
@@ -142,22 +129,17 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
                 }
             }
         }
-        else
-        {
-            if (!this.normalAttributesResolved)
-            {
+        else {
+            if (!this.normalAttributesResolved) {
                 PointPlacemarkAttributes a = this.getAttributes();
-                if (a == null || a.isUnresolved())
-                {
+                if (a == null || a.isUnresolved()) {
                     a = this.makeAttributesCurrent(KMLConstants.NORMAL);
-                    if (a != null)
-                    {
+                    if (a != null) {
                         this.setAttributes(a);
                         if (!a.isUnresolved())
                             this.normalAttributesResolved = true;
                     }
-                    else
-                    {
+                    else {
                         // There are no normal attributes, so we can stop looking for them.  Note that this is different
                         // from having unresolved attributes (handled above).
                         this.normalAttributesResolved = true;
@@ -169,16 +151,13 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         this.render(dc);
     }
 
-    protected void determineActiveAttributes()
-    {
+    protected void determineActiveAttributes() {
         super.determineActiveAttributes();
 
-        if (this.mustRefreshIcon())
-        {
+        if (this.mustRefreshIcon()) {
             String path = this.getActiveAttributes().getImageAddress();
 
-            if (!WWUtil.isEmpty(path))
-            {
+            if (!WWUtil.isEmpty(path)) {
                 // Evict the resource from the file store if there is a cached resource older than the icon update
                 // time. This prevents fetching a stale resource out of the cache when the Icon is updated.
                 boolean highlighted = this.isHighlighted();
@@ -194,18 +173,15 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
      *
      * @return True if the icon has expired and must be refreshed.
      */
-    protected boolean mustRefreshIcon()
-    {
+    protected boolean mustRefreshIcon() {
         String mode;
         long retrievalTime;
 
-        if (this.isHighlighted())
-        {
+        if (this.isHighlighted()) {
             mode = KMLConstants.HIGHLIGHT;
             retrievalTime = this.highlightIconRetrievalTime;
         }
-        else
-        {
+        else {
             mode = KMLConstants.NORMAL;
             retrievalTime = this.iconRetrievalTime;
         }
@@ -219,11 +195,9 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
      * {@inheritDoc} Overridden to set the expiration time of the placemark's icon based on the HTTP headers of the
      * linked resource.
      */
-    protected WWTexture initializeTexture(String address)
-    {
+    protected WWTexture initializeTexture(String address) {
         WWTexture texture = super.initializeTexture(address);
-        if (texture != null)
-        {
+        if (texture != null) {
             // Query the KMLRoot for the expiration time.
             long expiration = this.parent.getRoot().getExpiration(address);
 
@@ -243,10 +217,11 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         return texture;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected PickedObject createPickedObject(DrawContext dc, Color pickColor)
-    {
+    protected PickedObject createPickedObject(DrawContext dc, Color pickColor) {
         PickedObject po = super.createPickedObject(dc, pickColor);
 
         // Add the KMLPlacemark to the picked object as the context of the picked object.        
@@ -261,8 +236,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
      * @return True if the label must be drawn.
      */
     @Override
-    protected boolean mustDrawLabel()
-    {
+    protected boolean mustDrawLabel() {
         double labelScale = this.getActiveAttributes().getLabelScale() != null
             ? this.getActiveAttributes().getLabelScale() : PointPlacemarkAttributes.DEFAULT_LABEL_SCALE;
         double imageScale = this.getActiveAttributes().getScale() != null
@@ -275,12 +249,10 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
      * Determine and set the {@link PointPlacemark} attributes from the KML <i>Feature</i> fields.
      *
      * @param attrType the type of attributes, either {@link KMLConstants#NORMAL} or {@link KMLConstants#HIGHLIGHT}.
-     *
      * @return The new attributes, or null if there are no attributes defined. Returns a partially empty attributes
-     *         bundle marked unresolved if any of placemark KML styles are unresolved.
+     * bundle marked unresolved if any of placemark KML styles are unresolved.
      */
-    protected PointPlacemarkAttributes makeAttributesCurrent(String attrType)
-    {
+    protected PointPlacemarkAttributes makeAttributesCurrent(String attrType) {
         boolean hasLineStyle = false;
         boolean hasIconStyle = false;
         boolean hasLabelStyle = false;
@@ -291,8 +263,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         // Get the KML sub-style for Line attributes. Map them to Shape attributes.
 
         KMLAbstractSubStyle subStyle = this.parent.getSubStyle(new KMLLineStyle(null), attrType);
-        if (subStyle.hasFields() && (!this.isHighlighted() || KMLUtil.isHighlightStyleState(subStyle)))
-        {
+        if (subStyle.hasFields() && (!this.isHighlighted() || KMLUtil.isHighlightStyleState(subStyle))) {
             hasLineStyle = true;
             this.assembleLineAttributes(attrs, (KMLLineStyle) subStyle);
             if (subStyle.hasField(AVKey.UNRESOLVED))
@@ -300,8 +271,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         }
 
         subStyle = this.parent.getSubStyle(new KMLIconStyle(null), attrType);
-        if (subStyle.hasFields() && (!this.isHighlighted() || KMLUtil.isHighlightStyleState(subStyle)))
-        {
+        if (subStyle.hasFields() && (!this.isHighlighted() || KMLUtil.isHighlightStyleState(subStyle))) {
             hasIconStyle = true;
             this.assemblePointAttributes(attrs, (KMLIconStyle) subStyle);
             if (subStyle.hasField(AVKey.UNRESOLVED))
@@ -309,8 +279,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         }
 
         subStyle = this.parent.getSubStyle(new KMLLabelStyle(null), attrType);
-        if (subStyle.hasFields() && (!this.isHighlighted() || KMLUtil.isHighlightStyleState(subStyle)))
-        {
+        if (subStyle.hasFields() && (!this.isHighlighted() || KMLUtil.isHighlightStyleState(subStyle))) {
             hasLabelStyle = true;
             this.assembleLabelAttributes(attrs, (KMLLabelStyle) subStyle);
             if (subStyle.hasField(AVKey.UNRESOLVED))
@@ -326,29 +295,24 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
             return null;
     }
 
-    protected PointPlacemarkAttributes assemblePointAttributes(PointPlacemarkAttributes attrs, KMLIconStyle style)
-    {
+    protected PointPlacemarkAttributes assemblePointAttributes(PointPlacemarkAttributes attrs, KMLIconStyle style) {
         KMLIcon icon = style.getIcon();
-        if (icon != null && icon.getHref() != null)
-        {
+        if (icon != null && icon.getHref() != null) {
             // The icon reference may be to a support file within a KMZ file, so check for that. If it's not, then just
             // let the normal PointPlacemark code resolve the reference.
             String href = icon.getHref();
             String localAddress = null;
-            try
-            {
+            try {
                 localAddress = this.parent.getRoot().getSupportFilePath(href);
             }
-            catch (IOException e)
-            {
+            catch (IOException e) {
                 String message = Logging.getMessage("generic.UnableToResolveReference", href);
                 Logging.logger().warning(message);
             }
             attrs.setImageAddress((localAddress != null ? localAddress : href));
         }
         // If the Icon element is present, but there is no href, draw a point instead of the default icon.
-        else if (icon != null && WWUtil.isEmpty(icon.getHref()))
-        {
+        else if (icon != null && WWUtil.isEmpty(icon.getHref())) {
             attrs.setUsePointAsDefaultImage(true);
         }
 
@@ -363,20 +327,17 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         if (style.getScale() != null)
             attrs.setScale(style.getScale());
 
-        if (style.getHeading() != null)
-        {
+        if (style.getHeading() != null) {
             attrs.setHeading(style.getHeading());
             attrs.setHeadingReference(AVKey.RELATIVE_TO_GLOBE); // KML spec is not clear about this
         }
 
-        if (style.getHotSpot() != null)
-        {
+        if (style.getHotSpot() != null) {
             KMLVec2 hs = style.getHotSpot();
             attrs.setImageOffset(new Offset(hs.getX(), hs.getY(), KMLUtil.kmlUnitsToWWUnits(hs.getXunits()),
                 KMLUtil.kmlUnitsToWWUnits(hs.getYunits())));
         }
-        else
-        {
+        else {
             // By default, use the center of the image as the offset.
             attrs.setImageOffset(new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION));
         }
@@ -384,8 +345,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         return attrs;
     }
 
-    protected PointPlacemarkAttributes assembleLineAttributes(PointPlacemarkAttributes attrs, KMLLineStyle style)
-    {
+    protected PointPlacemarkAttributes assembleLineAttributes(PointPlacemarkAttributes attrs, KMLLineStyle style) {
         // Assign the attributes defined in the KML Feature element.
 
         if (style.getWidth() != null)
@@ -400,8 +360,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
         return attrs;
     }
 
-    protected PointPlacemarkAttributes assembleLabelAttributes(PointPlacemarkAttributes attrs, KMLLabelStyle style)
-    {
+    protected PointPlacemarkAttributes assembleLabelAttributes(PointPlacemarkAttributes attrs, KMLLabelStyle style) {
         // Assign the attributes defined in the KML Feature element.
 
         if (style.getScale() != null)
@@ -420,12 +379,10 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
      * Get the initial attributes for this feature. These attributes will be changed to reflect the feature's style.
      *
      * @param attrType {@link KMLConstants#NORMAL} or {@link KMLConstants#HIGHLIGHT}.
-     *
      * @return New placemark attributes.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected PointPlacemarkAttributes getInitialAttributes(String attrType)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected PointPlacemarkAttributes getInitialAttributes(String attrType) {
         return new PointPlacemarkAttributes();
     }
 
@@ -434,11 +391,9 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
      * this threshold, or if the placemark is highlighted.
      *
      * @return Label scale threshold.
-     *
      * @see #setLabelScaleThreshold(double)
      */
-    public double getLabelScaleThreshold()
-    {
+    public double getLabelScaleThreshold() {
         return this.labelScaleThreshold;
     }
 
@@ -447,21 +402,17 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
      * this threshold, or if the placemark is highlighted.
      *
      * @param labelScaleThreshold New label scale threshold.
-     *
      * @see #getLabelScaleThreshold()
      */
-    public void setLabelScaleThreshold(double labelScaleThreshold)
-    {
+    public void setLabelScaleThreshold(double labelScaleThreshold) {
         this.labelScaleThreshold = labelScaleThreshold;
     }
 
     @Override
-    public void onMessage(Message message)
-    {
+    public void onMessage(Message message) {
         super.onMessage(message);
 
-        if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(message.getName()))
-        {
+        if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(message.getName())) {
             this.normalAttributesResolved = false;
             this.highlightAttributesResolved = false;
 

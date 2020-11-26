@@ -33,7 +33,8 @@ public class JOGLVersionInfo {
             if (p == null) {
                 System.out.println("WARNING: Package.getPackage(" + pkgName + ") is null");
             }
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             System.out.println("Unable to load " + pkgName);
         }
 
@@ -79,9 +80,9 @@ public class JOGLVersionInfo {
         System.out.println(JOGLVersionInfo.isCompatibleWith("1.1.1"));
         System.out.println(JOGLVersionInfo.isCompatibleWith("1.2.1"));
         System.out.println(
-                JOGLVersionInfo.getImplementationVersion().compareToIgnoreCase("1.1.1-pre-20070511-02:12:11"));
+            JOGLVersionInfo.getImplementationVersion().compareToIgnoreCase("1.1.1-pre-20070511-02:12:11"));
         System.out.println(
-                JOGLVersionInfo.getImplementationVersion().compareToIgnoreCase("1.1.1-pre-20070512-02:12:11"));
+            JOGLVersionInfo.getImplementationVersion().compareToIgnoreCase("1.1.1-pre-20070512-02:12:11"));
         System.out.println(JOGLVersionInfo.getImplementationVersion().compareToIgnoreCase("1.1.1"));
     }
 }

@@ -10,24 +10,22 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 
 /**
- * Common interface for surface conforming shapes such as {@link gov.nasa.worldwind.render.SurfacePolygon}, {@link
- * gov.nasa.worldwind.render.SurfacePolyline}, {@link gov.nasa.worldwind.render.SurfaceEllipse}, {@link
- * gov.nasa.worldwind.render.SurfaceQuad}, and {@link gov.nasa.worldwind.render.SurfaceSector}.
+ * Common interface for surface conforming shapes such as {@link SurfacePolygon}, {@link
+ * SurfacePolyline}, {@link SurfaceEllipse}, {@link
+ * SurfaceQuad}, and {@link SurfaceSector}.
  * <p>
- * SurfaceShape extends the {@link gov.nasa.worldwind.render.SurfaceObject} interface, and inherits SurfaceObject's
+ * SurfaceShape extends the {@link SurfaceObject} interface, and inherits SurfaceObject's
  * batch rendering capabilities.
  *
  * @author dcollins
  * @version $Id: SurfaceShape.java 2339 2014-09-22 18:22:37Z tgaskins $
  */
 public interface SurfaceShape
-    extends SurfaceObject, Highlightable, ExtentHolder, MeasurableArea, MeasurableLength, Restorable, Attributable
-{
+    extends SurfaceObject, Highlightable, ExtentHolder, MeasurableArea, MeasurableLength, Restorable, Attributable {
     /**
      * Indicates whether to highlight the surface shape.
      *
      * @return true if highlighted, otherwise false.
-     *
      * @see #setHighlighted(boolean)
      * @see #setHighlightAttributes(ShapeAttributes)
      */
@@ -37,7 +35,6 @@ public interface SurfaceShape
      * Specifies whether the surface shape is highlighted.
      *
      * @param highlighted true to highlight the surface shape, otherwise false. The default value is false.
-     *
      * @see #setHighlightAttributes(ShapeAttributes)
      */
     void setHighlighted(boolean highlighted);
@@ -87,7 +84,6 @@ public interface SurfaceShape
      * <li>gov.nasa.worldwind.avlist.AVKey.LOXODROME</li> <li>gov.nasa.worldwind.avlist.AVKey.RHUMB</li> </ul>
      *
      * @param pathType path interpolation type.
-     *
      * @throws IllegalArgumentException if <code>pathType</code> is null.
      */
     void setPathType(String pathType);
@@ -96,7 +92,6 @@ public interface SurfaceShape
      * Returns the number of texels per shape edge interval.
      *
      * @return texels per shape edge interval.
-     *
      * @see #setTexelsPerEdgeInterval(double)
      */
     double getTexelsPerEdgeInterval();
@@ -109,7 +104,6 @@ public interface SurfaceShape
      * #setMinAndMaxEdgeIntervals(int, int)}.
      *
      * @param texelsPerEdgeInterval the size, in texels, of each interpolated edge interval.
-     *
      * @throws IllegalArgumentException if <code>texelsPerEdgeInterval</code> is less than or equal to zero.
      * @see #setMinAndMaxEdgeIntervals(int, int)
      */
@@ -119,7 +113,6 @@ public interface SurfaceShape
      * Returns the minimum and maximum number of interpolated intervals that may be added to each shape edge.
      *
      * @return array of two elements, the first element is minEdgeIntervals, the second element is maxEdgeIntervals.
-     *
      * @see #setMinAndMaxEdgeIntervals(int, int)
      */
     int[] getMinAndMaxEdgeIntervals();
@@ -131,7 +124,6 @@ public interface SurfaceShape
      *
      * @param minEdgeIntervals the minimum number of interpolated edge intervals.
      * @param maxEdgeIntervals the maximum number of interpolated edge intervals.
-     *
      * @throws IllegalArgumentException if either of <code>minEdgeIntervals</code> or <code>maxEdgeIntervals</code> is
      *                                  less than or equal to zero.
      * @see #setTexelsPerEdgeInterval(double)
@@ -143,9 +135,7 @@ public interface SurfaceShape
      * locations.
      *
      * @param globe the globe the shape is related to.
-     *
      * @return the shapes locations on the globe, or null if the shape has no locations.
-     *
      * @throws IllegalArgumentException if <code>globe</code> is null.
      */
     Iterable<? extends LatLon> getLocations(Globe globe);
@@ -156,10 +146,8 @@ public interface SurfaceShape
      *
      * @param globe             the globe the shape is related to.
      * @param terrainConformant whether or not the returned area should treat the shape as conforming to the terrain.
-     *
      * @return the shape's area in square meters. Returns -1 if the object does not form an area due to an insufficient
-     *         number of vertices or any other condition.
-     *
+     * number of vertices or any other condition.
      * @throws IllegalArgumentException if <code>globe</code> is null.
      */
     double getArea(Globe globe, boolean terrainConformant);

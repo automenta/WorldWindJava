@@ -15,20 +15,17 @@ import java.awt.*;
  * @author tag
  * @version $Id: AppPanelImpl.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AppPanelImpl extends AbstractFeature implements AppPanel
-{
+public class AppPanelImpl extends AbstractFeature implements AppPanel {
     private final JPanel panel;
 
-    public AppPanelImpl(Registry registry)
-    {
+    public AppPanelImpl(Registry registry) {
         super("App Panel", Constants.APP_PANEL, registry);
 
         this.panel = new JPanel(new BorderLayout());
         this.panel.setPreferredSize(new Dimension(1280, 800));
     }
 
-    public void initialize(final Controller controller)
-    {
+    public void initialize(final Controller controller) {
         super.initialize(controller);
 
         Dimension appSize = controller.getAppSize();
@@ -40,8 +37,7 @@ public class AppPanelImpl extends AbstractFeature implements AppPanel
             this.panel.add(wwPanel.getJPanel(), BorderLayout.CENTER);
     }
 
-    public JPanel getJPanel()
-    {
+    public JPanel getJPanel() {
         return this.panel;
     }
 }

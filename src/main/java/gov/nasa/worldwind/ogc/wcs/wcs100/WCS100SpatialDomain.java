@@ -17,67 +17,54 @@ import java.util.*;
  * @author tag
  * @version $Id: WCS100SpatialDomain.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
-public class WCS100SpatialDomain extends AbstractXMLEventParser
-{
+public class WCS100SpatialDomain extends AbstractXMLEventParser {
     protected final List<GMLEnvelope> envelopes = new ArrayList<>(1);
     protected final List<GMLRectifiedGrid> rectifiedGrids = new ArrayList<>(1);
     protected final List<GMLGrid> grids = new ArrayList<>(1);
 
-    public WCS100SpatialDomain(String namespaceURI)
-    {
+    public WCS100SpatialDomain(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public List<GMLEnvelope> getEnvelopes()
-    {
+    public List<GMLEnvelope> getEnvelopes() {
         return this.envelopes;
     }
 
-    public List<GMLRectifiedGrid> getRectifiedGrids()
-    {
+    public List<GMLRectifiedGrid> getRectifiedGrids() {
         return this.rectifiedGrids;
     }
 
-    public List<GMLGrid> getGrids()
-    {
+    public List<GMLGrid> getGrids() {
         return this.grids;
     }
 
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
-        if (ctx.isStartElement(event, "Envelope") || ctx.isStartElement(event, "EnvelopeWithTimePeriod"))
-        {
+        throws XMLStreamException {
+        if (ctx.isStartElement(event, "Envelope") || ctx.isStartElement(event, "EnvelopeWithTimePeriod")) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof GMLEnvelope)
                     this.envelopes.add((GMLEnvelope) o);
             }
         }
-        else if (ctx.isStartElement(event, "RectifiedGrid"))
-        {
+        else if (ctx.isStartElement(event, "RectifiedGrid")) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof GMLRectifiedGrid)
                     this.rectifiedGrids.add((GMLRectifiedGrid) o);
             }
         }
-        else if (ctx.isStartElement(event, "Grid"))
-        {
+        else if (ctx.isStartElement(event, "Grid")) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof GMLGrid)
                     this.grids.add((GMLGrid) o);
             }
         }
-        else
-        {
+        else {
             super.doParseEventContent(ctx, event, args);
         }
     }

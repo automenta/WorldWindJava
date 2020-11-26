@@ -11,15 +11,13 @@ package gov.nasa.worldwind.exception;
  * @author tag
  * @version $Id: WWUnrecognizedException.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WWUnrecognizedException extends WWRuntimeException
-{
+public class WWUnrecognizedException extends WWRuntimeException {
     /**
      * Construct an exception with a message string.
      *
      * @param msg the message.
      */
-    public WWUnrecognizedException(String msg)
-    {
+    public WWUnrecognizedException(String msg) {
         super(msg);
     }
 
@@ -29,8 +27,7 @@ public class WWUnrecognizedException extends WWRuntimeException
      * @param msg the message.
      * @param t   the exception causing this exception.
      */
-    public WWUnrecognizedException(String msg, Throwable t)
-    {
+    public WWUnrecognizedException(String msg, Throwable t) {
         super(msg, t);
     }
 }

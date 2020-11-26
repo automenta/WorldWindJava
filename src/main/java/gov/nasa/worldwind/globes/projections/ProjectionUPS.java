@@ -17,8 +17,7 @@ import gov.nasa.worldwind.util.*;
  * @author tag
  * @version $Id$
  */
-public class ProjectionUPS extends AbstractGeographicProjection
-{
+public class ProjectionUPS extends AbstractGeographicProjection {
     protected static final int NORTH = 0;
     protected static final int SOUTH = 1;
 
@@ -30,8 +29,7 @@ public class ProjectionUPS extends AbstractGeographicProjection
     /**
      * Creates a projection centered on the North pole.
      */
-    public ProjectionUPS()
-    {
+    public ProjectionUPS() {
         super(NORTH_LIMITS);
     }
 
@@ -40,15 +38,12 @@ public class ProjectionUPS extends AbstractGeographicProjection
      * AVKey#SOUTH}.
      *
      * @param pole The pole to center on, either {@link AVKey#NORTH} or {@link AVKey#SOUTH}.
-     *
      * @throws IllegalArgumentException if the specified pole is null.
      */
-    public ProjectionUPS(String pole)
-    {
+    public ProjectionUPS(String pole) {
         super(pole != null && pole.equals(AVKey.SOUTH) ? SOUTH_LIMITS : NORTH_LIMITS);
 
-        if (pole == null)
-        {
+        if (pole == null) {
             String message = Logging.getMessage("nullValue.HemisphereIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -58,20 +53,18 @@ public class ProjectionUPS extends AbstractGeographicProjection
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return (this.pole == SOUTH ? "South " : "North ") + "Universal Polar Stereographic";
     }
 
     @Override
-    public boolean isContinuous()
-    {
+    public boolean isContinuous() {
         return false;
     }
 
     @Override
-    public Vec4 geographicToCartesian(Globe globe, Angle latitude, Angle longitude, double metersElevation, Vec4 offset)
-    {
+    public Vec4 geographicToCartesian(Globe globe, Angle latitude, Angle longitude, double metersElevation,
+        Vec4 offset) {
         // Formulas taken from "Map Projections -- A Working Manual", Snyder, USGS paper 1395, pg. 161.
 
         if ((this.pole == NORTH && latitude.degrees == 90) || (this.pole == SOUTH && latitude.degrees == -90))
@@ -101,32 +94,29 @@ public class ProjectionUPS extends AbstractGeographicProjection
 
     @Override
     public void geographicToCartesian(Globe globe, Sector sector, int numLat, int numLon, double[] metersElevation,
-        Vec4 offset, Vec4[] out)
-    {
-        double minLat = sector.getMinLatitude().radians;
-        double maxLat = sector.getMaxLatitude().radians;
-        double minLon = sector.getMinLongitude().radians;
-        double maxLon = sector.getMaxLongitude().radians;
+        Vec4 offset, Vec4[] out) {
+        double minLat = sector.latMin().radians;
+        double maxLat = sector.latMax().radians;
+        double minLon = sector.lonMin().radians;
+        double maxLon = sector.lonMax().radians;
         double deltaLat = (maxLat - minLat) / (numLat > 1 ? numLat - 1 : 1);
         double deltaLon = (maxLon - minLon) / (numLon > 1 ? numLon - 1 : 1);
-        double minLatLimit = this.getProjectionLimits().getMinLatitude().radians;
-        double maxLatLimit = this.getProjectionLimits().getMaxLatitude().radians;
-        double minLonLimit = this.getProjectionLimits().getMinLongitude().radians;
-        double maxLonLimit = this.getProjectionLimits().getMaxLongitude().radians;
+        double minLatLimit = this.getProjectionLimits().latMin().radians;
+        double maxLatLimit = this.getProjectionLimits().latMax().radians;
+        double minLonLimit = this.getProjectionLimits().lonMin().radians;
+        double maxLonLimit = this.getProjectionLimits().lonMax().radians;
         int pos = 0;
 
         // Iterate over the latitude and longitude coordinates in the specified sector, computing the Cartesian point
         // corresponding to each latitude and longitude.
         double lat = minLat;
-        for (int j = 0; j < numLat; j++, lat += deltaLat)
-        {
+        for (int j = 0; j < numLat; j++, lat += deltaLat) {
             if (j == numLat - 1) // explicitly set the last lat to the max latitude to ensure alignment
                 lat = maxLat;
             lat = WWMath.clamp(lat, minLatLimit, maxLatLimit); // limit lat to projection limits
 
             double lon = minLon;
-            for (int i = 0; i < numLon; i++, lon += deltaLon)
-            {
+            for (int i = 0; i < numLon; i++, lon += deltaLon) {
                 if (i == numLon - 1) // explicitly set the last lon to the max longitude to ensure alignment
                     lon = maxLon;
                 lon = WWMath.clamp(lon, minLonLimit, maxLonLimit); // limit lon to projection limits
@@ -139,8 +129,7 @@ public class ProjectionUPS extends AbstractGeographicProjection
     }
 
     @Override
-    public Position cartesianToGeographic(Globe globe, Vec4 cart, Vec4 offset)
-    {
+    public Position cartesianToGeographic(Globe globe, Vec4 cart, Vec4 offset) {
         double xOffset = offset != null ? offset.x : 0;
         double x = (cart.x - xOffset);
         double y = cart.y;
@@ -180,8 +169,7 @@ public class ProjectionUPS extends AbstractGeographicProjection
     }
 
     @Override
-    public Vec4 northPointingTangent(Globe globe, Angle latitude, Angle longitude)
-    {
+    public Vec4 northPointingTangent(Globe globe, Angle latitude, Angle longitude) {
         // The north pointing tangent depends on the pole. With the south pole, the north pointing tangent points in the
         // same direction as the vector returned by cartesianToGeographic. With the north pole, the north pointing
         // tangent has the opposite direction.
@@ -192,17 +180,16 @@ public class ProjectionUPS extends AbstractGeographicProjection
         return new Vec4(x, y, 0);
     }
 
-//    @Override
-    public Vec4 geographicToCartesianNGA(Globe globe, Angle latitude, Angle longitude, double metersElevation, Vec4 offset)
-    {
+    //    @Override
+    public Vec4 geographicToCartesianNGA(Globe globe, Angle latitude, Angle longitude, double metersElevation,
+        Vec4 offset) {
         // Formula from NGA.SIG.0012_2.0.0_UTMUPS dated 2014-03-25.
 
         if ((this.pole == NORTH && latitude.degrees == 90) || (this.pole == SOUTH && latitude.degrees == -90))
             return new Vec4(0, 0, metersElevation);
 
-        double clampedLat = WWMath.clamp(latitude.radians, this.getProjectionLimits().getMinLatitude().radians,
-            this.getProjectionLimits().getMaxLatitude().radians);
-
+        double clampedLat = WWMath.clamp(latitude.radians, this.getProjectionLimits().latMin().radians,
+            this.getProjectionLimits().latMax().radians);
 
         double a = globe.getEquatorialRadius();
         double lat = clampedLat * (this.pole == NORTH ? 1 : -1);
@@ -220,15 +207,14 @@ public class ProjectionUPS extends AbstractGeographicProjection
         double sinChi = ((1 + sinLat) / P - (1 - sinLat) * P) / denom;
 
         denom = k90 * (1 + sinChi);
-        double x = 0.994 * 2 * a * Math.sin(lon) * cosChi/ denom;
-        double y = 0.994 * -2 * a * Math.cos(lon) * cosChi/ denom * (this.pole == NORTH ? 1 : -1);
+        double x = 0.994 * 2 * a * Math.sin(lon) * cosChi / denom;
+        double y = 0.994 * -2 * a * Math.cos(lon) * cosChi / denom * (this.pole == NORTH ? 1 : -1);
 
         return new Vec4(x, y, metersElevation);
     }
 
-//    @Override
-    public Position cartesianToGeographicNGA(Globe globe, Vec4 cart, Vec4 offset)
-    {
+    //    @Override
+    public Position cartesianToGeographicNGA(Globe globe, Vec4 cart, Vec4 offset) {
         // Formula from NGA.SIG.0012_2.0.0_UTMUPS dated 2014-03-25.
 
         // THIS FORMULA IS NOT PRODUCING THE EXPECTED RESULTS. Using this formula causes navigation to behave as
@@ -255,8 +241,7 @@ public class ProjectionUPS extends AbstractGeographicProjection
         double P = 1;
         double convergence = 0.00000001; // ~ 6 cm on Earth
 
-        for (int i = 0; i < 10; i++)
-        {
+        for (int i = 0; i < 10; i++) {
             P = Math.exp(e * Angle.arctanh(e * sinLat));
             double sPrevious = sinLat;
             sinLat = ((1 + sinChi) * P * P - (1 - sinChi)) / ((1 + sinChi) * P * P + (1 - sinChi));

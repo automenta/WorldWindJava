@@ -21,27 +21,34 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Demonstrates how to create and display WorldWind tactical symbols. See the 
+ * Demonstrates how to create and display WorldWind tactical symbols. See the
  * <a href="https://worldwind.arc.nasa.gov/java/tutorials/tactical-graphics/" target="_blank">Tutorial</a>
- * for more
- * information on symbology support in WorldWind.
+ * for more information on symbology support in WorldWind.
  * <p>
  * See the {@link TacticalGraphics} for a detailed example of using WorldWind tactical graphics in an application.
  *
  * @author dcollins
  * @version $Id: TacticalSymbols.java 2196 2014-08-06 19:42:15Z tgaskins $
  */
-public class TacticalSymbols extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+public class TacticalSymbols extends ApplicationTemplate {
+    public static void main(String[] args) {
+        // Configure the initial view parameters so that this example starts looking at the symbols.
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 32.49);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 63.455);
+        Configuration.setValue(AVKey.INITIAL_HEADING, 22);
+        Configuration.setValue(AVKey.INITIAL_PITCH, 82);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 20000);
+
+        start("WorldWind Tactical Symbols", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
         protected final RenderableLayer symbolLayer;
         protected final TacticalSymbolAttributes sharedAttrs;
         protected final TacticalSymbolAttributes sharedHighlightAttrs;
         protected final BasicDragger dragger;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             // Create a renderable layer to display the tactical symbols. This example adds only three symbols, but many
             // symbols can be added to a single layer. Note that tactical symbols and tactical graphics can be combined
             // in the same RenderableLayer, along with any WorldWind object implementing the Renderable interface.
@@ -113,7 +120,8 @@ public class TacticalSymbols extends ApplicationTemplate
             // Add the same symbol at the dateline to test that all aspects display correctly there.
             TacticalSymbol machineGunSymbolAtDateline = new MilStd2525TacticalSymbol("SFGPEWRH--MTUSG",
                 Position.fromDegrees(32.3902, 180, 0));
-            machineGunSymbolAtDateline.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly Heavy Machine Gun at Dateline");
+            machineGunSymbolAtDateline.setValue(AVKey.DISPLAY_NAME,
+                "MIL-STD-2525 Friendly Heavy Machine Gun at Dateline");
             machineGunSymbolAtDateline.setAttributes(this.sharedAttrs);
             machineGunSymbolAtDateline.setHighlightAttributes(this.sharedHighlightAttrs);
             machineGunSymbolAtDateline.setModifier(SymbologyConstants.QUANTITY, 200);
@@ -141,8 +149,7 @@ public class TacticalSymbols extends ApplicationTemplate
             WWUtil.alignComponent(null, this, AVKey.CENTER);
         }
 
-        protected void addSymbolControls()
-        {
+        protected void addSymbolControls() {
             Box box = Box.createVerticalBox();
             box.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -154,7 +161,7 @@ public class TacticalSymbols extends ApplicationTemplate
                 // from suddenly appearing larger when highlighted. Changes in these attributes are reflected in all
                 // symbols that use them.
                 JSlider slider12 = (JSlider) changeEvent.getSource();
-                double scale = (double) slider12.getValue() / 100d;
+                double scale = slider12.getValue() / 100.0d;
                 sharedAttrs.setScale(scale);
                 sharedHighlightAttrs.setScale(scale);
                 getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
@@ -171,7 +178,7 @@ public class TacticalSymbols extends ApplicationTemplate
                 // Set the opacity for only the normal attributes. This causes symbols to return to 100% opacity
                 // when highlighted. Changes in these attributes are reflected in all symbols that use them.
                 JSlider slider1 = (JSlider) changeEvent.getSource();
-                double opacity = (double) slider1.getValue() / 100d;
+                double opacity = slider1.getValue() / 100.0d;
                 sharedAttrs.setOpacity(opacity);
                 getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
             });
@@ -186,8 +193,7 @@ public class TacticalSymbols extends ApplicationTemplate
             cb.addActionListener(actionEvent -> {
                 boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                for (Renderable r : symbolLayer.getRenderables())
-                {
+                for (Renderable r : symbolLayer.getRenderables()) {
                     if (r instanceof TacticalSymbol)
                         ((TacticalSymbol) r).setShowGraphicModifiers(tf);
                     getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
@@ -202,8 +208,7 @@ public class TacticalSymbols extends ApplicationTemplate
             cb.addActionListener(actionEvent -> {
                 boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                for (Renderable r : symbolLayer.getRenderables())
-                {
+                for (Renderable r : symbolLayer.getRenderables()) {
                     if (r instanceof TacticalSymbol)
                         ((TacticalSymbol) r).setShowTextModifiers(tf);
                     getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
@@ -218,8 +223,7 @@ public class TacticalSymbols extends ApplicationTemplate
             cb.addActionListener(actionEvent -> {
                 boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                for (Renderable r : symbolLayer.getRenderables())
-                {
+                for (Renderable r : symbolLayer.getRenderables()) {
                     if (r instanceof TacticalSymbol)
                         ((MilStd2525TacticalSymbol) r).setShowFrame(tf);
                     getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
@@ -234,8 +238,7 @@ public class TacticalSymbols extends ApplicationTemplate
             cb.addActionListener(actionEvent -> {
                 boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                for (Renderable r : symbolLayer.getRenderables())
-                {
+                for (Renderable r : symbolLayer.getRenderables()) {
                     if (r instanceof TacticalSymbol)
                         ((MilStd2525TacticalSymbol) r).setShowFill(tf);
                     getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
@@ -250,8 +253,7 @@ public class TacticalSymbols extends ApplicationTemplate
             cb.addActionListener(actionEvent -> {
                 boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                for (Renderable r : symbolLayer.getRenderables())
-                {
+                for (Renderable r : symbolLayer.getRenderables()) {
                     if (r instanceof TacticalSymbol)
                         ((MilStd2525TacticalSymbol) r).setShowIcon(tf);
                     getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
@@ -263,17 +265,5 @@ public class TacticalSymbols extends ApplicationTemplate
 
             this.getControlPanel().add(box, BorderLayout.SOUTH);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        // Configure the initial view parameters so that this example starts looking at the symbols.
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 32.49);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 63.455);
-        Configuration.setValue(AVKey.INITIAL_HEADING, 22);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 82);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 20000);
-
-        start("WorldWind Tactical Symbols", AppFrame.class);
     }
 }

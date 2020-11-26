@@ -55,9 +55,19 @@ public class TerrainIntersections extends ApplicationTemplate {
     /**
      * The desired terrain resolution to use in the intersection calculations.
      */
-    protected static final Double TARGET_RESOLUTION = 10d; // meters, or null for globe's highest resolution
+    protected static final Double TARGET_RESOLUTION = 10.0d; // meters, or null for globe's highest resolution
 
     protected static final int NUM_THREADS = 4; // set to 1 to run synchronously
+
+    public static void main(String[] args) {
+        // zoom to San Francisco downtown
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 34.0e3);
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 37.9521d);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -119.7761d);
+
+        // Adjust configuration values before instantiation
+        ApplicationTemplate.start("WorldWind Terrain Intersections", AppFrame.class);
+    }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
@@ -67,21 +77,28 @@ public class TerrainIntersections extends ApplicationTemplate {
         protected final RenderableLayer gridLayer;
         protected final RenderableLayer intersectionsLayer;
         protected final RenderableLayer sightLinesLayer;
-        protected RenderableLayer tilesLayer;
-        protected Thread calculationDispatchThread;
         protected final JProgressBar progressBar;
         protected final ThreadPoolExecutor threadPool;
+        // Create containers to hold the intersection points and the lines emanating from the center.
+        protected final List<Position> firstIntersectionPositions = new ArrayList<>();
+        protected final List<Position[]> sightLines = new ArrayList<>(GRID_DIMENSION * GRID_DIMENSION);
+        protected RenderableLayer tilesLayer;
+        protected Thread calculationDispatchThread;
         protected List<Position> grid;
         protected int numGridPoints; // used to monitor percentage progress
         protected long startTime, endTime; // for reporting calculation duration
         protected Position previousCurrentPosition;
+        // Make the picked location's position and model-coordinate point available to all methods.
+        protected Position referencePosition;
+        protected Vec4 referencePoint;
+        private long lastTime = System.currentTimeMillis();
 
         public AppFrame() {
             super(true, true, false);
 
             // Create a thread pool.
             this.threadPool = new ThreadPoolExecutor(NUM_THREADS, NUM_THREADS, 200, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<>());
+                new LinkedBlockingQueue<>());
 
             // Display a progress bar.
             this.progressBar = new JProgressBar(0, 100);
@@ -157,28 +174,18 @@ public class TerrainIntersections extends ApplicationTemplate {
             this.calculationDispatchThread.start();
         }
 
-        // Create containers to hold the intersection points and the lines emanating from the center.
-        protected final List<Position> firstIntersectionPositions = new ArrayList<>();
-        protected final List<Position[]> sightLines = new ArrayList<>(GRID_DIMENSION * GRID_DIMENSION);
-
-        // Make the picked location's position and model-coordinate point available to all methods.
-        protected Position referencePosition;
-        protected Vec4 referencePoint;
-
         // This is a collection of synchronized accessors to the list updated during the calculations.
         protected synchronized void addIntersectionPosition(Position position) {
             this.firstIntersectionPositions.add(position);
         }
 
         protected synchronized void addSightLine(Position positionA, Position positionB) {
-            this.sightLines.add(new Position[]{positionA, positionB});
+            this.sightLines.add(new Position[] {positionA, positionB});
         }
 
         protected synchronized int getSightlinesSize() {
             return this.sightLines.size();
         }
-
-        private long lastTime = System.currentTimeMillis();
 
         /**
          * Keeps the progress meter current. When calculations are complete, displays the results.
@@ -187,14 +194,15 @@ public class TerrainIntersections extends ApplicationTemplate {
             // Update the progress bar only once every 250 milliseconds to avoid stealing time from calculations.
             if (this.sightLines.size() >= this.numGridPoints) {
                 endTime = System.currentTimeMillis();
-            } else if (System.currentTimeMillis() < this.lastTime + 250) {
+            }
+            else if (System.currentTimeMillis() < this.lastTime + 250) {
                 return;
             }
             this.lastTime = System.currentTimeMillis();
 
             // On the EDT, update the progress bar and if calculations are complete, update the WorldWindow.
             SwingUtilities.invokeLater(() -> {
-                int progress = (int) (100d * getSightlinesSize() / (double) numGridPoints);
+                int progress = (int) (100.0d * getSightlinesSize() / numGridPoints);
                 progressBar.setValue(progress);
 
                 if (progress >= 100) {
@@ -216,8 +224,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             this.getWwd().redraw();
         }
 
-        protected void performIntersectionTests(final Position curPos)
-        {
+        protected void performIntersectionTests(final Position curPos) {
             // Clear the results lists when the user selects a new location.
             this.firstIntersectionPositions.clear();
             this.sightLines.clear();
@@ -228,8 +235,8 @@ public class TerrainIntersections extends ApplicationTemplate {
             // Form the grid.
             double gridRadius = GRID_RADIUS.degrees;
             Sector sector = Sector.fromDegrees(
-                    curPos.getLatitude().degrees - gridRadius, curPos.getLatitude().degrees + gridRadius,
-                    curPos.getLongitude().degrees - gridRadius, curPos.getLongitude().degrees + gridRadius);
+                curPos.getLatitude().degrees - gridRadius, curPos.getLatitude().degrees + gridRadius,
+                curPos.getLongitude().degrees - gridRadius, curPos.getLongitude().degrees + gridRadius);
 
             this.grid = buildGrid(sector, height, GRID_DIMENSION, GRID_DIMENSION);
             this.numGridPoints = grid.size();
@@ -258,7 +265,8 @@ public class TerrainIntersections extends ApplicationTemplate {
                 //noinspection ConstantConditions
                 if (NUM_THREADS > 0) {
                     this.threadPool.execute(new Intersector(gridPos));
-                } else {
+                }
+                else {
                     performIntersection(gridPos);
                 }
             }
@@ -268,29 +276,27 @@ public class TerrainIntersections extends ApplicationTemplate {
          * Performs one line of sight calculation between the reference position and a specified grid position.
          *
          * @param gridPosition the grid position.
-         *
          */
-        protected void performIntersection(Position gridPosition)
-        {
+        protected void performIntersection(Position gridPosition) {
             // Intersect the line between this grid point and the selected position.
             Intersection[] intersections = this.terrain.intersect(this.referencePosition, gridPosition);
             if (intersections == null || intersections.length == 0) {
                 // No intersection, so the line goes from the center to the grid point.
-                this.sightLines.add(new Position[]{this.referencePosition, gridPosition});
+                this.sightLines.add(new Position[] {this.referencePosition, gridPosition});
                 return;
             }
 
             // Only the first intersection is shown.
             Vec4 iPoint = intersections[0].getIntersectionPoint();
             Vec4 gPoint = terrain.getSurfacePoint(gridPosition.getLatitude(), gridPosition.getLongitude(),
-                    gridPosition.getAltitude());
+                gridPosition.getAltitude());
 
             // Check to see whether the intersection is beyond the grid point.
             if (iPoint.distanceTo3(this.referencePoint) >= gPoint.distanceTo3(this.referencePoint)) {
                 // Intersection is beyond the grid point; the line goes from the center to the grid point.
                 this.addSightLine(this.referencePosition, gridPosition);
-            } else
-            {
+            }
+            else {
 
                 // Compute the position corresponding to the intersection.
                 Position iPosition = this.terrain.getGlobe().computePositionFromPoint(iPoint);
@@ -305,27 +311,6 @@ public class TerrainIntersections extends ApplicationTemplate {
             }
         }
 
-        /**
-         * Inner {@link Runnable} to perform a single line/terrain intersection calculation.
-         */
-        protected class Intersector implements Runnable {
-
-            protected final Position gridPosition;
-
-            public Intersector(Position gridPosition) {
-                this.gridPosition = gridPosition;
-            }
-
-            @Override
-            public void run() {
-//                try {
-                    performIntersection(this.gridPosition);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-            }
-        }
-
         protected List<Position> buildGrid(Sector sector, double height, int nLatCells, int nLonCells) {
             List<Position> grid = new ArrayList<>((nLatCells + 1) * (nLonCells + 1));
 
@@ -334,11 +319,11 @@ public class TerrainIntersections extends ApplicationTemplate {
 
             for (int j = 0; j <= nLatCells; j++) {
                 double lat = j == nLatCells
-                        ? sector.getMaxLatitude().degrees : sector.getMinLatitude().degrees + j * dLat;
+                    ? sector.latMax().degrees : sector.latMin().degrees + j * dLat;
 
                 for (int i = 0; i <= nLonCells; i++) {
                     double lon = i == nLonCells
-                            ? sector.getMaxLongitude().degrees : sector.getMinLongitude().degrees + i * dLon;
+                        ? sector.lonMax().degrees : sector.lonMin().degrees + i * dLon;
 
                     grid.add(Position.fromDegrees(lat, lon, height));
                 }
@@ -347,7 +332,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             return grid;
         }
 
-        protected void preCache(List<Position> grid, Position centerPosition) throws InterruptedException {
+        protected void preCache(Collection<Position> grid, Position centerPosition) throws InterruptedException {
             // Pre-cache the tiles that will be needed for the intersection calculations.
             double n = 0;
             final long start = System.currentTimeMillis();
@@ -366,7 +351,7 @@ public class TerrainIntersections extends ApplicationTemplate {
 
             long end = System.currentTimeMillis();
             System.out.printf("Pre-caching time %d milliseconds, cache usage %f, tiles %d\n", end - start,
-                    terrain.getCacheUsage(), terrain.getNumCacheEntries());
+                terrain.getCacheUsage(), terrain.getNumCacheEntries());
         }
 
         protected void clearLayers() {
@@ -375,14 +360,14 @@ public class TerrainIntersections extends ApplicationTemplate {
             this.gridLayer.removeAllRenderables();
         }
 
-        protected void showIntersections(List<Position> intersections) {
+        protected void showIntersections(Iterable<Position> intersections) {
             this.intersectionsLayer.removeAllRenderables();
 
             // Display the intersections as CYAN points.
             PointPlacemarkAttributes intersectionPointAttributes;
             intersectionPointAttributes = new PointPlacemarkAttributes();
             intersectionPointAttributes.setLineMaterial(Material.CYAN);
-            intersectionPointAttributes.setScale(6d);
+            intersectionPointAttributes.setScale(6.0d);
             intersectionPointAttributes.setUsePointAsDefaultImage(true);
 
             for (Position p : intersections) {
@@ -394,7 +379,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             }
         }
 
-        protected void showSightLines(List<Position[]> sightLines) {
+        protected void showSightLines(Iterable<Position[]> sightLines) {
             this.sightLinesLayer.removeAllRenderables();
 
             // Display the sight lines as green lines.
@@ -417,7 +402,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             }
         }
 
-        protected void showGridSightLines(List<Position> grid, Position cPos) {
+        protected void showGridSightLines(Iterable<Position> grid, Position cPos) {
             this.sightLinesLayer.removeAllRenderables();
 
             // Display lines from the center to each grid point.
@@ -440,14 +425,14 @@ public class TerrainIntersections extends ApplicationTemplate {
             }
         }
 
-        protected void showGrid(List<Position> grid, Position cPos) {
+        protected void showGrid(Iterable<Position> grid, Position cPos) {
             this.gridLayer.removeAllRenderables();
 
             // Display the grid points in yellow.
             PointPlacemarkAttributes gridPointAttributes;
             gridPointAttributes = new PointPlacemarkAttributes();
             gridPointAttributes.setLineMaterial(Material.YELLOW);
-            gridPointAttributes.setScale(6d);
+            gridPointAttributes.setScale(6.0d);
             gridPointAttributes.setUsePointAsDefaultImage(true);
 
             for (Position p : grid) {
@@ -467,7 +452,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             PointPlacemarkAttributes selectedLocationAttributes;
             selectedLocationAttributes = new PointPlacemarkAttributes();
             selectedLocationAttributes.setLineMaterial(Material.RED);
-            selectedLocationAttributes.setScale(8d);
+            selectedLocationAttributes.setScale(8.0d);
             selectedLocationAttributes.setUsePointAsDefaultImage(true);
 
             PointPlacemark pm = new PointPlacemark(cPos);
@@ -477,15 +462,26 @@ public class TerrainIntersections extends ApplicationTemplate {
             pm.setLineEnabled(true);
             this.gridLayer.addRenderable(pm);
         }
-    }
 
-    public static void main(String[] args) {
-        // zoom to San Francisco downtown
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 34e3);
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 37.9521d);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -119.7761d);
+        /**
+         * Inner {@link Runnable} to perform a single line/terrain intersection calculation.
+         */
+        protected class Intersector implements Runnable {
 
-        // Adjust configuration values before instantiation
-        ApplicationTemplate.start("WorldWind Terrain Intersections", AppFrame.class);
+            protected final Position gridPosition;
+
+            public Intersector(Position gridPosition) {
+                this.gridPosition = gridPosition;
+            }
+
+            @Override
+            public void run() {
+//                try {
+                performIntersection(this.gridPosition);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+            }
+        }
     }
 }

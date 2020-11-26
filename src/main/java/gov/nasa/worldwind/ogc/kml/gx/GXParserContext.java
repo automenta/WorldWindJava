@@ -17,8 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author tag
  * @version $Id: GXParserContext.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GXParserContext extends BasicXMLEventParserContext
-{
+public class GXParserContext extends BasicXMLEventParserContext {
     protected static final String[] StringFields = new String[]
         {
             "altitudeMode",
@@ -37,9 +36,8 @@ public class GXParserContext extends BasicXMLEventParserContext
             "balloonVisibility",
         };
 
-    public static Map<QName, XMLEventParser> getDefaultParsers()
-    {
-        ConcurrentHashMap<QName, XMLEventParser> parsers = new ConcurrentHashMap<>();
+    public static Map<QName, XMLEventParser> getDefaultParsers() {
+        Map<QName, XMLEventParser> parsers = new ConcurrentHashMap<>();
 
         String ns = GXConstants.GX_NAMESPACE;
         parsers.put(new QName(ns, "AnimatedUpdate"), new GXAnimatedUpdate(ns));
@@ -53,21 +51,18 @@ public class GXParserContext extends BasicXMLEventParserContext
         parsers.put(new QName(ns, "TourControl"), new GXTourControl(ns));
         parsers.put(new QName(ns, "Wait"), new GXWait(ns));
 
-        StringXMLEventParser stringParser = new StringXMLEventParser();
-        for (String s : StringFields)
-        {
+        XMLEventParser stringParser = new StringXMLEventParser();
+        for (String s : StringFields) {
             parsers.put(new QName(ns, s), stringParser);
         }
 
-        DoubleXMLEventParser doubleParser = new DoubleXMLEventParser();
-        for (String s : DoubleFields)
-        {
+        XMLEventParser doubleParser = new DoubleXMLEventParser();
+        for (String s : DoubleFields) {
             parsers.put(new QName(ns, s), doubleParser);
         }
 
-        BooleanXMLEventParser booleanParser = new BooleanXMLEventParser();
-        for (String s : BooleanFields)
-        {
+        XMLEventParser booleanParser = new BooleanXMLEventParser();
+        for (String s : BooleanFields) {
             parsers.put(new QName(ns, s), booleanParser);
         }
 

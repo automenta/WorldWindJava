@@ -17,20 +17,37 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.*;
 
 /**
  * Control panel for the MeasureTool.
  *
  * @author Patrick Murris
  * @version $Id: MeasureToolPanel.java 2226 2014-08-14 15:56:45Z tgaskins $
- * @see gov.nasa.worldwind.util.measure.MeasureTool
+ * @see MeasureTool
  */
 public class MeasureToolPanel extends JPanel {
 
+    private static final List<Position> LINE = new ArrayList<>();
+    private static final ArrayList<Position> PATH = new ArrayList<>();
+    private static final ArrayList<Position> POLYGON = new ArrayList<>();
+
+    static {
+        LINE.add(Position.fromDegrees(44, 7, 0));
+        LINE.add(Position.fromDegrees(45, 8, 0));
+
+        PATH.addAll(LINE);
+        PATH.add(Position.fromDegrees(46, 6, 0));
+        PATH.add(Position.fromDegrees(47, 5, 0));
+        PATH.add(Position.fromDegrees(45, 6, 0));
+
+        POLYGON.addAll(PATH);
+        POLYGON.add(Position.fromDegrees(44, 7, 0));
+    }
+
     private final WorldWindow wwd;
     private final MeasureTool measureTool;
-
     private JComboBox shapeCombo;
     private JComboBox pathTypeCombo;
     private JComboBox unitsCombo;
@@ -54,23 +71,6 @@ public class MeasureToolPanel extends JPanel {
     private JLabel headingLabel;
     private JLabel centerLabel;
 
-    private static final ArrayList<Position> LINE = new ArrayList<>();
-    private static final ArrayList<Position> PATH = new ArrayList<>();
-    private static final ArrayList<Position> POLYGON = new ArrayList<>();
-
-    static {
-        LINE.add(Position.fromDegrees(44, 7, 0));
-        LINE.add(Position.fromDegrees(45, 8, 0));
-
-        PATH.addAll(LINE);
-        PATH.add(Position.fromDegrees(46, 6, 0));
-        PATH.add(Position.fromDegrees(47, 5, 0));
-        PATH.add(Position.fromDegrees(45, 6, 0));
-
-        POLYGON.addAll(PATH);
-        POLYGON.add(Position.fromDegrees(44, 7, 0));
-    }
-
     public MeasureToolPanel(WorldWindow wwdObject, MeasureTool measureToolObject) {
         super(new BorderLayout());
         this.wwd = wwdObject;
@@ -80,8 +80,7 @@ public class MeasureToolPanel extends JPanel {
         // Handle measure tool events
         measureTool.addPropertyChangeListener((PropertyChangeEvent event) -> {
             // Add, remove or change positions
-            switch (event.getPropertyName())
-            {
+            switch (event.getPropertyName()) {
                 case MeasureTool.EVENT_POSITION_ADD:
                 case MeasureTool.EVENT_POSITION_REMOVE:
                 case MeasureTool.EVENT_POSITION_REPLACE:
@@ -89,16 +88,14 @@ public class MeasureToolPanel extends JPanel {
 
                     break;
                 case MeasureTool.EVENT_ARMED:
-                    if (measureTool.isArmed())
-                    {
+                    if (measureTool.isArmed()) {
                         newButton.setEnabled(false);
                         pauseButton.setText("Pause");
                         pauseButton.setEnabled(true);
                         endButton.setEnabled(true);
                         ((Component) wwd).setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                     }
-                    else
-                    {
+                    else {
                         newButton.setEnabled(true);
                         pauseButton.setText("Pause");
                         pauseButton.setEnabled(false);
@@ -123,7 +120,8 @@ public class MeasureToolPanel extends JPanel {
         JPanel shapePanel = new JPanel(new GridLayout(1, 2, 5, 5));
         shapePanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         shapePanel.add(new JLabel("Shape:"));
-        shapeCombo = new JComboBox<>(new String[]{"Line", "Path", "Polygon", "Circle", "Ellipse", "Square", "Rectangle"});
+        shapeCombo = new JComboBox<>(
+            new String[] {"Line", "Path", "Polygon", "Circle", "Ellipse", "Square", "Rectangle"});
         shapeCombo.addActionListener((ActionEvent event) -> {
             String item = (String) ((JComboBox) event.getSource()).getSelectedItem();
             switch (item) {
@@ -158,7 +156,7 @@ public class MeasureToolPanel extends JPanel {
         JPanel pathTypePanel = new JPanel(new GridLayout(1, 2, 5, 5));
         pathTypePanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         pathTypePanel.add(new JLabel("Path type:"));
-        pathTypeCombo = new JComboBox<>(new String[]{"Linear", "Rhumb", "Great circle"});
+        pathTypeCombo = new JComboBox<>(new String[] {"Linear", "Rhumb", "Great circle"});
         pathTypeCombo.setSelectedIndex(2);
         pathTypeCombo.addActionListener((ActionEvent event) -> {
             String item = (String) ((JComboBox) event.getSource()).getSelectedItem();
@@ -182,7 +180,7 @@ public class MeasureToolPanel extends JPanel {
         JPanel unitsPanel = new JPanel(new GridLayout(1, 2, 5, 5));
         unitsPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         unitsPanel.add(new JLabel("Units:"));
-        unitsCombo = new JComboBox<>(new String[]{"M/M\u00b2", "KM/KM\u00b2", "KM/Hectare", "Feet/Feet\u00b2",
+        unitsCombo = new JComboBox<>(new String[] {"M/M\u00b2", "KM/KM\u00b2", "KM/Hectare", "Feet/Feet\u00b2",
             "Miles/Miles\u00b2", "Nm/Miles\u00b2", "Yards/Acres"});
         unitsCombo.setSelectedItem("KM/KM\u00b2");
         unitsCombo.addActionListener((ActionEvent event) -> {
@@ -226,7 +224,7 @@ public class MeasureToolPanel extends JPanel {
         JPanel anglesPanel = new JPanel(new GridLayout(1, 2, 5, 5));
         anglesPanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
         anglesPanel.add(new JLabel("Angle Format:"));
-        anglesCombo = new JComboBox<>(new String[]{"DD", "DMS"});
+        anglesCombo = new JComboBox<>(new String[] {"DD", "DMS"});
         anglesCombo.setSelectedItem("DD");
         anglesCombo.addActionListener((ActionEvent event) -> {
             String item = (String) ((JComboBox) event.getSource()).getSelectedItem();
@@ -290,12 +288,12 @@ public class MeasureToolPanel extends JPanel {
         lineColorButton = new JButton("Line");
         lineColorButton.addActionListener((ActionEvent event) -> {
             Color c = JColorChooser.showDialog(colorPanel,
-                    "Choose a color...", ((JButton) event.getSource()).getBackground());
+                "Choose a color...", ((JButton) event.getSource()).getBackground());
             if (c != null) {
                 ((JButton) event.getSource()).setBackground(c);
                 measureTool.setLineColor(c);
-                Color fill = new Color(c.getRed() / 255f * .5f,
-                        c.getGreen() / 255f * .5f, c.getBlue() / 255f * .5f, .5f);
+                Color fill = new Color(c.getRed() / 255.0f * 0.5f,
+                    c.getGreen() / 255.0f * 0.5f, c.getBlue() / 255.0f * 0.5f, 0.5f);
                 measureTool.setFillColor(fill);
             }
         });
@@ -305,7 +303,7 @@ public class MeasureToolPanel extends JPanel {
         pointColorButton = new JButton("Points");
         pointColorButton.addActionListener((ActionEvent event) -> {
             Color c = JColorChooser.showDialog(colorPanel,
-                    "Choose a color...", ((JButton) event.getSource()).getBackground());
+                "Choose a color...", ((JButton) event.getSource()).getBackground());
             if (c != null) {
                 ((JButton) event.getSource()).setBackground(c);
                 measureTool.getControlPointsAttributes().setBackgroundColor(c);
@@ -317,7 +315,7 @@ public class MeasureToolPanel extends JPanel {
         annotationColorButton = new JButton("Tooltip");
         annotationColorButton.addActionListener((ActionEvent event) -> {
             Color c = JColorChooser.showDialog(colorPanel,
-                    "Choose a color...", ((JButton) event.getSource()).getBackground());
+                "Choose a color...", ((JButton) event.getSource()).getBackground());
             if (c != null) {
                 ((JButton) event.getSource()).setBackground(c);
                 measureTool.getAnnotationAttributes().setTextColor(c);
@@ -343,7 +341,7 @@ public class MeasureToolPanel extends JPanel {
             pauseButton.setText(!measureTool.isArmed() ? "Resume" : "Pause");
             pauseButton.setEnabled(true);
             ((Component) wwd).setCursor(!measureTool.isArmed() ? Cursor.getDefaultCursor()
-                    : Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+                : Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         });
         buttonPanel.add(pauseButton);
         pauseButton.setEnabled(false);
@@ -365,7 +363,8 @@ public class MeasureToolPanel extends JPanel {
         bt = new JButton("Surf. Quad");
         bt.addActionListener((ActionEvent actionEvent) -> {
             shapeCombo.setSelectedIndex(6);
-            measureTool.setMeasureShape(new SurfaceQuad(Position.fromDegrees(44, 7, 0), 100e3, 50e3, Angle.fromDegrees(30)));
+            measureTool.setMeasureShape(
+                new SurfaceQuad(Position.fromDegrees(44, 7, 0), 100.0e3, 50.0e3, Angle.fromDegrees(30)));
         });
         presetPanel.add(bt);
         bt = new JButton("Polygon");
@@ -399,7 +398,7 @@ public class MeasureToolPanel extends JPanel {
         // Metric
         JPanel metricPanel = new JPanel(new GridLayout(0, 2, 0, 4));
         metricPanel.setBorder(new CompoundBorder(
-                new TitledBorder("Metric"), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+            new TitledBorder("Metric"), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         metricPanel.add(new JLabel("Length:"));
         lengthLabel = new JLabel();
         metricPanel.add(lengthLabel);
@@ -423,7 +422,7 @@ public class MeasureToolPanel extends JPanel {
         JPanel outerPanel = new JPanel();
         outerPanel.setLayout(new BoxLayout(outerPanel, BoxLayout.Y_AXIS));
         outerPanel.setBorder(
-                new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("Measure")));
+            new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("Measure")));
         outerPanel.setToolTipText("Measure tool control and info");
         outerPanel.add(colorPanel);
         outerPanel.add(shapePanel);
@@ -456,7 +455,6 @@ public class MeasureToolPanel extends JPanel {
         for (; i < this.pointLabels.length; i++) {
             pointLabels[i].setText("");
         }
-
     }
 
     private void updateMetric() {
@@ -465,9 +463,11 @@ public class MeasureToolPanel extends JPanel {
         String s;
         if (value <= 0) {
             s = "na";
-        } else if (value < 1000) {
+        }
+        else if (value < 1000) {
             s = String.format("%,7.1f m", value);
-        } else {
+        }
+        else {
             s = String.format("%,7.3f km", value / 1000);
         }
         lengthLabel.setText(s);
@@ -476,10 +476,12 @@ public class MeasureToolPanel extends JPanel {
         value = measureTool.getArea();
         if (value < 0) {
             s = "na";
-        } else if (value < 1e6) {
+        }
+        else if (value < 1.0e6) {
             s = String.format("%,7.1f m2", value);
-        } else {
-            s = String.format("%,7.3f km2", value / 1e6);
+        }
+        else {
+            s = String.format("%,7.3f km2", value / 1.0e6);
         }
         areaLabel.setText(s);
 
@@ -487,9 +489,11 @@ public class MeasureToolPanel extends JPanel {
         value = measureTool.getWidth();
         if (value < 0) {
             s = "na";
-        } else if (value < 1000) {
+        }
+        else if (value < 1000) {
             s = String.format("%,7.1f m", value);
-        } else {
+        }
+        else {
             s = String.format("%,7.3f km", value / 1000);
         }
         widthLabel.setText(s);
@@ -498,9 +502,11 @@ public class MeasureToolPanel extends JPanel {
         value = measureTool.getHeight();
         if (value < 0) {
             s = "na";
-        } else if (value < 1000) {
+        }
+        else if (value < 1000) {
             s = String.format("%,7.1f m", value);
-        } else {
+        }
+        else {
             s = String.format("%,7.3f km", value / 1000);
         }
         heightLabel.setText(s);
@@ -509,7 +515,8 @@ public class MeasureToolPanel extends JPanel {
         Angle angle = measureTool.getOrientation();
         if (angle != null) {
             s = String.format("%,6.2f\u00B0", angle.degrees);
-        } else {
+        }
+        else {
             s = "na";
         }
         headingLabel.setText(s);
@@ -518,7 +525,8 @@ public class MeasureToolPanel extends JPanel {
         Position center = measureTool.getCenterPosition();
         if (center != null) {
             s = String.format("%,7.4f\u00B0 %,7.4f\u00B0", center.getLatitude().degrees, center.getLongitude().degrees);
-        } else {
+        }
+        else {
             s = "na";
         }
         centerLabel.setText(s);

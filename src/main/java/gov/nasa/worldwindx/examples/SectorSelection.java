@@ -13,24 +13,25 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * Demonstrates how to use the {@link gov.nasa.worldwindx.examples.util.SectorSelector} utility.
+ * Demonstrates how to use the {@link SectorSelector} utility.
  *
  * @author tag
  * @version $Id: SectorSelection.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class SectorSelection extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+public class SectorSelection extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("Sector Selection", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
         private final SectorSelector selector;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             super(true, true, false);
 
             this.selector = new SectorSelector(getWwd());
-            this.selector.setInteriorColor(new Color(1f, 1f, 1f, 0.1f));
-            this.selector.setBorderColor(new Color(1f, 0f, 0f, 0.5f));
+            this.selector.setInteriorColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
+            this.selector.setBorderColor(new Color(1.0f, 0.0f, 0.0f, 0.5f));
             this.selector.setBorderWidth(3);
 
             // Set up a button to enable and disable region selection.
@@ -50,37 +51,26 @@ public class SectorSelection extends ApplicationTemplate
             });
         }
 
-        private class EnableSelectorAction extends AbstractAction
-        {
-            public EnableSelectorAction()
-            {
+        private class EnableSelectorAction extends AbstractAction {
+            public EnableSelectorAction() {
                 super("Start");
             }
 
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 ((JButton) e.getSource()).setAction(new DisableSelectorAction());
                 selector.enable();
             }
         }
 
-        private class DisableSelectorAction extends AbstractAction
-        {
-            public DisableSelectorAction()
-            {
+        private class DisableSelectorAction extends AbstractAction {
+            public DisableSelectorAction() {
                 super("Stop");
             }
 
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 selector.disable();
                 ((JButton) e.getSource()).setAction(new EnableSelectorAction());
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("Sector Selection", AppFrame.class);
     }
 }

@@ -11,9 +11,20 @@ public class TestParser {
     private final ArrayList<AOLFlightPlan> plans = new ArrayList<>();
     private final ArrayList<AOLPosition> positions = new ArrayList<>();
 
+    public static void main(String[] args) {
+        try {
+            TestParser tp = new TestParser();
+            tp.parseMessages("/home/mpeterson/d/temp/aol-data");
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public void parseMessages(String path) throws Exception {
         File messageDir = new File(path);
-        FilenameFilter filter = (File directory, String fileName) -> fileName.startsWith("message") && fileName.endsWith(".json");
+        FilenameFilter filter = (File directory, String fileName) -> fileName.startsWith("message")
+            && fileName.endsWith(".json");
         File[] messageList = messageDir.listFiles(filter);
         for (File f : messageList) {
             GeoJSONDoc messageJson = new GeoJSONDoc(f);
@@ -27,15 +38,9 @@ public class TestParser {
                         Set<Map.Entry<String, Object>> entries = avl.getEntries();
                         entries.forEach((e) -> {
                             switch (e.getKey()) {
-                                case "MessageAolFlightPlan":
-                                    plans.add(new AOLFlightPlan((AVList) e.getValue()));
-                                    break;
-                                case "MessageAolPosition":
-                                    positions.add(new AOLPosition((AVList) e.getValue()));
-                                    break;
-                                default:
-                                    System.out.println("Unknown key:" + e.getKey());
-                                    break;
+                                case "MessageAolFlightPlan" -> plans.add(new AOLFlightPlan((AVList) e.getValue()));
+                                case "MessageAolPosition" -> positions.add(new AOLPosition((AVList) e.getValue()));
+                                default -> System.out.println("Unknown key:" + e.getKey());
                             }
                         });
                     }
@@ -43,7 +48,7 @@ public class TestParser {
             }
         }
     }
-    
+
     public ArrayList<AOLFlightPlan> getPlans() {
         return this.plans;
     }
@@ -51,14 +56,4 @@ public class TestParser {
     public ArrayList<AOLPosition> getPositions() {
         return this.positions;
     }
-
-    public static void main(String[] args) {
-        try {
-            TestParser tp = new TestParser();
-            tp.parseMessages("/home/mpeterson/d/temp/aol-data");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
 }

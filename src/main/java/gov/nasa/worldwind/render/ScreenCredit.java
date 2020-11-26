@@ -12,19 +12,18 @@ import java.awt.*;
  * @author tag
  * @version $Id: ScreenCredit.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface ScreenCredit extends Renderable
-{
-    void setViewport(Rectangle viewport);
-
+public interface ScreenCredit extends Renderable {
     Rectangle getViewport();
 
-    void setOpacity(double opacity);
+    void setViewport(Rectangle viewport);
 
     double getOpacity();
 
-    void setLink(String link);
+    void setOpacity(double opacity);
 
     String getLink();
 
-    void pick(DrawContext dc, java.awt.Point pickPoint);
+    void setLink(String link);
+
+    void pick(DrawContext dc, Point pickPoint);
 }

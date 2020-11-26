@@ -16,7 +16,6 @@ import javax.imageio.metadata.IIOMetadata;
 
 public class GeotiffMetaData extends IIOMetadata {
 
-    
     public boolean isReadOnly() {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -25,8 +24,7 @@ public class GeotiffMetaData extends IIOMetadata {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void mergeTree(String formatName, Node root)
-    {
+    public void mergeTree(String formatName, Node root) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

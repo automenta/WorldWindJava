@@ -9,6 +9,7 @@ package gov.nasa.worldwindx.applications.dataimporter;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.util.List;
 import java.util.*;
 
 /**
@@ -17,12 +18,10 @@ import java.util.*;
  * @author tag
  * @version $Id: FileStoreTable.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
-public class FileStoreTable extends JTable
-{
+public class FileStoreTable extends JTable {
     public static final String VISIBLE = "gov.nasa.worldwindx.dataimport.FileStoreTable.Visible";
 
-    public FileStoreTable()
-    {
+    public FileStoreTable() {
         super(new FileStoreTableModel());
 
         this.setIntercellSpacing(new Dimension(10, 1));
@@ -40,7 +39,7 @@ public class FileStoreTable extends JTable
         column.setPreferredWidth(20);
 
         // The table cell renderers manage the enablement of the dataset rows based on view inclusion
-        NameRenderer cellRenderer = new NameRenderer();
+        TableCellRenderer cellRenderer = new NameRenderer();
         column = this.getColumnModel().getColumn(1);
         column.setCellRenderer(cellRenderer);
         column = this.getColumnModel().getColumn(2);
@@ -49,25 +48,21 @@ public class FileStoreTable extends JTable
         column.setCellRenderer(cellRenderer);
     }
 
-    public void setDataSets(java.util.List<FileStoreDataSet> sets)
-    {
+    public void setDataSets(java.util.List<FileStoreDataSet> sets) {
         ((FileStoreTableModel) this.getModel()).setDataSets(sets);
         this.setPreferredColumnWidths();
     }
 
-    public java.util.List<FileStoreDataSet> getSelectedDataSets()
-    {
+    public java.util.List<FileStoreDataSet> getSelectedDataSets() {
         int[] rows = this.getSelectedRows();
 
         if (rows.length == 0)
             return Collections.emptyList();
 
-        ArrayList<FileStoreDataSet> selected = new ArrayList<>();
-        for (int i : rows)
-        {
+        List<FileStoreDataSet> selected = new ArrayList<>();
+        for (int i : rows) {
             int modelRow = this.convertRowIndexToModel(i);
-            if (modelRow < ((FileStoreTableModel) this.getModel()).dataSets.size())
-            {
+            if (modelRow < ((FileStoreTableModel) this.getModel()).dataSets.size()) {
                 // Don't add disabled (non-visible) datasets to the selection list.
                 if ((((FileStoreTableModel) this.getModel()).dataSets.get(modelRow).getValue(VISIBLE) == null))
                     continue;
@@ -79,18 +74,15 @@ public class FileStoreTable extends JTable
         return selected;
     }
 
-    protected void setPreferredColumnWidths()
-    {
-        for (int col = 1; col < getColumnModel().getColumnCount(); col++)
-        {
+    protected void setPreferredColumnWidths() {
+        for (int col = 1; col < getColumnModel().getColumnCount(); col++) {
             // Start with size of column header
             JLabel label = new JLabel(this.getColumnName(col));
             int size = label.getPreferredSize().width;
 
             // Find any cells in column that have a wider value
             TableColumn column = getColumnModel().getColumn(col);
-            for (int row = 0; row < this.getModel().getRowCount(); row++)
-            {
+            for (int row = 0; row < this.getModel().getRowCount(); row++) {
                 label = new JLabel(this.getValueAt(row, col).toString());
                 if (label.getPreferredSize().width > size)
                     size = label.getPreferredSize().width;
@@ -100,16 +92,14 @@ public class FileStoreTable extends JTable
         }
     }
 
-    public void scrollToDataSet(FileStoreDataSet dataSet)
-    {
+    public void scrollToDataSet(FileStoreDataSet dataSet) {
         Integer row = ((FileStoreTableModel) this.getModel()).getRowForDataSet(dataSet);
 
         if (row != null)
             this.scrollToVisible(row, 0);
     }
 
-    public void scrollToVisible(int rowIndex, int vColIndex)
-    {
+    public void scrollToVisible(int rowIndex, int vColIndex) {
         if (!(this.getParent() instanceof JViewport))
             return;
 
@@ -131,12 +121,10 @@ public class FileStoreTable extends JTable
         viewport.scrollRectToVisible(rect);
     }
 
-    class NameRenderer extends DefaultTableCellRenderer
-    {
+    class NameRenderer extends DefaultTableCellRenderer {
         protected boolean enabled;
 
-        public void setValue(Object value)
-        {
+        public void setValue(Object value) {
             super.setValue(value);
 
             FileStoreDataSet dataSet =

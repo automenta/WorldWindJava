@@ -14,36 +14,30 @@ import java.util.logging.Level;
 
 /**
  * Retrieves resources identified by a jar url, which has the form jar:&lt;url&gt;!/{entry}, as in:
- * jar:http://www.foo.com/bar/baz.jar!/COM/foo/Quux.class. See {@link java.net.JarURLConnection} for a full description
+ * jar:http://www.foo.com/bar/baz.jar!/COM/foo/Quux.class. See {@link JarURLConnection} for a full description
  * of jar URLs.
  *
  * @author tag
  * @version $Id: JarRetriever.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class JarRetriever extends URLRetriever
-{
+public class JarRetriever extends URLRetriever {
     private int responseCode;
     private String responseMessage;
 
-    public JarRetriever(URL url, RetrievalPostProcessor postProcessor)
-    {
+    public JarRetriever(URL url, RetrievalPostProcessor postProcessor) {
         super(url, postProcessor);
     }
 
-    public int getResponseCode()
-    {
+    public int getResponseCode() {
         return this.responseCode;
     }
 
-    public String getResponseMessage()
-    {
+    public String getResponseMessage() {
         return this.responseMessage;
     }
 
-    protected ByteBuffer doRead(URLConnection connection) throws Exception
-    {
-        if (connection == null)
-        {
+    protected ByteBuffer doRead(URLConnection connection) throws Exception {
+        if (connection == null) {
             String msg = Logging.getMessage("nullValue.ConnectionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);

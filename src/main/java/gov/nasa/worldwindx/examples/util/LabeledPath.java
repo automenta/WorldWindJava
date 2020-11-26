@@ -13,47 +13,53 @@ import gov.nasa.worldwind.util.Logging;
 import java.awt.*;
 
 /**
- * LabeledPath draws a {@link gov.nasa.worldwind.render.Annotation} on a specified path. The path itself is not drawn.
+ * LabeledPath draws a {@link Annotation} on a specified path. The path itself is not drawn.
  * Instead, the annotation is drawn at the location that maximizes the annotation's visible area in the viewport. The
  * annotation is not drawn if the location list is {@code null}, or if no location in the list is visible.
  * <p>
  * The caller must specify the screen annotation used to draw the path's label by calling {@link
- * #setAnnotation(gov.nasa.worldwind.render.ScreenAnnotation)}. The path sets the specified annotation's screen point to
+ * #setAnnotation(ScreenAnnotation)}. The path sets the specified annotation's screen point to
  * control the label's location, but otherwise does not modify the annotation.
  *
  * @author dcollins
  * @version $Id: LabeledPath.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class LabeledPath implements Renderable
-{
-    /** The labeled path's locations as specified by the application. {@code null} if no locations have been specified. */
+public class LabeledPath implements Renderable {
+    /**
+     * The labeled path's locations as specified by the application. {@code null} if no locations have been specified.
+     */
     protected Iterable<? extends LatLon> locations;
     /**
      * The altitude mode that defines how to interpret the altitude of locations that have an altitude component.
-     * Defaults to {@link gov.nasa.worldwind.WorldWind#ABSOLUTE}.
+     * Defaults to {@link WorldWind#ABSOLUTE}.
      */
     protected int altitudeMode = WorldWind.ABSOLUTE;
-    /** The screen annotation to use as a label. {@code null} if no annotation has been specified. */
+    /**
+     * The screen annotation to use as a label. {@code null} if no annotation has been specified.
+     */
     protected ScreenAnnotation annotation;
-    /** The frame number used to place the label. */
+    /**
+     * The frame number used to place the label.
+     */
     protected long frameNumber = -1;
-    /** The index of the label's location in {@link #locations}, or -1 if the path has no label location. */
+    /**
+     * The index of the label's location in {@link #locations}, or -1 if the path has no label location.
+     */
     protected int labelLocationIndex = -1;
 
-    /** Creates a labeled path with no locations and no label annotation. */
-    public LabeledPath()
-    {
+    /**
+     * Creates a labeled path with no locations and no label annotation.
+     */
+    public LabeledPath() {
     }
 
     /**
      * Creates a labeled path with specified locations.
      *
      * @param locations the labeled path's locations.
-     *
      * @throws IllegalArgumentException if locations is {@code null}.
      */
-    public LabeledPath(Iterable<? extends LatLon> locations)
-    {
+    public LabeledPath(Iterable<? extends LatLon> locations) {
         this.setLocations(locations);
     }
 
@@ -63,8 +69,7 @@ public class LabeledPath implements Renderable
      * @param annotation the screen annotation to use for drawing the label, or {@code null} if no label should be
      *                   drawn.
      */
-    public LabeledPath(ScreenAnnotation annotation)
-    {
+    public LabeledPath(ScreenAnnotation annotation) {
         this.setAnnotation(annotation);
     }
 
@@ -74,11 +79,9 @@ public class LabeledPath implements Renderable
      * @param locations  the labeled path's locations.
      * @param annotation the screen annotation to use for drawing the label, or {@code null} if no label should be
      *                   drawn.
-     *
      * @throws IllegalArgumentException if locations is {@code null}.
      */
-    public LabeledPath(Iterable<? extends LatLon> locations, ScreenAnnotation annotation)
-    {
+    public LabeledPath(Iterable<? extends LatLon> locations, ScreenAnnotation annotation) {
         this.setLocations(locations);
         this.setAnnotation(annotation);
     }
@@ -88,8 +91,7 @@ public class LabeledPath implements Renderable
      *
      * @return the labeled path's locations. Will be {@code null} if no locations have been specified.
      */
-    public Iterable<? extends LatLon> getLocations()
-    {
+    public Iterable<? extends LatLon> getLocations() {
         return locations;
     }
 
@@ -97,13 +99,10 @@ public class LabeledPath implements Renderable
      * Specifies the labeled path's locations, which replace the path's current locations, if any.
      *
      * @param locations the labeled path's locations.
-     *
      * @throws IllegalArgumentException if locations is {@code null}.
      */
-    public void setLocations(Iterable<? extends LatLon> locations)
-    {
-        if (locations == null)
-        {
+    public void setLocations(Iterable<? extends LatLon> locations) {
+        if (locations == null) {
             String message = Logging.getMessage("nullValue.LocationsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -117,49 +116,44 @@ public class LabeledPath implements Renderable
      * Returns the labeled path's altitude mode.
      *
      * @return the labeled path's altitude mode.
-     *
      * @see #setAltitudeMode(int)
      */
-    public int getAltitudeMode()
-    {
+    public int getAltitudeMode() {
         return altitudeMode;
     }
 
     /**
-     * Specifies the labeled path's altitude mode, one of {@link gov.nasa.worldwind.WorldWind#ABSOLUTE}, {@link
-     * gov.nasa.worldwind.WorldWind#RELATIVE_TO_GROUND} or {@link gov.nasa.worldwind.WorldWind#CLAMP_TO_GROUND}.
+     * Specifies the labeled path's altitude mode, one of {@link WorldWind#ABSOLUTE}, {@link
+     * WorldWind#RELATIVE_TO_GROUND} or {@link WorldWind#CLAMP_TO_GROUND}.
      * <p>
-     * Note: If the altitude mode is unrecognized, {@link gov.nasa.worldwind.WorldWind#ABSOLUTE} is used.
+     * Note: If the altitude mode is unrecognized, {@link WorldWind#ABSOLUTE} is used.
      *
-     * @param altitudeMode the altitude mode. The default value is {@link gov.nasa.worldwind.WorldWind#ABSOLUTE}.
+     * @param altitudeMode the altitude mode. The default value is {@link WorldWind#ABSOLUTE}.
      */
-    public void setAltitudeMode(int altitudeMode)
-    {
+    public void setAltitudeMode(int altitudeMode) {
         this.altitudeMode = altitudeMode;
         this.reset();
     }
 
     /**
-     * Returns the {@link gov.nasa.worldwind.render.ScreenAnnotation} used to draw the label, or {@code null} if the
+     * Returns the {@link ScreenAnnotation} used to draw the label, or {@code null} if the
      * path doesn't draw a label.
      *
      * @return the screen annotation used for drawing the label, or {@code null} if no label is drawn.
      */
-    public ScreenAnnotation getAnnotation()
-    {
+    public ScreenAnnotation getAnnotation() {
         return this.annotation;
     }
 
     /**
-     * Specifies the {@link gov.nasa.worldwind.render.ScreenAnnotation} to use for drawing the label. The specified
+     * Specifies the {@link ScreenAnnotation} to use for drawing the label. The specified
      * screen annotation's screen point is controlled by the labled path. Otherwise the screen annotation's attributes
      * are not modified.
      *
      * @param annotation the screen annotation to use for drawing the label, or {@code null} if no label should be
      *                   drawn.
      */
-    public void setAnnotation(ScreenAnnotation annotation)
-    {
+    public void setAnnotation(ScreenAnnotation annotation) {
         this.annotation = annotation;
         this.reset();
     }
@@ -168,21 +162,17 @@ public class LabeledPath implements Renderable
      * Causes the labeled path to draw its label at one of the path locations.
      *
      * @param dc the <code>DrawContext</code> to be used.
-     *
      * @throws IllegalArgumentException if dc is {@code null}.
      */
-    public void render(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void render(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         // Determine the label's location only once per frame.
-        if (this.frameNumber != dc.getFrameTimeStamp())
-        {
+        if (this.frameNumber != dc.getFrameTimeStamp()) {
             this.determineLabelLocation(dc);
             this.frameNumber = dc.getFrameTimeStamp();
         }
@@ -190,9 +180,10 @@ public class LabeledPath implements Renderable
         this.drawLabel(dc);
     }
 
-    /** Resets the labeled path's cached location information. */
-    protected void reset()
-    {
+    /**
+     * Resets the labeled path's cached location information.
+     */
+    protected void reset() {
         this.labelLocationIndex = -1;
     }
 
@@ -203,14 +194,12 @@ public class LabeledPath implements Renderable
      *
      * @param dc the current draw context.
      */
-    protected void determineLabelLocation(DrawContext dc)
-    {
+    protected void determineLabelLocation(DrawContext dc) {
         // Reuse the current label location if its inside the view frustum and the label is completely visible when
         // placed there. Otherwise we find a new location that maximizes the label's visible area and is closest to the
         // current location.
         Vec4 lastPoint = this.getLabelPoint(dc);
-        if (lastPoint != null && dc.getView().getFrustumInModelCoordinates().contains(lastPoint))
-        {
+        if (lastPoint != null && dc.getView().getFrustumInModelCoordinates().contains(lastPoint)) {
             // Project the current location's model point into screen coordinates, and place the label at the
             // projected point. We do this to measure the label's visible area when placed at that point.
             Vec4 screenPoint = dc.getView().project(lastPoint);
@@ -230,8 +219,7 @@ public class LabeledPath implements Renderable
         double minDistance = Double.MAX_VALUE;
         int locationIndex = -1;
 
-        for (LatLon ll : this.getLocations())
-        {
+        for (LatLon ll : this.getLocations()) {
             ++locationIndex;
 
             if (ll == null)
@@ -250,8 +238,7 @@ public class LabeledPath implements Renderable
 
             // Find the location that maximizes the label's visible area.
             double area = this.getLabelVisibleArea(dc);
-            if (maxArea < area)
-            {
+            if (maxArea < area) {
                 maxArea = area;
                 this.labelLocationIndex = locationIndex;
 
@@ -260,11 +247,9 @@ public class LabeledPath implements Renderable
             }
             // If two or more locations cause the label to have the same visible area, give priority to the location
             // closest to the previous location.
-            else if (maxArea == area && lastPoint != null)
-            {
+            else if (maxArea == area && lastPoint != null) {
                 double dist = lastPoint.distanceToSquared3(point);
-                if (minDistance > dist)
-                {
+                if (minDistance > dist) {
                     minDistance = dist;
                     this.labelLocationIndex = locationIndex;
                 }
@@ -277,8 +262,7 @@ public class LabeledPath implements Renderable
      *
      * @param dc the current draw context.
      */
-    protected void drawLabel(DrawContext dc)
-    {
+    protected void drawLabel(DrawContext dc) {
         if (this.getAnnotation() == null)
             return;
 
@@ -300,9 +284,8 @@ public class LabeledPath implements Renderable
      * @param dc          the current draw context.
      * @param screenPoint the screen point to use.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void setLabelLocation(DrawContext dc, Vec4 screenPoint)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected void setLabelLocation(DrawContext dc, Vec4 screenPoint) {
         if (this.getAnnotation() != null)
             this.getAnnotation().setScreenPoint(new Point((int) screenPoint.x, (int) screenPoint.y));
     }
@@ -312,11 +295,9 @@ public class LabeledPath implements Renderable
      * label is not visible.
      *
      * @param dc the current draw context.
-     *
      * @return the number of square pixels visible.
      */
-    protected double getLabelVisibleArea(DrawContext dc)
-    {
+    protected double getLabelVisibleArea(DrawContext dc) {
         if (this.getAnnotation() == null)
             return 0;
 
@@ -332,11 +313,9 @@ public class LabeledPath implements Renderable
      * Returns {@code true} if the label is completely visible at its current location, and {@code false} otherwise.
      *
      * @param dc the current draw context.
-     *
      * @return {@code true} if the label is completely visible at its current location, and {@code false} otherwise.
      */
-    protected boolean isLabelCompletelyVisible(DrawContext dc)
-    {
+    protected boolean isLabelCompletelyVisible(DrawContext dc) {
         if (this.getAnnotation() == null)
             return false;
 
@@ -351,11 +330,9 @@ public class LabeledPath implements Renderable
      * index.
      *
      * @param dc the current draw context.
-     *
      * @return a model-coordinate point corresponding to the label's position and the path's path type.
      */
-    protected Vec4 getLabelPoint(DrawContext dc)
-    {
+    protected Vec4 getLabelPoint(DrawContext dc) {
         if (this.getLocations() == null)
             return null;
 
@@ -364,8 +341,7 @@ public class LabeledPath implements Renderable
 
         int i = 0;
         LatLon location = null;
-        for (LatLon ll : this.getLocations())
-        {
+        for (LatLon ll : this.getLocations()) {
             if (i++ == this.labelLocationIndex)
                 location = ll;
         }
@@ -382,15 +358,13 @@ public class LabeledPath implements Renderable
      *
      * @param dc       the current draw context.
      * @param location the location to compute a point for.
-     *
      * @return the model-coordinate point corresponding to the position and the path's path type.
      */
-    protected Vec4 computePoint(DrawContext dc, LatLon location)
-    {
+    protected Vec4 computePoint(DrawContext dc, LatLon location) {
         double elevation = (location instanceof Position) ? ((Position) location).getElevation() : 0;
 
         if (this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
-            return dc.computeTerrainPoint(location.getLatitude(), location.getLongitude(), 0d);
+            return dc.computeTerrainPoint(location.getLatitude(), location.getLongitude(), 0.0d);
         else if (this.getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
             return dc.computeTerrainPoint(location.getLatitude(), location.getLongitude(), elevation);
 

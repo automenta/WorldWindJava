@@ -16,18 +16,17 @@ import gov.nasa.worldwind.globes.Globe;
 import java.awt.*;
 
 /**
- * Interprets mouse input via the {@link DragSelectEvent} for notifying picked objects implementing the
- * {@link Draggable} interface. This version uses the {@link Draggable} interface for dragging but retains the original
- * behavior of the BasicDragger when the {@link gov.nasa.worldwind.pick.PickedObject} implements either the
- * {@link Movable} or {@link Movable2} interface.
+ * Interprets mouse input via the {@link DragSelectEvent} for notifying picked objects implementing the {@link
+ * Draggable} interface. This version uses the {@link Draggable} interface for dragging but retains the original
+ * behavior of the BasicDragger when the {@link gov.nasa.worldwind.pick.PickedObject} implements either the {@link
+ * Movable} or {@link Movable2} interface.
  * <p>
  * For objects not yet implementing the {@link Draggable} interface the legacy dragging functionality will be used.
  */
-public class BasicDragger implements SelectListener
-{
+public class BasicDragger implements SelectListener {
     /**
-     * The {@link WorldWindow} this dragger will utilize for the {@link Globe}, {@link View}, and
-     * {@link SceneController} objects.
+     * The {@link WorldWindow} this dragger will utilize for the {@link Globe}, {@link View}, and {@link
+     * SceneController} objects.
      */
     protected WorldWindow wwd;
     /**
@@ -38,18 +37,21 @@ public class BasicDragger implements SelectListener
      * The {@link DragContext} for dragging operations. Initialized on {@link AVKey#DRAG_BEGIN}.
      */
     protected DragContext dragContext;
+    //////////////////////////////////////////////////////////
+    // Legacy Properties
+    //////////////////////////////////////////////////////////
+    protected Vec4 dragRefObjectPoint;
+    protected Point dragRefCursorPoint;
+    protected double dragRefAltitude;
 
     /**
      * Creates a dragging controller which converts {@link SelectEvent}s to the {@link Draggable} interface.
      *
      * @param wwd the {@link WorldWindow} this drag controller should be associated with.
-     *
      * @throws IllegalArgumentException if the provided {@link WorldWindow} is null.
      */
-    public BasicDragger(WorldWindow wwd)
-    {
-        if (wwd == null)
-        {
+    public BasicDragger(WorldWindow wwd) {
+        if (wwd == null) {
             String msg = Logging.getMessage("nullValue.WorldWindow");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -60,14 +62,13 @@ public class BasicDragger implements SelectListener
     /**
      * Ignores the useTerrain argument as it has been deprecated and utilizes the single parameter constructor.
      *
-     * @param wwd The world window.
+     * @param wwd        The world window.
      * @param useTerrain Unused.
      * @deprecated the useTerrain property has been deprecated in favor of the {@link Draggable} interface which allows
      * the object to define the drag behavior.
      */
     @Deprecated
-    public BasicDragger(WorldWindow wwd, boolean useTerrain)
-    {
+    public BasicDragger(WorldWindow wwd, boolean useTerrain) {
         this(wwd);
     }
 
@@ -76,52 +77,43 @@ public class BasicDragger implements SelectListener
      *
      * @return <code>true</code> if a drag operation is executing.
      */
-    public boolean isDragging()
-    {
+    public boolean isDragging() {
         return this.dragging;
     }
 
     /**
-     *
      * @return <code>false</code> as this functionality has been deprecated.
      * @deprecated the {@link Draggable} provides the object being dragged complete control over the dragging behavior.
      */
     @Deprecated
-    public boolean isUseTerrain()
-    {
+    public boolean isUseTerrain() {
         return false;
     }
 
     /**
      * @param useTerrain Unused.
-     *
      * @deprecated definition of dragging behavior now defined by the object in the {@link Draggable} interface.
      */
     @Deprecated
-    public void setUseTerrain(boolean useTerrain)
-    {
+    public void setUseTerrain(boolean useTerrain) {
         // ignored - functionality deprecated
     }
 
     @Override
-    public void selected(SelectEvent event)
-    {
-        if (event == null)
-        {
+    public void selected(SelectEvent event) {
+        if (event == null) {
             String msg = Logging.getMessage("nullValue.EventIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (event.getEventAction().equals(SelectEvent.DRAG_END))
-        {
+        if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
             this.dragContext.setDragState(AVKey.DRAG_ENDED);
             this.fireDrag((DragSelectEvent) event);
             this.dragContext = null;
             this.dragging = false;
         }
-        else if (event.getEventAction().equals(SelectEvent.DRAG))
-        {
+        else if (event.getEventAction().equals(SelectEvent.DRAG)) {
 
             if (this.dragContext == null)
                 this.dragContext = new DragContext();
@@ -132,12 +124,10 @@ public class BasicDragger implements SelectListener
             this.dragContext.setGlobe(this.wwd.getModel().getGlobe());
             this.dragContext.setSceneController(this.wwd.getSceneController());
 
-            if (this.dragging)
-            {
+            if (this.dragging) {
                 this.dragContext.setDragState(AVKey.DRAG_CHANGE);
             }
-            else
-            {
+            else {
                 this.dragContext.setDragState(AVKey.DRAG_BEGIN);
                 this.dragContext.setInitialPoint(((DragSelectEvent) event).getPreviousPickPoint());
                 this.dragging = true;
@@ -149,17 +139,14 @@ public class BasicDragger implements SelectListener
     }
 
     /**
-     * Propagates the {@link DragContext} to the picked object if it implements {@link Draggable},
-     * {@link Movable}, or {@link Movable2}.
+     * Propagates the {@link DragContext} to the picked object if it implements {@link Draggable}, {@link Movable}, or
+     * {@link Movable2}.
      *
      * @param dragEvent the {@link DragContext} to deliver to the selected object.
-     *
      * @throws IllegalArgumentException if the {@link DragContext} is null.
      */
-    protected void fireDrag(DragSelectEvent dragEvent)
-    {
-        if (dragEvent == null || dragEvent.getTopObject() == null)
-        {
+    protected void fireDrag(DragSelectEvent dragEvent) {
+        if (dragEvent == null || dragEvent.getTopObject() == null) {
             String msg = Logging.getMessage("nullValue.ObjectIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -167,31 +154,21 @@ public class BasicDragger implements SelectListener
 
         Object dragObject = dragEvent.getTopObject();
 
-        if (dragObject instanceof Draggable)
-        {
+        if (dragObject instanceof Draggable) {
             ((Draggable) dragObject).drag(this.dragContext);
         }
-        else if ((dragObject instanceof Movable2) || (dragObject instanceof Movable))
-        {
+        else if ((dragObject instanceof Movable2) || (dragObject instanceof Movable)) {
             // Utilize the existing behavior
             this.dragLegacy(dragEvent);
         }
     }
-
-    //////////////////////////////////////////////////////////
-    // Legacy Properties
-    //////////////////////////////////////////////////////////
-    protected Vec4 dragRefObjectPoint;
-    protected Point dragRefCursorPoint;
-    protected double dragRefAltitude;
 
     /**
      * Legacy drag approach, provided for objects not yet implementing the {@link Draggable} interface.
      *
      * @param event the current {@link SelectEvent}.
      */
-    protected void dragLegacy(SelectEvent event)
-    {
+    protected void dragLegacy(SelectEvent event) {
 
         DragSelectEvent dragEvent = (DragSelectEvent) event;
         Object dragObject = dragEvent.getTopObject();
@@ -238,8 +215,7 @@ public class BasicDragger implements SelectListener
         if (inters != null)
             pickPos = globe.computePositionFromPoint(inters[0].getIntersectionPoint());
 
-        if (pickPos != null)
-        {
+        if (pickPos != null) {
             // Intersection with globe. Move reference point to the intersection point,
             // but maintain current altitude.
             Position p = new Position(pickPos, refPos.getElevation());

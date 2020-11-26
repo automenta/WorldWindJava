@@ -15,54 +15,34 @@ import java.util.*;
  * @author dcollins
  * @version $Id: AbstractDataStoreProducer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractDataStoreProducer extends WWObjectImpl implements DataStoreProducer
-{
-    public static class SourceInfo extends AVListImpl
-    {
-        public final Object source;
-
-        public SourceInfo(Object source, AVList params)
-        {
-            this.source = source;
-            if (null != params)
-                this.setValues(params);
-        }
-    }
-
+public abstract class AbstractDataStoreProducer extends WWObjectImpl implements DataStoreProducer {
+    private final List<SourceInfo> dataSourceList =
+        Collections.synchronizedList(new ArrayList<>());
+    private final List<Object> productionResults = new ArrayList<>();
+    protected AVList productionParams = null;
     private AVList params;
-    private final java.util.List<SourceInfo> dataSourceList =
-        Collections.synchronizedList(new java.util.ArrayList<>());
-    private final java.util.List<Object> productionResults = new java.util.ArrayList<>();
     private boolean isStopped = false;
 
-    protected AVList productionParams = null;
-
-    public AbstractDataStoreProducer()
-    {
+    public AbstractDataStoreProducer() {
     }
 
-    public AVList getProductionParameters()
-    {
+    public AVList getProductionParameters() {
         return this.productionParams;
     }
 
-    public AVList getStoreParameters()
-    {
+    public AVList getStoreParameters() {
         return this.params;
     }
 
-    public void setStoreParameters(AVList parameters)
-    {
-        if (parameters == null)
-        {
+    public void setStoreParameters(AVList parameters) {
+        if (parameters == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         String message = this.validateProductionParameters(parameters);
-        if (message != null)
-        {
+        if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
@@ -70,27 +50,23 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         this.params = parameters;
     }
 
-    public Iterable<Object> getDataSources()
-    {
-        ArrayList<Object> list = new ArrayList<>();
+    public Iterable<Object> getDataSources() {
+        List<Object> list = new ArrayList<>();
 
-        for (SourceInfo info : this.dataSourceList)
-        {
+        for (SourceInfo info : this.dataSourceList) {
             list.add(info.source);
         }
 
         return list;
     }
 
-    public boolean acceptsDataSource(Object source, AVList params)
-    {
+    public boolean acceptsDataSource(Object source, AVList params) {
         if (source == null || this.isStopped())
             return false;
 
         String message = this.validateDataSource(source, params);
         //noinspection RedundantIfStatement
-        if (message != null)
-        {
+        if (message != null) {
             // TODO garakl Do we want to log these files which we do not have readers for?
 //            Logging.logger().finest(message);
             return false;
@@ -99,10 +75,8 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         return true;
     }
 
-    public boolean containsDataSource(Object source)
-    {
-        for (SourceInfo info : this.dataSourceList)
-        {
+    public boolean containsDataSource(Object source) {
+        for (SourceInfo info : this.dataSourceList) {
             if (Objects.equals(info.source, source))
                 return true;
         }
@@ -110,10 +84,8 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         return false;
     }
 
-    public void offerDataSource(Object source, AVList params)
-    {
-        if (source == null)
-        {
+    public void offerDataSource(Object source, AVList params) {
+        if (source == null) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -121,8 +93,7 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
 
         params = (null == params) ? new AVListImpl() : params.copy();
         String message = this.validateDataSource(source, params);
-        if (message != null)
-        {
+        if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
@@ -130,25 +101,20 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         this.dataSourceList.add(new SourceInfo(source, params));
     }
 
-    public void offerAllDataSources(Iterable<?> sources)
-    {
-        if (sources == null)
-        {
+    public void offerAllDataSources(Iterable<?> sources) {
+        if (sources == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        for (Object source : sources)
-        {
+        for (Object source : sources) {
             this.offerDataSource(source, null);
         }
     }
 
-    public void removeDataSource(Object source)
-    {
-        if (source == null)
-        {
+    public void removeDataSource(Object source) {
+        if (source == null) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().warning(message);
             return; // Warn but don't throw an exception.
@@ -158,30 +124,25 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         if (!iter.hasNext())
             return;
 
-        for (SourceInfo info = iter.next(); iter.hasNext(); info = iter.next())
-        {
+        for (SourceInfo info = iter.next(); iter.hasNext(); info = iter.next()) {
             if (info.source != null && info.source.equals(source))
                 iter.remove();
         }
     }
 
-    public void removeAllDataSources()
-    {
+    public void removeAllDataSources() {
         this.dataSourceList.clear();
     }
 
-    public void startProduction() throws Exception
-    {
-        if (this.isStopped())
-        {
+    public void startProduction() throws Exception {
+        if (this.isStopped()) {
             String message = Logging.getMessage("DataStoreProducer.Stopped");
             Logging.logger().warning(message);
             return;
         }
 
         String message = this.validateProductionParameters(this.params);
-        if (message != null)
-        {
+        if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
@@ -189,33 +150,27 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
         this.doStartProduction(this.params);
     }
 
-    public synchronized void stopProduction()
-    {
+    public synchronized void stopProduction() {
         this.isStopped = true;
     }
 
-    protected synchronized boolean isStopped()
-    {
+    protected synchronized boolean isStopped() {
         return this.isStopped;
     }
 
-    public Iterable<?> getProductionResults()
-    {
-        return java.util.Collections.unmodifiableList(this.productionResults);
+    public Iterable<?> getProductionResults() {
+        return Collections.unmodifiableList(this.productionResults);
     }
 
-    public void removeProductionState()
-    {
+    public void removeProductionState() {
         // Left as an optional operation for subclasses to define.
     }
 
-    protected java.util.List<SourceInfo> getDataSourceList()
-    {
+    protected List<SourceInfo> getDataSourceList() {
         return this.dataSourceList;
     }
 
-    protected java.util.List<Object> getProductionResultsList()
-    {
+    protected List<Object> getProductionResultsList() {
         return this.productionResults;
     }
 
@@ -224,4 +179,14 @@ public abstract class AbstractDataStoreProducer extends WWObjectImpl implements 
     protected abstract String validateProductionParameters(AVList parameters);
 
     protected abstract String validateDataSource(Object source, AVList params);
+
+    public static class SourceInfo extends AVListImpl {
+        public final Object source;
+
+        public SourceInfo(Object source, AVList params) {
+            this.source = source;
+            if (null != params)
+                this.setValues(params);
+        }
+    }
 }

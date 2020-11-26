@@ -15,13 +15,15 @@ import gov.nasa.worldwind.pick.PickedObjectList;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.util.BasicDragger;
 
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.image.*;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This example illustrates how you might show video on the globe's surface. It uses a {@link
- * gov.nasa.worldwind.render.SurfaceImage} to display one image after another, each of which could correspond to a frame
+ * SurfaceImage} to display one image after another, each of which could correspond to a frame
  * of video. The video frames are simulated by creating a new buffered image for each frame. The same
  * <code>SurfaceImage</code> is used. The image source of the <code>SurfaceImage</code> is continually set to a new
  * BufferedImage. (It would be more efficient to also re-use a single BufferedImage, but one objective of this example
@@ -31,25 +33,32 @@ import java.util.Arrays;
  * @author tag
  * @version $Id: VideoOnTerrain.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class VideoOnTerrain extends ApplicationTemplate
-{
+public class VideoOnTerrain extends ApplicationTemplate {
     protected static final int IMAGE_SIZE = 512;
     protected static final double IMAGE_OPACITY = 0.5;
     protected static final double IMAGE_SELECTED_OPACITY = 0.8;
 
     // These corners do not form a Sector, so SurfaceImage must generate a texture rather than simply using the source
     // image.
-    protected static final java.util.List<LatLon> CORNERS = Arrays.asList(
+    protected static final List<LatLon> CORNERS = Arrays.asList(
         LatLon.fromDegrees(37.8313, -105.0653),
         LatLon.fromDegrees(37.8313, -105.0396),
         LatLon.fromDegrees(37.8539, -105.04),
         LatLon.fromDegrees(37.8539, -105.0653)
     );
 
-    protected static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+    public static void main(String[] args) {
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 37.8432);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -105.0527);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 7000);
+        ApplicationTemplate.start("WorldWind Video on Terrain", AppFrame.class);
+    }
+
+    protected static class AppFrame extends ApplicationTemplate.AppFrame {
+        protected final long start = System.currentTimeMillis();
+        protected long counter;
+
+        public AppFrame() {
             super(true, true, true);
 
             RenderableLayer layer = new RenderableLayer();
@@ -63,7 +72,7 @@ public class VideoOnTerrain extends ApplicationTemplate
             surfaceImage.setOpacity(IMAGE_OPACITY);
             layer.addRenderable(surfaceImage);
 
-            javax.swing.Timer timer = new javax.swing.Timer(50, actionEvent -> {
+            Timer timer = new Timer(50, actionEvent -> {
                 Iterable<LatLon> corners = surfaceImage.getCorners();
                 surfaceImage.setImageSource(makeImage(), corners);
                 getWwd().redraw();
@@ -71,11 +80,7 @@ public class VideoOnTerrain extends ApplicationTemplate
             timer.start();
         }
 
-        protected long counter;
-        protected final long start = System.currentTimeMillis();
-
-        protected BufferedImage makeImage()
-        {
+        protected BufferedImage makeImage() {
             BufferedImage image = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D g = image.createGraphics();
 
@@ -95,31 +100,26 @@ public class VideoOnTerrain extends ApplicationTemplate
         }
     }
 
-    protected static class SurfaceImageDragger implements SelectListener
-    {
+    protected static class SurfaceImageDragger implements SelectListener {
         protected final WorldWindow wwd;
-        protected SurfaceImage lastHighlit;
         protected final BasicDragger dragger;
+        protected SurfaceImage lastHighlit;
 
-        public SurfaceImageDragger(WorldWindow wwd)
-        {
+        public SurfaceImageDragger(WorldWindow wwd) {
             this.wwd = wwd;
             this.dragger = new BasicDragger(wwd);
         }
 
-        public void selected(SelectEvent event)
-        {
+        public void selected(SelectEvent event) {
             // Have rollover events highlight the rolled-over object.
-            if (event.getEventAction().equals(SelectEvent.ROLLOVER) && !this.dragger.isDragging())
-            {
+            if (event.getEventAction().equals(SelectEvent.ROLLOVER) && !this.dragger.isDragging()) {
                 this.highlight(event.getTopObject());
                 this.wwd.redraw();
             }
 
             // Drag the selected object.
             if (event.getEventAction().equals(SelectEvent.DRAG) ||
-                event.getEventAction().equals(SelectEvent.DRAG_END))
-            {
+                event.getEventAction().equals(SelectEvent.DRAG_END)) {
                 this.dragger.selected(event);
 
                 if (this.dragger.isDragging())
@@ -127,43 +127,30 @@ public class VideoOnTerrain extends ApplicationTemplate
             }
 
             // We missed any roll-over events while dragging, so highlight any under the cursor now.
-            if (event.getEventAction().equals(SelectEvent.DRAG_END))
-            {
+            if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
                 PickedObjectList pol = this.wwd.getObjectsAtCurrentPosition();
-                if (pol != null)
-                {
+                if (pol != null) {
                     this.highlight(pol.getTopObject());
                     this.wwd.redraw();
                 }
             }
         }
 
-        protected void highlight(Object o)
-        {
+        protected void highlight(Object o) {
             if (this.lastHighlit == o)
                 return; // Same thing selected
 
             // Turn off highlight if on.
-            if (this.lastHighlit != null)
-            {
+            if (this.lastHighlit != null) {
                 this.lastHighlit.setOpacity(IMAGE_OPACITY);
                 this.lastHighlit = null;
             }
 
             // Turn on highlight if selected object is a SurfaceImage.
-            if (o instanceof SurfaceImage)
-            {
+            if (o instanceof SurfaceImage) {
                 this.lastHighlit = (SurfaceImage) o;
                 this.lastHighlit.setOpacity(IMAGE_SELECTED_OPACITY);
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 37.8432);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -105.0527);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 7000);
-        ApplicationTemplate.start("WorldWind Video on Terrain", AppFrame.class);
     }
 }

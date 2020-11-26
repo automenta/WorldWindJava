@@ -18,18 +18,19 @@ import java.awt.*;
 import java.util.Hashtable;
 
 /**
- * Example of {@link gov.nasa.worldwind.render.Wedge} usage. Shows examples of pyramids with various orientations,
+ * Example of {@link Wedge} usage. Shows examples of pyramids with various orientations,
  * materials, and textures applied.
  *
  * @author ccrick
  * @version $Id: Wedges.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class Wedges extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class Wedges extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Wedges", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             // Add detail hint slider panel
@@ -43,7 +44,7 @@ public class Wedges extends ApplicationTemplate
             attrs.setInteriorOpacity(0.7);
             attrs.setEnableLighting(true);
             attrs.setOutlineMaterial(Material.RED);
-            attrs.setOutlineWidth(2d);
+            attrs.setOutlineWidth(2.0d);
             attrs.setDrawInterior(true);
             attrs.setDrawOutline(false);
 
@@ -53,7 +54,7 @@ public class Wedges extends ApplicationTemplate
             attrs2.setInteriorOpacity(1);
             attrs2.setEnableLighting(true);
             attrs2.setOutlineMaterial(Material.WHITE);
-            attrs2.setOutlineWidth(2d);
+            attrs2.setOutlineWidth(2.0d);
             attrs2.setDrawOutline(false);
 
             // ********* sample  Wedges  *******************
@@ -140,8 +141,7 @@ public class Wedges extends ApplicationTemplate
             insertBeforeCompass(getWwd(), layer);
         }
 
-        protected JPanel makeDetailHintControlPanel()
-        {
+        protected JPanel makeDetailHintControlPanel() {
             JPanel controlPanel = new JPanel(new BorderLayout(0, 10));
             controlPanel.setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9),
                 new TitledBorder("Detail Hint")));
@@ -162,7 +162,7 @@ public class Wedges extends ApplicationTemplate
                 slider.setLabelTable(labelTable);
                 slider.setPaintLabels(true);
                 slider.addChangeListener(e -> {
-                    double hint = ((JSlider) e.getSource()).getValue() / 10d;
+                    double hint = ((JSlider) e.getSource()).getValue() / 10.0d;
                     setWedgeDetailHint(hint);
                     getWwd().redraw();
                 });
@@ -176,12 +176,9 @@ public class Wedges extends ApplicationTemplate
             return controlPanel;
         }
 
-        protected RenderableLayer getLayer()
-        {
-            for (Layer layer : getWwd().getModel().getLayers())
-            {
-                if (layer.getName().contains("Renderable"))
-                {
+        protected RenderableLayer getLayer() {
+            for (Layer layer : getWwd().getModel().getLayers()) {
+                if (layer.getName().contains("Renderable")) {
                     return (RenderableLayer) layer;
                 }
             }
@@ -189,20 +186,13 @@ public class Wedges extends ApplicationTemplate
             return null;
         }
 
-        protected void setWedgeDetailHint(double hint)
-        {
-            for (Renderable renderable : getLayer().getRenderables())
-            {
+        protected void setWedgeDetailHint(double hint) {
+            for (Renderable renderable : getLayer().getRenderables()) {
                 Wedge current = (Wedge) renderable;
                 current.setDetailHint(hint);
             }
             System.out.println("wedge detail hint set to " + hint);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Wedges", AppFrame.class);
     }
 }
 

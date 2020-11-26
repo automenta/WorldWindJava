@@ -19,21 +19,17 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: TacticalGraphicUtil.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class TacticalGraphicUtil
-{
+public class TacticalGraphicUtil {
     /**
      * Convert a list of cartesian points to Positions.
      *
      * @param globe  Globe used to convert points to positions.
      * @param points Points to convert.
-     *
      * @return List of positions computed from cartesian points.
      */
-    public static List<Position> asPositionList(Globe globe, Vec4... points)
-    {
+    public static List<Position> asPositionList(Globe globe, Vec4... points) {
         List<Position> positions = new ArrayList<>(points.length);
-        for (Vec4 point : points)
-        {
+        for (Vec4 point : points) {
             positions.add(globe.computePositionFromPoint(point));
         }
         return positions;
@@ -46,30 +42,24 @@ public class TacticalGraphicUtil
      * modifier is a single object, this method returns an array containing that object and <code>null</code>.
      *
      * @param graphic Graphic from which to retrieve dates.
-     *
      * @return A two element array containing the altitude modifiers. One or both elements may be null.
      */
-    public static Object[] getDateRange(TacticalGraphic graphic)
-    {
+    public static Object[] getDateRange(TacticalGraphic graphic) {
         Object date1 = null;
         Object date2 = null;
 
         Object o = graphic.getModifier(SymbologyConstants.DATE_TIME_GROUP);
-        if (o instanceof Iterable)
-        {
+        if (o instanceof Iterable) {
             Iterator iterator = ((Iterable) o).iterator();
-            if (iterator.hasNext())
-            {
+            if (iterator.hasNext()) {
                 date1 = iterator.next();
             }
 
-            if (iterator.hasNext())
-            {
+            if (iterator.hasNext()) {
                 date2 = iterator.next();
             }
         }
-        else
-        {
+        else {
             date1 = o;
         }
 
@@ -84,30 +74,24 @@ public class TacticalGraphicUtil
      * <code>null</code>.
      *
      * @param graphic Graphic from which to retrieve dates.
-     *
      * @return A two element array containing the altitude modifiers. One or both elements may be null.
      */
-    public static Object[] getAltitudeRange(TacticalGraphic graphic)
-    {
+    public static Object[] getAltitudeRange(TacticalGraphic graphic) {
         Object alt1 = null;
         Object alt2 = null;
 
         Object o = graphic.getModifier(SymbologyConstants.ALTITUDE_DEPTH);
-        if (o instanceof Iterable)
-        {
+        if (o instanceof Iterable) {
             Iterator iterator = ((Iterable) o).iterator();
-            if (iterator.hasNext())
-            {
+            if (iterator.hasNext()) {
                 alt1 = iterator.next();
             }
 
-            if (iterator.hasNext())
-            {
+            if (iterator.hasNext()) {
                 alt2 = iterator.next();
             }
         }
-        else
-        {
+        else {
             alt1 = o;
         }
 
@@ -127,8 +111,7 @@ public class TacticalGraphicUtil
      */
     public static void placeLabelsOnPath(DrawContext dc, Iterable<? extends Position> positions,
         TacticalGraphicLabel label1,
-        TacticalGraphicLabel label2, double distance)
-    {
+        TacticalGraphicLabel label2, double distance) {
         Iterator<? extends Position> iterator = positions.iterator();
         Globe globe = dc.getGlobe();
 
@@ -142,8 +125,7 @@ public class TacticalGraphicUtil
         pos2 = iterator.next();
         pt2 = globe.computePointFromLocation(pos2);
 
-        while (iterator.hasNext() && length < distance)
-        {
+        while (iterator.hasNext() && length < distance) {
             pos1 = pos2;
             pt1 = pt2;
 
@@ -154,8 +136,7 @@ public class TacticalGraphicUtil
             length += thisDistance;
         }
 
-        if (pos1 != null && pos2 != null && thisDistance > 0)
-        {
+        if (pos1 != null && pos2 != null && thisDistance > 0) {
             double delta = length - distance;
             LatLon ll = LatLon.interpolateGreatCircle(delta / thisDistance, pos1, pos2);
             pos1 = new Position(ll, 0);
@@ -163,8 +144,7 @@ public class TacticalGraphicUtil
             label1.setPosition(pos1);
             label1.setOrientationPosition(pos2);
 
-            if (label2 != null)
-            {
+            if (label2 != null) {
                 label2.setPosition(pos1);
                 label2.setOrientationPosition(pos2);
             }
@@ -204,35 +184,29 @@ public class TacticalGraphicUtil
      *                      invocation, pass an int[] with length equal to the controlPoints array. bezierCurve will
      *                      populate the array on the first invocation, and reuse the computed values on subsequent
      *                      invocations.
-     *
      * @return A point along the curve.
      */
-    public static Vec4 bezierCurve(Vec4[] controlPoints, double t, int[] coefficients)
-    {
-        if (coefficients == null || controlPoints == null)
-        {
+    public static Vec4 bezierCurve(Vec4[] controlPoints, double t, int[] coefficients) {
+        if (coefficients == null || controlPoints == null) {
             String message = Logging.getMessage("nullValue.ArrayIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (coefficients.length != controlPoints.length)
-        {
+        if (coefficients.length != controlPoints.length) {
             String message = Logging.getMessage("generic.ArrayInvalidLength", coefficients.length);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (coefficients[0] != 1)
-        {
+        if (coefficients[0] != 1) {
             binomial(coefficients.length - 1, coefficients);
         }
 
         int n = controlPoints.length - 1;
 
         Vec4 r = Vec4.ZERO;
-        for (int k = 0; k <= n; k++)
-        {
+        for (int k = 0; k <= n; k++) {
             double c = coefficients[k] * Math.pow(t, k) * Math.pow(1 - t, n - k);
             r = r.add3(controlPoints[k].multiply3(c));
         }
@@ -247,17 +221,14 @@ public class TacticalGraphicUtil
      * @param n            Order of polynomial for which to calculate coefficients.
      * @param coefficients Array to receive coefficients. The length of this array must be n + 1.
      */
-    protected static void binomial(int n, int[] coefficients)
-    {
-        if (coefficients == null)
-        {
+    protected static void binomial(int n, int[] coefficients) {
+        if (coefficients == null) {
             String message = Logging.getMessage("nullValue.ArrayIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (coefficients.length != n + 1)
-        {
+        if (coefficients.length != n + 1) {
             String message = Logging.getMessage("generic.ArrayInvalidLength", coefficients.length);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -265,11 +236,9 @@ public class TacticalGraphicUtil
 
         // Algorithm from "Data Structures and Algorithms with Object-Oriented Design Patterns in Java" by Bruno R.
         // Preiss (http://www.brpreiss.com/books/opus5/html/page460.html)
-        for (int i = 0; i <= n; i++)
-        {
+        for (int i = 0; i <= n; i++) {
             coefficients[i] = 1;
-            for (int j = i - 1; j > 0; j--)
-            {
+            for (int j = i - 1; j > 0; j--) {
                 coefficients[j] += coefficients[j - 1];
             }
         }

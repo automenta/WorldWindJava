@@ -12,20 +12,17 @@ package gov.nasa.worldwind.ogc.kml;
  * @author tag
  * @version $Id: KMLBoundary.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLBoundary extends KMLAbstractObject
-{
+public class KMLBoundary extends KMLAbstractObject {
     /**
      * Construct an instance.
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLBoundary(String namespaceURI)
-    {
+    public KMLBoundary(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public KMLLinearRing getLinearRing()
-    {
+    public KMLLinearRing getLinearRing() {
         return (KMLLinearRing) this.getField("LinearRing");
     }
 }

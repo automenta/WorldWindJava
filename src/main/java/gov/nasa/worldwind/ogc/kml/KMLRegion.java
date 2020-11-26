@@ -71,8 +71,7 @@ import java.util.*;
  * @author tag
  * @version $Id: KMLRegion.java 2029 2014-05-23 21:22:23Z pabercrombie $
  */
-public class KMLRegion extends KMLAbstractObject
-{
+public class KMLRegion extends KMLAbstractObject {
     /**
      * The default time in milliseconds a <code>RegionData</code> element may exist in this Region's
      * <code>regionDataCache</code> before it must be regenerated: 6 seconds.
@@ -88,218 +87,6 @@ public class KMLRegion extends KMLAbstractObject
      * 2.8.
      */
     protected static final double DEFAULT_DETAIL_HINT_ORIGIN = 2.8;
-
-    /**
-     * <code>RegionData</code> holds a Region's computed data used during a single call to <code>Region.isActive</code>,
-     * and is unique to a particular <code>Globe</code>.
-     * <p>
-     * RegionData entries are places in a Region's <code>regionDataCache</code>, and are retrieved during each call to
-     * <code>isActive</code> using the current <code>Globe</code> as the cache key. RegionData's elements depend on the
-     * <code>Globe's</code> <code>ElevationModel</code>, and therefore cannot be permanently cached. Each RegionData
-     * entry is valid for a random amount of time between its <code>minExpiryTime</code> and its
-     * <code>maxExpiryTime</code>, after which it must be regenerated. The time is randomized to amortize the cost of
-     * regenerating data for multiple Regions over multiple frames.
-     * <p>
-     * <strong>isActive</strong> <br> RegionData's <code>isActive</code> property indicates whether the Region
-     * associated with a RegionData entry is active. This is used to share the result of computing <code>isActive</code>
-     * among multiple calls during the same frame. For example, the preRender and render passes need not each compute
-     * <code>isActive</code>, and can therefore share the same computation by ensuring that this property is set at most
-     * once per frame. Callers determine when to recompute <code>isActive</code> by comparing the
-     * <code>DrawContext's</code> current frame number against the RegionData's <code>activeFrameNumber</code>. This
-     * property is accessed by calling <code>isActive</code> and <code>setActive</code>.
-     * <p>
-     * <strong>extent</strong> <br> RegionData's <code>extent</code> property is an <code>Extent</code> used to
-     * determine if a Region's bounding box is in view. This property is accessed by calling <code>getExtent</code> and
-     * <code>setExtent</code>. May be <code>null</code>.
-     * <p>
-     * <strong>sector</strong> <br> RegionData's <code>sector</code> property is a <code>Sector</code> used to
-     * determine if Regions with an <code>altitudeMode</code> of <code>clampToGround</code> are in view. Accessed by
-     * calling <code>getSector</code> and <code>setSector</code>. When a Region's <code>altitudeMode</code> is
-     * <code>clampToGround</code>, the Region's sector can be used to determine visibility because the Region is defined
-     * to be on the <code>Globe's</code> surface.
-     * <p>
-     * <strong>points</strong> <br> RegionData's <code>points</code> property indicates a list of model-coordinate
-     * points representing the corners and interior of the Region. These points are used to determine the distance
-     * between the Region and the <code>View's</code> eye point. If the Region has altitude mode of
-     * <code>clampToGround</code>, this list must contain five points: the model-coordinate points of the Region's four
-     * corners and center point on the surface terrain.
-     */
-    protected static class RegionData extends ShapeDataCache.ShapeDataCacheEntry
-    {
-        /** Identifies the frame used to calculate this entry's values. Initially -1. */
-        protected long frameNumber = -1;
-        /** Identifies the frame used to determine if this entry's Region is active. Initially -1. */
-        protected long activeFrameNumber = -1;
-        /** Identifies whether this entry's Region is active. Initially <code>false</code>. */
-        protected boolean isActive;
-        /**
-         * Indicates the vertical datum against which the altitudes values in this entry's Region are interpreted. One
-         * of <code>WorldWind.ABSOLUTE</code>, <code>WorldWind.CLAMP_TO_GROUND</code>, or
-         * <code>WorldWind.RELATIVE_TO_GROUND</code>. Initially -1.
-         */
-        protected int altitudeMode = -1;
-        /**
-         * Indicates the <code>Sector</code> used to determine if a Region who's <code>altitudeMode</code> is
-         * <code>clampToGround</code> is visible. Initially <code>null</code>.
-         */
-        protected Sector sector;
-        /**
-         * Indicates the model-coordinate points representing the corners and interior of this entry's Region. These
-         * points are used to determine the distance between this entry's Region and the <code>View's</code> eye point.
-         * Initially <code>null</code>.
-         */
-        protected List<Vec4> points;
-
-        /**
-         * Constructs a new <code>RegionData</code> entry from the <code>Globe</code> and vertical exaggeration of a
-         * specified draw context.
-         *
-         * @param dc            the draw context. Must contain a <code>Globe</code>.
-         * @param minExpiryTime the minimum expiration duration, in milliseconds.
-         * @param maxExpiryTime the maximum expiration duration, in milliseconds.
-         */
-        public RegionData(DrawContext dc, long minExpiryTime, long maxExpiryTime)
-        {
-            super(dc, minExpiryTime, maxExpiryTime);
-        }
-
-        /**
-         * Identifies the frame used to calculate this entry's values.
-         *
-         * @return the frame used to calculate this entry's values.
-         */
-        public long getFrameNumber()
-        {
-            return frameNumber;
-        }
-
-        /**
-         * Specifies the frame used to calculate this entry's values.
-         *
-         * @param frameNumber the frame used to calculate this entry's values.
-         */
-        public void setFrameNumber(long frameNumber)
-        {
-            this.frameNumber = frameNumber;
-        }
-
-        /**
-         * Identifies the frame used to determine if this entry's Region is active.
-         *
-         * @return the frame used to determine if this entry's Region is active.
-         */
-        public long getActiveFrameNumber()
-        {
-            return activeFrameNumber;
-        }
-
-        /**
-         * Specifies the frame used to determine if this entry's Region is active.
-         *
-         * @param frameNumber the frame used to determine if this entry's Region is active.
-         */
-        public void setActiveFrameNumber(long frameNumber)
-        {
-            this.activeFrameNumber = frameNumber;
-        }
-
-        /**
-         * Indicates whether this entry's Region is active.
-         *
-         * @return <code>true</code> if this entry's Region is active, otherwise <code>false</code>.
-         */
-        public boolean isActive()
-        {
-            return this.isActive;
-        }
-
-        /**
-         * Specifies whether this entry's Region is active.
-         *
-         * @param active <code>true</code> to specify that this entry's Region is active, otherwise <code>false</code>.
-         */
-        public void setActive(boolean active)
-        {
-            this.isActive = active;
-        }
-
-        /**
-         * Indicates the vertical datum against which the altitudes values in this entry's Region are interpreted.
-         *
-         * @return the altitude mode of this entry's Region. One of <code>WorldWind.ABSOLUTE</code>,
-         *         <code>WorldWind.CLAMP_TO_GROUND</code>, or <code>WorldWind.RELATIVE_TO_GROUND</code>.
-         */
-        public int getAltitudeMode()
-        {
-            return this.altitudeMode;
-        }
-
-        /**
-         * Specifies the vertical datum against which the altitudes values in this entry's Region should be interpreted.
-         * Must be one of <code>WorldWind.ABSOLUTE</code>, <code>WorldWind.CLAMP_TO_GROUND</code>, or
-         * <code>WorldWind.RELATIVE_TO_GROUND</code>.
-         *
-         * @param altitudeMode the vertical datum to use.
-         */
-        public void setAltitudeMode(int altitudeMode)
-        {
-            this.altitudeMode = altitudeMode;
-        }
-
-        /**
-         * Indicates the <code>Sector</code> used to determine if a Region who's <code>altitudeMode</code> is
-         * <code>clampToGround</code> is visible. This returns <code>null</code> if this entry's Region's has no
-         * geographic bounding box.
-         *
-         * @return the <code>Sector</code> used to determine if a Region is visible, or <code>null</code> to specify
-         *         that this entry's Region has no bounding box.
-         */
-        public Sector getSector()
-        {
-            return this.sector;
-        }
-
-        /**
-         * Specifies the <code>Sector</code> that defines a Region's surface sector on the <code>Globe</code>. Specify
-         * <code>null</code> to indicate that this entry' Region has no geographic bounding box.
-         *
-         * @param sector the <code>Sector</code> that is used to determine if a <code>clampToGround</code> Region is
-         *               visible, or <code>null</code> to specify that the entry's Region's has no bounding box.
-         */
-        public void setSector(Sector sector)
-        {
-            this.sector = sector;
-        }
-
-        /**
-         * Indicates the model-coordinate points representing the corners and interior of this entry's Region. This
-         * returns <code>null</code> if this entry's Region has no geographic bounding box.
-         *
-         * @return the points representing the corners and interior of this entry's Region, or <code>null</code> if the
-         *         Region has no bounding box.
-         */
-        public List<Vec4> getPoints()
-        {
-            return this.points;
-        }
-
-        /**
-         * Specifies the model-coordinate points representing the corners and interior of this entry's Region. These
-         * points are used to determine the distance between this entry's Region and the <code>View's</code> eye point.
-         * Specify <code>null</code> to indicate that this entry' Region has no geographic bounding box.
-         * <p>
-         * If this entry's Region has altitude mode <code>clampToGround</code>, this list must contain five points: the
-         * model-coordinate points of the Region's four corners and center point on the surface terrain.
-         *
-         * @param points the points representing the corners and interior of this entry's Region, or <code>null</code>
-         *               to specify that this entry's Region has no bounding box.
-         */
-        public void setPoints(List<Vec4> points)
-        {
-            this.points = points;
-        }
-    }
-
     /**
      * The maximum lifespan of this Region's computed data, in milliseconds. Initialized to
      * <code>DEFAULT_DATA_GENERATION_INTERVAL</code>.
@@ -317,16 +104,16 @@ public class KMLRegion extends KMLAbstractObject
      */
     protected final ShapeDataCache regionDataCache = new ShapeDataCache(DEFAULT_UNUSED_DATA_LIFETIME);
     /**
-     * Identifies the active globe-dependent data for the current invocation of <code>isActive</code>. The active data
-     * is drawn from the <code>regionDataCache</code> at the beginning of the <code>isActive</code> method.
-     */
-    protected RegionData currentData;
-    /**
      * The default value that configures KML scene resolution to screen resolution as the viewing distance changes. The
      * <code>KMLRoot's</code> detail hint specifies deviations from this default. Initially
      * <code>DEFAULT_DETAIL_HINT_ORIGIN</code>.
      */
     protected final double detailHintOrigin = DEFAULT_DETAIL_HINT_ORIGIN;
+    /**
+     * Identifies the active globe-dependent data for the current invocation of <code>isActive</code>. The active data
+     * is drawn from the <code>regionDataCache</code> at the beginning of the <code>isActive</code> method.
+     */
+    protected RegionData currentData;
 
     /**
      * Creates a new <code>KMLRegion</code> with the specified namespace URI, but otherwise does nothing. The new Region
@@ -335,8 +122,7 @@ public class KMLRegion extends KMLAbstractObject
      * @param namespaceURI the qualifying namespace URI. May be <code>null</code> to indicate no namespace
      *                     qualification.
      */
-    public KMLRegion(String namespaceURI)
-    {
+    public KMLRegion(String namespaceURI) {
         super(namespaceURI);
     }
 
@@ -345,10 +131,9 @@ public class KMLRegion extends KMLAbstractObject
      * <code>null</code>.
      *
      * @return this Region's geographic bounding box, or <code>null</code> indicating that this Region has no bounding
-     *         box restriction.
+     * box restriction.
      */
-    public KMLLatLonAltBox getLatLonAltBox()
-    {
+    public KMLLatLonAltBox getLatLonAltBox() {
         return (KMLLatLonAltBox) this.getField("LatLonAltBox");
     }
 
@@ -357,10 +142,9 @@ public class KMLRegion extends KMLAbstractObject
      * <code>null</code>.
      *
      * @return this Region's level of detail range, or <code>null</code> indicating that this Region has no level of
-     *         detail restriction.
+     * detail restriction.
      */
-    public KMLLod getLod()
-    {
+    public KMLLod getLod() {
         return (KMLLod) this.getField("Lod");
     }
 
@@ -374,23 +158,18 @@ public class KMLRegion extends KMLAbstractObject
      *
      * @param tc the current KML traversal context.
      * @param dc the <code>DrawContext</code> used to determine whether this Region is active.
-     *
      * @return <code>true</code> if this Region is active; otherwise <code>false</code>.
-     *
      * @throws IllegalArgumentException if either the <code>KMLTraversalContext</code> or the <code>DrawContext</code>
      *                                  is <code>null</code>.
      */
-    public boolean isActive(KMLTraversalContext tc, DrawContext dc)
-    {
-        if (tc == null)
-        {
+    public boolean isActive(KMLTraversalContext tc, DrawContext dc) {
+        if (tc == null) {
             String message = Logging.getMessage("nullValue.TraversalContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (dc == null)
-        {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -403,8 +182,7 @@ public class KMLRegion extends KMLAbstractObject
         // recompute isActive when the frame changes or when Globe changes, and return the computed value below.
         // Note that we use the same frustum intersection for both picking and rendering. We cannot cull against
         // the pick frustums because content (e.g. an open balloon) may extend beyond the region's bounding box.
-        if (dc.getFrameTimeStamp() != this.getCurrentData().getActiveFrameNumber())
-        {
+        if (dc.getFrameTimeStamp() != this.getCurrentData().getActiveFrameNumber()) {
             this.getCurrentData().setActive(this.isRegionActive(tc, dc));
             this.getCurrentData().setActiveFrameNumber(dc.getFrameTimeStamp());
         }
@@ -419,26 +197,21 @@ public class KMLRegion extends KMLAbstractObject
      * prior to determining if this Region is actually active.
      *
      * @param dc the current draw context.
-     *
      * @see #isActive
      */
-    protected void makeRegionData(DrawContext dc)
-    {
+    protected void makeRegionData(DrawContext dc) {
         // Retrieve the cached data for the current globe. If it doesn't yet exist, create it. Most code subsequently
         // executed depends on currentData being non-null.
         this.currentData = (RegionData) this.regionDataCache.getEntry(dc.getGlobe());
-        if (this.currentData == null)
-        {
+        if (this.currentData == null) {
             this.currentData = this.createCacheEntry(dc);
             this.regionDataCache.addEntry(this.currentData);
         }
 
         // Re-use values already calculated this frame.
-        if (dc.getFrameTimeStamp() != this.getCurrentData().getFrameNumber())
-        {
+        if (dc.getFrameTimeStamp() != this.getCurrentData().getFrameNumber()) {
             // Regenerate the region and data at a specified frequency.
-            if (this.mustRegenerateData(dc))
-            {
+            if (this.mustRegenerateData(dc)) {
                 this.doMakeRegionData(dc);
                 this.getCurrentData().restartTimer(dc);
                 this.getCurrentData().setGlobeStateKey(dc.getGlobe().getGlobeStateKey(dc));
@@ -454,8 +227,7 @@ public class KMLRegion extends KMLAbstractObject
      *
      * @return the data cache entry for the current invocation of <code>isActive</code>.
      */
-    protected RegionData getCurrentData()
-    {
+    protected RegionData getCurrentData() {
         return this.currentData;
     }
 
@@ -463,11 +235,9 @@ public class KMLRegion extends KMLAbstractObject
      * Creates and returns a new <code>RegionData</code> instance specific to this Region instance.
      *
      * @param dc the current draw context.
-     *
      * @return data cache entry for the state in the specified draw context.
      */
-    protected RegionData createCacheEntry(DrawContext dc)
-    {
+    protected RegionData createCacheEntry(DrawContext dc) {
         return new RegionData(dc, this.minExpiryTime, this.maxExpiryTime);
     }
 
@@ -475,15 +245,13 @@ public class KMLRegion extends KMLAbstractObject
      * Indicates whether this Region's data must be recomputed, either as a result of a change in the
      * <code>Globe's</code> state or the expiration of the geometry regeneration interval.
      * <p>
-     * A <code>{@link gov.nasa.worldwind.ogc.kml.KMLRegion.RegionData}</code> must be current when this method is
+     * A <code>{@link KMLRegion.RegionData}</code> must be current when this method is
      * called.
      *
      * @param dc the current draw context.
-     *
      * @return <code>true</code> if this Region's data must be regenerated, otherwise <code>false</code>.
      */
-    protected boolean mustRegenerateData(DrawContext dc)
-    {
+    protected boolean mustRegenerateData(DrawContext dc) {
         return this.getCurrentData().isExpired(dc) || !this.getCurrentData().isValid(dc);
     }
 
@@ -491,15 +259,13 @@ public class KMLRegion extends KMLAbstractObject
      * Produces the data used to determine whether this Region is active for the specified <code>DrawContext</code>.
      * This method is called by <code>makeRegionData</code> upon determining that the current RegionData must be
      * recomputed, either as a result of a change in the <code>Globe's</code> state or the expiration of the geometry
-     * regeneration interval. A <code>{@link gov.nasa.worldwind.ogc.kml.KMLRegion.RegionData}</code> must be current
+     * regeneration interval. A <code>{@link KMLRegion.RegionData}</code> must be current
      * when this method is called.
      *
      * @param dc the current draw context.
-     *
      * @see #makeRegionData
      */
-    protected void doMakeRegionData(DrawContext dc)
-    {
+    protected void doMakeRegionData(DrawContext dc) {
         this.getCurrentData().setExtent(null);
         this.getCurrentData().setSector(null);
         this.getCurrentData().setPoints(null);
@@ -511,12 +277,10 @@ public class KMLRegion extends KMLAbstractObject
         int altitudeMode = KMLUtil.convertAltitudeMode(box.getAltitudeMode(), WorldWind.CLAMP_TO_GROUND); // KML default
         this.getCurrentData().setAltitudeMode(altitudeMode);
 
-        if (altitudeMode == WorldWind.CLAMP_TO_GROUND)
-        {
+        if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
             this.doMakeClampToGroundRegionData(dc, box);
         }
-        else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND)
-        {
+        else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             this.doMakeRelativeToGroundRegionData(dc, box);
         }
         else // Default to WorldWind.ABSOLUTE.
@@ -527,22 +291,20 @@ public class KMLRegion extends KMLAbstractObject
 
     /**
      * Produces the <code>Extent</code> and the <code>Sector</code> for this Region. Assumes this region's altitude mode
-     * is <code>clampToGround</code>. A <code>{@link gov.nasa.worldwind.ogc.kml.KMLRegion.RegionData}</code> must be
+     * is <code>clampToGround</code>. A <code>{@link KMLRegion.RegionData}</code> must be
      * current when this method is called.
      *
      * @param dc  the current draw context.
      * @param box the Region's geographic bounding box.
      */
-    protected void doMakeClampToGroundRegionData(DrawContext dc, KMLLatLonAltBox box)
-    {
+    protected void doMakeClampToGroundRegionData(DrawContext dc, KMLLatLonAltBox box) {
         Sector sector = KMLUtil.createSectorFromLatLonBox(box);
         if (sector == null)
             return;
 
         // TODO: Regions outside of the normal lat/lon bounds ([-90, 90], [-180, 180]) are not supported. Remove
         // TODO: this warning when such regions are supported. See WWJINT-482.
-        if (!this.isSectorSupported(sector))
-        {
+        if (!this.isSectorSupported(sector)) {
             String message = Logging.getMessage("KML.UnsupportedRegion", sector);
             Logging.logger().warning(message);
             return;
@@ -565,20 +327,18 @@ public class KMLRegion extends KMLAbstractObject
 
     /**
      * Produces the <code>Extent</code> and the <code>Sector</code> for this Region. Assumes this region's altitude mode
-     * is <code>relativeToGround</code>. A <code>{@link gov.nasa.worldwind.ogc.kml.KMLRegion.RegionData}</code> must be
+     * is <code>relativeToGround</code>. A <code>{@link KMLRegion.RegionData}</code> must be
      * current when this method is called.
      *
      * @param dc  the current draw context.
      * @param box the Region's geographic bounding box.
      */
-    protected void doMakeRelativeToGroundRegionData(DrawContext dc, KMLLatLonAltBox box)
-    {
+    protected void doMakeRelativeToGroundRegionData(DrawContext dc, KMLLatLonAltBox box) {
         Sector sector = KMLUtil.createSectorFromLatLonBox(box);
         if (sector == null)
             return;
 
-        if (!this.isSectorSupported(sector))
-        {
+        if (!this.isSectorSupported(sector)) {
             String message = Logging.getMessage("KML.UnsupportedRegion", sector);
             Logging.logger().warning(message);
             return;
@@ -586,11 +346,11 @@ public class KMLRegion extends KMLAbstractObject
 
         Double minAltitude = box.getMinAltitude();
         if (minAltitude == null)
-            minAltitude = 0d; // The default minAltitude is zero.
+            minAltitude = 0.0d; // The default minAltitude is zero.
 
         Double maxAltitude = box.getMaxAltitude();
         if (maxAltitude == null)
-            maxAltitude = 0d; // The default maxAltitude is zero.
+            maxAltitude = 0.0d; // The default maxAltitude is zero.
 
         double[] extremeElevations = dc.getGlobe().getMinAndMaxElevations(sector);
         Extent extent = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), sector,
@@ -601,20 +361,18 @@ public class KMLRegion extends KMLAbstractObject
 
     /**
      * Produces the <code>Extent</code> and the <code>Sector</code> for this Region. Assumes this region's altitude mode
-     * is <code>absolute</code>. A <code>{@link gov.nasa.worldwind.ogc.kml.KMLRegion.RegionData}</code> must be current
+     * is <code>absolute</code>. A <code>{@link KMLRegion.RegionData}</code> must be current
      * when this method is called.
      *
      * @param dc  the current draw context.
      * @param box the Region's geographic bounding box.
      */
-    protected void doMakeAbsoluteRegionData(DrawContext dc, KMLLatLonAltBox box)
-    {
+    protected void doMakeAbsoluteRegionData(DrawContext dc, KMLLatLonAltBox box) {
         Sector sector = KMLUtil.createSectorFromLatLonBox(box);
         if (sector == null)
             return;
 
-        if (!this.isSectorSupported(sector))
-        {
+        if (!this.isSectorSupported(sector)) {
             String message = Logging.getMessage("KML.UnsupportedRegion", sector);
             Logging.logger().warning(message);
             return;
@@ -622,11 +380,11 @@ public class KMLRegion extends KMLAbstractObject
 
         Double minAltitude = box.getMinAltitude();
         if (minAltitude == null)
-            minAltitude = 0d; // The default minAltitude is zero.
+            minAltitude = 0.0d; // The default minAltitude is zero.
 
         Double maxAltitude = box.getMaxAltitude();
         if (maxAltitude == null)
-            maxAltitude = 0d; // The default maxAltitude is zero.
+            maxAltitude = 0.0d; // The default maxAltitude is zero.
 
         Extent extent = Sector.computeBoundingBox(dc.getGlobe(), dc.getVerticalExaggeration(), sector,
             minAltitude, maxAltitude);
@@ -639,11 +397,9 @@ public class KMLRegion extends KMLAbstractObject
      * with latitude values outside of [-90, 90], or longitude values outside of [-180, 180].
      *
      * @param sector Sector to test.
-     *
      * @return {@code true} if {@code sector} is with [-90, 90] latitude and [-180, 180] longitude.
      */
-    protected boolean isSectorSupported(Sector sector)
-    {
+    protected boolean isSectorSupported(Sector sector) {
         return sector.isWithinLatLonLimits();
     }
 
@@ -655,11 +411,9 @@ public class KMLRegion extends KMLAbstractObject
      *
      * @param tc the current KML traversal context.
      * @param dc the <code>DrawContext</code> used to determine whether this Region is active.
-     *
      * @return <code>true</code> if this Region is active; otherwise <code>false</code>.
      */
-    protected boolean isRegionActive(KMLTraversalContext tc, DrawContext dc)
-    {
+    protected boolean isRegionActive(KMLTraversalContext tc, DrawContext dc) {
         return this.isRegionVisible(dc) && this.meetsLodCriteria(tc, dc);
     }
 
@@ -671,18 +425,15 @@ public class KMLRegion extends KMLAbstractObject
      * the <code>DrawContext's</code> viewing frustum.
      *
      * @param dc the <code>DrawContext</code> used to test this Region for visibility.
-     *
      * @return <code>true</code> if this Region is visible, otherwise <code>false</code>.
      */
-    protected boolean isRegionVisible(DrawContext dc)
-    {
+    protected boolean isRegionVisible(DrawContext dc) {
         // If this Region's altitude mode is clampToGround and it has a non-null sector, compare its sector against the
         // DrawContext's visible sector to determine if the Region is visible. In this case the sector can be used to
         // determine visibility because the Region is defined to be on the Globe's surface.
         if (this.getCurrentData().getAltitudeMode() == WorldWind.CLAMP_TO_GROUND
             && dc.getVisibleSector() != null && this.getCurrentData().getSector() != null
-            && !dc.getVisibleSector().intersects(this.getCurrentData().getSector()))
-        {
+            && !dc.getVisibleSector().intersects(this.getCurrentData().getSector())) {
             return false;
         }
 
@@ -700,18 +451,16 @@ public class KMLRegion extends KMLAbstractObject
 
     /**
      * Indicates whether this Region intersects the viewing frustum for the specified <code>DrawContext</code>. A
-     * <code>{@link gov.nasa.worldwind.ogc.kml.KMLRegion.RegionData}</code> must be current when this method is called.
+     * <code>{@link KMLRegion.RegionData}</code> must be current when this method is called.
      * <p>
      * This returns <code>true</code> if this Region has no bounding box, or if its bounding box cannot be computed for
      * any reason.
      *
      * @param dc the <code>DrawContext</code> who's frustum is tested against this Region's bounding box.
-     *
      * @return <code>true</code> if this Region's bounding box intersects the <code>DrawContext's</code> frustum,
-     *         otherwise <code>false</code>.
+     * otherwise <code>false</code>.
      */
-    protected boolean intersectsFrustum(DrawContext dc)
-    {
+    protected boolean intersectsFrustum(DrawContext dc) {
         Extent extent = this.getCurrentData().getExtent();
         //noinspection SimplifiableIfStatement
         if (extent == null)
@@ -724,38 +473,34 @@ public class KMLRegion extends KMLAbstractObject
 
     /**
      * Indicates whether the specified <code>DrawContext</code> meets this Region's level of detail criteria. A
-     * <code>{@link gov.nasa.worldwind.ogc.kml.KMLRegion.RegionData}</code> must be current when this method is called.
+     * <code>{@link KMLRegion.RegionData}</code> must be current when this method is called.
      * <p>
      * This returns <code>true</code> if this Region has no level of criteria, or if its level of detail cannot be
      * compared against the bounding box for any reason.
      *
      * @param tc the current KML traversal context.
      * @param dc the <code>DrawContext</code> to test.
-     *
      * @return <code>true</code> if the <code>DrawContext's</code> meets this Region's level of detail criteria,
-     *         otherwise <code>false</code>.
+     * otherwise <code>false</code>.
      */
-    protected boolean meetsLodCriteria(KMLTraversalContext tc, DrawContext dc)
-    {
+    protected boolean meetsLodCriteria(KMLTraversalContext tc, DrawContext dc) {
         KMLLod lod = this.getLod();
         if (lod == null)
             return true; // No level of detail specified; assume the DrawContext meets the level of detail criteria.
 
-        if ((lod.getMinLodPixels() == null || lod.getMinLodPixels() <= 0d)
-            && (lod.getMaxLodPixels() == null || lod.getMaxLodPixels() < 0d))
+        if ((lod.getMinLodPixels() == null || lod.getMinLodPixels() <= 0.0d)
+            && (lod.getMaxLodPixels() == null || lod.getMaxLodPixels() < 0.0d))
             return true; // The level of detail range is infinite, so this Region always meets the lod criteria.
 
-        if (lod.getMaxLodPixels() != null && lod.getMaxLodPixels() == 0d)
+        if (lod.getMaxLodPixels() != null && lod.getMaxLodPixels() == 0.0d)
             return false; // The maximum number of pixels is zero, so this Region never meets the lod criteria.
 
         int altitudeMode = this.getCurrentData().getAltitudeMode();
 
-        if (altitudeMode == WorldWind.CLAMP_TO_GROUND)
-        {
+        if (altitudeMode == WorldWind.CLAMP_TO_GROUND) {
             return this.meetsClampToGroundLodCriteria(tc, dc, lod);
         }
-        else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND)
-        {
+        else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             return this.meetsRelativeToGroundLodCriteria(tc, dc, lod);
         }
         else // Default to WorldWind.ABSOLUTE.
@@ -766,18 +511,16 @@ public class KMLRegion extends KMLAbstractObject
 
     /**
      * Indicates whether the specified <code>DrawContext</code> meets this Region's level of detail criteria. Assumes
-     * this region's altitude mode is <code>clampToGround</code>. A <code>{@link gov.nasa.worldwind.ogc.kml.KMLRegion.RegionData}</code>
+     * this region's altitude mode is <code>clampToGround</code>. A <code>{@link KMLRegion.RegionData}</code>
      * must be current when this method is called.
      *
      * @param tc  the current KML traversal context.
      * @param dc  the <code>DrawContext</code> to test.
      * @param lod the level of detail criteria that must be met.
-     *
      * @return <code>true</code> if the <code>DrawContext's</code> meets this Region's level of detail criteria,
-     *         otherwise <code>false</code>.
+     * otherwise <code>false</code>.
      */
-    protected boolean meetsClampToGroundLodCriteria(KMLTraversalContext tc, DrawContext dc, KMLLod lod)
-    {
+    protected boolean meetsClampToGroundLodCriteria(KMLTraversalContext tc, DrawContext dc, KMLLod lod) {
         // Neither the OGC KML specification nor the Google KML reference specify how to compute a clampToGround
         // Region's projected screen area. However, the Google Earth outreach tutorials, and an official post from a
         // Google engineer on the Google forums both indicate that clampToGround Regions are represented by a flat
@@ -807,23 +550,19 @@ public class KMLRegion extends KMLAbstractObject
         double numRadians = Math.sqrt(sector.getDeltaLatRadians() * sector.getDeltaLonRadians());
         double numMeters = points.get(0).getLength3() * numRadians;
 
-        if (d2 < minDistance)
-        {
+        if (d2 < minDistance) {
             minDistance = d2;
             numMeters = points.get(1).getLength3() * numRadians;
         }
-        if (d3 < minDistance)
-        {
+        if (d3 < minDistance) {
             minDistance = d3;
             numMeters = points.get(2).getLength3() * numRadians;
         }
-        if (d4 < minDistance)
-        {
+        if (d4 < minDistance) {
             minDistance = d4;
             numMeters = points.get(3).getLength3() * numRadians;
         }
-        if (d5 < minDistance)
-        {
+        if (d5 < minDistance) {
             minDistance = d5;
             numMeters = points.get(4).getLength3() * numRadians;
         }
@@ -845,43 +584,39 @@ public class KMLRegion extends KMLAbstractObject
         // We ignore minLodPixels if it's unspecified, zero, or less than zero. We ignore maxLodPixels if it's
         // unspecified or less than 0 (infinity). In these cases any distance passes the test against minLodPixels or
         // maxLodPixels.
-        return (lodMinPixels == null || lodMinPixels <= 0d || (numMeters / lodMinPixels) >= distanceFactor)
-            && (lodMaxPixels == null || lodMaxPixels < 0d || (numMeters / lodMaxPixels) < distanceFactor);
+        return (lodMinPixels == null || lodMinPixels <= 0.0d || (numMeters / lodMinPixels) >= distanceFactor)
+            && (lodMaxPixels == null || lodMaxPixels < 0.0d || (numMeters / lodMaxPixels) < distanceFactor);
     }
 
     /**
      * Indicates whether the specified <code>DrawContext</code> meets this Region's level of detail criteria. Assumes
      * this region's altitude mode is <code>relativeToGround</code>. A <code>{@link
-     * gov.nasa.worldwind.ogc.kml.KMLRegion.RegionData}</code> must be current when this method is called.
+     * KMLRegion.RegionData}</code> must be current when this method is called.
      *
      * @param tc  the current KML traversal context.
      * @param dc  the <code>DrawContext</code> to test.
      * @param lod the level of detail criteria that must be met.
-     *
      * @return <code>true</code> if the <code>DrawContext's</code> meets this Region's level of detail criteria,
-     *         otherwise <code>false</code>.
+     * otherwise <code>false</code>.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected boolean meetsRelativeToGroundLodCriteria(KMLTraversalContext tc, DrawContext dc, KMLLod lod)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected boolean meetsRelativeToGroundLodCriteria(KMLTraversalContext tc, DrawContext dc, KMLLod lod) {
         return this.meetsScreenAreaCriteria(dc, lod);
     }
 
     /**
      * Indicates whether the specified <code>DrawContext</code> meets this Region's level of detail criteria. Assumes
-     * this region's altitude mode is <code>absolute</code>. A <code>{@link gov.nasa.worldwind.ogc.kml.KMLRegion.RegionData}</code>
+     * this region's altitude mode is <code>absolute</code>. A <code>{@link KMLRegion.RegionData}</code>
      * must be current when this method is called.
      *
      * @param tc  the current KML traversal context.
      * @param dc  the <code>DrawContext</code> to test.
      * @param lod the level of detail criteria that must be met.
-     *
      * @return <code>true</code> if the <code>DrawContext's</code> meets this Region's level of detail criteria,
-     *         otherwise <code>false</code>.
+     * otherwise <code>false</code>.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected boolean meetsAbsoluteLodCriteria(KMLTraversalContext tc, DrawContext dc, KMLLod lod)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected boolean meetsAbsoluteLodCriteria(KMLTraversalContext tc, DrawContext dc, KMLLod lod) {
         return this.meetsScreenAreaCriteria(dc, lod);
     }
 
@@ -891,12 +626,10 @@ public class KMLRegion extends KMLAbstractObject
      *
      * @param dc  the <code>DrawContext</code> to test.
      * @param lod the level of detail criteria that must be met.
-     *
      * @return <code>true</code> if this Region's screen area meets the level of detail criteria, otherwise
-     *         <code>false</code>.
+     * <code>false</code>.
      */
-    protected boolean meetsScreenAreaCriteria(DrawContext dc, KMLLod lod)
-    {
+    protected boolean meetsScreenAreaCriteria(DrawContext dc, KMLLod lod) {
         // The DrawContext does not meet this region's minLodPixels criteria if minLodPixels is specified and this
         // region's projected screen pixel count is less than minLodPixels.
 
@@ -926,8 +659,8 @@ public class KMLRegion extends KMLAbstractObject
         Double lodMinPixels = lod.getMinLodPixels();
         Double lodMaxPixels = lod.getMaxLodPixels();
 
-        return (lodMinPixels == null || lodMinPixels <= 0d || lodMinPixels <= numPixels)
-            && (lodMaxPixels == null || lodMaxPixels < 0d || lodMaxPixels > numPixels);
+        return (lodMinPixels == null || lodMinPixels <= 0.0d || lodMinPixels <= numPixels)
+            && (lodMaxPixels == null || lodMaxPixels < 0.0d || lodMaxPixels > numPixels);
     }
 
     /**
@@ -936,19 +669,15 @@ public class KMLRegion extends KMLAbstractObject
      * detail hint.
      *
      * @param tc the KML traversal context that specifies the detail hint.
-     *
      * @return this Region's <code>detailHintOrigin</code> plus the traversal context's <code>detailHintOrigin</code>.
      */
-    protected double getDetailFactor(KMLTraversalContext tc)
-    {
+    protected double getDetailFactor(KMLTraversalContext tc) {
         return this.detailHintOrigin + tc.getDetailHint();
     }
 
     @Override
-    public void applyChange(KMLAbstractObject sourceValues)
-    {
-        if (!(sourceValues instanceof KMLRegion))
-        {
+    public void applyChange(KMLAbstractObject sourceValues) {
+        if (!(sourceValues instanceof KMLRegion)) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().warning(message);
             throw new IllegalArgumentException(message);
@@ -960,17 +689,219 @@ public class KMLRegion extends KMLAbstractObject
     }
 
     @Override
-    public void onChange(Message msg)
-    {
+    public void onChange(Message msg) {
         if (KMLAbstractObject.MSG_BOX_CHANGED.equals(msg.getName()))
             this.reset();
 
         super.onChange(msg);
     }
 
-    protected void reset()
-    {
+    protected void reset() {
         this.regionDataCache.removeAllEntries();
         this.currentData = null;
+    }
+
+    /**
+     * <code>RegionData</code> holds a Region's computed data used during a single call to
+     * <code>Region.isActive</code>,
+     * and is unique to a particular <code>Globe</code>.
+     * <p>
+     * RegionData entries are places in a Region's <code>regionDataCache</code>, and are retrieved during each call to
+     * <code>isActive</code> using the current <code>Globe</code> as the cache key. RegionData's elements depend on the
+     * <code>Globe's</code> <code>ElevationModel</code>, and therefore cannot be permanently cached. Each RegionData
+     * entry is valid for a random amount of time between its <code>minExpiryTime</code> and its
+     * <code>maxExpiryTime</code>, after which it must be regenerated. The time is randomized to amortize the cost of
+     * regenerating data for multiple Regions over multiple frames.
+     * <p>
+     * <strong>isActive</strong> <br> RegionData's <code>isActive</code> property indicates whether the Region
+     * associated with a RegionData entry is active. This is used to share the result of computing <code>isActive</code>
+     * among multiple calls during the same frame. For example, the preRender and render passes need not each compute
+     * <code>isActive</code>, and can therefore share the same computation by ensuring that this property is set at
+     * most once per frame. Callers determine when to recompute <code>isActive</code> by comparing the
+     * <code>DrawContext's</code> current frame number against the RegionData's <code>activeFrameNumber</code>. This
+     * property is accessed by calling <code>isActive</code> and <code>setActive</code>.
+     * <p>
+     * <strong>extent</strong> <br> RegionData's <code>extent</code> property is an <code>Extent</code> used to
+     * determine if a Region's bounding box is in view. This property is accessed by calling <code>getExtent</code> and
+     * <code>setExtent</code>. May be <code>null</code>.
+     * <p>
+     * <strong>sector</strong> <br> RegionData's <code>sector</code> property is a <code>Sector</code> used to
+     * determine if Regions with an <code>altitudeMode</code> of <code>clampToGround</code> are in view. Accessed by
+     * calling <code>getSector</code> and <code>setSector</code>. When a Region's <code>altitudeMode</code> is
+     * <code>clampToGround</code>, the Region's sector can be used to determine visibility because the Region is
+     * defined to be on the <code>Globe's</code> surface.
+     * <p>
+     * <strong>points</strong> <br> RegionData's <code>points</code> property indicates a list of model-coordinate
+     * points representing the corners and interior of the Region. These points are used to determine the distance
+     * between the Region and the <code>View's</code> eye point. If the Region has altitude mode of
+     * <code>clampToGround</code>, this list must contain five points: the model-coordinate points of the Region's four
+     * corners and center point on the surface terrain.
+     */
+    protected static class RegionData extends ShapeDataCache.ShapeDataCacheEntry {
+        /**
+         * Identifies the frame used to calculate this entry's values. Initially -1.
+         */
+        protected long frameNumber = -1;
+        /**
+         * Identifies the frame used to determine if this entry's Region is active. Initially -1.
+         */
+        protected long activeFrameNumber = -1;
+        /**
+         * Identifies whether this entry's Region is active. Initially <code>false</code>.
+         */
+        protected boolean isActive;
+        /**
+         * Indicates the vertical datum against which the altitudes values in this entry's Region are interpreted. One
+         * of <code>WorldWind.ABSOLUTE</code>, <code>WorldWind.CLAMP_TO_GROUND</code>, or
+         * <code>WorldWind.RELATIVE_TO_GROUND</code>. Initially -1.
+         */
+        protected int altitudeMode = -1;
+        /**
+         * Indicates the <code>Sector</code> used to determine if a Region who's <code>altitudeMode</code> is
+         * <code>clampToGround</code> is visible. Initially <code>null</code>.
+         */
+        protected Sector sector;
+        /**
+         * Indicates the model-coordinate points representing the corners and interior of this entry's Region. These
+         * points are used to determine the distance between this entry's Region and the <code>View's</code> eye point.
+         * Initially <code>null</code>.
+         */
+        protected List<Vec4> points;
+
+        /**
+         * Constructs a new <code>RegionData</code> entry from the <code>Globe</code> and vertical exaggeration of a
+         * specified draw context.
+         *
+         * @param dc            the draw context. Must contain a <code>Globe</code>.
+         * @param minExpiryTime the minimum expiration duration, in milliseconds.
+         * @param maxExpiryTime the maximum expiration duration, in milliseconds.
+         */
+        public RegionData(DrawContext dc, long minExpiryTime, long maxExpiryTime) {
+            super(dc, minExpiryTime, maxExpiryTime);
+        }
+
+        /**
+         * Identifies the frame used to calculate this entry's values.
+         *
+         * @return the frame used to calculate this entry's values.
+         */
+        public long getFrameNumber() {
+            return frameNumber;
+        }
+
+        /**
+         * Specifies the frame used to calculate this entry's values.
+         *
+         * @param frameNumber the frame used to calculate this entry's values.
+         */
+        public void setFrameNumber(long frameNumber) {
+            this.frameNumber = frameNumber;
+        }
+
+        /**
+         * Identifies the frame used to determine if this entry's Region is active.
+         *
+         * @return the frame used to determine if this entry's Region is active.
+         */
+        public long getActiveFrameNumber() {
+            return activeFrameNumber;
+        }
+
+        /**
+         * Specifies the frame used to determine if this entry's Region is active.
+         *
+         * @param frameNumber the frame used to determine if this entry's Region is active.
+         */
+        public void setActiveFrameNumber(long frameNumber) {
+            this.activeFrameNumber = frameNumber;
+        }
+
+        /**
+         * Indicates whether this entry's Region is active.
+         *
+         * @return <code>true</code> if this entry's Region is active, otherwise <code>false</code>.
+         */
+        public boolean isActive() {
+            return this.isActive;
+        }
+
+        /**
+         * Specifies whether this entry's Region is active.
+         *
+         * @param active <code>true</code> to specify that this entry's Region is active, otherwise <code>false</code>.
+         */
+        public void setActive(boolean active) {
+            this.isActive = active;
+        }
+
+        /**
+         * Indicates the vertical datum against which the altitudes values in this entry's Region are interpreted.
+         *
+         * @return the altitude mode of this entry's Region. One of <code>WorldWind.ABSOLUTE</code>,
+         * <code>WorldWind.CLAMP_TO_GROUND</code>, or <code>WorldWind.RELATIVE_TO_GROUND</code>.
+         */
+        public int getAltitudeMode() {
+            return this.altitudeMode;
+        }
+
+        /**
+         * Specifies the vertical datum against which the altitudes values in this entry's Region should be interpreted.
+         * Must be one of <code>WorldWind.ABSOLUTE</code>, <code>WorldWind.CLAMP_TO_GROUND</code>, or
+         * <code>WorldWind.RELATIVE_TO_GROUND</code>.
+         *
+         * @param altitudeMode the vertical datum to use.
+         */
+        public void setAltitudeMode(int altitudeMode) {
+            this.altitudeMode = altitudeMode;
+        }
+
+        /**
+         * Indicates the <code>Sector</code> used to determine if a Region who's <code>altitudeMode</code> is
+         * <code>clampToGround</code> is visible. This returns <code>null</code> if this entry's Region's has no
+         * geographic bounding box.
+         *
+         * @return the <code>Sector</code> used to determine if a Region is visible, or <code>null</code> to specify
+         * that this entry's Region has no bounding box.
+         */
+        public Sector getSector() {
+            return this.sector;
+        }
+
+        /**
+         * Specifies the <code>Sector</code> that defines a Region's surface sector on the <code>Globe</code>. Specify
+         * <code>null</code> to indicate that this entry' Region has no geographic bounding box.
+         *
+         * @param sector the <code>Sector</code> that is used to determine if a <code>clampToGround</code> Region is
+         *               visible, or <code>null</code> to specify that the entry's Region's has no bounding box.
+         */
+        public void setSector(Sector sector) {
+            this.sector = sector;
+        }
+
+        /**
+         * Indicates the model-coordinate points representing the corners and interior of this entry's Region. This
+         * returns <code>null</code> if this entry's Region has no geographic bounding box.
+         *
+         * @return the points representing the corners and interior of this entry's Region, or <code>null</code> if the
+         * Region has no bounding box.
+         */
+        public List<Vec4> getPoints() {
+            return this.points;
+        }
+
+        /**
+         * Specifies the model-coordinate points representing the corners and interior of this entry's Region. These
+         * points are used to determine the distance between this entry's Region and the <code>View's</code> eye point.
+         * Specify <code>null</code> to indicate that this entry' Region has no geographic bounding box.
+         * <p>
+         * If this entry's Region has altitude mode <code>clampToGround</code>, this list must contain five points: the
+         * model-coordinate points of the Region's four corners and center point on the surface terrain.
+         *
+         * @param points the points representing the corners and interior of this entry's Region, or <code>null</code>
+         *               to specify that this entry's Region has no bounding box.
+         */
+        public void setPoints(List<Vec4> points) {
+            this.points = points;
+        }
     }
 }

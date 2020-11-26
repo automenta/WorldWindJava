@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.view.firstperson;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -16,17 +16,14 @@ import gov.nasa.worldwind.view.*;
  * @author jym
  * @version $Id: FlyToFlyViewAnimator.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class FlyToFlyViewAnimator extends CompoundAnimator
-{
+public class FlyToFlyViewAnimator extends CompoundAnimator {
     final int altitudeMode;
 
     public FlyToFlyViewAnimator(Interpolator interpolator, int altitudeMode,
         PositionAnimator eyePositionAnimator, DoubleAnimator elevationAnimator,
-        AngleAnimator headingAnimator, AngleAnimator pitchAnimator, AngleAnimator rollAnimator)
-    {
+        AngleAnimator headingAnimator, AngleAnimator pitchAnimator, AngleAnimator rollAnimator) {
         super(interpolator, eyePositionAnimator, elevationAnimator, headingAnimator, pitchAnimator, rollAnimator);
-        if (interpolator == null)
-        {
+        if (interpolator == null) {
             this.interpolator = new ScheduledInterpolator(10000);
         }
         this.altitudeMode = altitudeMode;
@@ -37,8 +34,7 @@ public class FlyToFlyViewAnimator extends CompoundAnimator
         Position beginCenterPos, Position endCenterPos,
         Angle beginHeading, Angle endHeading,
         Angle beginPitch, Angle endPitch,
-        double beginElevation, double endElevation, long timeToMove, int altitudeMode)
-    {
+        double beginElevation, double endElevation, long timeToMove, int altitudeMode) {
         return createFlyToFlyViewAnimator(view, beginCenterPos, endCenterPos, beginHeading, endHeading,
             beginPitch, endPitch, view.getRoll(), view.getRoll(), beginElevation, endElevation, timeToMove,
             altitudeMode);
@@ -50,8 +46,7 @@ public class FlyToFlyViewAnimator extends CompoundAnimator
         Angle beginHeading, Angle endHeading,
         Angle beginPitch, Angle endPitch,
         Angle beginRoll, Angle endRoll,
-        double beginElevation, double endElevation, long timeToMove, int altitudeMode)
-    {
+        double beginElevation, double endElevation, long timeToMove, int altitudeMode) {
         OnSurfacePositionAnimator centerAnimator = new OnSurfacePositionAnimator(
             view.getGlobe(),
             new ScheduledInterpolator(timeToMove),
@@ -83,38 +78,31 @@ public class FlyToFlyViewAnimator extends CompoundAnimator
             elevAnimator, headingAnimator, pitchAnimator, rollAnimator));
     }
 
-    public static class FlyToElevationAnimator extends ViewElevationAnimator
-    {
-        public FlyToElevationAnimator(BasicFlyView flyView, Globe globe,
+    public static class FlyToElevationAnimator extends ViewElevationAnimator {
+        public FlyToElevationAnimator(View flyView, Globe globe,
             double beginZoom, double endZoom, LatLon beginLatLon,
-            LatLon endLatLon, int altitudeMode, PropertyAccessor.DoubleAccessor propertyAccessor)
-        {
+            LatLon endLatLon, int altitudeMode, PropertyAccessor.DoubleAccessor propertyAccessor) {
             super(globe, beginZoom, endZoom, beginLatLon, endLatLon, altitudeMode, propertyAccessor);
 
-            if (globe == null)
-            {
+            if (globe == null) {
                 useMidZoom = false;
             }
-            else
-            {
+            else {
                 this.midZoom = computeMidZoom(globe, beginLatLon, endLatLon, beginZoom, endZoom);
                 double maxMidZoom = flyView.getViewPropertyLimits().getEyeElevationLimits()[1];
-                if (this.midZoom > maxMidZoom)
-                {
+                if (this.midZoom > maxMidZoom) {
                     this.midZoom = maxMidZoom;
                 }
                 useMidZoom = useMidZoom(beginZoom, endZoom, midZoom);
             }
-            if (useMidZoom)
-            {
+            if (useMidZoom) {
                 this.trueEndZoom = endZoom;
                 this.end = this.midZoom;
             }
         }
     }
 
-    public static class OnSurfacePositionAnimator extends PositionAnimator
-    {
+    public static class OnSurfacePositionAnimator extends PositionAnimator {
         final Globe globe;
         final int altitudeMode;
         final boolean useMidZoom = true;
@@ -122,16 +110,14 @@ public class FlyToFlyViewAnimator extends CompoundAnimator
         public OnSurfacePositionAnimator(Globe globe, Interpolator interpolator,
             Position begin,
             Position end,
-            PropertyAccessor.PositionAccessor propertyAccessor, int altitudeMode)
-        {
+            PropertyAccessor.PositionAccessor propertyAccessor, int altitudeMode) {
             super(interpolator, begin, end, propertyAccessor);
             this.globe = globe;
             this.altitudeMode = altitudeMode;
         }
 
         @Override
-        protected Position nextPosition(double interpolant)
-        {
+        protected Position nextPosition(double interpolant) {
             final int MAX_SMOOTHING = 1;
 
             final double CENTER_START = this.useMidZoom ? 0.2 : 0.0;
@@ -149,20 +135,17 @@ public class FlyToFlyViewAnimator extends CompoundAnimator
             double endElevation = 0.0;
             boolean overrideEndElevation = false;
 
-            if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND)
-            {
+            if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND) {
                 overrideEndElevation = true;
                 endElevation = this.globe.getElevation(getEnd().getLatitude(), getEnd().getLongitude());
             }
-            else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND)
-            {
+            else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
                 overrideEndElevation = true;
                 endElevation = this.globe.getElevation(getEnd().getLatitude(), getEnd().getLongitude())
                     + getEnd().getAltitude();
             }
 
-            if (overrideEndElevation)
-            {
+            if (overrideEndElevation) {
                 LatLon ll = pos; // Use interpolated lat/lon.
                 double e1 = getBegin().getElevation();
                 pos = new Position(ll, (1 - latLonInterpolant) * e1 + latLonInterpolant * endElevation);

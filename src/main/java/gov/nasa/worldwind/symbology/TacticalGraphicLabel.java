@@ -21,162 +21,130 @@ import java.awt.geom.*;
 /**
  * A label drawn as part of a tactical graphic. The label is drawn at constant screen size. The label can include
  * multiple lines of text, and can optionally be kept aligned with features on the globe. To align a label with the
- * globe specify an {@link #setOrientationPosition(gov.nasa.worldwind.geom.Position) orientationPosition} for the label.
+ * globe specify an {@link #setOrientationPosition(Position) orientationPosition} for the label.
  * The label will be drawn along a line connecting the label's position to the orientation position.
  *
  * @author pabercrombie
  * @version $Id: TacticalGraphicLabel.java 2200 2014-08-07 18:05:43Z tgaskins $
  */
-public class TacticalGraphicLabel
-{
-    protected class OrderedLabel implements OrderedRenderable
-    {
-        /** Geographic position in cartesian coordinates. */
-        protected Vec4 placePoint;
-        /** Location of the place point projected onto the screen. */
-        protected Vec4 screenPlacePoint;
-        /**
-         * Location of the upper left corner of the text measured from the lower left corner of the viewport. This point
-         * in OGL coordinates.
-         */
-        protected Point screenPoint;
-        /** Rotation applied to the label. This is computed each frame based on the orientation position. */
-        protected Angle rotation;
-        /** Extent of the label on the screen. */
-        protected Rectangle screenExtent;
-        /** Distance from the eye point to the label's geographic location. */
-        protected double eyeDistance;
-
-        @Override
-        public double getDistanceFromEye()
-        {
-            return this.eyeDistance;
-        }
-
-        @Override
-        public void pick(DrawContext dc, Point pickPoint)
-        {
-            TacticalGraphicLabel.this.pick(dc, pickPoint, this);
-        }
-
-        @Override
-        public void render(DrawContext dc)
-        {
-
-            TacticalGraphicLabel.this.drawOrderedRenderable(dc, this);
-        }
-
-        public boolean isEnableBatchRendering()
-        {
-            return TacticalGraphicLabel.this.isEnableBatchRendering();
-        }
-
-        public boolean isEnableBatchPicking()
-        {
-            return TacticalGraphicLabel.this.isEnableBatchPicking();
-        }
-
-        public Layer getPickLayer()
-        {
-            return TacticalGraphicLabel.this.pickLayer;
-        }
-
-        protected void doDrawOrderedRenderable(DrawContext dc, PickSupport pickCandidates)
-        {
-            TacticalGraphicLabel.this.doDrawOrderedRenderable(dc, pickCandidates, this);
-        }
-
-        protected Font getFont()
-        {
-            return TacticalGraphicLabel.this.getFont();
-        }
-
-        protected boolean isDrawInterior()
-        {
-            return TacticalGraphicLabel.this.isDrawInterior();
-        }
-
-        protected void doDrawText(TextRenderer textRenderer)
-        {
-            TacticalGraphicLabel.this.doDrawText(textRenderer, this);
-        }
-    }
-
-    /** Default font. */
+public class TacticalGraphicLabel {
+    /**
+     * Default font.
+     */
     public static final Font DEFAULT_FONT = Font.decode("Arial-BOLD-16");
     /**
      * Default offset. The default offset aligns the label horizontal with the text alignment position, and centers the
      * label vertically. For example, if the text alignment is <code>AVKey.LEFT</code>, then the left edge of the text
      * will be aligned with the geographic position, and the label will be centered vertically.
      */
-    public static final Offset DEFAULT_OFFSET = new Offset(0d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
-    /** Default insets around the label. */
+    public static final Offset DEFAULT_OFFSET = new Offset(0.0d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
+    /**
+     * Default insets around the label.
+     */
     public static final Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
-    /** Default interior opacity. */
+    /**
+     * Default interior opacity.
+     */
     public static final double DEFAULT_INTERIOR_OPACITY = 0.7;
-    /** Default text effect (shadow). */
+    /**
+     * Default text effect (shadow).
+     */
     public static final String DEFAULT_TEXT_EFFECT = AVKey.TEXT_EFFECT_SHADOW;
-
-    /** Text split into separate lines. */
+    /**
+     * Stack handler used for beginDrawing/endDrawing state.
+     */
+    protected final OGLStackHandler BEogsh = new OGLStackHandler();
+    /**
+     * Support object used during picking.
+     */
+    protected final PickSupport pickSupport = new PickSupport();
+    /**
+     * Text split into separate lines.
+     */
     protected String[] lines;
-    /** The label's geographic position. */
+    /**
+     * The label's geographic position.
+     */
     protected Position position;
-    /** Offset from the geographic position at which to draw the label. */
+    /**
+     * Offset from the geographic position at which to draw the label.
+     */
     protected Offset offset = DEFAULT_OFFSET;
-    /** Text alignment for multi-line labels. */
+    /**
+     * Text alignment for multi-line labels.
+     */
     protected String textAlign = AVKey.LEFT;
-    /** The label is drawn along a line from the label position to the orientation position. */
+    /**
+     * The label is drawn along a line from the label position to the orientation position.
+     */
     protected Position orientationPosition;
-
-    /** Material used to draw the label. */
+    /**
+     * Material used to draw the label.
+     */
     protected Material material = Material.BLACK;
-    /** Opacity of the text, as a value between 0 and 1. */
+    /**
+     * Opacity of the text, as a value between 0 and 1.
+     */
     protected double opacity = 1.0;
     protected double interiorOpacity = DEFAULT_INTERIOR_OPACITY;
-    /** Font used to draw the label. */
+    /**
+     * Font used to draw the label.
+     */
     protected Font font = DEFAULT_FONT;
-    /** Space (in pixels) between lines in a multi-line label. */
+    /**
+     * Space (in pixels) between lines in a multi-line label.
+     */
     protected int lineSpacing = 5; // TODO compute default based on font size
-
-    /** Effect applied to the text. May be {@link AVKey#TEXT_EFFECT_SHADOW} or {@link AVKey#TEXT_EFFECT_NONE}. */
+    /**
+     * Effect applied to the text. May be {@link AVKey#TEXT_EFFECT_SHADOW} or {@link AVKey#TEXT_EFFECT_NONE}.
+     */
     protected String effect = DEFAULT_TEXT_EFFECT;
-    /** Insets that separate the text from its frame. Only applies when the text interior is rendered. */
+    /**
+     * Insets that separate the text from its frame. Only applies when the text interior is rendered.
+     */
     protected Insets insets = DEFAULT_INSETS;
-    /** Indicates whether or not to draw the label interior. */
+    /**
+     * Indicates whether or not to draw the label interior.
+     */
     protected boolean drawInterior;
-
-    /** Indicates whether or not batch rendering is enabled. */
+    /**
+     * Indicates whether or not batch rendering is enabled.
+     */
     protected boolean enableBatchRendering = true;
-    /** Indicates whether or not batch picking is enabled. */
+    /**
+     * Indicates whether or not batch picking is enabled.
+     */
     protected boolean enableBatchPicking = true;
-
-    /** Indicates an object that represents the label during picking. */
+    /**
+     * Indicates an object that represents the label during picking.
+     */
     protected Object delegateOwner;
-
     // Computed each frame
     protected long frameTimeStamp = -1L;
-    protected OrderedLabel thisFramesOrderedLabel;
 
     // Computed only when text or font changes
-    /** Size of the label. */
+    protected OrderedLabel thisFramesOrderedLabel;
+    /**
+     * Size of the label.
+     */
     protected Rectangle2D bounds;
-    /** Cached bounds for each line of text. */
+    /**
+     * Cached bounds for each line of text.
+     */
     protected Rectangle2D[] lineBounds;
     /**
-     * Height of a line of text, computed in {@link #computeBoundsIfNeeded(gov.nasa.worldwind.render.DrawContext)}.
+     * Height of a line of text, computed in {@link #computeBoundsIfNeeded(DrawContext)}.
      */
     protected int lineHeight;
-
-    /** Stack handler used for beginDrawing/endDrawing state. */
-    protected final OGLStackHandler BEogsh = new OGLStackHandler();
-    /** Support object used during picking. */
-    protected final PickSupport pickSupport = new PickSupport();
-    /** Active layer. */
+    /**
+     * Active layer.
+     */
     protected Layer pickLayer;
 
-    /** Create a new empty label. */
-    public TacticalGraphicLabel()
-    {
+    /**
+     * Create a new empty label.
+     */
+    public TacticalGraphicLabel() {
     }
 
     /**
@@ -184,8 +152,7 @@ public class TacticalGraphicLabel
      *
      * @param text Label text.
      */
-    public TacticalGraphicLabel(String text)
-    {
+    public TacticalGraphicLabel(String text) {
         this.setText(text);
     }
 
@@ -194,14 +161,11 @@ public class TacticalGraphicLabel
      *
      * @return The label's text.
      */
-    public String getText()
-    {
-        if (this.lines != null)
-        {
+    public String getText() {
+        if (this.lines != null) {
             StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < this.lines.length - 1; i++)
-            {
+            for (int i = 0; i < this.lines.length - 1; i++) {
                 sb.append(this.lines[i]).append("\n");
             }
             sb.append(this.lines[this.lines.length - 1]);
@@ -217,8 +181,7 @@ public class TacticalGraphicLabel
      *
      * @param text New text.
      */
-    public void setText(String text)
-    {
+    public void setText(String text) {
         if (text != null)
             this.lines = text.split("\n");
         else
@@ -231,11 +194,9 @@ public class TacticalGraphicLabel
      * Indicates the label's position. The label is drawn at an offset from this position.
      *
      * @return The label's geographic position.
-     *
      * @see #getOffset()
      */
-    public Position getPosition()
-    {
+    public Position getPosition() {
         return this.position;
     }
 
@@ -243,11 +204,9 @@ public class TacticalGraphicLabel
      * Indicates the label's geographic position. The label is drawn at an offset from this position.
      *
      * @param position New position.
-     *
      * @see #getOffset()
      */
-    public void setPosition(Position position)
-    {
+    public void setPosition(Position position) {
         this.position = position;
 
         // Label has moved, need to recompute screen extent. Explicitly set the extent to null so that it will be
@@ -261,8 +220,7 @@ public class TacticalGraphicLabel
      *
      * @return the current text alignment.
      */
-    public String getTextAlign()
-    {
+    public String getTextAlign() {
         return this.textAlign;
     }
 
@@ -272,10 +230,8 @@ public class TacticalGraphicLabel
      *
      * @param textAlign New text alignment.
      */
-    public void setTextAlign(String textAlign)
-    {
-        if (textAlign == null)
-        {
+    public void setTextAlign(String textAlign) {
+        if (textAlign == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -286,12 +242,11 @@ public class TacticalGraphicLabel
 
     /**
      * Indicates the offset from the geographic position at which to draw the label. See {@link
-     * #setOffset(gov.nasa.worldwind.render.Offset) setOffset} for more information on how the offset is interpreted.
+     * #setOffset(Offset) setOffset} for more information on how the offset is interpreted.
      *
      * @return The offset at which to draw the label.
      */
-    public Offset getOffset()
-    {
+    public Offset getOffset() {
         return this.offset;
     }
 
@@ -306,10 +261,8 @@ public class TacticalGraphicLabel
      *
      * @param offset The offset at which to draw the label.
      */
-    public void setOffset(Offset offset)
-    {
-        if (offset == null)
-        {
+    public void setOffset(Offset offset) {
+        if (offset == null) {
             String message = Logging.getMessage("nullValue.OffsetIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -323,8 +276,7 @@ public class TacticalGraphicLabel
      *
      * @return The label's font.
      */
-    public Font getFont()
-    {
+    public Font getFont() {
         return this.font;
     }
 
@@ -333,17 +285,14 @@ public class TacticalGraphicLabel
      *
      * @param font New font.
      */
-    public void setFont(Font font)
-    {
-        if (font == null)
-        {
+    public void setFont(Font font) {
+        if (font == null) {
             String message = Logging.getMessage("nullValue.FontIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (font != this.font)
-        {
+        if (font != this.font) {
             this.font = font;
             this.bounds = null; // Need to recompute
         }
@@ -354,8 +303,7 @@ public class TacticalGraphicLabel
      *
      * @return The space (in pixels) between lines of a multi-line label.
      */
-    public int getLineSpacing()
-    {
+    public int getLineSpacing() {
         return lineSpacing;
     }
 
@@ -364,10 +312,8 @@ public class TacticalGraphicLabel
      *
      * @param lineSpacing New line spacing.
      */
-    public void setLineSpacing(int lineSpacing)
-    {
-        if (lineSpacing < 0)
-        {
+    public void setLineSpacing(int lineSpacing) {
+        if (lineSpacing < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -381,8 +327,7 @@ public class TacticalGraphicLabel
      *
      * @return The label's material.
      */
-    public Material getMaterial()
-    {
+    public Material getMaterial() {
         return this.material;
     }
 
@@ -391,10 +336,8 @@ public class TacticalGraphicLabel
      *
      * @param material New material.
      */
-    public void setMaterial(Material material)
-    {
-        if (material == null)
-        {
+    public void setMaterial(Material material) {
+        if (material == null) {
             String message = Logging.getMessage("nullValue.MaterialIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -407,11 +350,9 @@ public class TacticalGraphicLabel
      * Indicates whether or not to draw a colored frame behind the label.
      *
      * @return <code>true</code> if the label's interior is drawn, otherwise <code>false</code>.
-     *
      * @see #setDrawInterior(boolean)
      */
-    public boolean isDrawInterior()
-    {
+    public boolean isDrawInterior() {
         return this.drawInterior;
     }
 
@@ -419,11 +360,9 @@ public class TacticalGraphicLabel
      * Specifies whether or not to draw a colored frame behind the label.
      *
      * @param drawInterior <code>true</code> if the label's interior is drawn, otherwise <code>false</code>.
-     *
      * @see #isDrawInterior()
      */
-    public void setDrawInterior(boolean drawInterior)
-    {
+    public void setDrawInterior(boolean drawInterior) {
         this.drawInterior = drawInterior;
     }
 
@@ -434,8 +373,7 @@ public class TacticalGraphicLabel
      *
      * @return the opacity of the text as a floating-point value from 0.0 to 1.0.
      */
-    public double getOpacity()
-    {
+    public double getOpacity() {
         return this.opacity;
     }
 
@@ -445,13 +383,10 @@ public class TacticalGraphicLabel
      * transparent text.
      *
      * @param opacity the opacity of text as a floating-point value from 0.0 to 1.0.
-     *
      * @throws IllegalArgumentException if <code>opacity</code> is less than 0.0 or greater than 1.0.
      */
-    public void setOpacity(double opacity)
-    {
-        if (opacity < 0 || opacity > 1)
-        {
+    public void setOpacity(double opacity) {
+        if (opacity < 0 || opacity > 1) {
             String message = Logging.getMessage("generic.OpacityOutOfRange", opacity);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -467,8 +402,7 @@ public class TacticalGraphicLabel
      *
      * @return the opacity of the interior as a floating-point value from 0.0 to 1.0.
      */
-    public double getInteriorOpacity()
-    {
+    public double getInteriorOpacity() {
         return this.interiorOpacity;
     }
 
@@ -478,13 +412,10 @@ public class TacticalGraphicLabel
      * specify a partially transparent interior.
      *
      * @param interiorOpacity the opacity of label's interior as a floating-point value from 0.0 to 1.0.
-     *
      * @throws IllegalArgumentException if <code>opacity</code> is less than 0.0 or greater than 1.0.
      */
-    public void setInteriorOpacity(double interiorOpacity)
-    {
-        if (opacity < 0 || opacity > 1)
-        {
+    public void setInteriorOpacity(double interiorOpacity) {
+        if (opacity < 0 || opacity > 1) {
             String message = Logging.getMessage("generic.OpacityOutOfRange", opacity);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -499,8 +430,7 @@ public class TacticalGraphicLabel
      *
      * @return Position used to orient the label. May be null.
      */
-    public Position getOrientationPosition()
-    {
+    public Position getOrientationPosition() {
         return this.orientationPosition;
     }
 
@@ -510,8 +440,7 @@ public class TacticalGraphicLabel
      *
      * @param orientationPosition Draw label oriented toward this position.
      */
-    public void setOrientationPosition(Position orientationPosition)
-    {
+    public void setOrientationPosition(Position orientationPosition) {
         this.orientationPosition = orientationPosition;
     }
 
@@ -519,11 +448,9 @@ public class TacticalGraphicLabel
      * Indicates the amount of space between the label's content and its frame, in pixels.
      *
      * @return the padding between the label's content and its frame, in pixels.
-     *
-     * @see #setInsets(java.awt.Insets)
+     * @see #setInsets(Insets)
      */
-    public Insets getInsets()
-    {
+    public Insets getInsets() {
         return this.insets;
     }
 
@@ -531,14 +458,11 @@ public class TacticalGraphicLabel
      * Specifies the amount of space (in pixels) between the label's content and the edges of the label's frame.
      *
      * @param insets the desired padding between the label's content and its frame, in pixels.
-     *
      * @throws IllegalArgumentException if <code>insets</code> is <code>null</code>.
      * @see #getInsets()
      */
-    public void setInsets(Insets insets)
-    {
-        if (insets == null)
-        {
+    public void setInsets(Insets insets) {
+        if (insets == null) {
             String message = Logging.getMessage("nullValue.InsetsIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -553,8 +477,7 @@ public class TacticalGraphicLabel
      *
      * @return the effect used for text rendering
      */
-    public String getEffect()
-    {
+    public String getEffect() {
         return this.effect;
     }
 
@@ -564,10 +487,8 @@ public class TacticalGraphicLabel
      *
      * @param effect the effect to use for text rendering
      */
-    public void setEffect(String effect)
-    {
-        if (effect == null)
-        {
+    public void setEffect(String effect) {
+        if (effect == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -583,8 +504,7 @@ public class TacticalGraphicLabel
      * @return the object used as the pickable object returned during picking, or null to indicate the the label is
      * returned during picking.
      */
-    public Object getDelegateOwner()
-    {
+    public Object getDelegateOwner() {
         return this.delegateOwner;
     }
 
@@ -594,8 +514,7 @@ public class TacticalGraphicLabel
      *
      * @param owner the object to use as the pickable object returned during picking, or null to return the label.
      */
-    public void setDelegateOwner(Object owner)
-    {
+    public void setDelegateOwner(Object owner) {
         this.delegateOwner = owner;
     }
 
@@ -603,11 +522,9 @@ public class TacticalGraphicLabel
      * Indicates whether batch picking is enabled.
      *
      * @return true if batch rendering is enabled, otherwise false.
-     *
      * @see #setEnableBatchPicking(boolean)
      */
-    public boolean isEnableBatchPicking()
-    {
+    public boolean isEnableBatchPicking() {
         return this.enableBatchPicking;
     }
 
@@ -620,8 +537,7 @@ public class TacticalGraphicLabel
      *
      * @param enableBatchPicking true to enable batch rendering, otherwise false.
      */
-    public void setEnableBatchPicking(boolean enableBatchPicking)
-    {
+    public void setEnableBatchPicking(boolean enableBatchPicking) {
         this.enableBatchPicking = enableBatchPicking;
     }
 
@@ -629,11 +545,9 @@ public class TacticalGraphicLabel
      * Indicates whether batch rendering is enabled.
      *
      * @return true if batch rendering is enabled, otherwise false.
-     *
      * @see #setEnableBatchRendering(boolean)
      */
-    public boolean isEnableBatchRendering()
-    {
+    public boolean isEnableBatchRendering() {
         return this.enableBatchRendering;
     }
 
@@ -643,26 +557,21 @@ public class TacticalGraphicLabel
      *
      * @param enableBatchRendering true to enable batch rendering, otherwise false.
      */
-    public void setEnableBatchRendering(boolean enableBatchRendering)
-    {
+    public void setEnableBatchRendering(boolean enableBatchRendering) {
         this.enableBatchRendering = enableBatchRendering;
     }
 
     /**
-     * Get the label bounding {@link java.awt.Rectangle} using OGL coordinates - bottom-left corner x and y relative to
+     * Get the label bounding {@link Rectangle} using OGL coordinates - bottom-left corner x and y relative to
      * the {@link gov.nasa.worldwind.WorldWindow} bottom-left corner. If the label is rotated then the returned
      * rectangle is the bounding rectangle of the rotated label.
      *
      * @param dc the current DrawContext.
-     *
-     * @return the label bounding {@link java.awt.Rectangle} using OGL viewport coordinates.
-     *
+     * @return the label bounding {@link Rectangle} using OGL viewport coordinates.
      * @throws IllegalArgumentException if <code>dc</code> is null.
      */
-    public Rectangle getBounds(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public Rectangle getBounds(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -673,15 +582,13 @@ public class TacticalGraphicLabel
         return this.thisFramesOrderedLabel.screenExtent;
     }
 
-    protected void computeGeometryIfNeeded(DrawContext dc)
-    {
+    protected void computeGeometryIfNeeded(DrawContext dc) {
         // Re-use rendering state values already calculated this frame. If the screenExtent is null, recompute even if
         // the timestamp is the same. This prevents using a stale position if the application calls setPosition and
         // getBounds multiple times before the label is rendered.
 
         if (dc.getFrameTimeStamp() != this.frameTimeStamp || this.thisFramesOrderedLabel == null
-            || dc.isContinuous2DGlobe())
-        {
+            || dc.isContinuous2DGlobe()) {
             OrderedLabel olbl = new OrderedLabel();
             this.computeGeometry(dc, olbl);
             this.thisFramesOrderedLabel = olbl;
@@ -694,8 +601,7 @@ public class TacticalGraphicLabel
      *
      * @param dc the current DrawContext.
      */
-    protected void computeBoundsIfNeeded(DrawContext dc)
-    {
+    protected void computeBoundsIfNeeded(DrawContext dc) {
         // Do not compute bounds if they are available. Computing text bounds is expensive, so only do this
         // calculation if necessary.
         if (this.bounds != null)
@@ -708,8 +614,7 @@ public class TacticalGraphicLabel
         int maxLineHeight = 0;
         this.lineBounds = new Rectangle2D[this.lines.length];
 
-        for (int i = 0; i < this.lines.length; i++)
-        {
+        for (int i = 0; i < this.lines.length; i++) {
             Rectangle2D lineBounds = textRenderer.getBounds(lines[i]);
             width = (int) Math.max(lineBounds.getWidth(), width);
 
@@ -731,8 +636,7 @@ public class TacticalGraphicLabel
      * @param dc   Current draw context.
      * @param olbl The ordered label to compute geometry for.
      */
-    protected void computeGeometry(DrawContext dc, OrderedLabel olbl)
-    {
+    protected void computeGeometry(DrawContext dc, OrderedLabel olbl) {
         // Project the label position onto the viewport
         Position pos = this.getPosition();
         if (pos == null)
@@ -744,8 +648,7 @@ public class TacticalGraphicLabel
         olbl.eyeDistance = olbl.placePoint.distanceTo3(dc.getView().getEyePoint());
 
         boolean orientationReversed = false;
-        if (this.orientationPosition != null)
-        {
+        if (this.orientationPosition != null) {
             // Project the orientation point onto the screen
             Vec4 orientationPlacePoint = dc.computeTerrainPoint(this.orientationPosition.getLatitude(),
                 this.orientationPosition.getLongitude(), 0);
@@ -767,16 +670,14 @@ public class TacticalGraphicLabel
         // If a rotation is applied to the text, then rotate the offset as well. An offset in the x direction
         // will move the text along the orientation line, and a offset in the y direction will move the text
         // perpendicular to the orientation line.
-        if (olbl.rotation != null)
-        {
+        if (olbl.rotation != null) {
             double dy = offsetPoint.getY();
 
             // If the orientation is reversed we need to adjust the vertical offset to compensate for the flipped
             // text. For example, if the offset normally aligns the top of the text with the place point then without
             // this adjustment the bottom of the text would align with the place point when the orientation is
             // reversed.
-            if (orientationReversed)
-            {
+            if (orientationReversed) {
                 dy = -(dy + this.bounds.getHeight());
             }
 
@@ -800,19 +701,16 @@ public class TacticalGraphicLabel
      *
      * @param dc   Current draw context.
      * @param olbl The ordered label to intersect.
-     *
      * @return True if this label intersects the active frustum (view or pick). Otherwise false.
      */
-    protected boolean intersectsFrustum(DrawContext dc, OrderedLabel olbl)
-    {
+    protected boolean intersectsFrustum(DrawContext dc, OrderedLabel olbl) {
         View view = dc.getView();
         Frustum frustum = view.getFrustumInModelCoordinates();
 
         // Test the label's model coordinate point against the near and far clipping planes.
         if (olbl.placePoint != null
             && (frustum.getNear().distanceTo(olbl.placePoint) < 0
-            || frustum.getFar().distanceTo(olbl.placePoint) < 0))
-        {
+            || frustum.getFar().distanceTo(olbl.placePoint) < 0)) {
             return false;
         }
 
@@ -827,22 +725,18 @@ public class TacticalGraphicLabel
      *
      * @param screenPoint            Geographic position of the text, projected onto the screen.
      * @param orientationScreenPoint Orientation position, projected onto the screen.
-     *
      * @return The rotation angle to apply when drawing the label.
      */
-    protected Angle computeRotation(Vec4 screenPoint, Vec4 orientationScreenPoint)
-    {
+    protected Angle computeRotation(Vec4 screenPoint, Vec4 orientationScreenPoint) {
         // Determine delta between the orientation position and the label position
         double deltaX = screenPoint.x - orientationScreenPoint.x;
         double deltaY = screenPoint.y - orientationScreenPoint.y;
 
-        if (deltaX != 0)
-        {
+        if (deltaX != 0) {
             double angle = Math.atan(deltaY / deltaX);
             return Angle.fromRadians(angle);
         }
-        else
-        {
+        else {
             return Angle.POS90; // Vertical label
         }
     }
@@ -851,17 +745,14 @@ public class TacticalGraphicLabel
      * Causes this <code>Renderable</code> to render itself using the provided draw context.
      *
      * @param dc the <code>DrawContext</code> to be used
-     *
      * @throws IllegalArgumentException if the draw context is null.
      * @see DrawContext
      */
-    public void render(DrawContext dc)
-    {
+    public void render(DrawContext dc) {
         // This render method is called twice during frame generation. It's first called as a Renderable
         // during Renderable picking. It's called again during normal rendering.
 
-        if (dc == null)
-        {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -870,26 +761,22 @@ public class TacticalGraphicLabel
         this.makeOrderedRenderable(dc);
     }
 
-    public void pick(DrawContext dc, Point pickPoint, OrderedLabel olbl)
-    {
+    public void pick(DrawContext dc, Point pickPoint, OrderedLabel olbl) {
         // This method is called only when ordered renderables are being drawn.
         // Arg checked within call to render.
 
-        if (dc == null)
-        {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         this.pickSupport.clearPickList();
-        try
-        {
+        try {
             this.pickSupport.beginPicking(dc);
             this.drawOrderedRenderable(dc, olbl);
         }
-        finally
-        {
+        finally {
             this.pickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
@@ -900,8 +787,7 @@ public class TacticalGraphicLabel
      *
      * @param dc the current draw context.
      */
-    protected void makeOrderedRenderable(DrawContext dc)
-    {
+    protected void makeOrderedRenderable(DrawContext dc) {
         if (this.lines == null || this.position == null)
             return;
 
@@ -925,18 +811,15 @@ public class TacticalGraphicLabel
      * @param dc   the current draw context.
      * @param olbl The ordered label to draw.
      */
-    protected void drawOrderedRenderable(DrawContext dc, OrderedLabel olbl)
-    {
+    protected void drawOrderedRenderable(DrawContext dc, OrderedLabel olbl) {
         this.beginDrawing(dc);
-        try
-        {
+        try {
             this.doDrawOrderedRenderable(dc, this.pickSupport, olbl);
 
             if (this.isEnableBatchRendering())
                 this.drawBatched(dc, olbl);
         }
-        finally
-        {
+        finally {
             this.endDrawing(dc);
         }
     }
@@ -948,15 +831,12 @@ public class TacticalGraphicLabel
      * @param pickSupport Support object used during picking.
      * @param olbl        The ordered label to draw.
      */
-    protected void doDrawOrderedRenderable(DrawContext dc, PickSupport pickSupport, OrderedLabel olbl)
-    {
+    protected void doDrawOrderedRenderable(DrawContext dc, PickSupport pickSupport, OrderedLabel olbl) {
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
-        if (dc.isPickingMode())
-        {
+        if (dc.isPickingMode()) {
             this.doPick(dc, pickSupport, olbl);
         }
-        else
-        {
+        else {
             this.drawText(dc, textRenderer, olbl);
         }
     }
@@ -966,8 +846,7 @@ public class TacticalGraphicLabel
      *
      * @param dc the current draw context.
      */
-    protected void beginDrawing(DrawContext dc)
-    {
+    protected void beginDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attrMask =
@@ -981,8 +860,7 @@ public class TacticalGraphicLabel
 
         this.BEogsh.pushAttrib(gl, attrMask);
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             gl.glEnable(GL.GL_BLEND);
             OGLUtil.applyBlending(gl, false);
         }
@@ -993,7 +871,7 @@ public class TacticalGraphicLabel
 
         // The image is drawn using a parallel projection.
         this.BEogsh.pushProjectionIdentity(gl);
-        gl.glOrtho(0d, dc.getView().getViewport().width, 0d, dc.getView().getViewport().height, -1d, 1d);
+        gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
 
         this.BEogsh.pushModelviewIdentity(gl);
     }
@@ -1003,8 +881,7 @@ public class TacticalGraphicLabel
      *
      * @param dc the current draw context.
      */
-    protected void endDrawing(DrawContext dc)
-    {
+    protected void endDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         this.BEogsh.pop(gl);
@@ -1017,8 +894,7 @@ public class TacticalGraphicLabel
      * @param pickSupport the PickSupport instance to be used.
      * @param olbl        The ordered label to pick.
      */
-    protected void doPick(DrawContext dc, PickSupport pickSupport, OrderedLabel olbl)
-    {
+    protected void doPick(DrawContext dc, PickSupport pickSupport, OrderedLabel olbl) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         Angle heading = olbl.rotation;
@@ -1033,10 +909,8 @@ public class TacticalGraphicLabel
         int y = olbl.screenPoint.y;
 
         boolean matrixPushed = false;
-        try
-        {
-            if (headingDegrees != 0)
-            {
+        try {
+            if (headingDegrees != 0) {
                 gl.glPushMatrix();
                 matrixPushed = true;
 
@@ -1045,8 +919,7 @@ public class TacticalGraphicLabel
                 gl.glTranslated(-x, -y, 0);
             }
 
-            for (int i = 0; i < this.lines.length; i++)
-            {
+            for (int i = 0; i < this.lines.length; i++) {
                 Rectangle2D bounds = this.lineBounds[i];
                 double width = bounds.getWidth();
                 double height = bounds.getHeight();
@@ -1066,8 +939,7 @@ public class TacticalGraphicLabel
                 // Draw line rectangle
                 gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
 
-                try
-                {
+                try {
                     gl.glBegin(GL2.GL_POLYGON);
                     gl.glVertex3d(x, y, 0);
                     gl.glVertex3d(x + width - 1, y, 0);
@@ -1075,18 +947,15 @@ public class TacticalGraphicLabel
                     gl.glVertex3d(x, y + height - 1, 0);
                     gl.glVertex3d(x, y, 0);
                 }
-                finally
-                {
+                finally {
                     gl.glEnd();
                 }
 
                 y -= this.lineSpacing;
             }
         }
-        finally
-        {
-            if (matrixPushed)
-            {
+        finally {
+            if (matrixPushed) {
                 gl.glPopMatrix();
             }
         }
@@ -1094,14 +963,13 @@ public class TacticalGraphicLabel
 
     /**
      * Draw the label's text. This method sets up the text renderer, and then calls {@link #doDrawText(TextRenderer,
-     * gov.nasa.worldwind.symbology.TacticalGraphicLabel.OrderedLabel) doDrawText} to actually draw the text.
+     * TacticalGraphicLabel.OrderedLabel) doDrawText} to actually draw the text.
      *
      * @param dc           Current draw context.
      * @param textRenderer Text renderer.
      * @param olbl         The ordered label to draw.
      */
-    protected void drawText(DrawContext dc, TextRenderer textRenderer, OrderedLabel olbl)
-    {
+    protected void drawText(DrawContext dc, TextRenderer textRenderer, OrderedLabel olbl) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         Angle heading = olbl.rotation;
@@ -1113,13 +981,11 @@ public class TacticalGraphicLabel
             headingDegrees = 0;
 
         boolean matrixPushed = false;
-        try
-        {
+        try {
             int x = olbl.screenPoint.x;
             int y = olbl.screenPoint.y;
 
-            if (headingDegrees != 0)
-            {
+            if (headingDegrees != 0) {
                 gl.glPushMatrix();
                 matrixPushed = true;
 
@@ -1132,23 +998,19 @@ public class TacticalGraphicLabel
                 this.drawInterior(dc, olbl);
 
             textRenderer.begin3DRendering();
-            try
-            {
+            try {
                 this.doDrawText(textRenderer, olbl);
 
                 // Draw other labels that share the same text renderer configuration, if possible.
                 if (this.isEnableBatchRendering())
                     this.drawBatchedText(dc, textRenderer, olbl);
             }
-            finally
-            {
+            finally {
                 textRenderer.end3DRendering();
             }
         }
-        finally
-        {
-            if (matrixPushed)
-            {
+        finally {
+            if (matrixPushed) {
                 gl.glPopMatrix();
             }
         }
@@ -1160,8 +1022,7 @@ public class TacticalGraphicLabel
      * @param dc   Current draw context.
      * @param olbl The ordered label to draw.
      */
-    protected void drawInterior(DrawContext dc, OrderedLabel olbl)
-    {
+    protected void drawInterior(DrawContext dc, OrderedLabel olbl) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         double width = this.bounds.getWidth();
@@ -1187,24 +1048,21 @@ public class TacticalGraphicLabel
         yAligned -= insets.bottom;
         height = height + insets.bottom + insets.top;
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             // Apply the frame background color and opacity if we're in normal rendering mode.
             Color color = this.computeBackgroundColor(this.getMaterial().getDiffuse());
             gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(),
                 (byte) (this.interiorOpacity < 1 ? (int) (this.interiorOpacity * 255 + 0.5) : 255));
         }
 
-        try
-        {
+        try {
             // Draw a quad
             gl.glPushMatrix();
             gl.glTranslated(xAligned, yAligned, 0);
             gl.glScaled(width, height, 1.0);
             dc.drawUnitQuad();
         }
-        finally
-        {
+        finally {
             gl.glPopMatrix();
         }
     }
@@ -1215,8 +1073,7 @@ public class TacticalGraphicLabel
      * @param textRenderer renderer to use.
      * @param olbl         The ordered label to draw.
      */
-    protected void doDrawText(TextRenderer textRenderer, OrderedLabel olbl)
-    {
+    protected void doDrawText(TextRenderer textRenderer, OrderedLabel olbl) {
         Color color = this.material.getDiffuse();
         Color backgroundColor = this.computeBackgroundColor(color);
         float opacity = (float) this.getOpacity();
@@ -1225,8 +1082,7 @@ public class TacticalGraphicLabel
         int y = olbl.screenPoint.y;
 
         float[] compArray = new float[3];
-        if (AVKey.TEXT_EFFECT_SHADOW.equals(this.effect) && backgroundColor != null)
-        {
+        if (AVKey.TEXT_EFFECT_SHADOW.equals(this.effect) && backgroundColor != null) {
             backgroundColor.getRGBColorComponents(compArray);
 
             textRenderer.setColor(compArray[0], compArray[1], compArray[2], opacity);
@@ -1238,17 +1094,14 @@ public class TacticalGraphicLabel
         this.drawMultiLineText(textRenderer, x, y, olbl);
     }
 
-    protected void drawMultiLineText(TextRenderer textRenderer, int x, int y, OrderedLabel olbl)
-    {
-        if (this.lines == null)
-        {
+    protected void drawMultiLineText(TextRenderer textRenderer, int x, int y, OrderedLabel olbl) {
+        if (this.lines == null) {
             String msg = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        for (int i = 0; i < this.lines.length; i++)
-        {
+        for (int i = 0; i < this.lines.length; i++) {
             String line = this.lines[i];
             Rectangle2D bounds = this.lineBounds[i];
 
@@ -1266,8 +1119,8 @@ public class TacticalGraphicLabel
 
     /**
      * Draws this ordered renderable and all subsequent Label ordered renderables in the ordered renderable list. This
-     * method differs from {@link #drawBatchedText(gov.nasa.worldwind.render.DrawContext, TextRenderer,
-     * gov.nasa.worldwind.symbology.TacticalGraphicLabel.OrderedLabel) drawBatchedText} in that this method
+     * method differs from {@link #drawBatchedText(DrawContext, TextRenderer,
+     * TacticalGraphicLabel.OrderedLabel) drawBatchedText} in that this method
      * re-initializes the text renderer to draw the next label, while {@code drawBatchedText} re-uses the active text
      * renderer context. That is, {@code drawBatchedText} attempts to draw as many labels as possible that share same
      * text renderer configuration as this label, and this method attempts to draw as many labels as possible regardless
@@ -1276,15 +1129,12 @@ public class TacticalGraphicLabel
      * @param dc         the current draw context.
      * @param firstLabel the label drawn prior to calling this method.
      */
-    protected void drawBatched(DrawContext dc, OrderedLabel firstLabel)
-    {
+    protected void drawBatched(DrawContext dc, OrderedLabel firstLabel) {
         // Draw as many as we can in a batch to save ogl state switching.
         Object nextItem = dc.peekOrderedRenderables();
 
-        if (!dc.isPickingMode())
-        {
-            while (nextItem instanceof OrderedLabel)
-            {
+        if (!dc.isPickingMode()) {
+            while (nextItem instanceof OrderedLabel) {
                 OrderedLabel nextLabel = (OrderedLabel) nextItem;
                 if (!nextLabel.isEnableBatchRendering())
                     break;
@@ -1295,10 +1145,8 @@ public class TacticalGraphicLabel
                 nextItem = dc.peekOrderedRenderables();
             }
         }
-        else if (this.isEnableBatchPicking())
-        {
-            while (nextItem instanceof OrderedLabel)
-            {
+        else if (this.isEnableBatchPicking()) {
+            while (nextItem instanceof OrderedLabel) {
                 OrderedLabel nextLabel = (OrderedLabel) nextItem;
                 if (!nextLabel.isEnableBatchRendering() || !nextLabel.isEnableBatchPicking())
                     break;
@@ -1318,7 +1166,7 @@ public class TacticalGraphicLabel
      * Draws text for subsequent Label ordered renderables in the ordered renderable list. This method is called after
      * the text renderer has been set up (after beginRendering has been called), so this method can only draw text for
      * subsequent labels that use the same font and rotation as this label. This method differs from {@link
-     * #drawBatched(gov.nasa.worldwind.render.DrawContext, gov.nasa.worldwind.symbology.TacticalGraphicLabel.OrderedLabel)
+     * #drawBatched(DrawContext, TacticalGraphicLabel.OrderedLabel)
      * drawBatched} in that this method reuses the active text renderer context to draw as many labels as possible
      * without switching text renderer state.
      *
@@ -1326,15 +1174,12 @@ public class TacticalGraphicLabel
      * @param textRenderer Text renderer used to draw the label.
      * @param firstLabel   The first ordered renderable in the batch.
      */
-    protected void drawBatchedText(DrawContext dc, TextRenderer textRenderer, OrderedLabel firstLabel)
-    {
+    protected void drawBatchedText(DrawContext dc, TextRenderer textRenderer, OrderedLabel firstLabel) {
         // Draw as many as we can in a batch to save ogl state switching.
         Object nextItem = dc.peekOrderedRenderables();
 
-        if (!dc.isPickingMode())
-        {
-            while (nextItem instanceof OrderedLabel)
-            {
+        if (!dc.isPickingMode()) {
+            while (nextItem instanceof OrderedLabel) {
                 OrderedLabel nextLabel = (OrderedLabel) nextItem;
                 if (!nextLabel.isEnableBatchRendering())
                     break;
@@ -1363,8 +1208,7 @@ public class TacticalGraphicLabel
      *
      * @return If a delegate owner is set, returns the delegate owner. Otherwise returns this label.
      */
-    protected Object getPickedObject()
-    {
+    protected Object getPickedObject() {
         Object owner = this.getDelegateOwner();
         return (owner != null) ? owner : this;
     }
@@ -1378,11 +1222,9 @@ public class TacticalGraphicLabel
      * @param x    X coordinate at which to draw the label.
      * @param y    Y coordinate at which to draw the label.
      * @param olbl The ordered label to compute extents for.
-     *
      * @return The rectangle, in OGL screen coordinates (origin at bottom left corner), that is covered by the label.
      */
-    protected Rectangle computeTextExtent(int x, int y, OrderedLabel olbl)
-    {
+    protected Rectangle computeTextExtent(int x, int y, OrderedLabel olbl) {
         double width = this.bounds.getWidth();
         double height = this.bounds.getHeight();
 
@@ -1399,8 +1241,7 @@ public class TacticalGraphicLabel
         Rectangle screenRect = new Rectangle(xAligned, yAligned, (int) width, (int) height);
 
         // Compute bounds of the rotated rectangle, if there is a rotation angle.
-        if (olbl.rotation != null && olbl.rotation.degrees != 0)
-        {
+        if (olbl.rotation != null && olbl.rotation.degrees != 0) {
             screenRect = this.computeRotatedScreenExtent(screenRect, x, y, olbl.rotation);
         }
 
@@ -1414,11 +1255,9 @@ public class TacticalGraphicLabel
      * @param x        X coordinate of the rotation point.
      * @param y        Y coordinate of the rotation point.
      * @param rotation Rotation angle.
-     *
      * @return The smallest rectangle that completely contains {@code rect} when rotated by the specified angle.
      */
-    protected Rectangle computeRotatedScreenExtent(Rectangle rect, int x, int y, Angle rotation)
-    {
+    protected Rectangle computeRotatedScreenExtent(Rectangle rect, int x, int y, Angle rotation) {
         Rectangle r = new Rectangle(rect);
 
         // Translate the rectangle to the rotation point.
@@ -1434,8 +1273,7 @@ public class TacticalGraphicLabel
 
         // Rotate the rectangle
         Matrix rotationMatrix = Matrix.fromRotationZ(rotation);
-        for (int i = 0; i < corners.length; i++)
-        {
+        for (int i = 0; i < corners.length; i++) {
             corners[i] = corners[i].transformBy3(rotationMatrix);
         }
 
@@ -1445,8 +1283,7 @@ public class TacticalGraphicLabel
         int maxX = -Integer.MAX_VALUE;
         int maxY = -Integer.MAX_VALUE;
 
-        for (Vec4 v : corners)
-        {
+        for (Vec4 v : corners) {
             if (v.x > maxX)
                 maxX = (int) v.x;
 
@@ -1471,11 +1308,9 @@ public class TacticalGraphicLabel
      * Compute a contrasting background color to draw the label's outline.
      *
      * @param color Label color.
-     *
      * @return A color that contrasts with {@code color}.
      */
-    protected Color computeBackgroundColor(Color color)
-    {
+    protected Color computeBackgroundColor(Color color) {
         float[] colorArray = new float[4];
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), colorArray);
 
@@ -1483,5 +1318,77 @@ public class TacticalGraphicLabel
             return new Color(0, 0, 0, 0.7f);
         else
             return new Color(1, 1, 1, 0.7f);
+    }
+
+    protected class OrderedLabel implements OrderedRenderable {
+        /**
+         * Geographic position in cartesian coordinates.
+         */
+        protected Vec4 placePoint;
+        /**
+         * Location of the place point projected onto the screen.
+         */
+        protected Vec4 screenPlacePoint;
+        /**
+         * Location of the upper left corner of the text measured from the lower left corner of the viewport. This point
+         * in OGL coordinates.
+         */
+        protected Point screenPoint;
+        /**
+         * Rotation applied to the label. This is computed each frame based on the orientation position.
+         */
+        protected Angle rotation;
+        /**
+         * Extent of the label on the screen.
+         */
+        protected Rectangle screenExtent;
+        /**
+         * Distance from the eye point to the label's geographic location.
+         */
+        protected double eyeDistance;
+
+        @Override
+        public double getDistanceFromEye() {
+            return this.eyeDistance;
+        }
+
+        @Override
+        public void pick(DrawContext dc, Point pickPoint) {
+            TacticalGraphicLabel.this.pick(dc, pickPoint, this);
+        }
+
+        @Override
+        public void render(DrawContext dc) {
+
+            TacticalGraphicLabel.this.drawOrderedRenderable(dc, this);
+        }
+
+        public boolean isEnableBatchRendering() {
+            return TacticalGraphicLabel.this.isEnableBatchRendering();
+        }
+
+        public boolean isEnableBatchPicking() {
+            return TacticalGraphicLabel.this.isEnableBatchPicking();
+        }
+
+        public Layer getPickLayer() {
+            return TacticalGraphicLabel.this.pickLayer;
+        }
+
+        protected void doDrawOrderedRenderable(DrawContext dc, PickSupport pickCandidates) {
+            TacticalGraphicLabel.this.doDrawOrderedRenderable(dc, pickCandidates, this);
+        }
+
+        protected Font getFont() {
+            return TacticalGraphicLabel.this.getFont();
+        }
+
+        protected boolean isDrawInterior() {
+            return TacticalGraphicLabel.this.isDrawInterior();
+        }
+
+        protected void doDrawText(TextRenderer textRenderer) {
+            TacticalGraphicLabel.this.doDrawText(textRenderer, this);
+        }
     }
 }

@@ -18,14 +18,11 @@ import java.util.*;
  * @author tag
  * @version $Id: FileStoreDataSetFinder.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
-public class FileStoreDataSetFinder
-{
-    public List<FileStoreDataSet> findDataSets(FileStore fileStore)
-    {
+public class FileStoreDataSetFinder {
+    public List<FileStoreDataSet> findDataSets(FileStore fileStore) {
         final List<FileStoreDataSet> dataSets = new ArrayList<>();
 
-        for (File file : fileStore.getLocations())
-        {
+        for (File file : fileStore.getLocations()) {
             if (!file.exists())
                 continue;
 
@@ -38,10 +35,8 @@ public class FileStoreDataSetFinder
         return dataSets;
     }
 
-    protected List<FileStoreDataSet> findDataSets(File cacheRoot)
-    {
-        if (cacheRoot == null)
-        {
+    protected List<FileStoreDataSet> findDataSets(File cacheRoot) {
+        if (cacheRoot == null) {
             String message = Logging.getMessage("nullValue.FileStorePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -53,8 +48,7 @@ public class FileStoreDataSetFinder
 
         List<FileStoreDataSet> dataSets = new ArrayList<>();
 
-        for (String configFilePath : configFilePaths)
-        {
+        for (String configFilePath : configFilePaths) {
             File configFile = new File(configFilePath);
             dataSets.add(new FileStoreDataSet(cacheRoot.getPath(),
                 cacheRoot.getPath() + File.separator + configFile.getParent(),

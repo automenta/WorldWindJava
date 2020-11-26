@@ -25,12 +25,17 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: ParallelPaths.java 617 2012-05-31 23:32:31Z tgaskins $
  */
-public class ParallelPaths extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class ParallelPaths extends ApplicationTemplate {
+    public static void main(String[] args) {
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 49.05);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.78);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 8000);
+
+        ApplicationTemplate.start("WorldWind Multi Path", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             // Create list of positions along the control line.
@@ -71,18 +76,7 @@ public class ParallelPaths extends ApplicationTemplate
             insertBeforePlacenames(getWwd(), layer);
         }
 
-        public static class ExamplePositionColors implements Path.PositionColors
-        {
-            public Color getColor(Position position, int ordinal)
-            {
-                // Color the positions based on their altitude.
-                double altitude = position.getAltitude();
-                return altitude < 115 ? Color.GREEN : altitude < 135 ? Color.BLUE : Color.RED;
-            }
-        }
-
-        protected void addPath(RenderableLayer layer, List<Position> positions, String displayName)
-        {
+        protected void addPath(RenderableLayer layer, List<Position> positions, String displayName) {
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineWidth(5);
 
@@ -96,14 +90,13 @@ public class ParallelPaths extends ApplicationTemplate
             // Show how to make the colors vary along the paths.
             path.setPositionColors(new ExamplePositionColors());
         }
-    }
 
-    public static void main(String[] args)
-    {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 49.05);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -122.78);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 8000);
-
-        ApplicationTemplate.start("WorldWind Multi Path", AppFrame.class);
+        public static class ExamplePositionColors implements Path.PositionColors {
+            public Color getColor(Position position, int ordinal) {
+                // Color the positions based on their altitude.
+                double altitude = position.getAltitude();
+                return altitude < 115 ? Color.GREEN : altitude < 135 ? Color.BLUE : Color.RED;
+            }
+        }
     }
 }

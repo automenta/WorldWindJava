@@ -12,15 +12,12 @@ import gov.nasa.worldwind.util.xml.AbstractXMLEventParser;
  * @author tag
  * @version $Id$
  */
-public class WCS100DCPType extends AbstractXMLEventParser
-{
-    public WCS100DCPType(String namespaceURI)
-    {
+public class WCS100DCPType extends AbstractXMLEventParser {
+    public WCS100DCPType(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public WCS100HTTP getHTTP()
-    {
+    public WCS100HTTP getHTTP() {
         return (WCS100HTTP) this.getField("HTTP");
     }
 }

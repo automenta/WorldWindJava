@@ -23,26 +23,34 @@ import java.util.*;
  * @author tag
  * @version $Id: GridOfPoints.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class GridOfPoints extends ApplicationTemplate
-{
+public class GridOfPoints extends ApplicationTemplate {
     protected static final int NUM_POINTS_WIDE = 500;
     protected static final int NUM_POINTS_HIGH = 500;
 
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+    public static void main(String[] args) {
+        // Configure the initial view parameters so that the balloons are immediately visible.
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 40.5);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -120.4);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 2000.0e3);
+        Configuration.setValue(AVKey.INITIAL_HEADING, 27);
+        Configuration.setValue(AVKey.INITIAL_PITCH, 30);
+
+        ApplicationTemplate.start("WorldWind Point Grid", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
         protected final RenderableLayer layer; // layer to display the polygon and the intersection
         protected final HashMap<Position, Object> positionInfo;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             super(true, true, false);
 
             // Create the grid and its positions. This one is rectangular; it need not be, but must be four-sided.
             List<Position> corners = new ArrayList<>();
-            corners.add(Position.fromDegrees(35.0, -125.0, 10e3));
-            corners.add(Position.fromDegrees(35.0, -115.0, 10e3));
-            corners.add(Position.fromDegrees(45.0, -115.0, 10e3));
-            corners.add(Position.fromDegrees(45.0, -125.0, 10e3));
+            corners.add(Position.fromDegrees(35.0, -125.0, 10.0e3));
+            corners.add(Position.fromDegrees(35.0, -115.0, 10.0e3));
+            corners.add(Position.fromDegrees(45.0, -115.0, 10.0e3));
+            corners.add(Position.fromDegrees(45.0, -125.0, 10.0e3));
 
             List<Position> positions = new ArrayList<>(NUM_POINTS_WIDE * NUM_POINTS_WIDE);
 
@@ -52,8 +60,7 @@ public class GridOfPoints extends ApplicationTemplate
             // Populate the position list with positions and the positionInfo map with data.
             int aDataValue = 0;// generate an arbitrary data value
             PositionIterator posIter = new PositionIterator(corners, NUM_POINTS_WIDE, NUM_POINTS_HIGH);
-            while (posIter.hasNext())
-            {
+            while (posIter.hasNext()) {
                 Position position = posIter.next();
                 positions.add(position);
                 this.positionInfo.put(position, aDataValue++);
@@ -64,7 +71,7 @@ public class GridOfPoints extends ApplicationTemplate
 
             // Set its attributes.
             PointGrid.Attributes attrs = new PointGrid.Attributes();
-            attrs.setPointSize(6d);
+            attrs.setPointSize(6.0d);
             grid.setAttributes(attrs);
 
             // Add the shape to the display layer.
@@ -73,11 +80,9 @@ public class GridOfPoints extends ApplicationTemplate
             insertBeforeCompass(getWwd(), this.layer);
 
             // Establish a select listener that causes the tooltip controller to show the picked position's data value.
-            this.setToolTipController(new ToolTipController(getWwd())
-            {
+            this.setToolTipController(new ToolTipController(getWwd()) {
                 @Override
-                public void selected(SelectEvent event)
-                {
+                public void selected(SelectEvent event) {
                     // Intercept the selected position and assign its display name the position's data value.
                     if (event.getTopObject() instanceof PointGrid)
                         ((PointGrid) event.getTopObject()).setValue(AVKey.DISPLAY_NAME,
@@ -89,22 +94,21 @@ public class GridOfPoints extends ApplicationTemplate
         }
     }
 
-    /** Generates positions forming a lat/lon grid. */
-    protected static class PositionIterator implements Iterator<Position>
-    {
-        protected int numWide = NUM_POINTS_WIDE;
-        protected int numHigh = NUM_POINTS_HIGH;
-        protected int w;
-        protected int h;
-
+    /**
+     * Generates positions forming a lat/lon grid.
+     */
+    protected static class PositionIterator implements Iterator<Position> {
         protected final List<Position> corners;
         protected final Position sw;
         protected final Position se;
         protected final Position ne;
         protected final Position nw;
+        protected int numWide = NUM_POINTS_WIDE;
+        protected int numHigh = NUM_POINTS_HIGH;
+        protected int w;
+        protected int h;
 
-        public PositionIterator(List<Position> corners, int numPointsWide, int numPointsHigh)
-        {
+        public PositionIterator(List<Position> corners, int numPointsWide, int numPointsHigh) {
             this.corners = corners;
             this.sw = corners.get(0);
             this.se = corners.get(1);
@@ -115,40 +119,33 @@ public class GridOfPoints extends ApplicationTemplate
             this.numHigh = numPointsHigh;
         }
 
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return this.h < this.numHigh;
         }
 
-        public Position next()
-        {
+        public Position next() {
             if (this.h >= this.numHigh)
                 throw new NoSuchElementException("PointGridIterator");
 
             return this.computeNextPosition();
         }
 
-        public void remove()
-        {
+        public void remove() {
             throw new UnsupportedOperationException("PointGridIterator");
         }
 
-        protected Position computeNextPosition()
-        {
+        protected Position computeNextPosition() {
             Position left, right;
 
-            if (h == 0)
-            {
+            if (h == 0) {
                 left = sw;
                 right = se;
             }
-            else if (h == numHigh - 1)
-            {
+            else if (h == numHigh - 1) {
                 left = nw;
                 right = ne;
             }
-            else
-            {
+            else {
                 double t = h / (double) (numHigh - 1);
 
                 left = Position.interpolate(t, sw, nw);
@@ -157,19 +154,16 @@ public class GridOfPoints extends ApplicationTemplate
 
             Position pos;
 
-            if (w == 0)
-            {
+            if (w == 0) {
                 pos = left;
                 ++w;
             }
-            else if (w == numWide - 1)
-            {
+            else if (w == numWide - 1) {
                 pos = right;
 
                 w = ++h < numHigh ? 0 : w + 1;
             }
-            else
-            {
+            else {
                 double s = w / (double) (numWide - 1);
                 pos = Position.interpolate(s, left, right);
                 ++w;
@@ -177,17 +171,5 @@ public class GridOfPoints extends ApplicationTemplate
 
             return pos;
         }
-    }
-
-    public static void main(String[] args)
-    {
-        // Configure the initial view parameters so that the balloons are immediately visible.
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 40.5);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -120.4);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 2000e3);
-        Configuration.setValue(AVKey.INITIAL_HEADING, 27);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 30);
-
-        ApplicationTemplate.start("WorldWind Point Grid", AppFrame.class);
     }
 }

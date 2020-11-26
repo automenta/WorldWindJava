@@ -18,34 +18,44 @@ import gov.nasa.worldwind.util.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.io.IOException;
+import java.util.List;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * @author dcollins
  * @version $Id: GeographicTextRenderer.java 2392 2014-10-20 20:02:44Z tgaskins $
  */
-public class GeographicTextRenderer
-{
-    private TextRenderer lastTextRenderer = null;
-    private final GLU glu = new GLUgl2();
-
+public class GeographicTextRenderer {
     private static final Font DEFAULT_FONT = Font.decode("Arial-PLAIN-12");
     private static final Color DEFAULT_COLOR = Color.white;
+    private final GLU glu = new GLUgl2();
+    private TextRenderer lastTextRenderer = null;
     private boolean cullText = false;
     private int cullTextMargin = 0;
     private String effect = AVKey.TEXT_EFFECT_SHADOW;
 
     // Distance scaling and fading
-    private double distanceMinScale = 1d;
-    private double distanceMaxScale = 1d;
-    private double distanceMinOpacity = 1d;
+    private double distanceMinScale = 1.0d;
+    private double distanceMaxScale = 1.0d;
+    private double distanceMinOpacity = 1.0d;
     private boolean isDistanceScaling = false;
     private double lookAtDistance = 0;
 
     private boolean hasJOGLv111Bug = false;
 
-    public GeographicTextRenderer()
-    {
+    public GeographicTextRenderer() {
+    }
+
+    protected static boolean isTextValid(GeographicText text, boolean checkPosition) {
+        if (text == null || text.getText() == null)
+            return false;
+
+        //noinspection RedundantIfStatement
+        if (checkPosition && text.getPosition() == null)
+            return false;
+
+        return true;
     }
 
     /**
@@ -55,8 +65,7 @@ public class GeographicTextRenderer
      *
      * @return <code>true</code> if overlapping text are culled.
      */
-    public boolean isCullTextEnabled()
-    {
+    public boolean isCullTextEnabled() {
         return cullText;
     }
 
@@ -67,8 +76,7 @@ public class GeographicTextRenderer
      *
      * @param cullText <code>true</code> if overlapping text should be culled.
      */
-    public void setCullTextEnabled(boolean cullText)
-    {
+    public void setCullTextEnabled(boolean cullText) {
         this.cullText = cullText;
     }
 
@@ -79,8 +87,7 @@ public class GeographicTextRenderer
      *
      * @return the empty margin that surrounds a text item - in pixels.
      */
-    public int getCullTextMargin()
-    {
+    public int getCullTextMargin() {
         return this.cullTextMargin;
     }
 
@@ -91,8 +98,7 @@ public class GeographicTextRenderer
      *
      * @param margin the empty margin that surrounds a text item - in pixels.
      */
-    public void setCullTextMargin(int margin)
-    {
+    public void setCullTextMargin(int margin) {
         this.cullTextMargin = margin;
     }
 
@@ -102,8 +108,7 @@ public class GeographicTextRenderer
      *
      * @return the effect used for text rendering.
      */
-    public String getEffect()
-    {
+    public String getEffect() {
         return this.effect;
     }
 
@@ -113,10 +118,8 @@ public class GeographicTextRenderer
      *
      * @param effect the effect to use for text rendering.
      */
-    public void setEffect(String effect)
-    {
-        if (effect == null)
-        {
+    public void setEffect(String effect) {
+        if (effect == null) {
             String msg = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
@@ -131,8 +134,7 @@ public class GeographicTextRenderer
      *
      * @return the minimum scale that can be applied to a text item when it gets away from the eye.
      */
-    public double getDistanceMinScale()
-    {
+    public double getDistanceMinScale() {
         return this.distanceMinScale;
     }
 
@@ -143,8 +145,7 @@ public class GeographicTextRenderer
      *
      * @param scale the minimum scale that can be applied to a text item when it gets away from the eye.
      */
-    public void setDistanceMinScale(double scale)
-    {
+    public void setDistanceMinScale(double scale) {
         this.distanceMinScale = scale;
     }
 
@@ -154,8 +155,7 @@ public class GeographicTextRenderer
      *
      * @return the maximum scale that can be applied to a text item when it closer to the eye.
      */
-    public double getDistanceMaxScale()
-    {
+    public double getDistanceMaxScale() {
         return this.distanceMaxScale;
     }
 
@@ -166,8 +166,7 @@ public class GeographicTextRenderer
      *
      * @param scale the maximum scale that can be applied to a text item when it closer to the eye.
      */
-    public void setDistanceMaxScale(double scale)
-    {
+    public void setDistanceMaxScale(double scale) {
         this.distanceMaxScale = scale;
     }
 
@@ -177,8 +176,7 @@ public class GeographicTextRenderer
      *
      * @return the minimum opacity that can be applied to a text item when it gets away from the eye.
      */
-    public double getDistanceMinOpacity()
-    {
+    public double getDistanceMinOpacity() {
         return this.distanceMinOpacity;
     }
 
@@ -189,34 +187,28 @@ public class GeographicTextRenderer
      *
      * @param opacity the minimum opacity that can be applied to a text item when it gets away from the eye.
      */
-    public void setDistanceMinOpacity(double opacity)
-    {
+    public void setDistanceMinOpacity(double opacity) {
         this.distanceMinOpacity = opacity;
     }
 
-    public void render(DrawContext dc, Iterable<GeographicText> text)
-    {
+    public void render(DrawContext dc, Iterable<GeographicText> text) {
         this.drawMany(dc, text);
     }
 
-    public void render(DrawContext dc, GeographicText text, Vec4 textPoint)
-    {
+    public void render(DrawContext dc, GeographicText text, Vec4 textPoint) {
         if (!isTextValid(text, false))
             return;
 
         this.drawOne(dc, text, textPoint);
     }
 
-    private void drawMany(DrawContext dc, Iterable<GeographicText> textIterable)
-    {
-        if (dc == null)
-        {
+    private void drawMany(DrawContext dc, Iterable<GeographicText> textIterable) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (textIterable == null)
-        {
+        if (textIterable == null) {
             String msg = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
@@ -236,8 +228,7 @@ public class GeographicTextRenderer
         Frustum frustumInModelCoords = dc.getView().getFrustumInModelCoordinates();
         double horizon = dc.getView().getHorizonDistance();
 
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             GeographicText text = iterator.next();
             if (!isTextValid(text, true))
                 continue;
@@ -245,9 +236,8 @@ public class GeographicTextRenderer
             if (!text.isVisible())
                 continue;
 
-            if (dc.is2DGlobe())
-            {
-                Sector limits = ((Globe2D)dc.getGlobe()).getProjection().getProjectionLimits();
+            if (dc.is2DGlobe()) {
+                Sector limits = ((Globe2D) dc.getGlobe()).getProjection().getProjectionLimits();
                 if (limits != null && !limits.contains(text.getPosition()))
                     continue;
             }
@@ -274,16 +264,13 @@ public class GeographicTextRenderer
         }
     }
 
-    private void drawOne(DrawContext dc, GeographicText text, Vec4 textPoint)
-    {
-        if (dc == null)
-        {
+    private void drawOne(DrawContext dc, GeographicText text, Vec4 textPoint) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (dc.getView() == null)
-        {
+        if (dc.getView() == null) {
             String msg = Logging.getMessage("nullValue.ViewIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
@@ -299,8 +286,7 @@ public class GeographicTextRenderer
         if (!text.isVisible())
             return;
 
-        if (textPoint == null)
-        {
+        if (textPoint == null) {
             if (text.getPosition() == null)
                 return;
 
@@ -327,137 +313,7 @@ public class GeographicTextRenderer
         dc.addOrderedRenderable(new OrderedText(text, textPoint, eyeDistance));
     }
 
-    protected static boolean isTextValid(GeographicText text, boolean checkPosition)
-    {
-        if (text == null || text.getText() == null)
-            return false;
-
-        //noinspection RedundantIfStatement
-        if (checkPosition && text.getPosition() == null)
-            return false;
-
-        return true;
-    }
-
-    protected class OrderedText implements OrderedRenderable, Comparable<OrderedText>
-    {
-        final GeographicText text;
-        final Vec4 point;
-        final double eyeDistance;
-
-        OrderedText(GeographicText text, Vec4 point, double eyeDistance)
-        {
-            this.text = text;
-            this.point = point;
-            this.eyeDistance = eyeDistance;
-        }
-
-        // When overlapping text are culled we want to sort them front to back by priority.
-        public int compareTo(OrderedText t)
-        {
-            if (t.text.getPriority() - this.text.getPriority() == 0)
-            {
-                return (int) (this.eyeDistance - t.eyeDistance);
-            }
-            else
-                return (int) (t.text.getPriority() - this.text.getPriority());
-        }
-
-        public double getDistanceFromEye()
-        {
-            return this.eyeDistance;
-        }
-
-        private GeographicTextRenderer getRenderer()
-        {
-            return GeographicTextRenderer.this;
-        }
-
-        public void render(DrawContext dc)
-        {
-            GeographicTextRenderer.this.beginRendering(dc);
-            try
-            {
-                if (cullText)
-                {
-                    ArrayList<OrderedText> textList = new ArrayList<>();
-                    textList.add(this);
-
-                    // Draw as many as we can in a batch to save ogl state switching.
-                    Object nextItem = dc.peekOrderedRenderables();
-                    while (nextItem instanceof OrderedText)
-                    {
-                        OrderedText ot = (OrderedText) nextItem;
-                        if (ot.getRenderer() != GeographicTextRenderer.this)
-                            break;
-
-                        textList.add(ot);
-                        dc.pollOrderedRenderables(); // take it off the queue
-                        nextItem = dc.peekOrderedRenderables();
-                    }
-
-                    Collections.sort(textList); // sort for rendering priority then front to back
-
-                    ArrayList<Rectangle2D> textBounds = new ArrayList<>();
-                    for (OrderedText ot : textList)
-                    {
-                        double[] scaleAndOpacity = GeographicTextRenderer.this.computeDistanceScaleAndOpacity(dc, ot);
-                        Rectangle2D newBounds = GeographicTextRenderer.this.computeTextBounds(dc, ot,
-                            scaleAndOpacity[0]);
-                        if (newBounds == null)
-                            continue;
-
-                        boolean overlap = false;
-                        newBounds = GeographicTextRenderer.this.computeExpandedBounds(newBounds, cullTextMargin);
-                        for (Rectangle2D rect : textBounds)
-                        {
-                            if (rect.intersects(newBounds))
-                                overlap = true;
-                        }
-
-                        if (!overlap)
-                        {
-                            textBounds.add(newBounds);
-                            GeographicTextRenderer.this.drawText(dc, ot, scaleAndOpacity[0], scaleAndOpacity[1]);
-                        }
-                    }
-                }
-                else //just draw each label
-                {
-                    double[] scaleAndOpacity = GeographicTextRenderer.this.computeDistanceScaleAndOpacity(dc, this);
-                    GeographicTextRenderer.this.drawText(dc, this, scaleAndOpacity[0], scaleAndOpacity[1]);
-                    // Draw as many as we can in a batch to save ogl state switching.
-                    Object nextItem = dc.peekOrderedRenderables();
-                    while (nextItem instanceof OrderedText)
-                    {
-                        OrderedText ot = (OrderedText) nextItem;
-                        if (ot.getRenderer() != GeographicTextRenderer.this)
-                            break;
-
-                        scaleAndOpacity = GeographicTextRenderer.this.computeDistanceScaleAndOpacity(dc, ot);
-                        GeographicTextRenderer.this.drawText(dc, ot, scaleAndOpacity[0], scaleAndOpacity[1]);
-                        dc.pollOrderedRenderables(); // take it off the queue
-                        nextItem = dc.peekOrderedRenderables();
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Logging.logger().log(java.util.logging.Level.SEVERE, "generic.ExceptionWhileRenderingText", e);
-            }
-            finally
-            {
-                GeographicTextRenderer.this.endRendering(dc);
-            }
-        }
-
-        public void pick(DrawContext dc, java.awt.Point pickPoint)
-        {
-        }
-    }
-
-    protected Rectangle2D computeTextBounds(DrawContext dc, OrderedText uText, double scale) throws Exception
-    {
+    protected Rectangle2D computeTextBounds(DrawContext dc, OrderedText uText, double scale) throws Exception {
         GeographicText geographicText = uText.text;
 
         final CharSequence charSequence = geographicText.getText();
@@ -472,11 +328,9 @@ public class GeographicTextRenderer
         if (font == null)
             font = DEFAULT_FONT;
 
-        try
-        {
+        try {
             TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
-            if (textRenderer != this.lastTextRenderer)
-            {
+            if (textRenderer != this.lastTextRenderer) {
                 if (this.lastTextRenderer != null)
                     this.lastTextRenderer.end3DRendering();
                 textRenderer.begin3DRendering();
@@ -484,21 +338,19 @@ public class GeographicTextRenderer
             }
 
             Rectangle2D textBound = textRenderer.getBounds(charSequence);
-            double x = screenPoint.x - textBound.getWidth() / 2d;
+            double x = screenPoint.x - textBound.getWidth() / 2.0d;
             Rectangle2D bounds = new Rectangle2D.Float();
             bounds.setRect(x, screenPoint.y, textBound.getWidth(), textBound.getHeight());
 
             return computeScaledBounds(bounds, scale);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             handleTextRendererExceptions(e);
             return null;
         }
     }
 
-    protected Rectangle2D computeScaledBounds(Rectangle2D bounds, double scale)
-    {
+    protected Rectangle2D computeScaledBounds(Rectangle2D bounds, double scale) {
         if (scale == 1)
             return bounds;
 
@@ -509,8 +361,7 @@ public class GeographicTextRenderer
         return bounds;
     }
 
-    protected Rectangle2D computeExpandedBounds(Rectangle2D bounds, int margin)
-    {
+    protected Rectangle2D computeExpandedBounds(Rectangle2D bounds, int margin) {
         if (margin == 0)
             return bounds;
 
@@ -520,9 +371,8 @@ public class GeographicTextRenderer
         return bounds;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected double[] computeDistanceScaleAndOpacity(DrawContext dc, OrderedText ot)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected double[] computeDistanceScaleAndOpacity(DrawContext dc, OrderedRenderable ot) {
         if (!this.isDistanceScaling)
             return new double[] {1, 1};
 
@@ -538,8 +388,7 @@ public class GeographicTextRenderer
         return new double[] {scale, opacity};
     }
 
-    protected double computeLookAtDistance(DrawContext dc)
-    {
+    protected double computeLookAtDistance(DrawContext dc) {
         View view = dc.getView();
 
         // Get point in the middle of the screen
@@ -548,8 +397,7 @@ public class GeographicTextRenderer
             view.getViewport().getCenterX(), view.getViewport().getCenterY());
 
         // Update look at distance if center point found
-        if (groundPos != null)
-        {
+        if (groundPos != null) {
             // Compute distance from eye to the position in the middle of the screen
             this.lookAtDistance = view.getEyePoint().distanceTo3(dc.getGlobe().computePointFromPosition(groundPos));
         }
@@ -557,8 +405,7 @@ public class GeographicTextRenderer
         return this.lookAtDistance;
     }
 
-    protected void beginRendering(DrawContext dc)
-    {
+    protected void beginRendering(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         int attribBits =
             GL2.GL_ENABLE_BIT // for enable/disable changes
@@ -599,10 +446,8 @@ public class GeographicTextRenderer
         this.computeLookAtDistance(dc);
     }
 
-    protected void endRendering(DrawContext dc)
-    {
-        if (this.lastTextRenderer != null)
-        {
+    protected void endRendering(DrawContext dc) {
+        if (this.lastTextRenderer != null) {
             this.lastTextRenderer.end3DRendering();
             this.lastTextRenderer = null;
         }
@@ -619,10 +464,8 @@ public class GeographicTextRenderer
         gl.glPopAttrib();
     }
 
-    protected Vec4 drawText(DrawContext dc, OrderedText uText, double scale, double opacity) throws Exception
-    {
-        if (uText.point == null)
-        {
+    protected Vec4 drawText(DrawContext dc, OrderedText uText, double scale, double opacity) throws Exception {
+        if (uText.point == null) {
             String msg = Logging.getMessage("nullValue.PointIsNull");
             Logging.logger().fine(msg);
             return null;
@@ -643,11 +486,9 @@ public class GeographicTextRenderer
         if (font == null)
             font = DEFAULT_FONT;
 
-        try
-        {
+        try {
             TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
-            if (textRenderer != this.lastTextRenderer)
-            {
+            if (textRenderer != this.lastTextRenderer) {
                 if (this.lastTextRenderer != null)
                     this.lastTextRenderer.end3DRendering();
                 textRenderer.begin3DRendering();
@@ -661,11 +502,9 @@ public class GeographicTextRenderer
             textBounds = this.computeScaledBounds(textBounds, scale);
             Point.Float drawPoint = computeDrawPoint(dc, textBounds, screenPoint);
 
-            if (drawPoint != null)
-            {
-                if (scale != 1d)
-                {
-                    gl.glScaled(scale, scale, 1d);
+            if (drawPoint != null) {
+                if (scale != 1.0d) {
+                    gl.glScaled(scale, scale, 1.0d);
                     drawPoint.setLocation(drawPoint.x / (float) scale, drawPoint.y / (float) scale);
                 }
 
@@ -675,16 +514,13 @@ public class GeographicTextRenderer
                 color = this.applyOpacity(color, opacity);
 
                 Color background = geographicText.getBackgroundColor();
-                if (background != null)
-                {
+                if (background != null) {
                     background = this.applyOpacity(background, opacity);
                     textRenderer.setColor(background);
-                    if (this.effect.equals(AVKey.TEXT_EFFECT_SHADOW))
-                    {
+                    if (this.effect.equals(AVKey.TEXT_EFFECT_SHADOW)) {
                         textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
                     }
-                    else if (this.effect.equals(AVKey.TEXT_EFFECT_OUTLINE))
-                    {
+                    else if (this.effect.equals(AVKey.TEXT_EFFECT_OUTLINE)) {
                         textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
                         textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y + 1, 0, 1);
                         textRenderer.draw3D(charSequence, drawPoint.x - 1, drawPoint.y - 1, 0, 1);
@@ -696,20 +532,18 @@ public class GeographicTextRenderer
                 textRenderer.draw3D(charSequence, drawPoint.x, drawPoint.y, 0, 1);
                 textRenderer.flush();
 
-                if (scale != 1d)
+                if (scale != 1.0d)
                     gl.glLoadIdentity();
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             handleTextRendererExceptions(e);
         }
 
         return screenPoint;
     }
 
-    protected Color applyOpacity(Color color, double opacity)
-    {
+    protected Color applyOpacity(Color color, double opacity) {
         if (opacity >= 1)
             return color;
 
@@ -717,20 +551,16 @@ public class GeographicTextRenderer
         return new Color(compArray[0], compArray[1], compArray[2], compArray[3] * (float) opacity);
     }
 
-    private void handleTextRendererExceptions(Exception e) throws Exception
-    {
-        if (e instanceof IOException)
-        {
-            if (!this.hasJOGLv111Bug)
-            {
+    private void handleTextRendererExceptions(Exception e) throws Exception {
+        if (e instanceof IOException) {
+            if (!this.hasJOGLv111Bug) {
                 // This is likely a known JOGL 1.1.1 bug - see AMZN-287 or 343
                 // Log once and then ignore.
-                Logging.logger().log(java.util.logging.Level.SEVERE, "generic.ExceptionWhileRenderingText", e);
+                Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingText", e);
                 this.hasJOGLv111Bug = true;
             }
         }
-        else
-        {
+        else {
             throw e;
         }
     }
@@ -742,18 +572,15 @@ public class GeographicTextRenderer
      * @param dc          the current {@link DrawContext}
      * @param rect        the text rectangle to draw.
      * @param screenPoint the projected screen point the text relates to.
-     *
      * @return the final draw point for the given rectangle lower left corner or <code>null</code>.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected Point.Float computeDrawPoint(DrawContext dc, Rectangle2D rect, Vec4 screenPoint)
-    {
-        return new Point.Float((float) (screenPoint.x - rect.getWidth() / 2d), (float) (screenPoint.y));
+    @SuppressWarnings("UnusedDeclaration")
+    protected Point.Float computeDrawPoint(DrawContext dc, Rectangle2D rect, Vec4 screenPoint) {
+        return new Point.Float((float) (screenPoint.x - rect.getWidth() / 2.0d), (float) (screenPoint.y));
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void setDepthFunc(DrawContext dc, OrderedText uText, Vec4 screenPoint)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected void setDepthFunc(DrawContext dc, OrderedText uText, Vec4 screenPoint) {
         GL gl = dc.getGL();
 
         //if (uText.text.isAlwaysOnTop())
@@ -763,17 +590,15 @@ public class GeographicTextRenderer
         //}
 
         Position eyePos = dc.getView().getEyePosition();
-        if (eyePos == null)
-        {
+        if (eyePos == null) {
             gl.glDepthFunc(GL.GL_ALWAYS);
             return;
         }
 
         double altitude = eyePos.getElevation();
-        if (altitude < (dc.getGlobe().getMaxElevation() * dc.getVerticalExaggeration()))
-        {
-            double depth = screenPoint.z - (8d * 0.00048875809d);
-            depth = depth < 0d ? 0d : (Math.min(depth, 1d));
+        if (altitude < (dc.getGlobe().getMaxElevation() * dc.getVerticalExaggeration())) {
+            double depth = screenPoint.z - (8.0d * 0.00048875809d);
+            depth = depth < 0.0d ? 0.0d : (Math.min(depth, 1.0d));
             gl.glDepthFunc(GL.GL_LESS);
             gl.glDepthRange(depth, depth);
         }
@@ -782,9 +607,108 @@ public class GeographicTextRenderer
         //    gl.glDepthFunc(GL.GL_EQUAL);
         //    gl.glDepthRange(1d, 1d);
         //}
-        else
-        {
+        else {
             gl.glDepthFunc(GL.GL_ALWAYS);
+        }
+    }
+
+    protected class OrderedText implements OrderedRenderable, Comparable<OrderedText> {
+        final GeographicText text;
+        final Vec4 point;
+        final double eyeDistance;
+
+        OrderedText(GeographicText text, Vec4 point, double eyeDistance) {
+            this.text = text;
+            this.point = point;
+            this.eyeDistance = eyeDistance;
+        }
+
+        // When overlapping text are culled we want to sort them front to back by priority.
+        public int compareTo(OrderedText t) {
+            if (t.text.getPriority() - this.text.getPriority() == 0) {
+                return (int) (this.eyeDistance - t.eyeDistance);
+            }
+            else
+                return (int) (t.text.getPriority() - this.text.getPriority());
+        }
+
+        public double getDistanceFromEye() {
+            return this.eyeDistance;
+        }
+
+        private GeographicTextRenderer getRenderer() {
+            return GeographicTextRenderer.this;
+        }
+
+        public void render(DrawContext dc) {
+            GeographicTextRenderer.this.beginRendering(dc);
+            try {
+                if (cullText) {
+                    List<OrderedText> textList = new ArrayList<>();
+                    textList.add(this);
+
+                    // Draw as many as we can in a batch to save ogl state switching.
+                    Object nextItem = dc.peekOrderedRenderables();
+                    while (nextItem instanceof OrderedText) {
+                        OrderedText ot = (OrderedText) nextItem;
+                        if (ot.getRenderer() != GeographicTextRenderer.this)
+                            break;
+
+                        textList.add(ot);
+                        dc.pollOrderedRenderables(); // take it off the queue
+                        nextItem = dc.peekOrderedRenderables();
+                    }
+
+                    Collections.sort(textList); // sort for rendering priority then front to back
+
+                    List<Rectangle2D> textBounds = new ArrayList<>();
+                    for (OrderedText ot : textList) {
+                        double[] scaleAndOpacity = GeographicTextRenderer.this.computeDistanceScaleAndOpacity(dc, ot);
+                        Rectangle2D newBounds = GeographicTextRenderer.this.computeTextBounds(dc, ot,
+                            scaleAndOpacity[0]);
+                        if (newBounds == null)
+                            continue;
+
+                        boolean overlap = false;
+                        newBounds = GeographicTextRenderer.this.computeExpandedBounds(newBounds, cullTextMargin);
+                        for (Rectangle2D rect : textBounds) {
+                            if (rect.intersects(newBounds))
+                                overlap = true;
+                        }
+
+                        if (!overlap) {
+                            textBounds.add(newBounds);
+                            GeographicTextRenderer.this.drawText(dc, ot, scaleAndOpacity[0], scaleAndOpacity[1]);
+                        }
+                    }
+                }
+                else //just draw each label
+                {
+                    double[] scaleAndOpacity = GeographicTextRenderer.this.computeDistanceScaleAndOpacity(dc, this);
+                    GeographicTextRenderer.this.drawText(dc, this, scaleAndOpacity[0], scaleAndOpacity[1]);
+                    // Draw as many as we can in a batch to save ogl state switching.
+                    Object nextItem = dc.peekOrderedRenderables();
+                    while (nextItem instanceof OrderedText) {
+                        OrderedText ot = (OrderedText) nextItem;
+                        if (ot.getRenderer() != GeographicTextRenderer.this)
+                            break;
+
+                        scaleAndOpacity = GeographicTextRenderer.this.computeDistanceScaleAndOpacity(dc, ot);
+                        GeographicTextRenderer.this.drawText(dc, ot, scaleAndOpacity[0], scaleAndOpacity[1]);
+                        dc.pollOrderedRenderables(); // take it off the queue
+                        nextItem = dc.peekOrderedRenderables();
+                    }
+                }
+            }
+            catch (Exception e) {
+                Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingText", e);
+            }
+            finally {
+                GeographicTextRenderer.this.endRendering(dc);
+            }
+        }
+
+        public void pick(DrawContext dc, Point pickPoint) {
         }
     }
 }

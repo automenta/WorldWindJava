@@ -17,43 +17,35 @@ import java.util.*;
  * @author tag
  * @version $Id: OWSPhone.java 2061 2014-06-19 19:59:40Z tgaskins $
  */
-public class OWSPhone extends AbstractXMLEventParser
-{
+public class OWSPhone extends AbstractXMLEventParser {
     protected final List<String> voices = new ArrayList<>(1);
     protected final List<String> faxes = new ArrayList<>(1);
 
-    public OWSPhone(String namespaceURI)
-    {
+    public OWSPhone(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public List<String> getVoices()
-    {
+    public List<String> getVoices() {
         return this.voices;
     }
 
-    public List<String> getFacsimiles()
-    {
+    public List<String> getFacsimiles() {
         return this.faxes;
     }
 
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
-        if (ctx.isStartElement(event, "Voice") || ctx.isStartElement(event, "voice"))
-        {
+        throws XMLStreamException {
+        if (ctx.isStartElement(event, "Voice") || ctx.isStartElement(event, "voice")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.voices.add(s);
         }
-        else if (ctx.isStartElement(event, "Facsimile") || ctx.isStartElement(event, "facsimile"))
-        {
+        else if (ctx.isStartElement(event, "Facsimile") || ctx.isStartElement(event, "facsimile")) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.faxes.add(s);
         }
-        else
-        {
+        else {
             super.doParseEventContent(ctx, event, args);
         }
     }

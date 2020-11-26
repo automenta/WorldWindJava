@@ -7,6 +7,5 @@
 /**
  * <p>
  * Provides classes for COLLADA file and stream I/O and relative-path resolution.</p>
- *
  */
 package gov.nasa.worldwind.ogc.collada.io;

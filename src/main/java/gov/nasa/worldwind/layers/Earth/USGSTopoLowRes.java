@@ -14,15 +14,12 @@ import org.w3c.dom.Document;
  * @author tag
  * @version $Id: USGSTopoLowRes.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class USGSTopoLowRes extends WMSTiledImageLayer
-{
-    public USGSTopoLowRes()
-    {
+public class USGSTopoLowRes extends WMSTiledImageLayer {
+    public USGSTopoLowRes() {
         super(getConfigurationDocument(), null);
     }
 
-    protected static Document getConfigurationDocument()
-    {
+    protected static Document getConfigurationDocument() {
         return WWXML.openDocumentFile("config/Earth/USGSTopoLowResLayer.xml", null);
     }
 }

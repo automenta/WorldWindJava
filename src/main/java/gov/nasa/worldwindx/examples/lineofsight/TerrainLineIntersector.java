@@ -14,27 +14,24 @@ import java.util.*;
 /**
  * Computes the intersections of a collection of lines with the terrain. The lines are specified with a common origin
  * and multiple end positions. For each end position this class computes the intersections of a line between that
- * position and a reference position. See {@link #setReferencePosition(gov.nasa.worldwind.geom.Position)} and {@link
+ * position and a reference position. See {@link #setReferencePosition(Position)} and {@link
  * #setPositions(Iterable)}.
  *
  * @author tag
  * @version $Id: TerrainLineIntersector.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class TerrainLineIntersector extends LineIntersector
-{
+public class TerrainLineIntersector extends LineIntersector {
     /**
      * Consruct an terrain intersector.
      *
      * @param terrain    the terrain to use to determine terrain geometry.
      * @param numThreads the number of threads to use.
      */
-    public TerrainLineIntersector(Terrain terrain, int numThreads)
-    {
+    public TerrainLineIntersector(Terrain terrain, int numThreads) {
         super(terrain, numThreads);
     }
 
-    protected void doPerformIntersection(Position position)
-    {
+    protected void doPerformIntersection(Position position) {
         // Intersect the line between this grid point and the selected position.
         Intersection[] intersections = this.terrain.intersect(this.referencePosition, position);
         if (intersections == null || intersections.length == 0)
@@ -52,8 +49,7 @@ public class TerrainLineIntersector extends LineIntersector
         List<Intersection> iList = new ArrayList<>();
         iList.add(new Intersection(iPoint, new Position(iPosition, 0), false, null));
 
-        for (int i = 1; i < intersections.length; i++)
-        {
+        for (int i = 1; i < intersections.length; i++) {
             iPoint = intersections[i].getIntersectionPoint();
             iPosition = this.terrain.getGlobe().computePositionFromPoint(iPoint);
             iList.add(new Intersection(iPoint, new Position(iPosition, 0), false, null));

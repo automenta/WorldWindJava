@@ -10,7 +10,6 @@ package gov.nasa.worldwind.util.xml.atom;
  * @author tag
  * @version $Id: AtomConstants.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface AtomConstants
-{
+public interface AtomConstants {
     String ATOM_NAMESPACE = "http://www.w3.org/2005/Atom";
 }

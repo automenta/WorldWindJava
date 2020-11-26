@@ -19,35 +19,46 @@ import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc.*;
  *
  * @author pabercrombie
  * @version $Id: DefaultOffsets.java 542 2012-04-24 19:08:12Z pabercrombie $
- * @see gov.nasa.worldwind.symbology.AbstractTacticalSymbol#setOffset(gov.nasa.worldwind.render.Offset)
+ * @see gov.nasa.worldwind.symbology.AbstractTacticalSymbol#setOffset(Offset)
  */
-public class DefaultOffsets
-{
-    /** Offset to align the center of the graphic with the geographic position. */
-    protected static final Offset DEFAULT_OFFSET = Offset.CENTER;
-
-    /** Offset to align a point 25% up from the bottom edge with the geographic position. */
+public class DefaultOffsets {
+    /**
+     * Offset to align a point 25% up from the bottom edge with the geographic position.
+     */
     public static final Offset OFFSET_BOTTOM_QUARTER = Offset.fromFraction(0.5, 0.25);
-
-    /** Offset for the Drop Point graphic (2.X.2.1.1.3.2). */
+    /**
+     * Offset for the Drop Point graphic (2.X.2.1.1.3.2).
+     */
     public static final Offset OFFSET_C2GM_GNL_PNT_WPN_DRPPNT = Offset.fromFraction(0.5, 0.17);
-
-    /** Offset for the Antitank Mine with Anti-handling Device graphic (2.X.3.1.5.3). */
+    /**
+     * Offset for the Antitank Mine with Anti-handling Device graphic (2.X.3.1.5.3).
+     */
     public static final Offset OFFSET_MOBSU_OBST_MNE_ATMAHD = Offset.fromFraction(0.5, 0.75);
-    /** Offset for the Antipersonnel (AP) Mines graphic (2.X.3.1.5.5). */
+    /**
+     * Offset for the Antipersonnel (AP) Mines graphic (2.X.3.1.5.5).
+     */
     public static final Offset OFFSET_MOBSU_OBST_MNE_APMNE = Offset.fromFraction(0.5, 0.35);
-    /** Offset for the Wide Area Mines graphic (2.X.3.1.5.6). */
+    /**
+     * Offset for the Wide Area Mines graphic (2.X.3.1.5.6).
+     */
     public static final Offset OFFSET_MOBSU_OBST_MNE_WAMNE = Offset.fromFraction(0.5, 0.71);
-
-    /** Offset for the Sea Mine-Like Hazard graphic (2.X.6.2.1). */
+    /**
+     * Offset for the Sea Mine-Like Hazard graphic (2.X.6.2.1).
+     */
     public static final Offset OFFSET_OTH_HAZ_SML = Offset.fromFraction(0.5, 0.33);
-
-    /** Map to store defaults. */
+    /**
+     * Offset to align the center of the graphic with the geographic position.
+     */
+    protected static final Offset DEFAULT_OFFSET = Offset.CENTER;
+    /**
+     * Map to store defaults.
+     */
     protected final Map<String, Offset> offsets = new HashMap<>();
 
-    /** Create the map and populate it with the default offsets. */
-    public DefaultOffsets()
-    {
+    /**
+     * Create the map and populate it with the default offsets.
+     */
+    public DefaultOffsets() {
         this.populate();
     }
 
@@ -55,18 +66,17 @@ public class DefaultOffsets
      * Determine the default offset for a graphic.
      *
      * @param sidc Masked SIDC for a point graphic.
-     *
      * @return Default offset for the specified graphic.
      */
-    public Offset get(String sidc)
-    {
+    public Offset get(String sidc) {
         Offset offset = this.offsets.get(sidc);
         return offset != null ? offset : DEFAULT_OFFSET;
     }
 
-    /** Populate the map with default offsets. */
-    protected void populate()
-    {
+    /**
+     * Populate the map with default offsets.
+     */
+    protected void populate() {
         // A bunch of graphics are anchored on the bottom edge
         this.putAll(Offset.BOTTOM_CENTER,
             C2GM_GNL_PNT_USW_UH2_BCON,
@@ -202,10 +212,8 @@ public class DefaultOffsets
      * @param value Value to add.
      * @param keys  Keys that map to the value.
      */
-    protected void putAll(Offset value, String... keys)
-    {
-        for (String sidc : keys)
-        {
+    protected void putAll(Offset value, String... keys) {
+        for (String sidc : keys) {
             this.offsets.put(sidc, value);
         }
     }

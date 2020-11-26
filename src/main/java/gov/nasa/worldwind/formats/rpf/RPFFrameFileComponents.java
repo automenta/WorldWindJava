@@ -9,12 +9,13 @@ package gov.nasa.worldwind.formats.rpf;
 import gov.nasa.worldwind.formats.nitfs.*;
 import gov.nasa.worldwind.geom.LatLon;
 
+import java.nio.ByteBuffer;
+
 /**
  * @author lado
  * @version $Id: RPFFrameFileComponents.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RPFFrameFileComponents
-{
+public class RPFFrameFileComponents {
     public static final String DATA_TAG = "RPFIMG";
 
     // [ rpf location section ]
@@ -55,8 +56,7 @@ public class RPFFrameFileComponents
     // [ rpf related images section ]
     public RelatedImagesSection relatedImagesSection = null;
 
-    public RPFFrameFileComponents(java.nio.ByteBuffer buffer)
-    {
+    public RPFFrameFileComponents(ByteBuffer buffer) {
         this.componentLocationTable = new RPFLocationSection(buffer);
 
         if (0 < this.componentLocationTable.getCoverageSectionSubheaderLength())
@@ -71,20 +71,17 @@ public class RPFFrameFileComponents
         if (0 < this.componentLocationTable.getColorConverterSubsectionLength())
             this.parseColorConverterSubsection(buffer);
 
-        if (0 < this.componentLocationTable.getImageDescriptionSubheaderLength())
-        {
+        if (0 < this.componentLocationTable.getImageDescriptionSubheaderLength()) {
             buffer.position(this.componentLocationTable.getImageDescriptionSubheaderLocation());
             this.parseImageDescriptionSubheader(buffer);
         }
-        if (0 < this.componentLocationTable.getRelatedImagesSectionSubheaderLength())
-        {
+        if (0 < this.componentLocationTable.getRelatedImagesSectionSubheaderLength()) {
             buffer.position(this.componentLocationTable.getRelatedImagesSectionSubheaderLocation());
             this.relatedImagesSection = new RelatedImagesSection(buffer);
         }
     }
 
-    private void parseImageDescriptionSubheader(java.nio.ByteBuffer buffer)
-    {
+    private void parseImageDescriptionSubheader(ByteBuffer buffer) {
         this.numOfSpectralGroups = NITFSUtil.getUShort(buffer);
         this.numOfSubframeTables = NITFSUtil.getUShort(buffer);
         this.numOfSpectralBandTables = NITFSUtil.getUShort(buffer);
@@ -97,25 +94,21 @@ public class RPFFrameFileComponents
         this.transparencyMaskTableOffset = NITFSUtil.getUInt(buffer);
     }
 
-    private void parseColorConverterSubsection(java.nio.ByteBuffer buffer)
-    {
+    private void parseColorConverterSubsection(ByteBuffer buffer) {
         buffer.position(this.componentLocationTable.getColorConverterSubsectionLocation());
 //        if (0 < this.numOfColorConverterOffsetRecords)
 //            throw new NITFSRuntimeException("NITFSReader.NotImplemented.ColorConvertorSubsectionReader");
     }
 
-    private void parseColormapSubSection(java.nio.ByteBuffer buffer)
-    {
+    private void parseColormapSubSection(ByteBuffer buffer) {
         buffer.position(this.componentLocationTable.getColormapSubsectionLocation());
 
         this.colormapOffsetTableOffset = NITFSUtil.getUInt(buffer);
         this.colormapGrayscaleOffsetRecordLength = NITFSUtil.getUShort(buffer);
         // read color / grayscale AND histogram records; builds a ColorMap (LUT)
-        if (0 < this.numOfColorGrayscaleOffsetRecords)
-        {
+        if (0 < this.numOfColorGrayscaleOffsetRecords) {
             rpfColorMaps = new RPFColorMap[this.numOfColorGrayscaleOffsetRecords];
-            for (int i = 0; i < this.numOfColorGrayscaleOffsetRecords; i++)
-            {
+            for (int i = 0; i < this.numOfColorGrayscaleOffsetRecords; i++) {
                 rpfColorMaps[i] = new RPFColorMap(buffer, this.componentLocationTable.getColormapSubsectionLocation());
             }
         }
@@ -123,8 +116,7 @@ public class RPFFrameFileComponents
             throw new NITFSRuntimeException("NITFSReader.InvalidNumberOfRPFColorGrayscaleRecords");
     }
 
-    private void parseColorGrayscaleSection(java.nio.ByteBuffer buffer)
-    {
+    private void parseColorGrayscaleSection(ByteBuffer buffer) {
         buffer.position(this.componentLocationTable.getColorGrayscaleSectionSubheaderLocation());
 
         this.numOfColorGrayscaleOffsetRecords = NITFSUtil.getByteAsShort(buffer);
@@ -132,8 +124,7 @@ public class RPFFrameFileComponents
         this.externalColorGrayscaleFilename = NITFSUtil.getString(buffer, 12);
     }
 
-    private void parseRPFCoverageSection(java.nio.ByteBuffer buffer)
-    {
+    private void parseRPFCoverageSection(ByteBuffer buffer) {
         buffer.position(this.componentLocationTable.getCoverageSectionSubheaderLocation());
 
         this.nwUpperLeft = LatLon.fromDegrees(buffer.getDouble(), buffer.getDouble());
@@ -147,15 +138,13 @@ public class RPFFrameFileComponents
         this.horizontalIntervalLongitude = buffer.getDouble();
     }
 
-    public static class RelatedImagesSection
-    {
+    public static class RelatedImagesSection {
         // [ rpf related images section subheader ]
         public final long relatedImageDescriptionTableOffset;
         public final int numOfRelatedImageDescriptionRecords;
         public final int relatedImageDescriptionRecordLength;
 
-        public RelatedImagesSection(java.nio.ByteBuffer buffer)
-        {
+        public RelatedImagesSection(ByteBuffer buffer) {
             this.relatedImageDescriptionTableOffset = NITFSUtil.getUInt(buffer);
             this.numOfRelatedImageDescriptionRecords = NITFSUtil.getUShort(buffer);
             this.relatedImageDescriptionRecordLength = NITFSUtil.getUShort(buffer);

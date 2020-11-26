@@ -12,8 +12,7 @@ import gov.nasa.worldwind.render.airspaces.Airspace;
  * @author dcollins
  * @version $Id: AirspaceControlPoint.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface AirspaceControlPoint
-{
+public interface AirspaceControlPoint {
     AirspaceEditor getEditor();
 
     Airspace getAirspace();

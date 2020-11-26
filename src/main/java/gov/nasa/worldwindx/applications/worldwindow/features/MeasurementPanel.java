@@ -28,18 +28,26 @@ import java.util.ArrayList;
 public class MeasurementPanel extends AbstractFeaturePanel {
 
     private static final String NAME = "Measurement";
-
+    private static final String LINE = "Line";
+    private static final String PATH = "Path";
+    private static final String POLYGON = "Polygon";
+    private static final String CIRCLE = "Circle";
+    private static final String ELLIPSE = "Ellipse";
+    private static final String SQUARE = "Square";
+    private static final String RECTANGLE = "Rectangule";
+    private static final String FREEHAND = "Freehand";
+    private static final String GREAT_CIRCLE = "Great Circle";
+    private static final String RHUMB = "Rhumb";
+    private static final String LINEAR = "Linear";
     private WWOMeasureTool measureTool;
     private RenderableLayer shapeLayer;
     private RenderableLayer controlPointsLayer;
     private PropertyChangeListener toolListener;
-
     private JButton newButton;
     private JButton pauseButton;
     private JButton endButton;
     private JComboBox pathTypeCombo;
     private JComboBox shapeCombo;
-
     private Color lineColor = Color.WHITE;
     private Color fillColor = Color.WHITE;
     private String pathType = AVKey.GREAT_CIRCLE;
@@ -122,7 +130,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
 
     public void setShapeColor(Renderable shape, Color lineColor, Color fillColor) {
         if (shape instanceof Path) {
-            Path path = (Path) shape;
+            Attributable path = (Path) shape;
             if (path.getAttributes() == null) {
                 path.setAttributes(new BasicShapeAttributes());
             }
@@ -130,7 +138,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         }
 
         if (shape instanceof SurfaceShape) {
-            SurfaceShape sShape = (SurfaceShape) shape;
+            Attributable sShape = (SurfaceShape) shape;
             ShapeAttributes attrs = sShape.getAttributes();
             if (attrs == null) {
                 attrs = new BasicShapeAttributes();
@@ -151,7 +159,8 @@ public class MeasurementPanel extends AbstractFeaturePanel {
 
         if (this.measureTool.getShape() instanceof Path) {
             ((Path) this.measureTool.getShape()).setPathType(pathType);
-        } else if (this.measureTool.getShape() instanceof SurfaceShape) {
+        }
+        else if (this.measureTool.getShape() instanceof SurfaceShape) {
             ((SurfaceShape) this.measureTool.getShape()).setPathType(pathType);
         }
     }
@@ -159,7 +168,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
     protected void installNewMeasureTool(String shapeType) {
         Renderable shape = this.makeMeasureShape(shapeType);
         this.measureTool = new WWOMeasureTool(this.controller.getWWd(), shape,
-                shapeType.equals(PATH) || shapeType.equals(FREEHAND) ? AVKey.SHAPE_PATH : null, this.controlPointsLayer);
+            shapeType.equals(PATH) || shapeType.equals(FREEHAND) ? AVKey.SHAPE_PATH : null, this.controlPointsLayer);
         if (shapeType.equals(FREEHAND)) {
             this.measureTool.setFreeHand(true);
         }
@@ -193,7 +202,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
             Path line = new Path();
             line.setPositions(new ArrayList<>());
             line.setSurfacePath(true);
-            var attrs = new BasicShapeAttributes();
+            ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineWidth(shapeType.equals(FREEHAND) ? 2 : 4);
             line.setAttributes(attrs);
             return line;
@@ -238,16 +247,18 @@ public class MeasurementPanel extends AbstractFeaturePanel {
                     endButton.setEnabled(true);
                     controller.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                     ((Component) controller.getWWd()).requestFocus();
-                } else {
+                }
+                else {
                     newButton.setEnabled(true);
                     pauseButton.setText("Pause");
                     pauseButton.setEnabled(false);
                     endButton.setEnabled(false);
                     controller.setCursor(Cursor.getDefaultCursor());
                 }
-            } else if (event.getPropertyName().equals(WWOMeasureTool.EVENT_POSITION_ADD)) {
+            }
+            else if (event.getPropertyName().equals(WWOMeasureTool.EVENT_POSITION_ADD)) {
                 if (getMeasureTool().getShape() != null
-                        && !layerContains(getShapeLayer(), getMeasureTool().getShape())) {
+                    && !layerContains(getShapeLayer(), getMeasureTool().getShape())) {
                     getShapeLayer().addRenderable(getMeasureTool().getShape());
                 }
             } // TODO: remove shape when it becomes undefined? such as no points in line
@@ -270,18 +281,6 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         }
     }
 
-    private static final String LINE = "Line";
-    private static final String PATH = "Path";
-    private static final String POLYGON = "Polygon";
-    private static final String CIRCLE = "Circle";
-    private static final String ELLIPSE = "Ellipse";
-    private static final String SQUARE = "Square";
-    private static final String RECTANGLE = "Rectangule";
-    private static final String FREEHAND = "Freehand";
-    private static final String GREAT_CIRCLE = "Great Circle";
-    private static final String RHUMB = "Rhumb";
-    private static final String LINEAR = "Linear";
-
     private void createComponents(JPanel panel) {
         // Shape combo
         JPanel shapePanel = new JPanel(new GridLayout(1, 2, 5, 5));
@@ -290,7 +289,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
 
         shapePanel.add(new JLabel("Measurement Type:"));
         this.shapeCombo = new JComboBox(
-                new String[]{LINE, PATH, POLYGON, CIRCLE, ELLIPSE, SQUARE, RECTANGLE, FREEHAND});
+            new String[] {LINE, PATH, POLYGON, CIRCLE, ELLIPSE, SQUARE, RECTANGLE, FREEHAND});
         this.shapeCombo.setToolTipText("Choose a measurement type");
         this.shapeCombo.setOpaque(false);
         this.shapeCombo.addActionListener((ActionEvent event) -> {
@@ -306,7 +305,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         pathTypePanel.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
         pathTypePanel.add(new JLabel("Route type:"));
-        this.pathTypeCombo = new JComboBox(new String[]{LINEAR, RHUMB, GREAT_CIRCLE});
+        this.pathTypeCombo = new JComboBox(new String[] {LINEAR, RHUMB, GREAT_CIRCLE});
         this.pathTypeCombo.setToolTipText("Choose a route type");
         this.pathTypeCombo.setOpaque(false);
         this.pathTypeCombo.setSelectedIndex(2);
@@ -357,7 +356,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
             pauseButton.setText(!getMeasureTool().isArmed() ? "Resume" : "Pause");
             pauseButton.setEnabled(true);
             ((Component) controller.getWWd()).setCursor(!getMeasureTool().isArmed() ? Cursor.getDefaultCursor()
-                    : Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+                : Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         });
         buttonPanel.add(this.pauseButton);
         this.pauseButton.setEnabled(false);

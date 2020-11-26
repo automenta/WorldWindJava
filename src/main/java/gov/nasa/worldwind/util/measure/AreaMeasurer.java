@@ -37,13 +37,12 @@ import java.util.ArrayList;
 public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
 
     private static final double DEFAULT_AREA_SAMPLING_STEPS = 32; // sampling grid max rows or cols
-
+    protected double surfaceArea = -1;
+    protected double projectedArea = -1;
     private ArrayList<? extends Position> subdividedPositions;
     private Cell[][] sectorCells;
     private Double[][] sectorElevations;
     private double areaTerrainSamplingSteps = DEFAULT_AREA_SAMPLING_STEPS;
-    protected double surfaceArea = -1;
-    protected double projectedArea = -1;
 
     public AreaMeasurer() {
     }
@@ -164,7 +163,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
         Sector sector = getBoundingSector();
         if (sector != null) {
             return globe.getRadiusAt(sector.getCentroid()) * sector.getDeltaLon().radians
-                    * Math.cos(sector.getCentroid().getLatitude().radians);
+                * Math.cos(sector.getCentroid().getLatitude().radians);
         }
 
         return -1;
@@ -186,20 +185,6 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
         return -1;
     }
 
-    // *** Computing area ******************************************************************
-    protected static class Cell {
-
-        final Sector sector;
-        final double projectedArea;
-        final double surfaceArea;
-
-        public Cell(Sector sector, double projected, double surface) {
-            this.sector = sector;
-            this.projectedArea = projected;
-            this.surfaceArea = surface;
-        }
-    }
-
     // *** Projected area ***
     // Tessellate the path in lat-lon space, then sum each triangle area.
     protected double computeProjectedAreaGeometry(Globe globe) {
@@ -208,7 +193,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             // Subdivide long segments if needed
             if (this.subdividedPositions == null) {
                 this.subdividedPositions = subdividePositions(globe, getPositions(), getMaxSegmentLength(),
-                        isFollowTerrain(), getAVKeyPathType());
+                    isFollowTerrain(), getAVKeyPathType());
             }
             // First: tessellate polygon
             int verticesCount = this.subdividedPositions.size() - 1; // trim last pos which is same as first
@@ -219,7 +204,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
                 // Vertices coordinates are x=lon y=lat in radians, z = elevation zero
                 verts[idx++] = (float) this.subdividedPositions.get(i).getLongitude().radians;
                 verts[idx++] = (float) this.subdividedPositions.get(i).getLatitude().radians;
-                verts[idx++] = 0f;
+                verts[idx++] = 0.0f;
             }
             // Tessellate
             GeometryBuilder gb = new GeometryBuilder();
@@ -231,7 +216,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             for (int i = 0; i < triangleCount; i++) {
                 idx = i * 3;
                 area += computeTriangleProjectedArea(globe, ita.getVertices(), indices[idx] * 3,
-                        indices[idx + 1] * 3, indices[idx + 2] * 3);
+                    indices[idx + 1] * 3, indices[idx + 2] * 3);
             }
             return area;
         }
@@ -243,8 +228,8 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
     protected double computeTriangleProjectedArea(Globe globe, float[] verts, int a, int b, int c) {
         // http://www.mathopenref.com/coordtrianglearea.html
         double area = Math.abs(verts[a] * (verts[b + 1] - verts[c + 1])
-                + verts[b] * (verts[c + 1] - verts[a + 1])
-                + verts[c] * (verts[a + 1] - verts[b + 1])) / 2; // square radians
+            + verts[b] * (verts[c + 1] - verts[a + 1])
+            + verts[c] * (verts[a + 1] - verts[b + 1])) / 2; // square radians
         // Compute triangle center
         double centerLat = (verts[a + 1] + verts[b + 1] + verts[c + 1]) / 3;
         double centerLon = (verts[a] + verts[b] + verts[c]) / 3;
@@ -264,14 +249,14 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             // Subdivide long segments if needed
             if (this.subdividedPositions == null) {
                 this.subdividedPositions = subdividePositions(globe, getPositions(), getMaxSegmentLength(),
-                        true, getAVKeyPathType());
+                    true, getAVKeyPathType());
             }
 
             // Sample the bounding sector with cells about the same length in side - squares
             double stepRadians = Math.max(sector.getDeltaLatRadians() / steps, sector.getDeltaLonRadians() / steps);
             int latSteps = (int) Math.round(sector.getDeltaLatRadians() / stepRadians);
             int lonSteps = (int) Math.round(sector.getDeltaLonRadians() / stepRadians
-                    * Math.cos(sector.getCentroid().getLatitude().radians));
+                * Math.cos(sector.getCentroid().getLatitude().radians));
             double latStepRadians = sector.getDeltaLatRadians() / latSteps;
             double lonStepRadians = sector.getDeltaLonRadians() / lonSteps;
 
@@ -284,16 +269,16 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
 
             double area = 0;
             for (int i = 0; i < latSteps; i++) {
-                double lat = sector.getMinLatitude().radians + latStepRadians * i;
+                double lat = sector.latMin().radians + latStepRadians * i;
                 // Compute this latitude row cells area
                 double radius = globe.getRadiusAt(Angle.fromRadians(lat + latStepRadians / 2),
-                        sector.getCentroid().getLongitude());
+                    sector.getCentroid().getLongitude());
                 double cellWidth = lonStepRadians * radius * Math.cos(lat + latStepRadians / 2);
                 double cellHeight = latStepRadians * radius;
                 double cellArea = cellWidth * cellHeight;
 
                 for (int j = 0; j < lonSteps; j++) {
-                    double lon = sector.getMinLongitude().radians + lonStepRadians * j;
+                    double lon = sector.lonMin().radians + lonStepRadians * j;
                     Sector cellSector = Sector.fromRadians(lat, lat + latStepRadians, lon, lon + lonStepRadians);
                     // Select cells which center is inside the shape
                     if (WWMath.isLocationInside(cellSector.getCentroid(), this.subdividedPositions)) {
@@ -302,11 +287,11 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
                             // Compute suface area using terrain normal in SW corner
                             // Corners elevation
                             double eleSW = sectorElevations[i][j] != null ? sectorElevations[i][j]
-                                    : globe.getElevation(Angle.fromRadians(lat), Angle.fromRadians(lon));
+                                : globe.getElevation(Angle.fromRadians(lat), Angle.fromRadians(lon));
                             double eleSE = sectorElevations[i][j + 1] != null ? sectorElevations[i][j + 1]
-                                    : globe.getElevation(Angle.fromRadians(lat), Angle.fromRadians(lon + lonStepRadians));
+                                : globe.getElevation(Angle.fromRadians(lat), Angle.fromRadians(lon + lonStepRadians));
                             double eleNW = sectorElevations[i + 1][j] != null ? sectorElevations[i + 1][j]
-                                    : globe.getElevation(Angle.fromRadians(lat + latStepRadians), Angle.fromRadians(lon));
+                                : globe.getElevation(Angle.fromRadians(lat + latStepRadians), Angle.fromRadians(lon));
                             // Cache elevations
                             sectorElevations[i][j] = eleSW;
                             sectorElevations[i][j + 1] = eleSE;
@@ -330,6 +315,20 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             return area;
         }
         return -1;
+    }
+
+    // *** Computing area ******************************************************************
+    protected static class Cell {
+
+        final Sector sector;
+        final double projectedArea;
+        final double surfaceArea;
+
+        public Cell(Sector sector, double projected, double surface) {
+            this.sector = sector;
+            this.projectedArea = projected;
+            this.surfaceArea = surface;
+        }
     }
 
 // Below code is an attempt at computing the surface area using geometry.

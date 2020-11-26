@@ -12,15 +12,13 @@ package gov.nasa.worldwind.ogc.collada;
  * @author pabercrombie
  * @version $Id: ColladaTechnique.java 675 2012-07-02 18:47:47Z pabercrombie $
  */
-public class ColladaTechnique extends ColladaAbstractParamContainer
-{
+public class ColladaTechnique extends ColladaAbstractParamContainer {
     /**
      * Construct an instance.
      *
      * @param ns the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public ColladaTechnique(String ns)
-    {
+    public ColladaTechnique(String ns) {
         super(ns);
     }
 
@@ -29,8 +27,7 @@ public class ColladaTechnique extends ColladaAbstractParamContainer
      *
      * @return The shader for this technique, or null if the shader is not set, or is not supported.
      */
-    public ColladaAbstractShader getShader()
-    {
+    public ColladaAbstractShader getShader() {
         Object o = this.getField("lambert");
         if (o != null)
             return (ColladaAbstractShader) o;
@@ -48,8 +45,7 @@ public class ColladaTechnique extends ColladaAbstractParamContainer
      *
      * @return The value of the profile field, or null if the field is not set.
      */
-    public String getProfile()
-    {
+    public String getProfile() {
         return (String) this.getField("profile");
     }
 }

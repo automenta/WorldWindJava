@@ -12,31 +12,25 @@ import gov.nasa.worldwindx.applications.worldwindow.core.*;
  * @author tag
  * @version $Id: AbstractOpenResourceFeature.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractOpenResourceFeature extends AbstractFeature implements NetworkActivitySignal.NetworkUser
-{
+public abstract class AbstractOpenResourceFeature extends AbstractFeature implements NetworkActivitySignal.NetworkUser {
     protected Thread loadingThread;
 
-    protected AbstractOpenResourceFeature(String s, String featureID, String largeIconPath, Registry registry)
-    {
+    protected AbstractOpenResourceFeature(String s, String featureID, String largeIconPath, Registry registry) {
         super(s, featureID, largeIconPath, registry);
     }
 
-    public boolean hasNetworkActivity()
-    {
+    public boolean hasNetworkActivity() {
         return this.loadingThread != null && this.loadingThread.isAlive();
     }
 
-    protected Thread runOpenThread(final Object source)
-    {
+    protected Thread runOpenThread(final Object source) {
         this.loadingThread = new Thread(() -> {
             getController().getNetworkActivitySignal().addNetworkUser(AbstractOpenResourceFeature.this);
 
-            try
-            {
+            try {
                 new SimpleImporter(source, getController()).startImport();
             }
-            finally
-            {
+            finally {
                 controller.getNetworkActivitySignal().removeNetworkUser(AbstractOpenResourceFeature.this);
             }
         });

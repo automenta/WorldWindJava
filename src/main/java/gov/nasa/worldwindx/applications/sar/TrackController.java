@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwindx.applications.sar;
 
-import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
@@ -43,14 +43,11 @@ public class TrackController {
     public static final String EXTENSION_PLANE = "TrackController.ExtensionPlane";
     public static final String EXTENSION_CURSOR_GROUND = "TrackController.ExtensionMouseGround";
     public static final String EXTENSION_CURSOR_AIR = "TrackController.ExtensionMouseAir";
-
-    private WorldWindow wwd;
-    private TracksPanel tracksPanel;
-    private AnalysisPanel analysisPanel;
     private final HashMap<SARTrack, Layer> trackLayers = new HashMap<>();
     private final SARTrackBuilder trackBuilder;
     private final SARTrackExtensionTool trackExtensionTool;
-
+    private WorldWindow wwd;
+    private TracksPanel tracksPanel;
     private final SelectListener selectListener = event -> {
         if (event == null) {
             return;
@@ -58,6 +55,7 @@ public class TrackController {
 
         onSelected(event);
     };
+    private AnalysisPanel analysisPanel;
 
     public TrackController() {
         this.trackBuilder = new SARTrackBuilder();
@@ -206,7 +204,7 @@ public class TrackController {
     }
 
     private void enableTrack(SARTrack track) {
-        RenderableLayer layer = (RenderableLayer) this.trackLayers.get(track);
+        Layer layer = this.trackLayers.get(track);
         if (layer == null) {
             return;
         }
@@ -218,7 +216,7 @@ public class TrackController {
     }
 
     private void disableTrack(SARTrack track) {
-        RenderableLayer layer = (RenderableLayer) this.trackLayers.get(track);
+        Layer layer = this.trackLayers.get(track);
         if (layer == null) {
             return;
         }
@@ -265,12 +263,12 @@ public class TrackController {
         this.wwd.firePropertyChange(TRACK_CURRENT, null, track); // broadcast track change via wwd
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     private void trackName(SARTrack track) {
         // Intentionally left blank, as a placeholder for future functionality.
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     private void trackDirtyBit(SARTrack track) {
         // Intentionally left blank, as a placeholder for future functionality.
     }
@@ -283,7 +281,8 @@ public class TrackController {
 
             this.trackExtensionTool.setTrack(track);
             this.trackExtensionTool.setArmed(true);
-        } else {
+        }
+        else {
             this.trackBuilder.setArmed(false);
 
             this.trackBuilder.setTrack(track);
@@ -314,7 +313,8 @@ public class TrackController {
     private void removeLastTrackPoint() {
         if (this.trackBuilder.isArmed() && this.trackBuilder.canRemoveLastTrackPoint()) {
             this.trackBuilder.removeLastTrackPoint();
-        } else if (this.trackExtensionTool.isArmed() && this.trackExtensionTool.canRemoveLastTrackPoint()) {
+        }
+        else if (this.trackExtensionTool.isArmed() && this.trackExtensionTool.canRemoveLastTrackPoint()) {
             this.trackExtensionTool.removeLastTrackPoint();
         }
     }
@@ -326,7 +326,7 @@ public class TrackController {
     //move to the first position in a track
     private void moveToTrack(SARTrack track) {
 
-        OrbitView view = (OrbitView) this.wwd.getView();
+        View view = this.wwd.getView();
         if (!track.getPositions().isEmpty()) {
             Position pos = track.getPositions().get(0);
             ((BasicOrbitView) view).addPanToAnimator(pos, view.getHeading(), Angle.ZERO, 10000, true);
@@ -336,11 +336,9 @@ public class TrackController {
     protected void onSelected(SelectEvent event) {
         SARTrack track = this.getPickedTrack(event.getTopPickedObject());
 
-        switch (event.getEventAction())
-        {
+        switch (event.getEventAction()) {
             case SelectEvent.LEFT_CLICK:
-                if (track != null)
-                {
+                if (track != null) {
                     this.onTrackClicked(track);
                 }
                 break;

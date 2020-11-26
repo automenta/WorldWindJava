@@ -23,6 +23,7 @@ import gov.nasa.worldwindx.examples.util.HighlightController;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class illustrates how to display round and flat globes side by side.
@@ -40,12 +41,18 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: FlatAndRoundGlobes.java 2219 2014-08-11 21:39:44Z dcollins $
  */
-public class FlatAndRoundGlobes
-{
-    public FlatAndRoundGlobes()
-    {
+public class FlatAndRoundGlobes {
+    protected static final int NUM_PATHS = 200;
+    protected static final int NUM_POSITIONS = 200;
+    protected static final Angle PATH_LENGTH = Angle.fromDegrees(5);
+    protected static final double PATH_HEIGHT = 1.0e3;
+    protected static final LatLon START_LOCATION = LatLon.fromDegrees(48.86, 2.33);
+    protected static final int ALTITUDE_MODE = WorldWind.RELATIVE_TO_GROUND;
+    protected static final double LINE_WIDTH = 1.0d;
+
+    public FlatAndRoundGlobes() {
         LayerList layers = this.makeCommonLayers();
-        
+
         Model roundModel = this.makeModel(new Earth(), layers);
         Model flatModel = this.makeModel(new EarthFlat(), layers);
         ((EarthFlat) flatModel.getGlobe()).setProjection(new ProjectionSinusoidal());
@@ -57,15 +64,23 @@ public class FlatAndRoundGlobes
         this.addViewControlLayer(roundFrame);
         this.addViewControlLayer(flatFrame);
 
-        roundFrame.wwPanel.wwd.getView().setEyePosition(new Position(START_LOCATION, 3e6));
-        flatFrame.wwPanel.wwd.getView().setEyePosition(new Position(START_LOCATION, 3e6));
+        roundFrame.wwPanel.wwd.getView().setEyePosition(new Position(START_LOCATION, 3.0e6));
+        flatFrame.wwPanel.wwd.getView().setEyePosition(new Position(START_LOCATION, 3.0e6));
 
         roundFrame.setVisible(true);
         flatFrame.setVisible(true);
     }
 
-    protected LayerList makeCommonLayers()
-    {
+    public static void main(String[] args) {
+        String appName = "WorldWind MultiGlobe";
+
+        if (Configuration.isMacOS())
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
+
+        EventQueue.invokeLater(FlatAndRoundGlobes::new);
+    }
+
+    protected LayerList makeCommonLayers() {
         LayerList layerList = new LayerList();
 
         layerList.add(new BMNGOneImage());
@@ -82,8 +97,7 @@ public class FlatAndRoundGlobes
         return layerList;
     }
 
-    protected Model makeModel(Globe globe, LayerList layers)
-    {
+    protected Model makeModel(Globe globe, LayerList layers) {
         Model model = new BasicModel(globe, new LayerList(layers));
 
         // Add per-window layers
@@ -94,67 +108,13 @@ public class FlatAndRoundGlobes
         return model;
     }
 
-    protected void addViewControlLayer(WWFrame wwf)
-    {
+    protected void addViewControlLayer(WWFrame wwf) {
         ViewControlsLayer layer = new ViewControlsLayer();
         wwf.wwPanel.wwd.getModel().getLayers().add(layer);
         wwf.wwPanel.wwd.addSelectListener(new ViewControlsSelectListener(wwf.wwPanel.wwd, layer));
     }
 
-    protected static class WWFrame extends JFrame
-    {
-        protected final Dimension canvasSize = new Dimension(800, 600);
-        protected final WWPanel wwPanel;
-
-        public WWFrame(WorldWindowGLCanvas shareWith, Model model, String displayName, String position)
-        {
-            this.getContentPane().setLayout(new BorderLayout(5, 5));
-            this.wwPanel = new WWPanel(shareWith, canvasSize, model);
-            this.getContentPane().add(this.wwPanel, BorderLayout.CENTER);
-
-            this.setTitle(displayName);
-            WWUtil.alignComponent(null, this, position);
-            this.setResizable(true);
-            this.pack();
-
-            this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        }
-    }
-
-    protected static class WWPanel extends JPanel
-    {
-        protected final WorldWindowGLCanvas wwd;
-        protected final HighlightController highlightController;
-
-        public WWPanel(WorldWindowGLCanvas shareWith, Dimension size, Model model)
-        {
-            this.wwd = shareWith != null ? new WorldWindowGLCanvas(shareWith) : new WorldWindowGLCanvas();
-            this.wwd.setSize(size);
-            this.wwd.setModel(model);
-
-            this.setLayout(new BorderLayout(5, 5));
-            this.add(this.wwd, BorderLayout.CENTER);
-
-            StatusBar statusBar = new StatusBar();
-            statusBar.setEventSource(wwd);
-            this.add(statusBar, BorderLayout.SOUTH);
-
-            this.highlightController = new HighlightController(this.wwd, SelectEvent.ROLLOVER);
-//
-//            wwd.getSceneController().getGLRuntimeCapabilities().setVertexBufferObjectEnabled(true);
-        }
-    }
-
-    protected static final int NUM_PATHS = 200;
-    protected static final int NUM_POSITIONS = 200;
-    protected static final Angle PATH_LENGTH = Angle.fromDegrees(5);
-    protected static final double PATH_HEIGHT = 1e3;
-    protected static final LatLon START_LOCATION = LatLon.fromDegrees(48.86, 2.33);
-    protected static final int ALTITUDE_MODE = WorldWind.RELATIVE_TO_GROUND;
-    protected static final double LINE_WIDTH = 1d;
-
-    protected Layer makePathLayer()
-    {
+    protected Layer makePathLayer() {
         RenderableLayer layer = new RenderableLayer();
         layer.setName("Paths");
         this.makePaths(layer, new Position(START_LOCATION, PATH_HEIGHT), NUM_PATHS, PATH_LENGTH, NUM_POSITIONS);
@@ -162,12 +122,10 @@ public class FlatAndRoundGlobes
         return layer;
     }
 
-    protected void makePaths(RenderableLayer layer, Position origin, int numPaths, Angle length, int numPositions)
-    {
-        double dAngle = 360d / numPaths;
+    protected void makePaths(RenderableLayer layer, Position origin, int numPaths, Angle length, int numPositions) {
+        double dAngle = 360.0d / numPaths;
 
-        for (int i = 0; i < numPaths; i++)
-        {
+        for (int i = 0; i < numPaths; i++) {
             Angle heading = Angle.fromDegrees(i * dAngle);
             layer.addRenderable(this.makePath(origin, heading, length, numPositions));
         }
@@ -175,13 +133,11 @@ public class FlatAndRoundGlobes
         System.out.printf("%d paths, each with %d positions\n", NUM_PATHS, NUM_POSITIONS);
     }
 
-    protected Path makePath(Position startPosition, Angle heading, Angle length, int numPositions)
-    {
+    protected Path makePath(Position startPosition, Angle heading, Angle length, int numPositions) {
         double dLength = length.radians / (numPositions - 1);
-        java.util.List<Position> positions = new ArrayList<>(numPositions);
+        List<Position> positions = new ArrayList<>(numPositions);
 
-        for (int i = 0; i < numPositions - 1; i++)
-        {
+        for (int i = 0; i < numPositions - 1; i++) {
             LatLon ll = Position.greatCircleEndPosition(startPosition, heading, Angle.fromRadians(i * dLength));
             positions.add(new Position(ll, PATH_HEIGHT));
         }
@@ -206,8 +162,7 @@ public class FlatAndRoundGlobes
         return path;
     }
 
-    protected Layer makePolygonLayer()
-    {
+    protected Layer makePolygonLayer() {
         RenderableLayer layer = new RenderableLayer();
         layer.setName("Polygons");
 
@@ -227,32 +182,32 @@ public class FlatAndRoundGlobes
 
         // Create a polygon, set some of its properties and set its attributes.
         ArrayList<Position> pathPositions = new ArrayList<>();
-        pathPositions.add(Position.fromDegrees(28, -106, 3e4));
-        pathPositions.add(Position.fromDegrees(35, -104, 3e4));
-        pathPositions.add(Position.fromDegrees(35, -107, 9e4));
-        pathPositions.add(Position.fromDegrees(28, -107, 9e4));
-        pathPositions.add(Position.fromDegrees(28, -106, 3e4));
+        pathPositions.add(Position.fromDegrees(28, -106, 3.0e4));
+        pathPositions.add(Position.fromDegrees(35, -104, 3.0e4));
+        pathPositions.add(Position.fromDegrees(35, -107, 9.0e4));
+        pathPositions.add(Position.fromDegrees(28, -107, 9.0e4));
+        pathPositions.add(Position.fromDegrees(28, -106, 3.0e4));
         Polygon pgon = new Polygon(pathPositions);
         pgon.setValue(AVKey.DISPLAY_NAME, "Has a hole\nRotated -170\u00b0");
 
         pathPositions.clear();
-        pathPositions.add(Position.fromDegrees(29, -106.4, 4e4));
-        pathPositions.add(Position.fromDegrees(30, -106.4, 4e4));
-        pathPositions.add(Position.fromDegrees(29, -106.8, 7e4));
-        pathPositions.add(Position.fromDegrees(29, -106.4, 4e4));
+        pathPositions.add(Position.fromDegrees(29, -106.4, 4.0e4));
+        pathPositions.add(Position.fromDegrees(30, -106.4, 4.0e4));
+        pathPositions.add(Position.fromDegrees(29, -106.8, 7.0e4));
+        pathPositions.add(Position.fromDegrees(29, -106.4, 4.0e4));
         pgon.addInnerBoundary(pathPositions);
         pgon.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
         pgon.setAttributes(normalAttributes);
         pgon.setHighlightAttributes(highlightAttributes);
-        pgon.setRotation(-90d);
+        pgon.setRotation(-90.0d);
         layer.addRenderable(pgon);
 
         ArrayList<Position> pathLocations = new ArrayList<>();
-        pathLocations.add(Position.fromDegrees(28, -110, 5e4));
-        pathLocations.add(Position.fromDegrees(35, -108, 5e4));
-        pathLocations.add(Position.fromDegrees(35, -111, 5e4));
-        pathLocations.add(Position.fromDegrees(28, -111, 5e4));
-        pathLocations.add(Position.fromDegrees(28, -110, 5e4));
+        pathLocations.add(Position.fromDegrees(28, -110, 5.0e4));
+        pathLocations.add(Position.fromDegrees(35, -108, 5.0e4));
+        pathLocations.add(Position.fromDegrees(35, -111, 5.0e4));
+        pathLocations.add(Position.fromDegrees(28, -111, 5.0e4));
+        pathLocations.add(Position.fromDegrees(28, -110, 5.0e4));
         pgon = new Polygon(pathLocations);
         pgon.setValue(AVKey.DISPLAY_NAME, "Has an image");
         normalAttributes = new BasicShapeAttributes(normalAttributes);
@@ -268,8 +223,7 @@ public class FlatAndRoundGlobes
         return layer;
     }
 
-    protected Layer makeExtrudedPolygonLayer()
-    {
+    protected Layer makeExtrudedPolygonLayer() {
         RenderableLayer layer = new RenderableLayer();
         layer.setName("Extruded Polygons");
 
@@ -296,18 +250,18 @@ public class FlatAndRoundGlobes
 
         // Create a path, set some of its properties and set its attributes.
         ArrayList<Position> pathPositions = new ArrayList<>();
-        pathPositions.add(Position.fromDegrees(36, -106, 3e4));
-        pathPositions.add(Position.fromDegrees(43, -104, 3e4));
-        pathPositions.add(Position.fromDegrees(43, -107, 9e4));
-        pathPositions.add(Position.fromDegrees(36, -107, 9e4));
-        pathPositions.add(Position.fromDegrees(36, -106, 3e4));
+        pathPositions.add(Position.fromDegrees(36, -106, 3.0e4));
+        pathPositions.add(Position.fromDegrees(43, -104, 3.0e4));
+        pathPositions.add(Position.fromDegrees(43, -107, 9.0e4));
+        pathPositions.add(Position.fromDegrees(36, -107, 9.0e4));
+        pathPositions.add(Position.fromDegrees(36, -106, 3.0e4));
         ExtrudedPolygon pgon = new ExtrudedPolygon(pathPositions);
 
         pathPositions.clear();
-        pathPositions.add(Position.fromDegrees(37, -106.4, 4e4));
-        pathPositions.add(Position.fromDegrees(38, -106.4, 4e4));
-        pathPositions.add(Position.fromDegrees(37, -106.8, 7e4));
-        pathPositions.add(Position.fromDegrees(37, -106.4, 4e4));
+        pathPositions.add(Position.fromDegrees(37, -106.4, 4.0e4));
+        pathPositions.add(Position.fromDegrees(38, -106.4, 4.0e4));
+        pathPositions.add(Position.fromDegrees(37, -106.8, 7.0e4));
+        pathPositions.add(Position.fromDegrees(37, -106.4, 4.0e4));
         pgon.addInnerBoundary(pathPositions);
         pgon.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
         pgon.setSideAttributes(sideAttributes);
@@ -321,7 +275,7 @@ public class FlatAndRoundGlobes
         pathLocations.add(LatLon.fromDegrees(43, -111));
         pathLocations.add(LatLon.fromDegrees(36, -111));
         pathLocations.add(LatLon.fromDegrees(36, -110));
-        pgon = new ExtrudedPolygon(pathLocations, 6e4);
+        pgon = new ExtrudedPolygon(pathLocations, 6.0e4);
         pgon.setSideAttributes(sideAttributes);
         pgon.setSideHighlightAttributes(sideHighlightAttributes);
         pgon.setCapAttributes(capAttributes);
@@ -330,13 +284,43 @@ public class FlatAndRoundGlobes
         return layer;
     }
 
-    public static void main(String[] args)
-    {
-        String appName = "WorldWind MultiGlobe";
+    protected static class WWFrame extends JFrame {
+        protected final Dimension canvasSize = new Dimension(800, 600);
+        protected final WWPanel wwPanel;
 
-        if (Configuration.isMacOS())
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
+        public WWFrame(WorldWindowGLCanvas shareWith, Model model, String displayName, String position) {
+            this.getContentPane().setLayout(new BorderLayout(5, 5));
+            this.wwPanel = new WWPanel(shareWith, canvasSize, model);
+            this.getContentPane().add(this.wwPanel, BorderLayout.CENTER);
 
-        java.awt.EventQueue.invokeLater(FlatAndRoundGlobes::new);
+            this.setTitle(displayName);
+            WWUtil.alignComponent(null, this, position);
+            this.setResizable(true);
+            this.pack();
+
+            this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        }
+    }
+
+    protected static class WWPanel extends JPanel {
+        protected final WorldWindowGLCanvas wwd;
+        protected final HighlightController highlightController;
+
+        public WWPanel(WorldWindowGLCanvas shareWith, Dimension size, Model model) {
+            this.wwd = shareWith != null ? new WorldWindowGLCanvas(shareWith) : new WorldWindowGLCanvas();
+            this.wwd.setSize(size);
+            this.wwd.setModel(model);
+
+            this.setLayout(new BorderLayout(5, 5));
+            this.add(this.wwd, BorderLayout.CENTER);
+
+            StatusBar statusBar = new StatusBar();
+            statusBar.setEventSource(wwd);
+            this.add(statusBar, BorderLayout.SOUTH);
+
+            this.highlightController = new HighlightController(this.wwd, SelectEvent.ROLLOVER);
+//
+//            wwd.getSceneController().getGLRuntimeCapabilities().setVertexBufferObjectEnabled(true);
+        }
     }
 }

@@ -21,18 +21,22 @@ import java.util.ArrayList;
  *
  * @author Patrick Murris
  * @version $Id: MeasureToolUsage.java 2117 2014-07-01 20:36:49Z tgaskins $
- * @see gov.nasa.worldwind.util.measure.MeasureTool
- * @see gov.nasa.worldwind.util.measure.MeasureToolController
+ * @see MeasureTool
+ * @see MeasureToolController
  * @see MeasureToolPanel
  */
 public class MeasureToolUsage extends ApplicationTemplate {
 
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Measure Tool", MeasureToolUsage.AppFrame.class);
+    }
+
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
-        private int lastTabIndex = -1;
         private final JTabbedPane tabbedPane = new JTabbedPane();
         private final TerrainProfileLayer profile = new TerrainProfileLayer();
         private final PropertyChangeListener measureToolListener = new MeasureToolListener();
+        private int lastTabIndex = -1;
 
         public AppFrame() {
             super(true, true, false); // no layer or statistics panel
@@ -55,7 +59,8 @@ public class MeasureToolUsage extends ApplicationTemplate {
                     tabbedPane.setTitleAt(tabbedPane.getTabCount() - 1, String.valueOf(tabbedPane.getTabCount() - 1));
                     tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
                     switchMeasureTool();
-                } else {
+                }
+                else {
                     switchMeasureTool();
                 }
             });
@@ -70,19 +75,6 @@ public class MeasureToolUsage extends ApplicationTemplate {
 
             this.getControlPanel().add(tabbedPane, BorderLayout.EAST);
             this.pack();
-        }
-
-        private class MeasureToolListener implements PropertyChangeListener {
-
-            @Override
-            public void propertyChange(PropertyChangeEvent event) {
-                // Measure shape position list changed - update terrain profile
-                if (event.getPropertyName().equals(MeasureTool.EVENT_POSITION_ADD)
-                        || event.getPropertyName().equals(MeasureTool.EVENT_POSITION_REMOVE)
-                        || event.getPropertyName().equals(MeasureTool.EVENT_POSITION_REPLACE)) {
-                    updateProfile(((MeasureTool) event.getSource()));
-                }
-            }
         }
 
         private void switchMeasureTool() {
@@ -104,16 +96,25 @@ public class MeasureToolUsage extends ApplicationTemplate {
             if (positions != null && positions.size() > 1) {
                 profile.setPathPositions(positions);
                 profile.setEnabled(true);
-            } else {
+            }
+            else {
                 profile.setEnabled(false);
             }
 
             getWwd().redraw();
         }
-    }
 
-    public static void main(String[] args) {
-        ApplicationTemplate.start("WorldWind Measure Tool", MeasureToolUsage.AppFrame.class);
-    }
+        private class MeasureToolListener implements PropertyChangeListener {
 
+            @Override
+            public void propertyChange(PropertyChangeEvent event) {
+                // Measure shape position list changed - update terrain profile
+                if (event.getPropertyName().equals(MeasureTool.EVENT_POSITION_ADD)
+                    || event.getPropertyName().equals(MeasureTool.EVENT_POSITION_REMOVE)
+                    || event.getPropertyName().equals(MeasureTool.EVENT_POSITION_REPLACE)) {
+                    updateProfile(((MeasureTool) event.getSource()));
+                }
+            }
+        }
+    }
 }

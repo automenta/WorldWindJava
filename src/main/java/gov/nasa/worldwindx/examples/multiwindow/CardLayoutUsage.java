@@ -29,41 +29,17 @@ import java.awt.*;
  * Most WorldWind {@link Globe} and {@link Layer} objects can be shared among WorldWindows. Those that cannot be shared
  * have an operational dependency on the WorldWindow they're associated with. An example is the {@link
  * ViewControlsLayer} layer for on-screen navigation. Because this layer responds to input events within a specific
- * WorldWindow, it is not sharable. Refer to the WorldWind Overview page for a list of layers that cannot be shared.
- * // TODO: include the reference to overview.html.
+ * WorldWindow, it is not sharable. Refer to the WorldWind Overview page for a list of layers that cannot be shared. //
+ * TODO: include the reference to overview.html.
  *
  * @version $Id: CardLayoutUsage.java 1853 2014-02-28 19:28:23Z tgaskins $
  */
-public class CardLayoutUsage extends JFrame
-{
-    private static class WWPanel extends JPanel // A class to encapsulate a WorldWindow that shares resources.
-    {
-        final WorldWindowGLCanvas wwd;
-
-        public WWPanel(WorldWindowGLCanvas shareWith, int width, int height)
-        {
-            // To share resources among WorldWindows, pass the first WorldWindow to the constructor of the other
-            // WorldWindows.
-            this.wwd = shareWith != null ? new WorldWindowGLCanvas(shareWith) : new WorldWindowGLCanvas();
-            this.wwd.setSize(new java.awt.Dimension(width, height));
-
-            this.setLayout(new BorderLayout(5, 5));
-            this.add(this.wwd, BorderLayout.CENTER);
-
-            StatusBar statusBar = new StatusBar();
-            statusBar.setBorder(new EmptyBorder(5, 5, 5, 5));
-            statusBar.setEventSource(wwd);
-            this.add(statusBar, BorderLayout.SOUTH);
-        }
-    }
-
+public class CardLayoutUsage extends JFrame {
     private WWPanel wwpA;
     private WWPanel wwpB;
 
-    public CardLayoutUsage()
-    {
-        try
-        {
+    public CardLayoutUsage() {
+        try {
             // Create an inner panel and the CardLayout manager.
             JPanel cardPanel = new JPanel();
             cardPanel.setLayout(new CardLayout());
@@ -110,7 +86,7 @@ public class CardLayoutUsage extends JFrame
             // Position and display the frame. It's essential to do this before creating the second WorldWindow. This
             // first one must be visible in order for the second one to share its OpenGL resources.
             this.setTitle("WorldWind Multi-Window CardLayout");
-            this.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+            this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.pack();
             WWUtil.alignComponent(null, this, AVKey.CENTER); // Center the application on the screen.
             this.setResizable(true);
@@ -126,14 +102,16 @@ public class CardLayoutUsage extends JFrame
             wwpA.wwd.redraw();
             wwpB.wwd.redraw();
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private JPanel makeControlPanel(final CardLayout cardLayout, final JPanel cardLayoutParent)
-    {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(CardLayoutUsage::new);
+    }
+
+    private JPanel makeControlPanel(final CardLayout cardLayout, final JPanel cardLayoutParent) {
         final JButton buttonA = new JButton("WorldWindow A");
         final JButton buttonB = new JButton(" WorldWindow B");
 
@@ -161,8 +139,23 @@ public class CardLayoutUsage extends JFrame
         return panel;
     }
 
-    public static void main(String[] args)
+    private static class WWPanel extends JPanel // A class to encapsulate a WorldWindow that shares resources.
     {
-        SwingUtilities.invokeLater(CardLayoutUsage::new);
+        final WorldWindowGLCanvas wwd;
+
+        public WWPanel(WorldWindowGLCanvas shareWith, int width, int height) {
+            // To share resources among WorldWindows, pass the first WorldWindow to the constructor of the other
+            // WorldWindows.
+            this.wwd = shareWith != null ? new WorldWindowGLCanvas(shareWith) : new WorldWindowGLCanvas();
+            this.wwd.setSize(new Dimension(width, height));
+
+            this.setLayout(new BorderLayout(5, 5));
+            this.add(this.wwd, BorderLayout.CENTER);
+
+            StatusBar statusBar = new StatusBar();
+            statusBar.setBorder(new EmptyBorder(5, 5, 5, 5));
+            statusBar.setEventSource(wwd);
+            this.add(statusBar, BorderLayout.SOUTH);
+        }
     }
 }

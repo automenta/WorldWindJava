@@ -5,6 +5,8 @@
  */
 package gov.nasa.worldwind.cache;
 
+import java.util.Set;
+
 /**
  * SessionCache is a general receiving area for data represented as key-value pairs. Entries in a SessionCache may
  * persist for the length of a Virtual Machine's run time, but may be evicted at any time.
@@ -16,8 +18,7 @@ package gov.nasa.worldwind.cache;
  * @author dcollins
  * @version $Id: SessionCache.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface SessionCache
-{
+public interface SessionCache {
     /**
      * Returns the maximum number of entries in the cache.
      *
@@ -44,13 +45,12 @@ public interface SessionCache
      *
      * @return a {@link java.util.Set} view of the keys contained in the cache.
      */
-    java.util.Set<Object> getKeySet();
+    Set<Object> getKeySet();
 
     /**
      * Returns true if the cache contains a specified key, and false if it does not.
      *
      * @param key the entry key in question.
-     *
      * @return true if the cache contains the key; false otherwise.
      */
     boolean contains(Object key);
@@ -60,7 +60,6 @@ public interface SessionCache
      * that key exists.
      *
      * @param key the entry key to look for.
-     *
      * @return a reference to the found entry's value.
      */
     Object get(Object key);
@@ -78,7 +77,6 @@ public interface SessionCache
      * the specified key, this does nothing and returns null.
      *
      * @param key the entry key to look for.
-     *
      * @return a reference to the removed entry's value, or null of no entry matches the specified key.
      */
     Object remove(Object key);

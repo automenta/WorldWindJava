@@ -20,24 +20,22 @@ import java.awt.*;
  * @author tag
  * @version $Id: WWIcon.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface WWIcon extends AVList, Restorable
-{
-    /**
-     * Specifies the source image for the icon. Implementations of this interface determine the allowed source types,
-     * but generally allow at least a {@link String} file path and a {@link java.awt.image.BufferedImage}.
-     *
-     * @param imageSource the image source.
-     *
-     * @throws IllegalArgumentException if <code>imageSource</code> is null or the source is not an allowed type.
-     */
-    void setImageSource(Object imageSource);
-
+public interface WWIcon extends AVList, Restorable {
     /**
      * Returns the icon's image source.
      *
      * @return the icon's image source.
      */
     Object getImageSource();
+
+    /**
+     * Specifies the source image for the icon. Implementations of this interface determine the allowed source types,
+     * but generally allow at least a {@link String} file path and a {@link java.awt.image.BufferedImage}.
+     *
+     * @param imageSource the image source.
+     * @throws IllegalArgumentException if <code>imageSource</code> is null or the source is not an allowed type.
+     */
+    void setImageSource(Object imageSource);
 
     /**
      * Returns the icon's geographic position.
@@ -74,8 +72,7 @@ public interface WWIcon extends AVList, Restorable
      * Returns the icon's specified screen size.
      *
      * @return the icon's specified screen size. The default value is false.
-     *
-     * @see #setSize(java.awt.Dimension)
+     * @see #setSize(Dimension)
      */
     Dimension getSize();
 
@@ -166,7 +163,7 @@ public interface WWIcon extends AVList, Restorable
      * Indicates the color in which the icon's tool tip, if any, is drawn.
      *
      * @return the tool tip's text color. The default value is null, in which case an implementation dependent color is
-     *         used.
+     * used.
      */
     Color getToolTipTextColor();
 

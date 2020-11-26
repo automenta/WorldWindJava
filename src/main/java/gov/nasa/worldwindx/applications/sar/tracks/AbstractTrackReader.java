@@ -11,42 +11,44 @@ import gov.nasa.worldwind.util.*;
 
 import java.io.*;
 import java.net.URL;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author dcollins
  * @version $Id: AbstractTrackReader.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractTrackReader implements TrackReader
-{
+public abstract class AbstractTrackReader implements TrackReader {
+    protected static Track[] asArray(Collection<Track> trackList) {
+        if (trackList == null)
+            return null;
+
+        Track[] trackArray = new Track[trackList.size()];
+        trackList.toArray(trackArray);
+        return trackArray;
+    }
+
     protected abstract Track[] doRead(InputStream inputStream) throws IOException;
 
-    public boolean canRead(Object source)
-    {
+    public boolean canRead(Object source) {
         return (source != null) && this.doCanRead(source);
     }
 
-    public Track[] read(Object source)
-    {
-        if (source == null)
-        {
+    public Track[] read(Object source) {
+        if (source == null) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             return this.doRead(source);
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToReadFrom", source);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message, e);
         }
-        catch (WWUnrecognizedException e)
-        {
+        catch (WWUnrecognizedException e) {
             // Source type is passed up the call stack in the WWUnrecognizedException's message.
             String message = Logging.getMessage("generic.UnrecognizedSourceType", e.getMessage());
             Logging.logger().severe(message);
@@ -54,8 +56,7 @@ public abstract class AbstractTrackReader implements TrackReader
         }
     }
 
-    protected boolean doCanRead(Object source)
-    {
+    protected boolean doCanRead(Object source) {
         if (source instanceof File)
             return this.doCanRead(((File) source).getPath());
         else if (source instanceof String)
@@ -68,17 +69,14 @@ public abstract class AbstractTrackReader implements TrackReader
         return false;
     }
 
-    protected boolean doCanRead(String filePath)
-    {
+    protected boolean doCanRead(String filePath) {
         if (!this.acceptFilePath(filePath))
             return false;
 
-        try
-        {
+        try {
             return this.doRead(filePath) != null;
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Not interested in logging the exception. We just want to return false to indicate that the source
             // cannot be read.
         }
@@ -86,18 +84,15 @@ public abstract class AbstractTrackReader implements TrackReader
         return false;
     }
 
-    protected boolean doCanRead(URL url)
-    {
+    protected boolean doCanRead(URL url) {
         File file = WWIO.convertURLToFile(url);
         if (file != null)
             return this.doCanRead(file.getPath());
 
-        try
-        {
+        try {
             return this.doRead(url) != null;
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Not interested in logging the exception. We just want to return false to indicate that the source
             // cannot be read.
         }
@@ -105,14 +100,11 @@ public abstract class AbstractTrackReader implements TrackReader
         return false;
     }
 
-    protected boolean doCanRead(InputStream inputStream)
-    {
-        try
-        {
+    protected boolean doCanRead(InputStream inputStream) {
+        try {
             return this.doRead(inputStream) != null;
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Not interested in logging the exception. We just want to return false to indicate that the source
             // cannot be read.
         }
@@ -120,13 +112,11 @@ public abstract class AbstractTrackReader implements TrackReader
         return false;
     }
 
-    protected boolean acceptFilePath(String filePath)
-    {
+    protected boolean acceptFilePath(String filePath) {
         return true;
     }
 
-    protected Track[] doRead(Object source) throws IOException
-    {
+    protected Track[] doRead(Object source) throws IOException {
         if (source instanceof File)
             return this.doRead(((File) source).getPath());
         else if (source instanceof String)
@@ -141,41 +131,25 @@ public abstract class AbstractTrackReader implements TrackReader
         throw new WWUnrecognizedException(source.toString());
     }
 
-    protected Track[] doRead(String filePath) throws IOException
-    {
+    protected Track[] doRead(String filePath) throws IOException {
         InputStream inputStream = null;
-        try
-        {
+        try {
             inputStream = WWIO.openFileOrResourceStream(filePath, this.getClass());
             return this.doRead(inputStream);
         }
-        finally
-        {
+        finally {
             WWIO.closeStream(inputStream, filePath);
         }
     }
 
-    protected Track[] doRead(URL url) throws IOException
-    {
+    protected Track[] doRead(URL url) throws IOException {
         InputStream inputStream = null;
-        try
-        {
+        try {
             inputStream = url.openStream();
             return this.doRead(inputStream);
         }
-        finally
-        {
+        finally {
             WWIO.closeStream(inputStream, url.toString());
         }
-    }
-
-    protected static Track[] asArray(List<Track> trackList)
-    {
-        if (trackList == null)
-            return null;
-
-        Track[] trackArray = new Track[trackList.size()];
-        trackList.toArray(trackArray);
-        return trackArray;
     }
 }

@@ -7,27 +7,28 @@ package gov.nasa.worldwind.cache;
 
 import gov.nasa.worldwind.WWObject;
 
+import java.io.File;
 import java.net.URL;
+import java.util.List;
 
 /**
  * @author Tom Gaskins
  * @version $Id: FileStore.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface FileStore extends WWObject
-{
+public interface FileStore extends WWObject {
     /**
      * Returns the locations that the file store will look for files.
      *
      * @return the list of locations the file store will search when a file is requested.
      */
-    java.util.List<? extends java.io.File> getLocations();
+    List<? extends File> getLocations();
 
     /**
      * Returns the location that additions to the file store are placed.
      *
      * @return the location at which new entries are placed.
      */
-    java.io.File getWriteLocation();
+    File getWriteLocation();
 
     /**
      * Adds a location to search when files are requested from the file store.
@@ -36,7 +37,6 @@ public interface FileStore extends WWObject
      *                  removed and a new entry is added to the end of the search list.
      * @param isInstall indicates whether the location is an "installed data" location and therefore not subject to
      *                  automatic removal of its contents.
-     *
      * @throws IllegalArgumentException if the specified path is null or empty.
      */
     void addLocation(String newPath, boolean isInstall);
@@ -49,7 +49,6 @@ public interface FileStore extends WWObject
      * @param newPath   the location to add.
      * @param isInstall indicates whether the location is an installed-data location and therefore not subject to
      *                  automatic removal of its contents.
-     *
      * @throws IllegalArgumentException if the specified path is null or empty or the specified index is less than 0.
      */
     void addLocation(int index, String newPath, boolean isInstall);
@@ -58,7 +57,6 @@ public interface FileStore extends WWObject
      * Remove a specified read location from the file store. The current write location cannot be removed.
      *
      * @param path the read location to remove.
-     *
      * @throws IllegalArgumentException if the specified path is null or identifies the current write location.
      */
     void removeLocation(String path);
@@ -68,9 +66,7 @@ public interface FileStore extends WWObject
      * automatic removal of its contents.
      *
      * @param path the path in question.
-     *
      * @return true if the location is an installed-data location, otherwise false.
-     *
      * @throws IllegalArgumentException if the specified path is null or empty.
      */
     boolean isInstallLocation(String path);
@@ -79,9 +75,8 @@ public interface FileStore extends WWObject
      * Indicates whether the file store contains a specified file.
      *
      * @param fileName the file in question.
-     *
      * @return true if the file store contains the file, false if the file store does not contain the file or the
-     *         specified path is null.
+     * specified path is null.
      */
     boolean containsFile(String fileName);
 
@@ -91,12 +86,10 @@ public interface FileStore extends WWObject
      * @param fileName       the file to search for, identified by a path relative to the root of the file store.
      * @param checkClassPath if true, the current classpath is first searched for the file, otherwise the classpath is
      *                       not searched.
-     *
      * @return a URL addressing the file if it is found.
-     *
      * @throws IllegalArgumentException if the specified path is null.
      */
-    java.net.URL findFile(String fileName, boolean checkClassPath);
+    URL findFile(String fileName, boolean checkClassPath);
 
     /**
      * Creates a new, empty file in the file store.
@@ -104,12 +97,10 @@ public interface FileStore extends WWObject
      * If the file store has no write location, the file is not created and null is returned.
      *
      * @param fileName the name of the file to create.
-     *
      * @return a reference to the newly created file.
-     *
      * @throws IllegalArgumentException if the specified path is null.
      */
-    java.io.File newFile(String fileName);
+    File newFile(String fileName);
 
     /**
      * Remove an entry from the file store. This method removes files that were added to the file store by {@link
@@ -125,10 +116,9 @@ public interface FileStore extends WWObject
      * Removes a file from the file store using the URL to the cached file.
      *
      * @param url a URL, as returned by {@link #findFile(String, boolean)} identifying the file.
-     *
      * @throws IllegalArgumentException if the specified URL is null.
      */
-    void removeFile(java.net.URL url);
+    void removeFile(URL url);
 
     /**
      * Returns an array of strings naming the files discovered directly under a specified file store path name. If the
@@ -137,9 +127,7 @@ public interface FileStore extends WWObject
      *
      * @param pathName relative path in the file store to search, or null to search the entire file store.
      * @param filter   a file filter.
-     *
      * @return an array of file store names. Returns null if the path does not exist in the file store.
-     *
      * @throws IllegalArgumentException if the filter is null.
      */
     String[] listFileNames(String pathName, FileStoreFilter filter);
@@ -153,9 +141,7 @@ public interface FileStore extends WWObject
      *
      * @param pathName relative path in the file store to search, or null to search the entire file store.
      * @param filter   a file filter.
-     *
      * @return an array of file store names. Returns null if the path does not exist in the file store.
-     *
      * @throws IllegalArgumentException if the filter is null.
      */
     String[] listAllFileNames(String pathName, FileStoreFilter filter);
@@ -170,9 +156,7 @@ public interface FileStore extends WWObject
      *
      * @param pathName relative path in the file store to search, or null to search the entire file store.
      * @param filter   a file filter.
-     *
      * @return an array of file store names. Returns null if the path does not exist in the file store.
-     *
      * @throws IllegalArgumentException if the filter is null.
      */
     String[] listTopFileNames(String pathName, FileStoreFilter filter);
@@ -181,7 +165,6 @@ public interface FileStore extends WWObject
      * Returns the content type of a cached file.
      *
      * @param address the file's address. If null, null is returned.
-     *
      * @return the mime type describing the cached file's contents. Null is returned if the specified address is null.
      */
     String getContentType(String address);
@@ -190,9 +173,8 @@ public interface FileStore extends WWObject
      * Returns the expiration time of a cached file.
      *
      * @param address the file's address. If null, zero is returned.
-     *
      * @return The expiration time of the file, in milliseconds since the Epoch (January 1, 1970, 00:00:00 GMT). Zero
-     *         indicates that there is no expiration time.
+     * indicates that there is no expiration time.
      */
     long getExpirationTime(String address);
 
@@ -203,10 +185,8 @@ public interface FileStore extends WWObject
      * the local WorldWind cache and subsequent invocations of this method return a URL to the retrieved file.
      *
      * @param address the file address: either a local file, a URL, or a path relative to the root of the file store.
-     *
      * @return the file's URL if it exists locally or is a remote file that has been retrieved, otherwise
-     *         <code>null</code>.
-     *
+     * <code>null</code>.
      * @throws IllegalArgumentException if the <code>address</code> is <code>null</code>.
      */
     URL requestFile(String address);
@@ -215,8 +195,8 @@ public interface FileStore extends WWObject
      * Requests a file and specifies whether to store retrieved files in the cache or in a temporary location. If the
      * file exists locally, including as a resource on the classpath, this returns a <code>{@link URL}</code> to the
      * file. Otherwise if the specified address is a URL to a remote location, this initiates a request for the file and
-     * returns <code>null</code>. When the request succeeds the file is stored either in the local WorldWind cache or
-     * in a temporary location and subsequent invocations of this method return a URL to the retrieved file.
+     * returns <code>null</code>. When the request succeeds the file is stored either in the local WorldWind cache or in
+     * a temporary location and subsequent invocations of this method return a URL to the retrieved file.
      * <p>
      * The <code>cacheRemoteFile</code> parameter specifies whether to store a retrieved remote file in the WorldWind
      * cache or in a temporary location. This parameter has no effect if the file exists locally. The temporary location
@@ -230,10 +210,8 @@ public interface FileStore extends WWObject
      *                        store.
      * @param cacheRemoteFile <code>true</code> to store remote files in the WorldWind cache, or <code>false</code> to
      *                        store remote files in a temporary location. Has no effect if the address is a local file.
-     *
      * @return the file's URL if it exists locally or is a remote file that has been retrieved, otherwise
-     *         <code>null</code>.
-     *
+     * <code>null</code>.
      * @throws IllegalArgumentException if the <code>address</code> is <code>null</code>.
      */
     URL requestFile(String address, boolean cacheRemoteFile);

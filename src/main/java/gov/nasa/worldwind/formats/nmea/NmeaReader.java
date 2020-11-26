@@ -9,59 +9,59 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.tracks.*;
 import gov.nasa.worldwind.util.Logging;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 // TODO: exception handling
+
 /**
  * @author Tom Gaskins
  * @version $Id: NmeaReader.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class NmeaReader implements Track, TrackSegment
-{
-    private final java.util.List<Track> tracks = new java.util.ArrayList<>();
-    private final java.util.List<TrackSegment> segments =
-        new java.util.ArrayList<>();
-    private final java.util.List<TrackPoint> points =
-        new java.util.ArrayList<>();
+public class NmeaReader implements Track, TrackSegment {
+    private final List<Track> tracks = new ArrayList<>();
+    private final List<TrackSegment> segments =
+        new ArrayList<>();
+    private final List<TrackPoint> points =
+        new ArrayList<>();
     private String name;
     private int sentenceNumber = 0;
 
-    public NmeaReader()
-    {
+    public NmeaReader() {
         this.tracks.add(this);
         this.segments.add(this);
     }
 
-    public java.util.List<TrackSegment> getSegments()
-    {
+    public List<TrackSegment> getSegments() {
         return this.segments;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public int getNumPoints()
-    {
+    public int getNumPoints() {
         return this.points.size();
     }
 
-    public java.util.List<TrackPoint> getPoints()
-    {
+    public List<TrackPoint> getPoints() {
         return this.points;
     }
 
     /**
      * @param path The file spec to read.
      * @throws IllegalArgumentException if <code>path</code> is null
-     * @throws java.io.IOException if a read error occurs.
+     * @throws IOException      if a read error occurs.
      */
-    public void readFile(String path) throws java.io.IOException
-    {
-        if (path == null)
-        {
+    public void readFile(String path) throws IOException {
+        if (path == null) {
             String msg = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -69,15 +69,14 @@ public class NmeaReader implements Track, TrackSegment
 
         this.name = path;
 
-        java.io.File file = new java.io.File(path);
-        if (!file.exists())
-        {
+        File file = new File(path);
+        if (!file.exists()) {
             String msg = Logging.getMessage("generic.FileNotFound", path);
             Logging.logger().severe(msg);
-            throw new java.io.FileNotFoundException(path);
+            throw new FileNotFoundException(path);
         }
 
-        java.io.FileInputStream fis = new java.io.FileInputStream(file);
+        FileInputStream fis = new FileInputStream(file);
         this.doReadStream(fis);
 
         if (this.tracks.isEmpty() || this.tracks.get(0).getNumPoints() == 0)
@@ -88,13 +87,11 @@ public class NmeaReader implements Track, TrackSegment
 
     /**
      * @param stream The stream to read from.
-     * @param name The name of the stream.
+     * @param name   The name of the stream.
      * @throws IllegalArgumentException if <code>stream</code> is null
      */
-    public void readStream(java.io.InputStream stream, String name)
-    {
-        if (stream == null)
-        {
+    public void readStream(InputStream stream, String name) {
+        if (stream == null) {
             String msg = Logging.getMessage("nullValue.InputStreamIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -104,52 +101,42 @@ public class NmeaReader implements Track, TrackSegment
         this.doReadStream(stream);
     }
 
-    public java.util.List<Track> getTracks()
-    {
+    public List<Track> getTracks() {
         return this.tracks;
     }
 
-    public Iterator<Position> getTrackPositionIterator()
-    {
-        return new Iterator<>()
-        {
-            private final TrackPointIterator trackPoints = new TrackPointIteratorImpl(NmeaReader.this.tracks);
+    public Iterator<Position> getTrackPositionIterator() {
+        return new Iterator<>() {
+            private final Iterator<TrackPoint> trackPoints = new TrackPointIteratorImpl(NmeaReader.this.tracks);
 
-            public boolean hasNext()
-            {
+            public boolean hasNext() {
                 return this.trackPoints.hasNext();
             }
 
-            public Position next()
-            {
+            public Position next() {
                 return this.trackPoints.next().getPosition();
             }
 
-            public void remove()
-            {
+            public void remove() {
                 this.trackPoints.remove();
             }
         };
     }
 
-    private void doReadStream(java.io.InputStream stream)
-    {
+    private void doReadStream(InputStream stream) {
         String sentence;
 
-        try
-        {
-            do
-            {
+        try {
+            do {
                 sentence = this.readSentence(stream);
-                if (sentence != null)
-                {
+                if (sentence != null) {
                     ++this.sentenceNumber;
                     this.parseSentence(sentence);
                 }
-            } while (sentence != null);
+            }
+            while (sentence != null);
         }
-        catch (IOException | InterruptedException e)
-        {
+        catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
@@ -195,13 +182,11 @@ public class NmeaReader implements Track, TrackSegment
 //        }
 //    }
 
-    private String readSentence(java.io.InputStream stream) throws java.io.IOException, InterruptedException
-    {
+    private String readSentence(InputStream stream) throws IOException, InterruptedException {
         StringBuilder sb = null;
         boolean endOfSentence = false;
 
-        while (!endOfSentence && !Thread.currentThread().isInterrupted())
-        {
+        while (!endOfSentence && !Thread.currentThread().isInterrupted()) {
             int b = stream.read();
 
             if (b < 0)
@@ -220,12 +205,10 @@ public class NmeaReader implements Track, TrackSegment
         return sb != null ? sb.toString() : null;
     }
 
-    private String readSentence(java.nio.ByteBuffer buffer)
-    {
+    private String readSentence(ByteBuffer buffer) {
         StringBuilder sb = new StringBuilder(100);
         boolean endOfSentence = false;
-        while (!endOfSentence)
-        {
+        while (!endOfSentence) {
             byte b = buffer.get();
             if (b == '\r')
                 endOfSentence = true;
@@ -236,8 +219,7 @@ public class NmeaReader implements Track, TrackSegment
         return sb.toString();
     }
 
-    private void parseSentence(String sentence)
-    {
+    private void parseSentence(String sentence) {
         String[] words = sentence.split("[,*]");
 
         if (words[0].equalsIgnoreCase("GPGGA"))
@@ -246,16 +228,13 @@ public class NmeaReader implements Track, TrackSegment
 //            this.doTrackPoint(words);
     }
 
-    private void doTrackPoint(String[] words)
-    {
-        try
-        {
-            gov.nasa.worldwind.formats.nmea.NmeaTrackPoint point = new gov.nasa.worldwind.formats.nmea.NmeaTrackPoint(
+    private void doTrackPoint(String[] words) {
+        try {
+            TrackPoint point = new NmeaTrackPoint(
                 words);
             this.points.add(point);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             System.out.printf("Exception %s at sentence number %d for %s\n",
                 e.getMessage(), this.sentenceNumber, this.name);
         }

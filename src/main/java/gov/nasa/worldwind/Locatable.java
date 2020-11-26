@@ -12,7 +12,6 @@ import gov.nasa.worldwind.geom.Position;
  * @author tag
  * @version $Id: Locatable.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface Locatable
-{
+public interface Locatable {
     Position getPosition();
 }

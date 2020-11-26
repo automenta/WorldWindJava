@@ -12,11 +12,9 @@ import java.util.concurrent.*;
  *
  * @author pabercrombie
  * @version $Id: ScheduledTaskService.java 1171 2013-02-11 21:45:02Z dcollins $
- *
  * @see TaskService
  */
-public interface ScheduledTaskService
-{
+public interface ScheduledTaskService {
     /**
      * Shut down the service. If the {@code immediate} parameter is {@code true}, the service will attempt to stop all
      * active tasks, and will not begin work on any other tasks in the queue. Otherwise, the service will complete all
@@ -30,7 +28,6 @@ public interface ScheduledTaskService
      * Enqueues a task to run. Duplicate tasks are ignored.
      *
      * @param runnable the task to add
-     *
      * @throws IllegalArgumentException if <code>runnable</code> is null
      */
     void addTask(Runnable runnable);
@@ -41,27 +38,23 @@ public interface ScheduledTaskService
      * @param runnable the task to add.
      * @param delay    delay before execution of the task. {@code timeUnit} determines the units of the value.
      * @param timeUnit time unit of {@code initialDelay} and {@code period}.
-     *
      * @return a ScheduledFuture that can be used to get the result of the task, or cancel the task, or {@code null} if
-     *         the task was not enqueued.
-     *
+     * the task was not enqueued.
      * @throws IllegalArgumentException if <code>runnable</code> is null
      */
     ScheduledFuture<?> addScheduledTask(Runnable runnable, long delay, TimeUnit timeUnit);
 
     /**
      * Enqueues a task to run periodically. This method follows the same semantics as {@link
-     * java.util.concurrent.ScheduledExecutorService#scheduleAtFixedRate}. Duplicate tasks are ignored.
+     * ScheduledExecutorService#scheduleAtFixedRate}. Duplicate tasks are ignored.
      *
      * @param runnable     the task to add.
      * @param initialDelay delay before the first execution of the task. {@code timeUnit} determines the units of the
      *                     value.
      * @param period       interval between executions of the task. {@code timeUnit} determines the units of the value.
      * @param timeUnit     time unit of {@code initialDelay} and {@code period}.
-     *
      * @return a ScheduledFuture that can be used to get the result of the task, or cancel the task, or {@code null} if
-     *         the task was not enqueued.
-     *
+     * the task was not enqueued.
      * @throws IllegalArgumentException if <code>runnable</code> is null
      */
     ScheduledFuture<?> addRepeatingTask(Runnable runnable, long initialDelay, long period, TimeUnit timeUnit);

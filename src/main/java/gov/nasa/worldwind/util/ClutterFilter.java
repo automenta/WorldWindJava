@@ -17,8 +17,7 @@ import java.util.List;
  * @author tag
  * @version $Id: ClutterFilter.java 726 2012-08-29 03:16:03Z tgaskins $
  */
-public interface ClutterFilter
-{
+public interface ClutterFilter {
     /**
      * Applies the filter for a specified list of {@link Declutterable} shapes.
      *

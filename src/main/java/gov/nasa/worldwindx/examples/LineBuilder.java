@@ -50,26 +50,27 @@ import java.util.ArrayList;
 public class LineBuilder extends AVListImpl {
 
     private final WorldWindow wwd;
-    private boolean armed = false;
     private final ArrayList<Position> positions = new ArrayList<>();
     private final RenderableLayer layer;
     private final Path line;
+    private boolean armed = false;
     private boolean active = false;
 
     /**
      * Construct a new line builder using the specified path and layer and drawing events from the specified world
      * window. Either or both the path and the layer may be null, in which case the necessary object is created.
      *
-     * @param wwd the WorldWindow to draw events from.
+     * @param wwd       the WorldWindow to draw events from.
      * @param lineLayer the layer holding the path. May be null, in which case a new layer is created.
-     * @param path the path object to build. May be null, in which case a new path is created.
+     * @param path      the path object to build. May be null, in which case a new path is created.
      */
     public LineBuilder(final WorldWindow wwd, RenderableLayer lineLayer, Path path) {
         this.wwd = wwd;
 
         if (path != null) {
             line = path;
-        } else {
+        }
+        else {
             this.line = new Path();
             this.line.setSurfacePath(true);
         }
@@ -134,10 +135,16 @@ public class LineBuilder extends AVListImpl {
 
             if (positions.size() == 1) {
                 addPosition();
-            } else {
+            }
+            else {
                 replacePosition();
             }
         });
+    }
+
+    public static void main(String[] args) {
+        //noinspection deprecation
+        ApplicationTemplate.start("WorldWind Line Builder", LineBuilder.AppFrame.class);
     }
 
     /**
@@ -162,7 +169,7 @@ public class LineBuilder extends AVListImpl {
      * Removes all positions from the path.
      */
     public void clear() {
-        while (this.positions.size() > 0) {
+        while (!this.positions.isEmpty()) {
             this.removePosition();
         }
     }
@@ -307,7 +314,7 @@ public class LineBuilder extends AVListImpl {
             // Add the buttons, scroll bar and inner panel to a titled panel that will resize with the main window.
             JPanel outerPanel = new JPanel(new BorderLayout());
             outerPanel.setBorder(
-                    new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("Line")));
+                new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("Line")));
             outerPanel.setToolTipText("Line control and info");
             outerPanel.add(buttonPanel, BorderLayout.NORTH);
             outerPanel.add(scrollPane, BorderLayout.CENTER);
@@ -345,10 +352,5 @@ public class LineBuilder extends AVListImpl {
             LineBuilder lineBuilder = new LineBuilder(this.getWwd(), null, null);
             this.getContentPane().add(new LinePanel(this.getWwd(), lineBuilder), BorderLayout.WEST);
         }
-    }
-
-    public static void main(String[] args) {
-        //noinspection deprecation
-        ApplicationTemplate.start("WorldWind Line Builder", LineBuilder.AppFrame.class);
     }
 }

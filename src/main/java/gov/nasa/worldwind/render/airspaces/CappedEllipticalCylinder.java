@@ -23,14 +23,13 @@ import java.util.*;
  * @author tag
  * @version $Id: CappedEllipticalCylinder.java 3424 2015-09-29 19:34:00Z tgaskins $
  */
-public class CappedEllipticalCylinder extends AbstractAirspace
-{
+public class CappedEllipticalCylinder extends AbstractAirspace {
     protected static final int DEFAULT_SLICES = 32;
     protected static final int DEFAULT_STACKS = 1;
     protected static final int DEFAULT_LOOPS = 8;
     protected static final int MINIMAL_GEOMETRY_SLICES = 8;
     protected static final int MINIMAL_GEOMETRY_LOOPS = 4;
-
+    protected final int stacks = DEFAULT_STACKS;
     protected LatLon center = LatLon.ZERO;
     protected double innerMinorRadius = 0.0;
     protected double outerMinorRadius = 1.0;
@@ -38,29 +37,23 @@ public class CappedEllipticalCylinder extends AbstractAirspace
     protected double outerMajorRadius = 1.0;
     protected Angle heading = Angle.ZERO;
     protected boolean enableCaps = true;
-
     protected int slices = DEFAULT_SLICES;
-    protected final int stacks = DEFAULT_STACKS;
     protected int loops = DEFAULT_LOOPS;
 
-    public CappedEllipticalCylinder(LatLon location, double minorRadius, double majorRadius, Angle heading)
-    {
-        if (location == null)
-        {
+    public CappedEllipticalCylinder(LatLon location, double minorRadius, double majorRadius, Angle heading) {
+        if (location == null) {
             String message = Logging.getMessage("nullValue.LatLonIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (minorRadius < 0 | majorRadius < 0)
-        {
+        if (minorRadius < 0 | majorRadius < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "minor radius=" + minorRadius);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (majorRadius < 0)
-        {
+        if (majorRadius < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "major radius=" + majorRadius);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -73,8 +66,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
         this.makeDefaultDetailLevels();
     }
 
-    public CappedEllipticalCylinder(CappedEllipticalCylinder source)
-    {
+    public CappedEllipticalCylinder(CappedEllipticalCylinder source) {
         super(source);
 
         this.center = source.center;
@@ -90,20 +82,17 @@ public class CappedEllipticalCylinder extends AbstractAirspace
         this.makeDefaultDetailLevels();
     }
 
-    public CappedEllipticalCylinder(AirspaceAttributes attributes)
-    {
+    public CappedEllipticalCylinder(AirspaceAttributes attributes) {
         super(attributes);
         this.makeDefaultDetailLevels();
     }
 
-    public CappedEllipticalCylinder()
-    {
+    public CappedEllipticalCylinder() {
         this.makeDefaultDetailLevels();
     }
 
-    private void makeDefaultDetailLevels()
-    {
-        List<DetailLevel> levels = new ArrayList<>();
+    private void makeDefaultDetailLevels() {
+        Collection<DetailLevel> levels = new ArrayList<>();
         double[] ramp = ScreenSizeDetailLevel.computeDefaultScreenSizeRamp(5);
 
         DetailLevel level;
@@ -150,8 +139,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
      *
      * @return the cylinder's center
      */
-    public LatLon getCenter()
-    {
+    public LatLon getCenter() {
         return this.center;
     }
 
@@ -159,13 +147,10 @@ public class CappedEllipticalCylinder extends AbstractAirspace
      * Sets the cylinder's center.
      *
      * @param location the geographic position (latitude and longitude) of the cylinder's center.
-     *
      * @throws IllegalArgumentException if the location is null.
      */
-    public void setCenter(LatLon location)
-    {
-        if (location == null)
-        {
+    public void setCenter(LatLon location) {
+        if (location == null) {
             String message = Logging.getMessage("nullValue.LatLonIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -181,8 +166,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
      * @return the cylinder's radii, in meters. The returned array contains the inner minor radius, inner major radius,
      * outer minor radius and outer major radius, in that order.
      */
-    public double[] getRadii()
-    {
+    public double[] getRadii() {
         double[] array = new double[4];
 
         array[0] = this.innerMinorRadius;
@@ -200,35 +184,29 @@ public class CappedEllipticalCylinder extends AbstractAirspace
      * @param innerMajorRadius The cylinder's inner major radius, in meters.
      * @param outerMinorRadius the cylinder's outer minor radius, in meters.
      * @param outerMajorRadius The cylinder's outer major radius, in meters.
-     *
      * @throws IllegalArgumentException if either radius is less than zero.
      */
     public void setRadii(double innerMinorRadius, double innerMajorRadius, double outerMinorRadius,
-        double outerMajorRadius)
-    {
-        if (innerMinorRadius < 0.0)
-        {
+        double outerMajorRadius) {
+        if (innerMinorRadius < 0.0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "innerMinorRadius=" + innerMinorRadius);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (outerMinorRadius < 0.0)
-        {
+        if (outerMinorRadius < 0.0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "outerMinorRadius=" + outerMinorRadius);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (innerMajorRadius < 0.0)
-        {
+        if (innerMajorRadius < 0.0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "innerMajorRadius=" + innerMajorRadius);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (outerMajorRadius < 0.0)
-        {
+        if (outerMajorRadius < 0.0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "outerMajorRadius=" + outerMajorRadius);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -247,20 +225,16 @@ public class CappedEllipticalCylinder extends AbstractAirspace
      *
      * @param outerMinorRadius the cylinder's outer minor radius, in meters.
      * @param outerMajorRadius the cylinder's outer major radius, in meters.
-     *
      * @throws IllegalArgumentException if either radius is less than zero.
      */
-    public void setRadii(double outerMinorRadius, double outerMajorRadius)
-    {
-        if (outerMinorRadius < 0.0)
-        {
+    public void setRadii(double outerMinorRadius, double outerMajorRadius) {
+        if (outerMinorRadius < 0.0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "outerMinorRadius=" + outerMinorRadius);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (outerMajorRadius < 0.0)
-        {
+        if (outerMajorRadius < 0.0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "outerMajorRadius=" + outerMajorRadius);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -274,8 +248,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
      *
      * @return This cylinder's heading, in degrees.
      */
-    public Angle getHeading()
-    {
+    public Angle getHeading() {
         return heading;
     }
 
@@ -284,30 +257,25 @@ public class CappedEllipticalCylinder extends AbstractAirspace
      *
      * @param heading This cylinder's heading, in degrees.
      */
-    public void setHeading(Angle heading)
-    {
+    public void setHeading(Angle heading) {
         this.heading = heading;
         this.invalidateAirspaceData();
     }
 
-    public boolean isEnableCaps()
-    {
+    public boolean isEnableCaps() {
         return this.enableCaps;
     }
 
-    public void setEnableCaps(boolean enable)
-    {
+    public void setEnableCaps(boolean enable) {
         this.enableCaps = enable;
     }
 
-    public Position getReferencePosition()
-    {
+    public Position getReferencePosition() {
         double[] altitudes = this.getAltitudes();
         return new Position(this.center, altitudes[0]);
     }
 
-    protected Extent computeExtent(Globe globe, double verticalExaggeration)
-    {
+    protected Extent computeExtent(Globe globe, double verticalExaggeration) {
         List<Vec4> points = this.computeMinimalGeometry(globe, verticalExaggeration);
         if (points == null || points.isEmpty())
             return null;
@@ -319,8 +287,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
         double maxProj = -Double.MAX_VALUE;
         double maxPerp = -Double.MAX_VALUE;
 
-        for (Vec4 vec : points)
-        {
+        for (Vec4 vec : points) {
             Vec4 v = vec.subtract3(centerPoint);
             double proj = v.dot3(cylinderAxis);
             double perp = v.perpendicularTo3(cylinderAxis).getLengthSquared3();
@@ -335,48 +302,42 @@ public class CappedEllipticalCylinder extends AbstractAirspace
                 maxPerp = perp;
         }
 
-        if (minProj != maxProj && maxPerp > 0.0)
-        {
+        if (minProj != maxProj && maxPerp > 0.0) {
             Vec4 bottomCenter = centerPoint.add3(cylinderAxis.multiply3(minProj));
             Vec4 topCenter = centerPoint.add3(cylinderAxis.multiply3(maxProj));
             double radius = Math.sqrt(maxPerp);
             return new Cylinder(bottomCenter, topCenter, radius);
         }
-        else
-        {
+        else {
             return Box.computeBoundingBox(points);
         }
     }
 
     @Override
-    protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration)
-    {
+    protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration) {
         GeometryBuilder gb = new GeometryBuilder();
         LatLon[] locations = gb.makeDiskLocations(globe, this.center, this.getRadii(),
             this.heading, MINIMAL_GEOMETRY_SLICES, MINIMAL_GEOMETRY_LOOPS);
 
-        ArrayList<Vec4> points = new ArrayList<>();
+        List<Vec4> points = new ArrayList<>();
         this.makeExtremePoints(globe, verticalExaggeration, Arrays.asList(locations), points);
 
         return points;
     }
 
-    protected void doMoveTo(Globe globe, Position oldRef, Position newRef)
-    {
-        if (oldRef == null)
-        {
+    protected void doMoveTo(Globe globe, Position oldRef, Position newRef) {
+        if (oldRef == null) {
             String message = "nullValue.OldRefIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (newRef == null)
-        {
+        if (newRef == null) {
             String message = "nullValue.NewRefIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        List<LatLon> oldLocations = new ArrayList<>(1);
+        Collection<LatLon> oldLocations = new ArrayList<>(1);
         oldLocations.add(this.getCenter());
         List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldRef, newRef, oldLocations);
         this.setCenter(newLocations.get(0));
@@ -384,16 +345,13 @@ public class CappedEllipticalCylinder extends AbstractAirspace
         super.doMoveTo(oldRef, newRef);
     }
 
-    protected void doMoveTo(Position oldRef, Position newRef)
-    {
-        if (oldRef == null)
-        {
+    protected void doMoveTo(Position oldRef, Position newRef) {
+        if (oldRef == null) {
             String message = "nullValue.OldRefIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (newRef == null)
-        {
+        if (newRef == null) {
             String message = "nullValue.NewRefIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -408,14 +366,12 @@ public class CappedEllipticalCylinder extends AbstractAirspace
     }
 
     @Override
-    protected SurfaceShape createSurfaceShape()
-    {
+    protected SurfaceShape createSurfaceShape() {
         return new SurfacePolygon();
     }
 
     @Override
-    protected void updateSurfaceShape(DrawContext dc, SurfaceShape shape)
-    {
+    protected void updateSurfaceShape(DrawContext dc, SurfaceShape shape) {
         super.updateSurfaceShape(dc, shape);
 
         boolean mustDrawInterior = this.getActiveAttributes().isDrawInterior() && this.isEnableCaps();
@@ -423,31 +379,26 @@ public class CappedEllipticalCylinder extends AbstractAirspace
     }
 
     @Override
-    protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape)
-    {
+    protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape) {
         GeometryBuilder gb = new GeometryBuilder();
         LatLon[] locations = gb.makeCylinderLocations(dc.getGlobe(), this.center,
             this.outerMinorRadius, this.outerMajorRadius, this.heading, this.slices);
         ((SurfacePolygon) shape).getBoundaries().clear();
         ((SurfacePolygon) shape).setOuterBoundary(Arrays.asList(locations));
 
-        if (this.innerMinorRadius > 0 && this.innerMajorRadius > 0)
-        {
+        if (this.innerMinorRadius > 0 && this.innerMajorRadius > 0) {
             locations = gb.makeCylinderLocations(dc.getGlobe(), this.center,
                 this.innerMinorRadius, this.innerMajorRadius, this.heading, this.slices);
             ((SurfacePolygon) shape).addInnerBoundary(Arrays.asList(locations));
         }
     }
 
-    public int getSlices()
-    {
+    public int getSlices() {
         return this.slices;
     }
 
-    public void setSlices(int slices)
-    {
-        if (slices < 0)
-        {
+    public void setSlices(int slices) {
+        if (slices < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "slices=" + slices);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -456,20 +407,16 @@ public class CappedEllipticalCylinder extends AbstractAirspace
         this.slices = slices;
     }
 
-    public int getStacks()
-    {
+    public int getStacks() {
         return this.stacks;
     }
 
-    public int getLoops()
-    {
+    public int getLoops() {
         return this.loops;
     }
 
-    public void setLoops(int loops)
-    {
-        if (loops < 0)
-        {
+    public void setLoops(int loops) {
+        if (loops < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "loops=" + loops);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -482,17 +429,14 @@ public class CappedEllipticalCylinder extends AbstractAirspace
     //********************  Geometry Rendering  ********************//
     //**************************************************************//
 
-    protected Vec4 computeReferenceCenter(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    protected Vec4 computeReferenceCenter(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (dc.getGlobe() == null)
-        {
+        if (dc.getGlobe() == null) {
             String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -503,17 +447,14 @@ public class CappedEllipticalCylinder extends AbstractAirspace
             altitudes[0]); // model-coordinate reference center
     }
 
-    protected void doRenderGeometry(DrawContext dc, String drawStyle)
-    {
-        if (dc == null)
-        {
+    protected void doRenderGeometry(DrawContext dc, String drawStyle) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (dc.getGL() == null)
-        {
+        if (dc.getGL() == null) {
             String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -527,8 +468,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
         int stacks = this.stacks;
         int loops = this.loops;
 
-        if (this.isEnableLevelOfDetail())
-        {
+        if (this.isEnableLevelOfDetail()) {
             DetailLevel level = this.computeDetailLevel(dc);
 
             Object o = level.getValue(SLICES);
@@ -554,70 +494,59 @@ public class CappedEllipticalCylinder extends AbstractAirspace
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
-        try
-        {
+        try {
             dc.getView().pushReferenceCenter(dc, refCenter);
 
-            if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle))
-            {
+            if (Airspace.DRAW_STYLE_OUTLINE.equals(drawStyle)) {
                 // Outer cylinder isn't rendered if outer radius is zero.
-                if (radii[2] != 0.0 && radii[3] != 0)
-                {
+                if (radii[2] != 0.0 && radii[3] != 0) {
                     this.drawCylinderOutline(dc, center, radii[2], radii[3], this.heading, altitudes,
                         terrainConformant, slices, stacks, GeometryBuilder.OUTSIDE, refCenter);
                 }
                 // Inner cylinder isn't rendered if inner radius is zero.
-                if (radii[0] != 0.0 && radii[1] != 0)
-                {
+                if (radii[0] != 0.0 && radii[1] != 0) {
                     this.drawCylinderOutline(dc, center, radii[0], radii[1], this.heading, altitudes,
                         terrainConformant, slices, stacks, GeometryBuilder.INSIDE, refCenter);
                 }
             }
-            else if (Airspace.DRAW_STYLE_FILL.equals(drawStyle))
-            {
-                if (this.enableCaps)
-                {
+            else if (Airspace.DRAW_STYLE_FILL.equals(drawStyle)) {
+                if (this.enableCaps) {
                     ogsh.pushAttrib(gl, GL2.GL_POLYGON_BIT);
                     gl.glEnable(GL.GL_CULL_FACE);
                     gl.glFrontFace(GL.GL_CCW);
                 }
 
-                if (this.enableCaps)
-                {
+                if (this.enableCaps) {
                     // Caps aren't rendered if radii are equal.
-                    if ((radii[0] != radii[2]) && (radii[1] != radii[3]))
-                    {
-                        this.drawDisk(dc, center, radii, this.heading, altitudes[1], terrainConformant[1], slices, loops,
+                    if ((radii[0] != radii[2]) && (radii[1] != radii[3])) {
+                        this.drawDisk(dc, center, radii, this.heading, altitudes[1], terrainConformant[1], slices,
+                            loops,
                             GeometryBuilder.OUTSIDE, refCenter);
                         // Bottom cap isn't rendered if airspace is collapsed
-                        if (!this.isAirspaceCollapsed())
-                        {
-                            this.drawDisk(dc, center, radii, this.heading, altitudes[0], terrainConformant[0], slices, loops,
+                        if (!this.isAirspaceCollapsed()) {
+                            this.drawDisk(dc, center, radii, this.heading, altitudes[0], terrainConformant[0], slices,
+                                loops,
                                 GeometryBuilder.INSIDE, refCenter);
                         }
                     }
                 }
 
                 // Cylinders aren't rendered if airspace is collapsed
-                if (!this.isAirspaceCollapsed())
-                {
+                if (!this.isAirspaceCollapsed()) {
                     // Outer cylinder isn't rendered if outer radius is zero.
-                    if (radii[2] != 0.0 && radii[3] != 0)
-                    {
+                    if (radii[2] != 0.0 && radii[3] != 0) {
                         this.drawCylinder(dc, center, radii[2], radii[3], this.heading, altitudes, terrainConformant,
                             slices, stacks, GeometryBuilder.OUTSIDE, refCenter);
                     }
                     // Inner cylinder isn't rendered if inner radius is zero.
-                    if (radii[0] != 0.0)
-                    {
+                    if (radii[0] != 0.0) {
                         this.drawCylinder(dc, center, radii[0], radii[1], this.heading, altitudes, terrainConformant,
                             slices, stacks, GeometryBuilder.INSIDE, refCenter);
                     }
                 }
             }
         }
-        finally
-        {
+        finally {
             dc.getView().popReferenceCenter(dc);
             ogsh.pop(gl);
         }
@@ -628,15 +557,15 @@ public class CappedEllipticalCylinder extends AbstractAirspace
     //**************************************************************//
 
     private void drawCylinder(DrawContext dc, LatLon center, double minorRadius, double majorRadius, Angle heading,
-        double[] altitudes, boolean[] terrainConformant, int slices, int stacks, int orientation, Vec4 referenceCenter)
-    {
+        double[] altitudes, boolean[] terrainConformant, int slices, int stacks, int orientation,
+        Vec4 referenceCenter) {
         Geometry vertexGeom = this.createCylinderVertexGeometry(dc, center, minorRadius, majorRadius, heading,
             altitudes, terrainConformant, slices, stacks, orientation, referenceCenter);
 
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "EllipticalCylinder.Indices", slices, stacks, orientation);
+        Object cacheKey = new Geometry.CacheKey(this.getClass(), "EllipticalCylinder.Indices", slices, stacks,
+            orientation);
         Geometry indexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (indexGeom == null)
-        {
+        if (indexGeom == null) {
             indexGeom = new Geometry();
             this.makeCylinderIndices(slices, stacks, orientation, indexGeom);
             this.getGeometryCache().add(cacheKey, indexGeom);
@@ -647,16 +576,15 @@ public class CappedEllipticalCylinder extends AbstractAirspace
 
     private void drawCylinderOutline(DrawContext dc, LatLon center, double minorRadius, double majorRadius,
         Angle heading, double[] altitudes, boolean[] terrainConformant, int slices, int stacks, int orientation,
-        Vec4 referenceCenter)
-    {
-        Geometry vertexGeom = this.createCylinderVertexGeometry(dc, center, minorRadius, majorRadius, heading, altitudes,
+        Vec4 referenceCenter) {
+        Geometry vertexGeom = this.createCylinderVertexGeometry(dc, center, minorRadius, majorRadius, heading,
+            altitudes,
             terrainConformant, slices, stacks, orientation, referenceCenter);
 
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "EllipticalCylinder.OutlineIndices", slices, stacks,
             orientation);
         Geometry outlineIndexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (outlineIndexGeom == null)
-        {
+        if (outlineIndexGeom == null) {
             outlineIndexGeom = new Geometry();
             this.makeCylinderOutlineIndices(slices, stacks, orientation, outlineIndexGeom);
             this.getGeometryCache().add(cacheKey, outlineIndexGeom);
@@ -667,15 +595,13 @@ public class CappedEllipticalCylinder extends AbstractAirspace
 
     private Geometry createCylinderVertexGeometry(DrawContext dc, LatLon center, double minorRadius, double majorRadius,
         Angle heading, double[] altitudes, boolean[] terrainConformant, int slices, int stacks, int orientation,
-        Vec4 referenceCenter)
-    {
+        Vec4 referenceCenter) {
         Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "EllipticalCylinder.Vertices", center,
             minorRadius, majorRadius, heading,
             altitudes[0], altitudes[1], terrainConformant[0], terrainConformant[1], slices, stacks, orientation,
             referenceCenter);
         Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (vertexGeom == null || this.isExpired(dc, vertexGeom))
-        {
+        if (vertexGeom == null || this.isExpired(dc, vertexGeom)) {
             if (vertexGeom == null)
                 vertexGeom = new Geometry();
             this.makeCylinder(dc, center, minorRadius, majorRadius, heading, altitudes, terrainConformant, slices,
@@ -689,8 +615,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
 
     private void makeCylinder(DrawContext dc, LatLon center, double minorRadius, double majorRadius, Angle heading,
         double[] altitudes,
-        boolean[] terrainConformant, int slices, int stacks, int orientation, Vec4 referenceCenter, Geometry dest)
-    {
+        boolean[] terrainConformant, int slices, int stacks, int orientation, Vec4 referenceCenter, Geometry dest) {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
@@ -705,8 +630,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
         dest.setNormalData(count, norms);
     }
 
-    private void makeCylinderIndices(int slices, int stacks, int orientation, Geometry dest)
-    {
+    private void makeCylinderIndices(int slices, int stacks, int orientation, Geometry dest) {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
@@ -718,8 +642,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
         dest.setElementData(mode, count, indices);
     }
 
-    private void makeCylinderOutlineIndices(int slices, int stacks, int orientation, Geometry dest)
-    {
+    private void makeCylinderOutlineIndices(int slices, int stacks, int orientation, Geometry dest) {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
@@ -736,14 +659,12 @@ public class CappedEllipticalCylinder extends AbstractAirspace
     //**************************************************************//
 
     private void drawDisk(DrawContext dc, LatLon center, double[] radii, Angle heading, double altitude,
-        boolean terrainConformant, int slices, int loops, int orientation, Vec4 referenceCenter)
-    {
+        boolean terrainConformant, int slices, int loops, int orientation, Vec4 referenceCenter) {
         Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "EllipticalDisk.Vertices",
             center, radii[0], radii[1], radii[2], radii[3], heading, altitude, terrainConformant,
             slices, loops, orientation, referenceCenter);
         Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (vertexGeom == null || this.isExpired(dc, vertexGeom))
-        {
+        if (vertexGeom == null || this.isExpired(dc, vertexGeom)) {
             if (vertexGeom == null)
                 vertexGeom = new Geometry();
             this.makeDisk(dc, center, radii, heading, altitude, terrainConformant,
@@ -754,8 +675,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
 
         cacheKey = new Geometry.CacheKey(this.getClass(), "EllipticalDisk.Indices", slices, loops, orientation);
         Geometry indexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (indexGeom == null)
-        {
+        if (indexGeom == null) {
             indexGeom = new Geometry();
             this.makeDiskIndices(slices, loops, orientation, indexGeom);
             this.getGeometryCache().add(cacheKey, indexGeom);
@@ -765,8 +685,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
     }
 
     private void makeDisk(DrawContext dc, LatLon center, double[] radii, Angle heading, double altitude,
-        boolean terrainConformant, int slices, int loops, int orientation, Vec4 referenceCenter, Geometry dest)
-    {
+        boolean terrainConformant, int slices, int loops, int orientation, Vec4 referenceCenter, Geometry dest) {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
@@ -781,8 +700,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
         dest.setNormalData(count, norms);
     }
 
-    private void makeDiskIndices(int slices, int loops, int orientation, Geometry dest)
-    {
+    private void makeDiskIndices(int slices, int loops, int orientation, Geometry dest) {
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(orientation);
 
@@ -799,8 +717,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
     //**************************************************************//
 
     @Override
-    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.doGetRestorableState(rs, context);
 
         rs.addStateValueAsBoolean(context, "capsVisible", this.isEnableCaps());
@@ -813,8 +730,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace
     }
 
     @Override
-    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.doRestoreState(rs, context);
 
         Boolean booleanState = rs.getStateValueAsBoolean(context, "capsVisible");

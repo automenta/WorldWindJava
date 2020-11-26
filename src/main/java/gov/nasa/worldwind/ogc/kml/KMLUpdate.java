@@ -20,8 +20,7 @@ import java.util.*;
  * @author tag
  * @version $Id: KMLUpdate.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLUpdate extends KMLAbstractObject
-{
+public class KMLUpdate extends KMLAbstractObject {
     protected List<KMLUpdateOperation> operations; // operations are performed in the order specified in the KML file
     protected boolean updatesApplied;
 
@@ -30,15 +29,13 @@ public class KMLUpdate extends KMLAbstractObject
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLUpdate(String namespaceURI)
-    {
+    public KMLUpdate(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
+        throws XMLStreamException {
         if (o instanceof KMLChange)
             this.addChange((KMLChange) o);
         else if (o instanceof KMLCreate)
@@ -49,48 +46,42 @@ public class KMLUpdate extends KMLAbstractObject
             super.doAddEventContent(o, ctx, event, args);
     }
 
-    public String getTargetHref()
-    {
+    public String getTargetHref() {
         return (String) this.getField("targetHref");
     }
 
-    protected void addChange(KMLChange o)
-    {
+    protected void addChange(KMLUpdateOperation o) {
         if (this.operations == null)
             this.operations = new ArrayList<>();
 
         this.operations.add(o);
     }
 
-    protected void addCreate(KMLCreate o)
-    {
+    protected void addCreate(KMLUpdateOperation o) {
         if (this.operations == null)
             this.operations = new ArrayList<>();
 
         this.operations.add(o);
     }
 
-    protected void addDelete(KMLDelete o)
-    {
+    protected void addDelete(KMLUpdateOperation o) {
         if (this.operations == null)
             this.operations = new ArrayList<>();
 
         this.operations.add(o);
     }
 
-    public boolean isUpdatesApplied()
-    {
+    public boolean isUpdatesApplied() {
         return updatesApplied;
     }
 
-    public void applyOperations()
-    {
+    public void applyOperations() {
         this.updatesApplied = true;
 
         if (WWUtil.isEmpty(this.getTargetHref()))
             return;
 
-        if (this.operations == null || this.operations.size() == 0)
+        if (this.operations == null || this.operations.isEmpty())
             return;
 
         Object o = this.getRoot().resolveReference(this.getTargetHref());
@@ -100,8 +91,7 @@ public class KMLUpdate extends KMLAbstractObject
 
         KMLRoot targetRoot = (KMLRoot) o;
 
-        for (KMLUpdateOperation operation : this.operations)
-        {
+        for (KMLUpdateOperation operation : this.operations) {
             operation.applyOperation(targetRoot);
         }
         targetRoot.firePropertyChange(AVKey.UPDATED, null, this);

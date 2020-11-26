@@ -14,12 +14,10 @@ import java.awt.event.*;
  * @author tag
  * @version $Id: DeletePositionsAction.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class DeletePositionsAction extends AbstractAction
-{
+public class DeletePositionsAction extends AbstractAction {
     protected final PositionTable table;
 
-    public DeletePositionsAction(final PositionTable table)
-    {
+    public DeletePositionsAction(final PositionTable table) {
         this.table = table;
 
         int numSelectedPositions = table.getSelectedRowCount();
@@ -34,8 +32,7 @@ public class DeletePositionsAction extends AbstractAction
             this.setEnabled(false);
     }
 
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         SARTrack st = table.getSarTrack();
         if (st != null)
             st.removePositions(this.table.getSelectedRows());

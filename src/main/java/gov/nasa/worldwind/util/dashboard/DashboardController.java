@@ -70,9 +70,9 @@ public class DashboardController implements MouseListener, Disposable {
     @Override
     public void mouseClicked(MouseEvent event) {
         if ((event.getButton() == MouseEvent.BUTTON1
-                && (event.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0
-                && (event.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0
-                && (event.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0)) {
+            && (event.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0
+            && (event.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0
+            && (event.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0)) {
             raiseDialog();
         }
     }

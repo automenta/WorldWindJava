@@ -17,27 +17,21 @@ import java.awt.event.*;
  * @author tag
  * @version $Id: LayerMenu.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class LayerMenu extends JMenu
-{
+public class LayerMenu extends JMenu {
     private WorldWindow wwd;
 
-    public LayerMenu()
-    {
+    public LayerMenu() {
         super("Layers");
     }
 
-    public WorldWindow getWwd()
-    {
+    public WorldWindow getWwd() {
         return wwd;
     }
 
-    public void setWwd(WorldWindow wwd)
-    {
+    public void setWwd(WorldWindow wwd) {
         this.wwd = wwd;
-        for (Layer layer : this.wwd.getModel().getLayers())
-        {
-            if (isLayerMenuItem(layer))
-            {
+        for (Layer layer : this.wwd.getModel().getLayers()) {
+            if (isLayerMenuItem(layer)) {
                 JCheckBoxMenuItem mi = new JCheckBoxMenuItem(new LayerVisibilityAction(this.wwd, layer, this));
                 mi.setState(layer.isEnabled());
                 this.add(mi);
@@ -45,14 +39,12 @@ public class LayerMenu extends JMenu
         }
     }
 
-    private boolean isLayerMenuItem(Layer layer)
-    {
+    private boolean isLayerMenuItem(Layer layer) {
 
         if (layer instanceof RenderableLayer)    //detect surface image layers
         {
-            Iterable<Renderable> iter = ((RenderableLayer)layer).getRenderables();
-            for (Renderable rend: iter)
-            {
+            Iterable<Renderable> iter = ((RenderableLayer) layer).getRenderables();
+            for (Renderable rend : iter) {
                 if (rend instanceof SurfaceImage)
                     return true;
             }
@@ -64,31 +56,26 @@ public class LayerMenu extends JMenu
             && !(layer instanceof BMNGWMSLayer));
     }
 
-    private static class LayerVisibilityAction extends AbstractAction
-    {
+    private static class LayerVisibilityAction extends AbstractAction {
         private final Layer layer;
         private final WorldWindow wwd;
         private final LayerMenu menu;
 
-        public LayerVisibilityAction(WorldWindow wwd, Layer layer, LayerMenu menu)
-        {
+        public LayerVisibilityAction(WorldWindow wwd, Layer layer, LayerMenu menu) {
             super(layer.getName());
             this.layer = layer;
             this.wwd = wwd;
             this.menu = menu;
         }
 
-        public void actionPerformed(ActionEvent actionEvent)
-        {
+        public void actionPerformed(ActionEvent actionEvent) {
             layer.setEnabled(((JCheckBoxMenuItem) actionEvent.getSource()).getState());
             if (layer instanceof BMNGOneImage) //toggle other BMNG layers
             {
-                for (Layer lyr : this.wwd.getModel().getLayers())
-                {
+                for (Layer lyr : this.wwd.getModel().getLayers()) {
                     if (lyr instanceof BMNGWMSLayer)
                         lyr.setEnabled(((JCheckBoxMenuItem) actionEvent.getSource()).getState());
                 }
-
             }
             menu.doClick(0); // keep layer menu open
             this.wwd.redraw();

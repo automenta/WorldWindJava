@@ -66,12 +66,9 @@ import java.beans.PropertyChangeListener;
  * @author pabercrombie
  * @version $Id: WindowsWebViewJNI.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WindowsWebViewJNI
-{
-    static
-    {
-        try
-        {
+public class WindowsWebViewJNI {
+    static {
+        try {
             String architecture = System.getProperty("os.arch");
             if ("x86".equals(architecture))
                 System.loadLibrary("WebView32");
@@ -80,14 +77,15 @@ public class WindowsWebViewJNI
 
             initialize();
         }
-        catch (Throwable t)
-        {
+        catch (Throwable t) {
             String message = Logging.getMessage("WebView.ExceptionCreatingWebView", t);
             Logging.logger().severe(message);
         }
     }
 
-    /** Initialize the native library. This method must be called before any of the other methods in this class. */
+    /**
+     * Initialize the native library. This method must be called before any of the other methods in this class.
+     */
     protected static native void initialize();
 
     /**
@@ -108,7 +106,6 @@ public class WindowsWebViewJNI
      * Release a previously allocated message loop.
      *
      * @param messageLoop identifier of the message loop to release.
-     *
      * @see #newMessageLoop()
      */
     public static native void releaseMessageLoop(long messageLoop);
@@ -131,7 +128,6 @@ public class WindowsWebViewJNI
      * Create a new WebView window.
      *
      * @param messageLoop message loop that will handle events for the window.
-     *
      * @return Identifier for the new window, or zero if creation fails.
      */
     public static native long newWebViewWindow(long messageLoop);
@@ -151,10 +147,8 @@ public class WindowsWebViewJNI
      * Create a new notification adapter to bridge changes in the native WebView to PropertyChangeEvents.
      *
      * @param listener listener that will receive PropertyChangeEvents caused by changes in the native WebView
-     *
      * @return identifier for the new notification adapter, or zero if creation fails. The notification adapter must be
-     *         freed by {@code releaseComObject}.
-     *
+     * freed by {@code releaseComObject}.
      * @see #releaseComObject(long)
      */
     public static native long newNotificationAdapter(PropertyChangeListener listener);
@@ -208,7 +202,6 @@ public class WindowsWebViewJNI
      * Get the time at which the WebView rendered contents last changed.
      *
      * @param webViewWindowPtr pointer to native WebView
-     *
      * @return The time (in milliseconds since the system started) at which the WebView rendered content last changed.
      */
     public static native long getUpdateTime(long webViewWindowPtr);
@@ -218,7 +211,7 @@ public class WindowsWebViewJNI
      * input, etc)
      *
      * @param webViewWindowPtr pointer to native WebView to observe
-     * @param observerPtr      notification adapter allocated by {@link #newNotificationAdapter(java.beans.PropertyChangeListener)}
+     * @param observerPtr      notification adapter allocated by {@link #newNotificationAdapter(PropertyChangeListener)}
      */
     public static native void addWindowUpdateObserver(long webViewWindowPtr, long observerPtr);
 
@@ -242,7 +235,6 @@ public class WindowsWebViewJNI
      * Get the size of the scrollable WebView content.
      *
      * @param webViewWindowPtr pointer to native WebView.
-     *
      * @return Return the size of the WebView content.
      */
     public static native Dimension getContentSize(long webViewWindowPtr);
@@ -251,7 +243,6 @@ public class WindowsWebViewJNI
      * Get minimum size of the WebView content.
      *
      * @param webViewWindowPtr pointer to native WebView.
-     *
      * @return Return the minimum size of the WebView content.
      */
     public static native Dimension getMinContentSize(long webViewWindowPtr);
@@ -269,7 +260,6 @@ public class WindowsWebViewJNI
      * Get the URL of the page currently loaded in the WebView.
      *
      * @param webViewWindowPtr pointer to native WebView.
-     *
      * @return The URL of the current page, or null if the WebView content has been loaded from a String.
      */
     public static native String getContentURL(long webViewWindowPtr);

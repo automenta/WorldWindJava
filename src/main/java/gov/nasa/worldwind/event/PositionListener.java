@@ -11,7 +11,6 @@ import java.util.EventListener;
  * @author tag
  * @version $Id: PositionListener.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface PositionListener extends EventListener
-{
+public interface PositionListener extends EventListener {
     void moved(PositionEvent event);
 }

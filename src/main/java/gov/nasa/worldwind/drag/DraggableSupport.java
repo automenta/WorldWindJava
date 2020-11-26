@@ -18,8 +18,7 @@ import java.awt.*;
  * Utility functions which support dragging operations on objects implementing the {@link Movable} or {@link Movable2}
  * interface.
  */
-public class DraggableSupport
-{
+public class DraggableSupport {
     /**
      * The {@link DraggableSupport#computeRelativePoint(Line, Globe, SceneController, double)} method uses a numeric
      * search method to determine the coordinates of the desired position. The numeric solver will stop at a defined
@@ -35,6 +34,11 @@ public class DraggableSupport
      */
     public static final int DEFAULT_STEP_LIMIT = 20;
     /**
+     * The object that will be subject to the drag operations. This object should implement {@link Movable} or {@link
+     * Movable2}.
+     */
+    protected final Object dragObject;
+    /**
      * Initial drag operation offset in x and y screen coordinates, between the object reference position and the screen
      * point. Used for screen size constant drag operations.
      */
@@ -49,24 +53,19 @@ public class DraggableSupport
      */
     protected Vec4 initialEllipsoidalScreenPoint = null;
     /**
-     * This instances step limit when using the solver to determine the position of objects using the
-     * {@link WorldWind#RELATIVE_TO_GROUND} altitude mode. Increasing this value will increase solver runtime and may
-     * cause the event loop to hang. If the solver exceeds the number of steps specified here, it will fall back to
-     * using a position calculated by intersection with the ellipsoid.
+     * This instances step limit when using the solver to determine the position of objects using the {@link
+     * WorldWind#RELATIVE_TO_GROUND} altitude mode. Increasing this value will increase solver runtime and may cause the
+     * event loop to hang. If the solver exceeds the number of steps specified here, it will fall back to using a
+     * position calculated by intersection with the ellipsoid.
      */
     protected int stepLimit = DEFAULT_STEP_LIMIT;
     /**
-     * This instances convergence threshold for the solver used to determine the position of objects using the
-     * {@link WorldWind#RELATIVE_TO_GROUND} altitude mode. Decreasing this value will increase solver runtime and may
-     * cause the event loop to hang. If the solver does not converge to the threshold specified here, it will fall back
-     * to using a position calculated by intersection with the ellipsoid.
+     * This instances convergence threshold for the solver used to determine the position of objects using the {@link
+     * WorldWind#RELATIVE_TO_GROUND} altitude mode. Decreasing this value will increase solver runtime and may cause the
+     * event loop to hang. If the solver does not converge to the threshold specified here, it will fall back to using a
+     * position calculated by intersection with the ellipsoid.
      */
     protected double convergenceThreshold = DEFAULT_CONVERGENCE_THRESHOLD;
-    /**
-     * The object that will be subject to the drag operations. This object should implement {@link Movable} or {@link
-     * Movable2}.
-     */
-    protected final Object dragObject;
     /**
      * The altitude mode of the object to be dragged.
      */
@@ -78,21 +77,17 @@ public class DraggableSupport
      *
      * @param dragObject   the object to be dragged.
      * @param altitudeMode the altitude mode.
-     *
      * @throws IllegalArgumentException if the object is null.
      */
-    public DraggableSupport(Object dragObject, int altitudeMode)
-    {
-        if (dragObject == null)
-        {
+    public DraggableSupport(Object dragObject, int altitudeMode) {
+        if (dragObject == null) {
             String msg = Logging.getMessage("nullValue.ObjectIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         if (altitudeMode != WorldWind.ABSOLUTE && altitudeMode != WorldWind.CLAMP_TO_GROUND &&
-            altitudeMode != WorldWind.RELATIVE_TO_GROUND && altitudeMode != WorldWind.CONSTANT)
-        {
+            altitudeMode != WorldWind.RELATIVE_TO_GROUND && altitudeMode != WorldWind.CONSTANT) {
             String msg = Logging.getMessage("generic.InvalidAltitudeMode", altitudeMode);
             Logging.logger().warning(msg);
         }
@@ -105,18 +100,14 @@ public class DraggableSupport
      * Converts the screen position inputs to geographic movement information. Uses the information provided by the
      * {@link DragContext} object and attempts to move the object using the {@link Movable2} or {@link Movable}
      * interface. This method maintains a constant screen offset from the cursor to the reference point of the object
-     * being dragged. It is suited for objects maintaining a constant screen size presentation like,
-     * {@link gov.nasa.worldwindx.examples.symbology.TacticalSymbols} or
-     * {@link gov.nasa.worldwind.render.PointPlacemark}.
+     * being dragged. It is suited for objects maintaining a constant screen size presentation like, {@link
+     * gov.nasa.worldwindx.examples.symbology.TacticalSymbols} or {@link gov.nasa.worldwind.render.PointPlacemark}.
      *
      * @param dragContext the current {@link DragContext} for this object.
-     *
      * @throws IllegalArgumentException if the {@link DragContext} is null.
      */
-    public void dragScreenSizeConstant(DragContext dragContext)
-    {
-        if (dragContext == null)
-        {
+    public void dragScreenSizeConstant(DragContext dragContext) {
+        if (dragContext == null) {
             String msg = Logging.getMessage("nullValue.DragContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -126,8 +117,7 @@ public class DraggableSupport
         if (referencePosition == null)
             return;
 
-        if (dragContext.getDragState().equals(AVKey.DRAG_BEGIN))
-        {
+        if (dragContext.getDragState().equals(AVKey.DRAG_BEGIN)) {
             this.initialScreenPointOffset = this.computeScreenOffsetFromReferencePosition(
                 referencePosition,
                 dragContext);
@@ -175,13 +165,10 @@ public class DraggableSupport
      * object being dragged. It is suited for objects which maintain a constant model space or geographic size.
      *
      * @param dragContext the current {@link DragContext} for this object.
-     *
      * @throws IllegalArgumentException if the {@link DragContext} is null.
      */
-    public void dragGlobeSizeConstant(DragContext dragContext)
-    {
-        if (dragContext == null)
-        {
+    public void dragGlobeSizeConstant(DragContext dragContext) {
+        if (dragContext == null) {
             String msg = Logging.getMessage("nullValue.DragContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -191,8 +178,7 @@ public class DraggableSupport
         if (referencePosition == null)
             return;
 
-        if (dragContext.getDragState().equals(AVKey.DRAG_BEGIN))
-        {
+        if (dragContext.getDragState().equals(AVKey.DRAG_BEGIN)) {
             this.initialEllipsoidalReferencePoint = dragContext.getGlobe()
                 .computeEllipsoidalPointFromPosition(referencePosition);
             this.initialEllipsoidalScreenPoint = this.computeEllipsoidalPointFromScreen(
@@ -255,8 +241,7 @@ public class DraggableSupport
      *
      * @return the step limit.
      */
-    public int getStepLimit()
-    {
+    public int getStepLimit() {
         return this.stepLimit;
     }
 
@@ -268,21 +253,19 @@ public class DraggableSupport
      *
      * @param stepLimit the step limit to set for the solver method.
      */
-    public void setStepLimit(int stepLimit)
-    {
+    public void setStepLimit(int stepLimit) {
         this.stepLimit = stepLimit;
     }
 
     /**
-     * Returns the convergence threshold used by the solver when an a screen size constant object using a
-     * {@link WorldWind#RELATIVE_TO_GROUND} altitude mode needs to determine a position. When the solver finds an
-     * altitude within the convergence threshold to the desired altitude, the solver will stop and return the cartesian
+     * Returns the convergence threshold used by the solver when an a screen size constant object using a {@link
+     * WorldWind#RELATIVE_TO_GROUND} altitude mode needs to determine a position. When the solver finds an altitude
+     * within the convergence threshold to the desired altitude, the solver will stop and return the cartesian
      * position.
      *
      * @return the convergence threshold.
      */
-    public double getConvergenceThreshold()
-    {
+    public double getConvergenceThreshold() {
         return this.convergenceThreshold;
     }
 
@@ -294,8 +277,7 @@ public class DraggableSupport
      *
      * @param convergenceThreshold the convergence threshold to use for the solver.
      */
-    public void setConvergenceThreshold(double convergenceThreshold)
-    {
+    public void setConvergenceThreshold(double convergenceThreshold) {
         this.convergenceThreshold = convergenceThreshold;
     }
 
@@ -304,8 +286,7 @@ public class DraggableSupport
      *
      * @return the altitude mode.
      */
-    public int getAltitudeMode()
-    {
+    public int getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -314,11 +295,9 @@ public class DraggableSupport
      *
      * @param altitudeMode the altitude mode to use for dragging calculations.
      */
-    public void setAltitudeMode(int altitudeMode)
-    {
+    public void setAltitudeMode(int altitudeMode) {
         if (altitudeMode != WorldWind.ABSOLUTE && altitudeMode != WorldWind.CLAMP_TO_GROUND &&
-            altitudeMode != WorldWind.RELATIVE_TO_GROUND && altitudeMode != WorldWind.CONSTANT)
-        {
+            altitudeMode != WorldWind.RELATIVE_TO_GROUND && altitudeMode != WorldWind.CONSTANT) {
             String msg = Logging.getMessage("generic.InvalidAltitudeMode", altitudeMode);
             Logging.logger().warning(msg);
         }
@@ -335,12 +314,10 @@ public class DraggableSupport
      *                            search method will be used to determine the position, please see the {@link
      *                            DraggableSupport#computeRelativePoint(Line, Globe, SceneController, double)} for more
      *                            information.
-     *
      * @return the cartesian coordinates using an ellipsoidal globe, or null if a position could not be determined.
      */
     protected Vec4 computeEllipsoidalPointFromScreen(DragContext dragContext, Point screenPoint, double altitude,
-        boolean utilizeSearchMethod)
-    {
+        boolean utilizeSearchMethod) {
         Line ray = dragContext.getView().computeRayFromScreenPoint(screenPoint.getX(), screenPoint.getY());
         Vec4 globePoint = this.computeGlobeIntersection(
             ray,
@@ -366,28 +343,23 @@ public class DraggableSupport
      *
      * @param dragObjectReferencePosition the {@link Movable} or {@link Movable2} reference position {@link Position}.
      * @param dragContext                 the current {@link DragContext} of this drag event.
-     *
      * @return a {@link Vec4} containing the x and y offsets in screen coordinates from the reference position and the
      * previous screen point.
      */
     protected Vec4 computeScreenOffsetFromReferencePosition(Position dragObjectReferencePosition,
-        DragContext dragContext)
-    {
+        DragContext dragContext) {
         Vec4 dragObjectPoint;
 
-        if (dragContext.getGlobe() instanceof Globe2D)
-        {
+        if (dragContext.getGlobe() instanceof Globe2D) {
             dragObjectPoint = dragContext.getGlobe().computePointFromPosition(
                 new Position(dragObjectReferencePosition, 0.0));
         }
-        else
-        {
+        else {
             // If the altitude mode is ABSOLUTE, or not recognized as a standard WorldWind altitude mode, use the
             // ABSOLUTE method as the default
             if (this.altitudeMode == WorldWind.ABSOLUTE ||
                 (this.altitudeMode != WorldWind.RELATIVE_TO_GROUND && this.altitudeMode != WorldWind.CLAMP_TO_GROUND
-                    && this.altitudeMode != WorldWind.CONSTANT))
-            {
+                    && this.altitudeMode != WorldWind.CONSTANT)) {
                 dragObjectPoint = dragContext.getGlobe().computePointFromPosition(dragObjectReferencePosition);
             }
             else // Should be any one of the remaining WorldWind altitude modes: CLAMP, RELATIVE, CONSTANT
@@ -420,8 +392,7 @@ public class DraggableSupport
      * @return the reference {@link Movable#getReferencePosition()} or {@link Movable2#getReferencePosition()}, or null
      * if the object didn't implement either interface.
      */
-    protected Position getReferencePosition()
-    {
+    protected Position getReferencePosition() {
         if (this.dragObject instanceof Movable2)
             return ((Movable2) this.dragObject).getReferencePosition();
         else if (this.dragObject instanceof Movable)
@@ -439,12 +410,9 @@ public class DraggableSupport
      * @param globe        the globe reference, may be null if the object only implements the {@link Movable}
      *                     interface.
      */
-    protected void doMove(Position movePosition, Globe globe)
-    {
-        if (this.dragObject instanceof Movable2)
-        {
-            if (globe == null)
-            {
+    protected void doMove(Position movePosition, Globe globe) {
+        if (this.dragObject instanceof Movable2) {
+            if (globe == null) {
                 String msg = Logging.getMessage("nullValue.GlobeIsNull");
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
@@ -468,46 +436,37 @@ public class DraggableSupport
      * @param globe           the {@link Globe} to intersect.
      * @param sceneController if an altitude mode other than {@link WorldWind#ABSOLUTE} is specified, the {@link
      *                        SceneController} which will provide terrain information.
-     *
      * @return the cartesian coordinates of the intersection based on the {@link Globe}s coordinate system or null if
      * the intersection couldn't be calculated.
      */
     protected Vec4
     computeGlobeIntersection(Line ray, double altitude, boolean useSearchMethod, Globe globe,
-        SceneController sceneController)
-    {
+        SceneController sceneController) {
         Intersection[] intersections;
 
-        if (globe instanceof Globe2D)
-        {
+        if (globe instanceof Globe2D) {
             // Utilize the globe intersection method for a Globe2D as it best describes the appearance and the
             // terrain intersection method returns null when crossing the dateline on a Globe2D
             intersections = globe.intersect(ray, 0.0);
         }
-        else if (this.altitudeMode == WorldWind.ABSOLUTE)
-        {
+        else if (this.altitudeMode == WorldWind.ABSOLUTE) {
             // Accounts for the object being visually placed on the surface in a Globe2D Globe
             intersections = globe.intersect(ray, altitude);
         }
-        else if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || this.altitudeMode == WorldWind.CONSTANT)
-        {
+        else if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND || this.altitudeMode == WorldWind.CONSTANT) {
             intersections = sceneController.getTerrain().intersect(ray);
         }
-        else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND)
-        {
+        else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
             // If an object is RELATIVE_TO_GROUND but has an altitude close to 0.0, use CLAMP_TO_GROUND method
-            if (altitude < 1.0)
-            {
+            if (altitude < 1.0) {
                 intersections = sceneController.getTerrain().intersect(ray);
             }
-            else
-            {
+            else {
                 // When an object maintains a constant screen size independent of globe orientation or eye location,
                 // the dragger attempts to determine the position by testing different points of the ray for a
                 // matching altitude above elevation. The method is only used in objects maintain a constant screen
                 // size as the effects are less pronounced in globe constant features.
-                if (useSearchMethod)
-                {
+                if (useSearchMethod) {
                     Vec4 intersectionPoint = this.computeRelativePoint(ray, globe, sceneController, altitude);
                     // In the event the computeRelativePoint fails with the numeric approach it falls back to a
                     // ellipsoidal intersection. Need to check if the result of that calculation was also null,
@@ -517,14 +476,12 @@ public class DraggableSupport
                     else
                         intersections = null;
                 }
-                else
-                {
+                else {
                     intersections = globe.intersect(ray, altitude);
                 }
             }
         }
-        else
-        {
+        else {
             // If the altitude mode isn't recognized, the ABSOLUTE determination method is used as a fallback/default
             intersections = globe.intersect(ray, altitude);
         }
@@ -547,22 +504,18 @@ public class DraggableSupport
      * @param globe           the current {@link Globe}.
      * @param sceneController the current {@link SceneController}.
      * @param altitude        the target altitude.
-     *
      * @return a {@link Vec4} of the point in globe coordinates.
      */
-    protected Vec4 computeRelativePoint(Line ray, Globe globe, SceneController sceneController, double altitude)
-    {
+    protected Vec4 computeRelativePoint(Line ray, Globe globe, SceneController sceneController, double altitude) {
         // Calculate the intersection of ray with the terrain
         Intersection[] intersections = sceneController.getTerrain().intersect(ray);
-        if (intersections != null)
-        {
+        if (intersections != null) {
             Vec4 eye = ray.origin;
             Vec4 surface = intersections[0].getIntersectionPoint();
             double maxDifference = eye.getLength3() - surface.getLength3();
 
             // Account for extremely zoomed out instances
-            if (maxDifference > (5 * altitude))
-            {
+            if (maxDifference > (5 * altitude)) {
                 double mixAmount = (5 * altitude) / maxDifference;
                 eye = Vec4.mix3(mixAmount, surface, eye);
                 // maxDifference = eye.getLength3() - surface.getLength3();
@@ -583,16 +536,14 @@ public class DraggableSupport
             double pointAlt;
             Vec4 intersectionPoint;
 
-            for (int i = 0; i < this.stepLimit; i++)
-            {
+            for (int i = 0; i < this.stepLimit; i++) {
 
                 intersectionPoint = Vec4.mix3(mixPoint, surface, eye);
                 Position pointPos = globe.computePositionFromPoint(intersectionPoint);
                 pointAlt = globe.getElevation(pointPos.getLatitude(), pointPos.getLongitude());
                 pointAlt = pointPos.getElevation() - pointAlt;
 
-                if (Math.abs(pointAlt - altitude) < this.convergenceThreshold)
-                {
+                if (Math.abs(pointAlt - altitude) < this.convergenceThreshold) {
                     return intersectionPoint;
                 }
 

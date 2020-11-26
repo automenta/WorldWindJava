@@ -17,8 +17,7 @@ import java.util.*;
  * @author Eric Dalgliesh 30/11/2006
  * @version $Id: Triangle.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Triangle
-{
+public class Triangle {
     private static final double EPSILON = 0.0000001; // used in intersects method
 
     public final Vec4 a;
@@ -32,13 +31,10 @@ public class Triangle
      * @param a the first vertex.
      * @param b the second vertex.
      * @param c the third vertex.
-     *
      * @throws IllegalArgumentException if any vertex is null.
      */
-    public Triangle(Vec4 a, Vec4 b, Vec4 c)
-    {
-        if (a == null || b == null || c == null)
-        {
+    public Triangle(Vec4 a, Vec4 b, Vec4 c) {
+        if (a == null || b == null || c == null) {
             String msg = Logging.getMessage("nullValue.PointIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -80,60 +76,6 @@ public class Triangle
 //    }
 
     /**
-     * Indicates whether a specified point is on the triangle.
-     *
-     * @param p the point to test. If null, the method returns false.
-     *
-     * @return true if the point is on the triangle, otherwise false.
-     */
-    public boolean contains(Vec4 p)
-    {
-        if (p == null)
-            return false;
-
-        // Compute vectors
-        Vec4 v0 = this.c.subtract3(this.a);
-        Vec4 v1 = this.b.subtract3(this.a);
-        Vec4 v2 = p.subtract3(this.a);
-
-        // Compute dot products
-        double dot00 = v0.dotSelf3();
-        double dot01 = v0.dot3(v1);
-        double dot02 = v0.dot3(v2);
-        double dot11 = v1.dotSelf3();
-        double dot12 = v1.dot3(v2);
-
-        // Compute barycentric coordinates
-        double det = (dot00 * dot11 - dot01 * dot01);
-
-        double detInv = 1 / det;
-        double u = (dot11 * dot02 - dot01 * dot12) * detInv;
-        double v = (dot00 * dot12 - dot01 * dot02) * detInv;
-
-        // Check if point is contained in triangle (including edges and vertices)
-        return (u >= 0d) && (v >= 0d) && (u + v <= 1d);
-
-        // Check if point is contained inside triangle (NOT including edges or vertices)
-//        return (u > 0d) && (v > 0d) && (u + v < 1d);
-    }
-
-    /**
-     * Determine the intersection of the triangle with a specified line.
-     *
-     * @param line the line to test.
-     *
-     * @return the point of intersection if the line intersects the triangle, otherwise null.
-     *
-     * @throws IllegalArgumentException if the line is null.
-     */
-    public Vec4 intersect(Line line)
-    {
-        Intersection intersection = intersect(line, this.a, this.b, this.c);
-
-        return intersection != null ? intersection.getIntersectionPoint() : null;
-    }
-
-    /**
      * Determines the intersection of a specified line with a specified triangle. The triangle is specified by three
      * points ordered counterclockwise. The triangle's front face is determined by the right-hand rule.
      *
@@ -141,13 +83,10 @@ public class Triangle
      * @param a    the first vertex of the triangle.
      * @param b    the second vertex of the triangle.
      * @param c    the third vertex of the triangle.
-     *
      * @return the point of intersection if the line intersects the triangle, otherwise null.
-     *
      * @throws IllegalArgumentException if the line or any of the triangle vertices is null.
      */
-    public static Intersection intersect(Line line, Vec4 a, Vec4 b, Vec4 c)
-    {
+    public static Intersection intersect(Line line, Vec4 a, Vec4 b, Vec4 c) {
         return intersect(line, a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z);
     }
 
@@ -164,14 +103,11 @@ public class Triangle
      * @param vcx  the X coordinate of the third vertex of the triangle.
      * @param vcy  the Y coordinate of the third vertex of the triangle.
      * @param vcz  the Z coordinate of the third vertex of the triangle.
-     *
      * @return the point of intersection if the line intersects the triangle, otherwise null.
      */
     public static Intersection intersect(Line line,
-        double vax, double vay, double vaz, double vbx, double vby, double vbz, double vcx, double vcy, double vcz)
-    {
-        if (line == null)
-        {
+        double vax, double vay, double vaz, double vbx, double vby, double vbz, double vcx, double vcy, double vcz) {
+        if (line == null) {
             String msg = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -204,7 +140,7 @@ public class Triangle
         if (det > -EPSILON && det < EPSILON) // If det is near zero, then ray lies on plane of triangle
             return null;
 
-        double detInv = 1d / det;
+        double detInv = 1.0d / det;
 
         // Distance from vertA to ray origin: origin - va
         double tvecx = origin.x - vax;
@@ -240,22 +176,17 @@ public class Triangle
      * @param line     the line to intersect.
      * @param vertices the tri-strip vertices.
      * @param indices  the indices forming the tri-strip.
-     *
      * @return the list of intersections with the line and the tri-strip, or null if there are no intersections.
-     *
      * @throws IllegalArgumentException if the line, vertex buffer or index buffer is null.
      */
-    public static List<Intersection> intersectTriStrip(final Line line, FloatBuffer vertices, IntBuffer indices)
-    {
-        if (line == null)
-        {
+    public static List<Intersection> intersectTriStrip(final Line line, FloatBuffer vertices, IntBuffer indices) {
+        if (line == null) {
             String msg = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (vertices == null || indices == null)
-        {
+        if (vertices == null || indices == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -263,8 +194,7 @@ public class Triangle
 
         List<Intersection> intersections = null;
 
-        for (int n = indices.position(); n < indices.limit() - 2; n++)
-        {
+        for (int n = indices.position(); n < indices.limit() - 2; n++) {
             Intersection intersection;
 
             int i = indices.get(n) * 3;
@@ -278,8 +208,7 @@ public class Triangle
                 vertices.get(j), vertices.get(j + 1), vertices.get(j + 2),
                 vertices.get(k), vertices.get(k + 1), vertices.get(k + 2));
 
-            if (intersection != null)
-            {
+            if (intersection != null) {
                 if (intersections == null)
                     intersections = new ArrayList<>();
                 intersections.add(intersection);
@@ -295,29 +224,23 @@ public class Triangle
      * @param line     the line to intersect.
      * @param vertices the tri-strip vertices.
      * @param indices  the indices forming the tri-strip.
-     *
      * @return the list of intersections with the line and the triangle strip, or null if there are no intersections.
-     *
      * @throws IllegalArgumentException if the line, vertex array or index buffer is null.
      */
-    public static List<Intersection> intersectTriStrip(final Line line, Vec4[] vertices, IntBuffer indices)
-    {
-        if (line == null)
-        {
+    public static List<Intersection> intersectTriStrip(final Line line, Vec4[] vertices, IntBuffer indices) {
+        if (line == null) {
             String msg = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (vertices == null)
-        {
+        if (vertices == null) {
             String msg = Logging.getMessage("nullValue.ArrayIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (indices == null)
-        {
+        if (indices == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -325,8 +248,7 @@ public class Triangle
 
         List<Intersection> intersections = null;
 
-        for (int n = indices.position(); n < indices.limit() - 1; n++)
-        {
+        for (int n = indices.position(); n < indices.limit() - 1; n++) {
             Intersection intersection;
 
             int i = indices.get(n) * 3;
@@ -337,8 +259,7 @@ public class Triangle
             // order the vertices.
             intersection = intersect(line, vertices[i], vertices[j], vertices[k]);
 
-            if (intersection != null)
-            {
+            if (intersection != null) {
                 if (intersections == null)
                     intersections = new ArrayList<>();
                 intersections.add(intersection);
@@ -354,22 +275,17 @@ public class Triangle
      * @param line     the line to intersect.
      * @param vertices the tri-fan vertices.
      * @param indices  the indices forming the tri-fan.
-     *
      * @return the list of intersections with the line and the triangle fan, or null if there are no intersections.
-     *
      * @throws IllegalArgumentException if the line, vertex buffer or index buffer is null.
      */
-    public static List<Intersection> intersectTriFan(final Line line, FloatBuffer vertices, IntBuffer indices)
-    {
-        if (line == null)
-        {
+    public static List<Intersection> intersectTriFan(final Line line, FloatBuffer vertices, IntBuffer indices) {
+        if (line == null) {
             String msg = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (vertices == null || indices == null)
-        {
+        if (vertices == null || indices == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -385,8 +301,7 @@ public class Triangle
         float v0z = vertices.get(k * 3 + 2);
 
         // Starting with the second position in the index buffer, get subsequent indices and vertices.
-        for (int n = indices.position(); n < indices.limit() - 1; n++)
-        {
+        for (int n = indices.position(); n < indices.limit() - 1; n++) {
             Intersection intersection;
 
             int i = indices.get(n) * 3;
@@ -399,8 +314,7 @@ public class Triangle
                 vertices.get(i), vertices.get(i + 1), vertices.get(i + 2),
                 vertices.get(j), vertices.get(j + 1), vertices.get(j + 2));
 
-            if (intersection != null)
-            {
+            if (intersection != null) {
                 if (intersections == null)
                     intersections = new ArrayList<>();
                 intersections.add(intersection);
@@ -416,29 +330,23 @@ public class Triangle
      * @param line     the line to intersect.
      * @param vertices the tri-fan vertices.
      * @param indices  the indices forming the tri-fan.
-     *
      * @return the list of intersections with the line and the triangle fan, or null if there are no intersections.
-     *
      * @throws IllegalArgumentException if the line, vertex array or index buffer is null.
      */
-    public static List<Intersection> intersectTriFan(final Line line, Vec4[] vertices, IntBuffer indices)
-    {
-        if (line == null)
-        {
+    public static List<Intersection> intersectTriFan(final Line line, Vec4[] vertices, IntBuffer indices) {
+        if (line == null) {
             String msg = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (vertices == null)
-        {
+        if (vertices == null) {
             String msg = Logging.getMessage("nullValue.ArrayIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (indices == null)
-        {
+        if (indices == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -448,8 +356,7 @@ public class Triangle
 
         Vec4 v0 = vertices[0];
 
-        for (int n = indices.position() + 1; n < indices.limit() - 1; n++)
-        {
+        for (int n = indices.position() + 1; n < indices.limit() - 1; n++) {
             Intersection intersection;
 
             Vec4 v1 = vertices[indices.get(n)];
@@ -458,8 +365,7 @@ public class Triangle
             // The triangle intersect method detects front and back face intersections so there's no reason to
             // order the vertices.
             intersection = intersect(line, v0, v1, v2);
-            if (intersection != null)
-            {
+            if (intersection != null) {
                 if (intersections == null)
                     intersections = new ArrayList<>();
                 intersections.add(intersection);
@@ -474,22 +380,17 @@ public class Triangle
      *
      * @param line     the line to intersect.
      * @param vertices the triangles, arranged in a buffer as GL_TRIANGLES (9 floats per triangle).
-     *
      * @return the list of intersections with the line and the triangles, or null if there are no intersections.
-     *
      * @throws IllegalArgumentException if the line or vertex buffer is null.
      */
-    public static List<Intersection> intersectTriangles(final Line line, FloatBuffer vertices)
-    {
-        if (line == null)
-        {
+    public static List<Intersection> intersectTriangles(final Line line, FloatBuffer vertices) {
+        if (line == null) {
             String msg = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (vertices == null)
-        {
+        if (vertices == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -499,15 +400,13 @@ public class Triangle
 
         vertices.rewind();
 
-        while (vertices.limit() - vertices.position() >= 9)
-        {
+        while (vertices.limit() - vertices.position() >= 9) {
             Intersection intersection = intersect(line,
                 vertices.get(), vertices.get(), vertices.get(),
                 vertices.get(), vertices.get(), vertices.get(),
                 vertices.get(), vertices.get(), vertices.get());
 
-            if (intersection != null)
-            {
+            if (intersection != null) {
                 if (intersections == null)
                     intersections = new ArrayList<>();
                 intersections.add(intersection);
@@ -523,22 +422,17 @@ public class Triangle
      * @param line     the line to intersect.
      * @param vertices the triangles, arranged in a buffer as GL_TRIANGLES (9 floats per triangle).
      * @param indices  the indices forming the triangles.
-     *
      * @return the list of intersections with the line and the triangle fan, or null if there are no intersections.
-     *
      * @throws IllegalArgumentException if the line, vertex buffer or index buffer is null.
      */
-    public static List<Intersection> intersectTriangles(final Line line, FloatBuffer vertices, IntBuffer indices)
-    {
-        if (line == null)
-        {
+    public static List<Intersection> intersectTriangles(final Line line, FloatBuffer vertices, IntBuffer indices) {
+        if (line == null) {
             String msg = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (vertices == null || indices == null)
-        {
+        if (vertices == null || indices == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -546,8 +440,7 @@ public class Triangle
 
         List<Intersection> intersections = null;
 
-        for (int n = indices.position(); n < indices.limit(); n += 3)
-        {
+        for (int n = indices.position(); n < indices.limit(); n += 3) {
             Intersection intersection;
 
             int i = indices.get(n) * 3;
@@ -559,8 +452,7 @@ public class Triangle
                 vertices.get(j), vertices.get(j + 1), vertices.get(j + 2),
                 vertices.get(k), vertices.get(k + 1), vertices.get(k + 2));
 
-            if (intersection != null)
-            {
+            if (intersection != null) {
                 if (intersections == null)
                     intersections = new ArrayList<>();
                 intersections.add(intersection);
@@ -577,12 +469,10 @@ public class Triangle
      * @param vertices     the tri-fan vertices, in the order x, y, z, x, y, z, ...
      * @param indices      the indices forming the tri-fan.
      * @param triangleType the type of triangle collection, either GL.GL_TRIANGLE_STRIP or GL.GL_TRIANGLE_FAN.
-     *
      * @return the list of intersections with the line and the triangle fan, or null if there are no intersections.
      */
     public static List<Intersection> intersectTriangleTypes(final Line line, FloatBuffer vertices, IntBuffer indices,
-        int triangleType)
-    {
+        int triangleType) {
         if (triangleType == GL.GL_TRIANGLES)
             return Triangle.intersectTriangles(line, vertices, indices);
         else if (triangleType == GL.GL_TRIANGLE_STRIP)
@@ -600,36 +490,30 @@ public class Triangle
      * @param inBuf   the vertex buffer the indices refer to, in the order x, y, z, x, y, z, ...
      * @param outBuf  the buffer in which to place the expanded triangle vertices. The buffer must have a limit
      *                sufficient to hold the output vertices.
-     *
      * @throws IllegalArgumentException if the index list or the input or output buffer is null, or if the output buffer
      *                                  size is insufficient.
      */
-    public static void expandTriangles(List<Integer> indices, FloatBuffer inBuf, FloatBuffer outBuf)
-    {
-        if (indices == null)
-        {
+    public static void expandTriangles(List<Integer> indices, FloatBuffer inBuf, FloatBuffer outBuf) {
+        if (indices == null) {
             String msg = Logging.getMessage("nullValue.ListIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (inBuf == null || outBuf == null)
-        {
+        if (inBuf == null || outBuf == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         int nunTriangles = indices.size() / 3;
-        if (nunTriangles * 3 * 3 > outBuf.limit() - outBuf.position())
-        {
+        if (nunTriangles * 3 * 3 > outBuf.limit() - outBuf.position()) {
             String msg = Logging.getMessage("generic.BufferSize", outBuf.limit() - outBuf.position());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        for (int i = 0; i < indices.size(); i += 3)
-        {
+        for (int i = 0; i < indices.size(); i += 3) {
             int k = indices.get(i) * 3;
             outBuf.put(inBuf.get(k)).put(inBuf.get(k + 1)).put(inBuf.get(k + 2));
 
@@ -648,29 +532,24 @@ public class Triangle
      * @param inBuf   the vertex buffer the indices refer to, in the order x, y, z, x, y, z, ...
      * @param outBuf  the buffer in which to place the expanded triangle vertices. The buffer must have a limit
      *                sufficient to hold the output vertices.
-     *
      * @throws IllegalArgumentException if the index list or the input or output buffer is null, or if the output buffer
      *                                  size is insufficient.
      */
-    public static void expandTriangleFan(List<Integer> indices, FloatBuffer inBuf, FloatBuffer outBuf)
-    {
-        if (indices == null)
-        {
+    public static void expandTriangleFan(List<Integer> indices, FloatBuffer inBuf, FloatBuffer outBuf) {
+        if (indices == null) {
             String msg = Logging.getMessage("nullValue.ListIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (inBuf == null || outBuf == null)
-        {
+        if (inBuf == null || outBuf == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         int nunTriangles = indices.size() - 2;
-        if (nunTriangles * 3 * 3 > outBuf.limit() - outBuf.position())
-        {
+        if (nunTriangles * 3 * 3 > outBuf.limit() - outBuf.position()) {
             String msg = Logging.getMessage("generic.BufferSize", outBuf.limit() - outBuf.position());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -681,8 +560,7 @@ public class Triangle
         float v0y = inBuf.get(k + 1);
         float v0z = inBuf.get(k + 2);
 
-        for (int i = 1; i < indices.size() - 1; i++)
-        {
+        for (int i = 1; i < indices.size() - 1; i++) {
             outBuf.put(v0x).put(v0y).put(v0z);
 
             k = indices.get(i) * 3;
@@ -700,36 +578,30 @@ public class Triangle
      * @param inBuf   the vertex buffer the indices refer to, in the order x, y, z, x, y, z, ...
      * @param outBuf  the buffer in which to place the expanded triangle vertices. The buffer must have a limit
      *                sufficient to hold the output vertices.
-     *
      * @throws IllegalArgumentException if the index list or the input or output buffer is null, or if the output buffer
      *                                  size is insufficient.
      */
-    public static void expandTriangleStrip(List<Integer> indices, FloatBuffer inBuf, FloatBuffer outBuf)
-    {
-        if (indices == null)
-        {
+    public static void expandTriangleStrip(List<Integer> indices, FloatBuffer inBuf, FloatBuffer outBuf) {
+        if (indices == null) {
             String msg = Logging.getMessage("nullValue.ListIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (inBuf == null || outBuf == null)
-        {
+        if (inBuf == null || outBuf == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         int nunTriangles = indices.size() - 2;
-        if (nunTriangles * 3 * 3 > outBuf.limit() - outBuf.position())
-        {
+        if (nunTriangles * 3 * 3 > outBuf.limit() - outBuf.position()) {
             String msg = Logging.getMessage("generic.BufferSize", outBuf.limit() - outBuf.position());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        for (int i = 2; i < indices.size(); i++)
-        {
+        for (int i = 2; i < indices.size(); i++) {
             int k = indices.get(i - 2) * 3;
             outBuf.put(inBuf.get(k)).put(inBuf.get(k + 1)).put(inBuf.get(k + 2));
 
@@ -741,55 +613,46 @@ public class Triangle
         }
     }
 
-    public static void expandTriangles(List<Integer> indices, IntBuffer outBuf)
-    {
-        if (indices == null)
-        {
+    public static void expandTriangles(Collection<Integer> indices, IntBuffer outBuf) {
+        if (indices == null) {
             String msg = Logging.getMessage("nullValue.ListIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (outBuf == null)
-        {
+        if (outBuf == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         int numTriangles = indices.size() / 3;
-        if (numTriangles * 3 > outBuf.limit() - outBuf.position())
-        {
+        if (numTriangles * 3 > outBuf.limit() - outBuf.position()) {
             String msg = Logging.getMessage("generic.BufferSize", outBuf.limit() - outBuf.position());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        for (Integer index : indices)
-        {
+        for (Integer index : indices) {
             outBuf.put(index);
         }
     }
 
-    public static void expandTriangleFan(List<Integer> indices, IntBuffer outBuf)
-    {
-        if (indices == null)
-        {
+    public static void expandTriangleFan(List<Integer> indices, IntBuffer outBuf) {
+        if (indices == null) {
             String msg = Logging.getMessage("nullValue.ListIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (outBuf == null)
-        {
+        if (outBuf == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         int nunTriangles = indices.size() - 2;
-        if (nunTriangles * 3 > outBuf.limit() - outBuf.position())
-        {
+        if (nunTriangles * 3 > outBuf.limit() - outBuf.position()) {
             String msg = Logging.getMessage("generic.BufferSize", outBuf.limit() - outBuf.position());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -797,56 +660,38 @@ public class Triangle
 
         int k0 = indices.get(0);
 
-        for (int i = 1; i < indices.size() - 1; i++)
-        {
+        for (int i = 1; i < indices.size() - 1; i++) {
             outBuf.put(k0);
             outBuf.put(indices.get(i));
             outBuf.put(indices.get(i + 1));
         }
     }
 
-    public static void expandTriangleStrip(List<Integer> indices, IntBuffer outBuf)
-    {
-        if (indices == null)
-        {
+    public static void expandTriangleStrip(List<Integer> indices, IntBuffer outBuf) {
+        if (indices == null) {
             String msg = Logging.getMessage("nullValue.ListIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (outBuf == null)
-        {
+        if (outBuf == null) {
             String msg = Logging.getMessage("nullValue.BufferIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         int nunTriangles = indices.size() - 2;
-        if (nunTriangles * 3 > outBuf.limit() - outBuf.position())
-        {
+        if (nunTriangles * 3 > outBuf.limit() - outBuf.position()) {
             String msg = Logging.getMessage("generic.BufferSize", outBuf.limit() - outBuf.position());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        for (int i = 2; i < indices.size(); i++)
-        {
+        for (int i = 2; i < indices.size(); i++) {
             outBuf.put(indices.get(i - 2));
             outBuf.put(indices.get(i % 2 == 0 ? i - 1 : i));
             outBuf.put(indices.get(i % 2 == 0 ? i : i - 1));
         }
-    }
-
-    /**
-     * Defines a line segment representing the intersection of a line with and in the plane of a triangle. Used only
-     * within {@link #intersectTriangles}.
-     */
-    protected static class TriangleIntersection
-    {
-        public Vec4 p0; // the first point of the line
-        public Vec4 p1; // the second point of the line
-        public double s0; // the distance along the line to the first intersection with the triangle
-        public double s1; // the distance along the line to the second intersection with the triangle
     }
 
     /**
@@ -856,11 +701,9 @@ public class Triangle
      * @param u                    the Cartesian coordinates of the second triangle.
      * @param intersectionVertices a pre-allocated two-element array in which the intersection vertices, if any, are
      *                             returned.
-     *
      * @return -1 if there is no intersection, 1 if there is an intersection, or 0 if the triangles are co-planar.
      */
-    public static int intersectTriangles(Vec4[] v, Vec4[] u, Vec4[] intersectionVertices)
-    {
+    public static int intersectTriangles(Vec4[] v, Vec4[] u, Vec4[] intersectionVertices) {
         // Taken from http://jgt.akpeters.com/papers/Moller97/tritri.html#ISECTLINE
 
         // Compute plane equation of first triangle: n1 * x + d1 = 0.
@@ -929,13 +772,11 @@ public class Triangle
         int index = 0;
         double b = Math.abs(ld.y);
         double c = Math.abs(ld.z);
-        if (b > max)
-        {
+        if (b > max) {
             max = b;
             index = 1;
         }
-        if (c > max)
-        {
+        if (c > max) {
             index = 2;
         }
 
@@ -947,8 +788,7 @@ public class Triangle
         double up0 = u[0].x;
         double up1 = u[1].x;
         double up2 = u[2].x;
-        if (index == 1)
-        {
+        if (index == 1) {
             vp0 = v[0].y;
             vp1 = v[1].y;
             vp2 = v[2].y;
@@ -957,8 +797,7 @@ public class Triangle
             up1 = u[1].y;
             up2 = u[2].y;
         }
-        else if (index == 2)
-        {
+        else if (index == 2) {
             vp0 = v[0].z;
             vp1 = v[1].z;
             vp2 = v[2].z;
@@ -975,8 +814,7 @@ public class Triangle
             return coplanarTriangles(n1, v, u) ? 0 : -1;
 
         int smallest1 = 0;
-        if (isectA.s0 > isectA.s1)
-        {
+        if (isectA.s0 > isectA.s1) {
             double cc = isectA.s0;
             isectA.s0 = isectA.s1;
             isectA.s1 = cc;
@@ -987,8 +825,7 @@ public class Triangle
         TriangleIntersection isectB = compute_intervals_isectline(u, up0, up1, up2, du0, du1, du2, du0du1, du0du2);
 
         int smallest2 = 0;
-        if (isectB.s0 > isectB.s1)
-        {
+        if (isectB.s0 > isectB.s1) {
             double cc = isectB.s0;
             isectB.s0 = isectB.s1;
             isectB.s1 = cc;
@@ -1001,44 +838,38 @@ public class Triangle
         // At this point we know that the triangles intersect: there's an intersection line, the triangles are not
         // coplanar, and they overlap.
 
-        if (isectB.s0 < isectA.s0)
-        {
+        if (isectB.s0 < isectA.s0) {
             if (smallest1 == 0)
                 intersectionVertices[0] = isectA.p0;
             else
                 intersectionVertices[0] = isectA.p1;
 
-            if (isectB.s1 < isectA.s1)
-            {
+            if (isectB.s1 < isectA.s1) {
                 if (smallest2 == 0)
                     intersectionVertices[1] = isectB.p1;
                 else
                     intersectionVertices[1] = isectB.p0;
             }
-            else
-            {
+            else {
                 if (smallest1 == 0)
                     intersectionVertices[1] = isectA.p1;
                 else
                     intersectionVertices[1] = isectA.p0;
             }
         }
-        else
-        {
+        else {
             if (smallest2 == 0)
                 intersectionVertices[0] = isectB.p0;
             else
                 intersectionVertices[0] = isectB.p1;
 
-            if (isectB.s1 > isectA.s1)
-            {
+            if (isectB.s1 > isectA.s1) {
                 if (smallest1 == 0)
                     intersectionVertices[1] = isectA.p1;
                 else
                     intersectionVertices[1] = isectA.p0;
             }
-            else
-            {
+            else {
                 if (smallest2 == 0)
                     intersectionVertices[1] = isectB.p1;
                 else
@@ -1051,8 +882,7 @@ public class Triangle
 
     protected static TriangleIntersection compute_intervals_isectline(Vec4[] v, double vv0, double vv1, double vv2,
         double d0, double d1, double d2,
-        double d0d1, double d0d2)
-    {
+        double d0d1, double d0d2) {
         if (d0d1 > 0) // D0, D1 are on the same side, D2 on the other or on the plane
             return intersect(v[2], v[0], v[1], vv2, vv0, vv1, d2, d0, d1);
         else if (d0d2 > 0)
@@ -1068,8 +898,7 @@ public class Triangle
     }
 
     protected static TriangleIntersection intersect(Vec4 v0, Vec4 v1, Vec4 v2, double vv0, double vv1, double vv2,
-        double d0, double d1, double d2)
-    {
+        double d0, double d1, double d2) {
         TriangleIntersection intersection = new TriangleIntersection();
 
         double tmp = d0 / (d0 - d1);
@@ -1087,8 +916,7 @@ public class Triangle
         return intersection;
     }
 
-    protected static boolean coplanarTriangles(Vec4 n, Vec4[] v, Vec4[] u)
-    {
+    protected static boolean coplanarTriangles(Vec4 n, Vec4[] v, Vec4[] u) {
         // First project onto an axis-aligned plane that maximizes the are of the triangles.
         int i0;
         int i1;
@@ -1096,26 +924,22 @@ public class Triangle
         double[] a = new double[] {Math.abs(n.x), Math.abs(n.y), Math.abs(n.z)};
         if (a[0] > a[1]) // X > Y
         {
-            if (a[0] > a[2])
-            { // X is greatest
+            if (a[0] > a[2]) { // X is greatest
                 i0 = 1;
                 i1 = 2;
             }
-            else
-            { // Z is greatest
+            else { // Z is greatest
                 i0 = 0;
                 i1 = 1;
             }
         }
         else // X < Y
         {
-            if (a[2] > a[1])
-            { // Z is greatest
+            if (a[2] > a[1]) { // Z is greatest
                 i0 = 0;
                 i1 = 1;
             }
-            else
-            { // Y is greatest
+            else { // Y is greatest
                 i0 = 0;
                 i1 = 2;
             }
@@ -1151,8 +975,7 @@ public class Triangle
     }
 
     protected static boolean triangleEdgeTest(double[] v0, double[] v1, double[] u0, double[] u1, double[] u2, int i0,
-        int i1)
-    {
+        int i1) {
         double ax = v1[i0] - v0[i0];
         double ay = v1[i1] - v0[i1];
 
@@ -1170,8 +993,7 @@ public class Triangle
         return edgeEdgeTest(v0, u2, u0, i0, i1, ax, ay);
     }
 
-    protected static boolean edgeEdgeTest(double[] v0, double[] u0, double[] u1, int i0, int i1, double ax, double ay)
-    {
+    protected static boolean edgeEdgeTest(double[] v0, double[] u0, double[] u1, int i0, int i1, double ax, double ay) {
         double bx = u0[i0] - u1[i0];
         double by = u0[i1] - u1[i1];
         double cx = v0[i0] - u0[i0];
@@ -1180,15 +1002,12 @@ public class Triangle
         double f = ay * bx - ax * by;
         double d = by * cx - bx * cy;
 
-        if ((f > 0 && d >= 0 && d <= f) || (f < 0 && d <= 0 && d >= f))
-        {
+        if ((f > 0 && d >= 0 && d <= f) || (f < 0 && d <= 0 && d >= f)) {
             double e = ax * cy - ay * cx;
-            if (f > 0)
-            {
+            if (f > 0) {
                 return e >= 0 && e <= f;
             }
-            else
-            {
+            else {
                 return e <= 0 && e >= f;
             }
         }
@@ -1196,8 +1015,7 @@ public class Triangle
         return false;
     }
 
-    protected static boolean pointInTri(double[] v0, double[] u0, double[] u1, double[] u2, int i0, int i1)
-    {
+    protected static boolean pointInTri(double[] v0, double[] u0, double[] u1, double[] u2, int i0, int i1) {
         double a = u1[i1] - u0[i1];
         double b = -(u1[i0] - u0[i0]);
         double c = -a * u0[i0] - b * u0[i1];
@@ -1216,8 +1034,67 @@ public class Triangle
         return d0 * d1 > 0 && d0 * d2 > 0;
     }
 
-    public String toString()
-    {
+    /**
+     * Indicates whether a specified point is on the triangle.
+     *
+     * @param p the point to test. If null, the method returns false.
+     * @return true if the point is on the triangle, otherwise false.
+     */
+    public boolean contains(Vec4 p) {
+        if (p == null)
+            return false;
+
+        // Compute vectors
+        Vec4 v0 = this.c.subtract3(this.a);
+        Vec4 v1 = this.b.subtract3(this.a);
+        Vec4 v2 = p.subtract3(this.a);
+
+        // Compute dot products
+        double dot00 = v0.dotSelf3();
+        double dot01 = v0.dot3(v1);
+        double dot02 = v0.dot3(v2);
+        double dot11 = v1.dotSelf3();
+        double dot12 = v1.dot3(v2);
+
+        // Compute barycentric coordinates
+        double det = (dot00 * dot11 - dot01 * dot01);
+
+        double detInv = 1 / det;
+        double u = (dot11 * dot02 - dot01 * dot12) * detInv;
+        double v = (dot00 * dot12 - dot01 * dot02) * detInv;
+
+        // Check if point is contained in triangle (including edges and vertices)
+        return (u >= 0.0d) && (v >= 0.0d) && (u + v <= 1.0d);
+
+        // Check if point is contained inside triangle (NOT including edges or vertices)
+//        return (u > 0d) && (v > 0d) && (u + v < 1d);
+    }
+
+    /**
+     * Determine the intersection of the triangle with a specified line.
+     *
+     * @param line the line to test.
+     * @return the point of intersection if the line intersects the triangle, otherwise null.
+     * @throws IllegalArgumentException if the line is null.
+     */
+    public Vec4 intersect(Line line) {
+        Intersection intersection = intersect(line, this.a, this.b, this.c);
+
+        return intersection != null ? intersection.getIntersectionPoint() : null;
+    }
+
+    public String toString() {
         return "Triangle (" + a + ", " + b + ", " + c + ")";
+    }
+
+    /**
+     * Defines a line segment representing the intersection of a line with and in the plane of a triangle. Used only
+     * within {@link #intersectTriangles}.
+     */
+    protected static class TriangleIntersection {
+        public Vec4 p0; // the first point of the line
+        public Vec4 p1; // the second point of the line
+        public double s0; // the distance along the line to the first intersection with the triangle
+        public double s1; // the distance along the line to the second intersection with the triangle
     }
 }

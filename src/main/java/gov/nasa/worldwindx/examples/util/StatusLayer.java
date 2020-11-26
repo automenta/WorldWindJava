@@ -35,85 +35,60 @@ import java.util.concurrent.atomic.AtomicBoolean;
 //TODO
 //  3. move some methods duplicated in statusbar to a utility class
 //  6. add ability to put status text on top of window
-public class StatusLayer extends AbstractLayer implements PositionListener, RenderingListener
-{
+public class StatusLayer extends AbstractLayer implements PositionListener, RenderingListener {
     public final static String UNIT_METRIC = "gov.nasa.worldwind.StatusLayer.Metric";
     public final static String UNIT_IMPERIAL = "gov.nasa.worldwind.StatusLayer.Imperial";
-
+    static final int rotationIncrement = 60;
     private final String iconFilePath_bg = "images/dot-clockwise-32.png";
     private final Color color = Color.white;                //text color
-    private Font defaultFont = Font.decode("Arial-BOLD-12");
+    private final boolean showNetworkStatus = true;
+    private final AtomicBoolean isNetworkAvailable = new AtomicBoolean(true);
+    private final double iconScale = 0.50d; //adjust icon size
+    // Draw it as ordered with an eye distance of 0 so that it shows up in front of most other things.
+    private final OrderedRenderable orderedImage = new OrderedIcon();
+    private final float[] compArray = new float[4];
     protected WorldWindow eventSource;
     protected String latDisplay = "";
     protected String lonDisplay = "";
     protected String elevDisplay = "";
     protected String altDisplay = "";
+    protected int coordDecimalPlaces = 4;
+    protected Position previousPos;
+    private Font defaultFont = Font.decode("Arial-BOLD-12");
     private String noNetwork = "";
     private String elevationUnit = UNIT_METRIC;
-    private final boolean showNetworkStatus = true;
-    private final AtomicBoolean isNetworkAvailable = new AtomicBoolean(true);
     private boolean activatedDownload = false;
     private int bgWidth;
     private int bgHeight;
-    private final double iconScale = .5d; //adjust icon size
     private Texture iconTexture;
     private double rotated = 0.0d;
-    private Color backColor = new Color(0f, 0f, 0f, 0.4f);
-    protected int coordDecimalPlaces = 4;
-    static final int rotationIncrement = 60;
+    private Color backColor = new Color(0.00f, 0.00f, 0.00f, 0.4f);
 
-    // Draw it as ordered with an eye distance of 0 so that it shows up in front of most other things.
-    private final OrderedIcon orderedImage = new OrderedIcon();
-
-    private class OrderedIcon implements OrderedRenderable
-    {
-        public double getDistanceFromEye()
-        {
-            return 0;
-        }
-
-        public void pick(DrawContext dc, Point pickPoint)
-        {
-            StatusLayer.this.draw(dc);
-        }
-
-        public void render(DrawContext dc)
-        {
-            StatusLayer.this.draw(dc);
-        }
-    }
-
-    public StatusLayer()
-    {
+    public StatusLayer() {
         setPickEnabled(false);
 
         Timer downloadTimer = new Timer(300, actionEvent -> {
-            if (!showNetworkStatus)
-            {
+            if (!showNetworkStatus) {
                 activatedDownload = false;
                 noNetwork = "";
                 return;
             }
 
-            if (!isNetworkAvailable.get())
-            {
+            if (!isNetworkAvailable.get()) {
                 noNetwork = Logging.getMessage("term.NoNetwork");
                 return;
             }
             else
                 noNetwork = "";
 
-            if (isNetworkAvailable.get() && WorldWind.getRetrievalService().hasActiveTasks())
-            {
+            if (isNetworkAvailable.get() && WorldWind.getRetrievalService().hasActiveTasks()) {
                 activatedDownload = true;
                 bumpRotation();
                 if (eventSource != null)
                     eventSource.redraw();  //smooth graphic
             }
-            else
-            {
-                if (activatedDownload && (eventSource != null))
-                {
+            else {
+                if (activatedDownload && (eventSource != null)) {
                     eventSource.redraw();  //force a redraw to clear downloading graphic
                 }
                 activatedDownload = false;
@@ -131,20 +106,16 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         netCheckTimer.start();
     }
 
-    public void setElevationUnits(String units)
-    {
+    public void setElevationUnits(String units) {
         elevationUnit = units;
     }
 
-    public Font getDefaultFont()
-    {
+    public Font getDefaultFont() {
         return defaultFont;
     }
 
-    public void setDefaultFont(Font font)
-    {
-        if (font == null)
-        {
+    public void setDefaultFont(Font font) {
+        if (font == null) {
             String msg = Logging.getMessage("nullValue.FontIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -153,25 +124,20 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         this.defaultFont = font;
     }
 
-    public int getCoordSigDigits()
-    {
+    public int getCoordSigDigits() {
         return coordDecimalPlaces;
     }
 
-    public void setCoordDecimalPlaces(int coordDecimalPlaces)
-    {
+    public void setCoordDecimalPlaces(int coordDecimalPlaces) {
         this.coordDecimalPlaces = coordDecimalPlaces;
     }
 
-    public Color getBackColor()
-    {
+    public Color getBackColor() {
         return backColor;
     }
 
-    public void setBackColor(Color backColor)
-    {
-        if (backColor == null)
-        {
+    public void setBackColor(Color backColor) {
+        if (backColor == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -180,46 +146,18 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         this.backColor = backColor;
     }
 
-    protected WorldWindow getEventSource()
-    {
+    protected WorldWindow getEventSource() {
         return eventSource;
     }
 
-    private double getScaledBGWidth()
-    {
-        return this.bgWidth * this.iconScale;
-    }
-
-    private double getScaledBGHeight()
-    {
-        return this.bgHeight * this.iconScale;
-    }
-
-    // Rendering
-    @Override
-    public void doRender(DrawContext dc)
-    {
-        dc.addOrderedRenderable(this.orderedImage);
-    }
-
-    @Override
-    public void doPick(DrawContext dc, Point pickPoint)
-    {
-        // Delegate drawing to the ordered renderable list
-        dc.addOrderedRenderable(this.orderedImage);
-    }
-
-    public void setEventSource(WorldWindow newEventSource)
-    {
-        if (newEventSource == null)
-        {
+    public void setEventSource(WorldWindow newEventSource) {
+        if (newEventSource == null) {
             String msg = Logging.getMessage("nullValue.WorldWindow");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (this.eventSource != null)
-        {
+        if (this.eventSource != null) {
             this.eventSource.removePositionListener(this);
             this.eventSource.removeRenderingListener(this);
         }
@@ -230,20 +168,37 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         this.eventSource = newEventSource;
     }
 
-    public void moved(PositionEvent event)
-    {
+    private double getScaledBGWidth() {
+        return this.bgWidth * this.iconScale;
+    }
+
+    private double getScaledBGHeight() {
+        return this.bgHeight * this.iconScale;
+    }
+
+    // Rendering
+    @Override
+    public void doRender(DrawContext dc) {
+        dc.addOrderedRenderable(this.orderedImage);
+    }
+
+    @Override
+    public void doPick(DrawContext dc, Point pickPoint) {
+        // Delegate drawing to the ordered renderable list
+        dc.addOrderedRenderable(this.orderedImage);
+    }
+
+    public void moved(PositionEvent event) {
         this.handleCursorPositionChange(event);
     }
 
     // Rendering
-    public void draw(DrawContext dc)
-    {
+    public void draw(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         boolean attribsPushed = false;
         boolean modelviewPushed = false;
         boolean projectionPushed = false;
-        try
-        {
+        try {
             gl.glPushAttrib(GL2.GL_DEPTH_BUFFER_BIT
                 | GL2.GL_COLOR_BUFFER_BIT
                 | GL2.GL_ENABLE_BIT
@@ -258,7 +213,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
 
             // Load a parallel projection with xy dimensions (viewportWidth, viewportHeight)
             // into the GL projection matrix.
-            java.awt.Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.getView().getViewport();
             gl.glMatrixMode(GL2.GL_PROJECTION);
             gl.glPushMatrix();
             projectionPushed = true;
@@ -270,7 +225,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
             if (size.width < viewport.getWidth())   //todo more accurate add size of graphic
             {
                 double maxwh = Math.max(size.width, size.height);
-                gl.glOrtho(0d, viewport.width, 0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
+                gl.glOrtho(0.00d, viewport.width, 0.00d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
 
                 gl.glMatrixMode(GL2.GL_MODELVIEW);
                 gl.glPushMatrix();
@@ -285,14 +240,12 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                 int verticalSpacing = 2;
                 drawLabel(dc, label, new Vec4(1, verticalSpacing, 0), this.color);
 
-                if (noNetwork.length() > 0)
-                {
+                if (!noNetwork.isEmpty()) {
                     size = getTextRenderSize(dc, noNetwork);
                     double x = viewport.getWidth() - size.getWidth();
                     drawLabel(dc, noNetwork, new Vec4(x, verticalSpacing, 0), Color.RED);
                 }
-                else if (activatedDownload)
-                {
+                else if (activatedDownload) {
                     //draw background image
                     if (iconTexture == null)
                         initBGTexture(dc);
@@ -300,22 +253,20 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                     double width = this.getScaledBGWidth();
                     double height = this.getScaledBGHeight();
 
-                    if (iconTexture != null)
-                    {
-                        gl.glTranslated(viewport.getWidth() - width, 0, 0d);
+                    if (iconTexture != null) {
+                        gl.glTranslated(viewport.getWidth() - width, 0, 0.00d);
                         gl.glTranslated(width / 2, height / 2, 0);
-                        gl.glRotated(rotated, 0d, 0d, 1d);
+                        gl.glRotated(rotated, 0.00d, 0.00d, 1.00d);
                         gl.glTranslated(-width / 2, -height / 2, 0);
 
-                        if (iconTexture != null)
-                        {
+                        if (iconTexture != null) {
                             gl.glEnable(GL.GL_TEXTURE_2D);
                             iconTexture.bind(gl);
-                            gl.glColor4d(1d, 1d, 1d, this.getOpacity());
+                            gl.glColor4d(1.00d, 1.00d, 1.00d, this.getOpacity());
                             gl.glEnable(GL.GL_BLEND);
                             gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
                             TextureCoords texCoords = iconTexture.getImageTexCoords();
-                            gl.glScaled(width, height, 1d);
+                            gl.glScaled(width, height, 1.00d);
                             dc.drawUnitQuad(texCoords);
                             gl.glDisable(GL.GL_TEXTURE_2D);
                             gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
@@ -324,15 +275,12 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                 }
             }
         }
-        finally
-        {
-            if (projectionPushed)
-            {
+        finally {
+            if (projectionPushed) {
                 gl.glMatrixMode(GL2.GL_PROJECTION);
                 gl.glPopMatrix();
             }
-            if (modelviewPushed)
-            {
+            if (modelviewPushed) {
                 gl.glMatrixMode(GL2.GL_MODELVIEW);
                 gl.glPopMatrix();
             }
@@ -341,16 +289,14 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         }
     }
 
-    private void bumpRotation()
-    {
+    private void bumpRotation() {
         if (rotated > rotationIncrement)
             rotated = rotated - rotationIncrement;
         else
             rotated = 360;
     }
 
-    public void stageChanged(RenderingEvent event)
-    {
+    public void stageChanged(RenderingEvent event) {
         if (!event.getStage().equals(RenderingEvent.BEFORE_BUFFER_SWAP))
             return;
 
@@ -363,8 +309,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         });
     }
 
-    private Dimension getTextRenderSize(DrawContext dc, String text)
-    {
+    private Dimension getTextRenderSize(DrawContext dc, String text) {
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
             this.defaultFont);
         Rectangle2D nameBound = textRenderer.getBounds(text);
@@ -373,8 +318,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
     }
 
     // Draw the label
-    private void drawLabel(DrawContext dc, String text, Vec4 screenPoint, Color textColor)
-    {
+    private void drawLabel(DrawContext dc, String text, Vec4 screenPoint, Color textColor) {
         int x = (int) screenPoint.x();
         int y = (int) screenPoint.y();
 
@@ -388,11 +332,8 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         textRenderer.end3DRendering();
     }
 
-    private final float[] compArray = new float[4];
-
     // Compute background color for best contrast
-    private Color getBackgroundColor(Color color)
-    {
+    private Color getBackgroundColor(Color color) {
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), compArray);
         if (compArray[2] > 0.5)
             return new Color(0, 0, 0, 0.7f);
@@ -400,13 +341,9 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
             return new Color(1, 1, 1, 0.7f);
     }
 
-    protected Position previousPos;
-
-    private void handleCursorPositionChange(PositionEvent event)
-    {
+    private void handleCursorPositionChange(PositionEvent event) {
         Position newPos = event.getPosition();
-        if (newPos != null)
-        {
+        if (newPos != null) {
             latDisplay = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces);
             lonDisplay = makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
             elevDisplay = makeCursorElevationDescription(
@@ -417,8 +354,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                 && (previousPos.getLongitude().compareTo(newPos.getLongitude()) != 0))
                 this.eventSource.redraw();
         }
-        else
-        {
+        else {
             latDisplay = "";
             lonDisplay = Logging.getMessage("term.OffGlobe");
             elevDisplay = "";
@@ -427,16 +363,12 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         previousPos = newPos;
     }
 
-    private void initBGTexture(DrawContext dc)
-    {
-        try
-        {
+    private void initBGTexture(DrawContext dc) {
+        try {
             InputStream iconStream = this.getClass().getResourceAsStream("/" + iconFilePath_bg);
-            if (iconStream == null)
-            {
+            if (iconStream == null) {
                 File iconFile = new File(iconFilePath_bg);
-                if (iconFile.exists())
-                {
+                if (iconFile.exists()) {
                     iconStream = new FileInputStream(iconFile);
                 }
             }
@@ -447,16 +379,14 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
             this.bgWidth = iconTexture.getWidth();
             this.bgHeight = iconTexture.getHeight();
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             String msg = Logging.getMessage("layers.IOExceptionDuringInitialization");
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg, e);
         }
     }
 
-    private void drawFilledRectangle(DrawContext dc, Vec4 origin, Dimension dimension, Color color)
-    {
+    private void drawFilledRectangle(DrawContext dc, Vec4 origin, Dimension dimension, Color color) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(),
             (byte) color.getBlue(), (byte) color.getAlpha());
@@ -469,22 +399,19 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         gl.glEnd();
     }
 
-    protected String makeAngleDescription(String label, Angle angle, int places)
-    {
+    protected String makeAngleDescription(String label, Angle angle, int places) {
         return String.format("%s %s", label, angle.toDecimalDegreesString(places));
     }
 
-    protected String makeEyeAltitudeDescription(double metersAltitude)
-    {
+    protected String makeEyeAltitudeDescription(double metersAltitude) {
         String altitude = Logging.getMessage("term.Altitude");
         if (UNIT_IMPERIAL.equals(elevationUnit))
             return String.format("%s %,d mi", altitude, (int) Math.round(WWMath.convertMetersToMiles(metersAltitude)));
         else // Default to metric units.
-            return String.format("%s %,d km", altitude, (int) Math.round(metersAltitude / 1e3));
+            return String.format("%s %,d km", altitude, (int) Math.round(metersAltitude / 1.00e3));
     }
 
-    protected String makeCursorElevationDescription(double metersElevation)
-    {
+    protected String makeCursorElevationDescription(double metersElevation) {
         String elev = Logging.getMessage("term.Elev");
         if (UNIT_IMPERIAL.equals(elevationUnit))
             return String.format("%s %,d feet", elev, (int) Math.round(WWMath.convertMetersToFeet(metersElevation)));
@@ -493,37 +420,30 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return Logging.getMessage("layers.StatusLayer.Name");
     }
 
-    public static class StatusUTMLayer extends StatusLayer
-    {
-        public void moved(PositionEvent event)
-        {
+    public static class StatusUTMLayer extends StatusLayer {
+        public void moved(PositionEvent event) {
             this.handleCursorPositionChange(event);
         }
 
-        private void handleCursorPositionChange(PositionEvent event)
-        {
+        private void handleCursorPositionChange(PositionEvent event) {
             Position newPos = event.getPosition();
-            if (newPos != null)
-            {
+            if (newPos != null) {
                 //merge lat & lon into one field to display UMT coordinates in lon field
                 String las = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces) + " "
                     + makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
                 String els = makeCursorElevationDescription(
                     getEventSource().getModel().getGlobe().getElevation(newPos.getLatitude(), newPos.getLongitude()));
                 String los;
-                try
-                {
+                try {
                     UTMCoord UTM = UTMCoord.fromLatLon(newPos.getLatitude(), newPos.getLongitude(),
                         getEventSource().getModel().getGlobe());
                     los = UTM.toString();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     los = "";
                 }
                 latDisplay = las;
@@ -534,8 +454,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                     && (previousPos.getLongitude().compareTo(newPos.getLongitude()) != 0))
                     this.eventSource.redraw();
             }
-            else
-            {
+            else {
                 latDisplay = "";
                 lonDisplay = Logging.getMessage("term.OffGlobe");
                 elevDisplay = "";
@@ -543,32 +462,26 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
         }
     }
 
-    public static class StatusMGRSLayer extends StatusLayer
-    {
-        public void moved(PositionEvent event)
-        {
+    public static class StatusMGRSLayer extends StatusLayer {
+        public void moved(PositionEvent event) {
             this.handleCursorPositionChange(event);
         }
 
-        private void handleCursorPositionChange(PositionEvent event)
-        {
+        private void handleCursorPositionChange(PositionEvent event) {
             Position newPos = event.getPosition();
-            if (newPos != null)
-            {
+            if (newPos != null) {
                 //merge lat & lon into one field to display MGRS in lon field
                 String las = makeAngleDescription("Lat", newPos.getLatitude(), coordDecimalPlaces) + " "
                     + makeAngleDescription("Lon", newPos.getLongitude(), coordDecimalPlaces);
                 String els = makeCursorElevationDescription(
                     getEventSource().getModel().getGlobe().getElevation(newPos.getLatitude(), newPos.getLongitude()));
                 String los;
-                try
-                {
+                try {
                     MGRSCoord MGRS = MGRSCoord.fromLatLon(newPos.getLatitude(), newPos.getLongitude(),
                         getEventSource().getModel().getGlobe());
                     los = MGRS.toString();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     los = "";
                 }
                 latDisplay = las;
@@ -579,12 +492,25 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
                     && (previousPos.getLongitude().compareTo(newPos.getLongitude()) != 0))
                     this.eventSource.redraw();
             }
-            else
-            {
+            else {
                 latDisplay = "";
                 lonDisplay = Logging.getMessage("term.OffGlobe");
                 elevDisplay = "";
             }
+        }
+    }
+
+    private class OrderedIcon implements OrderedRenderable {
+        public double getDistanceFromEye() {
+            return 0;
+        }
+
+        public void pick(DrawContext dc, Point pickPoint) {
+            StatusLayer.this.draw(dc);
+        }
+
+        public void render(DrawContext dc) {
+            StatusLayer.this.draw(dc);
         }
     }
 }

@@ -14,22 +14,18 @@ import java.awt.event.*;
  * @author tag
  * @version $Id: InsertPositionAction.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class InsertPositionAction extends AbstractAction
-{
-    private final boolean above;
+public class InsertPositionAction extends AbstractAction {
     protected final PositionTable table;
+    private final boolean above;
 
-    public InsertPositionAction(final boolean above, final PositionTable table)
-    {
+    public InsertPositionAction(final boolean above, final PositionTable table) {
         this.table = table;
         this.above = above;
-        if (this.above)
-        {
+        if (this.above) {
             putValue(NAME, "Insert New Position Above Selection");
             putValue(LONG_DESCRIPTION, "Insert a new position above the selected positions");
         }
-        else
-        {
+        else {
             putValue(NAME, "Insert New Position Below Selection");
             putValue(LONG_DESCRIPTION, "Insert a new position below the selected positions");
         }
@@ -38,8 +34,7 @@ public class InsertPositionAction extends AbstractAction
             this.setEnabled(false);
     }
 
-    public void actionPerformed(ActionEvent e)
-    {
+    public void actionPerformed(ActionEvent e) {
         SARTrack st = table.getSarTrack();
         if (st == null)
             return;

@@ -27,25 +27,38 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id: DirectedPath.java 3034 2015-04-17 18:04:14Z dcollins $
  */
-public class DirectedPath extends Path
-{
-    /** Default arrow length, in meters. */
+public class DirectedPath extends Path {
+    /**
+     * Default arrow length, in meters.
+     */
     public static final double DEFAULT_ARROW_LENGTH = 300;
-    /** Default arrow angle. */
+    /**
+     * Default arrow angle.
+     */
     public static final Angle DEFAULT_ARROW_ANGLE = Angle.fromDegrees(45.0);
-    /** Default maximum screen size of the arrowheads, in pixels. */
+    /**
+     * Default maximum screen size of the arrowheads, in pixels.
+     */
     public static final double DEFAULT_MAX_SCREEN_SIZE = 20.0;
-
-    /** The length, in meters, of the arrowhead, from tip to base. */
+    protected static final String ARROWS_KEY = "DirectedPath.DirectionArrows";
+    protected static final String ARROWS_EXTENT = "DirectedPath.DirectionArrowsExtent";
+    /**
+     * The length, in meters, of the arrowhead, from tip to base.
+     */
     protected double arrowLength = DEFAULT_ARROW_LENGTH;
-    /** The angle of the arrowhead tip. */
+    /**
+     * The angle of the arrowhead tip.
+     */
     protected Angle arrowAngle = DEFAULT_ARROW_ANGLE;
-    /** The maximum screen size, in pixels, of the direction arrowheads. */
+    /**
+     * The maximum screen size, in pixels, of the direction arrowheads.
+     */
     protected double maxScreenSize = DEFAULT_MAX_SCREEN_SIZE;
 
-    /** Creates a path with no positions. */
-    public DirectedPath()
-    {
+    /**
+     * Creates a path with no positions.
+     */
+    public DirectedPath() {
         super();
     }
 
@@ -57,11 +70,9 @@ public class DirectedPath extends Path
      * @param positions the path positions. This reference is retained by this shape; the positions are not copied. If
      *                  any positions in the set change, {@link #setPositions(Iterable)} must be called to inform this
      *                  shape of the change.
-     *
      * @throws IllegalArgumentException if positions is null.
      */
-    public DirectedPath(Iterable<? extends Position> positions)
-    {
+    public DirectedPath(Iterable<? extends Position> positions) {
         super(positions);
     }
 
@@ -73,11 +84,9 @@ public class DirectedPath extends Path
      * @param positions the path positions. This reference is retained by this shape; the positions are not copied. If
      *                  any positions in the set change, {@link #setPositions(Iterable)} must be called to inform this
      *                  shape of the change.
-     *
      * @throws IllegalArgumentException if positions is null.
      */
-    public DirectedPath(Position.PositionList positions)
-    {
+    public DirectedPath(Position.PositionList positions) {
         super(positions.list);
     }
 
@@ -86,11 +95,9 @@ public class DirectedPath extends Path
      *
      * @param posA the first position.
      * @param posB the second position.
-     *
      * @throws IllegalArgumentException if either position is null.
      */
-    public DirectedPath(Position posA, Position posB)
-    {
+    public DirectedPath(Position posA, Position posB) {
         super(posA, posB);
     }
 
@@ -99,8 +106,7 @@ public class DirectedPath extends Path
      *
      * @return The geographic length of the direction arrowheads.
      */
-    public double getArrowLength()
-    {
+    public double getArrowLength() {
         return this.arrowLength;
     }
 
@@ -109,10 +115,8 @@ public class DirectedPath extends Path
      *
      * @param arrowLength length, in meters, of the direction arrowheads. The length must be greater than zero.
      */
-    public void setArrowLength(double arrowLength)
-    {
-        if (arrowLength <= 0)
-        {
+    public void setArrowLength(double arrowLength) {
+        if (arrowLength <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", arrowLength);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -127,8 +131,7 @@ public class DirectedPath extends Path
      *
      * @return The maximum screen size, in pixels, of the direction arrowheads, measured tip to base.
      */
-    public double getMaxScreenSize()
-    {
+    public double getMaxScreenSize() {
         return this.maxScreenSize;
     }
 
@@ -138,10 +141,8 @@ public class DirectedPath extends Path
      *
      * @param maxScreenSize the maximum screen size, in pixels, of the direction arrowheads, measured tip to base.
      */
-    public void setMaxScreenSize(double maxScreenSize)
-    {
-        if (maxScreenSize <= 0)
-        {
+    public void setMaxScreenSize(double maxScreenSize) {
+        if (maxScreenSize <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", maxScreenSize);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -156,8 +157,7 @@ public class DirectedPath extends Path
      *
      * @return The angle of the direction arrowhead tip.
      */
-    public Angle getArrowAngle()
-    {
+    public Angle getArrowAngle() {
         return this.arrowAngle;
     }
 
@@ -167,17 +167,14 @@ public class DirectedPath extends Path
      *
      * @param arrowAngle angle of the direction arrowhead tip. Valid values are between 0 degrees and 90 degrees.
      */
-    public void setArrowAngle(Angle arrowAngle)
-    {
-        if (arrowAngle == null)
-        {
+    public void setArrowAngle(Angle arrowAngle) {
+        if (arrowAngle == null) {
             String message = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if ((arrowAngle.compareTo(Angle.ZERO) <= 0) || (arrowAngle.compareTo(Angle.POS90) >= 0))
-        {
+        if ((arrowAngle.compareTo(Angle.ZERO) <= 0) || (arrowAngle.compareTo(Angle.POS90) >= 0)) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", arrowAngle);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -186,20 +183,15 @@ public class DirectedPath extends Path
         this.arrowAngle = arrowAngle;
     }
 
-    protected static final String ARROWS_KEY = "DirectedPath.DirectionArrows";
-    protected static final String ARROWS_EXTENT = "DirectedPath.DirectionArrowsExtent";
-
-    protected boolean intersectsFrustum(DrawContext dc)
-    {
+    protected boolean intersectsFrustum(DrawContext dc) {
         // Must override this method to account for the extent of the arrowheads.
 
         boolean intersects = super.intersectsFrustum(dc);
-        if (intersects || !dc.isPickingMode())
-        {
+        if (intersects || !dc.isPickingMode()) {
             return intersects;
         }
 
-        Box box = (Box) this.currentData.getValue(ARROWS_EXTENT);
+        Extent box = (Box) this.currentData.getValue(ARROWS_EXTENT);
         return box == null || dc.getPickFrustums().intersectsAny(box);
     }
 
@@ -209,8 +201,7 @@ public class DirectedPath extends Path
      * Overridden to also compute the geometry of the direction arrows.
      */
     @Override
-    protected void computePath(DrawContext dc, List<Position> positions, PathData pathData)
-    {
+    protected void computePath(DrawContext dc, List<Position> positions, PathData pathData) {
         super.computePath(dc, positions, pathData);
 //        this.computeDirectionArrows(dc, pathData);
     }
@@ -218,11 +209,10 @@ public class DirectedPath extends Path
     /**
      * {@inheritDoc}
      * <p>
-     * Overridden to return a {@link gov.nasa.worldwindx.examples.util.DirectedSurfacePolyline}.
+     * Overridden to return a {@link DirectedSurfacePolyline}.
      */
     @Override
-    protected SurfaceShape createSurfaceShape()
-    {
+    protected SurfaceShape createSurfaceShape() {
         DirectedSurfacePolyline polyline = new DirectedSurfacePolyline();
         polyline.setLocations(this.getPositions());
 
@@ -232,11 +222,10 @@ public class DirectedPath extends Path
     /**
      * {@inheritDoc}
      * <p>
-     * Overridden to update the arrow properties of {@link gov.nasa.worldwindx.examples.util.DirectedSurfacePolyline}.
+     * Overridden to update the arrow properties of {@link DirectedSurfacePolyline}.
      */
     @Override
-    protected void updateSurfaceShape()
-    {
+    protected void updateSurfaceShape() {
         super.updateSurfaceShape();
 
         ((DirectedSurfacePolyline) this.surfaceShape).setArrowLength(this.getArrowLength());
@@ -250,16 +239,14 @@ public class DirectedPath extends Path
      * @param dc       current draw context.
      * @param pathData the current globe-specific path data.
      */
-    protected void computeDirectionArrows(DrawContext dc, PathData pathData)
-    {
+    protected void computeDirectionArrows(DrawContext dc, PathData pathData) {
         IntBuffer polePositions = pathData.getPolePositions();
         int numPositions = polePositions.limit() / 2; // One arrow head for each path segment
         List<Position> tessellatedPositions = pathData.getTessellatedPositions();
 
         final int FLOATS_PER_ARROWHEAD = 9; // 3 points * 3 coordinates per point
         FloatBuffer buffer = (FloatBuffer) pathData.getValue(ARROWS_KEY);
-        if (buffer == null || buffer.capacity() < numPositions * FLOATS_PER_ARROWHEAD)
-        {
+        if (buffer == null || buffer.capacity() < numPositions * FLOATS_PER_ARROWHEAD) {
             buffer = Buffers.newDirectFloatBuffer(FLOATS_PER_ARROWHEAD * numPositions);
         }
         pathData.setValue(ARROWS_KEY, buffer);
@@ -276,8 +263,7 @@ public class DirectedPath extends Path
         // so we need to find the tessellated segment halfway between each pair of original positions.
         // polePositions holds indices into the rendered path array of the original vertices. Step through
         // polePositions by 2 because we only care about where the top of the pole is, not the bottom.
-        for (int i = 2; i < polePositions.limit(); i += 2)
-        {
+        for (int i = 2; i < polePositions.limit(); i += 2) {
             // Find the position of this pole and the next pole. Divide by 2 to convert an index in the
             // renderedPath buffer to a index in the tessellatedPositions list.
             int poleB = polePositions.get(i) / 2;
@@ -292,16 +278,13 @@ public class DirectedPath extends Path
         buffer.flip();
 
         // Create an extent for the arrowheads if we're picking.
-        if (dc.isPickingMode())
-        {
-            if (buffer.remaining() != 0)
-            {
+        if (dc.isPickingMode()) {
+            if (buffer.remaining() != 0) {
                 Box box = Box.computeBoundingBox(new BufferWrapper.FloatBufferWrapper(buffer), 3);
                 box = box.translate(pathData.getReferencePoint());
                 pathData.setValue(ARROWS_EXTENT, box);
             }
-            else
-            {
+            else {
                 pathData.setValue(ARROWS_EXTENT, null);
             }
         }
@@ -311,16 +294,15 @@ public class DirectedPath extends Path
      * Compute the geometry of a direction arrow between two points.
      *
      * @param dc       current draw context
-     * @param poleA The first pole.
-     * @param poleB The second pole.
+     * @param poleA    The first pole.
+     * @param poleB    The second pole.
      * @param polePtA  the first pole position. This is one of the application defined path positions.
      * @param polePtB  second pole position
      * @param buffer   buffer in which to place computed points
      * @param pathData the current globe-specific path data.
      */
     protected void computeArrowheadGeometry(DrawContext dc, int poleA, int poleB, Vec4 polePtA, Vec4 polePtB,
-        FloatBuffer buffer, PathData pathData)
-    {
+        FloatBuffer buffer, PathData pathData) {
         // Build a triangle to represent the arrowhead. The triangle is built from two vectors, one parallel to the
         // segment, and one perpendicular to it. The plane of the arrowhead will be parallel to the surface.
 
@@ -347,31 +329,26 @@ public class DirectedPath extends Path
         // Compute midpoint of segment. When the number of segments is odd, the midpoint falls between two tessellated
         // positions. When the number of segments is even, the midpoint falls on the middle tessellated position.
         Vec4 midPoint;
-        if ((poleA - poleB) % 2 != 0)
-        {
+        if ((poleA - poleB) % 2 != 0) {
             midPoint = ptA.add3(ptB).divide3(2.0);
         }
-        else
-        {
+        else {
             midPoint = ptA;
         }
 
-        if (!this.isArrowheadSmall(dc, midPoint, 1))
-        {
+        if (!this.isArrowheadSmall(dc, midPoint, 1)) {
             // Compute the size of the arrowhead in pixels to ensure that the arrow does not exceed the maximum
             // screen size.
             View view = dc.getView();
             double midpointDistance = view.getEyePoint().distanceTo3(midPoint);
             double pixelSize = view.computePixelSizeAtDistance(midpointDistance);
-            if (arrowLength / pixelSize > this.maxScreenSize)
-            {
+            if (arrowLength / pixelSize > this.maxScreenSize) {
                 arrowLength = this.maxScreenSize * pixelSize;
                 arrowBase = arrowLength * this.getArrowAngle().tanHalfAngle();
             }
 
             // Don't draw an arrowhead if the path segment is smaller than the arrow
-            if (poleDistance <= arrowLength)
-            {
+            if (poleDistance <= arrowLength) {
                 return;
             }
 
@@ -419,11 +396,9 @@ public class DirectedPath extends Path
      * @param dc        current draw context
      * @param arrowPt   point at which to draw direction arrow
      * @param numPixels the number of pixels which is considered to be "small"
-     *
      * @return {@code true} if an arrow drawn at {@code arrowPt} would occupy less than or equal to {@code numPixels}.
      */
-    protected boolean isArrowheadSmall(DrawContext dc, Vec4 arrowPt, int numPixels)
-    {
+    protected boolean isArrowheadSmall(DrawContext dc, Vec4 arrowPt, int numPixels) {
         return this.getArrowLength() <= numPixels * dc.getView().computePixelSizeAtDistance(
             dc.getView().getEyePoint().distanceTo3(arrowPt));
     }
@@ -436,15 +411,14 @@ public class DirectedPath extends Path
      * @param dc Current draw context.
      */
     @Override
-    protected void doDrawOutline(DrawContext dc)
-    {
+    protected void doDrawOutline(DrawContext dc) {
         this.computeDirectionArrows(dc, this.getCurrentPathData());
         this.drawDirectionArrows(dc, this.getCurrentPathData());
         super.doDrawOutline(dc);
     }
 
     /**
-     * Draws this DirectedPath's direction arrows. Called from {@link #doDrawOutline(gov.nasa.worldwind.render.DrawContext)}
+     * Draws this DirectedPath's direction arrows. Called from {@link #doDrawOutline(DrawContext)}
      * before drawing the Path's actual outline.
      * <p>
      * If this Path is entirely located on the terrain, this applies an offset to the arrow's depth values to to ensure
@@ -457,21 +431,17 @@ public class DirectedPath extends Path
      * @param dc       Current draw context.
      * @param pathData the current globe-specific path data.
      */
-    protected void drawDirectionArrows(DrawContext dc, PathData pathData)
-    {
+    protected void drawDirectionArrows(DrawContext dc, PathData pathData) {
         FloatBuffer points = (FloatBuffer) pathData.getValue(ARROWS_KEY);
-        if (points == null || points.remaining() == 0)
-        {
+        if (points == null || points.remaining() == 0) {
             return;
         }
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         boolean projectionOffsetPushed = false; // keep track for error recovery
 
-        try
-        {
-            if (this.isSurfacePath(dc))
-            {
+        try {
+            if (this.isSurfacePath(dc)) {
                 // Pull the arrow triangles forward just a bit to ensure they show over the terrain.
                 dc.pushProjectionOffest(SURFACE_PATH_DEPTH_OFFSET);
                 gl.glDepthMask(false);
@@ -481,10 +451,8 @@ public class DirectedPath extends Path
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, points);
             gl.glDrawArrays(GL.GL_TRIANGLES, 0, points.remaining() / 3);
         }
-        finally
-        {
-            if (projectionOffsetPushed)
-            {
+        finally {
+            if (projectionOffsetPushed) {
                 dc.popProjectionOffest();
                 gl.glDepthMask(true);
             }

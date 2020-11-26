@@ -49,7 +49,9 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     // GUI pickable objects
     protected final String buttonMinimize = "gov.nasa.worldwind.TerrainProfileLayer.ButtonMinimize";
     protected final String buttonMaximize = "gov.nasa.worldwind.TerrainProfileLayer.ButtonMaximize";
-
+    protected final PickSupport pickSupport = new PickSupport();
+    // Draw it as ordered with an eye distance of 0 so that it shows up in front of most other things.
+    protected final OrderedRenderable orderedImage = new OrderedIcon();
     // Display parameters
     protected Dimension size = new Dimension(250, 100);
     protected Color color = Color.white;
@@ -61,16 +63,12 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     protected double toViewportScale = 1;
     protected Point locationCenter = null;
     protected Vec4 locationOffset = null;
-    protected final PickSupport pickSupport = new PickSupport();
     protected boolean initialized = false;
     protected boolean isMinimized = false;     // True when graph is minimized to an icon
     protected boolean isMaximized = false;     // True when graph is 'full screen'
     protected boolean showProfileLine = true;  // True to show the profile path line on the ground
     protected boolean showPickedLine = true;   // True to show the picked position line on the terrain
-
     protected int pickedSample = -1;           // Picked sample number if not -1
-    Path selectionShape;                 // Shape showing section on the ground
-    Path pickedShape;                    // Shape showing actual pick position on the ground
     protected boolean keepProportions = false; // Keep graph distance/elevation proportions
     protected boolean zeroBased = true;        // Pad graph elevation scale to include sea level if true
     protected String follow = FOLLOW_VIEW;     // Profile position follow behavior
@@ -82,37 +80,16 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     protected Angle objectHeading;             // Object heading if FOLLOW_OBJECT
     protected ArrayList<? extends LatLon> pathPositions;  // Path position list if FOLLOW_PATH
     protected String pathType = AVKey.GREAT_CIRCLE;
-
     // Terrain profile data
     protected int samples = 250;              // Number of position samples
     protected double minElevation;            // Minimum elevation along the profile
     protected double maxElevation;            // Maximum elevation along the profile
     protected double length;                  // Profile length along great circle in meter
     protected Position[] positions;           // Position list
-
     // Worldwind
     protected WorldWindow wwd;
-
-    // Draw it as ordered with an eye distance of 0 so that it shows up in front of most other things.
-    protected final OrderedIcon orderedImage = new OrderedIcon();
-
-    protected class OrderedIcon implements OrderedRenderable {
-
-        @Override
-        public double getDistanceFromEye() {
-            return 0;
-        }
-
-        @Override
-        public void pick(DrawContext dc, Point pickPoint) {
-            TerrainProfileLayer.this.drawProfile(dc);
-        }
-
-        @Override
-        public void render(DrawContext dc) {
-            TerrainProfileLayer.this.drawProfile(dc);
-        }
-    }
+    Path selectionShape;                 // Shape showing section on the ground
+    Path pickedShape;                    // Shape showing actual pick position on the ground
 
     /**
      * Renders a terrain profile graphic in a screen corner.
@@ -120,16 +97,17 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     public TerrainProfileLayer() {
     }
 
-    // ** Public properties ************************************************************
     /**
      * Get whether the profile graph is minimized.
      *
      * @return true if the profile graph is minimized.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public boolean getIsMinimized() {
         return this.isMinimized;
     }
+
+    // ** Public properties ************************************************************
 
     /**
      * Set whether the profile graph should be minimized.
@@ -149,7 +127,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return true if the profile graph is maximized.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public boolean getIsMaximized() {
         return this.isMaximized;
     }
@@ -210,24 +188,10 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     /**
-     * Sets the layer opacity, which is applied to the layer's chart. The opacity is modified slightly for various
-     * elements of the chart to distinguish among them.
-     *
-     * @param opacity the current opacity value, which is ignored by this layer.
-     *
-     * @see #setColor
-     */
-    @Override
-    public void setOpacity(double opacity) {
-        super.setOpacity(opacity);
-    }
-
-    /**
      * Returns the layer's opacity value. The opacity is modified slightly for various elements of the chart to
      * distinguish among them.
      *
      * @return The layer opacity, a value between 0 and 1.
-     *
      * @see #getColor
      */
     @Override
@@ -236,11 +200,23 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     /**
+     * Sets the layer opacity, which is applied to the layer's chart. The opacity is modified slightly for various
+     * elements of the chart to distinguish among them.
+     *
+     * @param opacity the current opacity value, which is ignored by this layer.
+     * @see #setColor
+     */
+    @Override
+    public void setOpacity(double opacity) {
+        super.setOpacity(opacity);
+    }
+
+    /**
      * Returns the graphic-to-viewport scale factor.
      *
      * @return the graphic-to-viewport scale factor.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public double getToViewportScale() {
         return toViewportScale;
     }
@@ -253,7 +229,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @param toViewportScale the graphic to viewport scale factor.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public void setToViewportScale(double toViewportScale) {
         this.toViewportScale = toViewportScale;
     }
@@ -283,7 +259,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return the screen location of the graph center if set (can be null).
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public Point getLocationCenter() {
         return this.locationCenter;
     }
@@ -303,7 +279,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return the location offset. Will be null if no offset has been specified.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public Vec4 getLocationOffset() {
         return locationOffset;
     }
@@ -312,9 +288,8 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      * Specifies a placement offset from the layer position on the screen.
      *
      * @param locationOffset the number of pixels to shift the layer image from its specified screen position. A
-     * positive X value shifts the image to the right. A positive Y value shifts the image up. If null, no offset is
-     * applied. The default offset is null.
-     *
+     *                       positive X value shifts the image to the right. A positive Y value shifts the image up. If
+     *                       null, no offset is applied. The default offset is null.
      * @see #setLocationCenter
      * @see #setPosition
      */
@@ -327,7 +302,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return the layer's resize behavior.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public String getResizeBehavior() {
         return resizeBehavior;
     }
@@ -343,7 +318,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @param resizeBehavior the desired resize behavior
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public void setResizeBehavior(String resizeBehavior) {
         this.resizeBehavior = resizeBehavior;
     }
@@ -362,7 +337,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         this.borderWidth = borderWidth;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public String getUnit() {
         return this.unit;
     }
@@ -431,7 +406,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      * Set the graph center point placement behavior. Can be one of {@link #FOLLOW_VIEW} (the default), {@link
      * #FOLLOW_CURSOR}, {@link #FOLLOW_EYE}, {@link #FOLLOW_OBJECT}, {@link #FOLLOW_NONE} or {@link #FOLLOW_PATH}. If
      * {@link #FOLLOW_NONE} the profile will be computed between startLatLon and endLatLon. If {@link #FOLLOW_PATH} the
-     * profile will be computed along the path defined with {@link #setPathPositions(java.util.ArrayList)}.
+     * profile will be computed along the path defined with {@link #setPathPositions(ArrayList)}.
      *
      * @param behavior the graph center point placement behavior.
      */
@@ -481,7 +456,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return the profile start position lat/lon.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public LatLon getStartLatLon() {
         return this.startLatLon;
     }
@@ -505,7 +480,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return the profile end position lat/lon.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public LatLon getEndLatLon() {
         return this.endLatLon;
     }
@@ -529,7 +504,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return the number of elevation samples in the profile.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public int getSamples() {
         return this.samples;
     }
@@ -539,7 +514,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @param number the number of elevation samples in the profile.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public void setSamples(int number) {
         this.samples = Math.abs(number);
     }
@@ -567,7 +542,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return the object position the graph follows.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public Position getObjectPosition() {
         return this.objectPosition;
     }
@@ -587,7 +562,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return the object heading the graph follows.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public Angle getObjectHeading() {
         return this.objectHeading;
     }
@@ -607,7 +582,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return the path positions that the profile follows.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public List<? extends LatLon> getPathPositions() {
         return this.pathPositions;
     }
@@ -642,38 +617,31 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         }
     }
 
-    public String getAVKeyPathType() {
-        return this.pathType;
-    }
-
     /**
      * Sets the type of path to follow, one of {@link AVKey#GREAT_CIRCLE}, which computes each segment of the path as a
-     * great circle, or {@link AVKey#RHUMB_LINE}, which computes each segment of the path as a line of constant heading.
+     * great circle, or {@link AVKey#RHUMB_LINE}, which computes each segment of the path as a line of constant
+     * heading.
      *
      * @param pathType the type of path to follow.
      */
     @Deprecated
     public void setPathType(int pathType) {
         switch (pathType) {
-            case Polyline.LINEAR:
-                this.pathType = AVKey.LINEAR;
-                break;
-            case Polyline.RHUMB_LINE:
-                this.pathType = AVKey.RHUMB_LINE;
-                break;
-            case Polyline.GREAT_CIRCLE:
-                this.pathType = AVKey.GREAT_CIRCLE;
-                break;
-            default:
+            case Polyline.LINEAR -> this.pathType = AVKey.LINEAR;
+            case Polyline.RHUMB_LINE -> this.pathType = AVKey.RHUMB_LINE;
+            case Polyline.GREAT_CIRCLE -> this.pathType = AVKey.GREAT_CIRCLE;
+            default -> {
                 String message = Logging.getMessage("generic.ArgumentOutOfRange");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
+            }
         }
     }
 
     /**
      * Sets the type of path to follow, one of {@link AVKey#GREAT_CIRCLE}, which computes each segment of the path as a
-     * great circle, or {@link AVKey#RHUMB_LINE}, which computes each segment of the path as a line of constant heading.
+     * great circle, or {@link AVKey#RHUMB_LINE}, which computes each segment of the path as a line of constant
+     * heading.
      *
      * @param pathType the type of path to follow.
      */
@@ -681,12 +649,16 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         this.pathType = pathType;
     }
 
+    public String getAVKeyPathType() {
+        return this.pathType;
+    }
+
     /**
      * Get the <code>Path</code> used to render the profile line on the ground.
      *
      * @return the <code>Path</code> used to render the profile line on the ground.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public Path getProfileLine() {
         return this.selectionShape;
     }
@@ -696,7 +668,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return the <code>Path</code> used to render the picked position on the terrain.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public Path getPickedLine() {
         return this.selectionShape;
     }
@@ -706,7 +678,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return true is the profile line is displayed over the ground.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public boolean isShowProfileLine() {
         return this.showProfileLine;
     }
@@ -725,7 +697,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @return true if the picked line is displayed over the ground.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public boolean isShowPickedLine() {
         return this.showPickedLine;
     }
@@ -735,7 +707,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      *
      * @param state if the picked line should be displayed over the ground.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public void setShowPickedLine(boolean state) {
         this.showPickedLine = state;
     }
@@ -782,7 +754,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         this.computeProfile(dc);
 
         if ((this.positions == null || (this.minElevation == 0 && this.maxElevation == 0))
-                && !this.initialized) {
+            && !this.initialized) {
             this.initialize(dc);
         }
 
@@ -798,11 +770,11 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
         try {
             gl.glPushAttrib(GL2.GL_DEPTH_BUFFER_BIT
-                    | GL2.GL_COLOR_BUFFER_BIT
-                    | GL2.GL_ENABLE_BIT
-                    | GL2.GL_TRANSFORM_BIT
-                    | GL2.GL_VIEWPORT_BIT
-                    | GL2.GL_CURRENT_BIT);
+                | GL2.GL_COLOR_BUFFER_BIT
+                | GL2.GL_ENABLE_BIT
+                | GL2.GL_TRANSFORM_BIT
+                | GL2.GL_VIEWPORT_BIT
+                | GL2.GL_CURRENT_BIT);
             attribsPushed = true;
 
             gl.glDisable(GL.GL_TEXTURE_2D);        // no textures
@@ -813,8 +785,8 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
             Rectangle viewport = dc.getView().getViewport();
             Dimension drawSize = isMinimized ? new Dimension(MINIMIZED_SIZE, MINIMIZED_SIZE)
-                    : isMaximized ? new Dimension(viewport.width - this.borderWidth * 2,
-                                    viewport.height * 2 / 3 - this.borderWidth * 2) : this.size;
+                : isMaximized ? new Dimension(viewport.width - this.borderWidth * 2,
+                    viewport.height * 2 / 3 - this.borderWidth * 2) : this.size;
             double width = drawSize.width;
             double height = drawSize.height;
 
@@ -825,7 +797,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             projectionPushed = true;
             gl.glLoadIdentity();
             double maxwh = Math.max(width, height);
-            gl.glOrtho(0d, viewport.width, 0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
+            gl.glOrtho(0.0d, viewport.width, 0.0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
 
             gl.glMatrixMode(GL2.GL_MODELVIEW);
             gl.glPushMatrix();
@@ -837,7 +809,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             double scale = this.computeScale(viewport);
             Vec4 locationSW = this.computeLocation(viewport, scale);
             gl.glTranslated(locationSW.x(), locationSW.y(), locationSW.z());
-            gl.glScaled(scale, scale, 1d);
+            gl.glScaled(scale, scale, 1.0d);
 
             if (!dc.isPickingMode()) {
                 // Draw grid - Set color using current layer opacity
@@ -854,7 +826,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                     String label = String.format("min %.0fm   max %.0fm", this.minElevation, this.maxElevation);
                     if (this.unit.equals(UNIT_IMPERIAL)) {
                         label = String.format("min %.0fft   max %.0fft", this.minElevation * METER_TO_FEET,
-                                this.maxElevation * METER_TO_FEET);
+                            this.maxElevation * METER_TO_FEET);
                     }
                     gl.glLoadIdentity();
                     gl.glDisable(GL.GL_CULL_FACE);
@@ -868,7 +840,8 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                         drawLabel(dc, label, locationSW.add3(new Vec4(width, -12, 0)), 1); // right aligned
                     }
                 }
-            } else {
+            }
+            else {
                 // Picking
                 this.pickSupport.clearPickList();
                 this.pickSupport.beginPicking(dc);
@@ -880,7 +853,8 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                     computePickPosition(dc, locationSW, new Dimension((int) (width * scale), (int) (height * scale)));
                     // Draw GUI buttons
                     drawGUI(dc, drawSize);
-                } else {
+                }
+                else {
                     // Add graph to the pickable list for 'un-minimize' click
                     this.pickSupport.addPickableObject(colorCode, this);
                     gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
@@ -896,9 +870,11 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                 this.pickSupport.endPicking(dc);
                 this.pickSupport.resolvePick(dc, dc.getPickPoint(), this);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             //e.printStackTrace();
-        } finally {
+        }
+        finally {
             if (projectionPushed) {
                 gl.glMatrixMode(GL2.GL_PROJECTION);
                 gl.glPopMatrix();
@@ -918,7 +894,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         // Background color
         Color backColor = getBackgroundColor(this.color);
         drawFilledRectangle(dc, new Vec4(0, 0, 0), dimension, new Color(backColor.getRed(),
-                backColor.getGreen(), backColor.getBlue(), (int) (backColor.getAlpha() * .5))); // Increased transparency
+            backColor.getGreen(), backColor.getBlue(), (int) (backColor.getAlpha() * 0.5))); // Increased transparency
         // Grid - minimal
         float[] colorRGB = this.color.getRGBColorComponents(null);
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
@@ -938,7 +914,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             max = Math.max(max, dc.getView().getEyePosition().getElevation());
         }
         if (this.showEyePosition && (this.follow.equals(FOLLOW_OBJECT) || this.follow.equals(FOLLOW_PATH))
-                && this.objectPosition != null) {
+            && this.objectPosition != null) {
             max = Math.max(max, this.objectPosition.getElevation());
         }
         if (this.zeroBased) {
@@ -961,7 +937,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         double x = 0, y;
         // Filled graph
         gl.glColor4ub((byte) this.color.getRed(), (byte) this.color.getGreen(),
-                (byte) this.color.getBlue(), (byte) 100);
+            (byte) this.color.getBlue(), (byte) 100);
         gl.glBegin(GL2.GL_TRIANGLE_STRIP);
         for (i = 0; i < this.samples; i++) {
             x = i * lengthStep * stepX;
@@ -981,16 +957,16 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         }
         gl.glEnd();
         // Middle vertical line
-        gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], this.getOpacity() * .3); // increased transparency here
+        gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], this.getOpacity() * 0.3); // increased transparency here
         if (!this.follow.equals(FOLLOW_PATH)) {
             drawVerticalLine(dc, dimension, x / 2);
         }
         // Eye or object position
         double eyeX = -1, eyeY = -1;
         if ((this.follow.equals(FOLLOW_EYE)
-                || (this.follow.equals(FOLLOW_OBJECT) && this.objectPosition != null)
-                || (this.follow.equals(FOLLOW_PATH) && this.objectPosition != null))
-                && this.showEyePosition) {
+            || (this.follow.equals(FOLLOW_OBJECT) && this.objectPosition != null)
+            || (this.follow.equals(FOLLOW_PATH) && this.objectPosition != null))
+            && this.showEyePosition) {
             eyeX = x / 2;
             eyeY = (dc.getView().getEyePosition().getElevation() - min) * stepY;
             if (this.follow.equals(FOLLOW_PATH)) {
@@ -1011,7 +987,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         if (this.pickedSample != -1) {
             double pickedX = this.pickedSample * lengthStep * stepX;
             double pickedY = (positions[this.pickedSample].getElevation() - min) * stepY;
-            gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2] * .5, this.getOpacity() * .8); // yellower color
+            gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2] * 0.5, this.getOpacity() * 0.8); // yellower color
             drawVerticalLine(dc, dimension, pickedX);
             drawHorizontalLine(dc, dimension, pickedY);
             // Eye or object - picked position line
@@ -1020,10 +996,10 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                 drawLine(dc, pickedX, pickedY, eyeX, eyeY);
                 // Distance label
                 double distance = dc.getView().getEyePoint().distanceTo3(
-                        dc.getGlobe().computePointFromPosition(positions[this.pickedSample]));
+                    dc.getGlobe().computePointFromPosition(positions[this.pickedSample]));
                 if (this.follow.equals(FOLLOW_OBJECT) || this.follow.equals(FOLLOW_PATH)) {
                     distance = dc.getGlobe().computePointFromPosition(this.objectPosition).distanceTo3(
-                            dc.getGlobe().computePointFromPosition(positions[this.pickedSample]));
+                        dc.getGlobe().computePointFromPosition(positions[this.pickedSample]));
                 }
                 String label = String.format("Dist %.0fm", distance);
                 if (this.unit.equals(UNIT_IMPERIAL)) {
@@ -1035,18 +1011,18 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         // Min elevation horizontal line
         if (this.minElevation != min) {
             y = (this.minElevation - min) * stepY;
-            gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], this.getOpacity() * .5);  // medium transparency
+            gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], this.getOpacity() * 0.5);  // medium transparency
             drawHorizontalLine(dc, dimension, y);
         }
         // Max elevation horizontal line
         if (this.maxElevation != max) {
             y = (this.maxElevation - min) * stepY;
-            gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], this.getOpacity() * .5);  // medium transparency
+            gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], this.getOpacity() * 0.5);  // medium transparency
             drawHorizontalLine(dc, dimension, y);
         }
         // Sea level in between positive elevations only (not across land)
         if (min < 0 && max >= 0) {
-            gl.glColor4d(colorRGB[0] * .7, colorRGB[1] * .7, colorRGB[2], this.getOpacity() * .5); // bluer color
+            gl.glColor4d(colorRGB[0] * 0.7, colorRGB[1] * 0.7, colorRGB[2], this.getOpacity() * 0.5); // bluer color
             y = -this.minElevation * stepY;
             double previousX = -1;
             for (i = 0; i < this.samples; i++) {
@@ -1059,7 +1035,8 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                         gl.glEnd();
                         previousX = -1;
                     }
-                } else {
+                }
+                else {
                     previousX = previousX < 0 ? x : previousX;
                 }
             }
@@ -1073,10 +1050,10 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         int buttonBorder = 4;
         Dimension buttonDimension = new Dimension(buttonSize, buttonSize);
         Color highlightColor = new Color(color.getRed(), color.getGreen(),
-                color.getBlue(), (int) (color.getAlpha() * .5));
+            color.getBlue(), (int) (color.getAlpha() * 0.5));
         Color backColor = getBackgroundColor(this.color);
         backColor = new Color(backColor.getRed(), backColor.getGreen(),
-                backColor.getBlue(), (int) (backColor.getAlpha() * .5)); // Increased transparency
+            backColor.getBlue(), (int) (backColor.getAlpha() * 0.5)); // Increased transparency
         Color drawColor;
         int y = dimension.height - buttonDimension.height - buttonBorder;
         int x = dimension.width;
@@ -1088,13 +1065,14 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                 drawColor = dc.getUniquePickColor();
                 int colorCode = drawColor.getRGB();
                 this.pickSupport.addPickableObject(colorCode, this.buttonMaximize, null, false);
-            } else {
+            }
+            else {
                 drawColor = this.buttonMaximize == pickedObject ? highlightColor : backColor;
             }
             drawFilledRectangle(dc, new Vec4(x, y, 0), buttonDimension, drawColor);
             if (!dc.isPickingMode()) {
                 gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(),
-                        (byte) color.getBlue(), (byte) color.getAlpha());
+                    (byte) color.getBlue(), (byte) color.getAlpha());
                 // Draw '+'
                 drawLine(dc, x + 3, y + hs, x + buttonDimension.width - 3, y + hs); // Horizontal line
                 drawLine(dc, x + hs, y + 3, x + hs, y + buttonDimension.height - 3); // Vertical line
@@ -1107,13 +1085,14 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             drawColor = dc.getUniquePickColor();
             int colorCode = drawColor.getRGB();
             this.pickSupport.addPickableObject(colorCode, this.buttonMinimize, null, false);
-        } else {
+        }
+        else {
             drawColor = this.buttonMinimize == pickedObject ? highlightColor : backColor;
         }
         drawFilledRectangle(dc, new Vec4(x, y, 0), buttonDimension, drawColor);
         if (!dc.isPickingMode()) {
             gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(),
-                    (byte) color.getBlue(), (byte) color.getAlpha());
+                (byte) color.getBlue(), (byte) color.getAlpha());
             // Draw '-'
             drawLine(dc, x + 3, y + hs, x + buttonDimension.width - 3, y + hs); // Horizontal line
         }
@@ -1130,7 +1109,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     protected void drawFilledRectangle(DrawContext dc, Vec4 origin, Dimension dimension, Color color) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(),
-                (byte) color.getBlue(), (byte) color.getAlpha());
+            (byte) color.getBlue(), (byte) color.getAlpha());
         gl.glDisable(GL.GL_TEXTURE_2D);        // no textures
         gl.glBegin(GL2.GL_POLYGON);
         gl.glVertex3d(origin.x, origin.y, 0);
@@ -1153,12 +1132,12 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     // Align = -1: left, 0: center and 1: right
     protected void drawLabel(DrawContext dc, String text, Vec4 screenPoint, int align) {
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
-                this.defaultFont);
+            this.defaultFont);
 
         Rectangle2D nameBound = textRenderer.getBounds(text);
         int x = (int) screenPoint.x();  // left
         if (align == 0) {
-            x = (int) (screenPoint.x() - nameBound.getWidth() / 2d);  // centered
+            x = (int) (screenPoint.x() - nameBound.getWidth() / 2.0d);  // centered
         }
         if (align > 0) {
             x = (int) (screenPoint.x() - nameBound.getWidth());  // right
@@ -1181,28 +1160,27 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), compArray);
         if (compArray[2] > 0.5) {
             return new Color(0, 0, 0, (int) (this.color.getAlpha() * 0.7f));
-        } else {
+        }
+        else {
             return new Color(255, 255, 255, (int) (this.color.getAlpha() * 0.7f));
         }
     }
 
     // ** Dimensions and positionning ************************************************************
-    protected double computeScale(java.awt.Rectangle viewport) {
-        switch (this.resizeBehavior) {
-            case AVKey.RESIZE_SHRINK_ONLY:
-                return Math.min(1d, (this.toViewportScale) * viewport.width / this.size.width);
-            case AVKey.RESIZE_STRETCH:
-                return (this.toViewportScale) * viewport.width / this.size.width;
-            default:
-                return 1d;
-        }
+    protected double computeScale(Rectangle viewport) {
+        return switch (this.resizeBehavior) {
+            case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1.0d,
+                (this.toViewportScale) * viewport.width / this.size.width);
+            case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.size.width;
+            default -> 1.0d;
+        };
     }
 
-    protected Vec4 computeLocation(java.awt.Rectangle viewport, double scale) {
+    protected Vec4 computeLocation(Rectangle viewport, double scale) {
         double scaledWidth = scale * (isMinimized ? MINIMIZED_SIZE
-                : isMaximized ? viewport.width - this.borderWidth * 2 : this.size.width);
+            : isMaximized ? viewport.width - this.borderWidth * 2 : this.size.width);
         double scaledHeight = scale * (isMinimized ? MINIMIZED_SIZE
-                : isMaximized ? viewport.height * 2 / 3f - this.borderWidth * 2 : this.size.height);
+            : isMaximized ? viewport.height * 2 / 3.0f - this.borderWidth * 2 : this.size.height);
 
         double x;
         double y;
@@ -1210,19 +1188,24 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         if (this.locationCenter != null) {
             x = this.locationCenter.x - scaledWidth / 2;
             y = this.locationCenter.y - scaledHeight / 2;
-        } else if (this.position.equals(AVKey.NORTHEAST)) {
+        }
+        else if (this.position.equals(AVKey.NORTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHEAST)) {
+        }
+        else if (this.position.equals(AVKey.SOUTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
-            y = 0d + this.borderWidth;
-        } else if (this.position.equals(AVKey.NORTHWEST)) {
-            x = 0d + this.borderWidth;
+            y = 0.0d + this.borderWidth;
+        }
+        else if (this.position.equals(AVKey.NORTHWEST)) {
+            x = 0.0d + this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
-        } else if (this.position.equals(AVKey.SOUTHWEST)) {
-            x = 0d + this.borderWidth;
-            y = 0d + this.borderWidth;
-        } else // use North East
+        }
+        else if (this.position.equals(AVKey.SOUTHWEST)) {
+            x = 0.0d + this.borderWidth;
+            y = 0.0d + this.borderWidth;
+        }
+        else // use North East
         {
             x = viewport.getWidth() - scaledWidth / 2 - this.borderWidth;
             y = viewport.getHeight() - scaledHeight / 2 - this.borderWidth;
@@ -1239,10 +1222,9 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     /**
      * Computes the Position of the pickPoint over the graph and updates pickedSample indice
      *
-     * @param dc the current DrawContext
+     * @param dc         the current DrawContext
      * @param locationSW the screen location of the bottom left corner of the graph
-     * @param mapSize the graph screen dimension in pixels
-     *
+     * @param mapSize    the graph screen dimension in pixels
      * @return the picked Position
      */
     protected Position computePickPosition(DrawContext dc, Vec4 locationSW, Dimension mapSize) {
@@ -1253,9 +1235,9 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             Rectangle viewport = dc.getView().getViewport();
             // Check if pickpoint is inside the graph
             if (pickPoint.getX() >= locationSW.getX()
-                    && pickPoint.getX() < locationSW.getX() + mapSize.width
-                    && viewport.height - pickPoint.getY() >= locationSW.getY()
-                    && viewport.height - pickPoint.getY() < locationSW.getY() + mapSize.height) {
+                && pickPoint.getX() < locationSW.getX() + mapSize.width
+                && viewport.height - pickPoint.getY() >= locationSW.getY()
+                && viewport.height - pickPoint.getY() < locationSW.getY() + mapSize.height) {
                 // Find sample - Note: only works when graph expends over the full width
                 int sample = (int) (((pickPoint.getX() - locationSW.getX()) / mapSize.width) * this.samples);
                 if (sample >= 0 && sample < this.samples) {
@@ -1265,16 +1247,17 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                     ArrayList<Position> posList = new ArrayList<>();
                     posList.add(positions[sample]);
                     posList.add(new Position(positions[sample].getLatitude(), positions[sample].getLongitude(),
-                            positions[sample].getElevation() + this.length / 10));
+                        positions[sample].getElevation() + this.length / 10));
                     if (this.pickedShape == null) {
                         this.pickedShape = new Path(posList);
                         this.pickedShape.setPathType(AVKey.LINEAR);
-                        var attrs = new BasicShapeAttributes();
+                        ShapeAttributes attrs = new BasicShapeAttributes();
                         attrs.setOutlineWidth(2);
                         attrs.setOutlineMaterial(new Material(new Color(this.color.getRed(),
-                                this.color.getGreen(), (int) (this.color.getBlue() * .8), (int) (255 * .8))));
+                            this.color.getGreen(), (int) (this.color.getBlue() * 0.8), (int) (255 * 0.8))));
                         this.pickedShape.setAttributes(attrs);
-                    } else {
+                    }
+                    else {
                         this.pickedShape.setPositions(posList);
                     }
                 }
@@ -1287,7 +1270,6 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
      * Compute the sample number along the path closest to the given <code>LatLon</code>.
      *
      * @param pos the object <code>LatLon</code>
-     *
      * @return the sample number or -1 if not found.
      */
     protected int computeObjectSample(LatLon pos) {
@@ -1316,10 +1298,12 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                     // Compute portion of segment length
                     distanceFromStart += length1 / (length1 + length2) * segmentLength;
                     break;
-                } else {
+                }
+                else {
                     distanceFromStart += segmentLength;
                 }
-            } else {
+            }
+            else {
                 distanceFromStart += segmentLength;
             }
             // Next segment
@@ -1347,12 +1331,15 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             if (o == this.buttonMinimize) {
                 if (this.isMaximized) {
                     this.setIsMaximized(false);
-                } else {
+                }
+                else {
                     this.setIsMinimized(true);
                 }
-            } else if (o == this.buttonMaximize) {
+            }
+            else if (o == this.buttonMaximize) {
                 this.setIsMaximized(true);
-            } else if (o == this && this.isMinimized) {
+            }
+            else if (o == this && this.isMinimized) {
                 this.setIsMinimized(false);
             }
         }
@@ -1382,18 +1369,17 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         }
     }
 
-    // ** Profile data collection ************************************************************
     /**
      * Compute the terrain profile.
      * <p>
-     * If {@link #FOLLOW_VIEW}, {@link #FOLLOW_EYE}, {@link #FOLLOW_CURSOR} or {@link
-     * #FOLLOW_OBJECT}, collects terrain profile data along a great circle line centered at the current position (view,
-     * eye, cursor or object) and perpendicular to the view heading - or object heading if {@link #FOLLOW_OBJECT}.
+     * If {@link #FOLLOW_VIEW}, {@link #FOLLOW_EYE}, {@link #FOLLOW_CURSOR} or {@link #FOLLOW_OBJECT}, collects terrain
+     * profile data along a great circle line centered at the current position (view, eye, cursor or object) and
+     * perpendicular to the view heading - or object heading if {@link #FOLLOW_OBJECT}.
      * <p>
      * If {@link #FOLLOW_NONE} the profile is computed in between start and end latlon.
      * <p>
-     * If {@link #FOLLOW_PATH} the profile is computed along the path provided with
-     * {@link #setPathPositions(ArrayList)}</p>
+     * If {@link #FOLLOW_PATH} the profile is computed along the path provided with {@link
+     * #setPathPositions(ArrayList)}</p>
      *
      * @param dc the current <code>DrawContext</code>
      */
@@ -1424,45 +1410,51 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             }
             // Compute profile if we can
             if ((this.follow.equals(FOLLOW_VIEW) && groundPos != null)
-                    || (this.follow.equals(FOLLOW_EYE) && groundPos != null)
-                    || (this.follow.equals(FOLLOW_CURSOR) && groundPos != null)
-                    || (this.follow.equals(FOLLOW_NONE) && this.startLatLon != null && this.endLatLon != null)
-                    || (this.follow.equals(FOLLOW_OBJECT) && this.objectPosition != null && this.objectHeading != null)
-                    || (this.follow.equals(FOLLOW_PATH) && this.pathPositions != null && this.pathPositions.size() >= 2)) {
+                || (this.follow.equals(FOLLOW_EYE) && groundPos != null)
+                || (this.follow.equals(FOLLOW_CURSOR) && groundPos != null)
+                || (this.follow.equals(FOLLOW_NONE) && this.startLatLon != null && this.endLatLon != null)
+                || (this.follow.equals(FOLLOW_OBJECT) && this.objectPosition != null && this.objectHeading != null)
+                || (this.follow.equals(FOLLOW_PATH) && this.pathPositions != null && this.pathPositions.size() >= 2)) {
                 this.positions = new Position[samples];
                 this.minElevation = Double.MAX_VALUE;
                 this.maxElevation = -Double.MAX_VALUE;
                 // Compute profile positions
                 if (this.follow.equals(FOLLOW_PATH)) {
                     computePathPositions();
-                } else {
+                }
+                else {
                     computeMirroredPositions(groundPos);
                 }
                 // Update shape on ground
                 if (this.selectionShape == null) {
                     this.selectionShape = new Path(Arrays.asList(this.positions));
                     this.selectionShape.setSurfacePath(true);
-                    var attrs = new BasicShapeAttributes();
+                    ShapeAttributes attrs = new BasicShapeAttributes();
                     attrs.setOutlineWidth(2);
                     attrs.setOutlineMaterial(new Material(new Color(this.color.getRed(),
-                            this.color.getGreen(), (int) (this.color.getBlue() * .5), (int) (255 * .8))));
+                        this.color.getGreen(), (int) (this.color.getBlue() * 0.5), (int) (255 * 0.8))));
                     this.selectionShape.setAttributes(attrs);
-                } else {
+                }
+                else {
                     this.selectionShape.setPositions(Arrays.asList(this.positions));
                 }
-            } else {
+            }
+            else {
                 // Off globe or something missing
                 this.positions = null;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             this.positions = null;
         }
     }
 
+    // ** Profile data collection ************************************************************
+
     protected Position computeViewCenterPosition(DrawContext dc) {
         View view = dc.getView();
         Line ray = view.computeRayFromScreenPoint(view.getViewport().getWidth() / 2,
-                view.getViewport().getHeight() / 2);
+            view.getViewport().getHeight() / 2);
         Intersection[] inters = dc.getSurfaceGeometry().intersect(ray);
         if (inters.length > 0) {
             return dc.getGlobe().computePositionFromPoint(inters[0].getIntersectionPoint());
@@ -1475,18 +1467,20 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
         View view = this.wwd.getView();
         // Compute profile length
         if (view instanceof OrbitView) {
-            this.length = Math.min(((OrbitView) view).getZoom() * .8 * this.profileLengthFactor,
-                    this.wwd.getModel().getGlobe().getRadius() * Math.PI);
-        } else {
-            this.length = Math.min(Math.abs(view.getEyePosition().getElevation()) * .8 * this.profileLengthFactor,
-                    this.wwd.getModel().getGlobe().getRadius() * Math.PI);
+            this.length = Math.min(((OrbitView) view).getZoom() * 0.8 * this.profileLengthFactor,
+                this.wwd.getModel().getGlobe().getRadius() * Math.PI);
+        }
+        else {
+            this.length = Math.min(Math.abs(view.getEyePosition().getElevation()) * 0.8 * this.profileLengthFactor,
+                this.wwd.getModel().getGlobe().getRadius() * Math.PI);
         }
         if (this.follow.equals(FOLLOW_NONE)) {
             this.length = LatLon.greatCircleDistance(this.startLatLon, this.endLatLon).radians
-                    * this.wwd.getModel().getGlobe().getRadius();
-        } else if (this.follow.equals(FOLLOW_OBJECT)) {
-            this.length = Math.min(Math.abs(this.objectPosition.getElevation()) * .8 * this.profileLengthFactor,
-                    this.wwd.getModel().getGlobe().getRadius() * Math.PI);
+                * this.wwd.getModel().getGlobe().getRadius();
+        }
+        else if (this.follow.equals(FOLLOW_OBJECT)) {
+            this.length = Math.min(Math.abs(this.objectPosition.getElevation()) * 0.8 * this.profileLengthFactor,
+                this.wwd.getModel().getGlobe().getRadius() * Math.PI);
         }
         double lengthRadian = this.length / this.wwd.getModel().getGlobe().getRadius();
 
@@ -1501,14 +1495,15 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                 if (this.follow.equals(FOLLOW_OBJECT)) {
                     azimuth = this.objectHeading.subtract(Angle.POS90).radians;
                 }
-                if (i > (float) (this.samples - 1) / 2f) {
+                if (i > (this.samples - 1) / 2.0f) {
                     //azimuth = view.getHeading().subtract(Angle.NEG90).radians;
                     azimuth += Math.PI;
                 }
-                double distance = Math.abs(((double) i - ((double) (this.samples - 1) / 2d)) * step);
+                double distance = Math.abs((i - ((this.samples - 1) / 2.0d)) * step);
                 latLon = LatLon.greatCircleEndPosition(centerLatLon, azimuth, distance);
-            } else if (this.follow.equals(FOLLOW_NONE) && this.startLatLon != null
-                    && this.endLatLon != null) {
+            }
+            else if (this.follow.equals(FOLLOW_NONE) && this.startLatLon != null
+                && this.endLatLon != null) {
                 // Compute segments between start and end positions latlon
                 latLon = LatLon.interpolate((double) i / (this.samples - 1), this.startLatLon, this.endLatLon);
             }
@@ -1531,21 +1526,24 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             while (stepToGo > 0) {
                 if (this.pathType.equals(AVKey.RHUMB_LINE)) {
                     distance = LatLon.rhumbDistance(latLon, this.pathPositions.get(segmentIndex + 1)).radians;
-                } else {
+                }
+                else {
                     distance = LatLon.greatCircleDistance(latLon, this.pathPositions.get(segmentIndex + 1)).radians;
                 }
                 if (distance >= stepToGo) {
                     if (this.pathType.equals(AVKey.RHUMB_LINE)) {
                         azimuth = LatLon.rhumbAzimuth(latLon, this.pathPositions.get(segmentIndex + 1)).radians;
                         latLon = LatLon.rhumbEndPosition(latLon, azimuth, stepToGo);
-                    } else {
+                    }
+                    else {
                         azimuth = LatLon.greatCircleAzimuth(latLon, this.pathPositions.get(segmentIndex + 1)).radians;
                         latLon = LatLon.greatCircleEndPosition(latLon, azimuth, stepToGo);
                     }
 
                     this.setPosition(i, latLon);
                     stepToGo = 0;
-                } else {
+                }
+                else {
                     segmentIndex++;
                     latLon = this.pathPositions.get(segmentIndex);
                     stepToGo -= distance;
@@ -1570,7 +1568,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
 
     protected void setPosition(int index, LatLon latLon) {
         double elevation
-                = this.wwd.getModel().getGlobe().getElevation(latLon.getLatitude(), latLon.getLongitude());
+            = this.wwd.getModel().getGlobe().getElevation(latLon.getLatitude(), latLon.getLongitude());
         this.minElevation = Math.min(elevation, this.minElevation);
         this.maxElevation = Math.max(elevation, this.maxElevation);
         // Add position to the list
@@ -1597,5 +1595,23 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     @Override
     public String toString() {
         return Logging.getMessage("layers.Earth.TerrainProfileLayer.Name");
+    }
+
+    protected class OrderedIcon implements OrderedRenderable {
+
+        @Override
+        public double getDistanceFromEye() {
+            return 0;
+        }
+
+        @Override
+        public void pick(DrawContext dc, Point pickPoint) {
+            TerrainProfileLayer.this.drawProfile(dc);
+        }
+
+        @Override
+        public void render(DrawContext dc) {
+            TerrainProfileLayer.this.drawProfile(dc);
+        }
     }
 }

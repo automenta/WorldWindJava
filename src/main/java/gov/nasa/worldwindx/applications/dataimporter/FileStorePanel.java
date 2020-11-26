@@ -21,6 +21,8 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Manages the installed-data table and related actions.
@@ -28,8 +30,7 @@ import java.io.File;
  * @author tag
  * @version $Id: FileStorePanel.java 2982 2015-04-06 19:52:46Z tgaskins $
  */
-public class FileStorePanel extends JPanel implements ListSelectionListener
-{
+public class FileStorePanel extends JPanel implements ListSelectionListener {
     protected static final long VISIBILITY_UPDATE_INTERVAL = 2000; // milliseconds
 
     protected final WorldWindow wwd;
@@ -38,8 +39,7 @@ public class FileStorePanel extends JPanel implements ListSelectionListener
     protected long previousUpdate; // identifies when the visibility filter was last applied
     protected boolean applyVisibilityFilter = false;
 
-    public FileStorePanel(WorldWindow wwd)
-    {
+    public FileStorePanel(WorldWindow wwd) {
         super(new BorderLayout(5, 5));
 
         this.wwd = wwd;
@@ -52,11 +52,9 @@ public class FileStorePanel extends JPanel implements ListSelectionListener
         this.add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new BorderLayout(5, 5));
-        JButton deleteButton = new JButton(new AbstractAction("Delete Selected Data")
-        {
+        JButton deleteButton = new JButton(new AbstractAction("Delete Selected Data") {
             @Override
-            public void actionPerformed(ActionEvent actionEvent)
-            {
+            public void actionPerformed(ActionEvent actionEvent) {
                 deleteSelected();
             }
         });
@@ -76,8 +74,7 @@ public class FileStorePanel extends JPanel implements ListSelectionListener
 
         // Establish a rendering listener that filters the dataset table by its inclusion in the current view.
         this.wwd.addRenderingListener(event -> {
-            if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP))
-            {
+            if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)) {
                 filterForVisibility();
             }
         });
@@ -88,14 +85,13 @@ public class FileStorePanel extends JPanel implements ListSelectionListener
      *
      * @param fileStore the filestore for which to display the data sets.
      */
-    public void update(final FileStore fileStore)
-    {
+    public void update(final FileStore fileStore) {
         final FileStoreDataSetFinder dataSetFinder = new FileStoreDataSetFinder();
 
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         Thread t = new Thread(() -> {
-            final java.util.List<FileStoreDataSet> dataSets = dataSetFinder.findDataSets(fileStore);
+            final List<FileStoreDataSet> dataSets = dataSetFinder.findDataSets(fileStore);
 
             SwingUtilities.invokeLater(() -> {
                 fileStoreTable.setDataSets(dataSets);
@@ -106,29 +102,25 @@ public class FileStorePanel extends JPanel implements ListSelectionListener
         t.start();
     }
 
-    public void addSelectionListener(ListSelectionListener listener)
-    {
+    public void addSelectionListener(ListSelectionListener listener) {
         // This is a convenience method that simply forwards to the table.
 
         this.fileStoreTable.getSelectionModel().addListSelectionListener(listener);
     }
 
-    public java.util.List<FileStoreDataSet> getSelectedDataSets()
-    {
+    public List<FileStoreDataSet> getSelectedDataSets() {
         // This is a convenience method that simply forwards to the table.
 
         return this.fileStoreTable.getSelectedDataSets();
     }
 
-    public void scrollToDataSet(FileStoreDataSet dataSet)
-    {
+    public void scrollToDataSet(FileStoreDataSet dataSet) {
         // This method makes the selected file set visible as the top row in the table.
         this.fileStoreTable.scrollToDataSet(dataSet);
     }
 
     @Override
-    public void valueChanged(final ListSelectionEvent event)
-    {
+    public void valueChanged(final ListSelectionEvent event) {
         // This method is called when the table selection changes.
 
         if (event.getValueIsAdjusting())
@@ -138,12 +130,11 @@ public class FileStorePanel extends JPanel implements ListSelectionListener
             return;
 
         // This list is searched below to determine whether a data set is selected.
-        final java.util.List<FileStoreDataSet> selectedDataSets = this.fileStoreTable.getSelectedDataSets();
+        final List<FileStoreDataSet> selectedDataSets = this.fileStoreTable.getSelectedDataSets();
 
         Thread t = new Thread(() -> {
             // Loop through the selected interval and determine whether the rows were selected or deselected.
-            for (int i = event.getFirstIndex(); i <= event.getLastIndex(); i++)
-            {
+            for (int i = event.getFirstIndex(); i <= event.getLastIndex(); i++) {
                 int modelRow = fileStoreTable.convertRowIndexToModel(i);
                 FileStoreDataSet dataSet = ((FileStoreTableModel) fileStoreTable.getModel()).getRow(modelRow);
 
@@ -158,46 +149,37 @@ public class FileStorePanel extends JPanel implements ListSelectionListener
         t.start();
     }
 
-    protected void manageLayer(FileStoreDataSet dataSet, boolean tf)
-    {
-        if (tf)
-        {
+    protected void manageLayer(FileStoreDataSet dataSet, boolean tf) {
+        if (tf) {
             this.addToWorldWindow(dataSet);
         }
-        else
-        {
+        else {
             Layer existingLayer = DataInstaller.findLayer(this.wwd, dataSet.getName());
             if (existingLayer != null)
                 this.wwd.getModel().getLayers().remove(existingLayer);
         }
     }
 
-    protected void manageElevationModel(FileStoreDataSet dataSet, boolean tf)
-    {
-        if (tf)
-        {
+    protected void manageElevationModel(FileStoreDataSet dataSet, boolean tf) {
+        if (tf) {
             this.addToWorldWindow(dataSet);
         }
-        else
-        {
+        else {
             ElevationModel existingElevationModel = DataInstaller.findElevationModel(this.wwd, dataSet.getName());
             if (existingElevationModel != null)
                 DataInstaller.removeElevationModel(this.wwd, existingElevationModel);
         }
     }
 
-    protected void addToWorldWindow(FileStoreDataSet dataSet)
-    {
+    protected void addToWorldWindow(FileStoreDataSet dataSet) {
         Document doc = null;
 
-        try
-        {
+        try {
             doc = WWXML.openDocument(new File(dataSet.configFilePath));
             doc = DataConfigurationUtils.convertToStandardDataConfigDocument(doc);
         }
-        catch (WWRuntimeException e)
-        {
-            Logging.logger().log(java.util.logging.Level.SEVERE, "Exception making data set active", e);
+        catch (WWRuntimeException e) {
+            Logging.logger().log(Level.SEVERE, "Exception making data set active", e);
         }
 
         if (doc == null)
@@ -206,12 +188,10 @@ public class FileStorePanel extends JPanel implements ListSelectionListener
         DataInstaller.addToWorldWindow(this.wwd, doc.getDocumentElement(), dataSet, true);
     }
 
-    protected void deleteSelected()
-    {
-        java.util.List<FileStoreDataSet> dataSets = this.fileStoreTable.getSelectedDataSets();
+    protected void deleteSelected() {
+        List<FileStoreDataSet> dataSets = this.fileStoreTable.getSelectedDataSets();
 
-        for (FileStoreDataSet dataSet : dataSets)
-        {
+        for (FileStoreDataSet dataSet : dataSets) {
             String message = "Delete " + dataSet.getName() + "?" + "\nThis operation cannot be undone.";
             int status = JOptionPane.showConfirmDialog(this, message, "Verify Data Deletion",
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -224,28 +204,24 @@ public class FileStorePanel extends JPanel implements ListSelectionListener
         }
     }
 
-    protected void deleteDataSet(FileStoreDataSet dataSet)
-    {
+    protected void deleteDataSet(FileStoreDataSet dataSet) {
         dataSet.delete();
         ((FileStoreTableModel) this.fileStoreTable.getModel()).removeDataSet(dataSet);
 
         // Notify listeners so that the layer and elevations menus are updated.
-        if (dataSet.isImagery())
-        {
+        if (dataSet.isImagery()) {
             Layer layer = DataInstaller.findLayer(this.wwd, dataSet.getName());
             if (layer != null)
                 this.wwd.getModel().getLayers().remove(layer);
         }
-        else if (dataSet.isElevation())
-        {
+        else if (dataSet.isElevation()) {
             ElevationModel elevationModel = DataInstaller.findElevationModel(this.wwd, dataSet.getName());
             if (elevationModel != null)
                 DataInstaller.removeElevationModel(this.wwd, elevationModel);
         }
     }
 
-    protected void filterForVisibility()
-    {
+    protected void filterForVisibility() {
         // Determine whether each dataset is within the current view.
 
         long now = System.currentTimeMillis();
@@ -253,21 +229,17 @@ public class FileStorePanel extends JPanel implements ListSelectionListener
             return;
 
         FileStoreTableModel model = (FileStoreTableModel) this.fileStoreTable.getModel();
-        if (model.getDataSets().size() == 0)
+        if (model.getDataSets().isEmpty())
             return;
 
         Sector visibleSector = this.wwd.getSceneController().getDrawContext().getVisibleSector();
-        if (this.applyVisibilityFilter && visibleSector == null)
-        {
-            for (FileStoreDataSet dataSet : model.getDataSets())
-            {
+        if (this.applyVisibilityFilter && visibleSector == null) {
+            for (FileStoreDataSet dataSet : model.getDataSets()) {
                 dataSet.removeKey(FileStoreTable.VISIBLE);
             }
         }
-        else
-        {
-            for (FileStoreDataSet dataSet : model.getDataSets())
-            {
+        else {
+            for (FileStoreDataSet dataSet : model.getDataSets()) {
                 if (!applyVisibilityFilter || visibleSector.contains(dataSet.getSector()))
                     dataSet.setValue(FileStoreTable.VISIBLE, true);
                 else

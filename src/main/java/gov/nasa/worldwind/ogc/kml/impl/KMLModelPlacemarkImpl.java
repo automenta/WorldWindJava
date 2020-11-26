@@ -26,57 +26,57 @@ import java.util.concurrent.atomic.*;
  * @author pabercrombie
  * @version $Id: KMLModelPlacemarkImpl.java 1838 2014-02-05 20:48:12Z dcollins $
  */
-public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable, ColladaResourceResolver
-{
-    /** Model rendered by this class. */
-    protected KMLModel model;
-    /** Placemark that contains the model. */
-    protected KMLPlacemark parent;
-    /** Reference to the COLLADA root that contains the parsed COLLADA file. */
+public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable, ColladaResourceResolver {
+    /**
+     * Reference to the COLLADA root that contains the parsed COLLADA file.
+     */
     protected final AtomicReference<ColladaRoot> colladaRoot = new AtomicReference<>();
     /**
      * Time, in milliseconds since the Epoch, at which this placemark's model resource was last retrieved. Initially
      * <code>-1</code>, indicating that the resource has not been retrieved.
      */
     protected final AtomicLong resourceRetrievalTime = new AtomicLong(-1);
-
+    /**
+     * Traversal context for rendering the ColladaRoot.
+     */
+    protected final ColladaTraversalContext colladaTraversalContext = new ColladaTraversalContext();
+    /**
+     * Model rendered by this class.
+     */
+    protected KMLModel model;
+    /**
+     * Placemark that contains the model.
+     */
+    protected KMLPlacemark parent;
     /**
      * Map specified by the KML Model's ResourceMap element. The map relates relative references within the COLLADA file
      * to paths relative to the KML document.
      */
     protected Map<String, String> resourceMap;
 
-    /** Traversal context for rendering the ColladaRoot. */
-    protected final ColladaTraversalContext colladaTraversalContext = new ColladaTraversalContext();
-
     /**
      * Create an instance.
      *
      * @param tc        the current {@link KMLTraversalContext}.
      * @param placemark the <i>Placemark</i> element containing the <i>Point</i>.
-     * @param geom      the {@link gov.nasa.worldwind.ogc.kml.KMLPoint} geometry.
-     *
+     * @param geom      the {@link KMLPoint} geometry.
      * @throws NullPointerException     if the geometry is null.
      * @throws IllegalArgumentException if the parent placemark or the traversal context is null.
      */
-    public KMLModelPlacemarkImpl(KMLTraversalContext tc, KMLPlacemark placemark, KMLAbstractGeometry geom)
-    {
-        if (tc == null)
-        {
+    public KMLModelPlacemarkImpl(KMLTraversalContext tc, KMLPlacemark placemark, KMLAbstractGeometry geom) {
+        if (tc == null) {
             String msg = Logging.getMessage("nullValue.TraversalContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (placemark == null)
-        {
+        if (placemark == null) {
             String msg = Logging.getMessage("nullValue.ParentIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (geom == null)
-        {
+        if (geom == null) {
             String msg = Logging.getMessage("nullValue.GeometryIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -92,26 +92,33 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
      * Build the resource map from the KML Model's <i>ResourceMap</i> element.
      *
      * @param model Model from which to create the resource map.
-     *
      * @return Map that relates relative paths in the COLLADA document to paths relative to the KML document.
      */
-    protected Map<String, String> createResourceMap(KMLModel model)
-    {
+    protected Map<String, String> createResourceMap(KMLModel model) {
         Map<String, String> map = new HashMap<>();
 
         KMLResourceMap resourceMap = model.getResourceMap();
         if (resourceMap == null)
             return Collections.emptyMap();
 
-        for (KMLAlias alias : resourceMap.getAliases())
-        {
-            if (alias != null && !WWUtil.isEmpty(alias.getSourceRef()) && !WWUtil.isEmpty(alias.getTargetHref()))
-            {
+        for (KMLAlias alias : resourceMap.getAliases()) {
+            if (alias != null && !WWUtil.isEmpty(alias.getSourceRef()) && !WWUtil.isEmpty(alias.getTargetHref())) {
                 map.put(alias.getSourceRef(), alias.getTargetHref());
             }
         }
 
-        return map.size() > 0 ? map : Collections.emptyMap();
+        return !map.isEmpty() ? map : Collections.emptyMap();
+    }
+
+    /**
+     * Indicates the Collada resource referenced by this placemark. This returns <code>null</code> if this placemark has
+     * no resource.
+     *
+     * @return this placemark's Collada resource, or <code>null</code> to indicate that this placemark has no resource.
+     * @see #setColladaRoot(ColladaRoot)
+     */
+    protected ColladaRoot getColladaRoot() {
+        return this.colladaRoot.get();
     }
 
     /**
@@ -120,8 +127,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
      *
      * @param root the Collada resource referenced by this placemark. May be <code>null</code>.
      */
-    protected void setColladaRoot(ColladaRoot root)
-    {
+    protected void setColladaRoot(ColladaRoot root) {
         if (root != null)
             this.configureColladaRoot(root);
 
@@ -129,34 +135,20 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
     }
 
     /**
-     * Indicates the Collada resource referenced by this placemark. This returns <code>null</code> if this placemark has
-     * no resource.
-     *
-     * @return this placemark's Collada resource, or <code>null</code> to indicate that this placemark has no resource.
-     *
-     * @see #setColladaRoot(gov.nasa.worldwind.ogc.collada.ColladaRoot)
-     */
-    protected ColladaRoot getColladaRoot()
-    {
-        return this.colladaRoot.get();
-    }
-
-    /**
      * Apply the model's position, orientation, and scale to a COLLADA root.
      *
      * @param root COLLADA root to configure.
      */
-    protected void configureColladaRoot(ColladaRoot root)
-    {
+    protected void configureColladaRoot(ColladaRoot root) {
         root.setResourceResolver(this);
 
         Position refPosition = this.model.getLocation().getPosition();
         root.setPosition(refPosition);
-        root.setAltitudeMode(KMLUtil.convertAltitudeMode(this.model.getAltitudeMode(), WorldWind.CLAMP_TO_GROUND)); // KML default
+        root.setAltitudeMode(
+            KMLUtil.convertAltitudeMode(this.model.getAltitudeMode(), WorldWind.CLAMP_TO_GROUND)); // KML default
 
         KMLOrientation orientation = this.model.getOrientation();
-        if (orientation != null)
-        {
+        if (orientation != null) {
             Double d = orientation.getHeading();
             if (d != null)
                 root.setHeading(Angle.fromDegrees(d));
@@ -171,8 +163,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
         }
 
         KMLScale scale = this.model.getScale();
-        if (scale != null)
-        {
+        if (scale != null) {
             Double x = scale.getX();
             Double y = scale.getY();
             Double z = scale.getZ();
@@ -186,26 +177,26 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
         }
     }
 
-    /** {@inheritDoc} */
-    public void preRender(KMLTraversalContext tc, DrawContext dc)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void preRender(KMLTraversalContext tc, DrawContext dc) {
         if (this.mustRetrieveResource())
             this.requestResource(dc);
 
         ColladaRoot root = this.getColladaRoot();
-        if (root != null)
-        {
+        if (root != null) {
             this.colladaTraversalContext.initialize();
             root.preRender(this.colladaTraversalContext, dc);
         }
     }
 
-    /** {@inheritDoc} */
-    public void render(KMLTraversalContext tc, DrawContext dc)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void render(KMLTraversalContext tc, DrawContext dc) {
         ColladaRoot root = this.getColladaRoot();
-        if (root != null)
-        {
+        if (root != null) {
             this.colladaTraversalContext.initialize();
             root.render(this.colladaTraversalContext, dc);
         }
@@ -220,8 +211,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
      * <p>
      * {@inheritDoc}.
      */
-    public String resolveFilePath(String path)
-    {
+    public String resolveFilePath(String path) {
         KMLLink link = this.model.getLink();
 
         // Check the resource map to see if an alias is defined for this resource.
@@ -231,17 +221,14 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
 
         // If the path is relative then resolve it relative to the COLLADA file.
         File f = new File(path);
-        if (!f.isAbsolute() && link != null && link.getHref() != null)
-        {
-            try
-            {
+        if (!f.isAbsolute() && link != null && link.getHref() != null) {
+            try {
                 URI base = new URI(null, link.getHref(), null);
                 URI ref = new URI(null, path, null);
 
                 path = base.resolve(ref).getPath();
             }
-            catch (URISyntaxException ignored)
-            {
+            catch (URISyntaxException ignored) {
                 // Ignored
             }
         }
@@ -259,8 +246,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
      *
      * @return <code>true</code> if this placemark must retrieve its model resource, otherwise <code>false</code>.
      */
-    protected boolean mustRetrieveResource()
-    {
+    protected boolean mustRetrieveResource() {
         KMLLink link = this.model.getLink();
         if (link == null)
             return false;
@@ -276,8 +262,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
      *
      * @param dc the current draw context.
      */
-    protected void requestResource(DrawContext dc)
-    {
+    protected void requestResource(DrawContext dc) {
         if (WorldWind.getTaskService().isFull())
             return;
 
@@ -297,17 +282,17 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
 
     /**
      * Initiates a retrieval of the model referenced by this placemark.Once the resource is retrieved and loaded, this
-     * calls <code>{@link #setColladaRoot(ColladaRoot)}</code> to specify this link's new network resource, and sends an
+     * calls <code>{@link #setColladaRoot(ColladaRoot)}</code> to specify this link's new network resource, and sends
+     * an
      * <code>{@link gov.nasa.worldwind.avlist.AVKey#RETRIEVAL_STATE_SUCCESSFUL}</code> property change event to this
-     * link's property change listeners.<p>
-     * This does nothing if this <code>KMLNetworkLink</code> has no <code>KMLLink</code>.
+     * link's property change listeners.<p> This does nothing if this <code>KMLNetworkLink</code> has no
+     * <code>KMLLink</code>.
      *
      * @param address the address of the resource to retrieve
-     * @throws java.io.IOException if a reading error occurs.
-     * @throws javax.xml.stream.XMLStreamException if a parsing error occurs.
+     * @throws IOException                 if a reading error occurs.
+     * @throws XMLStreamException if a parsing error occurs.
      */
-    protected void retrieveModel(String address) throws IOException, XMLStreamException
-    {
+    protected void retrieveModel(String address) throws IOException, XMLStreamException {
         Object o = this.parent.getRoot().resolveReference(address);
         if (o == null)
             return;
@@ -321,12 +306,17 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
         this.parent.getRoot().requestRedraw();
     }
 
-    /** Attempts to find this model link resource file locally, and if that fails attempts to find it remotely. */
-    protected static class RequestTask implements Runnable
-    {
-        /** The link associated with this request. */
+    /**
+     * Attempts to find this model link resource file locally, and if that fails attempts to find it remotely.
+     */
+    protected static class RequestTask implements Runnable {
+        /**
+         * The link associated with this request.
+         */
         protected final KMLModelPlacemarkImpl placemark;
-        /** The resource's address. */
+        /**
+         * The resource's address.
+         */
         protected final String address;
 
         /**
@@ -335,17 +325,14 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
          * @param placemark the placemark for which to construct the request task.
          * @param address   the address of the resource to request.
          */
-        protected RequestTask(KMLModelPlacemarkImpl placemark, String address)
-        {
-            if (placemark == null)
-            {
+        protected RequestTask(KMLModelPlacemarkImpl placemark, String address) {
+            if (placemark == null) {
                 String message = Logging.getMessage("nullValue.ObjectIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
-            if (address == null)
-            {
+            if (address == null) {
                 String message = Logging.getMessage("nullValue.PathIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
@@ -355,30 +342,25 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
             this.address = address;
         }
 
-        public void run()
-        {
+        public void run() {
             if (Thread.currentThread().isInterrupted())
                 return; // the task was cancelled because it's a duplicate or for some other reason
 
-            try
-            {
+            try {
                 this.placemark.retrieveModel(this.address);
             }
-            catch (IOException e)
-            {
+            catch (IOException e) {
                 String message = Logging.getMessage("generic.ExceptionWhileReading", e.getMessage());
                 Logging.logger().warning(message);
             }
-            catch (XMLStreamException e)
-            {
+            catch (XMLStreamException e) {
                 String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", e.getMessage());
                 Logging.logger().warning(message);
             }
         }
 
         @Override
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (o == null || getClass() != o.getClass())
@@ -396,16 +378,14 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             int result = placemark.hashCode();
             result = 31 * result + address.hashCode();
             return result;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return this.address;
         }
     }

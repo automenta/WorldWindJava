@@ -5,14 +5,16 @@
  */
 
 package gov.nasa.worldwind.formats.nitfs;
+
+import java.nio.ByteBuffer;
+
 /**
  * @author Lado Garakanidze
  * @version $Id: NITFSTextSegment.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-class NITFSTextSegment extends NITFSSegment
-{
-    public NITFSTextSegment(java.nio.ByteBuffer buffer, int headerStartOffset, int headerLength, int dataStartOffset, int dataLength)
-    {
+class NITFSTextSegment extends NITFSSegment {
+    public NITFSTextSegment(ByteBuffer buffer, int headerStartOffset, int headerLength, int dataStartOffset,
+        int dataLength) {
         super(NITFSSegmentType.TEXT_SEGMENT, buffer, headerStartOffset, headerLength, dataStartOffset, dataLength);
 
         this.restoreBufferPosition();

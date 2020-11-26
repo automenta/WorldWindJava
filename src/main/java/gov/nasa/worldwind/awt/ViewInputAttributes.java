@@ -15,325 +15,7 @@ import java.util.*;
  * @author dcollins
  * @version $Id: ViewInputAttributes.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ViewInputAttributes
-{
-    public static class DeviceModifierMap extends HashMap<Object, ArrayList>
-    {
-    }
-
-    public static class ActionAttributesList extends ArrayList<ActionAttributes>
-    {
-    }
-
-    public static class ActionAttributes
-    {
-        public KeyInputActionHandler getActionListener()
-        {
-            return actionListener;
-        }
-
-        public void setActionListener(KeyInputActionHandler actionListener)
-        {
-            this.actionListener = actionListener;
-        }
-
-        public MouseInputActionHandler getMouseActionListener()
-        {
-            return mouseActionListener;
-        }
-
-        public void setMouseActionListener(MouseInputActionHandler mouseActionListener)
-        {
-            this.mouseActionListener = mouseActionListener;
-        }
-
-        public enum ActionTrigger
-        {
-            ON_PRESS,
-            ON_DRAG,
-            ON_KEY_DOWN,
-            ON_RELEASE
-        }
-
-        public static class KeyAction
-        {
-            public static final int KA_DIR_X = 0;
-            public static final int KA_DIR_Y = 1;
-            public static final int KA_DIR_Z = 2;
-
-            public final int keyCode;
-            public final int sign;
-            public final int direction;
-
-            public KeyAction(int key, int direction, int sign)
-            {
-                this.keyCode = key;
-                this.sign = sign;
-                this.direction = direction;
-            }
-        }
-
-        public static class MouseAction
-        {
-            public final int mouseButton;
-
-            public MouseAction(int mouseButton)
-            {
-                this.mouseButton = mouseButton;
-            }
-        }
-
-        public static final int NO_MODIFIER = 0;
-        private double minValue;
-        private double maxValue;
-        private boolean enableSmoothing;
-        private double smoothingValue;
-        private int keyCodeModifier;
-        private java.util.List keyActions;
-        private java.util.List mouseActions;
-        private ActionTrigger actionTrigger;
-        private KeyInputActionHandler actionListener;
-        private MouseInputActionHandler mouseActionListener;
-
-        public ActionAttributes(ActionAttributes.KeyAction[] keyActions, ActionTrigger trigger,
-            int modifier, double minValue, double maxValue,
-            boolean enableSmoothing, double smoothingValue)
-        {
-            this.setValues(minValue, maxValue);
-            this.setEnableSmoothing(enableSmoothing);
-            this.setSmoothingValue(smoothingValue);
-            this.setKeyActions(keyActions);
-            this.setKeyCodeModifier(modifier);
-            this.setActionTrigger(trigger);
-            mouseActions = null;
-        }
-
-        public ActionAttributes(ActionAttributes.MouseAction[] mouseActions, ActionTrigger trigger,
-            double minValue, double maxValue, boolean enableSmoothing, double smoothingValue)
-        {
-            this.setValues(minValue, maxValue);
-            this.setEnableSmoothing(enableSmoothing);
-            this.setSmoothingValue(smoothingValue);
-            this.setMouseActions(mouseActions);
-            this.setActionTrigger(trigger);
-            keyActions = null;
-        }
-
-        public ActionAttributes(double minValue, double maxValue, boolean enableSmoothing, double smoothingValue)
-        {
-            this.setValues(minValue, maxValue);
-            this.setEnableSmoothing(enableSmoothing);
-            this.setSmoothingValue(smoothingValue);
-        }
-
-        public ActionAttributes(ActionAttributes attributes)
-        {
-            if (attributes == null)
-            {
-                String message = Logging.getMessage("nullValue.AttributesIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.minValue = attributes.minValue;
-            this.maxValue = attributes.maxValue;
-            this.smoothingValue = attributes.smoothingValue;
-            this.setActionListener(attributes.getActionListener());
-            this.setKeyActions(attributes.getKeyActions());
-            this.setActionTrigger(attributes.getActionTrigger());
-        }
-
-        public double[] getValues()
-        {
-            return new double[] {this.minValue, this.maxValue};
-        }
-
-        public void setValues(double minValue, double maxValue)
-        {
-            if (minValue <= 0)
-            {
-                String message = Logging.getMessage("generic.ArgumentOutOfRange", "minValue <= 0");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-            if (maxValue <= 0)
-            {
-                String message = Logging.getMessage("generic.ArgumentOutOfRange", "maxValue <= 0");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.minValue = minValue;
-            this.maxValue = maxValue;
-        }
-
-        public void setValue(double value)
-        {
-            this.setValues(value, value);
-        }
-
-        public boolean isEnableSmoothing()
-        {
-            return this.enableSmoothing;
-        }
-
-        public void setEnableSmoothing(boolean enable)
-        {
-            this.enableSmoothing = enable;
-        }
-
-        public double getSmoothingValue()
-        {
-            return this.smoothingValue;
-        }
-
-        public void setSmoothingValue(double smoothingValue)
-        {
-            if (smoothingValue < 0 || smoothingValue >= 1.0)
-            {
-                String message = Logging.getMessage("generic.ArgumentOutOfRange",
-                    "smoothingValue < 0 || smoothingValue >= 1");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.smoothingValue = smoothingValue;
-        }
-
-        public void setKeyCodeModifier(int modifier)
-        {
-            this.keyCodeModifier = modifier;
-        }
-
-        public int getKeyCodeModifier()
-        {
-            return (this.keyCodeModifier);
-        }
-
-        public java.util.List getKeyActions()
-        {
-            return (this.keyActions);
-        }
-
-        public void setKeyActions(KeyAction[] keyActions)
-        {
-            this.keyActions = Arrays.asList(keyActions);
-        }
-
-        public void setKeyActions(java.util.List keyActions)
-        {
-            this.keyActions = keyActions;
-        }
-
-        public java.util.List getMouseActions()
-        {
-            return (this.mouseActions);
-        }
-
-        public void setMouseActions(MouseAction[] mouseActions)
-        {
-            this.mouseActions = Arrays.asList(mouseActions);
-        }
-
-        public void setMouseActions(java.util.List mouseActions)
-        {
-            this.mouseActions = mouseActions;
-        }
-
-        public ActionTrigger getActionTrigger()
-        {
-            return this.actionTrigger;
-        }
-
-        public void setActionTrigger(ActionTrigger actionTrigger)
-        {
-            this.actionTrigger = actionTrigger;
-        }
-
-        public static ActionAttributes.MouseAction createMouseActionAttribute(int mouseButton)
-        {
-            return (new MouseAction(mouseButton));
-        }
-    }
-
-    public static class DeviceAttributes
-    {
-        private double sensitivity;
-
-        public DeviceAttributes(double sensitivity)
-        {
-            this.setSensitivity(sensitivity);
-        }
-
-        public DeviceAttributes(DeviceAttributes attributes)
-        {
-            if (attributes == null)
-            {
-                String message = Logging.getMessage("nullValue.AttributesIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.sensitivity = attributes.sensitivity;
-        }
-
-        public double getSensitivity()
-        {
-            return this.sensitivity;
-        }
-
-        public void setSensitivity(double sensitivity)
-        {
-            if (sensitivity <= 0)
-            {
-                String message = Logging.getMessage("generic.ArgumentOutOfRange", "sensitivity <= 0");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.sensitivity = sensitivity;
-        }
-    }
-
-    public static class ActionAttributesMap
-    {
-        private final Map<Object, ActionAttributes> actionMap = new HashMap<>();
-
-        public ActionAttributesMap()
-        {
-        }
-
-        public ActionAttributes getActionAttributes(Object actionKey)
-        {
-            if (actionKey == null)
-            {
-                String message = Logging.getMessage("nullValue.ActionKeyIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            return this.actionMap.get(actionKey);
-        }
-
-        public void setActionAttributes(Object actionKey, ActionAttributes attributes)
-        {
-            if (actionKey == null)
-            {
-                String message = Logging.getMessage("nullValue.ActionKeyIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-            if (attributes == null)
-            {
-                String message = Logging.getMessage("nullValue.AttributesIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.actionMap.put(actionKey, attributes);
-        }
-    }
-
+public class ViewInputAttributes {
     public static final String VIEW_FOCUS = "gov.nasa.worldwind.ViewFocus";
     public static final String VIEW_FOCUS_SLOW = "gov.nasa.worldwind.ViewFocusSlow";
     public static final String VIEW_PAN = "gov.nasa.worldwind.ViewPan";
@@ -346,11 +28,9 @@ public class ViewInputAttributes
     public static final String DEVICE_KEYBOARD = "gov.nasa.worldwind.DeviceKeyboard";
     public static final String DEVICE_MOUSE = "gov.nasa.worldwind.DeviceMouse";
     public static final String DEVICE_MOUSE_WHEEL = "gov.nasa.worldwind.DeviceMouseWheel";
-
     public static final String DEVICE_KEYBOARD_MODS = "gov.nasa.worldwind.DeviceKeyboardMods";
     public static final String DEVICE_MOUSE_MODS = "gov.nasa.worldwind.DeviceMouseMods";
     public static final String DEVICE_MOUSE_WHEEL_MODS = "gov.nasa.worldwind.DeviceMouseWheelMods";
-
     // Action keys
     public static final String VIEW_MOVE_TO = "gov.nasa.worldwind.ViewMoveTo";
     public static final String VIEW_MOVE_TO_SLOW = "gov.nasa.worldwind.MoveToSlow";
@@ -362,7 +42,6 @@ public class ViewInputAttributes
     public static final String VIEW_RESET_HEADING = "gov.nasa.worldwind.ViewResetHeading";
     public static final String VIEW_RESET_HEADING_PITCH_ROLL = "gov.nasa.worldwind.ViewResetHeadingPitchRoll";
     public static final String VIEW_STOP_VIEW = "gov.nasa.worldwind.ViewStopView";
-
     // Action names for extensible view/navigation system
     public static final String VIEW_HORIZONTAL_TRANS_KEYS = "gov.nasa.worldwind.ViewHorizTransKeys";
     public static final String VIEW_VERTICAL_TRANS_KEYS_META = "gov.nasa.worldwind.ViewVertTransKeysMeta";
@@ -375,7 +54,56 @@ public class ViewInputAttributes
     public static final String VIEW_ROTATE_KEYS_SHIFT = "gov.nasa.worldwind.ViewRotateKeysShift";
     public static final String VIEW_ROTATE_KEYS_SHIFT_SLOW = "gov.nasa.worldwind.ViewRotateKeysShiftSlow";
     public static final String VIEW_ROLL_KEYS = "gov.nasa.worldwind.ViewRollKeys";
-
+    public static final boolean DEFAULT_MOVE_TO_SMOOTHING_ENABLED = true;
+    public static final boolean DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_ENABLED = true;
+    public static final boolean DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED = true;
+    public static final double DEFAULT_MOVE_TO_SMOOTHING_VALUE = 0.0; // [0, 1] smoothing value
+    public static final double DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_VALUE = 0.4; // [0, 1] smoothing value
+    public static final double DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE = 0.85; // [0, 1] smoothing value
+    // Keyboard/Action calibration values for extensible view/navigation support
+    public static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE = 0.000005; // Speed in degrees per frame
+    public static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE = 4.0; // Speed in degrees per frame
+    public static final double DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE = 0.06; // Speed in log-meters per frame
+    // Mouse/Action calibration values for extensible view/navigation support
+    public static final double DEFAULT_MOUSE_MOVE_TO_MIN_VALUE = 0.95; // [0, 1] smoothing value
+    public static final double DEFAULT_MOUSE_MOVE_TO_MAX_VALUE = 0.90; // [0, 1] smoothing value
+    public static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MIN_VALUE = 0.00001;
+    // Speed in degrees per mouse movement
+    public static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE = 0.2;
+    // Speed in degrees per mouse movement
+    public static final double DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE = 0.003; // Speed in log-meters per mouse movement
+    // MouseWheel/Action calibration values.
+    public static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE = 0.1;
+    // Speed in log-meters per wheel movement
+    public static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_OSX = 0.01;
+    // Device sensitivity defaults.
+    public static final double DEFAULT_KEY_SENSITIVITY = 1.0; // Scalar multiplier
+    public static final double DEFAULT_MOUSE_SENSITIVITY = 1.0; // Scalar multiplier
+    public static final double DEFAULT_MOUSE_WHEEL_SENSITIVITY = 1.0; // Scalar multiplier
+    public static final double DEFAULT_SLOW_VALUE = 0.25; // Scalar multiplier
+    public static final boolean DEFAULT_ROTATE_SMOOTHING_ENABLED = true;
+    public static final double DEFAULT_ROTATE_SMOOTHING_VALUE = 0.7; // [0, 1] smoothing value
+    public static final boolean DEFAULT_ROLL_SMOOTHING_ENABLED = true;
+    public static final double DEFAULT_ROLL_SMOOTHING_VALUE = 0.7; // [0, 1] smoothing value
+    // Keyboard/Action calibration values.
+    public static final double DEFAULT_KEY_ROTATE_MIN_VALUE = 2.0; // Speed in degrees per frame
+    public static final double DEFAULT_KEY_ROTATE_MAX_VALUE = 2.2; // Speed in degrees per frame
+    public static final double DEFAULT_KEY_ROLL_MIN_VALUE = 2.0; // Speed in degrees per frame
+    public static final double DEFAULT_KEY_ROLL_MAX_VALUE = 2.2; // Speed in degrees per frame
+    public static final double DEFAULT_MOUSE_ROTATE_MIN_VALUE = 0.14; // Speed in degrees per mouse movement
+    public static final double DEFAULT_MOUSE_ROTATE_MAX_VALUE = 0.18; // Speed in degrees per mouse movement
+    // Roll Keyboard events. Use CTRL-Left and CTRL-Right to change roll.
+    protected static final ActionAttributes.KeyAction DEFAULT_ROTATE_ROLLUP_KEY_ACT =
+        new ActionAttributes.KeyAction(KeyEvent.VK_LEFT,
+            ActionAttributes.KeyAction.KA_DIR_Y, 1);
+    protected static final ActionAttributes.KeyAction DEFAULT_ROTATE_ROLLDOWN_KEY_ACT =
+        new ActionAttributes.KeyAction(KeyEvent.VK_RIGHT,
+            ActionAttributes.KeyAction.KA_DIR_Y, -1);
+    public static final ActionAttributes.KeyAction[] rollKeyEvents =
+        {
+            DEFAULT_ROTATE_ROLLUP_KEY_ACT,
+            DEFAULT_ROTATE_ROLLDOWN_KEY_ACT
+        };
     // Reset Heading
     private static final ActionAttributes.KeyAction DEFAULT_RESET_HEADING_KEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_N, ActionAttributes.KeyAction.KA_DIR_X, 1);
@@ -397,7 +125,6 @@ public class ViewInputAttributes
         {
             DEFAULT_STOP_VIEW_KEY_ACT
         };
-
     // MoveTo Events
     private static final ActionAttributes.MouseAction DEFAULT_MOVETO_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON1);
@@ -405,7 +132,6 @@ public class ViewInputAttributes
         {
             DEFAULT_MOVETO_MOUSE_MODS
         };
-
     // Horizontal Translation mouse events
     private static final ActionAttributes.MouseAction DEFAULT_HORIZONTAL_TRANSLATE_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON1_DOWN_MASK);
@@ -429,7 +155,6 @@ public class ViewInputAttributes
             DEFAULT_HORIZONTAL_TRANSUP_KEY_ACT,
             DEFAULT_HORIZONTAL_TRANSDOWN_KEY_ACT
         };
-
     // Vertical Translation Mouse Events
     private static final ActionAttributes.MouseAction DEFAULT_VERTICAL_TRANSLATE_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON2_DOWN_MASK);
@@ -455,7 +180,6 @@ public class ViewInputAttributes
             DEFAULT_VERTICAL_TRANSUP_KEY_ACT,
             DEFAULT_VERTICAL_TRANSDOWN_KEY_ACT
         };
-
     private static final ActionAttributes.KeyAction DEFAULT_VERTICAL_TRANSUP_ADDKEY_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_ADD,
             ActionAttributes.KeyAction.KA_DIR_Z, -1);
@@ -481,16 +205,15 @@ public class ViewInputAttributes
         {
             DEFAULT_VERTICAL_TRANSLATE_MOUSE_WHEEL_MODS
         };
-
     private static final ActionAttributes.MouseAction DEFAULT_ROTATE_MOUSE_MODS =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON3_DOWN_MASK);
-
     public static final ActionAttributes.MouseAction[] rotateMouseEvents =
         {
             DEFAULT_ROTATE_MOUSE_MODS
         };
     private static final ActionAttributes.MouseAction DEFAULT_ROTATE_MOUSE_MODS_SHIFT =
         new ActionAttributes.MouseAction(MouseEvent.BUTTON1_DOWN_MASK);
+    // Speed in log-meters per wheel movement
     public static final ActionAttributes.MouseAction[] rotateMouseEventsShift =
         {
             DEFAULT_ROTATE_MOUSE_MODS_SHIFT
@@ -515,20 +238,6 @@ public class ViewInputAttributes
             DEFAULT_ROTATE_PITCHUP_KEY_ACT,
             DEFAULT_ROTATE_PITCHDOWN_KEY_ACT
         };
-
-    // Roll Keyboard events. Use CTRL-Left and CTRL-Right to change roll. 
-    protected static final ActionAttributes.KeyAction DEFAULT_ROTATE_ROLLUP_KEY_ACT =
-        new ActionAttributes.KeyAction(KeyEvent.VK_LEFT,
-            ActionAttributes.KeyAction.KA_DIR_Y, 1);
-    protected static final ActionAttributes.KeyAction DEFAULT_ROTATE_ROLLDOWN_KEY_ACT =
-        new ActionAttributes.KeyAction(KeyEvent.VK_RIGHT,
-            ActionAttributes.KeyAction.KA_DIR_Y, -1);
-    public static final ActionAttributes.KeyAction[] rollKeyEvents =
-        {
-            DEFAULT_ROTATE_ROLLUP_KEY_ACT,
-            DEFAULT_ROTATE_ROLLDOWN_KEY_ACT
-        };
-
     private static final ActionAttributes.KeyAction DEFAULT_ROTATE_PITCHUP_KEY_PAGE_ACT =
         new ActionAttributes.KeyAction(KeyEvent.VK_PAGE_UP,
             ActionAttributes.KeyAction.KA_DIR_Y, -1);
@@ -540,50 +249,6 @@ public class ViewInputAttributes
             DEFAULT_ROTATE_PITCHUP_KEY_PAGE_ACT,
             DEFAULT_ROTATE_PITCHDOWN_KEY_PAGE_ACT
         };
-
-    public static final boolean DEFAULT_MOVE_TO_SMOOTHING_ENABLED = true;
-    public static final boolean DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_ENABLED = true;
-    public static final boolean DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED = true;
-    public static final double DEFAULT_MOVE_TO_SMOOTHING_VALUE = 0.0; // [0, 1] smoothing value
-    public static final double DEFAULT_HORIZONTAL_TRANSLATE_SMOOTHING_VALUE = 0.4; // [0, 1] smoothing value
-    public static final double DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE = 0.85; // [0, 1] smoothing value
-    // Keyboard/Action calibration values for extensible view/navigation support
-    public static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE = 0.000005; // Speed in degrees per frame
-    public static final double DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE = 4.0; // Speed in degrees per frame
-    public static final double DEFAULT_KEY_VERTICAL_TRANSLATE_VALUE = 0.06; // Speed in log-meters per frame
-    // Mouse/Action calibration values for extensible view/navigation support
-    public static final double DEFAULT_MOUSE_MOVE_TO_MIN_VALUE = 0.95; // [0, 1] smoothing value
-    public static final double DEFAULT_MOUSE_MOVE_TO_MAX_VALUE = 0.90; // [0, 1] smoothing value
-    public static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MIN_VALUE = 0.00001;
-        // Speed in degrees per mouse movement
-    public static final double DEFAULT_MOUSE_HORIZONTAL_TRANSLATE_MAX_VALUE = 0.2;
-        // Speed in degrees per mouse movement
-    public static final double DEFAULT_MOUSE_VERTICAL_TRANSLATE_VALUE = 0.003; // Speed in log-meters per mouse movement
-    // MouseWheel/Action calibration values.
-    public static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE = 0.1;
-        // Speed in log-meters per wheel movement
-    public static final double DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_OSX = 0.01;
-        // Speed in log-meters per wheel movement
-
-    // Device sensitivity defaults.
-    public static final double DEFAULT_KEY_SENSITIVITY = 1.0; // Scalar multiplier
-    public static final double DEFAULT_MOUSE_SENSITIVITY = 1.0; // Scalar multiplier
-    public static final double DEFAULT_MOUSE_WHEEL_SENSITIVITY = 1.0; // Scalar multiplier
-    public static final double DEFAULT_SLOW_VALUE = 0.25; // Scalar multiplier
-
-    public static final boolean DEFAULT_ROTATE_SMOOTHING_ENABLED = true;
-    public static final double DEFAULT_ROTATE_SMOOTHING_VALUE = 0.7; // [0, 1] smoothing value
-    public static final boolean DEFAULT_ROLL_SMOOTHING_ENABLED = true;
-    public static final double DEFAULT_ROLL_SMOOTHING_VALUE = 0.7; // [0, 1] smoothing value
-
-    // Keyboard/Action calibration values.
-    public static final double DEFAULT_KEY_ROTATE_MIN_VALUE = 2.0; // Speed in degrees per frame
-    public static final double DEFAULT_KEY_ROTATE_MAX_VALUE = 2.2; // Speed in degrees per frame
-    public static final double DEFAULT_KEY_ROLL_MIN_VALUE = 2.0; // Speed in degrees per frame
-    public static final double DEFAULT_KEY_ROLL_MAX_VALUE = 2.2; // Speed in degrees per frame
-    public static final double DEFAULT_MOUSE_ROTATE_MIN_VALUE = 0.14; // Speed in degrees per mouse movement
-    public static final double DEFAULT_MOUSE_ROTATE_MAX_VALUE = 0.18; // Speed in degrees per mouse movement
-
     // Device attributes.
     private final Map<Object, DeviceAttributes> deviceMap = new HashMap<>();
     // Device/action pairing attributes.
@@ -593,17 +258,14 @@ public class ViewInputAttributes
     // that they are interested in, and only act on those keys.
     private final Map<Object, DeviceModifierMap> deviceModActionMap = new HashMap<>();
 
-    public ViewInputAttributes()
-    {
+    public ViewInputAttributes() {
 
         this.setDefaultDeviceAttributes();
         this.setDeviceModifierActionMaps();
     }
 
-    public ActionAttributesMap getActionMap(Object deviceKey)
-    {
-        if (deviceKey == null)
-        {
+    public ActionAttributesMap getActionMap(Object deviceKey) {
+        if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -612,16 +274,13 @@ public class ViewInputAttributes
         return this.deviceActionMap.get(deviceKey);
     }
 
-    public void setActionMap(Object deviceKey, ActionAttributesMap map)
-    {
-        if (deviceKey == null)
-        {
+    public void setActionMap(Object deviceKey, ActionAttributesMap map) {
+        if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (map == null)
-        {
+        if (map == null) {
             String message = Logging.getMessage("nullValue.MapIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -630,66 +289,54 @@ public class ViewInputAttributes
         this.deviceActionMap.put(deviceKey, map);
     }
 
-    public void addModifierAction(Object device, Integer modifier, ActionAttributes action)
-    {
+    public void addModifierAction(Object device, Integer modifier, ActionAttributes action) {
         this.addModifierActionList(device, modifier);
         DeviceModifierMap modActionMap = this.getModifierActionMap(device);
 
-        ActionAttributesList actionList = (ActionAttributesList) modActionMap.get(modifier);
+        List<ActionAttributes> actionList = (ActionAttributesList) modActionMap.get(modifier);
         actionList.remove(action);
         actionList.add(action);
     }
 
-    public void setValues(Object device, Object action, double minValue, double maxValue)
-    {
+    public void setValues(Object device, Object action, double minValue, double maxValue) {
         ActionAttributes actionAttrs = getActionAttributes(device, action);
-        if (actionAttrs == null)
-        {
+        if (actionAttrs == null) {
             String message = Logging.getMessage("nullValue.AttributesIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        else
-        {
+        else {
             actionAttrs.setValues(minValue, maxValue);
         }
     }
 
-    public void setActionTrigger(Object device, Object action, ActionAttributes.ActionTrigger trigger)
-    {
+    public void setActionTrigger(Object device, Object action, ActionAttributes.ActionTrigger trigger) {
         ActionAttributes actionAttrs = getActionAttributes(device, action);
-        if (actionAttrs == null)
-        {
+        if (actionAttrs == null) {
             String message = Logging.getMessage("nullValue.AttributesIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        else
-        {
+        else {
             actionAttrs.setActionTrigger(trigger);
         }
     }
 
-    public void addModifierActionList(Object device, Integer modifier)
-    {
+    public void addModifierActionList(Object device, Integer modifier) {
         DeviceModifierMap deviceActionMap = this.getModifierActionMap(device);
-        if (deviceActionMap == null)
-        {
+        if (deviceActionMap == null) {
             deviceActionMap = new DeviceModifierMap();
             this.setModifierActionMap(device, deviceActionMap);
         }
         ArrayList modifierList = deviceActionMap.get(modifier);
-        if (modifierList == null)
-        {
+        if (modifierList == null) {
             deviceActionMap.put(modifier, new ActionAttributesList());
         }
     }
 
-    public List getModifierActionList(Object device, Integer modifier)
-    {
+    public List getModifierActionList(Object device, Integer modifier) {
         Map<Object, ArrayList> deviceModActionMap = this.getModifierActionMap(device);
-        if (deviceModActionMap == null)
-        {
+        if (deviceModActionMap == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -697,10 +344,8 @@ public class ViewInputAttributes
         return (deviceModActionMap.get(modifier));
     }
 
-    public DeviceAttributes getDeviceAttributes(Object deviceKey)
-    {
-        if (deviceKey == null)
-        {
+    public DeviceAttributes getDeviceAttributes(Object deviceKey) {
+        if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -709,16 +354,13 @@ public class ViewInputAttributes
         return this.deviceMap.get(deviceKey);
     }
 
-    public void setDeviceAttributes(Object deviceKey, DeviceAttributes attributes)
-    {
-        if (deviceKey == null)
-        {
+    public void setDeviceAttributes(Object deviceKey, DeviceAttributes attributes) {
+        if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (attributes == null)
-        {
+        if (attributes == null) {
             String message = Logging.getMessage("nullValue.AttributesIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -727,10 +369,8 @@ public class ViewInputAttributes
         this.deviceMap.put(deviceKey, attributes);
     }
 
-    public DeviceModifierMap getModifierActionMap(Object deviceKey)
-    {
-        if (deviceKey == null)
-        {
+    public DeviceModifierMap getModifierActionMap(Object deviceKey) {
+        if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -739,16 +379,13 @@ public class ViewInputAttributes
         return this.deviceModActionMap.get(deviceKey);
     }
 
-    public void setModifierActionMap(Object deviceKey, DeviceModifierMap map)
-    {
-        if (deviceKey == null)
-        {
+    public void setModifierActionMap(Object deviceKey, DeviceModifierMap map) {
+        if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (map == null)
-        {
+        if (map == null) {
             String message = Logging.getMessage("nullValue.MapIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -757,16 +394,13 @@ public class ViewInputAttributes
         this.deviceModActionMap.put(deviceKey, map);
     }
 
-    public ActionAttributes getActionAttributes(Object deviceKey, Object actionKey)
-    {
-        if (deviceKey == null)
-        {
+    public ActionAttributes getActionAttributes(Object deviceKey, Object actionKey) {
+        if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (actionKey == null)
-        {
+        if (actionKey == null) {
             String message = Logging.getMessage("nullValue.ActionKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -780,16 +414,13 @@ public class ViewInputAttributes
     }
 
     public void addAction(Object deviceKey, Integer modifier, Object actionKey,
-        ActionAttributes actionAttrs)
-    {
-        if (deviceKey == null)
-        {
+        ActionAttributes actionAttrs) {
+        if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (actionKey == null)
-        {
+        if (actionKey == null) {
             String message = Logging.getMessage("nullValue.ActionKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -799,8 +430,7 @@ public class ViewInputAttributes
 
         // Get the Device -> Action map
         ActionAttributesMap deviceActionMap = this.getActionMap(deviceKey);
-        if (deviceActionMap == null)
-        {
+        if (deviceActionMap == null) {
             deviceActionMap = new ActionAttributesMap();
             this.setActionMap(deviceKey, deviceActionMap);
         }
@@ -810,19 +440,16 @@ public class ViewInputAttributes
 
     public void setMouseActionAttributes(String actionName, int modifier, ActionAttributes.ActionTrigger trigger,
         ActionAttributes.MouseAction[] mouseActions,
-        double minValue, double maxValue, boolean smoothingEnabled, double smoothingValue)
-    {
+        double minValue, double maxValue, boolean smoothingEnabled, double smoothingValue) {
         ActionAttributes actionAttrs = this.getActionAttributes(DEVICE_MOUSE, actionName);
-        if (actionAttrs != null)
-        {
+        if (actionAttrs != null) {
             actionAttrs.setValues(minValue, maxValue);
             actionAttrs.setMouseActions(mouseActions);
             actionAttrs.setActionTrigger(trigger);
             actionAttrs.setEnableSmoothing(smoothingEnabled);
             actionAttrs.setSmoothingValue(smoothingValue);
         }
-        else
-        {
+        else {
             this.addAction(DEVICE_MOUSE, modifier, actionName,
                 new ActionAttributes(mouseActions, trigger,
                     minValue, maxValue,
@@ -830,68 +457,53 @@ public class ViewInputAttributes
         }
     }
 
-    public void setActionListener(Object deviceKey, Object actionKey, ViewInputActionHandler listener)
-    {
-        if (deviceKey == null)
-        {
+    public void setActionListener(Object deviceKey, Object actionKey, ViewInputActionHandler listener) {
+        if (deviceKey == null) {
             String message = Logging.getMessage("nullValue.DeviceKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (actionKey == null)
-        {
+        if (actionKey == null) {
             String message = Logging.getMessage("nullValue.ActionKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
         ActionAttributesMap deviceActionMap = this.getActionMap(deviceKey);
-        if (deviceActionMap == null)
-        {
+        if (deviceActionMap == null) {
             String message = Logging.getMessage("nullValue.DeviceNotDefined");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
         ActionAttributes actions = deviceActionMap.getActionAttributes(actionKey);
-        if (actions == null)
-        {
+        if (actions == null) {
             String message = Logging.getMessage("nullValue.DeviceActionNotDefined");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (actions.getMouseActions() != null)
-        {
+        if (actions.getMouseActions() != null) {
             actions.setMouseActionListener(listener);
         }
-        else if (actions.getKeyActions() != null)
-        {
+        else if (actions.getKeyActions() != null) {
             actions.setActionListener(listener);
         }
     }
 
-    //**************************************************************//
-    //********************  Default Attributes  ********************//
-    //**************************************************************//
-
-    protected void setDefaultDeviceAttributes()
-    {
+    protected void setDefaultDeviceAttributes() {
         this.setDeviceAttributes(DEVICE_KEYBOARD, new DeviceAttributes(DEFAULT_KEY_SENSITIVITY));
         this.setDeviceAttributes(DEVICE_MOUSE, new DeviceAttributes(DEFAULT_MOUSE_SENSITIVITY));
         this.setDeviceAttributes(DEVICE_MOUSE_WHEEL, new DeviceAttributes(DEFAULT_MOUSE_WHEEL_SENSITIVITY));
     }
 
-    protected void setDeviceModifierActionMaps()
-    {
+    protected void setDeviceModifierActionMaps() {
         // Mouse Wheel Vertical Translation Event
-        if (Configuration.isMacOS())
-        {
+        if (Configuration.isMacOS()) {
             this.addAction(DEVICE_MOUSE_WHEEL, ActionAttributes.NO_MODIFIER, VIEW_VERTICAL_TRANSLATE,
                 new ActionAttributes(verticalTransMouseWheelEvents, ActionAttributes.ActionTrigger.ON_DRAG,
                     DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_OSX, DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE_OSX,
                     DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_ENABLED, DEFAULT_VERTICAL_TRANSLATE_SMOOTHING_VALUE));
         }
-        else
-        {
+        else {
             this.addAction(DEVICE_MOUSE_WHEEL, ActionAttributes.NO_MODIFIER, VIEW_VERTICAL_TRANSLATE,
                 new ActionAttributes(verticalTransMouseWheelEvents, ActionAttributes.ActionTrigger.ON_DRAG,
                     DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE, DEFAULT_MOUSE_WHEEL_VERTICAL_TRANSLATE_VALUE,
@@ -1014,8 +626,7 @@ public class ViewInputAttributes
                 0.1, 0.1, false, 0.1));
     }
 
-    protected ActionAttributes makeSlowActionAttributes(ActionAttributes attributes, double slowCoefficient)
-    {
+    protected ActionAttributes makeSlowActionAttributes(ActionAttributes attributes, double slowCoefficient) {
         ActionAttributes slowAttributes = new ActionAttributes(attributes);
         double[] values = attributes.getValues();
         slowAttributes.setValues(values[0] * slowCoefficient, values[1] * slowCoefficient);
@@ -1024,5 +635,274 @@ public class ViewInputAttributes
         slowAttributes.setKeyCodeModifier(attributes.getKeyCodeModifier());
         slowAttributes.setKeyActions(attributes.getKeyActions());
         return slowAttributes;
+    }
+
+    public static class DeviceModifierMap extends HashMap<Object, ArrayList> {
+    }
+
+    public static class ActionAttributesList extends ArrayList<ActionAttributes> {
+    }
+
+    //**************************************************************//
+    //********************  Default Attributes  ********************//
+    //**************************************************************//
+
+    public static class ActionAttributes {
+        public static final int NO_MODIFIER = 0;
+        private double minValue;
+        private double maxValue;
+        private boolean enableSmoothing;
+        private double smoothingValue;
+        private int keyCodeModifier;
+        private List keyActions;
+        private List mouseActions;
+        private ActionTrigger actionTrigger;
+        private KeyInputActionHandler actionListener;
+        private MouseInputActionHandler mouseActionListener;
+
+        public ActionAttributes(ActionAttributes.KeyAction[] keyActions, ActionTrigger trigger,
+            int modifier, double minValue, double maxValue,
+            boolean enableSmoothing, double smoothingValue) {
+            this.setValues(minValue, maxValue);
+            this.setEnableSmoothing(enableSmoothing);
+            this.setSmoothingValue(smoothingValue);
+            this.setKeyActions(keyActions);
+            this.setKeyCodeModifier(modifier);
+            this.setActionTrigger(trigger);
+            mouseActions = null;
+        }
+
+        public ActionAttributes(ActionAttributes.MouseAction[] mouseActions, ActionTrigger trigger,
+            double minValue, double maxValue, boolean enableSmoothing, double smoothingValue) {
+            this.setValues(minValue, maxValue);
+            this.setEnableSmoothing(enableSmoothing);
+            this.setSmoothingValue(smoothingValue);
+            this.setMouseActions(mouseActions);
+            this.setActionTrigger(trigger);
+            keyActions = null;
+        }
+
+        public ActionAttributes(double minValue, double maxValue, boolean enableSmoothing, double smoothingValue) {
+            this.setValues(minValue, maxValue);
+            this.setEnableSmoothing(enableSmoothing);
+            this.setSmoothingValue(smoothingValue);
+        }
+
+        public ActionAttributes(ActionAttributes attributes) {
+            if (attributes == null) {
+                String message = Logging.getMessage("nullValue.AttributesIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.minValue = attributes.minValue;
+            this.maxValue = attributes.maxValue;
+            this.smoothingValue = attributes.smoothingValue;
+            this.setActionListener(attributes.getActionListener());
+            this.setKeyActions(attributes.getKeyActions());
+            this.setActionTrigger(attributes.getActionTrigger());
+        }
+
+        public static ActionAttributes.MouseAction createMouseActionAttribute(int mouseButton) {
+            return (new MouseAction(mouseButton));
+        }
+
+        public KeyInputActionHandler getActionListener() {
+            return actionListener;
+        }
+
+        public void setActionListener(KeyInputActionHandler actionListener) {
+            this.actionListener = actionListener;
+        }
+
+        public MouseInputActionHandler getMouseActionListener() {
+            return mouseActionListener;
+        }
+
+        public void setMouseActionListener(MouseInputActionHandler mouseActionListener) {
+            this.mouseActionListener = mouseActionListener;
+        }
+
+        public double[] getValues() {
+            return new double[] {this.minValue, this.maxValue};
+        }
+
+        public void setValues(double minValue, double maxValue) {
+            if (minValue <= 0) {
+                String message = Logging.getMessage("generic.ArgumentOutOfRange", "minValue <= 0");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+            if (maxValue <= 0) {
+                String message = Logging.getMessage("generic.ArgumentOutOfRange", "maxValue <= 0");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.minValue = minValue;
+            this.maxValue = maxValue;
+        }
+
+        public void setValue(double value) {
+            this.setValues(value, value);
+        }
+
+        public boolean isEnableSmoothing() {
+            return this.enableSmoothing;
+        }
+
+        public void setEnableSmoothing(boolean enable) {
+            this.enableSmoothing = enable;
+        }
+
+        public double getSmoothingValue() {
+            return this.smoothingValue;
+        }
+
+        public void setSmoothingValue(double smoothingValue) {
+            if (smoothingValue < 0 || smoothingValue >= 1.0) {
+                String message = Logging.getMessage("generic.ArgumentOutOfRange",
+                    "smoothingValue < 0 || smoothingValue >= 1");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.smoothingValue = smoothingValue;
+        }
+
+        public int getKeyCodeModifier() {
+            return (this.keyCodeModifier);
+        }
+
+        public void setKeyCodeModifier(int modifier) {
+            this.keyCodeModifier = modifier;
+        }
+
+        public List getKeyActions() {
+            return (this.keyActions);
+        }
+
+        public void setKeyActions(KeyAction[] keyActions) {
+            this.keyActions = Arrays.asList(keyActions);
+        }
+
+        public void setKeyActions(List keyActions) {
+            this.keyActions = keyActions;
+        }
+
+        public List getMouseActions() {
+            return (this.mouseActions);
+        }
+
+        public void setMouseActions(MouseAction[] mouseActions) {
+            this.mouseActions = Arrays.asList(mouseActions);
+        }
+
+        public void setMouseActions(List mouseActions) {
+            this.mouseActions = mouseActions;
+        }
+
+        public ActionTrigger getActionTrigger() {
+            return this.actionTrigger;
+        }
+
+        public void setActionTrigger(ActionTrigger actionTrigger) {
+            this.actionTrigger = actionTrigger;
+        }
+
+        public enum ActionTrigger {
+            ON_PRESS,
+            ON_DRAG,
+            ON_KEY_DOWN,
+            ON_RELEASE
+        }
+
+        public static class KeyAction {
+            public static final int KA_DIR_X = 0;
+            public static final int KA_DIR_Y = 1;
+            public static final int KA_DIR_Z = 2;
+
+            public final int keyCode;
+            public final int sign;
+            public final int direction;
+
+            public KeyAction(int key, int direction, int sign) {
+                this.keyCode = key;
+                this.sign = sign;
+                this.direction = direction;
+            }
+        }
+
+        public static class MouseAction {
+            public final int mouseButton;
+
+            public MouseAction(int mouseButton) {
+                this.mouseButton = mouseButton;
+            }
+        }
+    }
+
+    public static class DeviceAttributes {
+        private double sensitivity;
+
+        public DeviceAttributes(double sensitivity) {
+            this.setSensitivity(sensitivity);
+        }
+
+        public DeviceAttributes(DeviceAttributes attributes) {
+            if (attributes == null) {
+                String message = Logging.getMessage("nullValue.AttributesIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.sensitivity = attributes.sensitivity;
+        }
+
+        public double getSensitivity() {
+            return this.sensitivity;
+        }
+
+        public void setSensitivity(double sensitivity) {
+            if (sensitivity <= 0) {
+                String message = Logging.getMessage("generic.ArgumentOutOfRange", "sensitivity <= 0");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.sensitivity = sensitivity;
+        }
+    }
+
+    public static class ActionAttributesMap {
+        private final Map<Object, ActionAttributes> actionMap = new HashMap<>();
+
+        public ActionAttributesMap() {
+        }
+
+        public ActionAttributes getActionAttributes(Object actionKey) {
+            if (actionKey == null) {
+                String message = Logging.getMessage("nullValue.ActionKeyIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            return this.actionMap.get(actionKey);
+        }
+
+        public void setActionAttributes(Object actionKey, ActionAttributes attributes) {
+            if (actionKey == null) {
+                String message = Logging.getMessage("nullValue.ActionKeyIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+            if (attributes == null) {
+                String message = Logging.getMessage("nullValue.AttributesIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.actionMap.put(actionKey, attributes);
+        }
     }
 }

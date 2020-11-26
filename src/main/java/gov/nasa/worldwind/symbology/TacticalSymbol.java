@@ -14,11 +14,11 @@ import gov.nasa.worldwind.util.UnitsFormat;
 /**
  * TacticalSymbol provides a common interface for displaying tactical point symbols from symbology sets. A tactical
  * symbol displays graphic and textual information about an object at a single geographic position at a particular point
- * in time. See the <a href="https://worldwind.arc.nasa.gov/java/tutorials/tactical-graphics/" target="_blank">Tutorial</a>
- * for instructions on using TacticalSymbol in an application.
- * <h2>Construction</h2> Implementations of this interface provide support for symbols belonging to a specific symbology
- * set. For example, class {@link gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol} provides support for
- * tactical symbols from the MIL-STD-2525 symbology specification.
+ * in time. See the <a href="https://worldwind.arc.nasa.gov/java/tutorials/tactical-graphics/"
+ * target="_blank">Tutorial</a> for instructions on using TacticalSymbol in an application.
+ * <h2>Construction</h2> Implementations of this interface provide support for symbols belonging to a specific
+ * symbology set. For example, class {@link gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol} provides
+ * support for tactical symbols from the MIL-STD-2525 symbology specification.
  * <p>
  * To create a tactical symbol, instantiate a concrete implementation appropriate for the desired symbology set. Pass a
  * string identifier, the desired geographic position, and (optionally) one or more symbol modifier key-value pairs to
@@ -69,8 +69,8 @@ import gov.nasa.worldwind.util.UnitsFormat;
  * For example, specifying the MIL-STD-2525 SIDC "SFGPU---------G" specifies a friendly ground unit symbol, and causes a
  * tactical symbol to configure the altitude mode as WorldWind.CLAMP_TO_GROUND. The automatically configured mode can be
  * overridden by calling setAltitudeMode.
- * <h2>Modifiers</h2> Symbols modifiers are optional attributes that augment or change a symbol's graphic. Modifiers can
- * be specified at construction by passing a list of key-value pairs, or after construction by calling {@link
+ * <h2>Modifiers</h2> Symbols modifiers are optional attributes that augment or change a symbol's graphic. Modifiers
+ * can be specified at construction by passing a list of key-value pairs, or after construction by calling {@link
  * #setModifier(String, Object)} with the modifier key and value. Which modifier keys are recognized by a tactical
  * symbol and how they affect the symbol's graphic is implementation dependent. Here's an example of setting the the
  * heading (direction of movement) modifier at construction for a MIL-STD-2525 friendly ground unit:
@@ -106,26 +106,7 @@ import gov.nasa.worldwind.util.UnitsFormat;
  * @author dcollins
  * @version $Id: TacticalSymbol.java 2370 2014-10-06 22:37:50Z tgaskins $
  */
-public interface TacticalSymbol extends WWObject, Renderable, Highlightable
-{
-    /**
-     * An interface to enable application selection of tactical symbol level of detail.
-     */
-    interface LODSelector
-    {
-        /**
-         * Modifies the symbol's attributes and properties to achieve a desired level of detail during rendering. This
-         * method is called during rendering in order to provide the application an opportunity to adjust the symbol's
-         * attributes and properties to achieve a level of detail based on the symbol's distance from the view's eye
-         * point or other criteria.
-         *
-         * @param dc          the current draw context.
-         * @param symbol      the symbol about to be rendered.
-         * @param eyeDistance the distance in meters from the view's eye point to the symbol's geographic position.
-         */
-        void selectLOD(DrawContext dc, TacticalSymbol symbol, double eyeDistance);
-    }
-
+public interface TacticalSymbol extends WWObject, Renderable, Highlightable {
     /**
      * Indicates this symbol's level of detail selector.
      *
@@ -165,7 +146,7 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
     String getIdentifier();
 
     /**
-     * Indicates this symbol's geographic position. See {@link #setPosition(gov.nasa.worldwind.geom.Position)} for a
+     * Indicates this symbol's geographic position. See {@link #setPosition(Position)} for a
      * description of how tactical symbols interpret their position.
      *
      * @return this symbol's current geographic position.
@@ -178,7 +159,6 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
      * altitudeMode. The type of graphic this symbol displays at the position is implementation dependent.
      *
      * @param position this symbol's new position.
-     *
      * @throws IllegalArgumentException if the position is <code>null</code>.
      */
     void setPosition(Position position);
@@ -275,10 +255,8 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
      * description of how modifiers values are interpreted.
      *
      * @param modifier the modifier key.
-     *
      * @return the modifier value. May be <code>null</code>, indicating that this symbol does not display the specified
      * modifier.
-     *
      * @throws IllegalArgumentException if the modifier is <code>null</code>.
      */
     Object getModifier(String modifier);
@@ -295,7 +273,6 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
      * @param modifier the modifier key.
      * @param value    the modifier value. May be <code>null</code>, indicating that the modifier should be removed from
      *                 this symbol.
-     *
      * @throws IllegalArgumentException if the modifier is <code>null</code>.
      */
     void setModifier(String modifier, Object value);
@@ -361,5 +338,22 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
      * @param unitsFormat Format used to format text modifiers.
      */
     void setUnitsFormat(UnitsFormat unitsFormat);
+
+    /**
+     * An interface to enable application selection of tactical symbol level of detail.
+     */
+    interface LODSelector {
+        /**
+         * Modifies the symbol's attributes and properties to achieve a desired level of detail during rendering. This
+         * method is called during rendering in order to provide the application an opportunity to adjust the symbol's
+         * attributes and properties to achieve a level of detail based on the symbol's distance from the view's eye
+         * point or other criteria.
+         *
+         * @param dc          the current draw context.
+         * @param symbol      the symbol about to be rendered.
+         * @param eyeDistance the distance in meters from the view's eye point to the symbol's geographic position.
+         */
+        void selectLOD(DrawContext dc, TacticalSymbol symbol, double eyeDistance);
+    }
 }
 

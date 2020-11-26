@@ -10,7 +10,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.SurfaceImageLayer;
-import gov.nasa.worldwind.render.SurfaceImage;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwindx.examples.util.ExampleUtil;
 
@@ -26,15 +26,17 @@ import java.io.File;
  * @author tag
  * @version $Id: ImportImagery.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class ImportImagery extends ApplicationTemplate
-{
+public class ImportImagery extends ApplicationTemplate {
     // The data to import.
-    protected static final String IMAGE_PATH = "/home/mpeterson/d/foo/usgs14-30cm-corpuschristi_2797134_nc/usgs14-nc-30cm-corpuschristi_14rpr5576.jp2";
+    protected static final String IMAGE_PATH
+        = "/home/mpeterson/d/foo/usgs14-30cm-corpuschristi_2797134_nc/usgs14-nc-30cm-corpuschristi_14rpr5576.jp2";
 
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Imagery Import", ImportImagery.AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             // Show the WAIT cursor because the import may take a while.
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
@@ -49,10 +51,8 @@ public class ImportImagery extends ApplicationTemplate
             t.start();
         }
 
-        protected void importImagery()
-        {
-            try
-            {
+        protected void importImagery() {
+            try {
                 // Read the data and save it in a temp file.
                 File sourceFile = ExampleUtil.saveResourceToTempFile(IMAGE_PATH, ".tif");
 
@@ -108,7 +108,7 @@ public class ImportImagery extends ApplicationTemplate
                 subRaster.dispose();
 
                 // Create a SurfaceImage to display the image over the specified sector.
-                final SurfaceImage si1 = new SurfaceImage(image, sector);
+                final Renderable si1 = new SurfaceImage(image, sector);
 
                 // On the event-dispatch thread, add the imported data as an SurfaceImageLayer.
                 SwingUtilities.invokeLater(() -> {
@@ -125,15 +125,9 @@ public class ImportImagery extends ApplicationTemplate
                     ExampleUtil.goTo(getWwd(), sector);
                 });
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Imagery Import", ImportImagery.AppFrame.class);
     }
 }

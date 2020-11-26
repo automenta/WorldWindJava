@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.logging.Level;
 
 /**
  * A simplified version of {@link GeographicTextRenderer} that participates in globe text decluttering. See {@link
@@ -26,8 +27,7 @@ import java.util.Iterator;
  * @author tag
  * @version $Id: DeclutteringTextRenderer.java 2392 2014-10-20 20:02:44Z tgaskins $
  */
-public class DeclutteringTextRenderer
-{
+public class DeclutteringTextRenderer {
     protected static final Font DEFAULT_FONT = Font.decode("Arial-PLAIN-12");
     protected static final Color DEFAULT_COLOR = Color.white;
 
@@ -36,8 +36,14 @@ public class DeclutteringTextRenderer
     // Flag indicating a JOGL text rendering problem. Set to avoid continual exception logging.
     protected boolean hasJOGLv111Bug = false;
 
-    public Font getDefaultFont()
-    {
+    protected static boolean isTextValid(GeographicText text, boolean checkPosition) {
+        if (text == null || text.getText() == null)
+            return false;
+
+        return !checkPosition || text.getPosition() != null;
+    }
+
+    public Font getDefaultFont() {
         return DEFAULT_FONT;
     }
 
@@ -46,11 +52,9 @@ public class DeclutteringTextRenderer
      *
      * @param dc   the current draw context.
      * @param font the text font.
-     *
      * @return a text renderer.
      */
-    public TextRenderer getTextRenderer(DrawContext dc, Font font)
-    {
+    public TextRenderer getTextRenderer(DrawContext dc, Font font) {
         return OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
     }
 
@@ -60,17 +64,14 @@ public class DeclutteringTextRenderer
      * @param dc           the current draw context.
      * @param textIterable a collection of text shapes to add to the ordered-renderable list.
      */
-    public void render(DrawContext dc, Iterable<? extends GeographicText> textIterable)
-    {
-        if (dc == null)
-        {
+    public void render(DrawContext dc, Iterable<? extends GeographicText> textIterable) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (textIterable == null)
-        {
+        if (textIterable == null) {
             String msg = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
@@ -90,8 +91,7 @@ public class DeclutteringTextRenderer
         Frustum frustumInModelCoords = dc.getView().getFrustumInModelCoordinates();
         double horizon = dc.getView().getHorizonDistance();
 
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             GeographicText text = iterator.next();
 
             if (!isTextValid(text, true))
@@ -100,9 +100,8 @@ public class DeclutteringTextRenderer
             if (!text.isVisible())
                 continue;
 
-            if (dc.is2DGlobe())
-            {
-                Sector limits = ((Globe2D)dc.getGlobe()).getProjection().getProjectionLimits();
+            if (dc.is2DGlobe()) {
+                Sector limits = ((Globe2D) dc.getGlobe()).getProjection().getProjectionLimits();
                 if (limits != null && !limits.contains(text.getPosition()))
                     continue;
             }
@@ -129,10 +128,8 @@ public class DeclutteringTextRenderer
         }
     }
 
-    protected void beginRendering(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    protected void beginRendering(DrawContext dc) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
@@ -173,10 +170,8 @@ public class DeclutteringTextRenderer
         gl.glAlphaFunc(GL2.GL_GREATER, 0.001f);
     }
 
-    protected void endRendering(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    protected void endRendering(DrawContext dc) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
@@ -194,10 +189,8 @@ public class DeclutteringTextRenderer
         gl.glPopAttrib();
     }
 
-    protected Vec4 drawText(DrawContext dc, DeclutterableText uText, double scale, double opacity) throws Exception
-    {
-        if (uText.getPoint() == null)
-        {
+    protected Vec4 drawText(DrawContext dc, DeclutterableText uText, double scale, double opacity) throws Exception {
+        if (uText.getPoint() == null) {
             String msg = Logging.getMessage("nullValue.PointIsNull");
             Logging.logger().fine(msg);
             return null;
@@ -221,8 +214,7 @@ public class DeclutteringTextRenderer
         TextRenderer textRenderer = this.getTextRenderer(dc, font);
 
         this.beginRendering(dc);
-        try
-        {
+        try {
             textRenderer.begin3DRendering();
 
             this.setDepthFunc(dc, screenPoint);
@@ -233,11 +225,9 @@ public class DeclutteringTextRenderer
 
             Point.Float drawPoint = this.computeDrawPoint(textBounds, screenPoint);
 
-            if (drawPoint != null)
-            {
-                if (scale != 1d)
-                {
-                    gl.glScaled(scale, scale, 1d);
+            if (drawPoint != null) {
+                if (scale != 1.0d) {
+                    gl.glScaled(scale, scale, 1.0d);
                     drawPoint.setLocation(drawPoint.x / (float) scale, drawPoint.y / (float) scale);
                 }
 
@@ -247,8 +237,7 @@ public class DeclutteringTextRenderer
                 color = this.applyOpacity(color, opacity);
 
                 Color background = geographicText.getBackgroundColor();
-                if (background != null)
-                {
+                if (background != null) {
                     background = this.applyOpacity(background, opacity);
                     textRenderer.setColor(background);
                     textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
@@ -258,16 +247,14 @@ public class DeclutteringTextRenderer
                 textRenderer.draw3D(charSequence, drawPoint.x, drawPoint.y, 0, 1);
                 textRenderer.flush();
 
-                if (scale != 1d)
+                if (scale != 1.0d)
                     gl.glLoadIdentity();
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             handleTextRendererExceptions(e);
         }
-        finally
-        {
+        finally {
             textRenderer.end3DRendering();
             this.endRendering(dc);
         }
@@ -275,27 +262,23 @@ public class DeclutteringTextRenderer
         return screenPoint;
     }
 
-    protected void setDepthFunc(DrawContext dc, Vec4 screenPoint)
-    {
+    protected void setDepthFunc(DrawContext dc, Vec4 screenPoint) {
         GL gl = dc.getGL();
 
         Position eyePos = dc.getView().getEyePosition();
-        if (eyePos == null)
-        {
+        if (eyePos == null) {
             gl.glDepthFunc(GL.GL_ALWAYS);
             return;
         }
 
         double altitude = eyePos.getElevation();
-        if (altitude < (dc.getGlobe().getMaxElevation() * dc.getVerticalExaggeration()))
-        {
-            double depth = screenPoint.z - (8d * 0.00048875809d);
-            depth = depth < 0d ? 0d : (Math.min(depth, 1d));
+        if (altitude < (dc.getGlobe().getMaxElevation() * dc.getVerticalExaggeration())) {
+            double depth = screenPoint.z - (8.0d * 0.00048875809d);
+            depth = depth < 0.0d ? 0.0d : (Math.min(depth, 1.0d));
             gl.glDepthFunc(GL.GL_LESS);
             gl.glDepthRange(depth, depth);
         }
-        else
-        {
+        else {
             gl.glDepthFunc(GL.GL_ALWAYS);
         }
     }
@@ -306,24 +289,13 @@ public class DeclutteringTextRenderer
      *
      * @param rect        the text rectangle to draw.
      * @param screenPoint the projected screen point the text relates to.
-     *
      * @return the final draw point for the given rectangle lower left corner or <code>null</code>.
      */
-    protected Point.Float computeDrawPoint(Rectangle2D rect, Vec4 screenPoint)
-    {
-        return new Point.Float((float) (screenPoint.x - rect.getWidth() / 2d), (float) (screenPoint.y));
+    protected Point.Float computeDrawPoint(Rectangle2D rect, Vec4 screenPoint) {
+        return new Point.Float((float) (screenPoint.x - rect.getWidth() / 2.0d), (float) (screenPoint.y));
     }
 
-    protected static boolean isTextValid(GeographicText text, boolean checkPosition)
-    {
-        if (text == null || text.getText() == null)
-            return false;
-
-        return !checkPosition || text.getPosition() != null;
-    }
-
-    protected Color applyOpacity(Color color, double opacity)
-    {
+    protected Color applyOpacity(Color color, double opacity) {
         if (opacity >= 1)
             return color;
 
@@ -331,8 +303,7 @@ public class DeclutteringTextRenderer
         return new Color(compArray[0], compArray[1], compArray[2], compArray[3] * (float) opacity);
     }
 
-    protected Rectangle2D computeTextBounds(DrawContext dc, DeclutterableText text) throws Exception
-    {
+    protected Rectangle2D computeTextBounds(DrawContext dc, DeclutterableText text) throws Exception {
         GeographicText geographicText = text.getText();
 
         final CharSequence charSequence = geographicText.getText();
@@ -347,38 +318,32 @@ public class DeclutteringTextRenderer
         if (font == null)
             font = this.getDefaultFont();
 
-        try
-        {
+        try {
             TextRenderer textRenderer = this.getTextRenderer(dc, font);
 
             Rectangle2D textBound = textRenderer.getBounds(charSequence);
-            double x = screenPoint.x - textBound.getWidth() / 2d;
+            double x = screenPoint.x - textBound.getWidth() / 2.0d;
             Rectangle2D bounds = new Rectangle2D.Float();
             bounds.setRect(x, screenPoint.y, textBound.getWidth(), textBound.getHeight());
 
             return bounds;
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             handleTextRendererExceptions(e);
             return null;
         }
     }
 
-    protected void handleTextRendererExceptions(Exception e) throws Exception
-    {
-        if (e instanceof IOException)
-        {
-            if (!this.hasJOGLv111Bug)
-            {
+    protected void handleTextRendererExceptions(Exception e) throws Exception {
+        if (e instanceof IOException) {
+            if (!this.hasJOGLv111Bug) {
                 // This is likely a known JOGL 1.1.1 bug - see AMZN-287 or 343
                 // Log once and then ignore.
-                Logging.logger().log(java.util.logging.Level.SEVERE, "generic.ExceptionWhileRenderingText", e);
+                Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingText", e);
                 this.hasJOGLv111Bug = true;
             }
         }
-        else
-        {
+        else {
             throw e;
         }
     }

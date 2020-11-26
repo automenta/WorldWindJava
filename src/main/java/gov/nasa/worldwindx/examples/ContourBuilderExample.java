@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.*;
 
 /**
- * Shows how to use the {@link gov.nasa.worldwind.util.ContourBuilder} class to compute contour lines in an arbitrary
+ * Shows how to use the {@link ContourBuilder} class to compute contour lines in an arbitrary
  * rectangular array of numeric values.
  * <p>
  * This example creates a 60x60 rectangular array of floating point values in the range from 0.0 to 1.0, inclusive. The
@@ -32,17 +32,18 @@ import java.util.*;
  * @author dcollins
  * @version $Id: ContourBuilderExample.java 2429 2014-11-14 17:52:34Z dcollins $
  */
-public class ContourBuilderExample extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+public class ContourBuilderExample extends ApplicationTemplate {
+    public static void main(String[] args) {
+        start("WorldWind Contour Building", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
         protected Sector arraySector;
         protected int arrayWidth;
         protected int arrayHeight;
         protected double[] arrayValues;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             // Create the rectangular array of numeric values in the range from 0.0 to 1.0, inclusive, and assign the
             // array a geographic sector.
             this.createRectangularArray();
@@ -66,15 +67,13 @@ public class ContourBuilderExample extends ApplicationTemplate
 
             // Build contour lines for a list of pre-determined threshold values. Contour line coordinates are computed
             // by mapping the rectangular array's coordinates to a geographic sector.
-            for (double value : Arrays.asList(0.083, 0.250, 0.416, 0.583, 0.75, 0.916))
-            {
+            for (double value : Arrays.asList(0.083, 0.250, 0.416, 0.583, 0.75, 0.916)) {
                 List<List<Position>> contourList = cb.buildContourLines(value, this.arraySector, 0); // altitude 0
                 this.addContourShapes(contourList, value, contourLayer);
             }
         }
 
-        protected void createRectangularArray()
-        {
+        protected void createRectangularArray() {
             this.arraySector = Sector.fromDegrees(20, 30, -110, -100);
             this.arrayWidth = 60;
             this.arrayHeight = 60;
@@ -82,8 +81,7 @@ public class ContourBuilderExample extends ApplicationTemplate
                 "gov/nasa/worldwindx/examples/data/GridValues01_60x60.csv");
         }
 
-        protected void addContourShapes(List<List<Position>> contourList, double value, RenderableLayer layer)
-        {
+        protected void addContourShapes(Iterable<List<Position>> contourList, double value, RenderableLayer layer) {
             String text = this.textForValue(value);
             Color color = this.colorForValue(value, 1.0); // color for value at 100% brightness
 
@@ -91,8 +89,7 @@ public class ContourBuilderExample extends ApplicationTemplate
             attrs.setOutlineMaterial(new Material(color));
             attrs.setOutlineWidth(2);
 
-            for (List<Position> positions : contourList)
-            {
+            for (List<Position> positions : contourList) {
                 Path path = new Path(positions);
                 path.setAttributes(attrs);
                 path.setSurfacePath(true);
@@ -101,12 +98,10 @@ public class ContourBuilderExample extends ApplicationTemplate
             }
         }
 
-        protected void addRectangularArrayShapes(RenderableLayer layer)
-        {
-            ArrayList<AnalyticSurface.GridPointAttributes> pointAttrs =
+        protected void addRectangularArrayShapes(RenderableLayer layer) {
+            List<AnalyticSurface.GridPointAttributes> pointAttrs =
                 new ArrayList<>();
-            for (double value : this.arrayValues)
-            {
+            for (double value : this.arrayValues) {
                 Color color = this.colorForValue(value, 0.5); // color for value at 50% brightness
                 pointAttrs.add(AnalyticSurface.createGridPointAttributes(value, color));
             }
@@ -124,19 +119,12 @@ public class ContourBuilderExample extends ApplicationTemplate
             layer.addRenderable(surface);
         }
 
-        protected Color colorForValue(double value, double brightness)
-        {
+        protected Color colorForValue(double value, double brightness) {
             return Color.getHSBColor((float) value, 1.0f, (float) brightness); // use array value as hue
         }
 
-        protected String textForValue(double value)
-        {
+        protected String textForValue(double value) {
             return String.format("%.2f", value);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        start("WorldWind Contour Building", AppFrame.class);
     }
 }

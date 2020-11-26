@@ -21,122 +21,13 @@ import java.util.*;
  * @author tag
  * @version $Id: RasterServerConfiguration.java 2813 2015-02-18 23:35:24Z tgaskins $
  */
-public class RasterServerConfiguration extends AbstractXMLEventParser
-{
-    protected static class Property extends AbstractXMLEventParser
-    {
-        public Property(String namespaceURI)
-        {
-            super(namespaceURI);
-        }
-
-        public String getName()
-        {
-            return (String) this.getField("name");
-        }
-
-        public String getValue()
-        {
-            return (String) this.getField("value");
-        }
-    }
-
-    protected static class RasterSector extends AbstractXMLEventParser
-    {
-        public RasterSector(String namespaceURI)
-        {
-            super(namespaceURI);
-        }
-
-        public Sector getSector()
-        {
-            AbstractXMLEventParser corner = (AbstractXMLEventParser) this.getField("SouthWest");
-            AbstractXMLEventParser latLon = (AbstractXMLEventParser) corner.getField("LatLon");
-            double minLat = Double.parseDouble((String) latLon.getField("latitude"));
-            double minLon = Double.parseDouble((String) latLon.getField("longitude"));
-            String units = (String) latLon.getField("units");
-
-            corner = (AbstractXMLEventParser) this.getField("NorthEast");
-            latLon = (AbstractXMLEventParser) corner.getField("LatLon");
-            double maxLat = Double.parseDouble((String) latLon.getField("latitude"));
-            double maxLon = Double.parseDouble((String) latLon.getField("longitude"));
-
-            if (units.equals("radians"))
-                return Sector.fromRadians(minLat, maxLat, minLon, maxLon);
-            else
-                return Sector.fromDegrees(minLat, maxLat, minLon, maxLon);
-        }
-    }
-
-    protected static class Corner extends AbstractXMLEventParser
-    {
-        public Corner(String namespaceURI)
-        {
-            super(namespaceURI);
-        }
-    }
-
-    public static class Source extends AbstractXMLEventParser
-    {
-        public Source(String namespaceURI)
-        {
-            super(namespaceURI);
-        }
-
-        public String getPath()
-        {
-            return (String) this.getField("path");
-        }
-
-        public String getType()
-        {
-            return (String) this.getField("type");
-        }
-
-        public Sector getSector()
-        {
-            return ((RasterSector) this.getField("Sector")).getSector();
-        }
-    }
-
-    protected static class Sources extends AbstractXMLEventParser
-    {
-        protected final ArrayList<Source> sources = new ArrayList<>();
-
-        public Sources(String namespaceURI)
-        {
-            super(namespaceURI);
-        }
-
-        public ArrayList<Source> getSources()
-        {
-            return this.sources;
-        }
-
-        protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-            throws XMLStreamException
-        {
-            if (ctx.isStartElement(event, "Source"))
-            {
-                Source s = (Source) ctx.getParser(event).parse(ctx, event);
-                this.sources.add(s);
-            }
-            else
-            {
-                super.doParseEventContent(ctx, event, args);
-            }
-        }
-    }
-
+public class RasterServerConfiguration extends AbstractXMLEventParser {
     protected static String namespaceURI;
-
     protected final XMLEventReader eventReader;
+    protected final HashMap<String, String> properties = new HashMap<>();
     protected XMLEventParserContext parserContext;
 
-    protected final HashMap<String, String> properties = new HashMap<>();
-
-    public RasterServerConfiguration(Object docSource)
-    {
+    public RasterServerConfiguration(Object docSource) {
         super(namespaceURI);
 
         this.eventReader = this.createReader(docSource);
@@ -144,63 +35,52 @@ public class RasterServerConfiguration extends AbstractXMLEventParser
         this.initialize();
     }
 
-    protected void initialize()
-    {
+    protected void initialize() {
         this.parserContext = this.createParserContext(this.eventReader);
     }
 
-    protected XMLEventReader createReader(Object docSource)
-    {
+    protected XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
     }
 
-    protected XMLEventParserContext createParserContext(XMLEventReader reader)
-    {
+    protected XMLEventParserContext createParserContext(XMLEventReader reader) {
         this.parserContext = new BasicXMLEventParserContext(reader);
         this.parserContext.setDefaultNamespaceURI(this.getNamespaceURI());
 
         return this.parserContext;
     }
 
-    public XMLEventParserContext getParserContext()
-    {
+    public XMLEventParserContext getParserContext() {
         return this.parserContext;
     }
 
-    public String getVersion()
-    {
+    public String getVersion() {
         return (String) this.getField("version");
     }
 
-    public Sector getSector()
-    {
+    public Sector getSector() {
         RasterSector sector = (RasterSector) this.getField("Sector");
 
         return sector != null ? sector.getSector() : null;
     }
 
-    public HashMap<String, String> getProperties()
-    {
+    public HashMap<String, String> getProperties() {
         return this.properties;
     }
 
-    public ArrayList<Source> getSources()
-    {
+    public ArrayList<Source> getSources() {
         return ((Sources) this.getField("Sources")).getSources();
     }
 
-    public RasterServerConfiguration parse(Object... args) throws XMLStreamException
-    {
+    public RasterServerConfiguration parse(Object... args) throws XMLStreamException {
         XMLEventParserContext ctx = this.parserContext;
         QName capsName = new QName(this.getNamespaceURI(), "RasterServer");
 
-        for (XMLEvent event = ctx.nextEvent(); ctx.hasNext(); event = ctx.nextEvent())
-        {
+        for (XMLEvent event = ctx.nextEvent(); ctx.hasNext(); event = ctx.nextEvent()) {
             if (event == null)
                 continue;
 
-            if (event.isStartElement() && event.asStartElement().getName().equals(capsName))
-            {
+            if (event.isStartElement() && event.asStartElement().getName().equals(capsName)) {
                 // Parse the attributes in order to get the version number in order to determine the namespaces.
                 this.doParseEventAttributes(ctx, event);
                 ctx.setDefaultNamespaceURI(this.getNamespaceURI());
@@ -217,21 +97,17 @@ public class RasterServerConfiguration extends AbstractXMLEventParser
     }
 
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
-        if (ctx.isStartElement(event, "Property"))
-        {
+        throws XMLStreamException {
+        if (ctx.isStartElement(event, "Property")) {
             Property p = (Property) ctx.getParser(event).parse(ctx, event);
             this.properties.put(p.getName(), p.getValue());
         }
-        else
-        {
+        else {
             super.doParseEventContent(ctx, event, args);
         }
     }
 
-    protected void registerParsers(XMLEventParserContext ctx)
-    {
+    protected void registerParsers(XMLEventParserContext ctx) {
         ctx.registerParser(new QName(this.getNamespaceURI(), "Property"),
             new Property(this.getNamespaceURI()));
 
@@ -252,5 +128,90 @@ public class RasterServerConfiguration extends AbstractXMLEventParser
 
         ctx.registerParser(new QName(this.getNamespaceURI(), "Sources"),
             new Sources(this.getNamespaceURI()));
+    }
+
+    protected static class Property extends AbstractXMLEventParser {
+        public Property(String namespaceURI) {
+            super(namespaceURI);
+        }
+
+        public String getName() {
+            return (String) this.getField("name");
+        }
+
+        public String getValue() {
+            return (String) this.getField("value");
+        }
+    }
+
+    protected static class RasterSector extends AbstractXMLEventParser {
+        public RasterSector(String namespaceURI) {
+            super(namespaceURI);
+        }
+
+        public Sector getSector() {
+            AbstractXMLEventParser corner = (AbstractXMLEventParser) this.getField("SouthWest");
+            AbstractXMLEventParser latLon = (AbstractXMLEventParser) corner.getField("LatLon");
+            double minLat = Double.parseDouble((String) latLon.getField("latitude"));
+            double minLon = Double.parseDouble((String) latLon.getField("longitude"));
+            String units = (String) latLon.getField("units");
+
+            corner = (AbstractXMLEventParser) this.getField("NorthEast");
+            latLon = (AbstractXMLEventParser) corner.getField("LatLon");
+            double maxLat = Double.parseDouble((String) latLon.getField("latitude"));
+            double maxLon = Double.parseDouble((String) latLon.getField("longitude"));
+
+            if (units.equals("radians"))
+                return Sector.fromRadians(minLat, maxLat, minLon, maxLon);
+            else
+                return Sector.fromDegrees(minLat, maxLat, minLon, maxLon);
+        }
+    }
+
+    protected static class Corner extends AbstractXMLEventParser {
+        public Corner(String namespaceURI) {
+            super(namespaceURI);
+        }
+    }
+
+    public static class Source extends AbstractXMLEventParser {
+        public Source(String namespaceURI) {
+            super(namespaceURI);
+        }
+
+        public String getPath() {
+            return (String) this.getField("path");
+        }
+
+        public String getType() {
+            return (String) this.getField("type");
+        }
+
+        public Sector getSector() {
+            return ((RasterSector) this.getField("Sector")).getSector();
+        }
+    }
+
+    protected static class Sources extends AbstractXMLEventParser {
+        protected final ArrayList<Source> sources = new ArrayList<>();
+
+        public Sources(String namespaceURI) {
+            super(namespaceURI);
+        }
+
+        public ArrayList<Source> getSources() {
+            return this.sources;
+        }
+
+        protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
+            throws XMLStreamException {
+            if (ctx.isStartElement(event, "Source")) {
+                Source s = (Source) ctx.getParser(event).parse(ctx, event);
+                this.sources.add(s);
+            }
+            else {
+                super.doParseEventContent(ctx, event, args);
+            }
+        }
     }
 }

@@ -16,10 +16,8 @@ import java.awt.event.*;
  * @author Patrick Murris
  * @version $Id: BulkDownloadFrame.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class BulkDownloadFrame extends JFrame
-{
-    public BulkDownloadFrame(WorldWindow wwd)
-    {
+public class BulkDownloadFrame extends JFrame {
+    public BulkDownloadFrame(WorldWindow wwd) {
         final BulkDownloadPanel panel = new BulkDownloadPanel(wwd);
         final JFrame frameInstance = this;
 
@@ -27,14 +25,11 @@ public class BulkDownloadFrame extends JFrame
         this.add(panel);
         this.pack();
         this.setAlwaysOnTop(true);
-        this.setDefaultCloseOperation (JFrame.DO_NOTHING_ON_CLOSE);
-        this.addWindowListener(new WindowAdapter()
-        {
-            public void windowClosing(WindowEvent e)
-            {
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
                 // Check whether some downloads are active before closing the frame
-                if(panel.hasActiveDownloads())
-                {
+                if (panel.hasActiveDownloads()) {
                     int choice = JOptionPane.showConfirmDialog(frameInstance, "Cancel all active downloads?",
                         "Active downloads", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if (choice == JOptionPane.CANCEL_OPTION)
@@ -50,6 +45,5 @@ public class BulkDownloadFrame extends JFrame
                 setVisible(false);
             }
         });
-
     }
 }

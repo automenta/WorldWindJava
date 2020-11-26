@@ -14,13 +14,12 @@ import java.util.EventListener;
  * @author tag
  * @version $Id: BulkRetrievalListener.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface BulkRetrievalListener extends EventListener
-{
+public interface BulkRetrievalListener extends EventListener {
     /**
      * A bulk-download event occurred, either a succes, a failure or an extended event.
      *
      * @param event the event that occurred.
-     * @see gov.nasa.worldwind.retrieve.BulkRetrievable 
+     * @see gov.nasa.worldwind.retrieve.BulkRetrievable
      */
     void eventOccurred(BulkRetrievalEvent event);
 }

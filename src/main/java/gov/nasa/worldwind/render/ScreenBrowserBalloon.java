@@ -12,15 +12,14 @@ import gov.nasa.worldwind.util.Logging;
 import java.awt.*;
 
 /**
- * A <code>{@link gov.nasa.worldwind.render.ScreenBalloon}</code> that displays HTML, JavaScript, and Flash content
+ * A <code>{@link ScreenBalloon}</code> that displays HTML, JavaScript, and Flash content
  * using the system's native browser, and who's origin is located at a point on the screen.
  *
  * @author pabercrombie
  * @version $Id: ScreenBrowserBalloon.java 2148 2014-07-14 16:27:49Z tgaskins $
- * @see gov.nasa.worldwind.render.AbstractBrowserBalloon
+ * @see AbstractBrowserBalloon
  */
-public class ScreenBrowserBalloon extends AbstractBrowserBalloon implements ScreenBalloon
-{
+public class ScreenBrowserBalloon extends AbstractBrowserBalloon implements ScreenBalloon {
     /**
      * Indicates this balloon's screen location. The screen location's coordinate system has its origin in the upper
      * left corner of the <code>WorldWindow</code>, with the y-axis pointing right and the x-axis pointing down.
@@ -34,15 +33,12 @@ public class ScreenBrowserBalloon extends AbstractBrowserBalloon implements Scre
      * @param text  the balloon's initial text content.
      * @param point the balloon's initial screen location, in AWT coordinates (origin at upper left corner of the
      *              <code>WorldWindow</code>).
-     *
      * @throws IllegalArgumentException if either <code>text</code> or <code>point</code> are <code>null</code>.
      */
-    public ScreenBrowserBalloon(String text, Point point)
-    {
+    public ScreenBrowserBalloon(String text, Point point) {
         super(text);
 
-        if (point == null)
-        {
+        if (point == null) {
             String message = Logging.getMessage("nullValue.PointIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -52,22 +48,22 @@ public class ScreenBrowserBalloon extends AbstractBrowserBalloon implements Scre
     }
 
     @Override
-    protected OrderedBrowserBalloon createOrderedRenderable()
-    {
+    protected OrderedBrowserBalloon createOrderedRenderable() {
         return new OrderedBrowserBalloon();
     }
 
-    /** {@inheritDoc} */
-    public Point getScreenLocation()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Point getScreenLocation() {
         return this.screenLocation;
     }
 
-    /** {@inheritDoc} */
-    public void setScreenLocation(Point point)
-    {
-        if (point == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void setScreenLocation(Point point) {
+        if (point == null) {
             String message = Logging.getMessage("nullValue.PointIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -87,8 +83,7 @@ public class ScreenBrowserBalloon extends AbstractBrowserBalloon implements Scre
      *
      * @param dc the current draw context.
      */
-    protected void computeBalloonPoints(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void computeBalloonPoints(DrawContext dc, OrderedBrowserBalloon obb) {
         this.screenOffset = null;
         obb.screenRect = null;
         obb.screenExtent = null;
@@ -122,9 +117,10 @@ public class ScreenBrowserBalloon extends AbstractBrowserBalloon implements Scre
         obb.eyeDistance = 0;
     }
 
-    /** {@inheritDoc} */
-    protected void setupDepthTest(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    protected void setupDepthTest(DrawContext dc, OrderedBrowserBalloon obb) {
         dc.getGL().glDisable(GL.GL_DEPTH_TEST);
     }
 }

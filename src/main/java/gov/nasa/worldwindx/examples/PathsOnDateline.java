@@ -20,12 +20,13 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: PathsOnDateline.java 2189 2014-07-30 19:25:51Z tgaskins $
  */
-public class PathsOnDateline extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class PathsOnDateline extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("Paths on Dateline", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             RenderableLayer layer = new RenderableLayer();
@@ -33,26 +34,28 @@ public class PathsOnDateline extends ApplicationTemplate
             // Create and set an attribute bundle.
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineMaterial(new Material(WWUtil.makeRandomColor(null)));
-            attrs.setOutlineWidth(2d);
+            attrs.setOutlineWidth(2.0d);
+
 
             ArrayList<Position> pathPositions = new ArrayList<>();
-            pathPositions.add(Position.fromDegrees(28, 170, 1e4));
-            pathPositions.add(Position.fromDegrees(35, -179, 1e4));
-            pathPositions.add(Position.fromDegrees(38, 180, 1e4));
-            pathPositions.add(Position.fromDegrees(35, -170, 1e4));
-            pathPositions.add(Position.fromDegrees(30, -170, 1e4));
-            pathPositions.add(Position.fromDegrees(32, -180, 1e4));
-            pathPositions.add(Position.fromDegrees(30, 170, 1e4));
+            pathPositions.add(Position.fromDegrees(28, 170, 1.0e4));
+            pathPositions.add(Position.fromDegrees(35, -179, 1.0e4));
+            pathPositions.add(Position.fromDegrees(38, 180, 1.0e4));
+            pathPositions.add(Position.fromDegrees(35, -170, 1.0e4));
+            pathPositions.add(Position.fromDegrees(30, -170, 1.0e4));
+            pathPositions.add(Position.fromDegrees(32, -180, 1.0e4));
+            pathPositions.add(Position.fromDegrees(30, 170, 1.0e4));
             Path path = new Path(pathPositions);
             path.setAttributes(attrs);
-            BasicShapeAttributes highlightAttrs = new BasicShapeAttributes(attrs);
+            ShapeAttributes highlightAttrs = new BasicShapeAttributes(attrs);
             highlightAttrs.setOutlineMaterial(Material.WHITE);
             path.setHighlightAttributes(highlightAttrs);
             path.setVisible(true);
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             path.setPathType(AVKey.GREAT_CIRCLE);
             path.setShowPositions(true);
-            path.setShowPositionsThreshold(1e12);
+            path.setShowPositionsThreshold(1.0e12);
+            //path.setExtrude(true);
 
             // Configure the path to draw its outline and position points in the colors below. We use three colors that
             // are evenly distributed along the path's length and gradually increasing in opacity. Position colors may
@@ -60,9 +63,9 @@ public class PathsOnDateline extends ApplicationTemplate
             // color to each path position.
             Color[] colors =
                 {
-                    new Color(1f, 0f, 0f, 0.4f),
-                    new Color(0f, 1f, 0f, 0.6f),
-                    new Color(0f, 0f, 1f, 1.0f),
+                    new Color(1.0f, 0.0f, 0.0f, 0.4f),
+                    new Color(0.0f, 1.0f, 0.0f, 0.6f),
+                    new Color(0.0f, 0.0f, 1.0f, 1.0f),
                 };
             path.setPositionColors(new ExamplePositionColors(colors, pathPositions.size()));
 
@@ -75,31 +78,23 @@ public class PathsOnDateline extends ApplicationTemplate
     }
 
     /**
-     * Example implementation of {@link gov.nasa.worldwind.render.Path.PositionColors} that evenly distributes the
+     * Example implementation of {@link Path.PositionColors} that evenly distributes the
      * specified colors along a path with the specified length. For example, if the Colors array contains red, green,
      * blue (in that order) and the pathLength is 6, this assigns the following colors to each path ordinal: 0:red,
      * 1:red, 2:green, 3:green, 4:blue, 5:blue.
      */
-    public static class ExamplePositionColors implements Path.PositionColors
-    {
+    public static class ExamplePositionColors implements Path.PositionColors {
         protected final Color[] colors;
         protected final int pathLength;
 
-        public ExamplePositionColors(Color[] colors, int pathLength)
-        {
+        public ExamplePositionColors(Color[] colors, int pathLength) {
             this.colors = colors;
             this.pathLength = pathLength;
         }
 
-        public Color getColor(Position position, int ordinal)
-        {
+        public Color getColor(Position position, int ordinal) {
             int index = colors.length * ordinal / this.pathLength;
             return this.colors[index];
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("Paths on Dateline", AppFrame.class);
     }
 }

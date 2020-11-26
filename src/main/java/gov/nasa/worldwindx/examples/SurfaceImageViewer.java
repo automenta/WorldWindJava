@@ -29,46 +29,20 @@ import java.io.*;
  * <p>
  * For example, a world file accompanying a jpeg file would have the extension .jgw :
  * <p>
- * image.jpg           // image file
- * image.jgw           // accompanying world file
+ * image.jpg           // image file image.jgw           // accompanying world file
  *
  * @author tag
  * @version $Id: SurfaceImageViewer.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class SurfaceImageViewer extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+public class SurfaceImageViewer extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Surface Images", SurfaceImageViewer.AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
         private final JFileChooser fileChooser = new JFileChooser();
-        private JSlider opacitySlider;
-        private SurfaceImageLayer layer;
-        private final JLabel statusLabel = new JLabel("status: ready");
-
-        public AppFrame()
-        {
-            super(true, true, false);
-
-            try
-            {
-                this.layer = new SurfaceImageLayer();
-                this.layer.setOpacity(1);
-                this.layer.setPickEnabled(false);
-                this.layer.setName("Surface Images");
-
-                insertBeforeCompass(this.getWwd(), layer);
-
-                this.getControlPanel().add(makeControlPanel(), BorderLayout.SOUTH);
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        final Action openElevationsAction = new AbstractAction("Open Elevation File...")
-        {
-            public void actionPerformed(ActionEvent e)
-            {
+        final Action openElevationsAction = new AbstractAction("Open Elevation File...") {
+            public void actionPerformed(ActionEvent e) {
                 int status = fileChooser.showOpenDialog(AppFrame.this);
                 if (status != JFileChooser.APPROVE_OPTION)
                     return;
@@ -78,16 +52,14 @@ public class SurfaceImageViewer extends ApplicationTemplate
                     return;
 
                 Thread t = new Thread(() -> {
-                    try
-                    {
+                    try {
                         CompoundElevationModel cem
                             = (CompoundElevationModel) getWwd().getModel().getGlobe().getElevationModel();
                         LocalElevationModel em = new LocalElevationModel();
                         em.addElevations(imageFile.getPath());
                         cem.addElevationModel(em);
                     }
-                    catch (IOException e1)
-                    {
+                    catch (IOException e1) {
                         e1.printStackTrace();
                     }
                 });
@@ -95,11 +67,11 @@ public class SurfaceImageViewer extends ApplicationTemplate
                 t.start();
             }
         };
-
-        final Action openImageAction = new AbstractAction("Open Image File...")
-        {
-            public void actionPerformed(ActionEvent actionEvent)
-            {
+        private final JLabel statusLabel = new JLabel("status: ready");
+        private JSlider opacitySlider;
+        private SurfaceImageLayer layer;
+        final Action openImageAction = new AbstractAction("Open Image File...") {
+            public void actionPerformed(ActionEvent actionEvent) {
                 int status = fileChooser.showOpenDialog(AppFrame.this);
                 if (status != JFileChooser.APPROVE_OPTION)
                     return;
@@ -128,8 +100,25 @@ public class SurfaceImageViewer extends ApplicationTemplate
             }
         };
 
-        private JPanel makeControlPanel()
-        {
+        public AppFrame() {
+            super(true, true, false);
+
+            try {
+                this.layer = new SurfaceImageLayer();
+                this.layer.setOpacity(1);
+                this.layer.setPickEnabled(false);
+                this.layer.setName("Surface Images");
+
+                insertBeforeCompass(this.getWwd(), layer);
+
+                this.getControlPanel().add(makeControlPanel(), BorderLayout.SOUTH);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private JPanel makeControlPanel() {
             JPanel controlPanel = new JPanel(new GridLayout(0, 1, 5, 5));
             JButton openImageButton = new JButton(openImageAction);
             controlPanel.add(openImageButton);
@@ -140,7 +129,7 @@ public class SurfaceImageViewer extends ApplicationTemplate
             this.opacitySlider.setEnabled(true);
             this.opacitySlider.addChangeListener(e -> {
                 int value = opacitySlider.getValue();
-                layer.setOpacity(value / 100d);
+                layer.setOpacity(value / 100.0d);
                 getWwd().redraw();
             });
             JPanel opacityPanel = new JPanel(new BorderLayout(5, 5));
@@ -158,10 +147,5 @@ public class SurfaceImageViewer extends ApplicationTemplate
 
             return controlPanel;
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Surface Images", SurfaceImageViewer.AppFrame.class);
     }
 }

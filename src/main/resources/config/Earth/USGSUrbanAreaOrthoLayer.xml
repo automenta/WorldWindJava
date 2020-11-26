@@ -51,10 +51,10 @@
         </StaleRequestLimit>
     </RetrievalTimeouts>
     <!--<TransparencyColors>-->
-        <!--<Color red="255" green="255" blue="255"/>-->
-        <!--<Color red="254" green="254" blue="254"/>-->
-        <!--<Color red="254" green="254" blue="254"/>-->
-        <!--<Color red="254" green="254" blue="254"/>-->
-        <!--<Color red="254" green="254" blue="254"/>-->
+    <!--<Color red="255" green="255" blue="255"/>-->
+    <!--<Color red="254" green="254" blue="254"/>-->
+    <!--<Color red="254" green="254" blue="254"/>-->
+    <!--<Color red="254" green="254" blue="254"/>-->
+    <!--<Color red="254" green="254" blue="254"/>-->
     <!--</TransparencyColors>-->
 </Layer>

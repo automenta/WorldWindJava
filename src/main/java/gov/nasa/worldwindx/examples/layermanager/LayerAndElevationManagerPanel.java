@@ -17,13 +17,11 @@ import java.awt.*;
  * @author tag
  * @version $Id: LayerAndElevationManagerPanel.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class LayerAndElevationManagerPanel extends JPanel
-{
+public class LayerAndElevationManagerPanel extends JPanel {
     protected final LayerManagerPanel layerManagerPanel;
     protected final ElevationModelManagerPanel elevationModelManagerPanel;
 
-    public LayerAndElevationManagerPanel(WorldWindow wwd)
-    {
+    public LayerAndElevationManagerPanel(WorldWindow wwd) {
         super(new BorderLayout(10, 10));
 
         this.add(this.layerManagerPanel = new LayerManagerPanel(wwd), BorderLayout.CENTER);
@@ -31,18 +29,15 @@ public class LayerAndElevationManagerPanel extends JPanel
         this.add(this.elevationModelManagerPanel = new ElevationModelManagerPanel(wwd), BorderLayout.SOUTH);
     }
 
-    public void updateLayers(WorldWindow wwd)
-    {
+    public void updateLayers(WorldWindow wwd) {
         this.layerManagerPanel.update(wwd);
     }
 
-    public void updateElevations(WorldWindow wwd)
-    {
+    public void updateElevations(WorldWindow wwd) {
         this.elevationModelManagerPanel.update(wwd);
     }
 
-    public void update(WorldWindow wwd)
-    {
+    public void update(WorldWindow wwd) {
         this.updateLayers(wwd);
         this.updateElevations(wwd);
     }

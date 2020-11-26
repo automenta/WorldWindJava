@@ -8,36 +8,19 @@ package gov.nasa.worldwind.formats.rpf;
 import gov.nasa.worldwind.formats.nitfs.*;
 
 import java.awt.image.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author lado
  * @version $Id: RPFImageFile.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RPFImageFile extends RPFFile
-{
+public class RPFImageFile extends RPFFile {
     private NITFSImageSegment imageSegment = null;
     private UserDefinedImageSubheader imageSubheader = null;
     private RPFFrameFileComponents rpfFrameFileComponents = null;
 
-    public RPFFrameFileComponents getRPFFrameFileComponents()
-    {
-        return this.rpfFrameFileComponents;
-    }
-
-    public UserDefinedImageSubheader getImageSubheader()
-    {
-        return this.imageSubheader;
-    }
-
-    public NITFSImageSegment getImageSegment()
-    {
-        return this.imageSegment;
-    }
-
-
-    
-    private RPFImageFile(java.io.File rpfFile) throws java.io.IOException, NITFSRuntimeException
-    {
+    private RPFImageFile(File rpfFile) throws IOException, NITFSRuntimeException {
         super(rpfFile);
 
         this.imageSegment = (NITFSImageSegment) this.getNITFSSegment(NITFSSegmentType.IMAGE_SEGMENT);
@@ -47,22 +30,30 @@ public class RPFImageFile extends RPFFile
         this.rpfFrameFileComponents = this.imageSubheader.getRPFFrameFileComponents();
     }
 
-    private void validateRPFImage() throws NITFSRuntimeException
-    {
-        if ( null == this.imageSegment )
-            throw new NITFSRuntimeException("NITFSReader.ImageSegmentWasNotFound");
-        if( null == this.imageSegment.getUserDefinedImageSubheader())
-            throw new NITFSRuntimeException("NITFSReader.UserDefinedImageSubheaderWasNotFound");
-        if( null == this.imageSegment.getUserDefinedImageSubheader().getRPFFrameFileComponents())
-            throw new NITFSRuntimeException("NITFSReader.RPFFrameFileComponentsWereNotFoundInUserDefinedImageSubheader");
+    public static RPFImageFile load(File rpfFile) throws IOException, NITFSRuntimeException {
+        return new RPFImageFile(rpfFile);
     }
 
-    public int[] getImagePixelsAsArray(int[] dest, RPFImageType imageType)
-    {
-        //IntBuffer buffer = IntBuffer.wrap(dest);
-        //this.getImagePixelsAsBuffer(buffer, imageType);
-        this.getImageSegment().getImagePixelsAsArray(dest, imageType);
-        return dest;
+    public RPFFrameFileComponents getRPFFrameFileComponents() {
+        return this.rpfFrameFileComponents;
+    }
+
+    public UserDefinedImageSubheader getImageSubheader() {
+        return this.imageSubheader;
+    }
+
+    public NITFSImageSegment getImageSegment() {
+        return this.imageSegment;
+    }
+
+    private void validateRPFImage() throws NITFSRuntimeException {
+        if (null == this.imageSegment)
+            throw new NITFSRuntimeException("NITFSReader.ImageSegmentWasNotFound");
+        if (null == this.imageSegment.getUserDefinedImageSubheader())
+            throw new NITFSRuntimeException("NITFSReader.UserDefinedImageSubheaderWasNotFound");
+        if (null == this.imageSegment.getUserDefinedImageSubheader().getRPFFrameFileComponents())
+            throw new NITFSRuntimeException(
+                "NITFSReader.RPFFrameFileComponentsWereNotFoundInUserDefinedImageSubheader");
     }
 
     //public IntBuffer getImagePixelsAsBuffer(IntBuffer dest, RPFImageType imageType)
@@ -72,8 +63,14 @@ public class RPFImageFile extends RPFFile
     //    return dest;
     //}
 
-    public BufferedImage getBufferedImage()
-    {
+    public int[] getImagePixelsAsArray(int[] dest, RPFImageType imageType) {
+        //IntBuffer buffer = IntBuffer.wrap(dest);
+        //this.getImagePixelsAsBuffer(buffer, imageType);
+        this.getImageSegment().getImagePixelsAsArray(dest, imageType);
+        return dest;
+    }
+
+    public BufferedImage getBufferedImage() {
         if (null == this.imageSegment)
             return null;
 
@@ -83,7 +80,7 @@ public class RPFImageFile extends RPFFile
             BufferedImage.TYPE_INT_ARGB);
 
         WritableRaster raster = bimage.getRaster();
-        java.awt.image.DataBufferInt dataBuffer = (java.awt.image.DataBufferInt) raster.getDataBuffer();
+        DataBufferInt dataBuffer = (DataBufferInt) raster.getDataBuffer();
 
 //        IntBuffer buffer = IntBuffer.wrap(dataBuffer.getData());
         int[] buffer = dataBuffer.getData();
@@ -91,15 +88,10 @@ public class RPFImageFile extends RPFFile
         return bimage;
     }
 
-    public boolean hasTransparentAreas()
-    {
+    public boolean hasTransparentAreas() {
         //noinspection SimplifiableIfStatement
-        if(null != this.imageSegment)
+        if (null != this.imageSegment)
             return (this.imageSegment.hasTransparentPixels() || this.imageSegment.hasMaskedSubframes());
         return false;
-    }
-
-    public static RPFImageFile load(java.io.File rpfFile) throws java.io.IOException, NITFSRuntimeException {
-        return new RPFImageFile(rpfFile);
     }
 }

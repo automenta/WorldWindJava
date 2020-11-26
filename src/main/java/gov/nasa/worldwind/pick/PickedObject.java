@@ -16,16 +16,14 @@ import java.util.Objects;
  * @author lado
  * @version $Id: PickedObject.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class PickedObject extends AVListImpl
-{
+public class PickedObject extends AVListImpl {
     private final Point pickPoint;
     private final int colorCode;
     private final Object userObject;
     private boolean isOnTop = false;
     private boolean isTerrain = false;
 
-    public PickedObject(int colorCode, Object userObject)
-    {
+    public PickedObject(int colorCode, Object userObject) {
         super();
 
         this.pickPoint = null;
@@ -35,8 +33,7 @@ public class PickedObject extends AVListImpl
         this.isTerrain = false;
     }
 
-    public PickedObject(int colorCode, Object userObject, Position position, boolean isTerrain)
-    {
+    public PickedObject(int colorCode, Object userObject, Position position, boolean isTerrain) {
         super();
 
         this.pickPoint = null;
@@ -48,8 +45,7 @@ public class PickedObject extends AVListImpl
     }
 
     public PickedObject(Point pickPoint, int colorCode, Object userObject, Angle lat, Angle lon, double elev,
-        boolean isTerrain)
-    {
+        boolean isTerrain) {
         super();
 
         this.pickPoint = pickPoint;
@@ -60,63 +56,51 @@ public class PickedObject extends AVListImpl
         this.setPosition(new Position(lat, lon, elev));
     }
 
-    public Point getPickPoint()
-    {
+    public Point getPickPoint() {
         return pickPoint;
     }
 
-    public int getColorCode()
-    {
+    public int getColorCode() {
         return this.colorCode;
     }
 
-    public Object getObject()
-    {
+    public Object getObject() {
         return userObject;
     }
 
-    public void setOnTop()
-    {
+    public void setOnTop() {
         this.isOnTop = true;
     }
 
-    public boolean isOnTop()
-    {
+    public boolean isOnTop() {
         return this.isOnTop;
     }
 
-    public boolean isTerrain()
-    {
+    public boolean isTerrain() {
         return this.isTerrain;
     }
 
-    public void setParentLayer(Layer layer)
-    {
-        this.setValue(AVKey.PICKED_OBJECT_PARENT_LAYER, layer);
-    }
-
-    public Layer getParentLayer()
-    {
+    public Layer getParentLayer() {
         return (Layer) this.getValue(AVKey.PICKED_OBJECT_PARENT_LAYER);
     }
 
-    public void setPosition(Position position)
-    {
-        this.setValue(AVKey.POSITION, position);
+    public void setParentLayer(Layer layer) {
+        this.setValue(AVKey.PICKED_OBJECT_PARENT_LAYER, layer);
     }
 
-    public Position getPosition()
-    {
+    public Position getPosition() {
         return (Position) this.getValue(AVKey.POSITION);
     }
 
-    public boolean hasPosition()
-    {
+    public void setPosition(Position position) {
+        this.setValue(AVKey.POSITION, position);
+    }
+
+    public boolean hasPosition() {
         return this.hasKey(AVKey.POSITION);
     }
 
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -135,8 +119,7 @@ public class PickedObject extends AVListImpl
         return true;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
         result = colorCode;
         result = 31 * result + (userObject != null ? userObject.hashCode() : 0);

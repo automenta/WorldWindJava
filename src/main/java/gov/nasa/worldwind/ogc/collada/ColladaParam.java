@@ -12,15 +12,13 @@ package gov.nasa.worldwind.ogc.collada;
  * @author pabercrombie
  * @version $Id: ColladaParam.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ColladaParam extends ColladaAbstractObject
-{
+public class ColladaParam extends ColladaAbstractObject {
     /**
      * Construct an instance.
      *
      * @param ns the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public ColladaParam(String ns)
-    {
+    public ColladaParam(String ns) {
         super(ns);
     }
 
@@ -29,8 +27,7 @@ public class ColladaParam extends ColladaAbstractObject
      *
      * @return The value of the <i>name</i> field, or null if the field is not set.
      */
-    public String getName()
-    {
+    public String getName() {
         return (String) this.getField("name");
     }
 }

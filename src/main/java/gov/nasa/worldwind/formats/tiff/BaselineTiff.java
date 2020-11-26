@@ -14,8 +14,7 @@ import gov.nasa.worldwind.util.Logging;
  * @author Lado Garakanidze
  * @version $Id: BaselineTiff.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-class BaselineTiff
-{
+class BaselineTiff {
     public int width = Tiff.Undefined;
     public int height = Tiff.Undefined;
     public int samplesPerPixel = Tiff.Undefined;
@@ -33,85 +32,37 @@ class BaselineTiff
     public String softwareVersion = null;
     public String dateTime = null;
 
-    private BaselineTiff()
-    {
+    private BaselineTiff() {
     }
 
-    public static BaselineTiff extract(TiffIFDEntry[] ifd, TIFFReader tiffReader)
-    {
-        if (null == ifd || null == tiffReader)
-        {
+    public static BaselineTiff extract(TiffIFDEntry[] ifd, TIFFReader tiffReader) {
+        if (null == ifd || null == tiffReader) {
             return null;
         }
 
         BaselineTiff tiff = new BaselineTiff();
 
-        for (TiffIFDEntry entry : ifd)
-        {
-            try
-            {
-                switch (entry.tag)
-                {
-                    // base TIFF tags
-                    case Tiff.Tag.IMAGE_WIDTH:
-                        tiff.width = (int) entry.asLong();
-                        break;
-
-                    case Tiff.Tag.IMAGE_LENGTH:
-                        tiff.height = (int) entry.asLong();
-                        break;
-
-                    case Tiff.Tag.DOCUMENT_NAME:
-                        tiff.displayName = tiffReader.readString(entry);
-                        break;
-
-                    case Tiff.Tag.IMAGE_DESCRIPTION:
-                        tiff.imageDescription = tiffReader.readString(entry);
-                        break;
-
-                    case Tiff.Tag.SOFTWARE_VERSION:
-                        tiff.softwareVersion = tiffReader.readString(entry);
-                        break;
-
-                    case Tiff.Tag.DATE_TIME:
-                        tiff.dateTime = tiffReader.readString(entry);
-                        break;
-
-                    case Tiff.Tag.SAMPLES_PER_PIXEL:
-                        tiff.samplesPerPixel = (int) entry.asLong();
-                        break;
-
-                    case Tiff.Tag.PHOTO_INTERPRETATION:
-                        tiff.photometric = (int) entry.asLong();
-                        break;
-
-                    case Tiff.Tag.ROWS_PER_STRIP:
-                        tiff.rowsPerStrip = (int) entry.asLong();
-                        break;
-
-                    case Tiff.Tag.PLANAR_CONFIGURATION:
-                        tiff.planarConfig = (int) entry.asLong();
-                        break;
-
-                    case Tiff.Tag.SAMPLE_FORMAT:
-                        tiff.sampleFormat = entry.getShortsAsInts();
-                        break;
-
-                    case Tiff.Tag.BITS_PER_SAMPLE:
-                        tiff.bitsPerSample = entry.getShortsAsInts();
-                        break;
-
-                    case Tiff.Tag.MIN_SAMPLE_VALUE:
-                        tiff.minSampleValue = entry.asShort();
-                        break;
-
-                    case Tiff.Tag.MAX_SAMPLE_VALUE:
-                        tiff.maxSampleValue = entry.asShort();
-                        break;
+        for (TiffIFDEntry entry : ifd) {
+            try {
+                // base TIFF tags
+                switch (entry.tag) {
+                    case Tiff.Tag.IMAGE_WIDTH -> tiff.width = (int) entry.asLong();
+                    case Tiff.Tag.IMAGE_LENGTH -> tiff.height = (int) entry.asLong();
+                    case Tiff.Tag.DOCUMENT_NAME -> tiff.displayName = tiffReader.readString(entry);
+                    case Tiff.Tag.IMAGE_DESCRIPTION -> tiff.imageDescription = tiffReader.readString(entry);
+                    case Tiff.Tag.SOFTWARE_VERSION -> tiff.softwareVersion = tiffReader.readString(entry);
+                    case Tiff.Tag.DATE_TIME -> tiff.dateTime = tiffReader.readString(entry);
+                    case Tiff.Tag.SAMPLES_PER_PIXEL -> tiff.samplesPerPixel = (int) entry.asLong();
+                    case Tiff.Tag.PHOTO_INTERPRETATION -> tiff.photometric = (int) entry.asLong();
+                    case Tiff.Tag.ROWS_PER_STRIP -> tiff.rowsPerStrip = (int) entry.asLong();
+                    case Tiff.Tag.PLANAR_CONFIGURATION -> tiff.planarConfig = (int) entry.asLong();
+                    case Tiff.Tag.SAMPLE_FORMAT -> tiff.sampleFormat = entry.getShortsAsInts();
+                    case Tiff.Tag.BITS_PER_SAMPLE -> tiff.bitsPerSample = entry.getShortsAsInts();
+                    case Tiff.Tag.MIN_SAMPLE_VALUE -> tiff.minSampleValue = entry.asShort();
+                    case Tiff.Tag.MAX_SAMPLE_VALUE -> tiff.maxSampleValue = entry.asShort();
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Logging.logger().finest(e.toString());
             }
         }
@@ -119,8 +70,7 @@ class BaselineTiff
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder sb = new StringBuilder("{ ");
         sb.append("width=").append(this.width).append(", ");
         sb.append("height=").append(this.height).append(", ");
@@ -130,10 +80,8 @@ class BaselineTiff
         sb.append("planarConfig=").append(this.planarConfig).append(", ");
 
         sb.append("sampleFormat=( ");
-        if (null != this.sampleFormat)
-        {
-            for (int value : this.sampleFormat)
-            {
+        if (null != this.sampleFormat) {
+            for (int value : this.sampleFormat) {
                 sb.append(value).append(" ");
             }
         }
@@ -142,10 +90,8 @@ class BaselineTiff
         sb.append("), ");
 
         sb.append("bitsPerSample=( ");
-        if (null != this.bitsPerSample)
-        {
-            for (int value : this.bitsPerSample)
-            {
+        if (null != this.bitsPerSample) {
+            for (int value : this.bitsPerSample) {
                 sb.append(value).append(" ");
             }
         }

@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwindx.applications.worldwindow.features.swinglayermanager;
 
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.applications.worldwindow.core.Constants;
@@ -19,48 +20,39 @@ import java.util.*;
  * @author tag
  * @version $Id: LayerTreeModel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class LayerTreeModel extends DefaultTreeModel
-{
+public class LayerTreeModel extends DefaultTreeModel {
     private boolean includeInternalLayers = false;
 
-    public LayerTreeModel()
-    {
+    public LayerTreeModel() {
         super(new LayerTreeGroupNode(("Root")), true);
     }
 
-    public LayerTreeModel(LayerList layerList)
-    {
+    public LayerTreeModel(LayerList layerList) {
         this();
         this.getRootNode().add(this.makeGroup(layerList));
     }
 
-    public LayerTreeGroupNode getRootNode()
-    {
+    public static boolean isInternalLayer(AVList layer) {
+        return layer.getValue(Constants.INTERNAL_LAYER) != null;
+    }
+
+    public LayerTreeGroupNode getRootNode() {
         return (LayerTreeGroupNode) getRoot();
     }
 
-    public LayerTreeGroupNode getDefaultGroupNode()
-    {
-        if (!(this.getRootNode().getFirstChild() instanceof LayerTreeGroupNode))
-        {
+    public LayerTreeGroupNode getDefaultGroupNode() {
+        if (!(this.getRootNode().getFirstChild() instanceof LayerTreeGroupNode)) {
             Util.getLogger().severe("Illegal State: The default group node is not a layer node.");
             return null;
         }
         return (LayerTreeGroupNode) this.getRootNode().getFirstChild();
     }
 
-    public boolean isIncludeInternalLayers()
-    {
+    public boolean isIncludeInternalLayers() {
         return includeInternalLayers;
     }
 
-    public static boolean isInternalLayer(Layer layer)
-    {
-        return layer.getValue(Constants.INTERNAL_LAYER) != null;
-    }
-
-    public void setIncludeInternalLayers(boolean includeInternalLayers)
-    {
+    public void setIncludeInternalLayers(boolean includeInternalLayers) {
         if (includeInternalLayers == this.includeInternalLayers)
             return;
 
@@ -68,30 +60,26 @@ public class LayerTreeModel extends DefaultTreeModel
         this.reload();
     }
 
-    public void selectLayer(Layer layer, boolean tf)
-    {
+    public void selectLayer(Layer layer, boolean tf) {
         // Select all instances of the layer.
         List<LayerTreeNode> layerNodes = findLayerInstances(layer, null);
         if (layerNodes == null)
             return;
 
-        for (LayerTreeNode layerNode : layerNodes)
-        {
+        for (LayerTreeNode layerNode : layerNodes) {
             layerNode.setSelected(tf);
             this.nodeChanged(layerNode);
         }
     }
 
-    public LayerTreeNode findChild(String childName, LayerTreeNode parent)
-    {
+    public LayerTreeNode findChild(String childName, LayerTreeNode parent) {
         if (childName == null)
             return null;
 
         if (parent == null)
             parent = this.getRootNode();
 
-        for (int i = 0; i < parent.getChildCount(); i++)
-        {
+        for (int i = 0; i < parent.getChildCount(); i++) {
             if (((LayerTreeNode) parent.getChildAt(i)).getTitle().equals(childName))
                 return (LayerTreeNode) parent.getChildAt(i);
         }
@@ -99,25 +87,21 @@ public class LayerTreeModel extends DefaultTreeModel
         return null;
     }
 
-    public LayerTreeNode getLastNode(LayerPath path)
-    {
+    public LayerTreeNode getLastNode(LayerPath path) {
         if (LayerPath.isEmptyPath(path))
             return null;
 
         LayerTreeNode currentNode = null;
 
-        for (String nodeName : path)
-        {
+        for (String nodeName : path) {
             if (currentNode == null)
                 currentNode = this.getRootNode();
 
             Enumeration iter = currentNode.children();
             currentNode = null;
-            while (iter.hasMoreElements())
-            {
+            while (iter.hasMoreElements()) {
                 LayerTreeNode child = (LayerTreeNode) iter.nextElement();
-                if (child.getTitle().equals(nodeName))
-                {
+                if (child.getTitle().equals(nodeName)) {
                     currentNode = child;
                     break; // out of while
                 }
@@ -129,12 +113,10 @@ public class LayerTreeModel extends DefaultTreeModel
         return currentNode;
     }
 
-    protected LayerTreeGroupNode makeGroup(LayerList layerList)
-    {
+    protected LayerTreeGroupNode makeGroup(LayerList layerList) {
         LayerTreeGroupNode groupNode = new LayerTreeGroupNode(layerList.getDisplayName());
 
-        for (Layer layer : layerList)
-        {
+        for (Layer layer : layerList) {
             if (layer.getValue(Constants.INTERNAL_LAYER) != null && !this.isIncludeInternalLayers())
                 continue;
 
@@ -153,19 +135,16 @@ public class LayerTreeModel extends DefaultTreeModel
      *
      * @param layerList the layerlist to synchronize with, typically the active layer list of the WorldWindow.
      */
-    public void refresh(LayerList layerList)
-    {
-        if (layerList == null || layerList.size() == 0)
+    public void refresh(List<Layer> layerList) {
+        if (layerList == null || layerList.isEmpty())
             return;
 
-        for (Layer layer : layerList)
-        {
+        for (Layer layer : layerList) {
             // See if the layer is contained in the tree
             LayerTreeNode layerNode = findLayer(layer, null);
 
             // Remove any layers recently designated as internal
-            if (layerNode != null && isInternalLayer(layer) && !this.isIncludeInternalLayers())
-            {
+            if (layerNode != null && isInternalLayer(layer) && !this.isIncludeInternalLayers()) {
                 removeNodeFromParent(layerNode);
                 continue;
             }
@@ -174,12 +153,10 @@ public class LayerTreeModel extends DefaultTreeModel
             if (isInternalLayer(layer) && !this.isIncludeInternalLayers())
                 continue;
 
-            if (layerNode == null)
-            {
+            if (layerNode == null) {
                 // put the new layer in the base-layer group
                 LayerTreeNode groupNode = (LayerTreeNode) this.getRootNode().getChildAt(0);
-                if (!(groupNode instanceof LayerTreeGroupNode))
-                {
+                if (!(groupNode instanceof LayerTreeGroupNode)) {
                     Util.getLogger().severe("Illegal State: The root node is not a layer node.");
                     return;
                 }
@@ -193,8 +170,7 @@ public class LayerTreeModel extends DefaultTreeModel
         }
     }
 
-    public void removeNode(Object o)
-    {
+    public void removeNode(Object o) {
         if (o == null)
             return;
 
@@ -209,8 +185,7 @@ public class LayerTreeModel extends DefaultTreeModel
             removeNodeFromParent(layerNode);
     }
 
-    public LayerTreeNode findLayer(Layer layer, LayerTreeGroupNode groupNode)
-    {
+    public LayerTreeNode findLayer(Layer layer, LayerTreeGroupNode groupNode) {
         if (layer == null)
             return null;
 
@@ -218,11 +193,9 @@ public class LayerTreeModel extends DefaultTreeModel
             groupNode = getRootNode();
 
         Enumeration treeNodes = groupNode.depthFirstEnumeration();
-        while (treeNodes.hasMoreElements())
-        {
+        while (treeNodes.hasMoreElements()) {
             LayerTreeNode treeNode = (LayerTreeNode) treeNodes.nextElement();
-            if (treeNode != null && !(treeNode instanceof LayerTreeGroupNode))
-            {
+            if (treeNode != null && !(treeNode instanceof LayerTreeGroupNode)) {
                 if (treeNode.getLayer() == layer)
                     return treeNode;
             }
@@ -232,8 +205,7 @@ public class LayerTreeModel extends DefaultTreeModel
     }
 
     // Find all paths to a layer.
-    public List<LayerTreeNode> findLayerInstances(Layer layer, LayerTreeGroupNode groupNode)
-    {
+    public List<LayerTreeNode> findLayerInstances(Layer layer, LayerTreeGroupNode groupNode) {
         if (layer == null)
             return null;
 
@@ -243,11 +215,9 @@ public class LayerTreeModel extends DefaultTreeModel
         List<LayerTreeNode> instances = new ArrayList<>();
 
         Enumeration treeNodes = groupNode.depthFirstEnumeration();
-        while (treeNodes.hasMoreElements())
-        {
+        while (treeNodes.hasMoreElements()) {
             LayerTreeNode treeNode = (LayerTreeNode) treeNodes.nextElement();
-            if (treeNode != null && !(treeNode instanceof LayerTreeGroupNode))
-            {
+            if (treeNode != null && !(treeNode instanceof LayerTreeGroupNode)) {
                 if (treeNode.getLayer() == layer)
                     instances.add(treeNode);
             }
@@ -257,8 +227,7 @@ public class LayerTreeModel extends DefaultTreeModel
     }
 
     // Find a layer by name in a specified layer group.
-    public LayerTreeNode findByTitle(String title, LayerTreeNode groupNode)
-    {
+    public LayerTreeNode findByTitle(String title, LayerTreeNode groupNode) {
         if (WWUtil.isEmpty(title))
             return null;
 
@@ -266,8 +235,7 @@ public class LayerTreeModel extends DefaultTreeModel
             groupNode = this.getRootNode();
 
         Enumeration treeNodes = groupNode.depthFirstEnumeration();
-        while (treeNodes.hasMoreElements())
-        {
+        while (treeNodes.hasMoreElements()) {
             LayerTreeNode treeNode = (LayerTreeNode) treeNodes.nextElement();
             if (treeNode != null && treeNode.getTitle().equals(title))
                 return treeNode;
@@ -277,14 +245,12 @@ public class LayerTreeModel extends DefaultTreeModel
     }
 
     // Find a layer by name no matter what group it's in.
-    public LayerTreeNode findByTitle(String title)
-    {
+    public LayerTreeNode findByTitle(String title) {
         if (getRoot() == null || title == null)
             return null;
 
         Enumeration treeNodes = getRootNode().breadthFirstEnumeration();
-        while (treeNodes.hasMoreElements())
-        {
+        while (treeNodes.hasMoreElements()) {
             LayerTreeNode layerNode = (LayerTreeNode) treeNodes.nextElement();
             if (layerNode != null && layerNode.getTitle() != null && layerNode.getTitle().equals(title))
                 return layerNode;
@@ -294,8 +260,7 @@ public class LayerTreeModel extends DefaultTreeModel
     }
 
     // Find a layer by name in a specified layer group.
-    public LayerTreeNode findByTitle(String layerTitle, String groupTitle)
-    {
+    public LayerTreeNode findByTitle(String layerTitle, String groupTitle) {
         if (layerTitle == null)
             return null;
 
@@ -304,8 +269,7 @@ public class LayerTreeModel extends DefaultTreeModel
             return null;
 
         Enumeration treeNodes = groupNode.breadthFirstEnumeration();
-        while (treeNodes.hasMoreElements())
-        {
+        while (treeNodes.hasMoreElements()) {
             LayerTreeNode layerNode = (LayerTreeNode) treeNodes.nextElement();
             if (layerNode != null && layerNode.getTitle() != null && layerNode.getTitle().equals(layerTitle))
                 return layerNode;
@@ -315,14 +279,12 @@ public class LayerTreeModel extends DefaultTreeModel
     }
 
     // Determine whether a layer node is in the model.
-    public LayerTreeNode find(LayerNode layerNodeRequested)
-    {
+    public LayerTreeNode find(LayerNode layerNodeRequested) {
         if (getRoot() == null || layerNodeRequested == null)
             return null;
 
         Enumeration treeNodes = getRootNode().preorderEnumeration();
-        while (treeNodes.hasMoreElements())
-        {
+        while (treeNodes.hasMoreElements()) {
             LayerTreeNode layerNode = (LayerTreeNode) treeNodes.nextElement();
             if (layerNode != null && layerNode.getID().equals(layerNodeRequested.getID()))
                 return layerNode;

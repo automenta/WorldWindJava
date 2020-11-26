@@ -19,8 +19,7 @@ import gov.nasa.worldwind.globes.Globe;
  * @author tag
  * @version $Id: Terrain.java 2056 2014-06-13 00:55:07Z tgaskins $
  */
-public interface Terrain
-{
+public interface Terrain {
     /**
      * Returns the object's globe.
      *
@@ -37,15 +36,12 @@ public interface Terrain
      * specified and it is exceeded during the operation.
      *
      * @param position the position.
-     *
      * @return the Cartesian, model-coordinate point of the specified position, or null if the specified position does
-     *         not exist within this instance's sector or if the operation is interrupted.
-     *
-     * @throws IllegalArgumentException if the position is null.
-     * @throws gov.nasa.worldwind.exception.WWTimeoutException
-     *                                  if the current timeout is exceeded while retrieving terrain data.
-     * @throws gov.nasa.worldwind.exception.WWRuntimeException
-     *                                  if the operation is interrupted.
+     * not exist within this instance's sector or if the operation is interrupted.
+     * @throws IllegalArgumentException                        if the position is null.
+     * @throws gov.nasa.worldwind.exception.WWTimeoutException if the current timeout is exceeded while retrieving
+     *                                                         terrain data.
+     * @throws gov.nasa.worldwind.exception.WWRuntimeException if the operation is interrupted.
      */
     Vec4 getSurfacePoint(Position position);
 
@@ -58,15 +54,12 @@ public interface Terrain
      * @param latitude     the location's latitude.
      * @param longitude    the location's longitude.
      * @param metersOffset the location's distance above the terrain.
-     *
      * @return the Cartesian, model-coordinate point of the specified location, or null if the specified location does
-     *         not exist within this instance's sector or if the operation is interrupted.
-     *
-     * @throws IllegalArgumentException if the latitude or longitude are null.
-     * @throws gov.nasa.worldwind.exception.WWTimeoutException
-     *                                  if the current timeout is exceeded while retrieving terrain data.
-     * @throws gov.nasa.worldwind.exception.WWRuntimeException
-     *                                  if the operation is interrupted.
+     * not exist within this instance's sector or if the operation is interrupted.
+     * @throws IllegalArgumentException                        if the latitude or longitude are null.
+     * @throws gov.nasa.worldwind.exception.WWTimeoutException if the current timeout is exceeded while retrieving
+     *                                                         terrain data.
+     * @throws gov.nasa.worldwind.exception.WWRuntimeException if the operation is interrupted.
      */
     Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset);
 
@@ -80,15 +73,12 @@ public interface Terrain
      *
      * @param pA the line's first position.
      * @param pB the line's second position.
-     *
      * @return an array of Cartesian model-coordinate intersection points, or null if no intersections occur or the
-     *         operation is interrupted.
-     *
-     * @throws IllegalArgumentException if either position is null.
-     * @throws gov.nasa.worldwind.exception.WWTimeoutException
-     *                                  if the current timeout is exceeded while retrieving terrain data.
-     * @throws gov.nasa.worldwind.exception.WWRuntimeException
-     *                                  if the operation is interrupted.
+     * operation is interrupted.
+     * @throws IllegalArgumentException                        if either position is null.
+     * @throws gov.nasa.worldwind.exception.WWTimeoutException if the current timeout is exceeded while retrieving
+     *                                                         terrain data.
+     * @throws gov.nasa.worldwind.exception.WWRuntimeException if the operation is interrupted.
      */
     Intersection[] intersect(Position pA, Position pB);
 
@@ -102,15 +92,12 @@ public interface Terrain
      * @param pA           the line's first position.
      * @param pB           the line's second position.
      * @param altitudeMode the altitude mode indicating the reference for the altitudes in the specified positions.
-     *
      * @return an array of Cartesian model-coordinate intersection points, or null if no intersections occur or the
-     *         operation is interrupted.
-     *
-     * @throws IllegalArgumentException if either position is null.
-     * @throws gov.nasa.worldwind.exception.WWTimeoutException
-     *                                  if the current timeout is exceeded while retrieving terrain data.
-     * @throws gov.nasa.worldwind.exception.WWRuntimeException
-     *                                  if the operation is interrupted.
+     * operation is interrupted.
+     * @throws IllegalArgumentException                        if either position is null.
+     * @throws gov.nasa.worldwind.exception.WWTimeoutException if the current timeout is exceeded while retrieving
+     *                                                         terrain data.
+     * @throws gov.nasa.worldwind.exception.WWRuntimeException if the operation is interrupted.
      */
     Intersection[] intersect(Position pA, Position pB, int altitudeMode);
 
@@ -121,14 +108,11 @@ public interface Terrain
      * specified and it is exceeded during the operation.
      *
      * @param location the location at which to compute the elevation.
-     *
      * @return the elevation at the location, or null if the elevation could not be determined.
-     *
-     * @throws IllegalArgumentException if the specified location in null.
-     * @throws gov.nasa.worldwind.exception.WWTimeoutException
-     *                                  if the current timeout is exceeded while retrieving terrain data.
-     * @throws gov.nasa.worldwind.exception.WWRuntimeException
-     *                                  if the operation is interrupted.
+     * @throws IllegalArgumentException                        if the specified location in null.
+     * @throws gov.nasa.worldwind.exception.WWTimeoutException if the current timeout is exceeded while retrieving
+     *                                                         terrain data.
+     * @throws gov.nasa.worldwind.exception.WWRuntimeException if the operation is interrupted.
      */
     Double getElevation(LatLon location);
 }

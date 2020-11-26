@@ -17,12 +17,10 @@ import java.awt.*;
  * @author ccrick
  * @version $Id: CylinderEditor.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class CylinderEditor extends RigidShapeEditor
-{
+public class CylinderEditor extends RigidShapeEditor {
 
     @Override
-    protected void assembleScaleControlPoints(DrawContext dc)
-    {
+    protected void assembleScaleControlPoints(DrawContext dc) {
         RigidShape shape = this.getShape();
 
         Matrix matrix = shape.computeRenderMatrix(dc);
@@ -31,17 +29,14 @@ public class CylinderEditor extends RigidShapeEditor
 
         double radius = ShapeUtils.getViewportScaleFactor(wwd) / 12;
 
-        if (controlPoints.size() > 0)
-        {
-            for (RigidShape controlPoint : controlPoints)
-            {
+        if (!controlPoints.isEmpty()) {
+            for (RigidShape controlPoint : controlPoints) {
                 controlPoint.setEastWestRadius(radius);
                 controlPoint.setNorthSouthRadius(radius);
                 controlPoint.setVerticalRadius(radius);
             }
         }
-        else
-        {
+        else {
             // create vertices at the extrema of the unit shape, and transform them by the
             // render matrix to get their final positions for use as control points
 
@@ -140,8 +135,7 @@ public class CylinderEditor extends RigidShapeEditor
     }
 
     @Override
-    protected void assembleTextureControlPoints(DrawContext dc)
-    {
+    protected void assembleTextureControlPoints(DrawContext dc) {
         RigidShape shape = this.getShape();
 
         Matrix matrix = shape.computeRenderMatrix(dc);
@@ -182,17 +176,14 @@ public class CylinderEditor extends RigidShapeEditor
         Vec4 right = URight.add3(LRight).divide3(2);
         Vec4 center = left.add3(right).divide3(2);
 
-        if (controlPoints.size() > 0)
-        {
-            for (RigidShape controlPoint : controlPoints)
-            {
+        if (!controlPoints.isEmpty()) {
+            for (RigidShape controlPoint : controlPoints) {
                 controlPoint.setEastWestRadius(radius);
                 controlPoint.setNorthSouthRadius(radius);
                 controlPoint.setVerticalRadius(radius);
             }
         }
-        else
-        {
+        else {
             // create vertices at the extrema of the current shape piece, and transform them by the
             // render matrix to get their final positions for use as control points
             Vec4 vert = matrix.transformBy3(matrix, ULeft.getX(), ULeft.getY(), ULeft.getZ()).add3(refPt);
@@ -295,19 +286,16 @@ public class CylinderEditor extends RigidShapeEditor
     }
 
     @Override
-    protected void scaleShapeNorth(Point previousMousePoint, Point mousePoint)
-    {
+    protected void scaleShapeNorth(Point previousMousePoint, Point mousePoint) {
         scaleShapeNorthSouth(previousMousePoint, mousePoint, SCALE_NORTH_ACTION);
     }
 
     @Override
-    protected void scaleShapeSouth(Point previousMousePoint, Point mousePoint)
-    {
+    protected void scaleShapeSouth(Point previousMousePoint, Point mousePoint) {
         scaleShapeNorthSouth(previousMousePoint, mousePoint, SCALE_SOUTH_ACTION);
     }
 
-    protected void scaleShapeNorthSouth(Point previousMousePoint, Point mousePoint, String scaleDirection)
-    {
+    protected void scaleShapeNorthSouth(Point previousMousePoint, Point mousePoint, String scaleDirection) {
         Position referencePos = this.shape.getReferencePosition();
         if (referencePos == null)
             return;
@@ -335,8 +323,7 @@ public class CylinderEditor extends RigidShapeEditor
         RigidShape shape = this.getShape();
         double radius = shape.getNorthSouthRadius();
 
-        if (radius + radiusChange > 0)
-        {
+        if (radius + radiusChange > 0) {
             this.shape.setNorthSouthRadius(radius + radiusChange / 2);
             Vec4 newCenterPt = referencePoint.add3(scaleVector.multiply3(radiusChange / 2));
             Position newCenterPos = this.wwd.getModel().getGlobe().computePositionFromPoint(newCenterPt);
@@ -345,19 +332,16 @@ public class CylinderEditor extends RigidShapeEditor
     }
 
     @Override
-    protected void scaleShapeEast(Point previousMousePoint, Point mousePoint)
-    {
+    protected void scaleShapeEast(Point previousMousePoint, Point mousePoint) {
         scaleShapeEastWest(previousMousePoint, mousePoint, SCALE_EAST_ACTION);
     }
 
     @Override
-    protected void scaleShapeWest(Point previousMousePoint, Point mousePoint)
-    {
+    protected void scaleShapeWest(Point previousMousePoint, Point mousePoint) {
         scaleShapeEastWest(previousMousePoint, mousePoint, SCALE_WEST_ACTION);
     }
 
-    protected void scaleShapeEastWest(Point previousMousePoint, Point mousePoint, String scaleDirection)
-    {
+    protected void scaleShapeEastWest(Point previousMousePoint, Point mousePoint, String scaleDirection) {
         Position referencePos = this.shape.getReferencePosition();
         if (referencePos == null)
             return;
@@ -385,8 +369,7 @@ public class CylinderEditor extends RigidShapeEditor
         RigidShape shape = this.getShape();
         double radius = shape.getEastWestRadius();
 
-        if (radius + radiusChange > 0)
-        {
+        if (radius + radiusChange > 0) {
             this.shape.setEastWestRadius(radius + radiusChange / 2);
             Vec4 newCenterPt = referencePoint.add3(scaleVector.multiply3(radiusChange / 2));
             Position newCenterPos = this.wwd.getModel().getGlobe().computePositionFromPoint(newCenterPt);
@@ -395,19 +378,16 @@ public class CylinderEditor extends RigidShapeEditor
     }
 
     @Override
-    protected void scaleShapeUp(Point previousMousePoint, Point mousePoint)
-    {
+    protected void scaleShapeUp(Point previousMousePoint, Point mousePoint) {
         scaleShapeVertical(previousMousePoint, mousePoint, SCALE_UP_ACTION);
     }
 
     @Override
-    protected void scaleShapeDown(Point previousMousePoint, Point mousePoint)
-    {
+    protected void scaleShapeDown(Point previousMousePoint, Point mousePoint) {
         scaleShapeVertical(previousMousePoint, mousePoint, SCALE_DOWN_ACTION);
     }
 
-    protected void scaleShapeVertical(Point previousMousePoint, Point mousePoint, String scaleDirection)
-    {
+    protected void scaleShapeVertical(Point previousMousePoint, Point mousePoint, String scaleDirection) {
         Position referencePos = this.shape.getReferencePosition();
         if (referencePos == null)
             return;
@@ -435,8 +415,7 @@ public class CylinderEditor extends RigidShapeEditor
         RigidShape shape = this.getShape();
         double radius = shape.getVerticalRadius();
 
-        if (radius + radiusChange > 0)
-        {
+        if (radius + radiusChange > 0) {
             this.shape.setVerticalRadius(radius + radiusChange / 2);
             Vec4 newCenterPt = referencePoint.add3(scaleVector.multiply3(radiusChange / 2));
             Position newCenterPos = this.wwd.getModel().getGlobe().computePositionFromPoint(newCenterPt);
@@ -445,8 +424,7 @@ public class CylinderEditor extends RigidShapeEditor
     }
 
     @Override
-    protected void scaleShapeRadius(Point previousMousePoint, Point mousePoint)
-    {
+    protected void scaleShapeRadius(Point previousMousePoint, Point mousePoint) {
         Position referencePos = this.shape.getReferencePosition();
         if (referencePos == null)
             return;
@@ -471,16 +449,14 @@ public class CylinderEditor extends RigidShapeEditor
 
         double scalingRatio = (radiusChange + average) / average;
 
-        if (scalingRatio > 0)
-        {
+        if (scalingRatio > 0) {
             this.shape.setEastWestRadius(eastWestRadius * scalingRatio);
             this.shape.setNorthSouthRadius(northSouthRadius * scalingRatio);
         }
     }
 
     @Override
-    protected void scaleShape(Point previousMousePoint, Point mousePoint)
-    {
+    protected void scaleShape(Point previousMousePoint, Point mousePoint) {
         Position referencePos = this.shape.getReferencePosition();
         if (referencePos == null)
             return;
@@ -510,8 +486,7 @@ public class CylinderEditor extends RigidShapeEditor
 
         double scalingRatio = (radiusChange + average) / average;
 
-        if (scalingRatio > 0)
-        {
+        if (scalingRatio > 0) {
             this.shape.setEastWestRadius(eastWestRadius * scalingRatio);
             this.shape.setNorthSouthRadius(northSouthRadius * scalingRatio);
             this.shape.setVerticalRadius(verticalRadius * scalingRatio);
@@ -523,8 +498,7 @@ public class CylinderEditor extends RigidShapeEditor
     }
 
     @Override
-    protected void skewShapeEastWest(Point previousMousePoint, Point mousePoint)
-    {
+    protected void skewShapeEastWest(Point previousMousePoint, Point mousePoint) {
         RigidShape shape = this.getShape();
         double skew = shape.getSkewEastWest().getDegrees();
         double scale = ShapeUtils.getViewportScaleFactor(wwd);
@@ -600,8 +574,7 @@ public class CylinderEditor extends RigidShapeEditor
     }
 
     @Override
-    protected void skewShapeNorthSouth(Point previousMousePoint, Point mousePoint)
-    {
+    protected void skewShapeNorthSouth(Point previousMousePoint, Point mousePoint) {
         RigidShape shape = this.getShape();
         double skew = shape.getSkewNorthSouth().getDegrees();
         double scale = ShapeUtils.getViewportScaleFactor(wwd);
@@ -677,8 +650,7 @@ public class CylinderEditor extends RigidShapeEditor
     }
 
     @Override
-    protected void moveTextureCorner(Point previousMousePoint, Point mousePoint, Integer corner)
-    {
+    protected void moveTextureCorner(Point previousMousePoint, Point mousePoint, Integer corner) {
         Vec4 rightRay = new Vec4(0, 0, 0);
         Vec4 upRay = new Vec4(0, 0, 0);
 
@@ -739,19 +711,11 @@ public class CylinderEditor extends RigidShapeEditor
 
         shape.setOffset(selectedFace, corner, newOffset[0], newOffset[1]);
         // set opposite control point as well
-        switch (corner)
-        {
-            case 0:
-                corner = 3;
-                break;
-            case 1:
-                corner = 2;
-                break;
-            case 2:
-                corner = 1;
-                break;
-            case 3:
-                corner = 0;
+        switch (corner) {
+            case 0 -> corner = 3;
+            case 1 -> corner = 2;
+            case 2 -> corner = 1;
+            case 3 -> corner = 0;
         }
 
         prevOffset = shape.getOffsets(selectedFace, corner);
@@ -763,8 +727,7 @@ public class CylinderEditor extends RigidShapeEditor
     }
 
     @Override
-    protected void scaleTexture(Point previousMousePoint, Point mousePoint, Direction side)
-    {
+    protected void scaleTexture(Point previousMousePoint, Point mousePoint, Direction side) {
 
         Vec4 rightRay = new Vec4(0, 0, 0);
         Vec4 upRay = new Vec4(0, 0, 0);
@@ -788,23 +751,23 @@ public class CylinderEditor extends RigidShapeEditor
         }
 
         // set the UV corners which will be scaled
-        switch (side)
-        {
-            case RIGHT:
+        switch (side) {
+            case RIGHT -> {
                 corner1 = 1;
                 corner2 = 3;
-                break;
-            case LEFT:
+            }
+            case LEFT -> {
                 corner1 = 2;
                 corner2 = 0;
-                break;
-            case UP:
+            }
+            case UP -> {
                 corner1 = 0;
                 corner2 = 1;
-                break;
-            case DOWN:
+            }
+            case DOWN -> {
                 corner1 = 3;
                 corner2 = 2;
+            }
         }
 
         Matrix inverseRenderMatrix = this.shape.computeRenderMatrixInverse(this.wwd.getModel().getGlobe(),
@@ -846,25 +809,21 @@ public class CylinderEditor extends RigidShapeEditor
         double upOffset = upRay.dot3(localChange);
 
         float[] prevOffset = shape.getOffsets(selectedFace, corner1);
-        if (side == Direction.RIGHT || side == Direction.LEFT)
-        {
+        if (side == Direction.RIGHT || side == Direction.LEFT) {
             newOffset[0] = (float) (prevOffset[0] + rightOffset);
             shape.setOffset(selectedFace, corner1, newOffset[0], prevOffset[1]);
         }
-        else
-        {
+        else {
             newOffset[1] = (float) (prevOffset[1] + upOffset);
             shape.setOffset(selectedFace, corner1, prevOffset[0], newOffset[1]);
         }
 
         prevOffset = shape.getOffsets(selectedFace, corner2);
-        if (side == Direction.RIGHT || side == Direction.LEFT)
-        {
+        if (side == Direction.RIGHT || side == Direction.LEFT) {
             newOffset[0] = (float) (prevOffset[0] + rightOffset);
             shape.setOffset(selectedFace, corner2, newOffset[0], prevOffset[1]);
         }
-        else
-        {
+        else {
             newOffset[1] = (float) (prevOffset[1] + upOffset);
             shape.setOffset(selectedFace, corner2, prevOffset[0], newOffset[1]);
         }

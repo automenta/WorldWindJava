@@ -15,16 +15,20 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * Shows the {@link gov.nasa.worldwind.layers.ViewControlsLayer} and allows you to adjust its size, orientation, and
+ * Shows the {@link ViewControlsLayer} and allows you to adjust its size, orientation, and
  * available controls.
  *
  * @author Patrick Murris
  * @version $Id: ViewControls.java 2109 2014-06-30 16:52:38Z tgaskins $
- * @see gov.nasa.worldwind.layers.ViewControlsLayer
- * @see gov.nasa.worldwind.layers.ViewControlsSelectListener
- * @see gov.nasa.worldwind.layers.CompassLayer
+ * @see ViewControlsLayer
+ * @see ViewControlsSelectListener
+ * @see CompassLayer
  */
 public class ViewControls extends ApplicationTemplate {
+
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind View Controls", AppFrame.class);
+    }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
@@ -48,7 +52,7 @@ public class ViewControls extends ApplicationTemplate {
             JPanel controlPanel = new JPanel();
             controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
             controlPanel.setBorder(
-                    new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("View Controls")));
+                new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("View Controls")));
             controlPanel.setToolTipText("Select active view controls");
 
             // Radio buttons - layout
@@ -76,7 +80,7 @@ public class ViewControls extends ApplicationTemplate {
             scalePanel.add(new JLabel("Scale:"));
             JSlider scaleSlider = new JSlider(1, 20, 10);
             scaleSlider.addChangeListener((ChangeEvent event) -> {
-                viewControlsLayer.setScale(((JSlider) event.getSource()).getValue() / 10d);
+                viewControlsLayer.setScale(((JSlider) event.getSource()).getValue() / 10.0d);
                 getWwd().redraw();
             });
             scalePanel.add(scaleSlider);
@@ -138,9 +142,5 @@ public class ViewControls extends ApplicationTemplate {
             controlPanel.add(checkPanel);
             return controlPanel;
         }
-    }
-
-    public static void main(String[] args) {
-        ApplicationTemplate.start("WorldWind View Controls", AppFrame.class);
     }
 }

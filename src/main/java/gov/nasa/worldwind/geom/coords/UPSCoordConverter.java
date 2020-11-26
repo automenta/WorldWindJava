@@ -94,14 +94,13 @@ import gov.nasa.worldwind.globes.Globe;
  * @author Garrett Headley, Patrick Murris
  * @version $Id: UPSCoordConverter.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class UPSCoordConverter
-{
+public class UPSCoordConverter {
     public static final int UPS_NO_ERROR = 0x0000;
-    private static final int UPS_LAT_ERROR = 0x0001;
-    private static final int UPS_LON_ERROR = 0x0002;
     public static final int UPS_HEMISPHERE_ERROR = 0x0004;
     public static final int UPS_EASTING_ERROR = 0x0008;
     public static final int UPS_NORTHING_ERROR = 0x0010;
+    private static final int UPS_LAT_ERROR = 0x0001;
+    private static final int UPS_LON_ERROR = 0x0002;
     private static final int UPS_A_ERROR = 0x0020;
     private static final int UPS_INV_F_ERROR = 0x0040;
 
@@ -114,34 +113,28 @@ public class UPSCoordConverter
     private static final double MAX_ORIGIN_LAT = (81.114528 * PI) / 180.0;
     private static final double MIN_EAST_NORTH = 0;
     private static final double MAX_EAST_NORTH = 4000000;
-
-    private double UPS_Origin_Latitude = MAX_ORIGIN_LAT;  /*set default = North Hemisphere */
     private final double UPS_Origin_Longitude = 0.0;
-
     /* Ellipsoid Parameters, default to WGS 84  */
     private final Globe globe;
-    private double UPS_a = 6378137.0;          /* Semi-major axis of ellipsoid in meters   */
-    private double UPS_f = 1 / 298.257223563;  /* Flattening of ellipsoid  */
     private final double UPS_False_Easting = 2000000.0;
     private final double UPS_False_Northing = 2000000.0;
     private final double false_easting = 0.0;
     private final double false_northing = 0.0;
+    private final PolarCoordConverter polarConverter = new PolarCoordConverter();
+    private double UPS_Origin_Latitude = MAX_ORIGIN_LAT;  /*set default = North Hemisphere */
+    private double UPS_a = 6378137.0;          /* Semi-major axis of ellipsoid in meters   */
+    private double UPS_f = 1 / 298.257223563;  /* Flattening of ellipsoid  */
     private double UPS_Easting = 0.0;
     private double UPS_Northing = 0.0;
-
     private double Easting = 0.0;
     private double Northing = 0.0;
     private String Hemisphere = AVKey.NORTH;
     private double Latitude = 0.0;
     private double Longitude = 0.0;
 
-    private final PolarCoordConverter polarConverter = new PolarCoordConverter();
-
-    UPSCoordConverter(Globe globe)
-    {
+    UPSCoordConverter(Globe globe) {
         this.globe = globe;
-        if (globe != null)
-        {
+        if (globe != null) {
             double a = globe.getEquatorialRadius();
             double f = (globe.getEquatorialRadius() - globe.getPolarRadius()) / globe.getEquatorialRadius();
             setUPSParameters(a, f);
@@ -154,19 +147,15 @@ public class UPSCoordConverter
      *
      * @param a Semi-major axis of ellipsoid in meters
      * @param f Flattening of ellipsoid
-     *
      * @return error code
      */
-    public long setUPSParameters(double a, double f)
-    {
+    public long setUPSParameters(double a, double f) {
         double inv_f = 1 / f;
 
-        if (a <= 0.0)
-        { /* Semi-major axis must be greater than zero */
+        if (a <= 0.0) { /* Semi-major axis must be greater than zero */
             return UPS_A_ERROR;
         }
-        if ((inv_f < 250) || (inv_f > 350))
-        { /* Inverse flattening must be between 250 and 350 */
+        if ((inv_f < 250) || (inv_f > 350)) { /* Inverse flattening must be between 250 and 350 */
             return UPS_INV_F_ERROR;
         }
 
@@ -183,13 +172,10 @@ public class UPSCoordConverter
      *
      * @param latitude  Latitude in radians
      * @param longitude Longitude in radians
-     *
      * @return error code
      */
-    public long convertGeodeticToUPS(double latitude, double longitude)
-    {
-        if ((latitude < -MAX_LAT) || (latitude > MAX_LAT))
-        {   /* latitude out of range */
+    public long convertGeodeticToUPS(double latitude, double longitude) {
+        if ((latitude < -MAX_LAT) || (latitude > MAX_LAT)) {   /* latitude out of range */
             return UPS_LAT_ERROR;
         }
         if ((latitude < 0) && (latitude > MIN_SOUTH_LAT))
@@ -197,18 +183,15 @@ public class UPSCoordConverter
         if ((latitude >= 0) && (latitude < MIN_NORTH_LAT))
             return UPS_LAT_ERROR;
 
-        if ((longitude < -PI) || (longitude > (2 * PI)))
-        {  /* slam out of range */
+        if ((longitude < -PI) || (longitude > (2 * PI))) {  /* slam out of range */
             return UPS_LON_ERROR;
         }
 
-        if (latitude < 0)
-        {
+        if (latitude < 0) {
             UPS_Origin_Latitude = -MAX_ORIGIN_LAT;
             Hemisphere = AVKey.SOUTH;
         }
-        else
-        {
+        else {
             UPS_Origin_Latitude = MAX_ORIGIN_LAT;
             Hemisphere = AVKey.NORTH;
         }
@@ -230,24 +213,25 @@ public class UPSCoordConverter
         return UPS_NO_ERROR;
     }
 
-    /** @return Easting/X in meters */
-    public double getEasting()
-    {
+    /**
+     * @return Easting/X in meters
+     */
+    public double getEasting() {
         return Easting;
     }
 
-    /** @return Northing/Y in meters */
-    public double getNorthing()
-    {
+    /**
+     * @return Northing/Y in meters
+     */
+    public double getNorthing() {
         return Northing;
     }
 
     /**
-     * @return Hemisphere, either {@link gov.nasa.worldwind.avlist.AVKey#NORTH} or {@link
-     *         gov.nasa.worldwind.avlist.AVKey#SOUTH}.
+     * @return Hemisphere, either {@link AVKey#NORTH} or {@link
+     * AVKey#SOUTH}.
      */
-    public String getHemisphere()
-    {
+    public String getHemisphere() {
         return Hemisphere;
     }
 
@@ -256,15 +240,13 @@ public class UPSCoordConverter
      * (latitude and longitude) coordinates according to the current ellipsoid parameters.  If any errors occur, the
      * error code(s) are returned by the function, otherwise UPS_NO_ERROR is returned.
      *
-     * @param Hemisphere Hemisphere, either {@link gov.nasa.worldwind.avlist.AVKey#NORTH} or {@link
-     *                   gov.nasa.worldwind.avlist.AVKey#SOUTH}.
+     * @param Hemisphere Hemisphere, either {@link AVKey#NORTH} or {@link
+     *                   AVKey#SOUTH}.
      * @param Easting    Easting/X in meters
      * @param Northing   Northing/Y in meters
-     *
      * @return error code
      */
-    public long convertUPSToGeodetic(String Hemisphere, double Easting, double Northing)
-    {
+    public long convertUPSToGeodetic(String Hemisphere, double Easting, double Northing) {
         long Error_Code = UPS_NO_ERROR;
 
         if (!AVKey.NORTH.equals(Hemisphere) && !AVKey.SOUTH.equals(Hemisphere))
@@ -279,8 +261,7 @@ public class UPSCoordConverter
         if (AVKey.SOUTH.equals(Hemisphere))
             UPS_Origin_Latitude = -MAX_ORIGIN_LAT;
 
-        if (Error_Code == UPS_NO_ERROR)
-        {   /*  no errors   */
+        if (Error_Code == UPS_NO_ERROR) {   /*  no errors   */
             polarConverter.setPolarStereographicParameters(UPS_a,
                 UPS_f,
                 UPS_Origin_Latitude,
@@ -300,15 +281,17 @@ public class UPSCoordConverter
         return Error_Code;
     }
 
-    /** @return Latitude in radians. */
-    public double getLatitude()
-    {
+    /**
+     * @return Latitude in radians.
+     */
+    public double getLatitude() {
         return Latitude;
     }
 
-    /** @return Longitude in radians. */
-    public double getLongitude()
-    {
+    /**
+     * @return Longitude in radians.
+     */
+    public double getLongitude() {
         return Longitude;
     }
 }

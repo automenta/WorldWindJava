@@ -20,15 +20,25 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: CombatSupportArea.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class CombatSupportArea extends BasicArea
-{
+public class CombatSupportArea extends BasicArea {
+    /**
+     * Create a new area.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public CombatSupportArea(String sidc) {
+        super(sidc);
+
+        // Do not draw "ENY" labels for hostile entities
+        this.setShowHostileIndicator(false);
+    }
+
     /**
      * Indicates the graphics supported by this class.
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         return Arrays.asList(
             TacGrpSidc.CSS_ARA_DHA,
             TacGrpSidc.CSS_ARA_EPWHA,
@@ -40,22 +50,10 @@ public class CombatSupportArea extends BasicArea
     }
 
     /**
-     * Create a new area.
-     *
-     * @param sidc Symbol code the identifies the graphic.
+     * {@inheritDoc}
      */
-    public CombatSupportArea(String sidc)
-    {
-        super(sidc);
-
-        // Do not draw "ENY" labels for hostile entities
-        this.setShowHostileIndicator(false);
-    }
-
-    /** {@inheritDoc} */
     @Override
-    protected String getGraphicLabel()
-    {
+    protected String getGraphicLabel() {
         String code = this.maskedSymbolCode;
 
         if (TacGrpSidc.CSS_ARA_DHA.equalsIgnoreCase(code))

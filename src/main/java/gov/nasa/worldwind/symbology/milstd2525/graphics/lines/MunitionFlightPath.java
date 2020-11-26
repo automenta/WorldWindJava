@@ -18,49 +18,47 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: MunitionFlightPath.java 545 2012-04-24 22:29:21Z pabercrombie $
  */
-public class MunitionFlightPath extends FireSupportLine
-{
-    /**
-     * Indicates the graphics supported by this class.
-     *
-     * @return List of masked SIDC strings that identify graphics that this class supports.
-     */
-    public static List<String> getSupportedGraphics()
-    {
-        return Collections.singletonList(TacGrpSidc.FSUPP_LNE_C2LNE_MFP);
-    }
-
+public class MunitionFlightPath extends FireSupportLine {
     /**
      * Create a new target graphic.
      *
      * @param sidc Symbol code the identifies the graphic.
      */
-    public MunitionFlightPath(String sidc)
-    {
+    public MunitionFlightPath(String sidc) {
         super(sidc);
     }
 
-    /** Create labels for the graphic. */
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics() {
+        return Collections.singletonList(TacGrpSidc.FSUPP_LNE_C2LNE_MFP);
+    }
+
+    /**
+     * Create labels for the graphic.
+     */
     @Override
-    protected void createLabels()
-    {
+    protected void createLabels() {
         this.addLabel("MFP");
 
         Offset bottomLabelOffset = this.getBottomLabelOffset();
         String bottomText = this.getBottomLabelText();
 
-        if (!WWUtil.isEmpty(bottomText))
-        {
+        if (!WWUtil.isEmpty(bottomText)) {
             TacticalGraphicLabel label = this.addLabel(bottomText);
             label.setOffset(bottomLabelOffset);
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void determineLabelPositions(DrawContext dc)
-    {
-        if (this.labels == null || this.labels.size() == 0)
+    protected void determineLabelPositions(DrawContext dc) {
+        if (this.labels == null || this.labels.isEmpty())
             return;
 
         Object[] pathData = this.computePathLength(dc);
@@ -71,17 +69,17 @@ public class MunitionFlightPath extends FireSupportLine
         TacticalGraphicLabel label = this.labels.get(0);
         TacticalGraphicUtil.placeLabelsOnPath(dc, positions, label, null, pathLength * 0.5);
 
-        if (this.labels.size() > 1)
-        {
+        if (this.labels.size() > 1) {
             label = this.labels.get(1);
             TacticalGraphicUtil.placeLabelsOnPath(dc, positions, label, null, pathLength * 0.25);
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected Offset getDefaultLabelOffset()
-    {
+    protected Offset getDefaultLabelOffset() {
         return TacticalGraphicLabel.DEFAULT_OFFSET;
     }
 }

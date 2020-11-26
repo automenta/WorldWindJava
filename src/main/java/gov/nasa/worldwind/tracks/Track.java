@@ -5,13 +5,14 @@
  */
 package gov.nasa.worldwind.tracks;
 
+import java.util.List;
+
 /**
  * @author tag
  * @version $Id: Track.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface Track
-{
-    java.util.List<TrackSegment> getSegments();
+public interface Track {
+    List<TrackSegment> getSegments();
 
     String getName();
 

@@ -17,20 +17,21 @@ import java.io.File;
 
 /**
  * Illustrates how to import elevation data into WorldWind. This imports a GeoTIFF file containing elevation data and
- * creates an <code>{@link gov.nasa.worldwind.globes.ElevationModel}</code> for it.
+ * creates an <code>{@link ElevationModel}</code> for it.
  *
  * @author tag
  * @version $Id: ImportElevations.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ImportElevations extends ApplicationTemplate
-{
+public class ImportElevations extends ApplicationTemplate {
     // The data to import.
     protected static final String ELEVATIONS_PATH = "gov/nasa/worldwindx/examples/data/craterlake-elev-16bit-30m.tif";
 
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Elevation Import", ImportElevations.AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             // Show the WAIT cursor because the import may take a while.
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
@@ -45,10 +46,8 @@ public class ImportElevations extends ApplicationTemplate
             t.start();
         }
 
-        protected void importElevations()
-        {
-            try
-            {
+        protected void importElevations() {
+            try {
                 // Download the data and save it in a temp file.
                 File sourceFile = ExampleUtil.saveResourceToTempFile(ELEVATIONS_PATH, ".tif");
 
@@ -74,15 +73,9 @@ public class ImportElevations extends ApplicationTemplate
                     ExampleUtil.goTo(getWwd(), modelSector);
                 });
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Elevation Import", ImportElevations.AppFrame.class);
     }
 }

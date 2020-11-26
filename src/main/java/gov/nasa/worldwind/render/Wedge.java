@@ -24,15 +24,12 @@ import java.util.List;
  * @author ccrick
  * @version $Id: Wedge.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Wedge extends RigidShape
-{
+public class Wedge extends RigidShape {
     protected static final int DEFAULT_SUBDIVISIONS = 2;
-
-    protected Angle wedgeAngle = Angle.fromDegrees(220);     // default value for angle consumed by the wedge
-
     // Geometry.
-    @SuppressWarnings({"FieldCanBeLocal"})
+    @SuppressWarnings("FieldCanBeLocal")
     protected final int faceCount = 5;   // number of separate Geometry pieces that comprise this Wedge
+    protected Angle wedgeAngle = Angle.fromDegrees(220);     // default value for angle consumed by the wedge
     // The faces are numbered as follows:
     // face 0: Wedge top
     // face 1: Wedge bottom
@@ -41,9 +38,10 @@ public class Wedge extends RigidShape
     // face 4: right rectangular Wedge side
     protected int subdivisions = DEFAULT_SUBDIVISIONS;
 
-    /** Construct a wedge with default parameters */
-    public Wedge()
-    {
+    /**
+     * Construct a wedge with default parameters
+     */
+    public Wedge() {
         this.setUpGeometryCache();
     }
 
@@ -54,42 +52,35 @@ public class Wedge extends RigidShape
      * @param height         the Wedge's height, in meters.
      * @param radius         the radius of the Wedge's base, in meters.
      * @param angle          the angle covered by the wedge
-     *
      * @throws IllegalArgumentException if the center position is null, if the wedgeAngle is null or not in [0, 2*PI],
      *                                  or if any of the radii are not greater than 0.
      */
-    public Wedge(Position centerPosition, Angle angle, double height, double radius)
-    {
-        if (centerPosition == null)
-        {
+    public Wedge(Position centerPosition, Angle angle, double height, double radius) {
+        if (centerPosition == null) {
             String message = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (angle == null)
-        {
+        if (angle == null) {
             String message = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (radius <= 0)
-        {
+        if (radius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius <= 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (height <= 0)
-        {
+        if (height <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "height <= 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (angle.getRadians() < 0 || angle.getRadians() > 2 * Math.PI)
-        {
+        if (angle.getRadians() < 0 || angle.getRadians() > 2 * Math.PI) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "angle < 0 or angle > 2 PI");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -112,36 +103,30 @@ public class Wedge extends RigidShape
      * @param northSouthRadius the wedge's north-south radius, in meters.
      * @param verticalRadius   the wedge's vertical radius, in meters.
      * @param eastWestRadius   the wedge's east-west radius, in meters.
-     *
      * @throws IllegalArgumentException if the center position is null, if the wedgeAngle is null or not in [0, 2*PI],
      *                                  or if any of the radii are not greater than 0.
      */
     public Wedge(Position centerPosition, Angle angle, double northSouthRadius, double verticalRadius,
-        double eastWestRadius)
-    {
-        if (centerPosition == null)
-        {
+        double eastWestRadius) {
+        if (centerPosition == null) {
             String message = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (angle == null)
-        {
+        if (angle == null) {
             String message = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0)
-        {
+        if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius <= 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (angle.getRadians() < 0 || angle.getRadians() > 2 * Math.PI)
-        {
+        if (angle.getRadians() < 0 || angle.getRadians() > 2 * Math.PI) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "angle < 0 or angle > 2 PI");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -168,36 +153,30 @@ public class Wedge extends RigidShape
      * @param heading          the wedge's azimuth, its rotation about its vertical axis.
      * @param tilt             the wedge pitch, its rotation about its east-west axis.
      * @param roll             the wedge's roll, its rotation about its north-south axis.
-     *
      * @throws IllegalArgumentException the centerPosition is null, or if the wedgeAngle is null or not in [0, 2*PI], or
      *                                  if any of the radii are not greater than 0.
      */
     public Wedge(Position centerPosition, Angle angle, double northSouthRadius, double verticalRadius,
-        double eastWestRadius, Angle heading, Angle tilt, Angle roll)
-    {
-        if (centerPosition == null)
-        {
+        double eastWestRadius, Angle heading, Angle tilt, Angle roll) {
+        if (centerPosition == null) {
             String message = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (angle == null)
-        {
+        if (angle == null) {
             String message = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (angle.getRadians() < 0 || angle.getRadians() > 2 * Math.PI)
-        {
+        if (angle.getRadians() < 0 || angle.getRadians() > 2 * Math.PI) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "angle < 0 or angle > 2 PI");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0)
-        {
+        if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius <= 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -216,8 +195,7 @@ public class Wedge extends RigidShape
     }
 
     @Override
-    protected void initialize()
-    {
+    protected void initialize() {
         // Nothing to override
     }
 
@@ -226,8 +204,7 @@ public class Wedge extends RigidShape
      *
      * @return the angle covered by the wedge.
      */
-    public Angle getWedgeAngle()
-    {
+    public Angle getWedgeAngle() {
         return wedgeAngle;
     }
 
@@ -235,20 +212,16 @@ public class Wedge extends RigidShape
      * Specifies the angle covered by the wedge.  This angle must fall in [0, 2*PI].
      *
      * @param angle the angle covered by the wedge. Must be in [0, 2*PI].
-     *
      * @throws IllegalArgumentException if the wedgeAngle is null, or is not in [0, 2*PI].
      */
-    public void setWedgeAngle(Angle angle)
-    {
-        if (angle == null)
-        {
+    public void setWedgeAngle(Angle angle) {
+        if (angle == null) {
             String message = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (angle.getRadians() < 0 || angle.getRadians() > 2 * Math.PI)
-        {
+        if (angle.getRadians() < 0 || angle.getRadians() > 2 * Math.PI) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "wedgeAngle < 0 or wedgeAngle > 2 PI");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -259,13 +232,11 @@ public class Wedge extends RigidShape
     }
 
     @Override
-    public int getFaceCount()
-    {
+    public int getFaceCount() {
         return this.faceCount;
     }
 
-    public int getSubdivisions()
-    {
+    public int getSubdivisions() {
         return this.subdivisions;
     }
 
@@ -274,8 +245,7 @@ public class Wedge extends RigidShape
      *
      * @return the detailThreshold
      */
-    protected double computeDetailThreshold()
-    {
+    protected double computeDetailThreshold() {
         // these values must be calibrated on a shape-by-shape basis
         double detailThreshold = 8;
         double rangeDetailThreshold = 25;
@@ -292,16 +262,13 @@ public class Wedge extends RigidShape
      * @param dc        the current drawContext.
      * @param shapeData the current globe-specific shape data
      */
-    protected void computeSubdivisions(DrawContext dc, ShapeData shapeData)
-    {
+    protected void computeSubdivisions(DrawContext dc, ShapeData shapeData) {
         // test again possible subdivision values
         int minDivisions = 0;
         int maxDivisions = 6;
 
-        if (shapeData.getExtent() != null)
-        {
-            for (int divisions = minDivisions; divisions <= maxDivisions; divisions++)
-            {
+        if (shapeData.getExtent() != null) {
+            for (int divisions = minDivisions; divisions <= maxDivisions; divisions++) {
                 this.subdivisions = divisions;
                 if (this.sufficientDetail(dc, divisions, shapeData))
                     break;
@@ -309,16 +276,13 @@ public class Wedge extends RigidShape
         }
     }
 
-    protected boolean sufficientDetail(DrawContext dc, int subdivisions, ShapeData shapeData)
-    {
-        if (dc.getView() == null)
-        {
+    protected boolean sufficientDetail(DrawContext dc, int subdivisions, ShapeData shapeData) {
+        if (dc.getView() == null) {
             String message = "nullValue.DrawingContextViewIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        if (subdivisions < 0)
-        {
+        if (subdivisions < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "subdivisions < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -342,8 +306,7 @@ public class Wedge extends RigidShape
         return vertexDensity > thresholdDensity;
     }
 
-    protected boolean mustRegenerateGeometry(DrawContext dc)
-    {
+    protected boolean mustRegenerateGeometry(DrawContext dc) {
         // check if current LOD is sufficient
         int oldDivisions = this.subdivisions;
         computeSubdivisions(dc, this.getCurrentShapeData());
@@ -362,13 +325,10 @@ public class Wedge extends RigidShape
      * appropriate geometry does not yet exist in the cache.
      *
      * @param shapeData this shape's current shape data.
-     *
      * @throws IllegalArgumentException if the wedgeAngle is null
      */
-    protected void makeGeometry(ShapeData shapeData)
-    {
-        if (this.wedgeAngle == null)
-        {
+    protected void makeGeometry(ShapeData shapeData) {
+        if (this.wedgeAngle == null) {
             String message = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -378,12 +338,10 @@ public class Wedge extends RigidShape
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "Wedge0-" + this.wedgeAngle.toString(),
             this.subdivisions);
         Geometry geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (geom == null)
-        {
+        if (geom == null) {
             // if none exists, create a new one
             makeUnitWedge(this.subdivisions, shapeData.getMeshes());
-            for (int piece = 0; piece < getFaceCount(); piece++)
-            {
+            for (int piece = 0; piece < getFaceCount(); piece++) {
                 if (offsets.get(piece) == null)  // if texture offsets don't exist, set default values to 0
                     offsets.put(piece, new OffsetsList());
                 // add the new mesh pieces to the cache
@@ -392,11 +350,9 @@ public class Wedge extends RigidShape
                 this.getGeometryCache().add(cacheKey, shapeData.getMesh(piece));
             }
         }
-        else
-        {
+        else {
             // otherwise, just use the one from the cache
-            for (int piece = 0; piece < getFaceCount(); piece++)
-            {
+            for (int piece = 0; piece < getFaceCount(); piece++) {
                 if (offsets.get(piece) == null)  // if texture offsets don't exist, set default values to 0
                     offsets.put(piece, new OffsetsList());
                 cacheKey = new Geometry.CacheKey(this.getClass(), "Wedge" + piece + "-" + this.wedgeAngle.toString(),
@@ -454,13 +410,10 @@ public class Wedge extends RigidShape
      *
      * @param subdivisions the number of times to subdivide the unit wedge geometry
      * @param meshes       the Geometry list to hold the computed points, etc. for all wedge Geometries
-     *
      * @throws IllegalArgumentException if the wedgeAngle is null
      */
-    protected void makeUnitWedge(int subdivisions, List<Geometry> meshes)
-    {
-        if (this.wedgeAngle == null)
-        {
+    protected void makeUnitWedge(int subdivisions, List<Geometry> meshes) {
+        if (this.wedgeAngle == null) {
             String message = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -472,8 +425,7 @@ public class Wedge extends RigidShape
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(GeometryBuilder.OUTSIDE);
 
-        for (int index = 0; index < getFaceCount(); index++)
-        {
+        for (int index = 0; index < getFaceCount(); index++) {
             // create wedge in model space
             GeometryBuilder.IndexedTriangleBuffer itb =
                 gb.tessellateWedgeBuffer(index, radius, subdivisions, this.wedgeAngle);
@@ -506,10 +458,8 @@ public class Wedge extends RigidShape
      * @param shapeData     this shape's current globe-specific shape data
      */
     protected void drawGeometry(DrawContext dc, int mode, int count, int type, Buffer elementBuffer,
-        ShapeData shapeData, int face)
-    {
-        if (elementBuffer == null)
-        {
+        ShapeData shapeData, int face) {
+        if (elementBuffer == null) {
             String message = "nullValue.ElementBufferIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -517,8 +467,7 @@ public class Wedge extends RigidShape
 
         Geometry mesh = shapeData.getMesh(face);
 
-        if (mesh.getBuffer(Geometry.VERTEX) == null)
-        {
+        if (mesh.getBuffer(Geometry.VERTEX) == null) {
             String message = "nullValue.VertexBufferIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -535,17 +484,13 @@ public class Wedge extends RigidShape
         vertexBuffer = mesh.getBuffer(Geometry.VERTEX);
 
         normalBuffer = null;
-        if (!dc.isPickingMode())
-        {
-            if (mustApplyLighting(dc, null))
-            {
+        if (!dc.isPickingMode()) {
+            if (mustApplyLighting(dc, null)) {
                 normalBuffer = mesh.getBuffer(Geometry.NORMAL);
-                if (normalBuffer == null)
-                {
+                if (normalBuffer == null) {
                     gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
                 }
-                else
-                {
+                else {
                     glType = mesh.getGLType(Geometry.NORMAL);
                     stride = mesh.getStride(Geometry.NORMAL);
                     gl.glNormalPointer(glType, stride, normalBuffer);
@@ -562,8 +507,7 @@ public class Wedge extends RigidShape
         dc.getGLRuntimeCapabilities().setVertexBufferObjectEnabled(false);
 
         // decide whether to draw with VBO's or VA's
-        if (this.shouldUseVBOs(dc) && (this.getVboIds(getSubdivisions(), dc)) != null)
-        {
+        if (this.shouldUseVBOs(dc) && (this.getVboIds(getSubdivisions(), dc)) != null) {
             // render using VBO's
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, getVboIds(getSubdivisions(), dc)[2 * face]);
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, this.getVboIds(getSubdivisions(), dc)[2 * face + 1]);
@@ -574,8 +518,7 @@ public class Wedge extends RigidShape
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
-        else
-        {
+        else {
             // render using vertex arrays
             gl.glVertexPointer(size, glType, stride, vertexBuffer.rewind());
             gl.glDrawElements(mode, count, type, elementBuffer);
@@ -589,10 +532,8 @@ public class Wedge extends RigidShape
 
         dc.getGLRuntimeCapabilities().setVertexBufferObjectEnabled(vboState);
 
-        if (!dc.isPickingMode())
-        {
-            if (mustApplyLighting(dc, null))
-            {
+        if (!dc.isPickingMode()) {
+            if (mustApplyLighting(dc, null)) {
                 // re-enable normals if we temporarily turned them off earlier
                 if (normalBuffer == null)
                     gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
@@ -601,8 +542,7 @@ public class Wedge extends RigidShape
         }
     }
 
-    protected ShapeData createIntersectionGeometry(Terrain terrain)
-    {
+    protected ShapeData createIntersectionGeometry(Terrain terrain) {
         ShapeData shapeData = new ShapeData(null, this);
         shapeData.setGlobeStateKey(terrain.getGlobe().getGlobeStateKey());
         Geometry mesh;
@@ -612,8 +552,7 @@ public class Wedge extends RigidShape
         // transform the vertices from local to world coords
         Matrix matrix = computeRenderMatrix(terrain.getGlobe(), terrain.getVerticalExaggeration());
 
-        for (int i = 0; i < getFaceCount(); i++)
-        {
+        for (int i = 0; i < getFaceCount(); i++) {
             mesh = shapeData.getMesh(i);
             // transform the vertices from local to world coords
             FloatBuffer newVertices = computeTransformedVertices((FloatBuffer) mesh.getBuffer(Geometry.VERTEX),
@@ -628,33 +567,31 @@ public class Wedge extends RigidShape
         return shapeData;
     }
 
-    /** No export formats supported. */
+    /**
+     * No export formats supported.
+     */
     @Override
-    public String isExportFormatSupported(String mimeType)
-    {
+    public String isExportFormatSupported(String mimeType) {
         // Overridden because this shape does not support export to KML.
         return Exportable.FORMAT_NOT_SUPPORTED;
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter)
-    {
+    protected void doExportAsKML(XMLStreamWriter xmlWriter) {
         String message = Logging.getMessage("generic.UnsupportedOperation", "doExportAsKML");
         Logging.logger().severe(message);
         throw new UnsupportedOperationException(message);
     }
 
     @Override
-    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.doGetRestorableState(rs, context);
 
         rs.addStateValueAsDouble(context, "wedgeAngle", this.getWedgeAngle().degrees);
     }
 
     @Override
-    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         super.doRestoreState(rs, context);
 
         Double doubleState = rs.getStateValueAsDouble(context, "wedgeAngle");

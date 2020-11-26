@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwindx.examples;
 
-import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.CrosshairLayer;
 import gov.nasa.worldwind.view.firstperson.BasicFlyView;
@@ -26,6 +26,10 @@ import java.beans.PropertyChangeEvent;
  * @version $Id: ViewLookAround.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class ViewLookAround extends ApplicationTemplate {
+
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind View Look Around", AppFrame.class);
+    }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
@@ -116,7 +120,7 @@ public class ViewLookAround extends ApplicationTemplate {
                 this.add(resetBut);
 
                 this.setBorder(
-                        new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("View")));
+                    new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("View")));
                 this.setToolTipText("View controls");
             }
 
@@ -149,7 +153,7 @@ public class ViewLookAround extends ApplicationTemplate {
             public void update() {
                 this.suspendEvents = true;
                 {
-                    OrbitView view = (OrbitView) wwd.getView();
+                    View view = wwd.getView();
                     this.pitchSlider.setValue((int) view.getPitch().degrees);
                     this.headingSlider.setValue((int) view.getHeading().degrees);
                     this.fovSlider.setValue((int) view.getFieldOfView().degrees);
@@ -157,9 +161,5 @@ public class ViewLookAround extends ApplicationTemplate {
                 this.suspendEvents = false;
             }
         }
-    }
-
-    public static void main(String[] args) {
-        ApplicationTemplate.start("WorldWind View Look Around", AppFrame.class);
     }
 }

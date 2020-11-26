@@ -11,21 +11,19 @@ import gov.nasa.worldwind.render.*;
 /**
  * Holds common attributes for WorldWind {@link Airspace} shapes. AirspaceAttributes was originally designed as a
  * special purpose attribute bundle for Airspace, but is now a redundant subinterface of {@link
- * gov.nasa.worldwind.render.ShapeAttributes}. AirspaceAttributes is still used by Airspace shapes to ensure backward
+ * ShapeAttributes}. AirspaceAttributes is still used by Airspace shapes to ensure backward
  * compatibility with earlier versions of WorldWind. Usage of methods unique to AirspaceAttributes should be replaced
  * with the equivalent methods in ShapeAttributes.
  *
  * @author dcollins
  * @version $Id: AirspaceAttributes.java 2222 2014-08-13 21:25:29Z dcollins $
  */
-public interface AirspaceAttributes extends ShapeAttributes
-{
+public interface AirspaceAttributes extends ShapeAttributes {
     /**
      * Get the <code>Material</code> used to draw the shape interior or volume. This method is deprecated, and should be
      * replaced with usage of {@link #getInteriorMaterial()}.
      *
      * @return the <code>Material</code> used to draw the shape interior or volume.
-     *
      * @deprecated Use {@link #getInteriorMaterial()} instead.
      */
     @Deprecated
@@ -33,11 +31,10 @@ public interface AirspaceAttributes extends ShapeAttributes
 
     /**
      * Sets the <code>Material</code> used to draw the shape interior or volume. This method is deprecated, and should
-     * be replaced with usage of {@link #setInteriorMaterial(gov.nasa.worldwind.render.Material)}.
+     * be replaced with usage of {@link #setInteriorMaterial(Material)}.
      *
      * @param material the <code>Material</code> used to draw the shape interior or volume.
-     *
-     * @deprecated Use {@link #setInteriorMaterial(gov.nasa.worldwind.render.Material)} instead.
+     * @deprecated Use {@link #setInteriorMaterial(Material)} instead.
      */
     @Deprecated
     void setMaterial(Material material);
@@ -47,8 +44,7 @@ public interface AirspaceAttributes extends ShapeAttributes
      * #getInteriorOpacity()}.
      *
      * @return the shape's opacity in the range [0, 1], where 0 indicates full transparency and 1 indicates full
-     *         opacity.
-     *
+     * opacity.
      * @deprecated Use {@link #getInteriorOpacity()} instead.
      */
     @Deprecated
@@ -60,7 +56,6 @@ public interface AirspaceAttributes extends ShapeAttributes
      *
      * @param opacity the shape's opacity in the range [0, 1], where 0 indicates full transparency and 1 indicates full
      *                opacity.
-     *
      * @deprecated Use {@link #setInteriorOpacity(double)} instead.
      */
     @Deprecated
@@ -73,7 +68,6 @@ public interface AirspaceAttributes extends ShapeAttributes
      *
      * @param dc             the current drawing context.
      * @param enableMaterial true to set OpenGL material state, false to set OpenGL color state.
-     *
      * @throws IllegalArgumentException if the drawing context is null.
      * @deprecated Use {@link Material#apply(com.jogamp.opengl.GL2, int)} or make OpenGL state changes directly.
      */
@@ -87,7 +81,6 @@ public interface AirspaceAttributes extends ShapeAttributes
      *
      * @param dc             the current drawing context.
      * @param enableMaterial true to set OpenGL material state, false to set OpenGL color state.
-     *
      * @throws IllegalArgumentException if the drawing context is null.
      * @deprecated Use {@link Material#apply(com.jogamp.opengl.GL2, int)} or make OpenGL state changes directly.
      */

@@ -15,7 +15,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.airspaces.*;
+import gov.nasa.worldwind.render.airspaces.BasicAirspaceAttributes;
 import gov.nasa.worldwind.render.markers.Marker;
 import gov.nasa.worldwind.util.ShapeEditor;
 
@@ -23,26 +23,27 @@ import java.awt.event.*;
 import java.util.*;
 
 /**
- * Shows how to extend {@link gov.nasa.worldwind.util.ShapeEditor} to operate on a custom Renderable. This example
+ * Shows how to extend {@link ShapeEditor} to operate on a custom Renderable. This example
  * defines a custom renderable and an extension of <code>ShapeEditor</code> that knows how to edit it.
  *
  * @author tag
  * @version $Id: ShapeEditingExtension.java 2421 2014-11-09 00:30:19Z tgaskins $
  */
-public class ShapeEditingExtension extends ApplicationTemplate
-{
+public class ShapeEditingExtension extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Shape Editing Extension", ShapeEditingExtension.AppFrame.class);
+    }
+
     /**
      * Defines a custom Renderable that we'll use to illustrate editing extension.
      */
-    public static class Arrow implements Renderable, Movable2, Highlightable, Attributable, Draggable
-    {
+    public static class Arrow implements Renderable, Movable2, Highlightable, Attributable, Draggable {
         protected final Path shaft;
         protected final Path head;
         protected boolean dragEnabled = true;
         protected DraggableSupport draggableSupport = null;
 
-        public Arrow(LatLon location0, LatLon location1, double altitude)
-        {
+        public Arrow(LatLon location0, LatLon location1, double altitude) {
             this.shaft = new Path(new Position(location0, altitude), new Position(location1, altitude));
             this.head = new Path();
 
@@ -53,78 +54,66 @@ public class ShapeEditingExtension extends ApplicationTemplate
             this.head.setPathType(AVKey.GREAT_CIRCLE);
         }
 
-        public Arrow(Arrow source)
-        {
+        public Arrow(Arrow source) {
             this.shaft = new Path(source.shaft);
             this.head = new Path(source.head);
         }
 
-        public void setLocations(LatLon location0, LatLon location1)
-        {
+        public void setLocations(LatLon location0, LatLon location1) {
             double altitude = this.getAltitude();
-            List<Position> positions = new ArrayList<>(2);
+            Collection<Position> positions = new ArrayList<>(2);
             positions.add(new Position(location0, altitude));
             positions.add(new Position(location1, altitude));
             this.shaft.setPositions(positions);
             this.head.setPositions(new ArrayList<>(0)); // causes arrowhead to be rebuilt
         }
 
-        public LatLon[] getLocations()
-        {
+        public LatLon[] getLocations() {
             Iterable<? extends Position> positions = this.shaft.getPositions();
             Iterator<? extends Position> iterator = positions.iterator();
 
             return new LatLon[] {new LatLon(iterator.next()), new LatLon(iterator.next())};
         }
 
-        public double getAltitude()
-        {
+        public double getAltitude() {
             return this.shaft.getPositions().iterator().next().getAltitude();
         }
 
-        public int getAltitudeMode()
-        {
+        public int getAltitudeMode() {
             return this.shaft.getAltitudeMode();
         }
 
-        public void setAttributes(ShapeAttributes attributes)
-        {
+        public ShapeAttributes getAttributes() {
+            return this.shaft.getAttributes();
+        }
+
+        public void setAttributes(ShapeAttributes attributes) {
             this.shaft.setAttributes(attributes);
             this.head.setAttributes(attributes);
         }
 
-        public ShapeAttributes getAttributes()
-        {
-            return this.shaft.getAttributes();
+        public ShapeAttributes getHighlightAttributes() {
+            return this.shaft.getHighlightAttributes();
         }
 
-        public void setHighlightAttributes(ShapeAttributes attributes)
-        {
+        public void setHighlightAttributes(ShapeAttributes attributes) {
             this.shaft.setHighlightAttributes(attributes);
             this.head.setHighlightAttributes(attributes);
         }
 
-        public ShapeAttributes getHighlightAttributes()
-        {
-            return this.shaft.getHighlightAttributes();
-        }
-
         @Override
-        public boolean isHighlighted()
-        {
+        public boolean isHighlighted() {
             return this.shaft.isHighlighted();
         }
 
         @Override
-        public void setHighlighted(boolean highlighted)
-        {
+        public void setHighlighted(boolean highlighted) {
             this.shaft.setHighlighted(highlighted);
             this.head.setHighlighted(highlighted);
         }
 
         @Override
-        public void render(DrawContext dc)
-        {
+        public void render(DrawContext dc) {
             this.shaft.render(dc);
 
             // Make the arrowhead if it's moved since we last made it.
@@ -134,8 +123,7 @@ public class ShapeEditingExtension extends ApplicationTemplate
             this.head.render(dc);
         }
 
-        protected void makeArrowhead(DrawContext dc)
-        {
+        protected void makeArrowhead(DrawContext dc) {
             Globe globe = dc.getGlobe();
 
             Iterable<? extends Position> positions = this.shaft.getPositions();
@@ -163,7 +151,7 @@ public class ShapeEditingExtension extends ApplicationTemplate
             Vec4 rightHeadPoint = point0.add3(shaftVec).add3(perpendicularVec);
             LatLon rightHeadLocation = globe.computePositionFromEllipsoidalPoint(rightHeadPoint);
 
-            List<Position> newPositions = new ArrayList<>(2);
+            Collection<Position> newPositions = new ArrayList<>(2);
             newPositions.add(new Position(leftHeadLocation, this.getAltitude()));
             newPositions.add(position1);
             newPositions.add(new Position(rightHeadLocation, this.getAltitude()));
@@ -171,33 +159,28 @@ public class ShapeEditingExtension extends ApplicationTemplate
         }
 
         @Override
-        public Position getReferencePosition()
-        {
+        public Position getReferencePosition() {
             return this.shaft.getReferencePosition();
         }
 
         @Override
-        public void moveTo(Globe globe, Position position)
-        {
+        public void moveTo(Globe globe, Position position) {
             this.shaft.moveTo(globe, position);
             this.head.setPositions(new ArrayList<>(0));
         }
 
         @Override
-        public boolean isDragEnabled()
-        {
+        public boolean isDragEnabled() {
             return this.dragEnabled;
         }
 
         @Override
-        public void setDragEnabled(boolean enabled)
-        {
+        public void setDragEnabled(boolean enabled) {
             this.dragEnabled = enabled;
         }
 
         @Override
-        public void drag(DragContext dragContext)
-        {
+        public void drag(DragContext dragContext) {
             if (!this.dragEnabled)
                 return;
 
@@ -207,33 +190,28 @@ public class ShapeEditingExtension extends ApplicationTemplate
             this.doDrag(dragContext);
         }
 
-        protected void doDrag(DragContext dragContext)
-        {
+        protected void doDrag(DragContext dragContext) {
             this.draggableSupport.dragGlobeSizeConstant(dragContext);
         }
     }
 
     /**
-     * Defines an extension to {@link gov.nasa.worldwind.util.ShapeEditor} that knows how to operate on the custom shape
+     * Defines an extension to {@link ShapeEditor} that knows how to operate on the custom shape
      * defined above.
      */
-    public static class ShapeEditorExtension extends ShapeEditor
-    {
-        public ShapeEditorExtension(WorldWindow wwd, Renderable shape)
-        {
+    public static class ShapeEditorExtension extends ShapeEditor {
+        public ShapeEditorExtension(WorldWindow wwd, Renderable shape) {
             super(wwd, shape);
         }
 
-        protected int getShapeAltitudeMode()
-        {
+        protected int getShapeAltitudeMode() {
             if (this.getShape() instanceof Arrow)
                 return ((Arrow) this.getShape()).getAltitudeMode();
             else
                 return super.getShapeAltitudeMode();
         }
 
-        protected double doGetControlPointAltitude(LatLon location, Renderable shape)
-        {
+        protected double doGetControlPointAltitude(LatLon location, Renderable shape) {
             if (shape instanceof Arrow)
                 return super.doGetControlPointAltitude(location, ((Arrow) shape).shaft);
             else
@@ -245,8 +223,7 @@ public class ShapeEditingExtension extends ApplicationTemplate
          *
          * @return a copy of the original shape.
          */
-        protected Renderable doMakeShadowShape()
-        {
+        protected Renderable doMakeShadowShape() {
             // Call the superclass to let it take care of shapes it knows about.
             Renderable shadow = super.doMakeShadowShape();
             if (shadow != null)
@@ -267,8 +244,7 @@ public class ShapeEditingExtension extends ApplicationTemplate
          * @param controlPoint    the control point selected.
          * @param terrainPosition the terrain position under the cursor.
          */
-        protected void doReshapeShape(ControlPointMarker controlPoint, Position terrainPosition)
-        {
+        protected void doReshapeShape(ControlPointMarker controlPoint, Position terrainPosition) {
             // First see if it's the custom shape. If not, defer to the superclass.
             if (this.getShape() instanceof Arrow)
                 this.reshapeArrow(controlPoint, terrainPosition);
@@ -280,8 +256,7 @@ public class ShapeEditingExtension extends ApplicationTemplate
          * Called during editing and moving to reposition the control points. This method should only compute and set
          * the new control point and other affordances. It should not attempt to edit the shape.
          */
-        protected void updateControlPoints()
-        {
+        protected void updateControlPoints() {
             // First see if it's the custom shape. If not, defer to the superclass.
             if (this.getShape() instanceof Arrow)
                 this.updateArrowControlPoints();
@@ -296,8 +271,7 @@ public class ShapeEditingExtension extends ApplicationTemplate
          * @param controlPoint    the control point being moved by the user.
          * @param terrainPosition the terrain position under the cursor.
          */
-        protected void reshapeArrow(ControlPointMarker controlPoint, Position terrainPosition)
-        {
+        protected void reshapeArrow(Marker controlPoint, Position terrainPosition) {
             if (controlPoint == null)
                 return; // this shape does not support control point insertion.
 
@@ -314,8 +288,7 @@ public class ShapeEditingExtension extends ApplicationTemplate
         /**
          * Modify the control points to conform to the current state of the shape being edited.
          */
-        protected void updateArrowControlPoints()
-        {
+        protected void updateArrowControlPoints() {
             Arrow arrow = (Arrow) this.getShape();
 
             LatLon[] locations = arrow.getLocations();
@@ -323,18 +296,16 @@ public class ShapeEditingExtension extends ApplicationTemplate
             // Get a handle on the current control points. If the handle is null, then the control points must be
             // created.
             Iterable<Marker> markers = this.getControlPointLayer().getMarkers();
-            if (markers == null)
-            {
+            if (markers == null) {
                 // There is only one control point. Compute its location, create it and add it to the list.
-                java.util.List<Marker> markerList = new ArrayList<>(1);
+                Collection<Marker> markerList = new ArrayList<>(1);
                 double altitude = this.getControlPointAltitude(locations[1]);
                 Position cpPosition = new Position(locations[1], altitude);
                 markerList.add(this.makeControlPoint(cpPosition, this.getAngleControlPointAttributes(), 0, ROTATION));
 
                 this.getControlPointLayer().setMarkers(markerList);
             }
-            else
-            {
+            else {
                 // The control point exists but must be updated to the new end position of the shape.
                 Iterator<Marker> markerIterator = markers.iterator();
                 double altitude = this.getControlPointAltitude(locations[1]);
@@ -347,12 +318,10 @@ public class ShapeEditingExtension extends ApplicationTemplate
             ((ControlPointMarker) markerIterator.next()).setRotation(this.normalizedHeading(arrowHeading, Angle.ZERO));
         }
 
-        protected void updateAnnotation(ControlPointMarker controlPoint)
-        {
+        protected void updateAnnotation(ControlPointMarker controlPoint) {
             super.updateAnnotation(controlPoint);
 
-            if (controlPoint != null)
-            {
+            if (controlPoint != null) {
                 // Add the arrowhead location to the readout, which by default for this control point shows only the
                 // rotation angle.
                 String text = this.getAnnotation().getText();
@@ -365,13 +334,11 @@ public class ShapeEditingExtension extends ApplicationTemplate
     /**
      * This is the app that instantiates the custom shape and the extended shape editor.
      */
-    public static class AppFrame extends ApplicationTemplate.AppFrame implements SelectListener
-    {
+    public static class AppFrame extends ApplicationTemplate.AppFrame implements SelectListener {
         protected ShapeEditor editor;
         protected ShapeAttributes lastAttrs;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             // Receive selection event to determine when to place the shape in editing mode.
             this.getWwd().addSelectListener(this);
 
@@ -383,15 +350,15 @@ public class ShapeEditingExtension extends ApplicationTemplate
             attrs.setOutlineWidth(2);
             attrs.setEnableAntialiasing(true);
 
-            AirspaceAttributes highlightAttrs = new BasicAirspaceAttributes(attrs);
+            ShapeAttributes highlightAttrs = new BasicAirspaceAttributes(attrs);
             highlightAttrs.setOutlineMaterial(Material.RED);
 
-            SurfaceEllipse ellipse = new SurfaceEllipse(attrs, LatLon.fromDegrees(40, -115), 1e5, 1.5e5);
+            SurfaceEllipse ellipse = new SurfaceEllipse(attrs, LatLon.fromDegrees(40, -115), 1.0e5, 1.5e5);
             ellipse.setHeading(Angle.fromDegrees(30));
             ellipse.setHighlightAttributes(highlightAttrs);
             layer.addRenderable(ellipse);
 
-            Arrow arrow = new Arrow(LatLon.fromDegrees(40, -115), LatLon.fromDegrees(41, -115), 4e4);
+            Arrow arrow = new Arrow(LatLon.fromDegrees(40, -115), LatLon.fromDegrees(41, -115), 4.0e4);
             arrow.setAttributes(attrs);
             arrow.setHighlightAttributes(highlightAttrs);
             layer.addRenderable(arrow);
@@ -400,25 +367,20 @@ public class ShapeEditingExtension extends ApplicationTemplate
         }
 
         @Override
-        public void selected(SelectEvent event)
-        {
+        public void selected(SelectEvent event) {
             PickedObject topObject = event.getTopPickedObject();
 
             // Enable and disable editing via left click.
-            if (event.getEventAction().equals(SelectEvent.LEFT_CLICK))
-            {
-                if (topObject != null && topObject.getObject() instanceof Renderable)
-                {
-                    if (this.editor == null)
-                    {
+            if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
+                if (topObject != null && topObject.getObject() instanceof Renderable) {
+                    if (this.editor == null) {
                         // Enable editing of the selected shape.
                         this.editor = new ShapeEditorExtension(getWwd(), (Renderable) topObject.getObject());
                         this.editor.setArmed(true);
                         this.keepShapeHighlighted(true);
                         event.consume();
                     }
-                    else if (this.editor.getShape() != event.getTopObject())
-                    {
+                    else if (this.editor.getShape() != event.getTopObject()) {
                         // Switch editor to a different shape.
                         this.keepShapeHighlighted(false);
                         this.editor.setArmed(false);
@@ -428,8 +390,7 @@ public class ShapeEditingExtension extends ApplicationTemplate
                         event.consume();
                     }
                     else if ((event.getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) == 0
-                        && (event.getMouseEvent().getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == 0)
-                    {
+                        && (event.getMouseEvent().getModifiersEx() & MouseEvent.ALT_DOWN_MASK) == 0) {
                         // Disable editing of the current shape. Shift and Alt are used by the editor, so ignore
                         // events with those buttons down.
                         this.editor.setArmed(false);
@@ -446,25 +407,17 @@ public class ShapeEditingExtension extends ApplicationTemplate
          *
          * @param tf <code>true</code> to enable constant highlighting, otherwise false.
          */
-        protected void keepShapeHighlighted(boolean tf)
-        {
-            if (tf)
-            {
+        protected void keepShapeHighlighted(boolean tf) {
+            if (tf) {
                 // Set the shape's normal attributes to its highlighted attributes.
                 this.lastAttrs = ((Attributable) this.editor.getShape()).getAttributes();
                 ((Attributable) this.editor.getShape()).setAttributes(
                     ((Attributable) this.editor.getShape()).getHighlightAttributes());
             }
-            else
-            {
+            else {
                 // restore the shape's original normal attributes.
                 ((Attributable) this.editor.getShape()).setAttributes(this.lastAttrs);
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Shape Editing Extension", ShapeEditingExtension.AppFrame.class);
     }
 }

@@ -6,13 +6,15 @@
 
 package gov.nasa.worldwind.formats.dds;
 
+import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
+
 /**
  * @author Lado Garakanidze
  * @version $Id: DXTDecompressor.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 
-public interface DXTDecompressor
-{
+public interface DXTDecompressor {
     /**
      * Decompress DXT1, DXT3 and DXT3A encoded rasters
      *
@@ -22,7 +24,6 @@ public interface DXTDecompressor
      * @return java.awt.image.BufferedImage instance
      * @throws IllegalArgumentException if any input parameter is null or invalid
      */
-    java.awt.image.BufferedImage decompress(java.nio.ByteBuffer buffer, int width, int height)
-            throws IllegalArgumentException;
-
+    BufferedImage decompress(ByteBuffer buffer, int width, int height)
+        throws IllegalArgumentException;
 }

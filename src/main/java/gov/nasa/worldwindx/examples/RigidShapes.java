@@ -14,28 +14,28 @@ import gov.nasa.worldwind.render.Box;
 import gov.nasa.worldwind.render.Cylinder;
 import gov.nasa.worldwind.render.*;
 
-import java.util.ArrayList;
+import java.util.*;
 
 /**
- * This example demonstrates usage of the various Rigid Shapes: {@link gov.nasa.worldwind.render.Ellipsoid}, {@link
- * gov.nasa.worldwind.render.Box}, {@link gov.nasa.worldwind.render.Cylinder}, {@link gov.nasa.worldwind.render.Cone},
- * {@link gov.nasa.worldwind.render.Pyramid} and {@link gov.nasa.worldwind.render.Wedge}. The Rigid Shapes can be
+ * This example demonstrates usage of the various Rigid Shapes: {@link Ellipsoid}, {@link
+ * gov.nasa.worldwind.render.Box}, {@link gov.nasa.worldwind.render.Cylinder}, {@link Cone},
+ * {@link Pyramid} and {@link Wedge}. The Rigid Shapes can be
  * scaled, rotated, skewed and textured. Standard attributes and altitude modes may also be specified.
  *
  * @author ccrick
  * @version $Id: RigidShapes.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class RigidShapes extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class RigidShapes extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Rigid Shapes", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             this.makeShapes();
         }
 
-        protected void makeShapes()
-        {
+        protected void makeShapes() {
             RenderableLayer layer = new RenderableLayer();
             layer.setName("Rigid Shapes");
 
@@ -45,7 +45,7 @@ public class RigidShapes extends ApplicationTemplate
             attrs.setInteriorOpacity(0.7);
             attrs.setEnableLighting(true);
             attrs.setOutlineMaterial(Material.RED);
-            attrs.setOutlineWidth(2d);
+            attrs.setOutlineWidth(2.0d);
             attrs.setDrawInterior(true);
             attrs.setDrawOutline(false);
 
@@ -55,7 +55,7 @@ public class RigidShapes extends ApplicationTemplate
             attrs2.setInteriorOpacity(1);
             attrs2.setEnableLighting(true);
             attrs2.setOutlineMaterial(Material.WHITE);
-            attrs2.setOutlineWidth(2d);
+            attrs2.setOutlineWidth(2.0d);
             attrs2.setDrawOutline(false);
 
             // Pyramid with equal axes, ABSOLUTE altitude mode.
@@ -83,7 +83,7 @@ public class RigidShapes extends ApplicationTemplate
             // Box with a texture.
             Box box = new Box(Position.fromDegrees(0, -90, 600000), 600000, 600000, 600000);
             box.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            ArrayList<Object> imageSources = new ArrayList<>();
+            List<Object> imageSources = new ArrayList<>();
             imageSources.add("images/32x32-icon-nasa.png");
             imageSources.add(null);
             imageSources.add("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
@@ -154,10 +154,5 @@ public class RigidShapes extends ApplicationTemplate
             // Add the layer to the model and update the layer panel.
             insertBeforePlacenames(getWwd(), layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Rigid Shapes", AppFrame.class);
     }
 }

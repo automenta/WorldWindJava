@@ -84,30 +84,30 @@ import java.util.Hashtable;
  * @author tag
  * @version $Id: EllipsoidsEverywhere.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class EllipsoidsEverywhere extends ApplicationTemplate
-{
+public class EllipsoidsEverywhere extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Very Many Shapes", AppFrame.class);
+    }
+
     @SuppressWarnings("unchecked")
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
         String shapeType = "Ellipsoid";
 
-        public AppFrame()
-        {
+        public AppFrame() {
             super(true, true, false);
 
             //getWwd().getSceneController().getGLRuntimeCapabilities().setVertexBufferObjectEnabled(true);
 
             this.getControlPanel().add(makeShapesControlPanel(), BorderLayout.SOUTH);
 
-            RenderableLayer layer = new RenderableLayer();
+            Layer layer = new RenderableLayer();
             //layer.setPickEnabled(true);
             insertBeforeCompass(getWwd(), layer);
 
             makeMany();
         }
 
-        protected void makeMany()
-        {
+        protected void makeMany() {
             int altitudeMode = WorldWind.ABSOLUTE;
             RigidShape shape;
 
@@ -121,12 +121,10 @@ public class EllipsoidsEverywhere extends ApplicationTemplate
             RenderableLayer layer = getLayer();
 
             int count = 0;
-            for (double lat = minLat; lat <= maxLat; lat += delta)
-            {
-                for (double lon = minLon; lon <= maxLon; lon += delta)
-                {
+            for (double lat = minLat; lat <= maxLat; lat += delta) {
+                for (double lon = minLon; lon <= maxLon; lon += delta) {
                     position = new Position(Angle.fromDegreesLatitude(lat),
-                        Angle.fromDegreesLongitude(lon), 5e4);
+                        Angle.fromDegreesLongitude(lon), 5.0e4);
 
                     if (shapeType.equalsIgnoreCase("ellipsoid"))
                         shape = new Ellipsoid(position, 50000, 10000, 50000);
@@ -155,8 +153,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate
                 altitudeMode == WorldWind.RELATIVE_TO_GROUND ? "RELATIVE_TO_GROUND" : "ABSOLUTE");
         }
 
-        protected JPanel makeShapesControlPanel()
-        {
+        protected JPanel makeShapesControlPanel() {
             JPanel controlPanel = new JPanel(new BorderLayout(0, 10));
             controlPanel.setBorder(new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9),
                 new TitledBorder("Shape selection")));
@@ -195,7 +192,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate
                 slider.setLabelTable(labelTable);
                 slider.setPaintLabels(true);
                 slider.addChangeListener(e -> {
-                    double hint = ((JSlider) e.getSource()).getValue() / 10d;
+                    double hint = ((JSlider) e.getSource()).getValue() / 10.0d;
                     getLayer().removeAllRenderables();
                     makeMany();
                     setDetailHint(hint);
@@ -218,12 +215,9 @@ public class EllipsoidsEverywhere extends ApplicationTemplate
             return controlPanel;
         }
 
-        protected RenderableLayer getLayer()
-        {
-            for (Layer layer : getWwd().getModel().getLayers())
-            {
-                if (layer.getName().contains("Renderable"))
-                {
+        protected RenderableLayer getLayer() {
+            for (Layer layer : getWwd().getModel().getLayers()) {
+                if (layer.getName().contains("Renderable")) {
                     return (RenderableLayer) layer;
                 }
             }
@@ -231,31 +225,25 @@ public class EllipsoidsEverywhere extends ApplicationTemplate
             return null;
         }
 
-        protected void setDetailHint(double hint)
-        {
-            for (Renderable renderable : getLayer().getRenderables())
-            {
+        protected void setDetailHint(double hint) {
+            for (Renderable renderable : getLayer().getRenderables()) {
 
-                if (shapeType.equalsIgnoreCase("ellipsoid"))
-                {
+                if (shapeType.equalsIgnoreCase("ellipsoid")) {
                     Ellipsoid current;
                     current = (Ellipsoid) renderable;
                     current.setDetailHint(hint);
                 }
-                else if (shapeType.equalsIgnoreCase("cylinder"))
-                {
+                else if (shapeType.equalsIgnoreCase("cylinder")) {
                     Cylinder current;
                     current = (Cylinder) renderable;
                     current.setDetailHint(hint);
                 }
-                else if (shapeType.equalsIgnoreCase("cone"))
-                {
+                else if (shapeType.equalsIgnoreCase("cone")) {
                     Cone current;
                     current = (Cone) renderable;
                     current.setDetailHint(hint);
                 }
-                else if (shapeType.equalsIgnoreCase("wedge"))
-                {
+                else if (shapeType.equalsIgnoreCase("wedge")) {
                     Wedge current;
                     current = (Wedge) renderable;
                     current.setDetailHint(hint);
@@ -263,10 +251,5 @@ public class EllipsoidsEverywhere extends ApplicationTemplate
             }
             System.out.println("wedge detail hint set to " + hint);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Very Many Shapes", AppFrame.class);
     }
 }

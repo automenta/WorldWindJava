@@ -27,20 +27,31 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: RectangularFireSupportArea.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class RectangularFireSupportArea extends AbstractRectangularGraphic implements TacticalQuad, PreRenderable
-{
-    /** Path to the image used for the polygon fill pattern. */
+public class RectangularFireSupportArea extends AbstractRectangularGraphic implements TacticalQuad, PreRenderable {
+    /**
+     * Path to the image used for the polygon fill pattern.
+     */
     protected static final String DIAGONAL_FILL_PATH = "images/diagonal-fill-16x16.png";
-    /** Center text block on label position when the text is left aligned. */
+    /**
+     * Center text block on label position when the text is left aligned.
+     */
     protected final static Offset LEFT_ALIGN_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
+
+    /**
+     * Create a new target.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public RectangularFireSupportArea(String sidc) {
+        super(sidc);
+    }
 
     /**
      * Indicates the graphics supported by this class.
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         return Arrays.asList(
             TacGrpSidc.FSUPP_ARS_C2ARS_FSA_RTG,
             TacGrpSidc.FSUPP_ARS_C2ARS_FFA_RTG,
@@ -61,25 +72,14 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
     }
 
     /**
-     * Create a new target.
-     *
-     * @param sidc Symbol code the identifies the graphic.
-     */
-    public RectangularFireSupportArea(String sidc)
-    {
-        super(sidc);
-    }
-
-    /**
      * Indicates the function IDs of rectangular Fire Support area graphics that display a date/time range as a separate
      * label at the left side of the rectangle. Whether or not a graphic supports this is determined by the graphic's
      * template in MIL-STD-2525C.
      *
      * @return A Set containing the function IDs of graphics that support a date/time label separate from the graphic's
-     *         main label.
+     * main label.
      */
-    public static Set<String> getGraphicsWithTimeLabel()
-    {
+    public static Set<String> getGraphicsWithTimeLabel() {
         return new HashSet<>(Arrays.asList(
             TacGrpSidc.FSUPP_ARS_C2ARS_FSA_RTG,
             TacGrpSidc.FSUPP_ARS_C2ARS_DA_RTG,
@@ -93,44 +93,40 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
             TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_RTG));
     }
 
-    /** Create labels for the graphic. */
+    /**
+     * Create labels for the graphic.
+     */
     @Override
-    protected void createLabels()
-    {
+    protected void createLabels() {
         FireSupportTextBuilder textBuilder = new FireSupportTextBuilder();
         String[] allText = textBuilder.createText(this);
 
         String text = allText[0];
-        if (!WWUtil.isEmpty(text))
-        {
+        if (!WWUtil.isEmpty(text)) {
             TacticalGraphicLabel mainLabel = this.addLabel(text);
             mainLabel.setTextAlign(this.getMainLabelTextAlign());
 
-            if (this.isFilled())
-            {
+            if (this.isFilled()) {
                 mainLabel.setEffect(AVKey.TEXT_EFFECT_NONE);
                 mainLabel.setDrawInterior(true);
             }
         }
 
-        if (allText.length > 1 && !WWUtil.isEmpty(allText[1]))
-        {
+        if (allText.length > 1 && !WWUtil.isEmpty(allText[1])) {
             TacticalGraphicLabel timeLabel = this.addLabel(allText[1]);
             timeLabel.setTextAlign(AVKey.RIGHT);
 
             // Align the upper right corner of the time label with the upper right corner of the quad.
-            timeLabel.setOffset(new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION));
+            timeLabel.setOffset(new Offset(0.0d, 0.0d, AVKey.FRACTION, AVKey.FRACTION));
         }
     }
 
     @Override
-    protected void determineLabelPositions(DrawContext dc)
-    {
+    protected void determineLabelPositions(DrawContext dc) {
         Position center = new Position(this.quad.getCenter(), 0);
         this.labels.get(0).setPosition(center);
 
-        if (this.labels.size() > 1)
-        {
+        if (this.labels.size() > 1) {
             double hw = this.quad.getWidth() / 2.0;
             double hh = this.quad.getHeight() / 2.0;
             double globeRadius = dc.getGlobe().getRadiusAt(center.getLatitude(), center.getLongitude());
@@ -153,8 +149,7 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
      *
      * @return Text alignment for the main label.
      */
-    protected String getMainLabelTextAlign()
-    {
+    protected String getMainLabelTextAlign() {
         boolean isACA = TacGrpSidc.FSUPP_ARS_C2ARS_ACA_RTG.equalsIgnoreCase(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. All others are center aligned.
@@ -171,8 +166,7 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
      * @return Offset to apply to the main label.
      */
     @Override
-    protected Offset getDefaultLabelOffset()
-    {
+    protected Offset getDefaultLabelOffset() {
         boolean isACA = TacGrpSidc.FSUPP_ARS_C2ARS_ACA_RTG.equalsIgnoreCase(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. Adjust the offset to center the left aligned label
@@ -184,14 +178,14 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
             return super.getDefaultLabelOffset();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void applyDefaultAttributes(ShapeAttributes attributes)
-    {
+    protected void applyDefaultAttributes(ShapeAttributes attributes) {
         super.applyDefaultAttributes(attributes);
 
-        if (this.isFilled())
-        {
+        if (this.isFilled()) {
             // Enable the polygon interior and set the image source to draw a fill pattern of diagonal lines.
             attributes.setDrawInterior(true);
             attributes.setImageSource(this.getImageSource());
@@ -203,8 +197,7 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
      *
      * @return true if the polygon must be filled, otherwise false.
      */
-    protected boolean isFilled()
-    {
+    protected boolean isFilled() {
         return TacGrpSidc.FSUPP_ARS_C2ARS_NFA_RTG.equalsIgnoreCase(this.maskedSymbolCode)
             || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_RTG.equalsIgnoreCase(this.maskedSymbolCode)
             || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equalsIgnoreCase(this.maskedSymbolCode);
@@ -215,8 +208,7 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
      *
      * @return The source of the polygon fill pattern.
      */
-    protected Object getImageSource()
-    {
+    protected Object getImageSource() {
         return DIAGONAL_FILL_PATH;
     }
 }

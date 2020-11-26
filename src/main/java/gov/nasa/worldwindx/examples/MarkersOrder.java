@@ -36,15 +36,20 @@ import java.util.*;
  * @author Patrick Murris
  * @version $Id: MarkersOrder.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class MarkersOrder extends ApplicationTemplate
-{
+public class MarkersOrder extends ApplicationTemplate {
     protected static final String TRACK_PATH = "gov/nasa/worldwindx/examples/data/tuolumne.gpx";
     protected static final double TRACK_LATITUDE = 37.90;
     protected static final double TRACK_LONGITUDE = -119.52;
 
+    public static void main(String[] args) {
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, TRACK_LATITUDE);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, TRACK_LONGITUDE);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 40.0e3);
+        ApplicationTemplate.start("WorldWind Markers Order", AppFrame.class);
+    }
+
     @SuppressWarnings("unchecked")
-    protected static class AppFrame extends ApplicationTemplate.AppFrame
-    {
+    protected static class AppFrame extends ApplicationTemplate.AppFrame {
         protected static final int COLOR_MODE_RAMP = 0;
         protected static final int COLOR_MODE_DOW = 1;
         protected static final int COLOR_MODE_HOURS = 2;
@@ -54,66 +59,55 @@ public class MarkersOrder extends ApplicationTemplate
         // Attributes color ramps
         // Monochrome
         protected static final MarkerAttributes[] attrsRampMono = new MarkerAttributes[RAMP_VALUES];
+        // Monochrome desaturated
+        protected static final MarkerAttributes[] attrsRampDesat = new MarkerAttributes[RAMP_VALUES];
+        // Two color gradient
+        protected static final MarkerAttributes[] attrsRampGradient = new MarkerAttributes[RAMP_VALUES];
+        // Rainbow
+        protected static final MarkerAttributes[] attrsRampHue = new MarkerAttributes[RAMP_VALUES];
+        // Seven days color set
+        protected static final MarkerAttributes[] attrsDayOfWeek = new MarkerAttributes[7];
+        // 24h color set
+        protected static final MarkerAttributes[] attrsHours = new MarkerAttributes[24];
 
-        static
-        {
-            for (int i = 0; i < RAMP_VALUES; i++)
-            {
-                float opacity = Math.max(1f - (float) i / RAMP_VALUES, .2f);
+        static {
+            for (int i = 0; i < RAMP_VALUES; i++) {
+                float opacity = Math.max(1.0f - (float) i / RAMP_VALUES, 0.2f);
                 attrsRampMono[i] = new BasicMarkerAttributes(new Material(Color.RED),
                     BasicMarkerShape.SPHERE, opacity, 10, 5);
             }
         }
 
-        // Monochrome desaturated
-        protected static final MarkerAttributes[] attrsRampDesat = new MarkerAttributes[RAMP_VALUES];
-
-        static
-        {
-            for (int i = 0; i < RAMP_VALUES; i++)
-            {
-                float hue = 1f;  // Red
-                float sat = 1f - (float) i / (RAMP_VALUES * 1.1f);  // bias to avoid falling to plain white
-                float opacity = Math.max(1f - (float) i / RAMP_VALUES, .2f);
-                attrsRampDesat[i] = new BasicMarkerAttributes(new Material(Color.getHSBColor(hue, sat, 1f)),
+        static {
+            for (int i = 0; i < RAMP_VALUES; i++) {
+                float hue = 1.0f;  // Red
+                float sat = 1.0f - i / (RAMP_VALUES * 1.1f);  // bias to avoid falling to plain white
+                float opacity = Math.max(1.0f - (float) i / RAMP_VALUES, 0.2f);
+                attrsRampDesat[i] = new BasicMarkerAttributes(new Material(Color.getHSBColor(hue, sat, 1.0f)),
                     BasicMarkerShape.SPHERE, opacity, 10, 5);
             }
         }
 
-        // Two color gradient
-        protected static final MarkerAttributes[] attrsRampGradient = new MarkerAttributes[RAMP_VALUES];
-
-        static
-        {
-            for (int i = 0; i < RAMP_VALUES; i++)
-            {
-                float factor = 1f - (float) i / RAMP_VALUES;
-                float opacity = Math.max(1f - (float) i / RAMP_VALUES, .2f);
+        static {
+            for (int i = 0; i < RAMP_VALUES; i++) {
+                float factor = 1.0f - (float) i / RAMP_VALUES;
+                float opacity = Math.max(1.0f - (float) i / RAMP_VALUES, 0.2f);
                 attrsRampGradient[i] = new BasicMarkerAttributes(
                     new Material(interpolateColor(Color.RED, Color.BLUE, factor)),
                     BasicMarkerShape.SPHERE, opacity, 10, 5);
             }
         }
 
-        // Rainbow
-        protected static final MarkerAttributes[] attrsRampHue = new MarkerAttributes[RAMP_VALUES];
-
-        static
-        {
-            for (int i = 0; i < RAMP_VALUES; i++)
-            {
-                float hue = (float) i / (RAMP_VALUES * 1.1f); // Bias to avoid looping back to red
-                float opacity = Math.max(1f - (float) i / RAMP_VALUES, .2f);
-                attrsRampHue[i] = new BasicMarkerAttributes(new Material(Color.getHSBColor(hue, 1f, 1f)),
+        static {
+            for (int i = 0; i < RAMP_VALUES; i++) {
+                float hue = i / (RAMP_VALUES * 1.1f); // Bias to avoid looping back to red
+                float opacity = Math.max(1.0f - (float) i / RAMP_VALUES, 0.2f);
+                attrsRampHue[i] = new BasicMarkerAttributes(new Material(Color.getHSBColor(hue, 1.0f, 1.0f)),
                     BasicMarkerShape.SPHERE, opacity, 10, 5);
             }
         }
 
-        // Seven days color set
-        protected static final MarkerAttributes[] attrsDayOfWeek = new MarkerAttributes[7];
-
-        static
-        {
+        static {
             for (int i = 1; i <= 7; i++)        // Sunday=1... Saturday=7
             {
                 attrsDayOfWeek[i - 1] = new BasicMarkerAttributes(
@@ -122,11 +116,7 @@ public class MarkersOrder extends ApplicationTemplate
             }
         }
 
-        // 24h color set
-        protected static final MarkerAttributes[] attrsHours = new MarkerAttributes[24];
-
-        static
-        {
+        static {
             for (int i = 0; i < 24; i++)        // 0...23
             {
                 attrsHours[i] = new BasicMarkerAttributes(
@@ -135,43 +125,18 @@ public class MarkersOrder extends ApplicationTemplate
             }
         }
 
-        public static Color interpolateColor(Color from, Color to, double factor)
-        {
-            return new Color((int) (from.getRed() * factor + to.getRed() * (1 - factor)),
-                (int) (from.getGreen() * factor + to.getGreen() * (1 - factor)),
-                (int) (from.getBlue() * factor + to.getBlue() * (1 - factor)),
-                (int) (from.getAlpha() * factor + to.getAlpha() * (1 - factor)));
-        }
-
-        public static Color computeColorForDayOfWeek(int day)
-        {
-            // Day goes from Sunday=1 to Saturday=7
-            // Bias ratio to avoid looping back to red on saturday
-            return Color.getHSBColor((float) (day - 1) / 6.5f, 1f, 1f);
-        }
-
-        public static Color computeColorForHour(int hour)
-        {
-            // Hour from 0 to 23
-            // Bias ratio to avoid looping back to red for 23:00
-            return Color.getHSBColor((float) hour / 26f, 1f, 1f);
-        }
-
+        protected final PowerOfTwoPaddedImage dayOfWeekLegend = createLegendForDaysOfWeek(attrsDayOfWeek);
+        protected final PowerOfTwoPaddedImage hoursLegend = createLegendForHours(attrsHours);
         protected RenderableLayer renderableLayer;
         protected ScreenAnnotation screenAnnotation;
         protected JComboBox colorRampCombo;
         protected JSlider timeScaleSlider;
         protected Marker lastHighlit;
         protected BasicMarkerAttributes lastAttrs;
-
-        protected final PowerOfTwoPaddedImage dayOfWeekLegend = createLegendForDaysOfWeek(attrsDayOfWeek);
-        protected final PowerOfTwoPaddedImage hoursLegend = createLegendForHours(attrsHours);
-
         protected int colorMode = COLOR_MODE_DOW;  // default color mode is day of week
         protected MarkerAttributes[] attrs = attrsDayOfWeek;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             super(true, true, false);
 
             // Add marker layer
@@ -203,20 +168,11 @@ public class MarkersOrder extends ApplicationTemplate
                 colorMode = COLOR_MODE_RAMP;
                 colorRampCombo.setEnabled(true);
                 timeScaleSlider.setEnabled(true);
-                switch (colorRampCombo.getSelectedIndex())
-                {
-                    case 0:
-                        attrs = attrsRampMono;
-                        break;
-                    case 1:
-                        attrs = attrsRampDesat;
-                        break;
-                    case 2:
-                        attrs = attrsRampGradient;
-                        break;
-                    case 3:
-                        attrs = attrsRampHue;
-                        break;
+                switch (colorRampCombo.getSelectedIndex()) {
+                    case 0 -> attrs = attrsRampMono;
+                    case 1 -> attrs = attrsRampDesat;
+                    case 2 -> attrs = attrsRampGradient;
+                    case 3 -> attrs = attrsRampHue;
                 }
                 updateScreenAnnotation(null);
                 getWwd().redraw();
@@ -271,20 +227,11 @@ public class MarkersOrder extends ApplicationTemplate
             colorRampCombo = new JComboBox(new String[] {"Monochrome", "Desaturated", "Gradient", "Rainbow"});
             colorRampCombo.setEnabled(false);
             colorRampCombo.addActionListener(event -> {
-                switch (colorRampCombo.getSelectedIndex())
-                {
-                    case 0:
-                        attrs = attrsRampMono;
-                        break;
-                    case 1:
-                        attrs = attrsRampDesat;
-                        break;
-                    case 2:
-                        attrs = attrsRampGradient;
-                        break;
-                    case 3:
-                        attrs = attrsRampHue;
-                        break;
+                switch (colorRampCombo.getSelectedIndex()) {
+                    case 0 -> attrs = attrsRampMono;
+                    case 1 -> attrs = attrsRampDesat;
+                    case 2 -> attrs = attrsRampGradient;
+                    case 3 -> attrs = attrsRampHue;
                 }
                 getWwd().redraw();
             });
@@ -295,8 +242,7 @@ public class MarkersOrder extends ApplicationTemplate
             // Setup select listener to highlight markers on rollover
             this.getWwd().addSelectListener(event -> {
                 if (lastHighlit != null
-                    && (event.getTopObject() == null || !event.getTopObject().equals(lastHighlit)))
-                {
+                    && (event.getTopObject() == null || !event.getTopObject().equals(lastHighlit))) {
                     lastHighlit.setAttributes(lastAttrs);
                     lastHighlit = null;
                 }
@@ -310,13 +256,12 @@ public class MarkersOrder extends ApplicationTemplate
                 if (event.getTopPickedObject().getParentLayer() != layer)
                     return;
 
-                if (lastHighlit == null && event.getTopObject() instanceof Marker)
-                {
+                if (lastHighlit == null && event.getTopObject() instanceof Marker) {
                     lastHighlit = (Marker) event.getTopObject();
                     lastAttrs = (BasicMarkerAttributes) lastHighlit.getAttributes();
                     MarkerAttributes highliteAttrs = new BasicMarkerAttributes(lastAttrs);
                     highliteAttrs.setMaterial(Material.WHITE);
-                    highliteAttrs.setOpacity(1d);
+                    highliteAttrs.setOpacity(1.0d);
                     highliteAttrs.setMarkerPixels(lastAttrs.getMarkerPixels() * 1.4);
                     highliteAttrs.setMinMarkerSize(lastAttrs.getMinMarkerSize() * 1.4);
                     lastHighlit.setAttributes(highliteAttrs);
@@ -324,10 +269,27 @@ public class MarkersOrder extends ApplicationTemplate
             });
         }
 
-        protected TimedMarkerLayer buildTracksLayer()
-        {
-            try
-            {
+        public static Color interpolateColor(Color from, Color to, double factor) {
+            return new Color((int) (from.getRed() * factor + to.getRed() * (1 - factor)),
+                (int) (from.getGreen() * factor + to.getGreen() * (1 - factor)),
+                (int) (from.getBlue() * factor + to.getBlue() * (1 - factor)),
+                (int) (from.getAlpha() * factor + to.getAlpha() * (1 - factor)));
+        }
+
+        public static Color computeColorForDayOfWeek(int day) {
+            // Day goes from Sunday=1 to Saturday=7
+            // Bias ratio to avoid looping back to red on saturday
+            return Color.getHSBColor((day - 1) / 6.5f, 1.0f, 1.0f);
+        }
+
+        public static Color computeColorForHour(int hour) {
+            // Hour from 0 to 23
+            // Bias ratio to avoid looping back to red for 23:00
+            return Color.getHSBColor(hour / 26.0f, 1.0f, 1.0f);
+        }
+
+        protected TimedMarkerLayer buildTracksLayer() {
+            try {
                 GpxReader reader = new GpxReader();
                 reader.readStream(WWIO.openFileOrResourceStream(TRACK_PATH, this.getClass()));
                 TrackPointIterator trackPoints = new TrackPointIteratorImpl(reader.getTracks());
@@ -335,18 +297,14 @@ public class MarkersOrder extends ApplicationTemplate
                 ArrayList<Marker> markers = new ArrayList<>();
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 df.setCalendar(Calendar.getInstance(TimeZone.getTimeZone("UTC")));
-                while (trackPoints.hasNext())
-                {
+                while (trackPoints.hasNext()) {
                     TrackPoint tp = trackPoints.next();
                     long time = 0;
-                    if (tp.getTime() != null)
-                    {
-                        try
-                        {
+                    if (tp.getTime() != null) {
+                        try {
                             time = df.parse(tp.getTime().replaceAll("[TZ]", " ").trim()).getTime();
                         }
-                        catch (Exception e)
-                        {
+                        catch (Exception e) {
                             time = 0;
                         }
                     }
@@ -362,96 +320,21 @@ public class MarkersOrder extends ApplicationTemplate
 
                 return layer;
             }
-            catch (ParserConfigurationException | IOException | SAXException e)
-            {
+            catch (ParserConfigurationException | IOException | SAXException e) {
                 e.printStackTrace();
             }
 
             return null;
         }
 
-        protected static class TimedMarker extends BasicMarker
-        {
-            protected final long time;
-
-            public TimedMarker(Position position, MarkerAttributes attributes, long time)
-            {
-                super(position, attributes);
-                this.time = time;
-            }
-        }
-
-        protected class TimedMarkerLayer extends MarkerLayer
-        {
-            protected long latestTime = 0;
-            protected long timeScale = (long) 60e3 * 10;   // 10 minutes between attributes ramp steps
-
-            public TimedMarkerLayer(Iterable<Marker> markers)
-            {
-                super(markers);
-            }
-
-            public void draw(DrawContext dc, java.awt.Point pickPoint)
-            {
-                if (!dc.isPickingMode())
-                {
-                    Calendar cal = Calendar.getInstance();
-                    for (Marker marker1 : getMarkers())
-                    {
-                        TimedMarker marker = (TimedMarker) marker1;
-                        int i = 0;
-                        switch (colorMode)
-                        {
-                            case COLOR_MODE_RAMP:
-                                i = Math.min((int) ((latestTime - marker.time) / timeScale), attrs.length - 1);
-                                break;
-                            case COLOR_MODE_DOW:
-                                cal.setTimeInMillis(marker.time);
-                                i = cal.get(Calendar.DAY_OF_WEEK) - 1;
-                                break;
-                            case COLOR_MODE_HOURS:
-                                cal.setTimeInMillis(marker.time);
-                                i = cal.get(Calendar.HOUR_OF_DAY) % 24;
-                                break;
-                        }
-                        if (marker != lastHighlit)
-                            marker.setAttributes(attrs[i]);
-                    }
-                }
-                super.draw(dc, pickPoint);
-            }
-
-            public void setLatestTime(long time)
-            {
-                this.latestTime = time;
-            }
-
-            public long getLatestTime()
-            {
-                return this.latestTime;
-            }
-
-            public void setTimeScale(long time)
-            {
-                this.timeScale = time;
-            }
-
-            public long getTimeScale()
-            {
-                return this.timeScale;
-            }
-        }
-
-        protected PowerOfTwoPaddedImage createLegendForHours(MarkerAttributes[] attrs)
-        {
+        protected PowerOfTwoPaddedImage createLegendForHours(MarkerAttributes[] attrs) {
             BufferedImage image = new BufferedImage(64, 320, BufferedImage.TYPE_4BYTE_ABGR);
             Graphics g2 = image.getGraphics();
             int divisions = 24;
             int margin = 2; // space between items in pixels
             int w = image.getWidth() / 2 - margin;
             int h = (image.getHeight() - margin * (divisions - 1)) / divisions;
-            for (int hour = 0; hour < divisions; hour++)
-            {
+            for (int hour = 0; hour < divisions; hour++) {
                 int x = 0;
                 int y = hour * (image.getHeight() / divisions);
                 // Draw color rectangle
@@ -469,8 +352,7 @@ public class MarkersOrder extends ApplicationTemplate
             return PowerOfTwoPaddedImage.fromBufferedImage(image);
         }
 
-        protected PowerOfTwoPaddedImage createLegendForDaysOfWeek(MarkerAttributes[] attrs)
-        {
+        protected PowerOfTwoPaddedImage createLegendForDaysOfWeek(MarkerAttributes[] attrs) {
             DateFormatSymbols dfs = new DateFormatSymbols();
             String[] dayNames = dfs.getShortWeekdays();
             BufferedImage image = new BufferedImage(64, 100, BufferedImage.TYPE_4BYTE_ABGR);
@@ -479,8 +361,7 @@ public class MarkersOrder extends ApplicationTemplate
             int margin = 2; // space between items in pixels
             int w = image.getWidth() / 2 - margin;
             int h = (image.getHeight() - margin * (divisions - 1)) / divisions;
-            for (int day = 0; day < divisions; day++)
-            {
+            for (int day = 0; day < divisions; day++) {
                 int x = 0;
                 int y = day * (image.getHeight() / divisions);
                 // Draw color rectangle
@@ -498,12 +379,10 @@ public class MarkersOrder extends ApplicationTemplate
             return PowerOfTwoPaddedImage.fromBufferedImage(image);
         }
 
-        protected void updateScreenAnnotation(PowerOfTwoPaddedImage image)
-        {
+        protected void updateScreenAnnotation(PowerOfTwoPaddedImage image) {
             if (this.screenAnnotation != null)
                 this.renderableLayer.removeRenderable(this.screenAnnotation);
-            if (image != null)
-            {
+            if (image != null) {
                 // Setup annotation in lower left viewport corner
                 this.screenAnnotation = new ScreenAnnotation("", new Point(20, 20));
                 this.screenAnnotation.getAttributes().setImageSource(image.getPowerOfTwoImage());
@@ -513,17 +392,68 @@ public class MarkersOrder extends ApplicationTemplate
                 this.screenAnnotation.getAttributes().setAdjustWidthToText(AVKey.SIZE_FIXED);
                 this.screenAnnotation.getAttributes().setBorderWidth(0);
                 this.screenAnnotation.getAttributes().setCornerRadius(0);
-                this.screenAnnotation.getAttributes().setBackgroundColor(new Color(0f, 0f, 0f, 0f));
+                this.screenAnnotation.getAttributes().setBackgroundColor(new Color(0.0f, 0.0f, 0.0f, 0.0f));
                 this.renderableLayer.addRenderable(this.screenAnnotation);
             }
         }
-    }
 
-    public static void main(String[] args)
-    {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, TRACK_LATITUDE);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, TRACK_LONGITUDE);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 40e3);
-        ApplicationTemplate.start("WorldWind Markers Order", AppFrame.class);
+        protected static class TimedMarker extends BasicMarker {
+            protected final long time;
+
+            public TimedMarker(Position position, MarkerAttributes attributes, long time) {
+                super(position, attributes);
+                this.time = time;
+            }
+        }
+
+        protected class TimedMarkerLayer extends MarkerLayer {
+            protected long latestTime = 0;
+            protected long timeScale = (long) 60.0e3 * 10;   // 10 minutes between attributes ramp steps
+
+            public TimedMarkerLayer(Iterable<Marker> markers) {
+                super(markers);
+            }
+
+            public void draw(DrawContext dc, Point pickPoint) {
+                if (!dc.isPickingMode()) {
+                    Calendar cal = Calendar.getInstance();
+                    for (Marker marker1 : getMarkers()) {
+                        TimedMarker marker = (TimedMarker) marker1;
+                        int i = 0;
+                        switch (colorMode) {
+                            case COLOR_MODE_RAMP -> i = Math.min((int) ((latestTime - marker.time) / timeScale),
+                                attrs.length - 1);
+                            case COLOR_MODE_DOW -> {
+                                cal.setTimeInMillis(marker.time);
+                                i = cal.get(Calendar.DAY_OF_WEEK) - 1;
+                            }
+                            case COLOR_MODE_HOURS -> {
+                                cal.setTimeInMillis(marker.time);
+                                i = cal.get(Calendar.HOUR_OF_DAY) % 24;
+                            }
+                        }
+                        if (marker != lastHighlit)
+                            marker.setAttributes(attrs[i]);
+                    }
+                }
+                super.draw(dc, pickPoint);
+            }
+
+            public long getLatestTime() {
+                return this.latestTime;
+            }
+
+            public void setLatestTime(long time) {
+                this.latestTime = time;
+            }
+
+            public long getTimeScale() {
+                return this.timeScale;
+            }
+
+            public void setTimeScale(long time) {
+                this.timeScale = time;
+            }
+        }
     }
 }

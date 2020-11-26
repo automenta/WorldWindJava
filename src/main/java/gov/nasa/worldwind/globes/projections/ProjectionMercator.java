@@ -16,36 +16,32 @@ import gov.nasa.worldwind.util.WWMath;
  * @author tag
  * @version $Id: ProjectionMercator.java 2277 2014-08-28 21:19:37Z dcollins $
  */
-public class ProjectionMercator extends AbstractGeographicProjection
-{
-    public ProjectionMercator()
-    {
+public class ProjectionMercator extends AbstractGeographicProjection {
+    public ProjectionMercator() {
         super(Sector.fromDegrees(-78, 78, -180, 180));
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "Mercator";
     }
 
     @Override
-    public boolean isContinuous()
-    {
+    public boolean isContinuous() {
         return true;
     }
 
     @Override
-    public Vec4 geographicToCartesian(Globe globe, Angle latitude, Angle longitude, double metersElevation, Vec4 offset)
-    {
-        if (latitude.degrees > this.getProjectionLimits().getMaxLatitude().degrees)
-            latitude = this.getProjectionLimits().getMaxLatitude();
-        if (latitude.degrees < this.getProjectionLimits().getMinLatitude().degrees)
-            latitude = this.getProjectionLimits().getMinLatitude();
-        if (longitude.degrees > this.getProjectionLimits().getMaxLongitude().degrees)
-            longitude = this.getProjectionLimits().getMaxLongitude();
-        if (longitude.degrees < this.getProjectionLimits().getMinLongitude().degrees)
-            longitude = this.getProjectionLimits().getMinLongitude();
+    public Vec4 geographicToCartesian(Globe globe, Angle latitude, Angle longitude, double metersElevation,
+        Vec4 offset) {
+        if (latitude.degrees > this.getProjectionLimits().latMax().degrees)
+            latitude = this.getProjectionLimits().latMax();
+        if (latitude.degrees < this.getProjectionLimits().latMin().degrees)
+            latitude = this.getProjectionLimits().latMin();
+        if (longitude.degrees > this.getProjectionLimits().lonMax().degrees)
+            longitude = this.getProjectionLimits().lonMax();
+        if (longitude.degrees < this.getProjectionLimits().lonMin().degrees)
+            longitude = this.getProjectionLimits().lonMin();
 
         double xOffset = offset != null ? offset.x : 0;
 
@@ -63,28 +59,26 @@ public class ProjectionMercator extends AbstractGeographicProjection
 
     @Override
     public void geographicToCartesian(Globe globe, Sector sector, int numLat, int numLon, double[] metersElevation,
-        Vec4 offset, Vec4[] out)
-    {
+        Vec4 offset, Vec4[] out) {
         double eqr = globe.getEquatorialRadius();
         double ecc = Math.sqrt(globe.getEccentricitySquared());
-        double minLat = sector.getMinLatitude().radians;
-        double maxLat = sector.getMaxLatitude().radians;
-        double minLon = sector.getMinLongitude().radians;
-        double maxLon = sector.getMaxLongitude().radians;
+        double minLat = sector.latMin().radians;
+        double maxLat = sector.latMax().radians;
+        double minLon = sector.lonMin().radians;
+        double maxLon = sector.lonMax().radians;
         double deltaLat = (maxLat - minLat) / (numLat > 1 ? numLat - 1 : 1);
         double deltaLon = (maxLon - minLon) / (numLon > 1 ? numLon - 1 : 1);
-        double minLatLimit = this.getProjectionLimits().getMinLatitude().radians;
-        double maxLatLimit = this.getProjectionLimits().getMaxLatitude().radians;
-        double minLonLimit = this.getProjectionLimits().getMinLongitude().radians;
-        double maxLonLimit = this.getProjectionLimits().getMaxLongitude().radians;
+        double minLatLimit = this.getProjectionLimits().latMin().radians;
+        double maxLatLimit = this.getProjectionLimits().latMax().radians;
+        double minLonLimit = this.getProjectionLimits().lonMin().radians;
+        double maxLonLimit = this.getProjectionLimits().lonMax().radians;
         double offset_x = offset.x;
         int pos = 0;
 
         // Iterate over the latitude and longitude coordinates in the specified sector, computing the Cartesian point
         // corresponding to each latitude and longitude.
         double lat = minLat;
-        for (int j = 0; j < numLat; j++, lat += deltaLat)
-        {
+        for (int j = 0; j < numLat; j++, lat += deltaLat) {
             if (j == numLat - 1) // explicitly set the last lat to the max latitude to ensure alignment
                 lat = maxLat;
             lat = WWMath.clamp(lat, minLatLimit, maxLatLimit); // limit lat to projection limits
@@ -95,8 +89,7 @@ public class ProjectionMercator extends AbstractGeographicProjection
             double y = eqr * Math.log(s) * 0.5;
 
             double lon = minLon;
-            for (int i = 0; i < numLon; i++, lon += deltaLon)
-            {
+            for (int i = 0; i < numLon; i++, lon += deltaLon) {
                 if (i == numLon - 1) // explicitly set the last lon to the max longitude to ensure alignment
                     lon = maxLon;
                 lon = WWMath.clamp(lon, minLonLimit, maxLonLimit); // limit lon to projection limits
@@ -109,8 +102,7 @@ public class ProjectionMercator extends AbstractGeographicProjection
     }
 
     @Override
-    public Position cartesianToGeographic(Globe globe, Vec4 cart, Vec4 offset)
-    {
+    public Position cartesianToGeographic(Globe globe, Vec4 cart, Vec4 offset) {
         double xOffset = offset != null ? offset.x : 0;
 
         // See "Map Projections: A Working Manual", pages 45 and 19 for the source of the below formulas.
@@ -141,8 +133,7 @@ public class ProjectionMercator extends AbstractGeographicProjection
     }
 
     @Override
-    public Vec4 northPointingTangent(Globe globe, Angle latitude, Angle longitude)
-    {
+    public Vec4 northPointingTangent(Globe globe, Angle latitude, Angle longitude) {
         return Vec4.UNIT_Y;
     }
 }

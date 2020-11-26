@@ -9,12 +9,13 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.render.DrawContext;
 
+import java.awt.Point;
+
 /**
  * @author Tom Gaskins
  * @version $Id: Layer.java 1824 2014-01-22 22:41:10Z dcollins $
  */
-public interface Layer extends WWObject, Disposable, Restorable
-{
+public interface Layer extends WWObject, Disposable, Restorable {
     /**
      * Indicates whether the layer is enabled for rendering and selection.
      *
@@ -69,7 +70,7 @@ public interface Layer extends WWObject, Disposable, Restorable
      * Indicates whether the layer performs selection during picking.
      * <p>
      * Most layers enable picking by default. However, this becomes inconvenient for {@link
-     * gov.nasa.worldwind.render.SurfaceImage} and {@link gov.nasa.worldwind.layers.SurfaceImageLayer}} when the image
+     * gov.nasa.worldwind.render.SurfaceImage} and {@link SurfaceImageLayer}} when the image
      * covers a large area because the view input handlers detect the surface image rather than the terrain as the top
      * picked object, and will not respond to the user's attempts at navigation. The solution is to disable picking for
      * the layer.
@@ -109,10 +110,9 @@ public interface Layer extends WWObject, Disposable, Restorable
      *
      * @param dc        the current draw context for rendering.
      * @param pickPoint the screen coordinate point
-     *
      * @see SelectEvent
      */
-    void pick(DrawContext dc, java.awt.Point pickPoint);
+    void pick(DrawContext dc, Point pickPoint);
 
     /**
      * Indicates whether the most recent rendering of the layer rendered the highest resolution imagery or other data
@@ -154,23 +154,22 @@ public interface Layer extends WWObject, Disposable, Restorable
     void setNetworkRetrievalEnabled(boolean networkRetrievalEnabled);
 
     /**
+     * Returns the current expiry time.
+     *
+     * @return the current expiry time.
+     */
+    long getExpiryTime();
+
+    /**
      * Specifies the time of the layer's most recent dataset update. If greater than zero, the layer ignores and
      * eliminates any previously cached data older than the time specified, and requests new information from the data
      * source. If zero, the layer uses any expiry times intrinsic to the layer, typically initialized at layer
      * construction. The default expiry time is 0, thereby enabling a layer's intrinsic expiration criteria.
      *
      * @param expiryTime the expiry time of any cached data, expressed as a number of milliseconds beyond the epoch.
-     *
      * @see System#currentTimeMillis() for a description of milliseconds beyond the epoch.
      */
     void setExpiryTime(long expiryTime);
-
-    /**
-     * Returns the current expiry time.
-     *
-     * @return the current expiry time.
-     */
-    long getExpiryTime();
 
     /**
      * Returns the minimum altitude at which the layer is displayed.
@@ -205,7 +204,6 @@ public interface Layer extends WWObject, Disposable, Restorable
      * view. Subclasses able to determine their presence in the view should override this implementation.
      *
      * @param dc the current draw context
-     *
      * @return <code>true</code> if the layer is in the view, <code>false</code> otherwise.
      */
     boolean isLayerInView(DrawContext dc);
@@ -216,7 +214,6 @@ public interface Layer extends WWObject, Disposable, Restorable
      * Subclasses able to consider more criteria should override this implementation.
      *
      * @param dc the current draw context
-     *
      * @return <code>true</code> if the layer is active, <code>false</code> otherwise.
      */
     boolean isLayerActive(DrawContext dc);
@@ -225,13 +222,12 @@ public interface Layer extends WWObject, Disposable, Restorable
      * Indicates the altitude above which this layer likely has low value or is not expected to be active. This value is
      * independent of the maximum active altitude, {@link #setMaxActiveAltitude(double)} and does not reflect it.
      * <p>
-     * The returned altitude is valid when the field of view indicated by {@link gov.nasa.worldwind.View#getFieldOfView()}
+     * The returned altitude is valid when the field of view indicated by {@link View#getFieldOfView()}
      * is set to its default value. Changing the field of view to any value other than the default may change this
      * layer's maximum effective altitude, but the returned altitude will not reflect that change.
      *
      * @param radius the radius of the {@link gov.nasa.worldwind.globes.Globe} the layer is associated with. May be
      *               null, in which case the Earth's equatorial radius is used, {@link gov.nasa.worldwind.globes.Earth#WGS84_EQUATORIAL_RADIUS}.
-     *
      * @return the layer's maximum effective altitude.
      */
     Double getMaxEffectiveAltitude(Double radius);
@@ -240,13 +236,12 @@ public interface Layer extends WWObject, Disposable, Restorable
      * Indicates the altitude below which this layer likely has low value or is not expected to be active. This value is
      * independent of the minimum active altitude, {@link #setMinActiveAltitude(double)} and does not reflect it.
      * <p>
-     * The returned altitude is valid when the field of view indicated by {@link gov.nasa.worldwind.View#getFieldOfView()}
+     * The returned altitude is valid when the field of view indicated by {@link View#getFieldOfView()}
      * is set to its default value. Changing the field of view to any value other than the default may change this
      * layer's minimum effective altitude, but the returned altitude will not reflect that change.
      *
      * @param radius the radius of the {@link gov.nasa.worldwind.globes.Globe} the layer is associated with. May be
      *               null, in which case the Earth's equatorial radius is used, {@link gov.nasa.worldwind.globes.Earth#WGS84_EQUATORIAL_RADIUS}.
-     *
      * @return the layer's minimum effective altitude.
      */
     Double getMinEffectiveAltitude(Double radius);

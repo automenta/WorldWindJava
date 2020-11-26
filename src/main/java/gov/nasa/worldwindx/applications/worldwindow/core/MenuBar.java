@@ -14,8 +14,7 @@ import javax.swing.*;
  * @author tag
  * @version $Id: MenuBar.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface MenuBar extends Feature
-{
+public interface MenuBar extends Feature {
     JMenuBar getJMenuBar();
 
     void addMenu(Menu menu);

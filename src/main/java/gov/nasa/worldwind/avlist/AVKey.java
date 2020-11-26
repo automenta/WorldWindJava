@@ -26,8 +26,8 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     String ACTION = "gov.nasa.worldwind.avkey.Action";
     String AIRSPACE_GEOMETRY_CACHE_SIZE = "gov.nasa.worldwind.avkey.AirspaceGeometryCacheSize";
     String ALLOW = "gov.nasa.worldwind.avkey.Allow";
-    String ANIMATION_META_DATA="gov.nasa.worldwind.animation.Metadata";
-    String ANIMATION_ANNOTATION="gov.nasa.worldwind.animation.Annotation";
+    String ANIMATION_META_DATA = "gov.nasa.worldwind.animation.Metadata";
+    String ANIMATION_ANNOTATION = "gov.nasa.worldwind.animation.Annotation";
     String AUTH_TOKEN = "gov.nasa.worldwind.avkey.AuthToken";
 
     String AVAILABLE_IMAGE_FORMATS = "gov.nasa.worldwind.avkey.AvailableImageFormats";
@@ -87,9 +87,9 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     String DATA_TYPE = "gov.nasa.worldwind.avkey.DataType";
     String DELETE_CACHE_ON_EXIT = "gov.nasa.worldwind.avkey.DeleteCacheOnExit";
     /**
-     * Indicates the WorldWind scene's worst-case depth resolution, in meters. This is typically interpreted by the
-     * View as the desired resolution at the scene's maximum drawing distance. In this case, the resolution closer to
-     * the viewer's eye point is significantly better then the worst-case resolution. Decreasing this value enables the
+     * Indicates the WorldWind scene's worst-case depth resolution, in meters. This is typically interpreted by the View
+     * as the desired resolution at the scene's maximum drawing distance. In this case, the resolution closer to the
+     * viewer's eye point is significantly better then the worst-case resolution. Decreasing this value enables the
      * viewer to get closer to 3D shapes positioned above the terrain at the coast of potential rendering artifacts
      * between shapes that are places closely together or close to the terrain.
      */
@@ -298,8 +298,10 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     String PIXEL_FORMAT = "gov.nasa.worldwind.avkey.PixelFormat";
     String PIXEL_HEIGHT = "gov.nasa.worldwind.avkey.PixelHeight";
     String PIXEL_WIDTH = "gov.nasa.worldwind.avkey.PixelWidth";
-    
-    /** @deprecated Use <code>{@link #DATA_TYPE} instead.</code>. */
+
+    /**
+     * @deprecated Use <code>{@link #DATA_TYPE} instead.</code>.
+     */
     @Deprecated
     String PIXEL_TYPE = AVKey.DATA_TYPE;
 
@@ -355,14 +357,18 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     String REPEAT_XY = "gov.nasa.worldwind.avkey.RepeatXY";
 
     String RESIZE = "gov.nasa.worldwind.avkey.Resize";
-    /** On window resize, scales the item to occupy a constant relative size of the viewport. */
+    /**
+     * On window resize, scales the item to occupy a constant relative size of the viewport.
+     */
     String RESIZE_STRETCH = "gov.nasa.worldwind.CompassLayer.ResizeStretch";
     /**
      * On window resize, scales the item to occupy a constant relative size of the viewport, but not larger than the
      * item's inherent size scaled by the layer's item scale factor.
      */
     String RESIZE_SHRINK_ONLY = "gov.nasa.worldwind.CompassLayer.ResizeShrinkOnly";
-    /** Does not modify the item size when the window changes size. */
+    /**
+     * Does not modify the item size when the window changes size.
+     */
     String RESIZE_KEEP_FIXED_SIZE = "gov.nasa.worldwind.CompassLayer.ResizeKeepFixedSize";
     String RETAIN_LEVEL_ZERO_TILES = "gov.nasa.worldwind.avkey.RetainLevelZeroTiles";
     String RETRIEVAL_POOL_SIZE = "gov.nasa.worldwind.avkey.RetrievalPoolSize";

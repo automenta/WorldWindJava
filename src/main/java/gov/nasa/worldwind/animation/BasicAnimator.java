@@ -13,24 +13,21 @@ package gov.nasa.worldwind.animation;
 /**
  * A base class for an interpolating <code>Animator</code>.
  */
-public class BasicAnimator implements Animator
-{
-    private boolean stopOnInvalidState = false;
-    private boolean lastStateValid = true;
-    private boolean hasNext = true;
-
+public class BasicAnimator implements Animator {
     /**
      * Used to drive the animators next value based on the interpolant returned by the
      * <code>Interpolator</code>'s next interpolant
      */
     protected Interpolator interpolator;
+    private boolean stopOnInvalidState = false;
+    private boolean lastStateValid = true;
+    private boolean hasNext = true;
 
     /**
      * Constructs a <code>BasicAnimator</code>.  Sets the <code>Animator</code>'s <code>Interpolator</code> to
-     * <code>null</code>. 
+     * <code>null</code>.
      */
-    public BasicAnimator()
-    {
+    public BasicAnimator() {
         interpolator = null;
     }
 
@@ -38,34 +35,29 @@ public class BasicAnimator implements Animator
      * Constructs a <code>BasicAnimator</code>.  The <code>next</code> method will use the passed
      * <code>Interpolator</code> to retrieve the <code>interpolant</code>
      *
-     * @param interpolator The <code>Interpolator</code> to be used to get the interpolant for
-     * setting the next value.
+     * @param interpolator The <code>Interpolator</code> to be used to get the interpolant for setting the next value.
      */
-    public BasicAnimator(Interpolator interpolator)
-    {
+    public BasicAnimator(Interpolator interpolator) {
         this.interpolator = interpolator;
     }
 
     /**
-     * Calls the <code>set</code> method with the next <code>interpolant</code> as determined
-     * by the <code>interpolator</code> member.
+     * Calls the <code>set</code> method with the next <code>interpolant</code> as determined by the
+     * <code>interpolator</code> member.
      */
-    public void next()
-    {
+    public void next() {
         set(this.interpolator.nextInterpolant());
     }
 
     /**
-     * Calls the setImpl method with the interpolant value.  Deriving classes are expected to
-     * implement the desired action of a set operation in thier <code>setImpl</code> method.
+     * Calls the setImpl method with the interpolant value.  Deriving classes are expected to implement the desired
+     * action of a set operation in thier <code>setImpl</code> method.
      *
      * @param interpolant A value between 0 and 1.
      */
-    public void set(double interpolant)
-    {
+    public void set(double interpolant) {
         this.setImpl(interpolant);
-        if (isStopOnInvalidState() && !isLastStateValid())
-        {
+        if (isStopOnInvalidState() && !isLastStateValid()) {
             this.stop();
         }
     }
@@ -75,55 +67,47 @@ public class BasicAnimator implements Animator
      *
      * @return <code>true</code> if the <code>Animator</code> has more elements
      */
-    public boolean hasNext()
-    {
+    public boolean hasNext() {
         return this.hasNext;
     }
 
     /**
      * Starts the <code>Animator</code>, <code>hasNext</code> will now return <code>true</code>
      */
-    public void start()
-    {
+    public void start() {
         this.hasNext = true;
     }
 
     /**
      * Stops the <code>Animator</code>, <code>hasNext</code> will now return <code>false</code>
      */
-    public void stop()
-    {
+    public void stop() {
         this.hasNext = false;
     }
 
     /**
-     * No-op intended to be overrided by deriving classes.  Deriving classes are expected to
-     * implement the desired action of a set operation in this method.
+     * No-op intended to be overrided by deriving classes.  Deriving classes are expected to implement the desired
+     * action of a set operation in this method.
      *
      * @param interpolant A value between 0 and 1.
      */
-    protected void setImpl(double interpolant)
-    {
+    protected void setImpl(double interpolant) {
 
     }
 
-    public void setStopOnInvalidState(boolean stop)
-    {
-       this.stopOnInvalidState = stop;
+    public boolean isStopOnInvalidState() {
+        return this.stopOnInvalidState;
     }
 
-    public boolean isStopOnInvalidState()
-    {
-       return this.stopOnInvalidState;
+    public void setStopOnInvalidState(boolean stop) {
+        this.stopOnInvalidState = stop;
     }
 
-    protected void flagLastStateInvalid()
-    {
-       this.lastStateValid = false;
+    protected void flagLastStateInvalid() {
+        this.lastStateValid = false;
     }
 
-    protected boolean isLastStateValid()
-    {
-       return this.lastStateValid;
+    protected boolean isLastStateValid() {
+        return this.lastStateValid;
     }
 }

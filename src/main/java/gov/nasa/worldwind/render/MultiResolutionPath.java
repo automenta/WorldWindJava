@@ -19,7 +19,7 @@ import java.util.Iterator;
  * count", the number of positions to skip between positions that are drawn. The skip-count algorithm can be replaced by
  * the application. The default algorithm skips up to four positions, depending on the eye distance from the positions.
  * Also, if the segment between any two positions is too small to be distinguished, it is not drawn. See {@link
- * #makePositions(DrawContext, gov.nasa.worldwind.render.Path.PathData)}.
+ * #makePositions(DrawContext, Path.PathData)}.
  * <p>
  * NOTE: This shape does not draw correctly on a 2D globe when its positions span the dateline.
  *
@@ -28,66 +28,7 @@ import java.util.Iterator;
  * @deprecated
  */
 @Deprecated
-public class MultiResolutionPath extends Path
-{
-    /**
-     * This interface provides the means for the application to specify the algorithm used to determine the number of
-     * specified positions skipped during path tessellation.
-     * <p>
-     * This class overrides the method {@link Path#makePositions(DrawContext, PathData)}.
-     */
-    public interface SkipCountComputer
-    {
-        /**
-         * Determines the number of positions to skip for the current viewing state. Determines the number of positions
-         * to skip for the current viewing state.
-         *
-         * @param dc       the current draw context.
-         * @param pathData this shape's current path data.
-         *
-         * @return the number of positions to skip when computing the tessellated or non-tessellated path.
-         */
-        int computeSkipCount(DrawContext dc, PathData pathData);
-    }
-
-    /** Subclass of PathData that adds the capability to map which ordinal number corresponds to each rendered position. */
-    protected static class MultiResolutionPathData extends PathData
-    {
-        /** Maps indices of rendered positions to their corresponding ordinal numbers. */
-        protected IntBuffer positionOrdinals;
-
-        /**
-         * Creates a new MultiResolutionPathData with the specified draw context and path.
-         *
-         * @param dc    the draw context associated with this path data.
-         * @param shape the shape associated with this path data.
-         */
-        public MultiResolutionPathData(DrawContext dc, Path shape)
-        {
-            super(dc, shape);
-        }
-
-        /**
-         * Returns a buffer mapping indices of rendered positions to their corresponding ordinal numbers.
-         *
-         * @return a buffer mapping positions to ordinal numbers.
-         */
-        public IntBuffer getPositionOrdinals()
-        {
-            return this.positionOrdinals;
-        }
-
-        /**
-         * Specifies a buffer that maps indices of rendered positions to their corresponding ordinal numbers.
-         *
-         * @param posOrdinals a buffer that maps positions to ordinal numbers.
-         */
-        public void setPositionOrdinals(IntBuffer posOrdinals)
-        {
-            this.positionOrdinals = posOrdinals;
-        }
-    }
-
+public class MultiResolutionPath extends Path {
     /**
      * The default implementation of <code>SkipCountComputer</code>. This implementation returns a value of 4 when the
      * eye distance to the path is greater than 10e3, a value of 2 when the eye distance is greater than 1e3 meters but
@@ -96,7 +37,7 @@ public class MultiResolutionPath extends Path
     protected SkipCountComputer skipCountComputer = (dc, pathData) -> {
         double d = getDistanceMetric(dc, pathData);
 
-        return d > 10e3 ? 4 : d > 1e3 ? 2 : 1;
+        return d > 10.0e3 ? 4 : d > 1.0e3 ? 2 : 1;
     };
 
     /**
@@ -109,11 +50,9 @@ public class MultiResolutionPath extends Path
      * @param positions the path positions. This reference is retained by this shape; the positions are not copied. If
      *                  any positions in the set change, {@link #setPositions(Iterable)} must be called to inform this
      *                  shape of the change.
-     *
      * @throws IllegalArgumentException if positions is null.
      */
-    public MultiResolutionPath(Iterable<? extends Position> positions)
-    {
+    public MultiResolutionPath(Iterable<? extends Position> positions) {
         super(positions);
     }
 
@@ -128,11 +67,9 @@ public class MultiResolutionPath extends Path
      * @param positions the path positions. This reference is retained by this shape; the positions are not copied. If
      *                  any positions in the set change, {@link #setPositions(Iterable)} must be called to inform this
      *                  shape of the change.
-     *
      * @throws IllegalArgumentException if positions is null.
      */
-    public MultiResolutionPath(Position.PositionList positions)
-    {
+    public MultiResolutionPath(Position.PositionList positions) {
         super(positions);
     }
 
@@ -142,8 +79,7 @@ public class MultiResolutionPath extends Path
      *
      * @return the SkipCountComputer used during path tessellation.
      */
-    public SkipCountComputer getSkipCountComputer()
-    {
+    public SkipCountComputer getSkipCountComputer() {
         return this.skipCountComputer;
     }
 
@@ -152,13 +88,10 @@ public class MultiResolutionPath extends Path
      * tessellation.
      *
      * @param computer the SkipCountComputer to use during path tessellation.
-     *
      * @throws IllegalArgumentException if the computer is null.
      */
-    public void setSkipCountComputer(SkipCountComputer computer)
-    {
-        if (computer == null)
-        {
+    public void setSkipCountComputer(SkipCountComputer computer) {
+        if (computer == null) {
             String message = Logging.getMessage("nullValue.CallbackIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -173,8 +106,7 @@ public class MultiResolutionPath extends Path
      * Overridden to return a new instance of MultiResolutionPathData.
      */
     @Override
-    protected AbstractShapeData createCacheEntry(DrawContext dc)
-    {
+    protected AbstractShapeData createCacheEntry(DrawContext dc) {
         return new MultiResolutionPathData(dc, this);
     }
 
@@ -184,8 +116,7 @@ public class MultiResolutionPath extends Path
      * Overridden to initialize and build the PathData's positionOrdinals buffer.
      */
     @Override
-    protected void makeTessellatedPositions(DrawContext dc, PathData pathData)
-    {
+    protected void makeTessellatedPositions(DrawContext dc, PathData pathData) {
         if (this.numPositions < 2)
             return;
 
@@ -209,8 +140,7 @@ public class MultiResolutionPath extends Path
      * either very small or not visible.
      */
     @Override
-    protected void makePositions(DrawContext dc, PathData pathData)
-    {
+    protected void makePositions(DrawContext dc, PathData pathData) {
         Iterator<? extends Position> iter = this.positions.iterator();
         Position posA = iter.next();
         int ordinalA = 0;
@@ -222,12 +152,10 @@ public class MultiResolutionPath extends Path
         // Tessellate each segment of the path.
         Vec4 ptA = this.computePoint(dc.getTerrain(), posA);
 
-        for (int i = 1; iter.hasNext(); i++)
-        {
+        for (int i = 1; iter.hasNext(); i++) {
             Position posB = iter.next();
 
-            if (i % skipCount != 0 && iter.hasNext())
-            {
+            if (i % skipCount != 0 && iter.hasNext()) {
                 continue;
             }
 
@@ -256,10 +184,8 @@ public class MultiResolutionPath extends Path
      * is not null.
      */
     @Override
-    protected void addTessellatedPosition(Position pos, Color color, Integer ordinal, PathData pathData)
-    {
-        if (ordinal != null)
-        {
+    protected void addTessellatedPosition(Position pos, Color color, Integer ordinal, PathData pathData) {
+        if (ordinal != null) {
             // NOTE: Assign these indices before adding the new position to the tessellatedPositions list.
             MultiResolutionPathData mrpd = (MultiResolutionPathData) pathData;
             mrpd.positionOrdinals.put(ordinal);
@@ -275,9 +201,64 @@ public class MultiResolutionPath extends Path
      * its corresponding ordinal number.
      */
     @Override
-    protected Integer getOrdinal(int positionIndex)
-    {
+    protected Integer getOrdinal(int positionIndex) {
         MultiResolutionPathData mrpd = (MultiResolutionPathData) this.getCurrentPathData();
         return mrpd.positionOrdinals.get(positionIndex);
+    }
+
+    /**
+     * This interface provides the means for the application to specify the algorithm used to determine the number of
+     * specified positions skipped during path tessellation.
+     * <p>
+     * This class overrides the method {@link Path#makePositions(DrawContext, PathData)}.
+     */
+    public interface SkipCountComputer {
+        /**
+         * Determines the number of positions to skip for the current viewing state. Determines the number of positions
+         * to skip for the current viewing state.
+         *
+         * @param dc       the current draw context.
+         * @param pathData this shape's current path data.
+         * @return the number of positions to skip when computing the tessellated or non-tessellated path.
+         */
+        int computeSkipCount(DrawContext dc, PathData pathData);
+    }
+
+    /**
+     * Subclass of PathData that adds the capability to map which ordinal number corresponds to each rendered position.
+     */
+    protected static class MultiResolutionPathData extends PathData {
+        /**
+         * Maps indices of rendered positions to their corresponding ordinal numbers.
+         */
+        protected IntBuffer positionOrdinals;
+
+        /**
+         * Creates a new MultiResolutionPathData with the specified draw context and path.
+         *
+         * @param dc    the draw context associated with this path data.
+         * @param shape the shape associated with this path data.
+         */
+        public MultiResolutionPathData(DrawContext dc, Path shape) {
+            super(dc, shape);
+        }
+
+        /**
+         * Returns a buffer mapping indices of rendered positions to their corresponding ordinal numbers.
+         *
+         * @return a buffer mapping positions to ordinal numbers.
+         */
+        public IntBuffer getPositionOrdinals() {
+            return this.positionOrdinals;
+        }
+
+        /**
+         * Specifies a buffer that maps indices of rendered positions to their corresponding ordinal numbers.
+         *
+         * @param posOrdinals a buffer that maps positions to ordinal numbers.
+         */
+        public void setPositionOrdinals(IntBuffer posOrdinals) {
+            this.positionOrdinals = posOrdinals;
+        }
     }
 }

@@ -13,8 +13,7 @@ import gov.nasa.worldwind.util.Logging;
  * @author tag
  * @version $Id: NmeaTrackPoint.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class NmeaTrackPoint implements TrackPoint
-{
+public class NmeaTrackPoint implements TrackPoint {
     private double latitude;
     private double longitude;
     private double altitude;
@@ -25,16 +24,13 @@ public class NmeaTrackPoint implements TrackPoint
      * @param words The track point words to parse.
      * @throws IllegalArgumentException if <code>words</code> is null or has length less than 1
      */
-    public NmeaTrackPoint(String[] words)
-    {
-        if (words == null)
-        {
+    public NmeaTrackPoint(String[] words) {
+        if (words == null) {
             String msg = Logging.getMessage("nullValue.ArrayIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (words.length < 1)
-        {
+        if (words.length < 1) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", words.length);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -50,11 +46,9 @@ public class NmeaTrackPoint implements TrackPoint
      * @param words
      * @throws IllegalArgumentException if <code>words</code> is null or has length less than 6
      */
-    private void doGGA(String[] words)
-    {
+    private void doGGA(String[] words) {
         // words won't be null, but it could be the wrong length
-        if (words.length < 6)
-        {
+        if (words.length < 6) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", words.length);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -69,56 +63,49 @@ public class NmeaTrackPoint implements TrackPoint
             this.geoidHeight = this.parseElevation(words[11], words[12]);
     }
 
-    private void doRMC(String[] words)
-    {
+    private void doRMC(String[] words) {
     }
 
-    private double parseLatitude(String angle, String direction)
-    {
-        if (angle.length() == 0)
+    private double parseLatitude(String angle, String direction) {
+        if (angle.isEmpty())
             return 0;
 
-        double minutes = angle.length() > 2 ? Double.parseDouble(angle.substring(2)) : 0d;
-        double degrees = Double.parseDouble(angle.substring(0, 2)) + minutes / 60d;
+        double minutes = angle.length() > 2 ? Double.parseDouble(angle.substring(2)) : 0.0d;
+        double degrees = Double.parseDouble(angle.substring(0, 2)) + minutes / 60.0d;
 
         return direction.equalsIgnoreCase("S") ? -degrees : degrees;
     }
 
-    private double parseLongitude(String angle, String direction)
-    {
-        if (angle.length() == 0)
+    private double parseLongitude(String angle, String direction) {
+        if (angle.isEmpty())
             return 0;
 
-        double minutes = angle.length() > 3 ? Double.parseDouble(angle.substring(3)) : 0d;
-        double degrees = Double.parseDouble(angle.substring(0, 3)) + minutes / 60d;
+        double minutes = angle.length() > 3 ? Double.parseDouble(angle.substring(3)) : 0.0d;
+        double degrees = Double.parseDouble(angle.substring(0, 3)) + minutes / 60.0d;
 
         return direction.equalsIgnoreCase("W") ? -degrees : degrees;
     }
 
-    private double parseElevation(String height, String units)
-    {
-        if (height.length() == 0)
+    private double parseElevation(String height, String units) {
+        if (height.isEmpty())
             return 0;
 
         return Double.parseDouble(height) * unitsToMeters(units);
     }
 
-    private double unitsToMeters(String units)
-    {
+    private double unitsToMeters(String units) {
         // meters
 // feet
         // fathoms
 
-        return switch (units)
-            {
-                case "f" -> 3.2808399;
-                case "F" -> 0.5468066528;
-                default -> 1d;
-            };
+        return switch (units) {
+            case "f" -> 3.2808399;
+            case "F" -> 0.5468066528;
+            default -> 1.0d;
+        };
     }
 
-    public double getLatitude()
-    {
+    public double getLatitude() {
         return latitude;
     }
 
@@ -126,10 +113,8 @@ public class NmeaTrackPoint implements TrackPoint
      * @param latitude The new latitude.
      * @throws IllegalArgumentException if <code>latitude</code> is less than -90 or greater than 90
      */
-    public void setLatitude(double latitude)
-    {
-        if (latitude > 90 || latitude < -90)
-        {
+    public void setLatitude(double latitude) {
+        if (latitude > 90 || latitude < -90) {
             String msg = Logging.getMessage("generic.AngleOutOfRange", latitude);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -138,8 +123,7 @@ public class NmeaTrackPoint implements TrackPoint
         this.latitude = latitude;
     }
 
-    public double getLongitude()
-    {
+    public double getLongitude() {
         return longitude;
     }
 
@@ -147,10 +131,8 @@ public class NmeaTrackPoint implements TrackPoint
      * @param longitude The new longitude.
      * @throws IllegalArgumentException if <code>longitude</code> is less than -180 or greater than 180
      */
-    public void setLongitude(double longitude)
-    {
-        if (longitude > 180 || longitude < -180)
-        {
+    public void setLongitude(double longitude) {
+        if (longitude > 180 || longitude < -180) {
             String msg = Logging.getMessage("generic.AngleOutOfRange", longitude);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -159,15 +141,12 @@ public class NmeaTrackPoint implements TrackPoint
         this.longitude = longitude;
     }
 
-    public Position getPosition()
-    {
+    public Position getPosition() {
         return Position.fromDegrees(this.latitude, this.longitude, this.altitude);
     }
 
-    public void setPosition(Position position)
-    {
-        if (position == null)
-        {
+    public void setPosition(Position position) {
+        if (position == null) {
             String msg = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -178,30 +157,25 @@ public class NmeaTrackPoint implements TrackPoint
         this.altitude = position.getElevation();
     }
 
-    public double getElevation()
-    {
+    public double getElevation() {
         return this.altitude + this.geoidHeight;
     }
 
-    public void setElevation(double elevation)
-    {
+    public void setElevation(double elevation) {
         this.altitude = elevation;
         this.geoidHeight = 0;
     }
 
-    public String getTime()
-    {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(String time)
-    {
+    public void setTime(String time) {
         this.time = time;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.format("(%10.8f\u00B0, %11.8f\u00B0, %10.4g m, %10.4g m, %s)", this.latitude, this.longitude,
             this.altitude, this.geoidHeight, this.time);
     }

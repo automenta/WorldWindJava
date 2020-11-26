@@ -10,8 +10,8 @@
 
 <p>
     <code>WorldWindow</code> is an interface. Toolkit-specific implementations of the interface are provided for
-                             Swing/AWT and, in the future, SWT-Eclipse. See {@link
-                             gov.nasa.worldwind.awt.WorldWindowGLCanvas}.</p>
+    Swing/AWT and, in the future, SWT-Eclipse. See {@link
+    gov.nasa.worldwind.awt.WorldWindowGLCanvas}.</p>
 
 <p>
     In addition to <code>WorldWindow</code>, there are five major WorldWind interfaces. They are:</p>
@@ -102,61 +102,66 @@
 <h2>Memory Cache</h2>
 
 <p>So that data can be shared among caching objects, most cached data used within WorldWind is cached in a {@link
-   gov.nasa.worldwind.cache.MemoryCache}. <code>MemoryCache</code> enable cached data to be shared among all
-   WorldWindWindow instantiations in an application. Thus two Earth globes each displayed in a separate window will
-   share any image or elevation tiles that they are using simultaneously. The same would be true of any place name
-   collections. The constraint this imposes is that cached data that is to be shared must base <code>equals()</code> and
+    gov.nasa.worldwind.cache.MemoryCache}. <code>MemoryCache</code> enable cached data to be shared among all
+    WorldWindWindow instantiations in an application. Thus two Earth globes each displayed in a separate window will
+    share any image or elevation tiles that they are using simultaneously. The same would be true of any place name
+    collections. The constraint this imposes is that cached data that is to be shared must base <code>equals()</code>
+    and
     <code>hashCode()</code> on fields that are not instance specific to the caching object.</p>
 
 <h2>File Cache</h2>
 
 <p>All data persisted to or drawn from the local computer is done so by the {@link gov.nasa.worldwind.cache.FileStore}
-   No object manages its own storage. The file cache cache manages multiple disk storage locations and unifies access to
-   them. The file cache is a singleton, accessible through the <code>WorldWind</code> singleton.</p>
+    No object manages its own storage. The file cache cache manages multiple disk storage locations and unifies access
+    to
+    them. The file cache is a singleton, accessible through the <code>WorldWind</code> singleton.</p>
 
 <h2>Picking and Selection</h2>
 
 <p>WorldWind can determine the displayed objects at a given screen position in a <code>WorldWindow</code>. When the
-   application wants to know what's displayed at a particular point, say the cursor position, it calls a method on
+    application wants to know what's displayed at a particular point, say the cursor position, it calls a method on
     <code>WorldWindow</code> that accepts the point and returns a description of what's drawn there. In general the
-   application specifies a pick region rather than a single point, with the region a few pixels wide and high and
-   centered on the point. This provides a pick tolerance and allows the user to indicate something close to but not
-   exactly at the screen position. Since several objects may intersect the pick region, descriptions of all these
-   objects are returned to the application. Which of these objects are meaningful is determined by the application.</p>
+    application specifies a pick region rather than a single point, with the region a few pixels wide and high and
+    centered on the point. This provides a pick tolerance and allows the user to indicate something close to but not
+    exactly at the screen position. Since several objects may intersect the pick region, descriptions of all these
+    objects are returned to the application. Which of these objects are meaningful is determined by the application.</p>
 
 <p>WorldWind uses a method similar to drawing to detect objects in the pick region. During picking, the frame
-   controller invokes each layer's {@link gov.nasa.worldwind.layers.AbstractLayer#doPick(DrawContext, java.awt.Point)}.
-   As in drawing, the methods are invoked in turn, according to the layer's position in the model's layer list. During
-   the call, each layer is responsible for determining which of its items, if any, are picked. Prior to traversing the
-   layer list, the frame controller sets the current view's viewport to the pick region specified by the application.
-   When a layer identifies an object that intersects that pick region, it adds a description of that object to the draw
-   context's pick list. Once all layers are traversed, the list of picked items is returned to the application.</p>
+    controller invokes each layer's {@link gov.nasa.worldwind.layers.AbstractLayer#doPick(DrawContext, java.awt.Point)}.
+    As in drawing, the methods are invoked in turn, according to the layer's position in the model's layer list. During
+    the call, each layer is responsible for determining which of its items, if any, are picked. Prior to traversing the
+    layer list, the frame controller sets the current view's viewport to the pick region specified by the application.
+    When a layer identifies an object that intersects that pick region, it adds a description of that object to the draw
+    context's pick list. Once all layers are traversed, the list of picked items is returned to the application.</p>
 
 <p>It's typically not straightforward for a layer to determine which of its contents intersect a screen-space pick
-   region. To do that usually requires transforming the screen point into model coordinates and determining intersection
-   in that coordinate system. But depth values are ambiguous with only a two-dimensional screen point as input,
-   complicating transformation to model coordinates, and geometric intersection determination can be very difficult and
-   time consuming. To overcome this, WorldWind implements a widely used method of sampling the window's color buffer to
-   detect intersection, and makes this method easy for layers to use.</p>
+    region. To do that usually requires transforming the screen point into model coordinates and determining
+    intersection
+    in that coordinate system. But depth values are ambiguous with only a two-dimensional screen point as input,
+    complicating transformation to model coordinates, and geometric intersection determination can be very difficult and
+    time consuming. To overcome this, WorldWind implements a widely used method of sampling the window's color buffer to
+    detect intersection, and makes this method easy for layers to use.</p>
 
 <p>The method works as follows: The frame controller precedes a pick traversal by first setting the current view's
-   viewport to the specified pick region and clearing the color buffer in that region. This clearing occurs in the
-   window's back buffer and is therefore not visible to the user. During traversal, each layer draws itself not in its
-   normal colors but in a set of colors that serve as pick identifiers. Since the result of pick traversal is never
-   displayed, the specific colors used don't matter visually. Each individual pickable item within a layer is drawn with
-   a unique color that makes the item individually identifiable in the color buffer. By reading the region of the color
-   buffer corresponding to the pick region, the specific items intersecting the region can be determined. The layer
-   performs this read and makes this determination after drawing its pickable items.</p>
+    viewport to the specified pick region and clearing the color buffer in that region. This clearing occurs in the
+    window's back buffer and is therefore not visible to the user. During traversal, each layer draws itself not in its
+    normal colors but in a set of colors that serve as pick identifiers. Since the result of pick traversal is never
+    displayed, the specific colors used don't matter visually. Each individual pickable item within a layer is drawn
+    with
+    a unique color that makes the item individually identifiable in the color buffer. By reading the region of the color
+    buffer corresponding to the pick region, the specific items intersecting the region can be determined. The layer
+    performs this read and makes this determination after drawing its pickable items.</p>
 
 <p>Since one layer does not know how subsequently traversed layers might overwrite or otherwise affect it once drawn,
-   items it determines have been picked could end up obscured by other layers. The items that intersect the pick region
+    items it determines have been picked could end up obscured by other layers. The items that intersect the pick region
     <em>and</em> are visible can be determined only after all layers are drawn. The frame controller therefore reads the
-   final colors from the pick region of the color buffer and passes them to the list of picked items so that those items
-   can compare their pick identifiers with the final colors and mark themselves as "on top." The application then
-   receives the full list of picked items, with the truly visible ones marked as such.</p>
+    final colors from the pick region of the color buffer and passes them to the list of picked items so that those
+    items
+    can compare their pick identifiers with the final colors and mark themselves as "on top." The application then
+    receives the full list of picked items, with the truly visible ones marked as such.</p>
 
 <p>WorldWind provides utility classes to make it simple for layers to participate in this picking scheme. See {@link
-   gov.nasa.worldwind.pick.PickSupport} </p>
+    gov.nasa.worldwind.pick.PickSupport} </p>
 
 <h2>Use of Proxies</h2>
 
@@ -173,13 +178,13 @@
 <h2>Offline Mode</h2>
 
 <p>WorldWind's use of the network can be disabled by calling {@link gov.nasa.worldwind.WorldWind#setOfflineMode}. Prior
-   to attempting retrieval of a network resource &mdash; anything addressed by a URL &mdash; WorldWind checks the
-   offline-mode setting and does not attempt retrieval if the value is true.</p>
+    to attempting retrieval of a network resource &mdash; anything addressed by a URL &mdash; WorldWind checks the
+    offline-mode setting and does not attempt retrieval if the value is true.</p>
 
 <h2><a id="path-types">Path Types</a></h2>
 
 <p>There is only one way to draw a straight line on a plane, but there are several ways to draw a straight line on the
-   surface of a globe. Most shapes support the following path types:</p>
+    surface of a globe. Most shapes support the following path types:</p>
 
 <ul>
     <li>{@link gov.nasa.worldwind.avlist.AVKey#LINEAR} &mdash; A line interpolated by treating latitude and longitude as
@@ -202,8 +207,8 @@
 </ul>
 
 <p>Set the {@code pathType} attribute to change how the lines of a shape are drawn (for example, {@link
-   gov.nasa.worldwind.render.Path#setPathType}). The {@link gov.nasa.worldwind.geom.LatLon} class provides utility
-   methods to calculate points along each type of path.</p>
+    gov.nasa.worldwind.render.Path#setPathType}). The {@link gov.nasa.worldwind.geom.LatLon} class provides utility
+    methods to calculate points along each type of path.</p>
 
 </body>
 </html>

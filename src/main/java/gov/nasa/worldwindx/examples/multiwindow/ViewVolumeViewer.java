@@ -26,8 +26,7 @@ import java.awt.*;
  * @author tag
  * @version $Id: ViewVolumeViewer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ViewVolumeViewer extends JFrame
-{
+public class ViewVolumeViewer extends JFrame {
     protected final WWPanel wwp;
     protected final WorldWindowGLCanvas wwd;
     protected final WorldWindow observed;
@@ -38,8 +37,7 @@ public class ViewVolumeViewer extends JFrame
      * @param observedWindow the WorldWindow to observe
      * @param size           the size of the view volume viewer window
      */
-    public ViewVolumeViewer(WorldWindow observedWindow, Dimension size)
-    {
+    public ViewVolumeViewer(WorldWindow observedWindow, Dimension size) {
         this.observed = observedWindow;
         this.getContentPane().setLayout(new BorderLayout(5, 5));
 
@@ -56,8 +54,7 @@ public class ViewVolumeViewer extends JFrame
 
         // This view volume viewer updates its display within a rendering listener registered for the observed window
         this.observed.addRenderingListener(event -> {
-            if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP))
-            {
+            if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)) {
                 // Get the observed window's sector geometry and update this window's terrain display layer
                 SectorGeometryList sgCopy = new SectorGeometryList(observed.getSceneController().getTerrain());
                 sgLayer.setGeometry(sgCopy);
@@ -76,12 +73,10 @@ public class ViewVolumeViewer extends JFrame
     }
 
     // Creates a model for the view volume viewer, selecting appropriate layers from the observed WorldWindow
-    protected Model makeModel()
-    {
+    protected Model makeModel() {
         LayerList layers = new LayerList();
 
-        for (Layer layer : this.observed.getModel().getLayers())
-        {
+        for (Layer layer : this.observed.getModel().getLayers()) {
             if (layer instanceof TiledImageLayer) // share TiledImageLayers
                 layers.add(layer);
         }
@@ -93,22 +88,18 @@ public class ViewVolumeViewer extends JFrame
         return model;
     }
 
-    public WorldWindow getWwd()
-    {
+    public WorldWindow getWwd() {
         return this.wwp.wwd;
     }
 
-    public WorldWindow getObserved()
-    {
+    public WorldWindow getObserved() {
         return this.observed;
     }
 
-    protected static class WWPanel extends JPanel
-    {
+    protected static class WWPanel extends JPanel {
         protected final WorldWindowGLCanvas wwd;
 
-        public WWPanel(WorldWindowGLCanvas shareWith, Dimension size, Model model)
-        {
+        public WWPanel(WorldWindowGLCanvas shareWith, Dimension size, Model model) {
             this.wwd = shareWith != null ? new WorldWindowGLCanvas(shareWith) : new WorldWindowGLCanvas();
             this.wwd.setSize(size);
             this.wwd.setModel(model);
@@ -123,32 +114,25 @@ public class ViewVolumeViewer extends JFrame
     }
 
     // A layer to display the terrain of the observed WorldWindow
-    protected static class SectorGeometryLayer extends RenderableLayer
-    {
+    protected static class SectorGeometryLayer extends RenderableLayer {
         protected SectorGeometryList sg;
 
-        public SectorGeometryLayer()
-        {
+        public SectorGeometryLayer() {
             this.setPickEnabled(false);
         }
 
-        public void setGeometry(SectorGeometryList sectorGeometry)
-        {
+        public void setGeometry(SectorGeometryList sectorGeometry) {
             this.sg = sectorGeometry;
         }
 
         @Override
-        protected void doRender(DrawContext dc)
-        {
-            if (this.sg != null)
-            {
+        protected void doRender(DrawContext dc) {
+            if (this.sg != null) {
                 Position currentPosition = this.getCurrentPosition(dc);
 
-                for (SectorGeometry sg : this.sg)
-                {
+                for (SectorGeometry sg : this.sg) {
                     sg.renderWireframe(dc, false, true);
-                    if (currentPosition != null && sg.getSector().contains(currentPosition))
-                    {
+                    if (currentPosition != null && sg.getSector().contains(currentPosition)) {
                         sg.renderBoundingVolume(dc);
                         sg.renderTileID(dc);
                     }
@@ -156,8 +140,7 @@ public class ViewVolumeViewer extends JFrame
             }
         }
 
-        public Position getCurrentPosition(DrawContext dc)
-        {
+        public Position getCurrentPosition(DrawContext dc) {
             PickedObjectList pos = dc.getPickedObjects();
             PickedObject terrainObject = pos != null ? pos.getTerrainObject() : null;
 
@@ -166,24 +149,20 @@ public class ViewVolumeViewer extends JFrame
     }
 
     // A layer to display the view volume of the observed window
-    protected static class ViewVolumeLayer extends RenderableLayer
-    {
-        protected View view;
+    protected static class ViewVolumeLayer extends RenderableLayer {
         protected final ViewVolumeRenderer renderer = new ViewVolumeRenderer();
+        protected View view;
 
-        public ViewVolumeLayer()
-        {
+        public ViewVolumeLayer() {
             this.setPickEnabled(false);
         }
 
-        public void setView(View view)
-        {
+        public void setView(View view) {
             this.view = view;
         }
 
         @Override
-        protected void doRender(DrawContext dc)
-        {
+        protected void doRender(DrawContext dc) {
             if (this.view != null)
                 this.renderer.render(dc, this.view.getModelviewMatrix(), this.view.getProjectionMatrix(),
                     this.view.getViewport());

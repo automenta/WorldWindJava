@@ -35,15 +35,32 @@ import java.awt.*;
  * @author tag
  * @version $Id: SplitPaneUsage.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SplitPaneUsage
-{
-    public static class AppPanel extends JPanel
-    {
+public class SplitPaneUsage {
+    public static void main(String[] args) {
+        start("WorldWind Split Pane Usage");
+    }
+
+    public static void start(String appName) {
+        if (Configuration.isMacOS() && appName != null) {
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
+        }
+
+        try {
+            final AppFrame frame = new AppFrame();
+            frame.setTitle(appName);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            EventQueue.invokeLater(() -> frame.setVisible(true));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static class AppPanel extends JPanel {
         private final WorldWindowGLCanvas wwd;
 
         // Constructs a JPanel to hold the WorldWindow
-        public AppPanel(Dimension canvasSize, boolean includeStatusBar)
-        {
+        public AppPanel(Dimension canvasSize, boolean includeStatusBar) {
             super(new BorderLayout());
 
             // Create the WorldWindow and set its preferred size.
@@ -64,8 +81,7 @@ public class SplitPaneUsage
             this.add(this.wwd, BorderLayout.CENTER);
 
             // Add the status bar if desired.
-            if (includeStatusBar)
-            {
+            if (includeStatusBar) {
                 StatusBar statusBar = new StatusBar();
                 this.add(statusBar, BorderLayout.PAGE_END);
                 statusBar.setEventSource(wwd);
@@ -73,12 +89,10 @@ public class SplitPaneUsage
         }
     }
 
-    private static class AppFrame extends JFrame
-    {
+    private static class AppFrame extends JFrame {
         private final Dimension canvasSize = new Dimension(800, 600); // the desired WorldWindow size
 
-        public AppFrame()
-        {
+        public AppFrame() {
             // Create the WorldWindow.
             final AppPanel wwjPanel = new AppPanel(this.canvasSize, true);
             LayerPanel layerPanel = new LayerPanel(wwjPanel.wwd);
@@ -114,37 +128,12 @@ public class SplitPaneUsage
             // Center the application on the screen.
             Dimension prefSize = this.getPreferredSize();
             Dimension parentSize;
-            java.awt.Point parentLocation = new java.awt.Point(0, 0);
+            Point parentLocation = new Point(0, 0);
             parentSize = Toolkit.getDefaultToolkit().getScreenSize();
             int x = parentLocation.x + (parentSize.width - prefSize.width) / 2;
             int y = parentLocation.y + (parentSize.height - prefSize.height) / 2;
             this.setLocation(x, y);
             this.setResizable(true);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        start("WorldWind Split Pane Usage");
-    }
-
-    public static void start(String appName)
-    {
-        if (Configuration.isMacOS() && appName != null)
-        {
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
-        }
-
-        try
-        {
-            final AppFrame frame = new AppFrame();
-            frame.setTitle(appName);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            java.awt.EventQueue.invokeLater(() -> frame.setVisible(true));
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
         }
     }
 }

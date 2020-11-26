@@ -16,31 +16,6 @@ import java.util.*;
  */
 public class KeyEventState implements KeyListener, MouseListener {
 
-    protected static class InputState {
-
-        protected final int eventType;
-        protected final int keyOrButtonCode;
-        protected final long timestamp;
-
-        public InputState(int eventType, int keyOrButtonCode, long timestamp) {
-            this.eventType = eventType;
-            this.keyOrButtonCode = keyOrButtonCode;
-            this.timestamp = timestamp;
-        }
-
-        public int getEventType() {
-            return this.eventType;
-        }
-
-        public int getKeyOrButtonCode() {
-            return this.keyOrButtonCode;
-        }
-
-        public long getTimestamp() {
-            return this.timestamp;
-        }
-    }
-
     protected final Map<Object, InputState> keyStateMap = new HashMap<>();
     protected int modifiersEx;
     protected int mouseModifiersEx;
@@ -68,7 +43,6 @@ public class KeyEventState implements KeyListener, MouseListener {
             if (is.getEventType() == KeyEvent.KEY_PRESSED) {
                 numKeys++;
             }
-
         }
         return (numKeys);
     }
@@ -82,7 +56,6 @@ public class KeyEventState implements KeyListener, MouseListener {
             if (is.getEventType() == MouseEvent.MOUSE_PRESSED) {
                 numKeys++;
             }
-
         }
         return (numKeys);
     }
@@ -99,10 +72,24 @@ public class KeyEventState implements KeyListener, MouseListener {
     }
 
     /**
+     * @param modifiers Unused.
+     * @deprecated Use {@link #setModifiersEx(int)} instead
+     */
+    @Deprecated
+    protected void setModifiers(int modifiers) {
+        String msg = Logging.getMessage("generic.OperationDeprecatedAndChanged", "setModifiers", "setModifiersEx");
+        Logging.logger().severe(msg);
+    }
+
+    /**
      * @return The extended event modifiers.
      */
     public int getModifiersEx() {
         return this.modifiersEx;
+    }
+
+    protected void setModifiersEx(int modifiersEx) {
+        this.modifiersEx = modifiersEx;
     }
 
     /**
@@ -111,9 +98,21 @@ public class KeyEventState implements KeyListener, MouseListener {
      */
     @Deprecated
     public int getMouseModifiers() {
-        String msg = Logging.getMessage("generic.OperationDeprecatedAndChanged", "getMouseModifiers", "getMouseModifiersEx");
+        String msg = Logging.getMessage("generic.OperationDeprecatedAndChanged", "getMouseModifiers",
+            "getMouseModifiersEx");
         Logging.logger().severe(msg);
         return this.mouseModifiersEx;
+    }
+
+    /**
+     * @param modifiers Unused.
+     * @deprecated Use {@link #setMouseModifiersEx(int)} instead
+     */
+    @Deprecated
+    protected void setMouseModifiers(int modifiers) {
+        String msg = Logging.getMessage("generic.OperationDeprecatedAndChanged", "setMouseModifiers",
+            "setMouseModifiersEx");
+        Logging.logger().severe(msg);
     }
 
     /**
@@ -121,6 +120,10 @@ public class KeyEventState implements KeyListener, MouseListener {
      */
     public int getMouseModifiersEx() {
         return this.mouseModifiersEx;
+    }
+
+    protected void setMouseModifiersEx(int modifiersEx) {
+        this.mouseModifiersEx = modifiersEx;
     }
 
     public void clearKeyState() {
@@ -154,29 +157,29 @@ public class KeyEventState implements KeyListener, MouseListener {
     }
 
     @Override
-    public void mouseClicked(java.awt.event.MouseEvent mouseEvent) {
+    public void mouseClicked(MouseEvent mouseEvent) {
     }
 
     @Override
-    public void mousePressed(java.awt.event.MouseEvent e) {
+    public void mousePressed(MouseEvent e) {
         long timestamp = this.getTimeStamp(e, MouseEvent.MOUSE_PRESSED, this.keyStateMap.get(e.getModifiersEx()));
         this.setKeyState(e.getButton(), new InputState(MouseEvent.MOUSE_PRESSED, e.getButton(), timestamp));
         this.setMouseModifiersEx(e.getModifiersEx());
     }
 
     @Override
-    public void mouseReleased(java.awt.event.MouseEvent e) {
+    public void mouseReleased(MouseEvent e) {
         this.keyStateMap.remove(e.getButton());
         this.setMouseModifiersEx(0);
     }
 
     @Override
-    public void mouseEntered(java.awt.event.MouseEvent mouseEvent) {
+    public void mouseEntered(MouseEvent mouseEvent) {
 
     }
 
     @Override
-    public void mouseExited(java.awt.event.MouseEvent mouseEvent) {
+    public void mouseExited(MouseEvent mouseEvent) {
 
     }
 
@@ -186,34 +189,6 @@ public class KeyEventState implements KeyListener, MouseListener {
 
     protected void setKeyState(int keyCode, InputState state) {
         this.keyStateMap.put(keyCode, state);
-    }
-
-    /**
-     * @param modifiers Unused.
-     * @deprecated Use {@link #setModifiersEx(int)} instead
-     */
-    @Deprecated
-    protected void setModifiers(int modifiers) {
-        String msg = Logging.getMessage("generic.OperationDeprecatedAndChanged", "setModifiers", "setModifiersEx");
-        Logging.logger().severe(msg);
-    }
-
-    protected void setModifiersEx(int modifiersEx) {
-        this.modifiersEx = modifiersEx;
-    }
-
-    protected void setMouseModifiersEx(int modifiersEx) {
-        this.mouseModifiersEx = modifiersEx;
-    }
-
-    /**
-     * @param modifiers Unused.
-     * @deprecated Use {@link #setMouseModifiersEx(int)} instead
-     */
-    @Deprecated
-    protected void setMouseModifiers(int modifiers) {
-        String msg = Logging.getMessage("generic.OperationDeprecatedAndChanged", "setMouseModifiers", "setMouseModifiersEx");
-        Logging.logger().severe(msg);
     }
 
     protected void removeKeyState(KeyEvent e) {
@@ -228,5 +203,30 @@ public class KeyEventState implements KeyListener, MouseListener {
         }
         // Otherwise return the InputEvent's timestamp.
         return e.getWhen();
+    }
+
+    protected static class InputState {
+
+        protected final int eventType;
+        protected final int keyOrButtonCode;
+        protected final long timestamp;
+
+        public InputState(int eventType, int keyOrButtonCode, long timestamp) {
+            this.eventType = eventType;
+            this.keyOrButtonCode = keyOrButtonCode;
+            this.timestamp = timestamp;
+        }
+
+        public int getEventType() {
+            return this.eventType;
+        }
+
+        public int getKeyOrButtonCode() {
+            return this.keyOrButtonCode;
+        }
+
+        public long getTimestamp() {
+            return this.timestamp;
+        }
     }
 }

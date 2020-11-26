@@ -7,6 +7,5 @@
 /**
  * <p>
  * Provides classes for parsing the Google GX KML extensions.</p>
- *
  */
 package gov.nasa.worldwind.ogc.kml.gx;

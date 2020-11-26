@@ -20,26 +20,32 @@ import java.beans.PropertyChangeEvent;
  * @author pabercrombie
  * @version $Id: AbstractWebView.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractWebView extends WWObjectImpl implements WebView, Disposable
-{
-    /** The size of the WebView frame in pixels. Initially null, indicating the default size is used. */
+public abstract class AbstractWebView extends WWObjectImpl implements WebView, Disposable {
+    /**
+     * The size of the WebView frame in pixels. Initially null, indicating the default size is used.
+     */
     protected Dimension frameSize;
-    /** The WebView's current texture representation. Lazily created in {@link #getTextureRepresentation}. */
+    /**
+     * The WebView's current texture representation. Lazily created in {@link #getTextureRepresentation}.
+     */
     protected WWTexture textureRep;
-    /** Indicates whether the WebView is active. */
+    /**
+     * Indicates whether the WebView is active.
+     */
     protected boolean active;
 
-    /** {@inheritDoc} */
-    public Dimension getFrameSize()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Dimension getFrameSize() {
         return this.frameSize;
     }
 
-    /** {@inheritDoc} */
-    public void setFrameSize(Dimension size)
-    {
-        if (size == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void setFrameSize(Dimension size) {
+        if (size == null) {
             String message = Logging.getMessage("nullValue.SizeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -58,11 +64,11 @@ public abstract class AbstractWebView extends WWObjectImpl implements WebView, D
 
     protected abstract void doSetFrameSize(Dimension size);
 
-    /** {@inheritDoc} */
-    public WWTexture getTextureRepresentation(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public WWTexture getTextureRepresentation(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -74,36 +80,34 @@ public abstract class AbstractWebView extends WWObjectImpl implements WebView, D
         return this.textureRep;
     }
 
-    /** {@inheritDoc} */
-    public void setActive(boolean active)
-    {
-        this.active = active;
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isActive() {
+        return this.active;
     }
 
-    /** {@inheritDoc} */
-    public boolean isActive()
-    {
-        return this.active;
+    /**
+     * {@inheritDoc}
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     /**
      * Create a texture representation of the WebView.
      *
      * @param dc draw context.
-     *
      * @return A texture representation of the WebView contents.
      */
     protected abstract WWTexture createTextureRepresentation(DrawContext dc);
 
     @Override
-    public void propertyChange(final PropertyChangeEvent event)
-    {
-        if (!SwingUtilities.isEventDispatchThread())
-        {
+    public void propertyChange(final PropertyChangeEvent event) {
+        if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> propertyChange(event));
         }
-        else
-        {
+        else {
             this.firePropertyChange(AVKey.REPAINT, null, this);
         }
     }

@@ -11,81 +11,90 @@ import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * @author dcollins
  * @version $Id: BILRasterWriter.java 1514 2013-07-22 23:17:23Z dcollins $
  */
-public class BILRasterWriter extends AbstractDataRasterWriter
-{
+public class BILRasterWriter extends AbstractDataRasterWriter {
     protected static final String[] bilMimeTypes = new String[] {"image/bil"};
     protected static final String[] bilSuffixes = new String[] {"bil"};
 
     protected boolean writeGeoreferenceFiles;
 
-    public BILRasterWriter(boolean writeGeoreferenceFiles)
-    {
+    public BILRasterWriter(boolean writeGeoreferenceFiles) {
         super(bilMimeTypes, bilSuffixes);
 
         this.writeGeoreferenceFiles = writeGeoreferenceFiles;
     }
 
-    public BILRasterWriter()
-    {
+    public BILRasterWriter() {
         this(true); // Enable writing georeference files by default.
     }
 
-    public boolean isWriteGeoreferenceFiles()
-    {
+    private static Object getDataType(BufferWrapper buffer) {
+        Object dataType = null;
+        if (buffer instanceof BufferWrapper.ByteBufferWrapper)
+            dataType = AVKey.INT8;
+        else if (buffer instanceof BufferWrapper.ShortBufferWrapper)
+            dataType = AVKey.INT16;
+        else if (buffer instanceof BufferWrapper.IntBufferWrapper)
+            dataType = AVKey.INT32;
+        else if (buffer instanceof BufferWrapper.FloatBufferWrapper)
+            dataType = AVKey.FLOAT32;
+
+        return dataType;
+    }
+
+    private static Object getByteOrder(ByteBuffer byteBuffer) {
+        return ByteOrder.LITTLE_ENDIAN.equals(byteBuffer.order()) ? AVKey.LITTLE_ENDIAN : AVKey.BIG_ENDIAN;
+    }
+
+    public boolean isWriteGeoreferenceFiles() {
         return this.writeGeoreferenceFiles;
     }
 
-    public void setWriteGeoreferenceFiles(boolean writeGeoreferenceFiles)
-    {
+    public void setWriteGeoreferenceFiles(boolean writeGeoreferenceFiles) {
         this.writeGeoreferenceFiles = writeGeoreferenceFiles;
     }
 
-    protected boolean doCanWrite(DataRaster raster, String formatSuffix, File file)
-    {
+    protected boolean doCanWrite(DataRaster raster, String formatSuffix, File file) {
         return (raster instanceof ByteBufferRaster);
     }
 
-    protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException
-    {
+    protected void doWrite(DataRaster raster, String formatSuffix, File file) throws IOException {
         this.writeRaster(raster, file);
 
-        if (this.isWriteGeoreferenceFiles())
-        {
+        if (this.isWriteGeoreferenceFiles()) {
             AVList worldFileParams = new AVListImpl();
             this.initWorldFileParams(raster, worldFileParams);
 
             String message = this.validate(worldFileParams, raster);
-            if (message != null)
-            {
+            if (message != null) {
                 Logging.logger().severe(message);
-                throw new java.io.IOException(message);
+                throw new IOException(message);
             }
 
-            java.io.File dir = file.getParentFile();
+            File dir = file.getParentFile();
             String base = WWIO.replaceSuffix(file.getName(), "");
 
-            this.writeWorldFile(worldFileParams, new java.io.File(dir, base + ".blw"));
-            this.writeHdrFile(worldFileParams, new java.io.File(dir, base + ".hdr"));
+            this.writeWorldFile(worldFileParams, new File(dir, base + ".blw"));
+            this.writeHdrFile(worldFileParams, new File(dir, base + ".hdr"));
         }
     }
 
-    protected void writeRaster(DataRaster raster, java.io.File file) throws java.io.IOException
-    {
+    protected void writeRaster(DataRaster raster, File file) throws IOException {
         ByteBufferRaster byteBufferRaster = (ByteBufferRaster) raster;
-        java.nio.ByteBuffer byteBuffer = byteBufferRaster.getByteBuffer();
+        ByteBuffer byteBuffer = byteBufferRaster.getByteBuffer();
 
         // Do not force changes to the underlying storage device.
         boolean forceFilesystemWrite = false;
         WWIO.saveBuffer(byteBuffer, file, forceFilesystemWrite);
     }
 
-    protected void writeWorldFile(AVList values, java.io.File file) throws java.io.IOException
-    {
+    protected void writeWorldFile(AVList values, File file) throws IOException {
         Sector sector = (Sector) values.getValue(AVKey.SECTOR);
         int[] size = (int[]) values.getValue(WorldFile.WORLD_FILE_IMAGE_SIZE);
 
@@ -93,11 +102,10 @@ public class BILRasterWriter extends AbstractDataRasterWriter
         double yPixelSize = -sector.getDeltaLatDegrees() / (size[1] - 1);
         double xCoeff = 0.0;
         double yCoeff = 0.0;
-        double xLocation = sector.getMinLongitude().degrees;
-        double yLocation = sector.getMaxLatitude().degrees;
+        double xLocation = sector.lonMin().degrees;
+        double yLocation = sector.latMax().degrees;
 
-        try (PrintWriter out = new PrintWriter(file))
-        {
+        try (PrintWriter out = new PrintWriter(file)) {
             out.println(xPixelSize);
             out.println(xCoeff);
             //noinspection SuspiciousNameCombination
@@ -110,8 +118,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter
         }
     }
 
-    protected void writeHdrFile(AVList values, java.io.File file) throws java.io.IOException
-    {
+    protected void writeHdrFile(AVList values, File file) throws IOException {
         int[] size = (int[]) values.getValue(WorldFile.WORLD_FILE_IMAGE_SIZE);
         Object byteOrder = values.getValue(AVKey.BYTE_ORDER);
         Object dataType = values.getValue(AVKey.DATA_TYPE);
@@ -126,8 +133,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter
 
         int rowBytes = size[0] * (nBits / 8);
 
-        try (PrintWriter out = new PrintWriter(file))
-        {
+        try (PrintWriter out = new PrintWriter(file)) {
             out.append("BYTEORDER      ").println(AVKey.BIG_ENDIAN.equals(byteOrder) ? "M" : "I");
             out.append("LAYOUT         ").println("BIL");
             out.append("NROWS          ").println(size[1]);
@@ -146,8 +152,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter
         }
     }
 
-    protected void initWorldFileParams(DataRaster raster, AVList worldFileParams)
-    {
+    protected void initWorldFileParams(DataRaster raster, AVList worldFileParams) {
         ByteBufferRaster byteBufferRaster = (ByteBufferRaster) raster;
 
         int[] size = new int[2];
@@ -167,58 +172,37 @@ public class BILRasterWriter extends AbstractDataRasterWriter
             worldFileParams.setValue(AVKey.MISSING_DATA_REPLACEMENT, d);
     }
 
-    private static Object getDataType(BufferWrapper buffer)
-    {
-        Object dataType = null;
-        if (buffer instanceof BufferWrapper.ByteBufferWrapper)
-            dataType = AVKey.INT8;
-        else if (buffer instanceof BufferWrapper.ShortBufferWrapper)
-            dataType = AVKey.INT16;
-        else if (buffer instanceof BufferWrapper.IntBufferWrapper)
-            dataType = AVKey.INT32;
-        else if (buffer instanceof BufferWrapper.FloatBufferWrapper)
-            dataType = AVKey.FLOAT32;
-
-        return dataType;
-    }
-
-    private static Object getByteOrder(java.nio.ByteBuffer byteBuffer)
-    {
-        return java.nio.ByteOrder.LITTLE_ENDIAN.equals(byteBuffer.order()) ? AVKey.LITTLE_ENDIAN : AVKey.BIG_ENDIAN;
-    }
-
-    protected String validate(AVList worldFileParams, Object dataSource)
-    {
+    protected String validate(AVList worldFileParams, Object dataSource) {
         StringBuilder sb = new StringBuilder();
 
         Object o = worldFileParams.getValue(WorldFile.WORLD_FILE_IMAGE_SIZE);
         if (!(o instanceof int[]))
-            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("WorldFile.NoSizeSpecified", dataSource));
+            sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoSizeSpecified", dataSource));
 
         o = worldFileParams.getValue(AVKey.SECTOR);
         if (!(o instanceof Sector))
-            sb.append(sb.length() > 0 ? ", " : "").append(
+            sb.append(!sb.isEmpty() ? ", " : "").append(
                 Logging.getMessage("WorldFile.NoSectorSpecified", dataSource));
 
         o = worldFileParams.getValue(AVKey.BYTE_ORDER);
         if (!(o instanceof String))
-            sb.append(sb.length() > 0 ? ", " : "").append(
+            sb.append(!sb.isEmpty() ? ", " : "").append(
                 Logging.getMessage("WorldFile.NoByteOrderSpecified", dataSource));
 
         o = worldFileParams.getValue(AVKey.PIXEL_FORMAT);
         if (o == null)
-            sb.append(sb.length() > 0 ? ", " : "").append(
+            sb.append(!sb.isEmpty() ? ", " : "").append(
                 Logging.getMessage("WorldFile.NoPixelFormatSpecified", dataSource));
         else if (!AVKey.ELEVATION.equals(o))
-            sb.append(sb.length() > 0 ? ", " : "").append(
+            sb.append(!sb.isEmpty() ? ", " : "").append(
                 Logging.getMessage("WorldFile.InvalidPixelFormat", dataSource));
 
         o = worldFileParams.getValue(AVKey.DATA_TYPE);
         if (o == null)
-            sb.append(sb.length() > 0 ? ", " : "").append(
+            sb.append(!sb.isEmpty() ? ", " : "").append(
                 Logging.getMessage("WorldFile.NoDataTypeSpecified", dataSource));
 
-        if (sb.length() == 0)
+        if (sb.isEmpty())
             return null;
 
         return sb.toString();

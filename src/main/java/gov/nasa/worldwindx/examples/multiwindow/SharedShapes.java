@@ -35,101 +35,17 @@ import java.util.Arrays;
  * shared automatically. But OpenGL resources are not automatically shared. To share them, a reference to a previously
  * created WorldWindow must be specified as a constructor argument for subsequently created WorldWindows.
  * <p>
- * Most WorldWind Globe and {@link gov.nasa.worldwind.layers.Layer} objects can be shared among WorldWindows. Those
- * that cannot be shared have an operational dependency on the WorldWindow they're associated with. An example is the
- * {@link gov.nasa.worldwind.layers.ViewControlsLayer} layer for on-screen navigation. Because this layer responds to
- * input events within a specific WorldWindow, it is not sharable. Refer to the WorldWind Overview page for a list of
- * layers that cannot be shared.
+ * Most WorldWind Globe and {@link Layer} objects can be shared among WorldWindows. Those that
+ * cannot be shared have an operational dependency on the WorldWindow they're associated with. An example is the {@link
+ * ViewControlsLayer} layer for on-screen navigation. Because this layer responds to input
+ * events within a specific WorldWindow, it is not sharable. Refer to the WorldWind Overview page for a list of layers
+ * that cannot be shared.
  *
  * @author dcollins
  * @version $Id: SharedShapes.java 2326 2014-09-17 22:35:45Z dcollins $
  */
-public class SharedShapes
-{
-    protected static class WWPanel extends JPanel
-    {
-        protected final WorldWindowGLCanvas wwd;
-        protected final HighlightController highlightController;
-
-        public WWPanel(WorldWindow shareWith, Model model, Dimension canvasSize)
-        {
-            super(new BorderLayout(5, 5));
-
-            this.wwd = shareWith != null ? new WorldWindowGLCanvas(shareWith) : new WorldWindowGLCanvas();
-            if (canvasSize != null)
-                this.wwd.setPreferredSize(canvasSize);
-            this.wwd.setModel(model);
-            this.add(this.wwd, BorderLayout.CENTER);
-
-            StatusBar statusBar = new StatusBar();
-            statusBar.setEventSource(this.wwd);
-            this.add(statusBar, BorderLayout.SOUTH);
-
-            this.highlightController = new HighlightController(this.wwd, SelectEvent.ROLLOVER);
-        }
-
-        public WorldWindow getWwd()
-        {
-            return this.wwd;
-        }
-    }
-
-    protected static class SharedLayerPanel extends JPanel
-    {
-        protected final JComponent layersComponent;
-
-        public SharedLayerPanel(String title, Dimension preferredSize, Iterable<? extends Layer> layersIterable)
-        {
-            this.setLayout(new BorderLayout());
-            this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10),
-                BorderFactory.createTitledBorder(title)));
-
-            // Create a box that holds the controls for each layer.
-            this.layersComponent = javax.swing.Box.createVerticalBox();
-            this.layersComponent.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            this.update(layersIterable);
-
-            // Put the layer box in a scroll panel. We put the layer box in a dummy container to prevent the scroll
-            // panel from stretching the vertical spacing between the layer controls.
-            JPanel dummyPanel = new JPanel(new BorderLayout());
-            dummyPanel.add(this.layersComponent, BorderLayout.NORTH);
-            JScrollPane scrollPane = new JScrollPane(dummyPanel);
-            scrollPane.setBorder(BorderFactory.createEmptyBorder());
-            if (preferredSize != null)
-                scrollPane.setPreferredSize(preferredSize);
-            this.add(scrollPane, BorderLayout.CENTER);
-        }
-
-        public void update(Iterable<? extends Layer> layersIterable)
-        {
-            this.layersComponent.removeAll();
-
-            if (layersIterable != null)
-            {
-                for (Layer layer : layersIterable)
-                {
-                    this.addLayer(layer);
-                }
-            }
-
-            this.revalidate();
-        }
-
-        protected void addLayer(final Layer layer)
-        {
-            final JCheckBox jcb = new JCheckBox(layer.getName(), layer.isEnabled());
-            jcb.addActionListener(actionEvent -> {
-                layer.setEnabled(jcb.isSelected());
-                layer.firePropertyChange(AVKey.LAYER, null, layer);
-            });
-
-            this.layersComponent.add(jcb);
-            this.layersComponent.add(javax.swing.Box.createVerticalStrut(5));
-        }
-    }
-
-    protected static Layer makeAirspaceLayer()
-    {
+public class SharedShapes {
+    protected static Layer makeAirspaceLayer() {
         RenderableLayer layer = new RenderableLayer();
         layer.setName("Airspaces");
 
@@ -212,8 +128,7 @@ public class SharedShapes
         return layer;
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         Layer[] basicLayers = new Layer[]
             {
                 new StarsLayer(),
@@ -268,5 +183,78 @@ public class SharedShapes
 
         // Center the application frame on the screen and make it visible.
         WWUtil.alignComponent(null, appFrame, AVKey.CENTER);
+    }
+
+    protected static class WWPanel extends JPanel {
+        protected final WorldWindowGLCanvas wwd;
+        protected final HighlightController highlightController;
+
+        public WWPanel(WorldWindow shareWith, Model model, Dimension canvasSize) {
+            super(new BorderLayout(5, 5));
+
+            this.wwd = shareWith != null ? new WorldWindowGLCanvas(shareWith) : new WorldWindowGLCanvas();
+            if (canvasSize != null)
+                this.wwd.setPreferredSize(canvasSize);
+            this.wwd.setModel(model);
+            this.add(this.wwd, BorderLayout.CENTER);
+
+            StatusBar statusBar = new StatusBar();
+            statusBar.setEventSource(this.wwd);
+            this.add(statusBar, BorderLayout.SOUTH);
+
+            this.highlightController = new HighlightController(this.wwd, SelectEvent.ROLLOVER);
+        }
+
+        public WorldWindow getWwd() {
+            return this.wwd;
+        }
+    }
+
+    protected static class SharedLayerPanel extends JPanel {
+        protected final JComponent layersComponent;
+
+        public SharedLayerPanel(String title, Dimension preferredSize, Iterable<? extends Layer> layersIterable) {
+            this.setLayout(new BorderLayout());
+            this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10),
+                BorderFactory.createTitledBorder(title)));
+
+            // Create a box that holds the controls for each layer.
+            this.layersComponent = javax.swing.Box.createVerticalBox();
+            this.layersComponent.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            this.update(layersIterable);
+
+            // Put the layer box in a scroll panel. We put the layer box in a dummy container to prevent the scroll
+            // panel from stretching the vertical spacing between the layer controls.
+            JPanel dummyPanel = new JPanel(new BorderLayout());
+            dummyPanel.add(this.layersComponent, BorderLayout.NORTH);
+            JScrollPane scrollPane = new JScrollPane(dummyPanel);
+            scrollPane.setBorder(BorderFactory.createEmptyBorder());
+            if (preferredSize != null)
+                scrollPane.setPreferredSize(preferredSize);
+            this.add(scrollPane, BorderLayout.CENTER);
+        }
+
+        public void update(Iterable<? extends Layer> layersIterable) {
+            this.layersComponent.removeAll();
+
+            if (layersIterable != null) {
+                for (Layer layer : layersIterable) {
+                    this.addLayer(layer);
+                }
+            }
+
+            this.revalidate();
+        }
+
+        protected void addLayer(final Layer layer) {
+            final JCheckBox jcb = new JCheckBox(layer.getName(), layer.isEnabled());
+            jcb.addActionListener(actionEvent -> {
+                layer.setEnabled(jcb.isSelected());
+                layer.firePropertyChange(AVKey.LAYER, null, layer);
+            });
+
+            this.layersComponent.add(jcb);
+            this.layersComponent.add(javax.swing.Box.createVerticalStrut(5));
+        }
     }
 }

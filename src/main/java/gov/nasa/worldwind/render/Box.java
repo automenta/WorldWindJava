@@ -24,11 +24,10 @@ import java.util.List;
  * @author ccrick
  * @version $Id: Box.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Box extends RigidShape
-{
+public class Box extends RigidShape {
     protected static final int DEFAULT_SUBDIVISIONS = 0;
 
-    @SuppressWarnings({"FieldCanBeLocal"})
+    @SuppressWarnings("FieldCanBeLocal")
     protected final int faceCount = 6;   // number of separate geometric faces that comprise this Box
     // The faces are numbered as follows:
     // face 0: right face
@@ -39,9 +38,10 @@ public class Box extends RigidShape
     // face 5: bottom face
     protected final int subdivisions = DEFAULT_SUBDIVISIONS;
 
-    /** Construct a box with default parameters */
-    public Box()
-    {
+    /**
+     * Construct a box with default parameters
+     */
+    public Box() {
         this.setUpGeometryCache();
     }
 
@@ -52,20 +52,16 @@ public class Box extends RigidShape
      * @param northSouthRadius the box's north-south radius, in meters.
      * @param verticalRadius   the box's vertical radius, in meters.
      * @param eastWestRadius   the box's east-west radius, in meters.
-     *
      * @throws IllegalArgumentException if the center position is null or any of the radii are not greater than 0.
      */
-    public Box(Position centerPosition, double northSouthRadius, double verticalRadius, double eastWestRadius)
-    {
-        if (centerPosition == null)
-        {
+    public Box(Position centerPosition, double northSouthRadius, double verticalRadius, double eastWestRadius) {
+        if (centerPosition == null) {
             String message = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0)
-        {
+        if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius <= 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -91,17 +87,14 @@ public class Box extends RigidShape
      * @param roll             the Box's roll, its rotation about its north-south axis.
      */
     public Box(Position centerPosition, double northSouthRadius, double verticalRadius, double eastWestRadius,
-        Angle heading, Angle tilt, Angle roll)
-    {
-        if (centerPosition == null)
-        {
+        Angle heading, Angle tilt, Angle roll) {
+        if (centerPosition == null) {
             String message = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0)
-        {
+        if (northSouthRadius <= 0 || eastWestRadius <= 0 || verticalRadius <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius <= 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -119,13 +112,11 @@ public class Box extends RigidShape
     }
 
     @Override
-    public int getFaceCount()
-    {
+    public int getFaceCount() {
         return this.faceCount;
     }
 
-    public int getSubdivisions()
-    {
+    public int getSubdivisions() {
         return this.subdivisions;
     }
 
@@ -136,8 +127,7 @@ public class Box extends RigidShape
      * @param dc        the current drawContext.
      * @param shapeData the current globe-specific shape data
      */
-    protected void computeSubdivisions(DrawContext dc, ShapeData shapeData)
-    {
+    protected void computeSubdivisions(DrawContext dc, ShapeData shapeData) {
     }
 
     //**************************************************************//
@@ -150,17 +140,14 @@ public class Box extends RigidShape
      *
      * @param shapeData this shape's current shape data.
      */
-    protected void makeGeometry(ShapeData shapeData)
-    {
+    protected void makeGeometry(ShapeData shapeData) {
         // attempt to retrieve a cached unit box with the same number of subdivisions
         Object cacheKey = new Geometry.CacheKey(this.getClass(), "Box0", this.subdivisions);
         Geometry geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
-        if (geom == null)
-        {
+        if (geom == null) {
             // if none exists, create a new one
             makeUnitBox(this.subdivisions, shapeData.getMeshes());
-            for (int piece = 0; piece < getFaceCount(); piece++)
-            {
+            for (int piece = 0; piece < getFaceCount(); piece++) {
                 if (offsets.get(piece) == null)  // if texture offsets don't exist, set default values to 0
                     offsets.put(piece, new OffsetsList());
                 // add the new mesh pieces to the cache
@@ -168,11 +155,9 @@ public class Box extends RigidShape
                 this.getGeometryCache().add(cacheKey, shapeData.getMesh(piece));
             }
         }
-        else
-        {
+        else {
             // otherwise, just use the one from the cache
-            for (int piece = 0; piece < getFaceCount(); piece++)
-            {
+            for (int piece = 0; piece < getFaceCount(); piece++) {
                 if (offsets.get(piece) == null)  // if texture offsets don't exist, set default values to 0
                     offsets.put(piece, new OffsetsList());
                 cacheKey = new Geometry.CacheKey(this.getClass(), "Box" + piece, this.subdivisions);
@@ -221,16 +206,14 @@ public class Box extends RigidShape
      * @param subdivisions the number of times to subdivide the unit box geometry
      * @param meshes       the Geometry list to hold the computed points, etc. for all Geometries
      */
-    protected void makeUnitBox(int subdivisions, List<Geometry> meshes)
-    {
+    protected void makeUnitBox(int subdivisions, List<Geometry> meshes) {
         float radius = 1.0f;
         Geometry dest;
 
         GeometryBuilder gb = this.getGeometryBuilder();
         gb.setOrientation(GeometryBuilder.OUTSIDE);
 
-        for (int index = 0; index < getFaceCount(); index++)
-        {
+        for (int index = 0; index < getFaceCount(); index++) {
             // create box in model space
             GeometryBuilder.IndexedTriangleBuffer itb =
                 gb.tessellateBoxBuffer(index, radius, subdivisions);
@@ -263,10 +246,8 @@ public class Box extends RigidShape
      * @param shapeData     this shape's current globe-specific shape data
      */
     protected void drawGeometry(DrawContext dc, int mode, int count, int type, Buffer elementBuffer,
-        ShapeData shapeData, int face)
-    {
-        if (elementBuffer == null)
-        {
+        ShapeData shapeData, int face) {
+        if (elementBuffer == null) {
             String message = "nullValue.ElementBufferIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -274,8 +255,7 @@ public class Box extends RigidShape
 
         Geometry mesh = shapeData.getMesh(face);
 
-        if (mesh.getBuffer(Geometry.VERTEX) == null)
-        {
+        if (mesh.getBuffer(Geometry.VERTEX) == null) {
             String message = "nullValue.VertexBufferIsNull";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -292,17 +272,13 @@ public class Box extends RigidShape
         vertexBuffer = mesh.getBuffer(Geometry.VERTEX);
 
         normalBuffer = null;
-        if (!dc.isPickingMode())
-        {
-            if (mustApplyLighting(dc, null))
-            {
+        if (!dc.isPickingMode()) {
+            if (mustApplyLighting(dc, null)) {
                 normalBuffer = mesh.getBuffer(Geometry.NORMAL);
-                if (normalBuffer == null)
-                {
+                if (normalBuffer == null) {
                     gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
                 }
-                else
-                {
+                else {
                     glType = mesh.getGLType(Geometry.NORMAL);
                     stride = mesh.getStride(Geometry.NORMAL);
                     gl.glNormalPointer(glType, stride, normalBuffer);
@@ -319,8 +295,7 @@ public class Box extends RigidShape
         // dc.getGLRuntimeCapabilities().setVertexBufferObjectEnabled(true);
 
         // decide whether to draw with VBO's or VA's
-        if (this.shouldUseVBOs(dc) && (this.getVboIds(getSubdivisions(), dc)) != null)
-        {
+        if (this.shouldUseVBOs(dc) && (this.getVboIds(getSubdivisions(), dc)) != null) {
             // render using VBO's
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, getVboIds(getSubdivisions(), dc)[2 * face]);
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, this.getVboIds(getSubdivisions(), dc)[2 * face + 1]);
@@ -331,8 +306,7 @@ public class Box extends RigidShape
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
             gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
-        else
-        {
+        else {
             // render using vertex arrays
             gl.glVertexPointer(size, glType, stride, vertexBuffer.rewind());
             gl.glDrawElements(mode, count, type, elementBuffer);
@@ -347,10 +321,8 @@ public class Box extends RigidShape
         // disable back face culling
         // gl.glDisable(GL.GL_CULL_FACE);
 
-        if (!dc.isPickingMode())
-        {
-            if (mustApplyLighting(dc, null))
-            {
+        if (!dc.isPickingMode()) {
+            if (mustApplyLighting(dc, null)) {
                 // re-enable normals if we temporarily turned them off earlier
                 if (normalBuffer == null)
                     gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
@@ -359,8 +331,7 @@ public class Box extends RigidShape
         }
     }
 
-    protected ShapeData createIntersectionGeometry(Terrain terrain)
-    {
+    protected ShapeData createIntersectionGeometry(Terrain terrain) {
         // TODO: add error checking
 
         ShapeData shapeData = new ShapeData(null, this);
@@ -371,8 +342,7 @@ public class Box extends RigidShape
 
         Matrix matrix = computeRenderMatrix(terrain.getGlobe(), terrain.getVerticalExaggeration());
 
-        for (int i = 0; i < getFaceCount(); i++)
-        {
+        for (int i = 0; i < getFaceCount(); i++) {
             mesh = shapeData.getMesh(i);
             // transform the vertices from local to world coords
             FloatBuffer newVertices = computeTransformedVertices((FloatBuffer) mesh.getBuffer(Geometry.VERTEX),
@@ -387,17 +357,17 @@ public class Box extends RigidShape
         return shapeData;
     }
 
-    /** No export formats supported. */
+    /**
+     * No export formats supported.
+     */
     @Override
-    public String isExportFormatSupported(String mimeType)
-    {
+    public String isExportFormatSupported(String mimeType) {
         // Overridden because this shape does not support export to KML.
         return Exportable.FORMAT_NOT_SUPPORTED;
     }
 
     @Override
-    protected void doExportAsKML(XMLStreamWriter xmlWriter)
-    {
+    protected void doExportAsKML(XMLStreamWriter xmlWriter) {
         String message = Logging.getMessage("generic.UnsupportedOperation", "doExportAsKML");
         Logging.logger().severe(message);
         throw new UnsupportedOperationException(message);

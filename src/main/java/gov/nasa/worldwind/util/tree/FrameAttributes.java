@@ -15,11 +15,10 @@ import java.awt.*;
  * @version $Id: FrameAttributes.java 1171 2013-02-11 21:45:02Z dcollins $
  * @see ScrollFrame
  */
-public interface FrameAttributes
-{
+public interface FrameAttributes {
     /**
-     * Returns a new FrameAttributes instance of the same type as this FrameAttributes, who's properties are
-     * configured exactly as this FrameAttributes.
+     * Returns a new FrameAttributes instance of the same type as this FrameAttributes, who's properties are configured
+     * exactly as this FrameAttributes.
      *
      * @return a copy of this FrameAttributes.
      */
@@ -37,8 +36,7 @@ public interface FrameAttributes
      * Get the color of the text in the frame.
      *
      * @return The foreground color.
-     *
-     * @see #setForegroundColor(java.awt.Color)
+     * @see #setForegroundColor(Color)
      */
     Color getForegroundColor();
 
@@ -46,7 +44,6 @@ public interface FrameAttributes
      * Set the color of the text in the frame.
      *
      * @param color New foreground color.
-     *
      * @see #getForegroundColor()
      */
     void setForegroundColor(Color color);
@@ -55,8 +52,7 @@ public interface FrameAttributes
      * Get the font used to render text.
      *
      * @return frame font.
-     *
-     * @see #setFont(java.awt.Font)
+     * @see #setFont(Font)
      */
     Font getFont();
 
@@ -64,7 +60,6 @@ public interface FrameAttributes
      * Set the font used to render text.
      *
      * @param font New frame font.
-     *
      * @see #getFont()
      */
     void setFont(Font font);
@@ -87,8 +82,7 @@ public interface FrameAttributes
      * Get the size of the icon in the frame title bar.
      *
      * @return Icon size.
-     *
-     * @see #setIconSize(java.awt.Dimension)
+     * @see #setIconSize(Dimension)
      */
     Dimension getIconSize();
 
@@ -96,7 +90,6 @@ public interface FrameAttributes
      * Set the size of each icon in the frame title bar.
      *
      * @param size New size.
-     *
      * @see #getIconSize()
      */
     void setIconSize(Dimension size);
@@ -105,7 +98,6 @@ public interface FrameAttributes
      * Get the amount of space, in pixels, to leave between an icon in the frame and surrounding text and shapes.
      *
      * @return Icon space in pixels.
-     *
      * @see #setIconSpace(int)
      */
     int getIconSpace();
@@ -114,7 +106,6 @@ public interface FrameAttributes
      * Set the amount of space, in pixels, to leave between an icon in the frame and surrounding text and shapes.
      *
      * @param iconSpace Icon space in pixels.
-     *
      * @see #getIconSpace()
      */
     void setIconSpace(int iconSpace);
@@ -123,7 +114,6 @@ public interface FrameAttributes
      * Get the opacity of the text and images in the frame.
      *
      * @return Opacity of text and images.
-     *
      * @see #setForegroundOpacity(double)
      * @see #getBackgroundOpacity()
      */
@@ -133,7 +123,6 @@ public interface FrameAttributes
      * Set the opacity of the frame text and images.
      *
      * @param textOpacity New opacity.
-     *
      * @see #getForegroundOpacity()
      * @see #setBackgroundOpacity(double)
      */
@@ -143,7 +132,6 @@ public interface FrameAttributes
      * Get the opacity of the frame.
      *
      * @return Frame opacity.
-     *
      * @see #setBackgroundOpacity(double)
      */
     double getBackgroundOpacity();
@@ -152,7 +140,6 @@ public interface FrameAttributes
      * Set the opacity of the frame.
      *
      * @param frameOpacity New frame opacity.
-     *
      * @see #getBackgroundOpacity()
      */
     void setBackgroundOpacity(double frameOpacity);
@@ -161,8 +148,7 @@ public interface FrameAttributes
      * Get the colors that make up the frame's background gradient.
      *
      * @return Two element array containing the colors in the background gradient.
-     *
-     * @see #setBackgroundColor(java.awt.Color, java.awt.Color)
+     * @see #setBackgroundColor(Color, Color)
      */
     Color[] getBackgroundColor();
 
@@ -171,7 +157,6 @@ public interface FrameAttributes
      *
      * @param frameColor1 First color in frame gradient.
      * @param frameColor2 Second color in frame gradient.
-     *
      * @see #getBackgroundColor()
      */
     void setBackgroundColor(Color frameColor1, Color frameColor2);
@@ -180,8 +165,7 @@ public interface FrameAttributes
      * Get the colors that make up the frame's title bar gradient.
      *
      * @return Two element array containing the colors in the title bar gradient.
-     *
-     * @see #setTitleBarColor(java.awt.Color, java.awt.Color)
+     * @see #setTitleBarColor(Color, Color)
      */
     Color[] getTitleBarColor();
 
@@ -190,7 +174,6 @@ public interface FrameAttributes
      *
      * @param color1 First color in the title bar gradient.
      * @param color2 Second color in the title bar gradient.
-     *
      * @see #getTitleBarColor()
      */
     void setTitleBarColor(Color color1, Color color2);
@@ -199,8 +182,7 @@ public interface FrameAttributes
      * Get the colors used to draw the frame's scroll bars.
      *
      * @return Two element array containing the colors in the scroll bar gradient.
-     *
-     * @see #setScrollBarColor(java.awt.Color, java.awt.Color)
+     * @see #setScrollBarColor(Color, Color)
      */
     Color[] getScrollBarColor();
 
@@ -209,7 +191,6 @@ public interface FrameAttributes
      *
      * @param color1 First color in the scroll bar gradient.
      * @param color2 Second color in the scroll bar gradient.
-     *
      * @see #getScrollBarColor()
      */
     void setScrollBarColor(Color color1, Color color2);

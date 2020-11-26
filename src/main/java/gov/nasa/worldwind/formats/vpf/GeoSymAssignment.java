@@ -13,11 +13,7 @@ import java.util.*;
  * @author dcollins
  * @version $Id: GeoSymAssignment.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GeoSymAssignment
-{
-    protected String filePath;
-    protected final Map<String, GeoSymTable> tableMap = new HashMap<>();
-
+public class GeoSymAssignment {
     protected static final String[] tableNames =
         {
             GeoSymConstants.ATTRIBUTE_EXPRESSION_FILE,
@@ -30,15 +26,14 @@ public class GeoSymAssignment
             GeoSymConstants.TEXT_LABEL_JOIN_FILE,
             GeoSymConstants.TEXT_LABEL_LOCATION_FILE,
         };
+    protected final Map<String, GeoSymTable> tableMap = new HashMap<>();
+    protected String filePath;
 
-    public GeoSymAssignment()
-    {
+    public GeoSymAssignment() {
     }
 
-    public static GeoSymAssignment fromFile(String filePath)
-    {
-        if (filePath == null)
-        {
+    public static GeoSymAssignment fromFile(String filePath) {
+        if (filePath == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -49,8 +44,7 @@ public class GeoSymAssignment
 
         GeoSymTableReader reader = new GeoSymTableReader();
 
-        for (String name : tableNames)
-        {
+        for (String name : tableNames) {
             GeoSymTable table = reader.read(getTablePath(filePath, name));
             if (table != null)
                 assignment.putTable(name, table);
@@ -59,10 +53,8 @@ public class GeoSymAssignment
         return assignment;
     }
 
-    public static boolean isGeoSymAssignment(String filePath)
-    {
-        if (filePath == null)
-        {
+    public static boolean isGeoSymAssignment(String filePath) {
+        if (filePath == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -70,8 +62,7 @@ public class GeoSymAssignment
 
         GeoSymTableReader reader = new GeoSymTableReader();
 
-        for (String name : tableNames)
-        {
+        for (String name : tableNames) {
             if (!reader.canRead(getTablePath(filePath, name)))
                 return false;
         }
@@ -79,15 +70,21 @@ public class GeoSymAssignment
         return true;
     }
 
-    public String getFilePath()
-    {
+    protected static String getTablePath(String filePath, String tableName) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(filePath);
+        sb.append("/");
+        sb.append(tableName);
+
+        return sb.toString();
+    }
+
+    public String getFilePath() {
         return this.filePath;
     }
 
-    public GeoSymTable getTable(String name)
-    {
-        if (name == null)
-        {
+    public GeoSymTable getTable(String name) {
+        if (name == null) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -96,25 +93,13 @@ public class GeoSymAssignment
         return this.tableMap.get(name);
     }
 
-    public void putTable(String name, GeoSymTable table)
-    {
-        if (name == null)
-        {
+    public void putTable(String name, GeoSymTable table) {
+        if (name == null) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         this.tableMap.put(name, table);
-    }
-
-    protected static String getTablePath(String filePath, String tableName)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append(filePath);
-        sb.append("/");
-        sb.append(tableName);
-
-        return sb.toString();
     }
 }

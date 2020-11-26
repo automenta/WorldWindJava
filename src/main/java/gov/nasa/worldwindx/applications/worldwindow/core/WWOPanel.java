@@ -12,7 +12,6 @@ import javax.swing.*;
  * @author tag
  * @version $Id: WWOPanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface WWOPanel
-{
+public interface WWOPanel {
     JPanel getJPanel();
 }

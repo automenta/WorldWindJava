@@ -18,15 +18,23 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: OffenseArea.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class OffenseArea extends BasicArea
-{
+public class OffenseArea extends BasicArea {
+    /**
+     * Create a new area graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public OffenseArea(String sidc) {
+        super(sidc);
+        this.setShowHostileIndicator(false);
+    }
+
     /**
      * Indicates the graphics supported by this class.
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         return Arrays.asList(
             TacGrpSidc.C2GM_OFF_ARS_ASTPSN,
             TacGrpSidc.C2GM_OFF_ARS_ATKPSN,
@@ -35,20 +43,10 @@ public class OffenseArea extends BasicArea
     }
 
     /**
-     * Create a new area graphic.
-     *
-     * @param sidc Symbol code the identifies the graphic.
+     * {@inheritDoc}
      */
-    public OffenseArea(String sidc)
-    {
-        super(sidc);
-        this.setShowHostileIndicator(false);
-    }
-
-    /** {@inheritDoc} */
     @Override
-    protected String createLabelText()
-    {
+    protected String createLabelText() {
         // Penetration box graphic does not support text modifiers.
         if (TacGrpSidc.C2GM_OFF_ARS_PBX.equalsIgnoreCase(this.maskedSymbolCode))
             return null;
@@ -57,8 +55,7 @@ public class OffenseArea extends BasicArea
     }
 
     @Override
-    protected String getGraphicLabel()
-    {
+    protected String getGraphicLabel() {
         String code = this.maskedSymbolCode;
 
         if (TacGrpSidc.C2GM_OFF_ARS_ASTPSN.equalsIgnoreCase(code))

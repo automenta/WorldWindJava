@@ -28,17 +28,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author tag
  * @version $Id: SurfaceImageLayer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SurfaceImageLayer extends RenderableLayer
-{
+public class SurfaceImageLayer extends RenderableLayer {
     protected final ImageTiler imageTiler = new ImageTiler();
     protected final ConcurrentHashMap<String, ArrayList<SurfaceImage>> imageTable =
         new ConcurrentHashMap<>();
 
-    protected final BasicDataRasterReaderFactory factory = new BasicDataRasterReaderFactory();
+    protected final DataRasterReaderFactory factory = new BasicDataRasterReaderFactory();
 
     @Override
-    public void dispose()
-    {
+    public void dispose() {
         super.dispose();
 
         this.imageTable.clear();
@@ -56,35 +54,29 @@ public class SurfaceImageLayer extends RenderableLayer
      * Only reprojection from UTM is currently provided.
      *
      * @param imagePath the path to the image file.
-     *
      * @throws IllegalArgumentException if the image path is null.
      * @throws IllegalStateException    if an error occurs while reprojecting or otherwise processing the image.
      * @throws WWRuntimeException       if the image type is unsupported.
      */
-    public void addImage(final String imagePath)
-    {
+    public void addImage(final String imagePath) {
         DataRaster raster = this.openDataRaster(imagePath, null);
         final BufferedImage image = this.getBufferedImage(raster);
 
-        if (null != raster && image != null)
-        {
+        if (null != raster && image != null) {
             addImage(imagePath, image, raster.getSector());
         }
-        else
-        {
+        else {
             String message = Logging.getMessage("generic.ImageReadFailed", imagePath);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
         }
     }
 
-    protected BufferedImage getBufferedImage(DataRaster raster)
-    {
+    protected BufferedImage getBufferedImage(DataRaster raster) {
         if (null == raster)
             return null;
 
-        if (raster instanceof GDALDataRaster)
-        {
+        if (raster instanceof GDALDataRaster) {
             AVList params = new AVListImpl();
 
             params.setValue(AVKey.WIDTH, raster.getWidth());
@@ -94,13 +86,11 @@ public class SurfaceImageLayer extends RenderableLayer
             raster = raster.getSubRaster(params);
         }
 
-        if (raster instanceof BufferedImageRaster)
-        {
+        if (raster instanceof BufferedImageRaster) {
             return ((BufferedImageRaster) raster).getBufferedImage();
         }
 
-        if (raster instanceof BufferWrapperRaster)
-        {
+        if (raster instanceof BufferWrapperRaster) {
             return ImageUtil.visualize((BufferWrapperRaster) raster);
         }
 
@@ -108,18 +98,15 @@ public class SurfaceImageLayer extends RenderableLayer
     }
 
     protected DataRaster openDataRaster(Object src, AVList params)
-        throws IllegalArgumentException, WWRuntimeException
-    {
-        if (src == null)
-        {
+        throws IllegalArgumentException, WWRuntimeException {
+        if (src == null) {
             String message = Logging.getMessage("nullValue.ImageSource");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         final File rasterFile = WWIO.getFileForLocalAddress(src);
-        if (null == rasterFile || !rasterFile.exists())
-        {
+        if (null == rasterFile || !rasterFile.exists()) {
             String message = Logging.getMessage("generic.FileNotFound", src);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -130,12 +117,10 @@ public class SurfaceImageLayer extends RenderableLayer
 
         DataRaster raster;
 
-        try
-        {
+        try {
             DataRasterReader reader = factory.findReaderFor(rasterFile, params);
             DataRaster[] rasters = reader.read(rasterFile, params);
-            if (null == rasters || rasters.length == 0 || null == rasters[0])
-            {
+            if (null == rasters || rasters.length == 0 || null == rasters[0]) {
                 String message = Logging.getMessage("generic.ImageReadFailed", src);
                 Logging.logger().severe(message);
                 throw new WWRuntimeException(message);
@@ -143,11 +128,9 @@ public class SurfaceImageLayer extends RenderableLayer
 
             raster = rasters[0];
 
-            if (raster.getSector() == null && params.hasKey(AVKey.SECTOR))
-            {
+            if (raster.getSector() == null && params.hasKey(AVKey.SECTOR)) {
                 Object o = params.getValue(AVKey.SECTOR);
-                if (o instanceof Sector)
-                {
+                if (o instanceof Sector) {
                     Sector sector = (Sector) o;
 
                     if (raster instanceof GDALDataRaster)
@@ -157,20 +140,17 @@ public class SurfaceImageLayer extends RenderableLayer
                 }
             }
 
-            if (raster.getSector() == null)
-            {
+            if (raster.getSector() == null) {
                 String reason = Logging.getMessage("nullValue.SpatialReferenceIsNull");
                 String message = Logging.getMessage("generic.ImageReadFailed", src + ":" + reason);
                 Logging.logger().severe(message);
                 throw new WWRuntimeException(message);
             }
         }
-        catch (WWRuntimeException wwre)
-        {
+        catch (WWRuntimeException wwre) {
             throw wwre;
         }
-        catch (Throwable t)
-        {
+        catch (Throwable t) {
             String reason = WWUtil.extractExceptionReason(t);
             String message = Logging.getMessage("generic.ImageReadFailed", reason);
             Logging.logger().severe(message);
@@ -186,13 +166,11 @@ public class SurfaceImageLayer extends RenderableLayer
      *
      * @param imagePath the path to the image file.
      * @param sector    the geographic location of the image.
-     *
      * @throws IllegalArgumentException if the image path or sector is null.
      * @throws WWRuntimeException       if the image type is unsupported.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
-    public void addImage(String imagePath, Sector sector) throws WWRuntimeException
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    public void addImage(String imagePath, Sector sector) throws WWRuntimeException {
         AVList params = new AVListImpl();
 
         if (null != sector)
@@ -201,14 +179,12 @@ public class SurfaceImageLayer extends RenderableLayer
         DataRaster raster = this.openDataRaster(imagePath, params);
         final BufferedImage image = this.getBufferedImage(raster);
 
-        if (null != raster && image != null)
-        {
+        if (null != raster && image != null) {
             Sector rasterSector = raster.getSector();
             rasterSector = (null == rasterSector) ? sector : rasterSector;
             addImage(imagePath, image, rasterSector);
         }
-        else
-        {
+        else {
             String message = Logging.getMessage("generic.ImageReadFailed", imagePath);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -223,28 +199,23 @@ public class SurfaceImageLayer extends RenderableLayer
      *               to keep a reference to the image itself. Use this name in calls to {@link #removeImage(String)}.
      * @param image  the image to add.
      * @param sector the geographic location of the image.
-     *
      * @throws IllegalArgumentException if the image path or sector is null.
      * @throws WWRuntimeException       if the image type is unsupported.
      */
-    public void addImage(String name, BufferedImage image, Sector sector)
-    {
-        if (name == null)
-        {
+    public void addImage(String name, BufferedImage image, Sector sector) {
+        if (name == null) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (image == null)
-        {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageSource");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (sector == null)
-        {
+        if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -255,12 +226,9 @@ public class SurfaceImageLayer extends RenderableLayer
 
         final ArrayList<SurfaceImage> surfaceImages = new ArrayList<>();
         this.imageTable.put(name, surfaceImages);
-        this.imageTiler.tileImage(image, sector, new ImageTiler.ImageTilerListener()
-        {
-            public void newTile(BufferedImage tileImage, Sector tileSector)
-            {
-                try
-                {
+        this.imageTiler.tileImage(image, sector, new ImageTiler.ImageTilerListener() {
+            public void newTile(BufferedImage tileImage, Sector tileSector) {
+                try {
                     File tempFile = File.createTempFile("wwj-", ".png");
                     tempFile.deleteOnExit();
                     ImageIO.write(tileImage, "png", tempFile);
@@ -269,15 +237,13 @@ public class SurfaceImageLayer extends RenderableLayer
                     si.setOpacity(SurfaceImageLayer.this.getOpacity());
                     SurfaceImageLayer.this.addRenderable(si);
                 }
-                catch (IOException e)
-                {
+                catch (IOException e) {
                     String message = Logging.getMessage("generic.ImageReadFailed");
                     Logging.logger().severe(message);
                 }
             }
 
-            public void newTile(BufferedImage tileImage, List<? extends LatLon> corners)
-            {
+            public void newTile(BufferedImage tileImage, List<? extends LatLon> corners) {
             }
         });
     }
@@ -289,16 +255,13 @@ public class SurfaceImageLayer extends RenderableLayer
      * @param imagePath the path to the image file.
      * @param corners   the geographic location of the image's corners, specified in order of lower-left, lower-right,
      *                  upper-right, upper-left.
-     *
      * @throws IllegalArgumentException if the image path or sector is null.
      * @throws WWRuntimeException       if the image type is unsupported.
      */
-    public void addImage(String imagePath, List<? extends LatLon> corners) throws WWRuntimeException
-    {
+    public void addImage(String imagePath, List<? extends LatLon> corners) throws WWRuntimeException {
         AVList params = new AVListImpl();
 
-        if (null != corners)
-        {
+        if (null != corners) {
             Sector sector = Sector.boundingSector(corners);
             params.setValue(AVKey.SECTOR, sector);
         }
@@ -306,12 +269,10 @@ public class SurfaceImageLayer extends RenderableLayer
         DataRaster raster = this.openDataRaster(imagePath, params);
         final BufferedImage image = this.getBufferedImage(raster);
 
-        if (null != raster && image != null)
-        {
+        if (null != raster && image != null) {
             this.addImage(imagePath, image, corners);
         }
-        else
-        {
+        else {
             String message = Logging.getMessage("generic.ImageReadFailed", imagePath);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -328,29 +289,24 @@ public class SurfaceImageLayer extends RenderableLayer
      * @param image   the image to add.
      * @param corners the geographic location of the image's corners, specified in order of lower-left, lower-right,
      *                upper-right, upper-left.
-     *
      * @throws IllegalArgumentException if the image path is null, the corners list is null, contains null values or
      *                                  fewer than four locations.
      * @throws WWRuntimeException       if the image type is unsupported.
      */
-    public void addImage(String name, BufferedImage image, List<? extends LatLon> corners)
-    {
-        if (name == null)
-        {
+    public void addImage(String name, BufferedImage image, List<? extends LatLon> corners) {
+        if (name == null) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (image == null)
-        {
+        if (image == null) {
             String message = Logging.getMessage("nullValue.ImageSource");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (corners == null)
-        {
+        if (corners == null) {
             String message = Logging.getMessage("nullValue.LocationsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -361,14 +317,11 @@ public class SurfaceImageLayer extends RenderableLayer
 
         final ArrayList<SurfaceImage> surfaceImages = new ArrayList<>();
         this.imageTable.put(name, surfaceImages);
-        this.imageTiler.tileImage(image, corners, new ImageTiler.ImageTilerListener()
-        {
-            public void newTile(BufferedImage tileImage, Sector tileSector)
-            {
+        this.imageTiler.tileImage(image, corners, new ImageTiler.ImageTilerListener() {
+            public void newTile(BufferedImage tileImage, Sector tileSector) {
             }
 
-            public void newTile(BufferedImage tileImage, List<? extends LatLon> corners)
-            {
+            public void newTile(BufferedImage tileImage, List<? extends LatLon> corners) {
                 SurfaceImage si = new SurfaceImage(tileImage, corners);
                 surfaceImages.add(si);
                 si.setOpacity(SurfaceImageLayer.this.getOpacity());
@@ -377,43 +330,36 @@ public class SurfaceImageLayer extends RenderableLayer
         });
     }
 
-    public void removeImage(String imagePath)
-    {
+    public void removeImage(String imagePath) {
         ArrayList<SurfaceImage> images = this.imageTable.get(imagePath);
         if (images == null)
             return;
 
         this.imageTable.remove(imagePath);
 
-        for (SurfaceImage si : images)
-        {
+        for (SurfaceImage si : images) {
             if (si != null)
                 this.removeRenderable(si);
         }
     }
 
     @Override
-    public void setOpacity(double opacity)
-    {
+    public void setOpacity(double opacity) {
         super.setOpacity(opacity);
 
-        for (Map.Entry<String, ArrayList<SurfaceImage>> entry : this.imageTable.entrySet())
-        {
-            for (SurfaceImage si : entry.getValue())
-            {
+        for (Map.Entry<String, ArrayList<SurfaceImage>> entry : this.imageTable.entrySet()) {
+            for (SurfaceImage si : entry.getValue()) {
                 if (si != null)
                     si.setOpacity(opacity);
             }
         }
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    public int getNumImages()
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    public int getNumImages() {
         int count = 0;
 
-        for (ArrayList<SurfaceImage> images : this.imageTable.values())
-        {
+        for (ArrayList<SurfaceImage> images : this.imageTable.values()) {
             count += images.size();
         }
 
@@ -434,28 +380,23 @@ public class SurfaceImageLayer extends RenderableLayer
      * @param image        if non-null, a {@link BufferedImage} in which to place the image. If null, a new buffered
      *                     image of type {@link BufferedImage#TYPE_INT_RGB} is created. The image must be the width and
      *                     height specified in the <code>canvasWidth</code> and <code>canvasHeight</code> arguments.
-     *
      * @return image        the assembelled image, of size indicated by the <code>canvasWidth</code> and
-     *         <code>canvasHeight</code>. If the specified aspect ratio is one, all pixels contain values. If the aspect
-     *         ratio is greater than one, a full-width segment along the top of the canvas is blank. If the aspect ratio
-     *         is less than one, a full-height segment along the right side of the canvase is blank. If the
-     *         <code>image</code> argument was non-null, that buffered image is returned.
-     *
+     * <code>canvasHeight</code>. If the specified aspect ratio is one, all pixels contain values. If the aspect
+     * ratio is greater than one, a full-width segment along the top of the canvas is blank. If the aspect ratio is less
+     * than one, a full-height segment along the right side of the canvase is blank. If the
+     * <code>image</code> argument was non-null, that buffered image is returned.
      * @see ImageUtil#mergeImage(Sector, Sector, double, BufferedImage, BufferedImage)
      */
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     public BufferedImage composeImageForSector(Sector sector, int canvasWidth, int canvasHeight, double aspectRatio,
-        BufferedImage image)
-    {
-        if (sector == null)
-        {
+        BufferedImage image) {
+        if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
-        if (!this.getRenderables().iterator().hasNext())
-        {
+        if (!this.getRenderables().iterator().hasNext()) {
             Logging.logger().severe(Logging.getMessage("generic.NoImagesAvailable"));
             return null;
         }
@@ -463,23 +404,20 @@ public class SurfaceImageLayer extends RenderableLayer
         if (image == null)
             image = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
 
-        for (Renderable r : this.getRenderables())
-        {
+        for (Renderable r : this.getRenderables()) {
             SurfaceImage si = (SurfaceImage) r;
 
             if (si.getImageSource() == null)
                 continue;
 
             BufferedImage sourceImage = null;
-            try
-            {
+            try {
                 if (si.getImageSource() instanceof String)
                     sourceImage = ImageIO.read(new File((String) si.getImageSource()));
                 else
                     sourceImage = (BufferedImage) si.getImageSource();
             }
-            catch (IOException e)
-            {
+            catch (IOException e) {
                 Logging.logger().severe(Logging.getMessage("generic.ExceptionAttemptingToReadImageFile", sourceImage));
                 return null;
             }

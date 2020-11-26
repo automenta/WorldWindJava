@@ -18,8 +18,7 @@ import java.awt.*;
  * @author dcollins
  * @version $Id: TacticalSymbolAttributes.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface TacticalSymbolAttributes
-{
+public interface TacticalSymbolAttributes {
     /**
      * Copies the specified TacticalSymbolAttributes' properties into this object's properties. This does nothing if the
      * specified attributes is <code>null</code>.
@@ -43,17 +42,15 @@ public interface TacticalSymbolAttributes
      * either <code>null</code> or greater than or equal to 0.0.
      *
      * @param scale the symbol's scale. May be <code>null</code>, indicating that the default scale should be used.
-     *
      * @throws IllegalArgumentException if the scale is less than 0.0.
      */
     void setScale(Double scale);
 
     /**
-     * Indicates the material properties of the symbols's interior. See {@link #setInteriorMaterial(gov.nasa.worldwind.render.Material)
+     * Indicates the material properties of the symbols's interior. See {@link #setInteriorMaterial(Material)
      * setInteriorMaterial} for more information on how this material is interpreted.
      *
      * @return the material applied to the symbols's interior.
-     *
      * @see #setInteriorMaterial(Material)
      */
     Material getInteriorMaterial();
@@ -64,7 +61,6 @@ public interface TacticalSymbolAttributes
      * light. Otherwise, the material's diffuse color indicates the symbols's constant interior color.
      *
      * @param material the material to apply to the symbol's interior.
-     *
      * @see #getInteriorMaterial()
      */
     void setInteriorMaterial(Material material);
@@ -84,13 +80,12 @@ public interface TacticalSymbolAttributes
      * (inclusive).
      *
      * @param opacity the symbol opacity. May be <code>null</code>, indicating that the default opacity should be used.
-     *
      * @throws IllegalArgumentException if the opacity is less than 0.0 or greater than 1.0.
      */
     void setOpacity(Double opacity);
 
     /**
-     * Indicates the font used to draw text modifiers. See {@link #setTextModifierFont(java.awt.Font)} for a description
+     * Indicates the font used to draw text modifiers. See {@link #setTextModifierFont(Font)} for a description
      * of how the text modifier font is used.
      *
      * @return the text modifier font. May be <code>null</code>, indicating that the default font is used.
@@ -108,7 +103,7 @@ public interface TacticalSymbolAttributes
     void setTextModifierFont(Font font);
 
     /**
-     * Indicates the material used to draw text modifiers. See {@link #setTextModifierMaterial(gov.nasa.worldwind.render.Material)}
+     * Indicates the material used to draw text modifiers. See {@link #setTextModifierMaterial(Material)}
      * for a description of how the text modifier material is used.
      *
      * @return the text modifier material. May be <code>null</code>, indicating that the default material is used.

@@ -21,22 +21,20 @@ import java.util.logging.Level;
  * @author dcollins
  * @version $Id: MacWebView.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class MacWebView extends AbstractWebView
-{
-    /** The address of the native WebViewWindow object. Initialized during construction. */
+public class MacWebView extends AbstractWebView {
+    /**
+     * The address of the native WebViewWindow object. Initialized during construction.
+     */
     protected long webViewWindowPtr;
 
-    public MacWebView(Dimension frameSize)
-    {
-        if (frameSize == null)
-        {
+    public MacWebView(Dimension frameSize) {
+        if (frameSize == null) {
             String message = Logging.getMessage("nullValue.SizeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (!Configuration.isMacOS())
-        {
+        if (!Configuration.isMacOS()) {
             String message = Logging.getMessage("NativeLib.UnsupportedOperatingSystem", "Mac WebView",
                 System.getProperty("os.name"));
             Logging.logger().severe(message);
@@ -49,97 +47,93 @@ public class MacWebView extends AbstractWebView
         MacWebViewJNI.setPropertyChangeListener(this.webViewWindowPtr, this);
     }
 
-    public void dispose()
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    public void dispose() {
+        if (this.webViewWindowPtr != 0) {
             MacWebViewJNI.releaseWebViewWindow(this.webViewWindowPtr);
             this.webViewWindowPtr = 0;
         }
     }
 
-    /** {@inheritDoc} */
-    public void setHTMLString(String htmlString)
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void setHTMLString(String htmlString) {
+        if (this.webViewWindowPtr != 0) {
             MacWebViewJNI.setHTMLString(this.webViewWindowPtr, htmlString);
         }
     }
 
-    /** {@inheritDoc} */
-    public void setHTMLString(String htmlString, URL baseURL)
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void setHTMLString(String htmlString, URL baseURL) {
+        if (this.webViewWindowPtr != 0) {
             MacWebViewJNI.setHTMLStringWithBaseURL(this.webViewWindowPtr, htmlString, baseURL);
         }
     }
 
-    /** {@inheritDoc} */
-    public void setHTMLString(String htmlString, WebResourceResolver resourceResolver)
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void setHTMLString(String htmlString, WebResourceResolver resourceResolver) {
+        if (this.webViewWindowPtr != 0) {
             MacWebViewJNI.setHTMLStringWithResourceResolver(this.webViewWindowPtr, htmlString, resourceResolver);
         }
     }
 
-    protected void doSetFrameSize(Dimension size)
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    protected void doSetFrameSize(Dimension size) {
+        if (this.webViewWindowPtr != 0) {
             MacWebViewJNI.setFrameSize(this.webViewWindowPtr, size);
         }
     }
 
-    /** {@inheritDoc} */
-    public Dimension getContentSize()
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public Dimension getContentSize() {
+        if (this.webViewWindowPtr != 0) {
             return MacWebViewJNI.getContentSize(this.webViewWindowPtr);
         }
 
         return null;
     }
 
-    /** {@inheritDoc} */
-    public Dimension getMinContentSize()
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public Dimension getMinContentSize() {
+        if (this.webViewWindowPtr != 0) {
             return MacWebViewJNI.getMinContentSize(this.webViewWindowPtr);
         }
 
         return null;
     }
 
-    /** {@inheritDoc} */
-    public void setMinContentSize(Dimension size)
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void setMinContentSize(Dimension size) {
+        if (this.webViewWindowPtr != 0) {
             MacWebViewJNI.setMinContentSize(this.webViewWindowPtr, size);
         }
     }
 
-    /** {@inheritDoc} */
-    public URL getContentURL()
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public URL getContentURL() {
+        if (this.webViewWindowPtr != 0) {
             return MacWebViewJNI.getContentURL(this.webViewWindowPtr);
         }
 
         return null;
     }
 
-    /** {@inheritDoc} */
-    public Iterable<AVList> getLinks()
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public Iterable<AVList> getLinks() {
+        if (this.webViewWindowPtr != 0) {
             AVList[] linkParams = MacWebViewJNI.getLinks(this.webViewWindowPtr);
             if (linkParams != null)
                 return Arrays.asList(linkParams);
@@ -148,29 +142,29 @@ public class MacWebView extends AbstractWebView
         return Collections.emptyList();
     }
 
-    /** {@inheritDoc} */
-    public void sendEvent(InputEvent event)
-    {
-        if (this.webViewWindowPtr != 0 && event != null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void sendEvent(InputEvent event) {
+        if (this.webViewWindowPtr != 0 && event != null) {
             MacWebViewJNI.sendEvent(this.webViewWindowPtr, event);
         }
     }
 
-    /** {@inheritDoc} */
-    public void goBack()
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void goBack() {
+        if (this.webViewWindowPtr != 0) {
             MacWebViewJNI.goBack(this.webViewWindowPtr);
         }
     }
 
-    /** {@inheritDoc} */
-    public void goForward()
-    {
-        if (this.webViewWindowPtr != 0)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public void goForward() {
+        if (this.webViewWindowPtr != 0) {
             MacWebViewJNI.goForward(this.webViewWindowPtr);
         }
     }
@@ -179,18 +173,16 @@ public class MacWebView extends AbstractWebView
      * Not implemented. MacWebView generates transparent WebView textures, so setting a background color is not
      * necessary. The texture can be drawn over the desired background color.
      */
-    public void setBackgroundColor(Color color)
-    {
-        // Do nothing
+    public Color getBackgroundColor() {
+        return null;
     }
 
     /**
      * Not implemented. MacWebView generates transparent WebView textures, so setting a background color is not
      * necessary. The texture can be drawn over the desired background color.
      */
-    public Color getBackgroundColor()
-    {
-        return null;
+    public void setBackgroundColor(Color color) {
+        // Do nothing
     }
 
     //**********************************************************************//
@@ -198,16 +190,14 @@ public class MacWebView extends AbstractWebView
     //**********************************************************************//
 
     @Override
-    protected WWTexture createTextureRepresentation(DrawContext dc)
-    {
+    protected WWTexture createTextureRepresentation(DrawContext dc) {
         BasicWWTexture texture = new MacWebViewTexture(this.getFrameSize(), false);
         texture.setUseAnisotropy(false); // Do not use anisotropic texture filtering.
 
         return texture;
     }
 
-    protected class MacWebViewTexture extends WebViewTexture
-    {
+    protected class MacWebViewTexture extends WebViewTexture {
         /**
          * Indicates whether updating this <code>WebViewTexture's</code> OpenGL texture has failed. When
          * <code>true</code>, this <code>WebViewTexture's</code> stops attempting to update its texture. Initially
@@ -215,14 +205,12 @@ public class MacWebView extends AbstractWebView
          */
         protected boolean textureUpdateFailed;
 
-        public MacWebViewTexture(Dimension frameSize, boolean useMipMaps)
-        {
+        public MacWebViewTexture(Dimension frameSize, boolean useMipMaps) {
             super(frameSize, useMipMaps, true);
         }
 
         @Override
-        protected void updateIfNeeded(DrawContext dc)
-        {
+        protected void updateIfNeeded(DrawContext dc) {
             if (this.textureUpdateFailed)
                 return;
 
@@ -233,12 +221,10 @@ public class MacWebView extends AbstractWebView
             if (texture == null)
                 return;
 
-            try
-            {
+            try {
                 this.displayInTexture(dc, texture);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 // Log an exception indicating that updating the texture failed, but do not re-throw it. This is called
                 // from within the rendering loop, and we want to avoid causing any other rendering code to fail.
                 Logging.logger().log(Level.SEVERE, Logging.getMessage("WebView.ExceptionUpdatingTexture"), e);
@@ -247,9 +233,8 @@ public class MacWebView extends AbstractWebView
             }
         }
 
-        @SuppressWarnings({"UnusedParameters"})
-        protected void displayInTexture(DrawContext dc, Texture texture)
-        {
+        @SuppressWarnings("UnusedParameters")
+        protected void displayInTexture(DrawContext dc, Texture texture) {
             // Return immediately if the native WebViewWindow has been released. This indicates the MacWebView has been
             // disposed, so there's nothing to do.
             long webViewWindowPtr = MacWebView.this.webViewWindowPtr;
@@ -258,8 +243,7 @@ public class MacWebView extends AbstractWebView
 
             // Load the WebViewWindow's current display pixels into the currently bound OGL texture if the native
             // WebView indicates that the display has changed since our last call to displayInTexture.
-            if (MacWebViewJNI.mustDisplayInTexture(webViewWindowPtr))
-            {
+            if (MacWebViewJNI.mustDisplayInTexture(webViewWindowPtr)) {
                 MacWebViewJNI.displayInTexture(webViewWindowPtr, texture.getTarget());
             }
         }

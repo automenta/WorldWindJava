@@ -25,13 +25,13 @@ import java.util.List;
 import java.util.*;
 
 /**
- * A <code>{@link gov.nasa.worldwind.render.Balloon}</code> that displays HTML, JavaScript, and Flash content using the
+ * A <code>{@link Balloon}</code> that displays HTML, JavaScript, and Flash content using the
  * system's native browser. The balloon's HTML content is specified by calling <code>setText</code> with an HTML
  * formatted string. A browser balloon resolves relative <code>URLs</code> in the HTML content by consulting its
  * resource resolver. The resource resolver converts a relative <code>URL</code> to an absolute <code>URL</code> that
  * the browser can load. The resource resolver is specified by calling <code>setResourceResolver</code>, and may be one
- * of the following: a <code>{@link gov.nasa.worldwind.util.webview.WebResourceResolver}</code>, a <code>{@link
- * java.net.URL}</code>, or a <code>String</code> containing a valid URL description. If a browser balloon's resource
+ * of the following: a <code>{@link WebResourceResolver}</code>, a <code>{@link
+ * URL}</code>, or a <code>String</code> containing a valid URL description. If a browser balloon's resource
  * resolver is <code>null</code> or is an unrecognized type, the browser interprets relative <code>URLs</code> as
  * unresolved references.
  * <p>
@@ -55,7 +55,7 @@ import java.util.*;
  * <p>
  * <b>Balloon Size</b>
  * <p>
- * The browser balloon's screen width and height are specified as a <code>{@link gov.nasa.worldwind.render.Size}</code>
+ * The browser balloon's screen width and height are specified as a <code>{@link Size}</code>
  * object in its <code>BalloonAttributes</code>. This size may configured in one of the following three modes: <ul>
  * <li>Explicit size in pixels.</li> <li>Fraction of the <code>WorldWindow</code> size.</li> <li>Fit to the balloon's
  * HTML content.</li> </ul> The balloon's width and height may be configured independently, enabling any combination of
@@ -94,238 +94,7 @@ import java.util.*;
  * @author dcollins
  * @version $Id: AbstractBrowserBalloon.java 2148 2014-07-14 16:27:49Z tgaskins $
  */
-public abstract class AbstractBrowserBalloon extends AbstractBalloon implements HotSpot, Disposable
-{
-
-    public static class BrowserControl extends AVListImpl
-    {
-        protected static final Color DEFAULT_COLOR = new Color(255, 255, 255, 153);
-        protected static final Color DEFAULT_HIGHLIGHT_COLOR = new Color(255, 255, 255, 255);
-
-        protected boolean visible = true;
-        protected Offset offset;
-        protected Size size;
-        protected Object imageSource;
-        protected Color color;
-        protected Color highlightColor;
-        protected WWTexture texture;
-
-        public BrowserControl(String action, Offset offset, Object imageSource)
-        {
-            if (offset == null)
-            {
-                String message = Logging.getMessage("nullValue.OffsetIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            if (WWUtil.isEmpty(imageSource))
-            {
-                String message = Logging.getMessage("nullValue.ImageSource");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.setAction(action);
-            this.offset = offset;
-            this.size = new Size(Size.NATIVE_DIMENSION, 0d, null, Size.NATIVE_DIMENSION, 0d, null);
-            this.imageSource = imageSource;
-        }
-
-        public BrowserControl(String action, Offset offset, Size size, Object imageSource)
-        {
-            if (offset == null)
-            {
-                String message = Logging.getMessage("nullValue.OffsetIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            if (size == null)
-            {
-                String message = Logging.getMessage("nullValue.SizeIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            if (WWUtil.isEmpty(imageSource))
-            {
-                String message = Logging.getMessage("nullValue.ImageSource");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.setValue(AVKey.ACTION, action);
-            this.offset = offset;
-            this.size = size;
-            this.imageSource = imageSource;
-        }
-
-        public boolean isVisible()
-        {
-            return this.visible;
-        }
-
-        public void setVisible(boolean visible)
-        {
-            this.visible = visible;
-        }
-
-        public String getAction()
-        {
-            return this.getStringValue(AVKey.ACTION);
-        }
-
-        public void setAction(String action)
-        {
-            this.setValue(AVKey.ACTION, action);
-        }
-
-        public Offset getOffset()
-        {
-            return this.offset;
-        }
-
-        public void setOffset(Offset offset)
-        {
-            if (offset == null)
-            {
-                String message = Logging.getMessage("nullValue.OffsetIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.offset = offset;
-        }
-
-        public Size getSize()
-        {
-            return size;
-        }
-
-        public void setSize(Size size)
-        {
-            if (size == null)
-            {
-                String message = Logging.getMessage("nullValue.SizeIsNull");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.size = size;
-        }
-
-        public Color getColor()
-        {
-            return color;
-        }
-
-        public void setColor(Color color)
-        {
-            this.color = color;
-        }
-
-        public Color getHighlightColor()
-        {
-            return highlightColor;
-        }
-
-        public void setHighlightColor(Color highlightColor)
-        {
-            this.highlightColor = highlightColor;
-        }
-
-        public Object getImageSource()
-        {
-            return imageSource;
-        }
-
-        public void setImageSource(Object imageSource)
-        {
-            if (WWUtil.isEmpty(imageSource))
-            {
-                String message = Logging.getMessage("nullValue.ImageSource");
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.imageSource = imageSource;
-            this.texture = null; // Force a texture to be re-created with the new image source.
-        }
-
-        protected WWTexture getTexture()
-        {
-            if (this.texture == null && this.getImageSource() != null)
-            {
-                this.texture = new BasicWWTexture(this.getImageSource(), true);
-            }
-
-            return this.texture;
-        }
-    }
-
-    /**
-     * Holds the vertex data and the defining properties of a balloon's frame and leader geometry. The
-     * <code>vertexBuffer</code> represents the screen-coordinate vertices of the balloon's frame. The
-     * <code>size</code>, <code>offset</code>, <code>balloonShape</code>, <code>leaderShape</code>,
-     * <code>leaderWidth</code>, and <code>cornerRadius</code> are the frame geometry's defining properties. These are
-     * used to determine when the frame geometry is invalid and must be recomputed.
-     */
-    protected static class FrameGeometryInfo
-    {
-        protected FloatBuffer vertexBuffer;
-        protected Dimension size;
-        protected Point offset;
-        protected String balloonShape;
-        protected String leaderShape;
-        protected int leaderWidth;
-        protected int cornerRadius;
-
-        public FrameGeometryInfo()
-        {
-        }
-    }
-
-    protected class OrderedBrowserBalloon implements OrderedRenderable
-    {
-        /** The location and size of the balloon's content frame in the viewport (on the screen). */
-        protected Rectangle screenRect;
-        /** The extent of the balloon's geometry in the viewport (on the screen). */
-        protected Rectangle screenExtent;
-        /**
-         * The extend of the balloon's pickable geometry in the viewport (on the screen). Includes this balloon's outline
-         * where it exceeds the screen extent.
-         */
-        protected Rectangle screenPickExtent;
-        /** The location and size of the WebView's content frame in the viewport (on the screen). */
-        protected Rectangle webViewRect;
-        /** The balloon geometry vertices passed to OpenGL. */
-        protected FrameGeometryInfo frameInfo;
-        /** Used to order the balloon as an ordered renderable. */
-        protected double eyeDistance;
-        /** Identifies the frame used to calculate the balloon's geometry. */
-        protected long geomTimeStamp = -1;
-        /** Identifies the frame used to calculate the balloon's active attributes and points. */
-        protected long frameTimeStamp = -1;
-
-        @Override
-        public double getDistanceFromEye()
-        {
-            return this.eyeDistance;
-        }
-
-        @Override
-        public void pick(DrawContext dc, Point pickPoint)
-        {
-            AbstractBrowserBalloon.this.pick(dc, pickPoint, this);
-        }
-
-        @Override
-        public void render(DrawContext dc)
-        {
-            AbstractBrowserBalloon.this.drawOrderedRenderable(dc, this);
-        }
-    }
+public abstract class AbstractBrowserBalloon extends AbstractBalloon implements HotSpot, Disposable {
 
     /**
      * The browser balloon's default native size: 400x300. This default size is used when a balloon's size is configured
@@ -340,15 +109,90 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      */
     protected static final int DEFAULT_OUTLINE_PICK_WIDTH = 10;
     /**
-     * The class name of the default <code>{@link gov.nasa.worldwind.util.webview.WebViewFactory}</code> used to create
+     * The class name of the default <code>{@link WebViewFactory}</code> used to create
      * the balloon's internal <code>WebView</code>. This factory is used when the configuration does not specify a
      * WebView factory.
      */
     protected static final String DEFAULT_WEB_VIEW_FACTORY = BasicWebViewFactory.class.getName();
-    /** The number of slices used to display a balloon frame as an ellipse: 64. */
+    /**
+     * The number of slices used to display a balloon frame as an ellipse: 64.
+     */
     protected static final int FRAME_GEOMETRY_ELLIPSE_SLICES = 64;
-    /** The number of slices used to display each of a rectangular balloon frame's rounded corners: 16. */
+    /**
+     * The number of slices used to display each of a rectangular balloon frame's rounded corners: 16.
+     */
     protected static final int FRAME_GEOMETRY_RECTANGLE_CORNER_SLICES = 16;
+    protected final Collection<BrowserControl> browserControls = new ArrayList<>(createDefaultBrowserControls());
+    /**
+     * Support for setting up and restoring picking state, and resolving the picked object.
+     */
+    protected final PickSupport pickSupport = new PickSupport();
+    /**
+     * Support for setting up and restoring OpenGL state during rendering.
+     */
+    protected final OGLStackHandler osh = new OGLStackHandler();
+    protected final HashMap<GlobeStateKey, OrderedBrowserBalloon>
+        orderedRenderables = new HashMap<>(1);
+    /**
+     * Action that will occur when the balloon is made invisible.
+     */
+    protected String visibilityAction = AVKey.VISIBILITY_ACTION_RELEASE;
+    protected boolean drawTitleBar = true;
+    protected boolean drawBrowserControls = true;
+    protected boolean drawResizeControl = true;
+    /**
+     * The line width used to draw the the balloon's outline during picking. Initially set to <code>{@link
+     * #DEFAULT_OUTLINE_PICK_WIDTH}</code>.
+     */
+    protected int outlinePickWidth = DEFAULT_OUTLINE_PICK_WIDTH;
+    /**
+     * Indicates the object used to resolve relative resource paths in this browser balloon's HTML content. May be one
+     * of the following: <code>{@link WebResourceResolver}</code>, <code>{@link
+     * URL}</code>, <code>{@link String}</code> containing a valid URL description, or <code>null</code> to
+     * specify that relative paths should be interpreted as unresolved references. Initially <code>null</code>.
+     */
+    protected Object resourceResolver;
+    /**
+     * Identifies the time when the balloon text was updated. Initially -1.
+     */
+    protected long textUpdateTime = -1;
+    /**
+     * Denotes whether or not an attempt at WebView creation failed. When <code>true</code> the balloon does not perform
+     * subsequent attempts to create the WebView. Initially <code>false</code>.
+     */
+    protected boolean webViewCreationFailed;
+    /**
+     * Interface for interacting with the operating system's web browser control. Initially <code>null</code>.
+     */
+    protected WebView webView;
+    /**
+     * Identifies the frame used to update the WebView's state.
+     */
+    protected long webViewTimeStamp = -1;
+    /**
+     * The location of the balloon's content frame relative to the balloon's screen point in the viewport.
+     */
+    protected Point screenOffset;
+    /**
+     * The size of the WebView's HTML content size, in pixels. This is the size that the WebView can be displayed at
+     * without the need for scroll bars. May be <code>null</code> or <code>(0, 0)</code>, indicating that the WebView's
+     * HTML content size is unknown. Initially <code>null</code>.
+     */
+    protected Dimension webViewContentSize;
+    /**
+     * The layer active during the most recent pick pass.
+     */
+    protected Layer pickLayer;
+    /**
+     * The screen coordinate of the last <code>SelectEvent</code> sent to this balloon's <code>select</code> method.
+     */
+    protected Point lastPickPoint;
+    protected long screenBalloonPickFrame;
+    protected long screenBalloonRenderFrame;
+
+    protected AbstractBrowserBalloon(String text) {
+        super(text);
+    }
 
     /**
      * Returns a list containing the browser balloon's three default browser controls, configured as follows:
@@ -364,8 +208,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @return a list containing the browser balloon's default browser controls.
      */
-    protected static List<BrowserControl> createDefaultBrowserControls()
-    {
+    protected static List<BrowserControl> createDefaultBrowserControls() {
         return Arrays.asList(
             new BrowserControl(AVKey.CLOSE, new Offset(30.0, 25.0, AVKey.INSET_PIXELS, AVKey.INSET_PIXELS),
                 "images/browser-close-16x16.gif"),
@@ -376,68 +219,12 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         );
     }
 
-    /** Action that will occur when the balloon is made invisible. */
-    protected String visibilityAction = AVKey.VISIBILITY_ACTION_RELEASE;
-    protected boolean drawTitleBar = true;
-    protected boolean drawBrowserControls = true;
-    protected boolean drawResizeControl = true;
-    /**
-     * The line width used to draw the the balloon's outline during picking. Initially set to <code>{@link
-     * #DEFAULT_OUTLINE_PICK_WIDTH}</code>.
-     */
-    protected int outlinePickWidth = DEFAULT_OUTLINE_PICK_WIDTH;
-    protected final List<BrowserControl> browserControls = new ArrayList<>(createDefaultBrowserControls());
-    /**
-     * Indicates the object used to resolve relative resource paths in this browser balloon's HTML content. May be one
-     * of the following: <code>{@link gov.nasa.worldwind.util.webview.WebResourceResolver}</code>, <code>{@link
-     * java.net.URL}</code>, <code>{@link String}</code> containing a valid URL description, or <code>null</code> to
-     * specify that relative paths should be interpreted as unresolved references. Initially <code>null</code>.
-     */
-    protected Object resourceResolver;
-    /** Identifies the time when the balloon text was updated. Initially -1. */
-    protected long textUpdateTime = -1;
-    /**
-     * Denotes whether or not an attempt at WebView creation failed. When <code>true</code> the balloon does not perform
-     * subsequent attempts to create the WebView. Initially <code>false</code>.
-     */
-    protected boolean webViewCreationFailed;
-    /** Interface for interacting with the operating system's web browser control. Initially <code>null</code>. */
-    protected WebView webView;
-    /** Identifies the frame used to update the WebView's state. */
-    protected long webViewTimeStamp = -1;
-    /** The location of the balloon's content frame relative to the balloon's screen point in the viewport. */
-    protected Point screenOffset;
-    /**
-     * The size of the WebView's HTML content size, in pixels. This is the size that the WebView can be displayed at
-     * without the need for scroll bars. May be <code>null</code> or <code>(0, 0)</code>, indicating that the WebView's
-     * HTML content size is unknown. Initially <code>null</code>.
-     */
-    protected Dimension webViewContentSize;
-    /** The layer active during the most recent pick pass. */
-    protected Layer pickLayer;
-    /** The screen coordinate of the last <code>SelectEvent</code> sent to this balloon's <code>select</code> method. */
-    protected Point lastPickPoint;
-    /** Support for setting up and restoring picking state, and resolving the picked object. */
-    protected final PickSupport pickSupport = new PickSupport();
-    /** Support for setting up and restoring OpenGL state during rendering. */
-    protected final OGLStackHandler osh = new OGLStackHandler();
-    protected long screenBalloonPickFrame;
-    protected long screenBalloonRenderFrame;
-
-    protected final HashMap<GlobeStateKey, OrderedBrowserBalloon>
-        orderedRenderables = new HashMap<>(1);
-
-    protected AbstractBrowserBalloon(String text)
-    {
-        super(text);
-    }
-
     protected abstract OrderedBrowserBalloon createOrderedRenderable();
 
     /**
      * Computes and stores the balloon's model-coordinate and screen-coordinate points.
      *
-     * @param dc the current draw context.
+     * @param dc  the current draw context.
      * @param obb The balloon.
      */
     protected abstract void computeBalloonPoints(DrawContext dc, OrderedBrowserBalloon obb);
@@ -445,42 +232,35 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     protected abstract void setupDepthTest(DrawContext dc, OrderedBrowserBalloon obb);
 
     /**
-     * Disposes the balloon's internal <code>{@link gov.nasa.worldwind.util.webview.WebView}</code>. This does nothing
+     * Disposes the balloon's internal <code>{@link WebView}</code>. This does nothing
      * if the balloon is already disposed.
      */
     @Override
-    public void dispose()
-    {
+    public void dispose() {
         this.disposeWebView();
     }
 
-    public boolean isDrawTitleBar()
-    {
+    public boolean isDrawTitleBar() {
         return this.drawTitleBar;
     }
 
-    public void setDrawTitleBar(boolean draw)
-    {
+    public void setDrawTitleBar(boolean draw) {
         this.drawTitleBar = draw;
     }
 
-    public boolean isDrawBrowserControls()
-    {
+    public boolean isDrawBrowserControls() {
         return this.drawBrowserControls;
     }
 
-    public void setDrawBrowserControls(boolean draw)
-    {
+    public void setDrawBrowserControls(boolean draw) {
         this.drawBrowserControls = draw;
     }
 
-    public boolean isDrawResizeControl()
-    {
+    public boolean isDrawResizeControl() {
         return this.drawResizeControl;
     }
 
-    public void setDrawResizeControl(boolean draw)
-    {
+    public void setDrawResizeControl(boolean draw) {
         this.drawResizeControl = draw;
     }
 
@@ -493,14 +273,12 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * @see #setVisibilityAction(String)
      */
     @Override
-    public void setVisible(boolean visible)
-    {
+    public void setVisible(boolean visible) {
         super.setVisible(visible);
 
         // If the balloon is not visible and the visibility action indicates to release the browser, dispose of the web
         // view to release native resources.
-        if (!this.isVisible() && AVKey.VISIBILITY_ACTION_RELEASE.equals(this.getVisibilityAction()))
-        {
+        if (!this.isVisible() && AVKey.VISIBILITY_ACTION_RELEASE.equals(this.getVisibilityAction())) {
             this.disposeWebView();
         }
     }
@@ -510,11 +288,9 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * outline easier to pick.
      *
      * @return the outline line width (in pixels) used during picking.
-     *
      * @see #setOutlinePickWidth(int)
      */
-    public int getOutlinePickWidth()
-    {
+    public int getOutlinePickWidth() {
         return this.outlinePickWidth;
     }
 
@@ -529,15 +305,12 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * <code>false</code>, this has no effect on the balloon's resize control until it is enabled.
      *
      * @param width the outline line width (in pixels) to use during picking.
-     *
      * @throws IllegalArgumentException if <code>width</code> is less than zero.
      * @see #getOutlinePickWidth()
      * @see #setDrawResizeControl(boolean)
      */
-    public void setOutlinePickWidth(int width)
-    {
-        if (width < 0)
-        {
+    public void setOutlinePickWidth(int width) {
+        if (width < 0) {
             String message = Logging.getMessage("Geom.WidthIsNegative", width);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -546,15 +319,12 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         this.outlinePickWidth = width;
     }
 
-    public Iterable<BrowserControl> getBrowserControls()
-    {
+    public Iterable<BrowserControl> getBrowserControls() {
         return this.browserControls;
     }
 
-    public void addBrowserControl(BrowserControl browserControl)
-    {
-        if (browserControl == null)
-        {
+    public void addBrowserControl(BrowserControl browserControl) {
+        if (browserControl == null) {
             String message = Logging.getMessage("nullValue.BrowserControlIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -563,17 +333,14 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         this.browserControls.add(browserControl);
     }
 
-    public BrowserControl addBrowserControl(String action, Offset offset, Object imageSource)
-    {
-        if (offset == null)
-        {
+    public BrowserControl addBrowserControl(String action, Offset offset, Object imageSource) {
+        if (offset == null) {
             String message = Logging.getMessage("nullValue.OffsetIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (WWUtil.isEmpty(imageSource))
-        {
+        if (WWUtil.isEmpty(imageSource)) {
             String message = Logging.getMessage("nullValue.ImageSource");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -585,24 +352,20 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         return browserControl;
     }
 
-    public BrowserControl addBrowserControl(String action, Offset offset, Size size, Object imageSource)
-    {
-        if (offset == null)
-        {
+    public BrowserControl addBrowserControl(String action, Offset offset, Size size, Object imageSource) {
+        if (offset == null) {
             String message = Logging.getMessage("nullValue.OffsetIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (size == null)
-        {
+        if (size == null) {
             String message = Logging.getMessage("nullValue.SizeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (WWUtil.isEmpty(imageSource))
-        {
+        if (WWUtil.isEmpty(imageSource)) {
             String message = Logging.getMessage("nullValue.ImageSource");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -614,28 +377,22 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         return browserControl;
     }
 
-    public void addAllBrowserControls(Iterable<? extends BrowserControl> iterable)
-    {
-        if (iterable == null)
-        {
+    public void addAllBrowserControls(Iterable<? extends BrowserControl> iterable) {
+        if (iterable == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        for (BrowserControl browserControl : iterable)
-        {
-            if (browserControl != null)
-            {
+        for (BrowserControl browserControl : iterable) {
+            if (browserControl != null) {
                 this.browserControls.add(browserControl);
             }
         }
     }
 
-    public void removeBrowserControl(BrowserControl browserControl)
-    {
-        if (browserControl == null)
-        {
+    public void removeBrowserControl(BrowserControl browserControl) {
+        if (browserControl == null) {
             String message = Logging.getMessage("nullValue.BrowserControlIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -644,8 +401,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         this.browserControls.remove(browserControl);
     }
 
-    public void removeAllBrowserControls()
-    {
+    public void removeAllBrowserControls() {
         this.browserControls.clear();
     }
 
@@ -653,36 +409,32 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * Indicates the object used to resolve relative resource paths in this browser balloon's HTML content.
      *
      * @return the object used to resolve relative resource paths in HTML content. One of the following: <code>{@link
-     *         gov.nasa.worldwind.util.webview.WebResourceResolver}</code>, <code>{@link java.net.URL}</code>,
-     *         <code>{@link String}</code> containing a valid URL description, or <code>null</code> to indicate that
-     *         relative paths are interpreted as unresolved references.
-     *
+     * WebResourceResolver}</code>, <code>{@link URL}</code>,
+     * <code>{@link String}</code> containing a valid URL description, or <code>null</code> to indicate that
+     * relative paths are interpreted as unresolved references.
      * @see #setResourceResolver(Object)
      */
-    public Object getResourceResolver()
-    {
+    public Object getResourceResolver() {
         return this.resourceResolver;
     }
 
     /**
      * Specifies a the object to use when resolving relative resource paths in this browser balloon's HTML content. The
      * <code>resourceResolver</code> may be one of the following:
-     * <ul> <li>a <code>{@link gov.nasa.worldwind.util.webview.WebResourceResolver}</code></li> <li>a <code>{@link
-     * java.net.URL}</code></li> <li>a <code>{@link String}</code> containing a valid URL description</li> </ul>
+     * <ul> <li>a <code>{@link WebResourceResolver}</code></li> <li>a <code>{@link
+     * URL}</code></li> <li>a <code>{@link String}</code> containing a valid URL description</li> </ul>
      * <p>
      * If the <code>resourceResolver</code> is <code>null</code> or is not one of the recognized types, this browser
      * balloon interprets relative resource paths as unresolved references.
      *
      * @param resourceResolver the object to use when resolving relative resource paths in HTML content. May be one of
-     *                         the following: <code>{@link gov.nasa.worldwind.util.webview.WebResourceResolver}</code>,
-     *                         <code>{@link java.net.URL}</code>, <code>{@link String}</code> containing a valid URL
+     *                         the following: <code>{@link WebResourceResolver}</code>,
+     *                         <code>{@link URL}</code>, <code>{@link String}</code> containing a valid URL
      *                         description, or <code>null</code> to specify that relative paths should be interpreted as
      *                         unresolved references.
-     *
      * @see #getResourceResolver()
      */
-    public void setResourceResolver(Object resourceResolver)
-    {
+    public void setResourceResolver(Object resourceResolver) {
         this.resourceResolver = resourceResolver;
 
         // Setting a new resource resolver may change how the WebView content is rendered. Set the textUpdate time to
@@ -695,12 +447,10 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * #setVisibilityAction(String) setVisibilityAction} for a description of the possible actions.
      *
      * @return A string that indicates the action that will occur when the balloon is set to invisible.
-     *
      * @see #setVisibilityAction(String)
      * @see #setVisible(boolean)
      */
-    public String getVisibilityAction()
-    {
+    public String getVisibilityAction() {
         return visibilityAction;
     }
 
@@ -715,10 +465,8 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param visibilityAction Either {@link AVKey#VISIBILITY_ACTION_RELEASE} or {@link AVKey#VISIBILITY_ACTION_RETAIN}.
      */
-    public void setVisibilityAction(String visibilityAction)
-    {
-        if (visibilityAction == null)
-        {
+    public void setVisibilityAction(String visibilityAction) {
+        if (visibilityAction == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -727,16 +475,18 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         this.visibilityAction = visibilityAction;
     }
 
-    /** Navigate the browser to the previous page in the browsing history. Has no effect if there is previous page. */
-    public void goBack()
-    {
+    /**
+     * Navigate the browser to the previous page in the browsing history. Has no effect if there is previous page.
+     */
+    public void goBack() {
         if (this.webView != null)
             this.webView.goBack();
     }
 
-    /** Navigate the browser to the next page in the browsing history. Has no effect if there is no next page. */
-    public void goForward()
-    {
+    /**
+     * Navigate the browser to the next page in the browsing history. Has no effect if there is no next page.
+     */
+    public void goForward() {
         if (this.webView != null)
             this.webView.goForward();
     }
@@ -745,26 +495,24 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * {@inheritDoc}
      * <p>
      * Overridden to suppress <code>AVKey.REPAINT</code> property change events sent by the balloon's internal
-     * <code>{@link gov.nasa.worldwind.util.webview.WebView}</code> when <code>isVisible</code> returns
+     * <code>{@link WebView}</code> when <code>isVisible</code> returns
      * <code>false</code>.
      */
     @Override
-    public void propertyChange(PropertyChangeEvent propertyChangeEvent)
-    {
+    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         if (!this.isVisible() && propertyChangeEvent != null
-            && AVKey.REPAINT.equals(propertyChangeEvent.getPropertyName()))
-        {
+            && AVKey.REPAINT.equals(propertyChangeEvent.getPropertyName())) {
             return;
         }
 
         super.propertyChange(propertyChangeEvent);
     }
 
-    /** {@inheritDoc} */
-    public Rectangle getBounds(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public Rectangle getBounds(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -781,34 +529,29 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         return obb.screenExtent;
     }
 
-    public void pick(DrawContext dc, Point pickPoint, OrderedBrowserBalloon obb)
-    {
+    public void pick(DrawContext dc, Point pickPoint, OrderedBrowserBalloon obb) {
         // This method is called only when ordered renderables are being drawn.
 
         if (!this.isPickEnabled())
             return;
 
         this.pickSupport.clearPickList();
-        try
-        {
+        try {
             this.pickSupport.beginPicking(dc);
             this.drawOrderedRenderable(dc, obb);
         }
-        finally
-        {
+        finally {
             this.pickSupport.endPicking(dc);
             this.pickSupport.resolvePick(dc, pickPoint, this.pickLayer);
         }
     }
 
-    public void render(DrawContext dc)
-    {
+    public void render(DrawContext dc) {
         // This render method is called twice during frame generation. It's first called as a {@link Renderable}
         // during <code>Renderable</code> picking. It's called again during normal rendering. These two calls determine
         // whether to add the placemark and its optional line to the ordered renderable list during pick and render.
 
-        if (dc == null)
-        {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -832,11 +575,9 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param dc the current draw context.
      */
-    protected void makeOrderedRenderable(DrawContext dc)
-    {
+    protected void makeOrderedRenderable(DrawContext dc) {
         // Prevent screen balloons from drawing more than once per frame for 2D continuous globes.
-        if (this instanceof ScreenBrowserBalloon && dc.isContinuous2DGlobe())
-        {
+        if (this instanceof ScreenBrowserBalloon && dc.isContinuous2DGlobe()) {
             if (dc.isPickingMode() && this.screenBalloonPickFrame == dc.getFrameTimeStamp())
                 return;
 
@@ -845,8 +586,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
 
         OrderedBrowserBalloon obb = this.orderedRenderables.get(dc.getGlobe().getGlobeStateKey());
-        if (obb == null)
-        {
+        if (obb == null) {
             obb = this.createOrderedRenderable();
             this.orderedRenderables.put(dc.getGlobe().getGlobeStateKey(), obb);
         }
@@ -860,8 +600,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             return;
 
         // Re-use geometry already calculated this frame.
-        if (dc.getFrameTimeStamp() != obb.geomTimeStamp)
-        {
+        if (dc.getFrameTimeStamp() != obb.geomTimeStamp) {
             // Recompute this balloon's geometry only when an attribute change requires us to.
             if (this.mustRegenerateGeometry(obb))
                 this.computeGeometry(obb);
@@ -871,14 +610,12 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // Update the balloon's WebView to be current with the BrowserBalloon's properties. This must be done after
         // updating the render state; this balloon's active attributes are applied to the WebView. Re-use WebView state
         // already calculated this frame.
-        if (dc.getFrameTimeStamp() != this.webViewTimeStamp)
-        {
+        if (dc.getFrameTimeStamp() != this.webViewTimeStamp) {
             this.updateWebView(dc, obb);
             this.webViewTimeStamp = dc.getFrameTimeStamp();
         }
 
-        if (this.intersectsFrustum(dc, obb))
-        {
+        if (this.intersectsFrustum(dc, obb)) {
             dc.addOrderedRenderable(obb);
 
             if (dc.isPickingMode())
@@ -898,21 +635,18 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * the balloon's model-coordinate and screen-coordinate points by calling <code>computeBalloonPoints</code>.</li>
      * </ul>
      *
-     * @param dc the current draw context.
+     * @param dc  the current draw context.
      * @param obb The balloon to update.
      */
-    protected void updateRenderStateIfNeeded(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void updateRenderStateIfNeeded(DrawContext dc, OrderedBrowserBalloon obb) {
         // Re-use rendering state values already calculated this frame.
-        if (dc.getFrameTimeStamp() != obb.frameTimeStamp)
-        {
+        if (dc.getFrameTimeStamp() != obb.frameTimeStamp) {
             this.updateRenderState(dc, obb);
             obb.frameTimeStamp = dc.getFrameTimeStamp();
         }
     }
 
-    protected void updateRenderState(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void updateRenderState(DrawContext dc, OrderedBrowserBalloon obb) {
         this.determineActiveAttributes();
         if (this.getActiveAttributes() == null)
             return;
@@ -927,11 +661,9 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param dc          the current draw context.
      * @param activeAttrs the attributes used to compute the balloon's size.
-     *
      * @return this balloon frame's screen size, in pixels.
      */
-    protected Dimension computeSize(DrawContext dc, BalloonAttributes activeAttrs)
-    {
+    protected Dimension computeSize(DrawContext dc, BalloonAttributes activeAttrs) {
         // Determine the balloon's current native size. If the WebView's content size is non-null and nonzero, then use
         // that as the basis for the balloon's native size. Otherwise use a default native size. This handles the case
         // where the balloon's size is computed either before the WebView is created or before the WebView's content
@@ -940,22 +672,19 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // native dimension, this size is ignored.
         Dimension nativeSize;
         if (this.webViewContentSize != null && this.webViewContentSize.width != 0
-            && this.webViewContentSize.height != 0)
-        {
+            && this.webViewContentSize.height != 0) {
             // Convert the WebView's content size to a balloon frame size.
             nativeSize = this.computeFrameRectForWebViewRect(activeAttrs,
                 new Rectangle(this.webViewContentSize)).getSize();
         }
-        else
-        {
+        else {
             nativeSize = DEFAULT_NATIVE_SIZE;
         }
 
         Dimension size = activeAttrs.getSize().compute(nativeSize.width, nativeSize.height,
             dc.getView().getViewport().width, dc.getView().getViewport().height);
 
-        if (activeAttrs.getMaximumSize() != null)
-        {
+        if (activeAttrs.getMaximumSize() != null) {
             Dimension maxSize = activeAttrs.getMaximumSize().compute(nativeSize.width, nativeSize.height,
                 dc.getView().getViewport().width, dc.getView().getViewport().height);
 
@@ -968,10 +697,9 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         return size;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected Point computeOffset(DrawContext dc, BalloonAttributes activeAttrs, int width, int height)
-    {
-        Point2D.Double offset = activeAttrs.getOffset().computeOffset(width, height, 1d, 1d);
+    @SuppressWarnings("UnusedDeclaration")
+    protected Point computeOffset(DrawContext dc, BalloonAttributes activeAttrs, int width, int height) {
+        Point2D.Double offset = activeAttrs.getOffset().computeOffset(width, height, 1.0d, 1.0d);
         return new Point((int) offset.getX(), (int) offset.getY());
     }
 
@@ -982,8 +710,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * @param obb The balloon to check.
      * @return <code>true</code> if this balloon's geometry must be recomputed, otherwise <code>false</code>.
      */
-    protected boolean mustRegenerateGeometry(OrderedBrowserBalloon obb)
-    {
+    protected boolean mustRegenerateGeometry(OrderedBrowserBalloon obb) {
         if (obb.frameInfo == null)
             return true;
 
@@ -1000,10 +727,10 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     /**
      * Updates the balloon's screen-coordinate geometry in <code>frameInfo</code> according to the current screen
      * bounds, screen offset, and active attributes.
+     *
      * @param obb The balloon to update.
      */
-    protected void computeGeometry(OrderedBrowserBalloon obb)
-    {
+    protected void computeGeometry(OrderedBrowserBalloon obb) {
         if (obb.screenRect == null)
             return;
 
@@ -1030,8 +757,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * @param obb The balloon.
      * @return a buffer containing the frame's x and y locations.
      */
-    protected FloatBuffer createFrameVertices(OrderedBrowserBalloon obb)
-    {
+    protected FloatBuffer createFrameVertices(OrderedBrowserBalloon obb) {
         BalloonAttributes activeAttrs = this.getActiveAttributes();
 
         if (AVKey.SHAPE_NONE.equals(activeAttrs.getBalloonShape()))
@@ -1044,8 +770,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             return this.makeRectangleFrameVertices(obb);
     }
 
-    protected FloatBuffer makeDefaultFrameVertices(OrderedBrowserBalloon obb)
-    {
+    protected FloatBuffer makeDefaultFrameVertices(OrderedBrowserBalloon obb) {
         BalloonAttributes activeAttrs = this.getActiveAttributes();
         GeometryBuilder gb = new GeometryBuilder();
 
@@ -1053,8 +778,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         int y = obb.webViewRect.y - obb.screenRect.y;
 
         // Return a rectangle that represents the WebView's screen rectangle.
-        if (AVKey.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape()))
-        {
+        if (AVKey.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape())) {
             // The balloon's leader location is equivalent to its screen offset because the screen offset specifies the
             // location of the screen reference point relative to the frame, and the leader points from the frame to the
             // screen reference point.
@@ -1067,8 +791,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
     }
 
-    protected FloatBuffer makeEllipseFrameVertices(OrderedBrowserBalloon obb)
-    {
+    protected FloatBuffer makeEllipseFrameVertices(OrderedBrowserBalloon obb) {
         BalloonAttributes activeAttrs = this.getActiveAttributes();
         GeometryBuilder gb = new GeometryBuilder();
 
@@ -1080,8 +803,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // Return an ellipse centered at the balloon's center and with major and minor axes equal to the balloon's
         // width and height, respectively. We use integer coordinates for the center and the radii to ensure that
         // these vertices align image texels exactly with screen pixels when used as texture coordinates.
-        if (AVKey.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape()))
-        {
+        if (AVKey.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape())) {
             // The balloon's leader location is equivalent to its screen offset because the screen offset specifies the
             // location of the screen reference point relative to the frame, and the leader points from the frame to the
             // screen reference point.
@@ -1094,14 +816,12 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
     }
 
-    protected FloatBuffer makeRectangleFrameVertices(OrderedBrowserBalloon obb)
-    {
+    protected FloatBuffer makeRectangleFrameVertices(OrderedBrowserBalloon obb) {
         BalloonAttributes activeAttrs = this.getActiveAttributes();
         GeometryBuilder gb = new GeometryBuilder();
 
         // Return a rectangle that represents the balloon's screen rectangle, with optional rounded corners.
-        if (AVKey.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape()))
-        {
+        if (AVKey.SHAPE_TRIANGLE.equals(activeAttrs.getLeaderShape())) {
             // The balloon's leader location is equivalent to its screen offset because the screen offset specifies the
             // location of the screen reference point relative to the frame, and the leader points from the frame to the
             // screen reference point.
@@ -1119,13 +839,11 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     /**
      * Determines whether the balloon intersects the view frustum.
      *
-     * @param dc the current draw context.
+     * @param dc  the current draw context.
      * @param obb The balloon to check.
-     *
      * @return <code>true</code> If the balloon intersects the frustum, otherwise <code>false</code>.
      */
-    protected boolean intersectsFrustum(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected boolean intersectsFrustum(DrawContext dc, OrderedBrowserBalloon obb) {
         // During picking, use the balloon's pickable screen extent. This extent includes this balloon's outline where
         // it exceeds the screen extent.
         if (dc.isPickingMode())
@@ -1134,21 +852,17 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         return dc.getView().getViewport().intersects(obb.screenExtent);
     }
 
-    protected void drawOrderedRenderable(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void drawOrderedRenderable(DrawContext dc, OrderedBrowserBalloon obb) {
         this.beginDrawing(dc);
-        try
-        {
+        try {
             this.doDrawOrderedRenderable(dc, obb);
         }
-        finally
-        {
+        finally {
             this.endDrawing(dc);
         }
     }
 
-    protected void beginDrawing(DrawContext dc)
-    {
+    protected void beginDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attrMask =
@@ -1165,31 +879,27 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         this.osh.pushClientAttrib(gl, GL2.GL_CLIENT_VERTEX_ARRAY_BIT); // For vertex array enable, pointers.
         this.osh.pushProjectionIdentity(gl);
         // The browser balloon is drawn using a parallel projection sized to fit the viewport.
-        gl.glOrtho(0d, dc.getView().getViewport().width, 0d, dc.getView().getViewport().height, -1d, 1d);
+        gl.glOrtho(0.0d, dc.getView().getViewport().width, 0.0d, dc.getView().getViewport().height, -1.0d, 1.0d);
         this.osh.pushTextureIdentity(gl);
         this.osh.pushModelviewIdentity(gl);
 
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY); // All drawing uses vertex arrays.
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             gl.glEnable(GL.GL_BLEND); // Enable interior and outline alpha blending when not picking.
             OGLUtil.applyBlending(gl, false);
         }
     }
 
-    protected void endDrawing(DrawContext dc)
-    {
+    protected void endDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         this.osh.pop(gl);
     }
 
-    protected void doDrawOrderedRenderable(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void doDrawOrderedRenderable(DrawContext dc, OrderedBrowserBalloon obb) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (dc.isPickingMode())
-        {
+        if (dc.isPickingMode()) {
             // Set up the pick color used during interior and outline rendering.
             Color pickColor = dc.getUniquePickColor();
             this.pickSupport.addPickableObject(this.createPickedObject(dc, pickColor));
@@ -1223,9 +933,8 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             this.drawLinks(dc, obb);
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected PickedObject createPickedObject(DrawContext dc, Color pickColor)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected PickedObject createPickedObject(DrawContext dc, Color pickColor) {
         PickedObject po = new PickedObject(pickColor.getRGB(),
             this.getDelegateOwner() != null ? this.getDelegateOwner() : this);
 
@@ -1238,9 +947,8 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         return po;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected PickedObject createLinkPickedObject(DrawContext dc, Color pickColor, AVList linkParams)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected PickedObject createLinkPickedObject(DrawContext dc, Color pickColor, AVList linkParams) {
         PickedObject po = new PickedObject(pickColor.getRGB(), this);
 
         // Apply all of the link parameters to the picked object. This provides the application with the link's URL,
@@ -1254,41 +962,34 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         return po;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected boolean isDrawInterior(DrawContext dc)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected boolean isDrawInterior(DrawContext dc) {
         return this.getActiveAttributes().isDrawInterior() && this.getActiveAttributes().getInteriorOpacity() > 0;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected boolean isDrawOutline(DrawContext dc)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected boolean isDrawOutline(DrawContext dc) {
         return this.getActiveAttributes().isDrawOutline() && this.getActiveAttributes().getOutlineOpacity() > 0;
     }
 
-    protected boolean isDrawTitleBar(DrawContext dc)
-    {
+    protected boolean isDrawTitleBar(DrawContext dc) {
         return this.isDrawTitleBar() && this.isDrawInterior(dc) && !dc.isPickingMode();
     }
 
-    protected boolean isDrawResizeControl(DrawContext dc)
-    {
+    protected boolean isDrawResizeControl(DrawContext dc) {
         // There is no visible control so only proceed in picking mode.
         return this.isDrawResizeControl() && (this.isDrawInterior(dc) || this.isDrawOutline(dc)) && dc.isPickingMode();
     }
 
-    protected boolean isDrawBrowserControls(DrawContext dc)
-    {
+    protected boolean isDrawBrowserControls(DrawContext dc) {
         return this.isDrawBrowserControls() && this.isDrawInterior(dc);
     }
 
-    protected boolean isDrawLinks(DrawContext dc)
-    {
+    protected boolean isDrawLinks(DrawContext dc) {
         return this.isDrawInterior(dc) && dc.isPickingMode();
     }
 
-    protected void drawFrame(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void drawFrame(DrawContext dc, OrderedBrowserBalloon obb) {
         if (obb.frameInfo.vertexBuffer == null) // This should never happen, but we check anyway.
             return;
 
@@ -1297,14 +998,12 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glVertexPointer(2, GL.GL_FLOAT, 0, obb.frameInfo.vertexBuffer);
 
-        if (this.isDrawInterior(dc))
-        {
+        if (this.isDrawInterior(dc)) {
             this.prepareToDrawInterior(dc);
             this.drawFrameInterior(dc, obb);
         }
 
-        if (this.isDrawOutline(dc))
-        {
+        if (this.isDrawOutline(dc)) {
             this.prepareToDrawOutline(dc);
             this.drawFrameOutline(dc, obb);
         }
@@ -1323,25 +1022,22 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      * If the specified draw context is in picking mode, this draws the balloon's interior geometry in the current color
      * and does not apply the <code>WebView's</code> texture.
      *
-     * @param dc the current draw context.
+     * @param dc  the current draw context.
      * @param obb The balloon to draw.
      */
-    protected void drawFrameInterior(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void drawFrameInterior(DrawContext dc, OrderedBrowserBalloon obb) {
         if (obb.frameInfo.vertexBuffer == null) // This should never happen, but we check anyway.
             return;
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         boolean textureApplied = false;
-        try
-        {
+        try {
             // Bind the WebView's texture representation as the current texture source if we're in normal rendering
             // mode. This also configures the texture matrix to transform texture coordinates from the balloon's vertex
             // coordinates to the WebView's screen rectangle. For this reason we use the balloon's vertex coordinates as
             // its texture coordinates.
-            if (!dc.isPickingMode() && this.bindWebViewTexture(dc, obb))
-            {
+            if (!dc.isPickingMode() && this.bindWebViewTexture(dc, obb)) {
                 // The WebView's texture is successfully bound. Enable GL texturing and set up the texture
                 // environment to apply the texture in decal mode. Decal mode uses the texture color where the
                 // texture's alpha is 1, and uses the balloon's background color where it's 0. The texture's
@@ -1355,18 +1051,16 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
                 textureApplied = true;
             }
 
-            // Draw the balloon's geometry as a triangle fan to display the interior. The balloon's vertices are 
+            // Draw the balloon's geometry as a triangle fan to display the interior. The balloon's vertices are
             // represented by (x,y) pairs in screen coordinates. The number of vertices to draw is computed by dividing
             // the number of coordinates by 2, because each vertex has exactly two coordinates: x and y.
             gl.glDrawArrays(GL.GL_TRIANGLE_FAN, 0, obb.frameInfo.vertexBuffer.remaining() / 2);
         }
-        finally
-        {
+        finally {
             // Restore the previous texture state and client array state. We do this to avoid pushing and popping the
             // texture attribute bit, which is expensive. We disable textures, disable texture coordinate arrays, bind
             // texture id 0, set the default texture environment mode, and and set the texture coord pointer to 0.
-            if (textureApplied)
-            {
+            if (textureApplied) {
                 gl.glDisable(GL.GL_TEXTURE_2D);
                 gl.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
                 gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
@@ -1376,8 +1070,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
     }
 
-    protected void drawFrameOutline(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void drawFrameOutline(DrawContext dc, OrderedBrowserBalloon obb) {
         if (obb.frameInfo.vertexBuffer == null) // This should never happen, but we check anyway.
             return;
 
@@ -1386,12 +1079,10 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         dc.getGL().glDrawArrays(GL.GL_LINE_LOOP, 0, obb.frameInfo.vertexBuffer.remaining() / 2);
     }
 
-    protected void prepareToDrawInterior(DrawContext dc)
-    {
+    protected void prepareToDrawInterior(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             // Apply the balloon's background color and opacity if we're in normal rendering mode.
             Color color = this.getActiveAttributes().getInteriorMaterial().getDiffuse();
             double opacity = this.getActiveAttributes().getInteriorOpacity();
@@ -1400,12 +1091,10 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
     }
 
-    protected void prepareToDrawOutline(DrawContext dc)
-    {
+    protected void prepareToDrawOutline(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             // Apply the balloon's outline color and opacity and apply the balloon's normal outline width if we're in
             // normal rendering mode.
             Color color = this.getActiveAttributes().getOutlineMaterial().getDiffuse();
@@ -1414,13 +1103,11 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
                 (byte) (opacity < 1 ? (int) (opacity * 255 + 0.5) : 255));
 
             // Apply line smoothing if we're in normal rendering mode.
-            if (this.getActiveAttributes().isEnableAntialiasing())
-            {
+            if (this.getActiveAttributes().isEnableAntialiasing()) {
                 gl.glEnable(GL.GL_LINE_SMOOTH);
             }
 
-            if (this.getActiveAttributes().getOutlineStippleFactor() > 0)
-            {
+            if (this.getActiveAttributes().getOutlineStippleFactor() > 0) {
                 gl.glEnable(GL2.GL_LINE_STIPPLE);
                 gl.glLineStipple(this.getActiveAttributes().getOutlineStippleFactor(),
                     this.getActiveAttributes().getOutlineStipplePattern());
@@ -1435,8 +1122,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             gl.glLineWidth((float) this.getActiveAttributes().getOutlineWidth());
     }
 
-    protected Rectangle computeFramePickRect(Rectangle frameRect)
-    {
+    protected Rectangle computeFramePickRect(Rectangle frameRect) {
         double outlinePickWidth = this.computeOutlinePickWidth();
         return new Rectangle(
             frameRect.x - (int) outlinePickWidth / 2,
@@ -1451,16 +1137,13 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @return the line width to use during picking, in pixels.
      */
-    protected double computeOutlinePickWidth()
-    {
+    protected double computeOutlinePickWidth() {
         return Math.max(this.getActiveAttributes().getOutlineWidth(), this.getOutlinePickWidth());
     }
 
-    protected void updateWebView(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void updateWebView(DrawContext dc, OrderedBrowserBalloon obb) {
         // Attempt to create the balloon's WebView.
-        if (this.webView == null)
-        {
+        if (this.webView == null) {
             this.makeWebView(dc, obb.webViewRect.getSize());
 
             // Exit immediately if WebView creation failed.
@@ -1479,43 +1162,35 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // application makes to the decoded text are reflected in the browser balloon's content. If we ignore those
         // changes when the user navigates to another page, the application cannot retain control over the balloon's
         // content.
-        if (this.getTextDecoder().getLastUpdateTime() != this.textUpdateTime)
-        {
+        if (this.getTextDecoder().getLastUpdateTime() != this.textUpdateTime) {
             this.setWebViewContent();
             this.textUpdateTime = this.getTextDecoder().getLastUpdateTime();
         }
     }
 
-    protected void setWebViewContent()
-    {
+    protected void setWebViewContent() {
         String text = this.getTextDecoder().getDecodedText();
         Object resourceResolver = this.getResourceResolver();
 
-        if (resourceResolver instanceof WebResourceResolver)
-        {
+        if (resourceResolver instanceof WebResourceResolver) {
             this.webView.setHTMLString(text, (WebResourceResolver) resourceResolver);
         }
-        else if (resourceResolver instanceof URL)
-        {
+        else if (resourceResolver instanceof URL) {
             this.webView.setHTMLString(text, (URL) resourceResolver);
         }
-        else if (resourceResolver instanceof String)
-        {
+        else if (resourceResolver instanceof String) {
             // If the string is not a valid URL, then makeURL returns null and the WebView treats any relative paths as
             // unresolved references.
             URL url = WWIO.makeURL((String) resourceResolver);
 
-            if (url == null)
-            {
+            if (url == null) {
                 Logging.logger().warning(Logging.getMessage("generic.URIInvalid", resourceResolver));
             }
 
             this.webView.setHTMLString(text, url);
         }
-        else
-        {
-            if (resourceResolver != null)
-            {
+        else {
+            if (resourceResolver != null) {
                 Logging.logger().warning(Logging.getMessage("generic.UnrecognizedResourceResolver", resourceResolver));
             }
 
@@ -1523,21 +1198,18 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
     }
 
-    protected void makeWebView(DrawContext dc, Dimension frameSize)
-    {
+    protected void makeWebView(DrawContext dc, Dimension frameSize) {
         if (this.webView != null || this.webViewCreationFailed)
             return;
 
-        try
-        {
+        try {
             // Attempt to get the WebViewFactory class name from configuration. Fall back on the BrowserBalloon's
             // default factory if the configuration does not specify a one.
             String className = Configuration.getStringValue(AVKey.WEB_VIEW_FACTORY, DEFAULT_WEB_VIEW_FACTORY);
             WebViewFactory factory = (WebViewFactory) WorldWind.createComponent(className);
             this.webView = factory.createWebView(frameSize);
         }
-        catch (Throwable t)
-        {
+        catch (Throwable t) {
             String message = Logging.getMessage("WebView.ExceptionCreatingWebView", t);
             Logging.logger().severe(message);
 
@@ -1553,8 +1225,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             this.webView.addPropertyChangeListener(this);
     }
 
-    protected void disposeWebView()
-    {
+    protected void disposeWebView() {
         if (this.webView == null)
             return;
 
@@ -1565,8 +1236,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         this.webViewContentSize = null;
     }
 
-    protected void determineWebViewContentSize()
-    {
+    protected void determineWebViewContentSize() {
         // Update the WebView's HTML content size when the WebView is non-null and has not navigated to a another page
         // (indicated by a non-null URL). The latter case indicates that the WebView is not displaying this balloon's
         // text. We avoid updating the content size in this case to ensure that the balloon's size always fits the
@@ -1574,14 +1244,12 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // content causes the balloon to abruptly change size as the user navigates. Note that the content size may be
         // null or (0, 0), indicating that the WebView does not know its content size. The balloon handles this by
         // falling back to a default content size.
-        if (this.webView != null && this.webView.getContentURL() == null)
-        {
+        if (this.webView != null && this.webView.getContentURL() == null) {
             this.webViewContentSize = this.webView.getContentSize();
         }
     }
 
-    protected Rectangle computeWebViewRectForFrameRect(BalloonAttributes activeAttrs, Rectangle frameRect)
-    {
+    protected Rectangle computeWebViewRectForFrameRect(BalloonAttributes activeAttrs, Rectangle frameRect) {
         // Compute the WebView rectangle as an inset of the balloon's screen rectangle, given the current inset values.
         Insets insets = activeAttrs.getInsets();
         return new Rectangle(
@@ -1591,8 +1259,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             frameRect.height - (insets.bottom + insets.top));
     }
 
-    protected Rectangle computeFrameRectForWebViewRect(BalloonAttributes activeAttrs, Rectangle webViewRect)
-    {
+    protected Rectangle computeFrameRectForWebViewRect(BalloonAttributes activeAttrs, Rectangle webViewRect) {
         Insets insets = activeAttrs.getInsets();
         return new Rectangle(
             webViewRect.x - insets.left,
@@ -1601,8 +1268,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             webViewRect.height + (insets.bottom + insets.top));
     }
 
-    protected boolean bindWebViewTexture(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected boolean bindWebViewTexture(DrawContext dc, OrderedBrowserBalloon obb) {
         if (this.webView == null)
             return false;
 
@@ -1626,16 +1292,15 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // origin to the webViewRect origin.
         texture.applyInternalTransform(dc);
         gl.glMatrixMode(GL2.GL_TEXTURE);
-        gl.glScalef(1f / obb.webViewRect.width, 1f / obb.webViewRect.height, 1f);
-        gl.glTranslatef(obb.screenRect.x - obb.webViewRect.x, obb.screenRect.y - obb.webViewRect.y, 0f);
+        gl.glScalef(1.0f / obb.webViewRect.width, 1.0f / obb.webViewRect.height, 1.0f);
+        gl.glTranslatef(obb.screenRect.x - obb.webViewRect.x, obb.screenRect.y - obb.webViewRect.y, 0.0f);
         // Restore the matrix mode.
         gl.glMatrixMode(GL2.GL_MODELVIEW);
 
         return true;
     }
 
-    protected void drawWebViewLinks(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void drawWebViewLinks(DrawContext dc, OrderedBrowserBalloon obb) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (this.webView == null)
@@ -1645,8 +1310,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         if (links == null)
             return;
 
-        for (AVList linkParams : links)
-        {
+        for (AVList linkParams : links) {
             // This should never happen, but we check anyway.
             if (linkParams == null)
                 continue;
@@ -1671,10 +1335,8 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             int y = obb.webViewRect.y - obb.screenRect.y;
 
             gl.glBegin(GL2.GL_QUADS);
-            try
-            {
-                for (Rectangle rect : (Rectangle[]) linkParams.getValue(AVKey.RECTANGLES))
-                {
+            try {
+                for (Rectangle rect : (Rectangle[]) linkParams.getValue(AVKey.RECTANGLES)) {
                     // This should never happen, but we check anyway.
                     if (rect == null)
                         continue;
@@ -1685,8 +1347,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
                     gl.glVertex2i(x + rect.x, y + rect.y + rect.height);
                 }
             }
-            finally
-            {
+            finally {
                 gl.glEnd();
             }
         }
@@ -1695,11 +1356,10 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     /**
      * Draw pickable regions for the resize controls.A pickable region is drawn along the frame outline.
      *
-     * @param dc Draw context.
+     * @param dc  Draw context.
      * @param obb The balloon.
      */
-    protected void drawResizeControl(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void drawResizeControl(DrawContext dc, OrderedBrowserBalloon obb) {
         if (obb.frameInfo.vertexBuffer == null) // This should never happen, but we check anyway.
             return;
 
@@ -1725,34 +1385,29 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         gl.glDrawArrays(GL.GL_LINE_LOOP, 0, obb.frameInfo.vertexBuffer.remaining() / 2);
     }
 
-    protected void drawBrowserControls(DrawContext dc, OrderedBrowserBalloon obb)
-    {
-        for (BrowserControl control : this.getBrowserControls())
-        {
+    protected void drawBrowserControls(DrawContext dc, OrderedBrowserBalloon obb) {
+        for (BrowserControl control : this.getBrowserControls()) {
             if (control == null) // This should never happen, but we check anyway.
                 continue;
 
             if (!control.isVisible())
                 continue;
 
-            try
-            {
+            try {
                 this.drawBrowserControl(dc, control, obb);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Logging.logger().severe(Logging.getMessage("generic.ExceptionWhileRenderingBrowserControl", control));
             }
         }
     }
 
-    protected void drawBrowserControl(DrawContext dc, BrowserControl control, OrderedBrowserBalloon obb)
-    {
+    protected void drawBrowserControl(DrawContext dc, BrowserControl control, OrderedBrowserBalloon obb) {
         WWTexture texture = control.getTexture();
         if (texture == null)
             return;
 
-        Point2D offset = control.getOffset().computeOffset(obb.screenRect.width, obb.screenRect.height, 1d, 1d);
+        Point2D offset = control.getOffset().computeOffset(obb.screenRect.width, obb.screenRect.height, 1.0d, 1.0d);
         Dimension size = control.getSize().compute(texture.getWidth(dc), texture.getHeight(dc),
             obb.screenRect.width, obb.screenRect.height);
 
@@ -1765,13 +1420,11 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushTextureIdentity(gl);
         ogsh.pushModelviewIdentity(gl);
-        try
-        {
+        try {
             gl.glTranslated(rect.x, rect.y, 0);
             gl.glScaled(rect.width, rect.height, 1);
 
-            if (dc.isPickingMode())
-            {
+            if (dc.isPickingMode()) {
                 Color pickColor = dc.getUniquePickColor();
                 gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
 
@@ -1785,18 +1438,15 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
 
                 dc.drawUnitQuad();
             }
-            else
-            {
+            else {
                 // Determine the control's active color: either the highlight color or the normal color, depending on
                 // whether a pick point is over the control.
                 Color color;
-                if (dc.getPickFrustums().intersectsAny(rect))
-                {
+                if (dc.getPickFrustums().intersectsAny(rect)) {
                     color = control.getHighlightColor() != null ? control.getHighlightColor()
                         : BrowserControl.DEFAULT_HIGHLIGHT_COLOR;
                 }
-                else
-                {
+                else {
                     color = control.getColor() != null ? control.getColor() : BrowserControl.DEFAULT_COLOR;
                 }
 
@@ -1806,8 +1456,8 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
                 // Multiply the color's opacity by the balloon's interior opacity so that controls maintain the same
                 // relative opacity to the balloon's interior.
                 float alpha = compArray[3] * (float) this.getActiveAttributes().getInteriorOpacity();
-                if (alpha > 1f)
-                    alpha = 1f;
+                if (alpha > 1.0f)
+                    alpha = 1.0f;
 
                 // Apply the control's color and enable blending in premultiplied alpha mode. We must enable use the
                 // correct blending function for premultiplied alpha colors, because textures loaded by JOGL contain
@@ -1816,14 +1466,12 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
                 gl.glColor4f(compArray[0] * alpha, compArray[1] * alpha, compArray[2] * alpha, alpha);
 
                 gl.glEnable(GL.GL_TEXTURE_2D);
-                if (texture.bind(dc))
-                {
+                if (texture.bind(dc)) {
                     dc.drawUnitQuad(texture.getTexCoords());
                 }
             }
         }
-        finally
-        {
+        finally {
             ogsh.pop(gl);
             // Restore the previous texture state. We do this to avoid pushing and popping the texture attribute bit,
             // which is expensive. We disable textures and bind texture id 0.
@@ -1832,8 +1480,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         }
     }
 
-    protected void drawTitleBar(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void drawTitleBar(DrawContext dc, OrderedBrowserBalloon obb) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Apply the balloon's outline color, but use the interior opacity.
@@ -1845,39 +1492,38 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // Disable line smoothing and specify a line with of 1.0. This ensures that the title separator line appears
         // sharp and thin.
         gl.glDisable(GL.GL_LINE_SMOOTH);
-        gl.glLineWidth(1f);
+        gl.glLineWidth(1.0f);
 
         int x = obb.webViewRect.x - obb.screenRect.x;
         int y = obb.webViewRect.y - obb.screenRect.y;
 
         gl.glBegin(GL2.GL_LINES);
-        try
-        {
+        try {
             gl.glVertex2i(x, y + obb.webViewRect.height);
             gl.glVertex2i(x + obb.webViewRect.width, y + obb.webViewRect.height);
         }
-        finally
-        {
+        finally {
             gl.glEnd();
         }
     }
 
-    protected void drawLinks(DrawContext dc, OrderedBrowserBalloon obb)
-    {
+    protected void drawLinks(DrawContext dc, OrderedBrowserBalloon obb) {
         this.drawWebViewLinks(dc, obb);
     }
 
-    /** {@inheritDoc} */
-    public void setActive(boolean active)
-    {
-        if (this.webView != null)
-            this.webView.setActive(active);
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isActive() {
+        return (this.webView != null) && this.webView.isActive();
     }
 
-    /** {@inheritDoc} */
-    public boolean isActive()
-    {
-        return (this.webView != null) && this.webView.isActive();
+    /**
+     * {@inheritDoc}
+     */
+    public void setActive(boolean active) {
+        if (this.webView != null)
+            this.webView.setActive(active);
     }
 
     /**
@@ -1888,8 +1534,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event The event to handle.
      */
-    public void selected(SelectEvent event)
-    {
+    public void selected(SelectEvent event) {
         if (event == null || event.isConsumed())
             return;
 
@@ -1897,14 +1542,13 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     }
 
     /**
-     * Forwards the key typed event to the balloon's internal <code>{@link gov.nasa.worldwind.util.webview.WebView}</code>
-     * and consumes the event. This consumes the event so the <code>{@link gov.nasa.worldwind.View}</code> doesn't
+     * Forwards the key typed event to the balloon's internal <code>{@link WebView}</code>
+     * and consumes the event. This consumes the event so the <code>{@link View}</code> doesn't
      * respond to it.
      *
      * @param event The event to forward.
      */
-    public void keyTyped(KeyEvent event)
-    {
+    public void keyTyped(KeyEvent event) {
         if (event == null || event.isConsumed())
             return;
 
@@ -1913,14 +1557,13 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     }
 
     /**
-     * Forwards the key pressed event to the balloon's internal <code>{@link gov.nasa.worldwind.util.webview.WebView}</code>
-     * and consumes the event. This consumes the event so the <code>{@link gov.nasa.worldwind.View}</code> doesn't
+     * Forwards the key pressed event to the balloon's internal <code>{@link WebView}</code>
+     * and consumes the event. This consumes the event so the <code>{@link View}</code> doesn't
      * respond to it. The
      *
      * @param event The event to forward.
      */
-    public void keyPressed(KeyEvent event)
-    {
+    public void keyPressed(KeyEvent event) {
         if (event == null || event.isConsumed())
             return;
 
@@ -1929,14 +1572,13 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     }
 
     /**
-     * Forwards the key released event to the balloon's internal <code>{@link gov.nasa.worldwind.util.webview.WebView}</code>
-     * and consumes the event. This consumes the event so the <code>{@link gov.nasa.worldwind.View}</code> doesn't
+     * Forwards the key released event to the balloon's internal <code>{@link WebView}</code>
+     * and consumes the event. This consumes the event so the <code>{@link View}</code> doesn't
      * respond to it.
      *
      * @param event The event to forward.
      */
-    public void keyReleased(KeyEvent event)
-    {
+    public void keyReleased(KeyEvent event) {
         if (event == null || event.isConsumed())
             return;
 
@@ -1949,8 +1591,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event The event to handle.
      */
-    public void mouseClicked(MouseEvent event)
-    {
+    public void mouseClicked(MouseEvent event) {
     }
 
     /**
@@ -1958,8 +1599,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event The event to handle.
      */
-    public void mousePressed(MouseEvent event)
-    {
+    public void mousePressed(MouseEvent event) {
     }
 
     /**
@@ -1967,8 +1607,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event The event to handle.
      */
-    public void mouseReleased(MouseEvent event)
-    {
+    public void mouseReleased(MouseEvent event) {
     }
 
     /**
@@ -1976,8 +1615,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event The event to handle.
      */
-    public void mouseEntered(MouseEvent event)
-    {
+    public void mouseEntered(MouseEvent event) {
     }
 
     /**
@@ -1985,8 +1623,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event The event to handle.
      */
-    public void mouseExited(MouseEvent event)
-    {
+    public void mouseExited(MouseEvent event) {
     }
 
     /**
@@ -1994,12 +1631,11 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event The event to handle.
      */
-    public void mouseDragged(MouseEvent event)
-    {
+    public void mouseDragged(MouseEvent event) {
     }
 
     /**
-     * Forwards the mouse moved event to the balloon's internal <code>{@link gov.nasa.worldwind.util.webview.WebView}</code>.
+     * Forwards the mouse moved event to the balloon's internal <code>{@link WebView}</code>.
      * This does not consume the event, because the <code>{@link gov.nasa.worldwind.event.InputHandler}</code>
      * implements the policy for consuming or forwarding mouse moved events to other objects.
      * <p>
@@ -2008,8 +1644,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event The event to forward.
      */
-    public void mouseMoved(MouseEvent event)
-    {
+    public void mouseMoved(MouseEvent event) {
         if (event == null || event.isConsumed())
             return;
 
@@ -2017,8 +1652,8 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
     }
 
     /**
-     * Forwards the mouse wheel event to the balloon's internal <code>{@link gov.nasa.worldwind.util.webview.WebView}</code>
-     * and consumes the event. This consumes the event so the <code>{@link gov.nasa.worldwind.View}</code> doesn't
+     * Forwards the mouse wheel event to the balloon's internal <code>{@link WebView}</code>
+     * and consumes the event. This consumes the event so the <code>{@link View}</code> doesn't
      * respond to it.
      * <p>
      * Unlike mouse clicked, mouse pressed, and mouse dragged events, mouse wheel events cannot be forwarded to the
@@ -2026,8 +1661,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event The event to forward.
      */
-    public void mouseWheelMoved(MouseWheelEvent event)
-    {
+    public void mouseWheelMoved(MouseWheelEvent event) {
         if (event == null || event.isConsumed())
             return;
 
@@ -2037,13 +1671,12 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
 
     /**
      * Returns a <code>null</code> Cursor, indicating the default cursor should be used when the BrowserBalloon is
-     * active. The Cursor is set by the <code>{@link gov.nasa.worldwind.util.webview.WebView}</code> in response to
+     * active. The Cursor is set by the <code>{@link WebView}</code> in response to
      * mouse moved events.
      *
      * @return A <code>null</code> Cursor.
      */
-    public Cursor getCursor()
-    {
+    public Cursor getCursor() {
         return null;
     }
 
@@ -2053,8 +1686,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event the event to send.
      */
-    protected void handleSelectEvent(SelectEvent event)
-    {
+    protected void handleSelectEvent(SelectEvent event) {
         if (this.webView == null)
             return;
 
@@ -2079,8 +1711,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
 
         Point webViewPoint = this.convertToWebView(event.getSource(), pickPoint);
 
-        if (event.isLeftPress() || event.isRightPress())
-        {
+        if (event.isLeftPress() || event.isRightPress()) {
             int modifiers = event.isLeftPress() ? MouseEvent.BUTTON1_DOWN_MASK : MouseEvent.BUTTON3_DOWN_MASK;
             this.webView.sendEvent(
                 new MouseEvent((Component) event.getSource(), MouseEvent.MOUSE_PRESSED,
@@ -2089,8 +1720,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
                     event.isRightPress(), // isPopupTrigger.
                     event.isRightPress() ? MouseEvent.BUTTON3 : MouseEvent.BUTTON1));
         }
-        else if (event.isLeftClick() || event.isRightClick() || event.isLeftDoubleClick())
-        {
+        else if (event.isLeftClick() || event.isRightClick() || event.isLeftDoubleClick()) {
             int clickCount = event.isLeftDoubleClick() ? 2 : 1;
             int modifiers = (event.isLeftClick() || event.isLeftDoubleClick()) ? MouseEvent.BUTTON1_DOWN_MASK
                 : MouseEvent.BUTTON3_DOWN_MASK;
@@ -2108,8 +1738,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
                     false, // isPopupTrigger.
                     event.isRightClick() ? MouseEvent.BUTTON3 : MouseEvent.BUTTON1));
         }
-        else if (event.isDrag())
-        {
+        else if (event.isDrag()) {
             this.webView.sendEvent(
                 new MouseEvent((Component) event.getSource(), MouseEvent.MOUSE_DRAGGED,
                     System.currentTimeMillis(), MouseEvent.BUTTON1_DOWN_MASK,  // when, modifiers.
@@ -2117,8 +1746,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
                     false, // isPopupTrigger.
                     MouseEvent.BUTTON1));
         }
-        else if (event.isDragEnd())
-        {
+        else if (event.isDragEnd()) {
             this.webView.sendEvent(
                 new MouseEvent((Component) event.getSource(), MouseEvent.MOUSE_RELEASED,
                     System.currentTimeMillis(), 0, // when, modifiers.
@@ -2142,8 +1770,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event the event to send.
      */
-    protected void handleKeyEvent(KeyEvent event)
-    {
+    protected void handleKeyEvent(KeyEvent event) {
         if (this.webView != null)
             this.webView.sendEvent(event);
     }
@@ -2156,8 +1783,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param event the event to send.
      */
-    protected void handleMouseEvent(MouseEvent event)
-    {
+    protected void handleMouseEvent(MouseEvent event) {
         if (this.webView == null)
             return;
 
@@ -2166,17 +1792,16 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         // WebView a chance to change its state or the cursor's state when the cursor it exits the WebView.
         Point webViewPoint = this.convertToWebView(event.getSource(), event.getPoint());
 
-        // Send a copy of the mouse event using the point in the WebView's local coordinate system. 
-        if (event instanceof MouseWheelEvent)
-        {
+        // Send a copy of the mouse event using the point in the WebView's local coordinate system.
+        if (event instanceof MouseWheelEvent) {
             this.webView.sendEvent(
-                new MouseWheelEvent((Component) event.getSource(), event.getID(), event.getWhen(), event.getModifiersEx(),
+                new MouseWheelEvent((Component) event.getSource(), event.getID(), event.getWhen(),
+                    event.getModifiersEx(),
                     webViewPoint.x, webViewPoint.y, event.getClickCount(), event.isPopupTrigger(),
                     ((MouseWheelEvent) event).getScrollType(), ((MouseWheelEvent) event).getScrollAmount(),
                     ((MouseWheelEvent) event).getWheelRotation()));
         }
-        else
-        {
+        else {
             this.webView.sendEvent(
                 new MouseEvent((Component) event.getSource(), event.getID(), event.getWhen(), event.getModifiersEx(),
                     webViewPoint.x, webViewPoint.y, event.getClickCount(), event.isPopupTrigger(), event.getButton()));
@@ -2188,11 +1813,9 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
      *
      * @param point   The point to convert.
      * @param context the component who's coordinate system the point is in.
-     *
      * @return A new <code>Point</code> in the WebView's local coordinate system.
      */
-    protected Point convertToWebView(Object context, Point point)
-    {
+    protected Point convertToWebView(Object context, Point point) {
         int x = point.x;
         int y = point.y;
 
@@ -2203,19 +1826,228 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
 
         // Find the ordered renderable that contains the point.
         Rectangle rect = null;
-        for (OrderedBrowserBalloon obb : this.orderedRenderables.values())
-        {
+        for (OrderedBrowserBalloon obb : this.orderedRenderables.values()) {
             rect = obb.webViewRect;
             if (x >= rect.x && x <= rect.x && y >= rect.y && y <= rect.y)
                 break;
         }
 
-        if (rect != null)
-        {
+        if (rect != null) {
             x -= rect.x;
             y -= rect.y;
         }
 
         return new Point(x, y);
+    }
+
+    public static class BrowserControl extends AVListImpl {
+        protected static final Color DEFAULT_COLOR = new Color(255, 255, 255, 153);
+        protected static final Color DEFAULT_HIGHLIGHT_COLOR = new Color(255, 255, 255, 255);
+
+        protected boolean visible = true;
+        protected Offset offset;
+        protected Size size;
+        protected Object imageSource;
+        protected Color color;
+        protected Color highlightColor;
+        protected WWTexture texture;
+
+        public BrowserControl(String action, Offset offset, Object imageSource) {
+            if (offset == null) {
+                String message = Logging.getMessage("nullValue.OffsetIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            if (WWUtil.isEmpty(imageSource)) {
+                String message = Logging.getMessage("nullValue.ImageSource");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.setAction(action);
+            this.offset = offset;
+            this.size = new Size(Size.NATIVE_DIMENSION, 0.0d, null, Size.NATIVE_DIMENSION, 0.0d, null);
+            this.imageSource = imageSource;
+        }
+
+        public BrowserControl(String action, Offset offset, Size size, Object imageSource) {
+            if (offset == null) {
+                String message = Logging.getMessage("nullValue.OffsetIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            if (size == null) {
+                String message = Logging.getMessage("nullValue.SizeIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            if (WWUtil.isEmpty(imageSource)) {
+                String message = Logging.getMessage("nullValue.ImageSource");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.setValue(AVKey.ACTION, action);
+            this.offset = offset;
+            this.size = size;
+            this.imageSource = imageSource;
+        }
+
+        public boolean isVisible() {
+            return this.visible;
+        }
+
+        public void setVisible(boolean visible) {
+            this.visible = visible;
+        }
+
+        public String getAction() {
+            return this.getStringValue(AVKey.ACTION);
+        }
+
+        public void setAction(String action) {
+            this.setValue(AVKey.ACTION, action);
+        }
+
+        public Offset getOffset() {
+            return this.offset;
+        }
+
+        public void setOffset(Offset offset) {
+            if (offset == null) {
+                String message = Logging.getMessage("nullValue.OffsetIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.offset = offset;
+        }
+
+        public Size getSize() {
+            return size;
+        }
+
+        public void setSize(Size size) {
+            if (size == null) {
+                String message = Logging.getMessage("nullValue.SizeIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.size = size;
+        }
+
+        public Color getColor() {
+            return color;
+        }
+
+        public void setColor(Color color) {
+            this.color = color;
+        }
+
+        public Color getHighlightColor() {
+            return highlightColor;
+        }
+
+        public void setHighlightColor(Color highlightColor) {
+            this.highlightColor = highlightColor;
+        }
+
+        public Object getImageSource() {
+            return imageSource;
+        }
+
+        public void setImageSource(Object imageSource) {
+            if (WWUtil.isEmpty(imageSource)) {
+                String message = Logging.getMessage("nullValue.ImageSource");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.imageSource = imageSource;
+            this.texture = null; // Force a texture to be re-created with the new image source.
+        }
+
+        protected WWTexture getTexture() {
+            if (this.texture == null && this.getImageSource() != null) {
+                this.texture = new BasicWWTexture(this.getImageSource(), true);
+            }
+
+            return this.texture;
+        }
+    }
+
+    /**
+     * Holds the vertex data and the defining properties of a balloon's frame and leader geometry. The
+     * <code>vertexBuffer</code> represents the screen-coordinate vertices of the balloon's frame. The
+     * <code>size</code>, <code>offset</code>, <code>balloonShape</code>, <code>leaderShape</code>,
+     * <code>leaderWidth</code>, and <code>cornerRadius</code> are the frame geometry's defining properties. These are
+     * used to determine when the frame geometry is invalid and must be recomputed.
+     */
+    protected static class FrameGeometryInfo {
+        protected FloatBuffer vertexBuffer;
+        protected Dimension size;
+        protected Point offset;
+        protected String balloonShape;
+        protected String leaderShape;
+        protected int leaderWidth;
+        protected int cornerRadius;
+
+        public FrameGeometryInfo() {
+        }
+    }
+
+    protected class OrderedBrowserBalloon implements OrderedRenderable {
+        /**
+         * The location and size of the balloon's content frame in the viewport (on the screen).
+         */
+        protected Rectangle screenRect;
+        /**
+         * The extent of the balloon's geometry in the viewport (on the screen).
+         */
+        protected Rectangle screenExtent;
+        /**
+         * The extend of the balloon's pickable geometry in the viewport (on the screen). Includes this balloon's
+         * outline where it exceeds the screen extent.
+         */
+        protected Rectangle screenPickExtent;
+        /**
+         * The location and size of the WebView's content frame in the viewport (on the screen).
+         */
+        protected Rectangle webViewRect;
+        /**
+         * The balloon geometry vertices passed to OpenGL.
+         */
+        protected FrameGeometryInfo frameInfo;
+        /**
+         * Used to order the balloon as an ordered renderable.
+         */
+        protected double eyeDistance;
+        /**
+         * Identifies the frame used to calculate the balloon's geometry.
+         */
+        protected long geomTimeStamp = -1;
+        /**
+         * Identifies the frame used to calculate the balloon's active attributes and points.
+         */
+        protected long frameTimeStamp = -1;
+
+        @Override
+        public double getDistanceFromEye() {
+            return this.eyeDistance;
+        }
+
+        @Override
+        public void pick(DrawContext dc, Point pickPoint) {
+            AbstractBrowserBalloon.this.pick(dc, pickPoint, this);
+        }
+
+        @Override
+        public void render(DrawContext dc) {
+            AbstractBrowserBalloon.this.drawOrderedRenderable(dc, this);
+        }
     }
 }

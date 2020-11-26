@@ -18,29 +18,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author tag
  * @version $Id: StatusBar.java 1945 2014-04-18 17:08:43Z tgaskins $
  */
-public class StatusBar extends JPanel implements PositionListener, RenderingListener
-{
+public class StatusBar extends JPanel implements PositionListener, RenderingListener {
     // Units constants TODO: Replace with UnitsFormat
     public final static String UNIT_METRIC = "gov.nasa.worldwind.StatusBar.Metric";
     public final static String UNIT_IMPERIAL = "gov.nasa.worldwind.StatusBar.Imperial";
 
     protected static final int MAX_ALPHA = 254;
-
-    private WorldWindow eventSource;
-    private String elevationUnit = UNIT_METRIC;
-    private String angleFormat = Angle.ANGLE_FORMAT_DD;
-
     protected final JLabel latDisplay = new JLabel("");
     protected final JLabel lonDisplay = new JLabel(Logging.getMessage("term.OffGlobe"));
     protected final JLabel altDisplay = new JLabel("");
     protected final JLabel eleDisplay = new JLabel("");
-
     protected final AtomicBoolean showNetworkStatus = new AtomicBoolean(true);
     protected final AtomicBoolean isNetworkAvailable = new AtomicBoolean(true);
     protected Thread netCheckThread;
+    private WorldWindow eventSource;
+    private String elevationUnit = UNIT_METRIC;
+    private String angleFormat = Angle.ANGLE_FORMAT_DD;
 
-    public StatusBar()
-    {
+    public StatusBar() {
         super(new GridLayout(1, 0));
 
         final JLabel heartBeat = new JLabel(Logging.getMessage("term.Downloading"));
@@ -57,18 +52,16 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
         this.add(heartBeat);
 
         heartBeat.setHorizontalAlignment(SwingConstants.CENTER);
-        heartBeat.setForeground(new java.awt.Color(255, 0, 0, 0));
+        heartBeat.setForeground(new Color(255, 0, 0, 0));
 
         Timer downloadTimer = new Timer(100, actionEvent -> {
-            if (!showNetworkStatus.get())
-            {
-                if (heartBeat.getText().length() > 0)
+            if (!showNetworkStatus.get()) {
+                if (!heartBeat.getText().isEmpty())
                     heartBeat.setText("");
                 return;
             }
 
-            if (!isNetworkAvailable.get())
-            {
+            if (!isNetworkAvailable.get()) {
                 heartBeat.setText(Logging.getMessage("term.NoNetwork"));
                 heartBeat.setForeground(new Color(255, 0, 0, MAX_ALPHA));
                 return;
@@ -76,16 +69,14 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
 
             Color color = heartBeat.getForeground();
             int alpha = color.getAlpha();
-            if (isNetworkAvailable.get() && WorldWind.getRetrievalService().hasActiveTasks())
-            {
+            if (isNetworkAvailable.get() && WorldWind.getRetrievalService().hasActiveTasks()) {
                 heartBeat.setText(Logging.getMessage("term.Downloading"));
                 if (alpha >= MAX_ALPHA)
                     alpha = MAX_ALPHA;
                 else
                     alpha = alpha < 16 ? 16 : Math.min(MAX_ALPHA, alpha + 20);
             }
-            else
-            {
+            else {
                 alpha = Math.max(0, alpha - 20);
             }
             heartBeat.setForeground(new Color(255, 0, 0, alpha));
@@ -111,8 +102,7 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
             });
     }
 
-    protected NetworkCheckThread startNetCheckThread()
-    {
+    protected NetworkCheckThread startNetCheckThread() {
         NetworkCheckThread nct = new NetworkCheckThread(this.showNetworkStatus, this.isNetworkAvailable, null);
         nct.setDaemon(true);
         nct.start();
@@ -120,41 +110,20 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
         return nct;
     }
 
-    public void setEventSource(WorldWindow newEventSource)
-    {
-        if (this.eventSource != null)
-        {
-            this.eventSource.removePositionListener(this);
-            this.eventSource.removeRenderingListener(this);
-        }
-
-        if (newEventSource != null)
-        {
-            newEventSource.addPositionListener(this);
-            newEventSource.addRenderingListener(this);
-        }
-
-        this.eventSource = newEventSource;
-    }
-
-    public boolean isShowNetworkStatus()
-    {
+    public boolean isShowNetworkStatus() {
         return showNetworkStatus.get();
     }
 
-    public void setShowNetworkStatus(boolean showNetworkStatus)
-    {
+    public void setShowNetworkStatus(boolean showNetworkStatus) {
         this.showNetworkStatus.set(showNetworkStatus);
 
-        if (showNetworkStatus)
-        {
+        if (showNetworkStatus) {
             if (this.netCheckThread != null)
                 this.netCheckThread.interrupt();
 
             this.netCheckThread = this.startNetCheckThread();
         }
-        else
-        {
+        else {
             if (this.netCheckThread != null)
                 this.netCheckThread.interrupt();
 
@@ -162,25 +131,34 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
         }
     }
 
-    public void moved(PositionEvent event)
-    {
+    public void moved(PositionEvent event) {
         this.handleCursorPositionChange(event);
     }
 
-    public WorldWindow getEventSource()
-    {
+    public WorldWindow getEventSource() {
         return this.eventSource;
     }
 
-    public String getElevationUnit()
-    {
+    public void setEventSource(WorldWindow newEventSource) {
+        if (this.eventSource != null) {
+            this.eventSource.removePositionListener(this);
+            this.eventSource.removeRenderingListener(this);
+        }
+
+        if (newEventSource != null) {
+            newEventSource.addPositionListener(this);
+            newEventSource.addRenderingListener(this);
+        }
+
+        this.eventSource = newEventSource;
+    }
+
+    public String getElevationUnit() {
         return this.elevationUnit;
     }
 
-    public void setElevationUnit(String unit)
-    {
-        if (unit == null)
-        {
+    public void setElevationUnit(String unit) {
+        if (unit == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -189,15 +167,12 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
         this.elevationUnit = unit;
     }
 
-    public String getAngleFormat()
-    {
+    public String getAngleFormat() {
         return this.angleFormat;
     }
 
-    public void setAngleFormat(String format)
-    {
-        if (format == null)
-        {
+    public void setAngleFormat(String format) {
+        if (format == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -206,8 +181,7 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
         this.angleFormat = format;
     }
 
-    protected String makeCursorElevationDescription(double metersElevation)
-    {
+    protected String makeCursorElevationDescription(double metersElevation) {
         String s;
         String elev = Logging.getMessage("term.Elev");
         if (UNIT_IMPERIAL.equals(elevationUnit))
@@ -217,12 +191,10 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
         return s;
     }
 
-    protected String makeEyeAltitudeDescription(double metersAltitude)
-    {
+    protected String makeEyeAltitudeDescription(double metersAltitude) {
         String s;
         String altitude = Logging.getMessage("term.Altitude");
-        if (UNIT_IMPERIAL.equals(elevationUnit))
-        {
+        if (UNIT_IMPERIAL.equals(elevationUnit)) {
             double miles = WWMath.convertMetersToMiles(metersAltitude);
             if (Math.abs(miles) >= 1)
                 s = String.format(altitude + " %,7d mi", (int) Math.round(miles));
@@ -230,14 +202,13 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
                 s = String.format(altitude + " %,7d ft", (int) Math.round(WWMath.convertMetersToFeet(metersAltitude)));
         }
         else if (Math.abs(metersAltitude) >= 1000) // Default to metric units.
-            s = String.format(altitude + " %,7d km", (int) Math.round(metersAltitude / 1e3));
+            s = String.format(altitude + " %,7d km", (int) Math.round(metersAltitude / 1.0e3));
         else
             s = String.format(altitude + " %,7d m", (int) Math.round(metersAltitude));
         return s;
     }
 
-    protected String makeAngleDescription(String label, Angle angle)
-    {
+    protected String makeAngleDescription(String label, Angle angle) {
         String s;
         if (Angle.ANGLE_FORMAT_DMS.equals(angleFormat))
             s = String.format("%s %s", label, angle.toDMSString());
@@ -246,11 +217,9 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
         return s;
     }
 
-    protected void handleCursorPositionChange(PositionEvent event)
-    {
+    protected void handleCursorPositionChange(PositionEvent event) {
         Position newPos = event.getPosition();
-        if (newPos != null)
-        {
+        if (newPos != null) {
             String las = makeAngleDescription("Lat", newPos.getLatitude());
             String los = makeAngleDescription("Lon", newPos.getLongitude());
             String els = makeCursorElevationDescription(
@@ -259,16 +228,14 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
             lonDisplay.setText(los);
             eleDisplay.setText(els);
         }
-        else
-        {
+        else {
             latDisplay.setText("");
             lonDisplay.setText(Logging.getMessage("term.OffGlobe"));
             eleDisplay.setText("");
         }
     }
 
-    public void stageChanged(RenderingEvent event)
-    {
+    public void stageChanged(RenderingEvent event) {
         if (!event.getStage().equals(RenderingEvent.BEFORE_BUFFER_SWAP))
             return;
 

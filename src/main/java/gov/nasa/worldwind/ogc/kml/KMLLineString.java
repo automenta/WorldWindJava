@@ -14,40 +14,32 @@ import gov.nasa.worldwind.geom.Position;
  * @author tag
  * @version $Id: KMLLineString.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLLineString extends KMLAbstractGeometry
-{
-    public KMLLineString(String namespaceURI)
-    {
+public class KMLLineString extends KMLAbstractGeometry {
+    public KMLLineString(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public boolean isExtrude()
-    {
+    public boolean isExtrude() {
         return this.getExtrude() == Boolean.TRUE;
     }
 
-    public Boolean getExtrude()
-    {
+    public Boolean getExtrude() {
         return (Boolean) this.getField("extrude");
     }
 
-    public boolean isTessellate()
-    {
+    public boolean isTessellate() {
         return this.getTessellate() == Boolean.TRUE;
     }
 
-    public Boolean getTessellate()
-    {
+    public Boolean getTessellate() {
         return (Boolean) this.getField("tessellate");
     }
 
-    public String getAltitudeMode()
-    {
+    public String getAltitudeMode() {
         return (String) this.getField("altitudeMode");
     }
 
-    public Position.PositionList getCoordinates()
-    {
+    public Position.PositionList getCoordinates() {
         return (Position.PositionList) this.getField("coordinates");
     }
 }

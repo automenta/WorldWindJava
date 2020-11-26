@@ -48,9 +48,9 @@ import java.util.*;
  * @author tag
  * @version $Id: Box.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Box implements Extent, Renderable
-{
+public class Box implements Extent, Renderable {
     /**
+     *
      */
     protected static final int[][] ProjectionHullTable = new int[][]
         {
@@ -98,9 +98,6 @@ public class Box implements Extent, Renderable
             {1, 0, 3, 7, 6, 5}, // 101001: left, back, top
             {1, 2, 3, 7, 4, 5}, // 101010: left, back, bottom
         };
-
-    public Vec4 bottomCenter; // point at center of box's longest axis
-    public Vec4 topCenter; // point at center of box's longest axis
     protected final Vec4 center; // center of box
     protected final Vec4 r; // longest axis
     protected final Vec4 s; // next longest axis
@@ -112,10 +109,11 @@ public class Box implements Extent, Renderable
     protected final double sLength; // length of s axis
     protected final double tLength; // length of t axis
     protected final Plane[] planes; // the six planes, with positive normals facing outwards
+    public Vec4 bottomCenter; // point at center of box's longest axis
+    public Vec4 topCenter; // point at center of box's longest axis
 
     protected Box(Vec4 bottomCenter, Vec4 topCenter, Vec4 center, Vec4 r, Vec4 s, Vec4 t, Vec4 ru, Vec4 su, Vec4 tu,
-        double rlength, double sLength, double tLength, Plane[] planes)
-    {
+        double rlength, double sLength, double tLength, Plane[] planes) {
         this.bottomCenter = bottomCenter;
         this.topCenter = topCenter;
         this.center = center;
@@ -149,13 +147,10 @@ public class Box implements Extent, Renderable
      * @param sMax the location along the second axis corresponding to the right-most box side relative to the axis.
      * @param tMin the location along the third axis corresponding to the left-most box side relative to the axis.
      * @param tMax the location along the third axis corresponding to the right-most box side relative to the axis.
-     *
      * @throws IllegalArgumentException if the axes array or one of its entries is null.
      */
-    public Box(Vec4[] axes, double rMin, double rMax, double sMin, double sMax, double tMin, double tMax)
-    {
-        if (axes == null || axes[0] == null || axes[1] == null || axes[2] == null)
-        {
+    public Box(Vec4[] axes, double rMin, double rMax, double sMin, double sMax, double tMin, double tMax) {
+        if (axes == null || axes[0] == null || axes[1] == null || axes[2] == null) {
             String msg = Logging.getMessage("nullValue.AxesIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -196,13 +191,10 @@ public class Box implements Extent, Renderable
      * Construct a unit-length cube centered at a specified point.
      *
      * @param point the center of the cube.
-     *
      * @throws IllegalArgumentException if the point is null.
      */
-    public Box(Vec4 point)
-    {
-        if (point == null)
-        {
+    public Box(Vec4 point) {
+        if (point == null) {
             String msg = Logging.getMessage("nullValue.PointIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -238,224 +230,23 @@ public class Box implements Extent, Renderable
     }
 
     /**
-     * Returns the box's center point.
-     *
-     * @return the box's center point.
-     */
-    public Vec4 getCenter()
-    {
-        return this.center;
-    }
-
-    /**
-     * Returns the point corresponding to the center of the box side left-most along the R (first) axis.
-     *
-     * @return the bottom-center point.
-     */
-    public Vec4 getBottomCenter()
-    {
-        return this.bottomCenter;
-    }
-
-    /**
-     * Returns the point corresponding to the center of the box side right-most along the R (first) axis.
-     *
-     * @return the top-center point.
-     */
-    public Vec4 getTopCenter()
-    {
-        return this.topCenter;
-    }
-
-    /**
-     * Returns the R (first) axis. The axis length is the distance between the box sides perpendicular to the axis.
-     *
-     * @return the R axis.
-     */
-    public Vec4 getRAxis()
-    {
-        return this.r;
-    }
-
-    /**
-     * Returns the S (second) axis. The axis length is the distance between the box sides perpendicular to the axis.
-     *
-     * @return the S axis.
-     */
-    public Vec4 getSAxis()
-    {
-        return this.s;
-    }
-
-    /**
-     * Returns the T (third) axis. The axis length is the distance between the box sides perpendicular to the axis.
-     *
-     * @return the T axis.
-     */
-    public Vec4 getTAxis()
-    {
-        return this.t;
-    }
-
-    /**
-     * Returns the R (first) axis in unit length.
-     *
-     * @return the unit R axis.
-     */
-    public Vec4 getUnitRAxis()
-    {
-        return this.ru;
-    }
-
-    /**
-     * Returns the S (second) axis in unit length.
-     *
-     * @return the unit S axis.
-     */
-    public Vec4 getUnitSAxis()
-    {
-        return this.su;
-    }
-
-    /**
-     * Returns the T (third) axis in unit length.
-     *
-     * @return the unit T axis.
-     */
-    public Vec4 getUnitTAxis()
-    {
-        return this.tu;
-    }
-
-    /**
-     * Returns the eight corners of the box.
-     *
-     * @return the eight box corners in the order bottom-lower-left, bottom-lower-right, bottom-upper-right,
-     *         bottom-upper-left, top-lower-left, top-lower-right, top-upper-right, top-upper-left.
-     */
-    public Vec4[] getCorners()
-    {
-        Vec4 ll = this.s.add3(this.t).multiply3(-0.5);     // Lower left.
-        Vec4 lr = this.t.subtract3(this.s).multiply3(0.5); // Lower right.
-        Vec4 ur = this.s.add3(this.t).multiply3(0.5);      // Upper right.
-        Vec4 ul = this.s.subtract3(this.t).multiply3(0.5); // Upper left.
-
-        Vec4[] corners = new Vec4[8];
-        corners[0] = this.bottomCenter.add3(ll);
-        corners[1] = this.bottomCenter.add3(lr);
-        corners[2] = this.bottomCenter.add3(ur);
-        corners[3] = this.bottomCenter.add3(ul);
-        corners[4] = this.topCenter.add3(ll);
-        corners[5] = this.topCenter.add3(lr);
-        corners[6] = this.topCenter.add3(ur);
-        corners[7] = this.topCenter.add3(ul);
-
-        return corners;
-    }
-
-    /**
-     * Returns the six planes of the box. The plane normals are directed outwards from the box.
-     *
-     * @return the six box planes in the order R-min, R-max, S-min, S-max, T-min, T-max.
-     */
-    public Plane[] getPlanes()
-    {
-        return this.planes;
-    }
-
-    /**
-     * Returns the length of the R axis.
-     *
-     * @return the length of the R axis.
-     */
-    public double getRLength()
-    {
-        return rLength;
-    }
-
-    /**
-     * Returns the length of the S axis.
-     *
-     * @return the length of the S axis.
-     */
-    public double getSLength()
-    {
-        return sLength;
-    }
-
-    /**
-     * Returns the length of the T axis.
-     *
-     * @return the length of the T axis.
-     */
-    public double getTLength()
-    {
-        return tLength;
-    }
-
-    /**
-     * Returns the effective diameter of the box as if it were a sphere. The length returned is the square root of the
-     * sum of the squares of axis lengths.
-     *
-     * @return the effective diameter of the box.
-     */
-    public double getDiameter()
-    {
-        return Math.sqrt(this.rLength * this.rLength + this.sLength * this.sLength + this.tLength * this.tLength);
-    }
-
-    /**
-     * Returns the effective radius of the box as if it were a sphere. The length returned is half the square root of
-     * the sum of the squares of axis lengths.
-     *
-     * @return the effective radius of the box.
-     */
-    public double getRadius()
-    {
-        return 0.5 * this.getDiameter();
-    }
-
-    public Box translate(Vec4 point)
-    {
-        Vec4 bc = this.bottomCenter.add3(point);
-        Vec4 tc = this.topCenter.add3(point);
-        Vec4 c = this.center.add3(point);
-
-        Plane[] newPlanes = new Plane[this.planes.length];
-        for (int i = 0; i < this.planes.length; i++)
-        {
-            Plane pl = this.planes[i];
-            Vec4 n = pl.getNormal();
-            newPlanes[i] = new Plane(n.x, n.y, n.z, pl.getDistance() - (n.dot3(point)));
-        }
-
-        return new Box(bc, tc, c, this.r, this.s, this.t, this.ru, this.su, this.tu, this.rLength, this.sLength,
-            this.tLength, newPlanes);
-    }
-
-    /**
      * Compute a <code>Box</code> that bounds a specified list of points. Principal axes are computed for the points and
      * used to form a <code>Box</code>.
      *
      * @param points the points for which to compute a bounding volume.
-     *
      * @return the bounding volume, with axes lengths consistent with the conventions described in the <code>Box</code>
-     *         class overview.
-     *
+     * class overview.
      * @throws IllegalArgumentException if the point list is null or empty.
      */
-    public static Box computeBoundingBox(Iterable<? extends Vec4> points)
-    {
-        if (points == null)
-        {
+    public static Box computeBoundingBox(Iterable<? extends Vec4> points) {
+        if (points == null) {
             String msg = Logging.getMessage("nullValue.PointListIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         Vec4[] axes = WWMath.computePrincipalAxes(points);
-        if (axes == null)
-        {
+        if (axes == null) {
             String msg = Logging.getMessage("generic.ListIsEmpty");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -473,8 +264,7 @@ public class Box implements Extent, Renderable
         double minDotT = Double.MAX_VALUE;
         double maxDotT = -minDotT;
 
-        for (Vec4 p : points)
-        {
+        for (Vec4 p : points) {
             if (p == null)
                 continue;
 
@@ -521,31 +311,25 @@ public class Box implements Extent, Renderable
      * @param coordinates the buffer containing the point coordinates for which to compute a bounding volume.
      * @param stride      the number of elements between the first coordinate of consecutive points. If stride is 3,
      *                    this interprets the buffer has having tightly packed XYZ coordinate tuples.
-     *
      * @return the bounding volume, with axes lengths consistent with the conventions described in the <code>Box</code>
-     *         class overview.
-     *
+     * class overview.
      * @throws IllegalArgumentException if the buffer is null or empty, or if the stride is less than three.
      */
-    public static Box computeBoundingBox(BufferWrapper coordinates, int stride)
-    {
-        if (coordinates == null)
-        {
+    public static Box computeBoundingBox(BufferWrapper coordinates, int stride) {
+        if (coordinates == null) {
             String msg = Logging.getMessage("nullValue.CoordinatesAreNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (stride < 3)
-        {
+        if (stride < 3) {
             String msg = Logging.getMessage("generic.StrideIsInvalid", stride);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         Vec4[] axes = WWMath.computePrincipalAxes(coordinates, stride);
-        if (axes == null)
-        {
+        if (axes == null) {
             String msg = Logging.getMessage("generic.ListIsEmpty");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -563,8 +347,7 @@ public class Box implements Extent, Renderable
         double minDotT = Double.MAX_VALUE;
         double maxDotT = -minDotT;
 
-        for (int i = 0; i <= coordinates.length() - stride; i += stride)
-        {
+        for (int i = 0; i <= coordinates.length() - stride; i += stride) {
             double x = coordinates.getDouble(i);
             double y = coordinates.getDouble(i + 1);
             double z = coordinates.getDouble(i + 2);
@@ -606,15 +389,11 @@ public class Box implements Extent, Renderable
      * <code>null</code> if the iterable is empty or contains only <code>null</code> references.
      *
      * @param iterable an iterable of <code>Boxes</code> to enclose.
-     *
      * @return a new <code>Box</code> that encloses the specified iterable of <code>Boxes</code>.
-     *
      * @throws IllegalArgumentException if the <code>iterable</code> is null.
      */
-    public static Box union(Iterable<? extends Box> iterable)
-    {
-        if (iterable == null)
-        {
+    public static Box union(Iterable<? extends Box> iterable) {
+        if (iterable == null) {
             String msg = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -622,33 +401,28 @@ public class Box implements Extent, Renderable
 
         ArrayList<Box> boxes = new ArrayList<>();
 
-        for (Box box : iterable)
-        {
+        for (Box box : iterable) {
             if (box == null)
                 continue;
 
             boxes.add(box);
         }
 
-        if (boxes.size() == 0)
-        {
+        if (boxes.isEmpty()) {
             return null;
         }
-        else if (boxes.size() == 1)
-        {
+        else if (boxes.size() == 1) {
             // If the iterable contains only a single non-null box, we avoid unnecessarily computing its bouding box and
             // just return it directly. This also ensures that we do not return a box larger than the original box, by
             // performing a principal component analysis on the corners of a single box.
             return boxes.get(0);
         }
-        else
-        {
+        else {
             // If the iterable contains two or more boxes, gather up their corners and return a box that encloses the
             // boxes corners. We create an ArrayList with enough room to hold all the boxes corners to avoid unnecessary
             // overhead.
-            ArrayList<Vec4> corners = new ArrayList<>(8 * boxes.size());
-            for (Box box : boxes)
-            {
+            List<Vec4> corners = new ArrayList<>(8 * boxes.size());
+            for (Box box : boxes) {
                 corners.addAll(Arrays.asList(box.getCorners()));
             }
 
@@ -656,13 +430,229 @@ public class Box implements Extent, Renderable
         }
     }
 
-    /** {@inheritDoc} */
-    public boolean intersects(Frustum frustum)
-    {
+    protected static double intersectsAt(Plane plane, double effectiveRadius, Vec4[] endpoints) {
+        // Test the distance from the first end-point.
+        double dq1 = plane.dot(endpoints[0]);
+        boolean bq1 = dq1 <= -effectiveRadius;
+
+        // Test the distance from the possibly reduced second end-point.
+        double dq2 = plane.dot(endpoints[1]);
+        boolean bq2 = dq2 <= -effectiveRadius;
+
+        if (bq1 && bq2) // endpoints more distant from plane than effective radius; box is on neg. side of plane
+            return -1;
+
+        if (bq1 == bq2) // endpoints less distant from plane than effective radius; can't draw any conclusions
+            return 0;
+
+        // Compute and return the endpoints of the cylinder on the positive side of the plane.
+        double t = (effectiveRadius + dq1) / plane.getNormal().dot3(endpoints[0].subtract3(endpoints[1]));
+
+        Vec4 newEndPoint = endpoints[0].add3(endpoints[1].subtract3(endpoints[0]).multiply3(t));
+        // truncate the line to only that in the positive halfspace (e.g., inside the frustum)
+        if (bq1)
+            endpoints[0] = newEndPoint;
+        else
+            endpoints[1] = newEndPoint;
+
+        return t;
+    }
+
+    protected static void drawOutline(DrawContext dc, Vec4 a, Vec4 b, Vec4 c, Vec4 d) {
+        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
+        gl.glBegin(GL2.GL_LINE_LOOP);
+        gl.glVertex3d(a.x, a.y, a.z);
+        gl.glVertex3d(b.x, b.y, b.z);
+        gl.glVertex3d(c.x, c.y, c.z);
+        gl.glVertex3d(d.x, d.y, d.z);
+        gl.glEnd();
+    }
+
+    /**
+     * Returns the box's center point.
+     *
+     * @return the box's center point.
+     */
+    public Vec4 getCenter() {
+        return this.center;
+    }
+
+    /**
+     * Returns the point corresponding to the center of the box side left-most along the R (first) axis.
+     *
+     * @return the bottom-center point.
+     */
+    public Vec4 getBottomCenter() {
+        return this.bottomCenter;
+    }
+
+    /**
+     * Returns the point corresponding to the center of the box side right-most along the R (first) axis.
+     *
+     * @return the top-center point.
+     */
+    public Vec4 getTopCenter() {
+        return this.topCenter;
+    }
+
+    /**
+     * Returns the R (first) axis. The axis length is the distance between the box sides perpendicular to the axis.
+     *
+     * @return the R axis.
+     */
+    public Vec4 getRAxis() {
+        return this.r;
+    }
+
+    /**
+     * Returns the S (second) axis. The axis length is the distance between the box sides perpendicular to the axis.
+     *
+     * @return the S axis.
+     */
+    public Vec4 getSAxis() {
+        return this.s;
+    }
+
+    /**
+     * Returns the T (third) axis. The axis length is the distance between the box sides perpendicular to the axis.
+     *
+     * @return the T axis.
+     */
+    public Vec4 getTAxis() {
+        return this.t;
+    }
+
+    /**
+     * Returns the R (first) axis in unit length.
+     *
+     * @return the unit R axis.
+     */
+    public Vec4 getUnitRAxis() {
+        return this.ru;
+    }
+
+    /**
+     * Returns the S (second) axis in unit length.
+     *
+     * @return the unit S axis.
+     */
+    public Vec4 getUnitSAxis() {
+        return this.su;
+    }
+
+    /**
+     * Returns the T (third) axis in unit length.
+     *
+     * @return the unit T axis.
+     */
+    public Vec4 getUnitTAxis() {
+        return this.tu;
+    }
+
+    /**
+     * Returns the eight corners of the box.
+     *
+     * @return the eight box corners in the order bottom-lower-left, bottom-lower-right, bottom-upper-right,
+     * bottom-upper-left, top-lower-left, top-lower-right, top-upper-right, top-upper-left.
+     */
+    public Vec4[] getCorners() {
+        Vec4 ll = this.s.add3(this.t).multiply3(-0.5);     // Lower left.
+        Vec4 lr = this.t.subtract3(this.s).multiply3(0.5); // Lower right.
+        Vec4 ur = this.s.add3(this.t).multiply3(0.5);      // Upper right.
+        Vec4 ul = this.s.subtract3(this.t).multiply3(0.5); // Upper left.
+
+        Vec4[] corners = new Vec4[8];
+        corners[0] = this.bottomCenter.add3(ll);
+        corners[1] = this.bottomCenter.add3(lr);
+        corners[2] = this.bottomCenter.add3(ur);
+        corners[3] = this.bottomCenter.add3(ul);
+        corners[4] = this.topCenter.add3(ll);
+        corners[5] = this.topCenter.add3(lr);
+        corners[6] = this.topCenter.add3(ur);
+        corners[7] = this.topCenter.add3(ul);
+
+        return corners;
+    }
+
+    /**
+     * Returns the six planes of the box. The plane normals are directed outwards from the box.
+     *
+     * @return the six box planes in the order R-min, R-max, S-min, S-max, T-min, T-max.
+     */
+    public Plane[] getPlanes() {
+        return this.planes;
+    }
+
+    /**
+     * Returns the length of the R axis.
+     *
+     * @return the length of the R axis.
+     */
+    public double getRLength() {
+        return rLength;
+    }
+
+    /**
+     * Returns the length of the S axis.
+     *
+     * @return the length of the S axis.
+     */
+    public double getSLength() {
+        return sLength;
+    }
+
+    /**
+     * Returns the length of the T axis.
+     *
+     * @return the length of the T axis.
+     */
+    public double getTLength() {
+        return tLength;
+    }
+
+    /**
+     * Returns the effective diameter of the box as if it were a sphere. The length returned is the square root of the
+     * sum of the squares of axis lengths.
+     *
+     * @return the effective diameter of the box.
+     */
+    public double getDiameter() {
+        return Math.sqrt(this.rLength * this.rLength + this.sLength * this.sLength + this.tLength * this.tLength);
+    }
+
+    /**
+     * Returns the effective radius of the box as if it were a sphere. The length returned is half the square root of
+     * the sum of the squares of axis lengths.
+     *
+     * @return the effective radius of the box.
+     */
+    public double getRadius() {
+        return 0.5 * this.getDiameter();
+    }
+
+    public Box translate(Vec4 point) {
+        Vec4 bc = this.bottomCenter.add3(point);
+        Vec4 tc = this.topCenter.add3(point);
+        Vec4 c = this.center.add3(point);
+
+        Plane[] newPlanes = new Plane[this.planes.length];
+        for (int i = 0; i < this.planes.length; i++) {
+            Plane pl = this.planes[i];
+            Vec4 n = pl.getNormal();
+            newPlanes[i] = new Plane(n.x, n.y, n.z, pl.getDistance() - (n.dot3(point)));
+        }
+
+        return new Box(bc, tc, c, this.r, this.s, this.t, this.ru, this.su, this.tu, this.rLength, this.sLength,
+            this.tLength, newPlanes);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean intersects(Frustum frustum) {
         // FYI: this code is identical to that in Cylinder.intersects.
 
-        if (frustum == null)
-        {
+        if (frustum == null) {
             String message = Logging.getMessage("nullValue.FrustumIsNull");
 
             Logging.logger().severe(message);
@@ -710,12 +700,10 @@ public class Box implements Extent, Renderable
      * Ed, Section 7.2.4.
      *
      * @param plane the plane in question.
-     *
      * @return the effective radius of this box relative to the specified plane, using only this box's S and T axes to
-     *         determine the effective radius.
+     * determine the effective radius.
      */
-    protected double getEffectiveRadius2(Plane plane)
-    {
+    protected double getEffectiveRadius2(Plane plane) {
         if (plane == null)
             return 0;
 
@@ -725,9 +713,10 @@ public class Box implements Extent, Renderable
         return 0.5 * (Math.abs(this.s.dot3(n)) + Math.abs(this.t.dot3(n)));
     }
 
-    /** {@inheritDoc} */
-    public double getEffectiveRadius(Plane plane)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public double getEffectiveRadius(Plane plane) {
         if (plane == null)
             return 0;
 
@@ -736,40 +725,11 @@ public class Box implements Extent, Renderable
         return 0.5 * (Math.abs(this.s.dot3(n)) + Math.abs(this.t.dot3(n)) + Math.abs(this.r.dot3(n)));
     }
 
-    protected static double intersectsAt(Plane plane, double effectiveRadius, Vec4[] endpoints)
-    {
-        // Test the distance from the first end-point.
-        double dq1 = plane.dot(endpoints[0]);
-        boolean bq1 = dq1 <= -effectiveRadius;
-
-        // Test the distance from the possibly reduced second end-point.
-        double dq2 = plane.dot(endpoints[1]);
-        boolean bq2 = dq2 <= -effectiveRadius;
-
-        if (bq1 && bq2) // endpoints more distant from plane than effective radius; box is on neg. side of plane
-            return -1;
-
-        if (bq1 == bq2) // endpoints less distant from plane than effective radius; can't draw any conclusions
-            return 0;
-
-        // Compute and return the endpoints of the cylinder on the positive side of the plane.
-        double t = (effectiveRadius + dq1) / plane.getNormal().dot3(endpoints[0].subtract3(endpoints[1]));
-
-        Vec4 newEndPoint = endpoints[0].add3(endpoints[1].subtract3(endpoints[0]).multiply3(t));
-        // truncate the line to only that in the positive halfspace (e.g., inside the frustum)
-        if (bq1)
-            endpoints[0] = newEndPoint;
-        else
-            endpoints[1] = newEndPoint;
-
-        return t;
-    }
-
-    /** {@inheritDoc} */
-    public boolean intersects(Plane plane)
-    {
-        if (plane == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean intersects(Plane plane) {
+        if (plane == null) {
             String message = Logging.getMessage("nullValue.PlaneIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -779,8 +739,7 @@ public class Box implements Extent, Renderable
         return this.intersects(plane, effectiveRadius) >= 0;
     }
 
-    protected double intersects(Plane plane, double effectiveRadius)
-    {
+    protected double intersects(Plane plane, double effectiveRadius) {
         // Test the distance from the first end-point.
         double dq1 = plane.dot(this.bottomCenter);
         boolean bq1 = dq1 <= -effectiveRadius;
@@ -798,17 +757,18 @@ public class Box implements Extent, Renderable
         return 1; // box almost certainly intersects
     }
 
-    /** {@inheritDoc} */
-    public Intersection[] intersect(Line line)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Intersection[] intersect(Line line) {
         return WWMath.polytopeIntersect(line, this.planes);
     }
 
-    /** {@inheritDoc} */
-    public boolean intersects(Line line)
-    {
-        if (line == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public boolean intersects(Line line) {
+        if (line == null) {
             String message = Logging.getMessage("nullValue.LineIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -817,11 +777,11 @@ public class Box implements Extent, Renderable
         return WWMath.polytopeIntersect(line, this.planes) != null;
     }
 
-    /** {@inheritDoc} */
-    public double getProjectedArea(View view)
-    {
-        if (view == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public double getProjectedArea(View view) {
+        if (view == null) {
             String message = Logging.getMessage("nullValue.ViewIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -861,15 +821,13 @@ public class Box implements Extent, Renderable
         // If any of this Box's vertices are behind the eye point, return positive infinity indicating that this Box
         // does not have a finite area in the viewport.
         //noinspection ForLoopReplaceableByForEach
-        for (int i = 0; i < indices.length; i++)
-        {
+        for (int i = 0; i < indices.length; i++) {
             Vec4 eyeVertex = vertices[indices[i]].transformBy4(view.getModelviewMatrix());
             if (eyeVertex.z >= 0)
                 return Double.POSITIVE_INFINITY;
         }
 
-        for (int i = 0; i < indices.length; i++)
-        {
+        for (int i = 0; i < indices.length; i++) {
             screenVertices[i] = view.project(vertices[indices[i]]);
         }
 
@@ -880,38 +838,6 @@ public class Box implements Extent, Renderable
         // either case.
         double area = WWMath.computePolygonAreaFromVertices(Arrays.asList(screenVertices));
         return Math.abs(area);
-    }
-
-    /**
-     * Computes an index into the <code>ProjectionHullTable</code> for this <code>Box</code> given the specified
-     * <code>view</code>. The returned integer is a 6-bit code, where each bit denotes whether one of this
-     * <code>Box's</code> six planes faces the <code>View</code>. See the documentation for <code>{@link
-     * #ProjectionHullTable}</code> for details.
-     * <p>
-     * If the <code>view</code> is inside this <code>Box</code>, this returns 0 indicating that none of this
-     * <code>Box's</code> planes face the <code>view</code>.
-     *
-     * @param view the <code>View</code> to compute a lookup index for.
-     *
-     * @return an integer who's first 6 bits define an index into the <code>ProjectionHullTable</code>.
-     */
-    protected int computeProjectionHullCode(View view)
-    {
-        // Transform the view's eye point from world coordinates to this box's local coordinates. We use this box's r, s,
-        // and t unit vectors axes as the x, y, and z axes of the local coordinate system. The r-axis is orthogonal to
-        // the top and bottom sides, the s-axis is orthogonal to the front and back sides, and the t-axis is orthogonal
-        // to the left and right sides.
-        Vec4 p = view.getEyePoint().subtract3(this.center);
-        double dr = p.dot3(this.ru);
-        double ds = p.dot3(this.su);
-        double dt = p.dot3(this.tu);
-
-        return (dr > this.rLength / 2.0 ? 1 : 0)           // bit 0: top
-            | ((dr < (-this.rLength / 2.0) ? 1 : 0) << 1)  // bit 1: bottom
-            | ((ds > this.sLength / 2.0 ? 1 : 0) << 2)     // bit 2: front
-            | ((ds < (-this.sLength / 2.0) ? 1 : 0) << 3)  // bit 3: back
-            | ((dt > this.tLength / 2.0 ? 1 : 0) << 4)     // bit 4: right
-            | ((dt < (-this.tLength / 2.0) ? 1 : 0) << 5); // bit 5: left
     }
 
 //    public static void main(String[] args)
@@ -996,14 +922,42 @@ public class Box implements Extent, Renderable
 //    }
 
     /**
+     * Computes an index into the <code>ProjectionHullTable</code> for this <code>Box</code> given the specified
+     * <code>view</code>. The returned integer is a 6-bit code, where each bit denotes whether one of this
+     * <code>Box's</code> six planes faces the <code>View</code>. See the documentation for <code>{@link
+     * #ProjectionHullTable}</code> for details.
+     * <p>
+     * If the <code>view</code> is inside this <code>Box</code>, this returns 0 indicating that none of this
+     * <code>Box's</code> planes face the <code>view</code>.
+     *
+     * @param view the <code>View</code> to compute a lookup index for.
+     * @return an integer who's first 6 bits define an index into the <code>ProjectionHullTable</code>.
+     */
+    protected int computeProjectionHullCode(View view) {
+        // Transform the view's eye point from world coordinates to this box's local coordinates. We use this box's r, s,
+        // and t unit vectors axes as the x, y, and z axes of the local coordinate system. The r-axis is orthogonal to
+        // the top and bottom sides, the s-axis is orthogonal to the front and back sides, and the t-axis is orthogonal
+        // to the left and right sides.
+        Vec4 p = view.getEyePoint().subtract3(this.center);
+        double dr = p.dot3(this.ru);
+        double ds = p.dot3(this.su);
+        double dt = p.dot3(this.tu);
+
+        return (dr > this.rLength / 2.0 ? 1 : 0)           // bit 0: top
+            | ((dr < (-this.rLength / 2.0) ? 1 : 0) << 1)  // bit 1: bottom
+            | ((ds > this.sLength / 2.0 ? 1 : 0) << 2)     // bit 2: front
+            | ((ds < (-this.sLength / 2.0) ? 1 : 0) << 3)  // bit 3: back
+            | ((dt > this.tLength / 2.0 ? 1 : 0) << 4)     // bit 4: right
+            | ((dt < (-this.tLength / 2.0) ? 1 : 0) << 5); // bit 5: left
+    }
+
+    /**
      * Draws a representation of the <code>Box</code>.
      *
      * @param dc the <code>DrawContext</code> to be used.
      */
-    public void render(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public void render(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DocumentSourceIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1024,29 +978,26 @@ public class Box implements Extent, Renderable
             | GL2.GL_LINE_BIT // For line width.
             | GL2.GL_TRANSFORM_BIT // For matrix mode.
             | GL2.GL_DEPTH_BUFFER_BIT); // For depth test enable, depth func.
-        try
-        {
-            gl.glLineWidth(1f);
+        try {
+            gl.glLineWidth(1.00f);
             gl.glEnable(GL.GL_BLEND);
             OGLUtil.applyBlending(gl, false);
             gl.glEnable(GL.GL_DEPTH_TEST);
 
             gl.glDepthFunc(GL.GL_LEQUAL);
-            gl.glColor4f(1f, 1f, 1f, 0.5f);
+            gl.glColor4f(1.00f, 1.00f, 1.00f, 0.5f);
             this.drawBox(dc, a, b, c, d);
 
             gl.glDepthFunc(GL.GL_GREATER);
-            gl.glColor4f(1f, 0f, 1f, 0.4f);
+            gl.glColor4f(1.00f, 0.00f, 1.00f, 0.4f);
             this.drawBox(dc, a, b, c, d);
         }
-        finally
-        {
+        finally {
             ogsh.pop(gl);
         }
     }
 
-    protected void drawBox(DrawContext dc, Vec4 a, Vec4 b, Vec4 c, Vec4 d)
-    {
+    protected void drawBox(DrawContext dc, Vec4 a, Vec4 b, Vec4 c, Vec4 d) {
         Vec4 e = a.add3(this.r);
         Vec4 f = d.add3(this.r);
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
@@ -1054,53 +1005,37 @@ public class Box implements Extent, Renderable
         dc.getView().pushReferenceCenter(dc, this.bottomCenter);
         OGLStackHandler ogsh = new OGLStackHandler();
         ogsh.pushModelview(gl);
-        try
-        {
+        try {
             // Draw parallel lines in R direction
             int n = 20;
-            Vec4 dr = this.r.multiply3(1d / (double) n);
+            Vec4 dr = this.r.multiply3(1.00d / n);
 
             Box.drawOutline(dc, a, b, c, d);
-            for (int i = 1; i < n; i++)
-            {
+            for (int i = 1; i < n; i++) {
                 gl.glTranslated(dr.x, dr.y, dr.z);
                 Box.drawOutline(dc, a, b, c, d);
             }
 
             // Draw parallel lines in S direction
             n = 20;
-            Vec4 ds = this.s.multiply3(1d / (double) n);
+            Vec4 ds = this.s.multiply3(1.00d / n);
 
             gl.glPopMatrix();
             gl.glPushMatrix();
             Box.drawOutline(dc, a, e, f, d);
-            for (int i = 1; i < n; i++)
-            {
+            for (int i = 1; i < n; i++) {
                 gl.glTranslated(ds.x, ds.y, ds.z);
                 Box.drawOutline(dc, a, e, f, d);
             }
         }
-        finally
-        {
+        finally {
             ogsh.pop(gl);
             dc.getView().popReferenceCenter(dc);
         }
     }
 
-    protected static void drawOutline(DrawContext dc, Vec4 a, Vec4 b, Vec4 c, Vec4 d)
-    {
-        GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
-        gl.glBegin(GL2.GL_LINE_LOOP);
-        gl.glVertex3d(a.x, a.y, a.z);
-        gl.glVertex3d(b.x, b.y, b.z);
-        gl.glVertex3d(c.x, c.y, c.z);
-        gl.glVertex3d(d.x, d.y, d.z);
-        gl.glEnd();
-    }
-
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (!(o instanceof Box))
@@ -1122,8 +1057,7 @@ public class Box implements Extent, Renderable
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = center != null ? center.hashCode() : 0;
         result = 31 * result + (r != null ? r.hashCode() : 0);
         result = 31 * result + (s != null ? s.hashCode() : 0);

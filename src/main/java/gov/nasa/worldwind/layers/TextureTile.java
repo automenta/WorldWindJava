@@ -26,12 +26,19 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author tag
  * @version $Id: TextureTile.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class TextureTile extends Tile implements SurfaceTile
-{
+public class TextureTile extends Tile implements SurfaceTile {
+    protected final AtomicLong updateTime = new AtomicLong(0);
+    protected boolean hasMipmapData = false;
     private volatile TextureData textureData; // if non-null, then must be converted to a Texture
     private TextureTile fallbackTile = null; // holds texture to use if own texture not available
-    protected boolean hasMipmapData = false;
-    protected final AtomicLong updateTime = new AtomicLong(0);
+
+    public TextureTile(Sector sector, Level level, int row, int col) {
+        super(sector, level, row, col);
+    }
+
+    public TextureTile(Sector sector, Level level, int row, int column, String cacheName) {
+        super(sector, level, row, column, cacheName);
+    }
 
     /**
      * Returns the memory cache used to cache tiles for this class and its subclasses, initializing the cache if it
@@ -39,10 +46,8 @@ public class TextureTile extends Tile implements SurfaceTile
      *
      * @return the memory cache associated with the tile.
      */
-    public static synchronized MemoryCache getMemoryCache()
-    {
-        if (!WorldWind.getMemoryCacheSet().containsCache(TextureTile.class.getName()))
-        {
+    public static synchronized MemoryCache getMemoryCache() {
+        if (!WorldWind.getMemoryCacheSet().containsCache(TextureTile.class.getName())) {
             long size = Configuration.getLongValue(AVKey.TEXTURE_IMAGE_CACHE_SIZE, 3000000L);
             MemoryCache cache = new BasicMemoryCache((long) (0.85 * size), size);
             cache.setName("Texture Tiles");
@@ -52,26 +57,13 @@ public class TextureTile extends Tile implements SurfaceTile
         return WorldWind.getMemoryCacheSet().getCache(TextureTile.class.getName());
     }
 
-
-    public TextureTile(Sector sector, Level level, int row, int col)
-    {
-        super(sector, level, row, col);
-    }
-
-    public TextureTile(Sector sector, Level level, int row, int column, String cacheName)
-    {
-        super(sector, level, row, column, cacheName);
-
-    }
-
     @Override
     public Sector getSector() {
         return sector;
     }
 
     @Override
-    public long getSizeInBytes()
-    {
+    public long getSizeInBytes() {
         long size = super.getSizeInBytes();
 
         if (this.textureData != null)
@@ -80,24 +72,20 @@ public class TextureTile extends Tile implements SurfaceTile
         return size;
     }
 
-    public List<? extends LatLon> getCorners()
-    {
-        ArrayList<LatLon> list = new ArrayList<>(4);
-        for (LatLon ll : sector)
-        {
+    public List<? extends LatLon> getCorners() {
+        List<LatLon> list = new ArrayList<>(4);
+        for (LatLon ll : sector) {
             list.add(ll);
         }
 
         return list;
     }
 
-    public TextureTile getFallbackTile()
-    {
+    public TextureTile getFallbackTile() {
         return this.fallbackTile;
     }
 
-    public void setFallbackTile(TextureTile fallbackTile)
-    {
+    public void setFallbackTile(TextureTile fallbackTile) {
         this.fallbackTile = fallbackTile;
     }
 
@@ -111,8 +99,7 @@ public class TextureTile extends Tile implements SurfaceTile
      *
      * @return the texture data, which may be null.
      */
-    public TextureData getTextureData()
-    {
+    public TextureData getTextureData() {
         return this.textureData;
     }
 
@@ -129,17 +116,14 @@ public class TextureTile extends Tile implements SurfaceTile
      *
      * @param textureData the texture data, which may be null.
      */
-    public void setTextureData(TextureData textureData)
-    {
+    public void setTextureData(TextureData textureData) {
         this.textureData = textureData;
         if (textureData.getMipmapData() != null)
             this.hasMipmapData = true;
     }
 
-    public Texture getTexture(GpuResourceCache tc)
-    {
-        if (tc == null)
-        {
+    public Texture getTexture(GpuResourceCache tc) {
+        if (tc == null) {
             String message = Logging.getMessage("nullValue.TextureCacheIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -148,10 +132,8 @@ public class TextureTile extends Tile implements SurfaceTile
         return tc.getTexture(this.tileKey);
     }
 
-    public boolean isTextureInMemory(GpuResourceCache tc)
-    {
-        if (tc == null)
-        {
+    public boolean isTextureInMemory(GpuResourceCache tc) {
+        if (tc == null) {
             String message = Logging.getMessage("nullValue.TextureCacheIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -160,25 +142,20 @@ public class TextureTile extends Tile implements SurfaceTile
         return this.getTexture(tc) != null || this.getTextureData() != null;
     }
 
-    public long getUpdateTime()
-    {
+    public long getUpdateTime() {
         return this.updateTime.get();
     }
 
-    public boolean isTextureExpired()
-    {
+    public boolean isTextureExpired() {
         return this.isTextureExpired(level.getExpiryTime());
     }
 
-    public boolean isTextureExpired(long expiryTime)
-    {
+    public boolean isTextureExpired(long expiryTime) {
         return this.updateTime.get() > 0 && this.updateTime.get() < expiryTime;
     }
 
-    public void setTexture(GpuResourceCache tc, Texture texture)
-    {
-        if (tc == null)
-        {
+    public void setTexture(GpuResourceCache tc, Texture texture) {
+        if (tc == null) {
             String message = Logging.getMessage("nullValue.TextureCacheIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -193,10 +170,8 @@ public class TextureTile extends Tile implements SurfaceTile
         this.updateMemoryCache();
     }
 
-    public Vec4 getCentroidPoint(Globe globe)
-    {
-        if (globe == null)
-        {
+    public Vec4 getCentroidPoint(Globe globe) {
+        if (globe == null) {
             String msg = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -205,10 +180,8 @@ public class TextureTile extends Tile implements SurfaceTile
         return globe.computePointFromLocation(sector.getCentroid());
     }
 
-    public Extent getExtent(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public Extent getExtent(DrawContext dc) {
+        if (dc == null) {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -219,30 +192,26 @@ public class TextureTile extends Tile implements SurfaceTile
 
     /**
      * Splits this texture tile into four tiles; one for each sub quadrant of this texture tile. This attempts to
-     * retrieve each sub tile from the texture tile cache. This calls {@link #createSubTile(gov.nasa.worldwind.geom.Sector,
-     * gov.nasa.worldwind.util.Level, int, int)} to create sub tiles not found in the cache.
+     * retrieve each sub tile from the texture tile cache. This calls {@link #createSubTile(Sector,
+     * Level, int, int)} to create sub tiles not found in the cache.
      *
      * @param nextLevel the level for the sub tiles.
-     *
      * @return a four-element array containing this texture tile's sub tiles.
-     *
      * @throws IllegalArgumentException if the level is null.
      */
-    public TextureTile[] createSubTiles(Level nextLevel)
-    {
-        if (nextLevel == null)
-        {
+    public TextureTile[] createSubTiles(Level nextLevel) {
+        if (nextLevel == null) {
             String msg = Logging.getMessage("nullValue.LevelIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        Angle p0 = sector.getMinLatitude();
-        Angle p2 = sector.getMaxLatitude();
+        Angle p0 = sector.latMin();
+        Angle p2 = sector.latMax();
         Angle p1 = Angle.midAngle(p0, p2);
 
-        Angle t0 = sector.getMinLongitude();
-        Angle t2 = sector.getMaxLongitude();
+        Angle t0 = sector.lonMin();
+        Angle t2 = sector.lonMax();
         Angle t1 = Angle.midAngle(t0, t2);
 
         int row = this.row;
@@ -282,8 +251,8 @@ public class TextureTile extends Tile implements SurfaceTile
     }
 
     /**
-     * Creates a sub tile of this texture tile with the specified {@link gov.nasa.worldwind.geom.Sector}, {@link
-     * gov.nasa.worldwind.util.Level}, row, and column. This is called by {@link #createSubTiles(gov.nasa.worldwind.util.Level)},
+     * Creates a sub tile of this texture tile with the specified {@link Sector}, {@link
+     * Level}, row, and column. This is called by {@link #createSubTiles(Level)},
      * to construct a sub tile for each quadrant of this tile. Subclasses must override this method to return an
      * instance of the derived version.
      *
@@ -291,45 +260,37 @@ public class TextureTile extends Tile implements SurfaceTile
      * @param level  the sub tile's level.
      * @param row    the sub tile's row.
      * @param col    the sub tile's column.
-     *
      * @return a sub tile of this texture tile.
      */
-    protected TextureTile createSubTile(Sector sector, Level level, int row, int col)
-    {
+    protected TextureTile createSubTile(Sector sector, Level level, int row, int col) {
         return new TextureTile(sector, level, row, col);
     }
 
     /**
-     * Returns a key for a sub tile of this texture tile with the specified {@link gov.nasa.worldwind.util.Level}, row,
-     * and column. This is called by {@link #createSubTiles(gov.nasa.worldwind.util.Level)}, to create a sub tile key
+     * Returns a key for a sub tile of this texture tile with the specified {@link Level}, row,
+     * and column. This is called by {@link #createSubTiles(Level)}, to create a sub tile key
      * for each quadrant of this tile.
      *
      * @param level the sub tile's level.
      * @param row   the sub tile's row.
      * @param col   the sub tile's column.
-     *
      * @return a sub tile of this texture tile.
      */
-    protected TileKey createSubTileKey(Level level, int row, int col)
-    {
+    protected TileKey createSubTileKey(Level level, int row, int col) {
         return new TileKey(level.getLevelNumber(), row, col, level.getCacheName());
     }
 
-    protected TextureTile getTileFromMemoryCache(TileKey tileKey)
-    {
+    protected TextureTile getTileFromMemoryCache(TileKey tileKey) {
         return (TextureTile) getMemoryCache().getObject(tileKey);
     }
 
-    protected void updateMemoryCache()
-    {
+    protected void updateMemoryCache() {
         if (this.getTileFromMemoryCache(this.tileKey) != null)
             getMemoryCache().add(this.tileKey, this);
     }
 
-    protected Texture initializeTexture(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    protected Texture initializeTexture(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -347,12 +308,10 @@ public class TextureTile extends Tile implements SurfaceTile
             throw new IllegalStateException(msg);
         }
 
-        try
-        {
+        try {
             t = TextureIO.newTexture(this.getTextureData());
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String msg = Logging.getMessage("layers.TextureLayer.ExceptionAttemptingToReadTextureFile", "");
             Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
             return null;
@@ -366,10 +325,8 @@ public class TextureTile extends Tile implements SurfaceTile
         return t;
     }
 
-    protected void setTextureParameters(DrawContext dc, Texture t)
-    {
-        if (dc == null)
-        {
+    protected void setTextureParameters(DrawContext dc, Texture t) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -388,27 +345,24 @@ public class TextureTile extends Tile implements SurfaceTile
         // TODO: remove the latitude range restriction if a better tessellator fixes the problem.
 
         boolean useMipmapFilter = (this.hasMipmapData || t.isUsingAutoMipmapGeneration())
-            && sector.getMaxLatitude().degrees < 80d && sector.getMinLatitude().degrees > -80;
+            && sector.latMax().degrees < 80.0d && sector.latMin().degrees > -80;
 
         // Set the texture minification filter. If the texture qualifies for mipmaps, apply a minification filter that
         // will access the mipmap data using the highest quality algorithm. If the anisotropic texture filter is
         // available, we will enable it. This will sharpen the appearance of the mipmap filter when the textured
         // surface is at a high slope to the eye.
-        if (useMipmapFilter)
-        {
+        if (useMipmapFilter) {
             gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
 
             // If the maximum degree of anisotropy is 2.0 or greater, then we know this graphics context supports
             // the anisotropic texture filter.
             double maxAnisotropy = dc.getGLRuntimeCapabilities().getMaxTextureAnisotropy();
-            if (dc.getGLRuntimeCapabilities().isUseAnisotropicTextureFilter() && maxAnisotropy >= 2.0)
-            {
+            if (dc.getGLRuntimeCapabilities().isUseAnisotropicTextureFilter() && maxAnisotropy >= 2.0) {
                 gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAX_ANISOTROPY_EXT, (float) maxAnisotropy);
             }
         }
         // If the texture does not qualify for mipmaps, then apply a linear minification filter.
-        else
-        {
+        else {
             gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
         }
 
@@ -422,18 +376,15 @@ public class TextureTile extends Tile implements SurfaceTile
         gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
     }
 
-    public boolean bind(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    public boolean bind(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
         }
 
         // Reinitialize texture if new texture data
-        if (this.getTextureData() != null)
-        {
+        if (this.getTextureData() != null) {
             Texture t = this.initializeTexture(dc);
             if (t != null)
                 return true; // texture was bound during initialization.
@@ -441,12 +392,10 @@ public class TextureTile extends Tile implements SurfaceTile
 
         Texture t = this.getTexture(dc.getTextureCache());
 
-        if (t == null && this.getFallbackTile() != null)
-        {
+        if (t == null && this.getFallbackTile() != null) {
             TextureTile resourceTile = this.getFallbackTile();
             t = resourceTile.getTexture(dc.getTextureCache());
-            if (t == null)
-            {
+            if (t == null) {
                 t = resourceTile.initializeTexture(dc);
                 if (t != null)
                     return true; // texture was bound during initialization.
@@ -459,10 +408,8 @@ public class TextureTile extends Tile implements SurfaceTile
         return t != null;
     }
 
-    public void applyInternalTransform(DrawContext dc, boolean textureIdentityActive)
-    {
-        if (dc == null)
-        {
+    public void applyInternalTransform(DrawContext dc, boolean textureIdentityActive) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -476,12 +423,9 @@ public class TextureTile extends Tile implements SurfaceTile
         else
             t = this.getTexture(dc.getTextureCache()); // Use the tile's texture if available
 
-        if (t != null)
-        {
-            if (t.getMustFlipVertically())
-            {
-                if (!textureIdentityActive)
-                {
+        if (t != null) {
+            if (t.getMustFlipVertically()) {
+                if (!textureIdentityActive) {
                     gl.glMatrixMode(GL2.GL_TEXTURE);
                     gl.glLoadIdentity();
                 }
@@ -504,14 +448,12 @@ public class TextureTile extends Tile implements SurfaceTile
             return;
 
         // Apply necessary transforms to the fallback texture.
-        if (!textureIdentityActive)
-        {
+        if (!textureIdentityActive) {
             gl.glMatrixMode(GL2.GL_TEXTURE);
             gl.glLoadIdentity();
         }
 
-        if (t.getMustFlipVertically())
-        {
+        if (t.getMustFlipVertically()) {
             gl.glScaled(1, -1, 1);
             gl.glTranslated(0, -1, 0);
         }
@@ -519,10 +461,8 @@ public class TextureTile extends Tile implements SurfaceTile
         this.applyResourceTextureTransform(dc);
     }
 
-    protected void applyResourceTextureTransform(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    protected void applyResourceTextureTransform(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -547,8 +487,7 @@ public class TextureTile extends Tile implements SurfaceTile
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -558,14 +497,12 @@ public class TextureTile extends Tile implements SurfaceTile
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return (this.tileKey != null ? this.tileKey.hashCode() : 0);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return sector.toString();
     }
 }

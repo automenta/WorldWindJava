@@ -18,66 +18,54 @@ import java.awt.*;
  * @author dcollins
  * @version $Id: SphereAirspaceEditor.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SphereAirspaceEditor extends AbstractAirspaceEditor
-{
+public class SphereAirspaceEditor extends AbstractAirspaceEditor {
+    public static final int RADIUS_CONTROL_ID = 1024;
     private SphereAirspace sphere = null; // Can be null
     private double minRadius = 1.0;
     private double maxRadius = Double.MAX_VALUE;
     private boolean alwaysShowRadiusControl = false;
     private double radiusControlDrawDistance = 14;
 
-    public static final int RADIUS_CONTROL_ID = 1024;
-
-    public SphereAirspaceEditor(AirspaceControlPointRenderer renderer)
-    {
+    public SphereAirspaceEditor(AirspaceControlPointRenderer renderer) {
         super(renderer);
     }
 
-    public SphereAirspaceEditor()
-    {
+    public SphereAirspaceEditor() {
         this(getDefaultRenderer());
     }
 
-    public static AirspaceControlPointRenderer getDefaultRenderer()
-    {
+    public static AirspaceControlPointRenderer getDefaultRenderer() {
         BasicAirspaceControlPointRenderer renderer = new BasicAirspaceControlPointRenderer();
         renderer.setControlPointMarker(createDefaultMarker());
         renderer.setEnableDepthTest(false);
         return renderer;
     }
 
-    public static Marker createDefaultMarker()
-    {
+    public static Marker createDefaultMarker() {
         // Create an opaque blue sphere. By default the sphere has a 12 pixel radius, but its radius must be at least
         // 0.1 meters .
         MarkerAttributes attributes = new BasicMarkerAttributes(Material.BLUE, BasicMarkerShape.SPHERE, 1.0, 12, 0.1);
         return new BasicMarker(null, attributes, null);
     }
 
-    public Airspace getAirspace()
-    {
+    public Airspace getAirspace() {
         return this.getSphere();
     }
 
-    public SphereAirspace getSphere()
-    {
+    public SphereAirspace getSphere() {
         return this.sphere;
     }
 
-    public void setSphere(SphereAirspace sphere)
-    {
+    public void setSphere(SphereAirspace sphere) {
         this.sphere = sphere;
     }
 
-    public double getMinRadius()
-    {
+    public double getMinRadius() {
         return this.minRadius;
     }
 
-    public void setMinRadius(double radius)
-    {
-        if (radius < 0.0)
-        {
+    public void setMinRadius(double radius) {
+        if (radius < 0.0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -86,15 +74,12 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor
         this.minRadius = radius;
     }
 
-    public double getMaxRadius()
-    {
+    public double getMaxRadius() {
         return this.maxRadius;
     }
 
-    public void setMaxRadius(double radius)
-    {
-        if (radius < 0.0)
-        {
+    public void setMaxRadius(double radius) {
+        if (radius < 0.0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "radius < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -103,25 +88,20 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor
         this.maxRadius = radius;
     }
 
-    public boolean isAlwaysShowRadiusControl()
-    {
+    public boolean isAlwaysShowRadiusControl() {
         return this.alwaysShowRadiusControl;
     }
 
-    public void setAlwaysShowRadiusControl(boolean alwaysShow)
-    {
+    public void setAlwaysShowRadiusControl(boolean alwaysShow) {
         this.alwaysShowRadiusControl = alwaysShow;
     }
 
-    public double getRadiusControlDrawDistance()
-    {
+    public double getRadiusControlDrawDistance() {
         return radiusControlDrawDistance;
     }
 
-    public void setRadiusControlDrawDistance(double distance)
-    {
-        if (distance < 0.0)
-        {
+    public void setRadiusControlDrawDistance(double distance) {
+        if (distance < 0.0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "distance < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -134,8 +114,7 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor
     //********************  Control Point Assembly  ****************//
     //**************************************************************//
 
-    protected void assembleControlPoints(DrawContext dc)
-    {
+    protected void assembleControlPoints(DrawContext dc) {
         // If the cursor passes near the edge of the sphere, draw a tangent control point that can be used to
         // adjust the sphere's radius.
 
@@ -163,18 +142,15 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor
         Vec4 nearestScreenPointOnSphere = dc.getView().project(nearestPointOnSphere);
 
         double distance = nearestScreenPointOnLine.distanceTo3(nearestScreenPointOnSphere);
-        if (this.isAlwaysShowRadiusControl() || distance < this.getRadiusControlDrawDistance())
-        {
+        if (this.isAlwaysShowRadiusControl() || distance < this.getRadiusControlDrawDistance()) {
             AirspaceControlPoint controlPoint = new BasicAirspaceControlPoint(this, this.getSphere(),
                 RADIUS_CONTROL_ID, RADIUS_CONTROL_ID, nearestPointOnSphere);
             this.addControlPoint(dc, controlPoint);
         }
     }
 
-    protected Vec4 getCenterPoint(WorldWindow wwd, Airspace airspace)
-    {
-        if (!(airspace instanceof SphereAirspace))
-        {
+    protected Vec4 getCenterPoint(WorldWindow wwd, Airspace airspace) {
+        if (!(airspace instanceof SphereAirspace)) {
             return null;
         }
 
@@ -184,23 +160,19 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor
         boolean terrainConforming = sphere.isTerrainConforming()[LOWER_ALTITUDE];
 
         Vec4 point;
-        if (terrainConforming)
-        {
-            if (wwd.getSceneController().getTerrain() != null)
-            {
+        if (terrainConforming) {
+            if (wwd.getSceneController().getTerrain() != null) {
                 point = wwd.getSceneController().getTerrain().getSurfacePoint(
                     location.getLatitude(), location.getLongitude(), altitude);
             }
-            else
-            {
+            else {
                 double elevation = wwd.getModel().getGlobe().getElevation(
                     location.getLatitude(), location.getLongitude());
                 point = wwd.getModel().getGlobe().computePointFromPosition(
                     location.getLatitude(), location.getLongitude(), elevation + altitude);
             }
         }
-        else
-        {
+        else {
             point = wwd.getModel().getGlobe().computePointFromPosition(
                 location.getLatitude(), location.getLongitude(), altitude);
         }
@@ -213,8 +185,7 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor
     //**************************************************************//
 
     protected void doMoveAirspaceVertically(WorldWindow wwd, Airspace airspace,
-        Point mousePoint, Point previousMousePoint)
-    {
+        Point mousePoint, Point previousMousePoint) {
         // Find the closest points between the rays through each screen point, and the ray from the control point
         // and in the direction of the globe's surface normal. Compute the elevation difference between these two
         // points, and use that as the change in airspace altitude.
@@ -238,15 +209,12 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor
         Position previousPos = wwd.getModel().getGlobe().computePositionFromPoint(previousPointOnLine);
         double elevationChange = previousPos.getElevation() - pos.getElevation();
 
-        if (this.isKeepControlPointsAboveTerrain())
-        {
-            if (terrainConforming)
-            {
+        if (this.isKeepControlPointsAboveTerrain()) {
+            if (terrainConforming) {
                 if (altitude + elevationChange < 0.0)
                     elevationChange = -altitude;
             }
-            else
-            {
+            else {
                 double height = AirspaceEditorUtil.computeHeightAboveSurface(wwd, centerPoint);
                 if (elevationChange <= -height)
                     elevationChange = -height;
@@ -260,32 +228,26 @@ public class SphereAirspaceEditor extends AbstractAirspaceEditor
     }
 
     protected AirspaceControlPoint doAddControlPoint(WorldWindow wwd, Airspace airspace,
-        Point mousePoint)
-    {
+        Point mousePoint) {
         return null;
     }
 
-    protected void doRemoveControlPoint(WorldWindow wwd, AirspaceControlPoint controlPoint)
-    {
+    protected void doRemoveControlPoint(WorldWindow wwd, AirspaceControlPoint controlPoint) {
     }
 
     protected void doMoveControlPoint(WorldWindow wwd, AirspaceControlPoint controlPoint,
-        Point mousePoint, Point previousMousePoint)
-    {
-        if (controlPoint.getLocationIndex() == RADIUS_CONTROL_ID)
-        {
+        Point mousePoint, Point previousMousePoint) {
+        if (controlPoint.getLocationIndex() == RADIUS_CONTROL_ID) {
             this.doMoveRadiusControlPoint(wwd, controlPoint, mousePoint, previousMousePoint);
         }
     }
 
     protected void doResizeAtControlPoint(WorldWindow wwd, AirspaceControlPoint controlPoint,
-        Point mousePoint, Point previousMousePoint)
-    {
+        Point mousePoint, Point previousMousePoint) {
     }
 
     protected void doMoveRadiusControlPoint(WorldWindow wwd, AirspaceControlPoint controlPoint,
-        Point mousePoint, Point previousMousePoint)
-    {
+        Point mousePoint, Point previousMousePoint) {
         // Find the closest points between the rays through each screen point, and the ray from the sphere center to the
         // control point. Compute the signed difference between these two points, and use that as the change in radius.
 

@@ -12,8 +12,7 @@ import javax.swing.*;
  * @author tag
  * @version $Id: Menu.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface Menu extends Initializable
-{
+public interface Menu extends Initializable {
     JMenu getJMenu();
 
     void addMenu(String featureID);

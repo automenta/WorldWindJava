@@ -25,22 +25,29 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: MilStd2525PointGraphic.java 560 2012-04-26 16:28:24Z pabercrombie $
  */
-public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525TacticalGraphic, TacticalPoint, Draggable
-{
+public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525TacticalGraphic, TacticalPoint, Draggable {
     // Implementation note: This class wraps an instance of TacticalGraphicSymbol. TacticalGraphicSymbol implements the
     // logic for rendering point graphics using the TacticalSymbol base classes. This class adapts the TacticalGraphic
     // interface to the TacticalSymbol interface.
 
-    /** Symbol used to render this graphic. */
+    protected static final TacticalSymbolAttributes defaultSymbolAttributes = new BasicTacticalSymbolAttributes();
+    /**
+     * Symbol used to render this graphic.
+     */
     protected final TacticalGraphicSymbol symbol;
-
-    /** Indicates whether or not the graphic is highlighted. */
+    /**
+     * Attributes to use for the current frame.
+     */
+    protected final TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
+    /**
+     * Indicates whether or not the graphic is highlighted.
+     */
     protected boolean highlighted;
-
-    /** Indicates whether the object is draggable and provides additional information for dragging about this object. */
+    /**
+     * Indicates whether the object is draggable and provides additional information for dragging about this object.
+     */
     protected boolean dragEnabled = true;
     protected DraggableSupport draggableSupport = null;
-
     /**
      * Attributes to apply when the graphic is not highlighted. These attributes override defaults determined by the
      * graphic's symbol code.
@@ -51,497 +58,18 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
      * graphic's symbol code.
      */
     protected TacticalGraphicAttributes highlightAttributes;
-
-    /** Current frame timestamp. */
+    /**
+     * Current frame timestamp.
+     */
     protected long frameTimestamp = -1L;
-    /** Attributes to use for the current frame. */
-    protected final TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
-
-    protected static final TacticalSymbolAttributes defaultSymbolAttributes = new BasicTacticalSymbolAttributes();
 
     /**
      * Create a new point graphic.
      *
      * @param sidc MIL-STD-2525 SIDC code that identifies the graphic.
      */
-    public MilStd2525PointGraphic(String sidc)
-    {
+    public MilStd2525PointGraphic(String sidc) {
         this.symbol = this.createSymbol(sidc);
-    }
-
-    /**
-     * Create a tactical symbol to render this graphic.
-     *
-     * @param sidc Symbol code that identifies the graphic.
-     *
-     * @return A new tactical symbol.
-     */
-    protected TacticalGraphicSymbol createSymbol(String sidc)
-    {
-        TacticalGraphicSymbol symbol = new TacticalGraphicSymbol(sidc);
-        symbol.setAttributes(this.activeSymbolAttributes);
-        symbol.setDelegateOwner(this);
-        return symbol;
-    }
-
-    /** {@inheritDoc} */
-    public boolean isVisible()
-    {
-        return this.symbol.isVisible();
-    }
-
-    /** {@inheritDoc} */
-    public void setVisible(boolean visible)
-    {
-        this.symbol.setVisible(visible);
-    }
-
-    /** {@inheritDoc} */
-    public Object getModifier(String modifier)
-    {
-        return this.symbol.getModifier(modifier);
-    }
-
-    /** {@inheritDoc} */
-    public void setModifier(String modifier, Object value)
-    {
-        this.symbol.setModifier(modifier, value);
-    }
-
-    /** {@inheritDoc} */
-    public boolean isShowTextModifiers()
-    {
-        return this.symbol.isShowTextModifiers();
-    }
-
-    /** {@inheritDoc} */
-    public void setShowTextModifiers(boolean showModifiers)
-    {
-        this.symbol.setShowTextModifiers(showModifiers);
-    }
-
-    /** {@inheritDoc} */
-    public boolean isShowGraphicModifiers()
-    {
-        return this.symbol.isShowGraphicModifiers();
-    }
-
-    /** {@inheritDoc} */
-    public void setShowGraphicModifiers(boolean showModifiers)
-    {
-        this.symbol.setShowGraphicModifiers(showModifiers);
-    }
-
-    /** {@inheritDoc} */
-    public boolean isShowLocation()
-    {
-        return this.symbol.isShowLocation();
-    }
-
-    /** {@inheritDoc} */
-    public void setShowLocation(boolean show)
-    {
-        this.symbol.setShowLocation(show);
-    }
-
-    /** {@inheritDoc} */
-    public boolean isShowHostileIndicator()
-    {
-        return this.symbol.isShowHostileIndicator();
-    }
-
-    /** {@inheritDoc} */
-    public void setShowHostileIndicator(boolean show)
-    {
-        this.symbol.setShowHostileIndicator(show);
-    }
-
-    /** {@inheritDoc} */
-    public String getIdentifier()
-    {
-        return this.symbol.getIdentifier();
-    }
-
-    /** {@inheritDoc} */
-    public void setText(String text)
-    {
-        this.symbol.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, text);
-    }
-
-    /** {@inheritDoc} */
-    public String getText()
-    {
-        // Get the Unique Designation modifier. If it's an iterable, return the first value.
-        Object value = this.getModifier(SymbologyConstants.UNIQUE_DESIGNATION);
-        if (value instanceof String)
-        {
-            return (String) value;
-        }
-        else if (value instanceof Iterable)
-        {
-            Iterator iterator = ((Iterable) value).iterator();
-            Object o = iterator.hasNext() ? iterator.next() : null;
-            if (o != null)
-                return o.toString();
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return Always returns an Iterable with only one position.
-     */
-    public Iterable<? extends Position> getPositions()
-    {
-        return Collections.singletonList(this.getPosition());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param positions Control points. This graphic uses only one control point.
-     */
-    public void setPositions(Iterable<? extends Position> positions)
-    {
-        if (positions == null)
-        {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        Iterator<? extends Position> iterator = positions.iterator();
-        if (!iterator.hasNext())
-        {
-            String message = Logging.getMessage("generic.InsufficientPositions");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        this.setPosition(iterator.next());
-    }
-
-    /** {@inheritDoc} */
-    public TacticalGraphicAttributes getAttributes()
-    {
-        return this.normalAttributes;
-    }
-
-    /** {@inheritDoc} */
-    public void setAttributes(TacticalGraphicAttributes attributes)
-    {
-        this.normalAttributes = attributes;
-    }
-
-    /** {@inheritDoc} */
-    public TacticalGraphicAttributes getHighlightAttributes()
-    {
-        return this.highlightAttributes;
-    }
-
-    /** {@inheritDoc} */
-    public void setHighlightAttributes(TacticalGraphicAttributes attributes)
-    {
-        this.highlightAttributes = attributes;
-    }
-
-    /** {@inheritDoc} */
-    public Offset getLabelOffset()
-    {
-        return null; // Does not apply to point graphic
-    }
-
-    /** {@inheritDoc} */
-    public void setLabelOffset(Offset offset)
-    {
-        // Does not apply to point graphic
-    }
-
-    /**
-     * Indicates a location within the symbol to align with the symbol point. See {@link
-     * #setOffset(gov.nasa.worldwind.render.Offset) setOffset} for more information.
-     *
-     * @return the hot spot controlling the symbol's placement relative to the symbol point. null indicates default
-     *         alignment.
-     */
-    public Offset getOffset()
-    {
-        return this.symbol.getOffset();
-    }
-
-    /**
-     * Specifies a location within the tactical symbol to align with the symbol point. By default, ground symbols are
-     * aligned at the bottom center of the symbol, and other symbols are aligned to the center of the symbol. {@code
-     * setOffset(Offset.CENTER)} aligns the center of the symbol with the symbol point, and {@code
-     * setOffset(Offset.BOTTOM_CENTER)} aligns the center of the bottom edge with the symbol point.
-     *
-     * @param offset the hot spot controlling the symbol's placement relative to the symbol point. May be null to
-     *               indicate default alignment.
-     */
-    public void setOffset(Offset offset)
-    {
-        this.symbol.setOffset(offset);
-    }
-
-    /** {@inheritDoc} */
-    public Object getDelegateOwner()
-    {
-        // If the application has supplied a delegate owner, return that object. If the owner is this object (the
-        // default), return null to keep the contract of getDelegateOwner, which specifies that a value of null
-        // indicates that the graphic itself is used during picking.
-        Object owner = this.symbol.getDelegateOwner();
-        return owner != this ? owner : null;
-    }
-
-    /** {@inheritDoc} */
-    public void setDelegateOwner(Object owner)
-    {
-        // Apply new delegate owner if non-null. If the new owner is null, set this object as symbol's delegate owner
-        // (the default).
-        if (owner != null)
-            this.symbol.setDelegateOwner(owner);
-        else
-            this.symbol.setDelegateOwner(this);
-    }
-
-    /** {@inheritDoc} */
-    public UnitsFormat getUnitsFormat()
-    {
-        return this.symbol.getUnitsFormat();
-    }
-
-    /** {@inheritDoc} */
-    public void setUnitsFormat(UnitsFormat unitsFormat)
-    {
-        this.symbol.setUnitsFormat(unitsFormat);
-    }
-
-    /** {@inheritDoc} */
-    public Position getPosition()
-    {
-        return this.symbol.getPosition();
-    }
-
-    /** {@inheritDoc} */
-    public void setPosition(Position position)
-    {
-        if (position == null)
-        {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        this.symbol.setPosition(position);
-    }
-
-    /**
-     * Indicates this symbol's altitude mode. See {@link #setAltitudeMode(int)} for a description of the valid altitude
-     * modes.
-     *
-     * @return this symbol's altitude mode.
-     */
-    public int getAltitudeMode()
-    {
-        return this.symbol.getAltitudeMode();
-    }
-
-    /**
-     * Specifies this graphic's altitude mode. Altitude mode defines how the altitude component of this symbol's
-     * position is interpreted. Recognized modes are: <ul> <li>WorldWind.CLAMP_TO_GROUND -- this graphic is placed on
-     * the terrain at the latitude and longitude of its position.</li> <li>WorldWind.RELATIVE_TO_GROUND -- this graphic
-     * is placed above the terrain at the latitude and longitude of its position and the distance specified by its
-     * elevation.</li> <li>WorldWind.ABSOLUTE -- this graphic is placed at its specified position.</li> </ul>
-     * <p>
-     * This graphic assumes the altitude mode WorldWind.ABSOLUTE if the specified mode is not recognized.
-     *
-     * @param altitudeMode this symbol's new altitude mode.
-     */
-    public void setAltitudeMode(int altitudeMode)
-    {
-        this.symbol.setAltitudeMode(altitudeMode);
-    }
-
-    ////////////////////////////////////////
-    // MilStd2525TacticalGraphic interface
-    ////////////////////////////////////////
-
-    /** {@inheritDoc} */
-    public String getStatus()
-    {
-        return this.symbol.getStatus();
-    }
-
-    /** {@inheritDoc} */
-    public void setStatus(String value)
-    {
-        this.symbol.setStatus(value);
-    }
-
-    /////////////////////////////
-    // Movable interface
-    /////////////////////////////
-
-    /** {@inheritDoc} */
-    public Position getReferencePosition()
-    {
-        return this.getPosition();
-    }
-
-    /** {@inheritDoc} */
-    public void move(Position delta)
-    {
-        if (delta == null)
-        {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Position refPos = this.getReferencePosition();
-
-        // The reference position is null if this shape has no positions. In this case moving the shape by a
-        // relative delta is meaningless. Therefore we fail softly by exiting and doing nothing.
-        if (refPos == null)
-            return;
-
-        this.moveTo(refPos.add(delta));
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(Position position)
-    {
-        this.symbol.setPosition(position);
-    }
-
-    @Override
-    public boolean isDragEnabled()
-    {
-        return this.dragEnabled;
-    }
-
-    @Override
-    public void setDragEnabled(boolean enabled)
-    {
-        this.dragEnabled = enabled;
-    }
-
-    @Override
-    public void drag(DragContext dragContext)
-    {
-        if (!this.dragEnabled)
-            return;
-
-        if (this.draggableSupport == null)
-            this.draggableSupport = new DraggableSupport(this, this.getAltitudeMode());
-
-        this.doDrag(dragContext);
-    }
-
-    protected void doDrag(DragContext dragContext)
-    {
-        this.draggableSupport.dragScreenSizeConstant(dragContext);
-    }
-
-    /////////////////////////////
-    // Highlightable interface
-    /////////////////////////////
-
-    /** {@inheritDoc} */
-    public boolean isHighlighted()
-    {
-        return this.highlighted;
-    }
-
-    /** {@inheritDoc} */
-    public void setHighlighted(boolean highlighted)
-    {
-        this.highlighted = highlighted;
-    }
-
-    /////////////////////////////
-    // Rendering
-    /////////////////////////////
-
-    /** {@inheritDoc} */
-    public void render(DrawContext dc)
-    {
-        long timestamp = dc.getFrameTimeStamp();
-        if (this.frameTimestamp != timestamp)
-        {
-            this.determineActiveAttributes();
-            this.frameTimestamp = timestamp;
-        }
-
-        this.symbol.render(dc);
-    }
-
-    /** Determine active attributes for this frame. */
-    protected void determineActiveAttributes()
-    {
-        // Reset symbol attributes to default before applying overrides.
-        this.activeSymbolAttributes.copy(defaultSymbolAttributes);
-
-        if (this.isHighlighted())
-        {
-            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
-
-            // If the application specified overrides to the highlight attributes, then apply the overrides
-            if (highlightAttributes != null)
-            {
-                // Apply overrides specified by application
-                this.applyAttributesToSymbol(highlightAttributes, this.activeSymbolAttributes);
-            }
-        }
-        else
-        {
-            // Apply overrides specified by application
-            TacticalGraphicAttributes normalAttributes = this.getAttributes();
-            if (normalAttributes != null)
-            {
-                this.applyAttributesToSymbol(normalAttributes, this.activeSymbolAttributes);
-            }
-        }
-    }
-
-    /**
-     * Apply graphic attributes to the symbol.
-     *
-     * @param graphicAttributes Tactical graphic attributes to apply to the tactical symbol.
-     * @param symbolAttributes  Symbol attributes to be modified.
-     */
-    protected void applyAttributesToSymbol(TacticalGraphicAttributes graphicAttributes,
-        TacticalSymbolAttributes symbolAttributes)
-    {
-        // Line and area graphics distinguish between interior and outline opacity. Tactical symbols only support one
-        // opacity, so use the interior opacity.
-        Double value = graphicAttributes.getInteriorOpacity();
-        if (value != null)
-        {
-            symbolAttributes.setOpacity(value);
-        }
-
-        value = graphicAttributes.getScale();
-        if (value != null)
-        {
-            symbolAttributes.setScale(value);
-        }
-
-        Material material = graphicAttributes.getInteriorMaterial();
-        symbolAttributes.setInteriorMaterial(material);
-
-        Font font = graphicAttributes.getTextModifierFont();
-        if (font != null)
-        {
-            symbolAttributes.setTextModifierFont(font);
-        }
-
-        material = graphicAttributes.getTextModifierMaterial();
-        if (material != null)
-        {
-            symbolAttributes.setTextModifierMaterial(material);
-        }
     }
 
     /**
@@ -549,8 +77,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         List<String> graphics = new ArrayList<>();
         graphics.addAll(getTacGrpGraphics());
         graphics.addAll(getMetocGraphics());
@@ -563,8 +90,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getTacGrpGraphics()
-    {
+    public static List<String> getTacGrpGraphics() {
         return Arrays.asList(
             TacGrpSidc.TSK_DSTY,
             TacGrpSidc.TSK_ITDT,
@@ -761,8 +287,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
             TacGrpSidc.OTH_FIX_EOP);
     }
 
-    public static List<String> getMetocGraphics()
-    {
+    public static List<String> getMetocGraphics() {
         return Arrays.asList(
             MetocSidc.AMPHC_PRS_LOWCTR,
             MetocSidc.AMPHC_PRS_LOWCTR_CYC,
@@ -961,8 +486,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
         );
     }
 
-    public static List<String> getEmsGraphics()
-    {
+    public static List<String> getEmsGraphics() {
         return Arrays.asList(
             EmsSidc.NATEVT_GEO_AFTSHK,
             EmsSidc.NATEVT_GEO_AVL,
@@ -980,5 +504,488 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
             EmsSidc.NATEVT_INFST_REPT,
             EmsSidc.NATEVT_INFST_RDNT
         );
+    }
+
+    /**
+     * Create a tactical symbol to render this graphic.
+     *
+     * @param sidc Symbol code that identifies the graphic.
+     * @return A new tactical symbol.
+     */
+    protected TacticalGraphicSymbol createSymbol(String sidc) {
+        TacticalGraphicSymbol symbol = new TacticalGraphicSymbol(sidc);
+        symbol.setAttributes(this.activeSymbolAttributes);
+        symbol.setDelegateOwner(this);
+        return symbol;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isVisible() {
+        return this.symbol.isVisible();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setVisible(boolean visible) {
+        this.symbol.setVisible(visible);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getModifier(String modifier) {
+        return this.symbol.getModifier(modifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setModifier(String modifier, Object value) {
+        this.symbol.setModifier(modifier, value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isShowTextModifiers() {
+        return this.symbol.isShowTextModifiers();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setShowTextModifiers(boolean showModifiers) {
+        this.symbol.setShowTextModifiers(showModifiers);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isShowGraphicModifiers() {
+        return this.symbol.isShowGraphicModifiers();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setShowGraphicModifiers(boolean showModifiers) {
+        this.symbol.setShowGraphicModifiers(showModifiers);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isShowLocation() {
+        return this.symbol.isShowLocation();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setShowLocation(boolean show) {
+        this.symbol.setShowLocation(show);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isShowHostileIndicator() {
+        return this.symbol.isShowHostileIndicator();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setShowHostileIndicator(boolean show) {
+        this.symbol.setShowHostileIndicator(show);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getIdentifier() {
+        return this.symbol.getIdentifier();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getText() {
+        // Get the Unique Designation modifier. If it's an iterable, return the first value.
+        Object value = this.getModifier(SymbologyConstants.UNIQUE_DESIGNATION);
+        if (value instanceof String) {
+            return (String) value;
+        }
+        else if (value instanceof Iterable) {
+            Iterator iterator = ((Iterable) value).iterator();
+            Object o = iterator.hasNext() ? iterator.next() : null;
+            if (o != null)
+                return o.toString();
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setText(String text) {
+        this.symbol.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, text);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return Always returns an Iterable with only one position.
+     */
+    public Iterable<? extends Position> getPositions() {
+        return Collections.singletonList(this.getPosition());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param positions Control points. This graphic uses only one control point.
+     */
+    public void setPositions(Iterable<? extends Position> positions) {
+        if (positions == null) {
+            String message = Logging.getMessage("nullValue.PositionsListIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        Iterator<? extends Position> iterator = positions.iterator();
+        if (!iterator.hasNext()) {
+            String message = Logging.getMessage("generic.InsufficientPositions");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.setPosition(iterator.next());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public TacticalGraphicAttributes getAttributes() {
+        return this.normalAttributes;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setAttributes(TacticalGraphicAttributes attributes) {
+        this.normalAttributes = attributes;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public TacticalGraphicAttributes getHighlightAttributes() {
+        return this.highlightAttributes;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setHighlightAttributes(TacticalGraphicAttributes attributes) {
+        this.highlightAttributes = attributes;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Offset getLabelOffset() {
+        return null; // Does not apply to point graphic
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLabelOffset(Offset offset) {
+        // Does not apply to point graphic
+    }
+
+    /**
+     * Indicates a location within the symbol to align with the symbol point. See {@link
+     * #setOffset(Offset) setOffset} for more information.
+     *
+     * @return the hot spot controlling the symbol's placement relative to the symbol point. null indicates default
+     * alignment.
+     */
+    public Offset getOffset() {
+        return this.symbol.getOffset();
+    }
+
+    /**
+     * Specifies a location within the tactical symbol to align with the symbol point. By default, ground symbols are
+     * aligned at the bottom center of the symbol, and other symbols are aligned to the center of the symbol. {@code
+     * setOffset(Offset.CENTER)} aligns the center of the symbol with the symbol point, and {@code
+     * setOffset(Offset.BOTTOM_CENTER)} aligns the center of the bottom edge with the symbol point.
+     *
+     * @param offset the hot spot controlling the symbol's placement relative to the symbol point. May be null to
+     *               indicate default alignment.
+     */
+    public void setOffset(Offset offset) {
+        this.symbol.setOffset(offset);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Object getDelegateOwner() {
+        // If the application has supplied a delegate owner, return that object. If the owner is this object (the
+        // default), return null to keep the contract of getDelegateOwner, which specifies that a value of null
+        // indicates that the graphic itself is used during picking.
+        Object owner = this.symbol.getDelegateOwner();
+        return owner != this ? owner : null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setDelegateOwner(Object owner) {
+        // Apply new delegate owner if non-null. If the new owner is null, set this object as symbol's delegate owner
+        // (the default).
+        if (owner != null)
+            this.symbol.setDelegateOwner(owner);
+        else
+            this.symbol.setDelegateOwner(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public UnitsFormat getUnitsFormat() {
+        return this.symbol.getUnitsFormat();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setUnitsFormat(UnitsFormat unitsFormat) {
+        this.symbol.setUnitsFormat(unitsFormat);
+    }
+
+    ////////////////////////////////////////
+    // MilStd2525TacticalGraphic interface
+    ////////////////////////////////////////
+
+    /**
+     * {@inheritDoc}
+     */
+    public Position getPosition() {
+        return this.symbol.getPosition();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setPosition(Position position) {
+        if (position == null) {
+            String message = Logging.getMessage("nullValue.PositionIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.symbol.setPosition(position);
+    }
+
+    /////////////////////////////
+    // Movable interface
+    /////////////////////////////
+
+    /**
+     * Indicates this symbol's altitude mode. See {@link #setAltitudeMode(int)} for a description of the valid altitude
+     * modes.
+     *
+     * @return this symbol's altitude mode.
+     */
+    public int getAltitudeMode() {
+        return this.symbol.getAltitudeMode();
+    }
+
+    /**
+     * Specifies this graphic's altitude mode. Altitude mode defines how the altitude component of this symbol's
+     * position is interpreted. Recognized modes are: <ul> <li>WorldWind.CLAMP_TO_GROUND -- this graphic is placed on
+     * the terrain at the latitude and longitude of its position.</li> <li>WorldWind.RELATIVE_TO_GROUND -- this graphic
+     * is placed above the terrain at the latitude and longitude of its position and the distance specified by its
+     * elevation.</li> <li>WorldWind.ABSOLUTE -- this graphic is placed at its specified position.</li> </ul>
+     * <p>
+     * This graphic assumes the altitude mode WorldWind.ABSOLUTE if the specified mode is not recognized.
+     *
+     * @param altitudeMode this symbol's new altitude mode.
+     */
+    public void setAltitudeMode(int altitudeMode) {
+        this.symbol.setAltitudeMode(altitudeMode);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getStatus() {
+        return this.symbol.getStatus();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setStatus(String value) {
+        this.symbol.setStatus(value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Position getReferencePosition() {
+        return this.getPosition();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void move(Position delta) {
+        if (delta == null) {
+            String msg = Logging.getMessage("nullValue.PositionIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Position refPos = this.getReferencePosition();
+
+        // The reference position is null if this shape has no positions. In this case moving the shape by a
+        // relative delta is meaningless. Therefore we fail softly by exiting and doing nothing.
+        if (refPos == null)
+            return;
+
+        this.moveTo(refPos.add(delta));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void moveTo(Position position) {
+        this.symbol.setPosition(position);
+    }
+
+    /////////////////////////////
+    // Highlightable interface
+    /////////////////////////////
+
+    @Override
+    public boolean isDragEnabled() {
+        return this.dragEnabled;
+    }
+
+    @Override
+    public void setDragEnabled(boolean enabled) {
+        this.dragEnabled = enabled;
+    }
+
+    /////////////////////////////
+    // Rendering
+    /////////////////////////////
+
+    @Override
+    public void drag(DragContext dragContext) {
+        if (!this.dragEnabled)
+            return;
+
+        if (this.draggableSupport == null)
+            this.draggableSupport = new DraggableSupport(this, this.getAltitudeMode());
+
+        this.doDrag(dragContext);
+    }
+
+    protected void doDrag(DragContext dragContext) {
+        this.draggableSupport.dragScreenSizeConstant(dragContext);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isHighlighted() {
+        return this.highlighted;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setHighlighted(boolean highlighted) {
+        this.highlighted = highlighted;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void render(DrawContext dc) {
+        long timestamp = dc.getFrameTimeStamp();
+        if (this.frameTimestamp != timestamp) {
+            this.determineActiveAttributes();
+            this.frameTimestamp = timestamp;
+        }
+
+        this.symbol.render(dc);
+    }
+
+    /**
+     * Determine active attributes for this frame.
+     */
+    protected void determineActiveAttributes() {
+        // Reset symbol attributes to default before applying overrides.
+        this.activeSymbolAttributes.copy(defaultSymbolAttributes);
+
+        if (this.isHighlighted()) {
+            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
+
+            // If the application specified overrides to the highlight attributes, then apply the overrides
+            if (highlightAttributes != null) {
+                // Apply overrides specified by application
+                this.applyAttributesToSymbol(highlightAttributes, this.activeSymbolAttributes);
+            }
+        }
+        else {
+            // Apply overrides specified by application
+            TacticalGraphicAttributes normalAttributes = this.getAttributes();
+            if (normalAttributes != null) {
+                this.applyAttributesToSymbol(normalAttributes, this.activeSymbolAttributes);
+            }
+        }
+    }
+
+    /**
+     * Apply graphic attributes to the symbol.
+     *
+     * @param graphicAttributes Tactical graphic attributes to apply to the tactical symbol.
+     * @param symbolAttributes  Symbol attributes to be modified.
+     */
+    protected void applyAttributesToSymbol(TacticalGraphicAttributes graphicAttributes,
+        TacticalSymbolAttributes symbolAttributes) {
+        // Line and area graphics distinguish between interior and outline opacity. Tactical symbols only support one
+        // opacity, so use the interior opacity.
+        Double value = graphicAttributes.getInteriorOpacity();
+        if (value != null) {
+            symbolAttributes.setOpacity(value);
+        }
+
+        value = graphicAttributes.getScale();
+        if (value != null) {
+            symbolAttributes.setScale(value);
+        }
+
+        Material material = graphicAttributes.getInteriorMaterial();
+        symbolAttributes.setInteriorMaterial(material);
+
+        Font font = graphicAttributes.getTextModifierFont();
+        if (font != null) {
+            symbolAttributes.setTextModifierFont(font);
+        }
+
+        material = graphicAttributes.getTextModifierMaterial();
+        if (material != null) {
+            symbolAttributes.setTextModifierMaterial(material);
+        }
     }
 }

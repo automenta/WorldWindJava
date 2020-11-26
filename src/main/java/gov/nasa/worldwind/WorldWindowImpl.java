@@ -18,6 +18,7 @@ import gov.nasa.worldwind.util.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * An implementation class for the {@link WorldWindow} interface. Classes implementing <code>WorldWindow</code> can
@@ -26,15 +27,14 @@ import java.util.*;
  * @author Tom Gaskins
  * @version $Id: WorldWindowImpl.java 1855 2014-02-28 23:01:02Z tgaskins $
  */
-public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindow
-{
-    private SceneController sceneController;
+public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindow {
+    private static final long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
     private final EventListenerList eventListeners = new EventListenerList();
-    private InputHandler inputHandler;
     protected GpuResourceCache gpuResourceCache;
+    private SceneController sceneController;
+    private InputHandler inputHandler;
 
-    public WorldWindowImpl()
-    {
+    public WorldWindowImpl() {
         this.sceneController = (SceneController) WorldWind.createConfigurationComponent(
             AVKey.SCENE_CONTROLLER_CLASS_NAME);
 
@@ -42,16 +42,43 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
         WorldWind.getDataFileStore().addPropertyChangeListener(this);
     }
 
+    public static GpuResourceCache createGpuResourceCache() {
+        long cacheSize = Configuration.getLongValue(AVKey.TEXTURE_CACHE_SIZE, FALLBACK_TEXTURE_CACHE_SIZE);
+        return new BasicGpuResourceCache((long) (0.8 * cacheSize), cacheSize);
+    }
+
     /**
-     * Causes resources used by the WorldWindow to be freed. The WorldWindow cannot be used once this method is
-     * called. An OpenGL context for the window must be current.
+     * Configures JOGL's surface pixel scaling on the specified
+     * <code>ScalableSurface</code> to ensure backward compatibility with
+     * WorldWind applications developed prior to JOGL pixel scaling's introduction.This method is used by
+     * <code>GLCanvas</code> and
+     * <code>GLJPanel</code> to effectively disable JOGL's surface pixel scaling
+     * by requesting a 1:1 scale.<p> Since v2.2.0, JOGL defaults to using high-dpi pixel scales where possible. This
+     * causes WorldWind screen elements such as placemarks, the compass, the world map, the view controls, and the scale
+     * bar (plus many more) to appear smaller than they are intended to on screen. The high-dpi default also has the
+     * effect of degrading WorldWind rendering performance.
+     *
+     * @param surface The surface to configure.
      */
-    public void shutdown()
-    {
+    public static void configureIdentityPixelScale(ScalableSurface surface) {
+        if (surface == null) {
+            String message = Logging.getMessage("nullValue.SurfaceIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        float[] identityScale = new float[] {ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE};
+        surface.setSurfaceScale(identityScale);
+    }
+
+    /**
+     * Causes resources used by the WorldWindow to be freed. The WorldWindow cannot be used once this method is called.
+     * An OpenGL context for the window must be current.
+     */
+    public void shutdown() {
         WorldWind.getDataFileStore().removePropertyChangeListener(this);
 
-        if (this.inputHandler != null)
-        {
+        if (this.inputHandler != null) {
             this.inputHandler.dispose();
             this.inputHandler = new NoOpInputHandler();
         }
@@ -61,17 +88,13 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
             this.getGpuResourceCache().clear();
 
         // Dispose all the layers //  TODO: Need per-window dispose for layers
-        if (this.getModel() != null && this.getModel().getLayers() != null)
-        {
-            for (Layer layer : this.getModel().getLayers())
-            {
-                try
-                {
+        if (this.getModel() != null && this.getModel().getLayers() != null) {
+            for (Layer layer : this.getModel().getLayers()) {
+                try {
                     layer.dispose();
                 }
-                catch (Exception e)
-                {
-                    Logging.logger().log(java.util.logging.Level.SEVERE, Logging.getMessage(
+                catch (Exception e) {
+                    Logging.logger().log(Level.SEVERE, Logging.getMessage(
                         "WorldWindowGLCanvas.ExceptionWhileShuttingDownWorldWindow"), e);
                 }
             }
@@ -82,106 +105,87 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
             sc.dispose();
     }
 
-    public GpuResourceCache getGpuResourceCache()
-    {
+    public GpuResourceCache getGpuResourceCache() {
         return this.gpuResourceCache;
     }
 
-    public void setGpuResourceCache(GpuResourceCache gpuResourceCache)
-    {
+    public void setGpuResourceCache(GpuResourceCache gpuResourceCache) {
         this.gpuResourceCache = gpuResourceCache;
         this.sceneController.setGpuResourceCache(this.gpuResourceCache);
     }
 
-    public void setModel(Model model)
-    {
+    public Model getModel() {
+        return this.sceneController != null ? this.sceneController.getModel() : null;
+    }
+
+    public void setModel(Model model) {
         // model can be null, that's ok - it indicates no model.
         if (this.sceneController != null)
             this.sceneController.setModel(model);
     }
 
-    public Model getModel()
-    {
-        return this.sceneController != null ? this.sceneController.getModel() : null;
+    public View getView() {
+        return this.sceneController != null ? this.sceneController.getView() : null;
     }
 
-    public void setView(View view)
-    {
+    public void setView(View view) {
         // view can be null, that's ok - it indicates no view.
         if (this.sceneController != null)
             this.sceneController.setView(view);
     }
 
-    public View getView()
-    {
-        return this.sceneController != null ? this.sceneController.getView() : null;
-    }
-
-    public void setModelAndView(Model model, View view)
-    {
+    public void setModelAndView(Model model, View view) {
         this.setModel(model);
         this.setView(view);
     }
 
-    public SceneController getSceneController()
-    {
+    public SceneController getSceneController() {
         return this.sceneController;
     }
 
-    public void setSceneController(SceneController sc)
-    {
-        if (sc != null && this.getSceneController() != null)
-        {
+    public void setSceneController(SceneController sc) {
+        if (sc != null && this.getSceneController() != null) {
             sc.setGpuResourceCache(this.sceneController.getGpuResourceCache());
         }
 
         this.sceneController = sc;
     }
 
-    public InputHandler getInputHandler()
-    {
+    public InputHandler getInputHandler() {
         return this.inputHandler;
     }
 
-    public void setInputHandler(InputHandler inputHandler)
-    {
+    public void setInputHandler(InputHandler inputHandler) {
         this.inputHandler = inputHandler;
     }
 
-    public void redraw()
-    {
+    public void redraw() {
     }
 
-    public void redrawNow()
-    {
+    public void redrawNow() {
     }
 
-    public void setPerFrameStatisticsKeys(Set<String> keys)
-    {
+    public void setPerFrameStatisticsKeys(Set<String> keys) {
         if (this.sceneController != null)
             this.sceneController.setPerFrameStatisticsKeys(keys);
     }
 
-    public Collection<PerformanceStatistic> getPerFrameStatistics()
-    {
+    public Collection<PerformanceStatistic> getPerFrameStatistics() {
         if (this.sceneController == null || this.sceneController.getPerFrameStatistics() == null)
             return new ArrayList<>(0);
 
         return this.sceneController.getPerFrameStatistics();
     }
 
-    public PickedObjectList getObjectsAtCurrentPosition()
-    {
+    public PickedObjectList getObjectsAtCurrentPosition() {
         return null;
     }
 
-    public PickedObjectList getObjectsInSelectionBox()
-    {
+    public PickedObjectList getObjectsInSelectionBox() {
         return null;
     }
 
-    public Position getCurrentPosition()
-    {
+    public Position getCurrentPosition() {
         if (this.sceneController == null)
             return null;
 
@@ -199,8 +203,7 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
         return p;
     }
 
-    protected PickedObject getCurrentSelection()
-    {
+    protected PickedObject getCurrentSelection() {
         if (this.sceneController == null)
             return null;
 
@@ -212,127 +215,74 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
         return top.isTerrain() ? null : top;
     }
 
-    protected PickedObjectList getCurrentBoxSelection()
-    {
+    protected PickedObjectList getCurrentBoxSelection() {
         if (this.sceneController == null)
             return null;
 
         PickedObjectList pol = this.sceneController.getObjectsInPickRectangle();
-        return pol != null && pol.size() > 0 ? pol : null;
+        return pol != null && !pol.isEmpty() ? pol : null;
     }
 
-    public void addRenderingListener(RenderingListener listener)
-    {
+    public void addRenderingListener(RenderingListener listener) {
         this.eventListeners.add(RenderingListener.class, listener);
     }
 
-    public void removeRenderingListener(RenderingListener listener)
-    {
+    public void removeRenderingListener(RenderingListener listener) {
         this.eventListeners.remove(RenderingListener.class, listener);
     }
 
-    protected void callRenderingListeners(RenderingEvent event)
-    {
-        for (RenderingListener listener : this.eventListeners.getListeners(RenderingListener.class))
-        {
+    protected void callRenderingListeners(RenderingEvent event) {
+        for (RenderingListener listener : this.eventListeners.getListeners(RenderingListener.class)) {
             listener.stageChanged(event);
         }
     }
 
-    public void addPositionListener(PositionListener listener)
-    {
+    public void addPositionListener(PositionListener listener) {
         this.eventListeners.add(PositionListener.class, listener);
     }
 
-    public void removePositionListener(PositionListener listener)
-    {
+    public void removePositionListener(PositionListener listener) {
         this.eventListeners.remove(PositionListener.class, listener);
     }
 
-    protected void callPositionListeners(final PositionEvent event)
-    {
+    protected void callPositionListeners(final PositionEvent event) {
         EventQueue.invokeLater(() -> {
-            for (PositionListener listener : eventListeners.getListeners(PositionListener.class))
-            {
+            for (PositionListener listener : eventListeners.getListeners(PositionListener.class)) {
                 listener.moved(event);
             }
         });
     }
 
-    public void addSelectListener(SelectListener listener)
-    {
+    public void addSelectListener(SelectListener listener) {
         this.eventListeners.add(SelectListener.class, listener);
     }
 
-    public void removeSelectListener(SelectListener listener)
-    {
+    public void removeSelectListener(SelectListener listener) {
         this.eventListeners.remove(SelectListener.class, listener);
     }
 
-    protected void callSelectListeners(final SelectEvent event)
-    {
+    protected void callSelectListeners(final SelectEvent event) {
         EventQueue.invokeLater(() -> {
-            for (SelectListener listener : eventListeners.getListeners(SelectListener.class))
-            {
+            for (SelectListener listener : eventListeners.getListeners(SelectListener.class)) {
                 listener.selected(event);
             }
         });
     }
 
-    public void addRenderingExceptionListener(RenderingExceptionListener listener)
-    {
+    public void addRenderingExceptionListener(RenderingExceptionListener listener) {
         this.eventListeners.add(RenderingExceptionListener.class, listener);
     }
 
-    public void removeRenderingExceptionListener(RenderingExceptionListener listener)
-    {
+    public void removeRenderingExceptionListener(RenderingExceptionListener listener) {
         this.eventListeners.remove(RenderingExceptionListener.class, listener);
     }
 
-    protected void callRenderingExceptionListeners(final Throwable exception)
-    {
+    protected void callRenderingExceptionListeners(final Throwable exception) {
         EventQueue.invokeLater(() -> {
             for (RenderingExceptionListener listener : eventListeners.getListeners(
-                RenderingExceptionListener.class))
-            {
+                RenderingExceptionListener.class)) {
                 listener.exceptionThrown(exception);
             }
         });
-    }
-
-    private static final long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
-
-    public static GpuResourceCache createGpuResourceCache()
-    {
-        long cacheSize = Configuration.getLongValue(AVKey.TEXTURE_CACHE_SIZE, FALLBACK_TEXTURE_CACHE_SIZE);
-        return new BasicGpuResourceCache((long) (0.8 * cacheSize), cacheSize);
-    }
-
-    /**
-     * Configures JOGL's surface pixel scaling on the specified
-     * <code>ScalableSurface</code> to ensure backward compatibility with
-     * WorldWind applications developed prior to JOGL pixel scaling's
-     * introduction.This method is used by <code>GLCanvas</code> and
-     * <code>GLJPanel</code> to effectively disable JOGL's surface pixel scaling
-     * by requesting a 1:1 scale.<p>
-     * Since v2.2.0, JOGL defaults to using high-dpi pixel scales where
-     * possible. This causes WorldWind screen elements such as placemarks, the
-     * compass, the world map, the view controls, and the scale bar (plus many
-     * more) to appear smaller than they are intended to on screen. The high-dpi
-     * default also has the effect of degrading WorldWind rendering performance.
-     *
-     * @param surface The surface to configure.
-     */
-    public static void configureIdentityPixelScale(ScalableSurface surface)
-    {
-        if (surface == null)
-        {
-            String message = Logging.getMessage("nullValue.SurfaceIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        float[] identityScale = new float[] {ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE};
-        surface.setSurfaceScale(identityScale);
     }
 }

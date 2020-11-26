@@ -17,12 +17,17 @@ import java.util.*;
 /**
  * Illustrates how to display lines that stand out from the background imagery. The technique is to draw behind the line
  * a slightly wider, slightly opaque line in a contrasting color. This backing line makes the primary line stand out
- * more than it otherwise would. This example shows how to do this for both SurfacePolyline and terrain-conforming Path.
+ * more than it otherwise would. This example shows how to do this for both SurfacePolyline and terrain-conforming
+ * Path.
  *
  * @author tag
  * @version $Id: LineBackground.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class LineBackground extends ApplicationTemplate {
+
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Line Backgrounds", AppFrame.class);
+    }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
@@ -44,10 +49,10 @@ public class LineBackground extends ApplicationTemplate {
 
                 // Create the primary line as a SurfacePolyline and set its attributes.
                 SurfacePolyline si1 = new SurfacePolyline(new ArrayList<>(Arrays.asList(
-                        LatLon.fromDegrees(33.7, 119.6),
-                        LatLon.fromDegrees(33.5, 125),
-                        LatLon.fromDegrees(35.1, 129.1),
-                        LatLon.fromDegrees(35.8, 127.1)
+                    LatLon.fromDegrees(33.7, 119.6),
+                    LatLon.fromDegrees(33.5, 125),
+                    LatLon.fromDegrees(35.1, 129.1),
+                    LatLon.fromDegrees(35.8, 127.1)
                 )));
                 si1.setClosed(true);
                 si1.setAttributes(foregroundAttrs);
@@ -72,8 +77,9 @@ public class LineBackground extends ApplicationTemplate {
                 path2.setSurfacePath(true);
                 path2.setPathType(AVKey.RHUMB_LINE);
                 float[] c = backgroundAttrs.getOutlineMaterial().getDiffuse().getColorComponents(new float[3]);
-                var attrs = new BasicShapeAttributes(backgroundAttrs);
-                attrs.setOutlineMaterial(new Material(new Color(c[0], c[1], c[2], (float) backgroundAttrs.getOutlineOpacity())));
+                ShapeAttributes attrs = new BasicShapeAttributes(backgroundAttrs);
+                attrs.setOutlineMaterial(
+                    new Material(new Color(c[0], c[1], c[2], (float) backgroundAttrs.getOutlineOpacity())));
                 path2.setAttributes(attrs);
                 path2.makeClosed();
 
@@ -90,14 +96,11 @@ public class LineBackground extends ApplicationTemplate {
 
                 // Move the view to the line locations.
                 View view = getWwd().getView();
-                view.setEyePosition(Position.fromDegrees(35.3, 124.6, 1500e3));
-            } catch (Exception e) {
+                view.setEyePosition(Position.fromDegrees(35.3, 124.6, 1500.0e3));
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static void main(String[] args) {
-        ApplicationTemplate.start("WorldWind Line Backgrounds", AppFrame.class);
     }
 }

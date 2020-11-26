@@ -25,11 +25,11 @@ public class PlaneModel implements Renderable {
     private Position position;
     private Angle heading;
 
-    private Double length = 100d;
-    private Double width = 100d;
+    private Double length = 100.0d;
+    private Double width = 100.0d;
     private Color color = Color.YELLOW;
     private boolean showShadow = true;
-    private double shadowScale = 1d;
+    private double shadowScale = 1.0d;
     private Color shadowColor = Color.YELLOW;
 
     private Path planeModel;
@@ -45,13 +45,17 @@ public class PlaneModel implements Renderable {
      * Renders a plane model with the specified dimensions and color.
      *
      * @param length the plane length in meters
-     * @param width the plane width in meter.
-     * @param color the plane color.
+     * @param width  the plane width in meter.
+     * @param color  the plane color.
      */
     public PlaneModel(Double length, Double width, Color color) {
         this.length = length;
         this.width = width;
         this.color = color;
+    }
+
+    public Position getPosition() {
+        return this.position;
     }
 
     public void setPosition(Position pos) {
@@ -64,8 +68,8 @@ public class PlaneModel implements Renderable {
         clearRenderables();
     }
 
-    public Position getPosition() {
-        return this.position;
+    public Angle getHeading() {
+        return this.heading;
     }
 
     public void setHeading(Angle head) {
@@ -78,16 +82,12 @@ public class PlaneModel implements Renderable {
         clearRenderables();
     }
 
-    public Angle getHeading() {
-        return this.heading;
+    public boolean getShowShadow() {
+        return this.showShadow;
     }
 
     public void setShowShadow(boolean state) {
         this.showShadow = state;
-    }
-
-    public boolean getShowShadow() {
-        return this.showShadow;
     }
 
     public double getShadowScale() {

@@ -21,11 +21,26 @@ import java.util.*;
 public class GliderImageLayer extends AbstractLayer {
 
     public static final String GLIDER_IMAGE = "gov.nasa.worldwind.glider.Image";
-
-    protected GliderImage image;
     protected final SurfaceImageLayer imageLayer = new SurfaceImageLayer();
     protected final RenderableLayer regionLayer = new RenderableLayer();
-    protected final ImageListener imageListener = new ImageListener();
+    protected final PropertyChangeListener imageListener = new ImageListener();
+    protected GliderImage image;
+
+    protected static List<Renderable> makePaths(GliderRegionOfInterest.RegionSet regions, double altitude) {
+        List<Renderable> paths = new ArrayList<>(regions.regions.size());
+
+        for (GliderRegionOfInterest region : regions.regions) {
+            Path p = new Path(region.getLocations(), altitude);
+            ShapeAttributes attrs = new BasicShapeAttributes();
+            attrs.setOutlineMaterial(new Material(region.getColor()));
+            p.setAttributes(attrs);
+            p.setSurfacePath(true);
+            p.makeClosed();
+            paths.add(p);
+        }
+
+        return paths;
+    }
 
     @Override
     public void dispose() {
@@ -36,14 +51,15 @@ public class GliderImageLayer extends AbstractLayer {
         this.regionLayer.dispose();
     }
 
-    public void setImage(GliderImage image)
-    {
+    public void setImage(GliderImage image) {
         if (image.getImageSource() instanceof String) {
             ((SurfaceImageLayer) this.getImageLayer()).addImage((String) image.getImageSource(), image.getCorners());
-        } else if (image.getImageSource() instanceof BufferedImage) {
+        }
+        else if (image.getImageSource() instanceof BufferedImage) {
             ((SurfaceImageLayer) this.getImageLayer()).addImage(image.getName(), (BufferedImage) image.getImageSource(),
-                    image.getSector());
-        } else {
+                image.getSector());
+        }
+        else {
             throw new IllegalArgumentException("Unsupported image source type");
         }
 
@@ -98,7 +114,8 @@ public class GliderImageLayer extends AbstractLayer {
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getSource() != GliderImageLayer.this.image && evt.getPropagationId() != GliderImageLayer.this.image) {
+            if (evt.getSource() != GliderImageLayer.this.image
+                && evt.getPropagationId() != GliderImageLayer.this.image) {
                 return;
             }
 
@@ -127,7 +144,7 @@ public class GliderImageLayer extends AbstractLayer {
                         GliderRegionOfInterest.RegionSet regions = (GliderRegionOfInterest.RegionSet) evt.getNewValue();
                         if (regions != null) {
                             GliderImageLayer.this.regionLayer.addRenderables(makePaths(regions,
-                                    GliderImageLayer.this.image.getAltitude()));
+                                GliderImageLayer.this.image.getAltitude()));
                         }   // Cause owner to repaint
                         evt.setPropagationId(GliderImageLayer.this);
                         GliderImageLayer.this.firePropertyChange(evt);
@@ -137,21 +154,5 @@ public class GliderImageLayer extends AbstractLayer {
                 }
             }
         }
-    }
-
-    protected static List<Renderable> makePaths(GliderRegionOfInterest.RegionSet regions, double altitude) {
-        ArrayList<Renderable> paths = new ArrayList<>(regions.regions.size());
-
-        for (GliderRegionOfInterest region : regions.regions) {
-            Path p = new Path(region.getLocations(), altitude);
-            var attrs = new BasicShapeAttributes();
-            attrs.setOutlineMaterial(new Material(region.getColor()));
-            p.setAttributes(attrs);
-            p.setSurfacePath(true);
-            p.makeClosed();
-            paths.add(p);
-        }
-
-        return paths;
     }
 }

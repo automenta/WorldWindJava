@@ -12,16 +12,17 @@ import gov.nasa.worldwind.util.*;
 import java.awt.event.*;
 
 /**
- * An area of a {@link gov.nasa.worldwind.util.tree.Tree} that can receive select and mouse events. The TreeHotSpot's
+ * An area of a {@link Tree} that can receive select and mouse events. The TreeHotSpot's
  * default behavior is to forward events to its parent HotSpot. Subclasses must override methods for events they can
  * react to, and all other events are handled by the parent.
  *
  * @author pabercrombie
  * @version $Id: TreeHotSpot.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class TreeHotSpot extends AbstractHotSpot
-{
-    /** The parent HotSpot, or null if this TreeHotSpot has no parent. */
+public class TreeHotSpot extends AbstractHotSpot {
+    /**
+     * The parent HotSpot, or null if this TreeHotSpot has no parent.
+     */
     protected final HotSpot parent;
 
     /**
@@ -30,8 +31,7 @@ public class TreeHotSpot extends AbstractHotSpot
      * @param parent The screen area that contains this hot spot. Input events that cannot be handled by this object
      *               will be passed to the parent. May be null.
      */
-    public TreeHotSpot(HotSpot parent)
-    {
+    public TreeHotSpot(HotSpot parent) {
         this.parent = parent;
     }
 
@@ -41,8 +41,7 @@ public class TreeHotSpot extends AbstractHotSpot
      *
      * @param event The event to handle.
      */
-    public void selected(SelectEvent event)
-    {
+    public void selected(SelectEvent event) {
         if (event == null || this.isConsumed(event))
             return;
 
@@ -56,8 +55,7 @@ public class TreeHotSpot extends AbstractHotSpot
      *
      * @param event The event to handle.
      */
-    public void mouseClicked(MouseEvent event)
-    {
+    public void mouseClicked(MouseEvent event) {
         if (event == null || event.isConsumed())
             return;
 
@@ -71,8 +69,7 @@ public class TreeHotSpot extends AbstractHotSpot
      *
      * @param event The event to handle.
      */
-    public void mousePressed(MouseEvent event)
-    {
+    public void mousePressed(MouseEvent event) {
         if (event == null || event.isConsumed())
             return;
 
@@ -86,8 +83,7 @@ public class TreeHotSpot extends AbstractHotSpot
      *
      * @param event The event to handle.
      */
-    public void mouseReleased(MouseEvent event)
-    {
+    public void mouseReleased(MouseEvent event) {
         if (event == null || event.isConsumed())
             return;
 
@@ -101,8 +97,7 @@ public class TreeHotSpot extends AbstractHotSpot
      *
      * @param event The event to handle.
      */
-    public void mouseWheelMoved(MouseWheelEvent event)
-    {
+    public void mouseWheelMoved(MouseWheelEvent event) {
         if (event == null || event.isConsumed())
             return;
 

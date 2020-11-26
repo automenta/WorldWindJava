@@ -23,16 +23,19 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: Ambush.java 1585 2013-09-06 00:12:52Z pabercrombie $
  */
-public class Ambush extends AbstractMilStd2525TacticalGraphic
-{
-    /** Default length of the arrowhead, as a fraction of the total line length. */
+public class Ambush extends AbstractMilStd2525TacticalGraphic {
+    /**
+     * Default length of the arrowhead, as a fraction of the total line length.
+     */
     public final static double DEFAULT_ARROWHEAD_LENGTH = 0.2;
     /**
      * Default angle of the arc. Control points 2 and 3 define a chord of a circle. This chord and the arc angle fully
      * define the circle, of which the arc is a segment.
      */
     public final static Angle DEFAULT_ARC_ANGLE = Angle.fromDegrees(60.0);
-    /** Default angle of the arrowhead. */
+    /**
+     * Default angle of the arrowhead.
+     */
     public final static Angle DEFAULT_ARROWHEAD_ANGLE = Angle.fromDegrees(70.0);
     /**
      * Default length of the legs of the graphic's base, as a fraction of the distance between the control points the
@@ -40,20 +43,34 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      */
     public final static double DEFAULT_LEG_LENGTH = 0.5;
 
-    /** Default number of intervals used to draw the arc. */
+    /**
+     * Default number of intervals used to draw the arc.
+     */
     public final static int DEFAULT_NUM_INTERVALS = 32;
-    /** Default number of legs to draw on the graphic's arc. */
+    /**
+     * Default number of legs to draw on the graphic's arc.
+     */
     public final static int DEFAULT_NUM_LEGS = 6;
 
-    /** Number of intervals used to draw the arc. */
+    /**
+     * Number of intervals used to draw the arc.
+     */
     protected int intervals = DEFAULT_NUM_INTERVALS;
-    /** The arc is drawn as a segment of a circle intersected by this angle. */
+    /**
+     * The arc is drawn as a segment of a circle intersected by this angle.
+     */
     protected Angle arcAngle = DEFAULT_ARC_ANGLE;
-    /** Length of the arrowhead from base to tip, as a fraction of the total line length. */
+    /**
+     * Length of the arrowhead from base to tip, as a fraction of the total line length.
+     */
     protected Angle arrowAngle = DEFAULT_ARROWHEAD_ANGLE;
-    /** Angle of the arrowhead. */
+    /**
+     * Angle of the arrowhead.
+     */
     protected double arrowLength = DEFAULT_ARROWHEAD_LENGTH;
-    /** Number of "legs" drawn on this graphic's arc. */
+    /**
+     * Number of "legs" drawn on this graphic's arc.
+     */
     protected int numLegs = DEFAULT_NUM_LEGS;
     /**
      * Length of the legs on the graphic's base, as a fraction of the distance between the control points that define
@@ -61,38 +78,31 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      */
     protected double legLength = DEFAULT_LEG_LENGTH;
 
-    /** First control point. */
+    /**
+     * First control point.
+     */
     protected Position position1;
-    /** Second control point. */
+    /**
+     * Second control point.
+     */
     protected Position position2;
-    /** Third control point. */
+    /**
+     * Third control point.
+     */
     protected Position position3;
 
-    /** Path used to render the graphic. */
+    /**
+     * Path used to render the graphic.
+     */
     protected Path[] paths;
 
     /**
-     * Data required for intermediate calculations while generating the Ambush graphic. This object is created and
-     * populated by {@link Ambush#computeArc(gov.nasa.worldwind.render.DrawContext)}.
+     * Create a new graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
      */
-    protected static class ArcData
-    {
-        /** Position at the midpoint of the arc. This point falls on the arc. */
-        Position midpoint;
-        /** Center of the circle, of which the arc is segment. */
-        LatLon center;
-        /** Radius of the circle. */
-        double radius;
-        /** Angle from North at which the arc begins. */
-        Angle startAngle;
-        /**
-         * Angular length of the arc. Note that this is different than {@link Ambush#arcAngle}: this angle is signed,
-         * where as Ambush.arcAngle is unsigned. This angle is calculated such that the end angle of the arc is equal to
-         * {@code arcData.arcAngle + arcData.startAngle}.
-         */
-        Angle arcAngle;
-        /** Direction of the arc. This vector points from the center of the circle to the midpoint of the arc. */
-        Vec4 direction;
+    public Ambush(String sidc) {
+        super(sidc);
     }
 
     /**
@@ -100,19 +110,8 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         return Collections.singletonList(TacGrpSidc.C2GM_SPL_LNE_AMB);
-    }
-
-    /**
-     * Create a new graphic.
-     *
-     * @param sidc Symbol code the identifies the graphic.
-     */
-    public Ambush(String sidc)
-    {
-        super(sidc);
     }
 
     /**
@@ -120,8 +119,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @return Intervals used to draw arc.
      */
-    public int getIntervals()
-    {
+    public int getIntervals() {
         return this.intervals;
     }
 
@@ -131,10 +129,8 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @param intervals Number of intervals for drawing the arc.
      */
-    public void setIntervals(int intervals)
-    {
-        if (intervals < 1)
-        {
+    public void setIntervals(int intervals) {
+        if (intervals < 1) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", intervals);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -150,8 +146,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @return Angle of the circular segment that forms this graphic's arc.
      */
-    public Angle getArcAngle()
-    {
+    public Angle getArcAngle() {
         return this.arcAngle;
     }
 
@@ -162,10 +157,8 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @param arcAngle Angle of the circular segment that forms this graphic's arc.
      */
-    public void setArcAngle(Angle arcAngle)
-    {
-        if (arcAngle == null)
-        {
+    public void setArcAngle(Angle arcAngle) {
+        if (arcAngle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -179,8 +172,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @return Angle of the arrowhead in the graphic.
      */
-    public Angle getArrowAngle()
-    {
+    public Angle getArrowAngle() {
         return this.arrowAngle;
     }
 
@@ -189,17 +181,14 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @param arrowAngle The angle of the arrowhead. Must be greater than zero degrees and less than 90 degrees.
      */
-    public void setArrowAngle(Angle arrowAngle)
-    {
-        if (arrowAngle == null)
-        {
+    public void setArrowAngle(Angle arrowAngle) {
+        if (arrowAngle == null) {
             String msg = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (arrowAngle.degrees <= 0 || arrowAngle.degrees >= 90)
-        {
+        if (arrowAngle.degrees <= 0 || arrowAngle.degrees >= 90) {
             String msg = Logging.getMessage("generic.AngleOutOfRange");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -214,8 +203,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @return The length of the arrowhead as a fraction of the total line length.
      */
-    public double getArrowLength()
-    {
+    public double getArrowLength() {
         return this.arrowLength;
     }
 
@@ -225,10 +213,8 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      * @param arrowLength Length of the arrowhead as a fraction of the total line length. If the arrowhead length is
      *                    0.25, then the arrowhead length will be one quarter of the total line length.
      */
-    public void setArrowLength(double arrowLength)
-    {
-        if (arrowLength < 0)
-        {
+    public void setArrowLength(double arrowLength) {
+        if (arrowLength < 0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -243,8 +229,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @return Number of legs drawn on the arc of this graphic.
      */
-    public int getLegs()
-    {
+    public int getLegs() {
         return this.numLegs;
     }
 
@@ -253,10 +238,8 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @param numLegs Number of legs to draw on the arc of this graphic.
      */
-    public void setLegs(int numLegs)
-    {
-        if (numLegs < 0)
-        {
+    public void setLegs(int numLegs) {
+        if (numLegs < 0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -270,10 +253,9 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      * Indicates the length of legs on the graphic's base.
      *
      * @return The length of the legs on the base, as a fraction of the distance between the control points that define
-     *         the base.
+     * the base.
      */
-    public double getLegLength()
-    {
+    public double getLegLength() {
         return this.legLength;
     }
 
@@ -283,10 +265,8 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      * @param legLength Length of the legs on the graphic's base, as a fraction of the distance between the control
      *                  points that define the base.
      */
-    public void setLegLength(double legLength)
-    {
-        if (legLength < 0)
-        {
+    public void setLegLength(double legLength) {
+        if (legLength < 0) {
             String msg = Logging.getMessage("generic.ArgumentOutOfRange");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -298,27 +278,30 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
 
     /**
      * {@inheritDoc}
+     */
+    public Iterable<? extends Position> getPositions() {
+        return Arrays.asList(this.position1, this.position2, this.position3);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @param positions Control points that orient the graphic. Must provide at least three points.
      */
-    public void setPositions(Iterable<? extends Position> positions)
-    {
-        if (positions == null)
-        {
+    public void setPositions(Iterable<? extends Position> positions) {
+        if (positions == null) {
             String message = Logging.getMessage("nullValue.PositionsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             Iterator<? extends Position> iterator = positions.iterator();
             this.position1 = iterator.next();
             this.position2 = iterator.next();
             this.position3 = iterator.next();
         }
-        catch (NoSuchElementException e)
-        {
+        catch (NoSuchElementException e) {
             String message = Logging.getMessage("generic.InsufficientPositions");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -327,46 +310,39 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
         this.onShapeChanged();
     }
 
-    /** {@inheritDoc} */
-    public Iterable<? extends Position> getPositions()
-    {
-        return Arrays.asList(this.position1, this.position2, this.position3);
-    }
-
-    /** {@inheritDoc} */
-    public Position getReferencePosition()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public Position getReferencePosition() {
         return this.position1;
     }
 
-    /** {@inheritDoc} */
-    protected void doRenderGraphic(DrawContext dc)
-    {
-        if (this.paths == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    protected void doRenderGraphic(DrawContext dc) {
+        if (this.paths == null) {
             this.createShapes(dc);
         }
 
-        for (Path path : this.paths)
-        {
+        for (Path path : this.paths) {
             path.render(dc);
         }
     }
 
-    /** {@inheritDoc} */
-    protected void applyDelegateOwner(Object owner)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    protected void applyDelegateOwner(Object owner) {
         if (this.paths == null)
             return;
 
-        for (Path path : this.paths)
-        {
+        for (Path path : this.paths) {
             path.setDelegateOwner(owner);
         }
     }
 
-    protected void onShapeChanged()
-    {
+    protected void onShapeChanged() {
         this.paths = null; // Need to recompute paths
     }
 
@@ -375,8 +351,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @param dc Current draw context.
      */
-    protected void createShapes(DrawContext dc)
-    {
+    protected void createShapes(DrawContext dc) {
         // This graphic requires three paths, plus one path for each of the legs.
         this.paths = new Path[3 + this.getLegs()];
 
@@ -402,11 +377,9 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      * define the chord.
      *
      * @param dc Current draw context.
-     *
      * @return Data that describes the arc.
      */
-    protected ArcData computeArc(DrawContext dc)
-    {
+    protected ArcData computeArc(DrawContext dc) {
         Globe globe = dc.getGlobe();
 
         // The graphic looks like this:
@@ -481,11 +454,9 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      *
      * @param dc      Current draw context.
      * @param arcData Data that describes the arc.
-     *
      * @return Positions along the arc.
      */
-    protected List<Position> computeArcPositions(DrawContext dc, ArcData arcData)
-    {
+    protected List<Position> computeArcPositions(DrawContext dc, ArcData arcData) {
         Globe globe = dc.getGlobe();
 
         Angle da = arcData.arcAngle.divide(this.intervals);
@@ -496,8 +467,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
         int intervals = this.getIntervals();
         List<Position> positions = new ArrayList<>(intervals);
 
-        for (int i = 0; i < intervals; i++)
-        {
+        for (int i = 0; i < intervals; i++) {
             double angle = i * da.radians + arcData.startAngle.radians;
 
             LatLon ll = LatLon.greatCircleEndPosition(arcData.center, angle, radiusRadians);
@@ -518,8 +488,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      * @param pathCount  Number of leg paths to create. The {@code paths} array must have length of at least {@code
      *                   startIndex + pathCount}.
      */
-    protected void createLegs(DrawContext dc, ArcData arcData, Path[] paths, int startIndex, int pathCount)
-    {
+    protected void createLegs(DrawContext dc, ArcData arcData, Path[] paths, int startIndex, int pathCount) {
         Globe globe = dc.getGlobe();
 
         Vec4 p1 = globe.computePointFromPosition(this.position1);
@@ -542,8 +511,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
         double globeRadius = globe.getRadiusAt(arcData.center.getLatitude(), arcData.center.getLongitude());
         double radiusRadians = arcData.radius / globeRadius;
 
-        for (int i = 0; i < pathCount; i++)
-        {
+        for (int i = 0; i < pathCount; i++) {
             double angle = (i + 0.5) * da.radians + arcData.startAngle.radians;
 
             LatLon ll = LatLon.greatCircleEndPosition(arcData.center, angle, radiusRadians);
@@ -561,11 +529,9 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      * @param dc      Current draw context.
      * @param tip     Position of the arrow head tip.
      * @param arcData Data that describes the arc of this graphic.
-     *
      * @return Positions that define the arrowhead.
      */
-    protected List<Position> computeArrowheadPositions(DrawContext dc, Position tip, ArcData arcData)
-    {
+    protected List<Position> computeArrowheadPositions(DrawContext dc, Position tip, ArcData arcData) {
         Globe globe = dc.getGlobe();
         //             _
         //        A\    | 1/2 width
@@ -603,16 +569,47 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic
      * Create and configure the Path used to render this graphic.
      *
      * @param positions Positions that define the path.
-     *
      * @return New path configured with defaults appropriate for this type of graphic.
      */
-    protected Path createPath(List<Position> positions)
-    {
+    protected Path createPath(List<Position> positions) {
         Path path = new Path(positions);
         path.setSurfacePath(true);
         path.setPathType(AVKey.GREAT_CIRCLE);
         path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());
         return path;
+    }
+
+    /**
+     * Data required for intermediate calculations while generating the Ambush graphic. This object is created and
+     * populated by {@link Ambush#computeArc(DrawContext)}.
+     */
+    protected static class ArcData {
+        /**
+         * Position at the midpoint of the arc. This point falls on the arc.
+         */
+        Position midpoint;
+        /**
+         * Center of the circle, of which the arc is segment.
+         */
+        LatLon center;
+        /**
+         * Radius of the circle.
+         */
+        double radius;
+        /**
+         * Angle from North at which the arc begins.
+         */
+        Angle startAngle;
+        /**
+         * Angular length of the arc. Note that this is different than {@link Ambush#arcAngle}: this angle is signed,
+         * where as Ambush.arcAngle is unsigned. This angle is calculated such that the end angle of the arc is equal to
+         * {@code arcData.arcAngle + arcData.startAngle}.
+         */
+        Angle arcAngle;
+        /**
+         * Direction of the arc. This vector points from the center of the circle to the midpoint of the arc.
+         */
+        Vec4 direction;
     }
 }

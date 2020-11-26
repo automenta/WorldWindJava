@@ -15,89 +15,9 @@ import java.util.regex.*;
  * @author tag
  * @version $Id: EntityMap.java 669 2012-06-27 00:26:59Z pabercrombie $
  */
-public class EntityMap
-{
-    protected static final List<Pattern> patterns = new ArrayList<>();
-
-    static
-    {
-        patterns.add(Pattern.compile("&[^;]+;")); // ampersand followed by any number of chars followed by semicolon
-    }
-
+public class EntityMap {
+    protected static final Collection<Pattern> patterns = new ArrayList<>();
     protected static final HashMap<String, String> map = new HashMap<>();
-
-    /**
-     * Replaces all entities and character references in a specified string.
-     *
-     * @param source the input string.
-     *
-     * @return the input string with all entities and references resolved. The input string is returned as-is if it
-     *         contains no entities or references.
-     */
-    public static String replaceAll(String source)
-    {
-        int regionStart = 0;
-        for (String entity = getNextEntity(source, regionStart); entity != null;
-            entity = getNextEntity(source, regionStart))
-        {
-            String replacement = EntityMap.get(entity);
-            if (replacement == null)
-            {
-                regionStart += entity.length();
-                continue;
-            }
-
-            source = source.replace(entity, replacement);
-            regionStart += replacement.length();
-        }
-
-        return source;
-    }
-
-    /**
-     * Search a string for the next occurrence of an entity.
-     *
-     * @param source      String to search.
-     * @param regionStart Position in the string at which to start searching.
-     *
-     * @return The entity that was matched, or {@code null} if no entity could be matched.
-     */
-    protected static String getNextEntity(String source, int regionStart)
-    {
-        if (source == null)
-            return null;
-
-        for (Pattern pattern : patterns)
-        {
-            Matcher matcher = pattern.matcher(source);
-            matcher.region(regionStart, source.length());
-
-            if (matcher.find())
-                return matcher.group();
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns tne Java equivalent of an entity or a named character reference.
-     *
-     * @param key the entity or character reference.
-     *
-     * @return the Java equivalent of the input, or null if the input string does not identify a known entity or
-     *         character reference.
-     */
-    public static String get(String key)
-    {
-        if (key == null)
-            return null;
-
-        return map.get(key);
-    }
-
-// Mappings taken from
-// http://www.whatwg.org/specs/web-apps/current-work/multipage/named-character-references.html#named-character-references
-
     protected static final String[] entityKeys = new String[] {
         "&#x1fbf;",
         "&#x1ffe;",
@@ -2246,7 +2166,6 @@ public class EntityMap
         "&zwj;",
         "&zwnj;",
     };
-
     protected static final String[] entityReplacements = new String[]
         {
             "\u1fbf",
@@ -4401,11 +4320,76 @@ public class EntityMap
             "\u0060",
             "\u007e",};
 
-    static
-    {
-        for (int i = 0; i < entityKeys.length; i++)
-        {
+    static {
+        patterns.add(Pattern.compile("&[^;]+;")); // ampersand followed by any number of chars followed by semicolon
+    }
+
+    static {
+        for (int i = 0; i < entityKeys.length; i++) {
             map.put(entityKeys[i], entityReplacements[i]);
         }
+    }
+
+// Mappings taken from
+// http://www.whatwg.org/specs/web-apps/current-work/multipage/named-character-references.html#named-character-references
+
+    /**
+     * Replaces all entities and character references in a specified string.
+     *
+     * @param source the input string.
+     * @return the input string with all entities and references resolved. The input string is returned as-is if it
+     * contains no entities or references.
+     */
+    public static String replaceAll(String source) {
+        int regionStart = 0;
+        for (String entity = getNextEntity(source, regionStart); entity != null;
+            entity = getNextEntity(source, regionStart)) {
+            String replacement = EntityMap.get(entity);
+            if (replacement == null) {
+                regionStart += entity.length();
+                continue;
+            }
+
+            source = source.replace(entity, replacement);
+            regionStart += replacement.length();
+        }
+
+        return source;
+    }
+
+    /**
+     * Search a string for the next occurrence of an entity.
+     *
+     * @param source      String to search.
+     * @param regionStart Position in the string at which to start searching.
+     * @return The entity that was matched, or {@code null} if no entity could be matched.
+     */
+    protected static String getNextEntity(CharSequence source, int regionStart) {
+        if (source == null)
+            return null;
+
+        for (Pattern pattern : patterns) {
+            Matcher matcher = pattern.matcher(source);
+            matcher.region(regionStart, source.length());
+
+            if (matcher.find())
+                return matcher.group();
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns tne Java equivalent of an entity or a named character reference.
+     *
+     * @param key the entity or character reference.
+     * @return the Java equivalent of the input, or null if the input string does not identify a known entity or
+     * character reference.
+     */
+    public static String get(String key) {
+        if (key == null)
+            return null;
+
+        return map.get(key);
     }
 }

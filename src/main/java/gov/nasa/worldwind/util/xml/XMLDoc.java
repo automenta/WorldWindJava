@@ -9,13 +9,12 @@ import java.net.URL;
 public abstract class XMLDoc {
 
     /**
-     * Returns an {@link java.io.InputStream} to the associated XML document.
+     * Returns an {@link InputStream} to the associated XML document.
      * <p>
      * Implementations of this interface do not close the stream; the user of the class must close the stream.
      *
      * @return an input stream positioned to the head of the XML document.
-     *
-     * @throws java.io.IOException if an error occurs while attempting to create or open the input stream.
+     * @throws IOException if an error occurs while attempting to create or open the input stream.
      */
     public abstract InputStream getInputStream() throws IOException;
 
@@ -23,11 +22,9 @@ public abstract class XMLDoc {
      * Returns an absolute path or URL to a file indicated by a path relative to the XML file's location.
      *
      * @param path the path of the requested file.
-     *
      * @return an absolute path or URL to the file, or null if the file does not exist.
-     *
      * @throws IllegalArgumentException if the specified path is null.
-     * @throws java.io.IOException if an error occurs while attempting to read the support file.
+     * @throws IOException      if an error occurs while attempting to read the support file.
      */
     public abstract String getSupportFilePath(String path) throws IOException;
 
@@ -38,11 +35,9 @@ public abstract class XMLDoc {
      * path is resolved relative to the base URI of the stream, if a base URI has been specified.
      *
      * @param path the path of the requested file.
-     *
      * @return an input stream positioned to the start of the requested file, or null if the file cannot be found.
-     *
      * @throws IllegalArgumentException if the path is null.
-     * @throws IOException if an error occurs while attempting to create or open the input stream.
+     * @throws IOException              if an error occurs while attempting to create or open the input stream.
      */
     public abstract InputStream getSupportFileStream(String path) throws IOException;
 
@@ -65,14 +60,13 @@ public abstract class XMLDoc {
      * location for a retrieved document does not persist between runtime sessions, and subsequent invocations of this
      * method may not return the same temporary location.
      *
-     * @param root Document root
-     * @param link the document address in the form address#identifier.
+     * @param root            Document root
+     * @param link            the document address in the form address#identifier.
      * @param cacheRemoteFile <code>true</code> to store remote documents in the WorldWind cache, or <code>false</code>
-     * to store remote documents in a temporary location. Has no effect if the address is a local document.
-     *
+     *                        to store remote documents in a temporary location. Has no effect if the address is a local
+     *                        document.
      * @return the requested document, the requested or element within a document, or <code>null</code> if the document
      * or the element are not found.
-     *
      * @throws IllegalArgumentException if the <code>link</code> is <code>null</code>.
      */
     public Object resolveReference(XMLRoot root, String link, boolean cacheRemoteFile) {
@@ -126,7 +120,8 @@ public abstract class XMLDoc {
             // reference string. This handles the case of malformed internal references that omit the # sign at the
             // beginning of the reference.
             return root.getItemByID(link);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             String message = Logging.getMessage("generic.UnableToResolveReference", link);
             Logging.logger().warning(message);
         }

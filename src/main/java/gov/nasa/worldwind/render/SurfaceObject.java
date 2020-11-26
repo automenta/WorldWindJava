@@ -12,24 +12,23 @@ import java.awt.*;
 
 /**
  * Common interface for renderables that are drawn on the Globe's surface terrain, such as {@link
- * gov.nasa.worldwind.render.SurfaceShape}. SurfaceObject implements the {@link gov.nasa.worldwind.render.Renderable}
+ * SurfaceShape}. SurfaceObject implements the {@link Renderable}
  * interface, so a surface object may be aggregated within any layer or within some arbitrary rendering code.
  * <p>
  * SurfaceObjects automatically aggregate themselves in the DrawContext's ordered surface renderable queue by calling
- * {@link gov.nasa.worldwind.render.DrawContext#addOrderedSurfaceRenderable(OrderedRenderable)} during the preRender,
+ * {@link DrawContext#addOrderedSurfaceRenderable(OrderedRenderable)} during the preRender,
  * pick, and render stages. This enables SurfaceObjects to be processed in bulk, and reduces texture memory consumption
  * by sharing rendering resources amongst multiple SurfaceObjects.
  * <p>
  * Implementations of SurfaceObject require that {@link #preRender(DrawContext)} is called before {@link
- * #render(DrawContext)} and {@link #pick(DrawContext, java.awt.Point)}, and that preRender is called at the appropriate
+ * #render(DrawContext)} and {@link #pick(DrawContext, Point)}, and that preRender is called at the appropriate
  * stage in the current rendering cycle. Calling preRender locks in the SurfaceObject's visual appearance for any
  * subsequent calls to pick or render until the next call preRender.
  *
  * @author dcollins
  * @version $Id: SurfaceObject.java 2283 2014-08-30 15:58:43Z dcollins $
  */
-public interface SurfaceObject extends OrderedRenderable, SurfaceRenderable, PreRenderable, AVList
-{
+public interface SurfaceObject extends OrderedRenderable, SurfaceRenderable, PreRenderable, AVList {
     /**
      * Indicates whether the surface object should be drawn during rendering.
      *
@@ -48,7 +47,6 @@ public interface SurfaceObject extends OrderedRenderable, SurfaceRenderable, Pre
      * Indicates whether batch picking is enabled.
      *
      * @return <code>true</code> to enable batch picking; <code>false</code> otherwise.
-     *
      * @see #setEnableBatchPicking(boolean)
      */
     boolean isEnableBatchPicking();
@@ -77,7 +75,7 @@ public interface SurfaceObject extends OrderedRenderable, SurfaceRenderable, Pre
      * during picking.
      *
      * @return the object used as the pickable object returned during picking, or null to indicate the the surface
-     *         object is returned during picking.
+     * object is returned during picking.
      */
     Object getDelegateOwner();
 
@@ -92,13 +90,11 @@ public interface SurfaceObject extends OrderedRenderable, SurfaceRenderable, Pre
     void setDelegateOwner(Object owner);
 
     /**
-     * Returns the surface object's enclosing volume as an {@link gov.nasa.worldwind.geom.Extent} in model coordinates,
-     * given a specified {@link gov.nasa.worldwind.render.DrawContext}.
+     * Returns the surface object's enclosing volume as an {@link Extent} in model coordinates,
+     * given a specified {@link DrawContext}.
      *
      * @param dc the current draw context.
-     *
      * @return the surface object's Extent in model coordinates.
-     *
      * @throws IllegalArgumentException if the draw context is null.
      */
     Extent getExtent(DrawContext dc);
@@ -117,7 +113,6 @@ public interface SurfaceObject extends OrderedRenderable, SurfaceRenderable, Pre
      *
      * @param dc        the current draw context.
      * @param pickPoint the pick point.
-     *
      * @throws IllegalArgumentException if the draw context is null.
      */
     void pick(DrawContext dc, Point pickPoint);

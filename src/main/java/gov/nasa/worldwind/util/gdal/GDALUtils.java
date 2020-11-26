@@ -19,6 +19,7 @@ import org.gdal.osr.*;
 
 import java.awt.*;
 import java.awt.color.*;
+import java.awt.geom.Point2D;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.*;
@@ -36,32 +37,21 @@ public class GDALUtils {
 
     public static final long ALPHA_MASK = 0xFFFFFFFFL;
 
-    protected static final byte ALPHA_TRANSPARENT = (byte) 0x00;
-    protected static byte ALPHA_OPAQUE = (byte) 0xFF;
-
+    protected static final byte ALPHA_TRANSPARENT = 0x00;
     protected static final String JAVA_LIBRARY_PATH = "java.library.path";
     protected static final String GDAL_DRIVER_PATH = "GDAL_DRIVER_PATH";
     protected static final String OGR_DRIVER_PATH = "OGR_DRIVER_PATH";
     protected static final String GDAL_DATA_PATH = "GDAL_DATA";
-
     protected static final AtomicBoolean gdalIsAvailable = new AtomicBoolean(false);
-
     // This is an OLD default libname request by WW build of GDAL
     protected static final String gdalalljni = Configuration.isMacOS()
-            ? "gdalalljni" : (is32bitArchitecture() ? "gdalalljni32" : "gdalalljni64");
-
-    protected static final CopyOnWriteArraySet<String> loadedLibraries = new CopyOnWriteArraySet<>();
+        ? "gdalalljni" : (is32bitArchitecture() ? "gdalalljni32" : "gdalalljni64");
+    protected static final Set<String> loadedLibraries = new CopyOnWriteArraySet<>();
     protected static final CopyOnWriteArraySet<String> failedLibraries = new CopyOnWriteArraySet<>();
+    protected static byte ALPHA_OPAQUE = (byte) 0xFF;
+    private static Class newClassLoader = null;
 
-    static {
-        // Allow the app or user to prevent library loader replacement.
-        if (System.getProperty("gov.nasa.worldwind.prevent.gdal.loader.replacement") == null) {
-            replaceLibraryLoader(); // This must be the first line of initialization
-        }
-        initialize();
-    }
-
-//    private static class GDALLibraryLoader implements gdal.LibraryLoader {
+    //    private static class GDALLibraryLoader implements gdal.LibraryLoader {
 //
 //        @Override
 //        public void load(String libName) throws UnsatisfiedLinkError {
@@ -101,6 +91,17 @@ public class GDALUtils {
 //            throw new UnsatisfiedLinkError(message);
 //        }
 //    }
+    private static Object originalClassLoader = null;
+    private static Field fieldSysPaths = null;
+    private static boolean fieldSysPaths_accessible = false;
+
+    static {
+        // Allow the app or user to prevent library loader replacement.
+        if (System.getProperty("gov.nasa.worldwind.prevent.gdal.loader.replacement") == null) {
+            replaceLibraryLoader(); // This must be the first line of initialization
+        }
+        initialize();
+    }
 
     protected static void replaceLibraryLoader() {
         try {
@@ -145,7 +146,8 @@ public class GDALUtils {
             Logging.logger().info(Logging.getMessage("generic.LibraryLoadedOK", gdalalljni));
 
             return true;
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             if (allowLogErrors) {
                 Logging.logger().finest(WWUtil.extractExceptionReason(t));
             }
@@ -170,7 +172,8 @@ public class GDALUtils {
                     try {
                         alterJavaLibraryPath(newJavaLibraryPath);
 //                    gdalNativeLibraryLoaded = gdalLoadNativeLibrary(true);
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         String message = Logging.getMessage("gdal.UnableToAlterLibraryPath");
                         Logging.logger().log(Level.WARNING, message, e);
                     }
@@ -204,12 +207,14 @@ public class GDALUtils {
                 listAllRegisteredDrivers();
 
                 gdalIsAvailable.set(true);
-            } else {
+            }
+            else {
                 String reason = Logging.getMessage("generic.LibraryNotFound", "GDAL");
                 String msg = Logging.getMessage("generic.LibraryNotLoaded", "GDAL", reason);
                 Logging.logger().warning(msg);
             }
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             Logging.logger().log(Level.FINEST, t.getMessage(), t);
         }
     }
@@ -217,7 +222,7 @@ public class GDALUtils {
     protected static String getCurrentDirectory() {
         String cwd = System.getProperty("user.dir");
 
-        if (null == cwd || cwd.length() == 0) {
+        if (null == cwd || cwd.isEmpty()) {
             String message = Logging.getMessage("generic.UsersHomeDirectoryNotKnown");
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -235,7 +240,8 @@ public class GDALUtils {
             GDALLibraryFinder filter = new GDALLibraryFinder(/*gdalalljni*/);
             fileTree.asList(filter);
             return filter.getFolders();
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             Logging.logger().severe(t.getMessage());
         }
         return null;
@@ -259,7 +265,8 @@ public class GDALUtils {
                 }
                 return folders[0];
             }
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             Logging.logger().severe(t.getMessage());
         }
 
@@ -294,7 +301,7 @@ public class GDALUtils {
         for (int i = 0; i < gdal.GetDriverCount(); i++) {
             Driver drv = gdal.GetDriver(i);
             String msg = Logging.getMessage("gdal.DriverDetails", drv.getShortName(), drv.getLongName(),
-                    drv.GetDescription());
+                drv.GetDescription());
             sb.append(msg).append("\n");
         }
         Logging.logger().finest(sb.toString());
@@ -311,7 +318,8 @@ public class GDALUtils {
                     return Logging.getMessage("gdal.InternalError", errno, gdal.GetLastErrorMsg());
                 }
             }
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             return t.getMessage();
         }
         return null;
@@ -320,18 +328,16 @@ public class GDALUtils {
     /**
      * Opens image or elevation file, returns a DataSet object
      *
-     * @param source the location of the local file, expressed as either a String path, a File, or a file URL.
+     * @param source       the location of the local file, expressed as either a String path, a File, or a file URL.
      * @param isSilentMode specifies a silent mode of reading file (usually needed for canRead() and readMetadata())
-     *
      * @return returns a Dataset object
-     *
-     * @throws FileNotFoundException if file not found
+     * @throws FileNotFoundException    if file not found
      * @throws IllegalArgumentException if file is null
-     * @throws SecurityException if file could not be read
-     * @throws WWRuntimeException if GDAL library was not initialized
+     * @throws SecurityException        if file could not be read
+     * @throws WWRuntimeException       if GDAL library was not initialized
      */
     public static Dataset open(Object source, boolean isSilentMode)
-            throws FileNotFoundException, IllegalArgumentException, SecurityException, WWRuntimeException {
+        throws FileNotFoundException, IllegalArgumentException, SecurityException, WWRuntimeException {
         if (!gdalIsAvailable.get()) {
             if (isSilentMode) {
                 return null;
@@ -378,7 +384,8 @@ public class GDALUtils {
             gdal.PushErrorHandler("CPLQuietErrorHandler");
 
             ds = gdal.Open(file.getAbsolutePath(), gdalconst.GA_ReadOnly);
-        } finally {
+        }
+        finally {
             gdal.PopErrorHandler();
         }
 
@@ -399,16 +406,14 @@ public class GDALUtils {
      * Opens image or elevation file, returns a DataSet object
      *
      * @param source the location of the local file, expressed as either a String path, a File, or a file URL.
-     *
      * @return returns a Dataset object
-     *
-     * @throws FileNotFoundException if file not found
+     * @throws FileNotFoundException    if file not found
      * @throws IllegalArgumentException if file is null
-     * @throws SecurityException if file could not be read
-     * @throws WWRuntimeException if GDAL library was not initialized
+     * @throws SecurityException        if file could not be read
+     * @throws WWRuntimeException       if GDAL library was not initialized
      */
     public static Dataset open(Object source)
-            throws FileNotFoundException, IllegalArgumentException, SecurityException, WWRuntimeException {
+        throws FileNotFoundException, IllegalArgumentException, SecurityException, WWRuntimeException {
         return open(source, false);
     }
 
@@ -416,7 +421,6 @@ public class GDALUtils {
      * Checks if a data raster can is readable
      *
      * @param source the location of the local file, expressed as either a String path, a File, or a file URL.
-     *
      * @return true, if source is readable
      */
     public static boolean canOpen(Object source) {
@@ -439,9 +443,11 @@ public class GDALUtils {
                 ds = gdal.Open(file.getAbsolutePath(), gdalconst.GA_ReadOnly);
                 canOpen = !(ds == null);
             }
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             // this is a quiet mode, no need to log
-        } finally {
+        }
+        finally {
             if (null != ds) {
                 ds.delete();
             }
@@ -454,17 +460,15 @@ public class GDALUtils {
     /**
      * Opens image or elevation file, returns as a BufferedImage (even for elevations)
      *
-     * @param ds GDAL's Dataset object
+     * @param ds     GDAL's Dataset object
      * @param params AVList of parameters
-     *
      * @return DataRaster returns as a BufferedImage (even for elevations)
-     *
      * @throws IllegalArgumentException if file is null
-     * @throws SecurityException if file could not be read
-     * @throws WWRuntimeException if GDAL library was not initialized
+     * @throws SecurityException        if file could not be read
+     * @throws WWRuntimeException       if GDAL library was not initialized
      */
     protected static DataRaster composeImageDataRaster(Dataset ds, AVList params)
-            throws IllegalArgumentException, SecurityException, WWRuntimeException {
+        throws IllegalArgumentException, SecurityException, WWRuntimeException {
         if (!gdalIsAvailable.get()) {
             String message = Logging.getMessage("gdal.GDALNotAvailable");
             Logging.logger().severe(message);
@@ -516,20 +520,22 @@ public class GDALUtils {
 
             if (params.hasKey(AVKey.RASTER_BAND_MAX_PIXEL_VALUE)) {
                 maxValue = (Double) params.getValue(AVKey.RASTER_BAND_MAX_PIXEL_VALUE);
-            } else if ((bandDataType == gdalconstConstants.GDT_UInt16 || bandDataType == gdalconstConstants.GDT_UInt32)
-                    && colorInt != gdalconst.GCI_AlphaBand && colorInt != gdalconst.GCI_Undefined) {
+            }
+            else if ((bandDataType == gdalconstConstants.GDT_UInt16 || bandDataType == gdalconstConstants.GDT_UInt32)
+                && colorInt != gdalconst.GCI_AlphaBand && colorInt != gdalconst.GCI_Undefined) {
                 imageBand.GetMaximum(dbls);
                 if (dbls[0] == null) {
                     double[] minmax = new double[2];
                     imageBand.ComputeRasterMinMax(minmax);
                     maxValue = Math.max(minmax[1], maxValue);
-                } else {
+                }
+                else {
                     maxValue = (dbls[0] > maxValue) ? dbls[0] : maxValue;
                 }
             }
 
             int returnVal = imageBand.ReadRaster_Direct(0, 0, imageBand.getXSize(),
-                    imageBand.getYSize(), width, height, bandDataType, data);
+                imageBand.getYSize(), width, height, bandDataType, data);
 
             if (returnVal != gdalconstConstants.CE_None) {
                 throw new WWRuntimeException(GDALUtils.getErrorMessage());
@@ -539,9 +545,11 @@ public class GDALUtils {
 
             if (colorInt == gdalconst.GCI_RedBand) {
                 destBandIdx = 0;
-            } else if (colorInt == gdalconst.GCI_GreenBand) {
+            }
+            else if (colorInt == gdalconst.GCI_GreenBand) {
                 destBandIdx = 1;
-            } else if (colorInt == gdalconst.GCI_BlueBand) {
+            }
+            else if (colorInt == gdalconst.GCI_BlueBand) {
                 destBandIdx = 2;
             }
 
@@ -554,8 +562,9 @@ public class GDALUtils {
 
         if (params.hasKey(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL)) {
             actualBitsPerColor = (Integer) params.getValue(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL);
-        } else if (maxValue > 0d) {
-            actualBitsPerColor = (int) Math.ceil(Math.log(maxValue) / Math.log(2d));
+        }
+        else if (maxValue > 0.0d) {
+            actualBitsPerColor = (int) Math.ceil(Math.log(maxValue) / Math.log(2.0d));
         }
 
         int[] reqBandOrder;
@@ -563,7 +572,8 @@ public class GDALUtils {
             reqBandOrder = extractBandOrder(ds, params);
             if (null == reqBandOrder || 0 == reqBandOrder.length) {
                 reqBandOrder = bandsOrder;
-            } else {
+            }
+            else {
                 offsets = new int[reqBandOrder.length];
                 bandsOrder = new int[reqBandOrder.length];
                 for (int i = 0; i < reqBandOrder.length; i++) {
@@ -571,7 +581,8 @@ public class GDALUtils {
                     offsets[i] = 0;
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             reqBandOrder = bandsOrder;
             Logging.logger().severe(e.getMessage());
         }
@@ -612,7 +623,8 @@ public class GDALUtils {
             imgBuffer = new DataBufferByte(int8, imgSize);
 
             bufferType = DataBuffer.TYPE_BYTE;
-        } else if (bandDataType == gdalconstConstants.GDT_Int16) {
+        }
+        else if (bandDataType == gdalconstConstants.GDT_Int16) {
             short[][] int16 = new short[reqBandCount][];
             for (int i = 0; i < reqBandCount; i++) {
                 int srcBandIndex = reqBandOrder[i];
@@ -626,7 +638,8 @@ public class GDALUtils {
 
             imgBuffer = new DataBufferShort(int16, imgSize);
             bufferType = DataBuffer.TYPE_SHORT;
-        } else if (bandDataType == gdalconstConstants.GDT_Int32 || bandDataType == gdalconstConstants.GDT_UInt32) {
+        }
+        else if (bandDataType == gdalconstConstants.GDT_Int32 || bandDataType == gdalconstConstants.GDT_UInt32) {
             int[][] uint32 = new int[reqBandCount][];
             for (int i = 0; i < reqBandCount; i++) {
                 int srcBandIndex = reqBandOrder[i];
@@ -639,7 +652,8 @@ public class GDALUtils {
 
             imgBuffer = new DataBufferInt(uint32, imgSize);
             bufferType = DataBuffer.TYPE_INT;
-        } else if (bandDataType == gdalconstConstants.GDT_UInt16) {
+        }
+        else if (bandDataType == gdalconstConstants.GDT_UInt16) {
 
             short[][] uint16 = new short[reqBandCount][];
             for (int i = 0; i < reqBandCount; i++) {
@@ -653,7 +667,8 @@ public class GDALUtils {
 
             imgBuffer = new DataBufferUShort(uint16, imgSize);
             bufferType = DataBuffer.TYPE_USHORT;
-        } else {
+        }
+        else {
             String message = Logging.getMessage("generic.UnrecognizedDataType", bandDataType);
             Logging.logger().severe(message);
         }
@@ -667,7 +682,8 @@ public class GDALUtils {
         if (band1.GetRasterColorInterpretation() == gdalconstConstants.GCI_PaletteIndex) {
             cm = band1.GetRasterColorTable().getIndexColorModel(gdal.GetDataTypeSize(bandDataType));
             img = new BufferedImage(cm, raster, false, null);
-        } else if (band1.GetRasterColorInterpretation() == gdalconstConstants.GCI_GrayIndex && reqBandCount == 2) {
+        }
+        else if (band1.GetRasterColorInterpretation() == gdalconstConstants.GCI_GrayIndex && reqBandCount == 2) {
             int transparency = Transparency.BITMASK;
             int baseColorSpace = ColorSpace.CS_GRAY;
             ColorSpace cs = ColorSpace.getInstance(baseColorSpace);
@@ -697,7 +713,8 @@ public class GDALUtils {
                 dstRaster.setSamples(0, y, w, 1, 2, gray);
                 dstRaster.setSamples(0, y, w, 1, 3, alpha);
             }
-        } else {
+        }
+        else {
             // Determine the color space.
             int transparency = hasAlpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE;
             int baseColorSpace = (reqBandCount > 2) ? ColorSpace.CS_sRGB : ColorSpace.CS_GRAY;
@@ -727,7 +744,6 @@ public class GDALUtils {
      * <code>http://en.wikipedia.org/wiki/Flood_fill#Scanline_fill</code>
      *
      * @param sourceImage a source image raster
-     *
      * @return BufferedImage with voids (if detected) filled with a transparent pixel values
      */
     protected static BufferedImage detectVoidsAndMakeThemTransparent(BufferedImage sourceImage) {
@@ -754,7 +770,8 @@ public class GDALUtils {
             // second run
             dest = verticalFlip(dest);
             scanFill(dest);
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             Logging.logger().log(java.util.logging.Level.SEVERE, t.getMessage(), t);
             dest = sourceImage;
         }
@@ -817,7 +834,8 @@ public class GDALUtils {
             if (h + 1 < height) {
                 sourceImage.getRGB(0, h + 1, width, 1, scanline2, 1, width);
                 scanline2[0] = scanline2[width + 1] = NODATA_TRANSPARENT;
-            } else {
+            }
+            else {
                 Arrays.fill(scanline2, NODATA_TRANSPARENT);
             }
 
@@ -826,10 +844,10 @@ public class GDALUtils {
 
                 for (int v = 0; v < numVoids; v++) {
                     if (pixel == nodata[v]
-                            && (scanline0[i - 1] == NODATA_TRANSPARENT || scanline0[i] == NODATA_TRANSPARENT
-                            || scanline0[i + 1] == NODATA_TRANSPARENT || scanline1[i - 1] == NODATA_TRANSPARENT
-                            || scanline1[i + 1] == NODATA_TRANSPARENT || scanline2[i - 1] == NODATA_TRANSPARENT
-                            || scanline2[i] == NODATA_TRANSPARENT || scanline2[i + 1] == NODATA_TRANSPARENT)) {
+                        && (scanline0[i - 1] == NODATA_TRANSPARENT || scanline0[i] == NODATA_TRANSPARENT
+                        || scanline0[i + 1] == NODATA_TRANSPARENT || scanline1[i - 1] == NODATA_TRANSPARENT
+                        || scanline1[i + 1] == NODATA_TRANSPARENT || scanline2[i - 1] == NODATA_TRANSPARENT
+                        || scanline2[i] == NODATA_TRANSPARENT || scanline2[i + 1] == NODATA_TRANSPARENT)) {
                         scanline1[i] = NODATA_TRANSPARENT;
                         break;
                     }
@@ -844,7 +862,6 @@ public class GDALUtils {
      * Flips image raster vertically
      *
      * @param img A source raster as a BufferedImage
-     *
      * @return A vertically flipped image raster as a BufferedImage
      */
     protected static BufferedImage verticalFlip(BufferedImage img) {
@@ -858,8 +875,8 @@ public class GDALUtils {
 //        BufferedImage flipImg = new BufferedImage(w, h, img.getColorModel().getTransparency() );
         BufferedImage flipImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = flipImg.createGraphics();
-        java.awt.Composite prevComposite = g2d.getComposite();
-        g2d.setComposite(java.awt.AlphaComposite.Src);
+        Composite prevComposite = g2d.getComposite();
+        g2d.setComposite(AlphaComposite.Src);
         g2d.drawImage(img, 0, 0, w, h, 0, h, w, 0, null);
         g2d.setComposite(prevComposite);
         g2d.dispose();
@@ -944,7 +961,7 @@ public class GDALUtils {
                 maskData.order(ByteOrder.nativeOrder());
 
                 int returnVal = maskBand.ReadRaster_Direct(0, 0, maskBand.getXSize(),
-                        maskBand.getYSize(), width, height, maskBandDataType, maskData);
+                    maskBand.getYSize(), width, height, maskBandDataType, maskData);
 
                 if (returnVal != gdalconstConstants.CE_None) {
                     throw new WWRuntimeException(GDALUtils.getErrorMessage());
@@ -952,7 +969,8 @@ public class GDALUtils {
 
                 return maskData.asIntBuffer();
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Logging.logger().log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -963,11 +981,9 @@ public class GDALUtils {
      * Calculates geo-transform matrix for a north-up raster
      *
      * @param sector Geographic area, a Sector
-     * @param width none-zero width of a raster
+     * @param width  none-zero width of a raster
      * @param height none-zero height of a raster
-     *
      * @return an array of 6 doubles that contain a geo-transform matrix
-     *
      * @throws IllegalArgumentException if sector is null, or raster size is zero
      */
     public static double[] calcGetGeoTransform(Sector sector, int width, int height) throws IllegalArgumentException {
@@ -995,12 +1011,12 @@ public class GDALUtils {
 //        * geotransform[3] + 0.5 * geotransform[4] + 0.5 * geotransform[5] : y offset to center of top left pixel.
         double[] gx = new double[6];
 
-        gx[GDAL.GT_0_ORIGIN_LON] = sector.getMinLongitude().degrees;
-        gx[GDAL.GT_1_PIXEL_WIDTH] = Math.abs(sector.getDeltaLonDegrees() / (double) width);
-        gx[GDAL.GT_2_ROTATION_X] = 0d;
-        gx[GDAL.GT_3_ORIGIN_LAT] = sector.getMaxLatitude().degrees;
-        gx[GDAL.GT_4_ROTATION_Y] = 0d;
-        gx[GDAL.GT_5_PIXEL_HEIGHT] = -Math.abs(sector.getDeltaLatDegrees() / (double) height);
+        gx[GDAL.GT_0_ORIGIN_LON] = sector.lonMin().degrees;
+        gx[GDAL.GT_1_PIXEL_WIDTH] = Math.abs(sector.getDeltaLonDegrees() / width);
+        gx[GDAL.GT_2_ROTATION_X] = 0.0d;
+        gx[GDAL.GT_3_ORIGIN_LAT] = sector.latMax().degrees;
+        gx[GDAL.GT_4_ROTATION_Y] = 0.0d;
+        gx[GDAL.GT_5_PIXEL_HEIGHT] = -Math.abs(sector.getDeltaLatDegrees() / height);
 
 //      correct for center of pixel vs. top left of pixel
 //      GeoTransform[0] -= 0.5 * GeoTransform[1];
@@ -1029,7 +1045,7 @@ public class GDALUtils {
             throw new WWRuntimeException(message);
         }
 
-        java.awt.geom.Point2D geoPoint = GDAL.getGeoPointForRasterPoint(gt, x, y);
+        Point2D geoPoint = GDAL.getGeoPointForRasterPoint(gt, x, y);
         if (null == geoPoint) {
             return null;
         }
@@ -1045,83 +1061,107 @@ public class GDALUtils {
     /**
      * Extracts raster parameters to an AVList
      *
-     * @param ds A GDAL dataset
-     * @param params AVList to hold retrieved metadata, if null, a new instance will be created and returned as a return
-     * value
+     * @param ds               A GDAL dataset
+     * @param params           AVList to hold retrieved metadata, if null, a new instance will be created and returned
+     *                         as a return value
      * @param quickReadingMode if quick reading mode is enabled GDAL will not spend much time on heavy calculations,
-     * like for example calculating Min/Max for entire elevation raster
-     *
+     *                         like for example calculating Min/Max for entire elevation raster
      * @return AVList with retrieved metadata
-     *
-     * @throws IllegalArgumentException when the passed dataset is null pr emtpy, or any of the dimension is 0
-     * @throws gov.nasa.worldwind.exception.WWRuntimeException if GDAL is not available, or a dataset contains no bands
-     * <p>
-     * The extractRasterParameters() sets next key/value pairs:
-     * <p>
-     * AVKey.WIDTH - the maximum width of the image
-     * <p>
-     * AVKey.HEIGHT - the maximum height of the image
-     * <p>
-     * AVKey.COORDINATE_SYSTEM - one of the next values: AVKey.COORDINATE_SYSTEM_SCREEN
-     * AVKey.COORDINATE_SYSTEM_GEOGRAPHIC AVKey.COORDINATE_SYSTEM_PROJECTED
-     * <p>
-     * AVKey.SECTOR - in case of Geographic CS, contains a regular Geographic Sector defined by lat/lon coordinates of
-     * corners in case of Projected CS, contains a bounding box of the area
-     * <p>
-     * AVKey.COORDINATE_SYSTEM_NAME
-     * <p>
-     * AVKey.PIXEL_WIDTH (Double) pixel size, UTM images usually specify 1 (1 meter); if missing and Geographic
-     * Coordinate System is specified will be calculated as LongitudeDelta/WIDTH
-     * <p>
-     * AVKey.PIXEL_HEIGHT (Double) pixel size, UTM images usually specify 1 (1 meter); if missing and Geographic
-     * Coordinate System is specified will be calculated as LatitudeDelta/HEIGHT
-     * <p>
-     * AVKey.ORIGIN (LatLon) specifies coordinate of the image's origin (one of the corners, or center) If missing,
-     * upper left corner will be set as origin
-     * <p>
-     * AVKey.DATE_TIME (0 terminated String, length == 20) if missing, current date and time will be used
-     * <p>
-     * AVKey.PIXEL_FORMAT required (valid values: AVKey.ELEVATION | AVKey.IMAGE } specifies weather it is a digital
-     * elevation model or image
-     * <p>
-     * AVKey.IMAGE_COLOR_FORMAT required if AVKey.PIXEL_FORMAT is AVKey.IMAGE (valid values: AVKey.COLOR and
-     * AVKey.MONOCHROME)
-     * <p>
-     * AVKey.DATA_TYPE required ( valid values: AVKey.INT16, and AVKey.FLOAT32 )
-     * <p>
-     * AVKey.VERSION optional, if missing a default will be used "NASA WorldWind"
-     * <p>
-     * AVKey.DISPLAY_NAME, (String) optional, specifies a name of the document/image
-     * <p>
-     * AVKey.DESCRIPTION (String) optional, for any kind of descriptions
-     * <p>
-     * AVKey.MISSING_DATA_SIGNAL optional, set the AVKey.MISSING_DATA_SIGNAL ONLY if you know for sure that the
-     * specified value actually represents void (NODATA) areas. Elevation data usually has "-32767" (like DTED), or
-     * "-32768" like SRTM, but some has "0" (mostly images) and "-9999" like NED. Note! Setting "-9999" is very ambiguos
-     * because -9999 for elevation is valid value;
-     * <p>
-     * AVKey.MISSING_DATA_REPLACEMENT (String type forced by spec) Most images have "NODATA" as "0", elevations have as
-     * "-9999", or "-32768" (sometimes "-32767")
-     * <p>
-     * AVKey.COORDINATE_SYSTEM required, valid values AVKey.COORDINATE_SYSTEM_GEOGRAPHIC or
-     * AVKey.COORDINATE_SYSTEM_PROJECTED
-     * <p>
-     * AVKey.COORDINATE_SYSTEM_NAME Optional, A name of the Coordinates System as a String
-     * <p>
-     * AVKey.PROJECTION_EPSG_CODE Required; Integer; EPSG code or Projection Code If CS is Geodetic and EPSG code is not
-     * specified, a default WGS84 (4326) will be used
-     * <p>
-     * AVKey.PROJECTION_DATUM Optional, AVKey.PROJECTION_DESC Optional, AVKey.PROJECTION_NAME Optional,
-     * AVKey.PROJECTION_UNITS Optional,
-     * <p>
-     * AVKey.ELEVATION_UNIT Required, if AVKey.PIXEL_FORMAT = AVKey.ELEVATION, value: AVKey.UNIT_FOOT or
-     * AVKey.UNIT_METER (default, if not specified)
-     * <p>
-     * AVKey.RASTER_PIXEL, optional, values: AVKey.RASTER_PIXEL_IS_AREA or AVKey.RASTER_PIXEL_IS_POINT if not specified,
-     * default for images is RASTER_PIXEL_IS_AREA, and AVKey.RASTER_PIXEL_IS_POINT for elevations
+     * @throws IllegalArgumentException                        when the passed dataset is null pr emtpy, or any of the
+     *                                                         dimension is 0
+     * @throws WWRuntimeException if GDAL is not available, or a dataset contains no bands
+     *                                                         <p>
+     *                                                         The extractRasterParameters() sets next key/value pairs:
+     *                                                         <p>
+     *                                                         AVKey.WIDTH - the maximum width of the image
+     *                                                         <p>
+     *                                                         AVKey.HEIGHT - the maximum height of the image
+     *                                                         <p>
+     *                                                         AVKey.COORDINATE_SYSTEM - one of the next values:
+     *                                                         AVKey.COORDINATE_SYSTEM_SCREEN AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
+     *                                                         AVKey.COORDINATE_SYSTEM_PROJECTED
+     *                                                         <p>
+     *                                                         AVKey.SECTOR - in case of Geographic CS, contains a
+     *                                                         regular Geographic Sector defined by lat/lon coordinates
+     *                                                         of corners in case of Projected CS, contains a bounding
+     *                                                         box of the area
+     *                                                         <p>
+     *                                                         AVKey.COORDINATE_SYSTEM_NAME
+     *                                                         <p>
+     *                                                         AVKey.PIXEL_WIDTH (Double) pixel size, UTM images usually
+     *                                                         specify 1 (1 meter); if missing and Geographic Coordinate
+     *                                                         System is specified will be calculated as
+     *                                                         LongitudeDelta/WIDTH
+     *                                                         <p>
+     *                                                         AVKey.PIXEL_HEIGHT (Double) pixel size, UTM images
+     *                                                         usually specify 1 (1 meter); if missing and Geographic
+     *                                                         Coordinate System is specified will be calculated as
+     *                                                         LatitudeDelta/HEIGHT
+     *                                                         <p>
+     *                                                         AVKey.ORIGIN (LatLon) specifies coordinate of the image's
+     *                                                         origin (one of the corners, or center) If missing, upper
+     *                                                         left corner will be set as origin
+     *                                                         <p>
+     *                                                         AVKey.DATE_TIME (0 terminated String, length == 20) if
+     *                                                         missing, current date and time will be used
+     *                                                         <p>
+     *                                                         AVKey.PIXEL_FORMAT required (valid values:
+     *                                                         AVKey.ELEVATION | AVKey.IMAGE } specifies weather it is a
+     *                                                         digital elevation model or image
+     *                                                         <p>
+     *                                                         AVKey.IMAGE_COLOR_FORMAT required if AVKey.PIXEL_FORMAT
+     *                                                         is AVKey.IMAGE (valid values: AVKey.COLOR and
+     *                                                         AVKey.MONOCHROME)
+     *                                                         <p>
+     *                                                         AVKey.DATA_TYPE required ( valid values: AVKey.INT16, and
+     *                                                         AVKey.FLOAT32 )
+     *                                                         <p>
+     *                                                         AVKey.VERSION optional, if missing a default will be used
+     *                                                         "NASA WorldWind"
+     *                                                         <p>
+     *                                                         AVKey.DISPLAY_NAME, (String) optional, specifies a name
+     *                                                         of the document/image
+     *                                                         <p>
+     *                                                         AVKey.DESCRIPTION (String) optional, for any kind of
+     *                                                         descriptions
+     *                                                         <p>
+     *                                                         AVKey.MISSING_DATA_SIGNAL optional, set the
+     *                                                         AVKey.MISSING_DATA_SIGNAL ONLY if you know for sure that
+     *                                                         the specified value actually represents void (NODATA)
+     *                                                         areas. Elevation data usually has "-32767" (like DTED),
+     *                                                         or "-32768" like SRTM, but some has "0" (mostly images)
+     *                                                         and "-9999" like NED. Note! Setting "-9999" is very
+     *                                                         ambiguos because -9999 for elevation is valid value;
+     *                                                         <p>
+     *                                                         AVKey.MISSING_DATA_REPLACEMENT (String type forced by
+     *                                                         spec) Most images have "NODATA" as "0", elevations have
+     *                                                         as "-9999", or "-32768" (sometimes "-32767")
+     *                                                         <p>
+     *                                                         AVKey.COORDINATE_SYSTEM required, valid values
+     *                                                         AVKey.COORDINATE_SYSTEM_GEOGRAPHIC or AVKey.COORDINATE_SYSTEM_PROJECTED
+     *                                                         <p>
+     *                                                         AVKey.COORDINATE_SYSTEM_NAME Optional, A name of the
+     *                                                         Coordinates System as a String
+     *                                                         <p>
+     *                                                         AVKey.PROJECTION_EPSG_CODE Required; Integer; EPSG code
+     *                                                         or Projection Code If CS is Geodetic and EPSG code is not
+     *                                                         specified, a default WGS84 (4326) will be used
+     *                                                         <p>
+     *                                                         AVKey.PROJECTION_DATUM Optional, AVKey.PROJECTION_DESC
+     *                                                         Optional, AVKey.PROJECTION_NAME Optional,
+     *                                                         AVKey.PROJECTION_UNITS Optional,
+     *                                                         <p>
+     *                                                         AVKey.ELEVATION_UNIT Required, if AVKey.PIXEL_FORMAT =
+     *                                                         AVKey.ELEVATION, value: AVKey.UNIT_FOOT or
+     *                                                         AVKey.UNIT_METER (default, if not specified)
+     *                                                         <p>
+     *                                                         AVKey.RASTER_PIXEL, optional, values: AVKey.RASTER_PIXEL_IS_AREA
+     *                                                         or AVKey.RASTER_PIXEL_IS_POINT if not specified, default
+     *                                                         for images is RASTER_PIXEL_IS_AREA, and
+     *                                                         AVKey.RASTER_PIXEL_IS_POINT for elevations
      */
     public static AVList extractRasterParameters(Dataset ds, AVList params, boolean quickReadingMode)
-            throws IllegalArgumentException, WWRuntimeException {
+        throws IllegalArgumentException, WWRuntimeException {
         if (null == params) {
             params = new AVListImpl();
         }
@@ -1173,33 +1213,40 @@ public class GDALUtils {
             if (dataType == gdalconst.GDT_Int16 || dataType == gdalconst.GDT_CInt16) {
                 params.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
                 params.setValue(AVKey.DATA_TYPE, AVKey.INT16);
-            } else if (dataType == gdalconst.GDT_Int32 || dataType == gdalconst.GDT_CInt32) {
+            }
+            else if (dataType == gdalconst.GDT_Int32 || dataType == gdalconst.GDT_CInt32) {
                 params.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
                 params.setValue(AVKey.DATA_TYPE, AVKey.INT32);
-            } else if (dataType == gdalconst.GDT_Float32 || dataType == gdalconst.GDT_CFloat32) {
+            }
+            else if (dataType == gdalconst.GDT_Float32 || dataType == gdalconst.GDT_CFloat32) {
                 params.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
                 params.setValue(AVKey.DATA_TYPE, AVKey.FLOAT32);
-            } else if (dataType == gdalconst.GDT_Byte) {
+            }
+            else if (dataType == gdalconst.GDT_Byte) {
                 int colorInt = band.GetColorInterpretation();
                 if (colorInt == gdalconst.GCI_GrayIndex && bandCount < 3) {
                     params.setValue(AVKey.IMAGE_COLOR_FORMAT, AVKey.GRAYSCALE);
-                } else {
+                }
+                else {
                     // if has only one band => one byte index of the palette, 216 marks voids
                     params.setValue(AVKey.IMAGE_COLOR_FORMAT, AVKey.COLOR);
                 }
                 params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
                 params.setValue(AVKey.DATA_TYPE, AVKey.INT8);
-            } else if (dataType == gdalconst.GDT_UInt16) {
+            }
+            else if (dataType == gdalconst.GDT_UInt16) {
                 params.setValue(AVKey.IMAGE_COLOR_FORMAT,
-                        ((bandCount >= 3) ? AVKey.COLOR : AVKey.GRAYSCALE));
+                    ((bandCount >= 3) ? AVKey.COLOR : AVKey.GRAYSCALE));
                 params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
                 params.setValue(AVKey.DATA_TYPE, AVKey.INT16);
-            } else if (dataType == gdalconst.GDT_UInt32) {
+            }
+            else if (dataType == gdalconst.GDT_UInt32) {
                 params.setValue(AVKey.IMAGE_COLOR_FORMAT,
-                        ((bandCount >= 3) ? AVKey.COLOR : AVKey.GRAYSCALE));
+                    ((bandCount >= 3) ? AVKey.COLOR : AVKey.GRAYSCALE));
                 params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
                 params.setValue(AVKey.DATA_TYPE, AVKey.INT32);
-            } else {
+            }
+            else {
                 String msg = Logging.getMessage("generic.UnrecognizedDataType", dataType);
                 Logging.logger().severe(msg);
                 throw new WWRuntimeException(msg);
@@ -1214,9 +1261,9 @@ public class GDALUtils {
             }
 
             if ("GTiff".equalsIgnoreCase(ds.GetDriver().getShortName())
-                    && params.hasKey(AVKey.FILE)
-                    && AVKey.ELEVATION.equals(params.getValue(AVKey.PIXEL_FORMAT))
-                    && !params.hasKey(AVKey.ELEVATION_UNIT)) {
+                && params.hasKey(AVKey.FILE)
+                && AVKey.ELEVATION.equals(params.getValue(AVKey.PIXEL_FORMAT))
+                && !params.hasKey(AVKey.ELEVATION_UNIT)) {
                 GeotiffReader reader = null;
                 try {
                     File src = (File) params.getValue(AVKey.FILE);
@@ -1224,11 +1271,13 @@ public class GDALUtils {
                     reader = new GeotiffReader(src);
                     reader.copyMetadataTo(tiffParams);
 
-                    WWUtil.copyValues(tiffParams, params, new String[]{AVKey.ELEVATION_UNIT,
+                    WWUtil.copyValues(tiffParams, params, new String[] {AVKey.ELEVATION_UNIT,
                         AVKey.ELEVATION_MIN, AVKey.ELEVATION_MAX, AVKey.MISSING_DATA_SIGNAL}, false);
-                } catch (Throwable t) {
+                }
+                catch (Throwable t) {
                     Logging.logger().finest(WWUtil.extractExceptionReason(t));
-                } finally {
+                }
+                finally {
                     if (null != reader) {
                         reader.dispose();
                     }
@@ -1238,11 +1287,11 @@ public class GDALUtils {
             extractMinMaxSampleValues(ds, band, params);
 
             if (AVKey.ELEVATION.equals(params.getValue(AVKey.PIXEL_FORMAT))
-                    && (!params.hasKey(AVKey.ELEVATION_MIN)
-                    || !params.hasKey(AVKey.ELEVATION_MAX)
-                    || !params.hasKey(AVKey.MISSING_DATA_SIGNAL))
-                    // skip this heavy calculation if the file is opened in Quick Reading Node (when checking canRead())
-                    && !quickReadingMode) {
+                && (!params.hasKey(AVKey.ELEVATION_MIN)
+                || !params.hasKey(AVKey.ELEVATION_MAX)
+                || !params.hasKey(AVKey.MISSING_DATA_SIGNAL))
+                // skip this heavy calculation if the file is opened in Quick Reading Node (when checking canRead())
+                && !quickReadingMode) {
                 double[] minmax = new double[2];
                 band.ComputeRasterMinMax(minmax);
 
@@ -1255,7 +1304,8 @@ public class GDALUtils {
                         params.setValue(AVKey.ELEVATION_MIN, minmax[0]);
                         params.setValue(AVKey.ELEVATION_MAX, minmax[1]);
                     }
-                } else {
+                }
+                else {
                     params.setValue(AVKey.ELEVATION_MIN, minmax[0]);
                     params.setValue(AVKey.ELEVATION_MAX, minmax[1]);
                 }
@@ -1290,7 +1340,7 @@ public class GDALUtils {
         }
 
         // calculate geo-coordinates in image's native CS and Projection (these are NOT lat/lon coordinates)
-        java.awt.geom.Point2D[] corners = GDAL.computeCornersFromGeotransform(gt, width, height);
+        Point2D[] corners = GDAL.computeCornersFromGeotransform(gt, width, height);
 
         double minX = GDAL.getMinX(corners);
         double minY = GDAL.getMinY(corners);
@@ -1305,13 +1355,15 @@ public class GDALUtils {
         params.setValue(AVKey.PIXEL_WIDTH, pixelWidth);
         params.setValue(AVKey.PIXEL_HEIGHT, pixelHeight);
 
-        if (minX == 0d && pixelWidth == 1d && rotX == 0d && maxY == 0d && rotY == 0d && pixelHeight == 1d) {
+        if (minX == 0.0d && pixelWidth == 1.0d && rotX == 0.0d && maxY == 0.0d && rotY == 0.0d && pixelHeight == 1.0d) {
             params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_SCREEN);
-        } else if (Angle.isValidLongitude(minX) && Angle.isValidLatitude(maxY)
-                && Angle.isValidLongitude(maxX) && Angle.isValidLatitude(minY)) {
+        }
+        else if (Angle.isValidLongitude(minX) && Angle.isValidLatitude(maxY)
+            && Angle.isValidLongitude(maxX) && Angle.isValidLatitude(minY)) {
             if (null == srs) {
                 srs = createGeographicSRS();
-            } else if (srs.IsGeographic() == 0) {
+            }
+            else if (srs.IsGeographic() == 0) {
                 String msg = Logging.getMessage("generic.UnexpectedCoordinateSystem", srs.ExportToWkt());
                 Logging.logger().warning(msg);
                 srs = createGeographicSRS();
@@ -1330,20 +1382,21 @@ public class GDALUtils {
                 return params;
             }
 
-            // save area in image's native CS and Projection 
+            // save area in image's native CS and Projection
             GDAL.Area area = new GDAL.Area(srs, ds);
             Sector sector = area.getSector();
             params.setValue(AVKey.GDAL_AREA, area);
             if (null != sector) {
                 params.setValue(AVKey.SECTOR, sector);
-                LatLon origin = new LatLon(sector.getMaxLatitude(), sector.getMinLongitude());
+                LatLon origin = new LatLon(sector.latMax(), sector.lonMin());
                 params.setValue(AVKey.ORIGIN, origin);
             }
 
             if (srs.IsGeographic() == 1) {
                 params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
                 // no need to extract anything, all parameters were extracted above
-            } else if (srs.IsProjected() == 1) {
+            }
+            else if (srs.IsProjected() == 1) {
                 params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
 
                 // ----8><----------------------------------------------------------------------------------------
@@ -1380,21 +1433,26 @@ public class GDALUtils {
                 String unit = srs.GetAttrValue("PROJCS|UNIT");
                 if (null != unit) {
                     unit = unit.toLowerCase();
-                    if ("meter".equals(unit) || "meters".equals(unit) || "metre".equals(unit) || "metres".equals(unit)) {
+                    if ("meter".equals(unit) || "meters".equals(unit) || "metre".equals(unit) || "metres".equals(
+                        unit)) {
                         params.setValue(AVKey.PROJECTION_UNITS, AVKey.UNIT_METER);
-                    } else if ("foot".equals(unit) || "feet".equals(unit)) {
+                    }
+                    else if ("foot".equals(unit) || "feet".equals(unit)) {
                         params.setValue(AVKey.PROJECTION_UNITS, AVKey.UNIT_FOOT);
-                    } else {
+                    }
+                    else {
                         Logging.logger().warning(Logging.getMessage("generic.UnknownProjectionUnits", unit));
                     }
                 }
 
-                if (null != projection && 0 < projection.length()) {
+                if (null != projection && !projection.isEmpty()) {
                     params.setValue(AVKey.PROJECTION_NAME, projection);
                 }
-            } else if (srs.IsLocal() == 1) {
+            }
+            else if (srs.IsLocal() == 1) {
                 params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_SCREEN);
-            } else {
+            }
+            else {
                 params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
                 String msg = Logging.getMessage("generic.UnknownCoordinateSystem", proj_wkt);
                 Logging.logger().severe(msg);
@@ -1434,7 +1492,7 @@ public class GDALUtils {
 
             band.GetNoDataValue(dbls);
             Double missingSignal = (null != dbls[0])
-                    ? dbls[0] : convertStringToDouble(ds.GetMetadataItem("TIFFTAG_GDAL_NODATA"));
+                ? dbls[0] : convertStringToDouble(ds.GetMetadataItem("TIFFTAG_GDAL_NODATA"));
 
             if (ElevationsUtil.isKnownMissingSignal(minValue)) {
                 if (missingSignal == null) {
@@ -1464,7 +1522,8 @@ public class GDALUtils {
                 gdal.PushErrorHandler("CPLQuietErrorHandler");
 
                 return gdalconst.CE_None == band.SetNoDataValue(nodata);
-            } finally {
+            }
+            finally {
                 gdal.PopErrorHandler();
             }
         }
@@ -1473,7 +1532,7 @@ public class GDALUtils {
     }
 
     public static DataRaster composeDataRaster(Dataset ds, AVList params)
-            throws IllegalArgumentException, WWRuntimeException {
+        throws IllegalArgumentException, WWRuntimeException {
         if (!gdalIsAvailable.get()) {
             String message = Logging.getMessage("gdal.GDALNotAvailable");
             Logging.logger().severe(message);
@@ -1485,9 +1544,11 @@ public class GDALUtils {
         String pixelFormat = params.getStringValue(AVKey.PIXEL_FORMAT);
         if (AVKey.ELEVATION.equals(pixelFormat)) {
             return composeNonImageDataRaster(ds, params);
-        } else if (AVKey.IMAGE.equals(pixelFormat)) {
+        }
+        else if (AVKey.IMAGE.equals(pixelFormat)) {
             return composeImageDataRaster(ds, params);
-        } else {
+        }
+        else {
             String message = Logging.getMessage("generic.UnexpectedRasterType", pixelFormat);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -1495,7 +1556,7 @@ public class GDALUtils {
     }
 
     public static int[] extractBandOrder(Dataset ds, AVList params)
-            throws IllegalArgumentException, WWRuntimeException {
+        throws IllegalArgumentException, WWRuntimeException {
         if (!gdalIsAvailable.get()) {
             String message = Logging.getMessage("gdal.GDALNotAvailable");
             Logging.logger().severe(message);
@@ -1525,7 +1586,8 @@ public class GDALUtils {
                 for (int i = 0; i < order.length; i++) {
                     bandsOrder[i] = order[i];
                 }
-            } else if (o instanceof int[]) {
+            }
+            else if (o instanceof int[]) {
                 bandsOrder = (int[]) o;
             }
 
@@ -1541,10 +1603,8 @@ public class GDALUtils {
                 throw new IllegalArgumentException(message);
             }
 
-            for (int value : bandsOrder)
-            {
-                if (value < 0 || value >= bandsCount)
-                {
+            for (int value : bandsOrder) {
+                if (value < 0 || value >= bandsCount) {
                     String message = Logging.getMessage("generic.InvalidBandOrder", value, bandsCount);
                     Logging.logger().severe(message);
                     throw new IllegalArgumentException(message);
@@ -1558,17 +1618,16 @@ public class GDALUtils {
     /**
      * The "composeDataRaster" method creates a ByteBufferRaster from an elevation (or non-image) Dataset.
      *
-     * @param ds The GDAL dataset with data raster (expected only elevation raster); f or imagery rasters use
-     * composeImageDataRaster() method
+     * @param ds     The GDAL dataset with data raster (expected only elevation raster); f or imagery rasters use
+     *               composeImageDataRaster() method
      * @param params , The AVList with properties (usually used to force projection info or sector)
-     *
      * @return ByteBufferRaster as DataRaster
-     *
      * @throws IllegalArgumentException if raster parameters (height, width, sector, etc) are invalid
-     * @throws WWRuntimeException when invalid raster detected (like attempt to use the method for imagery raster)
+     * @throws WWRuntimeException       when invalid raster detected (like attempt to use the method for imagery
+     *                                  raster)
      */
     protected static DataRaster composeNonImageDataRaster(Dataset ds, AVList params)
-            throws IllegalArgumentException, WWRuntimeException {
+        throws IllegalArgumentException, WWRuntimeException {
         String pixelFormat = params.getStringValue(AVKey.PIXEL_FORMAT);
         if (!AVKey.ELEVATION.equals(pixelFormat)) {
             String message = Logging.getMessage("generic.UnexpectedRasterType", pixelFormat);
@@ -1595,10 +1654,11 @@ public class GDALUtils {
         ByteOrder byteOrder = ByteOrder.nativeOrder();
         if (params.hasKey(AVKey.BYTE_ORDER)) {
             byteOrder = AVKey.LITTLE_ENDIAN.equals(params.getStringValue(AVKey.BYTE_ORDER))
-                    ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
-        } else {
+                ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
+        }
+        else {
             params.setValue(AVKey.BYTE_ORDER,
-                    (byteOrder == ByteOrder.BIG_ENDIAN) ? AVKey.BIG_ENDIAN : AVKey.LITTLE_ENDIAN);
+                (byteOrder == ByteOrder.BIG_ENDIAN) ? AVKey.BIG_ENDIAN : AVKey.LITTLE_ENDIAN);
         }
 
         int width = ds.getRasterXSize();
@@ -1618,7 +1678,8 @@ public class GDALUtils {
         ByteBuffer data = null;
         try {
             data = ByteBuffer.allocateDirect(bufferSize);
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             String message = Logging.getMessage("generic.MemoryAllocationError", bufferSize);
             Logging.logger().log(Level.SEVERE, message, t);
             throw new WWRuntimeException(message);
@@ -1627,7 +1688,7 @@ public class GDALUtils {
         data.order(byteOrder);
 
         int returnVal = band.ReadRaster_Direct(0, 0, band.getXSize(), band.getYSize(),
-                width, height, band.getDataType(), data);
+            width, height, band.getDataType(), data);
 
         if (returnVal != gdalconstConstants.CE_None) {
             throw new WWRuntimeException(GDALUtils.getErrorMessage());
@@ -1639,7 +1700,7 @@ public class GDALUtils {
     }
 
     protected static void alterJavaLibraryPath(String newJavaLibraryPath)
-            throws IllegalAccessException, NoSuchFieldException {
+        throws IllegalAccessException, NoSuchFieldException {
         System.setProperty(JAVA_LIBRARY_PATH, newJavaLibraryPath);
 
         newClassLoader = ClassLoader.class;
@@ -1648,7 +1709,8 @@ public class GDALUtils {
             try {
                 fieldSysPaths.setAccessible(true);
                 fieldSysPaths_accessible = true;
-            } catch (InaccessibleObjectException ioex) {
+            }
+            catch (InaccessibleObjectException ioex) {
                 fieldSysPaths_accessible = false;
             }
             originalClassLoader = fieldSysPaths.get(newClassLoader);
@@ -1666,13 +1728,9 @@ public class GDALUtils {
                 fieldSysPaths.set(newClassLoader, originalClassLoader);
                 fieldSysPaths.setAccessible(fieldSysPaths_accessible);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             Logging.logger().log(Level.SEVERE, e.getMessage(), e);
         }
     }
-
-    private static Class newClassLoader = null;
-    private static Object originalClassLoader = null;
-    private static Field fieldSysPaths = null;
-    private static boolean fieldSysPaths_accessible = false;
 }

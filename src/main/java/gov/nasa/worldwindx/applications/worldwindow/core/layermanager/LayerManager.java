@@ -14,8 +14,7 @@ import gov.nasa.worldwindx.applications.worldwindow.features.swinglayermanager.L
  * @author tag
  * @version $Id: LayerManager.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface LayerManager extends Feature
-{
+public interface LayerManager extends Feature {
     Layer findLayerByTitle(String layerTitle, String groupTitle);
 
     void addGroup(LayerPath pathToGroup);
@@ -45,7 +44,6 @@ public interface LayerManager extends Feature
      * Returns the layer at the end of a specified path.
      *
      * @param path the path to the layer.
-     *
      * @return the layer at the end of the path, or null if no layer is there.
      */
     Layer getLayerFromPath(LayerPath path);

@@ -16,8 +16,7 @@ import gov.nasa.worldwind.view.ViewPropertyLimits;
  * @author dcollins
  * @version $Id: OrbitViewLimits.java 2253 2014-08-22 16:33:46Z dcollins $
  */
-public interface OrbitViewLimits extends ViewPropertyLimits
-{
+public interface OrbitViewLimits extends ViewPropertyLimits {
     /**
      * Returns the Sector which limits the orbit view center latitude and longitude.
      *
@@ -29,7 +28,6 @@ public interface OrbitViewLimits extends ViewPropertyLimits
      * Sets the Sector which will limit the orbit view center latitude and longitude.
      *
      * @param sector Sector which will limit the center latitude and longitude.
-     *
      * @throws IllegalArgumentException if sector is null.
      */
     void setCenterLocationLimits(Sector sector);
@@ -71,9 +69,7 @@ public interface OrbitViewLimits extends ViewPropertyLimits
      *
      * @param view     the view associated with the center position and the property limits.
      * @param position position to clamp to the allowed range.
-     *
      * @return The clamped position.
-     *
      * @throws IllegalArgumentException if any argument is null.
      */
     Position limitCenterPosition(View view, Position position);
@@ -84,9 +80,7 @@ public interface OrbitViewLimits extends ViewPropertyLimits
      *
      * @param view  the view associated with the zoom distance and the property limits.
      * @param value zoom distance to clamp to the allowed range.
-     *
      * @return The clamped value.
-     *
      * @throws IllegalArgumentException if any argument is null.
      */
     double limitZoom(View view, double value);

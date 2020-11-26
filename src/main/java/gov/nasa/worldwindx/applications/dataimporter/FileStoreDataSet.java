@@ -16,6 +16,7 @@ import org.w3c.dom.*;
 import javax.xml.xpath.XPath;
 import java.awt.*;
 import java.io.*;
+import java.util.logging.Level;
 
 /**
  * Represents one data set within a WorldWind filestore.
@@ -23,8 +24,7 @@ import java.io.*;
  * @author tag
  * @version $Id: FileStoreDataSet.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
-public class FileStoreDataSet extends AVListImpl
-{
+public class FileStoreDataSet extends AVListImpl {
     public static final String IMAGERY = "Imagery";
     public static final String ELEVATION = "Elevation";
 
@@ -39,10 +39,8 @@ public class FileStoreDataSet extends AVListImpl
      * @param dataSetPath    the full path to the data set in the specified filestore.
      * @param configFilePath the full path to the data set's config file.
      */
-    public FileStoreDataSet(String filestorePath, String dataSetPath, String configFilePath)
-    {
-        if (filestorePath == null || dataSetPath == null || configFilePath == null)
-        {
+    public FileStoreDataSet(String filestorePath, String dataSetPath, String configFilePath) {
+        if (filestorePath == null || dataSetPath == null || configFilePath == null) {
             String message = Logging.getMessage("nullValue.FileStorePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -57,13 +55,63 @@ public class FileStoreDataSet extends AVListImpl
         this.attachMetadata();
     }
 
-    public String getPath()
-    {
+    protected static void setFallbackParams(Document dataConfig, String filename, AVList params) {
+        XPath xpath = WWXML.makeXPath();
+        Element domElement = dataConfig.getDocumentElement();
+
+        // If the data configuration document doesn't define a cache name, then compute one using the file's path
+        // relative to its file cache directory.
+        String s = WWXML.getText(domElement, "DataCacheName", xpath);
+        if (s == null || s.isEmpty())
+            DataConfigurationUtils.getDataConfigCacheName(filename, params);
+
+        // If the data configuration document doesn't define the data's extreme elevations,
+        // provide default values using
+        // the minimum and maximum elevations of Earth.
+        String type = DataConfigurationUtils.getDataConfigType(domElement);
+        if (type.equalsIgnoreCase("ElevationModel")) {
+            if (WWXML.getDouble(domElement, "ExtremeElevations/@min", xpath) == null)
+                params.setValue(AVKey.ELEVATION_MIN, Earth.ELEVATION_MIN);
+            if (WWXML.getDouble(domElement, "ExtremeElevations/@max", xpath) == null)
+                params.setValue(AVKey.ELEVATION_MAX, Earth.ELEVATION_MAX);
+        }
+    }
+
+    protected static boolean removeDirectory(File directory) {
+        if (directory == null)
+            return false;
+
+        if (!directory.exists())
+            return true;
+
+        if (!directory.isDirectory())
+            return false;
+
+        String[] list = directory.list();
+
+        if (list != null) // Some JVMs return null for File.list() when the directory is empty.
+        {
+            for (String s : list) {
+                File entry = new File(directory, s);
+                if (entry.isDirectory()) {
+                    if (!removeDirectory(entry))
+                        return false;
+                }
+                else {
+                    if (!entry.delete())
+                        return false;
+                }
+            }
+        }
+
+        return directory.delete();
+    }
+
+    public String getPath() {
         return dataSetPath;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.getStringValue(AVKey.DISPLAY_NAME);
 //        // Strip all but the data set's root directory name.
 //        String name = this.cacheRootPath == null ? this.getPath() : this.getPath().replace(
@@ -71,59 +119,47 @@ public class FileStoreDataSet extends AVListImpl
 //        return name.startsWith("/") ? name.substring(1) : name;
     }
 
-    public String getDatasetType()
-    {
+    public String getDatasetType() {
         return this.getStringValue(AVKey.DATASET_TYPE);
     }
 
-    public boolean isImagery()
-    {
+    public boolean isImagery() {
         return this.getDatasetType() != null && this.getDatasetType().equals(IMAGERY);
     }
 
-    public boolean isElevation()
-    {
+    public boolean isElevation() {
         return this.getDatasetType() != null && this.getDatasetType().equals(ELEVATION);
     }
 
-    public Sector getSector()
-    {
+    public Sector getSector() {
         return (Sector) this.getValue(AVKey.SECTOR);
     }
 
-    public Color getColor()
-    {
+    public Color getColor() {
         return (Color) this.getValue(AVKey.COLOR);
     }
 
-    public long getSize()
-    {
+    public long getSize() {
         return this.getSize(this.dataSetPath);
     }
 
-    public long getSize(String path)
-    {
+    public long getSize(String path) {
         long size = 0;
 
         File pathFile = new File(path);
         File[] files = pathFile.listFiles();
-        for (File file : files)
-        {
-            try
-            {
-                if (file.isDirectory())
-                {
+        for (File file : files) {
+            try {
+                if (file.isDirectory()) {
                     size += this.getSize(file.getPath());
                 }
-                else
-                {
+                else {
                     FileInputStream fis = new FileInputStream(file);
                     size += fis.available();
                     fis.close();
                 }
             }
-            catch (IOException e)
-            {
+            catch (IOException e) {
                 String message = Logging.getMessage("generic.ExceptionWhileComputingSize", file.getAbsolutePath());
                 Logging.logger().fine(message);
             }
@@ -132,18 +168,15 @@ public class FileStoreDataSet extends AVListImpl
         return size;
     }
 
-    protected void attachMetadata()
-    {
+    protected void attachMetadata() {
         Document doc = null;
 
-        try
-        {
+        try {
             doc = WWXML.openDocument(new File(this.configFilePath));
             doc = DataConfigurationUtils.convertToStandardDataConfigDocument(doc);
         }
-        catch (WWRuntimeException e)
-        {
-            Logging.logger().log(java.util.logging.Level.SEVERE, "Exception reading data configuration", e);
+        catch (WWRuntimeException e) {
+            Logging.logger().log(Level.SEVERE, "Exception reading data configuration", e);
         }
 
         if (doc == null)
@@ -171,67 +204,10 @@ public class FileStoreDataSet extends AVListImpl
             this.setValue(AVKey.DATASET_TYPE, ELEVATION);
     }
 
-    protected static void setFallbackParams(Document dataConfig, String filename, AVList params)
-    {
-        XPath xpath = WWXML.makeXPath();
-        Element domElement = dataConfig.getDocumentElement();
-
-        // If the data configuration document doesn't define a cache name, then compute one using the file's path
-        // relative to its file cache directory.
-        String s = WWXML.getText(domElement, "DataCacheName", xpath);
-        if (s == null || s.length() == 0)
-            DataConfigurationUtils.getDataConfigCacheName(filename, params);
-
-        // If the data configuration document doesn't define the data's extreme elevations,
-        // provide default values using
-        // the minimum and maximum elevations of Earth.
-        String type = DataConfigurationUtils.getDataConfigType(domElement);
-        if (type.equalsIgnoreCase("ElevationModel"))
-        {
-            if (WWXML.getDouble(domElement, "ExtremeElevations/@min", xpath) == null)
-                params.setValue(AVKey.ELEVATION_MIN, Earth.ELEVATION_MIN);
-            if (WWXML.getDouble(domElement, "ExtremeElevations/@max", xpath) == null)
-                params.setValue(AVKey.ELEVATION_MAX, Earth.ELEVATION_MAX);
-        }
-    }
-
-    /** Delete an installed data set. */
-    public void delete()
-    {
+    /**
+     * Delete an installed data set.
+     */
+    public void delete() {
         removeDirectory(new File(this.dataSetPath));
-    }
-
-    protected static boolean removeDirectory(File directory)
-    {
-        if (directory == null)
-            return false;
-
-        if (!directory.exists())
-            return true;
-
-        if (!directory.isDirectory())
-            return false;
-
-        String[] list = directory.list();
-
-        if (list != null) // Some JVMs return null for File.list() when the directory is empty.
-        {
-            for (String s : list)
-            {
-                File entry = new File(directory, s);
-                if (entry.isDirectory())
-                {
-                    if (!removeDirectory(entry))
-                        return false;
-                }
-                else
-                {
-                    if (!entry.delete())
-                        return false;
-                }
-            }
-        }
-
-        return directory.delete();
     }
 }

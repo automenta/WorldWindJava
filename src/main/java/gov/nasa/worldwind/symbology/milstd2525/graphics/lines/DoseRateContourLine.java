@@ -20,21 +20,18 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: DoseRateContourLine.java 545 2012-04-24 22:29:21Z pabercrombie $
  */
-public class DoseRateContourLine extends BasicArea
-{
+public class DoseRateContourLine extends BasicArea {
+    public DoseRateContourLine(String sidc) {
+        super(sidc);
+    }
+
     /**
      * Indicates the graphics supported by this class.
      *
      * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public static List<String> getSupportedGraphics()
-    {
+    public static List<String> getSupportedGraphics() {
         return Collections.singletonList(TacGrpSidc.MOBSU_CBRN_DRCL);
-    }
-
-    public DoseRateContourLine(String sidc)
-    {
-        super(sidc);
     }
 
     /**
@@ -42,12 +39,10 @@ public class DoseRateContourLine extends BasicArea
      * label. If there are more lines, they will be arranged South of the first line.
      *
      * @param dc Current draw context.
-     *
      * @return Position for the graphic's main label.
      */
     @Override
-    protected Position determineMainLabelPosition(DrawContext dc)
-    {
+    protected Position determineMainLabelPosition(DrawContext dc) {
         return this.getReferencePosition();
     }
 }

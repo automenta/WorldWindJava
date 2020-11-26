@@ -20,8 +20,7 @@ import java.awt.event.*;
  * @author tag
  * @version $Id: ElevationModelPanel.java 1179 2013-02-15 17:47:37Z tgaskins $
  */
-public class ElevationModelPanel extends JPanel
-{
+public class ElevationModelPanel extends JPanel {
     protected final ElevationModel elevationModel;
 
     protected final JCheckBox checkBox;
@@ -29,8 +28,7 @@ public class ElevationModelPanel extends JPanel
     protected final JButton downButton;
 
     public ElevationModelPanel(final WorldWindow wwd, final ElevationModelManagerPanel emPanel,
-                               final ElevationModel elevationModel)
-    {
+        final ElevationModel elevationModel) {
         super(new BorderLayout(10, 10));
 
         this.elevationModel = elevationModel;
@@ -69,13 +67,11 @@ public class ElevationModelPanel extends JPanel
         this.downButton.setEnabled(index != this.getNumElevationModels(wwd) - 1);
     }
 
-    public ElevationModel getElevationModel()
-    {
+    public ElevationModel getElevationModel() {
         return this.elevationModel;
     }
 
-    protected void moveElevationModel(WorldWindow wwd, ElevationModel elevationModel, int direction)
-    {
+    protected void moveElevationModel(WorldWindow wwd, ElevationModel elevationModel, int direction) {
         // Moves the model associated with this instance in the direction indicated relative to the other models.
 
         int index = this.findElevationModelPosition(wwd, elevationModel);
@@ -103,8 +99,7 @@ public class ElevationModelPanel extends JPanel
         wwd.redraw();
     }
 
-    protected int findElevationModelPosition(WorldWindow wwd, ElevationModel elevationModel)
-    {
+    protected int findElevationModelPosition(WorldWindow wwd, ElevationModel elevationModel) {
         // Determines the ordinal location of an elevation model in the globe's elevation models.
 
         if (!(wwd.getModel().getGlobe().getElevationModel() instanceof CompoundElevationModel))
@@ -112,8 +107,7 @@ public class ElevationModelPanel extends JPanel
 
         CompoundElevationModel cem = (CompoundElevationModel) wwd.getModel().getGlobe().getElevationModel();
 
-        for (int i = 0; i < cem.getElevationModels().size(); i++)
-        {
+        for (int i = 0; i < cem.getElevationModels().size(); i++) {
             if (elevationModel == cem.getElevationModels().get(i))
                 return i;
         }
@@ -121,8 +115,7 @@ public class ElevationModelPanel extends JPanel
         return -1;
     }
 
-    protected int getNumElevationModels(WorldWindow wwd)
-    {
+    protected int getNumElevationModels(WorldWindow wwd) {
         // Determines the ordinal location of an elevation model in the globe's elevation models.
 
         if (!(wwd.getModel().getGlobe().getElevationModel() instanceof CompoundElevationModel))
@@ -132,16 +125,14 @@ public class ElevationModelPanel extends JPanel
         return cem.getElevationModels().size();
     }
 
-    protected static class SelectModelAction extends AbstractAction
-    {
+    protected static class SelectModelAction extends AbstractAction {
         // This action handles elevation model selection and de-selection.
 
         protected final WorldWindow wwd;
         protected final ElevationModel elevationModel;
         protected final boolean selected;
 
-        public SelectModelAction(WorldWindow wwd, ElevationModel elevationModel, boolean selected)
-        {
+        public SelectModelAction(WorldWindow wwd, ElevationModel elevationModel, boolean selected) {
             super(elevationModel.getName());
 
             this.wwd = wwd;
@@ -150,8 +141,7 @@ public class ElevationModelPanel extends JPanel
             this.elevationModel.setEnabled(this.selected);
         }
 
-        public void actionPerformed(ActionEvent actionEvent)
-        {
+        public void actionPerformed(ActionEvent actionEvent) {
             // Simply enable or disable the model based on its toggle button.
             this.elevationModel.setEnabled(((JCheckBox) actionEvent.getSource()).isSelected());
 

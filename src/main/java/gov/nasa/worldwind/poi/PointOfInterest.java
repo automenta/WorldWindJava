@@ -13,7 +13,6 @@ import gov.nasa.worldwind.geom.LatLon;
  * @author tag
  * @version $Id: PointOfInterest.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface PointOfInterest extends WWObject
-{
+public interface PointOfInterest extends WWObject {
     LatLon getLatlon();
 }

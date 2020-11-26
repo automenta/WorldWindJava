@@ -14,33 +14,29 @@ import gov.nasa.worldwind.geom.Position;
  * @author tag
  * @version $Id: KMLLocation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLLocation extends KMLAbstractObject
-{
-    private static final String LATITUDE_KEY="latitude";
-    private static final String LONGITUDE_KEY="longitude";
-    private static final String ALTITUDE_KEY="altitude";
+public class KMLLocation extends KMLAbstractObject {
+    private static final String LATITUDE_KEY = "latitude";
+    private static final String LONGITUDE_KEY = "longitude";
+    private static final String ALTITUDE_KEY = "altitude";
+
     /**
      * Construct an instance.
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public KMLLocation(String namespaceURI)
-    {
+    public KMLLocation(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public Double getLongitude()
-    {
+    public Double getLongitude() {
         return (Double) this.getField(LONGITUDE_KEY);
     }
 
-    public Double getLatitude()
-    {
+    public Double getLatitude() {
         return (Double) this.getField(LATITUDE_KEY);
     }
 
-    public Double getAltitude()
-    {
+    public Double getAltitude() {
         return (Double) this.getField(ALTITUDE_KEY);
     }
 
@@ -49,8 +45,7 @@ public class KMLLocation extends KMLAbstractObject
      *
      * @return Position object representing this location.
      */
-    public Position getPosition()
-    {
+    public Position getPosition() {
         Double lat = this.getLatitude();
         Double lon = this.getLongitude();
         Double alt = this.getAltitude();
@@ -60,7 +55,7 @@ public class KMLLocation extends KMLAbstractObject
             lon != null ? lon : 0,
             alt != null ? alt : 0);
     }
-    
+
     public void setPosition(Position pos) {
         this.setField(LATITUDE_KEY, pos.latitude.degrees);
         this.setField(LONGITUDE_KEY, pos.longitude.degrees);

@@ -9,7 +9,7 @@ package gov.nasa.worldwindx.performance;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.airspaces.Polygon;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 import java.util.ArrayList;
@@ -18,19 +18,19 @@ import java.util.ArrayList;
  * @author tag
  * @version $Id: AirspacesEverywhere.java 2231 2014-08-15 19:03:12Z dcollins $
  */
-public class AirspacesEverywhere extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class AirspacesEverywhere extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Very Many Airspaces", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             makeMany();
         }
 
-        protected void makeMany()
-        {
+        protected void makeMany() {
             double minLat = -50, maxLat = 50, minLon = -140, maxLon = -10;
             double delta = 5;
             double intervals = 100;
@@ -42,40 +42,34 @@ public class AirspacesEverywhere extends ApplicationTemplate
             RenderableLayer layer = new RenderableLayer();
 
             int count = 0;
-            for (double lat = minLat; lat <= maxLat; lat += delta)
-            {
-                for (double lon = minLon; lon <= maxLon; lon += delta)
-                {
+            for (double lat = minLat; lat <= maxLat; lat += delta) {
+                for (double lon = minLon; lon <= maxLon; lon += delta) {
                     positions.clear();
                     double innerLat = lat;
                     double innerLon = lon;
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLon += dLon;
                         positions.add(LatLon.fromDegrees(innerLat, innerLon));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLat += dLat;
                         positions.add(LatLon.fromDegrees(innerLat, innerLon));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLon -= dLon;
                         positions.add(LatLon.fromDegrees(innerLat, innerLon));
                     }
 
-                    for (int i = 0; i <= intervals; i++)
-                    {
+                    for (int i = 0; i <= intervals; i++) {
                         innerLat -= dLat;
                         positions.add(LatLon.fromDegrees(innerLat, innerLon));
                     }
 
-                    Polygon pgon = new Polygon(positions);
-                    pgon.setAltitudes(1e3, 1e4);
+                    Airspace pgon = new Polygon(positions);
+                    pgon.setAltitudes(1.0e3, 1.0e4);
                     pgon.setAltitudeDatum(AVKey.ABOVE_MEAN_SEA_LEVEL, AVKey.ABOVE_MEAN_SEA_LEVEL);
                     layer.addRenderable(pgon);
                     ++count;
@@ -85,10 +79,5 @@ public class AirspacesEverywhere extends ApplicationTemplate
 
             insertBeforeCompass(getWwd(), layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Very Many Airspaces", AppFrame.class);
     }
 }

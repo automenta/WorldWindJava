@@ -8,6 +8,7 @@ package gov.nasa.worldwindx.applications.dataimporter;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.util.Logging;
+import org.w3c.dom.Document;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -16,6 +17,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -24,14 +26,12 @@ import java.util.logging.Level;
  * @author tag
  * @version $Id: FileSetPanel.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
-public class FileSetPanel extends JPanel
-{
+public class FileSetPanel extends JPanel {
     protected final WorldWindow wwd;
-
-    protected FileSetFinder fileSetFinder;
-    protected FileSetTable fileSetTable;
     protected final FileSetHighlighter sectorHighlighter;
     protected final JFileChooser fileChooser;
+    protected FileSetFinder fileSetFinder;
+    protected FileSetTable fileSetTable;
     protected Thread scanningThread;
 
     /**
@@ -39,8 +39,7 @@ public class FileSetPanel extends JPanel
      *
      * @param wwd the WorldWindow associated with the panel.
      */
-    public FileSetPanel(WorldWindow wwd)
-    {
+    public FileSetPanel(WorldWindow wwd) {
         super(new BorderLayout(30, 30));
 
         this.wwd = wwd;
@@ -51,8 +50,7 @@ public class FileSetPanel extends JPanel
         this.fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         this.fileChooser.setMultiSelectionEnabled(true);
         this.fileChooser.addActionListener(event -> {
-            if (event.getActionCommand().equals(JFileChooser.CANCEL_SELECTION))
-            {
+            if (event.getActionCommand().equals(JFileChooser.CANCEL_SELECTION)) {
                 // Cancel the scanning action by interrupting the thread. Interrupts are checked by the
                 // FileSetFinder.
                 if (scanningThread != null && scanningThread.isAlive())
@@ -79,23 +77,19 @@ public class FileSetPanel extends JPanel
         this.sectorHighlighter = new FileSetHighlighter(this.wwd, this);
     }
 
-    protected JButton findCancelButton(Container container)
-    {
+    protected JButton findCancelButton(Container container) {
         // Searches the file chooser to find the Cancel button.
 
         int length = container.getComponentCount();
 
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             Component c = container.getComponent(i);
-            if (c instanceof JButton)
-            {
+            if (c instanceof JButton) {
                 JButton b = (JButton) c;
                 if (UIManager.getString("FileChooser.cancelButtonText").equals(b.getText()))
                     return b;
             }
-            else if (c instanceof Container)
-            {
+            else if (c instanceof Container) {
                 JButton b = this.findCancelButton((Container) c);
                 if (b != null)
                     return b;
@@ -105,15 +99,13 @@ public class FileSetPanel extends JPanel
         return null;
     }
 
-    protected void enableCancelAction(boolean tf)
-    {
+    protected void enableCancelAction(boolean tf) {
         JButton button = this.findCancelButton(this.fileChooser);
         if (button != null)
             button.setEnabled(tf);
     }
 
-    protected void resetTable(final File[] roots)
-    {
+    protected void resetTable(final File[] roots) {
         // Causes the file set table to be cleared and repopulated for the specified root directories.
 
         fileSetTable.setFileSetMap(null);
@@ -122,16 +114,13 @@ public class FileSetPanel extends JPanel
         this.enableCancelAction(true);
 
         this.scanningThread = new Thread(() -> {
-            try
-            {
+            try {
                 fileSetFinder.findFileSets(roots);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Logging.logger().log(Level.SEVERE, "Exception while finding available data", e);
             }
-            finally
-            {
+            finally {
                 SwingUtilities.invokeLater(() -> {
                     fileSetTable.setFileSetMap(fileSetFinder.getFileSetMap());
                     setCursor(Cursor.getDefaultCursor());
@@ -143,8 +132,7 @@ public class FileSetPanel extends JPanel
         this.scanningThread.start();
     }
 
-    protected JPanel createTablePanel()
-    {
+    protected JPanel createTablePanel() {
         this.fileSetFinder = new FileSetFinder();
         this.fileSetTable = new FileSetTable(null);
         JScrollPane scrollPane = new JScrollPane(this.fileSetTable);
@@ -153,16 +141,13 @@ public class FileSetPanel extends JPanel
         panel.setBorder(new EmptyBorder(20, 5, 5, 20));
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        JButton importButton = new JButton(new AbstractAction("Install Selected Data")
-        {
+        JButton importButton = new JButton(new AbstractAction("Install Selected Data") {
             @Override
-            public void actionPerformed(ActionEvent actionEvent)
-            {
-                final java.util.List<FileSet> fileSetList = new ArrayList<>();
+            public void actionPerformed(ActionEvent actionEvent) {
+                final List<FileSet> fileSetList = new ArrayList<>();
 
                 int[] rows = fileSetTable.getSelectedRows();
-                for (int row : rows)
-                {
+                for (int row : rows) {
                     int modelRow = fileSetTable.convertRowIndexToModel(row);
                     FileSet fileSet = ((FileSetTableModel) fileSetTable.getModel()).getRow(modelRow);
 
@@ -170,7 +155,7 @@ public class FileSetPanel extends JPanel
                         fileSetList.add(fileSet);
                 }
 
-                final java.util.List<FileSet> consolidatedFileSetList = fileSetFinder.consolidateFileSets(fileSetList);
+                final List<FileSet> consolidatedFileSetList = fileSetFinder.consolidateFileSets(fileSetList);
 
                 Thread t = new Thread(() -> performInstallation(consolidatedFileSetList));
                 t.start();
@@ -181,44 +166,36 @@ public class FileSetPanel extends JPanel
         return panel;
     }
 
-    public void addSelectionListener(ListSelectionListener listener)
-    {
+    public void addSelectionListener(ListSelectionListener listener) {
         this.fileSetTable.getSelectionModel().addListSelectionListener(listener);
     }
 
-    public java.util.List<FileSet> getSelectedFileSets()
-    {
+    public List<FileSet> getSelectedFileSets() {
         return this.fileSetTable.getSelectedFileSets();
     }
 
-    public void scrollToFileSet(FileSet fileSet)
-    {
+    public void scrollToFileSet(FileSet fileSet) {
         // This method makes the selected file set visible in the table.
         this.fileSetTable.scrollToFileSet(fileSet);
     }
 
-    protected void performInstallation(java.util.List<FileSet> fileSets)
-    {
+    protected void performInstallation(Iterable<FileSet> fileSets) {
         // Install the selected data sets.
 
         final DataInstaller dataImporter = new DataInstaller();
-        for (final FileSet fileSet : fileSets)
-        {
-            try
-            {
-                final org.w3c.dom.Document
+        for (final FileSet fileSet : fileSets) {
+            try {
+                final Document
                     dataConfig = dataImporter.installDataFromFiles(FileSetPanel.this, fileSet);
 
-                if (dataConfig != null && this.wwd != null)
-                {
+                if (dataConfig != null && this.wwd != null) {
                     SwingUtilities.invokeLater(() -> {
                         DataInstaller.addToWorldWindow(wwd, dataConfig.getDocumentElement(), fileSet, true);
                         FileSetPanel.this.firePropertyChange(DataInstaller.INSTALL_COMPLETE, dataConfig, null);
                     });
                 }
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 Logging.logger().log(Level.SEVERE, "Exception performing installation", e);
             }
         }

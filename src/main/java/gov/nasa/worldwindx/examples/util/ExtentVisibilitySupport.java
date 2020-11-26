@@ -12,25 +12,26 @@ import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.view.ViewUtil;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.*;
 
 /**
  * ExtentVisibilitySupport provides visibility tests and computations on objects with 3D extents in model coordinates,
  * and on objects with 2D extents in screen coordinates. The caller configures ExtentVisibilitySupport with an Iterable
- * of {@link gov.nasa.worldwind.geom.Extent} instances and {@link gov.nasa.worldwindx.examples.util.ExtentVisibilitySupport.ScreenExtent}
+ * of {@link Extent} instances and {@link ExtentVisibilitySupport.ScreenExtent}
  * instances by invoking {@link #setExtents(Iterable)} and {@link #setScreenExtents(Iterable)}, respectively. These
  * Iterables defines ExtentVisibilitySupport's scene elements. ExtentVisibilitySupport keeps a direct reference to these
  * Iterables; it does not attempt to copy or modify them in any way. Any null elements in these Iterables are ignored.
- * The static convenience method {@link #extentsFromExtentHolders(Iterable, gov.nasa.worldwind.globes.Globe, double)}
+ * The static convenience method {@link #extentsFromExtentHolders(Iterable, Globe, double)}
  * makes it easy to for callers to convert an Iterable of Extents references to an Iterable of {@link
- * gov.nasa.worldwind.geom.ExtentHolder} references.
+ * ExtentHolder} references.
  * <p>
- * The method {@link #areExtentsContained(gov.nasa.worldwind.View)} provides a mechanism for callers to test whether or
- * not the currently configured scene is entirely contained within a certain {@link gov.nasa.worldwind.View}. This
+ * The method {@link #areExtentsContained(View)} provides a mechanism for callers to test whether or
+ * not the currently configured scene is entirely contained within a certain {@link View}. This
  * method tests containment on both the model coordinate extents and screen coordinate extents.
  * <p>
- * The method {@link #computeViewLookAtContainingExtents(gov.nasa.worldwind.globes.Globe, double,
- * gov.nasa.worldwind.View)} returns a viewing coordinate system which contains the currently configured scene, while
+ * The method {@link #computeViewLookAtContainingExtents(Globe, double,
+ * View)} returns a viewing coordinate system which contains the currently configured scene, while
  * preserving the current view's orientation to the globe (heading and pitch). This has the effect of computing the pan
  * and zoom parameters necessary for a View to contain the current scene. Depending on the current scene, the computed
  * view may represent a best-estimate, and not the final parameters necessary to contain the scene. If the scene
@@ -40,74 +41,26 @@ import java.util.ArrayList;
  *
  * @author dcollins
  * @version $Id: ExtentVisibilitySupport.java 1171 2013-02-11 21:45:02Z dcollins $
- * @see gov.nasa.worldwind.geom.Extent
- * @see gov.nasa.worldwind.geom.ExtentHolder
- * @see gov.nasa.worldwindx.examples.util.ExtentVisibilitySupport.ScreenExtent
+ * @see Extent
+ * @see ExtentHolder
+ * @see ExtentVisibilitySupport.ScreenExtent
  */
-public class ExtentVisibilitySupport
-{
-    /**
-     * ScreenExtent represents a screen object's enclosing bounding box in screen coordinates, and that object's
-     * reference point in model coordinates. ExtentVisibilitySupport assumes that the relationship between the model
-     * reference point and the screen bounds are predicable: projecting the reference point into screen coordinates
-     * should yield a screen point with a predictable location relative to the screen bounds.
-     */
-    public static class ScreenExtent
-    {
-        protected final Vec4 modelReferencePoint;
-        protected final Rectangle screenBounds;
-
-        /**
-         * Constructs a new ScreenExtent with the specified model coordinate reference point and screen coordinate
-         * bounding box. Either value may be null.
-         *
-         * @param modelReferencePoint the model coordinate reference point. A null reference is accepted.
-         * @param screenBounds        the screen coordinate bounding rectangle. A null reference is accepted.
-         */
-        public ScreenExtent(Vec4 modelReferencePoint, Rectangle screenBounds)
-        {
-            this.modelReferencePoint = modelReferencePoint;
-            this.screenBounds = (screenBounds != null) ? new Rectangle(screenBounds) : null;
-        }
-
-        /**
-         * Returns the model coordinate reference point. This may return null, indicating this ScreenExtent has no model
-         * coordinate reference point.
-         *
-         * @return the reference point in model coordinates. May be null.
-         */
-        public Vec4 getModelReferencePoint()
-        {
-            return this.modelReferencePoint;
-        }
-
-        /**
-         * Returns the screen coordinate bounding rectangle. This may return null, indicating the ScreenExtent has no
-         * screen coordinate bounds.
-         *
-         * @return the bounding rectangle in screen coordinates. May be null.
-         */
-        public Rectangle getScreenBounds()
-        {
-            return (this.screenBounds != null) ? new Rectangle(this.screenBounds) : null;
-        }
-    }
-
+public class ExtentVisibilitySupport {
     protected static final double EPSILON = 1.0e-6;
     protected static final double SCREEN_POINT_PADDING_PIXELS = 4;
-
     protected Iterable<? extends Extent> extentIterable;
     protected Iterable<? extends ScreenExtent> screenExtentIterable;
 
-    /** Constructs a new ExtentVisibilitySupport, but otherwise does nothing. */
-    public ExtentVisibilitySupport()
-    {
+    /**
+     * Constructs a new ExtentVisibilitySupport, but otherwise does nothing.
+     */
+    public ExtentVisibilitySupport() {
     }
 
     /**
-     * Converts the specified Iterable of {@link gov.nasa.worldwind.geom.ExtentHolder} references to a new Iterable of
-     * {@link gov.nasa.worldwind.geom.Extent} references. The new Extents are constructed from the specified
-     * ExtentHolders by invoking {@link gov.nasa.worldwind.geom.ExtentHolder#getExtent(gov.nasa.worldwind.globes.Globe,
+     * Converts the specified Iterable of {@link ExtentHolder} references to a new Iterable of
+     * {@link Extent} references. The new Extents are constructed from the specified
+     * ExtentHolders by invoking {@link ExtentHolder#getExtent(Globe,
      * double)} with the specified Globe and vertical exaggeration. This ignores any null ExtentHolders in the specified
      * Iterable, and any null Extents returned by the ExtentHolders. This returns null if the Iterable is null or
      * empty.
@@ -115,19 +68,16 @@ public class ExtentVisibilitySupport
      * @param extentHolders        Iterable of ExtentHolders used to construct the new Extents.
      * @param globe                the Globe used to construct the Extents.
      * @param verticalExaggeration the vertical exaggeration used to construct the new Extents.
-     *
      * @return a new Iterable of Extents constructed from the specified ExtentHolder, Globe, and vertical exaggeration.
      */
     public static Iterable<Extent> extentsFromExtentHolders(Iterable<? extends ExtentHolder> extentHolders,
-        Globe globe, double verticalExaggeration)
-    {
+        Globe globe, double verticalExaggeration) {
         if (extentHolders == null)
             return null;
 
-        ArrayList<Extent> list = new ArrayList<>();
+        List<Extent> list = new ArrayList<>();
 
-        for (ExtentHolder eh : extentHolders)
-        {
+        for (ExtentHolder eh : extentHolders) {
             if (eh == null)
                 continue;
 
@@ -149,8 +99,7 @@ public class ExtentVisibilitySupport
      *
      * @return the Iterable of Extents this ExtentVisibilitySupport operates on, or null if none exists.
      */
-    public Iterable<? extends Extent> getExtents()
-    {
+    public Iterable<? extends Extent> getExtents() {
         return this.extentIterable;
     }
 
@@ -161,8 +110,7 @@ public class ExtentVisibilitySupport
      *                This iterable can be null, indicating that this ExtentVisibilitySupport has no model coordinate
      *                scene.
      */
-    public void setExtents(Iterable<? extends Extent> extents)
-    {
+    public void setExtents(Iterable<? extends Extent> extents) {
         this.extentIterable = extents;
     }
 
@@ -171,8 +119,7 @@ public class ExtentVisibilitySupport
      *
      * @return the Iterable of ScreenExtents this ExtentVisibilitySupport operates on, or null if none exists.
      */
-    public Iterable<? extends ScreenExtent> getScreenExtents()
-    {
+    public Iterable<? extends ScreenExtent> getScreenExtents() {
         return this.screenExtentIterable;
     }
 
@@ -183,61 +130,50 @@ public class ExtentVisibilitySupport
      *                      scene elements. This iterable can be null, indicating that this ExtentVisibilitySupport has
      *                      no screen coordinate scene.
      */
-    public void setScreenExtents(Iterable<? extends ScreenExtent> screenExtents)
-    {
+    public void setScreenExtents(Iterable<? extends ScreenExtent> screenExtents) {
         this.screenExtentIterable = screenExtents;
     }
 
     /**
      * Returns true if the model coordinates scene elements are completely inside the space enclosed by the specified
-     * {@link gov.nasa.worldwind.geom.Frustum} in model coordinates, and the screen coordinate scene elements are
+     * {@link Frustum} in model coordinates, and the screen coordinate scene elements are
      * completely inside the viewport rectangle. Otherwise, this returns false. If this ExtentVisibilitySupport has no
      * scene elements, this returns true.
      *
      * @param frustum  the Frustum with which to test for containment, in model coordinates.
      * @param viewport the viewport rectangle with which to test for containment, in screen coordinates.
-     *
      * @return true if the scene elements are completely inside the Frustum and viewport rectangle, or if this has no
-     *         scene elements. false if any scene element is partially or completely outside the Frustum or viewport
-     *         rectangle.
-     *
+     * scene elements. false if any scene element is partially or completely outside the Frustum or viewport rectangle.
      * @throws IllegalArgumentException if either the the Frustum or the viewport are null.
      */
-    public boolean areExtentsContained(Frustum frustum, Rectangle viewport)
-    {
-        if (frustum == null)
-        {
+    public boolean areExtentsContained(Frustum frustum, Rectangle viewport) {
+        if (frustum == null) {
             String message = Logging.getMessage("nullValue.FrustumIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (viewport == null)
-        {
+        if (viewport == null) {
             String message = Logging.getMessage("nullValue.ViewportIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (viewport.getWidth() <= 0d)
-        {
+        if (viewport.getWidth() <= 0.0d) {
             String message = Logging.getMessage("Geom.ViewportWidthInvalid", viewport.getWidth());
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (viewport.getHeight() <= 0d)
-        {
+        if (viewport.getHeight() <= 0.0d) {
             String message = Logging.getMessage("Geom.ViewportHeightInvalid", viewport.getHeight());
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Iterable<? extends Extent> extents = this.getExtents();
-        if (extents != null)
-        {
-            for (Extent e : extents)
-            {
+        if (extents != null) {
+            for (Extent e : extents) {
                 if (e == null)
                     continue;
 
@@ -247,10 +183,8 @@ public class ExtentVisibilitySupport
         }
 
         Iterable<? extends ScreenExtent> screenExtents = this.getScreenExtents();
-        if (screenExtents != null)
-        {
-            for (ScreenExtent se : screenExtents)
-            {
+        if (screenExtents != null) {
+            for (ScreenExtent se : screenExtents) {
                 if (se == null)
                     continue;
 
@@ -267,22 +201,18 @@ public class ExtentVisibilitySupport
 
     /**
      * Returns true if the model coordinates scene elements are completely inside the space enclosed by the specified
-     * {@link gov.nasa.worldwind.View} in model coordinates, and the screen coordinate scene elements are completely
+     * {@link View} in model coordinates, and the screen coordinate scene elements are completely
      * inside the View's viewport rectangle. Otherwise, this returns false. If this ExtentVisibilitySupport has no scene
      * elements, this returns true.
      *
      * @param view The View with which to test for containment.
-     *
      * @return true if the scene elements are completely inside the View and it's viewport rectangle, or if this has no
-     *         scene elements. false if any scene element is partially or completely outside the View or it's viewport
-     *         rectangle.
-     *
+     * scene elements. false if any scene element is partially or completely outside the View or it's viewport
+     * rectangle.
      * @throws IllegalArgumentException if either the the Frustum or the viewport are null.
      */
-    public boolean areExtentsContained(View view)
-    {
-        if (view == null)
-        {
+    public boolean areExtentsContained(View view) {
+        if (view == null) {
             String message = Logging.getMessage("nullValue.ViewIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -311,10 +241,8 @@ public class ExtentVisibilitySupport
      * @param viewport             the viewport bounds, in window coordinates (screen pixels).
      * @param nearClipDistance     the near clipping plane distance, in model coordinates.
      * @param farClipDistance      the far clipping plane distance, in model coordinates.
-     *
      * @return an array of View look-at vectors  optimal for viewing the scene elements, or null if this has no scene
-     *         elements.
-     *
+     * elements.
      * @throws IllegalArgumentException if any of the globe, eyePoint, centerPoint, upVector, field-of-view, or viewport
      *                                  are null, if if the eye point and reference center point are coincident, if the
      *                                  up vector and the line of sight are parallel, or if any of the view projection
@@ -322,45 +250,38 @@ public class ExtentVisibilitySupport
      */
     public Vec4[] computeViewLookAtContainingExtents(Globe globe, double verticalExaggeration,
         Vec4 eyePoint, Vec4 centerPoint, Vec4 upVector, Angle fieldOfView, Rectangle viewport,
-        double nearClipDistance, double farClipDistance)
-    {
-        if (globe == null)
-        {
+        double nearClipDistance, double farClipDistance) {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (eyePoint == null)
-        {
+        if (eyePoint == null) {
             String message = Logging.getMessage("nullValue.EyeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (centerPoint == null)
-        {
+        if (centerPoint == null) {
             String message = Logging.getMessage("nullValue.CenterIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (upVector == null)
-        {
+        if (upVector == null) {
             String message = Logging.getMessage("nullValue.UpIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (fieldOfView == null)
-        {
+        if (fieldOfView == null) {
             String message = Logging.getMessage("nullValue.FOVIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (viewport == null)
-        {
+        if (viewport == null) {
             String message = Logging.getMessage("nullValue.ViewportIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -368,8 +289,7 @@ public class ExtentVisibilitySupport
 
         String message = this.validate(eyePoint, centerPoint, upVector, fieldOfView, viewport,
             nearClipDistance, farClipDistance);
-        if (message != null)
-        {
+        if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
@@ -436,23 +356,18 @@ public class ExtentVisibilitySupport
      * @param globe                the Globe the scene elements are related to.
      * @param verticalExaggeration the vertical exaggeration of the scene.
      * @param view                 the View defining the import view coordinate system and view projection parameters.
-     *
      * @return an array of View look-at vectors  optimal for viewing the scene elements, or null if this has no scene
-     *         elements.
-     *
+     * elements.
      * @throws IllegalArgumentException if either the globe or view are null.
      */
-    public Vec4[] computeViewLookAtContainingExtents(Globe globe, double verticalExaggeration, View view)
-    {
-        if (globe == null)
-        {
+    public Vec4[] computeViewLookAtContainingExtents(Globe globe, double verticalExaggeration, View view) {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (view == null)
-        {
+        if (view == null) {
             String message = Logging.getMessage("nullValue.ViewIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -469,47 +384,39 @@ public class ExtentVisibilitySupport
             view.getFieldOfView(), view.getViewport(), view.getNearClipDistance(), view.getFarClipDistance());
     }
 
-    protected String validate(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView, Rectangle viewport,
-        double nearClipDistance, double farClipDistance)
-    {
+    protected String validate(Vec4 eye, Vec4 center, Vec4 up, Comparable<Angle> fieldOfView, Rectangle viewport,
+        double nearClipDistance, double farClipDistance) {
         Vec4 f = center.subtract3(eye).normalize3();
         Vec4 u = up.normalize3();
 
         if (eye.distanceTo3(center) <= EPSILON)
             return Logging.getMessage("Geom.EyeAndCenterInvalid", eye, center);
 
-        if (f.dot3(u) >= 1d - EPSILON)
+        if (f.dot3(u) >= 1.0d - EPSILON)
             return Logging.getMessage("Geom.UpAndLineOfSightInvalid", up, f);
 
         if (fieldOfView.compareTo(Angle.ZERO) < 0 || fieldOfView.compareTo(Angle.POS180) > 0)
             return Logging.getMessage("Geom.ViewFrustum.FieldOfViewOutOfRange");
 
-        if (viewport.getWidth() <= 0d)
+        if (viewport.getWidth() <= 0.0d)
             return Logging.getMessage("Geom.ViewportWidthInvalid", viewport.getWidth());
 
-        if (viewport.getHeight() <= 0d)
+        if (viewport.getHeight() <= 0.0d)
             return Logging.getMessage("Geom.ViewportHeightInvalid", viewport.getHeight());
 
-        if (nearClipDistance < 0d || farClipDistance < 0d || nearClipDistance > farClipDistance)
+        if (nearClipDistance < 0.0d || farClipDistance < 0.0d || nearClipDistance > farClipDistance)
             return Logging.getMessage("Geom.ViewFrustum.ClippingDistanceOutOfRange");
 
         return null;
     }
 
-    //**************************************************************//
-    //********************  Center Point Computation  **************//
-    //**************************************************************//
-
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     protected Vec4 computeCenterPoint(Globe globe, double verticalExaggeration,
-        Iterable<? extends Extent> modelExtents, Iterable<? extends ScreenExtent> screenExtents)
-    {
-        ArrayList<Vec4> list = new ArrayList<>();
+        Iterable<? extends Extent> modelExtents, Iterable<? extends ScreenExtent> screenExtents) {
+        List<Vec4> list = new ArrayList<>();
 
-        if (modelExtents != null)
-        {
-            for (Extent e : modelExtents)
-            {
+        if (modelExtents != null) {
+            for (Extent e : modelExtents) {
                 if (e == null || e.getCenter() == null)
                     continue;
 
@@ -517,10 +424,8 @@ public class ExtentVisibilitySupport
             }
         }
 
-        if (screenExtents != null)
-        {
-            for (ScreenExtent se : screenExtents)
-            {
+        if (screenExtents != null) {
+            for (ScreenExtent se : screenExtents) {
                 if (se == null || se.getModelReferencePoint() == null)
                     continue;
 
@@ -535,13 +440,12 @@ public class ExtentVisibilitySupport
     }
 
     //**************************************************************//
-    //********************  Eye Point Computation  *****************//
+    //********************  Center Point Computation  **************//
     //**************************************************************//
 
     protected Vec4 computeEyePoint(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView, Rectangle viewport,
         double nearClipDistance, double farClipDistance,
-        Iterable<? extends Extent> modelExtents, Iterable<? extends ScreenExtent> screenExtents)
-    {
+        Iterable<? extends Extent> modelExtents, Iterable<? extends ScreenExtent> screenExtents) {
         // Compute the modelview matrix from the specified model coordinate look-at parameters, and the projection
         // matrix from the specified projection parameters.
         Matrix modelview = Matrix.fromViewLookAt(eye, center, up);
@@ -553,15 +457,13 @@ public class ExtentVisibilitySupport
         // Compute the eye point which contains the specified model coordinate extents. We compute the model coordinate
         // eye point first to provide a baseline eye point which the screen extent computation can be compared against.
         Vec4 p = this.computeEyePointForModelExtents(eye, center, up, fieldOfView, viewport, modelExtents);
-        if (p != null)
-        {
+        if (p != null) {
             newEye = p;
 
             // Compute the new modelview matrix from the new look at parameters, and adjust the screen extents for the
             // change in modelview parameters.
             Matrix newModelview = Matrix.fromViewLookAt(newEye, center, up);
-            if (screenExtents != null)
-            {
+            if (screenExtents != null) {
                 screenExtents = this.translateScreenExtents(screenExtents, modelview, newModelview, projection,
                     viewport);
             }
@@ -571,8 +473,7 @@ public class ExtentVisibilitySupport
         // if it's closer to the center position than the screen extent eye point.
         p = this.computeEyePointForScreenExtents((newEye != null) ? newEye : eye, center, up, fieldOfView, viewport,
             nearClipDistance, farClipDistance, screenExtents);
-        if (p != null && (newEye == null || newEye.distanceTo3(center) < p.distanceTo3(center)))
-        {
+        if (p != null && (newEye == null || newEye.distanceTo3(center) < p.distanceTo3(center))) {
             newEye = p;
         }
 
@@ -580,12 +481,11 @@ public class ExtentVisibilitySupport
     }
 
     //**************************************************************//
-    //********************  Model Extent Support  ******************//
+    //********************  Eye Point Computation  *****************//
     //**************************************************************//
 
     protected Vec4 computeEyePointForModelExtents(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView,
-        Rectangle viewport, Iterable<? extends Extent> modelExtents)
-    {
+        Rectangle viewport, Iterable<? extends Extent> modelExtents) {
         if (modelExtents == null)
             return null;
 
@@ -606,8 +506,7 @@ public class ExtentVisibilitySupport
 
         // Compute the smallest distance from the center point needed to contain the model coordinate extents in the
         // viewport.
-        for (Extent e : modelExtents)
-        {
+        for (Extent e : modelExtents) {
             if (e == null || e.getCenter() == null)
                 continue;
 
@@ -629,13 +528,12 @@ public class ExtentVisibilitySupport
     }
 
     //**************************************************************//
-    //********************  Screen Extent Support  *****************//
+    //********************  Model Extent Support  ******************//
     //**************************************************************//
 
     protected Vec4 computeEyePointForScreenExtents(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView,
         Rectangle viewport, double nearClipDistance, double farClipDistance,
-        Iterable<? extends ScreenExtent> screenExtents)
-    {
+        Iterable<? extends ScreenExtent> screenExtents) {
         if (screenExtents == null)
             return null;
 
@@ -671,9 +569,12 @@ public class ExtentVisibilitySupport
         return newEye;
     }
 
+    //**************************************************************//
+    //********************  Screen Extent Support  *****************//
+    //**************************************************************//
+
     protected Vec4 computeEyePointForScreenReferencePoints(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView,
-        Rectangle viewport, Iterable<? extends ScreenExtent> screenExtents)
-    {
+        Rectangle viewport, Iterable<? extends ScreenExtent> screenExtents) {
         if (screenExtents == null)
             return null;
 
@@ -692,8 +593,7 @@ public class ExtentVisibilitySupport
 
         // Compute the smallest distance from the center point needed to contain the screen extent's model coordinate
         // reference points visible in the viewport.
-        for (ScreenExtent se : screenExtents)
-        {
+        for (ScreenExtent se : screenExtents) {
             if (se == null || se.getModelReferencePoint() == null)
                 continue;
 
@@ -718,8 +618,7 @@ public class ExtentVisibilitySupport
 
     protected Vec4 computeEyePointForScreenBounds(Vec4 eye, Vec4 center, Vec4 up, Angle fieldOfView,
         Rectangle viewport, double nearClipDistance, double farClipDistance,
-        Iterable<? extends ScreenExtent> screenExtents)
-    {
+        Iterable<? extends ScreenExtent> screenExtents) {
         if (screenExtents == null)
             return null;
 
@@ -737,8 +636,7 @@ public class ExtentVisibilitySupport
         double d;
 
         // If possible, estimate an eye distance which makes the entire screen bounds visible.
-        for (ScreenExtent se : screenExtents)
-        {
+        for (ScreenExtent se : screenExtents) {
             if (se == null || se.getModelReferencePoint() == null || se.getScreenBounds() == null)
                 continue;
 
@@ -747,15 +645,13 @@ public class ExtentVisibilitySupport
             Rectangle r = se.getScreenBounds();
 
             if (r.getWidth() < viewport.getWidth()
-                && (r.getMinX() < viewport.getMinX() || r.getMaxX() > viewport.getMaxX()))
-            {
+                && (r.getMinX() < viewport.getMinX() || r.getMaxX() > viewport.getMaxX())) {
                 double x0 = Math.abs(viewport.getCenterX() - sp.x);
                 double x1 = (r.getMinX() < viewport.getMinX()) ?
                     (viewport.getMinX() - r.getMinX()) :
                     (r.getMaxX() - viewport.getMaxX());
 
-                if (x1 < x0)
-                {
+                if (x1 < x0) {
                     d = (ep.z - c.z) + Math.abs(ep.z) * x0 / (x0 - x1);
                     if (maxDistance < d)
                         maxDistance = d;
@@ -763,15 +659,13 @@ public class ExtentVisibilitySupport
             }
 
             if (r.getHeight() < viewport.getHeight()
-                && (r.getMinY() < viewport.getMinY() || r.getMaxY() > viewport.getMaxY()))
-            {
+                && (r.getMinY() < viewport.getMinY() || r.getMaxY() > viewport.getMaxY())) {
                 double y0 = Math.abs(viewport.getCenterY() - sp.y);
                 double y1 = (r.getMinY() < viewport.getMinY()) ?
                     (viewport.getMinY() - r.getMinY()) :
                     (r.getMaxY() - viewport.getMaxY());
 
-                if (y1 < y0)
-                {
+                if (y1 < y0) {
                     d = (ep.z - c.z) + Math.abs(ep.z) * y0 / (y0 - y1);
                     if (maxDistance < d)
                         maxDistance = d;
@@ -786,14 +680,11 @@ public class ExtentVisibilitySupport
     }
 
     protected Iterable<ScreenExtent> translateScreenExtents(Iterable<? extends ScreenExtent> screenExtents,
-        Matrix oldModelview, Matrix newModelview, Matrix projection, Rectangle viewport)
-    {
-        ArrayList<ScreenExtent> adjustedScreenExtents = new ArrayList<>();
+        Matrix oldModelview, Matrix newModelview, Matrix projection, Rectangle viewport) {
+        List<ScreenExtent> adjustedScreenExtents = new ArrayList<>();
 
-        for (ScreenExtent se : screenExtents)
-        {
-            if (se.getModelReferencePoint() != null && se.getScreenBounds() != null)
-            {
+        for (ScreenExtent se : screenExtents) {
+            if (se.getModelReferencePoint() != null && se.getScreenBounds() != null) {
                 Vec4 sp1 = ViewUtil.project(se.getModelReferencePoint(), oldModelview, projection, viewport);
                 Vec4 sp2 = ViewUtil.project(se.getModelReferencePoint(), newModelview, projection, viewport);
                 Vec4 d = sp2.subtract3(sp1);
@@ -803,12 +694,54 @@ public class ExtentVisibilitySupport
 
                 adjustedScreenExtents.add(new ScreenExtent(se.getModelReferencePoint(), newBounds));
             }
-            else if (se.getModelReferencePoint() != null)
-            {
+            else if (se.getModelReferencePoint() != null) {
                 adjustedScreenExtents.add(se);
             }
         }
 
         return adjustedScreenExtents;
+    }
+
+    /**
+     * ScreenExtent represents a screen object's enclosing bounding box in screen coordinates, and that object's
+     * reference point in model coordinates. ExtentVisibilitySupport assumes that the relationship between the model
+     * reference point and the screen bounds are predicable: projecting the reference point into screen coordinates
+     * should yield a screen point with a predictable location relative to the screen bounds.
+     */
+    public static class ScreenExtent {
+        protected final Vec4 modelReferencePoint;
+        protected final Rectangle screenBounds;
+
+        /**
+         * Constructs a new ScreenExtent with the specified model coordinate reference point and screen coordinate
+         * bounding box. Either value may be null.
+         *
+         * @param modelReferencePoint the model coordinate reference point. A null reference is accepted.
+         * @param screenBounds        the screen coordinate bounding rectangle. A null reference is accepted.
+         */
+        public ScreenExtent(Vec4 modelReferencePoint, Rectangle screenBounds) {
+            this.modelReferencePoint = modelReferencePoint;
+            this.screenBounds = (screenBounds != null) ? new Rectangle(screenBounds) : null;
+        }
+
+        /**
+         * Returns the model coordinate reference point. This may return null, indicating this ScreenExtent has no model
+         * coordinate reference point.
+         *
+         * @return the reference point in model coordinates. May be null.
+         */
+        public Vec4 getModelReferencePoint() {
+            return this.modelReferencePoint;
+        }
+
+        /**
+         * Returns the screen coordinate bounding rectangle. This may return null, indicating the ScreenExtent has no
+         * screen coordinate bounds.
+         *
+         * @return the bounding rectangle in screen coordinates. May be null.
+         */
+        public Rectangle getScreenBounds() {
+            return (this.screenBounds != null) ? new Rectangle(this.screenBounds) : null;
+        }
     }
 }

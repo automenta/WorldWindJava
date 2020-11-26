@@ -28,36 +28,52 @@ import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.List;
+import java.util.*;
 
 /**
- * Demonstrates the use of the {@link gov.nasa.worldwind.render.SurfaceImage} class to create a "rubber sheet" image
+ * Demonstrates the use of the {@link SurfaceImage} class to create a "rubber sheet" image
  * that can be arbitrarily positioned, scaled and warped on the globe's surface using control points at the image's four
  * corners.
  *
  * @author tag
  * @version $Id: RubberSheetImage.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class RubberSheetImage extends ApplicationTemplate
-{
+public class RubberSheetImage extends ApplicationTemplate {
     public static final String OPEN_IMAGE_FILE = "OpenImageFile";
     public static final String SET_IMAGE_OPACITY = "SetImageOpacity";
     public static final String TOGGLE_EDITING = "ToggleEditing";
 
-    public static class AppFrame extends ApplicationTemplate.AppFrame implements ActionListener
-    {
+    protected static BufferedImage createPowerOfTwoImage(int minWidth, int minHeight) {
+        return new BufferedImage(WWMath.powerOfTwoCeiling(minWidth), WWMath.powerOfTwoCeiling(minHeight),
+            BufferedImage.TYPE_INT_ARGB);
+    }
+
+    protected static BufferedImage createPowerOfTwoScaledCopy(BufferedImage image) {
+        if (WWMath.isPowerOfTwo(image.getWidth()) && WWMath.isPowerOfTwo(image.getHeight()))
+            return image;
+
+        BufferedImage powerOfTwoImage = createPowerOfTwoImage(image.getWidth(), image.getHeight());
+        ImageUtil.getScaledCopy(image, powerOfTwoImage);
+        return powerOfTwoImage;
+    }
+
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Rubber Sheet Image", RubberSheetImage.AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame implements ActionListener {
         private final Controller controller;
 
-        public AppFrame()
-        {
+        public AppFrame() {
             this.controller = new Controller(this);
             this.getWwd().addSelectListener(this.controller);
 
             this.initComponents();
         }
 
-        private void initComponents()
-        {
+        private void initComponents() {
             Box controlBox = Box.createVerticalBox();
             controlBox.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // top, left, bottom, right
             {
@@ -93,8 +109,7 @@ public class RubberSheetImage extends ApplicationTemplate
             this.getControlPanel().add(controlBox, BorderLayout.SOUTH);
         }
 
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             if (e == null)
                 return;
 
@@ -105,14 +120,12 @@ public class RubberSheetImage extends ApplicationTemplate
         }
     }
 
-    public static class SurfaceImageEntry
-    {
+    public static class SurfaceImageEntry {
         private final SurfaceImage surfaceImage;
         private final SurfaceImageEditor editor;
         private final RenderableLayer layer;
 
-        public SurfaceImageEntry(WorldWindow wwd, SurfaceImage surfaceImage, String name)
-        {
+        public SurfaceImageEntry(WorldWindow wwd, SurfaceImage surfaceImage, String name) {
             this.surfaceImage = surfaceImage;
             this.editor = new SurfaceImageEditor(wwd, surfaceImage);
 
@@ -124,44 +137,36 @@ public class RubberSheetImage extends ApplicationTemplate
             insertBeforePlacenames(wwd, this.layer);
         }
 
-        public SurfaceImage getSurfaceImage()
-        {
+        public SurfaceImage getSurfaceImage() {
             return this.surfaceImage;
         }
 
-        public SurfaceImageEditor getEditor()
-        {
+        public SurfaceImageEditor getEditor() {
             return this.editor;
         }
 
-        public RenderableLayer getLayer()
-        {
+        public RenderableLayer getLayer() {
             return this.layer;
         }
     }
 
-    public static class Controller implements ActionListener, SelectListener
-    {
+    public static class Controller implements ActionListener, SelectListener {
         private final AppFrame appFrame;
+        private final List<SurfaceImageEntry> entryList = new ArrayList<>();
         private JFileChooser openFileChooser;
         private boolean isEditingEnabled = true;
 
-        private final ArrayList<SurfaceImageEntry> entryList = new ArrayList<>();
-
-        public Controller(AppFrame appFrame)
-        {
+        public Controller(AppFrame appFrame) {
             this.appFrame = appFrame;
         }
 
-        @SuppressWarnings( {"StringEquality"})
-        public void actionPerformed(ActionEvent event)
-        {
+        @SuppressWarnings("StringEquality")
+        public void actionPerformed(ActionEvent event) {
             String actionCommand = event.getActionCommand();
             if (WWUtil.isEmpty(actionCommand))
                 return;
 
-            switch (actionCommand)
-            {
+            switch (actionCommand) {
                 case OPEN_IMAGE_FILE -> this.doOpenImageFile();
                 case SET_IMAGE_OPACITY -> {
                     JSlider slider = (JSlider) event.getSource();
@@ -174,56 +179,44 @@ public class RubberSheetImage extends ApplicationTemplate
             }
         }
 
-        public void selected(SelectEvent e)
-        {
+        public void selected(SelectEvent e) {
             PickedObject topObject = e.getTopPickedObject();
 
-            if (e.getEventAction().equals(SelectEvent.LEFT_PRESS))
-            {
-                if (topObject != null && !topObject.isTerrain() && topObject.getObject() instanceof SurfaceImage)
-                {
+            if (e.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
+                if (topObject != null && !topObject.isTerrain() && topObject.getObject() instanceof SurfaceImage) {
                     SurfaceImageEntry entry = this.getEntryFor((SurfaceImage) topObject.getObject());
-                    if (entry != null)
-                    {
+                    if (entry != null) {
                         this.setSelectedEntry(entry);
                     }
                 }
             }
         }
 
-        protected void enableEditing(boolean enable)
-        {
+        protected void enableEditing(boolean enable) {
             this.isEditingEnabled = enable;
 
-            for (SurfaceImageEntry entry : this.entryList)
-            {
+            for (SurfaceImageEntry entry : this.entryList) {
                 entry.getLayer().setPickEnabled(enable);
-                if (!enable)
-                {
+                if (!enable) {
                     entry.getEditor().setArmed(false);
                 }
             }
         }
 
-        protected void addSurfaceImage(SurfaceImage surfaceImage, String name)
-        {
+        protected void addSurfaceImage(SurfaceImage surfaceImage, String name) {
             SurfaceImageEntry entry = new SurfaceImageEntry(this.appFrame.getWwd(), surfaceImage, name);
             this.entryList.add(entry);
             this.setSelectedEntry(entry);
 
             entry.getLayer().setPickEnabled(this.isEditingEnabled);
-            if (!this.isEditingEnabled)
-            {
+            if (!this.isEditingEnabled) {
                 entry.getEditor().setArmed(false);
             }
         }
 
-        protected SurfaceImageEntry getEntryFor(SurfaceImage surfaceImage)
-        {
-            for (SurfaceImageEntry entry : this.entryList)
-            {
-                if (entry.getSurfaceImage() == surfaceImage)
-                {
+        protected SurfaceImageEntry getEntryFor(SurfaceImage surfaceImage) {
+            for (SurfaceImageEntry entry : this.entryList) {
+                if (entry.getSurfaceImage() == surfaceImage) {
                     return entry;
                 }
             }
@@ -231,29 +224,22 @@ public class RubberSheetImage extends ApplicationTemplate
             return null;
         }
 
-        protected void setSelectedEntry(SurfaceImageEntry selected)
-        {
-            for (SurfaceImageEntry entry : this.entryList)
-            {
-                if (entry != selected)
-                {
-                    if (entry.getEditor().isArmed())
-                    {
+        protected void setSelectedEntry(SurfaceImageEntry selected) {
+            for (SurfaceImageEntry entry : this.entryList) {
+                if (entry != selected) {
+                    if (entry.getEditor().isArmed()) {
                         entry.getEditor().setArmed(false);
                     }
                 }
             }
 
-            if (!selected.getEditor().isArmed())
-            {
+            if (!selected.getEditor().isArmed()) {
                 selected.getEditor().setArmed(true);
             }
         }
 
-        protected void doOpenImageFile()
-        {
-            if (this.openFileChooser == null)
-            {
+        protected void doOpenImageFile() {
+            if (this.openFileChooser == null) {
                 this.openFileChooser = new JFileChooser(Configuration.getUserHomeDirectory());
                 this.openFileChooser.setAcceptAllFileFilterUsed(false);
                 this.openFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -270,23 +256,19 @@ public class RubberSheetImage extends ApplicationTemplate
             this.loadFiles(files);
         }
 
-        protected void doSetImageOpacity(double opacity)
-        {
-            for (SurfaceImageEntry entry : this.entryList)
-            {
+        protected void doSetImageOpacity(double opacity) {
+            for (SurfaceImageEntry entry : this.entryList) {
                 entry.getSurfaceImage().setOpacity(opacity);
             }
 
             this.appFrame.getWwd().redraw();
         }
 
-        protected void loadFiles(final File[] files)
-        {
+        protected void loadFiles(final File[] files) {
             this.appFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
             Thread thread = new Thread(() -> {
-                for (File f : files)
-                {
+                for (File f : files) {
                     loadFile(f);
                 }
 
@@ -295,15 +277,13 @@ public class RubberSheetImage extends ApplicationTemplate
             thread.start();
         }
 
-        protected void loadFile(final File file)
-        {
+        protected void loadFile(final File file) {
             final BufferedImage image = this.readImage(file);
             if (image == null)
                 return;
 
             final SurfaceImage si = this.createGeoreferencedSurfaceImage(file, image);
-            if (si == null)
-            {
+            if (si == null) {
                 this.addNonGeoreferencedSurfaceImage(file, image, this.appFrame.getWwd());
                 return;
             }
@@ -311,38 +291,31 @@ public class RubberSheetImage extends ApplicationTemplate
             SwingUtilities.invokeLater(() -> addSurfaceImage(si, file.getName()));
         }
 
-        protected BufferedImage readImage(File file)
-        {
-            try
-            {
+        protected BufferedImage readImage(File file) {
+            try {
                 return ImageIO.read(file);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
         }
 
-        protected SurfaceImage createGeoreferencedSurfaceImage(File file, BufferedImage image)
-        {
-            try
-            {
+        protected SurfaceImage createGeoreferencedSurfaceImage(File file, BufferedImage image) {
+            try {
                 SurfaceImage si = null;
 
                 File tabFile = this.getAssociatedTABFile(file);
                 if (tabFile != null)
                     si = this.createSurfaceImageFromTABFile(image, tabFile);
 
-                if (si == null)
-                {
+                if (si == null) {
                     File gcpsFile = this.getAssociatedGCPSFile(file);
                     if (gcpsFile != null)
                         si = this.createSurfaceImageFromGCPSFile(image, gcpsFile);
                 }
 
-                if (si == null)
-                {
+                if (si == null) {
                     File[] worldFiles = this.getAssociatedWorldFiles(file);
                     if (worldFiles != null)
                         si = this.createSurfaceImageFromWorldFiles(image, worldFiles);
@@ -350,18 +323,15 @@ public class RubberSheetImage extends ApplicationTemplate
 
                 return si;
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
         }
 
-        public File getAssociatedTABFile(File file)
-        {
+        public File getAssociatedTABFile(File file) {
             File tabFile = TABRasterReader.getTABFileFor(file);
-            if (tabFile != null && tabFile.exists())
-            {
+            if (tabFile != null && tabFile.exists()) {
                 TABRasterReader reader = new TABRasterReader();
                 if (reader.canRead(tabFile))
                     return tabFile;
@@ -370,11 +340,9 @@ public class RubberSheetImage extends ApplicationTemplate
             return null;
         }
 
-        public File getAssociatedGCPSFile(File file)
-        {
+        public File getAssociatedGCPSFile(File file) {
             File gcpsFile = GCPSReader.getGCPSFileFor(file);
-            if (gcpsFile != null && gcpsFile.exists())
-            {
+            if (gcpsFile != null && gcpsFile.exists()) {
                 GCPSReader reader = new GCPSReader();
                 if (reader.canRead(gcpsFile))
                     return gcpsFile;
@@ -383,24 +351,20 @@ public class RubberSheetImage extends ApplicationTemplate
             return null;
         }
 
-        public File[] getAssociatedWorldFiles(File file)
-        {
-            try
-            {
+        public File[] getAssociatedWorldFiles(File file) {
+            try {
                 File[] worldFiles = WorldFile.getWorldFiles(file);
                 if (worldFiles != null && worldFiles.length > 0)
                     return worldFiles;
             }
-            catch (Exception ignored)
-            {
+            catch (Exception ignored) {
             }
 
             return null;
         }
 
         protected SurfaceImage createSurfaceImageFromWorldFiles(BufferedImage image, File[] worldFiles)
-            throws java.io.IOException
-        {
+            throws IOException {
             AVList worldFileParams = new AVListImpl();
             WorldFile.decodeWorldFiles(worldFiles, worldFileParams);
 
@@ -411,8 +375,7 @@ public class RubberSheetImage extends ApplicationTemplate
         }
 
         protected SurfaceImage createSurfaceImageFromTABFile(BufferedImage image, File tabFile)
-            throws java.io.IOException
-        {
+            throws IOException {
             TABRasterReader reader = new TABRasterReader();
             RasterControlPointList controlPoints = reader.read(tabFile);
 
@@ -420,8 +383,7 @@ public class RubberSheetImage extends ApplicationTemplate
         }
 
         protected SurfaceImage createSurfaceImageFromGCPSFile(BufferedImage image, File gcpsFile)
-            throws java.io.IOException
-        {
+            throws IOException {
             GCPSReader reader = new GCPSReader();
             RasterControlPointList controlPoints = reader.read(gcpsFile);
 
@@ -429,14 +391,12 @@ public class RubberSheetImage extends ApplicationTemplate
         }
 
         protected SurfaceImage createSurfaceImageFromControlPoints(BufferedImage image,
-            RasterControlPointList controlPoints)
-        {
+            RasterControlPointList controlPoints) {
             int numControlPoints = controlPoints.size();
             Point2D[] imagePoints = new Point2D[numControlPoints];
             LatLon[] geoPoints = new LatLon[numControlPoints];
 
-            for (int i = 0; i < numControlPoints; i++)
-            {
+            for (int i = 0; i < numControlPoints; i++) {
                 RasterControlPointList.ControlPoint p = controlPoints.get(i);
                 imagePoints[i] = p.getRasterPoint();
                 geoPoints[i] = p.getWorldPointAsLatLon();
@@ -449,14 +409,11 @@ public class RubberSheetImage extends ApplicationTemplate
         }
 
         protected void addNonGeoreferencedSurfaceImage(final File file, final BufferedImage image,
-            final WorldWindow wwd)
-        {
-            if (!SwingUtilities.isEventDispatchThread())
-            {
+            final WorldWindow wwd) {
+            if (!SwingUtilities.isEventDispatchThread()) {
                 SwingUtilities.invokeLater(() -> addNonGeoreferencedSurfaceImage(file, image, wwd));
             }
-            else
-            {
+            else {
                 StringBuilder message = new StringBuilder();
                 message.append("Unable to find geographic coordinates for: ");
                 message.append("\"").append(file.getPath()).append("\"");
@@ -479,26 +436,5 @@ public class RubberSheetImage extends ApplicationTemplate
                 this.addSurfaceImage(new SurfaceImage(powerOfTwoImage, sector), file.getName());
             }
         }
-    }
-
-    protected static BufferedImage createPowerOfTwoImage(int minWidth, int minHeight)
-    {
-        return new BufferedImage(WWMath.powerOfTwoCeiling(minWidth), WWMath.powerOfTwoCeiling(minHeight),
-            BufferedImage.TYPE_INT_ARGB);
-    }
-
-    protected static BufferedImage createPowerOfTwoScaledCopy(BufferedImage image)
-    {
-        if (WWMath.isPowerOfTwo(image.getWidth()) && WWMath.isPowerOfTwo(image.getHeight()))
-            return image;
-
-        BufferedImage powerOfTwoImage = createPowerOfTwoImage(image.getWidth(), image.getHeight());
-        ImageUtil.getScaledCopy(image, powerOfTwoImage);
-        return powerOfTwoImage;
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Rubber Sheet Image", RubberSheetImage.AppFrame.class);
     }
 }

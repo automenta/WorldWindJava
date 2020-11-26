@@ -19,26 +19,24 @@ import java.awt.event.*;
  * @author tag
  * @version $Id: NetworkOfflineMode.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class NetworkOfflineMode extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class NetworkOfflineMode extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("Network Offline Mode", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             this.getControlPanel().add(makeControlPanel(), BorderLayout.SOUTH);
         }
 
-        protected JPanel makeControlPanel()
-        {
+        protected JPanel makeControlPanel() {
             JPanel panel = new JPanel(new BorderLayout(5, 5));
             panel.setBorder(new CompoundBorder(new EmptyBorder(0, 10, 15, 10), new EtchedBorder()));
 
-            JCheckBox modeSwitch = new JCheckBox(new AbstractAction(" Online")
-            {
-                public void actionPerformed(ActionEvent actionEvent)
-                {
+            JCheckBox modeSwitch = new JCheckBox(new AbstractAction(" Online") {
+                public void actionPerformed(ActionEvent actionEvent) {
                     // Get the current status
                     boolean offline = WorldWind.getNetworkStatus().isOfflineMode();
 
@@ -56,10 +54,5 @@ public class NetworkOfflineMode extends ApplicationTemplate
 
             return panel;
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("Network Offline Mode", AppFrame.class);
     }
 }

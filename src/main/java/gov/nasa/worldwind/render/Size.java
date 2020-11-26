@@ -37,18 +37,21 @@ import java.util.Objects;
  * Explicit        Native           1.0 (fraction)     N/A                   Stretch the image to fill the width of the
  *                                                                           container, but do not scale the height.
  * </pre>
- *
+ * <p>
  * This class implements the functionality of a KML <i>size</i>.
  *
  * @author pabercrombie
  * @version $Id: Size.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Size
-{
-    /** Size mode to indicate that the content's native dimension must be used. */
+public class Size {
+    /**
+     * Size mode to indicate that the content's native dimension must be used.
+     */
     public static final String NATIVE_DIMENSION = "gov.nasa.worldwind.render.Size.NativeDimension";
 
-    /** Size mode to indicate that the content's aspect ratio must be maintained. */
+    /**
+     * Size mode to indicate that the content's aspect ratio must be maintained.
+     */
     public static final String MAINTAIN_ASPECT_RATIO = "gov.nasa.worldwind.render.Size.MaintainAspectRatio";
 
     /**
@@ -62,9 +65,13 @@ public class Size
      * #EXPLICIT_DIMENSION}.
      */
     protected String widthMode = NATIVE_DIMENSION;
-    /** Units of width. */
+    /**
+     * Units of width.
+     */
     protected String widthUnits = AVKey.PIXELS;
-    /** Width size parameter. */
+    /**
+     * Width size parameter.
+     */
     protected double widthParam;
 
     /**
@@ -72,14 +79,19 @@ public class Size
      * #EXPLICIT_DIMENSION}.
      */
     protected String heightMode = NATIVE_DIMENSION;
-    /** Units of height. */
+    /**
+     * Units of height.
+     */
     protected String heightUnits = AVKey.PIXELS;
-    /** Height size parameter. */
+    /**
+     * Height size parameter.
+     */
     protected double heightParam;
 
-    /** Create a Size object that will preserve native dimensions. */
-    public Size()
-    {
+    /**
+     * Create a Size object that will preserve native dimensions.
+     */
+    public Size() {
     }
 
     /**
@@ -93,13 +105,11 @@ public class Size
      *                    #EXPLICIT_DIMENSION}.
      * @param heightParam The height (applies only to {@link #EXPLICIT_DIMENSION} mode).
      * @param heightUnits Units of {@code height}. Either {@link AVKey#PIXELS} or {@link AVKey#PIXELS}.
-     *
      * @see #setWidth(String, double, String)
      * @see #setHeight(String, double, String)
      */
     public Size(String widthMode, double widthParam, String widthUnits, String heightMode, double heightParam,
-        String heightUnits)
-    {
+        String heightUnits) {
         this.setWidth(widthMode, widthParam, widthUnits);
         this.setHeight(heightMode, heightParam, heightUnits);
     }
@@ -109,11 +119,9 @@ public class Size
      *
      * @param widthInPixels  Width of rectangle in pixels.
      * @param heightInPixels Height of rectangle in pixels.
-     *
      * @return New size object.
      */
-    public static Size fromPixels(int widthInPixels, int heightInPixels)
-    {
+    public static Size fromPixels(int widthInPixels, int heightInPixels) {
         return new Size(EXPLICIT_DIMENSION, widthInPixels, AVKey.PIXELS,
             EXPLICIT_DIMENSION, heightInPixels, AVKey.PIXELS);
     }
@@ -123,11 +131,9 @@ public class Size
      *
      * @param widthFraction  the size's width as a fraction of the containing rectangle.
      * @param heightFraction the size's height as a fraction of the containing rectangle.
-     *
      * @return a new size with the specified width and height.
      */
-    public static Size fromFraction(double widthFraction, double heightFraction)
-    {
+    public static Size fromFraction(double widthFraction, double heightFraction) {
         return new Size(EXPLICIT_DIMENSION, widthFraction, AVKey.FRACTION,
             EXPLICIT_DIMENSION, heightFraction, AVKey.FRACTION);
     }
@@ -139,13 +145,10 @@ public class Size
      *              #EXPLICIT_DIMENSION}.
      * @param width The width (applies only to {@link #EXPLICIT_DIMENSION} mode).
      * @param units Units of {@code width}. Either {@link AVKey#PIXELS} or {@link AVKey#PIXELS}.
-     *
      * @throws IllegalArgumentException if {@code mode} is null.
      */
-    public void setWidth(String mode, double width, String units)
-    {
-        if (mode == null)
-        {
+    public void setWidth(String mode, double width, String units) {
+        if (mode == null) {
             String message = Logging.getMessage("nullValue.SizeModeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -163,13 +166,10 @@ public class Size
      *               #EXPLICIT_DIMENSION}.
      * @param height The width (applies only to {@link #EXPLICIT_DIMENSION} mode).
      * @param units  Units of {@code width}. Either {@link AVKey#PIXELS} or {@link AVKey#FRACTION}.
-     *
      * @throws IllegalArgumentException if {@code mode} is null.
      */
-    public void setHeight(String mode, double height, String units)
-    {
-        if (mode == null)
-        {
+    public void setHeight(String mode, double height, String units) {
+        if (mode == null) {
             String message = Logging.getMessage("nullValue.SizeModeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -186,8 +186,7 @@ public class Size
      *
      * @return the units of the offset X value, or null.
      */
-    public String getWidthUnits()
-    {
+    public String getWidthUnits() {
         return widthUnits;
     }
 
@@ -197,8 +196,7 @@ public class Size
      *
      * @return the units of the offset Y value, or null.
      */
-    public String getHeightUnits()
-    {
+    public String getHeightUnits() {
         return heightUnits;
     }
 
@@ -206,10 +204,9 @@ public class Size
      * Get the mode of the width dimension.
      *
      * @return Width mode, one of {@link #NATIVE_DIMENSION}, {@link #MAINTAIN_ASPECT_RATIO}, or {@link
-     *         #EXPLICIT_DIMENSION}.
+     * #EXPLICIT_DIMENSION}.
      */
-    public String getWidthMode()
-    {
+    public String getWidthMode() {
         return this.widthMode;
     }
 
@@ -217,10 +214,9 @@ public class Size
      * Get the mode of the height dimension.
      *
      * @return Height mode, one of {@link #NATIVE_DIMENSION}, {@link #MAINTAIN_ASPECT_RATIO}, or {@link
-     *         #EXPLICIT_DIMENSION}.
+     * #EXPLICIT_DIMENSION}.
      */
-    public String getHeightMode()
-    {
+    public String getHeightMode() {
         return this.heightMode;
     }
 
@@ -228,12 +224,10 @@ public class Size
      * Get the unscaled width.
      *
      * @return Unscaled width. The units of this value depend on the current height units.
-     *
      * @see #getWidthMode()
      * @see #getWidthUnits()
      */
-    public double getWidth()
-    {
+    public double getWidth() {
         return widthParam;
     }
 
@@ -241,12 +235,10 @@ public class Size
      * Get the unscaled height.
      *
      * @return Unscaled height. The units of this value depend on the current height units.
-     *
      * @see #getHeightMode()
      * @see #getHeightUnits()
      */
-    public double getHeight()
-    {
+    public double getHeight() {
         return heightParam;
     }
 
@@ -257,34 +249,28 @@ public class Size
      * @param rectHeight      The height of the rectangle to size.
      * @param containerWidth  The width of the container.
      * @param containerHeight The height of the container.
-     *
      * @return The desired image dimensions.
      */
-    public Dimension compute(int rectWidth, int rectHeight, int containerWidth, int containerHeight)
-    {
-        if (rectWidth < 0)
-        {
+    public Dimension compute(int rectWidth, int rectHeight, int containerWidth, int containerHeight) {
+        if (rectWidth < 0) {
             String message = Logging.getMessage("generic.InvalidWidth", rectWidth);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (rectHeight < 0)
-        {
+        if (rectHeight < 0) {
             String message = Logging.getMessage("generic.InvalidHeight", rectHeight);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (containerWidth < 0)
-        {
+        if (containerWidth < 0) {
             String message = Logging.getMessage("generic.InvalidWidth", containerWidth);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (containerHeight < 0)
-        {
+        if (containerHeight < 0) {
             String message = Logging.getMessage("generic.InvalidHeight", containerHeight);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -304,20 +290,17 @@ public class Size
         if (NATIVE_DIMENSION.equals(xMode) && NATIVE_DIMENSION.equals(yMode)
             || NATIVE_DIMENSION.equals(xMode) && MAINTAIN_ASPECT_RATIO.equals(yMode)
             || MAINTAIN_ASPECT_RATIO.equals(xMode) && NATIVE_DIMENSION.equals(yMode)
-            || MAINTAIN_ASPECT_RATIO.equals(xMode) && MAINTAIN_ASPECT_RATIO.equals(yMode))
-        {
+            || MAINTAIN_ASPECT_RATIO.equals(xMode) && MAINTAIN_ASPECT_RATIO.equals(yMode)) {
             // Keep original dimensions
             width = rectWidth;
             height = rectHeight;
         }
-        else if (MAINTAIN_ASPECT_RATIO.equals(xMode))
-        {
+        else if (MAINTAIN_ASPECT_RATIO.equals(xMode)) {
             // y dimension is specified, scale x to maintain aspect ratio
             height = computeSize(this.heightParam, this.heightUnits, containerHeight);
             width = height * aspectRatio;
         }
-        else if (MAINTAIN_ASPECT_RATIO.equals(yMode))
-        {
+        else if (MAINTAIN_ASPECT_RATIO.equals(yMode)) {
             // x dimension is specified, scale y to maintain aspect ratio
             width = computeSize(this.widthParam, this.widthUnits, containerWidth);
             if (aspectRatio != 0)
@@ -325,8 +308,7 @@ public class Size
             else
                 height = 0;
         }
-        else
-        {
+        else {
             if (NATIVE_DIMENSION.equals(xMode))
                 width = rectWidth;
             else
@@ -348,11 +330,9 @@ public class Size
      * @param units              One of {@link AVKey#PIXELS} or {@link AVKey#FRACTION}. If the {@code units} value is
      *                           not one of the expected options, {@link AVKey#PIXELS} is used as the default.
      * @param containerDimension The viewport dimension.
-     *
      * @return Size in pixels
      */
-    protected double computeSize(double size, String units, double containerDimension)
-    {
+    protected double computeSize(double size, String units, double containerDimension) {
         if (AVKey.FRACTION.equals(units))
             return size * containerDimension;
         else  // Default to pixel
@@ -363,25 +343,21 @@ public class Size
      * Saves the size's current state in the specified <code>restorableSupport</code>. If <code>context</code> is not
      * <code>null</code>, the state is appended to it.  Otherwise the state is added to the
      * <code>RestorableSupport</code> root. This state can be restored later by calling {@link
-     * #restoreState(gov.nasa.worldwind.util.RestorableSupport, gov.nasa.worldwind.util.RestorableSupport.StateObject)}.
+     * #restoreState(RestorableSupport, RestorableSupport.StateObject)}.
      *
      * @param restorableSupport the <code>RestorableSupport</code> that receives the size's state.
      * @param context           the <code>StateObject</code> the state is appended to, if not <code>null</code>.
-     *
      * @throws IllegalArgumentException if <code>restorableSupport</code> is <code>null</code>.
      */
-    public void getRestorableState(RestorableSupport restorableSupport, RestorableSupport.StateObject context)
-    {
-        if (restorableSupport == null)
-        {
+    public void getRestorableState(RestorableSupport restorableSupport, RestorableSupport.StateObject context) {
+        if (restorableSupport == null) {
             String message = Logging.getMessage("nullValue.RestorableSupportIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         RestorableSupport.StateObject so = restorableSupport.addStateObject(context, "width");
-        if (so != null)
-        {
+        if (so != null) {
             restorableSupport.addStateValueAsString(so, "mode", this.getWidthMode());
             restorableSupport.addStateValueAsDouble(so, "param", this.getWidth());
 
@@ -390,8 +366,7 @@ public class Size
         }
 
         so = restorableSupport.addStateObject(context, "height");
-        if (so != null)
-        {
+        if (so != null) {
             restorableSupport.addStateValueAsString(so, "mode", this.getHeightMode());
             restorableSupport.addStateValueAsDouble(so, "param", this.getHeight());
 
@@ -407,21 +382,17 @@ public class Size
      *
      * @param restorableSupport the <code>RestorableSupport</code> that contains the size's state.
      * @param context           the <code>StateObject</code> to search for state values, if not <code>null</code>.
-     *
      * @throws IllegalArgumentException if <code>restorableSupport</code> is <code>null</code>.
      */
-    public void restoreState(RestorableSupport restorableSupport, RestorableSupport.StateObject context)
-    {
-        if (restorableSupport == null)
-        {
+    public void restoreState(RestorableSupport restorableSupport, RestorableSupport.StateObject context) {
+        if (restorableSupport == null) {
             String message = Logging.getMessage("nullValue.RestorableSupportIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         RestorableSupport.StateObject so = restorableSupport.getStateObject(context, "width");
-        if (so != null)
-        {
+        if (so != null) {
             String mode = restorableSupport.getStateValueAsString(so, "mode");
             mode = convertLegacyModeString(mode);
 
@@ -434,8 +405,7 @@ public class Size
         }
 
         so = restorableSupport.getStateObject(context, "height");
-        if (so != null)
-        {
+        if (so != null) {
             String mode = restorableSupport.getStateValueAsString(so, "mode");
             mode = convertLegacyModeString(mode);
 
@@ -455,11 +425,9 @@ public class Size
      * mode.
      *
      * @param string the legacy size mode <code>String</code> to convert to a size mode.
-     *
      * @return a size mode constant, or the input string if <code>string</code> is not a legacy size mode.
      */
-    protected String convertLegacyModeString(String string)
-    {
+    protected String convertLegacyModeString(String string) {
         if ("NativeDimension".equals(string))
             return NATIVE_DIMENSION;
         else if ("MaintainAspectRatio".equals(string))
@@ -471,8 +439,7 @@ public class Size
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || this.getClass() != o.getClass())
@@ -498,8 +465,7 @@ public class Size
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
         long temp;
         temp = this.widthParam != +0.0d ? Double.doubleToLongBits(this.widthParam) : 0L;

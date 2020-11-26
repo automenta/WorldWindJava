@@ -32,59 +32,23 @@ import java.util.*;
  * @version $Id: TacticalGraphicSymbol.java 2196 2014-08-06 19:42:15Z tgaskins $
  * @see MilStd2525PointGraphic
  */
-public class TacticalGraphicSymbol extends AbstractTacticalSymbol
-{
+public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
     /**
      * Object that provides the default offset for each point graphic. Most graphics are centered on their position, but
      * some require a different offset.
      */
     protected static final DefaultOffsets defaultOffsets = new DefaultOffsets();
 
-    /** Object that provides the default label layouts for each point graphic. */
+    /**
+     * Object that provides the default label layouts for each point graphic.
+     */
     protected static final DefaultLabelLayouts defaultLayouts = new DefaultLabelLayouts();
 
     protected static final Offset BELOW_BOTTOM_CENTER_OFFSET = Offset.fromFraction(0.5, -0.1);
-    /** The default number of label lines to expect when computing the minimum size of the text layout rectangle. */
+    /**
+     * The default number of label lines to expect when computing the minimum size of the text layout rectangle.
+     */
     protected static final int DEFAULT_LABEL_LINES = 2;
-
-    public static class LabelLayout
-    {
-        protected final String modifier;
-        protected final List<OffsetPair> offsets = new ArrayList<>();
-
-        public LabelLayout(String modifier)
-        {
-            this.modifier = modifier;
-        }
-
-        public void add(Offset offset, Offset hotspot)
-        {
-            this.offsets.add(new OffsetPair(offset, hotspot));
-        }
-
-        public String getModifier()
-        {
-            return modifier;
-        }
-
-        public List<OffsetPair> getOffsets()
-        {
-            return this.offsets;
-        }
-    }
-
-    public static class OffsetPair
-    {
-        public final Offset offset;
-        public final Offset hotSpot;
-
-        public OffsetPair(Offset offset, Offset hotSpot)
-        {
-            this.offset = offset;
-            this.hotSpot = hotSpot;
-        }
-    }
-
     /**
      * Indicates a string identifier for this symbol. The format of the identifier depends on the symbol set to which
      * this graphic belongs. For symbols belonging to the MIL-STD-2525 symbol set, this returns a 15-character
@@ -103,8 +67,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      *
      * @param sidc Code that identifies the graphic.
      */
-    public TacticalGraphicSymbol(String sidc)
-    {
+    public TacticalGraphicSymbol(String sidc) {
         super();
         init(sidc);
     }
@@ -116,11 +79,9 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      *
      * @param sidc     Code that identifies the graphic.
      * @param position The latitude, longitude, and altitude where the symbol is drawn.
-     *
      * @throws IllegalArgumentException if the position is <code>null</code>.
      */
-    public TacticalGraphicSymbol(String sidc, Position position)
-    {
+    public TacticalGraphicSymbol(String sidc, Position position) {
         super(position);
         init(sidc);
     }
@@ -129,11 +90,9 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      * Indicates the current value of graphic's Status/Operational Condition field.
      *
      * @return this graphic's Status/Operational Condition field.
-     *
      * @see #setStatus(String)
      */
-    public String getStatus()
-    {
+    public String getStatus() {
         return this.symbolCode.getStatus();
     }
 
@@ -152,21 +111,17 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      * <ul> <li>STATUS_ANTICIPATED</li> <li>STATUS_PRESENT</li> </ul>
      *
      * @param value the new value for the Status/Operational Condition field.
-     *
      * @throws IllegalArgumentException if the specified value is <code>null</code> or is not one of the accepted status
      *                                  values.
      */
-    public void setStatus(String value)
-    {
-        if (value == null)
-        {
+    public void setStatus(String value) {
+        if (value == null) {
             String msg = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (!SymbologyConstants.STATUS_ALL.contains(value.toUpperCase()))
-        {
+        if (!SymbologyConstants.STATUS_ALL.contains(value.toUpperCase())) {
             String msg = Logging.getMessage("Symbology.InvalidStatus", value);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -180,8 +135,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      *
      * @param sidc Code that identifies the graphic.
      */
-    protected void init(String sidc)
-    {
+    protected void init(String sidc) {
         this.symbolCode = new SymbolCode(sidc);
         this.maskedSymbolCode = this.symbolCode.toMaskedString();
 
@@ -208,21 +162,20 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         this.setUnitsFormat(MilStd2525TacticalSymbol.DEFAULT_UNITS_FORMAT);
     }
 
-    /** {@inheritDoc} */
-    public String getIdentifier()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public String getIdentifier() {
         return this.symbolCode.toString();
     }
 
     @Override
-    protected int getMaxLabelLines(AVList modifiers)
-    {
+    protected int getMaxLabelLines(AVList modifiers) {
         return DEFAULT_LABEL_LINES;
     }
 
     @Override
-    protected void applyImplicitModifiers(AVList modifiers)
-    {
+    protected void applyImplicitModifiers(AVList modifiers) {
         String si = this.symbolCode.getStandardIdentity();
 
         // If this symbol represents a hostile entity, and the "hostile/enemy" indicator is enabled, then set the
@@ -231,20 +184,17 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
             || SymbologyConstants.STANDARD_IDENTITY_SUSPECT.equalsIgnoreCase(si)
             || SymbologyConstants.STANDARD_IDENTITY_JOKER.equalsIgnoreCase(si)
             || SymbologyConstants.STANDARD_IDENTITY_FAKER.equalsIgnoreCase(si);
-        if (!modifiers.hasKey(SymbologyConstants.HOSTILE_ENEMY) && this.isShowHostileIndicator() && isHostile)
-        {
+        if (!modifiers.hasKey(SymbologyConstants.HOSTILE_ENEMY) && this.isShowHostileIndicator() && isHostile) {
             modifiers.setValue(SymbologyConstants.HOSTILE_ENEMY, SymbologyConstants.HOSTILE_ENEMY);
         }
 
         // Determine location, if location modifier is enabled.
-        if (!modifiers.hasKey(SymbologyConstants.LOCATION) && this.isShowLocation())
-        {
+        if (!modifiers.hasKey(SymbologyConstants.LOCATION) && this.isShowLocation()) {
             modifiers.setValue(SymbologyConstants.LOCATION, this.getFormattedPosition());
         }
 
         // Determine altitude, if location modifier is enabled.
-        if (!modifiers.hasKey(SymbologyConstants.ALTITUDE_DEPTH) && this.isShowLocation())
-        {
+        if (!modifiers.hasKey(SymbologyConstants.ALTITUDE_DEPTH) && this.isShowLocation()) {
             Position position = this.getPosition();
             UnitsFormat format = this.getUnitsFormat();
 
@@ -262,8 +212,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
             modifiers.setValue(SymbologyConstants.ALTITUDE_DEPTH, altitude);
         }
 
-        if (!modifiers.hasKey(SymbologyConstants.TYPE))
-        {
+        if (!modifiers.hasKey(SymbologyConstants.TYPE)) {
             if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equalsIgnoreCase(this.maskedSymbolCode))
                 modifiers.setValue(SymbologyConstants.TYPE, "BIO");
             else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equalsIgnoreCase(this.maskedSymbolCode))
@@ -278,15 +227,13 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      * @param modifiers Modifiers applied to this graphic.
      */
     @Override
-    protected void layoutTextModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym)
-    {
+    protected void layoutTextModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
         this.currentLabels.clear();
 
         Font font = this.getActiveAttributes().getTextModifierFont();
         List<LabelLayout> allLayouts = this.getLayouts(this.symbolCode.toMaskedString());
 
-        for (LabelLayout layout : allLayouts)
-        {
+        for (LabelLayout layout : allLayouts) {
             java.util.List<OffsetPair> offsets = layout.offsets;
 
             if (WWUtil.isEmpty(offsets))
@@ -297,8 +244,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
                 continue;
 
             // If we're retrieving the date modifier, maybe add a hyphen to the first value to indicate a date range.
-            if (SymbologyConstants.DATE_TIME_GROUP.equals(layout.modifier) && (value instanceof Iterable))
-            {
+            if (SymbologyConstants.DATE_TIME_GROUP.equals(layout.modifier) && (value instanceof Iterable)) {
                 value = this.addHyphenToDateRange((Iterable) value, offsets);
             }
 
@@ -306,12 +252,10 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
 
             // Some graphics support multiple instances of the same modifier. Handle this case differently than the
             // single instance case.
-            if (value instanceof Iterable)
-            {
+            if (value instanceof Iterable) {
                 this.layoutMultiLabel(dc, font, offsets, (Iterable) value, mode, osym);
             }
-            else if (value != null)
-            {
+            else if (value != null) {
                 this.layoutLabel(dc, font, layout.offsets.get(0), value.toString(), mode, osym);
             }
         }
@@ -321,17 +265,14 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      * Indicates the label layouts designed to a particular graphic.
      *
      * @param sidc Symbol ID to for which to determine layout.
-     *
      * @return List of label layouts for the specified symbol.
      */
-    protected List<LabelLayout> getLayouts(String sidc)
-    {
+    protected List<LabelLayout> getLayouts(String sidc) {
         return defaultLayouts.get(sidc);
     }
 
     @Override
-    protected void layoutDynamicModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym)
-    {
+    protected void layoutDynamicModifiers(DrawContext dc, AVList modifiers, OrderedSymbol osym) {
         this.currentLines.clear();
 
         if (!this.isShowGraphicModifiers())
@@ -340,8 +281,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         // Direction of Movement indicator. Placed at the bottom of the symbol layout. Direction of Movement applies
         // only to CBRN graphics (see MIL-STD-2525C table XI, pg. 38).
         Object o = modifiers.getValue(SymbologyConstants.DIRECTION_OF_MOVEMENT);
-        if (this.isShowDirectionOfMovement() && o instanceof Angle)
-        {
+        if (this.isShowDirectionOfMovement() && o instanceof Angle) {
             // The length of the direction of movement line is equal to the height of the symbol frame. See
             // MIL-STD-2525C section 5.3.4.1.c, page 33.
             double length = this.iconRect.getHeight();
@@ -352,22 +292,16 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         }
     }
 
-    //////////////////////////////////////////////
-    // Modifier layout
-    //////////////////////////////////////////////
-
     /**
      * Add a hyphen to the first element in a list of dates to indicate a date range. This method only modifiers the
      * date list if exactly two dates are displayed in the graphic.
      *
      * @param value   Iterable of date modifiers.
      * @param offsets Layouts for the date modifiers.
-     *
      * @return Iterable of modified dates. This may be a new, modified list, or the same list as {@code value} if no
-     *         modification was required.
+     * modification was required.
      */
-    protected Iterable addHyphenToDateRange(Iterable value, java.util.List<OffsetPair> offsets)
-    {
+    protected Iterable addHyphenToDateRange(Iterable value, Collection<OffsetPair> offsets) {
         // Only add a hyphen if exactly two dates are displayed in the graphic.
         if (offsets.size() != 2)
             return value;
@@ -379,34 +313,32 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
 
         // If only two dates were provided, add a hyphen to indicate a date range. If more or less
         // date were provided it's not a date range, so don't change anything.
-        if (date1 != null && date2 != null)
-        {
+        if (date1 != null && date2 != null) {
             return Arrays.asList(date1 + "-", date2);
         }
         return value;
     }
 
     protected void layoutLabel(DrawContext dc, Font font, OffsetPair layout, String value, String mode,
-        OrderedSymbol osym)
-    {
-        if (!WWUtil.isEmpty(value))
-        {
+        OrderedSymbol osym) {
+        if (!WWUtil.isEmpty(value)) {
             this.addLabel(dc, layout.offset, layout.hotSpot, value, font, null, mode, osym);
         }
     }
 
-    protected void layoutMultiLabel(DrawContext dc, Font font, java.util.List<OffsetPair> layouts, Iterable values,
-        String mode, OrderedSymbol osym)
-    {
+    //////////////////////////////////////////////
+    // Modifier layout
+    //////////////////////////////////////////////
+
+    protected void layoutMultiLabel(DrawContext dc, Font font, Collection<OffsetPair> layouts, Iterable values,
+        String mode, OrderedSymbol osym) {
         Iterator valueIterator = values.iterator();
         Iterator<OffsetPair> layoutIterator = layouts.iterator();
 
-        while (layoutIterator.hasNext() && valueIterator.hasNext())
-        {
+        while (layoutIterator.hasNext() && valueIterator.hasNext()) {
             OffsetPair layout = layoutIterator.next();
             Object value = valueIterator.next();
-            if (value != null)
-            {
+            if (value != null) {
                 this.layoutLabel(dc, font, layout, value.toString(), mode, osym);
             }
         }
@@ -418,8 +350,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      *
      * @return True if the graphic is chemical, biological, radiological, or nuclear.
      */
-    protected boolean isShowDirectionOfMovement()
-    {
+    protected boolean isShowDirectionOfMovement() {
         String code = this.maskedSymbolCode;
 
         return TacGrpSidc.MOBSU_CBRN_NDGZ.equalsIgnoreCase(code)
@@ -429,18 +360,47 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     }
 
     @Override
-    protected void computeTransform(DrawContext dc, OrderedSymbol osym)
-    {
+    protected void computeTransform(DrawContext dc, OrderedSymbol osym) {
         super.computeTransform(dc, osym);
 
         // Compute an appropriate offset if the application has not specified an offset and this symbol supports the
         // direction of movement indicator. Only the CBRN graphics in MIL-STD-2525C support this indicator. (Using the
         // graphic's default offset would cause the direction of movement line and location label to be cut off by the
         // surface when the globe is tilted.)
-        if (this.iconRect != null && osym.layoutRect != null && this.isShowDirectionOfMovement())
-        {
+        if (this.iconRect != null && osym.layoutRect != null && this.isShowDirectionOfMovement()) {
             osym.dx = -this.iconRect.getCenterX();
             osym.dy = -osym.layoutRect.getMinY();
+        }
+    }
+
+    public static class LabelLayout {
+        protected final String modifier;
+        protected final List<OffsetPair> offsets = new ArrayList<>();
+
+        public LabelLayout(String modifier) {
+            this.modifier = modifier;
+        }
+
+        public void add(Offset offset, Offset hotspot) {
+            this.offsets.add(new OffsetPair(offset, hotspot));
+        }
+
+        public String getModifier() {
+            return modifier;
+        }
+
+        public List<OffsetPair> getOffsets() {
+            return this.offsets;
+        }
+    }
+
+    public static class OffsetPair {
+        public final Offset offset;
+        public final Offset hotSpot;
+
+        public OffsetPair(Offset offset, Offset hotSpot) {
+            this.offset = offset;
+            this.hotSpot = hotSpot;
         }
     }
 }

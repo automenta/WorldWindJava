@@ -20,16 +20,8 @@ import java.util.Iterator;
  * @author tag
  * @version $Id: OGCCapabilities.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-abstract public class OGCCapabilities extends AbstractXMLEventParser
-{
-    /**
-     * Returns the default namespace URI. Must be overridden by subclasses to provide a specific URI. The default
-     * namespace is used to match XML elements found in the default namespace of the XML stream.
-     *
-     * @return the default namespace URI.
-     */
-    abstract public String getDefaultNamespaceURI();
-
+abstract public class OGCCapabilities extends AbstractXMLEventParser {
+    protected final XMLEventReader eventReader;
     // Element names, constructed when the namespaceURI is known
     protected QName SERVICE;
     protected QName CAPABILITY;
@@ -41,18 +33,7 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
 
     protected OGCServiceInformation serviceInformation;
     protected OGCCapabilityInformation capabilityInformation;
-
-    protected final XMLEventReader eventReader;
     protected XMLEventParserContext parserContext;
-
-    /**
-     * Determines whether a specified element name is the root element name of the schema.
-     *
-     * @param name the name to test.
-     *
-     * @return true if the name is the schema's root element, otherwise false.
-     */
-    abstract public boolean isRootElementName(QName name); // implement to test name of root element
 
     /**
      * Create a new capabilities parser.
@@ -60,19 +41,32 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
      * @param namespaceURI the default namespace URI.
      * @param docSource    the XML source. May be a filename, file, stream or other type allowed by {@link
      *                     WWXML#openEventReader(Object)}.
-     *
      * @throws IllegalArgumentException if the document source is null.
      */
-    public OGCCapabilities(String namespaceURI, Object docSource)
-    {
+    public OGCCapabilities(String namespaceURI, Object docSource) {
         super(namespaceURI);
 
         this.eventReader = this.createReader(docSource);
         this.initialize();
     }
 
-    private void initialize()
-    {
+    /**
+     * Returns the default namespace URI. Must be overridden by subclasses to provide a specific URI. The default
+     * namespace is used to match XML elements found in the default namespace of the XML stream.
+     *
+     * @return the default namespace URI.
+     */
+    abstract public String getDefaultNamespaceURI();
+
+    /**
+     * Determines whether a specified element name is the root element name of the schema.
+     *
+     * @param name the name to test.
+     * @return true if the name is the schema's root element, otherwise false.
+     */
+    abstract public boolean isRootElementName(QName name); // implement to test name of root element
+
+    private void initialize() {
         this.parserContext = this.createParserContext(this.eventReader);
 
         SERVICE = new QName(this.getNamespaceURI(), "Service");
@@ -84,24 +78,22 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
         // Capability parser is registered by subclass.
     }
 
-    protected XMLEventReader createReader(Object docSource)
-    {
+    protected XMLEventReader createReader(Object docSource) {
         return WWXML.openEventReader(docSource);
     }
 
-    protected XMLEventParserContext createParserContext(XMLEventReader reader)
-    {
+    protected XMLEventParserContext createParserContext(XMLEventReader reader) {
         this.parserContext = new BasicXMLEventParserContext(reader);
         this.parserContext.setDefaultNamespaceURI(this.getDefaultNamespaceURI());
 
         return this.parserContext;
     }
 
-    /** {@inheritDoc} */
-    public XMLEventParser allocate(XMLEventParserContext ctx, XMLEvent event)
-    {
-        if (ctx == null)
-        {
+    /**
+     * {@inheritDoc}
+     */
+    public XMLEventParser allocate(XMLEventParserContext ctx, XMLEvent event) {
+        if (ctx == null) {
             String message = Logging.getMessage("nullValue.ParserContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -120,22 +112,17 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
      * document has been parsed.
      *
      * @param args optional arguments to pass to parsers of sub-elements.
-     *
      * @return <code>this</code> if parsing is successful, otherwise  null.
-     *
      * @throws XMLStreamException if an exception occurs while attempting to read the event stream.
      */
-    public OGCCapabilities parse(Object... args) throws XMLStreamException
-    {
+    public OGCCapabilities parse(Object... args) throws XMLStreamException {
         XMLEventParserContext ctx = this.parserContext;
 
-        for (XMLEvent event = ctx.nextEvent(); ctx.hasNext(); event = ctx.nextEvent())
-        {
+        for (XMLEvent event = ctx.nextEvent(); ctx.hasNext(); event = ctx.nextEvent()) {
             if (event == null)
                 continue;
 
-            if (event.isStartElement() && this.isRootElementName(event.asStartElement().getName()))
-            {
+            if (event.isStartElement() && this.isRootElementName(event.asStartElement().getName())) {
                 super.parse(ctx, event, args);
                 return this;
             }
@@ -145,23 +132,18 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
     }
 
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
-        if (ctx.isStartElement(event, SERVICE))
-        {
+        throws XMLStreamException {
+        if (ctx.isStartElement(event, SERVICE)) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OGCServiceInformation)
                     this.setServiceInformation((OGCServiceInformation) o);
             }
         }
-        else if (ctx.isStartElement(event, CAPABILITY))
-        {
+        else if (ctx.isStartElement(event, CAPABILITY)) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OGCCapabilityInformation)
                     this.setCapabilityInformation((OGCCapabilityInformation) o);
@@ -170,14 +152,12 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
     }
 
     @Override
-    protected void doParseEventAttributes(XMLEventParserContext ctx, XMLEvent event, Object... args)
-    {
+    protected void doParseEventAttributes(XMLEventParserContext ctx, XMLEvent event, Object... args) {
         Iterator iter = event.asStartElement().getAttributes();
         if (iter == null)
             return;
 
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             Attribute attr = (Attribute) iter.next();
             if (ctx.isSameAttributeName(attr.getName(), VERSION))
                 this.setVersion(attr.getValue());
@@ -186,8 +166,7 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
         }
     }
 
-    public XMLEventParserContext getParserContext()
-    {
+    public XMLEventParserContext getParserContext() {
         return this.parserContext;
     }
 
@@ -196,19 +175,12 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
      *
      * @return the document's service information.
      */
-    public OGCServiceInformation getServiceInformation()
-    {
+    public OGCServiceInformation getServiceInformation() {
         return serviceInformation;
     }
 
-    protected void setServiceInformation(OGCServiceInformation serviceInformation)
-    {
+    protected void setServiceInformation(OGCServiceInformation serviceInformation) {
         this.serviceInformation = serviceInformation;
-    }
-
-    protected void setCapabilityInformation(OGCCapabilityInformation capabilityInformation)
-    {
-        this.capabilityInformation = capabilityInformation;
     }
 
     /**
@@ -216,9 +188,12 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
      *
      * @return the document's capability information.
      */
-    public OGCCapabilityInformation getCapabilityInformation()
-    {
+    public OGCCapabilityInformation getCapabilityInformation() {
         return capabilityInformation;
+    }
+
+    protected void setCapabilityInformation(OGCCapabilityInformation capabilityInformation) {
+        this.capabilityInformation = capabilityInformation;
     }
 
     /**
@@ -226,13 +201,11 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
      *
      * @return the document's version number.
      */
-    public String getVersion()
-    {
+    public String getVersion() {
         return version;
     }
 
-    protected void setVersion(String version)
-    {
+    protected void setVersion(String version) {
         this.version = version;
     }
 
@@ -241,19 +214,16 @@ abstract public class OGCCapabilities extends AbstractXMLEventParser
      *
      * @return the document's update sequence.
      */
-    public String getUpdateSequence()
-    {
+    public String getUpdateSequence() {
         return updateSequence;
     }
 
-    protected void setUpdateSequence(String updateSequence)
-    {
+    protected void setUpdateSequence(String updateSequence) {
         this.updateSequence = updateSequence;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
 
         sb.append("Version: ").

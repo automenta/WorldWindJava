@@ -21,8 +21,7 @@ import java.util.Iterator;
  * @author tag
  * @version $Id: WMSLayerInfoURL.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WMSLayerInfoURL extends AbstractXMLEventParser
-{
+public class WMSLayerInfoURL extends AbstractXMLEventParser {
     protected QName FORMAT;
     protected QName ONLINE_RESOURCE;
 
@@ -30,22 +29,19 @@ public class WMSLayerInfoURL extends AbstractXMLEventParser
     protected String name;
     protected String format;
 
-    public WMSLayerInfoURL(String namespaceURI)
-    {
+    public WMSLayerInfoURL(String namespaceURI) {
         super(namespaceURI);
 
         this.initialize();
     }
 
-    private void initialize()
-    {
+    private void initialize() {
         FORMAT = new QName(this.getNamespaceURI(), "Format");
         ONLINE_RESOURCE = new QName(this.getNamespaceURI(), "OnlineResource");
     }
 
     @Override
-    public XMLEventParser allocate(XMLEventParserContext ctx, XMLEvent event)
-    {
+    public XMLEventParser allocate(XMLEventParserContext ctx, XMLEvent event) {
         XMLEventParser defaultParser = null;
 
         if (ctx.isStartElement(event, ONLINE_RESOURCE))
@@ -56,17 +52,13 @@ public class WMSLayerInfoURL extends AbstractXMLEventParser
 
     @Override
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
-        if (ctx.isStartElement(event, FORMAT))
-        {
+        throws XMLStreamException {
+        if (ctx.isStartElement(event, FORMAT)) {
             this.setFormat(ctx.getStringParser().parseString(ctx, event));
         }
-        else if (ctx.isStartElement(event, ONLINE_RESOURCE))
-        {
+        else if (ctx.isStartElement(event, ONLINE_RESOURCE)) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof OGCOnlineResource)
                     this.setOnlineResource((OGCOnlineResource) o);
@@ -74,48 +66,40 @@ public class WMSLayerInfoURL extends AbstractXMLEventParser
         }
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected void doParseEventAttributes(XMLEventParserContext ctx, XMLEvent event, Object... args)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected void doParseEventAttributes(XMLEventParserContext ctx, XMLEvent event, Object... args) {
         Iterator iter = event.asStartElement().getAttributes();
         if (iter == null)
             return;
 
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             Attribute attr = (Attribute) iter.next();
             if (attr.getName().getLocalPart().equals("name") && attr.getValue() != null)
                 this.setName(attr.getValue());
         }
     }
 
-    public OGCOnlineResource getOnlineResource()
-    {
+    public OGCOnlineResource getOnlineResource() {
         return onlineResource;
     }
 
-    protected void setOnlineResource(OGCOnlineResource onlineResource)
-    {
+    protected void setOnlineResource(OGCOnlineResource onlineResource) {
         this.onlineResource = onlineResource;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    protected void setName(String name)
-    {
+    protected void setName(String name) {
         this.name = name;
     }
 
-    public String getFormat()
-    {
+    public String getFormat() {
         return format;
     }
 
-    protected void setFormat(String format)
-    {
+    protected void setFormat(String format) {
         this.format = format;
     }
 }

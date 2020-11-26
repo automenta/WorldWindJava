@@ -19,12 +19,13 @@ import gov.nasa.worldwind.render.*;
  * @author ccrick
  * @version $Id: Boxes.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class Boxes extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class Boxes extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Boxes", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             RenderableLayer layer = new RenderableLayer();
 
             // Create and set an attribute bundle.
@@ -33,7 +34,7 @@ public class Boxes extends ApplicationTemplate
             attrs.setInteriorOpacity(0.7);
             attrs.setEnableLighting(true);
             attrs.setOutlineMaterial(Material.RED);
-            attrs.setOutlineWidth(2d);
+            attrs.setOutlineWidth(2.0d);
             attrs.setDrawInterior(true);
             attrs.setDrawOutline(false);
 
@@ -43,7 +44,7 @@ public class Boxes extends ApplicationTemplate
             attrs2.setInteriorOpacity(1);
             attrs2.setEnableLighting(true);
             attrs2.setOutlineMaterial(Material.WHITE);
-            attrs2.setOutlineWidth(2d);
+            attrs2.setOutlineWidth(2.0d);
             attrs2.setDrawOutline(false);
 
             // ********* sample  Boxes  *******************
@@ -129,10 +130,5 @@ public class Boxes extends ApplicationTemplate
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Boxes", AppFrame.class);
     }
 }

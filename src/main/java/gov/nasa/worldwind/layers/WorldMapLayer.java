@@ -18,6 +18,7 @@ import gov.nasa.worldwind.util.*;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Displays a world map overlay with a current-position crosshair in a screen corner.
@@ -31,8 +32,11 @@ import java.util.ArrayList;
  * @author Patrick Murris
  * @version $Id: WorldMapLayer.java 2230 2014-08-14 18:19:48Z tgaskins $
  */
-public class WorldMapLayer extends AbstractLayer
-{
+public class WorldMapLayer extends AbstractLayer {
+    protected final Color color = Color.white;
+    protected final PickSupport pickSupport = new PickSupport();
+    // Draw it as ordered with an eye distance of 0 so that it shows up in front of most other things.
+    protected final OrderedRenderable orderedImage = new OrderedIcon();
     protected String iconFilePath;
     protected double toViewportScale = 0.2;
     protected double iconScale = 0.5;
@@ -43,38 +47,16 @@ public class WorldMapLayer extends AbstractLayer
     protected int iconHeight;
     protected Vec4 locationCenter = null;
     protected Vec4 locationOffset = null;
-    protected final Color color = Color.white;
-    protected Color backColor = new Color(0f, 0f, 0f, 0.4f);
+    protected Color backColor = new Color(0.0f, 0.0f, 0.0f, 0.4f);
     protected boolean showFootprint = true;
     protected ArrayList<? extends LatLon> footPrintPositions;
-    protected final PickSupport pickSupport = new PickSupport();
     protected long frameStampForPicking;
     protected long frameStampForDrawing;
 
-    // Draw it as ordered with an eye distance of 0 so that it shows up in front of most other things.
-    protected final OrderedIcon orderedImage = new OrderedIcon();
-
-    protected class OrderedIcon implements OrderedRenderable
-    {
-        public double getDistanceFromEye()
-        {
-            return 0;
-        }
-
-        public void pick(DrawContext dc, Point pickPoint)
-        {
-            WorldMapLayer.this.drawIcon(dc);
-        }
-
-        public void render(DrawContext dc)
-        {
-            WorldMapLayer.this.drawIcon(dc);
-        }
-    }
-
-    /** Displays a world map overlay with a current position crosshair in a screen corner */
-    public WorldMapLayer()
-    {
+    /**
+     * Displays a world map overlay with a current position crosshair in a screen corner
+     */
+    public WorldMapLayer() {
         this.setOpacity(0.6);
         this.setIconFilePath(Configuration.getStringValue(AVKey.WORLD_MAP_IMAGE_PATH));
     }
@@ -84,23 +66,21 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @param iconFilePath the world map image path and filename
      */
-    public WorldMapLayer(String iconFilePath)
-    {
+    public WorldMapLayer(String iconFilePath) {
         this.setOpacity(0.6);
         this.setIconFilePath(iconFilePath);
     }
-
-    // Public properties
 
     /**
      * Returns the layer's current icon file path.
      *
      * @return the icon file path
      */
-    public String getIconFilePath()
-    {
+    public String getIconFilePath() {
         return iconFilePath;
     }
+
+    // Public properties
 
     /**
      * Sets the world map icon's image location. The layer first searches for this location in the current Java
@@ -109,10 +89,8 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @param iconFilePath the path to the icon's image file
      */
-    public void setIconFilePath(String iconFilePath)
-    {
-        if (iconFilePath == null || iconFilePath.length() == 0)
-        {
+    public void setIconFilePath(String iconFilePath) {
+        if (iconFilePath == null || iconFilePath.isEmpty()) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -125,8 +103,7 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @return the world map-to-viewport scale factor
      */
-    public double getToViewportScale()
-    {
+    public double getToViewportScale() {
         return toViewportScale;
     }
 
@@ -138,8 +115,7 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @param toViewportScale the world map to viewport scale factor
      */
-    public void setToViewportScale(double toViewportScale)
-    {
+    public void setToViewportScale(double toViewportScale) {
         this.toViewportScale = toViewportScale;
     }
 
@@ -148,8 +124,7 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @return the current icon scale
      */
-    public double getIconScale()
-    {
+    public double getIconScale() {
         return iconScale;
     }
 
@@ -161,8 +136,7 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @param iconScale the icon scale factor
      */
-    public void setIconScale(double iconScale)
-    {
+    public void setIconScale(double iconScale) {
         this.iconScale = iconScale;
     }
 
@@ -171,8 +145,7 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @return the icon's resize behavior
      */
-    public String getResizeBehavior()
-    {
+    public String getResizeBehavior() {
         return resizeBehavior;
     }
 
@@ -188,13 +161,11 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @param resizeBehavior the desired resize behavior
      */
-    public void setResizeBehavior(String resizeBehavior)
-    {
+    public void setResizeBehavior(String resizeBehavior) {
         this.resizeBehavior = resizeBehavior;
     }
 
-    public int getBorderWidth()
-    {
+    public int getBorderWidth() {
         return borderWidth;
     }
 
@@ -204,8 +175,7 @@ public class WorldMapLayer extends AbstractLayer
      * @param borderWidth the number of pixels to offset the world map icon from the borders indicated by {@link
      *                    #setPosition(String)}.
      */
-    public void setBorderWidth(int borderWidth)
-    {
+    public void setBorderWidth(int borderWidth) {
         this.borderWidth = borderWidth;
     }
 
@@ -214,8 +184,7 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @return the current world map position
      */
-    public String getPosition()
-    {
+    public String getPosition() {
         return position;
     }
 
@@ -225,10 +194,8 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @param position the desired world map position
      */
-    public void setPosition(String position)
-    {
-        if (position == null)
-        {
+    public void setPosition(String position) {
+        if (position == null) {
             String message = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -241,8 +208,7 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @return the current location center. May be null.
      */
-    public Vec4 getLocationCenter()
-    {
+    public Vec4 getLocationCenter() {
         return locationCenter;
     }
 
@@ -254,11 +220,9 @@ public class WorldMapLayer extends AbstractLayer
      * a non-null location offset has been specified (see #setLocationOffset).
      *
      * @param locationCenter the location center. May be null.
-     *
      * @see #locationCenter the screen location at which to place the map.
      */
-    public void setLocationCenter(Vec4 locationCenter)
-    {
+    public void setLocationCenter(Vec4 locationCenter) {
         this.locationCenter = locationCenter;
     }
 
@@ -267,8 +231,7 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @return the location offset. Will be null if no offset has been specified.
      */
-    public Vec4 getLocationOffset()
-    {
+    public Vec4 getLocationOffset() {
         return locationOffset;
     }
 
@@ -278,24 +241,19 @@ public class WorldMapLayer extends AbstractLayer
      * @param locationOffset the number of pixels to shift the worldmap image from its specified screen position. A
      *                       positive X value shifts the image to the right. A positive Y value shifts the image up. If
      *                       null, no offset is applied. The default offset is null.
-     *
-     * @see #setLocationCenter(gov.nasa.worldwind.geom.Vec4)
+     * @see #setLocationCenter(Vec4)
      * @see #setPosition(String)
      */
-    public void setLocationOffset(Vec4 locationOffset)
-    {
+    public void setLocationOffset(Vec4 locationOffset) {
         this.locationOffset = locationOffset;
     }
 
-    public Color getBackgrounColor()
-    {
+    public Color getBackgrounColor() {
         return this.backColor;
     }
 
-    public void setBackgroundColor(Color color)
-    {
-        if (color == null)
-        {
+    public void setBackgroundColor(Color color) {
+        if (color == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -303,13 +261,11 @@ public class WorldMapLayer extends AbstractLayer
         this.backColor = color;
     }
 
-    public boolean getShowFootprint()
-    {
+    public boolean getShowFootprint() {
         return this.showFootprint;
     }
 
-    public void setShowFootprint(boolean state)
-    {
+    public void setShowFootprint(boolean state) {
         this.showFootprint = state;
     }
 
@@ -319,14 +275,12 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @return the current view footprint position list - may be null.
      */
-    public java.util.List<? extends LatLon> getFootPrintPositions()
-    {
+    public List<? extends LatLon> getFootPrintPositions() {
         return this.footPrintPositions;
     }
 
     @Override
-    public void doRender(DrawContext dc)
-    {
+    public void doRender(DrawContext dc) {
         // Ensure that this shape isn't added to the ordered renderable list more than once per frame.
         if (dc.isContinuous2DGlobe() && this.frameStampForDrawing == dc.getFrameTimeStamp())
             return;
@@ -338,8 +292,7 @@ public class WorldMapLayer extends AbstractLayer
     }
 
     @Override
-    public void doPick(DrawContext dc, Point pickPoint)
-    {
+    public void doPick(DrawContext dc, Point pickPoint) {
         // Ensure that this shape isn't added to the ordered renderable list more than once per frame.
         if (dc.isContinuous2DGlobe() && this.frameStampForPicking == dc.getFrameTimeStamp())
             return;
@@ -350,24 +303,20 @@ public class WorldMapLayer extends AbstractLayer
         this.frameStampForPicking = dc.getFrameTimeStamp();
     }
 
-    protected void drawIcon(DrawContext dc)
-    {
+    protected void drawIcon(DrawContext dc) {
         if (this.getIconFilePath() == null)
             return;
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler ogsh = new OGLStackHandler();
 
-        try
-        {
+        try {
             // Initialize texture if necessary
             Texture iconTexture = dc.getTextureCache().getTexture(this.getIconFilePath());
-            if (iconTexture == null)
-            {
+            if (iconTexture == null) {
                 this.initializeTexture(dc);
                 iconTexture = dc.getTextureCache().getTexture(this.getIconFilePath());
-                if (iconTexture == null)
-                {
+                if (iconTexture == null) {
                     String msg = Logging.getMessage("generic.ImageReadFailed");
                     Logging.logger().finer(msg);
                     return;
@@ -385,10 +334,10 @@ public class WorldMapLayer extends AbstractLayer
 
             // Load a parallel projection with xy dimensions (viewportWidth, viewportHeight)
             // into the GL projection matrix.
-            java.awt.Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.getView().getViewport();
             ogsh.pushProjectionIdentity(gl);
             double maxwh = Math.max(width, height);
-            gl.glOrtho(0d, viewport.width, 0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
+            gl.glOrtho(0.0d, viewport.width, 0.0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
 
             // Translate and scale
             ogsh.pushModelviewIdentity(gl);
@@ -397,10 +346,9 @@ public class WorldMapLayer extends AbstractLayer
             gl.glTranslated(locationSW.x(), locationSW.y(), locationSW.z());
             // Scale to 0..1 space
             gl.glScaled(scale, scale, 1);
-            gl.glScaled(width, height, 1d);
+            gl.glScaled(width, height, 1.0d);
 
-            if (!dc.isPickingMode())
-            {
+            if (!dc.isPickingMode()) {
                 gl.glEnable(GL.GL_BLEND);
                 gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -410,7 +358,7 @@ public class WorldMapLayer extends AbstractLayer
                 dc.drawUnitQuad();
 
                 // Draw world map icon
-                gl.glColor4d(1d, 1d, 1d, this.getOpacity());
+                gl.glColor4d(1.0d, 1.0d, 1.0d, this.getOpacity());
                 gl.glEnable(GL.GL_TEXTURE_2D);
                 iconTexture.bind(gl);
 
@@ -430,8 +378,7 @@ public class WorldMapLayer extends AbstractLayer
 
                 // Draw crosshair
                 Position groundPos = this.computeGroundPosition(dc, dc.getView());
-                if (groundPos != null)
-                {
+                if (groundPos != null) {
                     int x = (int) (width * (groundPos.getLongitude().degrees + 180) / 360);
                     int y = (int) (height * (groundPos.getLatitude().degrees + 90) / 180);
                     int w = 10; // cross branch length
@@ -447,20 +394,16 @@ public class WorldMapLayer extends AbstractLayer
                 }
 
                 // Draw view footprint in map icon space
-                if (!dc.is2DGlobe() && this.showFootprint)
-                {
+                if (!dc.is2DGlobe() && this.showFootprint) {
                     this.footPrintPositions = this.computeViewFootPrint(dc, 32);
-                    if (this.footPrintPositions != null)
-                    {
+                    if (this.footPrintPositions != null) {
                         gl.glBegin(GL2.GL_LINE_STRIP);
                         LatLon p1 = this.footPrintPositions.get(0);
-                        for (LatLon p2 : this.footPrintPositions)
-                        {
+                        for (LatLon p2 : this.footPrintPositions) {
                             int x = (int) (width * (p2.getLongitude().degrees + 180) / 360);
                             int y = (int) (height * (p2.getLatitude().degrees + 90) / 180);
                             // Draw
-                            if (LatLon.locationsCrossDateline(p1, p2))
-                            {
+                            if (LatLon.locationsCrossDateline(p1, p2)) {
                                 int y1 = (int) (height * (p1.getLatitude().degrees + 90) / 180);
                                 gl.glVertex3d(x < width / 2 ? width : 0, (y1 + y) / 2.0, 0);
                                 gl.glEnd();
@@ -482,8 +425,7 @@ public class WorldMapLayer extends AbstractLayer
                 gl.glVertex3d(0, 0, 0);
                 gl.glEnd();
             }
-            else
-            {
+            else {
                 // Picking
                 this.pickSupport.clearPickList();
                 this.pickSupport.beginPicking(dc);
@@ -499,8 +441,7 @@ public class WorldMapLayer extends AbstractLayer
                 this.pickSupport.resolvePick(dc, dc.getPickPoint(), this);
             }
         }
-        finally
-        {
+        finally {
             dc.restoreDefaultDepthTesting();
             dc.restoreDefaultCurrentColor();
             if (dc.isPickingMode())
@@ -509,29 +450,24 @@ public class WorldMapLayer extends AbstractLayer
         }
     }
 
-    protected double computeScale(java.awt.Rectangle viewport)
-    {
-        return switch (this.resizeBehavior)
-            {
-                case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1d,
-                    (this.toViewportScale) * viewport.width / this.getScaledIconWidth());
-                case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.getScaledIconWidth();
-                default -> 1d;
-            };
+    protected double computeScale(Rectangle viewport) {
+        return switch (this.resizeBehavior) {
+            case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1.0d,
+                (this.toViewportScale) * viewport.width / this.getScaledIconWidth());
+            case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.getScaledIconWidth();
+            default -> 1.0d;
+        };
     }
 
-    protected double getScaledIconWidth()
-    {
+    protected double getScaledIconWidth() {
         return this.iconWidth * this.iconScale;
     }
 
-    protected double getScaledIconHeight()
-    {
+    protected double getScaledIconHeight() {
         return this.iconHeight * this.iconScale;
     }
 
-    protected Vec4 computeLocation(java.awt.Rectangle viewport, double scale)
-    {
+    protected Vec4 computeLocation(Rectangle viewport, double scale) {
         double width = this.getScaledIconWidth();
         double height = this.getScaledIconHeight();
 
@@ -541,30 +477,25 @@ public class WorldMapLayer extends AbstractLayer
         double x;
         double y;
 
-        if (this.locationCenter != null)
-        {
+        if (this.locationCenter != null) {
             x = this.locationCenter.x - scaledWidth / 2;
             y = this.locationCenter.y - scaledHeight / 2;
         }
-        else if (this.position.equals(AVKey.NORTHEAST))
-        {
+        else if (this.position.equals(AVKey.NORTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
         }
-        else if (this.position.equals(AVKey.SOUTHEAST))
-        {
+        else if (this.position.equals(AVKey.SOUTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
-            y = 0d + this.borderWidth;
+            y = 0.0d + this.borderWidth;
         }
-        else if (this.position.equals(AVKey.NORTHWEST))
-        {
-            x = 0d + this.borderWidth;
+        else if (this.position.equals(AVKey.NORTHWEST)) {
+            x = 0.0d + this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
         }
-        else if (this.position.equals(AVKey.SOUTHWEST))
-        {
-            x = 0d + this.borderWidth;
-            y = 0d + this.borderWidth;
+        else if (this.position.equals(AVKey.SOUTHWEST)) {
+            x = 0.0d + this.borderWidth;
+            y = 0.0d + this.borderWidth;
         }
         else // use North East
         {
@@ -572,8 +503,7 @@ public class WorldMapLayer extends AbstractLayer
             y = viewport.getHeight() - scaledHeight / 2 - this.borderWidth;
         }
 
-        if (this.locationOffset != null)
-        {
+        if (this.locationOffset != null) {
             x += this.locationOffset.x;
             y += this.locationOffset.y;
         }
@@ -581,22 +511,18 @@ public class WorldMapLayer extends AbstractLayer
         return new Vec4(x, y, 0);
     }
 
-    protected void initializeTexture(DrawContext dc)
-    {
+    protected void initializeTexture(DrawContext dc) {
         Texture iconTexture = dc.getTextureCache().getTexture(this.getIconFilePath());
         if (iconTexture != null)
             return;
 
         GL gl = dc.getGL();
 
-        try
-        {
+        try {
             InputStream iconStream = this.getClass().getResourceAsStream("/" + this.getIconFilePath());
-            if (iconStream == null)
-            {
+            if (iconStream == null) {
                 File iconFile = new File(this.iconFilePath);
-                if (iconFile.exists())
-                {
+                if (iconFile.exists()) {
                     iconStream = new FileInputStream(iconFile);
                 }
             }
@@ -608,8 +534,7 @@ public class WorldMapLayer extends AbstractLayer
             this.iconHeight = iconTexture.getHeight();
             dc.getTextureCache().put(this.getIconFilePath(), iconTexture);
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             String msg = Logging.getMessage("layers.IOExceptionDuringInitialization");
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg, e);
@@ -630,11 +555,9 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @param dc   the current DrawContext
      * @param view the current View
-     *
      * @return the ground position of the view center or null
      */
-    protected Position computeGroundPosition(DrawContext dc, View view)
-    {
+    protected Position computeGroundPosition(DrawContext dc, View view) {
         if (view == null)
             return null;
 
@@ -656,25 +579,21 @@ public class WorldMapLayer extends AbstractLayer
      * @param dc         the current <code>DrawContext</code>
      * @param locationSW the screen location of the bottom left corner of the map
      * @param mapSize    the world map screen dimension in pixels
-     *
      * @return the picked Position
      */
-    protected Position computePickPosition(DrawContext dc, Vec4 locationSW, Dimension mapSize)
-    {
+    protected Position computePickPosition(DrawContext dc, Vec4 locationSW, Dimension mapSize) {
         Position pickPosition = null;
         Point pickPoint = dc.getPickPoint();
-        if (pickPoint != null)
-        {
+        if (pickPoint != null) {
             Rectangle viewport = dc.getView().getViewport();
             // Check if pickpoint is inside the map
             if (pickPoint.getX() >= locationSW.getX()
                 && pickPoint.getX() < locationSW.getX() + mapSize.width
                 && viewport.height - pickPoint.getY() >= locationSW.getY()
-                && viewport.height - pickPoint.getY() < locationSW.getY() + mapSize.height)
-            {
+                && viewport.height - pickPoint.getY() < locationSW.getY() + mapSize.height) {
                 double lon = (pickPoint.getX() - locationSW.getX()) / mapSize.width * 360 - 180;
                 double lat = (viewport.height - pickPoint.getY() - locationSW.getY()) / mapSize.height * 180 - 90;
-                double pickAltitude = 1000e3;
+                double pickAltitude = 1000.0e3;
                 pickPosition = new Position(Angle.fromDegrees(lat), Angle.fromDegrees(lon), pickAltitude);
             }
         }
@@ -686,21 +605,17 @@ public class WorldMapLayer extends AbstractLayer
      *
      * @param dc    the current <code>DrawContext</code>
      * @param steps the number of steps.
-     *
      * @return an array list of <code>LatLon</code> forming a closed shape.
      */
-    protected ArrayList<LatLon> computeViewFootPrint(DrawContext dc, int steps)
-    {
+    protected ArrayList<LatLon> computeViewFootPrint(DrawContext dc, int steps) {
         ArrayList<LatLon> positions = new ArrayList<>();
         Position eyePos = dc.getView().getEyePosition();
         Angle distance = Angle.fromRadians(
             Math.asin(dc.getView().getFarClipDistance() / (dc.getGlobe().getRadius() + eyePos.getElevation())));
-        if (distance.degrees > 10)
-        {
-            double headStep = 360d / steps;
+        if (distance.degrees > 10) {
+            double headStep = 360.0d / steps;
             Angle heading = Angle.ZERO;
-            for (int i = 0; i <= steps; i++)
-            {
+            for (int i = 0; i <= steps; i++) {
                 LatLon p = LatLon.greatCircleEndPosition(eyePos, heading, distance);
                 positions.add(p);
                 heading = heading.addDegrees(headStep);
@@ -712,8 +627,21 @@ public class WorldMapLayer extends AbstractLayer
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return Logging.getMessage("layers.Earth.WorldMapLayer.Name");
+    }
+
+    protected class OrderedIcon implements OrderedRenderable {
+        public double getDistanceFromEye() {
+            return 0;
+        }
+
+        public void pick(DrawContext dc, Point pickPoint) {
+            WorldMapLayer.this.drawIcon(dc);
+        }
+
+        public void render(DrawContext dc) {
+            WorldMapLayer.this.drawIcon(dc);
+        }
     }
 }

@@ -12,15 +12,13 @@ package gov.nasa.worldwind.ogc.collada;
  * @author pabercrombie
  * @version $Id: ColladaProfileCommon.java 675 2012-07-02 18:47:47Z pabercrombie $
  */
-public class ColladaProfileCommon extends ColladaAbstractParamContainer
-{
+public class ColladaProfileCommon extends ColladaAbstractParamContainer {
     /**
      * Construct an instance.
      *
      * @param ns the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public ColladaProfileCommon(String ns)
-    {
+    public ColladaProfileCommon(String ns) {
         super(ns);
     }
 
@@ -29,8 +27,7 @@ public class ColladaProfileCommon extends ColladaAbstractParamContainer
      *
      * @return The value of the <i>technique</i> field, or null if the field is not set.
      */
-    public ColladaTechnique getTechnique()
-    {
+    public ColladaTechnique getTechnique() {
         return (ColladaTechnique) this.getField("technique");
     }
 
@@ -39,15 +36,15 @@ public class ColladaProfileCommon extends ColladaAbstractParamContainer
      *
      * @return The value of the <i>technique</i> field, or null if the field is not set.
      */
-    public ColladaExtra getExtra()
-    {
+    public ColladaExtra getExtra() {
         return (ColladaExtra) this.getField("extra");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ColladaNewParam getParam(String sid)
-    {
+    public ColladaNewParam getParam(String sid) {
         ColladaNewParam param = super.getParam(sid);
         if (param != null)
             return param;

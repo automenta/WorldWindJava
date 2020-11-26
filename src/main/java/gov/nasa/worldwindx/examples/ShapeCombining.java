@@ -15,7 +15,7 @@ import gov.nasa.worldwind.util.combine.ShapeCombiner;
 
 /**
  * Shows how to use the {@link gov.nasa.worldwind.util.combine.Combinable} interface and the {@link
- * gov.nasa.worldwind.util.combine.ShapeCombiner} class to combine WorldWind surface shapes into a complex set of
+ * ShapeCombiner} class to combine WorldWind surface shapes into a complex set of
  * contours by using boolean operations.
  * <p>
  * This example creates two static SurfaceCircle instances that partially overlap and displays them in a layer named
@@ -26,12 +26,13 @@ import gov.nasa.worldwind.util.combine.ShapeCombiner;
  * @author dcollins
  * @version $Id: ShapeCombining.java 2411 2014-10-30 21:27:00Z dcollins $
  */
-public class ShapeCombining extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class ShapeCombining extends ApplicationTemplate {
+    public static void main(String[] args) {
+        start("WorldWind Shape Combining", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setInteriorOpacity(0.5);
             attrs.setOutlineWidth(2);
@@ -67,8 +68,7 @@ public class ShapeCombining extends ApplicationTemplate
             this.displayContours(difference, "Difference", Position.fromDegrees(-30, 0, 0));
         }
 
-        protected void displayContours(ContourList contours, String displayName, Position offset)
-        {
+        protected void displayContours(ContourList contours, String displayName, Position offset) {
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setInteriorMaterial(Material.CYAN);
             attrs.setInteriorOpacity(0.5);
@@ -85,10 +85,5 @@ public class ShapeCombining extends ApplicationTemplate
             layer.addRenderable(shape);
             this.getWwd().getModel().getLayers().add(layer);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        start("WorldWind Shape Combining", AppFrame.class);
     }
 }

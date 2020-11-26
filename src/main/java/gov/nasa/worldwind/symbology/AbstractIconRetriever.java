@@ -45,7 +45,7 @@ import java.util.Objects;
  * <h2>Composite icons</h2>
  * <p>
  * Complicated symbols may be made up of several different graphical elements. {@link
- * #drawImage(java.awt.image.BufferedImage, java.awt.image.BufferedImage) drawImage} helps build a complex symbol from
+ * #drawImage(BufferedImage, BufferedImage) drawImage} helps build a complex symbol from
  * simple pieces. For example, if a symbol is composed of a frame and an icon, the icon retriever could load the frame
  * and icon independently, draw the icon over the frame, and return the composite image:
  * <pre>
@@ -61,7 +61,7 @@ import java.util.Objects;
  * </pre>
  * <h2>Changing the color of an icon</h2>
  * <p>
- * {@link #multiply(java.awt.image.BufferedImage, java.awt.Color) multiply} can change the color of an image by
+ * {@link #multiply(BufferedImage, Color) multiply} can change the color of an image by
  * multiplying each pixel in the image by a color. The multiplication color will replace any white pixels and black
  * pixels will be unaffected. For example, a symbol set in which hostile symbols are drawn in red and friendly symbols
  * are drawn in green could be implemented by creating white icons, and then multiplying by either red or green when the
@@ -70,9 +70,10 @@ import java.util.Objects;
  * @author ccrick
  * @version $Id: AbstractIconRetriever.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public abstract class AbstractIconRetriever implements IconRetriever
-{
-    /** Path in the file system or network to the symbol repository. */
+public abstract class AbstractIconRetriever implements IconRetriever {
+    /**
+     * Path in the file system or network to the symbol repository.
+     */
     protected String retrieverPath;
 
     /**
@@ -82,10 +83,8 @@ public abstract class AbstractIconRetriever implements IconRetriever
      *
      * @param retrieverPath URL to to the base symbol directory on the local file system or the network.
      */
-    public AbstractIconRetriever(String retrieverPath)
-    {
-        if (retrieverPath == null || retrieverPath.length() == 0)
-        {
+    public AbstractIconRetriever(String retrieverPath) {
+        if (retrieverPath == null || retrieverPath.isEmpty()) {
             String msg = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -101,8 +100,7 @@ public abstract class AbstractIconRetriever implements IconRetriever
      *
      * @return File system or network path to symbol repository.
      */
-    public String getRetrieverPath()
-    {
+    public String getRetrieverPath() {
         return this.retrieverPath;
     }
 
@@ -110,13 +108,11 @@ public abstract class AbstractIconRetriever implements IconRetriever
      * Indicates whether or not this retriever is equal to another.
      *
      * @param o Object to compare.
-     *
      * @return {@code true} if {@code o} is an instance of AbstractIconRetriever and has the same retrieval path as this
-     *         retriever.
+     * retriever.
      */
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || this.getClass() != o.getClass())
@@ -126,10 +122,11 @@ public abstract class AbstractIconRetriever implements IconRetriever
         return Objects.equals(this.retrieverPath, that.retrieverPath);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return this.retrieverPath != null ? this.retrieverPath.hashCode() : 0;
     }
 
@@ -139,13 +136,10 @@ public abstract class AbstractIconRetriever implements IconRetriever
      * retrieve an image from http://myserver.com/milstd2525/icon.png.
      *
      * @param path Path to the icon resource, relative to this retriever's retrieval path.
-     *
      * @return The requested icon as a BufferedImage, or null if the icon cannot be loaded.
      */
-    protected BufferedImage readImage(String path)
-    {
-        if (path == null)
-        {
+    protected BufferedImage readImage(String path) {
+        if (path == null) {
             String msg = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -157,8 +151,7 @@ public abstract class AbstractIconRetriever implements IconRetriever
         sb.append(WWIO.stripLeadingSeparator(path));
 
         InputStream is = null;
-        try
-        {
+        try {
             URL url = WWIO.makeURL(sb.toString());
             if (url != null)
                 return ImageIO.read(url);
@@ -167,13 +160,11 @@ public abstract class AbstractIconRetriever implements IconRetriever
             if (is != null)
                 return ImageIO.read(is);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String msg = Logging.getMessage("generic.ExceptionWhileReading", sb.toString());
             Logging.logger().fine(msg);
         }
-        finally
-        {
+        finally {
             WWIO.closeStream(is, sb.toString());
         }
 
@@ -185,33 +176,27 @@ public abstract class AbstractIconRetriever implements IconRetriever
      *
      * @param src  Image to draw.
      * @param dest Image to draw into.
-     *
      * @return {@code dest} BufferedImage.
      */
-    protected BufferedImage drawImage(BufferedImage src, BufferedImage dest)
-    {
-        if (src == null)
-        {
+    protected BufferedImage drawImage(BufferedImage src, BufferedImage dest) {
+        if (src == null) {
             String msg = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (dest == null)
-        {
+        if (dest == null) {
             String msg = Logging.getMessage("nullValue.DestinationIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         Graphics2D g = null;
-        try
-        {
+        try {
             g = dest.createGraphics();
             g.drawImage(src, 0, 0, null);
         }
-        finally
-        {
+        finally {
             if (g != null)
                 g.dispose();
         }
@@ -225,20 +210,16 @@ public abstract class AbstractIconRetriever implements IconRetriever
      *
      * @param image Image to operate on.
      * @param color Color to multiply by.
-     *
-     * @see #replaceColor(java.awt.image.BufferedImage, java.awt.Color)
+     * @see #replaceColor(BufferedImage, Color)
      */
-    protected void multiply(BufferedImage image, Color color)
-    {
-        if (image == null)
-        {
+    protected void multiply(BufferedImage image, Color color) {
+        if (image == null) {
             String msg = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (color == null)
-        {
+        if (color == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -252,22 +233,20 @@ public abstract class AbstractIconRetriever implements IconRetriever
 
         int[] pixels = new int[w];
         int c = color.getRGB();
-        float ca = ((c >> 24) & 0xff) / 255f;
-        float cr = ((c >> 16) & 0xff) / 255f;
-        float cg = ((c >> 8) & 0xff) / 255f;
-        float cb = (c & 0xff) / 255f;
+        float ca = ((c >> 24) & 0xff) / 255.0f;
+        float cr = ((c >> 16) & 0xff) / 255.0f;
+        float cg = ((c >> 8) & 0xff) / 255.0f;
+        float cb = (c & 0xff) / 255.0f;
 
-        for (int y = 0; y < h; y++)
-        {
+        for (int y = 0; y < h; y++) {
             image.getRGB(0, y, w, 1, pixels, 0, w);
 
-            for (int x = 0; x < w; x++)
-            {
+            for (int x = 0; x < w; x++) {
                 int s = pixels[x];
-                float sa = ((s >> 24) & 0xff) / 255f;
-                float sr = ((s >> 16) & 0xff) / 255f;
-                float sg = ((s >> 8) & 0xff) / 255f;
-                float sb = (s & 0xff) / 255f;
+                float sa = ((s >> 24) & 0xff) / 255.0f;
+                float sr = ((s >> 16) & 0xff) / 255.0f;
+                float sg = ((s >> 8) & 0xff) / 255.0f;
+                float sb = (s & 0xff) / 255.0f;
 
                 int fa = (int) (ca * sa * 255 + 0.5);
                 int fr = (int) (cr * sr * 255 + 0.5);
@@ -287,24 +266,20 @@ public abstract class AbstractIconRetriever implements IconRetriever
     /**
      * Replace the color of each pixel in an image. This method retains the alpha channel of each pixel, but completely
      * replaces the red, green, and blue components with the replacement color. Unlike {@link
-     * #multiply(java.awt.image.BufferedImage, java.awt.Color) multiply}, this method changes the color of all pixels.
+     * #multiply(BufferedImage, Color) multiply}, this method changes the color of all pixels.
      *
      * @param image Image to operate on.
      * @param color Color to apply to to each pixel.
-     *
-     * @see #multiply(java.awt.image.BufferedImage, java.awt.Color)
+     * @see #multiply(BufferedImage, Color)
      */
-    protected void replaceColor(BufferedImage image, Color color)
-    {
-        if (image == null)
-        {
+    protected void replaceColor(BufferedImage image, Color color) {
+        if (image == null) {
             String msg = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (color == null)
-        {
+        if (color == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -318,18 +293,16 @@ public abstract class AbstractIconRetriever implements IconRetriever
 
         int[] pixels = new int[w];
         int c = color.getRGB();
-        float cr = ((c >> 16) & 0xff) / 255f;
-        float cg = ((c >> 8) & 0xff) / 255f;
-        float cb = (c & 0xff) / 255f;
+        float cr = ((c >> 16) & 0xff) / 255.0f;
+        float cg = ((c >> 8) & 0xff) / 255.0f;
+        float cb = (c & 0xff) / 255.0f;
 
-        for (int y = 0; y < h; y++)
-        {
+        for (int y = 0; y < h; y++) {
             image.getRGB(0, y, w, 1, pixels, 0, w);
 
-            for (int x = 0; x < w; x++)
-            {
+            for (int x = 0; x < w; x++) {
                 int s = pixels[x];
-                float sa = ((s >> 24) & 0xff) / 255f;
+                float sa = ((s >> 24) & 0xff) / 255.0f;
 
                 int fa = (int) (sa * 255 + 0.5);
                 int fr = (int) (cr * 255 + 0.5);

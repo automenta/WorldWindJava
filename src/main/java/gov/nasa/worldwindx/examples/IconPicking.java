@@ -24,12 +24,18 @@ import java.awt.*;
  * @see gov.nasa.worldwind.globes.FlatGlobe
  * @see EarthFlat
  */
-public class IconPicking extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class IconPicking extends ApplicationTemplate {
+    public static void main(String[] args) {
+        // Adjust configuration values before instantiation
+        Configuration.setValue(AVKey.GLOBE_CLASS_NAME, EarthFlat.class.getName());
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 27.0e6);
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 0);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 88);
+        ApplicationTemplate.start("WorldWind Icon Picking", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             super(true, true, false);
 
             IconLayer layer = new IconLayer();
@@ -65,27 +71,16 @@ public class IconPicking extends ApplicationTemplate
             ApplicationTemplate.insertAfterPlacenames(this.getWwd(), layer);
 
             this.getWwd().addSelectListener(event -> {
-                if (event.getEventAction().equals(SelectEvent.ROLLOVER))
-                {
+                if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
                     PickedObjectList pol = event.getObjects();
                     System.out.println(" Picked Objects Size " + pol.size());
-                    for (PickedObject po : pol)
-                    {
-                        System.out.println(" Class " + po.getObject().getClass().getName() + "  isTerrian=" + po.isTerrain());
+                    for (PickedObject po : pol) {
+                        System.out.println(
+                            " Class " + po.getObject().getClass().getName() + "  isTerrian=" + po.isTerrain());
                     }
                 }
             });
             this.getWwd().getSceneController().setDeepPickEnabled(true);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        // Adjust configuration values before instantiation
-        Configuration.setValue(AVKey.GLOBE_CLASS_NAME, EarthFlat.class.getName());
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 27e6);
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 0);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 88);
-        ApplicationTemplate.start("WorldWind Icon Picking", AppFrame.class);
     }
 }

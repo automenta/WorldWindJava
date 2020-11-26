@@ -26,6 +26,93 @@ import java.awt.*;
  */
 public class ApplicationTemplate {
 
+    static {
+        System.setProperty("java.net.useSystemProxies", "true");
+        if (Configuration.isMacOS()) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Application");
+            System.setProperty("com.apple.mrj.application.growbox.intrudes", "false");
+            System.setProperty("apple.awt.brushMetalLook", "true");
+        }
+        else if (Configuration.isWindowsOS()) {
+            System.setProperty("sun.awt.noerasebackground", "true"); // prevents flashing during window resizing
+        }
+    }
+
+    public static void insertBeforeCompass(WorldWindow wwd, Layer layer) {
+        // Insert the layer into the layer list just before the compass.
+        int compassPosition = 0;
+        LayerList layers = wwd.getModel().getLayers();
+        for (Layer l : layers) {
+            if (l instanceof CompassLayer) {
+                compassPosition = layers.indexOf(l);
+            }
+        }
+        layers.add(compassPosition, layer);
+    }
+
+    public static void insertBeforePlacenames(WorldWindow wwd, Layer layer) {
+        // Insert the layer into the layer list just before the placenames.
+        int compassPosition = 0;
+        LayerList layers = wwd.getModel().getLayers();
+        for (Layer l : layers) {
+            if (l instanceof PlaceNameLayer) {
+                compassPosition = layers.indexOf(l);
+            }
+        }
+        layers.add(compassPosition, layer);
+    }
+
+    public static void insertAfterPlacenames(WorldWindow wwd, Layer layer) {
+        // Insert the layer into the layer list just after the placenames.
+        int compassPosition = 0;
+        LayerList layers = wwd.getModel().getLayers();
+        for (Layer l : layers) {
+            if (l instanceof PlaceNameLayer) {
+                compassPosition = layers.indexOf(l);
+            }
+        }
+        layers.add(compassPosition + 1, layer);
+    }
+
+    public static void insertBeforeLayerName(WorldWindow wwd, Layer layer, CharSequence targetName) {
+        // Insert the layer into the layer list just before the target layer.
+        int targetPosition = 0;
+        LayerList layers = wwd.getModel().getLayers();
+        for (Layer l : layers) {
+            if (l.getName().contains(targetName)) {
+                targetPosition = layers.indexOf(l);
+                break;
+            }
+        }
+        layers.add(targetPosition, layer);
+    }
+
+    public static AppFrame start(String appName, Class<?> appFrameClass) {
+        if (Configuration.isMacOS() && appName != null) {
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
+        }
+
+        try {
+            final AppFrame frame = (AppFrame) appFrameClass.getConstructor().newInstance();
+            frame.setTitle(appName);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            EventQueue.invokeLater(() -> frame.setVisible(true));
+
+            return frame;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void main(String[] args) {
+        // Call the static start method like this from the main method of your derived class.
+        // Substitute your application's name for the first argument.
+        ApplicationTemplate.start("WorldWind Application", AppFrame.class);
+    }
+
     public static class AppPanel extends JPanel {
 
         protected final WorldWindow wwd;
@@ -73,12 +160,11 @@ public class ApplicationTemplate {
 
     protected static class AppFrame extends JFrame {
 
-        private Dimension canvasSize = new Dimension(1000, 800);
-
         protected AppPanel wwjPanel;
         protected JPanel controlPanel;
         protected LayerPanel layerPanel;
         protected StatisticsPanel statsPanel;
+        private Dimension canvasSize = new Dimension(1000, 800);
 
         public AppFrame() {
             this.initialize(true, true, false);
@@ -127,7 +213,7 @@ public class ApplicationTemplate {
                     message += "This program will end when you press OK.";
 
                     JOptionPane.showMessageDialog(AppFrame.this, message, "Unable to Start Program",
-                            JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.ERROR_MESSAGE);
                     System.exit(-1);
                 }
             });
@@ -168,8 +254,8 @@ public class ApplicationTemplate {
         }
 
         /**
-         * @deprecated Use getControlPanel instead.
          * @return This application's layer panel.
+         * @deprecated Use getControlPanel instead.
          */
         @Deprecated
         public LayerPanel getLayerPanel() {
@@ -199,90 +285,5 @@ public class ApplicationTemplate {
 
             this.wwjPanel.highlightController = controller;
         }
-    }
-
-    public static void insertBeforeCompass(WorldWindow wwd, Layer layer) {
-        // Insert the layer into the layer list just before the compass.
-        int compassPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
-        for (Layer l : layers) {
-            if (l instanceof CompassLayer) {
-                compassPosition = layers.indexOf(l);
-            }
-        }
-        layers.add(compassPosition, layer);
-    }
-
-    public static void insertBeforePlacenames(WorldWindow wwd, Layer layer) {
-        // Insert the layer into the layer list just before the placenames.
-        int compassPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
-        for (Layer l : layers) {
-            if (l instanceof PlaceNameLayer) {
-                compassPosition = layers.indexOf(l);
-            }
-        }
-        layers.add(compassPosition, layer);
-    }
-
-    public static void insertAfterPlacenames(WorldWindow wwd, Layer layer) {
-        // Insert the layer into the layer list just after the placenames.
-        int compassPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
-        for (Layer l : layers) {
-            if (l instanceof PlaceNameLayer) {
-                compassPosition = layers.indexOf(l);
-            }
-        }
-        layers.add(compassPosition + 1, layer);
-    }
-
-    public static void insertBeforeLayerName(WorldWindow wwd, Layer layer, String targetName) {
-        // Insert the layer into the layer list just before the target layer.
-        int targetPosition = 0;
-        LayerList layers = wwd.getModel().getLayers();
-        for (Layer l : layers) {
-            if (l.getName().contains(targetName)) {
-                targetPosition = layers.indexOf(l);
-                break;
-            }
-        }
-        layers.add(targetPosition, layer);
-    }
-
-    static {
-        System.setProperty("java.net.useSystemProxies", "true");
-        if (Configuration.isMacOS()) {
-            System.setProperty("apple.laf.useScreenMenuBar", "true");
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WorldWind Application");
-            System.setProperty("com.apple.mrj.application.growbox.intrudes", "false");
-            System.setProperty("apple.awt.brushMetalLook", "true");
-        } else if (Configuration.isWindowsOS()) {
-            System.setProperty("sun.awt.noerasebackground", "true"); // prevents flashing during window resizing
-        }
-    }
-
-    public static AppFrame start(String appName, Class<?> appFrameClass) {
-        if (Configuration.isMacOS() && appName != null) {
-            System.setProperty("com.apple.mrj.application.apple.menu.about.name", appName);
-        }
-
-        try {
-            final AppFrame frame = (AppFrame) appFrameClass.getConstructor().newInstance();
-            frame.setTitle(appName);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            java.awt.EventQueue.invokeLater(() -> frame.setVisible(true));
-
-            return frame;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static void main(String[] args) {
-        // Call the static start method like this from the main method of your derived class.
-        // Substitute your application's name for the first argument.
-        ApplicationTemplate.start("WorldWind Application", AppFrame.class);
     }
 }

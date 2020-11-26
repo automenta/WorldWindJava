@@ -10,34 +10,30 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.PropertyAccessor;
 
 /**
- * A position animator that has the ability to adjust the view to focus on the
- * terrain when it is stopped.
+ * A position animator that has the ability to adjust the view to focus on the terrain when it is stopped.
  *
  * @author jym
  * @version $Id: OrbitViewCenterAnimator.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class OrbitViewCenterAnimator extends MoveToPositionAnimator
-{
-    private final BasicOrbitView orbitView;
+public class OrbitViewCenterAnimator extends MoveToPositionAnimator {
     final boolean endCenterOnSurface;
+    private final BasicOrbitView orbitView;
+
     public OrbitViewCenterAnimator(BasicOrbitView orbitView, Position startPosition, Position endPosition,
-        double smoothing, PropertyAccessor.PositionAccessor propertyAccessor, boolean endCenterOnSurface)
-    {
+        double smoothing, PropertyAccessor.PositionAccessor propertyAccessor, boolean endCenterOnSurface) {
         super(startPosition, endPosition, smoothing, propertyAccessor);
         this.endCenterOnSurface = endCenterOnSurface;
         this.orbitView = orbitView;
     }
 
-    public Position nextPosition(double interpolant)
-    {
+    public Position nextPosition(double interpolant) {
         Position nextPosition = this.end;
         Position curCenter = this.propertyAccessor.getPosition();
 
         double latlonDifference = LatLon.greatCircleDistance(nextPosition, curCenter).degrees;
         double elevDifference = Math.abs(nextPosition.getElevation() - curCenter.getElevation());
         boolean stopMoving = Math.max(latlonDifference, elevDifference) < this.positionMinEpsilon;
-        if (!stopMoving)
-        {
+        if (!stopMoving) {
             interpolant = 1 - this.smoothing;
             nextPosition = new Position(
                 Angle.mix(interpolant, curCenter.getLatitude(), this.end.getLatitude()),
@@ -68,29 +64,26 @@ public class OrbitViewCenterAnimator extends MoveToPositionAnimator
         */
 
         // If target is close, cancel future value changes.
-        if (stopMoving)
-        {
+        if (stopMoving) {
             this.stop();
             this.propertyAccessor.setPosition(nextPosition);
             if (endCenterOnSurface)
                 this.orbitView.setViewOutOfFocus(true);
-            return(null);
+            return (null);
         }
         return nextPosition;
     }
 
-    protected void setImpl(double interpolant)
-    {
+    protected void setImpl(double interpolant) {
         Position newValue = this.nextPosition(interpolant);
         if (newValue == null)
-           return;
+            return;
 
         this.propertyAccessor.setPosition(newValue);
         this.orbitView.setViewOutOfFocus(true);
     }
 
-    public void stop()
-    {
+    public void stop() {
         super.stop();
     }
 }

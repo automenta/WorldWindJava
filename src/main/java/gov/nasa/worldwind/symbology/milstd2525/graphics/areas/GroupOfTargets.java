@@ -19,26 +19,23 @@ import java.util.*;
  * @version $Id: GroupOfTargets.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 // TODO: We might want to draw a white background behind the label to make it easier to read against the polygon line.
-public class GroupOfTargets extends BasicArea
-{
-    /**
-     * Indicates the graphics supported by this class.
-     *
-     * @return List of masked SIDC strings that identify graphics that this class supports.
-     */
-    public static List<String> getSupportedGraphics()
-    {
-        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_ARATGT_SGTGT);
-    }
-
+public class GroupOfTargets extends BasicArea {
     /**
      * Create a new graphic.
      *
      * @param sidc Symbol code the identifies the graphic.
      */
-    public GroupOfTargets(String sidc)
-    {
+    public GroupOfTargets(String sidc) {
         super(sidc);
+    }
+
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics() {
+        return Collections.singletonList(TacGrpSidc.FSUPP_ARS_ARATGT_SGTGT);
     }
 
     /**
@@ -46,12 +43,10 @@ public class GroupOfTargets extends BasicArea
      * label. If there are more lines, they will be arranged South of the first line.
      *
      * @param dc Current draw context.
-     *
      * @return Position for the graphic's main label.
      */
     @Override
-    protected Position determineMainLabelPosition(DrawContext dc)
-    {
+    protected Position determineMainLabelPosition(DrawContext dc) {
         Iterable<? extends LatLon> locations = this.polygon.getLocations();
         if (locations == null)
             return null;
@@ -63,16 +58,14 @@ public class GroupOfTargets extends BasicArea
 
         // Find the North-most segment in the polygon. The template in MIL-STD-2525C shows the label at the "top"
         // of the polygon. We will interpret this as the Northern edge of the polygon.
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             LatLon locB = locA;
             locA = iterator.next();
 
             LatLon mid = LatLon.interpolateGreatCircle(0.5, locA, locB);
 
             // Determine if the midpoint of the segment is farther North our North-most point
-            if (mid.latitude.compareTo(northMost.latitude) > 0)
-            {
+            if (mid.latitude.compareTo(northMost.latitude) > 0) {
                 northMost = mid;
             }
         }

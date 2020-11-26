@@ -21,8 +21,7 @@ import java.util.*;
  * @author tag
  * @version $Id: GliderRegionOfInterest.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GliderRegionOfInterest extends AVListImpl
-{
+public class GliderRegionOfInterest extends AVListImpl {
     public static final String GLIDER_REGION_OF_INTEREST = "gov.nasa.worldwind.glider.RegionOfInterest";
 
     private List<LatLon> locations;
@@ -33,28 +32,23 @@ public class GliderRegionOfInterest extends AVListImpl
      *
      * @param locations the lat/lon vertices of the region of interest.
      * @param color     the color in which to draw the region.
-     *
      * @throws IllegalArgumentException if either argument is null.
      */
-    public GliderRegionOfInterest(Iterable<? extends LatLon> locations, Color color)
-    {
-        if (locations == null)
-        {
+    public GliderRegionOfInterest(Iterable<? extends LatLon> locations, Color color) {
+        if (locations == null) {
             String message = Logging.getMessage("nullValue.LocationsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (color == null)
-        {
+        if (color == null) {
             String message = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         this.locations = new ArrayList<>();
-        for (LatLon ll : locations)
-        {
+        for (LatLon ll : locations) {
             this.locations.add(ll);
         }
 
@@ -65,11 +59,9 @@ public class GliderRegionOfInterest extends AVListImpl
      * Copy constructor. Performs a shallow copy.
      *
      * @param region the region of interest to copy.
-     *
      * @throws IllegalArgumentException if <code>region</code> is null.
      */
-    public GliderRegionOfInterest(GliderRegionOfInterest region)
-    {
+    public GliderRegionOfInterest(GliderRegionOfInterest region) {
         this(region.getLocations(), region.getColor());
     }
 
@@ -78,8 +70,7 @@ public class GliderRegionOfInterest extends AVListImpl
      *
      * @return the lat/lon vertices of the region.
      */
-    public List<LatLon> getLocations()
-    {
+    public List<LatLon> getLocations() {
         return this.locations;
     }
 
@@ -87,13 +78,10 @@ public class GliderRegionOfInterest extends AVListImpl
      * Set the region's location.
      *
      * @param locations the lat/lon vertices of the region.
-     *
      * @throws IllegalArgumentException if <code>locations</code> is null.
      */
-    public void setLocations(Iterable<? extends LatLon> locations)
-    {
-        if (locations == null)
-        {
+    public void setLocations(Iterable<? extends LatLon> locations) {
+        if (locations == null) {
             String message = Logging.getMessage("nullValue.LocationsListIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -101,8 +89,7 @@ public class GliderRegionOfInterest extends AVListImpl
 
         GliderRegionOfInterest oldRegion = new GliderRegionOfInterest(this);
         this.locations = new ArrayList<>();
-        for (LatLon ll : locations)
-        {
+        for (LatLon ll : locations) {
             this.locations.add(ll);
         }
         this.firePropertyChange(GLIDER_REGION_OF_INTEREST, oldRegion, this);
@@ -113,8 +100,7 @@ public class GliderRegionOfInterest extends AVListImpl
      *
      * @return the region's color
      */
-    public Color getColor()
-    {
+    public Color getColor() {
         return color;
     }
 
@@ -122,13 +108,10 @@ public class GliderRegionOfInterest extends AVListImpl
      * Set the region's color.
      *
      * @param color the color in which to draw the region.
-     *
      * @throws IllegalArgumentException if <code>color</code> is null.
      */
-    public void setColor(Color color)
-    {
-        if (color == null)
-        {
+    public void setColor(Color color) {
+        if (color == null) {
             String message = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -139,9 +122,8 @@ public class GliderRegionOfInterest extends AVListImpl
         this.firePropertyChange(GLIDER_REGION_OF_INTEREST, oldRegion, this);
     }
 
-    @SuppressWarnings({"RedundantIfStatement"})
-    public boolean equals(Object o)
-    {
+    @SuppressWarnings("RedundantIfStatement")
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -157,31 +139,30 @@ public class GliderRegionOfInterest extends AVListImpl
         return true;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
         result = (locations != null ? locations.hashCode() : 0);
         result = 31 * result + (color != null ? color.hashCode() : 0);
         return result;
     }
 
-    /** A class to encapsulate an unmodifiable list of regions, useful when region lists are passed as properties. */
-    public static class RegionSet
-    {
-        /** The unmodifiable list of regions. */
+    /**
+     * A class to encapsulate an unmodifiable list of regions, useful when region lists are passed as properties.
+     */
+    public static class RegionSet {
+        /**
+         * The unmodifiable list of regions.
+         */
         public final Set<GliderRegionOfInterest> regions;
 
         /**
          * Create a region set
          *
          * @param regions the regions to include in the set.
-         *
          * @throws IllegalArgumentException if <code>regions</code> is null.
          */
-        public RegionSet(Set<GliderRegionOfInterest> regions)
-        {
-            if (regions == null)
-            {
+        public RegionSet(Set<GliderRegionOfInterest> regions) {
+            if (regions == null) {
                 String message = Logging.getMessage("nullValue.RegionListIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);

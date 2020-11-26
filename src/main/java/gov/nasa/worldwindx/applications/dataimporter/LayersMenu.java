@@ -19,10 +19,8 @@ import java.awt.event.*;
  * @author tag
  * @version $Id: LayersMenu.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
-public class LayersMenu extends JMenu
-{
-    public LayersMenu(final WorldWindow wwd)
-    {
+public class LayersMenu extends JMenu {
+    public LayersMenu(final WorldWindow wwd) {
         super("Layers");
 
         this.fill(wwd);
@@ -33,19 +31,16 @@ public class LayersMenu extends JMenu
         });
     }
 
-    public void update(WorldWindow wwd)
-    {
+    public void update(WorldWindow wwd) {
         this.fill(wwd);
     }
 
-    protected void fill(WorldWindow wwd)
-    {
+    protected void fill(WorldWindow wwd) {
         // First remove all the existing menu items.
         this.removeAll();
 
         // Fill the layers panel with the titles of all layers in the WorldWindow's current model.
-        for (Layer layer : wwd.getModel().getLayers())
-        {
+        for (Layer layer : wwd.getModel().getLayers()) {
             if (layer.getValue(AVKey.IGNORE) != null)
                 continue;
 
@@ -56,14 +51,12 @@ public class LayersMenu extends JMenu
         }
     }
 
-    protected static class LayerAction extends AbstractAction
-    {
-        final WorldWindow wwd;
+    protected static class LayerAction extends AbstractAction {
         protected final Layer layer;
         protected final boolean selected;
+        final WorldWindow wwd;
 
-        public LayerAction(Layer layer, WorldWindow wwd, boolean selected)
-        {
+        public LayerAction(Layer layer, WorldWindow wwd, boolean selected) {
             super(layer.getName());
             this.wwd = wwd;
             this.layer = layer;
@@ -71,8 +64,7 @@ public class LayersMenu extends JMenu
             this.layer.setEnabled(this.selected);
         }
 
-        public void actionPerformed(ActionEvent actionEvent)
-        {
+        public void actionPerformed(ActionEvent actionEvent) {
             // Simply enable or disable the layer based on its toggle button.
             this.layer.setEnabled(((JCheckBoxMenuItem) actionEvent.getSource()).isSelected());
 

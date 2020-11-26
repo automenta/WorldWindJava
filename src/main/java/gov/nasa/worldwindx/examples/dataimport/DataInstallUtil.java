@@ -21,12 +21,11 @@ import java.io.File;
  * @author dcollins
  * @version $Id: DataInstallUtil.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class DataInstallUtil
-{
+public class DataInstallUtil {
     /**
      * Returns true if the specified input source is non-null and represents a data raster (imagery or elevation), and
      * false otherwise. The input source may be one of the following: <ul> <li><code>{@link String}</code></li>
-     * <li><code>{@link java.io.File}</code></li> <li><code>{@link java.net.URL}</code></li> <li><code>{@link
+     * <li><code>{@link File}</code></li> <li><code>{@link java.net.URL}</code></li> <li><code>{@link
      * java.net.URI}</code></li> <li><code>{@link java.io.InputStream}</code></li> </ul>
      *
      * @param source the input source reference to test as a data raster.
@@ -34,28 +33,22 @@ public class DataInstallUtil
      *               known parameters. If the raster is already known to be imagery or elevation data, specify a
      *               non-<code>null</code> parameter list with the key <code>AVKey.PIXEL_FORMAT</code> set to
      *               <code>AVKey.IMAGE</code> or <code>AVKey.ELEVATION</code>.
-     *
      * @return <code>true</code> if the input source is data raster, and <code>false</code> otherwise.
-     *
      * @throws IllegalArgumentException if the input source is <code>null</code>.
      */
-    public static boolean isDataRaster(Object source, AVList params)
-    {
-        if (source == null)
-        {
+    public static boolean isDataRaster(Object source, AVList params) {
+        if (source == null) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         DataRasterReaderFactory readerFactory;
-        try
-        {
+        try {
             readerFactory = (DataRasterReaderFactory) WorldWind.createConfigurationComponent(
                 AVKey.DATA_RASTER_READER_FACTORY_CLASS_NAME);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             readerFactory = new BasicDataRasterReaderFactory();
         }
 
@@ -64,14 +57,11 @@ public class DataInstallUtil
         if (reader == null)
             return false;
 
-        if (!params.hasKey(AVKey.PIXEL_FORMAT))
-        {
-            try
-            {
+        if (!params.hasKey(AVKey.PIXEL_FORMAT)) {
+            try {
                 reader.readMetadata(source, params);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 String message = Logging.getMessage("generic.ExceptionWhileReading", e.getMessage());
                 Logging.logger().finest(message);
             }
@@ -84,27 +74,22 @@ public class DataInstallUtil
     /**
      * Returns true if the specified input source is non-null and represents a reference to a WorldWind .NET LayerSet
      * XML document, and false otherwise. The input source may be one of the following: <ul> <li>{@link String}</li>
-     * <li>{@link java.io.File}</li> <li>{@link java.net.URL}</li> <li>{@link java.net.URI}</li> <li>{@link
+     * <li>{@link File}</li> <li>{@link java.net.URL}</li> <li>{@link java.net.URI}</li> <li>{@link
      * java.io.InputStream}</li> </ul>
      *
      * @param source the input source reference to test as a WorldWind .NET LayerSet document.
-     *
      * @return true if the input source is a WorldWind .NET LayerSet document, and false otherwise.
-     *
      * @throws IllegalArgumentException if the input source is null.
      */
-    public static boolean isWWDotNetLayerSet(Object source)
-    {
-        if (source == null)
-        {
+    public static boolean isWWDotNetLayerSet(Object source) {
+        if (source == null) {
             String message = Logging.getMessage("nullValue.SourceIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         String path = WWIO.getSourcePath(source);
-        if (path != null)
-        {
+        if (path != null) {
             String suffix = WWIO.getSuffix(path);
             if (suffix != null && !suffix.toLowerCase().endsWith("xml"))
                 return false;
@@ -113,8 +98,7 @@ public class DataInstallUtil
         // Open the document in question as an XML event stream. Since we're only interested in testing the document
         // element, we avoiding any unnecessary overhead incurred from parsing the entire document as a DOM.
         XMLEventReader eventReader = null;
-        try
-        {
+        try {
             eventReader = WWXML.openEventReader(source);
 
             // Get the first start element event, if any exists, then determine if it represents a LayerSet
@@ -122,43 +106,36 @@ public class DataInstallUtil
             XMLEvent event = WWXML.nextStartElementEvent(eventReader);
             return event != null && DataConfigurationUtils.isWWDotNetLayerSetConfigEvent(event);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             Logging.logger().fine(Logging.getMessage("generic.ExceptionAttemptingToParseXml", source));
             return false;
         }
-        finally
-        {
+        finally {
             WWXML.closeEventReader(eventReader, source.toString());
         }
     }
 
     /**
-     * Returns a location in the specified {@link gov.nasa.worldwind.cache.FileStore} which should be used as the
+     * Returns a location in the specified {@link FileStore} which should be used as the
      * default location for installing data. This attempts to use the first FileStore location marked as an "install"
      * location. If no install location exists, this falls back to the FileStore's default write location, the same
      * location where downloaded data is cached.
      * <p>
-     * The returned {@link java.io.File} represents an abstract path, and therefore may not exist. In this case, the
+     * The returned {@link File} represents an abstract path, and therefore may not exist. In this case, the
      * caller must create the missing directories composing the abstract path.
      *
      * @param fileStore the FileStore to determine the default location for installing data.
-     *
      * @return the default location in the specified FileStore to be used for installing data.
-     *
      * @throws IllegalArgumentException if the FileStore is null.
      */
-    public static File getDefaultInstallLocation(FileStore fileStore)
-    {
-        if (fileStore == null)
-        {
+    public static File getDefaultInstallLocation(FileStore fileStore) {
+        if (fileStore == null) {
             String message = Logging.getMessage("nullValue.FileStoreIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        for (File location : fileStore.getLocations())
-        {
+        for (File location : fileStore.getLocations()) {
             if (fileStore.isInstallLocation(location.getPath()))
                 return location;
         }

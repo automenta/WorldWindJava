@@ -14,26 +14,21 @@ import java.io.InputStream;
  * @author dcollins
  * @version $Id: NMEATrackReader.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class NMEATrackReader extends AbstractTrackReader
-{
-    public NMEATrackReader()
-    {
+public class NMEATrackReader extends AbstractTrackReader {
+    public NMEATrackReader() {
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return "National Marine Electronics Association (*.nmea)";
     }
 
-    protected Track[] doRead(InputStream inputStream)
-    {
+    protected Track[] doRead(InputStream inputStream) {
         NmeaReader reader = new NmeaReader();
         reader.readStream(inputStream, null); // un-named stream
         return AbstractTrackReader.asArray(reader.getTracks());
     }
 
-    protected boolean acceptFilePath(String filePath)
-    {
+    protected boolean acceptFilePath(String filePath) {
         return filePath.toLowerCase().endsWith(".nmea");
     }
 }

@@ -8,11 +8,10 @@ package gov.nasa.worldwind.drag;
 
 /**
  * An interface provided by objects that can be dragged. The {@link DragContext} provided in the {@link
- * Draggable#drag(DragContext)} method includes information on the screen coordinates and the state of the
- * {@link gov.nasa.worldwind.WorldWindow}.
+ * Draggable#drag(DragContext)} method includes information on the screen coordinates and the state of the {@link
+ * gov.nasa.worldwind.WorldWindow}.
  */
-public interface Draggable
-{
+public interface Draggable {
     /**
      * Indicates whether the object is enabled for dragging.
      *

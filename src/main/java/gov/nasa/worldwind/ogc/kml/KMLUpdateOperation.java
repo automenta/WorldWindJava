@@ -10,7 +10,6 @@ package gov.nasa.worldwind.ogc.kml;
  * @author tag
  * @version $Id: KMLUpdateOperation.java 390 2012-02-17 01:09:57Z tgaskins $
  */
-public interface KMLUpdateOperation
-{
+public interface KMLUpdateOperation {
     void applyOperation(KMLRoot operationsRoot);
 }

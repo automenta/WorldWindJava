@@ -21,50 +21,41 @@ import java.util.*;
  * @author tag
  * @version $Id: FileSetFinder.java 2915 2015-03-20 16:48:43Z tgaskins $
  */
-public class FileSetFinder
-{
+public class FileSetFinder {
     final FileSetMap fileSetMap = new FileSetMap();
 
-    public FileSetMap getFileSetMap()
-    {
+    public FileSetMap getFileSetMap() {
         return this.fileSetMap;
     }
 
-    public void findFileSets(File[] rootDirectories)
-    {
+    public void findFileSets(File[] rootDirectories) {
         this.fileSetMap.clear();
 
-        for (File rootDirectory : rootDirectories)
-        {
+        for (File rootDirectory : rootDirectories) {
             this.findFileSets(rootDirectory.getPath());
         }
     }
 
-    protected void findFileSets(String rootDirectory)
-    {
+    protected void findFileSets(String rootDirectory) {
         File root = new File(rootDirectory);
 
         // Retrieve all the files that match the filter.
         String[] matches = WWIO.listDescendantFilenames(root, new FileSetFilter());
 
         // Build the file-set map. Each file set contains its associated files.
-        for (String match : matches)
-        {
+        for (String match : matches) {
             if (Thread.currentThread().isInterrupted())
                 return;
 
-            try
-            {
+            try {
                 FileSet fileSet;
                 File file = new File(root, match);
 
                 RPFFrameFilename rpfFilename;
-                try
-                {
+                try {
                     rpfFilename = RPFFrameFilename.parseFilename(file.getName().toUpperCase());
                     String code = rpfFilename.getDataSeriesCode();
-                    if (code != null)
-                    {
+                    if (code != null) {
                         fileSet = this.fileSetMap.get(code);
                         if (fileSet == null)
                             this.fileSetMap.put(code, fileSet = new FileSetRPF(code));
@@ -72,18 +63,15 @@ public class FileSetFinder
                         continue;
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     // Just means it's not RPF, so keep going
                 }
 
                 // This code shows how to consolidate a collection of file sets, grouping them by suffix.
                 String suffix = WWIO.getSuffix(file.getPath().toUpperCase());
-                if (suffix != null)
-                {
+                if (suffix != null) {
                     fileSet = this.fileSetMap.get(suffix);
-                    if (fileSet == null)
-                    {
+                    if (fileSet == null) {
                         this.fileSetMap.put(suffix, fileSet = new FileSet());
                         File parent = new File(file.getParent());
                         fileSet.setName(parent.getName());
@@ -100,50 +88,42 @@ public class FileSetFinder
                 this.fileSetMap.put(file.getPath(), fileSet);
                 fileSet.addFile(file);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 continue;
             }
         }
 
         // Attach metadata to the file sets.
-        for (FileSet fileSet : this.fileSetMap.values())
-        {
+        for (FileSet fileSet : this.fileSetMap.values()) {
             this.attachMetadata(fileSet);
         }
     }
 
-    public void attachMetadata(FileSet fileSet)
-    {
+    public void attachMetadata(FileSet fileSet) {
         // Open the data set and extract metadata needed by the data installer panel.
 
         DataRasterReaderFactory readerFactory = DataInstaller.getReaderFactory();
-        List<Sector> fileSectors = new ArrayList<>(fileSet.getLength());
+        Collection<Sector> fileSectors = new ArrayList<>(fileSet.getLength());
 
         Sector sector = null;
-        for (File file : fileSet.getFiles())
-        {
+        for (File file : fileSet.getFiles()) {
             AVList params = new AVListImpl();
             DataRasterReader reader = readerFactory.findReaderFor(file, params);
-            if (reader == null)
-            {
+            if (reader == null) {
                 Logging.logger().fine("No reader for " + file.getPath());
                 continue;
             }
 
-            try
-            {
+            try {
                 reader.readMetadata(file, params);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 String message = Logging.getMessage("generic.ExceptionWhileReading", e.getMessage());
                 Logging.logger().finest(message);
             }
 
             // Set the file set's pixel format and data type.
-            if (fileSet.getDataType() == null)
-            {
+            if (fileSet.getDataType() == null) {
                 String pixelFormat = params.getStringValue(AVKey.PIXEL_FORMAT);
                 fileSet.setValue(AVKey.PIXEL_FORMAT, pixelFormat);
 
@@ -154,8 +134,7 @@ public class FileSetFinder
             }
 
             Sector fileSector = (Sector) params.getValue(AVKey.SECTOR);
-            if (fileSector == null)
-            {
+            if (fileSector == null) {
                 Logging.logger().fine("No sector for " + file.getPath());
                 continue;
             }
@@ -167,30 +146,61 @@ public class FileSetFinder
             sector = sector == null ? fileSector : sector.union(fileSector);
         }
 
-        if (sector != null)
-        {
+        if (sector != null) {
             fileSet.setValue(AVKey.SECTOR, sector);
 //            fileSet.setValue(FileSet.SECTOR_LIST, fileSectors.toArray());
             fileSet.addSectorList(fileSectors.toArray());
         }
     }
 
-    protected static class FileSetKey
-    {
+    public List<FileSet> consolidateFileSets(List<FileSet> fileSets) {
+        if (fileSets.size() <= 1)
+            return fileSets;
+
+        FileSetMap map = new FileSetMap();
+        List<FileSet> commonFilesets = new ArrayList<>();
+
+        for (FileSet fs : fileSets) {
+            if (fs.getFiles().size() > 1) {
+                commonFilesets.add(fs);
+                continue;
+            }
+
+            File file = fs.getFiles().get(0);
+            String dataType = fs.getDataType();
+            FileSetKey key = new FileSetKey(file, dataType);
+
+            FileSet consolidatedFileSet = map.get(key);
+            if (consolidatedFileSet == null) {
+                consolidatedFileSet = new FileSet();
+                map.put(key, consolidatedFileSet);
+                consolidatedFileSet.setDataType(fs.getDataType());
+                consolidatedFileSet.setValue(AVKey.PIXEL_FORMAT, fs.getValue(AVKey.PIXEL_FORMAT));
+                consolidatedFileSet.setSector(fs.getSector());
+                commonFilesets.add(consolidatedFileSet);
+            }
+
+            consolidatedFileSet.addFile(file);
+            consolidatedFileSet.setSector(consolidatedFileSet.getSector().union(fs.getSector()));
+            consolidatedFileSet.addSectorList(fs.getSectorList());
+        }
+
+        return commonFilesets;
+    }
+
+    protected static class FileSetKey {
         protected final String suffix;
         protected final String dataType;
         protected final File parentDirectory;
 
-        public FileSetKey(File file, String dataType)
-        {
-            this.dataType =dataType;
+        public FileSetKey(File file, String dataType) {
+            this.dataType = dataType;
             this.suffix = WWIO.getSuffix(file.getPath().toUpperCase());
             this.parentDirectory = file.getParentFile();
         }
 
         @Override
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
             if (o == null || getClass() != o.getClass())
@@ -206,51 +216,11 @@ public class FileSetFinder
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             int result = suffix != null ? suffix.hashCode() : 0;
             result = 31 * result + (dataType != null ? dataType.hashCode() : 0);
             result = 31 * result + (parentDirectory != null ? parentDirectory.hashCode() : 0);
             return result;
         }
-    }
-
-    public List<FileSet> consolidateFileSets(List<FileSet> fileSets)
-    {
-        if (fileSets.size() <= 1)
-            return fileSets;
-
-        FileSetMap map = new FileSetMap();
-        List<FileSet> commonFilesets = new ArrayList<>();
-
-        for (FileSet fs : fileSets)
-        {
-            if (fs.getFiles().size() > 1)
-            {
-                commonFilesets.add(fs);
-                continue;
-            }
-
-            File file = fs.getFiles().get(0);
-            String dataType = fs.getDataType();
-            FileSetKey key = new FileSetKey(file, dataType);
-
-            FileSet consolidatedFileSet = map.get(key);
-            if (consolidatedFileSet == null)
-            {
-                consolidatedFileSet = new FileSet();
-                map.put(key, consolidatedFileSet);
-                consolidatedFileSet.setDataType(fs.getDataType());
-                consolidatedFileSet.setValue(AVKey.PIXEL_FORMAT, fs.getValue(AVKey.PIXEL_FORMAT));
-                consolidatedFileSet.setSector(fs.getSector());
-                commonFilesets.add(consolidatedFileSet);
-            }
-
-            consolidatedFileSet.addFile(file);
-            consolidatedFileSet.setSector(consolidatedFileSet.getSector().union(fs.getSector()));
-            consolidatedFileSet.addSectorList(fs.getSectorList());
-        }
-
-        return commonFilesets;
     }
 }

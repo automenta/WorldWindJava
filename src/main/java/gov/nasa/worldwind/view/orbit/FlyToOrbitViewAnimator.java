@@ -16,8 +16,7 @@ import gov.nasa.worldwind.view.*;
  * @author jym
  * @version $Id: FlyToOrbitViewAnimator.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class FlyToOrbitViewAnimator extends CompoundAnimator
-{
+public class FlyToOrbitViewAnimator extends CompoundAnimator {
     final int altitudeMode;
     final PositionAnimator centerAnimator;
     final ViewElevationAnimator zoomAnimator;
@@ -28,8 +27,7 @@ public class FlyToOrbitViewAnimator extends CompoundAnimator
 
     public FlyToOrbitViewAnimator(OrbitView orbitView, Interpolator interpolator, int altitudeMode,
         PositionAnimator centerAnimator, DoubleAnimator zoomAnimator,
-        AngleAnimator headingAnimator, AngleAnimator pitchAnimator, AngleAnimator rollAnimator)
-    {
+        AngleAnimator headingAnimator, AngleAnimator pitchAnimator, AngleAnimator rollAnimator) {
         super(interpolator, centerAnimator, zoomAnimator, headingAnimator, pitchAnimator, rollAnimator);
         this.orbitView = (BasicOrbitView) orbitView;
         this.centerAnimator = centerAnimator;
@@ -37,8 +35,7 @@ public class FlyToOrbitViewAnimator extends CompoundAnimator
         this.headingAnimator = headingAnimator;
         this.pitchAnimator = pitchAnimator;
         this.rollAnimator = rollAnimator;
-        if (interpolator == null)
-        {
+        if (interpolator == null) {
             this.interpolator = new ScheduledInterpolator(10000);
         }
         this.altitudeMode = altitudeMode;
@@ -49,8 +46,7 @@ public class FlyToOrbitViewAnimator extends CompoundAnimator
         Position beginCenterPos, Position endCenterPos,
         Angle beginHeading, Angle endHeading,
         Angle beginPitch, Angle endPitch,
-        double beginZoom, double endZoom, long timeToMove, int altitudeMode)
-    {
+        double beginZoom, double endZoom, long timeToMove, int altitudeMode) {
         OnSurfacePositionAnimator centerAnimator = new OnSurfacePositionAnimator(orbitView.getGlobe(),
             new ScheduledInterpolator(timeToMove),
             beginCenterPos, endCenterPos,
@@ -80,8 +76,15 @@ public class FlyToOrbitViewAnimator extends CompoundAnimator
             zoomAnimator, headingAnimator, pitchAnimator, null));
     }
 
-    protected static class OnSurfacePositionAnimator extends PositionAnimator
-    {
+    @Override
+    public void stop() {
+        if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND) {
+            this.orbitView.setViewOutOfFocus(true);
+        }
+        super.stop();
+    }
+
+    protected static class OnSurfacePositionAnimator extends PositionAnimator {
         final Globe globe;
         final int altitudeMode;
         boolean useMidZoom = true;
@@ -89,16 +92,14 @@ public class FlyToOrbitViewAnimator extends CompoundAnimator
         public OnSurfacePositionAnimator(Globe globe, Interpolator interpolator,
             Position begin,
             Position end,
-            PropertyAccessor.PositionAccessor propertyAccessor, int altitudeMode)
-        {
+            PropertyAccessor.PositionAccessor propertyAccessor, int altitudeMode) {
             super(interpolator, begin, end, propertyAccessor);
             this.globe = globe;
             this.altitudeMode = altitudeMode;
         }
 
         @Override
-        protected Position nextPosition(double interpolant)
-        {
+        protected Position nextPosition(double interpolant) {
             final int MAX_SMOOTHING = 1;
 
             final double CENTER_START = this.useMidZoom ? 0.2 : 0.0;
@@ -116,20 +117,17 @@ public class FlyToOrbitViewAnimator extends CompoundAnimator
             double endElevation = 0.0;
             boolean overrideEndElevation = false;
 
-            if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND)
-            {
+            if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND) {
                 overrideEndElevation = true;
                 endElevation = this.globe.getElevation(getEnd().getLatitude(), getEnd().getLongitude());
             }
-            else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND)
-            {
+            else if (this.altitudeMode == WorldWind.RELATIVE_TO_GROUND) {
                 overrideEndElevation = true;
                 endElevation = this.globe.getElevation(getEnd().getLatitude(), getEnd().getLongitude())
                     + getEnd().getAltitude();
             }
 
-            if (overrideEndElevation)
-            {
+            if (overrideEndElevation) {
                 LatLon ll = pos; // Use interpolated lat/lon.
                 double e1 = getBegin().getElevation();
                 pos = new Position(ll, (1 - latLonInterpolant) * e1 + latLonInterpolant * endElevation);
@@ -137,15 +135,5 @@ public class FlyToOrbitViewAnimator extends CompoundAnimator
 
             return pos;
         }
-    }
-
-    @Override
-    public void stop()
-    {
-        if (this.altitudeMode == WorldWind.CLAMP_TO_GROUND)
-        {
-            this.orbitView.setViewOutOfFocus(true);
-        }
-        super.stop();
     }
 }

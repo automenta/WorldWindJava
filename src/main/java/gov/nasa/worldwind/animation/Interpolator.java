@@ -13,10 +13,10 @@ package gov.nasa.worldwind.animation;
 /**
  * An interface for generating interpolants.
  */
-public interface Interpolator
-{
+public interface Interpolator {
     /**
      * Returns the next interpolant
+     *
      * @return a value between 0 and 1 that represents the next position of the interpolant.
      */
     double nextInterpolant();

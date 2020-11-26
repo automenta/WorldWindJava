@@ -9,8 +9,7 @@ package gov.nasa.worldwind.formats.geojson;
  * @author dcollins
  * @version $Id: GeoJSONConstants.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface GeoJSONConstants
-{
+public interface GeoJSONConstants {
     String FIELD_TYPE = "type";
     String FIELD_CRS = "crs";
     String FIELD_BBOX = "bbox";

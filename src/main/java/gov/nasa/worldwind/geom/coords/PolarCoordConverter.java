@@ -100,19 +100,17 @@ package gov.nasa.worldwind.geom.coords;
  * @author Garrett Headley - Feb 12, 2007 4:48:11 PM
  * @version $Id: PolarCoordConverter.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class PolarCoordConverter
-{
+public class PolarCoordConverter {
+    public static final long POLAR_EASTING_ERROR = 0x0010;
+    public static final long POLAR_NORTHING_ERROR = 0x0020;
+    public static final long POLAR_RADIUS_ERROR = 0x0100;
     private static final long POLAR_NO_ERROR = 0x0000;
     private static final long POLAR_LAT_ERROR = 0x0001;
     private static final long POLAR_LON_ERROR = 0x0002;
     private static final long POLAR_ORIGIN_LAT_ERROR = 0x0004;
     private static final long POLAR_ORIGIN_LON_ERROR = 0x0008;
-    public static final long POLAR_EASTING_ERROR = 0x0010;
-    public static final long POLAR_NORTHING_ERROR = 0x0020;
     private static final long POLAR_A_ERROR = 0x0040;
     private static final long POLAR_INV_F_ERROR = 0x0080;
-    public static final long POLAR_RADIUS_ERROR = 0x0100;
-
     private static final double PI = 3.14159265358979323;
     private static final double PI_OVER_2 = PI / 2.0;
     private static final double PI_Over_4 = PI / 4.0;
@@ -122,7 +120,7 @@ public class PolarCoordConverter
     private double Polar_a = 6378137.0;                    /* Semi-major axis of ellipsoid in meters  */
     private double Polar_f = 1 / 298.257223563;            /* Flattening of ellipsoid  */
     private double es = 0.08181919084262188000;            /* Eccentricity of ellipsoid    */
-    private double es_OVER_2 = .040909595421311;           /* es / 2.0 */
+    private double es_OVER_2 = 0.040909595421311;           /* es / 2.0 */
     private double Southern_Hemisphere = 0;                /* Flag variable */
     private double mc = 1.0;
     private double tc = 1.0;
@@ -145,8 +143,7 @@ public class PolarCoordConverter
     private double Latitude;
     private double Longitude;
 
-    PolarCoordConverter()
-    {
+    PolarCoordConverter() {
     }
 
     /**
@@ -163,9 +160,7 @@ public class PolarCoordConverter
      * @return error code
      */
     public long setPolarStereographicParameters(double a, double f, double Latitude_of_True_Scale,
-                                                       double Longitude_Down_from_Pole, double False_Easting, double False_Northing)
-
-    {
+        double Longitude_Down_from_Pole, double False_Easting, double False_Northing) {
         double es2;
         double slat, clat;
         double essin;
@@ -175,25 +170,22 @@ public class PolarCoordConverter
         final double epsilon = 1.0e-2;
         long Error_Code = POLAR_NO_ERROR;
 
-        if (a <= 0.0)
-        { /* Semi-major axis must be greater than zero */
+        if (a <= 0.0) { /* Semi-major axis must be greater than zero */
             Error_Code |= POLAR_A_ERROR;
         }
-        if ((inv_f < 250) || (inv_f > 350))
-        { /* Inverse flattening must be between 250 and 350 */
+        if ((inv_f < 250) || (inv_f > 350)) { /* Inverse flattening must be between 250 and 350 */
             Error_Code |= POLAR_INV_F_ERROR;
         }
-        if ((Latitude_of_True_Scale < -PI_OVER_2) || (Latitude_of_True_Scale > PI_OVER_2))
-        { /* Origin Latitude out of range */
+        if ((Latitude_of_True_Scale < -PI_OVER_2) || (Latitude_of_True_Scale
+            > PI_OVER_2)) { /* Origin Latitude out of range */
             Error_Code |= POLAR_ORIGIN_LAT_ERROR;
         }
-        if ((Longitude_Down_from_Pole < -PI) || (Longitude_Down_from_Pole > TWO_PI))
-        { /* Origin Longitude out of range */
+        if ((Longitude_Down_from_Pole < -PI) || (Longitude_Down_from_Pole
+            > TWO_PI)) { /* Origin Longitude out of range */
             Error_Code |= POLAR_ORIGIN_LON_ERROR;
         }
 
-        if (Error_Code == POLAR_NO_ERROR)
-        { /* no errors */
+        if (Error_Code == POLAR_NO_ERROR) { /* no errors */
 
             Polar_a = a;
             two_Polar_a = 2.0 * Polar_a;
@@ -201,13 +193,12 @@ public class PolarCoordConverter
 
             if (Longitude_Down_from_Pole > PI)
                 Longitude_Down_from_Pole -= TWO_PI;
-            if (Latitude_of_True_Scale < 0)
-            {
+            if (Latitude_of_True_Scale < 0) {
                 Southern_Hemisphere = 1;
                 Polar_Origin_Lat = -Latitude_of_True_Scale;
                 Polar_Origin_Long = -Longitude_Down_from_Pole;
-            } else
-            {
+            }
+            else {
                 Southern_Hemisphere = 0;
                 Polar_Origin_Lat = Latitude_of_True_Scale;
                 Polar_Origin_Long = Longitude_Down_from_Pole;
@@ -219,8 +210,7 @@ public class PolarCoordConverter
             es = Math.sqrt(es2);
             es_OVER_2 = es / 2.0;
 
-            if (Math.abs(Math.abs(Polar_Origin_Lat) - PI_OVER_2) > 1.0e-10)
-            {
+            if (Math.abs(Math.abs(Polar_Origin_Lat) - PI_OVER_2) > 1.0e-10) {
                 slat = Math.sin(Polar_Origin_Lat);
                 essin = es * slat;
                 pow_es = Math.pow((1.0 - essin) / (1.0 + essin), es_OVER_2);
@@ -228,8 +218,8 @@ public class PolarCoordConverter
                 mc = clat / Math.sqrt(1.0 - essin * essin);
                 Polar_a_mc = Polar_a * mc;
                 tc = Math.tan(PI_Over_4 - Polar_Origin_Lat / 2.0) / pow_es;
-            } else
-            {
+            }
+            else {
                 one_PLUS_es = 1.0 + es;
                 one_MINUS_es = 1.0 - es;
                 e4 = Math.sqrt(Math.pow(one_PLUS_es, one_PLUS_es) * Math.pow(one_MINUS_es, one_MINUS_es));
@@ -256,8 +246,7 @@ public class PolarCoordConverter
      * @param Longitude Longitude, in radians
      * @return error code
      */
-    public long convertGeodeticToPolarStereographic(double Latitude, double Longitude)
-    {
+    public long convertGeodeticToPolarStereographic(double Latitude, double Longitude) {
         double dlam;
         double slat;
         double essin;
@@ -266,44 +255,37 @@ public class PolarCoordConverter
         double pow_es;
         long Error_Code = POLAR_NO_ERROR;
 
-        if ((Latitude < -PI_OVER_2) || (Latitude > PI_OVER_2))
-        {   /* Latitude out of range */
+        if ((Latitude < -PI_OVER_2) || (Latitude > PI_OVER_2)) {   /* Latitude out of range */
             Error_Code |= POLAR_LAT_ERROR;
         }
-        if ((Latitude < 0) && (Southern_Hemisphere == 0))
-        {   /* Latitude and Origin Latitude in different hemispheres */
+        if ((Latitude < 0) && (Southern_Hemisphere
+            == 0)) {   /* Latitude and Origin Latitude in different hemispheres */
             Error_Code |= POLAR_LAT_ERROR;
         }
-        if ((Latitude > 0) && (Southern_Hemisphere == 1))
-        {   /* Latitude and Origin Latitude in different hemispheres */
+        if ((Latitude > 0) && (Southern_Hemisphere
+            == 1)) {   /* Latitude and Origin Latitude in different hemispheres */
             Error_Code |= POLAR_LAT_ERROR;
         }
-        if ((Longitude < -PI) || (Longitude > TWO_PI))
-        {  /* Longitude out of range */
+        if ((Longitude < -PI) || (Longitude > TWO_PI)) {  /* Longitude out of range */
             Error_Code |= POLAR_LON_ERROR;
         }
 
-        if (Error_Code == POLAR_NO_ERROR)
-        {  /* no errors */
+        if (Error_Code == POLAR_NO_ERROR) {  /* no errors */
 
-            if (Math.abs(Math.abs(Latitude) - PI_OVER_2) < 1.0e-10)
-            {
+            if (Math.abs(Math.abs(Latitude) - PI_OVER_2) < 1.0e-10) {
                 Easting = 0.0;
                 Northing = 0.0;
-            } else
-            {
-                if (Southern_Hemisphere != 0)
-                {
+            }
+            else {
+                if (Southern_Hemisphere != 0) {
                     Longitude *= -1.0;
                     Latitude *= -1.0;
                 }
                 dlam = Longitude - Polar_Origin_Long;
-                if (dlam > PI)
-                {
+                if (dlam > PI) {
                     dlam -= TWO_PI;
                 }
-                if (dlam < -PI)
-                {
+                if (dlam < -PI) {
                     dlam += TWO_PI;
                 }
                 slat = Math.sin(Latitude);
@@ -316,44 +298,38 @@ public class PolarCoordConverter
                 else
                     rho = two_Polar_a * t / e4;
 
-
-                if (Southern_Hemisphere != 0)
-                {
+                if (Southern_Hemisphere != 0) {
                     Easting = -(rho * Math.sin(dlam) - Polar_False_Easting);
                     //Easting *= -1.0;
                     Northing = rho * Math.cos(dlam) + Polar_False_Northing;
-                } else
+                }
+                else
                     Easting = rho * Math.sin(dlam) + Polar_False_Easting;
-                    Northing = -rho * Math.cos(dlam) + Polar_False_Northing;
+                Northing = -rho * Math.cos(dlam) + Polar_False_Northing;
             }
         }
         return (Error_Code);
     }
 
-    public double getEasting()
-    {
+    public double getEasting() {
         return Easting;
     }
 
-    public double getNorthing()
-    {
+    public double getNorthing() {
         return Northing;
     }
 
     /**
-     *  The function Convert_Polar_Stereographic_To_Geodetic converts Polar
-     *  Stereographic coordinates (easting and northing) to geodetic
-     *  coordinates (latitude and longitude) according to the current ellipsoid
-     *  and Polar Stereographic projection Parameters. If any errors occur, the
-     *  code(s) are returned by the function, otherwise POLAR_NO_ERROR
-     *  is returned.
+     * The function Convert_Polar_Stereographic_To_Geodetic converts Polar Stereographic coordinates (easting and
+     * northing) to geodetic coordinates (latitude and longitude) according to the current ellipsoid and Polar
+     * Stereographic projection Parameters. If any errors occur, the code(s) are returned by the function, otherwise
+     * POLAR_NO_ERROR is returned.
      *
-     *  @param Easting Easting (X), in meters
-     *  @param Northing Northing (Y), in meters
-     *  @return error code
+     * @param Easting  Easting (X), in meters
+     * @param Northing Northing (Y), in meters
+     * @return error code
      */
-    public long convertPolarStereographicToGeodetic (double Easting, double Northing)
-    {
+    public long convertPolarStereographicToGeodetic(double Easting, double Northing) {
         double dy = 0, dx = 0;
         double rho = 0;
         double t;
@@ -368,43 +344,35 @@ public class PolarCoordConverter
         double min_northing = Polar_False_Northing - Polar_Delta_Northing;
         double max_northing = Polar_False_Northing + Polar_Delta_Northing;
 
-        if (Easting > max_easting || Easting < min_easting)
-        { /* Easting out of range */
+        if (Easting > max_easting || Easting < min_easting) { /* Easting out of range */
             Error_Code |= POLAR_EASTING_ERROR;
         }
-        if (Northing > max_northing || Northing < min_northing)
-        { /* Northing out of range */
+        if (Northing > max_northing || Northing < min_northing) { /* Northing out of range */
             Error_Code |= POLAR_NORTHING_ERROR;
         }
 
-        if (Error_Code == POLAR_NO_ERROR)
-        {
+        if (Error_Code == POLAR_NO_ERROR) {
             dy = Northing - Polar_False_Northing;
             dx = Easting - Polar_False_Easting;
 
             /* Radius of point with origin of false easting, false northing */
             rho = Math.sqrt(dx * dx + dy * dy);
 
-            delta_radius = Math.sqrt(Polar_Delta_Easting * Polar_Delta_Easting + Polar_Delta_Northing * Polar_Delta_Northing);
+            delta_radius = Math.sqrt(
+                Polar_Delta_Easting * Polar_Delta_Easting + Polar_Delta_Northing * Polar_Delta_Northing);
 
-            if(rho > delta_radius)
-            { /* Point is outside of projection area */
+            if (rho > delta_radius) { /* Point is outside of projection area */
                 Error_Code |= POLAR_RADIUS_ERROR;
             }
         }
 
-        if (Error_Code == POLAR_NO_ERROR)
-        { /* no errors */
-            if ((dy == 0.0) && (dx == 0.0))
-            {
+        if (Error_Code == POLAR_NO_ERROR) { /* no errors */
+            if ((dy == 0.0) && (dx == 0.0)) {
                 Latitude = PI_OVER_2;
                 Longitude = Polar_Origin_Long;
-
             }
-            else
-            {
-                if (Southern_Hemisphere != 0)
-                {
+            else {
+                if (Southern_Hemisphere != 0) {
                     dy *= -1.0;
                     dx *= -1.0;
                 }
@@ -414,11 +382,10 @@ public class PolarCoordConverter
                 else
                     t = rho * e4 / (two_Polar_a);
                 PHI = PI_OVER_2 - 2.0 * Math.atan(t);
-                while (Math.abs(PHI - tempPHI) > 1.0e-10)
-                {
+                while (Math.abs(PHI - tempPHI) > 1.0e-10) {
                     tempPHI = PHI;
                     sin_PHI = Math.sin(PHI);
-                    essin =  es * sin_PHI;
+                    essin = es * sin_PHI;
                     pow_es = Math.pow((1.0 - essin) / (1.0 + essin), es_OVER_2);
                     PHI = PI_OVER_2 - 2.0 * Math.atan(t * pow_es);
                 }
@@ -430,7 +397,6 @@ public class PolarCoordConverter
                 else if (Longitude < -PI)
                     Longitude += TWO_PI;
 
-
                 if (Latitude > PI_OVER_2)  /* force distorted values to 90, -90 degrees */
                     Latitude = PI_OVER_2;
                 else if (Latitude < -PI_OVER_2)
@@ -440,33 +406,27 @@ public class PolarCoordConverter
                     Longitude = PI;
                 else if (Longitude < -PI)
                     Longitude = -PI;
-
             }
-            if (Southern_Hemisphere != 0)
-            {
+            if (Southern_Hemisphere != 0) {
                 Latitude *= -1.0;
                 Longitude *= -1.0;
             }
-
         }
         return (Error_Code);
-    } 
+    }
 
     /**
      * @return Latitude in radians.
      */
-    public double getLatitude()
-    {
+    public double getLatitude() {
         return Latitude;
     }
 
     /**
      * @return Longitude in radians.
      */
-    public double getLongitude()
-    {
+    public double getLongitude() {
         return Longitude;
     }
-
 }
 

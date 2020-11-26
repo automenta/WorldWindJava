@@ -21,13 +21,13 @@ import java.awt.geom.*;
  * @author Patrick Murris
  * @version $Id: ScalebarLayer.java 2126 2014-07-04 00:35:06Z tgaskins $
  */
-public class ScalebarLayer extends AbstractLayer
-{
+public class ScalebarLayer extends AbstractLayer {
     // Units constants
     public final static String UNIT_METRIC = "gov.nasa.worldwind.ScalebarLayer.Metric";
     public final static String UNIT_IMPERIAL = "gov.nasa.worldwind.ScalebarLayer.Imperial";
     public final static String UNIT_NAUTICAL = "gov.nasa.worldwind.ScalebarLayer.Nautical";
-
+    protected final PickSupport pickSupport = new PickSupport();
+    private final float[] compArray = new float[4];
     // Display parameters
     protected Dimension size = new Dimension(150, 10);
     protected Color color = Color.white;
@@ -37,43 +37,15 @@ public class ScalebarLayer extends AbstractLayer
     protected String unit = UNIT_METRIC;
     protected Font defaultFont = Font.decode("Arial-PLAIN-12");
     protected double toViewportScale = 0.2;
-
-    protected final PickSupport pickSupport = new PickSupport();
     protected Vec4 locationCenter = null;
     protected Vec4 locationOffset = null;
     protected long frameStampForPicking;
     protected long frameStampForDrawing;
 
-    protected class OrderedImage implements OrderedRenderable
-    {
-        protected final Position referencePosition;
-        protected final double pixelSize;
-
-        public OrderedImage(Position referencePosition, double pixelSize)
-        {
-            this.referencePosition = referencePosition;
-            this.pixelSize = pixelSize;
-        }
-
-        public double getDistanceFromEye()
-        {
-            return 0;
-        }
-
-        public void pick(DrawContext dc, Point pickPoint)
-        {
-            ScalebarLayer.this.draw(dc, this);
-        }
-
-        public void render(DrawContext dc)
-        {
-            ScalebarLayer.this.draw(dc, this);
-        }
-    }
-
-    /** Renders a scalebar graphic in a screen corner */
-    public ScalebarLayer()
-    {
+    /**
+     * Renders a scalebar graphic in a screen corner
+     */
+    public ScalebarLayer() {
         setPickEnabled(false);
     }
 
@@ -84,8 +56,7 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @return the scalebar graphic Dimension
      */
-    public Dimension getSize()
-    {
+    public Dimension getSize() {
         return this.size;
     }
 
@@ -94,10 +65,8 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @param size the scalebar graphic Dimension
      */
-    public void setSize(Dimension size)
-    {
-        if (size == null)
-        {
+    public void setSize(Dimension size) {
+        if (size == null) {
             String message = Logging.getMessage("nullValue.DimensionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -110,8 +79,7 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @return the scalebar Color
      */
-    public Color getColor()
-    {
+    public Color getColor() {
         return this.color;
     }
 
@@ -120,10 +88,8 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @param color the scalebar Color
      */
-    public void setColor(Color color)
-    {
-        if (color == null)
-        {
+    public void setColor(Color color) {
+        if (color == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -136,8 +102,7 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @return the scalebar-to-viewport scale factor
      */
-    public double getToViewportScale()
-    {
+    public double getToViewportScale() {
         return toViewportScale;
     }
 
@@ -149,13 +114,11 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @param toViewportScale the scalebar to viewport scale factor
      */
-    public void setToViewportScale(double toViewportScale)
-    {
+    public void setToViewportScale(double toViewportScale) {
         this.toViewportScale = toViewportScale;
     }
 
-    public String getPosition()
-    {
+    public String getPosition() {
         return this.position;
     }
 
@@ -165,10 +128,8 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @param position the desired scalebar position
      */
-    public void setPosition(String position)
-    {
-        if (position == null)
-        {
+    public void setPosition(String position) {
+        if (position == null) {
             String msg = Logging.getMessage("nullValue.PositionIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -181,8 +142,7 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @return the current location center. May be null.
      */
-    public Vec4 getLocationCenter()
-    {
+    public Vec4 getLocationCenter() {
         return locationCenter;
     }
 
@@ -194,12 +154,10 @@ public class ScalebarLayer extends AbstractLayer
      * has been specified (see #setLocationOffset).
      *
      * @param locationCenter the scalebar center. May be null.
-     *
      * @see #setPosition
      * @see #setLocationOffset
      */
-    public void setLocationCenter(Vec4 locationCenter)
-    {
+    public void setLocationCenter(Vec4 locationCenter) {
         this.locationCenter = locationCenter;
     }
 
@@ -208,8 +166,7 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @return the location offset. Will be null if no offset has been specified.
      */
-    public Vec4 getLocationOffset()
-    {
+    public Vec4 getLocationOffset() {
         return locationOffset;
     }
 
@@ -219,12 +176,10 @@ public class ScalebarLayer extends AbstractLayer
      * @param locationOffset the number of pixels to shift the scalebar from its specified screen position. A positive X
      *                       value shifts the image to the right. A positive Y value shifts the image up. If null, no
      *                       offset is applied. The default offset is null.
-     *
      * @see #setLocationCenter
      * @see #setPosition
      */
-    public void setLocationOffset(Vec4 locationOffset)
-    {
+    public void setLocationOffset(Vec4 locationOffset) {
         this.locationOffset = locationOffset;
     }
 
@@ -233,8 +188,7 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @return the layer's resize behavior
      */
-    public String getResizeBehavior()
-    {
+    public String getResizeBehavior() {
         return resizeBehavior;
     }
 
@@ -249,13 +203,11 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @param resizeBehavior the desired resize behavior
      */
-    public void setResizeBehavior(String resizeBehavior)
-    {
+    public void setResizeBehavior(String resizeBehavior) {
         this.resizeBehavior = resizeBehavior;
     }
 
-    public int getBorderWidth()
-    {
+    public int getBorderWidth() {
         return borderWidth;
     }
 
@@ -265,13 +217,11 @@ public class ScalebarLayer extends AbstractLayer
      * @param borderWidth the number of pixels to offset the scalebar from the borders indicated by {@link
      *                    #setPosition(String)}.
      */
-    public void setBorderWidth(int borderWidth)
-    {
+    public void setBorderWidth(int borderWidth) {
         this.borderWidth = borderWidth;
     }
 
-    public String getUnit()
-    {
+    public String getUnit() {
         return this.unit;
     }
 
@@ -281,8 +231,7 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @param unit the desired unit
      */
-    public void setUnit(String unit)
-    {
+    public void setUnit(String unit) {
         this.unit = unit;
     }
 
@@ -291,8 +240,7 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @return the scalebar legend Font
      */
-    public Font getFont()
-    {
+    public Font getFont() {
         return this.defaultFont;
     }
 
@@ -301,10 +249,8 @@ public class ScalebarLayer extends AbstractLayer
      *
      * @param font the scalebar legend Font
      */
-    public void setFont(Font font)
-    {
-        if (font == null)
-        {
+    public void setFont(Font font) {
+        if (font == null) {
             String msg = Logging.getMessage("nullValue.FontIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -314,8 +260,7 @@ public class ScalebarLayer extends AbstractLayer
 
     // Rendering
     @Override
-    public void doRender(DrawContext dc)
-    {
+    public void doRender(DrawContext dc) {
         if (dc.isContinuous2DGlobe() && this.frameStampForDrawing == dc.getFrameTimeStamp())
             return;
 
@@ -325,8 +270,7 @@ public class ScalebarLayer extends AbstractLayer
     }
 
     @Override
-    public void doPick(DrawContext dc, Point pickPoint)
-    {
+    public void doPick(DrawContext dc, Point pickPoint) {
         if (dc.isContinuous2DGlobe() && this.frameStampForPicking == dc.getFrameTimeStamp())
             return;
 
@@ -335,16 +279,14 @@ public class ScalebarLayer extends AbstractLayer
         this.frameStampForPicking = dc.getFrameTimeStamp();
     }
 
-    protected void addOrderedImage(DrawContext dc)
-    {
+    protected void addOrderedImage(DrawContext dc) {
         // Capture the current reference position and pixel size and create an ordered renderable to defer drawing.
 
         Position referencePosition = dc.getViewportCenterPosition();
         dc.addOrderedRenderable(new OrderedImage(referencePosition, this.computePixelSize(dc, referencePosition)));
     }
 
-    protected double computePixelSize(DrawContext dc, Position referencePosition)
-    {
+    protected double computePixelSize(DrawContext dc, Position referencePosition) {
         if (referencePosition == null)
             return -1;
 
@@ -354,14 +296,12 @@ public class ScalebarLayer extends AbstractLayer
     }
 
     // Rendering
-    public void draw(DrawContext dc, OrderedImage orderedImage)
-    {
+    public void draw(DrawContext dc, OrderedImage orderedImage) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         OGLStackHandler ogsh = new OGLStackHandler();
 
-        try
-        {
+        try {
             ogsh.pushAttrib(gl, GL2.GL_TRANSFORM_BIT);
 
             gl.glDisable(GL.GL_DEPTH_TEST);
@@ -371,10 +311,10 @@ public class ScalebarLayer extends AbstractLayer
 
             // Load a parallel projection with xy dimensions (viewportWidth, viewportHeight)
             // into the GL projection matrix.
-            java.awt.Rectangle viewport = dc.getView().getViewport();
+            Rectangle viewport = dc.getView().getViewport();
             ogsh.pushProjectionIdentity(gl);
             double maxwh = Math.max(width, height);
-            gl.glOrtho(0d, viewport.width, 0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
+            gl.glOrtho(0.0d, viewport.width, 0.0d, viewport.height, -0.6 * maxwh, 0.6 * maxwh);
 
             ogsh.pushModelviewIdentity(gl);
 
@@ -386,15 +326,12 @@ public class ScalebarLayer extends AbstractLayer
             gl.glScaled(scale, scale, 1);
 
             // Compute scale size in real world
-            if (orderedImage.pixelSize > 0)
-            {
+            if (orderedImage.pixelSize > 0) {
                 double scaleSize = orderedImage.pixelSize * width * scale;  // meter
                 String unitLabel = "m";
-                switch (this.unit)
-                {
+                switch (this.unit) {
                     case UNIT_METRIC:
-                        if (scaleSize > 10000)
-                        {
+                        if (scaleSize > 10000) {
                             scaleSize /= 1000;
                             unitLabel = "Km";
                         }
@@ -403,8 +340,7 @@ public class ScalebarLayer extends AbstractLayer
                         scaleSize *= 3.280839895; // feet
 
                         unitLabel = "ft";
-                        if (scaleSize > 5280)
-                        {
+                        if (scaleSize > 5280) {
                             scaleSize /= 5280;
                             unitLabel = "mile(s)";
                         }
@@ -413,8 +349,7 @@ public class ScalebarLayer extends AbstractLayer
                         scaleSize *= 3.280839895; // feet
 
                         unitLabel = "ft";
-                        if (scaleSize > 6076)
-                        {
+                        if (scaleSize > 6076) {
                             scaleSize /= 6076;
                             unitLabel = "Nautical mile(s)";
                         }
@@ -422,8 +357,7 @@ public class ScalebarLayer extends AbstractLayer
                 }
                 // Rounded division size
                 int pot = (int) Math.floor(Math.log10(scaleSize));
-                if (!Double.isNaN(pot))
-                {
+                if (!Double.isNaN(pot)) {
                     int digit = Integer.parseInt(String.format("%.0f", scaleSize).substring(0, 1));
                     double divSize = digit * Math.pow(10, pot);
                     if (digit >= 5)
@@ -433,22 +367,21 @@ public class ScalebarLayer extends AbstractLayer
                     double divWidth = width * divSize / scaleSize;
 
                     // Draw scale
-                    if (!dc.isPickingMode())
-                    {
+                    if (!dc.isPickingMode()) {
                         gl.glEnable(GL.GL_BLEND);
                         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
                         // Set color using current layer opacity
                         Color backColor = this.getBackgroundColor(this.color);
                         float[] colorRGB = backColor.getRGBColorComponents(null);
-                        gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], (double) backColor.getAlpha() / 255d
+                        gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], backColor.getAlpha() / 255.0d
                             * this.getOpacity());
-                        gl.glTranslated((width - divWidth) / 2, 0d, 0d);
+                        gl.glTranslated((width - divWidth) / 2, 0.0d, 0.0d);
                         this.drawScale(dc, divWidth, height);
 
                         colorRGB = this.color.getRGBColorComponents(null);
                         gl.glColor4d(colorRGB[0], colorRGB[1], colorRGB[2], this.getOpacity());
-                        gl.glTranslated(-1d / scale, 1d / scale, 0d);
+                        gl.glTranslated(-1.0d / scale, 1.0d / scale, 0.0d);
                         this.drawScale(dc, divWidth, height);
 
                         // Draw label
@@ -459,8 +392,7 @@ public class ScalebarLayer extends AbstractLayer
                             locationSW.add3(
                                 new Vec4(divWidth * scale / 2 + (width - divWidth) / 2, height * scale, 0)));
                     }
-                    else
-                    {
+                    else {
                         // Picking
                         this.pickSupport.clearPickList();
                         this.pickSupport.beginPicking(dc);
@@ -470,7 +402,7 @@ public class ScalebarLayer extends AbstractLayer
                         // Add our object(s) to the pickable list
                         this.pickSupport.addPickableObject(colorCode, this, orderedImage.referencePosition, false);
                         gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
-                        gl.glTranslated((width - divWidth) / 2, 0d, 0d);
+                        gl.glTranslated((width - divWidth) / 2, 0.0d, 0.0d);
                         this.drawRectangle(dc, divWidth, height);
                         // Done picking
                         this.pickSupport.endPicking(dc);
@@ -479,13 +411,11 @@ public class ScalebarLayer extends AbstractLayer
                 }
             }
         }
-        finally
-        {
-            gl.glColor4d(1d, 1d, 1d, 1d); // restore the default OpenGL color
+        finally {
+            gl.glColor4d(1.0d, 1.0d, 1.0d, 1.0d); // restore the default OpenGL color
             gl.glEnable(GL.GL_DEPTH_TEST);
 
-            if (!dc.isPickingMode())
-            {
+            if (!dc.isPickingMode()) {
                 gl.glBlendFunc(GL.GL_ONE, GL.GL_ZERO); // restore to default blend function
                 gl.glDisable(GL.GL_BLEND); // restore to default blend state
             }
@@ -495,8 +425,7 @@ public class ScalebarLayer extends AbstractLayer
     }
 
     // Draw scale rectangle
-    private void drawRectangle(DrawContext dc, double width, double height)
-    {
+    private void drawRectangle(DrawContext dc, double width, double height) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_POLYGON);
         gl.glVertex3d(0, height, 0);
@@ -508,8 +437,7 @@ public class ScalebarLayer extends AbstractLayer
     }
 
     // Draw scale graphic
-    private void drawScale(DrawContext dc, double width, double height)
-    {
+    private void drawScale(DrawContext dc, double width, double height) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         gl.glBegin(GL2.GL_LINE_STRIP);
         gl.glVertex3d(0, height, 0);
@@ -524,13 +452,12 @@ public class ScalebarLayer extends AbstractLayer
     }
 
     // Draw the scale label
-    private void drawLabel(DrawContext dc, String text, Vec4 screenPoint)
-    {
+    private void drawLabel(DrawContext dc, String text, Vec4 screenPoint) {
         TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
             this.defaultFont);
 
         Rectangle2D nameBound = textRenderer.getBounds(text);
-        int x = (int) (screenPoint.x() - nameBound.getWidth() / 2d);
+        int x = (int) (screenPoint.x() - nameBound.getWidth() / 2.0d);
         int y = (int) screenPoint.y();
 
         textRenderer.begin3DRendering();
@@ -543,11 +470,8 @@ public class ScalebarLayer extends AbstractLayer
         textRenderer.end3DRendering();
     }
 
-    private final float[] compArray = new float[4];
-
     // Compute background color for best contrast
-    private Color getBackgroundColor(Color color)
-    {
+    private Color getBackgroundColor(Color color) {
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), compArray);
         if (compArray[2] > 0.5)
             return new Color(0, 0, 0, 0.7f);
@@ -555,49 +479,41 @@ public class ScalebarLayer extends AbstractLayer
             return new Color(1, 1, 1, 0.7f);
     }
 
-    private double computeScale(java.awt.Rectangle viewport)
-    {
-        return switch (this.resizeBehavior)
-            {
-                case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1d,
-                    (this.toViewportScale) * viewport.width / this.size.width);
-                case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.size.width;
-                default -> 1d;
-            };
+    private double computeScale(Rectangle viewport) {
+        return switch (this.resizeBehavior) {
+            case AVKey.RESIZE_SHRINK_ONLY -> Math.min(1.0d,
+                (this.toViewportScale) * viewport.width / this.size.width);
+            case AVKey.RESIZE_STRETCH -> (this.toViewportScale) * viewport.width / this.size.width;
+            default -> 1.0d;
+        };
     }
 
-    private Vec4 computeLocation(java.awt.Rectangle viewport, double scale)
-    {
+    private Vec4 computeLocation(Rectangle viewport, double scale) {
         double scaledWidth = scale * this.size.width;
         double scaledHeight = scale * this.size.height;
 
         double x;
         double y;
 
-        if (this.locationCenter != null)
-        {
+        if (this.locationCenter != null) {
             x = this.locationCenter.x - scaledWidth / 2;
             y = this.locationCenter.y - scaledHeight / 2;
         }
-        else if (this.position.equals(AVKey.NORTHEAST))
-        {
+        else if (this.position.equals(AVKey.NORTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
         }
-        else if (this.position.equals(AVKey.SOUTHEAST))
-        {
+        else if (this.position.equals(AVKey.SOUTHEAST)) {
             x = viewport.getWidth() - scaledWidth - this.borderWidth;
-            y = 0d + this.borderWidth;
+            y = 0.0d + this.borderWidth;
         }
-        else if (this.position.equals(AVKey.NORTHWEST))
-        {
-            x = 0d + this.borderWidth;
+        else if (this.position.equals(AVKey.NORTHWEST)) {
+            x = 0.0d + this.borderWidth;
             y = viewport.getHeight() - scaledHeight - this.borderWidth;
         }
-        else if (this.position.equals(AVKey.SOUTHWEST))
-        {
-            x = 0d + this.borderWidth;
-            y = 0d + this.borderWidth;
+        else if (this.position.equals(AVKey.SOUTHWEST)) {
+            x = 0.0d + this.borderWidth;
+            y = 0.0d + this.borderWidth;
         }
         else // use North East
         {
@@ -605,8 +521,7 @@ public class ScalebarLayer extends AbstractLayer
             y = viewport.getHeight() - scaledHeight / 2 - this.borderWidth;
         }
 
-        if (this.locationOffset != null)
-        {
+        if (this.locationOffset != null) {
             x += this.locationOffset.x;
             y += this.locationOffset.y;
         }
@@ -615,8 +530,29 @@ public class ScalebarLayer extends AbstractLayer
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return Logging.getMessage("layers.Earth.ScalebarLayer.Name");
+    }
+
+    protected class OrderedImage implements OrderedRenderable {
+        protected final Position referencePosition;
+        protected final double pixelSize;
+
+        public OrderedImage(Position referencePosition, double pixelSize) {
+            this.referencePosition = referencePosition;
+            this.pixelSize = pixelSize;
+        }
+
+        public double getDistanceFromEye() {
+            return 0;
+        }
+
+        public void pick(DrawContext dc, Point pickPoint) {
+            ScalebarLayer.this.draw(dc, this);
+        }
+
+        public void render(DrawContext dc) {
+            ScalebarLayer.this.draw(dc, this);
+        }
     }
 }

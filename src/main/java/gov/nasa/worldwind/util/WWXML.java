@@ -35,45 +35,36 @@ import java.util.*;
  * @author tag
  * @version $Id: WWXML.java 1583 2013-09-05 23:35:23Z dcollins $
  */
-public class WWXML
-{
+public class WWXML {
     public static final String XLINK_URI = "http://www.w3.org/1999/xlink";
 
     /**
      * Create a DOM builder.
      *
      * @param isNamespaceAware true if the builder is to be namespace aware, otherwise false.
-     *
-     * @return a {@link javax.xml.parsers.DocumentBuilder}.
-     *
+     * @return a {@link DocumentBuilder}.
      * @throws WWRuntimeException if an error occurs.
      */
-    public static DocumentBuilder createDocumentBuilder(boolean isNamespaceAware)
-    {
+    public static DocumentBuilder createDocumentBuilder(boolean isNamespaceAware) {
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 
         docBuilderFactory.setNamespaceAware(isNamespaceAware);
 
-        if (Configuration.getJavaVersion() >= 1.6)
-        {
-            try
-            {
+        if (Configuration.getJavaVersion() >= 1.6) {
+            try {
                 docBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",
                     false);
             }
-            catch (ParserConfigurationException e)
-            {   // Note it and continue on. Some Java5 parsers don't support the feature.
+            catch (ParserConfigurationException e) {   // Note it and continue on. Some Java5 parsers don't support the feature.
                 String message = Logging.getMessage("XML.NonvalidatingNotSupported");
                 Logging.logger().finest(message);
             }
         }
 
-        try
-        {
+        try {
             return docBuilderFactory.newDocumentBuilder();
         }
-        catch (ParserConfigurationException e)
-        {
+        catch (ParserConfigurationException e) {
             String message = Logging.getMessage("XML.ParserConfigurationException");
             Logging.logger().finest(message);
             throw new WWRuntimeException(e);
@@ -83,20 +74,16 @@ public class WWXML
     /**
      * Create a XML transformer.
      *
-     * @return a {@link javax.xml.transform.Transformer}
-     *
+     * @return a {@link Transformer}
      * @throws WWRuntimeException if an error occurs.
      */
-    public static Transformer createTransformer()
-    {
+    public static Transformer createTransformer() {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
-        try
-        {
+        try {
             return transformerFactory.newTransformer();
         }
-        catch (TransformerConfigurationException e)
-        {
+        catch (TransformerConfigurationException e) {
             String message = Logging.getMessage("XML.TransformerConfigurationException");
             Logging.logger().finest(message);
             throw new WWRuntimeException(e);
@@ -109,32 +96,25 @@ public class WWXML
      * description or a file or resource name available on the classpath.</li> </ul>
      *
      * @param docSource the source of the XML document.
-     *
      * @return the source document as a {@link Document}, or null if the source object is a string that does not
-     *         identify a URL, a file or a resource available on the classpath.
+     * identify a URL, a file or a resource available on the classpath.
      */
-    public static Document openDocument(Object docSource)
-    {
-        if (docSource == null || WWUtil.isEmpty(docSource))
-        {
+    public static Document openDocument(Object docSource) {
+        if (docSource == null || WWUtil.isEmpty(docSource)) {
             String message = Logging.getMessage("nullValue.DocumentSourceIsNull");
             throw new IllegalArgumentException(message);
         }
 
-        if (docSource instanceof URL)
-        {
+        if (docSource instanceof URL) {
             return openDocumentURL((URL) docSource);
         }
-        else if (docSource instanceof InputStream)
-        {
+        else if (docSource instanceof InputStream) {
             return openDocumentStream((InputStream) docSource);
         }
-        else if (docSource instanceof File)
-        {
+        else if (docSource instanceof File) {
             return openDocumentFile(((File) docSource).getPath(), null);
         }
-        else if (!(docSource instanceof String))
-        {
+        else if (!(docSource instanceof String)) {
             String message = Logging.getMessage("generic.UnrecognizedSourceType", docSource.toString());
             throw new IllegalArgumentException(message);
         }
@@ -154,18 +134,14 @@ public class WWXML
      * @param filePath the path to the file. Must be an absolute path or a path relative to a location in the
      *                 classpath.
      * @param c        the class that is used to find a path relative to the classpath.
-     *
      * @return a DOM for the file, or null if the specified cannot be found.
-     *
      * @throws IllegalArgumentException if the file path is null.
      * @throws WWRuntimeException       if an exception or error occurs while opening and parsing the file. The causing
      *                                  exception is included in this exception's {@link Throwable#initCause(Throwable)}
      *                                  .
      */
-    public static Document openDocumentFile(String filePath, Class c)
-    {
-        if (filePath == null)
-        {
+    public static Document openDocumentFile(String filePath, Class c) {
+        if (filePath == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             throw new IllegalArgumentException(message);
         }
@@ -176,32 +152,26 @@ public class WWXML
     }
 
     /**
-     * Opens an XML document given a generic {@link java.net.URL} reference.
+     * Opens an XML document given a generic {@link URL} reference.
      *
      * @param url the URL to the document.
-     *
      * @return a DOM for the URL.
-     *
      * @throws IllegalArgumentException if the url is null.
      * @throws WWRuntimeException       if an exception or error occurs while opening and parsing the url. The causing
      *                                  exception is included in this exception's {@link Throwable#initCause(Throwable)}
      *                                  .
      */
-    public static Document openDocumentURL(URL url)
-    {
-        if (url == null)
-        {
+    public static Document openDocumentURL(URL url) {
+        if (url == null) {
             String message = Logging.getMessage("nullValue.URLIsNull");
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             InputStream inputStream = url.openStream();
             return openDocumentStream(inputStream);
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", url.toString());
             throw new WWRuntimeException(message, e);
         }
@@ -211,32 +181,25 @@ public class WWXML
      * Opens an XML document given an input stream.
      *
      * @param inputStream the document as an input stream.
-     *
      * @return a DOM for the stream content.
-     *
      * @throws IllegalArgumentException if the input stream is null.
      * @throws WWRuntimeException       if an exception or error occurs while parsing the stream. The causing exception
      *                                  is included in this exception's {@link Throwable#initCause(Throwable)}
      */
-    public static Document openDocumentStream(InputStream inputStream)
-    {
+    public static Document openDocumentStream(InputStream inputStream) {
         return openDocumentStream(inputStream, true);
     }
 
-    public static Document openDocumentStream(InputStream inputStream, boolean isNamespaceAware)
-    {
-        if (inputStream == null)
-        {
+    public static Document openDocumentStream(InputStream inputStream, boolean isNamespaceAware) {
+        if (inputStream == null) {
             String message = Logging.getMessage("nullValue.InputStreamIsNull");
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             return WWXML.createDocumentBuilder(isNamespaceAware).parse(inputStream);
         }
-        catch (SAXException | IOException e)
-        {
+        catch (SAXException | IOException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", inputStream);
             throw new WWRuntimeException(message, e);
         }
@@ -247,35 +210,29 @@ public class WWXML
      *
      * @param doc      the DOM document to save.
      * @param filePath the path to the file. Must be an absolute path in the file system.
-     *
      * @throws IllegalArgumentException if either the document or file path is null.
      * @throws WWRuntimeException       if an exception or error occurs while writing the document. The causing
      *                                  exception is included in this exception's {@link Throwable#initCause(Throwable)}
      */
-    public static void saveDocumentToFile(Document doc, String filePath)
-    {
-        if (doc == null)
-        {
+    public static void saveDocumentToFile(Document doc, String filePath) {
+        if (doc == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (filePath == null)
-        {
+        if (filePath == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
-            java.io.FileOutputStream outputStream = new java.io.FileOutputStream(filePath);
+        try {
+            FileOutputStream outputStream = new FileOutputStream(filePath);
 
             saveDocumentToStream(doc, outputStream);
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToWriteXml", filePath);
             Logging.logger().severe(message);
             throw new WWRuntimeException(e);
@@ -287,22 +244,18 @@ public class WWXML
      *
      * @param doc          the DOM document to save.
      * @param outputStream the outputstream to save the document contents to.
-     *
      * @throws IllegalArgumentException if either the document or input stream is null.
      * @throws WWRuntimeException       if an exception or error occurs while writing the document. The causing
      *                                  exception is included in this exception's {@link Throwable#initCause(Throwable)}
      */
-    public static void saveDocumentToStream(Document doc, OutputStream outputStream)
-    {
-        if (doc == null)
-        {
+    public static void saveDocumentToStream(Document doc, OutputStream outputStream) {
+        if (doc == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (outputStream == null)
-        {
+        if (outputStream == null) {
             String message = Logging.getMessage("nullValue.OutputStreamIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -311,13 +264,11 @@ public class WWXML
         Source source = new DOMSource(doc);
         Result result = new StreamResult(outputStream);
 
-        try
-        {
+        try {
             Transformer transformer = createTransformer();
             transformer.transform(source, result);
         }
-        catch (TransformerException e)
-        {
+        catch (TransformerException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToWriteXml", outputStream);
             Logging.logger().severe(message);
             throw new WWRuntimeException(e);
@@ -329,17 +280,13 @@ public class WWXML
      *
      * @param inputStream      an XML document as an input stream.
      * @param isNamespaceAware true to enable namespace-aware processing and false to disable it.
-     *
      * @return an XMLEventReader for the stream content.
-     *
      * @throws IllegalArgumentException if the input stream is null.
      * @throws WWRuntimeException       if an exception or error occurs while parsing the stream. The causing exception
      *                                  is included in this exception's {@link Throwable#initCause(Throwable)}
      */
-    public static XMLEventReader openEventReaderStream(InputStream inputStream, boolean isNamespaceAware)
-    {
-        if (inputStream == null)
-        {
+    public static XMLEventReader openEventReaderStream(InputStream inputStream, boolean isNamespaceAware) {
+        if (inputStream == null) {
             String message = Logging.getMessage("nullValue.InputStreamIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -349,12 +296,10 @@ public class WWXML
         inputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, isNamespaceAware);
         inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
 
-        try
-        {
+        try {
             return inputFactory.createXMLEventReader(inputStream);
         }
-        catch (XMLStreamException e)
-        {
+        catch (XMLStreamException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", inputStream);
             throw new WWRuntimeException(message, e);
         }
@@ -364,17 +309,13 @@ public class WWXML
      * Opens an XML event stream given an input stream.
      *
      * @param inputStream an XML document as an input stream.
-     *
      * @return an XMLEventReader for the stream content.
-     *
      * @throws IllegalArgumentException if the input stream is null.
      * @throws WWRuntimeException       if an exception or error occurs while parsing the stream. The causing exception
      *                                  is included in this exception's {@link Throwable#initCause(Throwable)}
      */
-    public static XMLEventReader openEventReaderStream(InputStream inputStream)
-    {
-        if (inputStream == null)
-        {
+    public static XMLEventReader openEventReaderStream(InputStream inputStream) {
+        if (inputStream == null) {
             String message = Logging.getMessage("nullValue.InputStreamIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -390,17 +331,13 @@ public class WWXML
      *                         classpath.
      * @param c                the class that is used to find a path relative to the classpath.
      * @param isNamespaceAware true to enable namespace-aware processing and false to disable it.
-     *
      * @return an XMLEventReader for the file, or null if the specified cannot be found.
-     *
      * @throws IllegalArgumentException if the file path is null.
      * @throws WWRuntimeException       if an exception or error occurs while opening and parsing the file. The causing
      *                                  exception is included in this exception's {@link Throwable#initCause(Throwable)}.
      */
-    public static XMLEventReader openEventReaderFile(String filePath, Class c, boolean isNamespaceAware)
-    {
-        if (filePath == null)
-        {
+    public static XMLEventReader openEventReaderFile(String filePath, Class c, boolean isNamespaceAware) {
+        if (filePath == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -412,33 +349,27 @@ public class WWXML
     }
 
     /**
-     * Open an XML event stream given a generic {@link java.net.URL} reference.
+     * Open an XML event stream given a generic {@link URL} reference.
      *
      * @param url              the URL to the document.
      * @param isNamespaceAware true to enable namespace-aware processing and false to disable it.
-     *
      * @return an XMLEventReader for the URL.
-     *
      * @throws IllegalArgumentException if the url is null.
      * @throws WWRuntimeException       if an exception or error occurs while opening and parsing the url. The causing
      *                                  exception is included in this exception's {@link Throwable#initCause(Throwable)}.
      */
-    public static XMLEventReader openEventReaderURL(URL url, boolean isNamespaceAware)
-    {
-        if (url == null)
-        {
+    public static XMLEventReader openEventReaderURL(URL url, boolean isNamespaceAware) {
+        if (url == null) {
             String message = Logging.getMessage("nullValue.URLIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             InputStream inputStream = url.openStream();
             return openEventReaderStream(inputStream, isNamespaceAware);
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", url.toString());
             throw new WWRuntimeException(message, e);
         }
@@ -446,16 +377,14 @@ public class WWXML
 
     /**
      * Open a namespace-aware XML event stream from a general source. The source type may be one of the following: <ul>
-     * <li>{@link URL}</li> <li>{@link InputStream}</li> <li>{@link File}</li> <li>{@link String} containing a valid URL
-     * description or a file or resource name available on the classpath.</li> </ul>
+     * <li>{@link URL}</li> <li>{@link InputStream}</li> <li>{@link File}</li> <li>{@link String} containing a valid
+     * URL description or a file or resource name available on the classpath.</li> </ul>
      *
      * @param docSource the source of the XML document.
-     *
-     * @return the source document as a {@link javax.xml.stream.XMLEventReader}, or null if the source object is a
-     *         string that does not identify a URL, a file or a resource available on the classpath.
+     * @return the source document as a {@link XMLEventReader}, or null if the source object is a
+     * string that does not identify a URL, a file or a resource available on the classpath.
      */
-    public static XMLEventReader openEventReader(Object docSource)
-    {
+    public static XMLEventReader openEventReader(Object docSource) {
         return openEventReader(docSource, true);
     }
 
@@ -466,38 +395,30 @@ public class WWXML
      *
      * @param docSource        the source of the XML document.
      * @param isNamespaceAware true to enable namespace-aware processing and false to disable it.
-     *
-     * @return the source document as a {@link javax.xml.stream.XMLEventReader}, or null if the source object is a
-     *         string that does not identify a URL, a file or a resource available on the classpath.
+     * @return the source document as a {@link XMLEventReader}, or null if the source object is a
+     * string that does not identify a URL, a file or a resource available on the classpath.
      */
-    public static XMLEventReader openEventReader(Object docSource, boolean isNamespaceAware)
-    {
-        if (docSource == null || WWUtil.isEmpty(docSource))
-        {
+    public static XMLEventReader openEventReader(Object docSource, boolean isNamespaceAware) {
+        if (docSource == null || WWUtil.isEmpty(docSource)) {
             String message = Logging.getMessage("nullValue.DocumentSourceIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (docSource instanceof URL)
-        {
+        if (docSource instanceof URL) {
             return openEventReaderURL((URL) docSource, isNamespaceAware);
         }
-        else if (docSource instanceof InputStream)
-        {
+        else if (docSource instanceof InputStream) {
             return openEventReaderStream((InputStream) docSource, isNamespaceAware);
         }
-        else if (docSource instanceof File)
-        {
+        else if (docSource instanceof File) {
             return openEventReaderFile(((File) docSource).getPath(), null, isNamespaceAware);
         }
-        else if (docSource instanceof java.nio.ByteBuffer)
-        {
-            InputStream is = WWIO.getInputStreamFromByteBuffer((java.nio.ByteBuffer) docSource);
+        else if (docSource instanceof ByteBuffer) {
+            InputStream is = WWIO.getInputStreamFromByteBuffer((ByteBuffer) docSource);
             return openEventReaderStream(is, isNamespaceAware);
         }
-        else if (!(docSource instanceof String))
-        {
+        else if (!(docSource instanceof String)) {
             String message = Logging.getMessage("generic.UnrecognizedSourceType", docSource.toString());
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -513,22 +434,19 @@ public class WWXML
     }
 
     /**
-     * Close an XML event stream and catch any {@link javax.xml.stream.XMLStreamException} generated in the process.
+     * Close an XML event stream and catch any {@link XMLStreamException} generated in the process.
      *
      * @param eventReader the event reader to close. If null, this method does nothing.
      * @param name        the name of the event reader to place in the log message if an exception is encountered.
      */
-    public static void closeEventReader(XMLEventReader eventReader, String name)
-    {
+    public static void closeEventReader(XMLEventReader eventReader, String name) {
         if (eventReader == null)
             return;
 
-        try
-        {
+        try {
             eventReader.close();
         }
-        catch (XMLStreamException e)
-        {
+        catch (XMLStreamException e) {
             String message = Logging.getMessage("generic.ExceptionClosingXmlEventReader",
                 name != null ? name : "Unknown");
             Logging.logger().severe(message);
@@ -537,21 +455,18 @@ public class WWXML
 
     /**
      * Opens an XML stream writer to a general output destination. The source type may be one of the following: <ul>
-     * <li>{@link java.io.OutputStream}</li> <li>{@link java.io.Writer}</li> </ul> This returns <code>null</code> if the
+     * <li>{@link OutputStream}</li> <li>{@link Writer}</li> </ul> This returns <code>null</code> if
+     * the
      * <code>output</code> is not one of the recognized types.
      *
      * @param output the output destination for the XML document stream.
-     *
      * @return the <code>XMLStreamWriter</code> that writes to the specified <code>output</code>, or <code>null</code>
-     *         if the output type is not recognized.
-     *
+     * if the output type is not recognized.
      * @throws IllegalArgumentException if <code>output</code> is <code>null</code>.
      * @throws XMLStreamException       if an exception occurs while attempting to open the <code>XMLStreamWriter</code>.
      */
-    public static XMLStreamWriter openStreamWriter(Object output) throws XMLStreamException
-    {
-        if (output == null)
-        {
+    public static XMLStreamWriter openStreamWriter(Object output) throws XMLStreamException {
+        if (output == null) {
             String message = Logging.getMessage("nullValue.OutputIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -570,25 +485,19 @@ public class WWXML
      * StartElement events.
      *
      * @param eventReader the stream to poll for the next StartElement event.
-     *
      * @return the next StartElementEvent, or null if none exists.
-     *
      * @throws IllegalArgumentException if the event reader is null.
      */
-    public static StartElement nextStartElementEvent(XMLEventReader eventReader)
-    {
-        if (eventReader == null)
-        {
+    public static StartElement nextStartElementEvent(XMLEventReader eventReader) {
+        if (eventReader == null) {
             String message = Logging.getMessage("nullValue.EventReaderIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             XMLEvent event = null;
-            while (eventReader.hasNext())
-            {
+            while (eventReader.hasNext()) {
                 event = eventReader.nextEvent();
                 if (event != null && event.isStartElement())
                     break;
@@ -596,8 +505,7 @@ public class WWXML
 
             return (event != null && event.isStartElement()) ? (StartElement) event : null;
         }
-        catch (XMLStreamException e)
-        {
+        catch (XMLStreamException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", eventReader);
             Logging.logger().finest(message);
         }
@@ -607,22 +515,18 @@ public class WWXML
 
     /**
      * Returns a string containing the text from all character nodes under the current element appended into a single
-     * continuous string. After this method returns the specified eventReader is positioned at the end element
-     * of the eventReader's current element.
-     *
-     * This returns the empty string if there are no character nodes under the current element, or if the element contains
-     * only whitespace.
+     * continuous string. After this method returns the specified eventReader is positioned at the end element of the
+     * eventReader's current element.
+     * <p>
+     * This returns the empty string if there are no character nodes under the current element, or if the element
+     * contains only whitespace.
      *
      * @param eventReader the stream to poll for XML events.
-     *
      * @return A string containing the text from character nodes under the current element.
-     *
      * @throws IllegalArgumentException if the event reader is null.
      */
-    public static String readCharacters(XMLEventReader eventReader)
-    {
-        if (eventReader == null)
-        {
+    public static String readCharacters(XMLEventReader eventReader) {
+        if (eventReader == null) {
             String message = Logging.getMessage("nullValue.EventReaderIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -630,42 +534,33 @@ public class WWXML
 
         StringBuilder sb = new StringBuilder();
 
-        try
-        {
+        try {
             int depth = 0;
-            while (eventReader.hasNext())
-            {
+            while (eventReader.hasNext()) {
                 XMLEvent nextEvent = eventReader.peek();
-                if (nextEvent.isStartElement())
-                {
+                if (nextEvent.isStartElement()) {
                     ++depth;
                     eventReader.nextEvent(); // consume the event
                 }
-                else if (nextEvent.isEndElement())
-                {
-                    if (--depth > 0)
-                    {
+                else if (nextEvent.isEndElement()) {
+                    if (--depth > 0) {
                         eventReader.nextEvent(); // consume the event
                     }
-                    else
-                    {
+                    else {
                         break; // stop parsing at the end element that corresponds to the root start element
                     }
                 }
-                else if (nextEvent.isCharacters())
-                {
+                else if (nextEvent.isCharacters()) {
                     Characters characters = eventReader.nextEvent().asCharacters(); // consume the event
                     if (!characters.isWhiteSpace())
                         sb.append(characters.getData());
                 }
-                else
-                {
+                else {
                     eventReader.nextEvent(); // consume the event
                 }
             }
         }
-        catch (XMLStreamException e)
-        {
+        catch (XMLStreamException e) {
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseXml", eventReader);
             Logging.logger().finest(message);
         }
@@ -678,44 +573,38 @@ public class WWXML
      *
      * @return a new XPath.
      */
-    public static XPath makeXPath()
-    {
+    public static XPath makeXPath() {
         XPathFactory xpFactory = XPathFactory.newInstance();
         return xpFactory.newXPath();
     }
 
-    public static String checkOGCException(Document doc)
-    {
-        if (doc == null)
-        {
+    public static String checkOGCException(Document doc) {
+        if (doc == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             XPath xpath = makeXPath();
 
             String exception = xpath.evaluate("ServiceExceptionReport", doc);
 
-            if (exception == null || exception.length() == 0)
+            if (exception == null || exception.isEmpty())
                 return null;
 
             // TODO: Test this xpath expression for returning the text of the service exception.
             return xpath.evaluate("ServiceExceptionReport/ServiceException/text()", doc);
         }
-        catch (XPathExpressionException e)
-        {
+        catch (XPathExpressionException e) {
             String message = Logging.getMessage("XML.XPathExpressionException");
             Logging.logger().warning(message);
             return null;
         }
     }
 
-    @SuppressWarnings( {"UnusedParameters"})
-    public static String extractOGCServiceException(ByteBuffer buffer)
-    {
+    @SuppressWarnings("UnusedParameters")
+    public static String extractOGCServiceException(ByteBuffer buffer) {
         return null; // TODO
     }
 
@@ -724,15 +613,11 @@ public class WWXML
      * part of the qualified name. Otherwise, this returns the element's unqualified tag name.
      *
      * @param context the element who's unqualified name is returned.
-     *
      * @return the unqualified tag name of the specified element.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static String getUnqualifiedName(Element context)
-    {
-        if (context == null)
-        {
+    public static String getUnqualifiedName(Element context) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -746,15 +631,11 @@ public class WWXML
      * local part of the qualified name. Otherwise, this returns the element's unqualified tag name.
      *
      * @param event the XML StartElement event who's unqualified name is returned.
-     *
      * @return the unqualified tag name of the specified StartElement event.
-     *
      * @throws IllegalArgumentException if the event is null.
      */
-    public static String getUnqalifiedName(StartElement event)
-    {
-        if (event == null)
-        {
+    public static String getUnqalifiedName(StartElement event) {
+        if (event == null) {
             String message = Logging.getMessage("nullValue.EventIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -768,13 +649,10 @@ public class WWXML
      *
      * @param context the context from which to start the XPath search.
      * @param path    the XPath expression.
-     *
      * @return the text of an element matching the XPath expression, or null if no match is found.
-     *
      * @throws IllegalArgumentException if the context or XPath expression are null.
      */
-    public static String getText(Element context, String path)
-    {
+    public static String getText(Element context, String path) {
         return getText(context, path, null);
     }
 
@@ -785,22 +663,17 @@ public class WWXML
      * @param path    the XPath expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the text of an element matching the XPath expression, or null if no match is found.
-     *
      * @throws IllegalArgumentException if the context or XPath expression are null.
      */
-    public static String getText(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static String getText(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (path == null)
-        {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -809,12 +682,10 @@ public class WWXML
         if (xpath == null)
             xpath = makeXPath();
 
-        try
-        {
+        try {
             return xpath.evaluate(path, context);
         }
-        catch (XPathExpressionException e)
-        {
+        catch (XPathExpressionException e) {
             return null;
         }
     }
@@ -826,22 +697,17 @@ public class WWXML
      * @param path    the XPath expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return an array containing the text of each element matching the XPath expression.
-     *
      * @throws IllegalArgumentException if the context or XPath expression are null.
      */
-    public static String[] getTextArray(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static String[] getTextArray(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (path == null)
-        {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -850,22 +716,19 @@ public class WWXML
         if (xpath == null)
             xpath = makeXPath();
 
-        try
-        {
+        try {
             NodeList nodes = (NodeList) xpath.evaluate(path, context,
                 XPathConstants.NODESET);
             if (nodes == null || nodes.getLength() == 0)
                 return null;
 
             String[] strings = new String[nodes.getLength()];
-            for (int i = 0; i < nodes.getLength(); i++)
-            {
+            for (int i = 0; i < nodes.getLength(); i++) {
                 strings[i] = nodes.item(i).getTextContent();
             }
             return strings;
         }
-        catch (XPathExpressionException e)
-        {
+        catch (XPathExpressionException e) {
             return null;
         }
     }
@@ -877,24 +740,19 @@ public class WWXML
      * @param path    the XPath expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return an array containing the text of each element matching the XPath expression and containing unique text. If
-     *         multiple elements contain the same text only the first one found is returned. Returns null if no matching
-     *         element is found.
-     *
+     * multiple elements contain the same text only the first one found is returned. Returns null if no matching element
+     * is found.
      * @throws IllegalArgumentException if the context or XPath expression are null.
      */
-    public static String[] getUniqueText(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static String[] getUniqueText(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (path == null)
-        {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -908,8 +766,7 @@ public class WWXML
             return null;
 
         ArrayList<String> sarl = new ArrayList<>();
-        for (String s : strings)
-        {
+        for (String s : strings) {
             if (!sarl.contains(s))
                 sarl.add(s);
         }
@@ -924,22 +781,17 @@ public class WWXML
      * @param path    the XPath expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the element matching the XPath expression, or null if no element matches.
-     *
      * @throws IllegalArgumentException if the context or XPath expression are null.
      */
-    public static Element getElement(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static Element getElement(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (path == null)
-        {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -948,16 +800,14 @@ public class WWXML
         if (xpath == null)
             xpath = makeXPath();
 
-        try
-        {
+        try {
             Node node = (Node) xpath.evaluate(path, context, XPathConstants.NODE);
             if (node == null)
                 return null;
 
             return node instanceof Element ? (Element) node : null;
         }
-        catch (XPathExpressionException e)
-        {
+        catch (XPathExpressionException e) {
             String message = Logging.getMessage("XML.InvalidXPathExpression", "internal expression");
             Logging.logger().log(java.util.logging.Level.WARNING, message, e);
             return null;
@@ -971,22 +821,17 @@ public class WWXML
      * @param path    the XPath expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return an array containing the elements matching the XPath expression.
-     *
      * @throws IllegalArgumentException if the context or XPath expression are null.
      */
-    public static Element[] getElements(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static Element[] getElements(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (path == null)
-        {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -995,23 +840,20 @@ public class WWXML
         if (xpath == null)
             xpath = makeXPath();
 
-        try
-        {
+        try {
             NodeList nodes = (NodeList) xpath.evaluate(path, context, XPathConstants.NODESET);
             if (nodes == null || nodes.getLength() == 0)
                 return null;
 
             Element[] elements = new Element[nodes.getLength()];
-            for (int i = 0; i < nodes.getLength(); i++)
-            {
+            for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
                 if (node instanceof Element)
                     elements[i] = (Element) node;
             }
             return elements;
         }
-        catch (XPathExpressionException e)
-        {
+        catch (XPathExpressionException e) {
             String message = Logging.getMessage("XML.InvalidXPathExpression", "internal expression");
             Logging.logger().log(java.util.logging.Level.WARNING, message, e);
             return null;
@@ -1026,31 +868,25 @@ public class WWXML
      * @param uniqueTag an XPath expression to match with the elements matched with the above expression.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @return an array containing the unique elements matching the XPath expression and subexpression. If multiple
-     *         elements have the same content only the first one found is returned. Returns null if no matching element
-     *         is found.
-     *
+     * elements have the same content only the first one found is returned. Returns null if no matching element is
+     * found.
      * @throws IllegalArgumentException if either the context, XPath expression or XPath sub-expression are null.
      */
-    public static Element[] getUniqueElements(Element context, String path, String uniqueTag, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static Element[] getUniqueElements(Element context, String path, String uniqueTag, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (path == null)
-        {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (uniqueTag == null)
-        {
+        if (uniqueTag == null) {
             String message = Logging.getMessage("nullValue.UniqueTagIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1063,9 +899,8 @@ public class WWXML
         if (elements == null)
             return null;
 
-        HashMap<String, Element> styles = new HashMap<>();
-        for (Element e : elements)
-        {
+        Map<String, Element> styles = new HashMap<>();
+        for (Element e : elements) {
             String name = getText(e, uniqueTag, xpath);
             if (name != null)
                 styles.put(name, e);
@@ -1081,23 +916,18 @@ public class WWXML
      * @param path    the XPath expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the value of an element matching the XPath expression, or null if no match is found or the match does not
-     *         contain a {@link Double}.
-     *
+     * contain a {@link Double}.
      * @throws IllegalArgumentException if the context or XPath expression are null.
      */
-    public static Double getDouble(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static Double getDouble(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (path == null)
-        {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1105,16 +935,14 @@ public class WWXML
 
         String s = null;
 
-        try
-        {
+        try {
             s = getText(context, path, xpath);
-            if (s == null || s.length() == 0)
+            if (s == null || s.isEmpty())
                 return null;
 
             return Double.valueOf(s);
         }
-        catch (NumberFormatException e)
-        {
+        catch (NumberFormatException e) {
             String message = Logging.getMessage("generic.ConversionError", s);
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             return null;
@@ -1128,23 +956,18 @@ public class WWXML
      * @param path    the XPath expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the value of an element matching the XPath expression, or null if no match is found or the match does not
-     *         contain a {@link Integer}.
-     *
+     * contain a {@link Integer}.
      * @throws IllegalArgumentException if the context or XPath expression are null.
      */
-    public static Integer getInteger(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static Integer getInteger(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (path == null)
-        {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1152,16 +975,14 @@ public class WWXML
 
         String s = null;
 
-        try
-        {
+        try {
             s = getText(context, path, xpath);
-            if (s == null || s.length() == 0)
+            if (s == null || s.isEmpty())
                 return null;
 
             return Integer.valueOf(s);
         }
-        catch (NumberFormatException e)
-        {
+        catch (NumberFormatException e) {
             String message = Logging.getMessage("generic.ConversionError", s);
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             return null;
@@ -1175,23 +996,18 @@ public class WWXML
      * @param path    the XPath expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the value of an element matching the XPath expression, or null if no match is found or the match does not
-     *         contain a {@link Integer}.
-     *
+     * contain a {@link Integer}.
      * @throws IllegalArgumentException if the context or XPath expression are null.
      */
-    public static Long getLong(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static Long getLong(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (path == null)
-        {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1199,16 +1015,14 @@ public class WWXML
 
         String s = null;
 
-        try
-        {
+        try {
             s = getText(context, path, xpath);
-            if (s == null || s.length() == 0)
+            if (s == null || s.isEmpty())
                 return null;
 
             return Long.valueOf(s);
         }
-        catch (NumberFormatException e)
-        {
+        catch (NumberFormatException e) {
             String message = Logging.getMessage("generic.ConversionError", s);
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             return null;
@@ -1222,23 +1036,18 @@ public class WWXML
      * @param path    the XPath expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the value of an element matching the XPath expression, or null if no match is found or the match does not
-     *         contain a {@link Boolean}.
-     *
+     * contain a {@link Boolean}.
      * @throws IllegalArgumentException if the context or XPath expression are null.
      */
-    public static Boolean getBoolean(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static Boolean getBoolean(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (path == null)
-        {
+        if (path == null) {
             String message = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1246,16 +1055,14 @@ public class WWXML
 
         String s = null;
 
-        try
-        {
+        try {
             s = getText(context, path, xpath);
-            if (s == null || s.length() == 0)
+            if (s == null || s.isEmpty())
                 return null;
 
             return Boolean.valueOf(s);
         }
-        catch (NumberFormatException e)
-        {
+        catch (NumberFormatException e) {
             String message = Logging.getMessage("generic.ConversionError", s);
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             return null;
@@ -1263,30 +1070,25 @@ public class WWXML
     }
 
     /**
-     * Returns the {@link gov.nasa.worldwind.geom.LatLon} value of an element identified by an XPath expression.
+     * Returns the {@link LatLon} value of an element identified by an XPath expression.
      *
      * @param context the context from which to start the XPath search.
      * @param path    the XPath expression. If null, indicates that the context is the LatLon element itself. If
      *                non-null, the context is searched for a LatLon element using the expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the value of an element matching the XPath expression, or null if no match is found or the match does not
-     *         contain a {@link gov.nasa.worldwind.geom.LatLon}.
-     *
+     * contain a {@link LatLon}.
      * @throws IllegalArgumentException if the context is null.
      */
-    public static LatLon getLatLon(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static LatLon getLatLon(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             Element el = path == null ? context : getElement(context, path, xpath);
             if (el == null)
                 return null;
@@ -1310,8 +1112,7 @@ public class WWXML
 
             return null;
         }
-        catch (NumberFormatException e)
-        {
+        catch (NumberFormatException e) {
             String message = Logging.getMessage("generic.ConversionError", path);
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             return null;
@@ -1326,23 +1127,18 @@ public class WWXML
      *                non-null, the context is searched for a Color element using the expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the value of an element matching the XPath expression, or null if no match is found or the match does not
-     *         contain a {@link Color}.
-     *
+     * contain a {@link Color}.
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Color getColor(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static Color getColor(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             Element el = path == null ? context : getElement(context, path, xpath);
             if (el == null)
                 return null;
@@ -1354,8 +1150,7 @@ public class WWXML
 
             return new Color(r != null ? r : 0, g != null ? g : 0, b != null ? b : 0, a != null ? a : 255);
         }
-        catch (NumberFormatException e)
-        {
+        catch (NumberFormatException e) {
             String message = Logging.getMessage("generic.ConversionError", path);
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             return null;
@@ -1363,23 +1158,19 @@ public class WWXML
     }
 
     /**
-     * Returns the {@link gov.nasa.worldwind.geom.Sector} value of an element identified by an XPath expression.
+     * Returns the {@link Sector} value of an element identified by an XPath expression.
      *
      * @param context the context from which to start the XPath search.
      * @param path    the XPath expression. If null, indicates that the context is the Sector element itself. If
      *                non-null, the context is searched for a Sector element using the expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the value of an element matching the XPath expression, or null if no match is found or the match does not
-     *         contain a {@link gov.nasa.worldwind.geom.Sector}.
-     *
+     * contain a {@link Sector}.
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Sector getSector(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static Sector getSector(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1399,7 +1190,7 @@ public class WWXML
     }
 
     /**
-     * Returns the {@link gov.nasa.worldwind.util.LevelSet.SectorResolution} value of an element identified by an XPath
+     * Returns the {@link LevelSet.SectorResolution} value of an element identified by an XPath
      * expression.
      *
      * @param context the context from which to start the XPath search.
@@ -1407,16 +1198,12 @@ public class WWXML
      *                If non-null, the context is searched for a SectorResolution element using the expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the value of an element matching the XPath expression, or null if no match is found or the match does not
-     *         contain a {@link gov.nasa.worldwind.util.LevelSet.SectorResolution}.
-     *
+     * contain a {@link LevelSet.SectorResolution}.
      * @throws IllegalArgumentException if the context is null.
      */
-    public static LevelSet.SectorResolution getSectorResolutionLimit(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static LevelSet.SectorResolution getSectorResolutionLimit(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1443,23 +1230,18 @@ public class WWXML
      *                the context is searched for a Time element using the expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the value of an element matching the XPath expression, or null if no match is found or the match does not
-     *         contain a {@link gov.nasa.worldwind.geom.LatLon}.
-     *
+     * contain a {@link LatLon}.
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Long getTimeInMillis(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static Long getTimeInMillis(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             Element el = path == null ? context : getElement(context, path, xpath);
             if (el == null)
                 return null;
@@ -1488,8 +1270,7 @@ public class WWXML
 
             return null;
         }
-        catch (NumberFormatException e)
-        {
+        catch (NumberFormatException e) {
             String message = Logging.getMessage("generic.ConversionError", path);
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             return null;
@@ -1502,39 +1283,33 @@ public class WWXML
      * @param context the context from which to start the XPath search.
      * @param path    the XPath expression. If null, indicates that the context is the element itself. If non-null, the
      *                context is searched for an element matching the expression.
-     * @param pattern the format pattern of the date. See {@link java.text.DateFormat} for the pattern symbols. The
+     * @param pattern the format pattern of the date. See {@link DateFormat} for the pattern symbols. The
      *                element content must either match the pattern or be directly convertible to a long.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the value of an element matching the XPath expression, or null if no match is found.
-     *
      * @throws IllegalArgumentException if the context or pattern is null.
      */
-    public static Long getDateTimeInMillis(Element context, String path, String pattern, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static Long getDateTimeInMillis(Element context, String path, String pattern, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (WWUtil.isEmpty(pattern))
-        {
+        if (WWUtil.isEmpty(pattern)) {
             String message = Logging.getMessage("nullValue.PatternIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             Element el = path == null ? context : getElement(context, path, xpath);
             if (el == null)
                 return null;
 
             String s = getText(context, path, xpath);
-            if (s == null || s.length() == 0)
+            if (s == null || s.isEmpty())
                 return null;
 
             // See if the value is already a long
@@ -1544,8 +1319,7 @@ public class WWXML
 
             return new SimpleDateFormat(pattern).parse(s).getTime();
         }
-        catch (ParseException e)
-        {
+        catch (ParseException e) {
             String message = Logging.getMessage("generic.ConversionError", path);
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
             return null;
@@ -1553,7 +1327,7 @@ public class WWXML
     }
 
     /**
-     * Returns the {@link gov.nasa.worldwind.render.ScreenCredit} value of an element identified by an XPath
+     * Returns the {@link ScreenCredit} value of an element identified by an XPath
      * expression.
      *
      * @param context the context from which to start the XPath search.
@@ -1561,16 +1335,12 @@ public class WWXML
      *                non-null, the context is searched for a ScreenCredit element using the expression.
      * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
      *                performing multiple searches. May be null.
-     *
      * @return the value of an element matching the XPath expression, or null if no match is found or the match does not
-     *         contain a ScreenCredit.
-     *
+     * contain a ScreenCredit.
      * @throws IllegalArgumentException if the context is null.
      */
-    public static ScreenCredit getScreenCredit(Element context, String path, XPath xpath)
-    {
-        if (context == null)
-        {
+    public static ScreenCredit getScreenCredit(Element context, String path, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1582,21 +1352,18 @@ public class WWXML
 
         String type = WWXML.getText(el, "@creditType", xpath);
 
-        if (type != null && type.equals("ScreenImage"))
-        {
+        if (type != null && type.equals("ScreenImage")) {
             String fileName = WWXML.getText(el, "FileName", xpath);
-            if (fileName != null && fileName.length() > 0)
-            {
+            if (fileName != null && !fileName.isEmpty()) {
                 ScreenCredit credit = new ScreenCreditImage(WWIO.getFilename(fileName), fileName);
 
                 String link = WWXML.getText(el, "Link", xpath);
-                if (link != null && link.length() > 0)
+                if (link != null && !link.isEmpty())
                     credit.setLink(link);
 
                 return credit;
             }
-            else
-            {
+            else {
                 // Warn that the FileName property is missing.
                 String message = Logging.getMessage("generic.FileNameIsMissing");
                 Logging.logger().warning(message);
@@ -1618,22 +1385,17 @@ public class WWXML
      *
      * @param doc  the document which receives the new root element.
      * @param name the name of the document's new root element node.
-     *
      * @return the document's new root element node.
-     *
      * @throws IllegalArgumentException if the document is null, if the name is null, or if the name is empty.
      */
-    public static Element setDocumentElement(Document doc, String name)
-    {
-        if (doc == null)
-        {
+    public static Element setDocumentElement(Document doc, String name) {
+        if (doc == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (WWUtil.isEmpty(name))
-        {
+        if (WWUtil.isEmpty(name)) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1644,12 +1406,10 @@ public class WWXML
         // mode.
         Element el = doc.createElementNS(null, name);
 
-        if (doc.getDocumentElement() != null)
-        {
+        if (doc.getDocumentElement() != null) {
             doc.replaceChild(el, doc.getDocumentElement());
         }
-        else
-        {
+        else {
             doc.appendChild(el);
         }
 
@@ -1662,22 +1422,17 @@ public class WWXML
      *
      * @param context the context on which to append a new element.
      * @param name    the new element name to append.
-     *
      * @return the new element appended to the context, or the context if the element name is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element appendElement(Element context, String name)
-    {
-        if (context == null)
-        {
+    public static Element appendElement(Element context, String name) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (WWUtil.isEmpty(name))
-        {
+        if (WWUtil.isEmpty(name)) {
             return context;
         }
 
@@ -1701,38 +1456,30 @@ public class WWXML
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
-     *
      * @return the new element appended to the context, or the context if the element path is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element appendElementPath(Element context, String path)
-    {
-        if (context == null)
-        {
+    public static Element appendElementPath(Element context, String path) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (WWUtil.isEmpty(path))
-        {
+        if (WWUtil.isEmpty(path)) {
             return context;
         }
 
         String[] names = path.split("/");
-        if (names == null || names.length == 0)
-        {
+        if (names == null || names.length == 0) {
             return context;
         }
 
         Document doc = context.getOwnerDocument();
         Element cur = context;
 
-        for (String s : names)
-        {
-            if (s != null && s.length() > 0)
-            {
+        for (String s : names) {
+            if (s != null && !s.isEmpty()) {
                 // Create a namespace-aware element node, which supports DOM Level 1 and Level 2 features. This ensures
                 // the constructed DOM node is consistent with element nodes created by parsing an XML document in
                 // namespace-aware mode.
@@ -1747,28 +1494,23 @@ public class WWXML
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with a text element with a specified
-     * value. Elements are added to the context as in {@link #appendElementPath(org.w3c.dom.Element, String)}, except
+     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except
      * that a terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
      * @param string  the text element value.
-     *
      * @return the new element appended to the context, or the context if the element path is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element appendText(Element context, String path, String string)
-    {
-        if (context == null)
-        {
+    public static Element appendText(Element context, String path, String string) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (string == null)
-        {
+        if (string == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1786,28 +1528,23 @@ public class WWXML
     /**
      * For each non-null string in a specified array, appends a heirarcy of new elements with a path to a context
      * element, ending with a text element with a specified value. Elements are added to the context as in {@link
-     * #appendElementPath(org.w3c.dom.Element, String)}, except that a terminating text element is appended to the last
+     * #appendElementPath(Element, String)}, except that a terminating text element is appended to the last
      * element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
      * @param strings the text element values.
-     *
      * @return array of new elements appended to the context.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element[] appendTextArray(Element context, String path, String[] strings)
-    {
-        if (context == null)
-        {
+    public static Element[] appendTextArray(Element context, String path, String[] strings) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (strings == null)
-        {
+        if (strings == null) {
             String message = Logging.getMessage("nullValue.ArrayIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1815,12 +1552,10 @@ public class WWXML
 
         Element[] els = new Element[strings.length];
 
-        for (int i = 0; i < strings.length; i++)
-        {
+        for (int i = 0; i < strings.length; i++) {
             String s = strings[i];
 
-            if (s != null && s.length() > 0)
-            {
+            if (s != null && !s.isEmpty()) {
                 els[i] = appendText(context, path, s);
             }
         }
@@ -1830,21 +1565,17 @@ public class WWXML
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with a text element with a specified
-     * value. Elements are added to the context as in {@link #appendElementPath(org.w3c.dom.Element, String)}, except
+     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except
      * that a terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
      * @param value   the text element value.
-     *
      * @return the new element appended to the context, or the context if the element path is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element appendDouble(Element context, String path, double value)
-    {
-        if (context == null)
-        {
+    public static Element appendDouble(Element context, String path, double value) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1855,21 +1586,17 @@ public class WWXML
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with a text element with a specified
-     * value. Elements are added to the context as in {@link #appendElementPath(org.w3c.dom.Element, String)}, except
+     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except
      * that a terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
      * @param value   the text element value.
-     *
      * @return the new element appended to the context, or the context if the element path is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element appendInteger(Element context, String path, int value)
-    {
-        if (context == null)
-        {
+    public static Element appendInteger(Element context, String path, int value) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1880,21 +1607,17 @@ public class WWXML
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with a text element with a specified
-     * value. Elements are added to the context as in {@link #appendElementPath(org.w3c.dom.Element, String)}, except
+     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except
      * that a terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
      * @param value   the text element value.
-     *
      * @return the new element appended to the context, or the context if the element path is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element appendLong(Element context, String path, long value)
-    {
-        if (context == null)
-        {
+    public static Element appendLong(Element context, String path, long value) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1905,21 +1628,17 @@ public class WWXML
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with a text element with a specified
-     * value. Elements are added to the context as in {@link #appendElementPath(org.w3c.dom.Element, String)}, except
+     * value. Elements are added to the context as in {@link #appendElementPath(Element, String)}, except
      * that a terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
      * @param value   the text element value.
-     *
      * @return the new element appended to the context, or the context if the element path is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element appendBoolean(Element context, String path, boolean value)
-    {
-        if (context == null)
-        {
+    public static Element appendBoolean(Element context, String path, boolean value) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1930,28 +1649,23 @@ public class WWXML
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with an element formatted as a LatLon.
-     * Elements are added to the context as in {@link #appendElementPath(org.w3c.dom.Element, String)}, except that a
+     * Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a
      * terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
      * @param ll      the LatLon value to create.
-     *
      * @return the new element appended to the context, or the context if the element path is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element appendLatLon(Element context, String path, LatLon ll)
-    {
-        if (context == null)
-        {
+    public static Element appendLatLon(Element context, String path, LatLon ll) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (ll == null)
-        {
+        if (ll == null) {
             String message = Logging.getMessage("nullValue.LatLonIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1967,36 +1681,31 @@ public class WWXML
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with an element formatted as a Sector.
-     * Elements are added to the context as in {@link #appendElementPath(org.w3c.dom.Element, String)}, except that a
+     * Elements are added to the context as in {@link #appendElementPath(Element, String)}, except that a
      * terminating text element is appended to the last element.
      *
      * @param context the context on which to append new elements.
      * @param path    the element path to append.
      * @param sector  the Sector value to create.
-     *
      * @return the new element appended to the context, or the context if the element path is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element appendSector(Element context, String path, Sector sector)
-    {
-        if (context == null)
-        {
+    public static Element appendSector(Element context, String path, Sector sector) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (sector == null)
-        {
+        if (sector == null) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Element el = appendElementPath(context, path);
-        appendLatLon(el, "SouthWest/LatLon", new LatLon(sector.getMinLatitude(), sector.getMinLongitude()));
-        appendLatLon(el, "NorthEast/LatLon", new LatLon(sector.getMaxLatitude(), sector.getMaxLongitude()));
+        appendLatLon(el, "SouthWest/LatLon", new LatLon(sector.latMin(), sector.lonMin()));
+        appendLatLon(el, "NorthEast/LatLon", new LatLon(sector.latMax(), sector.lonMax()));
 
         return el;
     }
@@ -2004,29 +1713,24 @@ public class WWXML
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with an element formatted as a
      * LevelSet.SectorResolutionLimit. Elements are added to the context as in {@link
-     * #appendElementPath(org.w3c.dom.Element, String)}, except that a terminating text element is appended to the last
+     * #appendElementPath(Element, String)}, except that a terminating text element is appended to the last
      * element.
      *
      * @param context          the context on which to append new elements.
      * @param path             the element path to append.
      * @param sectorResolution the LevelSet.SectorResolutionLimit value to create.
-     *
      * @return the new element appended to the context, or the context if the element path is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
     public static Element appendSectorResolutionLimit(Element context, String path,
-        LevelSet.SectorResolution sectorResolution)
-    {
-        if (context == null)
-        {
+        LevelSet.SectorResolution sectorResolution) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (sectorResolution == null)
-        {
+        if (sectorResolution == null) {
             String message = Logging.getMessage("nullValue.LevelSet.SectorResolutionIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -2041,21 +1745,17 @@ public class WWXML
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with an element formatted as a time in
-     * milliseconds. Elements are added to the context as in {@link #appendElementPath(org.w3c.dom.Element, String)},
+     * milliseconds. Elements are added to the context as in {@link #appendElementPath(Element, String)},
      * except that a terminating text element is appended to the last element.
      *
      * @param context      the context on which to append new elements.
      * @param path         the element path to append.
      * @param timeInMillis the time value in milliseconds to create.
-     *
      * @return the new element appended to the context, or the context if the element path is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element appendTimeInMillis(Element context, String path, long timeInMillis)
-    {
-        if (context == null)
-        {
+    public static Element appendTimeInMillis(Element context, String path, long timeInMillis) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -2070,49 +1770,41 @@ public class WWXML
 
     /**
      * Append a heirarcy of new elements with a path to a context element, ending with an element formatted as a
-     * ScreenCredit. Elements are added to the context as in {@link WWXML#appendElementPath(org.w3c.dom.Element,
+     * ScreenCredit. Elements are added to the context as in {@link WWXML#appendElementPath(Element,
      * String)}, except that a terminating text element is appended to the last element.
      *
      * @param context      the context on which to append new elements.
      * @param path         the element path to append.
      * @param screenCredit the ScreenCredit value to create.
-     *
      * @return the new element appended to the context, or the context if the element path is null or empty.
-     *
      * @throws IllegalArgumentException if the context is null.
      */
-    public static Element appendScreenCredit(Element context, String path, ScreenCredit screenCredit)
-    {
-        if (context == null)
-        {
+    public static Element appendScreenCredit(Element context, String path, ScreenCredit screenCredit) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (screenCredit == null)
-        {
+        if (screenCredit == null) {
             String message = Logging.getMessage("nullValue.ScreenCreditIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (screenCredit instanceof ScreenCreditImage)
-        {
+        if (screenCredit instanceof ScreenCreditImage) {
             Element el = WWXML.appendElementPath(context, path);
             setTextAttribute(el, "creditType", "ScreenImage");
 
             String link = screenCredit.getLink();
-            if (link != null && link.length() > 0)
+            if (link != null && !link.isEmpty())
                 WWXML.appendText(el, "Link", link);
 
             Object imageSource = ((ScreenCreditImage) screenCredit).getImageSource();
-            if (imageSource instanceof String)
-            {
+            if (imageSource instanceof String) {
                 WWXML.appendText(el, "FileName", (String) imageSource);
             }
-            else
-            {
+            else {
                 // Warn that the image source property cannot be written to the document.
                 String message = Logging.getMessage("generic.UnrecognizedImageSourceType",
                     (imageSource != null) ? imageSource.getClass().getName() : null);
@@ -2136,20 +1828,16 @@ public class WWXML
      * @param context the element on which to set the attribute.
      * @param name    the attribute's name.
      * @param value   the attribute's value.
-     *
      * @throws IllegalArgumentException if the context is null, if the name is null, or if the name is empty.
      */
-    public static void setTextAttribute(Element context, String name, String value)
-    {
-        if (context == null)
-        {
+    public static void setTextAttribute(Element context, String name, String value) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (WWUtil.isEmpty(name))
-        {
+        if (WWUtil.isEmpty(name)) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -2168,20 +1856,16 @@ public class WWXML
      * @param context the Element on which to set the attribute.
      * @param name    the attribute's name.
      * @param value   the attribute's value.
-     *
      * @throws IllegalArgumentException if the context is null, if the name is null, or if the name is empty.
      */
-    public static void setDoubleAttribute(Element context, String name, double value)
-    {
-        if (context == null)
-        {
+    public static void setDoubleAttribute(Element context, String name, double value) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (name == null)
-        {
+        if (name == null) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -2197,20 +1881,16 @@ public class WWXML
      * @param context the element on which to set the attribute.
      * @param name    the attribute's name.
      * @param value   the attribute's value.
-     *
      * @throws IllegalArgumentException if the context is null, if the name is null, or if the name is empty.
      */
-    public static void setIntegerAttribute(Element context, String name, int value)
-    {
-        if (context == null)
-        {
+    public static void setIntegerAttribute(Element context, String name, int value) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (name == null)
-        {
+        if (name == null) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -2226,20 +1906,16 @@ public class WWXML
      * @param context the element on which to set the attribute.
      * @param name    the attribute's name.
      * @param value   the attribute's value.
-     *
      * @throws IllegalArgumentException if the context is null, if the name is null, or if the name is empty.
      */
-    public static void setLongAttribute(Element context, String name, long value)
-    {
-        if (context == null)
-        {
+    public static void setLongAttribute(Element context, String name, long value) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (name == null)
-        {
+        if (name == null) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -2255,20 +1931,16 @@ public class WWXML
      * @param context the element on which to set the attribute.
      * @param name    the attribute's name.
      * @param value   the attribute's value.
-     *
      * @throws IllegalArgumentException if the context is null, if the name is null, or if the name is empty.
      */
-    public static void setBooleanAttribute(Element context, String name, boolean value)
-    {
-        if (context == null)
-        {
+    public static void setBooleanAttribute(Element context, String name, boolean value) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (name == null)
-        {
+        if (name == null) {
             String message = Logging.getMessage("nullValue.NameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -2287,46 +1959,39 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetStringParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         String s = params.getStringValue(paramKey);
-        if (s == null)
-        {
+        if (s == null) {
             s = getText(context, paramName, xpath);
-            if (s != null && s.length() > 0)
+            if (s != null && !s.isEmpty())
                 params.setValue(paramKey, s.trim());
         }
     }
@@ -2341,44 +2006,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetStringArrayParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             String[] strings = getTextArray(context, paramName, xpath);
             if (strings != null && strings.length > 0)
                 params.setValue(paramKey, strings);
@@ -2395,44 +2053,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetUniqueStringsParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             String[] strings = getUniqueText(context, paramName, xpath);
             if (strings != null && strings.length > 0)
                 params.setValue(paramKey, strings);
@@ -2449,44 +2100,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetDoubleParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             Double d = getDouble(context, paramName, xpath);
             if (d != null)
                 params.setValue(paramKey, d);
@@ -2503,44 +2147,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetIntegerParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             Integer d = getInteger(context, paramName, xpath);
             if (d != null)
                 params.setValue(paramKey, d);
@@ -2557,44 +2194,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetLongParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             Long d = getLong(context, paramName, xpath);
             if (d != null)
                 params.setValue(paramKey, d);
@@ -2611,44 +2241,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetBooleanParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             Boolean d = getBoolean(context, paramName, xpath);
             if (d != null)
                 params.setValue(paramKey, d);
@@ -2665,44 +2288,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetLatLonParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             LatLon ll = getLatLon(context, paramName, xpath);
             if (ll != null)
                 params.setValue(paramKey, ll);
@@ -2719,44 +2335,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetColorParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             Color color = getColor(context, paramName, xpath);
             if (color != null)
                 params.setValue(paramKey, color);
@@ -2764,47 +2373,40 @@ public class WWXML
     }
 
     public static void checkAndSetColorArrayParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             Element[] els = getElements(context, paramName, xpath);
             if (els == null || els.length == 0)
                 return;
 
             int[] colors = new int[els.length];
 
-            for (int i = 0; i < els.length; i++)
-            {
+            for (int i = 0; i < els.length; i++) {
                 Color color = getColor(context, paramName, xpath);
                 if (color != null)
                     colors[i] = color.getRGB();
@@ -2824,44 +2426,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetSectorParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             Sector sector = getSector(context, paramName, xpath);
             if (sector != null)
                 params.setValue(paramKey, sector);
@@ -2878,52 +2473,44 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetSectorResolutionParam(Element context, AVList params, String paramKey,
-        String paramName, XPath xpath)
-    {
-        if (context == null)
-        {
+        String paramName, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             Element[] els = getElements(context, paramName, xpath);
             if (els == null || els.length == 0)
                 return;
 
             LevelSet.SectorResolution[] srs = new LevelSet.SectorResolution[els.length];
 
-            for (int i = 0; i < els.length; i++)
-            {
+            for (int i = 0; i < els.length; i++) {
                 LevelSet.SectorResolution sr = getSectorResolutionLimit(els[i], null, xpath);
                 if (sr != null)
                     srs[i] = sr;
@@ -2943,44 +2530,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetTimeParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             Long d = getTimeInMillis(context, paramName, xpath);
             if (d != null)
                 params.setValue(paramKey, d);
@@ -2997,44 +2577,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetTimeParamAsInteger(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             Long d = WWXML.getTimeInMillis(context, paramName, xpath);
             if (d != null)
                 params.setValue(paramKey, d.intValue());
@@ -3049,55 +2622,47 @@ public class WWXML
      * @param params    the parameter list.
      * @param paramKey  the key used to identify the paramater in the parameter list.
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
-     * @param pattern   the format pattern of the date. See {@link java.text.DateFormat} for the pattern symbols. The
+     * @param pattern   the format pattern of the date. See {@link DateFormat} for the pattern symbols. The
      *                  element content must either match the pattern or be directly convertible to a long.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key, pattern or parameter name
      *                                  are null.
      */
     public static void checkAndSetDateTimeParam(Element context, AVList params, String paramKey, String paramName,
-        String pattern, XPath xpath)
-    {
-        if (context == null)
-        {
+        String pattern, XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (WWUtil.isEmpty(pattern))
-        {
+        if (WWUtil.isEmpty(pattern)) {
             String message = Logging.getMessage("nullValue.PatternIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             Long d = getDateTimeInMillis(context, paramName, pattern, xpath);
             if (d != null)
                 params.setValue(paramKey, d);
@@ -3114,44 +2679,37 @@ public class WWXML
      * @param paramName the Xpath expression identifying the parameter value within the specified context.
      * @param xpath     an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects
      *                  when performing multiple searches. May be null.
-     *
      * @throws IllegalArgumentException if either the context, parameter list, parameter key or parameter name are
      *                                  null.
      */
     public static void checkAndSetScreenCreditParam(Element context, AVList params, String paramKey, String paramName,
-        XPath xpath)
-    {
-        if (context == null)
-        {
+        XPath xpath) {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (params == null)
-        {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramName == null)
-        {
+        if (paramName == null) {
             String message = Logging.getMessage("nullValue.ParameterNameIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o == null)
-        {
+        if (o == null) {
             ScreenCredit sc = getScreenCredit(context, paramName, xpath);
             if (sc != null)
                 params.setValue(paramKey, sc);
@@ -3166,35 +2724,29 @@ public class WWXML
      * @param params   the parameter list.
      * @param paramKey the key used to identify the paramater in the parameter list.
      * @param path     the element path to append.
-     *
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendTextElement(AVList params, String paramKey, Element context, String path)
-    {
-        if (params == null)
-        {
+    public static void checkAndAppendTextElement(AVList params, String paramKey, Element context, String path) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (context == null)
-        {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         String s = params.getStringValue(paramKey);
-        if (s != null && s.length() > 0)
-        {
+        if (s != null && !s.isEmpty()) {
             appendText(context, path, s.trim());
         }
     }
@@ -3207,38 +2759,31 @@ public class WWXML
      * @param params   the parameter list.
      * @param paramKey the key used to identify the paramater in the parameter list.
      * @param path     the element path to append.
-     *
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendTextArrayElement(AVList params, String paramKey, Element context, String path)
-    {
-        if (params == null)
-        {
+    public static void checkAndAppendTextArrayElement(AVList params, String paramKey, Element context, String path) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (context == null)
-        {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o instanceof String[])
-        {
+        if (o instanceof String[]) {
             String[] strings = (String[]) o;
-            if (strings.length > 0)
-            {
+            if (strings.length > 0) {
                 appendTextArray(context, path, (String[]) o);
             }
         }
@@ -3252,35 +2797,29 @@ public class WWXML
      * @param params   the parameter list.
      * @param paramKey the key used to identify the paramater in the parameter list.
      * @param path     the element path to append.
-     *
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendDoubleElement(AVList params, String paramKey, Element context, String path)
-    {
-        if (params == null)
-        {
+    public static void checkAndAppendDoubleElement(AVList params, String paramKey, Element context, String path) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (context == null)
-        {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Double d = AVListImpl.getDoubleValue(params, paramKey);
-        if (d != null)
-        {
+        if (d != null) {
             appendDouble(context, path, d);
         }
     }
@@ -3293,35 +2832,29 @@ public class WWXML
      * @param params   the parameter list.
      * @param paramKey the key used to identify the paramater in the parameter list.
      * @param path     the element path to append.
-     *
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendIntegerlement(AVList params, String paramKey, Element context, String path)
-    {
-        if (params == null)
-        {
+    public static void checkAndAppendIntegerlement(AVList params, String paramKey, Element context, String path) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (context == null)
-        {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Integer i = AVListImpl.getIntegerValue(params, paramKey);
-        if (i != null)
-        {
+        if (i != null) {
             appendInteger(context, path, i);
         }
     }
@@ -3334,35 +2867,29 @@ public class WWXML
      * @param params   the parameter list.
      * @param paramKey the key used to identify the paramater in the parameter list.
      * @param path     the element path to append.
-     *
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendLongElement(AVList params, String paramKey, Element context, String path)
-    {
-        if (params == null)
-        {
+    public static void checkAndAppendLongElement(AVList params, String paramKey, Element context, String path) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (context == null)
-        {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Long l = AVListImpl.getLongValue(params, paramKey);
-        if (l != null)
-        {
+        if (l != null) {
             appendLong(context, path, l);
         }
     }
@@ -3375,35 +2902,29 @@ public class WWXML
      * @param params   the parameter list.
      * @param paramKey the key used to identify the paramater in the parameter list.
      * @param path     the element path to append.
-     *
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendBooleanElement(AVList params, String paramKey, Element context, String path)
-    {
-        if (params == null)
-        {
+    public static void checkAndAppendBooleanElement(AVList params, String paramKey, Element context, String path) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (context == null)
-        {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o instanceof Boolean)
-        {
+        if (o instanceof Boolean) {
             appendBoolean(context, path, (Boolean) o);
         }
     }
@@ -3416,35 +2937,29 @@ public class WWXML
      * @param params   the parameter list.
      * @param paramKey the key used to identify the paramater in the parameter list.
      * @param path     the element path to append.
-     *
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendLatLonElement(AVList params, String paramKey, Element context, String path)
-    {
-        if (params == null)
-        {
+    public static void checkAndAppendLatLonElement(AVList params, String paramKey, Element context, String path) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (context == null)
-        {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o instanceof LatLon)
-        {
+        if (o instanceof LatLon) {
             appendLatLon(context, path, (LatLon) o);
         }
     }
@@ -3457,35 +2972,29 @@ public class WWXML
      * @param params   the parameter list.
      * @param paramKey the key used to identify the paramater in the parameter list.
      * @param path     the element path to append.
-     *
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendSectorElement(AVList params, String paramKey, Element context, String path)
-    {
-        if (params == null)
-        {
+    public static void checkAndAppendSectorElement(AVList params, String paramKey, Element context, String path) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (context == null)
-        {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o instanceof Sector)
-        {
+        if (o instanceof Sector) {
             appendSector(context, path, (Sector) o);
         }
     }
@@ -3498,42 +3007,34 @@ public class WWXML
      * @param params   the parameter list.
      * @param paramKey the key used to identify the paramater in the parameter list.
      * @param path     the element path to append.
-     *
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
     public static void checkAndAppendSectorResolutionElement(AVList params, String paramKey, Element context,
-        String path)
-    {
-        if (params == null)
-        {
+        String path) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (context == null)
-        {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o instanceof LevelSet.SectorResolution[])
-        {
+        if (o instanceof LevelSet.SectorResolution[]) {
             LevelSet.SectorResolution[] srs = (LevelSet.SectorResolution[]) o;
 
-            for (LevelSet.SectorResolution sr : srs)
-            {
-                if (sr != null)
-                {
+            for (LevelSet.SectorResolution sr : srs) {
+                if (sr != null) {
                     appendSectorResolutionLimit(context, path, sr);
                 }
             }
@@ -3548,36 +3049,30 @@ public class WWXML
      * @param params   the parameter list.
      * @param paramKey the key used to identify the paramater in the parameter list.
      * @param path     the element path to append.
-     *
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
     public static void checkAndAppendTimeElement(AVList params, String paramKey, Element context,
-        String path)
-    {
-        if (params == null)
-        {
+        String path) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (context == null)
-        {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o instanceof Number)
-        {
+        if (o instanceof Number) {
             Number num = (Number) o;
             appendTimeInMillis(context, path, num.longValue());
         }
@@ -3591,43 +3086,35 @@ public class WWXML
      * @param params   the parameter list.
      * @param paramKey the key used to identify the paramater in the parameter list.
      * @param path     the element path to append.
-     *
      * @throws IllegalArgumentException if either the parameter list  parameter key, or context are null.
      */
-    public static void checkAndAppendScreenCreditElement(AVList params, String paramKey, Element context, String path)
-    {
-        if (params == null)
-        {
+    public static void checkAndAppendScreenCreditElement(AVList params, String paramKey, Element context, String path) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.ParametersIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (paramKey == null)
-        {
+        if (paramKey == null) {
             String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (context == null)
-        {
+        if (context == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         Object o = params.getValue(paramKey);
-        if (o instanceof ScreenCredit)
-        {
+        if (o instanceof ScreenCredit) {
             appendScreenCredit(context, path, (ScreenCredit) o);
         }
     }
 
-    public static String fixGetMapString(String gms)
-    {
-        if (gms == null)
-        {
+    public static String fixGetMapString(String gms) {
+        if (gms == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -3646,19 +3133,16 @@ public class WWXML
 
     /**
      * Returns the byte order constant for a specified string. This performs a mapping between text and an AVKey
-     * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr> <tr><td>LittleEndian</td><td>{@link
-     * AVKey#LITTLE_ENDIAN}</td></tr> <tr><td>BigEndian</td><td>{@link AVKey#BIG_ENDIAN}</td></tr> </table>
+     * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr>
+     * <tr><td>LittleEndian</td><td>{@link AVKey#LITTLE_ENDIAN}</td></tr> <tr><td>BigEndian</td><td>{@link
+     * AVKey#BIG_ENDIAN}</td></tr> </table>
      *
      * @param s the string to parse as a byte order.
-     *
      * @return a byte order constant, or null if the string text is not recognized.
-     *
      * @throws IllegalArgumentException if the string is null.
      */
-    public static String parseByteOrder(String s)
-    {
-        if (s == null)
-        {
+    public static String parseByteOrder(String s) {
+        if (s == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -3679,19 +3163,16 @@ public class WWXML
 
     /**
      * Returns the string text for a specified byte order constant. This performs a mapping between text and an AVKey
-     * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr> <tr><td>LittleEndian</td><td>{@link
-     * AVKey#LITTLE_ENDIAN}</td></tr> <tr><td>BigEndian</td><td>{@link AVKey#BIG_ENDIAN}</td></tr> </table>
+     * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr>
+     * <tr><td>LittleEndian</td><td>{@link AVKey#LITTLE_ENDIAN}</td></tr> <tr><td>BigEndian</td><td>{@link
+     * AVKey#BIG_ENDIAN}</td></tr> </table>
      *
      * @param byteOrder the byte order constant to encode as a string.
-     *
      * @return a string representing the byte order constant, or null if the byte order constant is not recognized.
-     *
      * @throws IllegalArgumentException if the byte order is null.
      */
-    public static String byteOrderAsText(String byteOrder)
-    {
-        if (byteOrder == null)
-        {
+    public static String byteOrderAsText(String byteOrder) {
+        if (byteOrder == null) {
             String message = Logging.getMessage("nullValue.ByteOrderIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -3711,27 +3192,23 @@ public class WWXML
 
     /**
      * Returns the data type constant for a specified string. This performs a mapping between text and an AVKey
-     * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr> <tr><td>Float32</td><td>{@link AVKey#FLOAT32}</td></tr>
+     * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr>
+     * <tr><td>Float32</td><td>{@link AVKey#FLOAT32}</td></tr>
      * <tr><td>Int32</td><td>{@link AVKey#INT32}</td></tr> <tr><td>Int16</td><td>{@link AVKey#INT16}</td></tr>
      * <tr><td>Int8</td><td>{@link AVKey#INT8}</td></tr> </table>
      *
      * @param s the string to parse as a data type.
-     *
      * @return a data type constant, or null if the string text is not recognized.
-     *
      * @throws IllegalArgumentException if the string is null.
      */
-    public static String parseDataType(String s)
-    {
-        if (s == null)
-        {
+    public static String parseDataType(String s) {
+        if (s == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        switch (s)
-        {
+        switch (s) {
             case "Float32":
                 return AVKey.FLOAT32;
             case "Int32":
@@ -3751,27 +3228,23 @@ public class WWXML
 
     /**
      * Returns the string text for a specified data type constant. This performs a mapping between text and an AVKey
-     * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr> <tr><td>Float32</td><td>{@link AVKey#FLOAT32}</td></tr>
+     * constant: <table> <caption style="font-weight: bold;">Mapping</caption><tr><th>Text</th><th>Constant</th></tr>
+     * <tr><td>Float32</td><td>{@link AVKey#FLOAT32}</td></tr>
      * <tr><td>Int32</td><td>{@link AVKey#INT32}</td></tr> <tr><td>Int16</td><td>{@link AVKey#INT16}</td></tr>
      * <tr><td>Int8</td><td>{@link AVKey#INT8}</td></tr> </table>
      *
      * @param dataType the data type constant to encode as a string.
-     *
      * @return a string representing the data type constant, or null if the data type constant is not recognized.
-     *
      * @throws IllegalArgumentException if the data type is null.
      */
-    public static String dataTypeAsText(String dataType)
-    {
-        if (dataType == null)
-        {
+    public static String dataTypeAsText(String dataType) {
+        if (dataType == null) {
             String message = Logging.getMessage("nullValue.DataTypeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        switch (dataType)
-        {
+        switch (dataType) {
             case AVKey.FLOAT32:
                 return "Float32";
             case AVKey.INT32:
@@ -3794,24 +3267,19 @@ public class WWXML
      *
      * @param element the XML element potentially containing <code>Property</code> elements.
      * @param params  an attribute-value list to copy the properties to.
-     *
      * @return if an attribute-value list is specified, the reference to that list now containing any properties copied
-     *         from the XML element. If an attribute-value list is not specified and properties exist in the XML
-     *         element, a new attribute-value list containing those properties. Otherwise null is returned.
-     *
+     * from the XML element. If an attribute-value list is not specified and properties exist in the XML element, a new
+     * attribute-value list containing those properties. Otherwise null is returned.
      * @throws IllegalArgumentException if the specified element is null.
      */
-    public static AVList copyProperties(Element element, AVList params)
-    {
-        if (element == null)
-        {
+    public static AVList copyProperties(Element element, AVList params) {
+        if (element == null) {
             String message = Logging.getMessage("nullValue.ElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             XPath xpath = makeXPath();
             Element[] elements = getElements(element, "Property", xpath);
             if (elements == null || elements.length == 0)
@@ -3820,8 +3288,7 @@ public class WWXML
             if (params == null)
                 params = new AVListImpl();
 
-            for (Element el : elements)
-            {
+            for (Element el : elements) {
                 String prop = xpath.evaluate("@name", el);
                 String value = xpath.evaluate("@value", el);
                 if (WWUtil.isEmpty(prop) || WWUtil.isEmpty(value))
@@ -3846,21 +3313,17 @@ public class WWXML
      *
      * @param parent     the object on which to set the properties.
      * @param domElement the XML document containing the properties.
-     *
      * @throws IllegalArgumentException if the specified object or XML document element is null.
      * @see WWUtil#invokePropertyMethod(Object, String, String)
      */
-    public static void invokePropertySetters(Object parent, Element domElement)
-    {
-        if (parent == null)
-        {
+    public static void invokePropertySetters(Object parent, Element domElement) {
+        if (parent == null) {
             String message = Logging.getMessage("nullValue.nullValue.ParentIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (domElement == null)
-        {
+        if (domElement == null) {
             String message = Logging.getMessage("nullValue.DocumentElementIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -3870,27 +3333,23 @@ public class WWXML
         if (elements == null || elements.length == 0)
             return;
 
-        for (Element element : elements)
-        {
+        for (Element element : elements) {
             String propertyName = element.getAttribute("name");
             if (WWUtil.isEmpty(propertyName))
                 continue;
 
             String propertyValue = element.getAttribute("value");
 
-            try
-            {
+            try {
                 WWUtil.invokePropertyMethod(parent, propertyName, propertyValue);
             }
-            catch (NoSuchMethodException e)
-            {
+            catch (NoSuchMethodException e) {
                 // No property method, so just add the property to the object's AVList if it has one.
                 if (parent instanceof AVList)
                     ((AVList) parent).setValue(propertyName, propertyValue);
                 continue; // This is a benign exception; not all properties have set methods.
             }
-            catch (InvocationTargetException | IllegalAccessException e)
-            {
+            catch (InvocationTargetException | IllegalAccessException e) {
                 String message = Logging.getMessage("generic.ExceptionInvokingPropertyMethod", propertyName, e);
                 Logging.logger().warning(message);
             }

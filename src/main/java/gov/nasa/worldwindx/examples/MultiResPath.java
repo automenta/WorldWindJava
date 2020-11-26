@@ -27,12 +27,16 @@ public class MultiResPath extends ApplicationTemplate {
     // Specify several Paths, each with large numbers of positions.
     protected static final int NUM_POSITIONS = 108000;
     protected static final double SPEED = 90 / Earth.WGS84_EQUATORIAL_RADIUS; // meters per second to radians
-    protected static final Position[] ORIGIN = new Position[]{
+    protected static final Position[] ORIGIN = new Position[] {
         Position.fromDegrees(40.2377, -105.6480, 200),
         Position.fromDegrees(41.2625, -105.6503, 200),
         Position.fromDegrees(42.2285, -105.6169, 200),
         Position.fromDegrees(43.2019, -105.6467, 200),
         Position.fromDegrees(44.2414, -105.6911, 200),};
+
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind UAVPath Test", AppFrame.class);
+    }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
 
@@ -78,7 +82,7 @@ public class MultiResPath extends ApplicationTemplate {
             path.setShowPositions(true);
 
             // Indicate that the dots be drawn only when the path is less than 5 KM from the eye point.
-            path.setShowPositionsThreshold(5e3);
+            path.setShowPositionsThreshold(5.0e3);
 
             // Override generic view-distance geometry regeneration because multi-res Paths handle that themselves.
             path.setViewDistanceExpiration(false);
@@ -90,9 +94,5 @@ public class MultiResPath extends ApplicationTemplate {
             rLayer.addRenderable(path);
             insertBeforeCompass(getWwd(), rLayer);
         }
-    }
-
-    public static void main(String[] args) {
-        ApplicationTemplate.start("WorldWind UAVPath Test", AppFrame.class);
     }
 }

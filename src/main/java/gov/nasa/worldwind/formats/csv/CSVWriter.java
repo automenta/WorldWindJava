@@ -8,80 +8,75 @@ package gov.nasa.worldwind.formats.csv;
 import gov.nasa.worldwind.tracks.*;
 import gov.nasa.worldwind.util.Logging;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+
 /**
  * @author dcollins
  * @version $Id: CSVWriter.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class CSVWriter
-{
-    private final java.io.PrintWriter printWriter;
+public class CSVWriter {
+    private final PrintWriter printWriter;
     private int lineNumber = 0;
 
-    public CSVWriter(String path) throws java.io.IOException
-    {
-        if (path == null)
-        {
+    public CSVWriter(String path) throws IOException {
+        if (path == null) {
             String msg = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        this.printWriter = new java.io.PrintWriter(new java.io.BufferedWriter(new java.io.FileWriter(path)));
+        this.printWriter = new PrintWriter(new BufferedWriter(new FileWriter(path)));
     }
 
-    public CSVWriter(java.io.OutputStream stream)
-    {
-        if (stream == null)
-        {
+    public CSVWriter(OutputStream stream) {
+        if (stream == null) {
             String msg = Logging.getMessage("nullValue.InputStreamIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        this.printWriter = new java.io.PrintWriter(new java.io.BufferedWriter(new java.io.OutputStreamWriter(stream)));
+        this.printWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(stream)));
     }
 
-    public void writeTrack(Track track)
-    {
-        if (track == null)
-        {
+    public void writeTrack(Track track) {
+        if (track == null) {
             String msg = Logging.getMessage("nullValue.TrackIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        doWriteTrack(track,this.printWriter);
+        doWriteTrack(track, this.printWriter);
         doFlush();
     }
 
-    public void close()
-    {
+    public void close() {
         doFlush();
         this.printWriter.close();
     }
 
-    private void doWriteTrack(Track track, java.io.PrintWriter out)
-    {
-        if (track != null && track.getSegments() != null)
-        {
-            for (TrackSegment ts : track.getSegments())
+    private void doWriteTrack(Track track, PrintWriter out) {
+        if (track != null && track.getSegments() != null) {
+            for (TrackSegment ts : track.getSegments()) {
                 doWriteTrackSegment(ts, out);
+            }
         }
     }
 
-    private void doWriteTrackSegment(TrackSegment segment, java.io.PrintWriter out)
-    {
-        if (segment != null && segment.getPoints() != null)
-        {
-            for (TrackPoint tp : segment.getPoints())
+    private void doWriteTrackSegment(TrackSegment segment, PrintWriter out) {
+        if (segment != null && segment.getPoints() != null) {
+            for (TrackPoint tp : segment.getPoints()) {
                 doWriteTrackPoint(tp, out);
+            }
         }
     }
 
-    private void doWriteTrackPoint(TrackPoint point, java.io.PrintWriter out)
-    {
-        if (point != null)
-        {
+    private void doWriteTrackPoint(TrackPoint point, PrintWriter out) {
+        if (point != null) {
             int lineNum = this.lineNumber++;
             out.print(lineNum);
             out.print(",");
@@ -96,8 +91,7 @@ public class CSVWriter
         }
     }
 
-    private void doFlush()
-    {
+    private void doFlush() {
         this.printWriter.flush();
     }
 }

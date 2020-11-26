@@ -10,23 +10,25 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.util.*;
 
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author dcollins
  * @version $Id: AnnotationNullLayout.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AnnotationNullLayout extends AbstractAnnotationLayout
-{
-    protected final java.util.Map<Annotation, Object> constraintMap;
+public class AnnotationNullLayout extends AbstractAnnotationLayout {
+    protected final Map<Annotation, Object> constraintMap;
 
-    public AnnotationNullLayout()
-    {
-        this.constraintMap = new java.util.HashMap<>();
+    public AnnotationNullLayout() {
+        this.constraintMap = new HashMap<>();
     }
 
-    public Object getConstraint(Annotation annotation)
-    {
-        if (annotation == null)
-        {
+    public Object getConstraint(Annotation annotation) {
+        if (annotation == null) {
             String message = Logging.getMessage("nullValue.AnnotationIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -35,10 +37,8 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout
         return this.constraintMap.get(annotation);
     }
 
-    public void setConstraint(Annotation annotation, Object constraint)
-    {
-        if (annotation == null)
-        {
+    public void setConstraint(Annotation annotation, Object constraint) {
+        if (annotation == null) {
             String message = Logging.getMessage("nullValue.AnnotationIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -47,30 +47,25 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout
         this.constraintMap.put(annotation, constraint);
     }
 
-    public java.awt.Dimension getPreferredSize(DrawContext dc, Iterable<? extends Annotation> annotations)
-    {
-        if (dc == null)
-        {
+    public Dimension getPreferredSize(DrawContext dc, Iterable<? extends Annotation> annotations) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (annotations == null)
-        {
+        if (annotations == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         // Start with an empty bounding rectangle in the lower left hand corner.
-        java.awt.Rectangle annotationBounds = new java.awt.Rectangle();
+        Rectangle annotationBounds = new Rectangle();
 
-        for (Annotation annotation : annotations)
-        {
-            java.awt.Rectangle b = this.getAnnotationBounds(dc, annotation);
-            if (b != null)
-            {
+        for (Annotation annotation : annotations) {
+            Rectangle b = this.getAnnotationBounds(dc, annotation);
+            if (b != null) {
                 annotationBounds = annotationBounds.union(b);
             }
         }
@@ -78,25 +73,21 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout
         return annotationBounds.getSize();
     }
 
-    public void drawAnnotations(DrawContext dc, java.awt.Rectangle bounds,
-        Iterable<? extends Annotation> annotations, double opacity, Position pickPosition)
-    {
-        if (dc == null)
-        {
+    public void drawAnnotations(DrawContext dc, Rectangle bounds,
+        Iterable<? extends Annotation> annotations, double opacity, Position pickPosition) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (bounds == null)
-        {
+        if (bounds == null) {
             String message = Logging.getMessage("nullValue.RectangleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (annotations == null)
-        {
+        if (annotations == null) {
             String message = Logging.getMessage("nullValue.IterableIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -105,9 +96,8 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         OGLStackHandler stackHandler = new OGLStackHandler();
 
-        for (Annotation annotation : annotations)
-        {
-            java.awt.Rectangle annotationBounds = this.getAnnotationBounds(dc, annotation);
+        for (Annotation annotation : annotations) {
+            Rectangle annotationBounds = this.getAnnotationBounds(dc, annotation);
             annotationBounds = this.adjustAnnotationBounds(dc, bounds, annotation, annotationBounds);
 
             stackHandler.pushModelview(gl);
@@ -120,61 +110,51 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout
         }
     }
 
-    protected java.awt.Rectangle getAnnotationBounds(DrawContext dc, Annotation annotation)
-    {
-        java.awt.Dimension size = this.getAnnotationSize(dc, annotation);
+    protected Rectangle getAnnotationBounds(DrawContext dc, Annotation annotation) {
+        Dimension size = this.getAnnotationSize(dc, annotation);
         if (size == null)
             return null;
 
-        java.awt.Point offset = annotation.getAttributes().getDrawOffset();
+        Point offset = annotation.getAttributes().getDrawOffset();
         if (offset == null)
-            offset = new java.awt.Point();
+            offset = new Point();
 
-        return new java.awt.Rectangle(offset, size);
+        return new Rectangle(offset, size);
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected java.awt.Rectangle adjustAnnotationBounds(DrawContext dc, java.awt.Rectangle parentBounds,
-        Annotation annotation, java.awt.Rectangle bounds)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected Rectangle adjustAnnotationBounds(DrawContext dc, Rectangle parentBounds,
+        Annotation annotation, Rectangle bounds) {
         int x = bounds.x;
         int y = bounds.y;
 
         Object constraint = this.getConstraint(annotation);
 
-        if (constraint == AVKey.WEST)
-        {
+        if (constraint == AVKey.WEST) {
             y += parentBounds.height / 2 - bounds.height / 2;
         }
-        else if (constraint == AVKey.NORTHWEST)
-        {
+        else if (constraint == AVKey.NORTHWEST) {
             y += parentBounds.height - bounds.height;
         }
-        else if (constraint == AVKey.NORTH)
-        {
+        else if (constraint == AVKey.NORTH) {
             x += parentBounds.width / 2 - bounds.width / 2;
             y += parentBounds.height - bounds.height;
         }
-        else if (constraint == AVKey.NORTHEAST)
-        {
+        else if (constraint == AVKey.NORTHEAST) {
             x += parentBounds.width - bounds.width;
             y += parentBounds.height - bounds.height;
         }
-        else if (constraint == AVKey.EAST)
-        {
+        else if (constraint == AVKey.EAST) {
             x += parentBounds.width - bounds.width;
             y += parentBounds.height / 2 - bounds.height / 2;
         }
-        else if (constraint == AVKey.SOUTHEAST)
-        {
+        else if (constraint == AVKey.SOUTHEAST) {
             x += parentBounds.width - bounds.width;
         }
-        else if (constraint == AVKey.SOUTH)
-        {
+        else if (constraint == AVKey.SOUTH) {
             x += parentBounds.width / 2 - bounds.width / 2;
         }
-        else if (constraint == AVKey.CENTER)
-        {
+        else if (constraint == AVKey.CENTER) {
             x += parentBounds.width / 2 - bounds.width / 2;
             y += parentBounds.height / 2 - bounds.height / 2;
         }
@@ -182,6 +162,6 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout
         {
         }
 
-        return new java.awt.Rectangle(x, y, bounds.width, bounds.height);
+        return new Rectangle(x, y, bounds.width, bounds.height);
     }
 }

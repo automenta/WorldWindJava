@@ -8,6 +8,8 @@ package gov.nasa.worldwindx.examples.util;
 import gov.nasa.worldwind.avlist.AVKey;
 
 import javax.sound.sampled.*;
+import javax.swing.event.EventListenerList;
+import java.awt.EventQueue;
 
 /**
  * Plays an audio file.
@@ -15,76 +17,62 @@ import javax.sound.sampled.*;
  * @author Patrick Murris
  * @version $Id: AudioPlayer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class AudioPlayer
-{
-    private javax.sound.sampled.Clip clip;
-    private String status = AVKey.STOP;
+public class AudioPlayer {
+    protected final EventListenerList listenerList = new EventListenerList();
     protected long pausedMicrosecondPosition;
-    protected final javax.swing.event.EventListenerList listenerList = new javax.swing.event.EventListenerList();
-    
+    private Clip clip;
+    private String status = AVKey.STOP;
     protected final LineListener lineListener = this::onLineEvent;
 
-    public AudioPlayer()
-    {
+    public AudioPlayer() {
     }
 
-    public AudioPlayer(Clip clip)
-    {
+    public AudioPlayer(Clip clip) {
         this.setClip(clip);
     }
 
-    public Clip getClip()
-    {
+    public Clip getClip() {
         return this.clip;
     }
 
-    public void setClip(Clip clip)
-    {
+    public void setClip(Clip clip) {
         if (this.clip == clip)
             return;
 
-        if (this.clip != null)
-        {
-            if (this.lineListener != null)
-            {
+        if (this.clip != null) {
+            if (this.lineListener != null) {
                 this.clip.removeLineListener(this.lineListener);
             }
         }
 
         this.clip = clip;
 
-        if (this.clip != null)
-        {
-            if (this.lineListener != null)
-            {
+        if (this.clip != null) {
+            if (this.lineListener != null) {
                 this.clip.addLineListener(this.lineListener);
             }
         }
     }
 
-    public String getStatus()
-    {
+    public String getStatus() {
         return this.status;
     }
 
-    public long getMillisecondLength()
-    {
+    public long getMillisecondLength() {
         if (this.clip == null)
             return 0;
 
         return this.clip.getMicrosecondLength() / 1000;
     }
 
-    public long getMillisecondPosition()
-    {
+    public long getMillisecondPosition() {
         if (this.clip == null)
             return 0;
 
         return this.clip.getMicrosecondPosition() / 1000;
     }
 
-    public void setMillisecondPosition(long position)
-    {
+    public void setMillisecondPosition(long position) {
         if (this.clip == null)
             return;
 
@@ -94,106 +82,89 @@ public class AudioPlayer
         this.clip.setMicrosecondPosition(position * 1000);
     }
 
-    @SuppressWarnings({"StringEquality"})
-    public void play()
-    {
+    @SuppressWarnings("StringEquality")
+    public void play() {
         if (this.clip == null)
             return;
 
-        if (this.getStatus() == AVKey.PAUSE)
-        {
+        if (this.getStatus() == AVKey.PAUSE) {
             this.doStart(this.pausedMicrosecondPosition);
         }
-        else if (this.getStatus() == AVKey.STOP)
-        {
+        else if (this.getStatus() == AVKey.STOP) {
             this.doStart(0);
         }
 
         this.pausedMicrosecondPosition = 0;
     }
 
-    @SuppressWarnings({"StringEquality"})
-    public void stop()
-    {
+    @SuppressWarnings("StringEquality")
+    public void stop() {
         if (this.clip == null)
             return;
 
         this.doStop(0);
     }
 
-    @SuppressWarnings({"StringEquality"})
-    public void pause()
-    {
+    @SuppressWarnings("StringEquality")
+    public void pause() {
         if (this.clip == null)
             return;
 
-        if (this.getStatus() == AVKey.PLAY)
-        {
+        if (this.getStatus() == AVKey.PLAY) {
             this.doPause();
         }
     }
 
-    public LineListener[] getLineListeners()
-    {
+    public LineListener[] getLineListeners() {
         return this.listenerList.getListeners(LineListener.class);
     }
 
-    public void addLineListener(LineListener listener)
-    {
+    public void addLineListener(LineListener listener) {
         this.listenerList.add(LineListener.class, listener);
     }
 
-    public void removeLineListener(LineListener listener)
-    {
+    public void removeLineListener(LineListener listener) {
         this.listenerList.remove(LineListener.class, listener);
     }
 
-    protected void doStart(long microsecondPosition)
-    {
+    protected void doStart(long microsecondPosition) {
         this.status = AVKey.PLAY;
         this.clip.setMicrosecondPosition(microsecondPosition);
         this.clip.start();
     }
 
-    @SuppressWarnings({"StringEquality"})
-    protected void doStop(long microsecondPosition)
-    {
+    @SuppressWarnings("StringEquality")
+    protected void doStop(long microsecondPosition) {
         boolean needToStop = (this.getStatus() != AVKey.STOP);
 
         this.status = AVKey.STOP;
         this.pausedMicrosecondPosition = microsecondPosition;
         this.clip.setMicrosecondPosition(microsecondPosition);
 
-        if (needToStop)
-        {
+        if (needToStop) {
             this.clip.stop();
         }
     }
 
-    protected void doPause()
-    {
+    protected void doPause() {
         this.status = AVKey.PAUSE;
         this.pausedMicrosecondPosition = this.clip.getMicrosecondPosition();
         this.clip.stop();
     }
 
-    protected void onLineEvent(final LineEvent e)
-    {
+    protected void onLineEvent(final LineEvent e) {
         // This event comes from the Java Sound Dispatch Thread. Synchronize access to this class by processing the
         // event on the AWT Event Thread.
-        java.awt.EventQueue.invokeLater(() -> processLineEvent(e));
+        EventQueue.invokeLater(() -> processLineEvent(e));
     }
 
-    @SuppressWarnings({"StringEquality"})
-    protected void processLineEvent(LineEvent e)
-    {
-        if (e.getType() == LineEvent.Type.STOP)
-        {
+    @SuppressWarnings("StringEquality")
+    protected void processLineEvent(LineEvent e) {
+        if (e.getType() == LineEvent.Type.STOP) {
             // If the player's statis is STATUS_PLAY, then this event is arriving because the clip has reached its end,
             // but not due to an explicit call to Clip.stop(). In this case, we must explicity stop the clip to keep
             // the player's state synchronized with the clip.
-            if (this.getStatus() == AVKey.PLAY)
-            {
+            if (this.getStatus() == AVKey.PLAY) {
                 long microsecondLength = this.getClip().getMicrosecondLength();
                 this.doStop(microsecondLength);
             }
@@ -202,17 +173,14 @@ public class AudioPlayer
         this.fireUpdate(e);
     }
 
-    protected void fireUpdate(LineEvent e)
-    {
+    protected void fireUpdate(LineEvent e) {
         // Guaranteed to return a non-null array
         Object[] listeners = this.listenerList.getListenerList();
         // Process the listeners last to first, notifying
         // those that are interested in this event
-        for (int i = listeners.length - 2; i >= 0; i -= 2)
-        {
-            if (listeners[i] == LineListener.class)
-            {
-                ((LineListener) listeners[i+1]).update(e);
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == LineListener.class) {
+                ((LineListener) listeners[i + 1]).update(e);
             }
         }
     }

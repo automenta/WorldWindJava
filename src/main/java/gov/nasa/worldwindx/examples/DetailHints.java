@@ -23,42 +23,35 @@ import java.util.Hashtable;
  * @author Patrick Murris
  * @version $Id: DetailHints.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
-public class DetailHints extends ApplicationTemplate
-{
-    public static class AppFrame extends ApplicationTemplate.AppFrame
-    {
-        public AppFrame()
-        {
+public class DetailHints extends ApplicationTemplate {
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Detail Hints", AppFrame.class);
+    }
+
+    public static class AppFrame extends ApplicationTemplate.AppFrame {
+        public AppFrame() {
             this.makeDetailHintControls();
         }
 
-        protected void setElevationModelDetailHint(double detailHint)
-        {
+        protected void setElevationModelDetailHint(double detailHint) {
             this.setElevationModelDetailHint(getWwd().getModel().getGlobe().getElevationModel(), detailHint);
             System.out.println("Terrain detail hint set to " + detailHint);
         }
 
-        protected void setElevationModelDetailHint(ElevationModel em, double detailHint)
-        {
-            if (em instanceof BasicElevationModel)
-            {
+        protected void setElevationModelDetailHint(ElevationModel em, double detailHint) {
+            if (em instanceof BasicElevationModel) {
                 ((BasicElevationModel) em).setDetailHint(detailHint);
             }
-            else if (em instanceof CompoundElevationModel)
-            {
-                for (ElevationModel m : ((CompoundElevationModel) em).getElevationModels())
-                {
+            else if (em instanceof CompoundElevationModel) {
+                for (ElevationModel m : ((CompoundElevationModel) em).getElevationModels()) {
                     this.setElevationModelDetailHint(m, detailHint);
                 }
             }
         }
 
-        protected void setTiledImageLayerDetailHint(double detailHint)
-        {
-            for (Layer layer : getWwd().getModel().getLayers())
-            {
-                if (layer instanceof TiledImageLayer)
-                {
+        protected void setTiledImageLayerDetailHint(double detailHint) {
+            for (Layer layer : getWwd().getModel().getLayers()) {
+                if (layer instanceof TiledImageLayer) {
                     ((TiledImageLayer) layer).setDetailHint(detailHint);
                 }
             }
@@ -66,8 +59,7 @@ public class DetailHints extends ApplicationTemplate
             System.out.println("Image detail hint set to " + detailHint);
         }
 
-        protected void makeDetailHintControls()
-        {
+        protected void makeDetailHintControls() {
             Box vbox = Box.createVerticalBox();
             vbox.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -84,7 +76,7 @@ public class DetailHints extends ApplicationTemplate
             elevationDetailSlider.setPaintLabels(true);
             elevationDetailSlider.setLabelTable(labelTable);
             elevationDetailSlider.addChangeListener(e -> {
-                double newDetailHint = ((JSlider) e.getSource()).getValue() / 10d;
+                double newDetailHint = ((JSlider) e.getSource()).getValue() / 10.0d;
                 setElevationModelDetailHint(newDetailHint);
                 getWwd().redraw();
             });
@@ -102,7 +94,7 @@ public class DetailHints extends ApplicationTemplate
             imageDetailSlider.setPaintLabels(true);
             imageDetailSlider.setLabelTable(labelTable);
             imageDetailSlider.addChangeListener(e -> {
-                double detailHint = ((JSlider) e.getSource()).getValue() / 10d;
+                double detailHint = ((JSlider) e.getSource()).getValue() / 10.0d;
                 setTiledImageLayerDetailHint(detailHint);
                 getWwd().redraw();
             });
@@ -120,10 +112,5 @@ public class DetailHints extends ApplicationTemplate
             panel.add(vbox, BorderLayout.CENTER);
             this.getControlPanel().add(panel, BorderLayout.SOUTH);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        ApplicationTemplate.start("WorldWind Detail Hints", AppFrame.class);
     }
 }

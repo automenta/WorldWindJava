@@ -25,13 +25,11 @@ import java.util.List;
  * @author Tom Gaskins
  * @version $Id: ElevationModel.java 3420 2015-09-10 23:25:43Z tgaskins $
  */
-public interface ElevationModel extends WWObject, Restorable, Disposable
-{
+public interface ElevationModel extends WWObject, Restorable, Disposable {
     /**
      * Returns the elevation model's name.
      *
      * @return the elevation model's name.
-     *
      * @see #setName(String)
      */
     String getName();
@@ -64,7 +62,6 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      * Returns the current expiry time.
      *
      * @return the current expiry time.
-     *
      * @see #setExpiryTime(long)
      */
     long getExpiryTime();
@@ -76,10 +73,17 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      * construction. The default expiry time is 0, thereby enabling a model's intrinsic expiration criteria.
      *
      * @param expiryTime the expiry time of any cached data, expressed as a number of milliseconds beyond the epoch.
-     *
      * @see System#currentTimeMillis() for a description of milliseconds beyond the epoch.
      */
     void setExpiryTime(long expiryTime);
+
+    /**
+     * Returns the current missing-data signal.
+     *
+     * @return the missing-data signal.
+     * @see #getMissingDataReplacement()
+     */
+    double getMissingDataSignal();
 
     /**
      * Specifies the value used to identify missing data in an elevation model. Locations with this elevation value are
@@ -90,28 +94,17 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      * the metadata, the application may specify it via this method.
      *
      * @param flag the missing-data signal value. The default is -{@link Double#MAX_VALUE}.
-     *
      * @see #setMissingDataReplacement(double)
      * @see #getMissingDataSignal
      */
     void setMissingDataSignal(double flag);
 
     /**
-     * Returns the current missing-data signal.
-     *
-     * @return the missing-data signal.
-     *
-     * @see #getMissingDataReplacement()
-     */
-    double getMissingDataSignal();
-
-    /**
      * Indicates whether the elevation model covers a specified sector either partially or fully.
      *
      * @param sector the sector in question.
-     *
      * @return 0 if the elevation model fully contains the sector, 1 if the elevation model intersects the sector but
-     *         does not fully contain it, or -1 if the sector does not intersect the elevation model.
+     * does not fully contain it, or -1 if the sector does not intersect the elevation model.
      */
     int intersects(Sector sector);
 
@@ -120,7 +113,6 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      *
      * @param latitude  the latitude of the location in question.
      * @param longitude the longitude of the location in question.
-     *
      * @return true if the location is within the elevation model's domain, otherwise false.
      */
     boolean contains(Angle latitude, Angle longitude);
@@ -147,10 +139,9 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      *
      * @param latitude  the latitude of the location in question.
      * @param longitude the longitude of the location in question.
-     *
      * @return A two-element <code>double</code> array indicating, respectively, the minimum and maximum elevations at
-     *         the specified location. These values are the global minimum and maximum if the local minimum and maximum
-     *         values are currently unknown.
+     * the specified location. These values are the global minimum and maximum if the local minimum and maximum values
+     * are currently unknown.
      */
     double[] getExtremeElevations(Angle latitude, Angle longitude);
 
@@ -158,10 +149,9 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      * Returns the minimum and maximum elevations within a specified sector of the elevation model.
      *
      * @param sector the sector in question.
-     *
      * @return A two-element <code>double</code> array indicating, respectively, the sector's minimum and maximum
-     *         elevations. These elements are the global minimum and maximum if the local minimum and maximum values are
-     *         currently unknown.
+     * elevations. These elements are the global minimum and maximum if the local minimum and maximum values are
+     * currently unknown.
      */
     double[] getExtremeElevations(Sector sector);
 
@@ -170,9 +160,8 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      *
      * @param sector the sector in question. If null, the elevation model's best overall resolution is returned. This is
      *               the best attainable at <em>some</em> locations but not necessarily at all locations.
-     *
      * @return the best resolution attainable for the specified sector, in radians, or {@link Double#MAX_VALUE} if the
-     *         sector does not intersect the elevation model.
+     * sector does not intersect the elevation model.
      */
     double getBestResolution(Sector sector);
 
@@ -183,9 +172,7 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      * hint for the sector, this method returns zero.
      *
      * @param sector the sector in question.
-     *
      * @return The detail hint corresponding to the specified sector.
-     *
      * @throws IllegalArgumentException if <code>sector</code> is null.
      */
     double getDetailHint(Sector sector);
@@ -200,12 +187,10 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      *
      * @param latitude  the latitude of the location in question.
      * @param longitude the longitude of the location in question.
-     *
      * @return The elevation corresponding to the specified location, or the elevation model's missing-data replacement
-     *         value if there is no elevation for the given location.
-     *
+     * value if there is no elevation for the given location.
      * @see #setMissingDataSignal(double)
-     * @see #getUnmappedElevation(gov.nasa.worldwind.geom.Angle, gov.nasa.worldwind.geom.Angle)
+     * @see #getUnmappedElevation(Angle, Angle)
      */
     double getElevation(Angle latitude, Angle longitude);
 
@@ -216,10 +201,9 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      *
      * @param latitude  the latitude of the location for which to return the elevation.
      * @param longitude the longitude of the location for which to return the elevation.
-     *
      * @return the elevation at the specified location, or the elevation model's missing data signal. If no data is
-     *         currently in memory for the location, and the location is within the elevation model's coverage area, the
-     *         elevation model's minimum elevation at that location is returned.
+     * currently in memory for the location, and the location is within the elevation model's coverage area, the
+     * elevation model's minimum elevation at that location is returned.
      */
     double getUnmappedElevation(Angle latitude, Angle longitude);
 
@@ -239,14 +223,12 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      *                         same units.)
      * @param buffer           an array in which to place the returned elevations. The array must be pre-allocated and
      *                         contain at least as many elements as the list of locations.
-     *
      * @return the resolution achieved, in radians, or {@link Double#MAX_VALUE} if individual elevations cannot be
-     *         determined for all of the locations.
-     *
+     * determined for all of the locations.
      * @throws IllegalArgumentException if either the sector, latlons list or elevations array is null.
      * @see #setMissingDataSignal(double)
      */
-    @SuppressWarnings({"JavadocReference"})
+    @SuppressWarnings("JavadocReference")
     double getElevations(Sector sector, List<? extends LatLon> latlons, double targetResolution, double[] buffer);
 
     /**
@@ -268,11 +250,9 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      *                         gov.nasa.worldwind.terrain.CompoundElevationModel}.
      * @param buffer           an array in which to place the returned elevations. The array must be pre-allocated and
      *                         contain at least as many elements as the list of locations.
-     *
      * @return the resolutions achieved, in radians, which will be {@link Double#MAX_VALUE} if individual elevations
-     *         cannot be determined for all of the locations. The entries are in the same order as the elevations in
-     *         {@link gov.nasa.worldwind.terrain.CompoundElevationModel}.
-     *
+     * cannot be determined for all of the locations. The entries are in the same order as the elevations in {@link
+     * gov.nasa.worldwind.terrain.CompoundElevationModel}.
      * @throws IllegalArgumentException if either the sector, latlons list, target resolutions array or elevations array
      *                                  is null.
      * @see #setMissingDataSignal(double)
@@ -295,10 +275,8 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      *                         same units.)
      * @param buffer           an array in which to place the returned elevations. The array must be pre-allocated and
      *                         contain at least as many elements as the list of locations.
-     *
      * @return the resolution achieved, in radians, or {@link Double#MAX_VALUE} if individual elevations cannot be
-     *         determined for all of the locations.
-     *
+     * determined for all of the locations.
      * @see #setMissingDataSignal(double)
      */
     double getUnmappedElevations(Sector sector, List<? extends LatLon> latlons, double targetResolution,
@@ -323,11 +301,9 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      *                         gov.nasa.worldwind.terrain.CompoundElevationModel}.
      * @param buffer           an array in which to place the returned elevations. The array must be pre-allocated and
      *                         contain at least as many elements as the list of locations.
-     *
      * @return the resolutions achieved, in radians, which will be {@link Double#MAX_VALUE} if individual elevations
-     *         cannot be determined for all of the locations. The entries are in the same order as the elevations in
-     *         {@link gov.nasa.worldwind.terrain.CompoundElevationModel}.
-     *
+     * cannot be determined for all of the locations. The entries are in the same order as the elevations in {@link
+     * gov.nasa.worldwind.terrain.CompoundElevationModel}.
      * @throws IllegalArgumentException if either the sector, latlons list, target resolutions array or elevations
      *                                  array
      * @see #setMissingDataSignal(double)
@@ -339,7 +315,6 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      * Returns the elevation used for missing values in the elevation model.
      *
      * @return the value that indicates that no data is available at a location.
-     *
      * @see #setMissingDataSignal(double)
      * @see #getMissingDataSignal
      */
@@ -349,7 +324,6 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      * Specifies the elevation used for missing values in the elevation model.
      *
      * @param missingDataValue the value that indicates that no data is available at a location.
-     *
      * @see #setMissingDataSignal(double)
      */
     void setMissingDataReplacement(double missingDataValue);
@@ -362,7 +336,6 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      * @param tileWidth the number of locations that comprise one row in the {@code latlons} argument.
      * @param buffer    a buffer in which to put the elevations. The buffer must have at least as many elements as the
      *                  number of specified locations.
-     *
      * @throws Exception                if the method fails. Different elevation models may fail for different reasons.
      * @throws IllegalArgumentException if either the sector, list of locations or buffer is null, if the buffer size is
      *                                  not at least as large as the location list, or the tile width is greater than
@@ -380,10 +353,16 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      *                         from which elevations are drawn. (To compute radians from a distance, divide the distance
      *                         by the radius of the globe, ensuring that both the distance and the radius are in the
      *                         same units.) Specify null to use this elevation model's best resolution.
-     *
      * @return the fraction of the data that is local. A value of 1.0 indicates that all the data is available.
      */
     double getLocalDataAvailability(Sector sector, Double targetResolution);
+
+    /**
+     * Indicates whether this elevation model is used or ignored.
+     *
+     * @return true if this elevation model is used, otherwise false.
+     */
+    boolean isEnabled();
 
     /**
      * Indicates whether this elevation model is used or ignored.
@@ -393,11 +372,12 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
     void setEnabled(boolean enabled);
 
     /**
-     * Indicates whether this elevation model is used or ignored.
+     * Indicates whether extreme value caching is enabled.
      *
-     * @return true if this elevation model is used, otherwise false.
+     * @return true if extreme values caching is enabled, otherwise false.
+     * @see #setExtremesCachingEnabled(boolean)
      */
-    boolean isEnabled();
+    boolean isExtremesCachingEnabled();
 
     /**
      * Indicates whether extreme values of sectors should be cached as they're computed. Caching should be disabled if
@@ -410,19 +390,11 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
     void setExtremesCachingEnabled(boolean enabled);
 
     /**
-     * Indicates whether extreme value caching is enabled.
-     *
-     * @return true if extreme values caching is enabled, otherwise false.
-     *
-     * @see #setExtremesCachingEnabled(boolean)
-     */
-    boolean isExtremesCachingEnabled();
-
-    /**
      * Returns the elevation for this elevation model's highest level of detail if the source file for that level and
      * the specified location exists in the local elevation cache on disk. This method is useful only when an elevation
      * dataset has been pre-cached.
-     * @param latitude The latitude of the location whose elevation is desired.
+     *
+     * @param latitude  The latitude of the location whose elevation is desired.
      * @param longitude The longitude of the location whose elevation is desired.
      * @return The elevation at the specified location, if that location is contained in this elevation model and the
      * source file for the highest-resolution elevation at that location exists in the current disk cache. Otherwise

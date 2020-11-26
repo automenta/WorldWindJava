@@ -18,24 +18,37 @@ import java.beans.PropertyChangeEvent;
  *
  * @author tag
  * @version $Id: XMLParserNotification.java 1171 2013-02-11 21:45:02Z dcollins $
- * @see gov.nasa.worldwind.util.xml.XMLEventParserContext#setNotificationListener(XMLParserNotificationListener)
- * @see gov.nasa.worldwind.util.xml.XMLParserNotificationListener
+ * @see XMLEventParserContext#setNotificationListener(XMLParserNotificationListener)
+ * @see XMLParserNotificationListener
  */
-public class XMLParserNotification extends PropertyChangeEvent
-{
-    /** A notification type indicating that an exception occurred during parsing. */
+public class XMLParserNotification extends PropertyChangeEvent {
+    /**
+     * A notification type indicating that an exception occurred during parsing.
+     */
     public static final String EXCEPTION = "gov.nasa.worldwind.util.xml.XMLParserNotification.Exception";
-    /** A notification type indicating that a parser encounter an element it did not recognize. */
+    /**
+     * A notification type indicating that a parser encounter an element it did not recognize.
+     */
     public static final String UNRECOGNIZED = "gov.nasa.worldwind.util.xml.XMLParserNotification.Unrecognized";
-    /** Indicates the cause of the notification. */
+    /**
+     * Indicates the cause of the notification.
+     */
     protected final String notificationType;
-    /** The message sent from the object sending the notification. */
+    /**
+     * The message sent from the object sending the notification.
+     */
     protected final String message;
-    /** The <code>XMLEvent</code> associated with the notification, if any. */
+    /**
+     * The <code>XMLEvent</code> associated with the notification, if any.
+     */
     protected final XMLEvent event;
-    /** For exception notifications, the exception that occurred. */
+    /**
+     * For exception notifications, the exception that occurred.
+     */
     protected Exception exception;
-    /** The object initiating the notification. */
+    /**
+     * The object initiating the notification.
+     */
     protected Object notificationSource;
 
     /**
@@ -50,8 +63,7 @@ public class XMLParserNotification extends PropertyChangeEvent
      *                         exception that occurred is passed via this parameter. May be null.
      */
     public XMLParserNotification(Object source, String notificationType, XMLEvent event, String msg, Object oldValue,
-        Object newValue)
-    {
+        Object newValue) {
         super(source, notificationType, oldValue, newValue);
 
         this.notificationSource = source;
@@ -68,8 +80,7 @@ public class XMLParserNotification extends PropertyChangeEvent
      *
      * @return the event associated with the exception.
      */
-    public XMLEvent getEvent()
-    {
+    public XMLEvent getEvent() {
         return this.event;
     }
 
@@ -78,8 +89,7 @@ public class XMLParserNotification extends PropertyChangeEvent
      *
      * @return the message associated with the exception.
      */
-    public String getMessage()
-    {
+    public String getMessage() {
         return this.message;
     }
 
@@ -87,12 +97,10 @@ public class XMLParserNotification extends PropertyChangeEvent
      * The notification type.
      *
      * @return the notification type.
-     *
      * @see #EXCEPTION
      * @see #UNRECOGNIZED
      */
-    public String getNotificationType()
-    {
+    public String getNotificationType() {
         return this.notificationType;
     }
 
@@ -101,8 +109,7 @@ public class XMLParserNotification extends PropertyChangeEvent
      *
      * @return the associated exception, or null if this is not an exception notification.
      */
-    public Exception getException()
-    {
+    public Exception getException() {
         return this.exception;
     }
 
@@ -111,8 +118,7 @@ public class XMLParserNotification extends PropertyChangeEvent
      *
      * @return the object initiating the exception.
      */
-    public Object getSource()
-    {
+    public Object getSource() {
         return this.notificationSource;
     }
 
@@ -122,25 +128,21 @@ public class XMLParserNotification extends PropertyChangeEvent
      *
      * @param notificationSource the source to assign the exception.
      */
-    public void setSource(Object notificationSource)
-    {
+    public void setSource(Object notificationSource) {
         this.notificationSource = notificationSource;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         String msg;
 
-        if (this.event != null)
-        {
+        if (this.event != null) {
             msg = Logging.getMessage(this.message, this.event.toString(),
                 this.event.getLocation().getLineNumber(),
                 this.event.getLocation().getColumnNumber(),
                 this.event.getLocation().getCharacterOffset());
         }
-        else
-        {
+        else {
             msg = Logging.getMessage(this.message, "", "", "");
         }
 

@@ -21,8 +21,7 @@ import java.nio.ByteBuffer;
  * @author tag
  * @version $Id: ShapefileRecordMultiPoint.java 2303 2014-09-14 22:33:36Z dcollins $
  */
-public class ShapefileRecordMultiPoint extends ShapefileRecord
-{
+public class ShapefileRecordMultiPoint extends ShapefileRecord {
     protected double[] boundingRectangle;
     protected double[] zRange; // non-null only for Z types
     protected double[] zValues; // non-null only for Z types
@@ -30,25 +29,24 @@ public class ShapefileRecordMultiPoint extends ShapefileRecord
     protected double[] mValues; // will be null if no measures
 
     /**
-     * Constructs a record instance from the given {@link java.nio.ByteBuffer}. The buffer's current position must be
+     * Constructs a record instance from the given {@link ByteBuffer}. The buffer's current position must be
      * the start of the record, and will be the start of the next record when the constructor returns.
      *
      * @param shapeFile the parent {@link Shapefile}.
-     * @param buffer    the shapefile record {@link java.nio.ByteBuffer} to read from.
-     *
-     * @throws IllegalArgumentException if any argument is null or otherwise invalid.
-     * @throws gov.nasa.worldwind.exception.WWRuntimeException
-     *                                  if the record's shape type does not match that of the shapefile.
+     * @param buffer    the shapefile record {@link ByteBuffer} to read from.
+     * @throws IllegalArgumentException                        if any argument is null or otherwise invalid.
+     * @throws gov.nasa.worldwind.exception.WWRuntimeException if the record's shape type does not match that of the
+     *                                                         shapefile.
      */
-    public ShapefileRecordMultiPoint(Shapefile shapeFile, ByteBuffer buffer)
-    {
+    public ShapefileRecordMultiPoint(Shapefile shapeFile, ByteBuffer buffer) {
         super(shapeFile, buffer);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean isMultiPointRecord()
-    {
+    public boolean isMultiPointRecord() {
         return true;
     }
 
@@ -57,11 +55,9 @@ public class ShapefileRecordMultiPoint extends ShapefileRecord
      * start at zero.
      *
      * @param partNumber the number of the part of this record - zero based.
-     *
      * @return an {@link Iterable} over the points X and Y coordinates.
      */
-    public Iterable<double[]> getPoints(int partNumber)
-    {
+    public Iterable<double[]> getPoints(int partNumber) {
         return this.getPointBuffer(partNumber).getCoords();
     }
 
@@ -70,8 +66,7 @@ public class ShapefileRecordMultiPoint extends ShapefileRecord
      *
      * @return the shape's Z range. The range minimum is at index 0, the maximum at index 1.
      */
-    public double[] getZRange()
-    {
+    public double[] getZRange() {
         return this.zRange;
     }
 
@@ -80,8 +75,7 @@ public class ShapefileRecordMultiPoint extends ShapefileRecord
      *
      * @return the shape's Z values.
      */
-    public double[] getZValues()
-    {
+    public double[] getZValues() {
         return this.zValues;
     }
 
@@ -89,10 +83,9 @@ public class ShapefileRecordMultiPoint extends ShapefileRecord
      * Returns the shape's optional measure range.
      *
      * @return the shape's measure range, or null if no measures are in the record. The range minimum is at index 0, the
-     *         maximum at index 1.
+     * maximum at index 1.
      */
-    public double[] getMRange()
-    {
+    public double[] getMRange() {
         return this.mRange;
     }
 
@@ -101,22 +94,23 @@ public class ShapefileRecordMultiPoint extends ShapefileRecord
      *
      * @return the shape's measure values, or null if no measures are in the record.
      */
-    public double[] getMValues()
-    {
+    public double[] getMValues() {
         return this.mValues;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public double[] getBoundingRectangle()
-    {
+    public double[] getBoundingRectangle() {
         return this.boundingRectangle;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void doReadFromBuffer(Shapefile shapefile, ByteBuffer buffer)
-    {
+    protected void doReadFromBuffer(Shapefile shapefile, ByteBuffer buffer) {
         // Read the bounding rectangle.
         Shapefile.BoundingRectangle rect = shapefile.readBoundingRectangle(buffer);
         this.boundingRectangle = rect.coords;
@@ -131,8 +125,7 @@ public class ShapefileRecordMultiPoint extends ShapefileRecord
         this.numberOfPoints = buffer.getInt();
         this.firstPartNumber = -1;
 
-        if (this.numberOfPoints > 0)
-        {
+        if (this.numberOfPoints > 0) {
             // Add the record's points to the Shapefile's point buffer, and record this record's part offset in the
             // Shapefile's point buffer.
             this.firstPartNumber = shapefile.addPoints(this, buffer, this.numberOfPoints);
@@ -152,8 +145,7 @@ public class ShapefileRecordMultiPoint extends ShapefileRecord
      *
      * @param buffer the record buffer to read from.
      */
-    protected void readZ(ByteBuffer buffer)
-    {
+    protected void readZ(ByteBuffer buffer) {
         this.zRange = ShapefileUtils.readDoubleArray(buffer, 2);
         this.zValues = ShapefileUtils.readDoubleArray(buffer, this.getNumberOfPoints());
     }
@@ -163,11 +155,9 @@ public class ShapefileRecordMultiPoint extends ShapefileRecord
      *
      * @param buffer the record buffer to read from.
      */
-    protected void readOptionalMeasures(ByteBuffer buffer)
-    {
+    protected void readOptionalMeasures(ByteBuffer buffer) {
         // Measure values are optional.
-        if (buffer.hasRemaining() && (buffer.limit() - buffer.position()) >= (this.getNumberOfPoints() * 8))
-        {
+        if (buffer.hasRemaining() && (buffer.limit() - buffer.position()) >= (this.getNumberOfPoints() * 8)) {
             this.mRange = ShapefileUtils.readDoubleArray(buffer, 2);
             this.mValues = ShapefileUtils.readDoubleArray(buffer, this.getNumberOfPoints());
         }
@@ -177,13 +167,10 @@ public class ShapefileRecordMultiPoint extends ShapefileRecord
      * Export the record to KML as a {@code <Placemark>} element.
      *
      * @param xmlWriter XML writer to receive the generated KML.
-     *
-     * @throws javax.xml.stream.XMLStreamException
-     *                             If an exception occurs while writing the KML
+     * @throws XMLStreamException If an exception occurs while writing the KML
      */
     @Override
-    public void exportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException
-    {
+    public void exportAsKML(XMLStreamWriter xmlWriter) throws XMLStreamException {
         xmlWriter.writeStartElement("Placemark");
         xmlWriter.writeStartElement("name");
         xmlWriter.writeCharacters(Integer.toString(this.getRecordNumber()));
@@ -198,8 +185,7 @@ public class ShapefileRecordMultiPoint extends ShapefileRecord
         double[] zValues = this.getZValues();
 
         int index = 0;
-        for (double[] point : points)
-        {
+        for (double[] point : points) {
             xmlWriter.writeStartElement("Point");
 
             double z = 0.0;

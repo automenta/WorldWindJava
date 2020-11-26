@@ -14,15 +14,13 @@ import gov.nasa.worldwind.util.WWUtil;
  * @author pabercrombie
  * @version $Id: ColladaUnit.java 654 2012-06-25 04:15:52Z pabercrombie $
  */
-public class ColladaUnit extends ColladaAbstractObject
-{
+public class ColladaUnit extends ColladaAbstractObject {
     /**
      * Construct an instance.
      *
      * @param ns the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public ColladaUnit(String ns)
-    {
+    public ColladaUnit(String ns) {
         super(ns);
     }
 
@@ -32,8 +30,7 @@ public class ColladaUnit extends ColladaAbstractObject
      *
      * @return The scaling factor, or null if none is defined.
      */
-    public Double getMeter()
-    {
+    public Double getMeter() {
         String s = (String) this.getField("meter");
         return WWUtil.makeDouble(s);
     }

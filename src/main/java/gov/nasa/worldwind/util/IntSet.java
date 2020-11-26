@@ -15,38 +15,18 @@ package gov.nasa.worldwind.util;
  * @author dcollins
  * @version $Id: IntSet.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class IntSet
-{
+public class IntSet {
     protected static final int DEFAULT_NUM_BUCKETS = 128;
     protected static final int DEFAULT_BUCKET_CAPACITY = 8;
-
-    protected static class Bucket
-    {
-        public int[] values;
-        public int length;
-
-        public Bucket(int initialCapacity)
-        {
-            if (initialCapacity < 1)
-            {
-                String msg = Logging.getMessage("generic.SizeOutOfRange", initialCapacity);
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
-
-            this.values = new int[initialCapacity];
-            this.length = 0;
-        }
-    }
-
     protected Bucket[] buckets;
     protected int numBuckets;
     protected int bucketInitialCapacity;
     protected int size;
 
-    /** Creates an empty IntSet with the default number of buckets and initial bucket capacity. */
-    public IntSet()
-    {
+    /**
+     * Creates an empty IntSet with the default number of buckets and initial bucket capacity.
+     */
+    public IntSet() {
         this(DEFAULT_NUM_BUCKETS, DEFAULT_BUCKET_CAPACITY);
     }
 
@@ -58,20 +38,16 @@ public class IntSet
      *
      * @param numBuckets            the number of buckets this IntSet uses to
      * @param bucketInitialCapacity the initial capacity for each bucket.
-     *
      * @throws IllegalArgumentException if either numBuckets or bucketInitialCapacity is less than 1.
      */
-    public IntSet(int numBuckets, int bucketInitialCapacity)
-    {
-        if (numBuckets < 1)
-        {
+    public IntSet(int numBuckets, int bucketInitialCapacity) {
+        if (numBuckets < 1) {
             String msg = Logging.getMessage("generic.SizeOutOfRange", numBuckets);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (bucketInitialCapacity < 1)
-        {
+        if (bucketInitialCapacity < 1) {
             String msg = Logging.getMessage("generic.SizeOutOfRange", bucketInitialCapacity);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -87,8 +63,7 @@ public class IntSet
      *
      * @return the set's size.
      */
-    public int size()
-    {
+    public int size() {
         return this.size;
     }
 
@@ -97,29 +72,23 @@ public class IntSet
      * returns true. Otherwise this does nothing and returns false.
      *
      * @param value the value to add.
-     *
      * @return true if the value is added to this set, otherwise false.
      */
-    public boolean add(int value)
-    {
+    public boolean add(int value) {
         int index = value % this.numBuckets;
         Bucket bucket = this.buckets[index];
 
-        if (bucket == null)
-        {
+        if (bucket == null) {
             bucket = this.buckets[index] = new Bucket(this.bucketInitialCapacity);
         }
-        else
-        {
-            for (int i = 0; i < bucket.length; i++)
-            {
+        else {
+            for (int i = 0; i < bucket.length; i++) {
                 if (bucket.values[i] == value)
                     return false;
             }
         }
 
-        if (bucket.values.length <= bucket.length)
-        {
+        if (bucket.values.length <= bucket.length) {
             int[] tmp = new int[2 * bucket.values.length];
             System.arraycopy(bucket.values, 0, tmp, 0, bucket.values.length);
             bucket.values = tmp;
@@ -136,11 +105,9 @@ public class IntSet
      * false. Otherwise this removes the value and returns true.
      *
      * @param value the value to remove.
-     *
      * @return true of the value is removed from this set, otherwise false.
      */
-    public boolean remove(int value)
-    {
+    public boolean remove(int value) {
         int index = value % this.numBuckets;
         Bucket bucket = this.buckets[index];
 
@@ -148,8 +115,7 @@ public class IntSet
             return false;
 
         int i;
-        for (i = 0; i < bucket.length; i++)
-        {
+        for (i = 0; i < bucket.length; i++) {
             if (bucket.values[i] == value)
                 break;
         }
@@ -157,8 +123,7 @@ public class IntSet
         if (i == bucket.length)
             return false;
 
-        if (i < bucket.length - 1)
-        {
+        if (i < bucket.length - 1) {
             System.arraycopy(bucket.values, i + 1, bucket.values, i, bucket.length - i - 1);
         }
 
@@ -172,19 +137,16 @@ public class IntSet
      * Indicates whether this set contains the specified value.
      *
      * @param value the value to test.
-     *
      * @return true if this set contains the value, otherwise false.
      */
-    public boolean contains(int value)
-    {
+    public boolean contains(int value) {
         int index = value % this.numBuckets;
         Bucket bucket = this.buckets[index];
 
         if (bucket == null)
             return false;
 
-        for (int i = 0; i < bucket.length; i++)
-        {
+        for (int i = 0; i < bucket.length; i++) {
             if (bucket.values[i] == value)
                 return true;
         }
@@ -192,11 +154,11 @@ public class IntSet
         return false;
     }
 
-    /** Removes all of the values from this set. This set is empty after this call returns. */
-    public void clear()
-    {
-        for (int i = 0; i < this.numBuckets; i++)
-        {
+    /**
+     * Removes all of the values from this set. This set is empty after this call returns.
+     */
+    public void clear() {
+        for (int i = 0; i < this.numBuckets; i++) {
             if (this.buckets[i] != null)
                 this.buckets[i].length = 0;
         }
@@ -210,27 +172,39 @@ public class IntSet
      * with length equal to this set's size.
      *
      * @param array the array into which the values are stored.
-     *
      * @return the array of values in this set, or a new array if the specified array is <code>null</code> or not large
-     *         enough.
+     * enough.
      */
-    public int[] toArray(int[] array)
-    {
+    public int[] toArray(int[] array) {
         if (array == null || array.length < this.size)
             array = new int[this.size];
 
         int offset = 0;
 
-        for (int i = 0; i < this.numBuckets; i++)
-        {
+        for (int i = 0; i < this.numBuckets; i++) {
             Bucket bucket = this.buckets[i];
-            if (bucket != null)
-            {
+            if (bucket != null) {
                 System.arraycopy(bucket.values, 0, array, offset, bucket.length);
                 offset += bucket.length;
             }
         }
 
         return array;
+    }
+
+    protected static class Bucket {
+        public int[] values;
+        public int length;
+
+        public Bucket(int initialCapacity) {
+            if (initialCapacity < 1) {
+                String msg = Logging.getMessage("generic.SizeOutOfRange", initialCapacity);
+                Logging.logger().severe(msg);
+                throw new IllegalArgumentException(msg);
+            }
+
+            this.values = new int[initialCapacity];
+            this.length = 0;
+        }
     }
 }

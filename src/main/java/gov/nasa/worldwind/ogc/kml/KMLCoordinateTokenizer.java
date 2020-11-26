@@ -37,13 +37,10 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id: KMLCoordinateTokenizer.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class KMLCoordinateTokenizer
-{
-    protected int i;
+public class KMLCoordinateTokenizer {
     protected final char[] buffer;
-
     protected final List<String> words = new ArrayList<>(3);
-
+    protected int i;
     protected StringBuilder nextWord = new StringBuilder();
 
     protected boolean inWord;
@@ -54,8 +51,7 @@ public class KMLCoordinateTokenizer
      *
      * @param s String to read from.
      */
-    public KMLCoordinateTokenizer(String s)
-    {
+    public KMLCoordinateTokenizer(String s) {
         this.buffer = s.trim().toCharArray();
     }
 
@@ -64,8 +60,7 @@ public class KMLCoordinateTokenizer
      *
      * @return True if there are more coordinates to read from the string.
      */
-    public boolean hasMoreTokens()
-    {
+    public boolean hasMoreTokens() {
         return i < buffer.length;
     }
 
@@ -73,19 +68,15 @@ public class KMLCoordinateTokenizer
      * Read the next {@link Position} from the coordinate string.
      *
      * @return Next Position, or null if an error occurs while parsing the position (number format exception, etc).
-     *
      * @throws NumberFormatException if the coordinates cannot be parsed to a number.
      */
-    public Position nextPosition() throws NumberFormatException
-    {
+    public Position nextPosition() throws NumberFormatException {
         this.words.clear();
 
-        while (this.i < this.buffer.length)
-        {
+        while (this.i < this.buffer.length) {
             char ch = this.buffer[this.i++];
 
-            if (Character.isWhitespace(ch))
-            {
+            if (Character.isWhitespace(ch)) {
                 if (this.inWord)
                     wordBoundary();
 
@@ -93,8 +84,7 @@ public class KMLCoordinateTokenizer
                 if (!this.afterComma && this.words.size() >= 2)
                     break;
             }
-            else if (ch == ',')
-            {
+            else if (ch == ',') {
                 if (this.inWord)
                     wordBoundary();
 
@@ -104,8 +94,7 @@ public class KMLCoordinateTokenizer
                 if (this.words.size() >= 3)
                     break;
             }
-            else
-            {
+            else {
                 this.inWord = true;
                 this.afterComma = false;
                 this.nextWord.append(ch);
@@ -118,8 +107,7 @@ public class KMLCoordinateTokenizer
         return this.makePosition();
     }
 
-    protected Position makePosition()
-    {
+    protected Position makePosition() {
         if (this.words.size() > 2)
             return Position.fromDegrees(Double.parseDouble(this.words.get(1)), Double.parseDouble(this.words.get(0)),
                 Double.parseDouble(this.words.get(2)));
@@ -128,8 +116,7 @@ public class KMLCoordinateTokenizer
         return null;
     }
 
-    protected void wordBoundary()
-    {
+    protected void wordBoundary() {
         this.inWord = false;
         this.words.add(this.nextWord.toString());
         this.nextWord = new StringBuilder();

@@ -16,35 +16,28 @@ import java.util.*;
  * @author tag
  * @version $Id$
  */
-public class WCS100ContentMetadata extends AbstractXMLEventParser
-{
+public class WCS100ContentMetadata extends AbstractXMLEventParser {
     protected final List<WCS100CoverageOfferingBrief> coverageOfferings = new ArrayList<>(1);
 
-    public WCS100ContentMetadata(String namespaceURI)
-    {
+    public WCS100ContentMetadata(String namespaceURI) {
         super(namespaceURI);
     }
 
-    public List<WCS100CoverageOfferingBrief> getCoverageOfferings()
-    {
+    public List<WCS100CoverageOfferingBrief> getCoverageOfferings() {
         return this.coverageOfferings;
     }
 
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
-        if (ctx.isStartElement(event, "CoverageOfferingBrief"))
-        {
+        throws XMLStreamException {
+        if (ctx.isStartElement(event, "CoverageOfferingBrief")) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WCS100CoverageOfferingBrief)
                     this.coverageOfferings.add((WCS100CoverageOfferingBrief) o);
             }
         }
-        else
-        {
+        else {
             super.doParseEventContent(ctx, event, args);
         }
     }

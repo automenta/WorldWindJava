@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwindx.examples;
 
+import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.TerrainProfileLayer;
 import gov.nasa.worldwind.view.orbit.OrbitView;
@@ -16,7 +17,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * This application shows the {@link gov.nasa.worldwind.layers.TerrainProfileLayer} in action with its various controls.
+ * This application shows the {@link TerrainProfileLayer} in action with its various controls.
  * It allows you to view a real-time section profile graph for any place on the planet, at any scale - continent,
  * country or mountain range - just by moving the mouse.
  * <p>
@@ -27,6 +28,10 @@ import java.awt.event.*;
  * @version $Id: TerrainProfiler.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class TerrainProfiler extends ApplicationTemplate {
+
+    public static void main(String[] args) {
+        ApplicationTemplate.start("WorldWind Terrain Profiler", AppFrame.class);
+    }
 
     @SuppressWarnings("unchecked")
     public static class AppFrame extends ApplicationTemplate.AppFrame {
@@ -64,7 +69,8 @@ public class TerrainProfiler extends ApplicationTemplate {
 
                 // Add control panel
                 this.getControlPanel().add(makeControlPanel(), BorderLayout.SOUTH);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -105,7 +111,7 @@ public class TerrainProfiler extends ApplicationTemplate {
             // Dimension combo
             JPanel dimensionPanel = new JPanel(new GridLayout(0, 2, 0, 0));
             dimensionPanel.add(new JLabel("  Dimension:"));
-            final JComboBox cbDimension = new JComboBox(new String[]{"Small", "Medium", "Large"});
+            final JComboBox cbDimension = new JComboBox(new String[] {"Small", "Medium", "Large"});
             cbDimension.addActionListener((ActionEvent actionEvent) -> {
                 String size = (String) cbDimension.getSelectedItem();
                 switch (size) {
@@ -129,7 +135,7 @@ public class TerrainProfiler extends ApplicationTemplate {
             // Profile length factor slider
             JPanel sliderPanel = new JPanel(new GridLayout(0, 1, 0, 0));
             JSlider s = new JSlider(JSlider.HORIZONTAL, 0, 30,
-                    (int) (this.profileLengthFactor * 10));  // -5 - 5 in tenth
+                (int) (this.profileLengthFactor * 10));  // -5 - 5 in tenth
             s.setMajorTickSpacing(10);
             s.setMinorTickSpacing(1);
             //s.setPaintTicks(true);
@@ -154,7 +160,7 @@ public class TerrainProfiler extends ApplicationTemplate {
             // Follow behavior combo
             JPanel followPanel = new JPanel(new GridLayout(0, 2, 0, 0));
             followPanel.add(new JLabel("  Follow:"));
-            final JComboBox cbFollow = new JComboBox(new String[]{"View", "Cursor", "Eye", "None", "Object"});
+            final JComboBox cbFollow = new JComboBox(new String[] {"View", "Cursor", "Eye", "None", "Object"});
             cbFollow.addActionListener((ActionEvent actionEvent) -> {
                 String size = (String) cbFollow.getSelectedItem();
                 switch (size) {
@@ -187,7 +193,7 @@ public class TerrainProfiler extends ApplicationTemplate {
                         helpLabel.setEnabled(true);
                         showEyeCheck.setEnabled(true);
                         lengthSlider.setEnabled(true);
-                        OrbitView view = (OrbitView) getWwd().getView();
+                        View view = getWwd().getView();
                         tpl.setObjectPosition(getWwd().getView().getEyePosition());
                         tpl.setObjectHeading(view.getHeading());
                         break;
@@ -207,7 +213,7 @@ public class TerrainProfiler extends ApplicationTemplate {
             controlPanel.add(sliderPanel);
             controlPanel.add(textPanel);
             controlPanel.setBorder(
-                    new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("Terrain profile")));
+                new CompoundBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9), new TitledBorder("Terrain profile")));
             controlPanel.setToolTipText("Terrain profile controls");
             return controlPanel;
         }
@@ -222,9 +228,5 @@ public class TerrainProfiler extends ApplicationTemplate {
             this.tpl.setProfileLengthFactor(this.profileLengthFactor);
             this.getWwd().redraw();
         }
-    }
-
-    public static void main(String[] args) {
-        ApplicationTemplate.start("WorldWind Terrain Profiler", AppFrame.class);
     }
 }

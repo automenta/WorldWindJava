@@ -13,20 +13,16 @@ import java.util.Date;
  * @author jym
  * @version $Id: ScheduledInterpolator.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ScheduledInterpolator implements Interpolator
-{
-    private long startTime = -1;
+public class ScheduledInterpolator implements Interpolator {
     private final long length;
+    private long startTime = -1;
 
-    public ScheduledInterpolator(long lengthMillis)
-    {
+    public ScheduledInterpolator(long lengthMillis) {
         this(null, lengthMillis);
     }
 
-    public ScheduledInterpolator(Date startTime, long lengthMillis)
-    {
-        if (lengthMillis < 0)
-        {
+    public ScheduledInterpolator(Date startTime, long lengthMillis) {
+        if (lengthMillis < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", lengthMillis);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -37,17 +33,14 @@ public class ScheduledInterpolator implements Interpolator
         this.length = lengthMillis;
     }
 
-    public ScheduledInterpolator(Date startTime, Date stopTime)
-    {
-        if (startTime == null || stopTime == null)
-        {
+    public ScheduledInterpolator(Date startTime, Date stopTime) {
+        if (startTime == null || stopTime == null) {
             String message = Logging.getMessage("nullValue.DateIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (startTime.after(stopTime))
-        {
+        if (startTime.after(stopTime)) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", startTime);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -57,9 +50,7 @@ public class ScheduledInterpolator implements Interpolator
         this.length = stopTime.getTime() - startTime.getTime();
     }
 
-    public double nextInterpolant()
-    {
-
+    public double nextInterpolant() {
 
         long currentTime = System.currentTimeMillis();
         // When no start time is specified, begin counting time on the first run.
@@ -70,8 +61,7 @@ public class ScheduledInterpolator implements Interpolator
             return 0;
 
         long elapsedTime = currentTime - this.startTime;
-        double unclampedInterpolant = ((double) elapsedTime) / ((double) this.length);
+        double unclampedInterpolant = ((double) elapsedTime) / this.length;
         return AnimationSupport.clampDouble(unclampedInterpolant, 0, 1);
     }
-
 }

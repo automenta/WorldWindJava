@@ -11,6 +11,7 @@ import gov.nasa.worldwind.util.*;
 
 import java.io.InputStream;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * MIL-DTL-89045 3.5.3.1
@@ -18,16 +19,16 @@ import java.util.*;
  * @author dcollins
  * @version $Id: GeoSymTableReader.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class GeoSymTableReader
-{
-    public GeoSymTableReader()
-    {
+public class GeoSymTableReader {
+    public GeoSymTableReader() {
     }
 
-    public boolean canRead(String filePath)
-    {
-        if (filePath == null)
-        {
+    protected static boolean isEmpty(String s) {
+        return s.isEmpty() || s.equals("-");
+    }
+
+    public boolean canRead(String filePath) {
+        if (filePath == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -36,15 +37,12 @@ public class GeoSymTableReader
         Object streamOrException = null;
         boolean result = false;
 
-        try
-        {
+        try {
             streamOrException = WWIO.getFileOrResourceAsStream(filePath, this.getClass());
             result = (streamOrException instanceof InputStream);
         }
-        finally
-        {
-            if (streamOrException instanceof InputStream)
-            {
+        finally {
+            if (streamOrException instanceof InputStream) {
                 WWIO.closeStream(streamOrException, filePath);
             }
         }
@@ -52,48 +50,40 @@ public class GeoSymTableReader
         return result;
     }
 
-    public GeoSymTable read(String filePath)
-    {
-        if (filePath == null)
-        {
+    public GeoSymTable read(String filePath) {
+        if (filePath == null) {
             String message = Logging.getMessage("nullValue.FilePathIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             return this.doRead(filePath);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             String message = Logging.getMessage("VPF.ExceptionAttemptingToReadTable", filePath);
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
+            Logging.logger().log(Level.SEVERE, message, e);
             throw new WWRuntimeException(message, e);
         }
     }
 
-    protected GeoSymTable doRead(String filePath)
-    {
+    protected GeoSymTable doRead(String filePath) {
         InputStream inputStream = null;
         GeoSymTable result = null;
 
-        try
-        {
+        try {
             inputStream = WWIO.openFileOrResourceStream(filePath, this.getClass());
             result = this.readTable(filePath, inputStream);
         }
-        finally
-        {
+        finally {
             WWIO.closeStream(inputStream, filePath);
         }
 
         return result;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected GeoSymTable readTable(String filePath, InputStream inputStream)
-    {
+    @SuppressWarnings("UnusedDeclaration")
+    protected GeoSymTable readTable(String filePath, InputStream inputStream) {
         Scanner scanner = new Scanner(inputStream);
 
         // Read the table header.
@@ -106,8 +96,7 @@ public class GeoSymTableReader
         return table;
     }
 
-    protected void readHeader(Scanner scanner, GeoSymTableHeader header)
-    {
+    protected void readHeader(Scanner scanner, GeoSymTableHeader header) {
         header.removeAllColumns();
 
         String string = scanner.nextLine();
@@ -123,20 +112,17 @@ public class GeoSymTableReader
         if (s != null && !isEmpty(s))
             header.setDescription(s);
 
-        while (!(string = scanner.nextLine()).equals(";"))
-        {
+        while (!(string = scanner.nextLine()).equals(";")) {
             GeoSymColumn col = this.readColumn(string);
             header.addColumn(col);
         }
     }
 
-    protected GeoSymColumn readColumn(String string)
-    {
+    protected GeoSymColumn readColumn(String string) {
         String[] tokens = string.split("[=,:]");
 
         String s = tokens[0].trim();
-        if (s == null)
-        {
+        if (s == null) {
             String message = Logging.getMessage("VPF.MissingColumnName");
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
@@ -163,14 +149,12 @@ public class GeoSymTableReader
         return col;
     }
 
-    protected void readRecords(Scanner scanner, GeoSymTable table)
-    {
-        ArrayList<AVList> list = new ArrayList<>();
+    protected void readRecords(Scanner scanner, GeoSymTable table) {
+        List<AVList> list = new ArrayList<>();
 
-        while (scanner.hasNextLine())
-        {
+        while (scanner.hasNextLine()) {
             String s = scanner.nextLine().trim();
-            if (s.length() == 0)
+            if (s.isEmpty())
                 continue;
 
             AVList record = new AVListImpl();
@@ -184,34 +168,25 @@ public class GeoSymTableReader
         table.setRecords(array);
     }
 
-    protected void readRecord(String string, GeoSymTable table, AVList record)
-    {
+    protected void readRecord(String string, GeoSymTable table, AVList record) {
         Collection<? extends GeoSymColumn> columns = table.getHeader().getColumns();
         String[] tokens = string.split("[|]");
 
         int index = 0;
-        for (GeoSymColumn col : columns)
-        {
+        for (GeoSymColumn col : columns) {
             String s = (index < tokens.length) ? tokens[index++].trim() : null;
             Object o = null;
 
-            if (col.getDataType().equalsIgnoreCase(GeoSymConstants.INTEGER))
-            {
+            if (col.getDataType().equalsIgnoreCase(GeoSymConstants.INTEGER)) {
                 if (s != null)
                     o = WWUtil.convertStringToInteger(s);
             }
-            else if (col.getDataType().equalsIgnoreCase(GeoSymConstants.CHARACTER_STRING))
-            {
-                if (s != null && s.length() > 0)
+            else if (col.getDataType().equalsIgnoreCase(GeoSymConstants.CHARACTER_STRING)) {
+                if (s != null && !s.isEmpty())
                     o = s;
             }
 
             record.setValue(col.getName(), o);
         }
-    }
-
-    protected static boolean isEmpty(String s)
-    {
-        return s.length() == 0 || s.equals("-");
     }
 }

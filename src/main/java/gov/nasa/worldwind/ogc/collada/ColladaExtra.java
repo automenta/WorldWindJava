@@ -12,15 +12,13 @@ package gov.nasa.worldwind.ogc.collada;
  * @author pabercrombie
  * @version $Id: ColladaExtra.java 654 2012-06-25 04:15:52Z pabercrombie $
  */
-public class ColladaExtra extends ColladaAbstractObject
-{
+public class ColladaExtra extends ColladaAbstractObject {
     /**
      * Construct an instance.
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
      */
-    public ColladaExtra(String namespaceURI)
-    {
+    public ColladaExtra(String namespaceURI) {
         super(namespaceURI);
     }
 }

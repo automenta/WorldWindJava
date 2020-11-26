@@ -15,20 +15,22 @@ import gov.nasa.worldwind.util.Logging;
  * @author Tom Gaskins
  * @version $Id: Frustum.java 2178 2014-07-25 16:40:09Z dcollins $
  */
-public class Frustum
-{
+public class Frustum {
     protected final Plane left;
     protected final Plane right;
     protected final Plane bottom;
     protected final Plane top;
     protected final Plane near;
     protected final Plane far;
-    /** Holds all six frustum planes in an array in the order left, right, bottom, top, near, far. */
+    /**
+     * Holds all six frustum planes in an array in the order left, right, bottom, top, near, far.
+     */
     protected final Plane[] allPlanes;
 
-    /** Constructs a frustum two meters wide centered at the origin. Primarily used for testing. */
-    public Frustum()
-    {
+    /**
+     * Constructs a frustum two meters wide centered at the origin. Primarily used for testing.
+     */
+    public Frustum() {
         this(
             new Plane(1, 0, 0, 1),  // Left
             new Plane(-1, 0, 0, 1),  // Right
@@ -39,7 +41,7 @@ public class Frustum
     }
 
     /**
-     * Create a frustum from six {@link gov.nasa.worldwind.geom.Plane}s defining the frustum boundaries.
+     * Create a frustum from six {@link Plane}s defining the frustum boundaries.
      * <p>
      * None of the arguments may be null.
      *
@@ -49,13 +51,10 @@ public class Frustum
      * @param right  the right plane
      * @param top    the top plane
      * @param bottom the bottom plane
-     *
      * @throws IllegalArgumentException if any argument is null.
      */
-    public Frustum(Plane left, Plane right, Plane bottom, Plane top, Plane near, Plane far)
-    {
-        if (left == null || right == null || bottom == null || top == null || near == null || far == null)
-        {
+    public Frustum(Plane left, Plane right, Plane bottom, Plane top, Plane near, Plane far) {
+        if (left == null || right == null || bottom == null || top == null || near == null || far == null) {
             String message = Logging.getMessage("nullValue.PlaneIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -71,137 +70,16 @@ public class Frustum
     }
 
     /**
-     * Returns the left plane.
-     *
-     * @return the left plane.
-     */
-    public final Plane getLeft()
-    {
-        return this.left;
-    }
-
-    /**
-     * Returns the right plane.
-     *
-     * @return the right plane.
-     */
-    public final Plane getRight()
-    {
-        return this.right;
-    }
-
-    /**
-     * Returns the bottom plane.
-     *
-     * @return the bottom plane.
-     */
-    public final Plane getBottom()
-    {
-        return this.bottom;
-    }
-
-    /**
-     * Returns the top plane.
-     *
-     * @return the top plane.
-     */
-    public final Plane getTop()
-    {
-        return this.top;
-    }
-
-    /**
-     * Returns the near plane.
-     *
-     * @return the left plane.
-     */
-    public final Plane getNear()
-    {
-        return this.near;
-    }
-
-    /**
-     * Returns the far plane.
-     *
-     * @return the left plane.
-     */
-    public final Plane getFar()
-    {
-        return this.far;
-    }
-
-    /**
-     * Returns all the planes.
-     *
-     * @return an array of the frustum planes, in the order left, right, bottom, top, near, far.
-     */
-    public Plane[] getAllPlanes()
-    {
-        return this.allPlanes;
-    }
-
-    public boolean equals(Object obj)
-    {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-
-        Frustum that = (Frustum) obj;
-        return this.left.equals(that.left)
-            && this.right.equals(that.right)
-            && this.bottom.equals(that.bottom)
-            && this.top.equals(that.top)
-            && this.near.equals(that.near)
-            && this.far.equals(that.far);
-    }
-
-    public int hashCode()
-    {
-        int result;
-        result = this.left.hashCode();
-        result = 31 * result + this.right.hashCode();
-        result = 19 * result + this.bottom.hashCode();
-        result = 23 * result + this.top.hashCode();
-        result = 17 * result + this.near.hashCode();
-        result = 19 * result + this.far.hashCode();
-
-        return result;
-    }
-
-    public String toString()
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append("(");
-        sb.append("left=").append(this.left);
-        sb.append(", right=").append(this.right);
-        sb.append(", bottom=").append(this.bottom);
-        sb.append(", top=").append(this.top);
-        sb.append(", near=").append(this.near);
-        sb.append(", far=").append(this.far);
-        sb.append(")");
-        return sb.toString();
-    }
-
-    // ============== Factory Functions ======================= //
-    // ============== Factory Functions ======================= //
-    // ============== Factory Functions ======================= //
-
-    /**
      * Creates a frustum by extracting the six frustum planes from a projection matrix.
      *
      * @param projectionMatrix the projection matrix to extract the frustum planes from.
-     *
      * @return a frustum defined by the extracted planes.
-     *
      * @throws IllegalArgumentException if the projection matrix is null.
      */
-    public static Frustum fromProjectionMatrix(Matrix projectionMatrix)
-    {
+    public static Frustum fromProjectionMatrix(Matrix projectionMatrix) {
         //noinspection UnnecessaryLocalVariable
         Matrix m = projectionMatrix;
-        if (m == null)
-        {
+        if (m == null) {
             String message = Logging.getMessage("nullValue.MatrixIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -268,17 +146,13 @@ public class Frustum
      * @param viewportHeight        the height of the viewport in screen pixels
      * @param near                  distance to the near depth clipping plane
      * @param far                   distance to far depth clipping plane
-     *
      * @return Frustum configured from the specified perspective parameters.
-     *
      * @throws IllegalArgumentException if fov is not in the range (0, 180), if either near or far are negative, or near
      *                                  is greater than or equal to far
      */
     public static Frustum fromPerspective(Angle horizontalFieldOfView, int viewportWidth, int viewportHeight,
-        double near, double far)
-    {
-        if (horizontalFieldOfView == null)
-        {
+        double near, double far) {
+        if (horizontalFieldOfView == null) {
             String message = Logging.getMessage("Geom.ViewFrustum.FieldOfViewIsNull");
             Logging.logger().fine(message);
             throw new IllegalArgumentException(message);
@@ -290,22 +164,21 @@ public class Frustum
             message = Logging.getMessage("Geom.ViewFrustum.FieldOfViewOutOfRange", fov);
         if (near <= 0 || farMinusNear <= 0)
             message = Logging.getMessage("Geom.ViewFrustum.ClippingDistanceOutOfRange");
-        if (message != null)
-        {
+        if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        double focalLength = 1d / horizontalFieldOfView.tanHalfAngle();
+        double focalLength = 1.0d / horizontalFieldOfView.tanHalfAngle();
         double aspect = viewportHeight / (double) viewportWidth;
         double lrLen = Math.sqrt(focalLength * focalLength + 1);
         double btLen = Math.sqrt(focalLength * focalLength + aspect * aspect);
-        Plane leftPlane = new Plane(focalLength / lrLen, 0d, 0d - 1d / lrLen, 0);
-        Plane rightPlane = new Plane(0d - focalLength / lrLen, 0d, 0d - 1d / lrLen, 0d);
-        Plane bottomPlane = new Plane(0d, focalLength / btLen, 0d - aspect / btLen, 0d);
-        Plane topPlane = new Plane(0d, 0d - focalLength / btLen, 0d - aspect / btLen, 0d);
-        Plane nearPlane = new Plane(0d, 0d, 0d - 1d, 0d - near);
-        Plane farPlane = new Plane(0d, 0d, 1d, far);
+        Plane leftPlane = new Plane(focalLength / lrLen, 0.0d, 0.0d - 1.0d / lrLen, 0);
+        Plane rightPlane = new Plane(0.0d - focalLength / lrLen, 0.0d, 0.0d - 1.0d / lrLen, 0.0d);
+        Plane bottomPlane = new Plane(0.0d, focalLength / btLen, 0.0d - aspect / btLen, 0.0d);
+        Plane topPlane = new Plane(0.0d, 0.0d - focalLength / btLen, 0.0d - aspect / btLen, 0.0d);
+        Plane nearPlane = new Plane(0.0d, 0.0d, 0.0d - 1.0d, 0.0d - near);
+        Plane farPlane = new Plane(0.0d, 0.0d, 1.0d, far);
         return new Frustum(leftPlane, rightPlane, bottomPlane, topPlane, nearPlane, farPlane);
     }
 
@@ -317,17 +190,13 @@ public class Frustum
      * @param far    distance to far depth clipping plane
      * @param width  horizontal dimension of the near clipping plane
      * @param height vertical dimension of the near clipping plane
-     *
      * @return a Frustum configured with the specified perspective parameters.
-     *
      * @throws IllegalArgumentException if the difference of any plane set (lright - left, top - bottom, far - near) is
      *                                  less than or equal to zero.
      */
-    public static Frustum fromPerspective(double width, double height, double near, double far)
-    {
+    public static Frustum fromPerspective(double width, double height, double near, double far) {
         double farMinusNear = far - near;
-        if (farMinusNear <= 0.0 || width <= 0.0 || height <= 0.0)
-        {
+        if (farMinusNear <= 0.0 || width <= 0.0 || height <= 0.0) {
             String message = Logging.getMessage("Geom.ViewFrustum.ClippingDistanceOutOfRange");
             Logging.logger().fine(message);
             throw new IllegalArgumentException(message);
@@ -355,25 +224,20 @@ public class Frustum
      * @param vBR  vector defining the bottom-right of the frustum
      * @param near distance to the near plane
      * @param far  distance to far plane
-     *
      * @return Frustum that was created
-     *
      * @throws IllegalArgumentException if any of the vectors are null, if either near or far are negative, or near is
      *                                  greater than or equal to far
      */
     public static Frustum fromPerspectiveVecs(Vec4 vTL, Vec4 vTR, Vec4 vBL, Vec4 vBR,
-        double near, double far)
-    {
-        if (vTL == null || vTR == null || vBL == null || vBR == null)
-        {
+        double near, double far) {
+        if (vTL == null || vTR == null || vBL == null || vBR == null) {
             String message = Logging.getMessage("Geom.ViewFrustum.EdgeVectorIsNull");
             Logging.logger().fine(message);
             throw new IllegalArgumentException(message);
         }
 
         double farMinusNear = far - near;
-        if (near <= 0 || farMinusNear <= 0)
-        {
+        if (near <= 0 || farMinusNear <= 0) {
             String message = Logging.getMessage("Geom.ViewFrustum.ClippingDistanceOutOfRange");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -388,9 +252,116 @@ public class Frustum
         Vec4 tpn = vTL.cross3(vTR).normalize3();
         Plane topPlane = new Plane(tpn.x, tpn.y, tpn.z, 0);
 
-        Plane nearPlane = new Plane(0d, 0d, 0d - 1d, 0d - near);
-        Plane farPlane = new Plane(0d, 0d, 1d, far);
+        Plane nearPlane = new Plane(0.0d, 0.0d, 0.0d - 1.0d, 0.0d - near);
+        Plane farPlane = new Plane(0.0d, 0.0d, 1.0d, far);
         return new Frustum(leftPlane, rightPlane, bottomPlane, topPlane, nearPlane, farPlane);
+    }
+
+    /**
+     * Returns the left plane.
+     *
+     * @return the left plane.
+     */
+    public final Plane getLeft() {
+        return this.left;
+    }
+
+    /**
+     * Returns the right plane.
+     *
+     * @return the right plane.
+     */
+    public final Plane getRight() {
+        return this.right;
+    }
+
+    /**
+     * Returns the bottom plane.
+     *
+     * @return the bottom plane.
+     */
+    public final Plane getBottom() {
+        return this.bottom;
+    }
+
+    /**
+     * Returns the top plane.
+     *
+     * @return the top plane.
+     */
+    public final Plane getTop() {
+        return this.top;
+    }
+
+    /**
+     * Returns the near plane.
+     *
+     * @return the left plane.
+     */
+    public final Plane getNear() {
+        return this.near;
+    }
+
+    /**
+     * Returns the far plane.
+     *
+     * @return the left plane.
+     */
+    public final Plane getFar() {
+        return this.far;
+    }
+
+    // ============== Factory Functions ======================= //
+    // ============== Factory Functions ======================= //
+    // ============== Factory Functions ======================= //
+
+    /**
+     * Returns all the planes.
+     *
+     * @return an array of the frustum planes, in the order left, right, bottom, top, near, far.
+     */
+    public Plane[] getAllPlanes() {
+        return this.allPlanes;
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+
+        Frustum that = (Frustum) obj;
+        return this.left.equals(that.left)
+            && this.right.equals(that.right)
+            && this.bottom.equals(that.bottom)
+            && this.top.equals(that.top)
+            && this.near.equals(that.near)
+            && this.far.equals(that.far);
+    }
+
+    public int hashCode() {
+        int result;
+        result = this.left.hashCode();
+        result = 31 * result + this.right.hashCode();
+        result = 19 * result + this.bottom.hashCode();
+        result = 23 * result + this.top.hashCode();
+        result = 17 * result + this.near.hashCode();
+        result = 19 * result + this.far.hashCode();
+
+        return result;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        sb.append("left=").append(this.left);
+        sb.append(", right=").append(this.right);
+        sb.append(", bottom=").append(this.bottom);
+        sb.append(", top=").append(this.top);
+        sb.append(", near=").append(this.near);
+        sb.append(", far=").append(this.far);
+        sb.append(")");
+        return sb.toString();
     }
 
     // ============== Intersection Functions ======================= //
@@ -401,15 +372,11 @@ public class Frustum
      * Indicates whether a specified {@link Extent} intersects this frustum.
      *
      * @param extent the Extent to test.
-     *
      * @return true if the extent intersects this frustum, otherwise false.
-     *
      * @throws IllegalArgumentException if the extent is null.
      */
-    public boolean intersects(Extent extent)
-    {
-        if (extent == null)
-        {
+    public boolean intersects(Extent extent) {
+        if (extent == null) {
             String msg = Logging.getMessage("nullValue.ExtentIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
@@ -423,15 +390,11 @@ public class Frustum
      *
      * @param pa one end of the segment.
      * @param pb the other end of the segment.
-     *
      * @return true if the segment intersects or is contained in the frustum, otherwise false.
-     *
      * @throws IllegalArgumentException if either point is null.
      */
-    public boolean intersectsSegment(Vec4 pa, Vec4 pb)
-    {
-        if (pa == null || pb == null)
-        {
+    public boolean intersectsSegment(Vec4 pa, Vec4 pb) {
+        if (pa == null || pb == null) {
             String message = Logging.getMessage("nullValue.PointIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -444,8 +407,7 @@ public class Frustum
         if (pa.equals(pb))
             return false;
 
-        for (Plane p : this.getAllPlanes())
-        {
+        for (Plane p : this.getAllPlanes()) {
             // See if both points are behind the plane and therefore not in the frustum.
             if (p.onSameSide(pa, pb) < 0)
                 return false;
@@ -462,17 +424,13 @@ public class Frustum
      * Indicates whether a specified {@link Extent} is fully within this frustum.
      *
      * @param extent the Extent to test.
-     *
      * @return true if the extent is fully within this frustum, otherwise false.
-     *
      * @throws IllegalArgumentException if the extent is null.
      */
-    public final boolean contains(Extent extent)
-    {
+    public final boolean contains(Extent extent) {
         // TODO: This method should be implemented in the concrete extent classes and those implementing methods
         // invoked here, as is done above for intersects(Frustum).
-        if (extent == null)
-        {
+        if (extent == null) {
             String msg = Logging.getMessage("nullValue.ExtentIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
@@ -507,15 +465,11 @@ public class Frustum
      * Indicates whether a specified point is within this frustum.
      *
      * @param point the point to test.
-     *
      * @return true if the point is within the frustum, otherwise false.
-     *
      * @throws IllegalArgumentException if the point is null.
      */
-    public final boolean contains(Vec4 point)
-    {
-        if (point == null)
-        {
+    public final boolean contains(Vec4 point) {
+        if (point == null) {
             String msg = Logging.getMessage("nullValue.PointIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
@@ -550,15 +504,11 @@ public class Frustum
      * Returns a copy of this frustum transformed by a specified {@link Matrix}.
      *
      * @param matrix the Matrix to apply to this frustum.
-     *
      * @return a new frustum transformed by the specified matrix.
-     *
      * @throws IllegalArgumentException if the matrix is null.
      */
-    public Frustum transformBy(Matrix matrix)
-    {
-        if (matrix == null)
-        {
+    public Frustum transformBy(Matrix matrix) {
+        if (matrix == null) {
             String msg = Logging.getMessage("nullValue.MatrixIsNull");
             Logging.logger().fine(msg);
             throw new IllegalArgumentException(msg);
@@ -573,19 +523,12 @@ public class Frustum
         return new Frustum(left, right, bottom, top, near, far);
     }
 
-    /** Holds the eight corner points of a frustum. */
-    public static class Corners
-    {
-        public Vec4 nbl, nbr, ntl, ntr, fbl, fbr, ftl, ftr;
-    }
-
     /**
      * Returns the eight corners of this frustum.
      *
      * @return the eight frustum corners.
      */
-    public Corners getCorners()
-    {
+    public Corners getCorners() {
         Corners corners = new Corners();
 
         corners.nbl = Plane.intersect(this.near, this.bottom, this.left);
@@ -599,5 +542,12 @@ public class Frustum
         corners.ftr = Plane.intersect(this.far, this.top, this.right);
 
         return corners;
+    }
+
+    /**
+     * Holds the eight corner points of a frustum.
+     */
+    public static class Corners {
+        public Vec4 nbl, nbr, ntl, ntr, fbl, fbr, ftl, ftr;
     }
 }

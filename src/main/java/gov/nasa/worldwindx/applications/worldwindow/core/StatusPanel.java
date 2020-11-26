@@ -12,7 +12,6 @@ import gov.nasa.worldwindx.applications.worldwindow.features.FeaturePanel;
  * @author tag
  * @version $Id: StatusPanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface StatusPanel extends FeaturePanel
-{
+public interface StatusPanel extends FeaturePanel {
     String setStatusMessage(String message);
 }

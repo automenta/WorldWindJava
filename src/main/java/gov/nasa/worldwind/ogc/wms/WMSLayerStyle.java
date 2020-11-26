@@ -20,8 +20,7 @@ import java.util.*;
  * @author tag
  * @version $Id: WMSLayerStyle.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WMSLayerStyle extends AbstractXMLEventParser
-{
+public class WMSLayerStyle extends AbstractXMLEventParser {
     protected QName NAME;
     protected QName TITLE;
     protected QName ABSTRACT;
@@ -36,15 +35,13 @@ public class WMSLayerStyle extends AbstractXMLEventParser
     protected WMSLayerInfoURL styleURL;
     protected Set<WMSLogoURL> legendURLs;
 
-    public WMSLayerStyle(String namespaceURI)
-    {
+    public WMSLayerStyle(String namespaceURI) {
         super(namespaceURI);
 
         this.initialize();
     }
 
-    private void initialize()
-    {
+    private void initialize() {
         NAME = new QName(this.getNamespaceURI(), "Name");
         TITLE = new QName(this.getNamespaceURI(), "Title");
         ABSTRACT = new QName(this.getNamespaceURI(), "Abstract");
@@ -54,8 +51,7 @@ public class WMSLayerStyle extends AbstractXMLEventParser
     }
 
     @Override
-    public XMLEventParser allocate(XMLEventParserContext ctx, XMLEvent event)
-    {
+    public XMLEventParser allocate(XMLEventParserContext ctx, XMLEvent event) {
         XMLEventParser defaultParser = null;
 
         XMLEventParser parser = super.allocate(ctx, event);
@@ -74,51 +70,41 @@ public class WMSLayerStyle extends AbstractXMLEventParser
 
     @Override
     protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-        throws XMLStreamException
-    {
-        if (ctx.isStartElement(event, TITLE))
-        {
+        throws XMLStreamException {
+        if (ctx.isStartElement(event, TITLE)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.setTitle(s);
         }
-        else if (ctx.isStartElement(event, NAME))
-        {
+        else if (ctx.isStartElement(event, NAME)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.setName(s);
         }
-        else if (ctx.isStartElement(event, ABSTRACT))
-        {
+        else if (ctx.isStartElement(event, ABSTRACT)) {
             String s = ctx.getStringParser().parseString(ctx, event);
             if (!WWUtil.isEmpty(s))
                 this.setStyleAbstract(s);
         }
-        else if (ctx.isStartElement(event, LEGEND_URL))
-        {
+        else if (ctx.isStartElement(event, LEGEND_URL)) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLogoURL)
                     this.addLegendURL((WMSLogoURL) o);
             }
         }
-        else if (ctx.isStartElement(event, STYLE_SHEET_URL))
-        {
+        else if (ctx.isStartElement(event, STYLE_SHEET_URL)) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLayerInfoURL)
                     this.setStyleSheetURL((WMSLayerInfoURL) o);
             }
         }
-        else if (ctx.isStartElement(event, STYLE_URL))
-        {
+        else if (ctx.isStartElement(event, STYLE_URL)) {
             XMLEventParser parser = this.allocate(ctx, event);
-            if (parser != null)
-            {
+            if (parser != null) {
                 Object o = parser.parse(ctx, event, args);
                 if (o instanceof WMSLayerInfoURL)
                     this.setStyleURL((WMSLayerInfoURL) o);
@@ -126,71 +112,58 @@ public class WMSLayerStyle extends AbstractXMLEventParser
         }
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    protected void setName(String name)
-    {
+    protected void setName(String name) {
         this.name = name;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return title;
     }
 
-    protected void setTitle(String title)
-    {
+    protected void setTitle(String title) {
         this.title = title;
     }
 
-    public String getStyleAbstract()
-    {
+    public String getStyleAbstract() {
         return styleAbstract;
     }
 
-    protected void setStyleAbstract(String styleAbstract)
-    {
+    protected void setStyleAbstract(String styleAbstract) {
         this.styleAbstract = styleAbstract;
     }
 
-    public WMSLayerInfoURL getStyleSheetURL()
-    {
+    public WMSLayerInfoURL getStyleSheetURL() {
         return styleSheetURL;
     }
 
-    protected void setStyleSheetURL(WMSLayerInfoURL styleSheetURL)
-    {
+    protected void setStyleSheetURL(WMSLayerInfoURL styleSheetURL) {
         this.styleSheetURL = styleSheetURL;
     }
 
-    public WMSLayerInfoURL getStyleURL()
-    {
+    public WMSLayerInfoURL getStyleURL() {
         return styleURL;
     }
 
-    protected void setStyleURL(WMSLayerInfoURL styleURL)
-    {
+    protected void setStyleURL(WMSLayerInfoURL styleURL) {
         this.styleURL = styleURL;
     }
 
-    public Set<WMSLogoURL> getLegendURLs()
-    {
+    public Set<WMSLogoURL> getLegendURLs() {
         if (this.legendURLs != null)
             return legendURLs;
         else
             return Collections.emptySet();
     }
 
-    protected void setLegendURLs(Set<WMSLogoURL> legendURLs)
-    {
+    protected void setLegendURLs(Set<WMSLogoURL> legendURLs) {
         this.legendURLs = legendURLs;
     }
 
-    protected void addLegendURL(WMSLogoURL url)
-    {
+    protected void addLegendURL(WMSLogoURL url) {
         if (this.legendURLs == null)
             this.legendURLs = new HashSet<>();
 

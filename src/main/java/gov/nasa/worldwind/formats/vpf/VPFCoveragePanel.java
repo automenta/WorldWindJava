@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.beans.*;
+import java.util.List;
 import java.util.*;
 
 /**
@@ -25,8 +26,7 @@ import java.util.*;
  *
  * @version $Id: VPFCoveragePanel.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFCoveragePanel extends JPanel
-{
+public class VPFCoveragePanel extends JPanel {
     private WorldWindow wwd;
     private Dimension preferredSize;
     private JTabbedPane libraryTabbedPane;
@@ -34,34 +34,29 @@ public class VPFCoveragePanel extends JPanel
 
     private JPanel legendPanel;
 
-    public VPFCoveragePanel(WorldWindow wwd, VPFDatabase db)
-    {
+    public VPFCoveragePanel(WorldWindow wwd, VPFDatabase db) {
         // Make a panel at a default size.
         super(new BorderLayout());
         this.wwd = wwd;
         this.makePanel(db, new Dimension(200, 400));
     }
 
-    public VPFCoveragePanel(VPFDatabase db, Dimension size)
-    {
+    public VPFCoveragePanel(VPFDatabase db, Dimension size) {
         // Make a panel at a specified size.
         super(new BorderLayout());
         this.makePanel(db, size);
     }
 
-    public VPFLayer getLayer()
-    {
+    public VPFLayer getLayer() {
         return this.layer;
     }
 
-    public void setLayer(VPFLayer layer)
-    {
+    public void setLayer(VPFLayer layer) {
         this.layer = layer;
         this.fillLegendPanel();
     }
 
-    private void makePanel(VPFDatabase db, Dimension size)
-    {
+    private void makePanel(VPFDatabase db, Dimension size) {
         this.preferredSize = size;
         this.libraryTabbedPane = new JTabbedPane();
         this.add(this.libraryTabbedPane, BorderLayout.CENTER);
@@ -70,26 +65,22 @@ public class VPFCoveragePanel extends JPanel
         this.startLegendUpdateTimer();
     }
 
-    private void fill(VPFDatabase db)
-    {
+    private void fill(VPFDatabase db) {
         this.addDatabase(db);
         this.addLegend();
     }
 
-    public void addDatabase(VPFDatabase db)
-    {
+    public void addDatabase(VPFDatabase db) {
         // Sort the library list alphabetically.
-        ArrayList<VPFLibrary> sortedList = new ArrayList<>(db.getLibraries());
+        List<VPFLibrary> sortedList = new ArrayList<>(db.getLibraries());
         this.sortPropertyLists(sortedList, AVKey.DISPLAY_NAME);
 
-        for (VPFLibrary lib : sortedList)
-        {
+        for (VPFLibrary lib : sortedList) {
             this.addLibrary(db, lib);
         }
     }
 
-    public void addLibrary(VPFDatabase db, VPFLibrary lib)
-    {
+    public void addLibrary(VPFDatabase db, VPFLibrary lib) {
         // Make and fill the panel holding the library coverages.
         JPanel selectionPanel = new JPanel(new GridLayout(0, 1, 0, 4));
         selectionPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -138,11 +129,10 @@ public class VPFCoveragePanel extends JPanel
         this.libraryTabbedPane.setToolTipTextAt(index, lib.getDescription());
 
         // Sort the coverage list alphabetically.
-        ArrayList<VPFCoverage> sortedList = new ArrayList<>(lib.getCoverages());
+        List<VPFCoverage> sortedList = new ArrayList<>(lib.getCoverages());
         this.sortPropertyLists(sortedList, AVKey.DESCRIPTION);
 
-        for (VPFCoverage cov : sortedList)
-        {
+        for (VPFCoverage cov : sortedList) {
             if (cov.isReferenceCoverage())
                 continue;
 
@@ -150,8 +140,7 @@ public class VPFCoveragePanel extends JPanel
         }
     }
 
-    protected void sortPropertyLists(java.util.List<? extends AVList> propertyList, final String propertyName)
-    {
+    protected void sortPropertyLists(java.util.List<? extends AVList> propertyList, final String propertyName) {
         propertyList.sort((Comparator<AVList>) (a, b) -> {
             String aValue = (a.getValue(propertyName) != null) ? a.getValue(propertyName).toString() : "";
             String bValue = (b.getValue(propertyName) != null) ? b.getValue(propertyName).toString() : "";
@@ -159,8 +148,7 @@ public class VPFCoveragePanel extends JPanel
         });
     }
 
-    public void addLegend()
-    {
+    public void addLegend() {
         // Make and fill the panel holding the legend items.
         this.legendPanel = new JPanel();
         this.legendPanel.setLayout(new BoxLayout(this.legendPanel, BoxLayout.PAGE_AXIS));
@@ -195,8 +183,7 @@ public class VPFCoveragePanel extends JPanel
         this.libraryTabbedPane.add("Legend", dummyPanel);
     }
 
-    protected void fillLegendPanel()
-    {
+    protected void fillLegendPanel() {
         this.legendPanel.removeAll();
 
         if (this.layer == null)
@@ -212,11 +199,9 @@ public class VPFCoveragePanel extends JPanel
         // Compose legend panel
         VPFLegendSupport legendSupport = new VPFLegendSupport();
         String coverageName = null;
-        for (SymbolInfo info : symbolInfo)
-        {
+        for (SymbolInfo info : symbolInfo) {
             // Insert coverage title
-            if (coverageName == null || !info.getFeatureClass().getCoverage().getName().equals(coverageName))
-            {
+            if (coverageName == null || !info.getFeatureClass().getCoverage().getName().equals(coverageName)) {
                 if (coverageName != null)
                     this.legendPanel.add(Box.createVerticalStrut(5));
                 JLabel label = new JLabel(info.getFeatureClass().getCoverage().getDescription());
@@ -227,11 +212,10 @@ public class VPFCoveragePanel extends JPanel
             }
             // Add legend item
             String description = info.getDescription() != null ? info.getDescription() : "";
-            if (description.length() > 0)
+            if (!description.isEmpty())
                 description = description.substring(0, 1).toUpperCase() + description.substring(1);
             BufferedImage legendImage = legendSupport.createLegendImage(info.getAttributes(), 60, 22, 0);
-            if (legendImage != null && description.length() > 0)
-            {
+            if (legendImage != null && !description.isEmpty()) {
                 Icon icon = new ImageIcon(legendImage);
                 JLabel label = new JLabel(description, icon, SwingConstants.LEFT);
                 label.setIconTextGap(8);
@@ -244,11 +228,10 @@ public class VPFCoveragePanel extends JPanel
         this.legendPanel.repaint();
     }
 
-    protected Iterable<SymbolInfo> getUniqueSymbols(Iterable<VPFSymbol> iterable)
-    {
+    protected Iterable<SymbolInfo> getUniqueSymbols(Iterable<VPFSymbol> iterable) {
         // Use a TreeSet to consolidate duplicate symbol attributes and simultaneously sort the attributes.
 
-        Set<SymbolInfo> set = new TreeSet<>((a, b) -> {
+        Collection<SymbolInfo> set = new TreeSet<>((a, b) -> {
             String aCoverageName = (a.getFeatureClass().getCoverage().getName() != null)
                 ? a.getFeatureClass().getCoverage().getName() : "";
             String bCoverageName = (b.getFeatureClass().getCoverage().getName() != null)
@@ -273,10 +256,8 @@ public class VPFCoveragePanel extends JPanel
             return Integer.compare(aType, bType);
         });
 
-        for (VPFSymbol symbol : iterable)
-        {
-            if (symbol != null && symbol.getFeature() != null && symbol.getAttributes() != null)
-            {
+        for (VPFSymbol symbol : iterable) {
+            if (symbol != null && symbol.getFeature() != null && symbol.getAttributes() != null) {
                 set.add(new SymbolInfo(symbol.getFeature().getFeatureClass(), symbol.getAttributes()));
             }
         }
@@ -284,43 +265,14 @@ public class VPFCoveragePanel extends JPanel
         return set;
     }
 
-    protected static class SymbolInfo
-    {
-        protected final VPFFeatureClass featureClass;
-        protected final VPFSymbolAttributes attributes;
-
-        public SymbolInfo(VPFFeatureClass featureClass, VPFSymbolAttributes attributes)
-        {
-            this.featureClass = featureClass;
-            this.attributes = attributes;
-        }
-
-        public VPFFeatureClass getFeatureClass()
-        {
-            return this.featureClass;
-        }
-
-        public VPFSymbolAttributes getAttributes()
-        {
-            return this.attributes;
-        }
-
-        public String getDescription()
-        {
-            return this.attributes.getDescription();
-        }
-    }
-
-    protected void addCoverage(VPFDatabase db, VPFCoverage cov, Container parent)
-    {
+    protected void addCoverage(VPFDatabase db, VPFCoverage cov, Container parent) {
         CoverageAction action = new CoverageAction(db, cov, false); // default to non selected
         JCheckBox jcb = new JCheckBox(action);
         jcb.setSelected(action.selected);
         parent.add(jcb);
     }
 
-    public void update(VPFDatabase db)
-    {
+    public void update(VPFDatabase db) {
         // Refresh the coverage list from the given db
         this.libraryTabbedPane.removeAll();
         this.fill(db);
@@ -328,27 +280,45 @@ public class VPFCoveragePanel extends JPanel
         this.libraryTabbedPane.repaint();
     }
 
-    public void clear()
-    {
+    public void clear() {
         this.libraryTabbedPane.removeAll();
         this.libraryTabbedPane.revalidate();
         this.libraryTabbedPane.repaint();
     }
 
-    private void startLegendUpdateTimer()
-    {
+    private void startLegendUpdateTimer() {
         Timer timer = new Timer(3000, event -> fillLegendPanel());
         timer.start();
     }
 
-    private class LibraryAction extends AbstractAction
-    {
+    protected static class SymbolInfo {
+        protected final VPFFeatureClass featureClass;
+        protected final VPFSymbolAttributes attributes;
+
+        public SymbolInfo(VPFFeatureClass featureClass, VPFSymbolAttributes attributes) {
+            this.featureClass = featureClass;
+            this.attributes = attributes;
+        }
+
+        public VPFFeatureClass getFeatureClass() {
+            return this.featureClass;
+        }
+
+        public VPFSymbolAttributes getAttributes() {
+            return this.attributes;
+        }
+
+        public String getDescription() {
+            return this.attributes.getDescription();
+        }
+    }
+
+    private class LibraryAction extends AbstractAction {
         final VPFDatabase db;
         final VPFLibrary library;
         private boolean selected;
 
-        public LibraryAction(VPFDatabase db, VPFLibrary library, boolean selected)
-        {
+        public LibraryAction(VPFDatabase db, VPFLibrary library, boolean selected) {
             super("Show Library");
             this.putValue(Action.SHORT_DESCRIPTION, "Show " + library.getName());
             this.db = db;
@@ -356,8 +326,7 @@ public class VPFCoveragePanel extends JPanel
             this.selected = selected;
         }
 
-        public void actionPerformed(ActionEvent actionEvent)
-        {
+        public void actionPerformed(ActionEvent actionEvent) {
             // Fire property change event on the database
             boolean newState = ((JCheckBox) actionEvent.getSource()).isSelected();
             this.db.firePropertyChange(
@@ -367,14 +336,12 @@ public class VPFCoveragePanel extends JPanel
         }
     }
 
-    private class CoverageAction extends AbstractAction implements PropertyChangeListener
-    {
+    private class CoverageAction extends AbstractAction implements PropertyChangeListener {
         final VPFDatabase db;
         final VPFCoverage coverage;
         private boolean selected;
 
-        public CoverageAction(VPFDatabase db, VPFCoverage coverage, boolean selected)
-        {
+        public CoverageAction(VPFDatabase db, VPFCoverage coverage, boolean selected) {
             super(coverage.getDescription());
             this.putValue(Action.SHORT_DESCRIPTION, "Show " + coverage.getDescription());
             this.db = db;
@@ -384,8 +351,7 @@ public class VPFCoveragePanel extends JPanel
             this.setEnabled(false);
         }
 
-        public void actionPerformed(ActionEvent actionEvent)
-        {
+        public void actionPerformed(ActionEvent actionEvent) {
             // Fire property change event on the database
             boolean newState = ((JCheckBox) actionEvent.getSource()).isSelected();
             this.db.firePropertyChange(
@@ -394,40 +360,34 @@ public class VPFCoveragePanel extends JPanel
             wwd.redraw();
         }
 
-        public void propertyChange(PropertyChangeEvent event)
-        {
-            if (event.getPropertyName().equals(VPFLayer.LIBRARY_CHANGED))
-            {
+        public void propertyChange(PropertyChangeEvent event) {
+            if (event.getPropertyName().equals(VPFLayer.LIBRARY_CHANGED)) {
                 VPFLibrary library = (VPFLibrary) event.getSource();
                 boolean enabled = (Boolean) event.getNewValue();
 
-                if (library.getFilePath().equals(this.coverage.getLibrary().getFilePath()))
-                {
+                if (library.getFilePath().equals(this.coverage.getLibrary().getFilePath())) {
                     this.setEnabled(enabled);
                 }
             }
         }
     }
 
-    private class ZoomAction extends AbstractAction
-    {
+    private class ZoomAction extends AbstractAction {
         private final VPFLibrary library;
 
-        private ZoomAction(VPFLibrary library)
-        {
+        private ZoomAction(VPFLibrary library) {
             super("Zoom To Library");
             this.library = library;
             this.setEnabled(this.library.getBounds() != null);
         }
 
-        public void actionPerformed(ActionEvent actionEvent)
-        {
+        public void actionPerformed(ActionEvent actionEvent) {
             Sector sector = this.library.getBounds().toSector();
             Extent extent = Sector.computeBoundingCylinder(wwd.getModel().getGlobe(),
                 wwd.getSceneController().getVerticalExaggeration(), sector);
 
             Angle fov = wwd.getView().getFieldOfView();
-            Position centerPos = new Position(sector.getCentroid(), 0d);
+            Position centerPos = new Position(sector.getCentroid(), 0.0d);
             double zoom = extent.getRadius() / fov.cosHalfAngle() / fov.tanHalfAngle();
 
             wwd.getView().goTo(centerPos, zoom);

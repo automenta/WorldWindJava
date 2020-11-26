@@ -22,8 +22,7 @@ import java.awt.*;
  * @author tag
  * @version $Id: ScreenRelativeAnnotation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class ScreenRelativeAnnotation extends ScreenAnnotation
-{
+public class ScreenRelativeAnnotation extends ScreenAnnotation {
     private static final Point DUMMY_POINT = new Point();
 
     private double xFraction;
@@ -42,18 +41,15 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      * @param yFraction the relative Y position of the annotation. A value of 0 indicates the window's bottom edge, a
      *                  value of 1 indicates the window's top edge. The annotation's lower edge is justified to this
      *                  position prior to applying any Y offset specified in the annotation's attributes.
-     *
      * @throws IllegalArgumentException if the text string is null.
      */
-    public ScreenRelativeAnnotation(String text, double xFraction, double yFraction)
-    {
+    public ScreenRelativeAnnotation(String text, double xFraction, double yFraction) {
         super(text, DUMMY_POINT);
 
         this.init(xFraction, yFraction);
     }
 
-    private void init(double xFraction, double yFraction)
-    {
+    private void init(double xFraction, double yFraction) {
         this.xFraction = xFraction;
         this.yFraction = yFraction;
     }
@@ -63,8 +59,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      *
      * @return true if annotation is kept fully visible, otherwise false.
      */
-    public boolean isKeepFullyVisible()
-    {
+    public boolean isKeepFullyVisible() {
         return this.keepFullyVisible;
     }
 
@@ -75,8 +70,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      *
      * @param keepFullyVisible true to keep the annotation fully visible, otherwise false.
      */
-    public void setKeepFullyVisible(boolean keepFullyVisible)
-    {
+    public void setKeepFullyVisible(boolean keepFullyVisible) {
         this.keepFullyVisible = keepFullyVisible;
     }
 
@@ -85,8 +79,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      *
      * @return the annotation's relative X position, as specified to the constructor or {@link #setXFraction(double)}.
      */
-    public double getXFraction()
-    {
+    public double getXFraction() {
         return this.xFraction;
     }
 
@@ -96,8 +89,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      *
      * @param xFraction the annotation's relative X position.
      */
-    public void setXFraction(double xFraction)
-    {
+    public void setXFraction(double xFraction) {
         this.xFraction = xFraction;
     }
 
@@ -106,8 +98,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      *
      * @return the annotation's relative Y position, as specified to the constructor or {@link #setYFraction(double)}.
      */
-    public double getYFraction()
-    {
+    public double getYFraction() {
         return this.yFraction;
     }
 
@@ -117,8 +108,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      *
      * @param yFraction the annotation's relative Y position.
      */
-    public void setYFraction(double yFraction)
-    {
+    public void setYFraction(double yFraction) {
         this.yFraction = yFraction;
     }
 
@@ -127,8 +117,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      *
      * @return the annotation's X margin, in pixels.
      */
-    public int getXMargin()
-    {
+    public int getXMargin() {
         return this.xMargin;
     }
 
@@ -138,8 +127,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      *
      * @param xMargin the X margin, in pixels.
      */
-    public void setXMargin(int xMargin)
-    {
+    public void setXMargin(int xMargin) {
         this.xMargin = xMargin;
     }
 
@@ -148,8 +136,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      *
      * @return the annotation's Y margin, in pixels.
      */
-    public int getYMargin()
-    {
+    public int getYMargin() {
         return this.yMargin;
     }
 
@@ -159,8 +146,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      *
      * @param yMargin the Y margin, in pixels.
      */
-    public void setYMargin(int yMargin)
-    {
+    public void setYMargin(int yMargin) {
         this.yMargin = yMargin;
     }
 
@@ -169,11 +155,10 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      * and the current window size.
      *
      * @return the pixel coordinates corresponding to the annotation's relative coordinates. The pixel coordinate origin
-     *         is the lower left of the window.
+     * is the lower left of the window.
      */
     @Override
-    protected Point getScreenPoint(DrawContext dc)
-    {
+    protected Point getScreenPoint(DrawContext dc) {
         Rectangle vp = dc.getView().getViewport();
 
         double x = vp.getX() + this.xFraction * vp.getWidth();
@@ -182,8 +167,7 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
         Point size = this.computeSize(dc);
         double[] offset = this.computeOffset(dc);
 
-        if (this.keepFullyVisible)
-        {
+        if (this.keepFullyVisible) {
             // Compute the eventual screen position
             double xx = x - size.x / 2.0 + offset[0];
             double yy = y + offset[1];
@@ -220,20 +204,16 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      *
      * @return XML state document string describing this ScreenAnnotation.
      */
-    public String getRestorableState()
-    {
+    public String getRestorableState() {
         RestorableSupport restorableSupport = null;
 
         // Try to parse the superclass' xml state document, if it defined one.
         String superStateInXml = super.getRestorableState();
-        if (superStateInXml != null)
-        {
-            try
-            {
+        if (superStateInXml != null) {
+            try {
                 restorableSupport = RestorableSupport.parse(superStateInXml);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 // Parsing the document specified by the superclass failed.
                 String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", superStateInXml);
                 Logging.logger().severe(message);
@@ -265,36 +245,29 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation
      * ignored.
      *
      * @param stateInXml an XML document String describing a ScreenAnnotation.
-     *
      * @throws IllegalArgumentException If <code>stateInXml</code> is null, or if <code>stateInXml</code> is not a well
      *                                  formed XML document String.
      */
-    public void restoreState(String stateInXml)
-    {
-        if (stateInXml == null)
-        {
+    public void restoreState(String stateInXml) {
+        if (stateInXml == null) {
             String message = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         // Allow the superclass to restore it's state.
-        try
-        {
+        try {
             super.restoreState(stateInXml);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Superclass will log the exception.
         }
 
         RestorableSupport restorableSupport;
-        try
-        {
+        try {
             restorableSupport = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);

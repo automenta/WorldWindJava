@@ -18,8 +18,7 @@ import java.util.Iterator;
  * @author tag
  * @version $Id: WMSLayerDimension.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class WMSLayerDimension extends AbstractXMLEventParser
-{
+public class WMSLayerDimension extends AbstractXMLEventParser {
     protected StringBuilder dimension;
     protected String name;
     protected String units;
@@ -29,19 +28,15 @@ public class WMSLayerDimension extends AbstractXMLEventParser
     protected Boolean nearestValue;
     protected Boolean current;
 
-    public WMSLayerDimension(String namespaceURI)
-    {
+    public WMSLayerDimension(String namespaceURI) {
         super(namespaceURI);
     }
 
     @Override
-    protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args)
-    {
-        if (event.isCharacters())
-        {
+    protected void doParseEventContent(XMLEventParserContext ctx, XMLEvent event, Object... args) {
+        if (event.isCharacters()) {
             String s = ctx.getCharacters(event);
-            if (!WWUtil.isEmpty(s))
-            {
+            if (!WWUtil.isEmpty(s)) {
                 if (this.dimension == null)
                     this.dimension = new StringBuilder();
 
@@ -51,14 +46,12 @@ public class WMSLayerDimension extends AbstractXMLEventParser
     }
 
     @Override
-    protected void doParseEventAttributes(XMLEventParserContext ctx, XMLEvent event, Object... args)
-    {
+    protected void doParseEventAttributes(XMLEventParserContext ctx, XMLEvent event, Object... args) {
         Iterator iter = event.asStartElement().getAttributes();
         if (iter == null)
             return;
 
-        while (iter.hasNext())
-        {
+        while (iter.hasNext()) {
             Attribute attr = (Attribute) iter.next();
             if (attr.getName().getLocalPart().equals("name") && attr.getValue() != null)
                 this.setName(attr.getValue());
@@ -72,20 +65,17 @@ public class WMSLayerDimension extends AbstractXMLEventParser
             else if (attr.getName().getLocalPart().equals("default") && attr.getValue() != null)
                 this.setDefaultValue(attr.getValue());
 
-            else if (attr.getName().getLocalPart().equals("multipleValues") && attr.getValue() != null)
-            {
+            else if (attr.getName().getLocalPart().equals("multipleValues") && attr.getValue() != null) {
                 Boolean d = WWUtil.convertStringToBoolean(attr.getValue());
                 if (d != null)
                     this.setMultipleValues(d);
             }
-            else if (attr.getName().getLocalPart().equals("nearestValue") && attr.getValue() != null)
-            {
+            else if (attr.getName().getLocalPart().equals("nearestValue") && attr.getValue() != null) {
                 Boolean d = WWUtil.convertStringToBoolean(attr.getValue());
                 if (d != null)
                     this.setNearestValue(d);
             }
-            else if (attr.getName().getLocalPart().equals("current") && attr.getValue() != null)
-            {
+            else if (attr.getName().getLocalPart().equals("current") && attr.getValue() != null) {
                 Boolean d = WWUtil.convertStringToBoolean(attr.getValue());
                 if (d != null)
                     this.setCurrent(d);
@@ -93,81 +83,66 @@ public class WMSLayerDimension extends AbstractXMLEventParser
         }
     }
 
-    public String getDimension()
-    {
+    public String getDimension() {
         if (this.dimension == null)
             this.dimension = new StringBuilder();
 
         return dimension.toString();
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    protected void setName(String name)
-    {
+    protected void setName(String name) {
         this.name = name;
     }
 
-    public String getUnits()
-    {
+    public String getUnits() {
         return units;
     }
 
-    protected void setUnits(String units)
-    {
+    protected void setUnits(String units) {
         this.units = units;
     }
 
-    public String getUnitSymbol()
-    {
+    public String getUnitSymbol() {
         return unitSymbol;
     }
 
-    protected void setUnitSymbol(String unitSymbol)
-    {
+    protected void setUnitSymbol(String unitSymbol) {
         this.unitSymbol = unitSymbol;
     }
 
-    public String getDefaultValue()
-    {
+    public String getDefaultValue() {
         return defaultValue;
     }
 
-    protected void setDefaultValue(String defaultValue)
-    {
+    protected void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
     }
 
-    public Boolean isMultipleValues()
-    {
+    public Boolean isMultipleValues() {
         return multipleValues;
     }
 
-    protected void setMultipleValues(Boolean multipleValues)
-    {
+    protected void setMultipleValues(Boolean multipleValues) {
         this.multipleValues = multipleValues;
     }
 
-    public Boolean isNearestValue()
-    {
+    public Boolean isNearestValue() {
         return nearestValue;
     }
 
-    protected void setNearestValue(Boolean nearestValue)
-    {
+    protected void setNearestValue(Boolean nearestValue) {
         this.nearestValue = nearestValue;
     }
 
-    public Boolean isCurrent()
-    {
+    public Boolean isCurrent() {
         return current;
     }
 
-    protected void setCurrent(Boolean current)
-    {
+    protected void setCurrent(Boolean current) {
         this.current = current;
     }
 }

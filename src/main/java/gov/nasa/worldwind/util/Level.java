@@ -8,14 +8,17 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Objects;
 
 /**
  * @author tag
  * @version $Id: Level.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class Level extends AVListImpl implements Comparable<Level>
-{
+public class Level extends AVListImpl implements Comparable<Level> {
+    final int DEFAULT_MAX_ABSENT_TILE_ATTEMPTS = 2;
+    final int DEFAULT_MIN_ABSENT_TILE_CHECK_INTERVAL = 10000; // milliseconds
     protected AVList params;
     protected int levelNumber;
     protected String levelName; // null or empty level name signifies no data resources associated with this level
@@ -31,18 +34,13 @@ public class Level extends AVListImpl implements Comparable<Level>
     protected TileUrlBuilder urlBuilder;
     protected long expiryTime = 0;
     protected boolean active = true;
-
     // Absent tiles: A tile is deemed absent if a specified maximum number of attempts have been made to retrieve it.
     // Retrieval attempts are governed by a minimum time interval between successive attempts. If an attempt is made
     // within this interval, the tile is still deemed to be absent until the interval expires.
     protected AbsentResourceList absentTiles;
-    final int DEFAULT_MAX_ABSENT_TILE_ATTEMPTS = 2;
-    final int DEFAULT_MIN_ABSENT_TILE_CHECK_INTERVAL = 10000; // milliseconds
 
-    public Level(AVList params)
-    {
-        if (params == null)
-        {
+    public Level(AVList params) {
+        if (params == null) {
             String message = Logging.getMessage("nullValue.LevelConfigParams");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -50,8 +48,7 @@ public class Level extends AVListImpl implements Comparable<Level>
 
         this.params = params.copy(); // Private copy to insulate from subsequent changes by the app
         String message = this.validate(params);
-        if (message != null)
-        {
+        if (message != null) {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
@@ -92,11 +89,9 @@ public class Level extends AVListImpl implements Comparable<Level>
      * Determines whether the constructor arguments are valid.
      *
      * @param params the list of parameters to validate.
-     *
      * @return null if valid, otherwise a <code>String</code> containing a description of why it's invalid.
      */
-    protected String validate(AVList params)
-    {
+    protected String validate(AVList params) {
         StringBuilder sb = new StringBuilder();
 
         Object o = params.getValue(AVKey.LEVEL_NUMBER);
@@ -131,8 +126,7 @@ public class Level extends AVListImpl implements Comparable<Level>
         if (o != null && (!(o instanceof Long) || ((Long) o) < 1))
             sb.append(Logging.getMessage("term.expiryTime")).append(" ");
 
-        if (params.getStringValue(AVKey.LEVEL_NAME).length() > 0)
-        {
+        if (!params.getStringValue(AVKey.LEVEL_NAME).isEmpty()) {
             o = params.getValue(AVKey.DATASET_NAME);
             if (!(o instanceof String) || ((String) o).length() < 1)
                 sb.append(Logging.getMessage("term.datasetName")).append(" ");
@@ -142,122 +136,100 @@ public class Level extends AVListImpl implements Comparable<Level>
                 sb.append(Logging.getMessage("term.formatSuffix")).append(" ");
         }
 
-        if (sb.length() == 0)
+        if (sb.isEmpty())
             return null;
 
         return Logging.getMessage("layers.LevelSet.InvalidLevelDescriptorFields", sb.toString());
     }
 
-    public AVList getParams()
-    {
+    public AVList getParams() {
         return params;
     }
 
-    public String getPath()
-    {
+    public String getPath() {
         return this.path;
     }
 
-    public int getLevelNumber()
-    {
+    public int getLevelNumber() {
         return this.levelNumber;
     }
 
-    public String getLevelName()
-    {
+    public String getLevelName() {
         return this.levelName;
     }
 
-    public LatLon getTileDelta()
-    {
+    public LatLon getTileDelta() {
         return this.tileDelta;
     }
 
-    public int getTileWidth()
-    {
+    public int getTileWidth() {
         return this.tileWidth;
     }
 
-    public int getTileHeight()
-    {
+    public int getTileHeight() {
         return this.tileHeight;
     }
 
-    public String getFormatSuffix()
-    {
+    public String getFormatSuffix() {
         return this.formatSuffix;
     }
 
-    public String getService()
-    {
+    public String getService() {
         return this.service;
     }
 
-    public String getDataset()
-    {
+    public String getDataset() {
         return this.dataset;
     }
 
-    public String getCacheName()
-    {
+    public String getCacheName() {
         return this.cacheName;
     }
 
-    public double getTexelSize()
-    {
+    public double getTexelSize() {
         return this.texelSize;
     }
 
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return this.levelName == null || this.levelName.isEmpty() || !this.active;
     }
 
-    public void markResourceAbsent(long tileNumber)
-    {
+    public void markResourceAbsent(long tileNumber) {
         if (tileNumber >= 0)
             this.absentTiles.markResourceAbsent(tileNumber);
     }
 
-    public boolean isResourceAbsent(long tileNumber)
-    {
+    public boolean isResourceAbsent(long tileNumber) {
         return this.absentTiles.isResourceAbsent(tileNumber);
     }
 
-    public void unmarkResourceAbsent(long tileNumber)
-    {
+    public void unmarkResourceAbsent(long tileNumber) {
         if (tileNumber >= 0)
             this.absentTiles.unmarkResourceAbsent(tileNumber);
     }
 
-    public long getExpiryTime()
-    {
+    public long getExpiryTime() {
         return this.expiryTime;
     }
 
-    public void setExpiryTime(long expTime)
-    {
+    public void setExpiryTime(long expTime) {
         this.expiryTime = expTime;
     }
 
-    public boolean isActive()
-    {
+    public boolean isActive() {
         return this.active;
     }
 
-    public void setActive(boolean active)
-    {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
-    public AbsentResourceList getAbsentTiles()
-    {
+    public AbsentResourceList getAbsentTiles() {
         return absentTiles;
     }
 
     @Override
-    public Object setValue(String key, Object value)
-    {
+    public Object setValue(String key, Object value) {
         if (key != null && key.equals(AVKey.MAX_ABSENT_TILE_ATTEMPTS) && value instanceof Integer)
             this.absentTiles.setMaxTries((Integer) value);
         else if (key != null && key.equals(AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL) && value instanceof Integer)
@@ -267,8 +239,7 @@ public class Level extends AVListImpl implements Comparable<Level>
     }
 
     @Override
-    public Object getValue(String key)
-    {
+    public Object getValue(String key) {
         if (key != null && key.equals(AVKey.MAX_ABSENT_TILE_ATTEMPTS))
             return this.absentTiles.getMaxTries();
         else if (key != null && key.equals(AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL))
@@ -282,38 +253,31 @@ public class Level extends AVListImpl implements Comparable<Level>
      *
      * @param tile        the tile who's resources will be retrieved.
      * @param imageFormat a string identifying the mime type of the desired image format
-     *
      * @return the resource URL.
-     *
-     * @throws java.net.MalformedURLException if the URL cannot be formed from the tile's parameters.
+     * @throws MalformedURLException if the URL cannot be formed from the tile's parameters.
      * @throws IllegalArgumentException       if <code>tile</code> is null.
      */
-    public java.net.URL getTileResourceURL(Tile tile, String imageFormat) throws java.net.MalformedURLException
-    {
-        if (tile == null)
-        {
-            String msg = Logging.getMessage("nullValue.TileIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public URL getTileResourceURL(Tile tile, String imageFormat) throws MalformedURLException {
+//        if (tile == null) {
+//            String msg = Logging.getMessage("nullValue.TileIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return this.urlBuilder.getURL(tile, imageFormat);
     }
 
-    public Sector computeSectorForPosition(Angle latitude, Angle longitude, LatLon tileOrigin)
-    {
-        if (latitude == null || longitude == null)
-        {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (tileOrigin == null)
-        {
-            String message = Logging.getMessage("nullValue.TileOriginIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public Sector computeSectorForPosition(Angle latitude, Angle longitude, LatLon tileOrigin) {
+//        if (latitude == null || longitude == null) {
+//            String message = Logging.getMessage("nullValue.LatLonIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (tileOrigin == null) {
+//            String message = Logging.getMessage("nullValue.TileOriginIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Compute the tile's SW lat/lon based on its row/col in the level's data set.
         Angle dLat = this.getTileDelta().getLatitude();
@@ -329,19 +293,15 @@ public class Level extends AVListImpl implements Comparable<Level>
         return new Sector(minLatitude, minLatitude.add(dLat), minLongitude, minLongitude.add(dLon));
     }
 
-    public int compareTo(Level that)
-    {
-        if (that == null)
-        {
-            String msg = Logging.getMessage("nullValue.LevelIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        return Integer.compare(this.levelNumber, that.levelNumber);
+    public int compareTo(Level that) {
+        if (this == that) return 0;
+        int l = Integer.compare(this.levelNumber, that.levelNumber);
+        if (l == 0)
+            return path.compareTo(that.path);
+        else return l;
     }
 
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -372,8 +332,7 @@ public class Level extends AVListImpl implements Comparable<Level>
         return true;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
         result = levelNumber;
         result = 29 * result + (levelName != null ? levelName.hashCode() : 0);
@@ -388,8 +347,7 @@ public class Level extends AVListImpl implements Comparable<Level>
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.path;
     }
 }

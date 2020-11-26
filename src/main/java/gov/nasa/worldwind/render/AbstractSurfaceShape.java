@@ -25,75 +25,91 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
- * Common superclass for surface conforming shapes such as {@link gov.nasa.worldwind.render.SurfacePolygon}, {@link
- * gov.nasa.worldwind.render.SurfacePolyline}, {@link gov.nasa.worldwind.render.SurfaceEllipse}, {@link
- * gov.nasa.worldwind.render.SurfaceQuad}, and {@link gov.nasa.worldwind.render.SurfaceSector}.
+ * Common superclass for surface conforming shapes such as {@link SurfacePolygon}, {@link
+ * SurfacePolyline}, {@link SurfaceEllipse}, {@link
+ * SurfaceQuad}, and {@link SurfaceSector}.
  * <p>
  * SurfaceShapes have separate attributes for normal display and highlighted display. If no attributes are specified,
  * default attributes are used. See {@link #DEFAULT_INTERIOR_MATERIAL}, {@link #DEFAULT_OUTLINE_MATERIAL}, and {@link
  * #DEFAULT_HIGHLIGHT_MATERIAL}.
  * <p>
- * AbstractSurfaceShape extends from {@link gov.nasa.worldwind.render.AbstractSurfaceObject}, and therefore inherits
+ * AbstractSurfaceShape extends from {@link AbstractSurfaceObject}, and therefore inherits
  * AbstractSurfaceObject's batch rendering capabilities.
  *
  * @author dcollins
  * @version $Id: AbstractSurfaceShape.java 3240 2015-06-22 23:38:49Z tgaskins $
  */
 public abstract class AbstractSurfaceShape extends AbstractSurfaceObject implements SurfaceShape, Movable, Movable2,
-    Combinable, Draggable
-{
-    /** The default interior color. */
+    Combinable, Draggable {
+    /**
+     * The default interior color.
+     */
     protected static final Material DEFAULT_INTERIOR_MATERIAL = Material.LIGHT_GRAY;
-    /** The default outline color. */
+    /**
+     * The default outline color.
+     */
     protected static final Material DEFAULT_OUTLINE_MATERIAL = Material.DARK_GRAY;
-    /** The default highlight color. */
+    /**
+     * The default highlight color.
+     */
     protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
-    /** The default path type. */
+    /**
+     * The default path type.
+     */
     protected static final String DEFAULT_PATH_TYPE = AVKey.GREAT_CIRCLE;
-    /** The default number of texels per shape edge interval. */
+    /**
+     * The default number of texels per shape edge interval.
+     */
     protected static final int DEFAULT_TEXELS_PER_EDGE_INTERVAL = 50;
-    /** The default minimum number of shape edge intervals. */
+    /**
+     * The default minimum number of shape edge intervals.
+     */
     protected static final int DEFAULT_MIN_EDGE_INTERVALS = 0;
-    /** The default maximum number of shape edge intervals. */
+    /**
+     * The default maximum number of shape edge intervals.
+     */
     protected static final int DEFAULT_MAX_EDGE_INTERVALS = 100;
-    /** The attributes used if attributes are not specified. */
+    /**
+     * The attributes used if attributes are not specified.
+     */
     protected static final ShapeAttributes defaultAttrs;
+    protected static FloatBuffer vertexBuffer;
 
-    static
-    {
+    static {
         defaultAttrs = new BasicShapeAttributes();
         defaultAttrs.setInteriorMaterial(DEFAULT_INTERIOR_MATERIAL);
         defaultAttrs.setOutlineMaterial(DEFAULT_OUTLINE_MATERIAL);
     }
 
+    protected final ShapeAttributes activeAttrs = this.createActiveAttributes(); // re-determined each frame
+    // Rendering properties.
+    protected final List<List<LatLon>> activeGeometry = new ArrayList<>(); // re-determined each frame
+    protected final Collection<List<LatLon>> activeOutlineGeometry = new ArrayList<>(); // re-determined each frame
+    protected final Map<Object, CacheEntry> sectorCache = new HashMap<>();
+    protected final Map<Object, CacheEntry> geometryCache = new HashMap<>();
+    protected final OGLStackHandler stackHandler = new OGLStackHandler();
     // Public interface properties.
     protected boolean highlighted;
     protected boolean dragEnabled = true;
     protected DraggableSupport draggableSupport = null;
     protected ShapeAttributes normalAttrs;
     protected ShapeAttributes highlightAttrs;
-    protected final ShapeAttributes activeAttrs = this.createActiveAttributes(); // re-determined each frame
     protected String pathType = DEFAULT_PATH_TYPE;
     protected double texelsPerEdgeInterval = DEFAULT_TEXELS_PER_EDGE_INTERVAL;
     protected int minEdgeIntervals = DEFAULT_MIN_EDGE_INTERVALS;
     protected int maxEdgeIntervals = DEFAULT_MAX_EDGE_INTERVALS;
-    // Rendering properties.
-    protected final List<List<LatLon>> activeGeometry = new ArrayList<>(); // re-determined each frame
-    protected final List<List<LatLon>> activeOutlineGeometry = new ArrayList<>(); // re-determined each frame
     protected WWTexture texture; // An optional texture.
-    protected final Map<Object, CacheEntry> sectorCache = new HashMap<>();
-    protected final Map<Object, CacheEntry> geometryCache = new HashMap<>();
-    protected final OGLStackHandler stackHandler = new OGLStackHandler();
-    protected static FloatBuffer vertexBuffer;
     // Measurement properties.
     protected AreaMeasurer areaMeasurer;
     protected long areaMeasurerLastModifiedTime;
 
-    /** Constructs a new surface shape with the default attributes. */
-    public AbstractSurfaceShape()
-    {
+    /**
+     * Constructs a new surface shape with the default attributes.
+     */
+    public AbstractSurfaceShape() {
     }
 
     /**
@@ -102,8 +118,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      *
      * @param normalAttrs the normal attributes. May be null, in which case default attributes are used.
      */
-    public AbstractSurfaceShape(ShapeAttributes normalAttrs)
-    {
+    public AbstractSurfaceShape(ShapeAttributes normalAttrs) {
         this.setAttributes(normalAttrs);
     }
 
@@ -112,8 +127,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      *
      * @param source the shape to copy.
      */
-    public AbstractSurfaceShape(AbstractSurfaceShape source)
-    {
+    public AbstractSurfaceShape(AbstractSurfaceShape source) {
         super(source);
 
         this.highlighted = source.highlighted;
@@ -125,54 +139,69 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         this.maxEdgeIntervals = source.maxEdgeIntervals;
     }
 
-    /** {@inheritDoc} */
-    public boolean isHighlighted()
-    {
+    protected static boolean isSectorEmpty(Sector sector) {
+        if (sector == null)
+            return true;
+
+        //noinspection SimplifiableIfStatement
+        if (sector.equals(Sector.EMPTY_SECTOR))
+            return true;
+
+        return sector.latMin().equals(sector.latMax())
+            && sector.lonMin().equals(sector.lonMax());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isHighlighted() {
         return this.highlighted;
     }
 
-    /** {@inheritDoc} */
-    public void setHighlighted(boolean highlighted)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void setHighlighted(boolean highlighted) {
         this.highlighted = highlighted;
         this.updateModifiedTime();
     }
 
-    /** {@inheritDoc} */
-    public ShapeAttributes getAttributes()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public ShapeAttributes getAttributes() {
         return this.normalAttrs;
     }
 
-    /** {@inheritDoc} */
-    public void setAttributes(ShapeAttributes normalAttrs)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void setAttributes(ShapeAttributes normalAttrs) {
         this.normalAttrs = normalAttrs;
         this.updateModifiedTime();
     }
 
-    /** {@inheritDoc} */
-    public ShapeAttributes getHighlightAttributes()
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public ShapeAttributes getHighlightAttributes() {
         return highlightAttrs;
     }
 
-    /** {@inheritDoc} */
-    public void setHighlightAttributes(ShapeAttributes highlightAttrs)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    public void setHighlightAttributes(ShapeAttributes highlightAttrs) {
         this.highlightAttrs = highlightAttrs;
         this.updateModifiedTime();
     }
 
-    public String getPathType()
-    {
+    public String getPathType() {
         return this.pathType;
     }
 
-    public void setPathType(String pathType)
-    {
-        if (pathType == null)
-        {
+    public void setPathType(String pathType) {
+        if (pathType == null) {
             String message = Logging.getMessage("nullValue.PathTypeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -182,15 +211,12 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         this.onShapeChanged();
     }
 
-    public double getTexelsPerEdgeInterval()
-    {
+    public double getTexelsPerEdgeInterval() {
         return this.texelsPerEdgeInterval;
     }
 
-    public void setTexelsPerEdgeInterval(double texelsPerEdgeInterval)
-    {
-        if (texelsPerEdgeInterval <= 0)
-        {
+    public void setTexelsPerEdgeInterval(double texelsPerEdgeInterval) {
+        if (texelsPerEdgeInterval <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "texelsPerEdgeInterval <= 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -200,22 +226,18 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         this.onShapeChanged();
     }
 
-    public int[] getMinAndMaxEdgeIntervals()
-    {
+    public int[] getMinAndMaxEdgeIntervals() {
         return new int[] {this.minEdgeIntervals, this.maxEdgeIntervals};
     }
 
-    public void setMinAndMaxEdgeIntervals(int minEdgeIntervals, int maxEdgeIntervals)
-    {
-        if (minEdgeIntervals < 0)
-        {
+    public void setMinAndMaxEdgeIntervals(int minEdgeIntervals, int maxEdgeIntervals) {
+        if (minEdgeIntervals < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "minEdgeIntervals < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (maxEdgeIntervals < 0)
-        {
+        if (maxEdgeIntervals < 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "maxEdgeIntervals < 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -230,31 +252,27 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * {@inheritDoc}
      * <p>
      * The returned state key is constructed the SurfaceShape's unique ID, last modified time, and its active
-     * attributes. The returned state key has no dependency on the {@link gov.nasa.worldwind.globes.Globe}. Subclasses
+     * attributes. The returned state key has no dependency on the {@link Globe}. Subclasses
      * that depend on the Globe should return a state key that include the globe's state key.
      */
     @Override
-    public Object getStateKey(DrawContext dc)
-    {
+    public Object getStateKey(DrawContext dc) {
         // Store a copy of the active attributes to insulate the key from changes made to the shape's active attributes.
         // Use a null globe state key because SurfaceShape does not depend on the globe by default.
         return new SurfaceShapeStateKey(this.getUniqueId(), this.lastModifiedTime, this.getActiveAttributes().copy(),
             null);
     }
 
-    @SuppressWarnings({"unchecked"})
-    public List<Sector> getSectors(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    @SuppressWarnings("unchecked")
+    public List<Sector> getSectors(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
         CacheEntry entry = this.sectorCache.get(dc.getGlobe().getGlobeStateKey());
-        if (entry == null)
-        {
+        if (entry == null) {
             entry = new CacheEntry(this.computeSectors(dc), dc);
             this.sectorCache.put(dc.getGlobe().getGlobeStateKey(), entry);
         }
@@ -266,11 +284,9 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * does not enclose a pole.
      *
      * @param dc Current draw context.
-     *
      * @return Bounding sectors for the shape.
      */
-    protected List<Sector> computeSectors(DrawContext dc)
-    {
+    protected List<Sector> computeSectors(DrawContext dc) {
         return this.computeSectors(dc.getGlobe());
     }
 
@@ -279,11 +295,9 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * does not enclose a pole.
      *
      * @param globe Current globe.
-     *
      * @return Bounding sectors for the shape.
      */
-    protected List<Sector> computeSectors(Globe globe)
-    {
+    protected List<Sector> computeSectors(Globe globe) {
         Iterable<? extends LatLon> locations = this.getLocations(globe);
         if (locations == null)
             return null;
@@ -291,29 +305,26 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         List<Sector> sectors = null;
 
         String pole = this.containsPole(locations);
-        if (pole != null)
-        {
+        if (pole != null) {
             // If the shape contains a pole, then the bounding sector is defined by the shape's extreme latitude, the
             // latitude of the pole, and the full range of longitude.
             Sector s = Sector.boundingSector(locations);
-            if (AVKey.NORTH.equals(pole))
-                s = new Sector(s.getMinLatitude(), Angle.POS90, Angle.NEG180, Angle.POS180);
-            else
-                s = new Sector(Angle.NEG90, s.getMaxLatitude(), Angle.NEG180, Angle.POS180);
+            s = AVKey.NORTH.equals(pole) ? new Sector(s.latMin(), Angle.POS90, Angle.NEG180, Angle.POS180)
+                : new Sector(Angle.NEG90, s.latMax(), Angle.NEG180, Angle.POS180);
 
-            sectors = Collections.singletonList(s);
+            sectors = WWUtil.arrayList(s);
+
         }
-        else if (LatLon.locationsCrossDateLine(locations))
-        {
+        else if (LatLon.locationsCrossDateLine(locations)) {
             Sector[] array = Sector.splitBoundingSectors(locations);
-            if (array != null && array.length == 2 && !isSectorEmpty(array[0]) && !isSectorEmpty(array[1]))
-                sectors = Arrays.asList(array);
+            if (array != null && array.length == 2 && !isSectorEmpty(array[0]) && !isSectorEmpty(array[1])) {
+                sectors = WWUtil.arrayList(array);
+            }
         }
-        else
-        {
+        else {
             Sector s = Sector.boundingSector(locations);
             if (!isSectorEmpty(s))
-                sectors = Collections.singletonList(s);
+                sectors = WWUtil.arrayList(s);
         }
 
         if (sectors == null)
@@ -321,61 +332,44 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
         // Great circle paths between two latitudes may result in a latitude which is greater or smaller than either of
         // the two latitudes. All other path types are bounded by the defining locations.
-        if (AVKey.GREAT_CIRCLE.equals(this.getPathType()))
-        {
-            for (int i = 0; i < sectors.size(); i++)
-            {
+        if (AVKey.GREAT_CIRCLE.equals(this.getPathType())) {
+            LatLon[] extremes = LatLon.greatCircleArcExtremeLocations(locations);
+            final double e0Lat = extremes[0].getLatitude().degrees;
+            final double e1Lat = extremes[1].getLatitude().degrees;
+
+            final int n = sectors.size();
+            for (int i = 0; i < n; i++) {
                 Sector s = sectors.get(i);
 
-                LatLon[] extremes = LatLon.greatCircleArcExtremeLocations(locations);
 
-                double minLatDegrees = s.getMinLatitude().degrees;
-                double maxLatDegrees = s.getMaxLatitude().degrees;
+                double minLatDegrees = s.latMin().degrees;
+                double maxLatDegrees = s.latMax().degrees;
 
-                if (minLatDegrees > extremes[0].getLatitude().degrees)
-                    minLatDegrees = extremes[0].getLatitude().degrees;
-                if (maxLatDegrees < extremes[1].getLatitude().degrees)
-                    maxLatDegrees = extremes[1].getLatitude().degrees;
+                if (minLatDegrees > e0Lat) minLatDegrees = e0Lat;
+                if (maxLatDegrees < e1Lat) maxLatDegrees = e1Lat;
 
-                Angle minLat = Angle.fromDegreesLatitude(minLatDegrees);
-                Angle maxLat = Angle.fromDegreesLatitude(maxLatDegrees);
-
-                sectors.set(i, new Sector(minLat, maxLat, s.getMinLongitude(), s.getMaxLongitude()));
+                sectors.set(i, new Sector(
+                    Angle.fromDegreesLatitude(minLatDegrees),
+                    Angle.fromDegreesLatitude(maxLatDegrees),
+                    s.lonMin(), s.lonMax()));
             }
         }
 
         return sectors;
     }
 
-    protected static boolean isSectorEmpty(Sector sector)
-    {
-        if (sector == null)
-            return true;
-
-        //noinspection SimplifiableIfStatement
-        if (sector.equals(Sector.EMPTY_SECTOR))
-            return true;
-
-        return sector.getMinLatitude().equals(sector.getMaxLatitude())
-            && sector.getMinLongitude().equals(sector.getMaxLongitude());
-    }
-
     /**
-     * Returns this SurfaceShape's enclosing volume as an {@link gov.nasa.worldwind.geom.Extent} in model coordinates,
-     * given a specified {@link gov.nasa.worldwind.globes.Globe} and vertical exaggeration (see {@link
-     * gov.nasa.worldwind.SceneController#getVerticalExaggeration()}.
+     * Returns this SurfaceShape's enclosing volume as an {@link Extent} in model coordinates,
+     * given a specified {@link Globe} and vertical exaggeration (see {@link
+     * SceneController#getVerticalExaggeration()}.
      *
      * @param globe                the Globe this SurfaceShape is related to.
      * @param verticalExaggeration the vertical exaggeration of the scene containing this SurfaceShape.
-     *
      * @return this SurfaceShape's Extent in model coordinates.
-     *
      * @throws IllegalArgumentException if the Globe is null.
      */
-    public Extent getExtent(Globe globe, double verticalExaggeration)
-    {
-        if (globe == null)
-        {
+    public Extent getExtent(Globe globe, double verticalExaggeration) {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -388,30 +382,25 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         return this.computeExtent(globe, verticalExaggeration, sectors);
     }
 
-    public String getRestorableState()
-    {
+    public String getRestorableState() {
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         this.doGetRestorableState(rs, null);
 
         return rs.getStateAsXml();
     }
 
-    public void restoreState(String stateInXml)
-    {
-        if (stateInXml == null)
-        {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public void restoreState(String stateInXml) {
+//        if (stateInXml == null) {
+//            String message = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         RestorableSupport rs;
-        try
-        {
+        try {
             rs = RestorableSupport.parse(stateInXml);
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             // Parsing the document specified by stateInXml failed.
             String message = Logging.getMessage("generic.ExceptionAttemptingToParseStateXml", stateInXml);
             Logging.logger().severe(message);
@@ -421,93 +410,74 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         this.doRestoreState(rs, null);
     }
 
-    public double getArea(Globe globe)
-    {
-        if (globe == null)
-        {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public double getArea(Globe globe) {
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        AreaMeasurer areaMeasurer = this.setupAreaMeasurer(globe);
-        return areaMeasurer.getArea(globe);
+        return this.setupAreaMeasurer(globe).getArea(globe);
     }
 
-    public double getArea(Globe globe, boolean terrainConformant)
-    {
-        if (globe == null)
-        {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public double getArea(Globe globe, boolean terrainConformant) {
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         AreaMeasurer areaMeasurer = this.setupAreaMeasurer(globe);
         areaMeasurer.setFollowTerrain(terrainConformant);
         return areaMeasurer.getArea(globe);
     }
 
-    public double getPerimeter(Globe globe)
-    {
-        if (globe == null)
-        {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public double getPerimeter(Globe globe) {
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        AreaMeasurer areaMeasurer = this.setupAreaMeasurer(globe);
-        return areaMeasurer.getPerimeter(globe);
+        return this.setupAreaMeasurer(globe).getPerimeter(globe);
     }
 
-    public double getWidth(Globe globe)
-    {
-        if (globe == null)
-        {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public double getWidth(Globe globe) {
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        AreaMeasurer areaMeasurer = this.setupAreaMeasurer(globe);
-        return areaMeasurer.getWidth(globe);
+        return this.setupAreaMeasurer(globe).getWidth(globe);
     }
 
-    public double getHeight(Globe globe)
-    {
-        if (globe == null)
-        {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public double getHeight(Globe globe) {
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        AreaMeasurer areaMeasurer = this.setupAreaMeasurer(globe);
-        return areaMeasurer.getHeight(globe);
+        return this.setupAreaMeasurer(globe).getHeight(globe);
     }
 
-    public double getLength(Globe globe)
-    {
-        if (globe == null)
-        {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public double getLength(Globe globe) {
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        AreaMeasurer areaMeasurer = this.setupAreaMeasurer(globe);
-        return areaMeasurer.getLength(globe);
+        return this.setupAreaMeasurer(globe).getLength(globe);
     }
 
-    public void move(Position position)
-    {
-        if (position == null)
-        {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public void move(Position position) {
+//        if (position == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Position referencePosition = this.getReferencePosition();
         if (referencePosition == null)
@@ -516,14 +486,12 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         this.moveTo(referencePosition.add(position));
     }
 
-    public void moveTo(Position position)
-    {
-        if (position == null)
-        {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public void moveTo(Position position) {
+//        if (position == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Position oldReferencePosition = this.getReferencePosition();
         if (oldReferencePosition == null)
@@ -532,14 +500,12 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         this.doMoveTo(oldReferencePosition, position);
     }
 
-    public void moveTo(Globe globe, Position position)
-    {
-        if (position == null)
-        {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    public void moveTo(Globe globe, Position position) {
+//        if (position == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Position oldReferencePosition = this.getReferencePosition();
         if (oldReferencePosition == null)
@@ -549,20 +515,17 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     @Override
-    public boolean isDragEnabled()
-    {
+    public boolean isDragEnabled() {
         return this.dragEnabled;
     }
 
     @Override
-    public void setDragEnabled(boolean enabled)
-    {
+    public void setDragEnabled(boolean enabled) {
         this.dragEnabled = enabled;
     }
 
     @Override
-    public void drag(DragContext dragContext)
-    {
+    public void drag(DragContext dragContext) {
         if (!this.dragEnabled)
             return;
 
@@ -572,21 +535,20 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         this.doDrag(dragContext);
     }
 
-    protected void doDrag(DragContext dragContext)
-    {
+    protected void doDrag(DragContext dragContext) {
         this.draggableSupport.dragGlobeSizeConstant(dragContext);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void combine(CombineContext cc)
-    {
-        if (cc == null)
-        {
-            String msg = Logging.getMessage("nullValue.CombineContextIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public void combine(CombineContext cc) {
+//        if (cc == null) {
+//            String msg = Logging.getMessage("nullValue.CombineContextIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (cc.isBoundingSectorMode())
             this.combineBounds(cc);
@@ -597,6 +559,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     public abstract Position getReferencePosition();
 
     protected abstract void doMoveTo(Position oldReferencePosition, Position newReferencePosition);
+
     protected abstract void doMoveTo(Globe globe, Position oldReferencePosition, Position newReferencePosition);
 
     /**
@@ -605,8 +568,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * Overridden to clear this SurfaceShape's internal sector and geometry caches.
      */
     @Override
-    protected void clearCaches()
-    {
+    protected void clearCaches() {
         super.clearCaches();
         this.sectorCache.clear();
         this.geometryCache.clear();
@@ -623,41 +585,33 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * @param dc the current draw context.
      */
     @Override
-    protected void makeOrderedPreRenderable(DrawContext dc)
-    {
+    protected void makeOrderedPreRenderable(DrawContext dc) {
         this.determineActiveAttributes();
         super.makeOrderedPreRenderable(dc);
     }
 
-    protected void drawGeographic(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
-        if (dc == null)
-        {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (sdc == null)
-        {
-            String message = Logging.getMessage("nullValue.SurfaceTileDrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+    protected void drawGeographic(DrawContext dc, SurfaceTileDrawContext sdc) {
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (sdc == null) {
+//            String message = Logging.getMessage("nullValue.SurfaceTileDrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.beginDrawing(dc, sdc);
-        try
-        {
+        try {
             this.doDrawGeographic(dc, sdc);
-        }
-        finally
-        {
+        } finally {
             this.endDrawing(dc);
         }
     }
 
-    protected void beginDrawing(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected void beginDrawing(DrawContext dc, SurfaceTileDrawContext sdc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         this.stackHandler.pushAttrib(gl,
@@ -689,20 +643,17 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
 
         // Enable blending.
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             gl.glEnable(GL.GL_BLEND);
         }
 
         this.applyModelviewTransform(dc, sdc);
     }
 
-    protected void endDrawing(DrawContext dc)
-    {
+    protected void endDrawing(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (texture != null && !dc.isPickingMode())
-        {
+        if (texture != null && !dc.isPickingMode()) {
             gl.glTexGeni(GL2.GL_S, GL2.GL_TEXTURE_GEN_MODE, OGLUtil.DEFAULT_TEXTURE_GEN_MODE);
             gl.glTexGeni(GL2.GL_T, GL2.GL_TEXTURE_GEN_MODE, OGLUtil.DEFAULT_TEXTURE_GEN_MODE);
             gl.glTexGendv(GL2.GL_S, GL2.GL_OBJECT_PLANE, OGLUtil.DEFAULT_TEXTURE_GEN_S_OBJECT_PLANE, 0);
@@ -713,8 +664,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         this.stackHandler.pop(gl);
     }
 
-    protected void doDrawGeographic(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected void doDrawGeographic(DrawContext dc, SurfaceTileDrawContext sdc) {
         this.determineActiveGeometry(dc, sdc);
 
         if (this.getActiveAttributes().isDrawInterior() && this.getActiveAttributes().getInteriorOpacity() > 0)
@@ -724,16 +674,14 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             this.drawOutline(dc, sdc);
     }
 
-    protected void applyModelviewTransform(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected void applyModelviewTransform(DrawContext dc, SurfaceTileDrawContext sdc) {
         // Apply the geographic to surface tile coordinate transform.
         Matrix modelview = sdc.getModelviewMatrix();
 
         // If the SurfaceShape has a non-null reference position, transform to the local coordinate system that has its
         // origin at the reference position.
         Position refPos = this.getReferencePosition();
-        if (refPos != null)
-        {
+        if (refPos != null) {
             Matrix refMatrix = Matrix.fromTranslation(refPos.getLongitude().degrees, refPos.getLatitude().degrees, 0);
             modelview = modelview.multiply(refMatrix);
         }
@@ -742,15 +690,14 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         gl.glMultMatrixd(modelview.toArray(new double[16], 0, false), 0);
     }
 
-    /** Determines which attributes -- normal, highlight or default -- to use each frame. */
-    protected void determineActiveAttributes()
-    {
-        if (this.isHighlighted())
-        {
+    /**
+     * Determines which attributes -- normal, highlight or default -- to use each frame.
+     */
+    protected void determineActiveAttributes() {
+        if (this.isHighlighted()) {
             if (this.getHighlightAttributes() != null)
                 this.activeAttrs.copy(this.getHighlightAttributes());
-            else
-            {
+            else {
                 // If no highlight attributes have been specified we need to use the normal attributes but adjust them
                 // to cause highlighting.
                 if (this.getAttributes() != null)
@@ -762,28 +709,20 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
                 this.activeAttrs.setInteriorOpacity(1);
             }
         }
-        else if (this.getAttributes() != null)
-        {
-            this.activeAttrs.copy(this.getAttributes());
-        }
-        else
-        {
-            this.activeAttrs.copy(defaultAttrs);
+        else {
+            this.activeAttrs.copy(this.getAttributes() != null ? this.getAttributes() : defaultAttrs);
         }
     }
 
-    protected ShapeAttributes createActiveAttributes()
-    {
+    protected ShapeAttributes createActiveAttributes() {
         return new BasicShapeAttributes();
     }
 
-    protected ShapeAttributes getActiveAttributes()
-    {
+    protected ShapeAttributes getActiveAttributes() {
         return this.activeAttrs;
     }
 
-    protected void determineActiveGeometry(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected void determineActiveGeometry(DrawContext dc, SurfaceTileDrawContext sdc) {
         this.activeGeometry.clear();
         this.activeOutlineGeometry.clear();
 
@@ -791,28 +730,23 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         if (geom == null)
             return;
 
-        for (List<LatLon> locations : geom)
-        {
+        for (List<LatLon> locations : geom) {
             List<LatLon> drawLocations = new ArrayList<>(locations);
 
             String pole = this.containsPole(drawLocations);
-            if (pole != null)
-            {
+            if (pole != null) {
                 // Wrap the shape interior around the pole and along the anti-meridian. See WWJ-284.
                 List<LatLon> poleLocations = this.cutAlongDateLine(drawLocations, pole, dc.getGlobe());
                 this.activeGeometry.add(poleLocations);
                 // The outline need only compensate for dateline crossing. See WWJ-452.
-                List<List<LatLon>> datelineLocations = this.repeatAroundDateline(drawLocations);
-                this.activeOutlineGeometry.addAll(datelineLocations);
+                this.activeOutlineGeometry.addAll(this.repeatAroundDateline(drawLocations));
             }
-            else if (LatLon.locationsCrossDateLine(drawLocations))
-            {
+            else if (LatLon.locationsCrossDateLine(drawLocations)) {
                 List<List<LatLon>> datelineLocations = this.repeatAroundDateline(drawLocations);
                 this.activeGeometry.addAll(datelineLocations);
                 this.activeOutlineGeometry.addAll(datelineLocations);
             }
-            else
-            {
+            else {
                 this.activeGeometry.add(drawLocations);
                 this.activeOutlineGeometry.add(drawLocations);
             }
@@ -827,10 +761,9 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * partway around the pole) then the bounding sector is 80 to 85 lat, -100 to 100 lon.
      *
      * @return True if the shape is a closed polygon that can contain a pole, or false if it is treated as an open path
-     *         that cannot contain a pole.
+     * that cannot contain a pole.
      */
-    protected boolean canContainPole()
-    {
+    protected boolean canContainPole() {
         return true;
     }
 
@@ -840,17 +773,12 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * computation.)
      *
      * @param locations Locations to test.
-     *
      * @return AVKey.NORTH if the North Pole is enclosed, AVKey.SOUTH if the South Pole is enclosed, or null if neither
-     *         pole is enclosed. Always returns null if {@link #canContainPole()} returns false.
+     * pole is enclosed. Always returns null if {@link #canContainPole()} returns false.
      */
     // TODO handle a shape that contains both poles.
-    protected String containsPole(Iterable<? extends LatLon> locations)
-    {
-        if (!this.canContainPole())
-            return null;
-
-        return LatLon.locationsContainPole(locations);
+    protected String containsPole(Iterable<? extends LatLon> locations) {
+        return !this.canContainPole() ? null : LatLon.locationsContainPole(locations);
     }
 
     /**
@@ -861,16 +789,11 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * @param locations Locations to cut at date line. This list is not modified.
      * @param pole      Pole contained by locations, either AVKey.NORTH or AVKey.SOUTH.
      * @param globe     Current globe.
-     *
      * @return New location list with locations added to correctly handle date line intersection.
      */
-    protected List<LatLon> cutAlongDateLine(List<LatLon> locations, String pole, Globe globe)
-    {
+    protected List<LatLon> cutAlongDateLine(List<LatLon> locations, String pole, Globe globe) {
         // If the locations do not contain a pole, then there's nothing to do.
-        if (pole == null)
-            return locations;
-
-        return LatLon.cutLocationsAlongDateLine(locations, pole, globe);
+        return pole == null ? locations : LatLon.cutLocationsAlongDateLine(locations, pole, globe);
     }
 
     /**
@@ -879,21 +802,17 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * locations does not cross the dateline this returns a list containing a copy of the original list.
      *
      * @param locations Locations to repeat. This is list not modified.
-     *
      * @return A list containing two new location lists, one copy for either side of the date line.
      */
-    protected List<List<LatLon>> repeatAroundDateline(List<LatLon> locations)
-    {
+    protected List<List<LatLon>> repeatAroundDateline(Iterable<LatLon> locations) {
         return LatLon.repeatLocationsAroundDateline(locations);
     }
 
-    protected List<List<LatLon>> getActiveGeometry()
-    {
+    protected List<List<LatLon>> getActiveGeometry() {
         return this.activeGeometry;
     }
 
-    protected void drawInterior(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected void drawInterior(DrawContext dc, SurfaceTileDrawContext sdc) {
         if (this.getActiveGeometry().isEmpty())
             return;
 
@@ -907,21 +826,17 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         this.tessellateInterior(dc);
     }
 
-    protected void drawOutline(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected void drawOutline(DrawContext dc, SurfaceTileDrawContext sdc) {
         if (this.activeOutlineGeometry.isEmpty())
             return;
 
         this.applyOutlineState(dc, this.getActiveAttributes());
 
         for (List<LatLon> drawLocations : this.activeOutlineGeometry)
-        {
             this.drawLineStrip(dc, drawLocations);
-        }
     }
 
-    protected void drawLineStrip(DrawContext dc, List<LatLon> locations)
-    {
+    protected void drawLineStrip(DrawContext dc, Collection<LatLon> locations) {
         Position refPos = this.getReferencePosition();
         if (refPos == null)
             return;
@@ -930,8 +845,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             vertexBuffer = Buffers.newDirectFloatBuffer(2 * locations.size());
         vertexBuffer.clear();
 
-        for (LatLon ll : locations)
-        {
+        for (LatLon ll : locations) {
             vertexBuffer.put((float) (ll.getLongitude().degrees - refPos.getLongitude().degrees));
             vertexBuffer.put((float) (ll.getLatitude().degrees - refPos.getLatitude().degrees));
         }
@@ -942,56 +856,43 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         gl.glDrawArrays(GL.GL_LINE_STRIP, 0, locations.size());
     }
 
-    protected WWTexture getInteriorTexture()
-    {
-        if (this.getActiveAttributes().getImageSource() == null)
-        {
+    protected WWTexture getInteriorTexture() {
+        if (this.getActiveAttributes().getImageSource() == null) {
             this.texture = null;
         }
         else if (this.texture == null
-            || this.texture.getImageSource() != this.getActiveAttributes().getImageSource())
-        {
+            || this.texture.getImageSource() != this.getActiveAttributes().getImageSource()) {
             this.texture = new BasicWWTexture(this.getActiveAttributes().getImageSource(), true);
         }
 
         return this.texture;
     }
 
-    @SuppressWarnings({"unchecked"})
-    protected List<List<LatLon>> getCachedGeometry(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
-        if (dc == null)
-        {
+    @SuppressWarnings("unchecked")
+    protected List<List<LatLon>> getCachedGeometry(DrawContext dc, SurfaceTileDrawContext sdc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        Object key = this.createGeometryKey(dc, sdc);
-        CacheEntry entry = this.geometryCache.get(key);
-        if (entry == null)
-        {
-            entry = new CacheEntry(this.createGeometry(dc.getGlobe(), sdc), dc);
-            this.geometryCache.put(key, entry);
-        }
+        CacheEntry entry = this.geometryCache.computeIfAbsent(
+            createGeometryKey(dc, sdc),
+            k-> new CacheEntry(this.createGeometry(dc.getGlobe(), sdc), dc));
         return (List<List<LatLon>>) entry.object;
     }
 
-    protected List<List<LatLon>> createGeometry(Globe globe, SurfaceTileDrawContext sdc)
-    {
-        double edgeIntervalsPerDegree = this.computeEdgeIntervalsPerDegree(sdc);
-        return this.createGeometry(globe, edgeIntervalsPerDegree);
+    protected List<List<LatLon>> createGeometry(Globe globe, SurfaceTileDrawContext sdc) {
+        return this.createGeometry(globe, this.computeEdgeIntervalsPerDegree(sdc));
     }
 
     protected abstract List<List<LatLon>> createGeometry(Globe globe, double edgeIntervalsPerDegree);
 
-    protected Object createGeometryKey(DrawContext dc, SurfaceTileDrawContext sdc)
-    {
+    protected Object createGeometryKey(DrawContext dc, SurfaceTileDrawContext sdc) {
         return new GeometryKey(dc, this.computeEdgeIntervalsPerDegree(sdc));
     }
 
-    protected double computeEdgeIntervalsPerDegree(SurfaceTileDrawContext sdc)
-    {
+    protected double computeEdgeIntervalsPerDegree(SurfaceTileDrawContext sdc) {
         double texelsPerDegree = Math.max(
             sdc.getViewport().width / sdc.getSector().getDeltaLonDegrees(),
             sdc.getViewport().getHeight() / sdc.getSector().getDeltaLatDegrees());
@@ -1001,20 +902,16 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
-    protected double computeEdgeIntervalsPerDegree(double resolution)
-    {
+    protected double computeEdgeIntervalsPerDegree(double resolution) {
         double degreesPerInterval = resolution * 180.0 / Math.PI;
-        double intervalsPerDegree = 1.0 / degreesPerInterval;
-
-        return intervalsPerDegree;
+        return 1.0 / degreesPerInterval;
     }
 
     //**************************************************************//
     //********************  Combinable  ****************************//
     //**************************************************************//
 
-    protected void combineBounds(CombineContext cc)
-    {
+    protected void combineBounds(CombineContext cc) {
         List<Sector> sectorList = this.computeSectors(cc.getGlobe());
         if (sectorList == null)
             return; // no caller specified locations to bound
@@ -1022,8 +919,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         cc.addBoundingSector(Sector.union(sectorList));
     }
 
-    protected void combineContours(CombineContext cc)
-    {
+    protected void combineContours(CombineContext cc) {
         List<Sector> sectorList = this.computeSectors(cc.getGlobe());
         if (sectorList == null)
             return; // no caller specified locations to draw
@@ -1034,15 +930,13 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         this.doCombineContours(cc);
     }
 
-    protected void doCombineContours(CombineContext cc)
-    {
+    protected void doCombineContours(CombineContext cc) {
         double edgeIntervalsPerDegree = this.computeEdgeIntervalsPerDegree(cc.getResolution());
         List<List<LatLon>> contours = this.createGeometry(cc.getGlobe(), edgeIntervalsPerDegree);
         if (contours == null)
             return; // shape has no caller specified data
 
-        for (List<LatLon> contour : contours)
-        {
+        for (List<LatLon> contour : contours) {
             String pole = this.containsPole(contour);
             if (pole != null) // Wrap the contour around the pole and along the anti-meridian. See WWJ-284.
             {
@@ -1055,29 +949,24 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
                 this.doCombineContour(cc, datelineContours.get(0));
                 this.doCombineContour(cc, datelineContours.get(1));
             }
-            else
-            {
+            else {
                 this.doCombineContour(cc, contour);
             }
         }
     }
 
-    protected void doCombineContour(CombineContext cc, Iterable<? extends LatLon> contour)
-    {
+    protected void doCombineContour(CombineContext cc, Iterable<? extends LatLon> contour) {
         GLUtessellator tess = cc.getTessellator();
 
-        try
-        {
+        try {
             GLU.gluTessBeginContour(tess);
 
-            for (LatLon location : contour)
-            {
+            for (LatLon location : contour) {
                 double[] vertex = {location.longitude.degrees, location.latitude.degrees, 0};
                 GLU.gluTessVertex(tess, vertex, 0, vertex);
             }
         }
-        finally
-        {
+        finally {
             GLU.gluTessEndContour(tess);
         }
     }
@@ -1087,18 +976,14 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     //**************************************************************//
 
     protected void applyInteriorState(DrawContext dc, SurfaceTileDrawContext sdc, ShapeAttributes attributes,
-        WWTexture texture, LatLon refLocation)
-    {
+        WWTexture texture, LatLon refLocation) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
-        if (texture != null && !dc.isPickingMode())
-        {
+        if (texture != null && !dc.isPickingMode()) {
             this.applyInteriorTextureState(dc, sdc, attributes, texture, refLocation);
         }
-        else
-        {
-            if (!dc.isPickingMode())
-            {
+        else {
+            if (!dc.isPickingMode()) {
                 // Apply blending in non-premultiplied color mode.
                 OGLUtil.applyBlending(gl, false);
                 // Set the current RGBA color to the outline color and opacity. Convert the floating point opacity from the
@@ -1115,44 +1000,37 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         }
     }
 
-    protected void applyOutlineState(DrawContext dc, ShapeAttributes attributes)
-    {
+    protected void applyOutlineState(DrawContext dc, ShapeAttributes attributes) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Apply line width state
         double lineWidth = attributes.getOutlineWidth();
-        if (dc.isPickingMode() && !attributes.isDrawInterior())
-        {
+        if (dc.isPickingMode() && !attributes.isDrawInterior()) {
             if (lineWidth != 0)
                 lineWidth += 5;
         }
         gl.glLineWidth((float) lineWidth);
 
         // Apply line smooth state
-        if (!dc.isPickingMode() && attributes.isEnableAntialiasing())
-        {
+        if (!dc.isPickingMode() && attributes.isEnableAntialiasing()) {
             gl.glEnable(GL.GL_LINE_SMOOTH);
         }
-        else
-        {
+        else {
             gl.glDisable(GL.GL_LINE_SMOOTH);
         }
 
         // Apply line stipple state.
-        if (dc.isPickingMode() || (attributes.getOutlineStippleFactor() <= 0))
-        {
+        if (dc.isPickingMode() || (attributes.getOutlineStippleFactor() <= 0)) {
             gl.glDisable(GL2.GL_LINE_STIPPLE);
         }
-        else
-        {
+        else {
             gl.glEnable(GL2.GL_LINE_STIPPLE);
             gl.glLineStipple(
                 attributes.getOutlineStippleFactor(),
                 attributes.getOutlineStipplePattern());
         }
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             // Apply blending in non-premultiplied color mode.
             OGLUtil.applyBlending(gl, false);
             // Set the current RGBA color to the outline color and opacity. Convert the floating point opacity from the
@@ -1169,15 +1047,13 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     protected void applyInteriorTextureState(DrawContext dc, SurfaceTileDrawContext sdc, ShapeAttributes attributes,
-        WWTexture texture, LatLon refLocation)
-    {
+        WWTexture texture, LatLon refLocation) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (!texture.bind(dc))
             return;
 
-        if (!dc.isPickingMode())
-        {
+        if (!dc.isPickingMode()) {
             // Apply blending in premultiplied color mode, and set the current RGBA color to white, with the specified
             // opacity.
             OGLUtil.applyBlending(gl, true);
@@ -1197,22 +1073,21 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         // Apply texture transform.
         Matrix transform = Matrix.IDENTITY;
         // Translate geographic coordinates to the reference location.
-        if (refLocation != null)
-        {
+        if (refLocation != null) {
             double refLatDegrees = refLocation.getLatitude().degrees;
             double refLonDegrees = refLocation.getLongitude().degrees;
-            transform = Matrix.fromTranslation(refLonDegrees, refLatDegrees, 0d).multiply(transform);
+            transform = Matrix.fromTranslation(refLonDegrees, refLatDegrees, 0.0d).multiply(transform);
         }
         // Premultiply pattern scaling and cos latitude to compensate latitude distortion on x
-        double cosLat = refLocation != null ? refLocation.getLatitude().cos() : 1d;
+        double cosLat = refLocation != null ? refLocation.getLatitude().cos() : 1.0d;
         double scale = attributes.getImageScale();
-        transform = Matrix.fromScale(cosLat / scale, 1d / scale, 1d).multiply(transform);
+        transform = Matrix.fromScale(cosLat / scale, 1.0d / scale, 1.0d).multiply(transform);
         // To maintain the pattern apparent size, we scale it so that one texture pixel match one draw tile pixel.
         double regionPixelSize = dc.getGlobe().getRadius() * sdc.getSector().getDeltaLatRadians()
             / sdc.getViewport().height;
         double texturePixelSize = dc.getGlobe().getRadius() * Angle.fromDegrees(1).radians / texture.getHeight(dc);
         double drawScale = texturePixelSize / regionPixelSize;
-        transform = Matrix.fromScale(drawScale, drawScale, 1d).multiply(transform); // Pre multiply
+        transform = Matrix.fromScale(drawScale, drawScale, 1.0d).multiply(transform); // Pre multiply
         // Apply texture coordinates transform
         double[] matrixArray = transform.toArray(new double[16], 0, false);
         gl.glMatrixMode(GL2.GL_TEXTURE);
@@ -1232,20 +1107,16 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     //**************************************************************//
 
     protected void generateIntermediateLocations(Iterable<? extends LatLon> iterable, double edgeIntervalsPerDegree,
-        boolean makeClosedPath, List<LatLon> locations)
-    {
+        boolean makeClosedPath, List<LatLon> locations) {
         LatLon firstLocation = null;
         LatLon lastLocation = null;
 
-        for (LatLon ll : iterable)
-        {
-            if (firstLocation == null)
-            {
+        for (LatLon ll : iterable) {
+            if (firstLocation == null) {
                 firstLocation = ll;
             }
 
-            if (lastLocation != null)
-            {
+            if (lastLocation != null) {
                 this.addIntermediateLocations(lastLocation, ll, edgeIntervalsPerDegree, locations);
             }
 
@@ -1256,53 +1127,45 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         // If the caller has instructed us to generate locations for a closed path, then check to see if the specified
         // locations define a closed path. If not, then we need to generate intermediate locations between the last
         // and first locations, then close the path by repeating the first location.
-        if (makeClosedPath)
-        {
-            if (firstLocation != null && lastLocation != null && !firstLocation.equals(lastLocation))
-            {
+        if (makeClosedPath) {
+            if (firstLocation != null && lastLocation != null && !firstLocation.equals(lastLocation)) {
                 this.addIntermediateLocations(lastLocation, firstLocation, edgeIntervalsPerDegree, locations);
                 locations.add(firstLocation);
             }
         }
     }
 
-    @SuppressWarnings({"StringEquality"})
-    protected void addIntermediateLocations(LatLon a, LatLon b, double edgeIntervalsPerDegree, List<LatLon> locations)
-    {
-        if (this.pathType != null && this.pathType == AVKey.GREAT_CIRCLE)
-        {
+    @SuppressWarnings("StringEquality")
+    protected void addIntermediateLocations(LatLon a, LatLon b, double edgeIntervalsPerDegree,
+        Collection<LatLon> locations) {
+        if (this.pathType != null && this.pathType == AVKey.GREAT_CIRCLE) {
             Angle pathLength = LatLon.greatCircleDistance(a, b);
 
             double edgeIntervals = WWMath.clamp(edgeIntervalsPerDegree * pathLength.degrees,
                 this.minEdgeIntervals, this.maxEdgeIntervals);
             int numEdgeIntervals = (int) Math.ceil(edgeIntervals);
 
-            if (numEdgeIntervals > 1)
-            {
+            if (numEdgeIntervals > 1) {
                 double headingRadians = LatLon.greatCircleAzimuth(a, b).radians;
                 double stepSizeRadians = pathLength.radians / (numEdgeIntervals + 1);
 
-                for (int i = 1; i <= numEdgeIntervals; i++)
-                {
+                for (int i = 1; i <= numEdgeIntervals; i++) {
                     locations.add(LatLon.greatCircleEndPosition(a, headingRadians, i * stepSizeRadians));
                 }
             }
         }
-        else if (this.pathType != null && (this.pathType == AVKey.RHUMB_LINE || this.pathType == AVKey.LOXODROME))
-        {
+        else if (this.pathType != null && (this.pathType == AVKey.RHUMB_LINE || this.pathType == AVKey.LOXODROME)) {
             Angle pathLength = LatLon.rhumbDistance(a, b);
 
             double edgeIntervals = WWMath.clamp(edgeIntervalsPerDegree * pathLength.degrees,
                 this.minEdgeIntervals, this.maxEdgeIntervals);
             int numEdgeIntervals = (int) Math.ceil(edgeIntervals);
 
-            if (numEdgeIntervals > 1)
-            {
+            if (numEdgeIntervals > 1) {
                 double headingRadians = LatLon.rhumbAzimuth(a, b).radians;
                 double stepSizeRadians = pathLength.radians / (numEdgeIntervals + 1);
 
-                for (int i = 1; i <= numEdgeIntervals; i++)
-                {
+                for (int i = 1; i <= numEdgeIntervals; i++) {
                     locations.add(LatLon.rhumbEndPosition(a, headingRadians, i * stepSizeRadians));
                 }
             }
@@ -1318,23 +1181,19 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     //********************  Interior Tessellation  *****************//
     //**************************************************************//
 
-    protected Integer tessellateInterior(DrawContext dc)
-    {
-        if (dc == null)
-        {
+    protected Integer tessellateInterior(DrawContext dc) {
+        if (dc == null) {
             String message = Logging.getMessage("nullValue.DrawContextIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        try
-        {
+        try {
             return this.doTessellateInterior(dc);
         }
-        catch (OutOfMemoryError e)
-        {
+        catch (OutOfMemoryError e) {
             String message = Logging.getMessage("generic.ExceptionWhileTessellating", this);
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
+            Logging.logger().log(Level.SEVERE, message, e);
 
             //noinspection ThrowableInstanceNeverThrown
             dc.addRenderingException(new WWRuntimeException(message, e));
@@ -1345,8 +1204,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         }
     }
 
-    protected Integer doTessellateInterior(DrawContext dc)
-    {
+    protected Integer doTessellateInterior(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         GLUtessellatorCallback cb = GLUTessellatorSupport.createOGLDrawPrimitivesCallback(gl);
 
@@ -1354,12 +1212,10 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         // expected tessellation when the shape's contours all have a counter-clockwise winding.
         GLUTessellatorSupport glts = new GLUTessellatorSupport();
         glts.beginTessellation(cb, new Vec4(0, 0, 1));
-        try
-        {
+        try {
             return this.tessellateInteriorVertices(glts.getGLUtessellator());
         }
-        finally
-        {
+        finally {
             // Free any heap memory used for tessellation immediately. If tessellation has consumed all available heap
             // memory, we must free memory used by tessellation immediately or subsequent operations such as message
             // logging will fail.
@@ -1367,8 +1223,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         }
     }
 
-    protected Integer tessellateInteriorVertices(GLUtessellator tess)
-    {
+    protected Integer tessellateInteriorVertices(GLUtessellator tess) {
         if (this.getActiveGeometry().isEmpty())
             return null;
 
@@ -1379,11 +1234,9 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         int numBytes = 0;
         GLU.gluTessBeginPolygon(tess, null);
 
-        for (List<LatLon> drawLocations : this.getActiveGeometry())
-        {
+        for (List<LatLon> drawLocations : this.getActiveGeometry()) {
             GLU.gluTessBeginContour(tess);
-            for (LatLon ll : drawLocations)
-            {
+            for (LatLon ll : drawLocations) {
                 double[] vertex = new double[3];
                 vertex[0] = ll.getLongitude().degrees - referencePos.getLongitude().degrees;
                 vertex[1] = ll.getLatitude().degrees - referencePos.getLatitude().degrees;
@@ -1398,42 +1251,35 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         return numBytes;
     }
 
-    protected void handleUnsuccessfulInteriorTessellation(DrawContext dc)
-    {
+    protected void handleUnsuccessfulInteriorTessellation(DrawContext dc) {
     }
 
     //**************************************************************//
     //********************  Measurement  ***************************//
     //**************************************************************//
 
-    protected AreaMeasurer setupAreaMeasurer(Globe globe)
-    {
-        if (globe == null)
-        {
+    protected AreaMeasurer setupAreaMeasurer(Globe globe) {
+        if (globe == null) {
             String message = Logging.getMessage("nullValue.GlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (this.areaMeasurer == null)
-        {
+        if (this.areaMeasurer == null) {
             this.areaMeasurer = new AreaMeasurer();
         }
 
         // Try to use the currently cached locations. If the AreaMeasurer is out of sync with this shape's state,
         // then update the AreaMeasurer's internal location list.
-        if (this.areaMeasurerLastModifiedTime < this.lastModifiedTime)
-        {
+        if (this.areaMeasurerLastModifiedTime < this.lastModifiedTime) {
             // The AreaMeasurer requires an ArrayList reference, but SurfaceShapes use an opaque iterable. Copy the
             // iterable contents into an ArrayList to satisfy AreaMeasurer without compromising the generality of the
             // shape's iterator.
             ArrayList<LatLon> arrayList = new ArrayList<>();
 
             Iterable<? extends LatLon> locations = this.getLocations(globe);
-            if (locations != null)
-            {
-                for (LatLon ll : locations)
-                {
+            if (locations != null) {
+                for (LatLon ll : locations) {
                     arrayList.add(ll);
                 }
 
@@ -1455,8 +1301,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     //******************** Restorable State  ***********************//
     //**************************************************************//
 
-    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
         // Note: drawBoundingSectors is a diagnostic flag, therefore it is not saved or restored.
 
         rs.addStateValueAsBoolean(context, "visible", this.isVisible());
@@ -1475,14 +1320,12 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             this.getHighlightAttributes().getRestorableState(rs, rs.addStateObject(context, "highlightAttrs"));
 
         RestorableSupport.StateObject so = rs.addStateObject(null, "avlist");
-        for (Map.Entry<String, Object> avp : this.getEntries())
-        {
+        for (Map.Entry<String, Object> avp : this.getEntries()) {
             this.getRestorableStateForAVPair(avp.getKey(), avp.getValue() != null ? avp.getValue() : "", rs, so);
         }
     }
 
-    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void doRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         // Invoke the legacy restore functionality. This will enable the shape to recognize state XML elements
         // from the previous version of SurfaceShape.
         this.legacyRestoreState(rs, context);
@@ -1498,8 +1341,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             this.setHighlighted(b);
 
         String s = rs.getStateValueAsString(context, "pathType");
-        if (s != null)
-        {
+        if (s != null) {
             String pathType = this.pathTypeFromString(s);
             if (pathType != null)
                 this.setPathType(pathType);
@@ -1523,16 +1365,14 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             this.setMinAndMaxEdgeIntervals(minAndMaxEdgeIntervals[0], minAndMaxEdgeIntervals[1]);
 
         RestorableSupport.StateObject so = rs.getStateObject(context, "attributes");
-        if (so != null)
-        {
+        if (so != null) {
             ShapeAttributes attrs = (this.getAttributes() != null) ? this.getAttributes() : new BasicShapeAttributes();
             attrs.restoreState(rs, so);
             this.setAttributes(attrs);
         }
 
         so = rs.getStateObject(context, "highlightAttrs");
-        if (so != null)
-        {
+        if (so != null) {
             ShapeAttributes attrs = (this.getHighlightAttributes() != null) ? this.getHighlightAttributes()
                 : new BasicShapeAttributes();
             attrs.restoreState(rs, so);
@@ -1540,13 +1380,10 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         }
 
         so = rs.getStateObject(null, "avlist");
-        if (so != null)
-        {
+        if (so != null) {
             RestorableSupport.StateObject[] avpairs = rs.getAllStateObjects(so, "");
-            if (avpairs != null)
-            {
-                for (RestorableSupport.StateObject avp : avpairs)
-                {
+            if (avpairs != null) {
+                for (RestorableSupport.StateObject avp : avpairs) {
                     if (avp != null)
                         this.setValue(avp.getName(), avp.getValue());
                 }
@@ -1562,14 +1399,13 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     /**
      * Restores state values from previous versions of the SurfaceShape state XML. These values are stored or named
      * differently than the current implementation. Those values which have not changed are ignored here, and will
-     * restored in {@link #doRestoreState(gov.nasa.worldwind.util.RestorableSupport,
-     * gov.nasa.worldwind.util.RestorableSupport.StateObject)}.
+     * restored in {@link #doRestoreState(RestorableSupport,
+     * RestorableSupport.StateObject)}.
      *
      * @param rs      RestorableSupport object which contains the state value properties.
      * @param context active context in the RestorableSupport to read state from.
      */
-    protected void legacyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context)
-    {
+    protected void legacyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         // Ignore texture width and height parameters, they're no longer used.
 
         //Integer width = rs.getStateValueAsInteger(context, "textureWidth");
@@ -1579,7 +1415,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
         ShapeAttributes attrs = this.getAttributes();
 
-        java.awt.Color color = rs.getStateValueAsColor(context, "color");
+        Color color = rs.getStateValueAsColor(context, "color");
         if (color != null)
             (attrs != null ? attrs : (attrs = new BasicShapeAttributes())).setInteriorMaterial(new Material(color));
 
@@ -1619,19 +1455,17 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         //    this.positions = locations;
     }
 
-    protected String pathTypeFromString(String s)
-    {
+    protected String pathTypeFromString(String s) {
         if (s == null)
             return null;
 
-        return switch (s)
-            {
-                case AVKey.GREAT_CIRCLE -> AVKey.GREAT_CIRCLE;
-                case AVKey.LINEAR -> AVKey.LINEAR;
-                case AVKey.LOXODROME -> AVKey.LOXODROME;
-                case AVKey.RHUMB_LINE -> AVKey.RHUMB_LINE;
-                default -> null;
-            };
+        return switch (s) {
+            case AVKey.GREAT_CIRCLE -> AVKey.GREAT_CIRCLE;
+            case AVKey.LINEAR -> AVKey.LINEAR;
+            case AVKey.LOXODROME -> AVKey.LOXODROME;
+            case AVKey.RHUMB_LINE -> AVKey.RHUMB_LINE;
+            default -> null;
+        };
     }
 
     //**************************************************************//
@@ -1639,131 +1473,23 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     //**************************************************************//
 
     /**
-     * Represents a surface shapes's current state. SurfaceShapeStateKey extends {@link
-     * gov.nasa.worldwind.render.AbstractSurfaceObject.SurfaceObjectStateKey} by adding the shape's current {@link
-     * gov.nasa.worldwind.render.ShapeAttributes} and the globe's state key.
-     * <p>
-     * SurfaceShapeStateKey uniquely identifies a surface shapes's current state exactly as SurfaceObjectStateKey does,
-     * but also distinguishes the shape's active ShapeAttributes from any previous attributes, and distinguishes between
-     * different globes via the globe state key.
-     */
-    protected static class SurfaceShapeStateKey extends SurfaceObjectStateKey
-    {
-        /** The SurfaceShape's attributes. May be null if the shape has no attributes. */
-        protected final ShapeAttributes attributes;
-        /** The Globe's state key. May be null if the shape's state does not depend on the globe. */
-        protected final Object globeStateKey;
-
-        /**
-         * Constructs a new SurfaceShapeStateKey with the specified unique ID, modified time, attributes, and globe
-         * state key. The globe state key should be null if the surface shape does not depend on the globe.
-         *
-         * @param uniqueID      the SurfaceShape's unique ID.
-         * @param modifiedTime  the SurfaceShape's modified time.
-         * @param attributes    the SurfaceShape's attributes, or null if the shape has no attributes.
-         * @param globeStateKey the globe's state key, or null if the shape does not depend on the globe.
-         *
-         * @see gov.nasa.worldwind.globes.Globe#getStateKey(DrawContext)
-         */
-        public SurfaceShapeStateKey(long uniqueID, long modifiedTime, ShapeAttributes attributes, Object globeStateKey)
-        {
-            super(uniqueID, modifiedTime);
-
-            this.attributes = attributes;
-            this.globeStateKey = globeStateKey;
-        }
-
-        @Override
-        @SuppressWarnings({"SimplifiableIfStatement"})
-        public boolean equals(Object o)
-        {
-            if (this == o)
-                return true;
-            if (o == null || this.getClass() != o.getClass())
-                return false;
-
-            SurfaceShapeStateKey that = (SurfaceShapeStateKey) o;
-            return super.equals(o)
-                && (Objects.equals(this.attributes, that.attributes))
-                && (Objects.equals(this.globeStateKey, that.globeStateKey));
-        }
-
-        @Override
-        public int hashCode()
-        {
-            int result = super.hashCode();
-            result = 31 * result + (this.attributes != null ? this.attributes.hashCode() : 0);
-            result = 31 * result + (this.globeStateKey != null ? this.globeStateKey.hashCode() : 0);
-            return result;
-        }
-
-        /**
-         * Returns the state key's size in bytes. Overridden to include the attributes and the reference to the globe
-         * state key.
-         *
-         * @return The state key's size in bytes.
-         */
-        @Override
-        public long getSizeInBytes()
-        {
-            return super.getSizeInBytes() + 64; // Add the shape attributes and the references.
-        }
-    }
-
-    //**************************************************************//
-    //********************  Cache Key, Cache Entry  ****************//
-    //**************************************************************//
-
-    protected static class GeometryKey
-    {
-        protected final Globe globe;
-        protected final double edgeIntervalsPerDegree;
-
-        public GeometryKey(DrawContext dc, double edgeIntervalsPerDegree)
-        {
-            this.globe = dc.getGlobe();
-            this.edgeIntervalsPerDegree = edgeIntervalsPerDegree;
-        }
-
-        @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-                return true;
-            if (o == null || this.getClass() != o.getClass())
-                return false;
-
-            GeometryKey that = (GeometryKey) o;
-            return this.globe.equals(that.globe) && this.edgeIntervalsPerDegree == that.edgeIntervalsPerDegree;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            int hash = this.globe.hashCode();
-            long temp = this.edgeIntervalsPerDegree != +0.0d ? Double.doubleToLongBits(this.edgeIntervalsPerDegree)
-                : 0L;
-            return 31 * hash + (int) (temp ^ (temp >>> 32));
-        }
-    }
-
-    /**
      * Does this object support a certain export format?
      *
      * @param format Mime type for the export format.
-     *
      * @return One of {@link Exportable#FORMAT_SUPPORTED}, {@link Exportable#FORMAT_NOT_SUPPORTED}, or {@link
-     *         Exportable#FORMAT_PARTIALLY_SUPPORTED}.
-     *
+     * Exportable#FORMAT_PARTIALLY_SUPPORTED}.
      * @see #export(String, Object)
      */
-    public String isExportFormatSupported(String format)
-    {
+    public String isExportFormatSupported(String format) {
         if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(format))
             return Exportable.FORMAT_SUPPORTED;
         else
             return Exportable.FORMAT_NOT_SUPPORTED;
     }
+
+    //**************************************************************//
+    //********************  Cache Key, Cache Entry  ****************//
+    //**************************************************************//
 
     /**
      * Export the Polygon. The {@code output} object will receive the exported data. The type of this object depends on
@@ -1779,49 +1505,140 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * @param mimeType MIME type of desired export format.
      * @param output   An object that will receive the exported data. The type of this object depends on the export
      *                 format (see above).
-     *
-     * @throws java.io.IOException           If an exception occurs writing to the output object.
+     * @throws IOException           If an exception occurs writing to the output object.
      * @throws UnsupportedOperationException if the format is not supported by this object, or if the {@code output}
      *                                       argument is not of a supported type.
      */
-    public void export(String mimeType, Object output) throws IOException, UnsupportedOperationException
-    {
-        if (mimeType == null)
-        {
+    public void export(String mimeType, Object output) throws IOException, UnsupportedOperationException {
+        if (mimeType == null) {
             String message = Logging.getMessage("nullValue.Format");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (output == null)
-        {
+        if (output == null) {
             String message = Logging.getMessage("nullValue.OutputBufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType))
-        {
-            try
-            {
+        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType)) {
+            try {
                 exportAsKML(output);
             }
-            catch (XMLStreamException e)
-            {
+            catch (XMLStreamException e) {
                 Logging.logger().throwing(getClass().getName(), "export", e);
                 throw new IOException(e);
             }
         }
-        else
-        {
+        else {
             String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
             Logging.logger().warning(message);
             throw new UnsupportedOperationException(message);
         }
     }
 
-    protected void exportAsKML(Object output) throws IOException, XMLStreamException
-    {
+    protected void exportAsKML(Object output) throws IOException, XMLStreamException {
         // This is a dummy method, here to enable a call to it above. It's expected to be overridden by subclasses.
+    }
+
+    /**
+     * Represents a surface shapes's current state. SurfaceShapeStateKey extends {@link
+     * AbstractSurfaceObject.SurfaceObjectStateKey} by adding the shape's current {@link
+     * ShapeAttributes} and the globe's state key.
+     * <p>
+     * SurfaceShapeStateKey uniquely identifies a surface shapes's current state exactly as SurfaceObjectStateKey does,
+     * but also distinguishes the shape's active ShapeAttributes from any previous attributes, and distinguishes between
+     * different globes via the globe state key.
+     */
+    protected static class SurfaceShapeStateKey extends SurfaceObjectStateKey {
+        /**
+         * The SurfaceShape's attributes. May be null if the shape has no attributes.
+         */
+        protected final ShapeAttributes attributes;
+        /**
+         * The Globe's state key. May be null if the shape's state does not depend on the globe.
+         */
+        protected final Object globeStateKey;
+
+        /**
+         * Constructs a new SurfaceShapeStateKey with the specified unique ID, modified time, attributes, and globe
+         * state key. The globe state key should be null if the surface shape does not depend on the globe.
+         *
+         * @param uniqueID      the SurfaceShape's unique ID.
+         * @param modifiedTime  the SurfaceShape's modified time.
+         * @param attributes    the SurfaceShape's attributes, or null if the shape has no attributes.
+         * @param globeStateKey the globe's state key, or null if the shape does not depend on the globe.
+         * @see Globe#getStateKey(DrawContext)
+         */
+        public SurfaceShapeStateKey(long uniqueID, long modifiedTime, ShapeAttributes attributes,
+            Object globeStateKey) {
+            super(uniqueID, modifiedTime);
+
+            this.attributes = attributes;
+            this.globeStateKey = globeStateKey;
+        }
+
+        @Override
+        @SuppressWarnings("SimplifiableIfStatement")
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || this.getClass() != o.getClass())
+                return false;
+
+            SurfaceShapeStateKey that = (SurfaceShapeStateKey) o;
+            return super.equals(o)
+                && (Objects.equals(this.attributes, that.attributes))
+                && (Objects.equals(this.globeStateKey, that.globeStateKey));
+        }
+
+        @Override
+        public int hashCode() {
+            int result = super.hashCode();
+            result = 31 * result + (this.attributes != null ? this.attributes.hashCode() : 0);
+            result = 31 * result + (this.globeStateKey != null ? this.globeStateKey.hashCode() : 0);
+            return result;
+        }
+
+        /**
+         * Returns the state key's size in bytes. Overridden to include the attributes and the reference to the globe
+         * state key.
+         *
+         * @return The state key's size in bytes.
+         */
+        @Override
+        public long getSizeInBytes() {
+            return super.getSizeInBytes() + 64; // Add the shape attributes and the references.
+        }
+    }
+
+    protected static class GeometryKey {
+        protected final Globe globe;
+        protected final double edgeIntervalsPerDegree;
+
+        public GeometryKey(DrawContext dc, double edgeIntervalsPerDegree) {
+            this.globe = dc.getGlobe();
+            this.edgeIntervalsPerDegree = edgeIntervalsPerDegree;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || this.getClass() != o.getClass())
+                return false;
+
+            GeometryKey that = (GeometryKey) o;
+            return this.globe.equals(that.globe) && this.edgeIntervalsPerDegree == that.edgeIntervalsPerDegree;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = this.globe.hashCode();
+            long temp = this.edgeIntervalsPerDegree != +0.0d ? Double.doubleToLongBits(this.edgeIntervalsPerDegree)
+                : 0L;
+            return 31 * hash + (int) (temp ^ (temp >>> 32));
+        }
     }
 }

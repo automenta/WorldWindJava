@@ -18,8 +18,7 @@ import gov.nasa.worldwind.render.DrawContext;
  * @author tag
  * @version $Id: Marker.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface Marker
-{
+public interface Marker {
     void render(DrawContext dc, Vec4 point, double radius, boolean isRelative);
 
     void render(DrawContext dc, Vec4 point, double radius);

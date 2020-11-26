@@ -11,24 +11,35 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.pick.PickSupport;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.util.List;
+
 /**
  * Represent a text label and its rendering attributes.
  *
  * @author Patrick Murris
  * @version $Id: Annotation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface Annotation extends Renderable, Disposable, Restorable
-{
-    /** @deprecated Use {@link AVKey#REPEAT_NONE} instead. */
+public interface Annotation extends Renderable, Disposable, Restorable {
+    /**
+     * @deprecated Use {@link AVKey#REPEAT_NONE} instead.
+     */
     @Deprecated
     String IMAGE_REPEAT_NONE = AVKey.REPEAT_NONE;
-    /** @deprecated Use {@link AVKey#REPEAT_X} instead. */
+    /**
+     * @deprecated Use {@link AVKey#REPEAT_X} instead.
+     */
     @Deprecated
     String IMAGE_REPEAT_X = AVKey.REPEAT_X;
-    /** @deprecated Use {@link AVKey#REPEAT_Y} instead. */
+    /**
+     * @deprecated Use {@link AVKey#REPEAT_Y} instead.
+     */
     @Deprecated
     String IMAGE_REPEAT_Y = AVKey.REPEAT_Y;
-    /** @deprecated Use {@link AVKey#REPEAT_XY} instead. */
+    /**
+     * @deprecated Use {@link AVKey#REPEAT_XY} instead.
+     */
     @Deprecated
     String IMAGE_REPEAT_XY = AVKey.REPEAT_XY;
 
@@ -36,10 +47,14 @@ public interface Annotation extends Renderable, Disposable, Restorable
     int ANTIALIAS_FASTEST = GL.GL_FASTEST;
     int ANTIALIAS_NICEST = GL.GL_NICEST;
 
-    /** @deprecated Use {@link AVKey#SIZE_FIXED} instead. */
+    /**
+     * @deprecated Use {@link AVKey#SIZE_FIXED} instead.
+     */
     @Deprecated
     String SIZE_FIXED = AVKey.SIZE_FIXED;
-    /** @deprecated Use {@link AVKey#SIZE_FIT_TEXT} instead. */
+    /**
+     * @deprecated Use {@link AVKey#SIZE_FIT_TEXT} instead.
+     */
     @Deprecated
     String SIZE_FIT_TEXT = AVKey.SIZE_FIT_TEXT;
 
@@ -59,7 +74,7 @@ public interface Annotation extends Renderable, Disposable, Restorable
 
     void setAttributes(AnnotationAttributes attrs);
 
-    java.util.List<? extends Annotation> getChildren();
+    List<? extends Annotation> getChildren();
 
     void addChild(Annotation annotation);
 
@@ -79,7 +94,7 @@ public interface Annotation extends Renderable, Disposable, Restorable
 
     void setDelegateOwner(Object delegateOwner);
 
-    java.awt.Dimension getPreferredSize(DrawContext dc);
+    Dimension getPreferredSize(DrawContext dc);
 
     /**
      * Draws the annotation immediately on the specified DrawContext. Rendering is not be delayed by use of the
@@ -87,7 +102,6 @@ public interface Annotation extends Renderable, Disposable, Restorable
      * AnnotationRenderer while batch rendering. The GL should have its model view set to the identity matrix.
      *
      * @param dc the current DrawContext.
-     *
      * @throws IllegalArgumentException if <code>dc</code> is null.
      */
     void renderNow(DrawContext dc);
@@ -102,31 +116,27 @@ public interface Annotation extends Renderable, Disposable, Restorable
      * @param height       the height of the Annotation.
      * @param opacity      the opacity of the Annotation.
      * @param pickPosition the picked Position assigned to the Annotation, if picking is enabled.
-     *
      * @throws IllegalArgumentException if <code>dc</code> is null.
      */
     void draw(DrawContext dc, int width, int height, double opacity, Position pickPosition);
 
     /**
-     * Get the annotation bounding {@link java.awt.Rectangle} using OGL coordinates - bottom-left corner x and y
+     * Get the annotation bounding {@link Rectangle} using OGL coordinates - bottom-left corner x and y
      * relative to the {@link WorldWindow} bottom-left corner, and the annotation callout width and height.
      * <p>
      * The annotation offset from it's reference point is factored in such that the callout leader shape and reference
      * point are included in the bounding rectangle.
      *
      * @param dc the current DrawContext.
-     *
-     * @return the annotation bounding {@link java.awt.Rectangle} using OGL viewport coordinates.
-     *
+     * @return the annotation bounding {@link Rectangle} using OGL viewport coordinates.
      * @throws IllegalArgumentException if <code>dc</code> is null.
      */
-    java.awt.Rectangle getBounds(DrawContext dc);
+    Rectangle getBounds(DrawContext dc);
 
     /**
      * Returns the minimum eye altitude, in meters, for which the annotation is displayed.
      *
      * @return the minimum altitude, in meters, for which the annotation is displayed.
-     *
      * @see #setMinActiveAltitude(double)
      * @see #getMaxActiveAltitude()
      */
@@ -136,7 +146,6 @@ public interface Annotation extends Renderable, Disposable, Restorable
      * Specifies the minimum eye altitude, in meters, for which the annotation is displayed.
      *
      * @param minActiveAltitude the minimum altitude, in meters, for which the annotation is displayed.
-     *
      * @see #getMinActiveAltitude()
      * @see #setMaxActiveAltitude(double)
      */
@@ -146,7 +155,6 @@ public interface Annotation extends Renderable, Disposable, Restorable
      * Returns the maximum eye altitude, in meters, for which the annotation is displayed.
      *
      * @return the maximum altitude, in meters, for which the annotation is displayed.
-     *
      * @see #setMaxActiveAltitude(double)
      * @see #getMinActiveAltitude()
      */
@@ -156,7 +164,6 @@ public interface Annotation extends Renderable, Disposable, Restorable
      * Specifies the maximum eye altitude, in meters, for which the annotation is displayed.
      *
      * @param maxActiveAltitude the maximum altitude, in meters, for which the annotation is displayed.
-     *
      * @see #getMaxActiveAltitude()
      * @see #setMinActiveAltitude(double)
      */

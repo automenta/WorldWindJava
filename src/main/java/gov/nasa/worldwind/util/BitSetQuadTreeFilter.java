@@ -23,8 +23,7 @@ import java.util.*;
  * @author tag
  * @version $Id: BitSetQuadTreeFilter.java 1939 2014-04-15 22:50:19Z tgaskins $
  */
-public abstract class BitSetQuadTreeFilter
-{
+public abstract class BitSetQuadTreeFilter {
     protected BitSet bits;
     protected int maxLevel;
     protected int numLevels;
@@ -34,40 +33,15 @@ public abstract class BitSetQuadTreeFilter
     protected boolean stopped;
 
     /**
-     * A method implemented by subclasses and called during tree traversal to perform an operation on an intersecting
-     * item. The method's implementation typically stores a reference to the intersecting item, or stores the cell's
-     * identity for later reference. See for example {@link gov.nasa.worldwind.util.BasicQuadTree} and {@link
-     * gov.nasa.worldwind.util.BitSetQuadTreeFilter.FindIntersectingBitsOp}.
-     *
-     * @param level      the quadtree level currently being traversed.
-     * @param position   the position of the cell in its parent cell, either 0, 1, 2, or 3. Cell positions starts with 0
-     *                   at the southwest corner of the parent cell and increment counter-clockwise: cell 1 is SE, cell
-     *                   2 is NE and cell 3 is NW.
-     * @param cellRegion an array specifying the coordinates of the cell's region. The first two entries are the minimum
-     *                   and maximum values on the Y axis (typically latitude). The last two entries are the minimum and
-     *                   maximum values on the X axis, (typically longitude).
-     * @param itemCoords an array specifying the region or location of the intersecting item. If the array's length is 2
-     *                   it represents a location in [latitude, longitude]. If its length is 4 it represents a region,
-     *                   with the same layout as the <code>nodeRegion</code> argument.
-     *
-     * @return true if traversal should continue to the cell's descendants, false if traversal should not continue to
-     *         the cell's descendants.
-     */
-    abstract protected boolean doOperation(int level, int position, double[] cellRegion, double[] itemCoords);
-
-    /**
      * Constructs an instance of this class.
      *
      * @param numLevels the number of levels in the quadtree.
      * @param bitSet    a {@link BitSet} to use as the quadtree index. If null, a new set is created. Depending on the
      *                  operation, the bit-set is modified or only read.
-     *
      * @throws IllegalArgumentException if <code>numLevels</code> is less than 1.
      */
-    public BitSetQuadTreeFilter(int numLevels, BitSet bitSet)
-    {
-        if (numLevels < 1)
-        {
+    public BitSetQuadTreeFilter(int numLevels, BitSet bitSet) {
+        if (numLevels < 1) {
             String message = Logging.getMessage("generic.DepthOutOfRange", numLevels);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -84,12 +58,54 @@ public abstract class BitSetQuadTreeFilter
     }
 
     /**
+     * An internal method that computes the number of ancestor cells at each level. Level 0 has 0 ancestor cells, level
+     * 1 has 4, level 2 has 20 (16 + 4), etc.
+     *
+     * @param numLevels the number of quadtree levels.
+     * @return an array of <code>numLevels + 1</code> elements containing the sums of ancestor-level cell counts for
+     * each quadtree level. The last element in the array contains the total number of cells in the tree.
+     */
+    protected static int[] computeLevelSizes(int numLevels) {
+        int[] sizes = new int[numLevels + 1];
+
+        sizes[0] = 0;
+
+        double accumulatedSize = 0;
+        for (int i = 1; i <= numLevels; i++) {
+            accumulatedSize += Math.pow(4, i);
+            sizes[i] = (int) accumulatedSize;
+        }
+
+        return sizes;
+    }
+
+    /**
+     * A method implemented by subclasses and called during tree traversal to perform an operation on an intersecting
+     * item. The method's implementation typically stores a reference to the intersecting item, or stores the cell's
+     * identity for later reference. See for example {@link BasicQuadTree} and {@link
+     * BitSetQuadTreeFilter.FindIntersectingBitsOp}.
+     *
+     * @param level      the quadtree level currently being traversed.
+     * @param position   the position of the cell in its parent cell, either 0, 1, 2, or 3. Cell positions starts with 0
+     *                   at the southwest corner of the parent cell and increment counter-clockwise: cell 1 is SE, cell
+     *                   2 is NE and cell 3 is NW.
+     * @param cellRegion an array specifying the coordinates of the cell's region. The first two entries are the minimum
+     *                   and maximum values on the Y axis (typically latitude). The last two entries are the minimum and
+     *                   maximum values on the X axis, (typically longitude).
+     * @param itemCoords an array specifying the region or location of the intersecting item. If the array's length is 2
+     *                   it represents a location in [latitude, longitude]. If its length is 4 it represents a region,
+     *                   with the same layout as the <code>nodeRegion</code> argument.
+     * @return true if traversal should continue to the cell's descendants, false if traversal should not continue to
+     * the cell's descendants.
+     */
+    abstract protected boolean doOperation(int level, int position, double[] cellRegion, double[] itemCoords);
+
+    /**
      * Returns the number of levels in the filter.
      *
      * @return the number of levels in the filter.
      */
-    public int getNumLevels()
-    {
+    public int getNumLevels() {
         return this.numLevels;
     }
 
@@ -97,8 +113,7 @@ public abstract class BitSetQuadTreeFilter
      * Stop the current traversal of the quadtree. {@link #start()} must be called before attempting a subsequent
      * traversal.
      */
-    public void stop()
-    {
+    public void stop() {
         this.stopped = true;
     }
 
@@ -107,8 +122,7 @@ public abstract class BitSetQuadTreeFilter
      *
      * @return <code>true</code> if traversal has been stopped, otherwise false.
      */
-    public boolean isStopped()
-    {
+    public boolean isStopped() {
         return stopped;
     }
 
@@ -116,34 +130,8 @@ public abstract class BitSetQuadTreeFilter
      * Re-initialize for traversal. Must be called to perform subsequent traversals after having called {@link
      * #stop()}.
      */
-    public void start()
-    {
+    public void start() {
         this.stopped = false;
-    }
-
-    /**
-     * An internal method that computes the number of ancestor cells at each level. Level 0 has 0 ancestor cells, level
-     * 1 has 4, level 2 has 20 (16 + 4), etc.
-     *
-     * @param numLevels the number of quadtree levels.
-     *
-     * @return an array of <code>numLevels + 1</code> elements containing the sums of ancestor-level cell counts for
-     *         each quadtree level. The last element in the array contains the total number of cells in the tree.
-     */
-    protected static int[] computeLevelSizes(int numLevels)
-    {
-        int[] sizes = new int[numLevels + 1];
-
-        sizes[0] = 0;
-
-        double accumulatedSize = 0;
-        for (int i = 1; i <= numLevels; i++)
-        {
-            accumulatedSize += Math.pow(4, i);
-            sizes[i] = (int) accumulatedSize;
-        }
-
-        return sizes;
     }
 
     /**
@@ -162,8 +150,7 @@ public abstract class BitSetQuadTreeFilter
      *                   represents a location in [latitude, longitude]. If its length is 4 it represents a region, with
      *                   the same layout as the <code>nodeRegion</code> argument.
      */
-    protected void testAndDo(int level, int position, double[] cellRegion, double[] itemCoords)
-    {
+    protected void testAndDo(int level, int position, double[] cellRegion, double[] itemCoords) {
         if (this.stopped)
             return;
 
@@ -217,11 +204,9 @@ public abstract class BitSetQuadTreeFilter
      * @param itemCoords an array specifying the region or location of the item. If the array's length is 2 it
      *                   represents a location in [latitude, longitude]. If its length is 4 it represents a region, with
      *                   the same layout as the <code>nodeRegion</code> argument.
-     *
      * @return non-zero if the item intersects the region. 0 if no intersection.
      */
-    protected int intersects(double[] cellRegion, double[] itemCoords)
-    {
+    protected int intersects(double[] cellRegion, double[] itemCoords) {
         if (itemCoords.length == 4) // treat test region as a sector
             return !(itemCoords[1] < cellRegion[0] || itemCoords[0] > cellRegion[1]
                 || itemCoords[3] < cellRegion[2] || itemCoords[2] > cellRegion[3]) ? 1 : 0;
@@ -237,16 +222,13 @@ public abstract class BitSetQuadTreeFilter
      * @param position the position of the cell in its parent cell, either 0, 1, 2, or 3. Cell positions starts with 0
      *                 at the southwest corner of the parent cell and increment counter-clockwise: cell 1 is SE, cell 2
      *                 is NE and cell 3 is NW.
-     *
      * @return the cell's bit position in the class' bit-list.
      */
-    protected int computeBitPosition(int level, int position)
-    {
+    protected int computeBitPosition(int level, int position) {
         int bitPosition = position;
 
         // Compute the index of the position within the level
-        for (int i = 0; i < level; i++)
-        {
+        for (int i = 0; i < level; i++) {
             bitPosition += this.path[i] * this.powersOf4[level - i];
         }
 
@@ -262,8 +244,7 @@ public abstract class BitSetQuadTreeFilter
      * This class requires a previously populated filter and determines which of its cells intersect a specified
      * sector.
      */
-    public static class FindIntersectingBitsOp extends BitSetQuadTreeFilter
-    {
+    public static class FindIntersectingBitsOp extends BitSetQuadTreeFilter {
         protected List<Integer> intersectingBits;
 
         /**
@@ -271,12 +252,10 @@ public abstract class BitSetQuadTreeFilter
          *
          * @param filter a filter identifying significant cells in a quadtree, typically produced by applying a filter
          *               that identifies quadtree cells associated with items.
-         *
          * @throws NullPointerException     if <code>filter</code> is null.
          * @throws IllegalArgumentException if <code>filter</code> is invalid.
          */
-        public FindIntersectingBitsOp(BitSetQuadTreeFilter filter)
-        {
+        public FindIntersectingBitsOp(BitSetQuadTreeFilter filter) {
             super(filter.getNumLevels(), filter.bits);
         }
 
@@ -289,16 +268,12 @@ public abstract class BitSetQuadTreeFilter
          * @param outIds     a list in which to place the bit positions of intersecting significant cells. May be null,
          *                   in which case a new list is created. In either case the list is the return value of the
          *                   method.
-         *
          * @return the bit positions of intersecting significant cells. This is the list specified as the non-null
-         *         <code>outIds</code> argument, or a new list if that argument is null.
-         *
+         * <code>outIds</code> argument, or a new list if that argument is null.
          * @throws IllegalArgumentException if either <code>topRegions</code> or <code>testSector</code> is null.
          */
-        public List<Integer> getOnBits(List<double[]> topRegions, Sector testSector, List<Integer> outIds)
-        {
-            if (testSector == null)
-            {
+        public List<Integer> getOnBits(List<double[]> topRegions, Sector testSector, List<Integer> outIds) {
+            if (testSector == null) {
                 String message = Logging.getMessage("nullValue.SectorIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
@@ -318,23 +293,18 @@ public abstract class BitSetQuadTreeFilter
          * @param outIds     a list in which to place the bit positions of intersecting significant cells. May be null,
          *                   in which case a new list is created. In either case the list is the return value of the
          *                   method.
-         *
          * @return the bit positions of intersecting significant cells. This is the list specified as the non-null
-         *         <code>outIds</code> argument, or a new list if that argument is null.
-         *
+         * <code>outIds</code> argument, or a new list if that argument is null.
          * @throws IllegalArgumentException if either <code>topRegions</code> or <code>testSector</code> is null.
          */
-        public List<Integer> getOnBits(List<double[]> topRegions, double[] testRegion, List<Integer> outIds)
-        {
-            if (topRegions == null)
-            {
+        public List<Integer> getOnBits(List<double[]> topRegions, double[] testRegion, List<Integer> outIds) {
+            if (topRegions == null) {
                 String message = Logging.getMessage("generic.DepthOutOfRange", numLevels);
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
             }
 
-            if (testRegion == null)
-            {
+            if (testRegion == null) {
                 String message = Logging.getMessage("nullValue.ArrayIsNull");
                 Logging.logger().severe(message);
                 throw new IllegalArgumentException(message);
@@ -342,8 +312,7 @@ public abstract class BitSetQuadTreeFilter
 
             this.intersectingBits = outIds != null ? outIds : new ArrayList<>();
 
-            for (int i = 0; i < topRegions.size(); i++)
-            {
+            for (int i = 0; i < topRegions.size(); i++) {
                 this.testAndDo(0, i, topRegions.get(i), testRegion);
             }
 
@@ -365,12 +334,10 @@ public abstract class BitSetQuadTreeFilter
          * @param testSector an array specifying the region or location of the intersecting item. If the array's length
          *                   is 2 then it represents a location in [latitude, longitude]. If its length is 4 it
          *                   represents a region, with the same layout as the <code>nodeRegion</code> argument.
-         *
          * @return true if traversal should continue to the cell's descendants, false if traversal should not continue
-         *         to the cell's descendants.
+         * to the cell's descendants.
          */
-        protected boolean doOperation(int level, int position, double[] cellRegion, double[] testSector)
-        {
+        protected boolean doOperation(int level, int position, double[] cellRegion, double[] testSector) {
             int bitNum = this.computeBitPosition(level, position);
 
             if (!this.bits.get(bitNum))

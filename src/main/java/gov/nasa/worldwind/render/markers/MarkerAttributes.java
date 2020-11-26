@@ -12,8 +12,7 @@ import gov.nasa.worldwind.render.*;
  * @author tag
  * @version $Id: MarkerAttributes.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface MarkerAttributes
-{
+public interface MarkerAttributes {
     Material getMaterial();
 
     void setMaterial(Material material);
@@ -34,9 +33,9 @@ public interface MarkerAttributes
 
     MarkerShape getShape(DrawContext dc);
 
-    void setShapeType(String shapeType);
-
     String getShapeType();
+
+    void setShapeType(String shapeType);
 
     Material getHeadingMaterial();
 

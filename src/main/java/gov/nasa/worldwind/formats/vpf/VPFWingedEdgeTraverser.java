@@ -13,22 +13,12 @@ package gov.nasa.worldwind.formats.vpf;
  * @author dcollins
  * @version $Id: VPFWingedEdgeTraverser.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class VPFWingedEdgeTraverser
-{
-    public interface EdgeTraversalListener
-    {
-        void nextEdge(int index, int primitiveId, boolean reverseCoordinates);
+public class VPFWingedEdgeTraverser {
+    public VPFWingedEdgeTraverser() {
     }
 
-    protected enum Orientation
-    {
-        LEFT,
-        RIGHT,
-        LEFT_AND_RIGHT
-    }
-
-    public VPFWingedEdgeTraverser()
-    {
+    protected static VPFPrimitiveData.EdgeInfo getEdgeInfo(VPFPrimitiveData.PrimitiveInfo[] edgeInfo, int id) {
+        return (VPFPrimitiveData.EdgeInfo) edgeInfo[VPFBufferedRecordData.indexFromId(id)];
     }
 
     /**
@@ -36,16 +26,14 @@ public class VPFWingedEdgeTraverser
      * row from the ring primitive table, navigate the ring and edge primitive tables to construct the edge information
      * associated with the specified ring.
      *
-     * @param faceId The face.
-     * @param startEdgeId The start edge.
+     * @param faceId        The face.
+     * @param startEdgeId   The start edge.
      * @param edgeInfoArray the edge primitive data.
-     * @param listener the ring edge listener, may be null.
-     *
+     * @param listener      the ring edge listener, may be null.
      * @return the number of edges composing the specified ring.
      */
     public int traverseRing(int faceId, int startEdgeId, VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray,
-        EdgeTraversalListener listener)
-    {
+        EdgeTraversalListener listener) {
         // 1. Determine which face primitive to construct.
         // The face is determined for us by the selection of a row in the face primitive table.
 
@@ -64,13 +52,11 @@ public class VPFWingedEdgeTraverser
         int curEdgeId = -1;
         int nextEdgeId = startEdgeId;
 
-        do
-        {
+        do {
             prevEdgeId = curEdgeId;
             curEdgeId = nextEdgeId;
 
-            if (listener != null)
-            {
+            if (listener != null) {
                 listener.nextEdge(count, curEdgeId, this.getMustReverseCoordinates(faceId, prevEdgeId, curEdgeId,
                     edgeInfoArray));
             }
@@ -83,34 +69,27 @@ public class VPFWingedEdgeTraverser
         return count;
     }
 
-    protected int nextEdgeId(int faceId, int prevEdgeId, int curEdgeId, VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray)
-    {
+    protected int nextEdgeId(int faceId, int prevEdgeId, int curEdgeId,
+        VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray) {
         // The next edge depends on which side of this edge (left or right) the face belongs to. If the face is on
         // the left side of this edge, we travel to the left edge, and visa versa. However if this is an auxiliary
         // edge (face is both left and right of the edge), then travel to the next edge which does not cause us to
         // backtrack.
 
         Orientation o = this.getOrientation(faceId, curEdgeId, edgeInfoArray);
-        if (o == null)
-        {
+        if (o == null) {
             return -1;
         }
 
-        switch (o)
-        {
-            case LEFT:
-                return getEdgeInfo(edgeInfoArray, curEdgeId).getLeftEdge();
-            case RIGHT:
-                return getEdgeInfo(edgeInfoArray, curEdgeId).getRightEdge();
-            case LEFT_AND_RIGHT:
-                return (prevEdgeId > 0) ? this.auxiliaryNextEdgeId(prevEdgeId, curEdgeId, edgeInfoArray) : -1;
-            default:
-                return -1;
-        }
+        return switch (o) {
+            case LEFT -> getEdgeInfo(edgeInfoArray, curEdgeId).getLeftEdge();
+            case RIGHT -> getEdgeInfo(edgeInfoArray, curEdgeId).getRightEdge();
+            case LEFT_AND_RIGHT -> (prevEdgeId > 0) ? this.auxiliaryNextEdgeId(prevEdgeId, curEdgeId, edgeInfoArray)
+                : -1;
+        };
     }
 
-    protected Orientation getOrientation(int faceId, int edgeId, VPFPrimitiveData.PrimitiveInfo[] edgeInfo)
-    {
+    protected Orientation getOrientation(int faceId, int edgeId, VPFPrimitiveData.PrimitiveInfo[] edgeInfo) {
         VPFPrimitiveData.EdgeInfo thisInfo = getEdgeInfo(edgeInfo, edgeId);
         boolean matchLeft = thisInfo.getLeftFace() == faceId;
         boolean matchRight = thisInfo.getRightFace() == faceId;
@@ -119,12 +98,10 @@ public class VPFWingedEdgeTraverser
         {
             return Orientation.LEFT_AND_RIGHT;
         }
-        else if (matchLeft)
-        {
+        else if (matchLeft) {
             return Orientation.LEFT;
         }
-        else if (matchRight)
-        {
+        else if (matchRight) {
             return Orientation.RIGHT;
         }
 
@@ -132,8 +109,7 @@ public class VPFWingedEdgeTraverser
     }
 
     protected boolean getMustReverseCoordinates(int faceId, int prevEdgeId, int curEdgeId,
-        VPFPrimitiveData.PrimitiveInfo[] edgeInfo)
-    {
+        VPFPrimitiveData.PrimitiveInfo[] edgeInfo) {
         // Determine whether or not this edge's coordinate array must be reversed to provide a consistent ordering
         // of ring coordinates. There are two cases which cause the coordinates to need reversal:
         // 1. If the edge has left orientation, then we will travel backwards along this edge to arrive at the next
@@ -142,25 +118,20 @@ public class VPFWingedEdgeTraverser
         // we *may* travel backwards along this edge.
 
         Orientation o = this.getOrientation(faceId, curEdgeId, edgeInfo);
-        if (o == null)
-        {
+        if (o == null) {
             return false;
         }
 
-        switch (o)
-        {
-            case LEFT:
-                return true;
-            case LEFT_AND_RIGHT:
-                return (prevEdgeId > 0) && this.auxiliaryMustReverseCoordinates(prevEdgeId, curEdgeId, edgeInfo);
-            default:
-                return false;
-        }
+        return switch (o) {
+            case LEFT -> true;
+            case LEFT_AND_RIGHT -> (prevEdgeId > 0) && this.auxiliaryMustReverseCoordinates(prevEdgeId, curEdgeId,
+                edgeInfo);
+            default -> false;
+        };
     }
 
     protected int auxiliaryNextEdgeId(int prevEdgeId, int curEdgeId,
-        VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray)
-    {
+        VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray) {
         // Note: an edge which has the same face for both its left and right faces is known to be an "auxiliary edge".
         // Using auxiliary edges is a solution to defining a face (polygon) with holes. The face becomes a single loop,
         // with an auxiliary edge joining each inner and outer loop. The auxiliary edge is traversed twice; one upon
@@ -170,33 +141,34 @@ public class VPFWingedEdgeTraverser
         VPFPrimitiveData.EdgeInfo curInfo = getEdgeInfo(edgeInfoArray, curEdgeId);
 
         // Previous edge is adjacent to starting node.
-        if (curInfo.getStartNode() == prevInfo.getStartNode() || curInfo.getStartNode() == prevInfo.getEndNode())
-        {
+        if (curInfo.getStartNode() == prevInfo.getStartNode() || curInfo.getStartNode() == prevInfo.getEndNode()) {
             return (curInfo.getRightEdge() != curEdgeId) ? curInfo.getRightEdge() : curInfo.getLeftEdge();
         }
         // Previous edge is adjacent to ending node.
-        else if (curInfo.getEndNode() == prevInfo.getStartNode() || curInfo.getEndNode() == prevInfo.getEndNode())
-        {
+        else if (curInfo.getEndNode() == prevInfo.getStartNode() || curInfo.getEndNode() == prevInfo.getEndNode()) {
             return (curInfo.getLeftEdge() != curEdgeId) ? curInfo.getLeftEdge() : curInfo.getRightEdge();
         }
         // Edges are not actually adjacent. This should never happen, but we check anyway.
-        else
-        {
+        else {
             return -1;
         }
     }
 
     protected boolean auxiliaryMustReverseCoordinates(int prevEdgeId, int curEdgeId,
-        VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray)
-    {
+        VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray) {
         VPFPrimitiveData.EdgeInfo prevInfo = getEdgeInfo(edgeInfoArray, prevEdgeId);
         VPFPrimitiveData.EdgeInfo curInfo = getEdgeInfo(edgeInfoArray, curEdgeId);
 
         return curInfo.getEndNode() == prevInfo.getStartNode() || curInfo.getEndNode() == prevInfo.getEndNode();
     }
 
-    protected static VPFPrimitiveData.EdgeInfo getEdgeInfo(VPFPrimitiveData.PrimitiveInfo[] edgeInfo, int id)
-    {
-        return (VPFPrimitiveData.EdgeInfo) edgeInfo[VPFBufferedRecordData.indexFromId(id)];
+    protected enum Orientation {
+        LEFT,
+        RIGHT,
+        LEFT_AND_RIGHT
+    }
+
+    public interface EdgeTraversalListener {
+        void nextEdge(int index, int primitiveId, boolean reverseCoordinates);
     }
 }
