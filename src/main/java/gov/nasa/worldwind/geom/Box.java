@@ -430,14 +430,15 @@ public class Box implements Extent, Renderable {
         }
     }
 
-    protected static double intersectsAt(Plane plane, double effectiveRadius, Vec4[] endpoints) {
+    protected static double intersectsAt(Plane plane, double effectiveRadius, final Vec4[] endpoints) {
         // Test the distance from the first end-point.
-        double dq1 = plane.dot(endpoints[0]);
+        final Vec4 e0 = endpoints[0];
+        final Vec4 e1 = endpoints[1];
+        double dq1 = plane.dot(e0);
         boolean bq1 = dq1 <= -effectiveRadius;
 
         // Test the distance from the possibly reduced second end-point.
-        double dq2 = plane.dot(endpoints[1]);
-        boolean bq2 = dq2 <= -effectiveRadius;
+        boolean bq2 = plane.dot(e1) <= -effectiveRadius;
 
         if (bq1 && bq2) // endpoints more distant from plane than effective radius; box is on neg. side of plane
             return -1;
@@ -446,9 +447,9 @@ public class Box implements Extent, Renderable {
             return 0;
 
         // Compute and return the endpoints of the cylinder on the positive side of the plane.
-        double t = (effectiveRadius + dq1) / plane.getNormal().dot3(endpoints[0].subtract3(endpoints[1]));
+        double t = (effectiveRadius + dq1) / plane.getNormal().dot3(e0.subtract3(e1));
 
-        Vec4 newEndPoint = endpoints[0].add3(endpoints[1].subtract3(endpoints[0]).multiply3(t));
+        Vec4 newEndPoint = e0.add3(e1.subtract3(e0).multiply3(t));
         // truncate the line to only that in the positive halfspace (e.g., inside the frustum)
         if (bq1)
             endpoints[0] = newEndPoint;

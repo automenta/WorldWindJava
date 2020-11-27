@@ -16,7 +16,6 @@ import gov.nasa.worldwind.util.Logging;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 
 /**
@@ -28,7 +27,9 @@ import java.util.logging.Level;
  * @see Renderable
  */
 public class RenderableLayer extends AbstractLayer {
-    protected final Collection<Renderable> renderables = new ConcurrentLinkedQueue<>();
+    protected final Collection<Renderable> renderables =
+        new ArrayList();
+        //new ConcurrentLinkedQueue<>();
     protected final PickSupport pickSupport = new PickSupport();
     protected Iterable<Renderable> renderablesOverride;
 
