@@ -331,25 +331,29 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      */
     protected Extent computeExtent(Globe globe, double verticalExaggeration, List<Sector> sectors) {
         // This should never happen, but we check anyway.
-        if (sectors.isEmpty()) {
+        if (sectors==null) {
             return null;
         }
         // This surface shape does not cross the international dateline, and therefore has a single bounding sector.
         // Return the box which contains that sector.
-        else if (sectors.size() == 1) {
-            return Sector.computeBoundingBox(globe, verticalExaggeration, sectors.get(0));
-        }
-        // This surface crosses the international dateline, and its bounding sectors are split along the dateline.
-        // Return a box which contains the corners of the boxes bounding each sector.
         else {
-            List<Vec4> boxCorners = new ArrayList<>();
-
-            for (Sector s : sectors) {
-                Box box = Sector.computeBoundingBox(globe, verticalExaggeration, s);
-                boxCorners.addAll(Arrays.asList(box.getCorners()));
+            final int n = sectors.size();
+            if (n == 1) {
+                return Sector.computeBoundingBox(globe, verticalExaggeration, sectors.get(0));
             }
+            // This surface crosses the international dateline, and its bounding sectors are split along the dateline.
+            // Return a box which contains the corners of the boxes bounding each sector.
+            else {
+                List<Vec4> boxCorners = new ArrayList<>(n);
 
-            return Box.computeBoundingBox(boxCorners);
+                for (Sector s : sectors) {
+                    boxCorners.addAll(List.of(
+                        Sector.computeBoundingBox(globe, verticalExaggeration, s).getCorners()
+                    ));
+                }
+
+                return Box.computeBoundingBox(boxCorners);
+            }
         }
     }
 
@@ -395,7 +399,8 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * @return true if this SurfaceObject intersects the draw context's visible sector; false otherwise.
      */
     protected boolean intersectsVisibleSector(DrawContext dc) {
-        if (dc.getVisibleSector() == null)
+        final Sector visible = dc.getVisibleSector();
+        if (visible == null)
             return false;
 
         List<Sector> sectors = this.getSectors(dc);
@@ -403,7 +408,7 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
             return false;
 
         for (Sector s : sectors) {
-            if (s.intersects(dc.getVisibleSector()))
+            if (s.intersects(visible))
                 return true;
         }
 

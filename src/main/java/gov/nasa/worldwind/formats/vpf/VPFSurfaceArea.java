@@ -85,12 +85,12 @@ public class VPFSurfaceArea extends SurfacePolygon // TODO: consolidate with Sur
         return count;
     }
 
-    protected List<Sector> computeSectors(Globe globe) {
+    protected Sector[] computeSectors(Globe globe) {
         Sector s = this.feature.getBounds().toSector();
         if (s == null || s.equals(Sector.EMPTY_SECTOR))
             return null;
 
-        return Collections.singletonList(s);
+        return new Sector[] { s };
     }
 
     public Iterable<? extends LatLon> getLocations() {

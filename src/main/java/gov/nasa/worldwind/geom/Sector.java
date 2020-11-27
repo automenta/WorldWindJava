@@ -279,19 +279,19 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     }
 
     public static Sector[] splitBoundingSectors(Iterable<? extends LatLon> locations) {
-        if (locations == null) {
-            String message = Logging.getMessage("nullValue.LocationInListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (locations == null) {
+//            String message = Logging.getMessage("nullValue.LocationInListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        if (!locations.iterator().hasNext())
-            return null;
+//        if (!locations.iterator().hasNext())
+//            return null;
 
-        double minLat = Angle.POS90.getDegrees();
-        double minLon = Angle.POS180.getDegrees();
-        double maxLat = Angle.NEG90.getDegrees();
-        double maxLon = Angle.NEG180.getDegrees();
+        double minLat = Angle.POS90degrees;
+        double minLon = Angle.POS180degrees;
+        double maxLat = Angle.NEG90degrees;
+        double maxLon = Angle.NEG180degrees;
 
         LatLon lastLocation = null;
 
@@ -763,6 +763,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
             maxElevation);
     }
 
+    public static Sector union(Sector[] sectors) {
+        assert(sectors.length==2);
+        return union(sectors[0], sectors[1]);
+    }
+
     public static Sector union(Sector sectorA, Sector sectorB) {
         if (sectorA == null || sectorB == null) {
             if (sectorA == sectorB)
@@ -1180,12 +1185,12 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @return true if at least one of the sectors is non-null and intersects this sector, otherwise false.
      * @throws IllegalArgumentException if the iterable is null.
      */
-    public boolean intersectsAny(Iterable<? extends Sector> sectors) {
-        if (sectors == null) {
-            String msg = Logging.getMessage("nullValue.SectorListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+    public boolean intersectsAny(Sector[] sectors) {
+//        if (sectors == null) {
+//            String msg = Logging.getMessage("nullValue.SectorListIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         for (Sector s : sectors) {
             if (s != null && s.intersects(this))

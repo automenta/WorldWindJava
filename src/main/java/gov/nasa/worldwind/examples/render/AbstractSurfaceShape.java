@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
 
+import static gov.nasa.worldwind.geom.Sector.EMPTY_SECTOR;
+
 /**
  * Common superclass for surface conforming shapes such as {@link SurfacePolygon}, {@link
  * SurfacePolyline}, {@link SurfaceEllipse}, {@link
@@ -143,12 +145,11 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         if (sector == null)
             return true;
 
-        //noinspection SimplifiableIfStatement
-        if (sector.equals(Sector.EMPTY_SECTOR))
+
+        if (sector==EMPTY_SECTOR)
             return true;
 
-        return sector.latMin().equals(sector.latMax())
-            && sector.lonMin().equals(sector.lonMax());
+        return sector.latMin().equals(sector.latMax()) && sector.lonMin().equals(sector.lonMax());
     }
 
     /**
@@ -272,8 +273,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 //        }
 
         return this.sectorCache.computeIfAbsent(
-            dc.getGlobe().getGlobeStateKey(),
-            K -> computeSectors(dc));
+            dc.getGlobe().getGlobeStateKey(/*dc*/ /* shared should be ok if draw context is 1:1 with a globe*/),
+            K -> WWUtil.arrayList(computeSectors(dc)));
     }
 
     /**
@@ -283,7 +284,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * @param dc Current draw context.
      * @return Bounding sectors for the shape.
      */
-    protected List<Sector> computeSectors(DrawContext dc) {
+    protected Sector[] computeSectors(DrawContext dc) {
         return this.computeSectors(dc.getGlobe());
     }
 
@@ -294,34 +295,34 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * @param globe Current globe.
      * @return Bounding sectors for the shape.
      */
-    protected List<Sector> computeSectors(Globe globe) {
+    protected Sector[] computeSectors(Globe globe) {
         Iterable<? extends LatLon> locations = this.getLocations(globe);
         if (locations == null)
             return null;
 
-        List<Sector> sectors = null;
+        Sector[] sectors = null;
 
         String pole = this.containsPole(locations);
         if (pole != null) {
             // If the shape contains a pole, then the bounding sector is defined by the shape's extreme latitude, the
             // latitude of the pole, and the full range of longitude.
             Sector s = Sector.boundingSector(locations);
-            s = AVKey.NORTH.equals(pole) ? new Sector(s.latMin(), Angle.POS90, Angle.NEG180, Angle.POS180)
-                : new Sector(Angle.NEG90, s.latMax(), Angle.NEG180, Angle.POS180);
+            s = AVKey.NORTH.equals(pole) ?
+                new Sector(s.latMin(), Angle.POS90, Angle.NEG180, Angle.POS180)
+                :
+                new Sector(Angle.NEG90, s.latMax(), Angle.NEG180, Angle.POS180);
 
-            sectors = WWUtil.arrayList(s);
+            sectors = new Sector[] { s };
 
-        }
-        else if (LatLon.locationsCrossDateLine(locations)) {
+        }else if (LatLon.locationsCrossDateLine(locations)) {
             Sector[] array = Sector.splitBoundingSectors(locations);
             if (array != null && array.length == 2 && !isSectorEmpty(array[0]) && !isSectorEmpty(array[1])) {
-                sectors = WWUtil.arrayList(array);
+                sectors = array;
             }
-        }
-        else {
+        }else {
             Sector s = Sector.boundingSector(locations);
             if (!isSectorEmpty(s))
-                sectors = WWUtil.arrayList(s);
+                sectors = new Sector[] { s };
         }
 
         if (sectors == null)
@@ -334,9 +335,9 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             final double e0Lat = extremes[0].getLatitude().degrees;
             final double e1Lat = extremes[1].getLatitude().degrees;
 
-            final int n = sectors.size();
+            final int n = sectors.length;
             for (int i = 0; i < n; i++) {
-                Sector s = sectors.get(i);
+                Sector s = sectors[i];
 
 
                 double minLatDegrees = s.latMin().degrees;
@@ -345,10 +346,10 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
                 if (minLatDegrees > e0Lat) minLatDegrees = e0Lat;
                 if (maxLatDegrees < e1Lat) maxLatDegrees = e1Lat;
 
-                sectors.set(i, new Sector(
+                sectors[i] = new Sector(
                     Angle.fromDegreesLatitude(minLatDegrees),
                     Angle.fromDegreesLatitude(maxLatDegrees),
-                    s.lonMin(), s.lonMax()));
+                    s.lonMin(), s.lonMax());
             }
         }
 
@@ -372,11 +373,11 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             throw new IllegalArgumentException(message);
         }
 
-        List<Sector> sectors = this.computeSectors(globe);
+        Sector[] sectors = this.computeSectors(globe);
         if (sectors == null)
             return null;
 
-        return this.computeExtent(globe, verticalExaggeration, sectors);
+        return this.computeExtent(globe, verticalExaggeration, WWUtil.arrayList(sectors));
     }
 
     public String getRestorableState() {
@@ -908,7 +909,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     //**************************************************************//
 
     protected void combineBounds(CombineContext cc) {
-        List<Sector> sectorList = this.computeSectors(cc.getGlobe());
+        Sector[] sectorList = this.computeSectors(cc.getGlobe());
         if (sectorList == null)
             return; // no caller specified locations to bound
 
@@ -916,7 +917,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     protected void combineContours(CombineContext cc) {
-        List<Sector> sectorList = this.computeSectors(cc.getGlobe());
+        Sector[] sectorList = this.computeSectors(cc.getGlobe());
         if (sectorList == null)
             return; // no caller specified locations to draw
 

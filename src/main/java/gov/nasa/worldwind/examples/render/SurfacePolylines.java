@@ -28,26 +28,26 @@ public class SurfacePolylines extends AbstractSurfaceShape {
     protected boolean crossesDateLine = false;
 
     public SurfacePolylines(CompoundVecBuffer buffer) {
-        if (buffer == null) {
-            String message = Logging.getMessage("nullValue.BufferIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (buffer == null) {
+//            String message = Logging.getMessage("nullValue.BufferIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.buffer = buffer;
     }
 
     public SurfacePolylines(Sector sector, CompoundVecBuffer buffer) {
-        if (sector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (buffer == null) {
-            String message = Logging.getMessage("nullValue.BufferIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (sector == null) {
+//            String message = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (buffer == null) {
+//            String message = Logging.getMessage("nullValue.BufferIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.sectors = Collections.singletonList(sector);
         this.buffer = buffer;
@@ -64,25 +64,25 @@ public class SurfacePolylines extends AbstractSurfaceShape {
 
     @Override
     public List<Sector> getSectors(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // SurfacePolylines does not interpolate between caller specified positions, therefore it has no path type.
         if (this.sectors == null)
-            this.sectors = this.computeSectors(dc);
+            this.sectors = WWUtil.arrayList(this.computeSectors(dc));
 
         return this.sectors;
     }
 
     public Iterable<? extends LatLon> getLocations(Globe globe) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         return this.getLocations();
     }

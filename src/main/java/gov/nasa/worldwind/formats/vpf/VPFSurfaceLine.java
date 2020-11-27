@@ -32,11 +32,11 @@ public class VPFSurfaceLine extends SurfacePolyline // TODO: consolidate with Su
         this.referenceLocation = feature.getBounds().toSector().getCentroid();
     }
 
-    protected List<Sector> computeSectors(Globe globe) {
+    protected Sector[] computeSectors(Globe globe) {
         if (this.sector == null || this.sector.equals(Sector.EMPTY_SECTOR))
             return null;
 
-        return Collections.singletonList(this.sector);
+        return new Sector[] { this.sector };
     }
 
     public Iterable<? extends LatLon> getLocations() {

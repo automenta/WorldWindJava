@@ -31,19 +31,26 @@ public class Angle implements Comparable<Angle> {
     /**
      * Represents a right angle of positive 90 degrees
      */
-    public final static Angle POS90 = Angle.fromDegrees(90);
+    public static final Angle POS90 = Angle.fromDegrees(90);
+    public static final double POS90degrees = POS90.getDegrees();
+
+
     /**
      * Represents a right angle of negative 90 degrees
      */
     public final static Angle NEG90 = Angle.fromDegrees(-90);
+    public static final double NEG90degrees = NEG90.getDegrees();
     /**
      * Represents an angle of positive 180 degrees
      */
     public final static Angle POS180 = Angle.fromDegrees(180);
+    public static final double POS180degrees = POS180.getDegrees();
+
     /**
      * Represents an angle of negative 180 degrees
      */
     public final static Angle NEG180 = Angle.fromDegrees(-180);
+    public static final double NEG180degrees = NEG180.getDegrees();
     /**
      * Represents an angle of positive 360 degrees
      */
@@ -62,6 +69,7 @@ public class Angle implements Comparable<Angle> {
     public final static Angle SECOND = Angle.fromDegrees(1.0d / 3600.0d);
     private final static double RADIANS_TO_DEGREES = 180.0d / Math.PI;
     private static final double PIOver2 = Math.PI / 2;
+
     public final double degrees;
     public final double radians;
 

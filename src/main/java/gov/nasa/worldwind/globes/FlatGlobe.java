@@ -74,8 +74,10 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
         return new FlatStateKey(dc);
     }
 
-    public GlobeStateKey getGlobeStateKey() {
-        return new FlatStateKey(this);
+    private final FlatStateKey stateKey = new FlatStateKey();
+
+    public final GlobeStateKey getGlobeStateKey() {
+        return stateKey;
     }
 
     /**
@@ -398,8 +400,8 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
             this.offset = FlatGlobe.this.offset;
         }
 
-        public FlatStateKey(Globe globe) {
-            super(globe);
+        public FlatStateKey() {
+            super();
             this.projection = FlatGlobe.this.getProjection();
             this.offset = FlatGlobe.this.offset;
         }
@@ -408,8 +410,6 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
         public boolean equals(Object o) {
             if (this == o)
                 return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
             if (!super.equals(o))
                 return false;
 

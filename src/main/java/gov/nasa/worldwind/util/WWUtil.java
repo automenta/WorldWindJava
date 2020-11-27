@@ -1093,8 +1093,28 @@ public class WWUtil {
     }
 
     public static <X> java.util.List<X> arrayList(X... array) {
-        java.util.List<X> l = new ArrayList<>(array.length);
-        Collections.addAll(l, array);
-        return l;
+//        java.util.List<X> l = new ArrayList<>(array.length);
+//        Collections.addAll(l, array);
+//        return l;
+        return new DirectArrayList<>(array);
+    }
+
+    static class DirectArrayList<X> extends AbstractList<X> {
+
+        final X[] x;
+
+        DirectArrayList(X[] x) {
+            this.x = x;
+        }
+
+        @Override
+        public X get(int index) {
+            return x[index];
+        }
+
+        @Override
+        public int size() {
+            return x.length;
+        }
     }
 }
