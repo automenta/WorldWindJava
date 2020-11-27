@@ -57,7 +57,7 @@ public class IconRetrieverUsage {
 
             // Retrieve icons on a background thread. Icons may be retrieved from the network or a local disk.
             // This operation should not run on the UI thread.
-            WorldWind.getTaskService().addTask(() -> {
+            WorldWind.tasks().addTask(() -> {
                 AVList params = new AVListImpl();
 
                 // Create an icon with the default parameters.

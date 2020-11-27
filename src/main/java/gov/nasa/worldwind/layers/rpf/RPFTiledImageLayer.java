@@ -417,7 +417,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         // Load the RPFFileIndex associated with this RPFTiledImageLayer, and update the layer's expiry time according
         // to the last modified time on the RPFFileIndex.
 
-        FileStore fileStore = WorldWind.getDataFileStore();
+        FileStore fileStore = WorldWind.store();
 
         // Root path and data series ID parameters should have already been validated in initParams().
         String rootPath = params.getStringValue(RPF_ROOT_PATH);
@@ -511,7 +511,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
     }
 
     protected void forceTextureLoad(TextureTile tile) {
-        final URL textureURL = WorldWind.getDataFileStore().findFile(tile.getPath(), true);
+        final URL textureURL = WorldWind.store().findFile(tile.getPath(), true);
 
         if (textureURL != null) {
             this.loadTexture(tile, textureURL);
@@ -530,7 +530,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
     private boolean loadTexture(TextureTile tile, URL textureURL) {
         if (WWIO.isFileOutOfDate(textureURL, tile.level.getExpiryTime())) {
             // The file has expired. Delete it then request download of newer.
-            WorldWind.getDataFileStore().removeFile(textureURL);
+            WorldWind.store().removeFile(textureURL);
             String message = Logging.getMessage("generic.DataFileExpired", textureURL);
             Logging.logger().fine(message);
             return false;
@@ -571,13 +571,13 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             return;
         }
 
-        if (WorldWind.getRetrievalService().isAvailable()) {
+        if (WorldWind.retrieveRemote().isAvailable()) {
             Retriever retriever = new RPFRetriever(service, url, new DownloadPostProcessor(tile, this));
             // Apply any overridden timeouts.
             Integer srl = AVListImpl.getIntegerValue(this, AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT);
             if (srl != null && srl > 0)
                 retriever.setStaleRequestLimit(srl);
-            WorldWind.getRetrievalService().run(retriever, tile.getPriority());
+            WorldWind.retrieveRemote().run(retriever, tile.getPriority());
         }
         else {
             this.getRequestQ().add(new DownloadTask(service, url, tile, this));
@@ -642,7 +642,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
             // TODO: check to ensure load is still needed
 
-            final URL textureURL = WorldWind.getDataFileStore().findFile(tile.getPath(), false);
+            final URL textureURL = WorldWind.store().findFile(tile.getPath(), false);
             if (textureURL != null) {
                 if (this.layer.loadTexture(tile, textureURL)) {
                     layer.getLevels().has(tile);
@@ -651,7 +651,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
                 }
                 else {
                     // Assume that something's wrong with the file and delete it.
-                    WorldWind.getDataFileStore().removeFile(textureURL);
+                    WorldWind.store().removeFile(textureURL);
                     layer.getLevels().miss(tile);
                     String message = Logging.getMessage("generic.DeletedCorruptDataFile", textureURL);
                     Logging.logger().info(message);
@@ -682,7 +682,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
         }
 
         protected File doGetOutputFile() {
-            return WorldWind.getDataFileStore().newFile(this.tile.getPath());
+            return WorldWind.store().newFile(this.tile.getPath());
         }
 
         @Override
@@ -731,7 +731,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
             try {
                 ByteBuffer buffer = createImage(this.service, this.url);
                 if (buffer != null) {
-                    final File outFile = WorldWind.getDataFileStore().newFile(tile.getPath());
+                    final File outFile = WorldWind.store().newFile(tile.getPath());
                     if (outFile != null) {
                         this.layer.saveBuffer(buffer, outFile);
                     }

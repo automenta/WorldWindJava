@@ -208,8 +208,8 @@ public class VPFLayer extends AbstractLayer {
     protected void sendRequests() {
         Runnable task;
         while ((task = this.requestQ.poll()) != null) {
-            if (!WorldWind.getTaskService().isFull()) {
-                WorldWind.getTaskService().addTask(task);
+            if (!WorldWind.tasks().isFull()) {
+                WorldWind.tasks().addTask(task);
             }
         }
     }

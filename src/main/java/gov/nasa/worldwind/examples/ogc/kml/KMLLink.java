@@ -228,7 +228,7 @@ public class KMLLink extends KMLAbstractObject {
      * @return Future that represents the scheduled task.
      */
     protected ScheduledFuture scheduleDelayedTask(Runnable task, long delay, TimeUnit timeUnit) {
-        return WorldWind.getScheduledTaskService().addScheduledTask(task, delay, timeUnit);
+        return WorldWind.scheduler().addScheduledTask(task, delay, timeUnit);
     }
 
     /**

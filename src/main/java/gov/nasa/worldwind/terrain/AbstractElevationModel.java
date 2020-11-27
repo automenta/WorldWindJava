@@ -22,7 +22,7 @@ import java.util.List;
  * @version $Id: AbstractElevationModel.java 3420 2015-09-10 23:25:43Z tgaskins $
  */
 abstract public class AbstractElevationModel extends WWObjectImpl implements ElevationModel {
-    protected FileStore dataFileStore = WorldWind.getDataFileStore();
+    protected FileStore dataFileStore = WorldWind.store();
     protected double missingDataFlag = -Double.MAX_VALUE;
     protected double missingDataValue = 0;
 

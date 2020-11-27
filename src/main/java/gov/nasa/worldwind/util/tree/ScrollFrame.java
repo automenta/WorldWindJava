@@ -2106,7 +2106,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     protected BasicWWTexture initializeTexture() {
         Object imageSource = this.getIconImageSource();
         if (imageSource instanceof String || imageSource instanceof URL) {
-            URL imageURL = WorldWind.getDataFileStore().requestFile(imageSource.toString());
+            URL imageURL = WorldWind.store().requestFile(imageSource.toString());
             if (imageURL != null) {
                 this.texture = new BasicWWTexture(imageURL, true);
             }

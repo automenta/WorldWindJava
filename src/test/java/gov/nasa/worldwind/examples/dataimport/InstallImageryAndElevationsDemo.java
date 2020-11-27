@@ -445,7 +445,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate {
         protected final InstalledDataFrame installedDataFrame;
 
         public AppFrame() {
-            this.installedDataFrame = new InstalledDataFrame(WorldWind.getDataFileStore(), this.getWwd());
+            this.installedDataFrame = new InstalledDataFrame(WorldWind.store(), this.getWwd());
             WWUtil.alignComponent(this, this.installedDataFrame, AVKey.RIGHT);
             this.installedDataFrame.setVisible(true);
 

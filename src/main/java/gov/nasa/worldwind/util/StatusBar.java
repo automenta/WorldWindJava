@@ -69,7 +69,7 @@ public class StatusBar extends JPanel implements PositionListener, RenderingList
 
             Color color = heartBeat.getForeground();
             int alpha = color.getAlpha();
-            if (isNetworkAvailable.get() && WorldWind.getRetrievalService().hasActiveTasks()) {
+            if (isNetworkAvailable.get() && WorldWind.retrieveRemote().hasActiveTasks()) {
                 heartBeat.setText(Logging.getMessage("term.Downloading"));
                 if (alpha >= MAX_ALPHA)
                     alpha = MAX_ALPHA;

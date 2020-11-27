@@ -30,7 +30,7 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
     private boolean networkDownloadEnabled = true;
     private long expiryTime = 0;
     private ScreenCredit screenCredit = null;
-    private FileStore dataFileStore = WorldWind.getDataFileStore();
+    private FileStore dataFileStore = WorldWind.store();
 
     /**
      * Returns true if a specified DOM document is a Layer configuration document, and false otherwise.

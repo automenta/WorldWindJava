@@ -5,57 +5,146 @@
  */
 package gov.nasa.worldwind.util;
 
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.AVKey;
+
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
  * A service to execute tasks periodically, or after a delay.
  *
  * @author pabercrombie
- * @version $Id: ScheduledTaskService.java 1171 2013-02-11 21:45:02Z dcollins $
- * @see TaskService
+ * @version $Id: BasicScheduledTaskService.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public interface ScheduledTaskService {
+public class ScheduledTaskService extends WWObjectImpl implements Thread.UncaughtExceptionHandler {
     /**
-     * Shut down the service. If the {@code immediate} parameter is {@code true}, the service will attempt to stop all
-     * active tasks, and will not begin work on any other tasks in the queue. Otherwise, the service will complete all
-     * tasks in the work queue, but will not accept any new tasks.
-     *
-     * @param immediately {@code true} to shutdown immediately.
+     * Default thread pool size.
      */
-    void shutdown(boolean immediately);
+    protected static final int DEFAULT_POOL_SIZE = 1;
+    /**
+     * Name assigned to active threads.
+     */
+    protected static final String RUNNING_THREAD_NAME_PREFIX = Logging.getMessage(
+        "ThreadedTaskService.RunningThreadNamePrefix");
+    /**
+     * Name assigned to idle threads.
+     */
+    protected static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
+        "ThreadedTaskService.IdleThreadNamePrefix");
 
     /**
-     * Enqueues a task to run. Duplicate tasks are ignored.
-     *
-     * @param runnable the task to add
-     * @throws IllegalArgumentException if <code>runnable</code> is null
+     * Tasks currently running.
      */
-    void addTask(Runnable runnable);
+    protected final Set<Runnable> activeTasks;
+    /**
+     * Executor for running tasks.
+     */
+    protected final ScheduledTaskExecutor executor;
 
     /**
-     * Enqueues a task to run after a delay. Duplicate tasks are ignored.
-     *
-     * @param runnable the task to add.
-     * @param delay    delay before execution of the task. {@code timeUnit} determines the units of the value.
-     * @param timeUnit time unit of {@code initialDelay} and {@code period}.
-     * @return a ScheduledFuture that can be used to get the result of the task, or cancel the task, or {@code null} if
-     * the task was not enqueued.
-     * @throws IllegalArgumentException if <code>runnable</code> is null
+     * Create a new scheduled task service. The thread pool size is from the WorldWind configuration file property
+     * {@link AVKey#TASK_POOL_SIZE}.
      */
-    ScheduledFuture<?> addScheduledTask(Runnable runnable, long delay, TimeUnit timeUnit);
+    public ScheduledTaskService() {
+        Integer poolSize = Configuration.getIntegerValue(AVKey.TASK_POOL_SIZE, DEFAULT_POOL_SIZE);
+
+        // this.executor runs the tasks, each in their own thread
+        this.executor = new ScheduledTaskExecutor(poolSize);
+
+        // this.activeTasks holds the list of currently executing tasks
+        this.activeTasks = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    }
+
+    public void shutdown(boolean immediately) {
+        if (immediately)
+            this.executor.shutdownNow();
+        else
+            this.executor.shutdown();
+
+        this.activeTasks.clear();
+    }
+
+    public void uncaughtException(Thread thread, Throwable throwable) {
+        String message = Logging.getMessage("ThreadedTaskService.UncaughtExceptionDuringTask", thread.getName());
+        Logging.logger().fine(message);
+        Thread.currentThread().getThreadGroup().uncaughtException(thread, throwable);
+    }
 
     /**
-     * Enqueues a task to run periodically. This method follows the same semantics as {@link
-     * ScheduledExecutorService#scheduleAtFixedRate}. Duplicate tasks are ignored.
-     *
-     * @param runnable     the task to add.
-     * @param initialDelay delay before the first execution of the task. {@code timeUnit} determines the units of the
-     *                     value.
-     * @param period       interval between executions of the task. {@code timeUnit} determines the units of the value.
-     * @param timeUnit     time unit of {@code initialDelay} and {@code period}.
-     * @return a ScheduledFuture that can be used to get the result of the task, or cancel the task, or {@code null} if
-     * the task was not enqueued.
-     * @throws IllegalArgumentException if <code>runnable</code> is null
+     * {@inheritDoc}
      */
-    ScheduledFuture<?> addRepeatingTask(Runnable runnable, long initialDelay, long period, TimeUnit timeUnit);
+    public void addTask(Runnable runnable) {
+//        if (runnable == null) {
+//            String message = Logging.getMessage("nullValue.RunnableIsNull");
+//            Logging.logger().fine(message);
+//            throw new IllegalArgumentException(message);
+//        }
+
+        if (!this.activeTasks.add(runnable))
+            return;
+
+        this.executor.execute(runnable);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ScheduledFuture<?> addScheduledTask(Runnable runnable, long delay, TimeUnit timeunit) {
+//        if (runnable == null) {
+//            String message = Logging.getMessage("nullValue.RunnableIsNull");
+//            Logging.logger().fine(message);
+//            throw new IllegalArgumentException(message);
+//        }
+
+        if (!this.activeTasks.add(runnable))
+            return null;
+
+        return this.executor.schedule(runnable, delay, timeunit);
+    }
+
+    /**
+     * Custom executor to run tasks.
+     */
+    protected class ScheduledTaskExecutor extends ScheduledThreadPoolExecutor {
+        protected ScheduledTaskExecutor(int poolSize) {
+            super(poolSize,
+                runnable -> {
+                    Thread thread = new Thread(runnable);
+                    thread.setDaemon(true);
+                    thread.setPriority(Thread.MIN_PRIORITY);
+                    thread.setUncaughtExceptionHandler(ScheduledTaskService.this);
+                    return thread;
+                },
+                new DiscardPolicy() {
+                    public void rejectedExecution(Runnable runnable, ScheduledThreadPoolExecutor threadPoolExecutor) {
+                        // Interposes logging for rejected execution
+                        String message = Logging.getMessage("ThreadedTaskService.ResourceRejected", runnable);
+                        Logging.logger().fine(message);
+                        super.rejectedExecution(runnable, threadPoolExecutor);
+                    }
+                });
+        }
+
+        @Override
+        protected void beforeExecute(Thread thread, Runnable runnable) {
+
+            thread.setName(RUNNING_THREAD_NAME_PREFIX + runnable);
+            thread.setPriority(Thread.MIN_PRIORITY);
+            thread.setUncaughtExceptionHandler(ScheduledTaskService.this);
+
+            super.beforeExecute(thread, runnable);
+        }
+
+        @Override
+        protected void afterExecute(Runnable runnable, Throwable throwable) {
+
+            ScheduledTaskService.this.activeTasks.remove(runnable);
+
+            super.afterExecute(runnable, throwable);
+
+            if (throwable == null)
+                Thread.currentThread().setName(IDLE_THREAD_NAME_PREFIX);
+        }
+    }
 }

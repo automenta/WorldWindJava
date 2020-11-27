@@ -1259,7 +1259,7 @@ public class PointPlacemark extends WWObjectImpl
         if (!attrs.isDrawImage()) {
             WWTexture texture = this.textures.get(TRANSPARENT_IMAGE_ADDRESS);
             if (texture == null) {
-                URL localUrl = WorldWind.getDataFileStore().requestFile(TRANSPARENT_IMAGE_ADDRESS);
+                URL localUrl = WorldWind.store().requestFile(TRANSPARENT_IMAGE_ADDRESS);
                 if (localUrl != null) {
                     texture = new BasicWWTexture(localUrl, true);
                     this.textures.put(TRANSPARENT_IMAGE_ADDRESS, texture);
@@ -1292,7 +1292,7 @@ public class PointPlacemark extends WWObjectImpl
         else
             this.getActiveAttributes().setScale(defaultAttributes.getScale());
         if (texture == null) {
-            URL localUrl = WorldWind.getDataFileStore().requestFile(defaultAttributes.getImageAddress());
+            URL localUrl = WorldWind.store().requestFile(defaultAttributes.getImageAddress());
             if (localUrl != null) {
                 texture = new BasicWWTexture(localUrl, true);
                 this.textures.put(defaultAttributes.getImageAddress(), texture);
@@ -1316,7 +1316,7 @@ public class PointPlacemark extends WWObjectImpl
             return new BasicWWTexture(this.getActiveAttributes().getImage(), true);
         }
 
-        URL localUrl = WorldWind.getDataFileStore().requestFile(address);
+        URL localUrl = WorldWind.store().requestFile(address);
 
         if (localUrl != null) {
             return new BasicWWTexture(localUrl, true);

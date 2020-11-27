@@ -263,7 +263,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
      * @param dc the current draw context.
      */
     protected void requestResource(DrawContext dc) {
-        if (WorldWind.getTaskService().isFull())
+        if (WorldWind.tasks().isFull())
             return;
 
         KMLLink link = this.model.getLink();
@@ -277,7 +277,7 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
         if (WWUtil.isEmpty(address))
             return;
 
-        WorldWind.getTaskService().addTask(new RequestTask(this, address));
+        WorldWind.tasks().addTask(new RequestTask(this, address));
     }
 
     /**

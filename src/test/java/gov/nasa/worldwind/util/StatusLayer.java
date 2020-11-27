@@ -80,7 +80,7 @@ public class StatusLayer extends AbstractLayer implements PositionListener, Rend
             else
                 noNetwork = "";
 
-            if (isNetworkAvailable.get() && WorldWind.getRetrievalService().hasActiveTasks()) {
+            if (isNetworkAvailable.get() && WorldWind.retrieveRemote().hasActiveTasks()) {
                 activatedDownload = true;
                 bumpRotation();
                 if (eventSource != null)

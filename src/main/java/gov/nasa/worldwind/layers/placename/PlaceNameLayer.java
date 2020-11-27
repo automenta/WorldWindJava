@@ -398,8 +398,8 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
     protected void sendRequests() {
         Runnable task = this.requestQ.poll();
         while (task != null) {
-            if (!WorldWind.getTaskService().isFull()) {
-                WorldWind.getTaskService().addTask(task);
+            if (!WorldWind.tasks().isFull()) {
+                WorldWind.tasks().addTask(task);
             }
             task = this.requestQ.poll();
         }
@@ -430,7 +430,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         }
 
         tile.setDataChunk(tileData);
-        WorldWind.getMemoryCache(Tile.class.getName()).add(tile.getFileCachePath(), tile);
+        WorldWind.cache(Tile.class.getName()).add(tile.getFileCachePath(), tile);
         return true;
     }
 
@@ -442,7 +442,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         if (!this.isNetworkRetrievalEnabled())
             return;
 
-        if (!WorldWind.getRetrievalService().isAvailable())
+        if (!WorldWind.retrieveRemote().isAvailable())
             return;
 
         URL url;
@@ -482,7 +482,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         if (srl != null && srl > 0)
             retriever.setStaleRequestLimit(srl);
 
-        WorldWind.getRetrievalService().run(retriever, tile.getPriority());
+        WorldWind.retrieveRemote().run(retriever, tile.getPriority());
     }
 
     protected void saveBuffer(ByteBuffer buffer, File outFile) throws IOException {
@@ -700,7 +700,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         }
 
         protected boolean isTileInMemoryWithData() {
-            Tile t = (Tile) WorldWind.getMemoryCache(Tile.class.getName()).getObject(this.getFileCachePath());
+            Tile t = (Tile) WorldWind.cache(Tile.class.getName()).getObject(this.getFileCachePath());
             return !(t == null || t.getDataChunk() == null);
         }
 
@@ -1148,14 +1148,14 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
                 //load tileKeys
                 for (Tile t : tiles) {
                     tileKeys.add(t.getFileCachePath());
-                    WorldWind.getMemoryCache(Tile.class.getName()).add(t.getFileCachePath(), t);
+                    WorldWind.cache(Tile.class.getName()).add(t.getFileCachePath(), t);
                 }
                 return Arrays.asList(tiles);
             }
             else {
                 List<Tile> dataTiles = new ArrayList<>();
                 for (String s : tileKeys) {
-                    Tile t = (Tile) WorldWind.getMemoryCache(Tile.class.getName()).getObject(s);
+                    Tile t = (Tile) WorldWind.cache(Tile.class.getName()).getObject(s);
                     if (t != null) {
                         dataTiles.add(t);
                     }

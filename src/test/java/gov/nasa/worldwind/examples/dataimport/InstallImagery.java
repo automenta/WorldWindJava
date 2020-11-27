@@ -65,7 +65,7 @@ public class InstallImagery extends ApplicationTemplate {
             File sourceFile = ExampleUtil.saveResourceToTempFile(IMAGE_PATH, ".tif");
 
             // Get a reference to the FileStore into which we'll install the imagery.
-            FileStore fileStore = WorldWind.getDataFileStore();
+            FileStore fileStore = WorldWind.store();
 
             // Install the imagery into the FileStore.
             final Layer layer = installSurfaceImage("Crater Lake Imagery 30m", sourceFile, fileStore);

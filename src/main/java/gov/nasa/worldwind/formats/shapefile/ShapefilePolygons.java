@@ -43,7 +43,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     protected final List<ShapefileTile> topLevelTiles = new ArrayList<>();
     protected final List<ShapefileTile> currentTiles = new ArrayList<>();
     protected final PriorityQueue<Runnable> requestQueue = new PriorityQueue<>();
-    protected final MemoryCache cache = WorldWind.getMemoryCache(ShapefileGeometry.class.getName());
+    protected final MemoryCache cache = WorldWind.cache(ShapefileGeometry.class.getName());
     // Properties supporting picking and rendering.
     protected final PickSupport pickSupport = new PickSupport();
     protected final HashMap<Integer, Color> pickColorMap = new HashMap<>();
@@ -218,11 +218,11 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
 
     @Override
     public void preRender(DrawContext dc) {
-        if (dc == null) {
-            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (dc == null) {
+//            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (!this.visible)
             return;
@@ -238,18 +238,19 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         if (dc.isSmall(extent, 1))
             return;
 
-        this.layer = dc.getCurrentLayer();
+        final Layer currentLayer = dc.getCurrentLayer();
+        this.layer = currentLayer;
 
         // Assemble the tiles used for rendering, then add those tiles to the scene controller's list of renderables to
         // draw into the scene's shared surface tiles.
         this.assembleTiles(dc);
-        for (ShapefileTile tile : this.currentTiles) {
+        for (ShapefileTile tile : this.currentTiles)
             dc.addOrderedSurfaceRenderable(tile);
-        }
+
 
         // Assemble the tiles used for picking, then build a set of surface object tiles containing unique colors for
         // each record.
-        if (dc.getCurrentLayer().isPickEnabled()) {
+        if (currentLayer.isPickEnabled()) {
             try {
                 // Setup the draw context state and GL state for creating pick tiles.
                 dc.enablePickingMode();
@@ -269,7 +270,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         }
 
         // Send requests for tile geometry.
-        this.sendRequests();
+        WorldWind.tasks().addAll(requestQueue);
     }
 
     @Override
@@ -498,18 +499,6 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         geom.priority = eyePoint.distanceTo3(centroid);
 
         this.requestQueue.offer(geom);
-    }
-
-    protected void sendRequests() {
-        Runnable request;
-        while ((request = this.requestQueue.poll()) != null) {
-            if (WorldWind.getTaskService().isFull())
-                break;
-
-            WorldWind.getTaskService().addTask(request);
-        }
-
-        this.requestQueue.clear(); // clear any remaining requests
     }
 
     protected void tessellate(ShapefileGeometry geom) {

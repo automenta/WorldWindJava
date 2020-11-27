@@ -541,7 +541,7 @@ public abstract class RigidShape extends AbstractShape {
      * @return the geometry cache.
      */
     protected MemoryCache getGeometryCache() {
-        return WorldWind.getMemoryCache(GEOMETRY_CACHE_KEY);
+        return WorldWind.cache(GEOMETRY_CACHE_KEY);
     }
 
     @Override

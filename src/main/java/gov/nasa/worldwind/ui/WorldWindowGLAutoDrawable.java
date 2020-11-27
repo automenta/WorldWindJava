@@ -49,7 +49,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     /**
      * Schedule task to send the {@link View#VIEW_STOPPED} message after the view stop time elapses.
      */
-    protected ScheduledFuture viewRefreshTask;
+    private ScheduledFuture viewRefreshTask;
     protected boolean enableGpuCacheReinitialization = true;
     private GLAutoDrawable drawable;
 
@@ -427,6 +427,13 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
             this.drawable.display();
     }
 
+    private final Message viewStopMsg = new Message(View.VIEW_STOPPED, WorldWindowGLAutoDrawable.this);
+
+    private final Runnable viewStoppedTask = () -> {
+        //EventQueue.invokeLater(() ->
+        WorldWindowGLAutoDrawable.this.onMessage(viewStopMsg);
+    };
+
     /**
      * Schedule a task that will send a {@link View#VIEW_STOPPED} message to the Model when the task executes. If the
      * task runs (is not cancelled), then the view is considered stopped. Only one view stop task is scheduled at a
@@ -436,19 +443,16 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
      * @param delay Delay in milliseconds until the task runs.
      */
     protected void scheduleViewStopTask(long delay) {
-        Runnable viewStoppedTask = () -> {
-            // Call onMessage on the EDT with a VIEW_STOP message
-            EventQueue.invokeLater(() -> WorldWindowGLAutoDrawable.this.onMessage(
-                new Message(View.VIEW_STOPPED, WorldWindowGLAutoDrawable.this)));
-        };
 
         // Cancel the previous view stop task
         if (this.viewRefreshTask != null) {
             this.viewRefreshTask.cancel(false);
+            this.viewRefreshTask = null;
         }
 
+
         // Schedule the task for execution in delay milliseconds
-        this.viewRefreshTask = WorldWind.getScheduledTaskService()
+        this.viewRefreshTask = WorldWind.scheduler()
             .addScheduledTask(viewStoppedTask, delay, TimeUnit.MILLISECONDS);
     }
 

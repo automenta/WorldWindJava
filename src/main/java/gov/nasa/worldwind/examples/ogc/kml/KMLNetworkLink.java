@@ -319,7 +319,7 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
      * @param dc the current draw context.
      */
     protected void requestResource(DrawContext dc) {
-        if (WorldWind.getTaskService().isFull())
+        if (WorldWind.tasks().isFull())
             return;
 
         KMLLink link = this.getLinkOrUrl();
@@ -336,7 +336,7 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
         if (this.hasNetworkLinkControl() && this.getRoot().getNetworkLinkControl().getCookie() != null)
             address = address + this.getRoot().getNetworkLinkControl().getCookie();
 
-        WorldWind.getTaskService().addTask(new RequestTask(this, address));
+        WorldWind.tasks().addTask(new RequestTask(this, address));
     }
 
     /**

@@ -531,8 +531,8 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     private void sendRequests() {
         Runnable task = this.requestQ.poll();
         while (task != null) {
-            if (!WorldWind.getTaskService().isFull()) {
-                WorldWind.getTaskService().addTask(task);
+            if (!WorldWind.tasks().isFull()) {
+                WorldWind.tasks().addTask(task);
             }
             task = this.requestQ.poll();
         }

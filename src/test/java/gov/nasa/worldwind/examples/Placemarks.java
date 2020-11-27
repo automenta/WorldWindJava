@@ -250,7 +250,7 @@ public class Placemarks extends ApplicationTemplate {
 
             // Create a placemark that uses a 2525C tactical symbol. The symbol is downloaded from the internet on a
             // separate thread.
-            WorldWind.getTaskService().addTask(() -> createTacticalSymbolPointPlacemark(layer));
+            WorldWind.tasks().addTask(() -> createTacticalSymbolPointPlacemark(layer));
 
             // Add the layer to the model.
             insertBeforeCompass(getWwd(), layer);

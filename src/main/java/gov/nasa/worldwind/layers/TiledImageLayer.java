@@ -6,12 +6,12 @@
 package gov.nasa.worldwind.layers;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.examples.render.*;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.globes.Earth;
+import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
@@ -832,8 +832,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
             this.currentTiles.clear();
         }
 
-
-        this.sendRequests();
+        WorldWind.tasks().addAll(requestQ);
         //this.requestQ.clear();
     }
 
@@ -858,44 +857,35 @@ public abstract class TiledImageLayer extends AbstractLayer {
         gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    protected void sendRequests() {
-        Runnable task = this.requestQ.poll();
-        while (task != null) {
-//            if (!WorldWind.getTaskService().isFull()) {
-                WorldWind.getTaskService().addTask(task);
-//            }
-            task = this.requestQ.poll();
-        }
-    }
-
     public boolean isLayerInView(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
+//
+//        if (dc.getView() == null) {
+//            String message = Logging.getMessage("layers.AbstractLayer.NoViewSpecifiedInDrawingContext");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
-        if (dc.getView() == null) {
-            String message = Logging.getMessage("layers.AbstractLayer.NoViewSpecifiedInDrawingContext");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
-
-        return !(dc.getVisibleSector() != null && !this.levels.getSector().intersects(dc.getVisibleSector()));
+        final Sector visibleSector = dc.getVisibleSector();
+        return !(visibleSector != null && !this.levels.getSector().intersects(visibleSector));
     }
 
     protected Vec4 computeReferencePoint(DrawContext dc) {
+        final Globe globe = dc.getGlobe();
         if (dc.getViewportCenterPosition() != null)
-            return dc.getGlobe().computePointFromPosition(dc.getViewportCenterPosition());
+            return globe.computePointFromPosition(dc.getViewportCenterPosition());
 
-        Rectangle2D viewport = dc.getView().getViewport();
+        final View view = dc.getView();
+        Rectangle2D viewport = view.getViewport();
         int x = (int) viewport.getWidth() / 2;
         for (int y = (int) (0.5 * viewport.getHeight()); y >= 0; y--) {
-            Position pos = dc.getView().computePositionFromScreenPoint(x, y);
-            if (pos == null)
-                continue;
-
-            return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), 0.0d);
+            Position pos = view.computePositionFromScreenPoint(x, y);
+            if (pos != null)
+                return globe.computePointFromPosition(pos.getLatitude(), pos.getLongitude(), 0.0d);
         }
 
         return null;
@@ -1063,7 +1053,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     protected void retrieveLocalImage(TextureTile tile, String mimeType, int timeout) throws Exception {
-        if (!WorldWind.getLocalRetrievalService().isAvailable())
+        if (!WorldWind.retrieveLocal().isAvailable())
             return;
 
         RetrieverFactory retrieverFactory = (RetrieverFactory) this.getValue(AVKey.RETRIEVER_FACTORY_LOCAL);

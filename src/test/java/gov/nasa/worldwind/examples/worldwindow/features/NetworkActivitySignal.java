@@ -41,7 +41,7 @@ public class NetworkActivitySignal extends AbstractFeature {
         this.networkLabel = new JLabel();
         this.networkLabel.setOpaque(false);
 
-        NetworkUser downloadUser = () -> WorldWind.getRetrievalService().hasActiveTasks();
+        NetworkUser downloadUser = () -> WorldWind.retrieveRemote().hasActiveTasks();
         this.networkUsers.add(downloadUser);
 
         Timer activityTimer = new Timer(500, actionEvent -> {

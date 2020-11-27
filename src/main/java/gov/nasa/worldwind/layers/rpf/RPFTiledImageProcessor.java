@@ -114,7 +114,7 @@ public class RPFTiledImageProcessor {
             String dataSeriesId = fileIndex.getIndexProperties().getDataSeriesIdentifier();
 
             // Save the RPFFileIndex to the file cache.
-            File indexFile = WorldWind.getDataFileStore().newFile(
+            File indexFile = WorldWind.store().newFile(
                 RPFTiledImageLayer.getFileIndexCachePath(rootPath, dataSeriesId));
             saveFileIndex(fileIndex, indexFile);
 
@@ -227,7 +227,7 @@ public class RPFTiledImageProcessor {
             // Create the wavelet file path.
             synchronized (this.fileLock) {
                 String cachePath = makeWaveletCachePath(fileIndex, record.getKey());
-                waveletFile = WorldWind.getDataFileStore().newFile(cachePath);
+                waveletFile = WorldWind.store().newFile(cachePath);
             }
 
             // Create a record for the wavelet file.
@@ -441,7 +441,7 @@ public class RPFTiledImageProcessor {
         File outFile = null;
         if (!this.doStop) {
             synchronized (this.fileLock) {
-                outFile = WorldWind.getDataFileStore().newFile(tile.getPath());
+                outFile = WorldWind.store().newFile(tile.getPath());
             }
         }
 

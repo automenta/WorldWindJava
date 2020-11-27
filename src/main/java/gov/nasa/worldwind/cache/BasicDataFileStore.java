@@ -318,13 +318,13 @@ public class BasicDataFileStore extends AbstractFileStore {
         // findFile will attempt to retrieve from that URL on the thread that called this method, which might be the EDT
         // (See WWJ-434).
         if (cacheFileUrl == null && (addressProtocol == null || addressProtocol.equals("file")))
-            cacheFileUrl = WorldWind.getDataFileStore().findFile(address, true);
+            cacheFileUrl = WorldWind.store().findFile(address, true);
 
         // Look for the file in the WorldWind disk cache by creating a cache path from the file's address. We ignore this
         // step if searchLocalCache is false.
         if (cacheFileUrl == null && retrievalUrl != null && searchLocalCache) {
             String cachePath = this.makeCachePath(retrievalUrl, null);
-            cacheFileUrl = WorldWind.getDataFileStore().findFile(cachePath, true);
+            cacheFileUrl = WorldWind.store().findFile(cachePath, true);
 
             // If a address is requested that does not have a format suffix, then any previous call to makeLocal for the
             // same address has appended a suffix to the file's cache path that is appropriate for the content type
@@ -336,7 +336,7 @@ public class BasicDataFileStore extends AbstractFileStore {
             if (cacheFileUrl == null && (suffix == null || suffix.length() > 4)) {
                 for (String contentType : this.getCacheContentTypes()) {
                     String pathWithSuffix = cachePath + WWIO.makeSuffixForMimeType(contentType);
-                    cacheFileUrl = WorldWind.getDataFileStore().findFile(pathWithSuffix, true);
+                    cacheFileUrl = WorldWind.store().findFile(pathWithSuffix, true);
                     if (cacheFileUrl != null)
                         break;
                 }
@@ -387,7 +387,7 @@ public class BasicDataFileStore extends AbstractFileStore {
      *                         temporary location.
      */
     protected void makeLocal(String address, URL url, boolean saveInLocalCache) {
-        if (!WorldWind.getNetworkStatus().isHostUnavailable(url) || !WorldWind.getRetrievalService().isAvailable())
+        if (!WorldWind.getNetworkStatus().isHostUnavailable(url) || !WorldWind.retrieveRemote().isAvailable())
             return;
 
         DBEntry newEntry = new DBEntry(address);
@@ -397,7 +397,7 @@ public class BasicDataFileStore extends AbstractFileStore {
         Retriever retriever = URLRetriever.createRetriever(url, new PostProcessor(address, url, saveInLocalCache));
 
         if (retriever != null)
-            WorldWind.getRetrievalService().run(retriever, 1);
+            WorldWind.retrieveRemote().run(retriever, 1);
     }
 
     /**
@@ -690,7 +690,7 @@ public class BasicDataFileStore extends AbstractFileStore {
 
             String path = makeCachePath(this.retrievalUrl, this.getRetriever().getContentType());
             if (this.saveInLocalCache && path.length() <= WWIO.MAX_FILE_PATH_LENGTH)
-                file = WorldWind.getDataFileStore().newFile(path);
+                file = WorldWind.store().newFile(path);
             else
                 file = BasicDataFileStore.this.makeTempFile(this.retrievalUrl, this.getRetriever().getContentType());
 

@@ -156,7 +156,7 @@ public class KMLViewer extends ApplicationTemplate {
             makeMenu(this);
 
             // Set up to receive SSLHandshakeExceptions that occur during resource retrieval.
-            WorldWind.getRetrievalService().setSSLExceptionListener((e, path) -> {
+            WorldWind.retrieveRemote().setSSLExceptionListener((e, path) -> {
                 System.out.println(path);
                 System.out.println(e);
             });

@@ -453,7 +453,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
 
     protected void createShapefileLayer(final Object shapefileSource, final RenderableLayer layer,
         final CompletionCallback callback) {
-        WorldWind.getScheduledTaskService().addTask(() -> {
+        WorldWind.scheduler().addTask(() -> {
             Shapefile shp = null;
             try {
                 shp = loadShapefile(shapefileSource);

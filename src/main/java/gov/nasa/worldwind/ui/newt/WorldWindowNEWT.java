@@ -46,6 +46,7 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
 
     @Override
     public void init(GLAutoDrawable drawable) {
+
         this.wwd().initDrawable(drawable);
         this.wwd().addPropertyChangeListener(this);
         this.wwd().initGpuResourceCache(WorldWindow.createGpuResourceCache());
@@ -63,7 +64,7 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
 
     @Override
     public void display(GLAutoDrawable drawable) {
-        wwd().display(drawable);
+        //wwd().display(drawable);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
 
     @Override
     public void redraw() {
-        wwd().redraw();
+//        wwd().redraw();
     }
 
     @Override

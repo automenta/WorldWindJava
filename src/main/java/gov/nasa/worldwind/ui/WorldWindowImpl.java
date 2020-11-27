@@ -39,7 +39,7 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
             AVKey.SCENE_CONTROLLER_CLASS_NAME);
 
         // Set up to initiate a repaint whenever a file is retrieved and added to the local file store.
-        WorldWind.getDataFileStore().addPropertyChangeListener(this);
+        WorldWind.store().addPropertyChangeListener(this);
     }
 
     public static GpuResourceCache createGpuResourceCache() {
@@ -76,7 +76,7 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
      * An OpenGL context for the window must be current.
      */
     public void shutdown() {
-        WorldWind.getDataFileStore().removePropertyChangeListener(this);
+        WorldWind.store().removePropertyChangeListener(this);
 
         if (this.inputHandler != null) {
             this.inputHandler.dispose();

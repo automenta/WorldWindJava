@@ -252,7 +252,7 @@ public class ImportedDataDialog extends AbstractFeatureDialog implements Network
         if (fileMenu != null)
             fileMenu.addMenu(this.getFeatureID());
 
-        this.fileStore = WorldWind.getDataFileStore();
+        this.fileStore = WorldWind.store();
 
         this.layoutComponents();
         this.loadPreviouslyImportedData();

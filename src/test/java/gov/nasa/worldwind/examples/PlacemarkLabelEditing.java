@@ -36,7 +36,7 @@ public class PlacemarkLabelEditing extends ApplicationTemplate {
 
             // Create a placemark that uses a 2525C tactical symbol. The symbol is downloaded from the internet on a
             // separate thread.
-            WorldWind.getTaskService().addTask(() -> {
+            WorldWind.tasks().addTask(() -> {
                 // Use the function in the Placemarks example to create a tactical symbol placemark.
                 Placemarks.createTacticalSymbolPointPlacemark(layer);
             });

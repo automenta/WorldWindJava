@@ -576,7 +576,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
     protected void makeVerts(DrawContext dc, RectTile tile) {
         // First see if the vertices have been previously computed and are in the cache. Since the elevation model
         // contents can change between frames, regenerate and re-cache vertices every second.
-        MemoryCache cache = WorldWind.getMemoryCache(CACHE_ID);
+        MemoryCache cache = WorldWind.cache(CACHE_ID);
         CacheKey cacheKey = this.createCacheKey(dc, tile);
         tile.ri = (RenderInfo) cache.getObject(cacheKey);
         if (tile.ri != null && tile.ri.time >= System.currentTimeMillis() - this.getUpdateFrequency()) {

@@ -108,12 +108,12 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
     }
 
     private void addTileToCache(MercatorTextureTile tile) {
-        WorldWind.getMemoryCache(MercatorTextureTile.class.getName()).add(
+        WorldWind.cache(MercatorTextureTile.class.getName()).add(
             tile.tileKey, tile);
     }
 
     protected void downloadTexture(final MercatorTextureTile tile) {
-        if (!WorldWind.getRetrievalService().isAvailable())
+        if (!WorldWind.retrieveRemote().isAvailable())
             return;
 
         URL url;
@@ -159,7 +159,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
         if (srl != null && srl > 0)
             retriever.setStaleRequestLimit(srl);
 
-        WorldWind.getRetrievalService().run(retriever, tile.getPriority());
+        WorldWind.retrieveRemote().run(retriever, tile.getPriority());
     }
 
     private void saveBuffer(ByteBuffer buffer, File outFile)

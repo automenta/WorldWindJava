@@ -472,7 +472,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     }
 
     protected void retrieveLocalTexture(TextureTile tile, RetrievalPostProcessor postProcessor) {
-        if (!WorldWind.getLocalRetrievalService().isAvailable())
+        if (!WorldWind.retrieveLocal().isAvailable())
             return;
 
         RetrieverFactory retrieverFactory = (RetrieverFactory) this.getValue(AVKey.RETRIEVER_FACTORY_LOCAL);
@@ -487,7 +487,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
         Retriever retriever = retrieverFactory.createRetriever(avList, postProcessor);
 
-        WorldWind.getLocalRetrievalService().run(retriever, tile.getPriority());
+        WorldWind.retrieveLocal().run(retriever, tile.getPriority());
     }
 
     protected void retrieveRemoteTexture(TextureTile tile, DownloadPostProcessor postProcessor) {
@@ -496,7 +496,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             return;
         }
 
-        if (!WorldWind.getRetrievalService().isAvailable())
+        if (!WorldWind.retrieveRemote().isAvailable())
             return;
 
         URL url;
@@ -539,7 +539,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (srl != null && srl > 0)
             retriever.setStaleRequestLimit(srl);
 
-        WorldWind.getRetrievalService().run(retriever, tile.getPriority());
+        WorldWind.retrieveRemote().run(retriever, tile.getPriority());
     }
 
     protected DownloadPostProcessor createDownloadPostProcessor(TextureTile tile) {

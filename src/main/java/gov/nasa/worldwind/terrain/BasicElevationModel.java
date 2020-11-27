@@ -538,7 +538,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
     protected MemoryCache createMemoryCache(String cacheName) {
         if (WorldWind.getMemoryCacheSet().containsCache(cacheName)) {
-            return WorldWind.getMemoryCache(cacheName);
+            return WorldWind.cache(cacheName);
         }
         else {
             long size = Configuration.getLongValue(AVKey.ELEVATION_TILE_CACHE_SIZE, 20000000L);
@@ -692,14 +692,14 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     protected void requestTile(TileKey key) {
-        if (WorldWind.getTaskService().isFull())
+        if (WorldWind.tasks().isFull())
             return;
 
         if (this.getLevels().missing(key))
             return;
 
         Runnable request = new RequestTask(key, this);
-        WorldWind.getTaskService().addTask(request);
+        WorldWind.tasks().addTask(request);
     }
 
     // Read elevations from the file cache. Don't be confused by the use of a URL here: it's used so that files can
@@ -976,7 +976,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     protected void retrieveLocalElevations(Tile tile, RetrievalPostProcessor postProcessor) {
-        if (!WorldWind.getLocalRetrievalService().isAvailable())
+        if (!WorldWind.retrieveLocal().isAvailable())
             return;
 
         RetrieverFactory retrieverFactory = (RetrieverFactory) this.getValue(AVKey.RETRIEVER_FACTORY_LOCAL);
@@ -991,7 +991,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         Retriever retriever = retrieverFactory.createRetriever(avList, postProcessor);
 
-        WorldWind.getLocalRetrievalService().run(retriever, tile.getPriority());
+        WorldWind.retrieveLocal().run(retriever, tile.getPriority());
     }
 
     protected void retrieveRemoteElevations(final Tile tile, DownloadPostProcessor postProcessor) {
@@ -1000,7 +1000,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             return;
         }
 
-        if (!WorldWind.getRetrievalService().isAvailable())
+        if (!WorldWind.retrieveRemote().isAvailable())
             return;
 
         URL url = null;
@@ -1023,7 +1023,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         Retriever retriever = new HTTPRetriever(url, postProcessor);
         retriever.setValue(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy elevation models
 
-        WorldWind.getRetrievalService().run(retriever, 0);
+        WorldWind.retrieveRemote().run(retriever, 0);
     }
 
     protected void determineExtremes(double value, double[] extremes) {

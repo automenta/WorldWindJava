@@ -453,12 +453,12 @@ public class SlideShowAnnotationController extends DialogAnnotationController {
     }
 
     protected PowerOfTwoPaddedImage getImage(Object source) {
-        return (PowerOfTwoPaddedImage) WorldWind.getMemoryCache(BUFFERED_IMAGE_CACHE_NAME).getObject(source);
+        return (PowerOfTwoPaddedImage) WorldWind.cache(BUFFERED_IMAGE_CACHE_NAME).getObject(source);
     }
 
     protected boolean putImage(Object source, PowerOfTwoPaddedImage image) {
         long sizeInBytes = ImageUtil.computeSizeInBytes(image.getPowerOfTwoImage());
-        MemoryCache cache = WorldWind.getMemoryCache(BUFFERED_IMAGE_CACHE_NAME);
+        MemoryCache cache = WorldWind.cache(BUFFERED_IMAGE_CACHE_NAME);
         boolean addToCache = (sizeInBytes < cache.getCapacity());
 
         // If the image is too large for the cache, then do not add it to the cache.

@@ -1351,7 +1351,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
                 if (this.context != null)
                     docSource = this.context.resolveReference(this.docUrl);
                 else
-                    docSource = WorldWind.getDataFileStore().requestFile(this.docUrl);
+                    docSource = WorldWind.store().requestFile(this.docUrl);
 
                 if (docSource instanceof KMLRoot) {
                     root = (KMLRoot) docSource;

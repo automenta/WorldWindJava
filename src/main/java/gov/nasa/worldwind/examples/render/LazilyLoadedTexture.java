@@ -41,7 +41,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
     /**
      * Identifies the {@link FileStore} of the supporting file cache for this model.
      */
-    protected final FileStore fileStore = WorldWind.getDataFileStore();
+    protected final FileStore fileStore = WorldWind.store();
     /**
      * Provides a semaphore to synchronize access to the texture file if duplicate request tasks are active.
      */
@@ -359,18 +359,18 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
         if (this.getTextureData() != null && this.getTexture(dc) == null)
             return this.makeTextureFromTextureData(dc);
 
-        if (WorldWind.getTaskService().isFull())
-            return null;
+//        if (WorldWind.tasks().isFull())
+//            return null;
 
         Runnable task = this.createRequestTask();
-        if (WorldWind.getTaskService().contains(task))
-            return null;
+//        if (WorldWind.tasks().contains(task))
+//            return null;
 
         // Use either the current layer or the layer list as the listener to notify when the request completes. The
         // latter is used when the image source is requested during ordered rendering and the current layer is null.
         this.listener = dc.getCurrentLayer() != null ? dc.getCurrentLayer() : dc.getLayers();
 
-        WorldWind.getTaskService().addTask(task);
+        WorldWind.tasks().addTask(task);
 
         return null;
     }

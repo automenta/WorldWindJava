@@ -323,7 +323,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
         }
 
         private void startEarthquakeDownload() {
-            WorldWind.getScheduledTaskService().addTask(() -> downloadEarthquakes(USGS_EARTHQUAKE_FEED_URL));
+            WorldWind.scheduler().addTask(() -> downloadEarthquakes(USGS_EARTHQUAKE_FEED_URL));
         }
 
         private void downloadEarthquakes(String earthquakeFeedUrl) {

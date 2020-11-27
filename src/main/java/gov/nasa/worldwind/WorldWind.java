@@ -66,7 +66,7 @@ public final class WorldWind {
         this.memoryCacheSet = (MemoryCacheSet) createConfigurationComponent(AVKey.MEMORY_CACHE_SET_CLASS_NAME);
         this.networkStatus = (NetworkStatus) createConfigurationComponent(AVKey.NETWORK_STATUS_CLASS_NAME);
         this.sessionCache = (SessionCache) createConfigurationComponent(AVKey.SESSION_CACHE_CLASS_NAME);
-        this.scheduledTaskService = new BasicScheduledTaskService();
+        this.scheduledTaskService = new ScheduledTaskService();
 
         // Seems like an unlikely place to load the tiff reader, but do it here nonetheless.
         IIORegistry.getDefaultInstance().registerServiceProvider(GeotiffImageReaderSpi.inst());
@@ -94,27 +94,23 @@ public final class WorldWind {
         return instance.memoryCacheSet;
     }
 
-    public static synchronized MemoryCache getMemoryCache(String key) {
+    public static MemoryCache cache(String key) {
         return instance.memoryCacheSet.getCache(key);
     }
 
-    public static FileStore getDataFileStore() {
+    public static FileStore store() {
         return instance.dataFileStore;
     }
 
-    public static RetrievalService getRetrievalService() {
+    public static RetrievalService retrieveRemote() {
         return instance.remoteRetrievalService;
     }
 
-    public static RetrievalService getRemoteRetrievalService() {
-        return instance.remoteRetrievalService;
-    }
-
-    public static RetrievalService getLocalRetrievalService() {
+    public static RetrievalService retrieveLocal() {
         return instance.localRetrievalService;
     }
 
-    public static TaskService getTaskService() {
+    public static TaskService tasks() {
         return instance.taskService;
     }
 
@@ -124,7 +120,7 @@ public final class WorldWind {
      *
      * @return the scheduled task service.
      */
-    public static ScheduledTaskService getScheduledTaskService() {
+    public static ScheduledTaskService scheduler() {
         return instance.scheduledTaskService;
     }
 

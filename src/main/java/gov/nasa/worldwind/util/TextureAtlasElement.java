@@ -269,11 +269,11 @@ public class TextureAtlasElement implements Disposable {
         if (this.getImage() != null && !this.getTextureAtlas().contains(this.getImageSource()))
             return this.addAtlasImage();
 
-        if (WorldWind.getTaskService().isFull())
+        if (WorldWind.tasks().isFull())
             return false;
 
         Runnable task = this.createRequestTask();
-        if (WorldWind.getTaskService().contains(task))
+        if (WorldWind.tasks().contains(task))
             return false;
 
         // Use either the current layer or the layer list as the listener to notify when the request completes. The
@@ -281,7 +281,7 @@ public class TextureAtlasElement implements Disposable {
         // null.
         this.listener = dc.getCurrentLayer() != null ? dc.getCurrentLayer() : dc.getLayers();
 
-        WorldWind.getTaskService().addTask(task);
+        WorldWind.tasks().addTask(task);
 
         return false;
     }
@@ -332,7 +332,7 @@ public class TextureAtlasElement implements Disposable {
      * @return <code>true</code> if the image source has been loaded successfully, and <code>false</code> otherwise.
      */
     protected boolean loadImage() {
-        URL fileUrl = WorldWind.getDataFileStore().requestFile(this.getImageSource().toString());
+        URL fileUrl = WorldWind.store().requestFile(this.getImageSource().toString());
         if (fileUrl != null) {
             BufferedImage image = this.readImage(fileUrl);
             if (image != null)

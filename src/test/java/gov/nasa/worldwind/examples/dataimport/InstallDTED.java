@@ -91,7 +91,7 @@ public class InstallDTED extends ApplicationTemplate {
 
         protected void installElevations(File sourceDir) {
             // Get a reference to the FileStore into which we'll install the elevations.
-            FileStore fileStore = WorldWind.getDataFileStore();
+            FileStore fileStore = WorldWind.store();
 
             // Install the elevations and get the resulting elevation model.
             ArrayList<File> sources = new ArrayList<>();

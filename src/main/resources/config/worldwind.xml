@@ -57,7 +57,7 @@
     <!-- Don't specify the property at all to use the default list. -->
     <Property name="gov.nasa.worldwind.avkey.NetworkStatusTestSites"
               value="www.nasa.gov, worldwind.arc.nasa.gov, google.com, microsoft.com, yahoo.com"/>
-    <Property name="gov.nasa.worldwind.avkey.TaskServiceClassName" value="gov.nasa.worldwind.util.ThreadedTaskService"/>
+    <Property name="gov.nasa.worldwind.avkey.TaskServiceClassName" value="gov.nasa.worldwind.util.TaskService"/>
     <Property name="gov.nasa.worldwind.avkey.DataFileStoreClassName"
               value="gov.nasa.worldwind.cache.BasicDataFileStore"/>
     <Property name="gov.nasa.worldwind.avkey.DataRasterReaderFactoryClassName"

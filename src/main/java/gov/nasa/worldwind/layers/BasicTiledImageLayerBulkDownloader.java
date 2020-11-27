@@ -136,7 +136,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
 //    }
 
     protected synchronized void submitMissingTilesRequests() throws InterruptedException {
-        RetrievalService rs = WorldWind.getRetrievalService();
+        RetrievalService rs = WorldWind.retrieveRemote();
         int i = 0;
         while (this.missingTiles.size() > i && rs.isAvailable()) {
             Thread.sleep(1); // generates InterruptedException if thread has been interrupted
