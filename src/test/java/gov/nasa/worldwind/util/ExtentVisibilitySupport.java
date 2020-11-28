@@ -14,6 +14,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
+import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
+
 /**
  * ExtentVisibilitySupport provides visibility tests and computations on objects with 3D extents in model coordinates,
  * and on objects with 2D extents in screen coordinates. The caller configures ExtentVisibilitySupport with an Iterable
@@ -680,7 +682,7 @@ public class ExtentVisibilitySupport {
 
     protected Iterable<ScreenExtent> translateScreenExtents(Iterable<? extends ScreenExtent> screenExtents,
         Matrix oldModelview, Matrix newModelview, Matrix projection, Rectangle viewport) {
-        List<ScreenExtent> adjustedScreenExtents = new ArrayList<>();
+        List<ScreenExtent> adjustedScreenExtents = new ArrayList<>(sizeEstimate(screenExtents));
 
         for (ScreenExtent se : screenExtents) {
             if (se.getModelReferencePoint() != null && se.getScreenBounds() != null) {

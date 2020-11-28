@@ -11,11 +11,11 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.ShapeDataCache;
 import gov.nasa.worldwind.drag.*;
-import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
-import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
+import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
@@ -1150,9 +1150,8 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param dc the current draw context.
      */
     protected void drawOutline(DrawContext dc) {
-        ShapeAttributes activeAttrs = this.getActiveAttributes();
 
-        this.prepareToDrawOutline(dc, activeAttrs, defaultAttributes);
+        this.prepareToDrawOutline(dc, this.getActiveAttributes(), defaultAttributes);
 
         this.doDrawOutline(dc);
     }
@@ -1185,6 +1184,7 @@ public abstract class AbstractShape extends WWObjectImpl
             else {
                 Color sc = material.getDiffuse();
                 double opacity = activeAttrs.getOutlineOpacity();
+
                 gl.glColor4ub((byte) sc.getRed(), (byte) sc.getGreen(), (byte) sc.getBlue(),
                     (byte) (opacity < 1 ? (int) (opacity * 255 + 0.5) : 255));
 

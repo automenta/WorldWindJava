@@ -10,12 +10,12 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.Cylinder;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
@@ -81,15 +81,15 @@ import static gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil.kmlBoolean;
  * @version $Id: Path.java 3032 2015-04-17 17:53:35Z dcollins $
  */
 public class Path extends AbstractShape {
-
-    /**
-     * The default interior color.
-     */
-    protected static final Material DEFAULT_PATH_INTERIOR_MATERIAL = Material.PINK;
-    /**
-     * The default outline color.
-     */
-    protected static final Material DEFAULT_PATH_OUTLINE_MATERIAL = Material.RED;
+//
+//    /**
+//     * The default interior color.
+//     */
+//    protected static final Material DEFAULT_PATH_INTERIOR_MATERIAL = Material.PINK;
+//    /**
+//     * The default outline color.
+//     */
+//    protected static final Material DEFAULT_PATH_OUTLINE_MATERIAL = Material.RED;
     /**
      * The default path type.
      */

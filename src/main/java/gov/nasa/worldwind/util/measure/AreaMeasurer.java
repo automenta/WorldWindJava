@@ -121,11 +121,11 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
     }
 
     public double getSurfaceArea(Globe globe) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (this.surfaceArea < 0) {
             this.surfaceArea = this.computeSurfaceAreaSampling(globe, this.areaTerrainSamplingSteps);
@@ -135,11 +135,11 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
     }
 
     public double getProjectedArea(Globe globe) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (this.projectedArea < 0) {
             this.projectedArea = this.computeProjectedAreaGeometry(globe);
@@ -155,11 +155,11 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
 
     @Override
     public double getWidth(Globe globe) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Sector sector = getBoundingSector();
         if (sector != null) {
@@ -172,11 +172,11 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
 
     @Override
     public double getHeight(Globe globe) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Sector sector = getBoundingSector();
         if (sector != null) {
@@ -245,7 +245,7 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
     // Sample the path bounding sector with square cells which area are approximated according to the surface normal at
     // the cell south-west corner.
     protected double computeSurfaceAreaSampling(Globe globe, double steps) {
-        Sector sector = getBoundingSector();
+        final Sector sector = getBoundingSector();
         if (sector != null && this.isClosedShape()) {
             // Subdivide long segments if needed
             if (this.subdividedPositions == null) {
@@ -256,8 +256,9 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
             // Sample the bounding sector with cells about the same length in side - squares
             double stepRadians = Math.max(sector.getDeltaLatRadians() / steps, sector.getDeltaLonRadians() / steps);
             int latSteps = (int) Math.round(sector.getDeltaLatRadians() / stepRadians);
+            final LatLon sectorCentroid = sector.getCentroid();
             int lonSteps = (int) Math.round(sector.getDeltaLonRadians() / stepRadians
-                * Math.cos(sector.getCentroid().getLatitude().radians));
+                * Math.cos(sectorCentroid.getLatitude().radians));
             double latStepRadians = sector.getDeltaLatRadians() / latSteps;
             double lonStepRadians = sector.getDeltaLonRadians() / lonSteps;
 
@@ -268,18 +269,24 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
                 this.sectorElevations = new Double[latSteps + 1][lonSteps + 1];
             }
 
+            final double sectorLatMinRadians = sector.latMin().radians;
+            final double sectorLonMinRadians = sector.lonMin().radians;
+            final Angle sectorCentroidLon = sectorCentroid.getLongitude();
+
             double area = 0;
             for (int i = 0; i < latSteps; i++) {
-                double lat = sector.latMin().radians + latStepRadians * i;
+                double lat = sectorLatMinRadians + latStepRadians * i;
                 // Compute this latitude row cells area
                 double radius = globe.getRadiusAt(Angle.fromRadians(lat + latStepRadians / 2),
-                    sector.getCentroid().getLongitude());
+                    sectorCentroidLon);
                 double cellWidth = lonStepRadians * radius * Math.cos(lat + latStepRadians / 2);
                 double cellHeight = latStepRadians * radius;
                 double cellArea = cellWidth * cellHeight;
 
+                final Angle latAngle = Angle.fromRadians(lat);
+
                 for (int j = 0; j < lonSteps; j++) {
-                    double lon = sector.lonMin().radians + lonStepRadians * j;
+                    double lon = sectorLonMinRadians + lonStepRadians * j;
                     Sector cellSector = Sector.fromRadians(lat, lat + latStepRadians, lon, lon + lonStepRadians);
                     // Select cells which center is inside the shape
                     if (WWMath.isLocationInside(cellSector.getCentroid(), this.subdividedPositions)) {
@@ -288,9 +295,9 @@ public class AreaMeasurer extends LengthMeasurer implements MeasurableArea {
                             // Compute suface area using terrain normal in SW corner
                             // Corners elevation
                             double eleSW = sectorElevations[i][j] != null ? sectorElevations[i][j]
-                                : globe.getElevation(Angle.fromRadians(lat), Angle.fromRadians(lon));
+                                : globe.getElevation(latAngle, Angle.fromRadians(lon));
                             double eleSE = sectorElevations[i][j + 1] != null ? sectorElevations[i][j + 1]
-                                : globe.getElevation(Angle.fromRadians(lat), Angle.fromRadians(lon + lonStepRadians));
+                                : globe.getElevation(latAngle, Angle.fromRadians(lon + lonStepRadians));
                             double eleNW = sectorElevations[i + 1][j] != null ? sectorElevations[i + 1][j]
                                 : globe.getElevation(Angle.fromRadians(lat + latStepRadians), Angle.fromRadians(lon));
                             // Cache elevations

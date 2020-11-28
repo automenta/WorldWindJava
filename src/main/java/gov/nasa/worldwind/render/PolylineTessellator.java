@@ -38,8 +38,9 @@ public class PolylineTessellator {
 
     public void addVertex(double x, double y, double z, int index) {
         if (this.lastIndex >= 0) {
-            this.indices = this.addIndex(this.indices, this.lastIndex);
-            this.indices = this.addIndex(this.indices, index);
+            IntBuffer i = indices;
+            i =            this.addIndex(i, this.lastIndex);
+            this.indices = this.addIndex(i, index);
         }
 
         this.lastIndex = index;
@@ -50,10 +51,9 @@ public class PolylineTessellator {
             int newCapacity = buffer.capacity() + buffer.capacity() / 2; // increase capacity by 50%
             IntBuffer newBuffer = IntBuffer.allocate(newCapacity);
             newBuffer.put(buffer.flip());
-            return newBuffer.put(index);
+            buffer = newBuffer;
         }
-        else {
-            return buffer.put(index);
-        }
+
+        return buffer.put(index);
     }
 }

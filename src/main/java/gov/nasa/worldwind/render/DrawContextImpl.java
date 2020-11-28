@@ -79,11 +79,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         }
 
         public Vec4 getSurfacePoint(Position position) {
-            if (position == null) {
-                String msg = Logging.getMessage("nullValue.PositionIsNull");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
+//            if (position == null) {
+//                String msg = Logging.getMessage("nullValue.PositionIsNull");
+//                Logging.logger().severe(msg);
+//                throw new IllegalArgumentException(msg);
+//            }
 
             SectorGeometryList sectorGeometry = DrawContextImpl.this.getSurfaceGeometry();
             if (sectorGeometry == null)
@@ -100,11 +100,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         }
 
         public Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset) {
-            if (latitude == null || longitude == null) {
-                String msg = Logging.getMessage("nullValue.LatLonIsNull");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
+//            if (latitude == null || longitude == null) {
+//                String msg = Logging.getMessage("nullValue.LatLonIsNull");
+//                Logging.logger().severe(msg);
+//                throw new IllegalArgumentException(msg);
+//            }
 
             SectorGeometryList sectorGeometry = DrawContextImpl.this.getSurfaceGeometry();
             if (sectorGeometry == null)
@@ -136,11 +136,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         }
 
         public Intersection[] intersect(Position pA, Position pB, int altitudeMode) {
-            if (pA == null || pB == null) {
-                String msg = Logging.getMessage("nullValue.PositionIsNull");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
+//            if (pA == null || pB == null) {
+//                String msg = Logging.getMessage("nullValue.PositionIsNull");
+//                Logging.logger().severe(msg);
+//                throw new IllegalArgumentException(msg);
+//            }
 
             // The intersect method expects altitudes to be relative to ground, so make them so if they aren't already.
             double altitudeA = pA.getAltitude();
@@ -235,11 +235,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public final void setGLContext(GLContext glContext) {
-        if (glContext == null) {
-            String message = Logging.getMessage("nullValue.GLContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (glContext == null) {
+//            String message = Logging.getMessage("nullValue.GLContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.glContext = glContext;
     }
@@ -261,21 +261,21 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setGLRuntimeCapabilities(GLRuntimeCapabilities capabilities) {
-        if (capabilities == null) {
-            String message = Logging.getMessage("nullValue.GLRuntimeCapabilitiesIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (capabilities == null) {
+//            String message = Logging.getMessage("nullValue.GLRuntimeCapabilitiesIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.glRuntimeCaps = capabilities;
     }
 
     public final void initialize(GLContext glContext) {
-        if (glContext == null) {
-            String message = Logging.getMessage("nullValue.GLContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (glContext == null) {
+//            String message = Logging.getMessage("nullValue.GLContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.glContext = glContext;
 
@@ -361,11 +361,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setGpuResourceCache(GpuResourceCache gpuResourceCache) {
-        if (gpuResourceCache == null) {
-            String msg = Logging.getMessage("nullValue.GpuResourceCacheIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (gpuResourceCache == null) {
+//            String msg = Logging.getMessage("nullValue.GpuResourceCacheIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.gpuResourceCache = gpuResourceCache;
     }
@@ -375,11 +375,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setTextRendererCache(TextRendererCache textRendererCache) {
-        if (textRendererCache == null) {
-            String msg = Logging.getMessage("nullValue.TextRendererCacheIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (textRendererCache == null) {
+//            String msg = Logging.getMessage("nullValue.TextRendererCacheIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.textRendererCache = textRendererCache;
     }
@@ -389,11 +389,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setAnnotationRenderer(AnnotationRenderer ar) {
-        if (ar == null) {
-            String msg = Logging.getMessage("nullValue.RendererIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (ar == null) {
+//            String msg = Logging.getMessage("nullValue.RendererIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
         annotationRenderer = ar;
     }
 
@@ -438,11 +438,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void addPickedObjects(PickedObjectList pickedObjects) {
-        if (pickedObjects == null) {
-            String msg = Logging.getMessage("nullValue.PickedObjectList");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (pickedObjects == null) {
+//            String msg = Logging.getMessage("nullValue.PickedObjectList");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (this.pickedObjects == null) {
             this.pickedObjects = pickedObjects;
@@ -453,11 +453,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void addPickedObject(PickedObject pickedObject) {
-        if (null == pickedObject) {
-            String msg = Logging.getMessage("nullValue.PickedObject");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (null == pickedObject) {
+//            String msg = Logging.getMessage("nullValue.PickedObject");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (null == this.pickedObjects)
             this.pickedObjects = new PickedObjectList();
@@ -474,11 +474,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void addObjectInPickRectangle(PickedObject pickedObject) {
-        if (pickedObject == null) {
-            String msg = Logging.getMessage("nullValue.PickedObject");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (pickedObject == null) {
+//            String msg = Logging.getMessage("nullValue.PickedObject");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.objectsInPickRect.add(pickedObject);
     }
@@ -526,11 +526,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
      * {@inheritDoc}
      */
     public int getPickColorAtPoint(Point point) {
-        if (point == null) {
-            String msg = Logging.getMessage("nullValue.PointIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (point == null) {
+//            String msg = Logging.getMessage("nullValue.PointIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         // Translate the point from AWT screen coordinates to OpenGL screen coordinates.
         Rectangle viewport = this.getView().getViewport();
@@ -554,11 +554,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
      * {@inheritDoc}
      */
     public int[] getPickColorsInRectangle(Rectangle rectangle, int[] minAndMaxColorCodes) {
-        if (rectangle == null) {
-            String msg = Logging.getMessage("nullValue.RectangleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (rectangle == null) {
+//            String msg = Logging.getMessage("nullValue.RectangleIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Rectangle viewport = this.getView().getViewport();
 
@@ -730,11 +730,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
      * {@inheritDoc}
      */
     public void addOrderedRenderable(OrderedRenderable orderedRenderable, boolean isBehind) {
-        if (null == orderedRenderable) {
-            String msg = Logging.getMessage("nullValue.OrderedRenderable");
-            Logging.logger().warning(msg);
-            return; // benign event
-        }
+//        if (null == orderedRenderable) {
+//            String msg = Logging.getMessage("nullValue.OrderedRenderable");
+//            Logging.logger().warning(msg);
+//            return; // benign event
+//        }
 
         // If the caller has specified that the ordered renderable should be treated as behind other ordered
         // renderables, then treat it as having an eye distance of Double.MAX_VALUE and ignore the actual eye distance.
@@ -1241,18 +1241,20 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
         GL2 gl = this.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
+        final boolean out = renderer.isDrawOutline(this, shape);
+        final boolean in = renderer.isDrawInterior(this, shape);
         if (this.isDeepPickingEnabled()) {
-            if (renderer.isDrawInterior(this, shape))
+            if (in)
                 renderer.drawInterior(this, shape);
 
-            if (renderer.isDrawOutline(this, shape)) // the line might extend outside the interior's projection
+            if (out) // the line might extend outside the interior's projection
                 renderer.drawOutline(this, shape);
 
             return;
         }
 
         // Optimize the outline-only case.
-        if (renderer.isDrawOutline(this, shape) && !renderer.isDrawInterior(this, shape)) {
+        if (out && !in) {
             renderer.drawOutline(this, shape);
             return;
         }
@@ -1268,7 +1270,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             // If the outline and interior are enabled, then draw the outline but do not affect the depth buffer. The
             // fill pixels contribute the depth values. When the interior is drawn, it draws on top of these colors, and
             // the outline is be visible behind the potentially transparent interior.
-            if (renderer.isDrawOutline(this, shape) && renderer.isDrawInterior(this, shape)) {
+            if (out && in) {
                 gl.glColorMask(true, true, true, true);
                 gl.glDepthMask(false);
 
@@ -1282,7 +1284,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             // priority over the fill, and gives the fill depth priority over other shapes drawn with depth offset
             // enabled. By drawing the colors without depth offset, we avoid the problem of having to use ever
             // increasing depth offsets.
-            if (renderer.isDrawInterior(this, shape)) {
+            if (in) {
                 if (renderer.isEnableDepthOffset(this, shape)) {
                     // Draw depth.
                     gl.glColorMask(false, false, false, false);
@@ -1313,14 +1315,13 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
             // If the outline is enabled, then draw the outline color and depth values. This blends outline colors with
             // the interior colors.
-            if (renderer.isDrawOutline(this, shape)) {
+            if (out) {
                 gl.glColorMask(true, true, true, true);
                 gl.glDepthMask(true);
 
                 renderer.drawOutline(this, shape);
             }
-        }
-        finally {
+        } finally {
             ogsh.pop(gl);
         }
     }

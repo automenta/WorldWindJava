@@ -7,9 +7,9 @@ package gov.nasa.worldwind.geom;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.Cacheable;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.tracks.TrackPoint;
 import gov.nasa.worldwind.util.Logging;
 
@@ -68,11 +68,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     }
 
     public Sector(Sector sector) {
-        if (sector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (sector == null) {
+//            String message = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.minLatitude = new Angle(sector.latMin());
         this.maxLatitude = new Angle(sector.latMax());
@@ -247,19 +247,19 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     }
 
     public static Sector boundingSector(Iterable<? extends LatLon> locations) {
-        if (locations == null) {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (locations == null) {
+//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (!locations.iterator().hasNext())
             return EMPTY_SECTOR; // TODO: should be returning null
 
-        double minLat = Angle.POS90.getDegrees();
-        double minLon = Angle.POS180.getDegrees();
-        double maxLat = Angle.NEG90.getDegrees();
-        double maxLon = Angle.NEG180.getDegrees();
+        double minLat = Angle.POS90degrees;
+        double minLon = Angle.POS180degrees;
+        double maxLat = Angle.NEG90degrees;
+        double maxLon = Angle.NEG180degrees;
 
         for (LatLon p : locations) {
             double lat = p.getLatitude().getDegrees();
@@ -332,11 +332,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     }
 
     public static Sector boundingSector(LatLon pA, LatLon pB) {
-        if (pA == null || pB == null) {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (pA == null || pB == null) {
+//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         double minLat = pA.getLatitude().degrees;
         double minLon = pA.getLongitude().degrees;
@@ -368,14 +368,16 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     public static Sector boundingSector(Globe globe, LatLon center, double radius) {
         double halfDeltaLatRadians = radius / globe.getRadiusAt(center);
         double halfDeltaLonRadians = Math.PI * 2;
-        if (center.getLatitude().cos() > 0)
-            halfDeltaLonRadians = halfDeltaLatRadians / center.getLatitude().cos();
+        final Angle lat = center.getLatitude();
+        if (lat.cos() > 0)
+            halfDeltaLonRadians = halfDeltaLatRadians / lat.cos();
 
+        final double lon = center.getLongitude().radians;
         return new Sector(
-            Angle.fromRadiansLatitude(center.getLatitude().radians - halfDeltaLatRadians),
-            Angle.fromRadiansLatitude(center.getLatitude().radians + halfDeltaLatRadians),
-            Angle.fromRadiansLongitude(center.getLongitude().radians - halfDeltaLonRadians),
-            Angle.fromRadiansLongitude(center.getLongitude().radians + halfDeltaLonRadians));
+            Angle.fromRadiansLatitude(lat.radians - halfDeltaLatRadians),
+            Angle.fromRadiansLatitude(lat.radians + halfDeltaLatRadians),
+            Angle.fromRadiansLongitude(lon - halfDeltaLonRadians),
+            Angle.fromRadiansLongitude(lon + halfDeltaLonRadians));
     }
 
     /**
@@ -487,11 +489,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
 
     @SuppressWarnings("RedundantIfStatement")
     public static boolean isSector(Iterable<? extends LatLon> corners) {
-        if (corners == null) {
-            String message = Logging.getMessage("nullValue.LocationsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (corners == null) {
+//            String message = Logging.getMessage("nullValue.LocationsListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         LatLon[] latlons = new LatLon[5];
 
@@ -529,11 +531,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if <code>globe</code> or <code>sector</code> is null
      */
     static public Sphere computeBoundingSphere(Globe globe, double verticalExaggeration, Sector sector) {
-        if (globe == null) {
-            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (globe == null) {
+//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
         if (sector == null) {
             String msg = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(msg);
@@ -573,17 +575,17 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if either the globe or sector is null.
      */
     public static Box computeBoundingBox(Globe globe, double verticalExaggeration, Sector sector) {
-        if (globe == null) {
-            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (globe == null) {
+//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (sector == null) {
+//            String msg = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         double[] minAndMaxElevations = globe.getMinAndMaxElevations(sector);
         return computeBoundingBox(globe, verticalExaggeration, sector, minAndMaxElevations[0], minAndMaxElevations[1]);
@@ -606,17 +608,17 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     public static Box computeBoundingBox(Globe globe, double verticalExaggeration, Sector sector,
         double minElevation, double maxElevation) {
-        if (globe == null) {
-            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (globe == null) {
+//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (sector == null) {
+//            String msg = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         // Compute the exaggerated minimum and maximum heights.
         double min = minElevation * verticalExaggeration;
@@ -656,17 +658,17 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if <code>sector</code> is null
      */
     static public Cylinder computeBoundingCylinder(Globe globe, double verticalExaggeration, Sector sector) {
-        if (globe == null) {
-            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (globe == null) {
+//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (sector == null) {
+//            String msg = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         double[] minAndMaxElevations = globe.getMinAndMaxElevations(sector);
         return computeBoundingCylinder(globe, verticalExaggeration, sector,
@@ -688,17 +690,17 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      */
     public static Cylinder computeBoundingCylinder(Globe globe, double verticalExaggeration, Sector sector,
         double minElevation, double maxElevation) {
-        if (globe == null) {
-            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (sector == null) {
-            String msg = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (globe == null) {
+//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (sector == null) {
+//            String msg = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         // Compute the exaggerated minimum and maximum heights.
         double minHeight = minElevation * verticalExaggeration;
@@ -780,11 +782,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     }
 
     public static Sector union(Iterable<? extends Sector> sectors) {
-        if (sectors == null) {
-            String msg = Logging.getMessage("nullValue.SectorListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (sectors == null) {
+//            String msg = Logging.getMessage("nullValue.SectorListIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Angle minLat = Angle.POS90;
         Angle maxLat = Angle.NEG90;
@@ -796,14 +798,16 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
                 continue;
 
             for (LatLon p : s) {
-                if (p.getLatitude().degrees < minLat.degrees)
-                    minLat = p.getLatitude();
-                if (p.getLatitude().degrees > maxLat.degrees)
-                    maxLat = p.getLatitude();
-                if (p.getLongitude().degrees < minLon.degrees)
-                    minLon = p.getLongitude();
-                if (p.getLongitude().degrees > maxLon.degrees)
-                    maxLon = p.getLongitude();
+                final Angle lat = p.getLatitude();
+                if (lat.degrees < minLat.degrees)
+                    minLat = lat;
+                if (lat.degrees > maxLat.degrees)
+                    maxLat = lat;
+                final Angle lon = p.getLongitude();
+                if (lon.degrees < minLon.degrees)
+                    minLon = lon;
+                if (lon.degrees > maxLon.degrees)
+                    maxLon = lon;
             }
         }
 
@@ -822,11 +826,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if the iterable is null.
      */
     public static Sector intersection(Iterable<? extends Sector> sectors) {
-        if (sectors == null) {
-            String msg = Logging.getMessage("nullValue.SectorListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (sectors == null) {
+//            String msg = Logging.getMessage("nullValue.SectorListIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Sector result = null;
 
@@ -919,18 +923,16 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     }
 
     public boolean isSameSector(Iterable<? extends LatLon> corners) {
-        if (corners == null) {
-            String message = Logging.getMessage("nullValue.LocationsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (corners == null) {
+//            String message = Logging.getMessage("nullValue.LocationsListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (!isSector(corners))
             return false;
 
-        Sector s = Sector.boundingSector(corners);
-
-        return s.equals(this);
+        return Sector.boundingSector(corners).equals(this);
     }
 
     /**
@@ -954,14 +956,14 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if <code>globe</code> is null.
      */
     public Vec4 computeCenterPoint(Globe globe, double exaggeration) {
-        if (globe == null) {
-            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (globe == null) {
+//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        double lat = 0.5 * (this.minLatitude.degrees + this.maxLatitude.degrees);
-        double lon = 0.5 * (this.minLongitude.degrees + this.maxLongitude.degrees);
+        double lat = (this.minLatitude.degrees + this.maxLatitude.degrees)/2;
+        double lon = (this.minLongitude.degrees + this.maxLongitude.degrees)/2;
 
         Angle cLat = Angle.fromDegrees(lat);
         Angle cLon = Angle.fromDegrees(lon);
@@ -977,11 +979,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if <code>globe</code> is null.
      */
     public Vec4[] computeCornerPoints(Globe globe, double exaggeration) {
-        if (globe == null) {
-            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (globe == null) {
+//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
         Vec4[] corners = new Vec4[4];
 
         Angle minLat = this.minLatitude;
@@ -998,11 +1000,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
     }
 
     public final boolean contains(Angle latitude, Angle longitude) {
-        if (latitude == null || longitude == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (latitude == null || longitude == null) {
+//            String message = Logging.getMessage("nullValue.LatLonIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         return containsDegrees(latitude.degrees, longitude.degrees);
     }
@@ -1017,11 +1019,11 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if <code>latlon</code> is null.
      */
     public final boolean contains(LatLon latLon) {
-        if (latLon == null) {
-            String message = Logging.getMessage("nullValue.LatLonIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (latLon == null) {
+//            String message = Logging.getMessage("nullValue.LatLonIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         return this.contains(latLon.getLatitude(), latLon.getLongitude());
     }
@@ -1136,17 +1138,17 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if either the begin location or the end location is null.
      */
     public boolean intersectsSegment(LatLon begin, LatLon end) {
-        if (begin == null) {
-            String message = Logging.getMessage("nullValue.BeginIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (end == null) {
-            String message = Logging.getMessage("nullValue.EndIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (begin == null) {
+//            String message = Logging.getMessage("nullValue.BeginIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (end == null) {
+//            String message = Logging.getMessage("nullValue.EndIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Vec4 segmentBegin = new Vec4(begin.getLongitude().degrees, begin.getLatitude().degrees, 0);
         Vec4 segmentEnd = new Vec4(end.getLongitude().degrees, end.getLatitude().degrees, 0);
@@ -1324,17 +1326,17 @@ public class Sector implements Cacheable, Comparable<Sector>, Iterable<LatLon> {
      * @throws IllegalArgumentException if any argument is null.
      */
     public double distanceTo(DrawContext dc, Vec4 point) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (point == null) {
-            String message = Logging.getMessage("nullValue.PointIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (point == null) {
+//            String message = Logging.getMessage("nullValue.PointIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Vec4[] corners = this.computeCornerPoints(dc.getGlobe(), dc.getVerticalExaggeration());
         Vec4 centerPoint = this.computeCenterPoint(dc.getGlobe(), dc.getVerticalExaggeration());

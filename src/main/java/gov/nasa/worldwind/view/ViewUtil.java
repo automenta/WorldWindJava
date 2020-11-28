@@ -9,9 +9,9 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.animation.*;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -30,11 +30,11 @@ public class ViewUtil {
      * @return An Animator to animate heading.
      */
     public static AngleAnimator createHeadingAnimator(View view, Angle begin, Angle end) {
-        if (begin == null || end == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (begin == null || end == null) {
+//            String message = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         final long MIN_LENGTH_MILLIS = 500;
         final long MAX_LENGTH_MILLIS = 3000;
@@ -55,11 +55,11 @@ public class ViewUtil {
      * @return An Animator to animate pitch.
      */
     public static AngleAnimator createPitchAnimator(View view, Angle begin, Angle end) {
-        if (begin == null || end == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (begin == null || end == null) {
+//            String message = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         final long MIN_LENGTH_MILLIS = 500;
         final long MAX_LENGTH_MILLIS = 3000;
@@ -80,11 +80,11 @@ public class ViewUtil {
      * @return An Animator to animate roll.
      */
     public static AngleAnimator createRollAnimator(View view, Angle begin, Angle end) {
-        if (begin == null || end == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (begin == null || end == null) {
+//            String message = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         final long MIN_LENGTH_MILLIS = 500;
         final long MAX_LENGTH_MILLIS = 3000;
@@ -110,12 +110,12 @@ public class ViewUtil {
      */
     public static CompoundAnimator createHeadingPitchRollAnimator(View view, Angle beginHeading, Angle endHeading,
         Angle beginPitch, Angle endPitch, Angle beginRoll, Angle endRoll) {
-        if (beginHeading == null || endHeading == null || beginPitch == null || endPitch == null || beginRoll == null
-            || endRoll == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (beginHeading == null || endHeading == null || beginPitch == null || endPitch == null || beginRoll == null
+//            || endRoll == null) {
+//            String message = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         final long MIN_LENGTH_MILLIS = 500;
         final long MAX_LENGTH_MILLIS = 3000;
@@ -152,16 +152,16 @@ public class ViewUtil {
 
     public static Matrix computeTransformMatrix(Globe globe, Position position, Angle heading, Angle pitch,
         Angle roll) {
-        if (heading == null) {
-            String message = Logging.getMessage("nullValue.HeadingIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (pitch == null) {
-            String message = Logging.getMessage("nullValue.PitchIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (heading == null) {
+//            String message = Logging.getMessage("nullValue.HeadingIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (pitch == null) {
+//            String message = Logging.getMessage("nullValue.PitchIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // To get a yaw-pitch-roll transform, do the view transform in reverse (i.e. roll-pitch-yaw)
         Matrix transform = Matrix.IDENTITY;
@@ -175,16 +175,16 @@ public class ViewUtil {
     }
 
     public static Matrix computePositionTransform(Globe globe, Position center) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (center == null) {
-            String message = Logging.getMessage("nullValue.CenterIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (center == null) {
+//            String message = Logging.getMessage("nullValue.CenterIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // The view eye position will be the same as the center position.
         // This is only the case without any zoom, heading, and pitch.
@@ -208,26 +208,26 @@ public class ViewUtil {
     }
 
     public static Matrix computeModelViewMatrix(Globe globe, Vec4 eyePoint, Vec4 centerPoint, Vec4 up) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (eyePoint == null) {
-            String message = "nullValue.EyePointIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (centerPoint == null) {
-            String message = "nullValue.CenterPointIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (up == null) {
-            String message = "nullValue.UpIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (eyePoint == null) {
+//            String message = "nullValue.EyePointIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (centerPoint == null) {
+//            String message = "nullValue.CenterPointIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (up == null) {
+//            String message = "nullValue.UpIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         return (Matrix.fromViewLookAt(eyePoint, centerPoint, up));
     }
@@ -237,24 +237,24 @@ public class ViewUtil {
     }
 
     public static ViewState computeViewState(Globe globe, Vec4 eyePoint, Vec4 centerPoint, Vec4 up) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (eyePoint == null) {
-            String message = "nullValue.EyePointIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (centerPoint == null) {
-            String message = "nullValue.CenterPointIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (up == null) {
-            up = ViewUtil.getUpVector(globe, centerPoint);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (eyePoint == null) {
+//            String message = "nullValue.EyePointIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (centerPoint == null) {
+//            String message = "nullValue.CenterPointIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (up == null) {
+//            up = ViewUtil.getUpVector(globe, centerPoint);
+//        }
 
         Matrix modelview = Matrix.fromViewLookAt(eyePoint, centerPoint, up);
         return ViewUtil.computeModelCoordinates(globe, modelview, centerPoint,
@@ -263,27 +263,27 @@ public class ViewUtil {
 
     public static ViewState computeModelCoordinates(Globe globe, Matrix modelTransform, Vec4 centerPoint,
         Vec4 eyePoint) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (modelTransform == null) {
-            String message = "nullValue.ModelTransformIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (modelTransform == null) {
+//            String message = "nullValue.ModelTransformIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Compute the center position.
         Position centerPos = globe.computePositionFromPoint(centerPoint);
         // Compute the center position transform.
         Matrix centerTransform = ViewUtil.computePositionTransform(globe, centerPos);
         Matrix centerTransformInv = centerTransform.getInverse();
-        if (centerTransformInv == null) {
-            String message = Logging.getMessage("generic.NoninvertibleMatrix");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (centerTransformInv == null) {
+//            String message = Logging.getMessage("generic.NoninvertibleMatrix");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         // Compute the heading-pitch-zoom transform.
         Matrix hpzTransform = modelTransform.multiply(centerTransformInv);
@@ -297,21 +297,21 @@ public class ViewUtil {
     }
 
     public static Angle computeHeading(Matrix headingPitchZoomTransform) {
-        if (headingPitchZoomTransform == null) {
-            String message = "nullValue.HeadingPitchZoomTransformTransformIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (headingPitchZoomTransform == null) {
+//            String message = "nullValue.HeadingPitchZoomTransformTransformIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         return headingPitchZoomTransform.getRotationZ();
     }
 
     public static Angle computePitch(Matrix transform) {
-        if (transform == null) {
-            String message = "nullValue.HeadingPitchZoomTransformTransformIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (transform == null) {
+//            String message = "nullValue.HeadingPitchZoomTransformTransformIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         Angle a = transform.getRotationX();
         if (a != null)
@@ -320,21 +320,21 @@ public class ViewUtil {
     }
 
     public static Angle computeRoll(Matrix transform) {
-        if (transform == null) {
-            String message = "nullValue.HeadingPitchZoomTransformTransformIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (transform == null) {
+//            String message = "nullValue.HeadingPitchZoomTransformTransformIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         return transform.getRotationY();
     }
 
     public static Position computePosition(Globe globe, Matrix transform) {
-        if (transform == null) {
-            String message = "nullValue.HeadingPitchZoomTransformTransformIsNull";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (transform == null) {
+//            String message = "nullValue.HeadingPitchZoomTransformTransformIsNull";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
         Vec4 v = transform.getTranslation();
         Position p = globe.computePositionFromPoint(v);
 
@@ -353,11 +353,11 @@ public class ViewUtil {
     }
 
     public static Position normalizedEyePosition(Position unnormalizedPosition) {
-        if (unnormalizedPosition == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (unnormalizedPosition == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         return new Position(
             Angle.normalizedLatitude(unnormalizedPosition.getLatitude()),
@@ -366,11 +366,11 @@ public class ViewUtil {
     }
 
     public static Angle normalizedHeading(Angle unnormalizedHeading) {
-        if (unnormalizedHeading == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (unnormalizedHeading == null) {
+//            String message = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         double degrees = unnormalizedHeading.degrees;
         double heading = degrees % 360;
@@ -378,11 +378,11 @@ public class ViewUtil {
     }
 
     public static Angle normalizedPitch(Angle unnormalizedPitch) {
-        if (unnormalizedPitch == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (unnormalizedPitch == null) {
+//            String message = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Normalize pitch to the range [-180, 180].
         double degrees = unnormalizedPitch.degrees;
@@ -391,11 +391,11 @@ public class ViewUtil {
     }
 
     public static Angle normalizedRoll(Angle unnormalizedRoll) {
-        if (unnormalizedRoll == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (unnormalizedRoll == null) {
+//            String message = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         double degrees = unnormalizedRoll.degrees;
         double roll = degrees % 360;
@@ -404,16 +404,16 @@ public class ViewUtil {
 
     public static Line computeRayFromScreenPoint(View view, double x, double y,
         Matrix modelview, Matrix projection, Rectangle viewport) {
-        if (modelview == null || projection == null) {
-            String message = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (viewport == null) {
-            String message = Logging.getMessage("nullValue.RectangleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (modelview == null || projection == null) {
+//            String message = Logging.getMessage("nullValue.MatrixIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (viewport == null) {
+//            String message = Logging.getMessage("nullValue.RectangleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Compute a ray originating from the view, and passing through the screen point (x, y).
         //
@@ -427,8 +427,7 @@ public class ViewUtil {
             return null;
 
         Vec4 eye = Vec4.UNIT_W.transformBy4(modelViewInv);
-        if (eye == null)
-            return null;
+
 
         double yInGLCoords = viewport.height - y - 1;
         Vec4 a = view.unProject(new Vec4(x, yInGLCoords, 0, 0));
@@ -440,16 +439,16 @@ public class ViewUtil {
     }
 
     public static double computePixelSizeAtDistance(double distance, Angle fieldOfView, Rectangle viewport) {
-        if (fieldOfView == null) {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (viewport == null) {
-            String message = Logging.getMessage("nullValue.RectangleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (fieldOfView == null) {
+//            String message = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (viewport == null) {
+//            String message = Logging.getMessage("nullValue.RectangleIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // If the viewport width is zero, than replace it with 1, which effectively ignores the viewport width.
         double viewportWidth = viewport.getWidth();

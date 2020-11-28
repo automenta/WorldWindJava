@@ -821,7 +821,7 @@ public interface DrawContext extends WWObject, Disposable {
     void setOrderedRenderingMode(boolean tf);
 
     /**
-     * Performs a multi-pass rendering technique to ensure that outlines around filled shapes are drawn correctly when
+     * Performs a multi-pass rendering technique to ensure that s around filled shapes are drawn correctly when
      * blending or ant-aliasing is performed, and that filled portions of the shape resolve depth-buffer fighting with
      * shapes previously drawn in favor of the current shape.
      *

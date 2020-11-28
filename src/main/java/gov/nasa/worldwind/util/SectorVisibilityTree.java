@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.DrawContext;
 
 import java.util.*;
 
@@ -84,11 +84,11 @@ public class SectorVisibilityTree {
      * @throws IllegalArgumentException if the draw context is null.
      */
     public List<Sector> refresh(DrawContext dc, double sectorSize) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (sectorSize < Angle.SECOND.degrees || sectorSize > 180) {
             String message = Logging.getMessage("generic.SizeOutOfRange", sectorSize);
