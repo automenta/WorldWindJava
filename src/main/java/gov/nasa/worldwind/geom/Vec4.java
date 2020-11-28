@@ -52,6 +52,9 @@ public class Vec4 {
         this.z = z;
         this.w = w;
     }
+    public Vec4(double[] xyzw) {
+        this.x = xyzw[0]; this.y = xyzw[1]; this.z = xyzw[2]; this.w = xyzw[3];
+    }
 
     /**
      * Constructs a new Vec4 with coordinate values read from the specified double array. The specified offset must be 0

@@ -18,6 +18,8 @@ import java.text.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static java.util.Collections.EMPTY_LIST;
+
 /**
  * @author tag
  * @version $Id: WWUtil.java 2396 2014-10-27 23:46:42Z tgaskins $
@@ -1096,7 +1098,7 @@ public class WWUtil {
 //        java.util.List<X> l = new ArrayList<>(array.length);
 //        Collections.addAll(l, array);
 //        return l;
-        return new DirectArrayList<>(array);
+        return /*array!=null && */array.length > 0 ? new DirectArrayList<>(array) : EMPTY_LIST;
     }
 
     static class DirectArrayList<X> extends AbstractList<X> {

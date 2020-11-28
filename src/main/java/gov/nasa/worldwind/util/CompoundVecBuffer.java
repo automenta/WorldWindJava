@@ -333,7 +333,7 @@ public abstract class CompoundVecBuffer {
      * @return iterator over this buffer's vectors, as double[] arrays.
      */
     public Iterable<double[]> getCoords(final int minCoordsPerVec) {
-        return new CompoundIteratable(new CoordIterable(minCoordsPerVec));
+        return () -> new CompoundIterator<>(new CoordIterable(minCoordsPerVec));
     }
 
     /**
@@ -355,7 +355,7 @@ public abstract class CompoundVecBuffer {
      * @return iterator over this buffer's vectors, as Vec4 references.
      */
     public Iterable<? extends Vec4> getVectors() {
-        return new CompoundIteratable<>(new VectorIterable());
+        return (Iterable<Vec4>) () -> new CompoundIterator<>(new VectorIterable());
     }
 
     /**
@@ -373,7 +373,7 @@ public abstract class CompoundVecBuffer {
      * @return iterator over this buffer's vectors, as LatLon locations.
      */
     public Iterable<? extends LatLon> getLocations() {
-        return new CompoundIteratable<>(new LocationIterable());
+        return (Iterable<LatLon>) () -> new CompoundIterator<>(new LocationIterable());
     }
 
     /**
@@ -391,7 +391,7 @@ public abstract class CompoundVecBuffer {
      * @return iterator over this buffer's vectors, as geographic Positions.
      */
     public Iterable<? extends Position> getPositions() {
-        return new CompoundIteratable<>(new PositionIterable());
+        return (Iterable<Position>) () -> new CompoundIterator<>(new PositionIterable());
     }
 
     /**
@@ -404,7 +404,7 @@ public abstract class CompoundVecBuffer {
     }
 
     public Position getReferencePosition() {
-        //        Iterator<? extends LatLon> iterator = this.getLocations().iterator();
+//                Iterator<? extends LatLon> iterator = this.getLocations().iterator();
 //        if (iterator.hasNext())
 //            return new Position(iterator.next(), 0);
 //

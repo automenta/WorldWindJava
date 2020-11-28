@@ -1383,9 +1383,9 @@ public class Matrix {
 
                 for (int i = 0; i < 3; i++) {
                     final double[] ri = r[i];
-                    temp =  c * ri[0] - s * ri[1];
+                    double x =  c * ri[0] - s * ri[1];
                     ri[1] = s * ri[0] + c * ri[1];
-                    ri[0] = temp;
+                    ri[0] = x;
                 }
             }
 
@@ -1410,9 +1410,9 @@ public class Matrix {
 
                 for (int i = 0; i < 3; i++) {
                     final double[] ri = r[i];
-                    temp = c * ri[0] - s * ri[2];
+                    double x = c * ri[0] - s * ri[2];
                     ri[2] = s * ri[0] + c * ri[2];
-                    ri[0] = temp;
+                    ri[0] = x;
                 }
             }
 
@@ -1437,9 +1437,9 @@ public class Matrix {
 
                 for (int i = 0; i < 3; i++) {
                     final double[] ri = r[i];
-                    temp = c * ri[1] - s * ri[2];
+                    double x = c * ri[1] - s * ri[2];
                     ri[2] = s * ri[1] + c * ri[2];
-                    ri[1] = temp;
+                    ri[1] = x;
                 }
             }
         }
@@ -1629,8 +1629,9 @@ public class Matrix {
     }
 
     private static boolean isZero(double value) {
-        return (POSITIVE_ZERO.compareTo(value) == 0)
-            || (NEGATIVE_ZERO.compareTo(value) == 0);
+        return Math.abs(value) <= Double.MIN_NORMAL;
+//        return (POSITIVE_ZERO.compareTo(value) == 0)
+//            || (NEGATIVE_ZERO.compareTo(value) == 0);
     }
 
     public final boolean equals(Object obj) {
@@ -1688,11 +1689,11 @@ public class Matrix {
     }
 
     public final double[] toArray(double[] compArray, int offset, boolean rowMajor) {
-        if (compArray == null) {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (compArray == null) {
+//            String msg = Logging.getMessage("nullValue.ArrayIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
         if ((compArray.length - offset) < NUM_ELEMENTS) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", compArray.length);
             Logging.logger().severe(msg);
