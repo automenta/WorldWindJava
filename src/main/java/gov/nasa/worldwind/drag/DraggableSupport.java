@@ -10,6 +10,7 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
+import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -101,7 +102,7 @@ public class DraggableSupport {
      * {@link DragContext} object and attempts to move the object using the {@link Movable2} or {@link Movable}
      * interface. This method maintains a constant screen offset from the cursor to the reference point of the object
      * being dragged. It is suited for objects maintaining a constant screen size presentation like, {@link
-     * gov.nasa.worldwind.examples.symbology.TacticalSymbols} or {@link gov.nasa.worldwind.examples.render.PointPlacemark}.
+     * gov.nasa.worldwind.examples.symbology.TacticalSymbols} or {@link PointPlacemark}.
      *
      * @param dragContext the current {@link DragContext} for this object.
      * @throws IllegalArgumentException if the {@link DragContext} is null.

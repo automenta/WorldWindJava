@@ -6,8 +6,9 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
 
@@ -19,16 +20,16 @@ public class SlideShowAnnotation extends DialogAnnotation {
     public static final String INCREASE = "SlideShowAnnotation.Increase";
     public static final String DECREASE = "SlideShowAnnotation.Decrease";
 
-    protected static final String PLAY_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/16x16-button-play.png";
-    protected static final String PAUSE_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/16x16-button-pause.png";
-    protected static final String PREVIOUS_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/16x16-button-previous.png";
-    protected static final String NEXT_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/16x16-button-next.png";
-    protected static final String BEGIN_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/16x16-button-start.png";
-    protected static final String END_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/16x16-button-end.png";
+    protected static final String PLAY_IMAGE_PATH = "gov/nasa/worldwind/examples/images/16x16-button-play.png";
+    protected static final String PAUSE_IMAGE_PATH = "gov/nasa/worldwind/examples/images/16x16-button-pause.png";
+    protected static final String PREVIOUS_IMAGE_PATH = "gov/nasa/worldwind/examples/images/16x16-button-previous.png";
+    protected static final String NEXT_IMAGE_PATH = "gov/nasa/worldwind/examples/images/16x16-button-next.png";
+    protected static final String BEGIN_IMAGE_PATH = "gov/nasa/worldwind/examples/images/16x16-button-start.png";
+    protected static final String END_IMAGE_PATH = "gov/nasa/worldwind/examples/images/16x16-button-end.png";
     protected static final String INCREASE_IMAGE_PATH
-        = "gov/nasa/worldwindx/examples/images/16x16-button-window-increase.png";
+        = "gov/nasa/worldwind/examples/images/16x16-button-window-increase.png";
     protected static final String DECREASE_IMAGE_PATH
-        = "gov/nasa/worldwindx/examples/images/16x16-button-window-decrease.png";
+        = "gov/nasa/worldwind/examples/images/16x16-button-window-decrease.png";
     protected static final String BUSY_IMAGE_PATH = "images/indicator-32.gif";
 
     protected static final String PLAY_TOOLTIP_TEXT = "Play slide show";

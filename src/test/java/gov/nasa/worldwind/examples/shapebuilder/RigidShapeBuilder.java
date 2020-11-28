@@ -9,12 +9,12 @@ package gov.nasa.worldwind.examples.shapebuilder;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.Box;
-import gov.nasa.worldwind.examples.render.Cylinder;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
+import gov.nasa.worldwind.render.Box;
+import gov.nasa.worldwind.render.Cylinder;
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;
@@ -32,8 +32,8 @@ import java.util.*;
 
 /**
  * RigidShapeBuilder is a tool for creating and editing 3D shapes and placing them on the globe. Possible shapes include
- * the Rigid Shapes ({@link Ellipsoid}, {@link gov.nasa.worldwind.examples.render.Box}, {@link
- * gov.nasa.worldwind.examples.render.Cylinder}, {@link Cone}, {@link
+ * the Rigid Shapes ({@link Ellipsoid}, {@link Box}, {@link
+ * Cylinder}, {@link Cone}, {@link
  * Pyramid} and {@link Wedge}) as well as {@link
  * ExtrudedPolygon}.  The RigidShapeBuilder user interface allows the user to select the
  * desired shape from a dropdown menu, create an instance of it with the click of a button, and specify an "edit mode"
@@ -222,7 +222,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         }
 
         public void setName(String name) {
-            this.setValue(AVKey.DISPLAY_NAME, name);
+            this.set(AVKey.DISPLAY_NAME, name);
         }
 
         public AbstractShape getShape() {
@@ -241,21 +241,21 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             return this.getName();
         }
 
-        public Object getValue(String key) {
-            Object value = super.getValue(key);
+        public Object get(String key) {
+            Object value = super.get(key);
             if (value == null) {
-                value = this.shape.getValue(key);
+                value = this.shape.get(key);
             }
             return value;
         }
 
-        public Object setValue(String key, Object value) {
+        public Object set(String key, Object value) {
             //noinspection StringEquality
             if (key == AVKey.DISPLAY_NAME) {
-                return this.shape.setValue(key, value);
+                return this.shape.set(key, value);
             }
             else {
-                return super.setValue(key, value);
+                return super.set(key, value);
             }
         }
 
@@ -301,13 +301,13 @@ public class RigidShapeBuilder extends ApplicationTemplate {
 
         public Object getValueAt(int rowIndex, int columnIndex) {
             AbstractShapeEntry entry = this.entryList.get(rowIndex);
-            return entry.getValue(columnAttribute[columnIndex]);
+            return entry.get(columnAttribute[columnIndex]);
         }
 
         public void setValueAt(Object aObject, int rowIndex, int columnIndex) {
             AbstractShapeEntry entry = this.entryList.get(rowIndex);
             String key = columnAttribute[columnIndex];
-            entry.setValue(key, aObject);
+            entry.set(key, aObject);
         }
 
         public java.util.List<AbstractShapeEntry> getEntries() {
@@ -382,7 +382,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Ellipsoid();
             shape.setAttributes(getDefaultAttributes());
-            shape.setValue(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             this.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -403,7 +403,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
             Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
@@ -429,7 +429,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Box();
             shape.setAttributes(getDefaultAttributes());
-            shape.setValue(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             this.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -450,7 +450,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
             Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
@@ -476,7 +476,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Cylinder();
             shape.setAttributes(getDefaultAttributes());
-            shape.setValue(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             this.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -497,7 +497,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
             Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
@@ -523,7 +523,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Pyramid();
             shape.setAttributes(getDefaultAttributes());
-            shape.setValue(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             this.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -544,7 +544,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
             Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
@@ -572,7 +572,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Cone();
             shape.setAttributes(getDefaultAttributes());
-            shape.setValue(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             this.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -593,7 +593,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
             Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
@@ -619,7 +619,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public RigidShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             RigidShape shape = new Wedge();
             shape.setAttributes(getDefaultAttributes());
-            shape.setValue(AVKey.DISPLAY_NAME, getNextName(toString()));
+            shape.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             this.initializeShape(wwd, shape, fitShapeToViewport);
 
             return shape;
@@ -640,7 +640,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             Position position = ShapeUtils.getNewShapePosition(wwd);
 
             // adjust position height so shape sits on terrain surface
-            Vec4 centerPoint = wwd.getSceneController().getTerrain().getSurfacePoint(position.getLatitude(),
+            Vec4 centerPoint = wwd.sceneControl().getTerrain().getSurfacePoint(position.getLatitude(),
                 position.getLongitude(), radius);
             Position centerPosition = wwd.model().getGlobe().computePositionFromPoint(centerPoint);
 
@@ -675,7 +675,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public AbstractShape createShape(WorldWindow wwd, boolean fitShapeToViewport) {
             ExtrudedPolygon poly = new ExtrudedPolygon();
             poly.setAttributes(getDefaultAttributes());
-            poly.setValue(AVKey.DISPLAY_NAME, getNextName(toString()));
+            poly.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             this.initializePolygon(wwd, poly, fitShapeToViewport);
 
             return poly;
@@ -926,7 +926,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
 
         public AbstractShapeBuilderController(AppFrame app) {
             this.app = app;
-            this.app.getWwd().getInputHandler().addMouseListener(this);
+            this.app.wwd().input().addMouseListener(this);
         }
 
         public AppFrame getApp() {
@@ -1005,7 +1005,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             view.setSelectedEditMode(mode);
             if (editor != null)
                 editor.setEditMode(mode);
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         public String getImageSource() {
@@ -1029,7 +1029,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
                 else {
                     myShape.setImageSource(selected, null);
                 }
-                this.getApp().getWwd().redraw();
+                this.getApp().wwd().redraw();
             }
         }
 
@@ -1130,7 +1130,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             // If the picked object is null or something other than a rigid shape, then ignore the mouse click. If we
             // deselect the current entry at this point, the user cannot easily navigate without loosing the selection.
 
-            PickedObjectList pickedObjects = this.getApp().getWwd().getObjectsAtCurrentPosition();
+            PickedObjectList pickedObjects = this.getApp().wwd().objectsAtPosition();
 
             Object topObject = pickedObjects.getTopObject();
             if (!(topObject instanceof AbstractShape))
@@ -1169,7 +1169,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         }
 
         public void createNewEntry(AbstractShapeFactory factory) {
-            AbstractShape shape = factory.createShape(this.getApp().getWwd(), this.isResizeNewShapesToViewport());
+            AbstractShape shape = factory.createShape(this.getApp().wwd(), this.isResizeNewShapesToViewport());
             AbstractShapeEditor editor = factory.createEditor(shape);
             editor.setAboveGround(this.isAboveGround());
             AbstractShapeEntry entry = new AbstractShapeEntry(shape, editor);
@@ -1191,7 +1191,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             this.getModel().addEntry(entry);
 
             this.getApp().getShapeLayer().add(entry.getShape());
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         public void removeEntry(AbstractShapeEntry entry) {
@@ -1202,7 +1202,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
             this.getModel().removeEntry(entry);
 
             this.getApp().getShapeLayer().remove(entry.getShape());
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         public AbstractShapeEntry getSelectedEntry() {
@@ -1248,7 +1248,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
                 this.getSelectedEntry().getEditor().setAboveGround(this.isAboveGround());
             }
 
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         protected boolean isSelectionEditing() {
@@ -1282,14 +1282,14 @@ public class RigidShapeBuilder extends ApplicationTemplate {
                             ((RigidShape) this.selectedEntry.getShape()).getImageSource(0).toString());
                 }
 
-                activeEditor.setWorldWindow(this.app.getWwd());
+                activeEditor.setWorldWindow(this.app.wwd());
                 this.setActiveEditor(activeEditor);
-                insertBeforePlacenames(this.getApp().getWwd(), activeEditor);
+                WorldWindow.insertBeforePlacenames(this.getApp().wwd(), activeEditor);
             }
             else {
                 activeEditor.setWorldWindow(null);
                 this.setActiveEditor(null);
-                this.getApp().getWwd().model().getLayers().remove(activeEditor);
+                this.getApp().wwd().model().getLayers().remove(activeEditor);
             }
 
             int index = this.getModel().getIndexForEntry(this.selectedEntry);
@@ -1304,7 +1304,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
                 }
             }
 
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         protected AbstractShapeEntry[] getSelectedEntries() {
@@ -1390,7 +1390,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
                     SwingUtilities.invokeLater(() -> {
                         setEnabled(true);
                         getApp().setCursor(null);
-                        getApp().getWwd().redraw();
+                        getApp().wwd().redraw();
                     });
                 }
             });
@@ -1433,7 +1433,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
                             shapes.add(newShape);
 
                             if (name.length >= 2) {
-                                newShape.setValue(AVKey.DISPLAY_NAME, name[1]);
+                                newShape.set(AVKey.DISPLAY_NAME, name[1]);
                             }
                         }
                         catch (Exception e) {
@@ -1446,7 +1446,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
                         setAbstractShapes(shapes);
                         setEnabled(true);
                         getApp().setCursor(null);
-                        getApp().getWwd().redraw();
+                        getApp().wwd().redraw();
                     });
                 }
             });
@@ -1533,7 +1533,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
         public AppFrame() {
             this.shapeLayer = new RenderableLayer();
             this.shapeLayer.setName(SHAPE_LAYER_NAME);
-            insertBeforePlacenames(this.getWwd(), this.shapeLayer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), this.shapeLayer);
 
             this.builderController = new AbstractShapeBuilderController(this);
             this.builderModel = new AbstractShapeBuilderModel();

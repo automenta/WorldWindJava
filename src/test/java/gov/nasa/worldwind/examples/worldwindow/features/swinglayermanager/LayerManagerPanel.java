@@ -31,7 +31,7 @@ import java.util.*;
 public class LayerManagerPanel extends AbstractFeaturePanel implements LayerManager, TreeModelListener {
     private static final String TOOL_TIP = "Select layers to add to the active layer list.";
     private static final String ICON_PATH
-        = "gov/nasa/worldwindx/applications/worldwindow/images/layer-manager-64x64.png";
+        = "gov/nasa/worldwind/examples/worldwindow/images/layer-manager-64x64.png";
     private LayerTree layerTree;
     private boolean on = false;
 
@@ -464,9 +464,9 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
             AVList configParams = wmsInfo.getParams().copy(); // Copy to insulate changes from the caller.
 
             // Some wms servers are slow, so increase the timeouts and limits used by WorldWind's retrievers.
-            configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, 30000);
-            configParams.setValue(AVKey.URL_READ_TIMEOUT, 30000);
-            configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
+            configParams.set(AVKey.URL_CONNECT_TIMEOUT, 30000);
+            configParams.set(AVKey.URL_READ_TIMEOUT, 30000);
+            configParams.set(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
 
             Factory factory = (Factory) WorldWind.createConfigurationComponent(AVKey.LAYER_FACTORY);
             Layer layer = (Layer) factory.createFromConfigSource(wmsInfo.getCaps(), configParams);

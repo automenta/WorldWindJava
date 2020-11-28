@@ -7,10 +7,11 @@ package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.markers.*;
 
 import java.awt.*;
 import java.util.ArrayList;

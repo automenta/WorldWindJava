@@ -6,11 +6,12 @@
 
 package gov.nasa.worldwind.examples;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.Material;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.MarkerLayer;
+import gov.nasa.worldwind.render.markers.*;
 
 import java.util.*;
 
@@ -88,9 +89,9 @@ public class Markers extends ApplicationTemplate {
             layer.setKeepSeparated(false);
             layer.setElevation(1000.0d);
             layer.setMarkers(markers);
-            insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
 
-            this.getWwd().addSelectListener(event -> {
+            this.wwd().addSelectListener(event -> {
                 if (lastHighlit != null
                     && (event.getTopObject() == null || !event.getTopObject().equals(lastHighlit))) {
                     lastHighlit.setAttributes(lastAttrs);

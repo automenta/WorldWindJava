@@ -106,7 +106,7 @@ public class YahooGazetteer implements Gazetteer {
                 if (lat != null && lon != null) {
                     LatLon latlon = LatLon.fromDegrees(Double.parseDouble(lat), Double.parseDouble(lon));
                     PointOfInterest loc = new BasicPointOfInterest(latlon);
-                    loc.setValue(AVKey.DISPLAY_NAME, displayName.toString());
+                    loc.set(AVKey.DISPLAY_NAME, displayName.toString());
                     positions.add(loc);
                 }
             }

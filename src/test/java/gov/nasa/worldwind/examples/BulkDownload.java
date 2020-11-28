@@ -27,7 +27,7 @@ public class BulkDownload extends ApplicationTemplate {
     public static class AppFrame extends ApplicationTemplate.AppFrame {
         public AppFrame() {
             // Add the bulk download control panel.
-            this.getControlPanel().add(new BulkDownloadPanel(this.getWwd()), BorderLayout.SOUTH);
+            this.getControlPanel().add(new BulkDownloadPanel(this.wwd()), BorderLayout.SOUTH);
 
             // Size the application window to provide enough screen space for the WorldWindow and the bulk download
             // panel, then center the application window on the screen.

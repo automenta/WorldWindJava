@@ -7,9 +7,9 @@
 package gov.nasa.worldwind.examples.worldwindow.util;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ogc.wms.*;
 import gov.nasa.worldwind.examples.worldwindow.core.Controller;
 import gov.nasa.worldwind.layers.TiledImageLayer;
+import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
@@ -88,7 +88,7 @@ public class WMSLayerTree extends LayerTree {
         AVList layerParams = new AVListImpl();
         if (commonLayerParams != null)
             layerParams.setValues(commonLayerParams);
-        layerParams.setValue(AVKey.LAYER_NAMES, layerCaps.getName());
+        layerParams.set(AVKey.LAYER_NAMES, layerCaps.getName());
 
         return new WMSTiledImageLayer(capsDoc, layerParams);
     }

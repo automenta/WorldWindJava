@@ -45,15 +45,9 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
      * @param wwd The WorldWindow to monitor selection events for.
      */
     public HotSpotController(WorldWindow wwd) {
-        if (wwd == null) {
-            String message = Logging.getMessage("nullValue.WorldWindow");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
         this.wwd = wwd;
         this.wwd.addSelectListener(this);
-        this.wwd.getInputHandler().addMouseMotionListener(this);
+        this.wwd.input().addMouseMotionListener(this);
     }
 
     /**
@@ -99,7 +93,7 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
 
             this.setDragging(false);
 
-            PickedObjectList list = this.wwd.getObjectsAtCurrentPosition();
+            PickedObjectList list = this.wwd.objectsAtPosition();
             PickedObject po = list != null ? list.getTopPickedObject() : null;
 
             this.updateActiveHotSpot(po);
@@ -140,13 +134,15 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
      */
     public void mouseMoved(MouseEvent e) {
         // Give the active HotSpot a chance to set a custom cursor based on the new mouse position.
-        HotSpot hotSpot = this.getActiveHotSpot();
-        if (hotSpot != null) {
-            Cursor cursor = hotSpot.getCursor();
+        if (wwd instanceof Component) {
+            HotSpot hotSpot = this.getActiveHotSpot();
+            if (hotSpot != null) {
+                Cursor cursor = hotSpot.getCursor();
 
-            if (cursor != null) {
-                ((Component) this.wwd).setCursor(cursor);
-                this.customCursor = true;
+                if (cursor != null) {
+                    ((Component) this.wwd).setCursor(cursor);
+                    this.customCursor = true;
+                }
             }
         }
     }
@@ -191,7 +187,7 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
      * @param hotSpot The HotSpot that becomes the active HotSpot. {@code null} to indicate that there is no active
      *                HotSpot.
      */
-    protected void setActiveHotSpot(HotSpot hotSpot) {
+    protected synchronized void setActiveHotSpot(HotSpot hotSpot) {
         // Update the WorldWindow's cursor to the cursor associated with the active HotSpot. We
         // specify null if there's no active HotSpot, which tells the WorldWindow to use the default
         // cursor, or inherit its cursor from the parent Component.
@@ -217,10 +213,10 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
             return;
 
         if (this.activeHotSpot != null) {
-            this.wwd.getInputHandler().removeKeyListener(this.activeHotSpot);
-            this.wwd.getInputHandler().removeMouseListener(this.activeHotSpot);
-            this.wwd.getInputHandler().removeMouseMotionListener(this.activeHotSpot);
-            this.wwd.getInputHandler().removeMouseWheelListener(this.activeHotSpot);
+            this.wwd.input().removeKeyListener(this.activeHotSpot);
+            this.wwd.input().removeMouseListener(this.activeHotSpot);
+            this.wwd.input().removeMouseMotionListener(this.activeHotSpot);
+            this.wwd.input().removeMouseWheelListener(this.activeHotSpot);
             this.activeHotSpot.setActive(false);
         }
 
@@ -228,10 +224,10 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
 
         if (this.activeHotSpot != null) {
             this.activeHotSpot.setActive(true);
-            this.wwd.getInputHandler().addKeyListener(this.activeHotSpot);
-            this.wwd.getInputHandler().addMouseListener(this.activeHotSpot);
-            this.wwd.getInputHandler().addMouseMotionListener(this.activeHotSpot);
-            this.wwd.getInputHandler().addMouseWheelListener(this.activeHotSpot);
+            this.wwd.input().addKeyListener(this.activeHotSpot);
+            this.wwd.input().addMouseListener(this.activeHotSpot);
+            this.wwd.input().addMouseMotionListener(this.activeHotSpot);
+            this.wwd.input().addMouseWheelListener(this.activeHotSpot);
         }
     }
 
@@ -246,8 +242,8 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
      * @param po Top picked object, which will provide the active HotSpot.
      */
     protected void updateActiveHotSpot(PickedObject po) {
-        if (po != null && po.getValue(AVKey.HOT_SPOT) instanceof HotSpot) {
-            this.setActiveHotSpot((HotSpot) po.getValue(AVKey.HOT_SPOT));
+        if (po != null && po.get(AVKey.HOT_SPOT) instanceof HotSpot) {
+            this.setActiveHotSpot((HotSpot) po.get(AVKey.HOT_SPOT));
         }
         else if (po != null && po.getObject() instanceof HotSpot) {
             this.setActiveHotSpot((HotSpot) po.getObject());

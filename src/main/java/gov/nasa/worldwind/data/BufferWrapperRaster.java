@@ -96,7 +96,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
 
     public double getTransparentValue() {
         if (this.hasKey(AVKey.MISSING_DATA_SIGNAL)) {
-            Object o = this.getValue(AVKey.MISSING_DATA_SIGNAL);
+            Object o = this.get(AVKey.MISSING_DATA_SIGNAL);
             if (o instanceof Double)
                 return (Double) o;
         }
@@ -104,7 +104,7 @@ public class BufferWrapperRaster extends AbstractDataRaster implements Cacheable
     }
 
     public void setTransparentValue(double transparentValue) {
-        this.setValue(AVKey.MISSING_DATA_SIGNAL, transparentValue);
+        this.set(AVKey.MISSING_DATA_SIGNAL, transparentValue);
     }
 
     /**

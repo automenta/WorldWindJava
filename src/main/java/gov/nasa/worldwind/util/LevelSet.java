@@ -27,33 +27,33 @@ public class LevelSet extends WWObjectImpl {
     public LevelSet(AVList params) {
         StringBuilder sb = new StringBuilder();
 
-        Object o = params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA);
+        Object o = params.get(AVKey.LEVEL_ZERO_TILE_DELTA);
         if (!(o instanceof LatLon))
             sb.append(Logging.getMessage("term.tileDelta")).append(" ");
 
-        o = params.getValue(AVKey.SECTOR);
+        o = params.get(AVKey.SECTOR);
         if (!(o instanceof Sector))
             sb.append(Logging.getMessage("term.sector")).append(" ");
 
         int numLevels = 0;
-        o = params.getValue(AVKey.NUM_LEVELS);
+        o = params.get(AVKey.NUM_LEVELS);
         if (!(o instanceof Integer) || (numLevels = (Integer) o) < 1)
             sb.append(Logging.getMessage("term.numLevels")).append(" ");
 
         int numEmptyLevels = 0;
-        o = params.getValue(AVKey.NUM_EMPTY_LEVELS);
+        o = params.get(AVKey.NUM_EMPTY_LEVELS);
         if (o instanceof Integer && (Integer) o > 0)
             numEmptyLevels = (Integer) o;
 
         String[] inactiveLevels = null;
-        o = params.getValue(AVKey.INACTIVE_LEVELS);
+        o = params.get(AVKey.INACTIVE_LEVELS);
         if (o != null && !(o instanceof String))
             sb.append(Logging.getMessage("term.inactiveLevels")).append(" ");
         else if (o != null)
             inactiveLevels = ((String) o).split(",");
 
         SectorResolution[] sectorLimits = null;
-        o = params.getValue(AVKey.SECTOR_RESOLUTION_LIMITS);
+        o = params.get(AVKey.SECTOR_RESOLUTION_LIMITS);
         if (o != null && !(o instanceof SectorResolution[])) {
             sb.append(Logging.getMessage("term.sectorResolutionLimits")).append(" ");
         }
@@ -76,10 +76,10 @@ public class LevelSet extends WWObjectImpl {
             throw new IllegalArgumentException(message);
         }
 
-        this.sector = (Sector) params.getValue(AVKey.SECTOR);
-        this.levelZeroTileDelta = (LatLon) params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA);
+        this.sector = (Sector) params.get(AVKey.SECTOR);
+        this.levelZeroTileDelta = (LatLon) params.get(AVKey.LEVEL_ZERO_TILE_DELTA);
 
-        o = params.getValue(AVKey.TILE_ORIGIN);
+        o = params.get(AVKey.TILE_ORIGIN);
         if (o instanceof LatLon)
             this.tileOrigin = (LatLon) o;
         else
@@ -87,9 +87,9 @@ public class LevelSet extends WWObjectImpl {
 
         params = params.copy(); // copy so as not to modify the user's params
 
-        TileUrlBuilder tub = (TileUrlBuilder) params.getValue(AVKey.TILE_URL_BUILDER);
+        TileUrlBuilder tub = (TileUrlBuilder) params.get(AVKey.TILE_URL_BUILDER);
         if (tub == null) {
-            params.setValue(AVKey.TILE_URL_BUILDER, (TileUrlBuilder) (tile, altImageFormat) -> {
+            params.set(AVKey.TILE_URL_BUILDER, (TileUrlBuilder) (tile, altImageFormat) -> {
                 String service = tile.level.getService();
                 if (service == null || service.length() < 1)
                     return null;
@@ -127,12 +127,12 @@ public class LevelSet extends WWObjectImpl {
         this.numLevelZeroColumns = Math.max(1, lastLevelZeroCol - firstLevelZeroCol + 1);
 
         for (int i = 0; i < numLevels; i++) {
-            params.setValue(AVKey.LEVEL_NAME, i < numEmptyLevels ? "" : Integer.toString(i - numEmptyLevels));
-            params.setValue(AVKey.LEVEL_NUMBER, i);
+            params.set(AVKey.LEVEL_NAME, i < numEmptyLevels ? "" : Integer.toString(i - numEmptyLevels));
+            params.set(AVKey.LEVEL_NUMBER, i);
 
             Angle latDelta = this.levelZeroTileDelta.getLatitude().divide(Math.pow(2, i));
             Angle lonDelta = this.levelZeroTileDelta.getLongitude().divide(Math.pow(2, i));
-            params.setValue(AVKey.TILE_DELTA, new LatLon(latDelta, lonDelta));
+            params.set(AVKey.TILE_DELTA, new LatLon(latDelta, lonDelta));
 
             this.levels.add(new Level(params));
         }
@@ -163,25 +163,25 @@ public class LevelSet extends WWObjectImpl {
     }
 
     @Override
-    public Object setValue(String key, Object value) {
+    public Object set(String key, Object value) {
         // Propogate the setting to all levels
         for (Level level : this.levels) {
-            level.setValue(key, value);
+            level.set(key, value);
         }
 
-        return super.setValue(key, value);
+        return super.set(key, value);
     }
 
     @Override
-    public Object getValue(String key) {
-        Object value = super.getValue(key);
+    public Object get(String key) {
+        Object value = super.get(key);
 
         if (value != null)
             return value;
 
         // See if any level has it
         for (Level level : this.getLevels()) {
-            if (level != null && (value = level.getValue(key)) != null)
+            if (level != null && (value = level.get(key)) != null)
                 return value;
         }
 

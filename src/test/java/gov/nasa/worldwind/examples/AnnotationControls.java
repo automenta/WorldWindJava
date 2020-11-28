@@ -5,9 +5,10 @@
  */
 package gov.nasa.worldwind.examples;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.PickedObject;
@@ -33,15 +34,15 @@ public class AnnotationControls extends ApplicationTemplate {
     protected final static String AUDIO = "Audio";
     protected final static String IMAGES = "Images";
 
-    protected final static String ICON_AUDIO = "gov/nasa/worldwindx/examples/images/audioicon-64.png";
-    protected final static String ICON_IMAGES = "gov/nasa/worldwindx/examples/images/imageicon-64.png";
+    protected final static String ICON_AUDIO = "gov/nasa/worldwind/examples/images/audioicon-64.png";
+    protected final static String ICON_IMAGES = "gov/nasa/worldwind/examples/images/imageicon-64.png";
 
-    protected final static String AUDIO_PATH_MUSIC = "gov/nasa/worldwindx/examples/data/spacemusic.au";
+    protected final static String AUDIO_PATH_MUSIC = "gov/nasa/worldwind/examples/data/spacemusic.au";
 
-    protected final static String IMAGE_PATH_MT_ST_HELENS = "gov/nasa/worldwindx/examples/images/MountStHelens.jpg";
-    protected final static String IMAGE_PATH_THE_NUT = "gov/nasa/worldwindx/examples/images/the_nut.jpg";
-    protected final static String IMAGE_PATH_IRELAND = "gov/nasa/worldwindx/examples/images/ireland.jpg";
-    protected final static String IMAGE_PATH_NEW_ZEALAND = "gov/nasa/worldwindx/examples/images/new_zealand.gif";
+    protected final static String IMAGE_PATH_MT_ST_HELENS = "gov/nasa/worldwind/examples/images/MountStHelens.jpg";
+    protected final static String IMAGE_PATH_THE_NUT = "gov/nasa/worldwind/examples/images/the_nut.jpg";
+    protected final static String IMAGE_PATH_IRELAND = "gov/nasa/worldwind/examples/images/ireland.jpg";
+    protected final static String IMAGE_PATH_NEW_ZEALAND = "gov/nasa/worldwind/examples/images/new_zealand.gif";
 
     public static IconLayer createIconLayer() {
         IconLayer layer = new IconLayer();
@@ -85,9 +86,9 @@ public class AnnotationControls extends ApplicationTemplate {
 
         UserFacingIcon icon = new UserFacingIcon(iconPath, position);
         icon.setSize(new Dimension(64, 64));
-        icon.setValue(AVKey.DATA_TYPE, type);
-        icon.setValue(AVKey.TITLE, title);
-        icon.setValue(AVKey.URL, data);
+        icon.set(AVKey.DATA_TYPE, type);
+        icon.set(AVKey.TITLE, title);
+        icon.set(AVKey.URL, data);
         return icon;
     }
 
@@ -113,7 +114,7 @@ public class AnnotationControls extends ApplicationTemplate {
 
         String type = params.getStringValue(AVKey.DATA_TYPE);
         String title = params.getStringValue(AVKey.TITLE);
-        Object source = params.getValue(AVKey.URL);
+        Object source = params.get(AVKey.URL);
 
         if (type == AUDIO) {
             return createAudioAnnotation(appFrame, position, title, source);
@@ -155,7 +156,7 @@ public class AnnotationControls extends ApplicationTemplate {
         annotation.setAlwaysOnTop(true);
         annotation.getTitleLabel().setText(title);
 
-        AudioPlayerAnnotationController controller = new AudioPlayerAnnotationController(appFrame.getWwd(), annotation);
+        AudioPlayerAnnotationController controller = new AudioPlayerAnnotationController(appFrame.wwd(), annotation);
 
         return new AudioContentAnnotation(appFrame, annotation, controller, source);
     }
@@ -191,7 +192,7 @@ public class AnnotationControls extends ApplicationTemplate {
         annotation.setAlwaysOnTop(true);
         annotation.getTitleLabel().setText(title);
 
-        SlideShowAnnotationController controller = new SlideShowAnnotationController(appFrame.getWwd(), annotation,
+        SlideShowAnnotationController controller = new SlideShowAnnotationController(appFrame.wwd(), annotation,
             sources);
 
         return new ImageContentAnnotation(appFrame, annotation, controller);
@@ -298,11 +299,11 @@ public class AnnotationControls extends ApplicationTemplate {
         public AppFrame() {
             this.iconLayer = createIconLayer();
             this.contentLayer = new RenderableLayer();
-            insertBeforePlacenames(this.getWwd(), this.iconLayer);
-            insertBeforePlacenames(this.getWwd(), this.contentLayer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), this.iconLayer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), this.contentLayer);
 
-            this.getWwd().addSelectListener(this);
-            this.dragger = new BasicDragger(this.getWwd());
+            this.wwd().addSelectListener(this);
+            this.dragger = new BasicDragger(this.wwd());
         }
 
         public IconLayer getIconLayer() {
@@ -355,7 +356,7 @@ public class AnnotationControls extends ApplicationTemplate {
                 this.highlit.setHighlighted(true);
             }
 
-            this.getWwd().redraw();
+            this.wwd().redraw();
         }
 
         protected void closeResource(ContentAnnotation content) {
@@ -476,7 +477,7 @@ public class AnnotationControls extends ApplicationTemplate {
         protected void doRetrieveAndSetClip(final Object source) {
             SwingUtilities.invokeLater(() -> {
                 getAnnotation().setBusy(true);
-                appFrame.getWwd().redraw();
+                appFrame.wwd().redraw();
             });
 
             final Clip clip = this.readClip(source);
@@ -495,7 +496,7 @@ public class AnnotationControls extends ApplicationTemplate {
                 }
 
                 getAnnotation().setBusy(false);
-                appFrame.getWwd().redraw();
+                appFrame.wwd().redraw();
             });
         }
 

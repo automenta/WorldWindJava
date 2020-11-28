@@ -9,9 +9,9 @@ package gov.nasa.worldwind.examples.kml;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.ogc.kml.*;
-import gov.nasa.worldwind.examples.ogc.kml.impl.KMLController;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.layers.ogc.kml.*;
+import gov.nasa.worldwind.layers.ogc.kml.impl.KMLController;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.layertree.*;
@@ -118,25 +118,25 @@ public class KMLViewer extends ApplicationTemplate {
             // intentionally refresh the tree's model before adding the layer that contains the tree itself. This
             // prevents the tree's layer from being displayed in the tree itself.
             this.layerTree = new LayerTree(new Offset(20.0d, 160.0d, AVKey.PIXELS, AVKey.INSET_PIXELS));
-            this.layerTree.getModel().refresh(this.getWwd().model().getLayers());
+            this.layerTree.getModel().refresh(this.wwd().model().getLayers());
 
             // Set up a layer to display the on-screen layer tree in the WorldWindow. This layer is not displayed in
             // the layer tree's model. Doing so would enable the user to hide the layer tree display with no way of
             // bringing it back.
             this.hiddenLayer = new RenderableLayer();
             this.hiddenLayer.add(this.layerTree);
-            this.getWwd().model().getLayers().add(this.hiddenLayer);
+            this.wwd().model().getLayers().add(this.hiddenLayer);
 
             // Add a controller to handle input events on the layer selector and on browser balloons.
-            this.hotSpotController = new HotSpotController(this.getWwd());
+            this.hotSpotController = new HotSpotController(this.wwd());
 
             // Add a controller to handle common KML application events.
-            this.kmlAppController = new KMLApplicationController(this.getWwd());
+            this.kmlAppController = new KMLApplicationController(this.wwd());
 
             // Add a controller to display balloons when placemarks are clicked. We override the method addDocumentLayer
             // so that loading a KML document by clicking a KML balloon link displays an entry in the on-screen layer
             // tree.
-            this.balloonController = new BalloonController(this.getWwd()) {
+            this.balloonController = new BalloonController(this.wwd()) {
                 @Override
                 protected void addDocumentLayer(KMLRoot document) {
                     addKMLLayer(document);
@@ -181,7 +181,7 @@ public class KMLViewer extends ApplicationTemplate {
             RenderableLayer layer = new RenderableLayer();
             layer.setName((String) kmlRoot.getField(AVKey.DISPLAY_NAME));
             layer.add(kmlController);
-            this.getWwd().model().getLayers().add(layer);
+            this.wwd().model().getLayers().add(layer);
 
             // Adds a new layer tree node for the KMLRoot to the on-screen layer tree, and makes the new node visible
             // in the tree. This also expands any tree paths that represent open KML containers or open KML network
@@ -201,7 +201,7 @@ public class KMLViewer extends ApplicationTemplate {
                     // Manipulate the tree on the EDT.
                     SwingUtilities.invokeLater(() -> {
                         ((KMLNetworkLinkTreeNode) event.getSource()).expandOpenContainers(layerTree);
-                        getWwd().redraw();
+                        wwd().redraw();
                     });
                 }
             });

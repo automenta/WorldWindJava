@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.examples.milstd2525.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.symbology.IconRetriever;
@@ -41,7 +41,7 @@ public class Placemarks extends ApplicationTemplate {
         final BufferedImage symbolImage = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
 
         // Create an alternate version of the image that we'll use for highlighting.
-        params.setValue(AVKey.COLOR, Color.WHITE);
+        params.set(AVKey.COLOR, Color.WHITE);
         final BufferedImage highlightImage = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
 
         // Add the placemark to WorldWind on the event dispatch thread.
@@ -89,12 +89,12 @@ public class Placemarks extends ApplicationTemplate {
 
             PointPlacemark pp = new PointPlacemark(Position.fromDegrees(28, -102, 1.0e4));
             pp.setLabelText("Placemark A");
-            pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Label, Semi-transparent, Audio icon");
+            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Label, Semi-transparent, Audio icon");
             pp.setLineEnabled(false);
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             pp.setEnableLabelPicking(true); // enable label picking for this placemark
             PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
-            attrs.setImageAddress("gov/nasa/worldwindx/examples/images/audioicon-64.png");
+            attrs.setImageAddress("gov/nasa/worldwind/examples/images/audioicon-64.png");
             attrs.setImageColor(new Color(1.0f, 1.0f, 1.0f, 0.6f));
             attrs.setScale(0.6);
 //            attrs.setImageOffset(new Offset(19d, 8d, AVKey.PIXELS, AVKey.PIXELS));
@@ -104,12 +104,12 @@ public class Placemarks extends ApplicationTemplate {
 
             // Place a default pin placemark at the same location over the previous one.
             pp = new PointPlacemark(pp.getPosition());
-            pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Default icon over audio icon");
+            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Default icon over audio icon");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(28, -104, 1.0e4));
-            pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading 90, Screen relative");
+            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading 90, Screen relative");
             pp.setLabelText("Placemark B");
             pp.setLineEnabled(false);
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
@@ -124,7 +124,7 @@ public class Placemarks extends ApplicationTemplate {
 
             // Place a pin placemark at the same location over the previous one.
             pp = new PointPlacemark(pp.getPosition());
-            pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Default icon over rotated audio icon");
+            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Default icon over rotated audio icon");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             layer.add(pp);
 
@@ -133,7 +133,7 @@ public class Placemarks extends ApplicationTemplate {
             // the new attributes can be initialized from an existing attributes instance.
             pp = new PointPlacemark(Position.fromDegrees(29, -104, 2.0e4));
             pp.setLabelText("Placemark C");
-            pp.setValue(AVKey.DISPLAY_NAME, "Absolute, Label, Red pin icon, Line in random color and 2 wide");
+            pp.set(AVKey.DISPLAY_NAME, "Absolute, Label, Red pin icon, Line in random color and 2 wide");
             pp.setLineEnabled(true);
             pp.setAltitudeMode(WorldWind.ABSOLUTE);
             attrs = new PointPlacemarkAttributes();
@@ -149,7 +149,7 @@ public class Placemarks extends ApplicationTemplate {
             // Create a placemark without a leader line.
             pp = new PointPlacemark(Position.fromDegrees(30, -104.5, 2.0e4));
             pp.setLabelText("Placemark D");
-            pp.setValue(AVKey.DISPLAY_NAME, "Relative to ground, Label, Teal pin icon, No line");
+            pp.set(AVKey.DISPLAY_NAME, "Relative to ground, Label, Teal pin icon, No line");
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             attrs = new PointPlacemarkAttributes(attrs);
             attrs.setImageAddress("images/pushpins/plain-teal.png");
@@ -159,7 +159,7 @@ public class Placemarks extends ApplicationTemplate {
             // Create a placemark clamped to ground.
             pp = new PointPlacemark(Position.fromDegrees(28, -104.5, 2.0e4));
             pp.setLabelText("Placemark E");
-            pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Blue label, White pin icon");
+            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Blue label, White pin icon");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             attrs = new PointPlacemarkAttributes(attrs);
             attrs.setLabelColor("ffff0000");
@@ -170,13 +170,13 @@ public class Placemarks extends ApplicationTemplate {
             // Create a placemark that uses all default values.
             pp = new PointPlacemark(Position.fromDegrees(30, -103.5, 2.0e3));
             pp.setLabelText("Placemark F");
-            pp.setValue(AVKey.DISPLAY_NAME, "All defaults");
+            pp.set(AVKey.DISPLAY_NAME, "All defaults");
             layer.add(pp);
 
             // Create a placemark without an image.
             pp = new PointPlacemark(Position.fromDegrees(29, -104.5, 2.0e4));
             pp.setLabelText("Placemark G");
-            pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, White label, Red point, Scale 5");
+            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, White label, Red point, Scale 5");
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             attrs = new PointPlacemarkAttributes();
             attrs.setLabelColor("ffffffff");
@@ -189,7 +189,7 @@ public class Placemarks extends ApplicationTemplate {
             // Create a placemark off the surface and with a line.
             pp = new PointPlacemark(Position.fromDegrees(30, -104, 2.0e4));
             pp.setLabelText("Placemark H");
-            pp.setValue(AVKey.DISPLAY_NAME, "Relative to ground, Blue label, Magenta point and line, Scale 10");
+            pp.set(AVKey.DISPLAY_NAME, "Relative to ground, Blue label, Magenta point and line, Scale 10");
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pp.setLineEnabled(true);
             attrs = new PointPlacemarkAttributes();
@@ -202,12 +202,12 @@ public class Placemarks extends ApplicationTemplate {
             layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(28, -103, 1.0e4));
-            pp.setValue(AVKey.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading -45, Globe relative");
+            pp.set(AVKey.DISPLAY_NAME, "Clamp to ground, Audio icon, Heading -45, Globe relative");
             pp.setLabelText("Placemark I");
             pp.setLineEnabled(false);
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             attrs = new PointPlacemarkAttributes(attrs);
-            attrs.setImageAddress("gov/nasa/worldwindx/examples/images/audioicon-64.png");
+            attrs.setImageAddress("gov/nasa/worldwind/examples/images/audioicon-64.png");
             attrs.setHeading(-45.0d);
             attrs.setHeadingReference(AVKey.RELATIVE_TO_GLOBE);
             attrs.setScale(0.6);
@@ -219,12 +219,12 @@ public class Placemarks extends ApplicationTemplate {
             layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(30, 179.9, 100.0e3));
-            pp.setValue(AVKey.DISPLAY_NAME, "Near dateline,  Clamp to ground, NASA icon, Heading -45, Globe relative");
+            pp.set(AVKey.DISPLAY_NAME, "Near dateline,  Clamp to ground, NASA icon, Heading -45, Globe relative");
             pp.setLabelText("Placemark J");
             pp.setLineEnabled(false);
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             attrs = new PointPlacemarkAttributes(attrs);
-            attrs.setImageAddress("gov/nasa/worldwindx/examples/images/georss.png");
+            attrs.setImageAddress("gov/nasa/worldwind/examples/images/georss.png");
             attrs.setHeading(-45.0d);
             attrs.setHeadingReference(AVKey.RELATIVE_TO_GLOBE);
             attrs.setScale(0.6);
@@ -234,12 +234,12 @@ public class Placemarks extends ApplicationTemplate {
             layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(90, 0, 100.0e3));
-            pp.setValue(AVKey.DISPLAY_NAME, "North Pole,  Clamp to ground, NASA icon, Heading -45, Globe relative");
+            pp.set(AVKey.DISPLAY_NAME, "North Pole,  Clamp to ground, NASA icon, Heading -45, Globe relative");
             pp.setLabelText("Placemark K");
             pp.setLineEnabled(false);
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             attrs = new PointPlacemarkAttributes(attrs);
-            attrs.setImageAddress("gov/nasa/worldwindx/examples/images/georss.png");
+            attrs.setImageAddress("gov/nasa/worldwind/examples/images/georss.png");
             attrs.setHeading(-45.0d);
             attrs.setHeadingReference(AVKey.RELATIVE_TO_GLOBE);
             attrs.setScale(0.6);
@@ -253,7 +253,7 @@ public class Placemarks extends ApplicationTemplate {
             WorldWind.tasks().addTask(() -> createTacticalSymbolPointPlacemark(layer));
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
         }
     }
 }

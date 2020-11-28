@@ -108,28 +108,28 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer {
         // Preserve backward compatibility with previous verisons of WWDotNetLayerSetConverter. If the caller specified
         // a format suffix parameter, use it to compute the image format properties. This gives priority to the format
         // suffix property to ensure applications which use format suffix continue to work.
-        if (params.getValue(AVKey.FORMAT_SUFFIX) != null) {
-            String s = WWIO.makeMimeTypeForSuffix(params.getValue(AVKey.FORMAT_SUFFIX).toString());
+        if (params.get(AVKey.FORMAT_SUFFIX) != null) {
+            String s = WWIO.makeMimeTypeForSuffix(params.get(AVKey.FORMAT_SUFFIX).toString());
             if (s != null) {
-                params.setValue(AVKey.IMAGE_FORMAT, s);
-                params.setValue(AVKey.AVAILABLE_IMAGE_FORMATS, new String[] {s});
+                params.set(AVKey.IMAGE_FORMAT, s);
+                params.set(AVKey.AVAILABLE_IMAGE_FORMATS, new String[] {s});
             }
         }
 
         // Use the default image format if none exists.
-        if (params.getValue(AVKey.IMAGE_FORMAT) == null)
-            params.setValue(AVKey.IMAGE_FORMAT, DEFAULT_IMAGE_FORMAT);
+        if (params.get(AVKey.IMAGE_FORMAT) == null)
+            params.set(AVKey.IMAGE_FORMAT, DEFAULT_IMAGE_FORMAT);
 
         // Compute the available image formats if none exists.
-        if (params.getValue(AVKey.AVAILABLE_IMAGE_FORMATS) == null) {
-            params.setValue(AVKey.AVAILABLE_IMAGE_FORMATS,
-                new String[] {params.getValue(AVKey.IMAGE_FORMAT).toString()});
+        if (params.get(AVKey.AVAILABLE_IMAGE_FORMATS) == null) {
+            params.set(AVKey.AVAILABLE_IMAGE_FORMATS,
+                new String[] {params.get(AVKey.IMAGE_FORMAT).toString()});
         }
 
         // Compute the format suffix if none exists.
-        if (params.getValue(AVKey.FORMAT_SUFFIX) == null) {
-            params.setValue(AVKey.FORMAT_SUFFIX,
-                WWIO.makeSuffixForMimeType(params.getValue(AVKey.IMAGE_FORMAT).toString()));
+        if (params.get(AVKey.FORMAT_SUFFIX) == null) {
+            params.set(AVKey.FORMAT_SUFFIX,
+                WWIO.makeSuffixForMimeType(params.get(AVKey.IMAGE_FORMAT).toString()));
         }
 
         productionState.productionParams = params;
@@ -142,11 +142,11 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer {
     protected String validateProductionParameters(AVList parameters) {
         StringBuilder sb = new StringBuilder();
 
-        Object o = parameters.getValue(AVKey.FILE_STORE_LOCATION);
+        Object o = parameters.get(AVKey.FILE_STORE_LOCATION);
         if (!(o instanceof String) || ((String) o).length() < 1)
             sb.append((!sb.isEmpty() ? ", " : "")).append(Logging.getMessage("term.fileStoreLocation"));
 
-        o = parameters.getValue(AVKey.DATA_CACHE_NAME);
+        o = parameters.get(AVKey.DATA_CACHE_NAME);
         // It's okay if the cache path is empty, but if specified it must be a String.
         if (o != null && !(o instanceof String))
             sb.append((!sb.isEmpty() ? ", " : "")).append(Logging.getMessage("term.fileStoreFolder"));
@@ -335,25 +335,25 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer {
         DataConfigurationUtils.getWWDotNetLayerSetConfigParams(layerSetDoc.getDocumentElement(), params);
 
         // Override the LayerSet's display name with the name used by the converter.
-        if (installParams.getValue(AVKey.DISPLAY_NAME) != null)
-            params.setValue(AVKey.DISPLAY_NAME, installParams.getValue(AVKey.DISPLAY_NAME));
+        if (installParams.get(AVKey.DISPLAY_NAME) != null)
+            params.set(AVKey.DISPLAY_NAME, installParams.get(AVKey.DISPLAY_NAME));
 
         // Override the LayerSet's cache name with the cache name used by the converter.
-        if (installParams.getValue(AVKey.DATA_CACHE_NAME) != null)
-            params.setValue(AVKey.DATA_CACHE_NAME, installParams.getValue(AVKey.DATA_CACHE_NAME));
+        if (installParams.get(AVKey.DATA_CACHE_NAME) != null)
+            params.set(AVKey.DATA_CACHE_NAME, installParams.get(AVKey.DATA_CACHE_NAME));
 
         // Override the LayerSet's image format and available image format parameters with values used by the converter.
-        if (installParams.getValue(AVKey.IMAGE_FORMAT) != null)
-            params.setValue(AVKey.IMAGE_FORMAT, installParams.getValue(AVKey.IMAGE_FORMAT));
-        if (installParams.getValue(AVKey.AVAILABLE_IMAGE_FORMATS) != null)
-            params.setValue(AVKey.AVAILABLE_IMAGE_FORMATS, installParams.getValue(AVKey.AVAILABLE_IMAGE_FORMATS));
+        if (installParams.get(AVKey.IMAGE_FORMAT) != null)
+            params.set(AVKey.IMAGE_FORMAT, installParams.get(AVKey.IMAGE_FORMAT));
+        if (installParams.get(AVKey.AVAILABLE_IMAGE_FORMATS) != null)
+            params.set(AVKey.AVAILABLE_IMAGE_FORMATS, installParams.get(AVKey.AVAILABLE_IMAGE_FORMATS));
 
         // Override the LayerSet's format suffix with the suffix used by the converter.
-        if (installParams.getValue(AVKey.FORMAT_SUFFIX) != null)
-            params.setValue(AVKey.FORMAT_SUFFIX, installParams.getValue(AVKey.FORMAT_SUFFIX));
+        if (installParams.get(AVKey.FORMAT_SUFFIX) != null)
+            params.set(AVKey.FORMAT_SUFFIX, installParams.get(AVKey.FORMAT_SUFFIX));
 
         // Set the texture format to DDS. If the texture data is already in DDS format, this parameter is benign.
-        params.setValue(AVKey.TEXTURE_FORMAT, DEFAULT_TEXTURE_FORMAT);
+        params.set(AVKey.TEXTURE_FORMAT, DEFAULT_TEXTURE_FORMAT);
 
         return BasicTiledImageLayer.createTiledImageLayerConfigDocument(params);
     }

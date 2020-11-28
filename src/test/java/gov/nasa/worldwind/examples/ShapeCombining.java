@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -40,18 +40,18 @@ public class ShapeCombining extends ApplicationTemplate {
             // Create two surface circles that partially overlap, and add them to a layer named "Original".
             SurfaceCircle shape1 = new SurfaceCircle(attrs, LatLon.fromDegrees(50, -105), 500000);
             SurfaceCircle shape2 = new SurfaceCircle(attrs, LatLon.fromDegrees(50, -100), 500000);
-            shape1.setValue(AVKey.DISPLAY_NAME, "Original");
-            shape2.setValue(AVKey.DISPLAY_NAME, "Original");
+            shape1.set(AVKey.DISPLAY_NAME, "Original");
+            shape2.set(AVKey.DISPLAY_NAME, "Original");
 
             RenderableLayer originalLayer = new RenderableLayer();
             originalLayer.setName("Original");
             originalLayer.add(shape1);
             originalLayer.add(shape2);
-            this.getWwd().model().getLayers().add(originalLayer);
+            this.wwd().model().getLayers().add(originalLayer);
 
             // Set up a ShapeCombiner to combine the two surface circles into a potentially complex set of contours
             // using boolean operations: union, intersection and difference.
-            Globe globe = this.getWwd().model().getGlobe();
+            Globe globe = this.wwd().model().getGlobe();
             double resolutionRadians = 10000 / globe.getRadius(); // 10km resolution
             ShapeCombiner shapeCombiner = new ShapeCombiner(globe, resolutionRadians);
 
@@ -76,14 +76,14 @@ public class ShapeCombining extends ApplicationTemplate {
             attrs.setOutlineWidth(2);
 
             SurfaceMultiPolygon shape = new SurfaceMultiPolygon(attrs, contours);
-            shape.setValue(AVKey.DISPLAY_NAME, displayName);
+            shape.set(AVKey.DISPLAY_NAME, displayName);
             shape.setPathType(AVKey.LINEAR);
             shape.move(offset);
 
             RenderableLayer layer = new RenderableLayer();
             layer.setName(displayName);
             layer.add(shape);
-            this.getWwd().model().getLayers().add(layer);
+            this.wwd().model().getLayers().add(layer);
         }
     }
 }

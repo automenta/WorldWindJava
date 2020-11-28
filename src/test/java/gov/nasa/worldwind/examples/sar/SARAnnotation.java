@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.examples.sar;
 
-import gov.nasa.worldwind.examples.render.GlobeAnnotation;
+import gov.nasa.worldwind.render.GlobeAnnotation;
 import gov.nasa.worldwind.geom.Position;
 
 /**

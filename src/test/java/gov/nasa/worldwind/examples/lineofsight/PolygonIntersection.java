@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples.lineofsight;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.terrain.HighResolutionTerrain;
@@ -62,10 +62,10 @@ public class PolygonIntersection extends ApplicationTemplate {
             // Add the shape to the display layer.
             this.layer = new RenderableLayer();
             this.layer.add(this.polygon);
-            insertBeforeCompass(getWwd(), this.layer);
+            WorldWindow.insertBeforeCompass(wwd(), this.layer);
 
             // Create high-resolution terrain for the intersection calculations
-            this.terrain = new HighResolutionTerrain(this.getWwd().model().getGlobe(), 20.0d);
+            this.terrain = new HighResolutionTerrain(this.wwd().model().getGlobe(), 20.0d);
 
             // Perform the intersection test within a timer callback. Intersection calculations would normally be done
             // on a separate, non-EDT thread, however.
@@ -111,7 +111,7 @@ public class PolygonIntersection extends ApplicationTemplate {
             path.setAttributes(pathAttributes);
             this.layer.add(path);
 
-            this.getWwd().redraw();
+            this.wwd().redraw();
         }
 
         protected void drawIntersection(Intersection intersection) {
@@ -125,7 +125,7 @@ public class PolygonIntersection extends ApplicationTemplate {
             iPoint.setAttributes(pointAttributes);
             this.layer.add(iPoint);
 
-            this.getWwd().redraw();
+            this.wwd().redraw();
         }
     }
 }

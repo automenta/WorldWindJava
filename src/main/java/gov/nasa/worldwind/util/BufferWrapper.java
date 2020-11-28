@@ -124,14 +124,14 @@ public abstract class BufferWrapper {
             throw new IllegalArgumentException(message);
         }
 
-        if (params.getValue(AVKey.DATA_TYPE) == null) {
+        if (params.get(AVKey.DATA_TYPE) == null) {
             String message = Logging.getMessage("generic.MissingRequiredParameter",
                 Logging.getMessage("term.dataType"));
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        return wrap(byteBuffer, params.getValue(AVKey.DATA_TYPE), params.getValue(AVKey.BYTE_ORDER));
+        return wrap(byteBuffer, params.get(AVKey.DATA_TYPE), params.get(AVKey.BYTE_ORDER));
     }
 
     /**

@@ -9,12 +9,12 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.*;
 
@@ -486,7 +486,7 @@ public class SegmentPlaneRenderer {
         gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
 
         PickedObject po = new PickedObject(colorCode, userObject);
-        po.setValue(AVKey.PICKED_OBJECT_ID, objectId);
+        po.set(AVKey.PICKED_OBJECT_ID, objectId);
         this.pickSupport.addPickableObject(po);
 
         return po;
@@ -498,7 +498,7 @@ public class SegmentPlaneRenderer {
             return null;
         }
 
-        Object id = topObject.getValue(AVKey.PICKED_OBJECT_ID);
+        Object id = topObject.get(AVKey.PICKED_OBJECT_ID);
         if (id != pickedObjectId) {
             return null;
         }
@@ -949,7 +949,7 @@ public class SegmentPlaneRenderer {
             surfaceElevation + (height / 2.0));
 
         AVList values = new AVListImpl();
-        values.setValue(AVKey.HEIGHT, height);
+        values.set(AVKey.HEIGHT, height);
 
         this.drawLabel(dc, segmentPlane, centerPos, values, SegmentPlane.ALTIMETER);
     }
@@ -1059,7 +1059,7 @@ public class SegmentPlaneRenderer {
         double height = position.getElevation() - surfaceElevation;
 
         AVList values = new AVListImpl();
-        values.setValue(AVKey.HEIGHT, height);
+        values.set(AVKey.HEIGHT, height);
 
         this.drawLabel(dc, segmentPlane, position, values, controlPoint.getKey());
     }
@@ -1133,7 +1133,7 @@ public class SegmentPlaneRenderer {
             double width = ui * gridCellSizes[0];
 
             AVList values = new AVListImpl();
-            values.setValue(AVKey.WIDTH, width);
+            values.set(AVKey.WIDTH, width);
 
             Position pos = this.computePositionOnPlane(sgl, globe, segmentPlane, u, 0, true);
             double surfaceElevation = this.computeSurfaceElevation(sgl, globe, pos.getLatitude(), pos.getLongitude());
@@ -1173,7 +1173,7 @@ public class SegmentPlaneRenderer {
             double height = vi * gridCellSizes[1];
 
             AVList values = new AVListImpl();
-            values.setValue(AVKey.HEIGHT, height);
+            values.set(AVKey.HEIGHT, height);
 
             Position pos = this.computePositionOnPlane(sgl, globe, segmentPlane, 1, v, false);
             double surfaceElevation = this.computeSurfaceElevation(sgl, globe, pos.getLatitude(), pos.getLongitude());

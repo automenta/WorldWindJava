@@ -10,7 +10,7 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.GpuResourceCache;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.PickSupport;
@@ -554,7 +554,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
             gl.glVertexPointer(tile.vertexStride, GL.GL_FLOAT, 0, tile.vertices);
         }
 
-        SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.getValue(AVKey.SURFACE_TILE_DRAW_CONTEXT);
+        SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.get(AVKey.SURFACE_TILE_DRAW_CONTEXT);
         Matrix modelview = sdc.getModelviewMatrix().multiply(tile.transformMatrix);
         modelview.toArray(this.matrixArray, 0, false);
         gl.glLoadMatrixd(this.matrixArray, 0);

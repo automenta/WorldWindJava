@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.util.tree;
 
 import gov.nasa.worldwind.WWObject;
-import gov.nasa.worldwind.examples.render.OrderedRenderable;
+import gov.nasa.worldwind.render.OrderedRenderable;
 
 /**
  * A tree of objects, drawn in the WorldWindow, that the user can interact with. How the tree is drawn is determined by

@@ -6,11 +6,12 @@
 
 package gov.nasa.worldwind.performance;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.airspaces.*;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.airspaces.*;
 
 import java.util.ArrayList;
 
@@ -77,7 +78,7 @@ public class AirspacesEverywhere extends ApplicationTemplate {
             }
             System.out.printf("%d Polygons, %d positions\n", count, positions.size());
 
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
         }
     }
 }

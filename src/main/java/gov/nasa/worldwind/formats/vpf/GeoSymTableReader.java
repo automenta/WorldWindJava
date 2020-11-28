@@ -186,7 +186,7 @@ public class GeoSymTableReader {
                     o = s;
             }
 
-            record.setValue(col.getName(), o);
+            record.set(col.getName(), o);
         }
     }
 }

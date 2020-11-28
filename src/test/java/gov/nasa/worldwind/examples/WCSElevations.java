@@ -73,7 +73,7 @@ public class WCSElevations extends ApplicationTemplate {
         protected WCSCoveragePanel addTab(int position, String server) {
             // Add a server to the tabbed dialog.
             try {
-                WCSCoveragePanel coveragePanel = new WCSCoveragePanel(AppFrame.this.getWwd(), server, wcsPanelSize);
+                WCSCoveragePanel coveragePanel = new WCSCoveragePanel(AppFrame.this.wwd(), server, wcsPanelSize);
                 this.tabbedPane.add(coveragePanel, BorderLayout.CENTER);
                 String title = coveragePanel.getServerDisplayString();
                 this.tabbedPane.setTitleAt(position, title != null && !title.isEmpty() ? title : server);

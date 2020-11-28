@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.examples.worldwindow.core;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ogc.OGCCapabilities;
-import gov.nasa.worldwind.examples.ogc.wms.*;
+import gov.nasa.worldwind.layers.ogc.OGCCapabilities;
+import gov.nasa.worldwind.layers.ogc.wms.*;
 
 import java.util.*;
 
@@ -23,12 +23,12 @@ public class WMSLayerInfo {
     public WMSLayerInfo(OGCCapabilities caps, WMSLayerCapabilities layerCaps, WMSLayerStyle style) {
         this.caps = caps;
         this.params = new AVListImpl();
-        this.params.setValue(AVKey.LAYER_NAMES, layerCaps.getName());
+        this.params.set(AVKey.LAYER_NAMES, layerCaps.getName());
         if (style != null)
-            this.params.setValue(AVKey.STYLE_NAMES, style.getName());
+            this.params.set(AVKey.STYLE_NAMES, style.getName());
 
         String layerTitle = layerCaps.getTitle();
-        this.params.setValue(AVKey.DISPLAY_NAME, layerTitle);
+        this.params.set(AVKey.DISPLAY_NAME, layerTitle);
     }
 
     public static List<WMSLayerInfo> createLayerInfos(OGCCapabilities caps, WMSLayerCapabilities layerCaps) {

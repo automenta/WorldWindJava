@@ -40,7 +40,7 @@ public class AddAnimator extends ApplicationTemplate {
             super(true, true, true);
             this.getControlPanel().add(makeControlPanel(), BorderLayout.SOUTH);
 
-            WorldWindow wwd = this.getWwd();
+            WorldWindow wwd = this.wwd();
 
             // Force the view to be a FlyView
             view = new BasicFlyView();
@@ -65,7 +65,7 @@ public class AddAnimator extends ApplicationTemplate {
             public ViewDisplay() {
                 super(new GridLayout(0, 1));
                 try {
-                    this.add(new FlyViewGazetteerPanel(getWwd(),
+                    this.add(new FlyViewGazetteerPanel(wwd(),
                         "gov.nasa.worldwind.poi.YahooGazetteer"), SwingConstants.CENTER);
                 }
                 catch (Exception e) {

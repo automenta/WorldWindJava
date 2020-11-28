@@ -5,13 +5,14 @@
  */
 package gov.nasa.worldwind.examples;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.Material;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.formats.gpx.GpxReader;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.MarkerLayer;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.WWIO;
 import org.xml.sax.SAXException;
 
@@ -28,7 +29,7 @@ import java.util.*;
  * @version $Id: GPSTracks.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class GPSTracks extends ApplicationTemplate {
-    protected static final String TRACK_PATH = "gov/nasa/worldwindx/examples/data/tuolumne.gpx";
+    protected static final String TRACK_PATH = "gov/nasa/worldwind/examples/data/tuolumne.gpx";
 
     public static void main(String[] args) {
         ApplicationTemplate.start("WorldWind Tracks", AppFrame.class);
@@ -39,16 +40,16 @@ public class GPSTracks extends ApplicationTemplate {
             super(true, true, false);
 
             MarkerLayer layer = this.buildTracksLayer();
-            insertBeforeCompass(this.getWwd(), layer);
+            WorldWindow.insertBeforeCompass(this.wwd(), layer);
 
-            this.getWwd().addSelectListener(event -> {
+            this.wwd().addSelectListener(event -> {
                 if (event.getTopObject() != null) {
                     if (event.getTopPickedObject().getParentLayer() instanceof MarkerLayer) {
                         PickedObject po = event.getTopPickedObject();
                         //noinspection RedundantCast
                         System.out.printf("Track position %s, %s, size = %f\n",
-                            po.getValue(AVKey.PICKED_OBJECT_ID).toString(),
-                            po.getPosition(), (Double) po.getValue(AVKey.PICKED_OBJECT_SIZE));
+                            po.get(AVKey.PICKED_OBJECT_ID).toString(),
+                            po.getPosition(), (Double) po.get(AVKey.PICKED_OBJECT_SIZE));
                     }
                 }
             });

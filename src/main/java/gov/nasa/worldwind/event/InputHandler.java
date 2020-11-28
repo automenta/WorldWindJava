@@ -92,10 +92,10 @@ public interface InputHandler extends AVList, PropertyChangeListener, com.jogamp
     void mouseWheelMoved(com.jogamp.newt.event.MouseEvent e);
 
     @Override
-    Object setValue(String key, Object value);
+    Object set(String key, Object value);
 
     @Override
-    Object getValue(String key);
+    Object get(String key);
 
     @Override
     Iterable<Object> getValues();

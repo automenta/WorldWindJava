@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.PickedObject;
@@ -490,10 +490,10 @@ public class LayerManagerLayer extends RenderableLayer implements SelectListener
                 }
                 // Check for text or url
                 PickedObject po = event.getTopPickedObject();
-                if (po.getValue(AVKey.URL) != null) {
+                if (po.get(AVKey.URL) != null) {
                     // Set cursor hand on hyperlinks
                     ((Component) this.wwd).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    int i = Integer.parseInt((String) po.getValue(AVKey.URL));
+                    int i = Integer.parseInt((String) po.get(AVKey.URL));
                     // Select current hyperlink
                     if (this.selectedIndex != i) {
                         this.selectedIndex = i;

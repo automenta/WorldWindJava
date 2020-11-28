@@ -74,7 +74,7 @@ public class DBaseRecord extends AVListImpl {
             // applications to treat the DBaseRecord a standard AVList without any knowledge of the DBase file's field
             // keys. Specifically, DBaseRecord.hasKey() returns true for all fields.
             if (dbaseFile.isStringEmpty(bytes, numRead)) {
-                this.setValue(field.getName(), "");
+                this.set(field.getName(), "");
                 continue;
             }
 
@@ -82,21 +82,21 @@ public class DBaseRecord extends AVListImpl {
 
             try {
                 if (field.getType() == DBaseField.TYPE_BOOLEAN) {
-                    this.setValue(field.getName(), value.equalsIgnoreCase("T") || value.equalsIgnoreCase("Y"));
+                    this.set(field.getName(), value.equalsIgnoreCase("T") || value.equalsIgnoreCase("Y"));
                 }
                 else if (field.getType() == DBaseField.TYPE_CHAR) {
-                    this.setValue(field.getName(), value);
+                    this.set(field.getName(), value);
                 }
                 else if (field.getType() == DBaseField.TYPE_DATE) {
-                    this.setValue(field.getName(), dateformat.parse(value));
+                    this.set(field.getName(), dateformat.parse(value));
                 }
                 else if (field.getType() == DBaseField.TYPE_NUMBER) {
                     // Parse the field value as a decimal number. Double.parseDouble ignores any leading or trailing
                     // whitespace.
                     if (field.getDecimals() > 0)
-                        this.setValue(field.getName(), Double.valueOf(value));
+                        this.set(field.getName(), Double.valueOf(value));
                     else
-                        this.setValue(field.getName(), Long.valueOf(value));
+                        this.set(field.getName(), Long.valueOf(value));
                 }
             }
             catch (Exception e) {

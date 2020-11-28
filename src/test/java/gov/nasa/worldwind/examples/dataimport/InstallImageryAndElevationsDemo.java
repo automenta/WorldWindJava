@@ -114,9 +114,9 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate {
         String type = DataConfigurationUtils.getDataConfigType(domElement);
         if (type.equalsIgnoreCase("ElevationModel")) {
             if (WWXML.getDouble(domElement, "ExtremeElevations/@min", xpath) == null)
-                params.setValue(AVKey.ELEVATION_MIN, Earth.ELEVATION_MIN);
+                params.set(AVKey.ELEVATION_MIN, Earth.ELEVATION_MIN);
             if (WWXML.getDouble(domElement, "ExtremeElevations/@max", xpath) == null)
-                params.setValue(AVKey.ELEVATION_MAX, Earth.ELEVATION_MAX);
+                params.set(AVKey.ELEVATION_MAX, Earth.ELEVATION_MAX);
         }
     }
 
@@ -196,21 +196,21 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate {
 
         String datasetName = askForDatasetName(suggestDatasetName(files));
 
-        params.setValue(AVKey.DATASET_NAME, datasetName);
-        params.setValue(AVKey.DATA_CACHE_NAME, datasetName);
-        params.setValue(AVKey.FILE_STORE_LOCATION, installLocation.getAbsolutePath());
+        params.set(AVKey.DATASET_NAME, datasetName);
+        params.set(AVKey.DATA_CACHE_NAME, datasetName);
+        params.set(AVKey.FILE_STORE_LOCATION, installLocation.getAbsolutePath());
 
         // These parameters define producer's behavior:
         // create a full tile cache OR generate only first two low resolution levels
         boolean enableFullPyramid = Configuration.getBooleanValue(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, false);
         if (!enableFullPyramid) {
-            params.setValue(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER);
+            params.set(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER);
             // retrieve the value of the AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, default to "Auto" if missing
             String maxLevel = Configuration.getStringValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, "Auto");
-            params.setValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, maxLevel);
+            params.set(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, maxLevel);
         }
         else {
-            params.setValue(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, true);
+            params.set(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, true);
         }
 
         producer.setStoreParameters(params);
@@ -445,7 +445,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate {
         protected final InstalledDataFrame installedDataFrame;
 
         public AppFrame() {
-            this.installedDataFrame = new InstalledDataFrame(WorldWind.store(), this.getWwd());
+            this.installedDataFrame = new InstalledDataFrame(WorldWind.store(), this.wwd());
             WWUtil.alignComponent(this, this.installedDataFrame, AVKey.RIGHT);
             this.installedDataFrame.setVisible(true);
 

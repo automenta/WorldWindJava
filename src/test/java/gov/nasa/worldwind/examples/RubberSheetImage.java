@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.SurfaceImage;
+import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.formats.gcps.GCPSReader;
 import gov.nasa.worldwind.formats.tab.TABRasterReader;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
@@ -66,7 +66,7 @@ public class RubberSheetImage extends ApplicationTemplate {
 
         public AppFrame() {
             this.controller = new Controller(this);
-            this.getWwd().addSelectListener(this.controller);
+            this.wwd().addSelectListener(this.controller);
 
             this.initComponents();
         }
@@ -132,7 +132,7 @@ public class RubberSheetImage extends ApplicationTemplate {
             this.layer.setPickEnabled(true);
             this.layer.add(surfaceImage);
 
-            insertBeforePlacenames(wwd, this.layer);
+            WorldWindow.insertBeforePlacenames(wwd, this.layer);
         }
 
         public SurfaceImage getSurfaceImage() {
@@ -202,7 +202,7 @@ public class RubberSheetImage extends ApplicationTemplate {
         }
 
         protected void addSurfaceImage(SurfaceImage surfaceImage, String name) {
-            SurfaceImageEntry entry = new SurfaceImageEntry(this.appFrame.getWwd(), surfaceImage, name);
+            SurfaceImageEntry entry = new SurfaceImageEntry(this.appFrame.wwd(), surfaceImage, name);
             this.entryList.add(entry);
             this.setSelectedEntry(entry);
 
@@ -259,7 +259,7 @@ public class RubberSheetImage extends ApplicationTemplate {
                 entry.getSurfaceImage().setOpacity(opacity);
             }
 
-            this.appFrame.getWwd().redraw();
+            this.appFrame.wwd().redraw();
         }
 
         protected void loadFiles(final File[] files) {
@@ -282,7 +282,7 @@ public class RubberSheetImage extends ApplicationTemplate {
 
             final SurfaceImage si = this.createGeoreferencedSurfaceImage(file, image);
             if (si == null) {
-                this.addNonGeoreferencedSurfaceImage(file, image, this.appFrame.getWwd());
+                this.addNonGeoreferencedSurfaceImage(file, image, this.appFrame.wwd());
                 return;
             }
 

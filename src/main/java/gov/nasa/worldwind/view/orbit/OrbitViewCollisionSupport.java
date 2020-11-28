@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.view.orbit;
 
-import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;

@@ -24,7 +24,7 @@ public class Measurement extends AbstractFeature {
 
     public Measurement(Registry registry) {
         super("Measurement", Constants.FEATURE_MEASUREMENT,
-            "gov/nasa/worldwindx/applications/worldwindow/images/globe-sextant-64x64.png", registry);
+            "gov/nasa/worldwind/examples/worldwindow/images/globe-sextant-64x64.png", registry);
         setEnabled(true);
     }
 

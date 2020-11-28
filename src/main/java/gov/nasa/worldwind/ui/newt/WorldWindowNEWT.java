@@ -5,8 +5,10 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.FPSAnimator;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.event.InputHandler;
+import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.layers.WorldMapLayer;
 import gov.nasa.worldwind.ui.WorldWindowGLAutoDrawable;
+import gov.nasa.worldwind.util.*;
 
 import java.beans.PropertyChangeListener;
 
@@ -47,14 +49,24 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
     @Override
     public void init(GLAutoDrawable drawable) {
 
-        this.wwd().initDrawable(drawable);
-        this.wwd().addPropertyChangeListener(this);
-        this.wwd().initGpuResourceCache(WorldWindow.createGpuResourceCache());
+        final WorldWindowGLAutoDrawable w = this.wwd();
+
+        w.initDrawable(drawable);
+        w.addPropertyChangeListener(this);
+        w.initGpuResourceCache(WorldWindow.createGpuResourceCache());
         this.createView();
         this.createDefaultInputHandler();
         WorldWind.addPropertyChangeListener(WorldWind.SHUTDOWN_EVENT, this);
         WorldWindow.configureIdentityPixelScale(window);
-        this.wwd().endInitialization();
+        w.endInitialization();
+
+        // Setup a select listener for the worldmap click-and-go feature
+        this.wwd.addSelectListener(new ClickAndGoSelectListener(w, WorldMapLayer.class));
+
+        // Add controllers to manage highlighting and tool tips.
+        var toolTipController = new ToolTipController(w, AVKey.DISPLAY_NAME, null);
+        var highlightController = new HighlightController(w, SelectEvent.ROLLOVER);
+
     }
 
     @Override

@@ -143,7 +143,7 @@ public class GeoSymAttributeExpressionProvider {
         };
 
         private static int compare(AVList params, String paramName, String value) {
-            Object o = params.getValue(paramName);
+            Object o = params.get(paramName);
             boolean valueIsNull = value.equalsIgnoreCase("NULL");
 
             // NULL feature attributes are stored as actual Java null references, while NULL values are the literal

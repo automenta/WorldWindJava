@@ -108,9 +108,9 @@ public class ImportedDataDialog extends AbstractFeatureDialog implements Network
         String type = DataConfigurationUtils.getDataConfigType(domElement);
         if (type.equalsIgnoreCase("ElevationModel")) {
             if (WWXML.getDouble(domElement, "ExtremeElevations/@min", xpath) == null)
-                params.setValue(AVKey.ELEVATION_MIN, Earth.ELEVATION_MIN);
+                params.set(AVKey.ELEVATION_MIN, Earth.ELEVATION_MIN);
             if (WWXML.getDouble(domElement, "ExtremeElevations/@max", xpath) == null)
-                params.setValue(AVKey.ELEVATION_MAX, Earth.ELEVATION_MAX);
+                params.set(AVKey.ELEVATION_MAX, Earth.ELEVATION_MAX);
         }
     }
 
@@ -190,9 +190,9 @@ public class ImportedDataDialog extends AbstractFeatureDialog implements Network
         // Create the production parameters. These parameters instruct the DataStoreProducer where to import the cached
         // data, and what name to put in the data configuration document.
         AVList params = new AVListImpl();
-        params.setValue(AVKey.DATASET_NAME, file.getName());
-        params.setValue(AVKey.DATA_CACHE_NAME, file.getName());
-        params.setValue(AVKey.FILE_STORE_LOCATION, importLocation.getAbsolutePath());
+        params.set(AVKey.DATASET_NAME, file.getName());
+        params.set(AVKey.DATA_CACHE_NAME, file.getName());
+        params.set(AVKey.FILE_STORE_LOCATION, importLocation.getAbsolutePath());
         producer.setStoreParameters(params);
 
         // Use the specified file as the the production data source.

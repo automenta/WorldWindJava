@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.formats.shapefile.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
@@ -115,7 +115,7 @@ public class OpenStreetMapShapefileLoader {
             if (record == null || !record.getShapeType().equals(Shapefile.SHAPE_POINT))
                 continue;
 
-            Object o = record.getAttributes().getValue("type");
+            Object o = record.getAttributes().get("type");
             if (!(o instanceof String))
                 continue;
 

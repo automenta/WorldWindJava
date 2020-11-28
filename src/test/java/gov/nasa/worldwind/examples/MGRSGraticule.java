@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.layers.Earth.MGRSGraticuleLayer;
 import gov.nasa.worldwind.util.*;
 
@@ -32,17 +33,17 @@ public class MGRSGraticule extends ApplicationTemplate {
             MGRSGraticuleLayer layer = new MGRSGraticuleLayer();
 
             // Add MGRS/UTM Graticule layer
-            insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
 
             // Replace status bar with MGRS version
             this.getStatusBar().setEventSource(null);
             this.getWwjPanel().remove(this.getStatusBar());
             StatusBar sb = new StatusBarMGRS();
-            sb.setEventSource(this.getWwd());
+            sb.setEventSource(this.wwd());
             this.getWwjPanel().add(sb, BorderLayout.SOUTH);
 
             // Add go to coordinate input panel
-            this.getControlPanel().add(new GoToCoordinatePanel(this.getWwd()), BorderLayout.SOUTH);
+            this.getControlPanel().add(new GoToCoordinatePanel(this.wwd()), BorderLayout.SOUTH);
 
             // Add MGRS graticule properties frame
             JDialog dialog = MGRSAttributesPanel.showDialog(this, "MGRS Graticule Properties", layer);

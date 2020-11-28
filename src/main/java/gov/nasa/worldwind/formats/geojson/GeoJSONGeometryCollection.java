@@ -22,6 +22,6 @@ public class GeoJSONGeometryCollection extends GeoJSONGeometry {
     }
 
     public GeoJSONGeometry[] getGeometries() {
-        return (GeoJSONGeometry[]) this.getValue(GeoJSONConstants.FIELD_GEOMETRIES);
+        return (GeoJSONGeometry[]) this.get(GeoJSONConstants.FIELD_GEOMETRIES);
     }
 }

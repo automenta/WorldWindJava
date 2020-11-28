@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.pick;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.util.Range;

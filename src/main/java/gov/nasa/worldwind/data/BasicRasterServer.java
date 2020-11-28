@@ -143,7 +143,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
     }
 
     protected void setDataSetPixelFormat(String pixelFormat) {
-        this.setValue(AVKey.PIXEL_FORMAT, pixelFormat);
+        this.set(AVKey.PIXEL_FORMAT, pixelFormat);
     }
 
     /**
@@ -153,7 +153,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
      */
     protected void extractProperties(RasterServerConfiguration config) {
         for (Map.Entry<String, String> prop : config.getProperties().entrySet()) {
-            this.setValue(prop.getKey(), prop.getValue());
+            this.set(prop.getKey(), prop.getValue());
         }
     }
 
@@ -219,14 +219,14 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
                     if (null == sector) {
                         rasterReader.readMetadata(rasterSourceFile, rasterMetadata);
 
-                        Object o = rasterMetadata.getValue(AVKey.SECTOR);
+                        Object o = rasterMetadata.get(AVKey.SECTOR);
                         sector = (o instanceof Sector) ? (Sector) o : null;
                     }
                     else {
-                        rasterMetadata.setValue(AVKey.SECTOR, sector);
+                        rasterMetadata.set(AVKey.SECTOR, sector);
                     }
 
-                    Object rasterPixelFormat = rasterMetadata.getValue(AVKey.PIXEL_FORMAT);
+                    Object rasterPixelFormat = rasterMetadata.get(AVKey.PIXEL_FORMAT);
                     String datasetPixelFormat = this.getDataSetPixelFormat();
 
                     if (!WWUtil.isEmpty(datasetPixelFormat)) {
@@ -270,7 +270,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
             }
 
             if (null != extent && extent.getDeltaLatDegrees() > 0.0d && extent.getDeltaLonDegrees() > 0.0d) {
-                this.setValue(AVKey.SECTOR, extent);
+                this.set(AVKey.SECTOR, extent);
             }
         }
         catch (Throwable t) {
@@ -317,7 +317,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
     }
 
     public Sector getSector() {
-        return (this.hasKey(AVKey.SECTOR)) ? (Sector) this.getValue(AVKey.SECTOR) : null;
+        return (this.hasKey(AVKey.SECTOR)) ? (Sector) this.get(AVKey.SECTOR) : null;
     }
 
     /**
@@ -353,7 +353,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = reqParams.getValue(AVKey.SECTOR);
+        Object o = reqParams.get(AVKey.SECTOR);
         if (!(o instanceof Sector)) {
             String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR);
             Logging.logger().severe(message);
@@ -369,29 +369,29 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
         }
 
         try {
-            int reqWidth = (Integer) reqParams.getValue(AVKey.WIDTH);
-            int reqHeight = (Integer) reqParams.getValue(AVKey.HEIGHT);
+            int reqWidth = (Integer) reqParams.get(AVKey.WIDTH);
+            int reqHeight = (Integer) reqParams.get(AVKey.HEIGHT);
 
             if (!reqParams.hasKey(AVKey.BYTE_ORDER)) {
-                reqParams.setValue(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
+                reqParams.set(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
             }
 
             // check if this Raster Server serves elevations or imagery
             if (AVKey.ELEVATION.equals(this.getStringValue(AVKey.PIXEL_FORMAT))) {
-                reqParams.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+                reqParams.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
 
                 if (!reqParams.hasKey(AVKey.DATA_TYPE)) {
-                    reqParams.setValue(AVKey.DATA_TYPE, AVKey.INT16);
+                    reqParams.set(AVKey.DATA_TYPE, AVKey.INT16);
                 }
 
                 reqRaster = new ByteBufferRaster(reqWidth, reqHeight, reqSector, reqParams);
             }
             else if (AVKey.IMAGE.equals(this.getStringValue(AVKey.PIXEL_FORMAT))) {
-                reqParams.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+                reqParams.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
                 reqRaster = new BufferedImageRaster(reqWidth, reqHeight, Transparency.TRANSLUCENT, reqSector);
             }
             else {
-                String msg = Logging.getMessage("generic.UnrecognizedSourceType", this.getValue(AVKey.PIXEL_FORMAT));
+                String msg = Logging.getMessage("generic.UnrecognizedSourceType", this.get(AVKey.PIXEL_FORMAT));
                 Logging.logger().severe(msg);
                 throw new WWRuntimeException(msg);
             }

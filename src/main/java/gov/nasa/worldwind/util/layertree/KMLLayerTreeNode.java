@@ -6,8 +6,8 @@
 package gov.nasa.worldwind.util.layertree;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.ogc.kml.*;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.tree.*;
 
@@ -70,7 +70,7 @@ public class KMLLayerTreeNode extends LayerTreeNode {
         });
 
         // Set the context of the KML document node to the root feature in the document.
-        this.setValue(AVKey.CONTEXT, kmlRoot.getFeature());
+        this.set(AVKey.CONTEXT, kmlRoot.getFeature());
     }
 
     /**

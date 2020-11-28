@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -135,27 +135,27 @@ public class GraticuleSupport {
             throw new IllegalArgumentException(message);
         }
 
-        if (params.getValue(GraticuleRenderingParams.KEY_DRAW_LINES) == null)
-            params.setValue(GraticuleRenderingParams.KEY_DRAW_LINES, Boolean.TRUE);
+        if (params.get(GraticuleRenderingParams.KEY_DRAW_LINES) == null)
+            params.set(GraticuleRenderingParams.KEY_DRAW_LINES, Boolean.TRUE);
 
-        if (params.getValue(GraticuleRenderingParams.KEY_LINE_COLOR) == null)
-            params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, Color.WHITE);
+        if (params.get(GraticuleRenderingParams.KEY_LINE_COLOR) == null)
+            params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.WHITE);
 
-        if (params.getValue(GraticuleRenderingParams.KEY_LINE_WIDTH) == null)
+        if (params.get(GraticuleRenderingParams.KEY_LINE_WIDTH) == null)
             //noinspection UnnecessaryBoxing
-            params.setValue(GraticuleRenderingParams.KEY_LINE_WIDTH, Double.valueOf(1));
+            params.set(GraticuleRenderingParams.KEY_LINE_WIDTH, Double.valueOf(1));
 
-        if (params.getValue(GraticuleRenderingParams.KEY_LINE_STYLE) == null)
-            params.setValue(GraticuleRenderingParams.KEY_LINE_STYLE, GraticuleRenderingParams.VALUE_LINE_STYLE_SOLID);
+        if (params.get(GraticuleRenderingParams.KEY_LINE_STYLE) == null)
+            params.set(GraticuleRenderingParams.KEY_LINE_STYLE, GraticuleRenderingParams.VALUE_LINE_STYLE_SOLID);
 
-        if (params.getValue(GraticuleRenderingParams.KEY_DRAW_LABELS) == null)
-            params.setValue(GraticuleRenderingParams.KEY_DRAW_LABELS, Boolean.TRUE);
+        if (params.get(GraticuleRenderingParams.KEY_DRAW_LABELS) == null)
+            params.set(GraticuleRenderingParams.KEY_DRAW_LABELS, Boolean.TRUE);
 
-        if (params.getValue(GraticuleRenderingParams.KEY_LABEL_COLOR) == null)
-            params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.WHITE);
+        if (params.get(GraticuleRenderingParams.KEY_LABEL_COLOR) == null)
+            params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.WHITE);
 
-        if (params.getValue(GraticuleRenderingParams.KEY_LABEL_FONT) == null)
-            params.setValue(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-12"));
+        if (params.get(GraticuleRenderingParams.KEY_LABEL_FONT) == null)
+            params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-12"));
 
         return params;
     }
@@ -163,7 +163,7 @@ public class GraticuleSupport {
     private void applyRenderingParams(AVList params, GeographicText text, double opacity) {
         if (params != null && text != null) {
             // Apply "label" properties to the GeographicText.
-            Object o = params.getValue(GraticuleRenderingParams.KEY_LABEL_COLOR);
+            Object o = params.get(GraticuleRenderingParams.KEY_LABEL_COLOR);
             if (o instanceof Color) {
                 Color color = applyOpacity((Color) o, opacity);
                 float[] compArray = new float[4];
@@ -173,7 +173,7 @@ public class GraticuleSupport {
                 text.setBackgroundColor(new Color(colorValue, colorValue, colorValue, color.getAlpha()));
             }
 
-            o = params.getValue(GraticuleRenderingParams.KEY_LABEL_FONT);
+            o = params.get(GraticuleRenderingParams.KEY_LABEL_FONT);
             if (o instanceof Font) {
                 text.setFont((Font) o);
             }
@@ -201,7 +201,7 @@ public class GraticuleSupport {
         attrs.setDrawOutline(true);
         if (params != null) {
             // Apply "line" properties.
-            Object o = params.getValue(GraticuleRenderingParams.KEY_LINE_COLOR);
+            Object o = params.get(GraticuleRenderingParams.KEY_LINE_COLOR);
             if (o instanceof Color) {
                 attrs.setOutlineMaterial(new Material(applyOpacity((Color) o, opacity)));
                 attrs.setOutlineOpacity(opacity);

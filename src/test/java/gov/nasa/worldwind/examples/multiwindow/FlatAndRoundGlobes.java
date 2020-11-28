@@ -9,13 +9,13 @@ package gov.nasa.worldwind.examples.multiwindow;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.Polygon;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.globes.projections.ProjectionSinusoidal;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.Earth.BMNGOneImage;
+import gov.nasa.worldwind.render.Polygon;
 import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
 
@@ -187,7 +187,7 @@ public class FlatAndRoundGlobes {
         pathPositions.add(Position.fromDegrees(28, -107, 9.0e4));
         pathPositions.add(Position.fromDegrees(28, -106, 3.0e4));
         Polygon pgon = new Polygon(pathPositions);
-        pgon.setValue(AVKey.DISPLAY_NAME, "Has a hole\nRotated -170\u00b0");
+        pgon.set(AVKey.DISPLAY_NAME, "Has a hole\nRotated -170\u00b0");
 
         pathPositions.clear();
         pathPositions.add(Position.fromDegrees(29, -106.4, 4.0e4));
@@ -208,7 +208,7 @@ public class FlatAndRoundGlobes {
         pathLocations.add(Position.fromDegrees(28, -111, 5.0e4));
         pathLocations.add(Position.fromDegrees(28, -110, 5.0e4));
         pgon = new Polygon(pathLocations);
-        pgon.setValue(AVKey.DISPLAY_NAME, "Has an image");
+        pgon.set(AVKey.DISPLAY_NAME, "Has an image");
         normalAttributes = new BasicShapeAttributes(normalAttributes);
         normalAttributes.setDrawInterior(true);
         normalAttributes.setInteriorMaterial(Material.WHITE);

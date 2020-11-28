@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.terrain;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.retrieve.*;
@@ -71,7 +71,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         BasicElevationModel.getBasicElevationModelConfigParams(domElement, params);
         wmsSetFallbacks(params);
 
-        params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder(params.getStringValue(AVKey.WMS_VERSION), params));
+        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params.getStringValue(AVKey.WMS_VERSION), params));
 
         return params;
     }
@@ -107,34 +107,34 @@ public class WMSBasicElevationModel extends BasicElevationModel {
 
         wmsSetFallbacks(params);
 
-        params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder(wmsVersion, params));
+        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(wmsVersion, params));
 
         return params;
     }
 
     protected static void wmsSetFallbacks(AVList params) {
-        if (params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
+        if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
             Angle delta = Angle.fromDegrees(20);
-            params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
+            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
         }
 
-        if (params.getValue(AVKey.TILE_WIDTH) == null)
-            params.setValue(AVKey.TILE_WIDTH, 150);
+        if (params.get(AVKey.TILE_WIDTH) == null)
+            params.set(AVKey.TILE_WIDTH, 150);
 
-        if (params.getValue(AVKey.TILE_HEIGHT) == null)
-            params.setValue(AVKey.TILE_HEIGHT, 150);
+        if (params.get(AVKey.TILE_HEIGHT) == null)
+            params.set(AVKey.TILE_HEIGHT, 150);
 
-        if (params.getValue(AVKey.FORMAT_SUFFIX) == null)
-            params.setValue(AVKey.FORMAT_SUFFIX, ".bil");
+        if (params.get(AVKey.FORMAT_SUFFIX) == null)
+            params.set(AVKey.FORMAT_SUFFIX, ".bil");
 
-        if (params.getValue(AVKey.MISSING_DATA_SIGNAL) == null)
-            params.setValue(AVKey.MISSING_DATA_SIGNAL, -9999.0d);
+        if (params.get(AVKey.MISSING_DATA_SIGNAL) == null)
+            params.set(AVKey.MISSING_DATA_SIGNAL, -9999.0d);
 
-        if (params.getValue(AVKey.NUM_LEVELS) == null)
-            params.setValue(AVKey.NUM_LEVELS, 18); // approximately 20 cm per pixel
+        if (params.get(AVKey.NUM_LEVELS) == null)
+            params.set(AVKey.NUM_LEVELS, 18); // approximately 20 cm per pixel
 
-        if (params.getValue(AVKey.NUM_EMPTY_LEVELS) == null)
-            params.setValue(AVKey.NUM_EMPTY_LEVELS, 0);
+        if (params.get(AVKey.NUM_EMPTY_LEVELS) == null)
+            params.set(AVKey.NUM_EMPTY_LEVELS, 0);
     }
 
     /**
@@ -195,28 +195,28 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         // Get the layer's extreme elevations.
         Double[] extremes = caps.getLayerExtremeElevations(names);
 
-        Double d = (Double) params.getValue(AVKey.ELEVATION_MIN);
+        Double d = (Double) params.get(AVKey.ELEVATION_MIN);
         if (d == null && extremes != null && extremes[0] != null)
-            params.setValue(AVKey.ELEVATION_MIN, extremes[0]);
+            params.set(AVKey.ELEVATION_MIN, extremes[0]);
 
-        d = (Double) params.getValue(AVKey.ELEVATION_MAX);
+        d = (Double) params.get(AVKey.ELEVATION_MAX);
         if (d == null && extremes != null && extremes[1] != null)
-            params.setValue(AVKey.ELEVATION_MAX, extremes[1]);
+            params.set(AVKey.ELEVATION_MAX, extremes[1]);
 
         // Compute the internal pixel type from the image format.
-        if (params.getValue(AVKey.DATA_TYPE) == null && params.getValue(AVKey.IMAGE_FORMAT) != null) {
-            String s = WWIO.makeDataTypeForMimeType(params.getValue(AVKey.IMAGE_FORMAT).toString());
+        if (params.get(AVKey.DATA_TYPE) == null && params.get(AVKey.IMAGE_FORMAT) != null) {
+            String s = WWIO.makeDataTypeForMimeType(params.get(AVKey.IMAGE_FORMAT).toString());
             if (s != null)
-                params.setValue(AVKey.DATA_TYPE, s);
+                params.set(AVKey.DATA_TYPE, s);
         }
 
         // Use the default data type.
-        if (params.getValue(AVKey.DATA_TYPE) == null)
-            params.setValue(AVKey.DATA_TYPE, AVKey.INT16);
+        if (params.get(AVKey.DATA_TYPE) == null)
+            params.set(AVKey.DATA_TYPE, AVKey.INT16);
 
         // Use the default byte order.
-        if (params.getValue(AVKey.BYTE_ORDER) == null)
-            params.setValue(AVKey.BYTE_ORDER, AVKey.LITTLE_ENDIAN);
+        if (params.get(AVKey.BYTE_ORDER) == null)
+            params.set(AVKey.BYTE_ORDER, AVKey.LITTLE_ENDIAN);
 
         return params;
     }
@@ -255,28 +255,28 @@ public class WMSBasicElevationModel extends BasicElevationModel {
 
         String s = rs.getStateValueAsString(context, AVKey.IMAGE_FORMAT);
         if (s != null)
-            params.setValue(AVKey.IMAGE_FORMAT, s);
+            params.set(AVKey.IMAGE_FORMAT, s);
 
         s = rs.getStateValueAsString(context, AVKey.TITLE);
         if (s != null)
-            params.setValue(AVKey.TITLE, s);
+            params.set(AVKey.TITLE, s);
 
         s = rs.getStateValueAsString(context, AVKey.DISPLAY_NAME);
         if (s != null)
-            params.setValue(AVKey.DISPLAY_NAME, s);
+            params.set(AVKey.DISPLAY_NAME, s);
 
         RestorableSupport.adjustTitleAndDisplayName(params);
 
         s = rs.getStateValueAsString(context, AVKey.LAYER_NAMES);
         if (s != null)
-            params.setValue(AVKey.LAYER_NAMES, s);
+            params.set(AVKey.LAYER_NAMES, s);
 
         s = rs.getStateValueAsString(context, AVKey.STYLE_NAMES);
         if (s != null)
-            params.setValue(AVKey.STYLE_NAMES, s);
+            params.set(AVKey.STYLE_NAMES, s);
 
         s = rs.getStateValueAsString(context, "wms.Version");
-        params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder(s, params));
+        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(s, params));
     }
 
     //**************************************************************//
@@ -381,7 +381,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         protected String URLTemplate = null;
 
         protected URLBuilder(String version, AVList params) {
-            Double d = (Double) params.getValue(AVKey.MISSING_DATA_SIGNAL);
+            Double d = (Double) params.get(AVKey.MISSING_DATA_SIGNAL);
 
             this.layerNames = params.getStringValue(AVKey.LAYER_NAMES);
             this.styleNames = params.getStringValue(AVKey.STYLE_NAMES);

@@ -229,7 +229,7 @@ public class ImportedDataPanel extends ShadedPanel {
 
         public void actionPerformed(ActionEvent e) {
             Extent extent = Sector.computeBoundingCylinder(controller.getWWd().model().getGlobe(),
-                controller.getWWd().getSceneController().getVerticalExaggeration(), this.sector);
+                controller.getWWd().sceneControl().getVerticalExaggeration(), this.sector);
 
             Angle fov = controller.getWWd().view().getFieldOfView();
             Position centerPos = new Position(this.sector.getCentroid(), 0.0d);

@@ -105,14 +105,14 @@ public class GeotiffRasterReader extends AbstractDataRasterReader {
             if (!isGeoTiff && params.hasKey(AVKey.WIDTH) && params.hasKey(AVKey.HEIGHT)) {
                 int[] size = new int[2];
 
-                size[0] = (Integer) params.getValue(AVKey.WIDTH);
-                size[1] = (Integer) params.getValue(AVKey.HEIGHT);
+                size[0] = (Integer) params.get(AVKey.WIDTH);
+                size[1] = (Integer) params.get(AVKey.HEIGHT);
 
-                params.setValue(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
+                params.set(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
 
                 WorldFile.readWorldFiles(source, params);
 
-                Object o = params.getValue(AVKey.SECTOR);
+                Object o = params.get(AVKey.SECTOR);
                 if (!(o instanceof Sector)) {
                     ImageUtil.calcBoundingBoxForUTM(params);
                 }

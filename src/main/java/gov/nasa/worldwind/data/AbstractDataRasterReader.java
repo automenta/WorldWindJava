@@ -28,7 +28,7 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
         this.mimeTypes = Arrays.copyOf(mimeTypes, mimeTypes.length);
         this.suffixes = Arrays.copyOf(suffixes, suffixes.length);
 
-        this.setValue(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_OFFLINE);
+        this.set(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_OFFLINE);
     }
 
     public AbstractDataRasterReader(String[] mimeTypes, String[] suffixes) {
@@ -146,15 +146,15 @@ public abstract class AbstractDataRasterReader extends AVListImpl implements Dat
     protected String validateMetadata(Object source, AVList params) {
         StringBuilder sb = new StringBuilder();
 
-        Object o = (params != null) ? params.getValue(AVKey.WIDTH) : null;
+        Object o = (params != null) ? params.get(AVKey.WIDTH) : null;
         if (!(o instanceof Integer))
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoSizeSpecified", source));
 
-        o = (params != null) ? params.getValue(AVKey.HEIGHT) : null;
+        o = (params != null) ? params.get(AVKey.HEIGHT) : null;
         if (!(o instanceof Integer))
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoSizeSpecified", source));
 
-        o = (params != null) ? params.getValue(AVKey.SECTOR) : null;
+        o = (params != null) ? params.get(AVKey.SECTOR) : null;
         if (!(o instanceof Sector))
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoSectorSpecified", source));
 

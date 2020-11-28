@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.LabeledPath;
@@ -334,7 +334,7 @@ public class PathsWithLabels extends ApplicationTemplate {
             layer.add(path);
             layer.add(label);
 
-            this.getWwd().model().getLayers().add(layer);
+            this.wwd().model().getLayers().add(layer);
         }
 
         protected List<Position> makePositionList(double[] src) {

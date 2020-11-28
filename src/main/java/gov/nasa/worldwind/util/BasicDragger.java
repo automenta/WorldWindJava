@@ -122,7 +122,7 @@ public class BasicDragger implements SelectListener {
             this.dragContext.setPreviousPoint(((DragSelectEvent) event).getPreviousPickPoint());
             this.dragContext.setView(this.wwd.view());
             this.dragContext.setGlobe(this.wwd.model().getGlobe());
-            this.dragContext.setSceneController(this.wwd.getSceneController());
+            this.dragContext.setSceneController(this.wwd.sceneControl());
 
             if (this.dragging) {
                 this.dragContext.setDragState(AVKey.DRAG_CHANGE);

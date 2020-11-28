@@ -6,8 +6,8 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.Renderable;
-import gov.nasa.worldwind.examples.render.airspaces.Airspace;
+import gov.nasa.worldwind.render.Renderable;
+import gov.nasa.worldwind.render.airspaces.Airspace;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.PickedObject;
 
@@ -33,10 +33,10 @@ public class DeepPicking extends Airspaces {
             this.disableBatchPicking();
 
             // Tell the scene controller to perform deep picking.
-            this.getWwd().getSceneController().setDeepPickEnabled(true);
+            this.wwd().sceneControl().setDeepPickEnabled(true);
 
             // Register a select listener to print the class names of the items under the cursor.
-            this.getWwd().addSelectListener(event -> {
+            this.wwd().addSelectListener(event -> {
                 if (event.getEventAction().equals(SelectEvent.HOVER) && event.getObjects() != null) {
                     System.out.printf("%d objects\n", event.getObjects().size());
                     if (event.getObjects().size() > 1) {
@@ -49,7 +49,7 @@ public class DeepPicking extends Airspaces {
         }
 
         protected void disableBatchPicking() {
-            for (Layer layer : this.getWwd().model().getLayers()) {
+            for (Layer layer : this.wwd().model().getLayers()) {
                 if (!layer.getName().toLowerCase().contains("airspace"))
                     continue;
 

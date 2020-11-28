@@ -683,8 +683,8 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         protected boolean markWhenUsed = false;
 
         public StoreLocation(File file, boolean isInstall) {
-            this.setValue(AVKey.FILE_STORE_LOCATION, file);
-            this.setValue(AVKey.INSTALLED, isInstall);
+            this.set(AVKey.FILE_STORE_LOCATION, file);
+            this.set(AVKey.INSTALLED, isInstall);
         }
 
         public StoreLocation(File file) {
@@ -692,21 +692,21 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         }
 
         public File getFile() {
-            Object o = this.getValue(AVKey.FILE_STORE_LOCATION);
+            Object o = this.get(AVKey.FILE_STORE_LOCATION);
             return (o instanceof File) ? (File) o : null;
         }
 
         public void setFile(File file) {
-            this.setValue(AVKey.FILE_STORE_LOCATION, file);
+            this.set(AVKey.FILE_STORE_LOCATION, file);
         }
 
         public boolean isInstall() {
-            Object o = this.getValue(AVKey.INSTALLED);
+            Object o = this.get(AVKey.INSTALLED);
             return (o instanceof Boolean) ? (Boolean) o : false;
         }
 
         public void setInstall(boolean isInstall) {
-            this.setValue(AVKey.INSTALLED, isInstall);
+            this.set(AVKey.INSTALLED, isInstall);
         }
 
         public boolean isMarkWhenUsed() {

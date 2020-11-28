@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.examples.analytics;
 
-import gov.nasa.worldwind.examples.render.Material;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.util.Logging;
 
 /**

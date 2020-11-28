@@ -9,16 +9,16 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.RenderingEvent;
-import gov.nasa.worldwind.examples.ogc.collada.ColladaRoot;
-import gov.nasa.worldwind.examples.ogc.collada.impl.ColladaController;
-import gov.nasa.worldwind.examples.ogc.kml.*;
-import gov.nasa.worldwind.examples.ogc.kml.impl.KMLController;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.airspaces.Polygon;
-import gov.nasa.worldwind.examples.render.airspaces.*;
+import gov.nasa.worldwind.layers.ogc.collada.ColladaRoot;
+import gov.nasa.worldwind.layers.ogc.collada.impl.ColladaController;
+import gov.nasa.worldwind.layers.ogc.kml.*;
+import gov.nasa.worldwind.layers.ogc.kml.impl.KMLController;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.formats.geojson.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.airspaces.Polygon;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.AbstractXMLEventParser;
 
@@ -72,7 +72,7 @@ public class ObjectAnimations extends ApplicationTemplate {
         public AppFrame() {
             super(true, true, false);
 
-            WorldWindow wwd = this.getWwd();
+            WorldWindow wwd = this.wwd();
             // Add view control panel to the layer panel
             this.vcp = new ViewControlPanel(wwd);
             //BasicFlyView flyView = new BasicFlyView();
@@ -101,7 +101,7 @@ public class ObjectAnimations extends ApplicationTemplate {
         }
 
         private void modelDisplay() throws Exception {
-            WorldWindow wwd = this.getWwd();
+            WorldWindow wwd = this.wwd();
             Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04),
                 25000.0); // DFW
             RenderableLayer layer = new RenderableLayer();
@@ -122,7 +122,7 @@ public class ObjectAnimations extends ApplicationTemplate {
         private void messageDisplay() throws Exception {
             Position eyePos = new Position(Angle.fromDegreesLatitude(39.52616886908606),
                 Angle.fromDegreesLongitude(-119.81207373509578), 6000.0); // Reno
-            WorldWindow wwd = this.getWwd();
+            WorldWindow wwd = this.wwd();
             wwd.view().setEyePosition(eyePos);
             TestParser messageParser = new TestParser();
             messageParser.parseMessages("/home/mpeterson/d/temp/aol-data");
@@ -164,7 +164,7 @@ public class ObjectAnimations extends ApplicationTemplate {
                     poly.setLocations(positions[0]);
                     poly.setAltitudes(ov.getMin_altitude().getAltitudeValue(), ov.getMax_altitude().getAltitudeValue());
                     poly.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_REFERENCE);
-                    poly.setValue(AVKey.DISPLAY_NAME, p.getCallSign());
+                    poly.set(AVKey.DISPLAY_NAME, p.getCallSign());
                     layer.add(poly);
                 }
             }
@@ -172,7 +172,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             positions.forEach((p) -> {
                 PointPlacemark pp = new PointPlacemark(p.getLLA());
                 //pp.setLabelText(callSigns.get(p.getGufi()));
-                pp.setValue(AVKey.DISPLAY_NAME, callSigns.get(p.getGufi()));
+                pp.set(AVKey.DISPLAY_NAME, callSigns.get(p.getGufi()));
                 pp.setLineEnabled(false);
                 pp.setAltitudeMode(WorldWind.ABSOLUTE);
                 pp.setEnableLabelPicking(true); // enable label picking for this placemark
@@ -189,7 +189,7 @@ public class ObjectAnimations extends ApplicationTemplate {
         }
 
         private void planesOverDFW(int nFlights) throws Exception {
-            WorldWindow wwd = this.getWwd();
+            WorldWindow wwd = this.wwd();
             Position eyePos = new Position(Angle.fromDegreesLatitude(32.897), Angle.fromDegreesLongitude(-97.04),
                 25000.0); // DFW
             wwd.view().setEyePosition(eyePos);
@@ -280,7 +280,7 @@ public class ObjectAnimations extends ApplicationTemplate {
             fpsText.setYMargin(5);
             fpsText.getAttributes().setDefaults(fpsAttrs);
             layer.add(fpsText);
-            WorldWindow wwd = this.getWwd();
+            WorldWindow wwd = this.wwd();
             wwd.addRenderingListener(event -> {
                 long now = System.currentTimeMillis();
                 if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)
@@ -340,7 +340,7 @@ public class ObjectAnimations extends ApplicationTemplate {
                 // Compose panel
                 this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-                insertBeforeCompass(getWwd(), new CrosshairLayer());
+                WorldWindow.insertBeforeCompass(wwd(), new CrosshairLayer());
 
                 // Pitch slider
                 JPanel pitchPanel = new JPanel(new GridLayout(0, 1, 5, 5));

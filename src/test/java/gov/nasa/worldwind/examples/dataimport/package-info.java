@@ -93,7 +93,7 @@
  * It's often the case that data is needed only during a current session. In this case the data should be imported but
  * not installed. The {@link gov.nasa.worldwind.examples.dataimport.ImportImagery} and {@link
  * gov.nasa.worldwind.examples.dataimport.ImportElevations} examples show how to import data and use it to create a
- * {@link gov.nasa.worldwind.examples.render.SurfaceImage} for imagery and an {@link gov.nasa.worldwind.globes.ElevationModel}
+ * {@link gov.nasa.worldwind.render.SurfaceImage} for imagery and an {@link gov.nasa.worldwind.globes.ElevationModel}
  * for elevations.</p>
  *
  * <h2>Deploying Data Import Capability</h2>

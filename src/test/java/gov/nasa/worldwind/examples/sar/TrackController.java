@@ -8,10 +8,11 @@ package gov.nasa.worldwind.examples.sar;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.view.orbit.BasicOrbitView;
 

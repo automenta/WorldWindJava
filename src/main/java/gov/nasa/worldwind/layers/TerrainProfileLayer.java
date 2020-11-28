@@ -9,7 +9,7 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.util.*;
@@ -1576,7 +1576,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
     }
 
     protected Position computeCursorPosition(DrawContext dc) {
-        Position pos = this.wwd.getCurrentPosition();
+        Position pos = this.wwd.position();
         if (pos == null && dc.getPickPoint() != null) {
             // Current pos is null, try intersection with terrain geometry
             Line ray = dc.getView().computeRayFromScreenPoint(dc.getPickPoint().x, dc.getPickPoint().y);

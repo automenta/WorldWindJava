@@ -263,7 +263,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
     }
 
     protected long estimateAverageTileSize() {
-        Long previouslyComputedSize = (Long) this.elevationModel.getValue(AVKey.AVERAGE_TILE_SIZE);
+        Long previouslyComputedSize = (Long) this.elevationModel.get(AVKey.AVERAGE_TILE_SIZE);
         if (previouslyComputedSize != null)
             return previouslyComputedSize;
 
@@ -292,7 +292,7 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
         long averageTileSize = DEFAULT_AVERAGE_FILE_SIZE;
         if (count > 0 && size > 0) {
             averageTileSize = size / count;
-            this.elevationModel.setValue(AVKey.AVERAGE_TILE_SIZE, averageTileSize);
+            this.elevationModel.set(AVKey.AVERAGE_TILE_SIZE, averageTileSize);
         }
 
         return averageTileSize;

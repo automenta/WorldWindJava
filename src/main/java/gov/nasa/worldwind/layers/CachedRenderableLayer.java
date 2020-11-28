@@ -8,9 +8,10 @@ package gov.nasa.worldwind.layers;
 
 import com.jogamp.opengl.GL2;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.PickSupport;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;

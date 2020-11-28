@@ -10,11 +10,11 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;
 
@@ -64,7 +64,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             Angle coneAzimuth = Angle.fromDegrees(205);
 
             // Initialize the high-resolution terrain class. Construct it to use 50 meter resolution elevations.
-            this.terrain = new HighResolutionTerrain(this.getWwd().model().getGlobe(), 50.0d);
+            this.terrain = new HighResolutionTerrain(this.wwd().model().getGlobe(), 50.0d);
 
             // Compute a near and far grid of positions that will serve as ray endpoints for computing terrain
             // intersections.
@@ -97,14 +97,14 @@ public class RadarVolumeExample extends ApplicationTemplate {
                     try {
                         showRadarVolume(positions, obstructionFlags, numAz, numEl);
 //                                showPositionsAndRays(positions, obstructionFlags);
-                        getWwd().redraw();
+                        wwd().redraw();
                     }
                     finally {
-                        ((Component) getWwd()).setCursor(Cursor.getDefaultCursor());
+                        ((Component) wwd()).setCursor(Cursor.getDefaultCursor());
                     }
                 });
             });
-            ((Component) this.getWwd()).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            ((Component) this.wwd()).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             thread.start();
 
             // Show the radar source as a marker.
@@ -114,7 +114,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             List<Marker> markers = new ArrayList<>();
             markerLayer.setMarkers(markers);
             markers.add(new BasicMarker(positions.get(0), markerAttributes));
-            insertAfterPlacenames(getWwd(), markerLayer);
+            WorldWindow.insertAfterPlacenames(wwd(), markerLayer);
         }
 
         List<Vec4> computeGridVertices(Position center, Angle leftAzimuth, Angle rightAzimuth, Angle lowerElevation,
@@ -296,7 +296,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             List<Vec4> transformedVertices = new ArrayList<>(vertices.size());
 
             // Create the transformation matrix that performs the transform.
-            Matrix transform = this.getWwd().model().getGlobe().computeEllipsoidalOrientationAtPosition(
+            Matrix transform = this.wwd().model().getGlobe().computeEllipsoidalOrientationAtPosition(
                 position.getLatitude(), position.getLongitude(),
                 this.terrain.getElevation(position) + position.getAltitude());
 
@@ -410,7 +410,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
         }
 
         protected boolean isBelowMinimumElevation(Position position, Vec4 cartesianOrigin) {
-            Globe globe = this.getWwd().model().getGlobe();
+            Globe globe = this.wwd().model().getGlobe();
 
             Vec4 cartesianPosition = globe.computeEllipsoidalPointFromPosition(position);
             Angle angle = cartesianOrigin.angleBetween3(cartesianPosition.subtract3(cartesianOrigin));
@@ -423,7 +423,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
 
             List<Position> positions = new ArrayList<>(vertices.size());
 
-            Globe globe = this.getWwd().model().getGlobe();
+            Globe globe = this.wwd().model().getGlobe();
 
             for (Vec4 vertex : vertices) {
                 positions.add(globe.computePositionFromEllipsoidalPoint(vertex));
@@ -464,7 +464,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
             path.setAttributes(pathAttributes);
             layer.add(path);
 
-            insertAfterPlacenames(getWwd(), layer);
+            WorldWindow.insertAfterPlacenames(wwd(), layer);
         }
 
         void showPositionsAndRays(List<Position> positions, int[] obstructionFlags) {
@@ -495,13 +495,13 @@ public class RadarVolumeExample extends ApplicationTemplate {
                     String msg = obstructionFlag == RadarVolume.NO_OBSTRUCTION ? "None"
                         : obstructionFlag == RadarVolume.EXTERNAL_OBSTRUCTION ? "External"
                             : obstructionFlag == RadarVolume.INTERNAL_OBSTRUCTION ? "Internal" : "UNKNOWN";
-                    path.setValue(AVKey.DISPLAY_NAME, msg);
+                    path.set(AVKey.DISPLAY_NAME, msg);
                 }
                 lineLayer.add(path);
             }
 
-            insertAfterPlacenames(getWwd(), markerLayer);
-            insertAfterPlacenames(getWwd(), lineLayer);
+            WorldWindow.insertAfterPlacenames(wwd(), markerLayer);
+            WorldWindow.insertAfterPlacenames(wwd(), lineLayer);
         }
     }
 

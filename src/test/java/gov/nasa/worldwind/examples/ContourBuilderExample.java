@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.analytics.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.*;
@@ -51,13 +51,13 @@ public class ContourBuilderExample extends ApplicationTemplate {
             // interpolates the colors between array points.
             RenderableLayer arrayLayer = new RenderableLayer();
             arrayLayer.setName("Rectangular Array");
-            this.getWwd().model().getLayers().add(arrayLayer);
+            this.wwd().model().getLayers().add(arrayLayer);
             this.addRectangularArrayShapes(arrayLayer);
 
             // Create a layer to group the contour line shapes.
             RenderableLayer contourLayer = new RenderableLayer();
             contourLayer.setName("Contour Lines");
-            this.getWwd().model().getLayers().add(contourLayer);
+            this.wwd().model().getLayers().add(contourLayer);
 
             // Create a ContourBuilder with the rectangular array of numeric values as a one-dimensional array of
             // floating point numbers. The contour builder assumes that the array is organized in row-major order, with
@@ -77,7 +77,7 @@ public class ContourBuilderExample extends ApplicationTemplate {
             this.arrayWidth = 60;
             this.arrayHeight = 60;
             this.arrayValues = ExampleUtil.readCommaDelimitedNumbers(
-                "gov/nasa/worldwindx/examples/data/GridValues01_60x60.csv");
+                "gov/nasa/worldwind/examples/data/GridValues01_60x60.csv");
         }
 
         protected void addContourShapes(Iterable<List<Position>> contourList, double value, RenderableLayer layer) {
@@ -92,7 +92,7 @@ public class ContourBuilderExample extends ApplicationTemplate {
                 Path path = new Path(positions);
                 path.setAttributes(attrs);
                 path.setSurfacePath(true);
-                path.setValue(AVKey.DISPLAY_NAME, text);
+                path.set(AVKey.DISPLAY_NAME, text);
                 layer.add(path);
             }
         }

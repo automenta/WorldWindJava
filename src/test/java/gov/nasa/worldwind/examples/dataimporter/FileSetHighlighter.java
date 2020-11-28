@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples.dataimporter;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.util.ExampleUtil;
@@ -75,7 +75,7 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
 
     protected void unHighlightSelectedSets() {
         for (FileSet fileSet : this.currentlyHighlightedSets) {
-            Layer layer = (Layer) fileSet.getValue(AVKey.LAYER);
+            Layer layer = (Layer) fileSet.get(AVKey.LAYER);
             if (layer != null) {
                 this.wwd.model().getLayers().remove(layer);
             }
@@ -88,10 +88,10 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         Sector overallSector = null;
 
         for (FileSet fileSet : fileSets) {
-            Layer layer = (Layer) fileSet.getValue(AVKey.LAYER);
+            Layer layer = (Layer) fileSet.get(AVKey.LAYER);
             if (layer == null) {
                 layer = createSectorLayer(fileSet);
-                layer.setValue("FileSet", fileSet);
+                layer.set("FileSet", fileSet);
             }
 
             this.currentlyHighlightedSets.add(fileSet);
@@ -107,9 +107,9 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
 
     protected Layer createSectorLayer(FileSet fileSet) {
         RenderableLayer layer = new RenderableLayer();
-        fileSet.setValue(AVKey.LAYER, layer);
-        layer.setValue(AVKey.IGNORE, true);
-        layer.setValue(DataInstaller.PREVIEW_LAYER, true);
+        fileSet.set(AVKey.LAYER, layer);
+        layer.set(AVKey.IGNORE, true);
+        layer.set(DataInstaller.PREVIEW_LAYER, true);
 
         this.populateLayer(fileSet, layer);
 
@@ -158,7 +158,7 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
         if (!(event.getTopObject() instanceof Path))
             return;
 
-        FileSet fileSet = (FileSet) event.getTopPickedObject().getParentLayer().getValue("FileSet");
+        FileSet fileSet = (FileSet) event.getTopPickedObject().getParentLayer().get("FileSet");
         if (fileSet == null)
             return;
 
@@ -171,10 +171,10 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
             fileSet.removePropertyChangeListener(AVKey.IMAGE, this); // notification no longer needed
 
             // Add a surface image for the preview image to the file set's layer.
-            Sector sector = (Sector) fileSet.getValue(AVKey.SECTOR);
+            Sector sector = (Sector) fileSet.get(AVKey.SECTOR);
             Renderable surfaceImage = new SurfaceImage(image, sector);
 
-            RenderableLayer layer = (RenderableLayer) fileSet.getValue(AVKey.LAYER);
+            RenderableLayer layer = (RenderableLayer) fileSet.get(AVKey.LAYER);
             layer.add(surfaceImage);
 
             this.wwd.redraw();

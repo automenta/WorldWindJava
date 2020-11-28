@@ -31,7 +31,7 @@ public class DashboardController implements MouseListener, Disposable {
 
         this.wwd = wwd;
         this.component = component;
-        wwd.getInputHandler().addMouseListener(this);
+        wwd.input().addMouseListener(this);
     }
 
     @Override
@@ -41,8 +41,8 @@ public class DashboardController implements MouseListener, Disposable {
             this.dialog = null;
         }
 
-        if (this.wwd.getInputHandler() != null) {
-            this.wwd.getInputHandler().removeMouseListener(this);
+        if (this.wwd.input() != null) {
+            this.wwd.input().removeMouseListener(this);
         }
         this.wwd = null;
 

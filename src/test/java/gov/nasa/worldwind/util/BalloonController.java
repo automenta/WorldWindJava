@@ -10,12 +10,12 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.kml.KMLViewController;
-import gov.nasa.worldwind.examples.ogc.kml.*;
-import gov.nasa.worldwind.examples.ogc.kml.impl.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWTimeoutException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.layers.ogc.kml.*;
+import gov.nasa.worldwind.layers.ogc.kml.impl.*;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.terrain.Terrain;
 
@@ -108,8 +108,8 @@ public class BalloonController extends MouseAdapter implements SelectListener {
 
         this.wwd = wwd;
         this.wwd.addSelectListener(this);
-        this.wwd.getInputHandler().addMouseListener(this);
-        this.wwd.getInputHandler().addMouseMotionListener(this);
+        this.wwd.input().addMouseListener(this);
+        this.wwd.input().addMouseMotionListener(this);
     }
 
     /**
@@ -149,7 +149,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // can be turned off if the user clicks on the terrain.
         try {
             if (this.isBalloonTrigger(e)) {
-                PickedObjectList pickedObjects = this.wwd.getObjectsAtCurrentPosition();
+                PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
                 if (pickedObjects == null || pickedObjects.getTopPickedObject() == null) {
                     this.hideBalloon();
                     return;
@@ -190,7 +190,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         if (e == null || e.isConsumed())
             return;
 
-        PickedObjectList list = this.wwd.getObjectsAtCurrentPosition();
+        PickedObjectList list = this.wwd.objectsAtPosition();
         PickedObject pickedObject = list != null ? list.getTopPickedObject() : null;
 
         // Handle balloon resize events. Create a resize controller when the mouse enters the resize area.
@@ -226,7 +226,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
             // resize operation.
             if (event.isDragEnd() && this.resizeController != null && !this.resizeController.isResizing()) {
                 PickedObject po;
-                PickedObjectList list = this.wwd.getObjectsAtCurrentPosition();
+                PickedObjectList list = this.wwd.objectsAtPosition();
                 po = list != null ? list.getTopPickedObject() : null;
 
                 if (!this.isResizeControl(po)) {
@@ -290,11 +290,11 @@ public class BalloonController extends MouseAdapter implements SelectListener {
     protected KMLAbstractFeature getContext(PickedObject pickedObject) {
         Object topObject = pickedObject.getObject();
 
-        Object context = pickedObject.getValue(AVKey.CONTEXT);
+        Object context = pickedObject.get(AVKey.CONTEXT);
 
         // If there was no context in the PickedObject, look for it in the top user object.
         if (context == null && topObject instanceof AVList) {
-            context = ((AVList) topObject).getValue(AVKey.CONTEXT);
+            context = ((AVList) topObject).get(AVKey.CONTEXT);
         }
 
         if (context instanceof KMLAbstractFeature)
@@ -680,7 +680,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // Look for a KMLAbstractFeature context. If the top picked object is part of a KML feature, the
         // feature will determine the balloon.
         if (pickedObject.hasKey(AVKey.CONTEXT)) {
-            Object contextObj = pickedObject.getValue(AVKey.CONTEXT);
+            Object contextObj = pickedObject.get(AVKey.CONTEXT);
             if (contextObj instanceof KMLAbstractFeature) {
                 KMLAbstractFeature feature = (KMLAbstractFeature) contextObj;
                 balloonObj = feature.getBalloon();
@@ -694,7 +694,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // If we didn't find a balloon on the KML feature, look for a balloon in the AVList
         if (balloonObj == null && topObject instanceof AVList) {
             AVList avList = (AVList) topObject;
-            balloonObj = avList.getValue(AVKey.BALLOON);
+            balloonObj = avList.get(AVKey.BALLOON);
         }
 
         if (balloonObj instanceof Balloon)
@@ -1011,7 +1011,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
         // Fall back to a terrain intersection if we still don't have a position.
         if (position == null) {
             Line ray = this.wwd.view().computeRayFromScreenPoint(pickPoint.x, pickPoint.y);
-            Intersection[] inter = this.wwd.getSceneController().getDrawContext().getSurfaceGeometry().intersect(ray);
+            Intersection[] inter = this.wwd.sceneControl().getDrawContext().getSurfaceGeometry().intersect(ray);
             if (inter != null && inter.length > 0) {
                 position = this.wwd.model().getGlobe().computePositionFromPoint(inter[0].getIntersectionPoint());
             }
@@ -1057,7 +1057,7 @@ public class BalloonController extends MouseAdapter implements SelectListener {
 //        {
         // Compute the intersection using whatever terrain is available. This calculation does not need to be very
         // precise, it just needs to place the balloon close to the shape.
-        Terrain terrain = this.wwd.getSceneController().getDrawContext().getTerrain();
+        Terrain terrain = this.wwd.sceneControl().getDrawContext().getTerrain();
 
         // Compute a line through the pick point.
         Line line = this.wwd.view().computeRayFromScreenPoint(screenPoint.x, screenPoint.y);

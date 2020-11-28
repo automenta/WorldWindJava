@@ -76,7 +76,7 @@ public class LocalRasterServerRetriever extends WWObjectImpl implements Retrieve
     }
 
     public String getContentType() {
-        Object o = this.getValue(AVKey.IMAGE_FORMAT);
+        Object o = this.get(AVKey.IMAGE_FORMAT);
         return (WWUtil.isEmpty(o)) ? null : (String) o;
     }
 

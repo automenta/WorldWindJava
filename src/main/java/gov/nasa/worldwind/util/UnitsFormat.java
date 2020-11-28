@@ -208,7 +208,7 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        this.setValue(labelName, label);
+        this.set(labelName, label);
     }
 
     /**
@@ -250,7 +250,7 @@ public class UnitsFormat extends AVListImpl {
             throw new IllegalArgumentException(msg);
         }
 
-        this.setValue(formatName, format);
+        this.set(formatName, format);
     }
 
     /**

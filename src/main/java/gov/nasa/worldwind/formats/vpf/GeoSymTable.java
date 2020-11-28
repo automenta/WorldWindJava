@@ -35,7 +35,7 @@ public class GeoSymTable {
             if (record == null)
                 continue;
 
-            Object o = record.getValue(columnName);
+            Object o = record.get(columnName);
             if ((o == null && !acceptNullValue) || (o != null && !o.equals(value))) {
                 iter.remove();
             }
@@ -54,7 +54,7 @@ public class GeoSymTable {
             if (record == null)
                 continue;
 
-            Object o = record.getValue(columnName);
+            Object o = record.get(columnName);
             if (o == null || o instanceof String) {
                 String s = (String) o;
                 if (s == null || s.isEmpty()) {

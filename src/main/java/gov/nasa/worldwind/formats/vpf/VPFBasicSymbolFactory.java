@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.formats.vpf;
 
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.*;
 
@@ -455,7 +455,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
             return null;
         }
 
-        Object o = featureAttributes.getValue(attr.getOrientationAttributeName());
+        Object o = featureAttributes.get(attr.getOrientationAttributeName());
         if (o instanceof Number) {
             double d = ((Number) o).doubleValue();
             return Angle.fromDegrees(d);

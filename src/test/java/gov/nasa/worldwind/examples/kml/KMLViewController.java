@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.examples.kml;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.examples.ogc.kml.*;
-import gov.nasa.worldwind.examples.ogc.kml.impl.KMLUtil;
+import gov.nasa.worldwind.layers.ogc.kml.*;
+import gov.nasa.worldwind.layers.ogc.kml.impl.KMLUtil;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;
@@ -211,7 +211,7 @@ public abstract class KMLViewController {
             // sector is visible.
             Sector sector = Sector.boundingSector(positions);
             Globe globe = view.getGlobe();
-            double ve = this.wwd.getSceneController().getVerticalExaggeration();
+            double ve = this.wwd.sceneControl().getVerticalExaggeration();
 
             // Find the highest point in the geometry. Make sure that our bounding cylinder encloses this point.
             double maxAltitude = this.findMaxAltitude(positions);

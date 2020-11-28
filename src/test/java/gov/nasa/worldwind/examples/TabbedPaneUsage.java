@@ -7,10 +7,10 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
 
@@ -114,7 +114,7 @@ public class TabbedPaneUsage {
             layer.setKeepSeparated(false);
             layer.setElevation(1000.0d);
             layer.setMarkers(markers);
-            ApplicationTemplate.insertBeforePlacenames(this.wwd, layer);
+            WorldWindow.insertBeforePlacenames(this.wwd, layer);
         }
 
         protected void addShapes() {
@@ -135,7 +135,7 @@ public class TabbedPaneUsage {
             cone3.setAltitudeMode(WorldWind.ABSOLUTE);
             cone3.setAttributes(attrs);
             cone3.setVisible(true);
-            cone3.setValue(AVKey.DISPLAY_NAME, "Cone with equal axes, ABSOLUTE altitude mode");
+            cone3.set(AVKey.DISPLAY_NAME, "Cone with equal axes, ABSOLUTE altitude mode");
             layer.add(cone3);
 
             // Cone with equal axes, RELATIVE_TO_GROUND
@@ -143,10 +143,10 @@ public class TabbedPaneUsage {
             cone4.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cone4.setAttributes(attrs);
             cone4.setVisible(true);
-            cone4.setValue(AVKey.DISPLAY_NAME, "Cone with equal axes, RELATIVE_TO_GROUND altitude mode");
+            cone4.set(AVKey.DISPLAY_NAME, "Cone with equal axes, RELATIVE_TO_GROUND altitude mode");
             layer.add(cone4);
 
-            ApplicationTemplate.insertBeforePlacenames(this.wwd, layer);
+            WorldWindow.insertBeforePlacenames(this.wwd, layer);
         }
     }
 }

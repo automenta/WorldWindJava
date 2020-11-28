@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples.shapebuilder;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.ShapeUtils;
 
@@ -45,7 +45,7 @@ public class BoxEditor extends RigidShapeEditor {
             RigidShape controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, SCALE_EAST_ACTION);
+            controlPoint.set(AVKey.ACTION, SCALE_EAST_ACTION);
             this.controlPoints.add(controlPoint);
 
             Path rod = new Path(refPos, vertexPosition);
@@ -58,7 +58,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, SCALE_NORTH_ACTION);
+            controlPoint.set(AVKey.ACTION, SCALE_NORTH_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -71,7 +71,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, SCALE_UP_ACTION);
+            controlPoint.set(AVKey.ACTION, SCALE_UP_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -84,7 +84,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, SCALE_WEST_ACTION);
+            controlPoint.set(AVKey.ACTION, SCALE_WEST_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -97,7 +97,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, SCALE_SOUTH_ACTION);
+            controlPoint.set(AVKey.ACTION, SCALE_SOUTH_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -110,7 +110,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(vertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.scaleControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, SCALE_DOWN_ACTION);
+            controlPoint.set(AVKey.ACTION, SCALE_DOWN_ACTION);
             this.controlPoints.add(controlPoint);
 
             rod = new Path(refPos, vertexPosition);
@@ -198,7 +198,7 @@ public class BoxEditor extends RigidShapeEditor {
             RigidShape controlPoint = new Ellipsoid(ULvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, TEXTURE_UPPER_LEFT_ACTION);
+            controlPoint.set(AVKey.ACTION, TEXTURE_UPPER_LEFT_ACTION);
             this.controlPoints.add(controlPoint);                                   // upper left
 
             vert = Matrix.transformBy3(matrix, URight.getX(), URight.getY(), URight.getZ()).add3(refPt);
@@ -206,7 +206,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(URvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, TEXTURE_UPPER_RIGHT_ACTION);
+            controlPoint.set(AVKey.ACTION, TEXTURE_UPPER_RIGHT_ACTION);
             this.controlPoints.add(controlPoint);                                   // upper right
 
             vert = Matrix.transformBy3(matrix, LLeft.getX(), LLeft.getY(), LLeft.getZ()).add3(refPt);
@@ -214,7 +214,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(LLvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, TEXTURE_LOWER_LEFT_ACTION);
+            controlPoint.set(AVKey.ACTION, TEXTURE_LOWER_LEFT_ACTION);
             this.controlPoints.add(controlPoint);                                   // lower left
 
             vert = Matrix.transformBy3(matrix, LRight.getX(), LRight.getY(), LRight.getZ()).add3(refPt);
@@ -222,7 +222,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(LRvertexPosition, radius, radius, radius);
             controlPoint.setAttributes(this.textureControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, TEXTURE_LOWER_RIGHT_ACTION);
+            controlPoint.set(AVKey.ACTION, TEXTURE_LOWER_RIGHT_ACTION);
             this.controlPoints.add(controlPoint);                                   // lower right
 
             // side scaling control points
@@ -231,7 +231,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, TEXTURE_SCALE_RIGHT_ACTION);
+            controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_RIGHT_ACTION);
             this.controlPoints.add(controlPoint);                                   // right
 
             vert = Matrix.transformBy3(matrix, left.getX(), left.getY(), left.getZ()).add3(refPt);
@@ -239,7 +239,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, TEXTURE_SCALE_LEFT_ACTION);
+            controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_LEFT_ACTION);
             this.controlPoints.add(controlPoint);                                   // left
 
             vert = Matrix.transformBy3(matrix, top.getX(), top.getY(), top.getZ()).add3(refPt);
@@ -247,7 +247,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, TEXTURE_SCALE_UP_ACTION);
+            controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_UP_ACTION);
             this.controlPoints.add(controlPoint);                                   // top
 
             vert = Matrix.transformBy3(matrix, bottom.getX(), bottom.getY(), bottom.getZ()).add3(refPt);
@@ -255,7 +255,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, TEXTURE_SCALE_DOWN_ACTION);
+            controlPoint.set(AVKey.ACTION, TEXTURE_SCALE_DOWN_ACTION);
             this.controlPoints.add(controlPoint);                                   // bottom
 
             vert = Matrix.transformBy3(matrix, center.getX(), center.getY(), center.getZ()).add3(refPt);
@@ -263,7 +263,7 @@ public class BoxEditor extends RigidShapeEditor {
             controlPoint = new Ellipsoid(pos, radius, radius, radius);
             controlPoint.setAttributes(this.radiusControlAttributes);
             controlPoint.setAltitudeMode(this.getAltitudeMode());
-            controlPoint.setValue(AVKey.ACTION, TEXTURE_MOVE_ACTION);
+            controlPoint.set(AVKey.ACTION, TEXTURE_MOVE_ACTION);
             //this.controlPoints.add(controlPoint);                                   // center
 
             Path rod = new Path(ULvertexPosition, URvertexPosition);
@@ -479,7 +479,7 @@ public class BoxEditor extends RigidShapeEditor {
         double scale = ShapeUtils.getViewportScaleFactor(wwd);
 
         Matrix renderMatrix = this.shape.computeRenderMatrix(this.wwd.model().getGlobe(),
-            this.wwd.getSceneController().getVerticalExaggeration());
+            this.wwd.sceneControl().getVerticalExaggeration());
 
         Position referencePos = this.shape.getReferencePosition();
         if (referencePos == null)
@@ -537,7 +537,7 @@ public class BoxEditor extends RigidShapeEditor {
         Vec4 bottomPoint = Matrix.transformBy3(renderMatrix, 0, 0, -1);
 
         Matrix newRenderMatrix = this.shape.computeRenderMatrix(this.wwd.model().getGlobe(),
-            this.wwd.getSceneController().getVerticalExaggeration());
+            this.wwd.sceneControl().getVerticalExaggeration());
         Vec4 newBottomPoint = Matrix.transformBy3(newRenderMatrix, 0, 0, -1);
 
         // compute the points change in location and subtract from the previous referencePoint
@@ -555,7 +555,7 @@ public class BoxEditor extends RigidShapeEditor {
         double scale = ShapeUtils.getViewportScaleFactor(wwd);
 
         Matrix renderMatrix = this.shape.computeRenderMatrix(this.wwd.model().getGlobe(),
-            this.wwd.getSceneController().getVerticalExaggeration());
+            this.wwd.sceneControl().getVerticalExaggeration());
 
         Position referencePos = this.shape.getReferencePosition();
         if (referencePos == null)
@@ -613,7 +613,7 @@ public class BoxEditor extends RigidShapeEditor {
         Vec4 bottomPoint = Matrix.transformBy3(renderMatrix, 0, 0, -1);
 
         Matrix newRenderMatrix = this.shape.computeRenderMatrix(this.wwd.model().getGlobe(),
-            this.wwd.getSceneController().getVerticalExaggeration());
+            this.wwd.sceneControl().getVerticalExaggeration());
         Vec4 newBottomPoint = Matrix.transformBy3(newRenderMatrix, 0, 0, -1);
 
         // compute the points change in location and subtract from the previous referencePoint
@@ -661,7 +661,7 @@ public class BoxEditor extends RigidShapeEditor {
         }
 
         Matrix inverseRenderMatrix = this.shape.computeRenderMatrixInverse(this.wwd.model().getGlobe(),
-            this.wwd.getSceneController().getVerticalExaggeration());
+            this.wwd.sceneControl().getVerticalExaggeration());
 
         // create rays from mouse position (current and previous)
         Line screenRay = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
@@ -742,7 +742,7 @@ public class BoxEditor extends RigidShapeEditor {
         }
 
         Matrix inverseRenderMatrix = this.shape.computeRenderMatrixInverse(this.wwd.model().getGlobe(),
-            this.wwd.getSceneController().getVerticalExaggeration());
+            this.wwd.sceneControl().getVerticalExaggeration());
 
         // create rays from mouse position (current and previous)
         Line screenRay = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
@@ -857,7 +857,7 @@ public class BoxEditor extends RigidShapeEditor {
         }
 
         Matrix inverseRenderMatrix = this.shape.computeRenderMatrixInverse(this.wwd.model().getGlobe(),
-            this.wwd.getSceneController().getVerticalExaggeration());
+            this.wwd.sceneControl().getVerticalExaggeration());
 
         // create rays from mouse position (current and previous)
         Line screenRay = this.wwd.view().computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());

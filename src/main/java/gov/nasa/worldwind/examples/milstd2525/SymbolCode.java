@@ -134,16 +134,16 @@ public class SymbolCode extends AVListImpl {
             // The second character is either unused or indicates the symbol's echelon.
 
             if (SymbologyConstants.ECHELON_ALL.contains(uppercaseSecondChar))
-                params.setValue(SymbologyConstants.ECHELON, secondChar);
+                params.set(SymbologyConstants.ECHELON, secondChar);
 
             if (SymbologyConstants.MODIFIER_CODE_ALL_HEADQUARTERS.contains(uppercaseFirstChar))
-                params.setValue(SymbologyConstants.HEADQUARTERS, Boolean.TRUE);
+                params.set(SymbologyConstants.HEADQUARTERS, Boolean.TRUE);
 
             if (SymbologyConstants.MODIFIER_CODE_ALL_TASK_FORCE.contains(uppercaseFirstChar))
-                params.setValue(SymbologyConstants.TASK_FORCE, Boolean.TRUE);
+                params.set(SymbologyConstants.TASK_FORCE, Boolean.TRUE);
 
             if (SymbologyConstants.MODIFIER_CODE_ALL_FEINT_DUMMY.contains(uppercaseFirstChar))
-                params.setValue(SymbologyConstants.FEINT_DUMMY, Boolean.TRUE);
+                params.set(SymbologyConstants.FEINT_DUMMY, Boolean.TRUE);
         }
         else if (SymbologyConstants.INSTALLATION_ALL.contains(uppercaseCode)) {
             // The symbol modifier code indicates an installation modifier. Currently, this must either be a normal
@@ -151,25 +151,25 @@ public class SymbolCode extends AVListImpl {
             // installation is a feint/dummy, we check for this case and set the FEINT_DUMMY modifier key to TRUE. This
             // provides a consistent modifier key for feint/dummy status across for units/equipment and installations.
 
-            params.setValue(SymbologyConstants.INSTALLATION, code);
+            params.set(SymbologyConstants.INSTALLATION, code);
 
             if (SymbologyConstants.INSTALLATION_FEINT_DUMMY.equalsIgnoreCase(code))
-                params.setValue(SymbologyConstants.FEINT_DUMMY, Boolean.TRUE);
+                params.set(SymbologyConstants.FEINT_DUMMY, Boolean.TRUE);
         }
         else if (SymbologyConstants.MOBILITY_ALL.contains(uppercaseCode)) {
             // The symbol modifier code indicates an equipment mobility modifier.
-            params.setValue(SymbologyConstants.MOBILITY, code);
+            params.set(SymbologyConstants.MOBILITY, code);
         }
         else if (SymbologyConstants.AUXILIARY_EQUIPMENT_ALL.contains(uppercaseCode)) {
             // The symbol modifier code indicates an auxiliary equipment modifier. Currently, this is limited to the
             // towed sonar array modifier.
-            params.setValue(SymbologyConstants.AUXILIARY_EQUIPMENT, code);
+            params.set(SymbologyConstants.AUXILIARY_EQUIPMENT, code);
         }
         else if (SymbologyConstants.OPERATIONAL_CONDITION_ALL.contains(uppercaseCode)) {
-            params.setValue(SymbologyConstants.OPERATIONAL_CONDITION, code);
+            params.set(SymbologyConstants.OPERATIONAL_CONDITION, code);
         }
         else if (SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_ALL.contains(uppercaseCode)) {
-            params.setValue(SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE, code);
+            params.set(SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE, code);
         }
 
         return params;
@@ -182,7 +182,7 @@ public class SymbolCode extends AVListImpl {
         if (modifiers == null || modifierKey == null)
             return null;
 
-        Object modifierValue = modifiers.getValue(modifierKey);
+        Object modifierValue = modifiers.get(modifierKey);
         String uppercaseValue = modifierValue != null ? modifierValue.toString().toUpperCase() : null;
 
         if (SymbologyConstants.ECHELON.equalsIgnoreCase(modifierKey)
@@ -190,7 +190,7 @@ public class SymbolCode extends AVListImpl {
             return UNUSED_POSITION_CODE + uppercaseValue;
         }
         else if (SymbologyConstants.TASK_FORCE.equalsIgnoreCase(modifierKey) && Boolean.TRUE.equals(modifierValue)) {
-            Object echelonValue = modifiers.getValue(SymbologyConstants.ECHELON);
+            Object echelonValue = modifiers.get(SymbologyConstants.ECHELON);
             if (echelonValue != null && SymbologyConstants.ECHELON_ALL.contains(echelonValue.toString().toUpperCase()))
                 return SymbologyConstants.MODIFIER_CODE_TASK_FORCE + echelonValue.toString().toUpperCase();
             else
@@ -303,7 +303,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Coding Scheme field. May be <code>null</code>.
      */
     public void setScheme(String value) {
-        this.setValue(SymbologyConstants.SCHEME, value);
+        this.set(SymbologyConstants.SCHEME, value);
     }
 
     /**
@@ -329,7 +329,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Standard Identity field. May be <code>null</code>.
      */
     public void setStandardIdentity(String value) {
-        this.setValue(SymbologyConstants.STANDARD_IDENTITY, value);
+        this.set(SymbologyConstants.STANDARD_IDENTITY, value);
     }
 
     /**
@@ -352,7 +352,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Battle Dimension field. May be <code>null</code>.
      */
     public void setBattleDimension(String value) {
-        this.setValue(SymbologyConstants.BATTLE_DIMENSION, value);
+        this.set(SymbologyConstants.BATTLE_DIMENSION, value);
     }
 
     /**
@@ -386,7 +386,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Category field. May be <code>null</code>.
      */
     public void setCategory(String value) {
-        this.setValue(SymbologyConstants.CATEGORY, value);
+        this.set(SymbologyConstants.CATEGORY, value);
     }
 
     /**
@@ -418,7 +418,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Status/Operational Condition field. May be <code>null</code>.
      */
     public void setStatus(String value) {
-        this.setValue(SymbologyConstants.STATUS, value);
+        this.set(SymbologyConstants.STATUS, value);
     }
 
     /**
@@ -443,7 +443,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Function ID field. May be <code>null</code>.
      */
     public void setFunctionId(String value) {
-        this.setValue(SymbologyConstants.FUNCTION_ID, value);
+        this.set(SymbologyConstants.FUNCTION_ID, value);
     }
 
     /**
@@ -469,7 +469,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Symbol Modifier field. May be <code>null</code>.
      */
     public void setSymbolModifier(String value) {
-        this.setValue(SymbologyConstants.SYMBOL_MODIFIER, value);
+        this.set(SymbologyConstants.SYMBOL_MODIFIER, value);
     }
 
     /**
@@ -494,7 +494,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Echelon field. May be <code>null</code>.
      */
     public void setEchelon(String value) {
-        this.setValue(SymbologyConstants.ECHELON, value);
+        this.set(SymbologyConstants.ECHELON, value);
     }
 
     /**
@@ -515,7 +515,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Country Code field. May be <code>null</code>.
      */
     public void setCountryCode(String value) {
-        this.setValue(SymbologyConstants.COUNTRY_CODE, value);
+        this.set(SymbologyConstants.COUNTRY_CODE, value);
     }
 
     /**
@@ -544,7 +544,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Order of Battle field. May be <code>null</code>.
      */
     public void setOrderOfBattle(String value) {
-        this.setValue(SymbologyConstants.ORDER_OF_BATTLE, value);
+        this.set(SymbologyConstants.ORDER_OF_BATTLE, value);
     }
 
     /**
@@ -564,7 +564,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Static/Dynamic field. May be <code>null</code>.
      */
     public void setStaticDynamic(String value) {
-        this.setValue(SymbologyConstants.STATIC_DYNAMIC, value);
+        this.set(SymbologyConstants.STATIC_DYNAMIC, value);
     }
 
     /**
@@ -584,7 +584,7 @@ public class SymbolCode extends AVListImpl {
      * @param value the new value for the Graphic Type field. May be <code>null</code>.
      */
     public void setGraphicType(String value) {
-        this.setValue(SymbologyConstants.GRAPHIC_TYPE, value);
+        this.set(SymbologyConstants.GRAPHIC_TYPE, value);
     }
 
     /**

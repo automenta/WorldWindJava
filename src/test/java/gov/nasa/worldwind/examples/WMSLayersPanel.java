@@ -7,9 +7,9 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ogc.wms.*;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.terrain.CompoundElevationModel;
 import gov.nasa.worldwind.util.WWUtil;
 
@@ -58,9 +58,9 @@ public class WMSLayersPanel extends JPanel {
         AVList configParams = params.copy(); // Copy to insulate changes from the caller.
 
         // Some wms servers are slow, so increase the timeouts and limits used by WorldWind's retrievers.
-        configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, 30000);
-        configParams.setValue(AVKey.URL_READ_TIMEOUT, 30000);
-        configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
+        configParams.set(AVKey.URL_CONNECT_TIMEOUT, 30000);
+        configParams.set(AVKey.URL_READ_TIMEOUT, 30000);
+        configParams.set(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
 
         try {
             String factoryKey = getFactoryKeyForCapabilities(caps);
@@ -174,14 +174,14 @@ public class WMSLayersPanel extends JPanel {
         LayerInfo linfo = new LayerInfo();
         linfo.caps = caps;
         linfo.params = new AVListImpl();
-        linfo.params.setValue(AVKey.LAYER_NAMES, layerCaps.getName());
+        linfo.params.set(AVKey.LAYER_NAMES, layerCaps.getName());
         if (style != null)
-            linfo.params.setValue(AVKey.STYLE_NAMES, style.getName());
+            linfo.params.set(AVKey.STYLE_NAMES, style.getName());
         String abs = layerCaps.getLayerAbstract();
         if (!WWUtil.isEmpty(abs))
-            linfo.params.setValue(AVKey.LAYER_ABSTRACT, abs);
+            linfo.params.set(AVKey.LAYER_ABSTRACT, abs);
 
-        linfo.params.setValue(AVKey.DISPLAY_NAME, makeTitle(caps, linfo));
+        linfo.params.set(AVKey.DISPLAY_NAME, makeTitle(caps, linfo));
 
         return linfo;
     }
@@ -231,7 +231,7 @@ public class WMSLayersPanel extends JPanel {
 
             if (enable) {
                 if (!layers.contains(layer)) {
-                    ApplicationTemplate.insertBeforePlacenames(this.wwd, layer);
+                    WorldWindow.insertBeforePlacenames(this.wwd, layer);
                     this.firePropertyChange("LayersPanelUpdated", null, layer);
                 }
             }

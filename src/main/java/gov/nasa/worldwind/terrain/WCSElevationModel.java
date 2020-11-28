@@ -7,10 +7,10 @@
 package gov.nasa.worldwind.terrain;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ogc.gml.GMLRectifiedGrid;
-import gov.nasa.worldwind.examples.ogc.wcs.wcs100.*;
+import gov.nasa.worldwind.layers.ogc.gml.GMLRectifiedGrid;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.layers.ogc.wcs.wcs100.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
@@ -68,7 +68,7 @@ public class WCSElevationModel extends BasicElevationModel {
         BasicElevationModel.getBasicElevationModelConfigParams(domElement, params);
         wcsSetFallbacks(params);
 
-        params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder(params.getStringValue(AVKey.WCS_VERSION), params));
+        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params.getStringValue(AVKey.WCS_VERSION), params));
 
         return params;
     }
@@ -86,7 +86,7 @@ public class WCSElevationModel extends BasicElevationModel {
             throw new IllegalArgumentException(message);
         }
 
-        WCS100DescribeCoverage coverage = (WCS100DescribeCoverage) params.getValue(AVKey.DOCUMENT);
+        WCS100DescribeCoverage coverage = (WCS100DescribeCoverage) params.get(AVKey.DOCUMENT);
         if (coverage == null) {
             String message = Logging.getMessage("nullValue.WCSDescribeCoverage");
             Logging.logger().severe(message);
@@ -98,55 +98,55 @@ public class WCSElevationModel extends BasicElevationModel {
         wcsSetFallbacks(params);
         determineNumLevels(coverage, params);
 
-        params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder(caps.getVersion(), params));
+        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(caps.getVersion(), params));
 
-        if (params.getValue(AVKey.ELEVATION_EXTREMES_FILE) == null) {
+        if (params.get(AVKey.ELEVATION_EXTREMES_FILE) == null) {
             // Use the default extremes file if there are at least as many levels in this new elevation model as the
             // level of the extremes file, which is level 5.
-            int numLevels = (Integer) params.getValue(AVKey.NUM_LEVELS);
+            int numLevels = (Integer) params.get(AVKey.NUM_LEVELS);
             if (numLevels >= 6)
-                params.setValue(AVKey.ELEVATION_EXTREMES_FILE, "config/SRTM30Plus_ExtremeElevations_5.bil");
+                params.set(AVKey.ELEVATION_EXTREMES_FILE, "config/SRTM30Plus_ExtremeElevations_5.bil");
         }
 
         return params;
     }
 
     protected static void wcsSetFallbacks(AVList params) {
-        if (params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
+        if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
             Angle delta = Angle.fromDegrees(20);
-            params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
+            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
         }
 
-        if (params.getValue(AVKey.TILE_WIDTH) == null)
-            params.setValue(AVKey.TILE_WIDTH, 150);
+        if (params.get(AVKey.TILE_WIDTH) == null)
+            params.set(AVKey.TILE_WIDTH, 150);
 
-        if (params.getValue(AVKey.TILE_HEIGHT) == null)
-            params.setValue(AVKey.TILE_HEIGHT, 150);
+        if (params.get(AVKey.TILE_HEIGHT) == null)
+            params.set(AVKey.TILE_HEIGHT, 150);
 
-        if (params.getValue(AVKey.FORMAT_SUFFIX) == null)
-            params.setValue(AVKey.FORMAT_SUFFIX, ".tif");
+        if (params.get(AVKey.FORMAT_SUFFIX) == null)
+            params.set(AVKey.FORMAT_SUFFIX, ".tif");
 
-        if (params.getValue(AVKey.MISSING_DATA_SIGNAL) == null)
-            params.setValue(AVKey.MISSING_DATA_SIGNAL, -9999.0d);
+        if (params.get(AVKey.MISSING_DATA_SIGNAL) == null)
+            params.set(AVKey.MISSING_DATA_SIGNAL, -9999.0d);
 
-        if (params.getValue(AVKey.NUM_LEVELS) == null)
-            params.setValue(AVKey.NUM_LEVELS, 18); // approximately 20 cm per pixel
+        if (params.get(AVKey.NUM_LEVELS) == null)
+            params.set(AVKey.NUM_LEVELS, 18); // approximately 20 cm per pixel
 
-        if (params.getValue(AVKey.NUM_EMPTY_LEVELS) == null)
-            params.setValue(AVKey.NUM_EMPTY_LEVELS, 0);
+        if (params.get(AVKey.NUM_EMPTY_LEVELS) == null)
+            params.set(AVKey.NUM_EMPTY_LEVELS, 0);
 
-        if (params.getValue(AVKey.ELEVATION_MIN) == null)
-            params.setValue(AVKey.ELEVATION_MIN, -11000.0);
+        if (params.get(AVKey.ELEVATION_MIN) == null)
+            params.set(AVKey.ELEVATION_MIN, -11000.0);
 
-        if (params.getValue(AVKey.ELEVATION_MAX) == null)
-            params.setValue(AVKey.ELEVATION_MAX, 8850.0);
+        if (params.get(AVKey.ELEVATION_MAX) == null)
+            params.set(AVKey.ELEVATION_MAX, 8850.0);
     }
 
     protected static void determineNumLevels(WCS100DescribeCoverage coverage, AVList params) {
         List<GMLRectifiedGrid> grids =
             coverage.getCoverageOfferings().get(0).getDomainSet().getSpatialDomain().getRectifiedGrids();
         if (grids.size() < 1 || grids.get(0).getOffsetVectors().size() < 2) {
-            params.setValue(AVKey.NUM_LEVELS, 18);
+            params.set(AVKey.NUM_LEVELS, 18);
             return;
         }
 
@@ -154,11 +154,11 @@ public class WCSElevationModel extends BasicElevationModel {
         double yRes = Math.abs(grids.get(0).getOffsetVectors().get(1).y);
         double dataResolution = Math.min(xRes, yRes);
 
-        int tileSize = (Integer) params.getValue(AVKey.TILE_WIDTH);
-        LatLon level0Delta = (LatLon) params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA);
+        int tileSize = (Integer) params.get(AVKey.TILE_WIDTH);
+        LatLon level0Delta = (LatLon) params.get(AVKey.LEVEL_ZERO_TILE_DELTA);
 
         double n = Math.log(level0Delta.getLatitude().degrees / (dataResolution * tileSize)) / Math.log(2);
-        params.setValue(AVKey.NUM_LEVELS, (int) (Math.ceil(n) + 1));
+        params.set(AVKey.NUM_LEVELS, (int) (Math.ceil(n) + 1));
     }
 
     public static AVList getWCSElevationModelConfigParams(WCS100Capabilities caps, WCS100DescribeCoverage coverage,
@@ -186,7 +186,7 @@ public class WCSElevationModel extends BasicElevationModel {
             throw new WWRuntimeException(Logging.getMessage("WCS.NoImageFormats"));
         }
 
-        if (params.getValue(AVKey.SECTOR) == null) {
+        if (params.get(AVKey.SECTOR) == null) {
             Logging.logger().severe("WCS.NoLonLatEnvelope");
             throw new WWRuntimeException(Logging.getMessage("WCS.NoLonLatEnvelope"));
         }
@@ -230,25 +230,25 @@ public class WCSElevationModel extends BasicElevationModel {
 
         String s = rs.getStateValueAsString(context, AVKey.IMAGE_FORMAT);
         if (s != null)
-            params.setValue(AVKey.IMAGE_FORMAT, s);
+            params.set(AVKey.IMAGE_FORMAT, s);
 
         s = rs.getStateValueAsString(context, AVKey.TITLE);
         if (s != null)
-            params.setValue(AVKey.TITLE, s);
+            params.set(AVKey.TITLE, s);
 
         s = rs.getStateValueAsString(context, AVKey.DISPLAY_NAME);
         if (s != null)
-            params.setValue(AVKey.DISPLAY_NAME, s);
+            params.set(AVKey.DISPLAY_NAME, s);
 
         RestorableSupport.adjustTitleAndDisplayName(params);
 
         s = rs.getStateValueAsString(context, AVKey.COVERAGE_IDENTIFIERS);
         if (s != null)
-            params.setValue(AVKey.COVERAGE_IDENTIFIERS, s);
+            params.set(AVKey.COVERAGE_IDENTIFIERS, s);
 
         s = rs.getStateValueAsString(context, AVKey.WCS_VERSION);
         if (s != null)
-            params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder(s, params));
+            params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(s, params));
     }
 
     /**

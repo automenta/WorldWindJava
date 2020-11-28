@@ -153,10 +153,10 @@ public class BathymetryFilterElevationModel extends AbstractElevationModel {
     }
 
     @Override
-    public Object getValue(String key) {
-        Object o = super.getValue(key);
+    public Object get(String key) {
+        Object o = super.get(key);
 
-        return o != null ? o : this.sourceModel != null ? this.sourceModel.getValue(key) : null;
+        return o != null ? o : this.sourceModel != null ? this.sourceModel.get(key) : null;
     }
 
     @Override

@@ -7,7 +7,8 @@
 package gov.nasa.worldwind.util.tree;
 
 import gov.nasa.worldwind.WWObject;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.*;
 
 /**
  * Handles rendering a {@link Tree}. The layout is responsible for the overall arrangement of the tree.

@@ -7,8 +7,9 @@ package gov.nasa.worldwind.util;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
 

@@ -33,7 +33,7 @@ public class LayerTreeModel extends DefaultTreeModel {
     }
 
     public static boolean isInternalLayer(AVList layer) {
-        return layer.getValue(Constants.INTERNAL_LAYER) != null;
+        return layer.get(Constants.INTERNAL_LAYER) != null;
     }
 
     public LayerTreeGroupNode getRootNode() {
@@ -117,7 +117,7 @@ public class LayerTreeModel extends DefaultTreeModel {
         LayerTreeGroupNode groupNode = new LayerTreeGroupNode(layerList.getDisplayName());
 
         for (Layer layer : layerList) {
-            if (layer.getValue(Constants.INTERNAL_LAYER) != null && !this.isIncludeInternalLayers())
+            if (layer.get(Constants.INTERNAL_LAYER) != null && !this.isIncludeInternalLayers())
                 continue;
 
             LayerTreeNode layerNode = new LayerTreeNode(layer);

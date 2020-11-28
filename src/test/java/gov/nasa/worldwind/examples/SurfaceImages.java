@@ -5,8 +5,9 @@
  */
 package gov.nasa.worldwind.examples;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.formats.tiff.GeotiffImageReaderSpi;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -24,8 +25,8 @@ import java.util.*;
  */
 public class SurfaceImages extends ApplicationTemplate {
 
-    protected static final String GEORSS_ICON_PATH = "gov/nasa/worldwindx/examples/images/georss.png";
-    protected static final String TEST_PATTERN = "gov/nasa/worldwindx/examples/images/antenna.png";
+    protected static final String GEORSS_ICON_PATH = "gov/nasa/worldwind/examples/images/georss.png";
+    protected static final String TEST_PATTERN = "gov/nasa/worldwind/examples/images/antenna.png";
 
     static {
         IIORegistry reg = IIORegistry.getDefaultInstance();
@@ -78,7 +79,7 @@ public class SurfaceImages extends ApplicationTemplate {
                 layer.add(boundary);
                 layer.add(boundary2);
 
-                insertBeforeCompass(this.getWwd(), layer);
+                WorldWindow.insertBeforeCompass(this.wwd(), layer);
             }
             catch (Exception e) {
                 e.printStackTrace();

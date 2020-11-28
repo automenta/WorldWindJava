@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.terrain;
 
 import gov.nasa.worldwind.WWObject;
-import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.render.DrawContext;
 
 /**
  * @author tag

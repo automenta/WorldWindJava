@@ -82,8 +82,8 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
         WWXML.checkAndAppendTextElement(params, AVKey.DISPLAY_NAME, context, "DisplayName");
         WWXML.checkAndAppendBooleanElement(params, AVKey.NETWORK_RETRIEVAL_ENABLED, context, "NetworkRetrievalEnabled");
 
-        if (params.getValue(AVKey.MISSING_DATA_SIGNAL) != null ||
-            params.getValue(AVKey.MISSING_DATA_REPLACEMENT) != null) {
+        if (params.get(AVKey.MISSING_DATA_SIGNAL) != null ||
+            params.get(AVKey.MISSING_DATA_REPLACEMENT) != null) {
             Element el = WWXML.getElement(context, "MissingData", null);
             if (el == null)
                 el = WWXML.appendElementPath(context, "MissingData");
@@ -152,17 +152,17 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
     }
 
     public String getName() {
-        Object n = this.getValue(AVKey.DISPLAY_NAME);
+        Object n = this.get(AVKey.DISPLAY_NAME);
 
         return n != null ? n.toString() : this.toString();
     }
 
     public void setName(String name) {
-        this.setValue(AVKey.DISPLAY_NAME, name);
+        this.set(AVKey.DISPLAY_NAME, name);
     }
 
     public String toString() {
-        Object n = this.getValue(AVKey.DISPLAY_NAME);
+        Object n = this.get(AVKey.DISPLAY_NAME);
 
         return n != null ? n.toString() : super.toString();
     }

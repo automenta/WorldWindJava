@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.layers.LatLonGraticuleLayer;
 
 /**
@@ -25,7 +26,7 @@ public class Graticule extends ApplicationTemplate {
             super(true, true, false);
 
             // Add the graticule layer
-            insertBeforePlacenames(getWwd(), new LatLonGraticuleLayer());
+            WorldWindow.insertBeforePlacenames(wwd(), new LatLonGraticuleLayer());
         }
     }
 }

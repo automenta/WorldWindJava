@@ -8,7 +8,7 @@ package gov.nasa.worldwind.layers;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Element;
@@ -168,17 +168,17 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
     }
 
     public String getName() {
-        Object n = this.getValue(AVKey.DISPLAY_NAME);
+        Object n = this.get(AVKey.DISPLAY_NAME);
 
         return n != null ? n.toString() : this.toString();
     }
 
     public void setName(String name) {
-        this.setValue(AVKey.DISPLAY_NAME, name);
+        this.set(AVKey.DISPLAY_NAME, name);
     }
 
     public String toString() {
-        Object n = this.getValue(AVKey.DISPLAY_NAME);
+        Object n = this.get(AVKey.DISPLAY_NAME);
 
         return n != null ? n.toString() : super.toString();
     }
@@ -216,7 +216,7 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer {
     }
 
     public double getScale() {
-        Object o = this.getValue(AVKey.MAP_SCALE);
+        Object o = this.get(AVKey.MAP_SCALE);
         return o instanceof Double ? (Double) o : 1;
     }
 

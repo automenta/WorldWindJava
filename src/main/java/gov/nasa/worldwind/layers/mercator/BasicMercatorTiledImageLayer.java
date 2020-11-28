@@ -10,7 +10,7 @@ import com.jogamp.opengl.util.texture.TextureData;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
@@ -46,7 +46,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
 
     public BasicMercatorTiledImageLayer(AVList params) {
         this(new LevelSet(params));
-        this.setValue(AVKey.CONSTRUCTION_PARAMETERS, params);
+        this.set(AVKey.CONSTRUCTION_PARAMETERS, params);
     }
 
     private static TextureData readTexture(URL url, boolean useMipMaps) {
@@ -138,7 +138,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
 
         if ("http".equalsIgnoreCase(url.getProtocol())) {
             retriever = new HTTPRetriever(url, new DownloadPostProcessor(tile, this));
-            retriever.setValue(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
+            retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
         }
         else {
             Logging.logger().severe(

@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.formats.vpf;
 
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.examples.render.Material;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.awt.*;
@@ -80,7 +80,7 @@ public class VPFSymbolSupport {
         String text = null;
 
         // Look up label text.
-        Object o = featureAttributes.getValue(attr.getAttributeName());
+        Object o = featureAttributes.get(attr.getAttributeName());
         if (o instanceof String) {
             String s = (String) o;
             if (!s.isEmpty() && !s.equalsIgnoreCase("UNK"))
@@ -193,7 +193,7 @@ public class VPFSymbolSupport {
     }
 
     protected Integer getSymbolId(AVList params) {
-        Object o = params.getValue("symbol_id");
+        Object o = params.get("symbol_id");
         return (o instanceof Number) ? ((Number) o).intValue() : null;
     }
 

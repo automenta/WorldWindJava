@@ -44,7 +44,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         boolean canRead = RPFFrameFilename.isFilename(filename);
 
         if (canRead && null != params && !params.hasKey(AVKey.PIXEL_FORMAT))
-            params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
 
         return canRead;
     }
@@ -76,19 +76,19 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         File file = (File) source;
         RPFImageFile rpfFile = null;
 
-        Object width = params.getValue(AVKey.WIDTH);
-        Object height = params.getValue(AVKey.HEIGHT);
+        Object width = params.get(AVKey.WIDTH);
+        Object height = params.get(AVKey.HEIGHT);
         if (!(width instanceof Integer) || !(height instanceof Integer)) {
             rpfFile = RPFImageFile.load(file);
             this.readFileSize(rpfFile, params);
         }
 
-        Object sector = params.getValue(AVKey.SECTOR);
+        Object sector = params.get(AVKey.SECTOR);
         if (!(sector instanceof Sector))
             this.readFileSector(file, rpfFile, params);
 
         if (!params.hasKey(AVKey.PIXEL_FORMAT))
-            params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
     }
 
     private DataRaster[] readNonPolarImage(Object source, AVList params) throws IOException {
@@ -102,11 +102,11 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         image = ImageUtil.toCompatibleImage(image);
 
         // If the data source doesn't already have all the necessary metadata, then we attempt to read the metadata.
-        Object o = (params != null) ? params.getValue(AVKey.SECTOR) : null;
+        Object o = (params != null) ? params.get(AVKey.SECTOR) : null;
         if (!(o instanceof Sector)) {
             AVList values = new AVListImpl();
             this.readFileSector(file, rpfFile, values);
-            o = values.getValue(AVKey.SECTOR);
+            o = values.get(AVKey.SECTOR);
         }
 
         DataRaster raster = new BufferedImageRaster((Sector) o, image);
@@ -136,8 +136,8 @@ public class RPFRasterReader extends AbstractDataRasterReader {
     private void readFileSize(RPFImageFile rpfFile, AVList values) {
         int width = rpfFile.getImageSegment().numSignificantCols;
         int height = rpfFile.getImageSegment().numSignificantRows;
-        values.setValue(AVKey.WIDTH, width);
-        values.setValue(AVKey.HEIGHT, height);
+        values.set(AVKey.WIDTH, width);
+        values.set(AVKey.HEIGHT, height);
     }
 
     private void readFileSector(File file, RPFImageFile rpfFile, AVList values) {
@@ -149,7 +149,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         if (sector == null)
             sector = this.sectorFromHeader(file, rpfFile);
 
-        values.setValue(AVKey.SECTOR, sector);
+        values.set(AVKey.SECTOR, sector);
     }
 
     private Sector sectorFromFilename(File file) {

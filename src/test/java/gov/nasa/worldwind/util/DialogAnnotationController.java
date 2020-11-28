@@ -7,7 +7,7 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.Annotation;
+import gov.nasa.worldwind.render.Annotation;
 
 import java.awt.*;
 import java.awt.event.*;

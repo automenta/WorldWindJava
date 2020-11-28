@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples.shapebuilder;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.AbstractLayer;
 import gov.nasa.worldwind.util.*;
@@ -82,15 +82,15 @@ public abstract class AbstractShapeEditor extends AbstractLayer implements Mouse
             return;
 
         if (this.wwd != null) {
-            this.wwd.getInputHandler().removeMouseListener(this);
-            this.wwd.getInputHandler().removeMouseMotionListener(this);
+            this.wwd.input().removeMouseListener(this);
+            this.wwd.input().removeMouseMotionListener(this);
         }
 
         this.wwd = wwd;
 
         if (this.wwd != null) {
-            this.wwd.getInputHandler().addMouseListener(this);
-            this.wwd.getInputHandler().addMouseMotionListener(this);
+            this.wwd.input().addMouseListener(this);
+            this.wwd.input().addMouseMotionListener(this);
         }
     }
 
@@ -147,7 +147,7 @@ public abstract class AbstractShapeEditor extends AbstractLayer implements Mouse
 
     public void setLabel(String labelName, String label) {
         if (labelName != null && !labelName.isEmpty())
-            this.setValue(labelName, label);
+            this.set(labelName, label);
     }
 
     protected AnnotationAttributes getAnnotationAttributes() {

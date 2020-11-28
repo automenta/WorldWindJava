@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.examples.sar.segmentplane;
 
 import gov.nasa.worldwind.WWObjectImpl;
-import gov.nasa.worldwind.examples.render.markers.BasicMarkerShape;
+import gov.nasa.worldwind.render.markers.BasicMarkerShape;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;

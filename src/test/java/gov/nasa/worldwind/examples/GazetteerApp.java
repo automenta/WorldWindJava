@@ -27,7 +27,7 @@ public class GazetteerApp extends ApplicationTemplate {
             InvocationTargetException {
             super(true, false, false);
 
-            this.getContentPane().add(new GazetteerPanel(this.getWwd(), null),   //use default yahoo service
+            this.getContentPane().add(new GazetteerPanel(this.wwd(), null),   //use default yahoo service
                 BorderLayout.NORTH);
         }
     }

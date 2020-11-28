@@ -74,8 +74,8 @@ public class TableCellColorRenderer extends JLabel implements TableCellRenderer 
     }
 
     protected Color determineFileSetColor(FileSet fileSet) {
-        if (fileSet.getValue(AVKey.COLOR) != null)
-            return (Color) fileSet.getValue(AVKey.COLOR);
+        if (fileSet.get(AVKey.COLOR) != null)
+            return (Color) fileSet.get(AVKey.COLOR);
 
         // Try to use a pre-defined color.
         if (!this.fileSetColors.isEmpty()) {

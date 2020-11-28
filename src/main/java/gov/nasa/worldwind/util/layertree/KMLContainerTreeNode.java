@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.util.layertree;
 
-import gov.nasa.worldwind.examples.ogc.kml.*;
+import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.util.tree.TreeNode;
 
 /**

@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.AnnotationLayer;
@@ -43,9 +44,9 @@ public class GetBestElevations extends ApplicationTemplate {
                 new Point(100, 50));
             AnnotationLayer layer = new AnnotationLayer();
             layer.addAnnotation(annotation);
-            insertBeforeCompass(this.getWwd(), layer);
+            WorldWindow.insertBeforeCompass(this.wwd(), layer);
 
-            this.getWwd().getInputHandler().addMouseListener(new MouseListener() {
+            this.wwd().input().addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent mouseEvent) {
                     if ((mouseEvent.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
@@ -53,13 +54,13 @@ public class GetBestElevations extends ApplicationTemplate {
                     }
                     mouseEvent.consume();
 
-                    final Position pos = getWwd().getCurrentPosition();
+                    final Position pos = wwd().position();
                     if (pos == null) {
                         return;
                     }
 
                     annotation.setText("Elevation = ");
-                    getWwd().redraw();
+                    wwd().redraw();
 
                     // Run the elevation query in a separate thread to avoid locking up the user interface
                     Thread t = new Thread(() -> {
@@ -70,7 +71,7 @@ public class GetBestElevations extends ApplicationTemplate {
                         final double[] elevations = getBestElevations(locations);
                         SwingUtilities.invokeLater(() -> {
                             annotation.setText(String.format("Elevation = %d m", (int) elevations[0]));
-                            getWwd().redraw();
+                            wwd().redraw();
                         });
                     });
                     t.start();
@@ -110,7 +111,7 @@ public class GetBestElevations extends ApplicationTemplate {
          * @return the resolution actually achieved.
          */
         public double[] getBestElevations(List<LatLon> locations) {
-            Globe globe = this.getWwd().model().getGlobe();
+            Globe globe = this.wwd().model().getGlobe();
             Sector sector = Sector.boundingSector(locations);
             double[] elevations = new double[locations.size()];
 

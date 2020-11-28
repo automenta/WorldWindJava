@@ -27,10 +27,10 @@ public class ImageLibrary {
     // These images are available for situation where a desired image is not available.
     private static final String[] WARNING_IMAGES = new String[]
         {
-            "gov/nasa/worldwindx/applications/worldwindow/images/warning16.png",
-            "gov/nasa/worldwindx/applications/worldwindow/images/warning24.png",
-            "gov/nasa/worldwindx/applications/worldwindow/images/warning32.png",
-            "gov/nasa/worldwindx/applications/worldwindow/images/warning64.png"
+            "gov/nasa/worldwind/examples/worldwindow/images/warning16.png",
+            "gov/nasa/worldwind/examples/worldwindow/images/warning24.png",
+            "gov/nasa/worldwind/examples/worldwindow/images/warning32.png",
+            "gov/nasa/worldwind/examples/worldwindow/images/warning64.png"
         };
 
     private static ImageLibrary instance;
@@ -127,10 +127,10 @@ public class ImageLibrary {
             url = instance.getClass().getResource("/images" + File.separatorChar + imageName);
         if (url == null)
             url = instance.getClass().getResource(
-                "gov/nasa/worldwindx/applications/worldwindow/images" + File.separatorChar + imageName);
+                "gov/nasa/worldwind/examples/worldwindow/images" + File.separatorChar + imageName);
         if (url == null)
             url = instance.getClass().getResource(
-                "/gov/nasa/worldwindx/applications/worldwindow/images" + File.separatorChar + imageName);
+                "/gov/nasa/worldwind/examples/worldwindow/images" + File.separatorChar + imageName);
 
         return url;
     }

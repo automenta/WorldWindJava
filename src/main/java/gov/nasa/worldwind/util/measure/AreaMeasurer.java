@@ -7,6 +7,7 @@ package gov.nasa.worldwind.util.measure;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.Polyline;
 import gov.nasa.worldwind.util.*;
 
 import java.util.ArrayList;
@@ -20,8 +21,8 @@ import java.util.ArrayList;
  *
  * <p>
  * Segments which are longer then the current maxSegmentLength will be subdivided along lines following the current
- * pathType - {@link gov.nasa.worldwind.examples.render.Polyline#LINEAR}, {@link gov.nasa.worldwind.examples.render.Polyline#RHUMB_LINE}
- * or {@link gov.nasa.worldwind.examples.render.Polyline#GREAT_CIRCLE}.</p>
+ * pathType - {@link Polyline#LINEAR}, {@link Polyline#RHUMB_LINE}
+ * or {@link Polyline#GREAT_CIRCLE}.</p>
  *
  * <p>
  * Projected or non terrain following area is computed in a sinusoidal projection which is equivalent or equal area.

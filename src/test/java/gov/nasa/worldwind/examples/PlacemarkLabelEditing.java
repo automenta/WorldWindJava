@@ -6,10 +6,10 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.PointPlacemark;
+import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.util.BasicDragger;
@@ -42,19 +42,19 @@ public class PlacemarkLabelEditing extends ApplicationTemplate {
             });
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
 
             // Add a dragger so the user can relocate the placemark.
-            this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
+            this.wwd().addSelectListener(new BasicDragger(this.wwd()));
 
             // Add a select listener in order to determine when the label is selected.
-            this.getWwd().addSelectListener(event -> {
+            this.wwd().addSelectListener(event -> {
                 PickedObject po = event.getTopPickedObject();
                 if (po != null && po.getObject() instanceof PointPlacemark) {
                     if (event.getEventAction().equals(SelectEvent.LEFT_CLICK)) {
                         // See if it was the label that was picked. If so, raise an input dialog prompting
                         // for new label text.
-                        Object placemarkPiece = po.getValue(AVKey.PICKED_OBJECT_ID);
+                        Object placemarkPiece = po.get(AVKey.PICKED_OBJECT_ID);
                         if (placemarkPiece != null && placemarkPiece.equals(AVKey.LABEL)) {
                             PointPlacemark placemark = (PointPlacemark) po.getObject();
                             String labelText = placemark.getLabelText();

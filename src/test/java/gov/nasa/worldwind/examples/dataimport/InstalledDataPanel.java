@@ -7,7 +7,6 @@ package gov.nasa.worldwind.examples.dataimport;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.Layer;
@@ -158,7 +157,7 @@ public class InstalledDataPanel extends JPanel {
         layer.setEnabled(true); // TODO: BasicLayerFactory creates layer which is intially disabled
 
         if (!this.worldWindow.model().getLayers().contains(layer))
-            ApplicationTemplate.insertBeforePlacenames(this.worldWindow, layer);
+            WorldWindow.insertBeforePlacenames(this.worldWindow, layer);
     }
 
     protected void addElevationModelToWorldWindow(Element domElement, AVList params) {

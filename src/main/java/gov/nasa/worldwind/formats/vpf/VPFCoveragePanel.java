@@ -142,8 +142,8 @@ public class VPFCoveragePanel extends JPanel {
 
     protected void sortPropertyLists(java.util.List<? extends AVList> propertyList, final String propertyName) {
         propertyList.sort((Comparator<AVList>) (a, b) -> {
-            String aValue = (a.getValue(propertyName) != null) ? a.getValue(propertyName).toString() : "";
-            String bValue = (b.getValue(propertyName) != null) ? b.getValue(propertyName).toString() : "";
+            String aValue = (a.get(propertyName) != null) ? a.get(propertyName).toString() : "";
+            String bValue = (b.get(propertyName) != null) ? b.get(propertyName).toString() : "";
             return String.CASE_INSENSITIVE_ORDER.compare(aValue, bValue);
         });
     }
@@ -384,7 +384,7 @@ public class VPFCoveragePanel extends JPanel {
         public void actionPerformed(ActionEvent actionEvent) {
             Sector sector = this.library.getBounds().toSector();
             Extent extent = Sector.computeBoundingCylinder(wwd.model().getGlobe(),
-                wwd.getSceneController().getVerticalExaggeration(), sector);
+                wwd.sceneControl().getVerticalExaggeration(), sector);
 
             Angle fov = wwd.view().getFieldOfView();
             Position centerPos = new Position(sector.getCentroid(), 0.0d);

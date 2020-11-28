@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.formats.vpf;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.ShapeAttributes;
+import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.util.*;
 
@@ -75,7 +75,7 @@ public class GeoSymSupport {
             new HashMap<>();
 
         for (AVList row : textCharTable.getRecords()) {
-            Integer id = (Integer) row.getValue("id");
+            Integer id = (Integer) row.get("id");
             VPFSymbolAttributes.LabelAttributes attr = getTextLabelCharacteristics(row, colorTable);
 
             attributes.put(id, attr);
@@ -89,13 +89,13 @@ public class GeoSymSupport {
         VPFSymbolAttributes.LabelAttributes attr = new VPFSymbolAttributes.LabelAttributes();
 
         // Get text characteristics
-        Integer fontType = (Integer) row.getValue("tfont");
-        Integer fontStyle = (Integer) row.getValue("tstyle");
-        Integer size = (Integer) row.getValue("tsize");
-        Color color = selectColor(colorTable, (Integer) row.getValue("tcolor"));
-        String prepend = (String) row.getValue("tprepend");
-        String append = (String) row.getValue("tappend");
-        Integer abbreviationTableIndex = (Integer) row.getValue("abindexid");
+        Integer fontType = (Integer) row.get("tfont");
+        Integer fontStyle = (Integer) row.get("tstyle");
+        Integer size = (Integer) row.get("tsize");
+        Color color = selectColor(colorTable, (Integer) row.get("tcolor"));
+        String prepend = (String) row.get("tprepend");
+        String append = (String) row.get("tappend");
+        Integer abbreviationTableIndex = (Integer) row.get("abindexid");
 
         // Assemble label attributes
         if (fontType != null && fontStyle != null && size != null) {
@@ -133,7 +133,7 @@ public class GeoSymSupport {
             new HashMap<>();
 
         for (AVList row : textLocTable.getRecords()) {
-            Integer id = (Integer) row.getValue("id");
+            Integer id = (Integer) row.get("id");
             VPFSymbolAttributes.LabelAttributes attr = getTextLabelLocation(row);
 
             attributes.put(id, attr);
@@ -162,11 +162,11 @@ public class GeoSymSupport {
         // azimuth degrees from North for the default offset of the text label relative to the feature's position. Zero
         // values in these fields indicate that the text is to be displayed at the center of the feature.
 
-        Integer i = (Integer) row.getValue("tdist");
+        Integer i = (Integer) row.get("tdist");
         if (i != null)
             attr.setOffset(i);
 
-        i = (Integer) row.getValue("tdir");
+        i = (Integer) row.get("tdir");
         if (i != null)
             attr.setOffsetAngle(Angle.fromDegrees(i));
 
@@ -224,7 +224,7 @@ public class GeoSymSupport {
             if (record == null)
                 continue;
 
-            Object o = record.getValue(columnName);
+            Object o = record.get(columnName);
             if (o == null || o instanceof String) {
                 String s = (String) o;
                 if (s == null || s.isEmpty()) {
@@ -253,7 +253,7 @@ public class GeoSymSupport {
         if (rows.isEmpty())
             return -1;
 
-        Integer i = (Integer) rows.get(0).getValue("value");
+        Integer i = (Integer) rows.get(0).get("value");
         return (i != null) ? i : -1;
     }
 
@@ -266,7 +266,7 @@ public class GeoSymSupport {
         if (rows.isEmpty())
             return null;
 
-        return (String) rows.get(0).getValue("description");
+        return (String) rows.get(0).get("description");
     }
 
     //**************************************************************//
@@ -280,9 +280,9 @@ public class GeoSymSupport {
             return null;
 
         AVList row = rows.get(0);
-        Integer r = (Integer) row.getValue("red");
-        Integer g = (Integer) row.getValue("green");
-        Integer b = (Integer) row.getValue("blue");
+        Integer r = (Integer) row.get("red");
+        Integer g = (Integer) row.get("green");
+        Integer b = (Integer) row.get("blue");
         return (r != null && g != null && b != null) ? new Color(r, g, b) : null;
     }
 
@@ -470,9 +470,9 @@ public class GeoSymSupport {
         this.textJoinAttributes = new HashMap<>();
         GeoSymTable joinTable = this.getAssignment().getTable(GeoSymConstants.TEXT_LABEL_JOIN_FILE);
         for (AVList row : joinTable.getRecords()) {
-            int id = (Integer) row.getValue("id");
-            int textCharId = (Integer) row.getValue("textcharid");
-            int textLocId = (Integer) row.getValue("textlocid");
+            int id = (Integer) row.get("id");
+            int textCharId = (Integer) row.get("textcharid");
+            int textLocId = (Integer) row.get("textlocid");
             VPFSymbolAttributes.LabelAttributes attr = new VPFSymbolAttributes.LabelAttributes();
 
             VPFSymbolAttributes.LabelAttributes chars = labelCharacteristics.get(textCharId);
@@ -503,8 +503,8 @@ public class GeoSymSupport {
 
         this.productTypes = new HashMap<>();
         for (AVList row : rows) {
-            Integer value = (Integer) row.getValue("value");
-            String description = (String) row.getValue("description");
+            Integer value = (Integer) row.get("value");
+            String description = (String) row.get("description");
             if (value != null && description != null)
                 this.productTypes.put(description.toUpperCase(), value);
         }
@@ -518,8 +518,8 @@ public class GeoSymSupport {
 
         this.deliniations = new HashMap<>();
         for (AVList row : rows) {
-            Integer value = (Integer) row.getValue("value");
-            String description = (String) row.getValue("description");
+            Integer value = (Integer) row.get("value");
+            String description = (String) row.get("description");
             if (value != null && description != null)
                 this.deliniations.put(description.toUpperCase(), value);
         }
@@ -763,7 +763,7 @@ public class GeoSymSupport {
         String[] attributeNames = null;
         String[] txtRowIds = null;
 
-        String s = (String) labelRow.getValue("labatt");
+        String s = (String) labelRow.get("labatt");
         if (s != null && !s.isEmpty()) {
             String[] array = s.split(",");
             if (array != null && array.length > 0) {
@@ -771,7 +771,7 @@ public class GeoSymSupport {
             }
         }
 
-        s = (String) labelRow.getValue("txrowid");
+        s = (String) labelRow.get("txrowid");
         if (s != null && !s.isEmpty()) {
             String[] array = s.split(",");
             if (array != null && array.length > 0) {

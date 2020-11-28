@@ -24,7 +24,7 @@ import java.io.File;
  */
 public class ImportElevations extends ApplicationTemplate {
     // The data to import.
-    protected static final String ELEVATIONS_PATH = "gov/nasa/worldwindx/examples/data/craterlake-elev-16bit-30m.tif";
+    protected static final String ELEVATIONS_PATH = "gov/nasa/worldwind/examples/data/craterlake-elev-16bit-30m.tif";
 
     public static void main(String[] args) {
         ApplicationTemplate.start("WorldWind Elevation Import", ImportElevations.AppFrame.class);
@@ -57,7 +57,7 @@ public class ImportElevations extends ApplicationTemplate {
 
                 SwingUtilities.invokeLater(() -> {
                     // Get the WorldWindow's current elevation model.
-                    Globe globe = AppFrame.this.getWwd().model().getGlobe();
+                    Globe globe = AppFrame.this.wwd().model().getGlobe();
                     ElevationModel currentElevationModel = globe.getElevationModel();
 
                     // Add the new elevation model to the globe.
@@ -70,7 +70,7 @@ public class ImportElevations extends ApplicationTemplate {
                     // make them easier to detect, replace the globe's CompoundElevationModel with the new elevation
                     // model rather than adding it.
                     Sector modelSector = elevationModel.getSector();
-                    ExampleUtil.goTo(getWwd(), modelSector);
+                    ExampleUtil.goTo(wwd(), modelSector);
                 });
             }
             catch (Exception e) {

@@ -9,7 +9,7 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
@@ -86,7 +86,7 @@ public class Annotations extends ApplicationTemplate {
             // Create a renderable layer
             RenderableLayer rl = new RenderableLayer();
             rl.setName("Annotations (stand alone)");
-            insertBeforeCompass(this.getWwd(), rl);
+            WorldWindow.insertBeforeCompass(this.wwd(), rl);
 
             // Add above ground level annotation with fixed height in real world
             ga = new GlobeAnnotation("AGL Annotation\nElev 1000m", Position.fromDegrees(10, 25, 1000));
@@ -452,7 +452,7 @@ public class Annotations extends ApplicationTemplate {
             makeRelativeAnnotations(layer);
 
             // Add layer to the layer list and update the layer panel
-            insertBeforeCompass(this.getWwd(), layer);
+            WorldWindow.insertBeforeCompass(this.wwd(), layer);
         }
 
         public void makeRelativeAnnotations(AnnotationLayer layer) {
@@ -525,16 +525,16 @@ public class Annotations extends ApplicationTemplate {
 
         private void setupSelection() {
             // Add a select listener to select or highlight annotations on rollover
-            this.getWwd().addSelectListener(new SelectListener() {
-                private final BasicDragger dragger = new BasicDragger(getWwd());
+            this.wwd().addSelectListener(new SelectListener() {
+                private final BasicDragger dragger = new BasicDragger(wwd());
 
                 public void selected(SelectEvent event) {
                     if (event.hasObjects() && event.getTopObject() instanceof Annotation) {
                         // Handle cursor change on hyperlink
-                        if (event.getTopPickedObject().getValue(AVKey.URL) != null)
-                            ((Component) getWwd()).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        if (event.getTopPickedObject().get(AVKey.URL) != null)
+                            ((Component) wwd()).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         else
-                            ((Component) getWwd()).setCursor(Cursor.getDefaultCursor());
+                            ((Component) wwd()).setCursor(Cursor.getDefaultCursor());
                     }
 
                     // Select/unselect on left click on annotations
@@ -543,13 +543,13 @@ public class Annotations extends ApplicationTemplate {
                             if (event.getTopObject() instanceof Annotation) {
                                 // Check for text or url
                                 PickedObject po = event.getTopPickedObject();
-                                if (po.getValue(AVKey.TEXT) != null) {
-                                    System.out.println("Text: \"" + po.getValue(AVKey.TEXT) + "\" Hyperlink: "
-                                        + po.getValue(AVKey.URL));
-                                    if (po.getValue(AVKey.URL) != null) {
+                                if (po.get(AVKey.TEXT) != null) {
+                                    System.out.println("Text: \"" + po.get(AVKey.TEXT) + "\" Hyperlink: "
+                                        + po.get(AVKey.URL));
+                                    if (po.get(AVKey.URL) != null) {
                                         // Try to launch a browser with the clicked URL
                                         try {
-                                            BrowserOpener.browse(new URL((String) po.getValue(AVKey.URL)));
+                                            BrowserOpener.browse(new URL((String) po.get(AVKey.URL)));
                                         }
                                         catch (Exception ignore) {
                                         }
@@ -603,10 +603,10 @@ public class Annotations extends ApplicationTemplate {
                         // We missed any roll-over events while dragging, so highlight any under the cursor now,
                         // or de-highlight the dragged shape if it's no longer under the cursor.
                         if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
-                            PickedObjectList pol = getWwd().getObjectsAtCurrentPosition();
+                            PickedObjectList pol = wwd().objectsAtPosition();
                             if (pol != null) {
                                 AppFrame.this.highlight(pol.getTopObject());
-                                AppFrame.this.getWwd().redraw();
+                                AppFrame.this.wwd().redraw();
                             }
                         }
                     }
@@ -1136,14 +1136,14 @@ public class Annotations extends ApplicationTemplate {
             // Add annotation button
             JButton btAdd = new JButton("Add new");
             btAdd.addActionListener(event -> {
-                Position lookAtPos = computeGroundPosition(getWwd());
+                Position lookAtPos = computeGroundPosition(wwd());
                 if (lookAtPos != null && !inputTextArea.getText().isEmpty()) {
                     Annotation a = currentAnnotation;
                     currentAnnotation = new GlobeAnnotation(inputTextArea.getText(), lookAtPos);
                     updateAnnotation();
                     layer.addAnnotation(currentAnnotation);
                     currentAnnotation = a;
-                    getWwd().redraw();
+                    wwd().redraw();
                 }
             });
 
@@ -1159,7 +1159,7 @@ public class Annotations extends ApplicationTemplate {
                     widthSlider.setEnabled(false);
                     btApply.setEnabled(false);
                     btRemove.setEnabled(false);
-                    getWwd().redraw();
+                    wwd().redraw();
                 }
             });
 
@@ -1545,7 +1545,7 @@ public class Annotations extends ApplicationTemplate {
                 this.currentAnnotation.getAttributes().setHighlightScale(
                     (double) this.highlightScaleSlider.getValue() / 10);
 
-                getWwd().redraw();
+                wwd().redraw();
             }
         }
 

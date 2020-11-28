@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.layers.*;
 
@@ -145,7 +145,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         // Clear any existing selection and clear set the SceneController's pick rectangle. This ensures that this
         // ScreenSelector starts with the correct state when enabled.
         this.selectionRect.clearSelection();
-        this.getWwd().getSceneController().setPickRectangle(null);
+        this.getWwd().sceneControl().setPickRectangle(null);
 
         // Add and enable the layer that displays this ScreenSelector's selection rectangle.
         LayerList layers = this.getWwd().model().getLayers();
@@ -157,8 +157,8 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
             this.getLayer().setEnabled(true);
 
         // Listen for mouse input on the WorldWindow.
-        this.getWwd().getInputHandler().addMouseListener(this);
-        this.getWwd().getInputHandler().addMouseMotionListener(this);
+        this.getWwd().input().addMouseListener(this);
+        this.getWwd().input().addMouseMotionListener(this);
     }
 
     public void disable() {
@@ -166,15 +166,15 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         // rectangle selection. These steps should have been done when the selection ends, but do them here in case the
         // caller disables this ScreenSelector before the selection ends.
         this.selectionRect.clearSelection();
-        this.getWwd().getSceneController().setPickRectangle(null);
+        this.getWwd().sceneControl().setPickRectangle(null);
         this.getWwd().removeSelectListener(this);
 
         // Remove the layer that displays this ScreenSelector's selection rectangle.
         this.getWwd().model().getLayers().remove(this.getLayer());
 
         // Stop listening for mouse input on the WorldWindow.
-        this.getWwd().getInputHandler().removeMouseListener(this);
-        this.getWwd().getInputHandler().removeMouseMotionListener(this);
+        this.getWwd().input().removeMouseListener(this);
+        this.getWwd().input().removeMouseMotionListener(this);
     }
 
     public List<?> getSelectedObjects() {
@@ -267,7 +267,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
 
     protected void selectionStarted(MouseEvent mouseEvent) {
         this.selectionRect.startSelection(mouseEvent.getPoint());
-        this.getWwd().getSceneController().setPickRectangle(null);
+        this.getWwd().sceneControl().setPickRectangle(null);
         this.getWwd().addSelectListener(this); // Listen for changes in the pick rectangle selection.
         this.getWwd().redraw();
 
@@ -279,7 +279,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
     @SuppressWarnings("UnusedParameters")
     protected void selectionEnded(MouseEvent mouseEvent) {
         this.selectionRect.clearSelection();
-        this.getWwd().getSceneController().setPickRectangle(null);
+        this.getWwd().sceneControl().setPickRectangle(null);
         this.getWwd().removeSelectListener(this); // Stop listening for changes the pick rectangle selection.
         this.getWwd().redraw();
 
@@ -298,7 +298,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         // We create a copy of the selected rectangle to insulate the scene controller from changes to rectangle
         // returned by ScreenRectangle.getSelection.
         this.selectionRect.endSelection(p);
-        this.getWwd().getSceneController().setPickRectangle(
+        this.getWwd().sceneControl().setPickRectangle(
             this.selectionRect.hasSelection() ? new Rectangle(this.selectionRect.getSelection()) : null);
         this.getWwd().redraw();
     }

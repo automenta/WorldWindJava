@@ -11,7 +11,7 @@ import com.jogamp.opengl.util.texture.TextureCoords;
 import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.util.*;
 
@@ -688,7 +688,7 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
             for (NodeLayout layout : nodes) {
                 Color color = dc.getUniquePickColor();
                 PickedObject pickedObject = new PickedObject(color.getRGB(), layout.node);
-                pickedObject.setValue(AVKey.HOT_SPOT, this.getFrame());
+                pickedObject.set(AVKey.HOT_SPOT, this.getFrame());
                 this.pickSupport.addPickableObject(pickedObject);
                 gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
 

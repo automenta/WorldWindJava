@@ -836,9 +836,9 @@ public class WWUtil {
                 continue;
             }
 
-            Object o = srcList.getValue(key);
+            Object o = srcList.get(key);
             if (!destList.hasKey(key) || forceOverwrite) {
-                destList.setValue(key, o);
+                destList.set(key, o);
             }
         }
     }

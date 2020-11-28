@@ -23,13 +23,13 @@ public class FileSetRPF extends FileSet {
     public void assignRPFMetadata(String rpfSuffixCode) {
         RPFDataSeries series = RPFDataSeries.dataSeriesFor(rpfSuffixCode);
         if (series != null) {
-            this.setValue(FileSet.FILE_SET_CODE, series.seriesCode);
-            this.setValue(FileSet.FILE_SET_ABBREVIATION, series.seriesAbbreviation);
-            this.setValue(FileSet.FILE_SET_SCALE, series.scaleOrResolution);
-            this.setValue(FileSet.FILE_SET_GSD, series.scaleOrGSD);
-            this.setValue(AVKey.DATASET_NAME, series.dataSeries);
-            this.setValue(AVKey.DATASET_TYPE, series.rpfDataType);
-            this.setValue(AVKey.DISPLAY_NAME, series.dataSeries);
+            this.set(FileSet.FILE_SET_CODE, series.seriesCode);
+            this.set(FileSet.FILE_SET_ABBREVIATION, series.seriesAbbreviation);
+            this.set(FileSet.FILE_SET_SCALE, series.scaleOrResolution);
+            this.set(FileSet.FILE_SET_GSD, series.scaleOrGSD);
+            this.set(AVKey.DATASET_NAME, series.dataSeries);
+            this.set(AVKey.DATASET_TYPE, series.rpfDataType);
+            this.set(AVKey.DISPLAY_NAME, series.dataSeries);
         }
     }
 }

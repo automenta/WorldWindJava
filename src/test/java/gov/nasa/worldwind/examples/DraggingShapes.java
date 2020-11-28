@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.*;
@@ -27,11 +28,11 @@ public class DraggingShapes extends ApplicationTemplate {
     }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
-        protected static final String SURFACE_POLYGON_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/georss.png";
+        protected static final String SURFACE_POLYGON_IMAGE_PATH = "gov/nasa/worldwind/examples/images/georss.png";
 
         public AppFrame() {
             // Add a basic dragger to the WorldWindow's select listeners to enable shape dragging.
-            this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
+            this.wwd().addSelectListener(new BasicDragger(this.wwd()));
 
             // Create a layer of shapes to drag.
             this.makeShapes();
@@ -181,7 +182,7 @@ public class DraggingShapes extends ApplicationTemplate {
             layer.add(shape);
 
             // Add the layer to the model and update the layer panel.
-            insertBeforeCompass(this.getWwd(), layer);
+            WorldWindow.insertBeforeCompass(this.wwd(), layer);
         }
     }
 }

@@ -29,7 +29,7 @@ public class SectorSelection extends ApplicationTemplate {
         public AppFrame() {
             super(true, true, false);
 
-            this.selector = new SectorSelector(getWwd());
+            this.selector = new SectorSelector(wwd());
             this.selector.setInteriorColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
             this.selector.setBorderColor(new Color(1.0f, 0.0f, 0.0f, 0.5f));
             this.selector.setBorderWidth(3);

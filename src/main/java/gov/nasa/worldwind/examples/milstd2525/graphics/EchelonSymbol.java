@@ -10,7 +10,7 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.examples.milstd2525.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.symbology.AbstractTacticalSymbol;
 import gov.nasa.worldwind.util.Logging;
@@ -116,7 +116,7 @@ public class EchelonSymbol extends AbstractTacticalSymbol {
 
         Material material = this.getActiveAttributes().getTextModifierMaterial();
         if (material != null)
-            params.setValue(AVKey.COLOR, material.getDiffuse());
+            params.set(AVKey.COLOR, material.getDiffuse());
 
         return params;
     }

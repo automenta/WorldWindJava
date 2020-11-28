@@ -7,12 +7,12 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
-import gov.nasa.worldwind.examples.ogc.OGCConstants;
-import gov.nasa.worldwind.examples.ogc.wcs.wcs100.*;
-import gov.nasa.worldwind.examples.ogc.wms.*;
+import gov.nasa.worldwind.layers.ogc.OGCConstants;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.AbstractLayer;
+import gov.nasa.worldwind.layers.ogc.wcs.wcs100.*;
+import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.terrain.AbstractElevationModel;
 import gov.nasa.worldwind.wms.CapabilitiesRequest;
 import org.w3c.dom.*;
@@ -264,7 +264,7 @@ public class DataConfigurationUtils {
                 // Replace any windows-style path separators with the unix-style path separator, which is the convention
                 // for cache paths.
                 s = s.replaceAll("\\\\", "/");
-                params.setValue(AVKey.DATA_CACHE_NAME, s);
+                params.set(AVKey.DATA_CACHE_NAME, s);
             }
         }
 
@@ -564,16 +564,16 @@ public class DataConfigurationUtils {
         WWXML.checkAndSetStringParam(domElement, params, AVKey.GET_CAPABILITIES_URL, "Service/GetCapabilitiesURL",
             xpath);
 
-        params.setValue(AVKey.SERVICE, params.getValue(AVKey.GET_MAP_URL));
+        params.set(AVKey.SERVICE, params.get(AVKey.GET_MAP_URL));
         String serviceURL = params.getStringValue(AVKey.SERVICE);
         if (serviceURL != null) {
-            params.setValue(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
+            params.set(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
         }
 
         // The dataset name is the layer-names string for WMS elevation models
         String layerNames = params.getStringValue(AVKey.LAYER_NAMES);
         if (layerNames != null) {
-            params.setValue(AVKey.DATASET_NAME, layerNames);
+            params.set(AVKey.DATASET_NAME, layerNames);
         }
 
         return params;
@@ -600,16 +600,16 @@ public class DataConfigurationUtils {
         WWXML.checkAndSetStringParam(domElement, params, AVKey.GET_CAPABILITIES_URL, "Service/GetCapabilitiesURL",
             xpath);
 
-        params.setValue(AVKey.SERVICE, params.getValue(AVKey.GET_COVERAGE_URL));
+        params.set(AVKey.SERVICE, params.get(AVKey.GET_COVERAGE_URL));
         String serviceURL = params.getStringValue(AVKey.SERVICE);
         if (serviceURL != null) {
-            params.setValue(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
+            params.set(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
         }
 
         // The dataset name is the layer-names string for WMS elevation models
         String coverages = params.getStringValue(AVKey.COVERAGE_IDENTIFIERS);
         if (coverages != null) {
-            params.setValue(AVKey.DATASET_NAME, coverages);
+            params.set(AVKey.DATASET_NAME, coverages);
         }
 
         return params;
@@ -663,23 +663,23 @@ public class DataConfigurationUtils {
             }
 
             if (!WWUtil.isEmpty(coordinateSystem))
-                params.setValue(AVKey.COORDINATE_SYSTEM, coordinateSystem);
+                params.set(AVKey.COORDINATE_SYSTEM, coordinateSystem);
         }
 
         // Define the DISPLAY_NAME and DATASET_NAME from the WMS layer names and styles.
-        params.setValue(AVKey.DISPLAY_NAME, makeTitle(caps, layerNames, styleNames));
-        params.setValue(AVKey.DATASET_NAME, layerNames);
+        params.set(AVKey.DISPLAY_NAME, makeTitle(caps, layerNames, styleNames));
+        params.set(AVKey.DATASET_NAME, layerNames);
 
         // Get the EXPIRY_TIME from the WMS layer last update time.
         Long lastUpdate = caps.getLayerLatestLastUpdateTime(names);
         if (lastUpdate != null) {
-            params.setValue(AVKey.EXPIRY_TIME, lastUpdate);
+            params.set(AVKey.EXPIRY_TIME, lastUpdate);
         }
 
         // Get the GET_MAP_URL from the WMS getMapRequest URL.
         String mapRequestURIString = caps.getRequestURL("GetMap", "http", "get");
-        if (params.getValue(AVKey.GET_MAP_URL) == null) {
-            params.setValue(AVKey.GET_MAP_URL, mapRequestURIString);
+        if (params.get(AVKey.GET_MAP_URL) == null) {
+            params.set(AVKey.GET_MAP_URL, mapRequestURIString);
         }
         mapRequestURIString = params.getStringValue(AVKey.GET_MAP_URL);
         // Throw an exception if there's no GET_MAP_URL property, or no getMapRequest URL in the WMS Capabilities.
@@ -690,35 +690,35 @@ public class DataConfigurationUtils {
 
         // Get the GET_CAPABILITIES_URL from the WMS getCapabilitiesRequest URL.
         String capsRequestURIString = caps.getRequestURL("GetCapabilities", "http", "get");
-        if (params.getValue(AVKey.GET_CAPABILITIES_URL) == null) {
-            params.setValue(AVKey.GET_CAPABILITIES_URL, capsRequestURIString);
+        if (params.get(AVKey.GET_CAPABILITIES_URL) == null) {
+            params.set(AVKey.GET_CAPABILITIES_URL, capsRequestURIString);
         }
 
         // Define the SERVICE from the GET_MAP_URL property.
-        params.setValue(AVKey.SERVICE, params.getValue(AVKey.GET_MAP_URL));
+        params.set(AVKey.SERVICE, params.get(AVKey.GET_MAP_URL));
         String serviceURL = params.getStringValue(AVKey.SERVICE);
         if (serviceURL != null) {
-            params.setValue(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
+            params.set(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
         }
 
         // Define the SERVICE_NAME as the standard OGC WMS service string.
-        if (params.getValue(AVKey.SERVICE_NAME) == null) {
-            params.setValue(AVKey.SERVICE_NAME, OGCConstants.WMS_SERVICE_NAME);
+        if (params.get(AVKey.SERVICE_NAME) == null) {
+            params.set(AVKey.SERVICE_NAME, OGCConstants.WMS_SERVICE_NAME);
         }
 
         // Define the WMS VERSION as the version fetched from the Capabilities document.
         String versionString = caps.getVersion();
-        if (params.getValue(AVKey.WMS_VERSION) == null) {
-            params.setValue(AVKey.WMS_VERSION, versionString);
+        if (params.get(AVKey.WMS_VERSION) == null) {
+            params.set(AVKey.WMS_VERSION, versionString);
         }
 
         // Form the cache path DATA_CACHE_NAME from a set of unique WMS parameters.
-        if (params.getValue(AVKey.DATA_CACHE_NAME) == null) {
+        if (params.get(AVKey.DATA_CACHE_NAME) == null) {
             try {
                 URI mapRequestURI = new URI(mapRequestURIString);
                 String cacheName = WWIO.formPath(mapRequestURI.getAuthority(), mapRequestURI.getPath(), layerNames,
                     styleNames);
-                params.setValue(AVKey.DATA_CACHE_NAME, cacheName);
+                params.set(AVKey.DATA_CACHE_NAME, cacheName);
             }
             catch (URISyntaxException e) {
                 String message = Logging.getMessage("WMS.RequestMapURLBad", mapRequestURIString);
@@ -730,7 +730,7 @@ public class DataConfigurationUtils {
         // Determine image format to request.
         if (params.getStringValue(AVKey.IMAGE_FORMAT) == null) {
             String imageFormat = chooseImageFormat(caps.getImageFormats().toArray(), formatOrderPreference);
-            params.setValue(AVKey.IMAGE_FORMAT, imageFormat);
+            params.set(AVKey.IMAGE_FORMAT, imageFormat);
         }
 
         // Throw an exception if we cannot determine an image format to request.
@@ -740,7 +740,7 @@ public class DataConfigurationUtils {
         }
 
         // Determine bounding sector.
-        Sector sector = (Sector) params.getValue(AVKey.SECTOR);
+        Sector sector = (Sector) params.get(AVKey.SECTOR);
         if (sector == null) {
             for (String name : names) {
                 Sector layerSector = caps.getLayerByName(name).getGeographicBoundingBox();
@@ -756,7 +756,7 @@ public class DataConfigurationUtils {
                 Logging.logger().severe("WMS.NoGeographicBoundingBox");
                 throw new WWRuntimeException(Logging.getMessage("WMS.NoGeographicBoundingBox"));
             }
-            params.setValue(AVKey.SECTOR, sector);
+            params.set(AVKey.SECTOR, sector);
         }
 
         // TODO: adjust for subsetable, fixedimage, etc.
@@ -786,31 +786,31 @@ public class DataConfigurationUtils {
 
         WCS100CoverageOffering offering = coverage.getCoverageOfferings().get(0);
 
-        params.setValue(AVKey.SERVICE_NAME, OGCConstants.WCS_SERVICE_NAME);
-        params.setValue(AVKey.WCS_VERSION, caps.getVersion() != null ? caps.getVersion() : "1.0.0");
-        params.setValue(AVKey.DISPLAY_NAME, offering.getLabel());
-        params.setValue(AVKey.COVERAGE_IDENTIFIERS, offering.getName());
-        params.setValue(AVKey.GET_COVERAGE_URL, caps.getCapability().getGetOperationAddress("GetCoverage"));
-        params.setValue(AVKey.GET_CAPABILITIES_URL, caps.getCapability().getGetOperationAddress("GetCapabilities"));
+        params.set(AVKey.SERVICE_NAME, OGCConstants.WCS_SERVICE_NAME);
+        params.set(AVKey.WCS_VERSION, caps.getVersion() != null ? caps.getVersion() : "1.0.0");
+        params.set(AVKey.DISPLAY_NAME, offering.getLabel());
+        params.set(AVKey.COVERAGE_IDENTIFIERS, offering.getName());
+        params.set(AVKey.GET_COVERAGE_URL, caps.getCapability().getGetOperationAddress("GetCoverage"));
+        params.set(AVKey.GET_CAPABILITIES_URL, caps.getCapability().getGetOperationAddress("GetCapabilities"));
 
-        params.setValue(AVKey.SERVICE, params.getValue(AVKey.GET_COVERAGE_URL));
+        params.set(AVKey.SERVICE, params.get(AVKey.GET_COVERAGE_URL));
         String serviceURL = params.getStringValue(AVKey.SERVICE);
         if (serviceURL != null) {
-            params.setValue(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
+            params.set(AVKey.SERVICE, WWXML.fixGetMapString(serviceURL));
         }
 
         String coverages = params.getStringValue(AVKey.COVERAGE_IDENTIFIERS);
         if (coverages != null) {
-            params.setValue(AVKey.DATASET_NAME, coverages);
+            params.set(AVKey.DATASET_NAME, coverages);
         }
 
         // Form the cache path DATA_CACHE_NAME from a set of unique WMS parameters.
-        if (params.getValue(AVKey.DATA_CACHE_NAME) == null) {
+        if (params.get(AVKey.DATA_CACHE_NAME) == null) {
             try {
                 URI mapRequestURI = new URI(params.getStringValue(AVKey.GET_COVERAGE_URL));
                 String cacheName = WWIO.formPath(mapRequestURI.getAuthority(), mapRequestURI.getPath(),
                     params.getStringValue(AVKey.COVERAGE_IDENTIFIERS));
-                params.setValue(AVKey.DATA_CACHE_NAME, cacheName);
+                params.set(AVKey.DATA_CACHE_NAME, cacheName);
             }
             catch (URISyntaxException e) {
                 String message = Logging.getMessage("WCS.RequestMapURLBad",
@@ -822,12 +822,12 @@ public class DataConfigurationUtils {
 
         for (String format : offering.getSupportedFormats().getStrings()) {
             if (format.toLowerCase().contains("image/tiff")) {
-                params.setValue(AVKey.IMAGE_FORMAT, format);
+                params.set(AVKey.IMAGE_FORMAT, format);
                 break;
             }
             else if (format.toLowerCase().contains("tiff")) // lots of variants in use, so find one
             {
-                params.setValue(AVKey.IMAGE_FORMAT, format);
+                params.set(AVKey.IMAGE_FORMAT, format);
                 break;
             }
         }
@@ -839,7 +839,7 @@ public class DataConfigurationUtils {
             double[] ne = envelope.getPositions().get(1).getPos2();
 
             if (sw != null && ne != null) {
-                params.setValue(AVKey.SECTOR, Sector.fromDegreesAndClamp(sw[1], ne[1], sw[0], ne[0]));
+                params.set(AVKey.SECTOR, Sector.fromDegreesAndClamp(sw[1], ne[1], sw[0], ne[0]));
             }
         }
 
@@ -856,14 +856,14 @@ public class DataConfigurationUtils {
         }
 
         if (crs != null) {
-            params.setValue(AVKey.COORDINATE_SYSTEM, crs);
+            params.set(AVKey.COORDINATE_SYSTEM, crs);
         }
 
         WCS100Values nullValues = offering.getRangeSet().getRangeSet().getNullValues();
         if (nullValues != null && nullValues.getSingleValues() != null && !nullValues.getSingleValues().isEmpty()) {
             Double nullValue = nullValues.getSingleValues().get(0).getSingleValue();
             if (nullValue != null) {
-                params.setValue(AVKey.MISSING_DATA_SIGNAL, nullValue);
+                params.set(AVKey.MISSING_DATA_SIGNAL, nullValue);
             }
         }
 
@@ -1139,8 +1139,8 @@ public class DataConfigurationUtils {
         WWXML.checkAndAppendLatLonElement(params, AVKey.LEVEL_ZERO_TILE_DELTA, context, "LevelZeroTileDelta/LatLon");
 
         // Retrieval properties.
-        if (params.getValue(AVKey.MAX_ABSENT_TILE_ATTEMPTS) != null ||
-            params.getValue(AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL) != null) {
+        if (params.get(AVKey.MAX_ABSENT_TILE_ATTEMPTS) != null ||
+            params.get(AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL) != null) {
             Element el = WWXML.getElement(context, "AbsentTiles", null);
             if (el == null) {
                 el = WWXML.appendElementPath(context, "AbsentTiles");
@@ -1278,7 +1278,7 @@ public class DataConfigurationUtils {
         if (s == null || s.isEmpty()) {
             s = firstLevel.getDataset();
             if (s != null && !s.isEmpty()) {
-                params.setValue(AVKey.DATASET_NAME, s);
+                params.set(AVKey.DATASET_NAME, s);
             }
         }
 
@@ -1286,7 +1286,7 @@ public class DataConfigurationUtils {
         if (s == null || s.isEmpty()) {
             s = firstLevel.getCacheName();
             if (s != null && !s.isEmpty()) {
-                params.setValue(AVKey.DATA_CACHE_NAME, s);
+                params.set(AVKey.DATA_CACHE_NAME, s);
             }
         }
 
@@ -1295,16 +1295,16 @@ public class DataConfigurationUtils {
         if (s == null || s.isEmpty()) {
             s = firstLevel.getService();
             if (s != null && !s.isEmpty()) {
-                params.setValue(AVKey.SERVICE, s);
+                params.set(AVKey.SERVICE, s);
             }
         }
 
-        Object o = params.getValue(AVKey.EXPIRY_TIME);
+        Object o = params.get(AVKey.EXPIRY_TIME);
         if (o == null) {
             // If the expiry time is zero or negative, then treat it as an uninitialized value.
             long l = firstLevel.getExpiryTime();
             if (l > 0) {
-                params.setValue(AVKey.EXPIRY_TIME, l);
+                params.set(AVKey.EXPIRY_TIME, l);
             }
         }
 
@@ -1313,68 +1313,68 @@ public class DataConfigurationUtils {
         if (s == null || s.isEmpty()) {
             s = firstLevel.getFormatSuffix();
             if (s != null && !s.isEmpty()) {
-                params.setValue(AVKey.FORMAT_SUFFIX, s);
+                params.set(AVKey.FORMAT_SUFFIX, s);
             }
         }
 
         // Tile structure properties.
-        o = params.getValue(AVKey.NUM_LEVELS);
+        o = params.get(AVKey.NUM_LEVELS);
         if (o == null) {
-            params.setValue(AVKey.NUM_LEVELS, levelSet.getNumLevels());
+            params.set(AVKey.NUM_LEVELS, levelSet.getNumLevels());
         }
 
-        o = params.getValue(AVKey.NUM_EMPTY_LEVELS);
+        o = params.get(AVKey.NUM_EMPTY_LEVELS);
         if (o == null) {
-            params.setValue(AVKey.NUM_EMPTY_LEVELS, getNumEmptyLevels(levelSet));
+            params.set(AVKey.NUM_EMPTY_LEVELS, getNumEmptyLevels(levelSet));
         }
 
         s = params.getStringValue(AVKey.INACTIVE_LEVELS);
         if (s == null || s.isEmpty()) {
             s = getInactiveLevels(levelSet);
             if (s != null && !s.isEmpty()) {
-                params.setValue(AVKey.INACTIVE_LEVELS, s);
+                params.set(AVKey.INACTIVE_LEVELS, s);
             }
         }
 
-        o = params.getValue(AVKey.SECTOR);
+        o = params.get(AVKey.SECTOR);
         if (o == null) {
             Sector sector = levelSet.getSector();
             if (sector != null) {
-                params.setValue(AVKey.SECTOR, sector);
+                params.set(AVKey.SECTOR, sector);
             }
         }
 
-        o = params.getValue(AVKey.SECTOR_RESOLUTION_LIMITS);
+        o = params.get(AVKey.SECTOR_RESOLUTION_LIMITS);
         if (o == null) {
             LevelSet.SectorResolution[] srs = levelSet.getSectorLevelLimits();
             if (srs != null && srs.length > 0) {
-                params.setValue(AVKey.SECTOR_RESOLUTION_LIMITS, srs);
+                params.set(AVKey.SECTOR_RESOLUTION_LIMITS, srs);
             }
         }
 
-        o = params.getValue(AVKey.TILE_ORIGIN);
+        o = params.get(AVKey.TILE_ORIGIN);
         if (o == null) {
             LatLon ll = levelSet.getTileOrigin();
             if (ll != null) {
-                params.setValue(AVKey.TILE_ORIGIN, ll);
+                params.set(AVKey.TILE_ORIGIN, ll);
             }
         }
 
-        o = params.getValue(AVKey.TILE_WIDTH);
+        o = params.get(AVKey.TILE_WIDTH);
         if (o == null) {
-            params.setValue(AVKey.TILE_WIDTH, firstLevel.getTileWidth());
+            params.set(AVKey.TILE_WIDTH, firstLevel.getTileWidth());
         }
 
-        o = params.getValue(AVKey.TILE_HEIGHT);
+        o = params.get(AVKey.TILE_HEIGHT);
         if (o == null) {
-            params.setValue(AVKey.TILE_HEIGHT, firstLevel.getTileHeight());
+            params.set(AVKey.TILE_HEIGHT, firstLevel.getTileHeight());
         }
 
-        o = params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA);
+        o = params.get(AVKey.LEVEL_ZERO_TILE_DELTA);
         if (o == null) {
             LatLon ll = levelSet.getLevelZeroTileDelta();
             if (ll != null) {
-                params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
+                params.set(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
             }
         }
 
@@ -1729,96 +1729,96 @@ public class DataConfigurationUtils {
         WWXML.checkAndSetStringParam(el, params, AVKey.DATASET_NAME, "Name", xpath);
 
         // Display properties.
-        if (params.getValue(AVKey.OPACITY) == null) {
+        if (params.get(AVKey.OPACITY) == null) {
             Double d = WWXML.getDouble(el, "Opacity", xpath);
             if (d != null) {
-                params.setValue(AVKey.OPACITY, d / 255.0d);
+                params.set(AVKey.OPACITY, d / 255.0d);
             }
         }
 
         // Service properties.
         // LayerSet documents always describe an offline pyramid of tiled imagery in the file store, Therefore we define
         // the service as "Offline".
-        if (params.getValue(AVKey.SERVICE_NAME) == null) {
-            params.setValue(AVKey.SERVICE_NAME, "Offline");
+        if (params.get(AVKey.SERVICE_NAME) == null) {
+            params.set(AVKey.SERVICE_NAME, "Offline");
         }
 
         // Image format properties.
-        if (params.getValue(AVKey.FORMAT_SUFFIX) == null) {
+        if (params.get(AVKey.FORMAT_SUFFIX) == null) {
             String s = WWXML.getText(el, "ImageAccessor/ImageFileExtension", xpath);
             if (s != null && !s.isEmpty()) {
                 if (!(!s.isEmpty() && s.charAt(0) == '.')) {
                     s = "." + s;
                 }
-                params.setValue(AVKey.FORMAT_SUFFIX, s);
+                params.set(AVKey.FORMAT_SUFFIX, s);
             }
         }
 
         // LayerSet documents contain a format suffix, but not image format type. Convert the format suffix to a
         // mime type, then use it to populate the IMAGE_FORMAT and AVAILABLE_IMAGE_FORMAT properties.
-        if (params.getValue(AVKey.FORMAT_SUFFIX) != null) {
-            String s = WWIO.makeMimeTypeForSuffix(params.getValue(AVKey.FORMAT_SUFFIX).toString());
+        if (params.get(AVKey.FORMAT_SUFFIX) != null) {
+            String s = WWIO.makeMimeTypeForSuffix(params.get(AVKey.FORMAT_SUFFIX).toString());
             if (s != null) {
-                if (params.getValue(AVKey.IMAGE_FORMAT) == null) {
-                    params.setValue(AVKey.IMAGE_FORMAT, s);
+                if (params.get(AVKey.IMAGE_FORMAT) == null) {
+                    params.set(AVKey.IMAGE_FORMAT, s);
                 }
-                if (params.getValue(AVKey.AVAILABLE_IMAGE_FORMATS) == null) {
-                    params.setValue(AVKey.AVAILABLE_IMAGE_FORMATS, new String[] {s});
+                if (params.get(AVKey.AVAILABLE_IMAGE_FORMATS) == null) {
+                    params.set(AVKey.AVAILABLE_IMAGE_FORMATS, new String[] {s});
                 }
             }
         }
 
         // Set the texture format to DDS. If the texture data is already in DDS format, this parameter is benign.
-        if (params.getValue(AVKey.TEXTURE_FORMAT) == null) {
-            params.setValue(AVKey.TEXTURE_FORMAT, DEFAULT_TEXTURE_FORMAT);
+        if (params.get(AVKey.TEXTURE_FORMAT) == null) {
+            params.set(AVKey.TEXTURE_FORMAT, DEFAULT_TEXTURE_FORMAT);
         }
 
         // Tile structure properties.
         WWXML.checkAndSetIntegerParam(el, params, AVKey.NUM_LEVELS, "ImageAccessor/NumberLevels", xpath);
 
-        if (params.getValue(AVKey.NUM_EMPTY_LEVELS) == null) {
-            params.setValue(AVKey.NUM_EMPTY_LEVELS, 0);
+        if (params.get(AVKey.NUM_EMPTY_LEVELS) == null) {
+            params.set(AVKey.NUM_EMPTY_LEVELS, 0);
         }
 
-        if (params.getValue(AVKey.SECTOR) == null) {
+        if (params.get(AVKey.SECTOR) == null) {
             Sector s = getWWDotNetLayerSetSector(el, "BoundingBox", xpath);
             if (s != null) {
-                params.setValue(AVKey.SECTOR, s);
+                params.set(AVKey.SECTOR, s);
             }
         }
 
-        if (params.getValue(AVKey.TILE_ORIGIN) == null) {
-            params.setValue(AVKey.TILE_ORIGIN, new LatLon(Angle.NEG90, Angle.NEG180));
+        if (params.get(AVKey.TILE_ORIGIN) == null) {
+            params.set(AVKey.TILE_ORIGIN, new LatLon(Angle.NEG90, Angle.NEG180));
         }
 
-        if (params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
+        if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
             LatLon ll = getWWDotNetLayerSetLatLon(el, "ImageAccessor/LevelZeroTileSizeDegrees", xpath);
             if (ll != null) {
-                params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
+                params.set(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
             }
         }
 
         Integer tileDimension = WWXML.getInteger(el, "ImageAccessor/TextureSizePixels", xpath);
         if (tileDimension != null) {
-            if (params.getValue(AVKey.TILE_WIDTH) == null) {
-                params.setValue(AVKey.TILE_WIDTH, tileDimension);
+            if (params.get(AVKey.TILE_WIDTH) == null) {
+                params.set(AVKey.TILE_WIDTH, tileDimension);
             }
-            if (params.getValue(AVKey.TILE_HEIGHT) == null) {
-                params.setValue(AVKey.TILE_HEIGHT, tileDimension);
+            if (params.get(AVKey.TILE_HEIGHT) == null) {
+                params.set(AVKey.TILE_HEIGHT, tileDimension);
             }
         }
 
         // LayerSet documents always describe an offline pyramid of tiled imagery in the file store. Therefore we can
         // safely assume that network retrieval should be disabled. Because we know nothing about the nature of the
         // imagery, it's best to enable mipmapping and transparent textures by default.
-        if (params.getValue(AVKey.NETWORK_RETRIEVAL_ENABLED) == null) {
-            params.setValue(AVKey.NETWORK_RETRIEVAL_ENABLED, false);
+        if (params.get(AVKey.NETWORK_RETRIEVAL_ENABLED) == null) {
+            params.set(AVKey.NETWORK_RETRIEVAL_ENABLED, false);
         }
-        if (params.getValue(AVKey.USE_MIP_MAPS) == null) {
-            params.setValue(AVKey.USE_MIP_MAPS, true);
+        if (params.get(AVKey.USE_MIP_MAPS) == null) {
+            params.set(AVKey.USE_MIP_MAPS, true);
         }
-        if (params.getValue(AVKey.USE_TRANSPARENT_TEXTURES) == null) {
-            params.setValue(AVKey.USE_TRANSPARENT_TEXTURES, true);
+        if (params.get(AVKey.USE_TRANSPARENT_TEXTURES) == null) {
+            params.set(AVKey.USE_TRANSPARENT_TEXTURES, true);
         }
 
         return params;

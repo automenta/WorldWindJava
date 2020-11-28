@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
-import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.formats.tiff.GeotiffWriter;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
@@ -54,7 +54,7 @@ public class ExportImageOrElevations extends ApplicationTemplate {
         public AppFrame() {
             super(true, true, false);
 
-            this.selector = new SectorSelector(getWwd());
+            this.selector = new SectorSelector(wwd());
             this.selector.setInteriorColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
             this.selector.setBorderColor(new Color(1.0f, 0.0f, 0.0f, 0.5f));
             this.selector.setBorderWidth(3);
@@ -159,19 +159,19 @@ public class ExportImageOrElevations extends ApplicationTemplate {
                 finally {
                     SwingUtilities.invokeLater(() -> {
                         setCursor(Cursor.getDefaultCursor());
-                        getWwd().redraw();
+                        wwd().redraw();
                         jd.setVisible(false);
                     });
                 }
             });
 
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-            this.getWwd().redraw();
+            this.wwd().redraw();
             t.start();
         }
 
         public void enableNAIPLayer() {
-            LayerList list = this.getWwd().model().getLayers();
+            LayerList list = this.wwd().model().getLayers();
             for (Layer layer : list) {
                 if (layer.getName().contains("NAIP")) {
                     layer.setEnabled(true);
@@ -182,8 +182,8 @@ public class ExportImageOrElevations extends ApplicationTemplate {
 
         public void doSaveImage() {
             TiledImageLayer currentLayer = null;
-            LayerList list = this.getWwd().model().getLayers();
-            DrawContext dc = this.getWwd().getSceneController().getDrawContext();
+            LayerList list = this.wwd().model().getLayers();
+            DrawContext dc = this.wwd().sceneControl().getDrawContext();
 
             for (Object o : list) {
                 if (o instanceof TiledImageLayer) {
@@ -236,14 +236,14 @@ public class ExportImageOrElevations extends ApplicationTemplate {
                 finally {
                     SwingUtilities.invokeLater(() -> {
                         setCursor(Cursor.getDefaultCursor());
-                        getWwd().redraw();
+                        wwd().redraw();
                         jd.setVisible(false);
                     });
                 }
             });
 
             this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-            this.getWwd().redraw();
+            this.wwd().redraw();
             t.start();
         }
 
@@ -317,7 +317,7 @@ public class ExportImageOrElevations extends ApplicationTemplate {
             }
 
             try {
-                Globe globe = this.getWwd().model().getGlobe();
+                Globe globe = this.wwd().model().getGlobe();
                 ElevationModel model = globe.getElevationModel();
 
                 elevations = new double[latlons.size()];
@@ -338,10 +338,10 @@ public class ExportImageOrElevations extends ApplicationTemplate {
             throws IOException {
             AVList params = new AVListImpl();
 
-            params.setValue(AVKey.SECTOR, sector);
-            params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
-            params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-            params.setValue(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
+            params.set(AVKey.SECTOR, sector);
+            params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
+            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+            params.set(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
 
             GeotiffWriter writer = new GeotiffWriter(gtFile);
             try {
@@ -357,15 +357,15 @@ public class ExportImageOrElevations extends ApplicationTemplate {
             // These parameters are required for writeElevation
             AVList elev32 = new AVListImpl();
 
-            elev32.setValue(AVKey.SECTOR, sector);
-            elev32.setValue(AVKey.WIDTH, width);
-            elev32.setValue(AVKey.HEIGHT, height);
-            elev32.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
-            elev32.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
-            elev32.setValue(AVKey.DATA_TYPE, AVKey.FLOAT32);
-            elev32.setValue(AVKey.ELEVATION_UNIT, AVKey.UNIT_METER);
-            elev32.setValue(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
-            elev32.setValue(AVKey.MISSING_DATA_SIGNAL, MISSING_DATA_SIGNAL);
+            elev32.set(AVKey.SECTOR, sector);
+            elev32.set(AVKey.WIDTH, width);
+            elev32.set(AVKey.HEIGHT, height);
+            elev32.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
+            elev32.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+            elev32.set(AVKey.DATA_TYPE, AVKey.FLOAT32);
+            elev32.set(AVKey.ELEVATION_UNIT, AVKey.UNIT_METER);
+            elev32.set(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
+            elev32.set(AVKey.MISSING_DATA_SIGNAL, MISSING_DATA_SIGNAL);
 
             ByteBufferRaster raster = (ByteBufferRaster) ByteBufferRaster.createGeoreferencedRaster(elev32);
             // copy elevation values to the elevation raster

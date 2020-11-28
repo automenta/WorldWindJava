@@ -6,8 +6,9 @@
 
 package gov.nasa.worldwind.examples.milstd2525;
 
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.Logging;
 

@@ -176,7 +176,7 @@ public class VPFUtils {
         if (record.hasValue(paramName)) {
             Object o = record.getValue(paramName);
             if (o != null)
-                params.setValue(paramKey, o);
+                params.set(paramKey, o);
         }
     }
 

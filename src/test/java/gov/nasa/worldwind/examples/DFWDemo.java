@@ -8,10 +8,10 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.ogc.wms.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
 import gov.nasa.worldwind.terrain.WMSBasicElevationModel;
 import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
@@ -149,13 +149,13 @@ public class DFWDemo {
             caps = pCaps;
             params = new AVListImpl();
             layerCaps = pLayerCaps;
-            params.setValue(AVKey.LAYER_NAMES, layerCaps.getName());
+            params.set(AVKey.LAYER_NAMES, layerCaps.getName());
             String abs = layerCaps.getLayerAbstract();
             if (!WWUtil.isEmpty(abs)) {
-                params.setValue(AVKey.LAYER_ABSTRACT, abs);
+                params.set(AVKey.LAYER_ABSTRACT, abs);
             }
 
-            params.setValue(AVKey.DISPLAY_NAME, makeTitle(caps));
+            params.set(AVKey.DISPLAY_NAME, makeTitle(caps));
         }
 
         public Sector getSector() {
@@ -316,9 +316,9 @@ public class DFWDemo {
                 AVList configParams = dynamicLayer.getParams().copy(); // Copy to insulate changes from the caller.
 
                 // Some wms servers are slow, so increase the timeouts and limits used by world wind's retrievers.
-                configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, 30000);
-                configParams.setValue(AVKey.URL_READ_TIMEOUT, 30000);
-                configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
+                configParams.set(AVKey.URL_CONNECT_TIMEOUT, 30000);
+                configParams.set(AVKey.URL_READ_TIMEOUT, 30000);
+                configParams.set(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
                 long fiveDayMillis = 5L * 24L * 60L * 60L * 1000L;
                 if (imagery) {
                     WMSTiledImageLayer wmsLayer = new WMSTiledImageLayer(dynamicLayer.getCaps(), configParams);
@@ -327,12 +327,12 @@ public class DFWDemo {
                     dynamicLayer.setImageLayer(wmsLayer);
                 }
                 else {
-                    configParams.setValue(AVKey.TILE_WIDTH, 1024);
-                    configParams.setValue(AVKey.TILE_HEIGHT, 1024);
-                    configParams.setValue(AVKey.NUM_LEVELS, 9);
+                    configParams.set(AVKey.TILE_WIDTH, 1024);
+                    configParams.set(AVKey.TILE_HEIGHT, 1024);
+                    configParams.set(AVKey.NUM_LEVELS, 9);
                     // configParams.setValue(AVKey.IMAGE_FORMAT,"image/png");
                     Angle delta = Angle.fromDegrees(0.01);
-                    configParams.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
+                    configParams.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
                     WMSBasicElevationModel wmsElevations = new WMSBasicElevationModel(dynamicLayer.getCaps(),
                         configParams);
                     wmsElevations.setExpiryTime(System.currentTimeMillis() - fiveDayMillis);

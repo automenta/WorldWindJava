@@ -104,14 +104,14 @@ public class InstallDTED extends ApplicationTemplate {
             // Add the new elevation model to the current (default) one. Must do it on the event dispatch thread.
             SwingUtilities.invokeLater(() -> {
                 CompoundElevationModel model
-                    = (CompoundElevationModel) AppFrame.this.getWwd().model().getGlobe().getElevationModel();
+                    = (CompoundElevationModel) AppFrame.this.wwd().model().getGlobe().getElevationModel();
                 model.addElevationModel(em);
 
                 // Set the view to look at the installed elevations. Get the location from the elevation model's
                 // construction parameters.
-                AVList params = (AVList) em.getValue(AVKey.CONSTRUCTION_PARAMETERS);
-                Sector sector = (Sector) params.getValue(AVKey.SECTOR);
-                ExampleUtil.goTo(getWwd(), sector);
+                AVList params = (AVList) em.get(AVKey.CONSTRUCTION_PARAMETERS);
+                Sector sector = (Sector) params.get(AVKey.SECTOR);
+                ExampleUtil.goTo(wwd(), sector);
             });
         }
 
@@ -142,14 +142,14 @@ public class InstallDTED extends ApplicationTemplate {
 
             // Create a parameter list specifying the install location information.
             AVList params = new AVListImpl();
-            params.setValue(AVKey.FILE_STORE_LOCATION, fileStoreLocation.getAbsolutePath());
-            params.setValue(AVKey.DATA_CACHE_NAME, cacheName);
-            params.setValue(AVKey.DATASET_NAME, displayName);
+            params.set(AVKey.FILE_STORE_LOCATION, fileStoreLocation.getAbsolutePath());
+            params.set(AVKey.DATA_CACHE_NAME, cacheName);
+            params.set(AVKey.DATASET_NAME, displayName);
 
             // Instruct the raster producer to produce only three initial levels and to create the remaining
             // tiles at whatever level is needed on the fly when the elevations are subsequently used.
-            params.setValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, 2); // three initial levels
-            params.setValue(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER); // on-the-fly tile creation
+            params.set(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, 2); // three initial levels
+            params.set(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER); // on-the-fly tile creation
 
             // Create a TiledImageProducer to install the imagery.
             this.producer = new TiledElevationProducer();

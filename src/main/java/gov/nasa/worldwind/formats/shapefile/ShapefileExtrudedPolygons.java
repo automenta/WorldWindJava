@@ -8,10 +8,11 @@ package gov.nasa.worldwind.formats.shapefile;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 

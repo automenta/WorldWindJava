@@ -93,7 +93,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
     }
 
     public void setDisplayName(String displayName) {
-        this.setValue(AVKey.DISPLAY_NAME, displayName);
+        this.set(AVKey.DISPLAY_NAME, displayName);
     }
 
     protected LayerList makeShallowCopy(LayerList sourceList) {
@@ -370,8 +370,8 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         return layers;
     }
 
-    public Object getValue(String key) {
-        return wwo.getValue(key);
+    public Object get(String key) {
+        return wwo.get(key);
     }
 
     public Iterable<Object> getValues() {
@@ -386,8 +386,8 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         return wwo.getStringValue(key);
     }
 
-    public Object setValue(String key, Object value) {
-        return wwo.setValue(key, value);
+    public Object set(String key, Object value) {
+        return wwo.set(key, value);
     }
 
     public AVList setValues(AVList avList) {

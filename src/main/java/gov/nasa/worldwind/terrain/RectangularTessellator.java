@@ -10,7 +10,7 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Cylinder;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
@@ -776,7 +776,7 @@ public class RectangularTessellator extends WWObjectImpl implements Tessellator 
         for (int i = 0; i < numTextureUnits; i++) {
             gl.glClientActiveTexture(GL2.GL_TEXTURE0 + i);
             gl.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
-            Object texCoords = dc.getValue(AVKey.TEXTURE_COORDINATES);
+            Object texCoords = dc.get(AVKey.TEXTURE_COORDINATES);
             if (texCoords instanceof DoubleBuffer) {
                 gl.glTexCoordPointer(2, GL.GL_FLOAT, 0, ((DoubleBuffer) texCoords).rewind());
             }

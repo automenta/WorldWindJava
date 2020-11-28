@@ -6,9 +6,9 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 
@@ -64,7 +64,7 @@ public class Wedges extends ApplicationTemplate {
             wedge3.setAltitudeMode(WorldWind.ABSOLUTE);
             wedge3.setAttributes(attrs);
             wedge3.setVisible(true);
-            wedge3.setValue(AVKey.DISPLAY_NAME, "Wedge with equal axes, ABSOLUTE altitude mode");
+            wedge3.set(AVKey.DISPLAY_NAME, "Wedge with equal axes, ABSOLUTE altitude mode");
             layer.add(wedge3);
 
             // Wedge with equal axes, RELATIVE_TO_GROUND
@@ -72,7 +72,7 @@ public class Wedges extends ApplicationTemplate {
             wedge4.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge4.setAttributes(attrs);
             wedge4.setVisible(true);
-            wedge4.setValue(AVKey.DISPLAY_NAME, "Wedge with equal axes, RELATIVE_TO_GROUND altitude mode");
+            wedge4.set(AVKey.DISPLAY_NAME, "Wedge with equal axes, RELATIVE_TO_GROUND altitude mode");
             layer.add(wedge4);
 
             // Wedge with equal axes, CLAMP_TO_GROUND
@@ -80,16 +80,16 @@ public class Wedges extends ApplicationTemplate {
             wedge5.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             wedge5.setAttributes(attrs);
             wedge5.setVisible(true);
-            wedge5.setValue(AVKey.DISPLAY_NAME, "Wedge with equal axes, CLAMP_TO_GROUND altitude mode");
+            wedge5.set(AVKey.DISPLAY_NAME, "Wedge with equal axes, CLAMP_TO_GROUND altitude mode");
             layer.add(wedge5);
 
             // Wedge with a texture, using Wedge(position, angle, height, radius) constructor
             Wedge wedge9 = new Wedge(Position.fromDegrees(0, -90, 600000), Angle.fromDegrees(225), 1200000, 600000);
             wedge9.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            wedge9.setImageSources("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            wedge9.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             wedge9.setAttributes(attrs);
             wedge9.setVisible(true);
-            wedge9.setValue(AVKey.DISPLAY_NAME, "Wedge with a texture");
+            wedge9.set(AVKey.DISPLAY_NAME, "Wedge with a texture");
             layer.add(wedge9);
 
             // Scaled Wedge with default orientation
@@ -97,7 +97,7 @@ public class Wedges extends ApplicationTemplate {
             wedge.setAltitudeMode(WorldWind.ABSOLUTE);
             wedge.setAttributes(attrs);
             wedge.setVisible(true);
-            wedge.setValue(AVKey.DISPLAY_NAME, "Scaled Wedge with default orientation");
+            wedge.set(AVKey.DISPLAY_NAME, "Scaled Wedge with default orientation");
             layer.add(wedge);
 
             // Scaled Wedge with a pre-set orientation
@@ -106,17 +106,17 @@ public class Wedges extends ApplicationTemplate {
             wedge2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge2.setAttributes(attrs2);
             wedge2.setVisible(true);
-            wedge2.setValue(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
+            wedge2.set(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
             layer.add(wedge2);
 
             // Scaled Wedge with a pre-set orientation
             Wedge wedge6 = new Wedge(Position.fromDegrees(30, 30, 750000), Angle.POS90, 500000, 500000, 500000,
                 Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
             wedge6.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            wedge6.setImageSources("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            wedge6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             wedge6.setAttributes(attrs2);
             wedge6.setVisible(true);
-            wedge6.setValue(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
+            wedge6.set(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
             layer.add(wedge6);
 
             // Scaled Wedge with a pre-set orientation
@@ -125,7 +125,7 @@ public class Wedges extends ApplicationTemplate {
             wedge7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge7.setAttributes(attrs2);
             wedge7.setVisible(true);
-            wedge7.setValue(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
+            wedge7.set(AVKey.DISPLAY_NAME, "Scaled Wedge with a pre-set orientation");
             layer.add(wedge7);
 
             // Scaled, oriented Wedge in 3rd "quadrant" (-X, -Y, -Z)
@@ -134,11 +134,11 @@ public class Wedges extends ApplicationTemplate {
             wedge8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             wedge8.setAttributes(attrs2);
             wedge8.setVisible(true);
-            wedge8.setValue(AVKey.DISPLAY_NAME, "Scaled, oriented Wedge with in the 3rd 'quadrant' (-X, -Y, -Z)");
+            wedge8.set(AVKey.DISPLAY_NAME, "Scaled, oriented Wedge with in the 3rd 'quadrant' (-X, -Y, -Z)");
             layer.add(wedge8);
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
         }
 
         protected JPanel makeDetailHintControlPanel() {
@@ -164,7 +164,7 @@ public class Wedges extends ApplicationTemplate {
                 slider.addChangeListener(e -> {
                     double hint = ((JSlider) e.getSource()).getValue() / 10.0d;
                     setWedgeDetailHint(hint);
-                    getWwd().redraw();
+                    wwd().redraw();
                 });
                 elevationSliderPanel.add(slider, BorderLayout.SOUTH);
             }
@@ -177,7 +177,7 @@ public class Wedges extends ApplicationTemplate {
         }
 
         protected RenderableLayer getLayer() {
-            for (Layer layer : getWwd().model().getLayers()) {
+            for (Layer layer : wwd().model().getLayers()) {
                 if (layer.getName().contains("Renderable")) {
                     return (RenderableLayer) layer;
                 }

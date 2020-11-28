@@ -6,8 +6,9 @@
 
 package gov.nasa.worldwind.performance;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -80,7 +81,7 @@ public class SurfacePolygonsEverywhere extends ApplicationTemplate {
             }
             System.out.printf("%d Polygons, %d positions each\n", count, positions.size());
 
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
         }
     }
 }

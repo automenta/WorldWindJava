@@ -7,9 +7,10 @@ package gov.nasa.worldwind.examples.sar.render;
 
 import com.jogamp.opengl.GL2;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.examples.sar.*;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;

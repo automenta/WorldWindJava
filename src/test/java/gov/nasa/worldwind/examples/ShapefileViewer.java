@@ -107,11 +107,11 @@ public class ShapefileViewer extends ApplicationTemplate {
 
             Layer layer = (Layer) result;
             layer.setName(WWIO.getFilename(layer.getName())); // convert the layer name to the source's filename
-            this.getWwd().model().getLayers().add(layer);
+            this.wwd().model().getLayers().add(layer);
 
-            Sector sector = (Sector) layer.getValue(AVKey.SECTOR);
+            Sector sector = (Sector) layer.get(AVKey.SECTOR);
             if (sector != null) {
-                ExampleUtil.goTo(this.getWwd(), sector);
+                ExampleUtil.goTo(this.wwd(), sector);
             }
 
             this.setCursor(null);

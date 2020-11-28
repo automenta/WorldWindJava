@@ -5,11 +5,11 @@
  */
 package gov.nasa.worldwind.examples.dataimport;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import gov.nasa.worldwind.util.ExampleUtil;
@@ -79,7 +79,7 @@ public class ImportImagery extends ApplicationTemplate {
 
                 // Determine the sector covered by the image. This information is in the GeoTIFF file or auxiliary
                 // files associated with the image file.
-                final Sector sector = (Sector) raster.getValue(AVKey.SECTOR);
+                final Sector sector = (Sector) raster.get(AVKey.SECTOR);
                 if (sector == null)
                     throw new Exception("No location specified with image.");
 
@@ -119,10 +119,10 @@ public class ImportImagery extends ApplicationTemplate {
                     layer.add(si1);
 
                     // Add the layer to the model and update the application's layer panel.
-                    insertBeforeCompass(AppFrame.this.getWwd(), layer);
+                    WorldWindow.insertBeforeCompass(AppFrame.this.wwd(), layer);
 
                     // Set the view to look at the imported image.
-                    ExampleUtil.goTo(getWwd(), sector);
+                    ExampleUtil.goTo(wwd(), sector);
                 });
             }
             catch (Exception e) {

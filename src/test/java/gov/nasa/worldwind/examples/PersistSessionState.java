@@ -71,7 +71,7 @@ public class PersistSessionState extends ApplicationTemplate {
             try {
                 // Save the WorldWindow's current state. This state is restored the next time this example loads by the
                 // call to restoreSessionState below.
-                this.sessionState.saveSessionState(this.getWwd());
+                this.sessionState.saveSessionState(this.wwd());
             }
             catch (Exception e) {
                 Logging.logger().log(Level.SEVERE, "Unable to save session state", e);
@@ -81,11 +81,11 @@ public class PersistSessionState extends ApplicationTemplate {
         protected void restoreSessionState() {
             try {
                 // Restore the WorldWindow's state to the last saved session state.
-                this.sessionState.restoreSessionState(this.getWwd());
+                this.sessionState.restoreSessionState(this.wwd());
                 // Update the layer panel to display changes in the layer list, and cause the WorldWindow to repaint
                 // itself. These two lines should be omitted in applications that automatically handle layer panel
                 // updates and WorldWindow repaints when the layer list changes.
-                this.getWwd().redraw();
+                this.wwd().redraw();
             }
             catch (Exception e) {
                 Logging.logger().log(Level.SEVERE, "Unable to restore session state", e);

@@ -7,7 +7,7 @@ package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;
@@ -159,25 +159,25 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
         GraticuleRenderingParams params;
         // Ten degrees grid
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, Color.WHITE);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.WHITE);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-16"));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.WHITE);
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.WHITE);
+        params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-16"));
         setRenderingParams(GRATICULE_GARS_LEVEL_0, params);
         // One degree
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, Color.YELLOW);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.YELLOW);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-14"));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.YELLOW);
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.YELLOW);
+        params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-14"));
         setRenderingParams(GRATICULE_GARS_LEVEL_1, params);
         // 1/10th degree - 1/6th (10 minutes)
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, Color.GREEN);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.GREEN);
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.GREEN);
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.GREEN);
         setRenderingParams(GRATICULE_GARS_LEVEL_2, params);
         // 1/100th degree - 1/60th (one minutes)
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, Color.CYAN);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.CYAN);
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.CYAN);
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.CYAN);
         setRenderingParams(GRATICULE_GARS_LEVEL_3, params);
     }
 
@@ -213,7 +213,7 @@ public class GARSGraticuleLayer extends AbstractGraticuleLayer {
     private void applyTerrainConformance() {
         String[] graticuleType = getOrderedTypes();
         for (String type : graticuleType) {
-            getRenderingParams(type).setValue(
+            getRenderingParams(type).set(
                 GraticuleRenderingParams.KEY_LINE_CONFORMANCE, this.terrainConformance);
         }
     }

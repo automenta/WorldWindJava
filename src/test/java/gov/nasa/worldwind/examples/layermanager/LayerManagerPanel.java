@@ -87,7 +87,7 @@ public class LayerManagerPanel extends JPanel {
 
         // Fill the layers panel with the titles of all layers in the WorldWindow's current model.
         for (Layer layer : wwd.model().getLayers()) {
-            if (layer.getValue(AVKey.IGNORE) != null)
+            if (layer.get(AVKey.IGNORE) != null)
                 continue;
 
             LayerPanel layerPanel = new LayerPanel(wwd, layer);
@@ -129,8 +129,8 @@ public class LayerManagerPanel extends JPanel {
             // for TiledImageLayer and its subclasses. Applications could, however, implement it for the layers
             // they design.
 
-            Long layerTimeStamp = (Long) layerPanel.getLayer().getValue(AVKey.FRAME_TIMESTAMP);
-            Long frameTimeStamp = (Long) wwd.getSceneController().getValue(AVKey.FRAME_TIMESTAMP);
+            Long layerTimeStamp = (Long) layerPanel.getLayer().get(AVKey.FRAME_TIMESTAMP);
+            Long frameTimeStamp = (Long) wwd.sceneControl().get(AVKey.FRAME_TIMESTAMP);
 
             if (layerTimeStamp != null && frameTimeStamp != null
                 && layerTimeStamp.longValue() == frameTimeStamp.longValue()) {

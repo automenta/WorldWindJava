@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -37,12 +37,12 @@ public class ScreenSelection extends ApplicationTemplate {
         public AppFrame() {
             // Create a screen selector to display a screen selection rectangle and track the objects intersecting
             // that rectangle.
-            this.screenSelector = new ScreenSelector(this.getWwd());
+            this.screenSelector = new ScreenSelector(this.wwd());
 
             // Set up a custom highlight controller that highlights objects both under the cursor and inside the
             // selection rectangle. Disable the superclass' default highlight controller to prevent it from interfering
             // with our highlight controller.
-            this.selectionHighlightController = new SelectionHighlightController(this.getWwd(), this.screenSelector);
+            this.selectionHighlightController = new SelectionHighlightController(this.wwd(), this.screenSelector);
             this.getWwjPanel().highlightController.dispose();
 
             // Create a button to enable and disable screen selection.
@@ -76,7 +76,7 @@ public class ScreenSelection extends ApplicationTemplate {
                 }
             }
 
-            this.getWwd().model().getLayers().add(layer);
+            this.wwd().model().getLayers().add(layer);
         }
 
         protected class EnableSelectorAction extends AbstractAction {

@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.milstd2525.graphics;
 
-import gov.nasa.worldwind.examples.render.Offset;
+import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.util.Logging;
 

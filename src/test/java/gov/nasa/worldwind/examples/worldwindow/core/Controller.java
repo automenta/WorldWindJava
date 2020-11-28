@@ -168,14 +168,14 @@ public class Controller {
 
     public Layer addInternalActiveLayer(Layer layer) {
         // Internal Active layers are not shown in the layer tree but are shown in the active layers list
-        layer.setValue(Constants.ACTIVE_LAYER, true);
+        layer.set(Constants.ACTIVE_LAYER, true);
 
         return addLayer(layer, Constants.INTERNAL_LAYER);
     }
 
     private Layer addLayer(Layer layer, String layerType) {
         if (layer != null) {
-            layer.setValue(layerType, true);
+            layer.set(layerType, true);
             this.getWWPanel().addLayer(layer);
         }
 

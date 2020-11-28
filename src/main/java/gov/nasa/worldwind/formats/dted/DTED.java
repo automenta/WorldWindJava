@@ -127,8 +127,8 @@ public class DTED {
 
         theChannel.position(offset);
 
-        int width = (Integer) metadata.getValue(AVKey.WIDTH);
-        int height = (Integer) metadata.getValue(AVKey.HEIGHT);
+        int width = (Integer) metadata.get(AVKey.WIDTH);
+        int height = (Integer) metadata.get(AVKey.HEIGHT);
 
         int recordSize = REC_HEADER_SIZE + height * Short.SIZE / Byte.SIZE + REC_CHKSUM_SIZE;
 
@@ -176,8 +176,8 @@ public class DTED {
             }
         }
 
-        raster.setValue(AVKey.ELEVATION_MIN, min);
-        raster.setValue(AVKey.ELEVATION_MAX, max);
+        raster.set(AVKey.ELEVATION_MIN, min);
+        raster.set(AVKey.ELEVATION_MAX, max);
 
         return raster;
     }
@@ -289,32 +289,32 @@ public class DTED {
             throw new IOException(message);
         }
 
-        metadata.setValue(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
+        metadata.set(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
 
         // DTED is always WGS84
-        metadata.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
-        metadata.setValue(AVKey.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
+        metadata.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
+        metadata.set(AVKey.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
 
         // DTED is elevation and always Int16
-        metadata.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
-        metadata.setValue(AVKey.DATA_TYPE, AVKey.INT16);
-        metadata.setValue(AVKey.ELEVATION_UNIT, AVKey.UNIT_METER);
-        metadata.setValue(AVKey.MISSING_DATA_SIGNAL, (double) DTED_NODATA_VALUE);
+        metadata.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+        metadata.set(AVKey.DATA_TYPE, AVKey.INT16);
+        metadata.set(AVKey.ELEVATION_UNIT, AVKey.UNIT_METER);
+        metadata.set(AVKey.MISSING_DATA_SIGNAL, (double) DTED_NODATA_VALUE);
 
-        metadata.setValue(AVKey.RASTER_PIXEL, AVKey.RASTER_PIXEL_IS_POINT);
+        metadata.set(AVKey.RASTER_PIXEL, AVKey.RASTER_PIXEL_IS_POINT);
 
         //  Number of longitude lines
         int width = Integer.parseInt(new String(uhl, 47, 4));
-        metadata.setValue(AVKey.WIDTH, width);
+        metadata.set(AVKey.WIDTH, width);
         // Number of latitude points
         int height = Integer.parseInt(new String(uhl, 51, 4));
-        metadata.setValue(AVKey.HEIGHT, height);
+        metadata.set(AVKey.HEIGHT, height);
 
         double pixelWidth = 1.0d / (width - 1);
-        metadata.setValue(AVKey.PIXEL_WIDTH, pixelWidth);
+        metadata.set(AVKey.PIXEL_WIDTH, pixelWidth);
 
         double pixelHeight = 1.0d / (height - 1);
-        metadata.setValue(AVKey.PIXEL_HEIGHT, pixelHeight);
+        metadata.set(AVKey.PIXEL_HEIGHT, pixelHeight);
 
         // Longitude of origin (lower left corner) as DDDMMSSH
         Angle lon = readAngle(new String(uhl, 4, 8));
@@ -327,15 +327,15 @@ public class DTED {
         // also, we should account 1 pixel overlap and half pixel shift
 
         Sector sector = Sector.fromDegrees(lat.degrees, lat.degrees + 1.0d, lon.degrees, lon.degrees + 1.0d);
-        metadata.setValue(AVKey.SECTOR, sector);
+        metadata.set(AVKey.SECTOR, sector);
 
         // WW uses Upper Left corner as an Origin, let's calculate a new origin
         LatLon wwOrigin = LatLon.fromDegrees(sector.latMax().degrees, sector.lonMin().degrees);
-        metadata.setValue(AVKey.ORIGIN, wwOrigin);
+        metadata.set(AVKey.ORIGIN, wwOrigin);
 
         String classLevel = readClassLevel(new String(uhl, 32, 3));
         if (null != classLevel)
-            metadata.setValue(AVKey.CLASS_LEVEL, classLevel);
+            metadata.set(AVKey.CLASS_LEVEL, classLevel);
 
 //        String sLonInterval = new String(uhl, 20, 4);
 //        String sLatInterval = new String(uhl, 24, 4);
@@ -368,12 +368,12 @@ public class DTED {
         if (!metadata.hasKey(AVKey.CLASS_LEVEL)) {
             String classLevel = readClassLevel(new String(dsi, 3, 1));
             if (null != classLevel)
-                metadata.setValue(AVKey.CLASS_LEVEL, classLevel);
+                metadata.set(AVKey.CLASS_LEVEL, classLevel);
         }
 
         Integer level = readLevel(new String(dsi, 59, 5));
         if (null != level)
-            metadata.setValue(AVKey.DTED_LEVEL, level);
+            metadata.set(AVKey.DTED_LEVEL, level);
 
         // Technically, there is no need to read next parameters because:
         // they are redundant (same data we get from UHL), and WW has no use for them 

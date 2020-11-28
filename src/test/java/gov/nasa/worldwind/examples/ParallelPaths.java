@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -59,7 +59,7 @@ public class ParallelPaths extends ApplicationTemplate {
             List<Position> pathPositions3 = new ArrayList<>();
             List<Position> pathPositions4 = new ArrayList<>();
 
-            Globe globe = getWwd().model().getGlobe();
+            Globe globe = wwd().model().getGlobe();
 
             // Generate two sets of lines parallel to the control line. The positions will be added to the pathPosition lists.
             WWMath.generateParallelLines(positions, pathPositions1, pathPositions2, 50, globe);
@@ -73,7 +73,7 @@ public class ParallelPaths extends ApplicationTemplate {
             this.addPath(layer, pathPositions3, "Path 3");
             this.addPath(layer, pathPositions4, "Path 4");
 
-            insertBeforePlacenames(getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(wwd(), layer);
         }
 
         protected void addPath(RenderableLayer layer, List<Position> positions, String displayName) {
@@ -84,7 +84,7 @@ public class ParallelPaths extends ApplicationTemplate {
             path.setPathType(AVKey.LINEAR);
             path.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             path.setAttributes(attrs);
-            path.setValue(AVKey.DISPLAY_NAME, displayName);
+            path.set(AVKey.DISPLAY_NAME, displayName);
             layer.add(path);
 
             // Show how to make the colors vary along the paths.

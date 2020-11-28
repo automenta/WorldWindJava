@@ -257,7 +257,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * @return true if the output file's delete-on-exit flag should be set, otherwise false.
      */
     protected boolean isDeleteOnExit(File outFile) {
-        return !outFile.exists() && this.avList != null && this.avList.getValue(AVKey.DELETE_CACHE_ON_EXIT) != null;
+        return !outFile.exists() && this.avList != null && this.avList.get(AVKey.DELETE_CACHE_ON_EXIT) != null;
     }
 
     /**
@@ -512,7 +512,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      */
     protected BufferedImage transformPixels() {
         if (this.avList != null) {
-            int[] colors = (int[]) this.avList.getValue(AVKey.TRANSPARENCY_COLORS);
+            int[] colors = (int[]) this.avList.get(AVKey.TRANSPARENCY_COLORS);
             if (colors != null)
                 return ImageUtil.mapTransparencyColors(this.getRetriever().getBuffer(), colors);
         }

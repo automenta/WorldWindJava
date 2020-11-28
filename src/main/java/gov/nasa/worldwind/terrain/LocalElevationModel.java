@@ -220,7 +220,7 @@ public class LocalElevationModel extends AbstractElevationModel {
             return Double.MAX_VALUE; // as stated in the javadoc above, this is the sentinel for "not in my domain"
 
         // Mark the model as used this frame.
-        this.setValue(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
+        this.set(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
 
         for (int i = 0; i < latlons.size(); i++) {
             LatLon ll = latlons.get(i);
@@ -327,7 +327,7 @@ public class LocalElevationModel extends AbstractElevationModel {
     protected void addRaster(DataRaster raster, String filename) {
         // Determine the sector covered by the elevations. This information is in the GeoTIFF file or auxiliary
         // files associated with the elevations file.
-        final Sector sector = (Sector) raster.getValue(AVKey.SECTOR);
+        final Sector sector = (Sector) raster.get(AVKey.SECTOR);
         if (sector == null) {
             String msg = Logging.getMessage("DataRaster.MissingMetadata", AVKey.SECTOR);
             Logging.logger().severe(msg);
@@ -405,10 +405,10 @@ public class LocalElevationModel extends AbstractElevationModel {
         // Check params for ELEVATION_MIN and ELEVATION_MAX and don't have the tile compute them if present.
         Double minElevation = null;
         Double maxElevation = null;
-        Object o = bufferParams.getValue(AVKey.ELEVATION_MIN);
+        Object o = bufferParams.get(AVKey.ELEVATION_MIN);
         if (o instanceof Double)
             minElevation = (Double) o;
-        o = bufferParams.getValue(AVKey.ELEVATION_MAX);
+        o = bufferParams.get(AVKey.ELEVATION_MAX);
         if (o instanceof Double)
             maxElevation = (Double) o;
 

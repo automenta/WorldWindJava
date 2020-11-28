@@ -9,7 +9,7 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
@@ -124,8 +124,8 @@ public class SectorSelector extends WWObjectImpl
 
         this.getWwd().addRenderingListener(this);
         this.getWwd().addSelectListener(this);
-        this.getWwd().getInputHandler().addMouseListener(this);
-        this.getWwd().getInputHandler().addMouseMotionListener(this);
+        this.getWwd().input().addMouseListener(this);
+        this.getWwd().input().addMouseMotionListener(this);
 
         this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     }
@@ -133,8 +133,8 @@ public class SectorSelector extends WWObjectImpl
     public void disable() {
         this.getWwd().removeRenderingListener(this);
         this.getWwd().removeSelectListener(this);
-        this.getWwd().getInputHandler().removeMouseListener(this);
-        this.getWwd().getInputHandler().removeMouseMotionListener(this);
+        this.getWwd().input().removeMouseListener(this);
+        this.getWwd().input().removeMouseMotionListener(this);
 
         this.getWwd().model().getLayers().remove(this.getLayer());
 
@@ -321,7 +321,7 @@ public class SectorSelector extends WWObjectImpl
         }
 
         if (event.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
-            this.setPreviousPosition(this.getWwd().getCurrentPosition());
+            this.setPreviousPosition(this.getWwd().position());
         }
         else if (event.getEventAction().equals(SelectEvent.DRAG)) {
             DragSelectEvent dragEvent = (DragSelectEvent) event;
@@ -352,7 +352,7 @@ public class SectorSelector extends WWObjectImpl
             }
             event.consume();
 
-            this.setPreviousPosition(this.getWwd().getCurrentPosition());
+            this.setPreviousPosition(this.getWwd().position());
             this.notifySectorChanged();
         }
         else if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
@@ -379,7 +379,7 @@ public class SectorSelector extends WWObjectImpl
         if (dragObject instanceof SurfaceSector) {
             SurfaceSector quad = (SurfaceSector) dragObject;
             Sector s = quad.getSector(); // TODO: go over all sectors
-            Position p = this.getWwd().getCurrentPosition();
+            Position p = this.getWwd().position();
 
             if (p == null) {
                 return NONE;
@@ -418,7 +418,7 @@ public class SectorSelector extends WWObjectImpl
         if (dragObject instanceof SurfaceSector) {
             SurfaceSector quad = (SurfaceSector) dragObject;
             Sector s = quad.getSector(); // TODO: go over all sectors
-            Position p = this.getWwd().getCurrentPosition();
+            Position p = this.getWwd().position();
 
             if (p == null || this.getPreviousPosition() == null) {
                 return null;

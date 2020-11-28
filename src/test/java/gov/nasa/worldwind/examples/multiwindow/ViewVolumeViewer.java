@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples.multiwindow;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.RenderingEvent;
-import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
@@ -55,7 +55,7 @@ public class ViewVolumeViewer extends JFrame {
         this.observed.addRenderingListener(event -> {
             if (event.getStage().equals(RenderingEvent.AFTER_BUFFER_SWAP)) {
                 // Get the observed window's sector geometry and update this window's terrain display layer
-                SectorGeometryList sgCopy = new SectorGeometryList(observed.getSceneController().getTerrain());
+                SectorGeometryList sgCopy = new SectorGeometryList(observed.sceneControl().getTerrain());
                 sgLayer.setGeometry(sgCopy);
 
                 // Get the observed window's view and update this window's view volume display layer

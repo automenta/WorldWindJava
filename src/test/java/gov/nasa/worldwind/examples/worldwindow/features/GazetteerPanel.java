@@ -68,8 +68,8 @@ public class GazetteerPanel extends AbstractFeature implements FeaturePanel {
         field.setToolTipText(tt);
 
         JLabel label = new JLabel(
-            ImageLibrary.getIcon("gov/nasa/worldwindx/applications/worldwindow/images/safari-24x24.png"));
-//            new ImageIcon(getClass().getResource("gov/nasa/worldwindx/applications/worldwindow/images/safari-24x24.png")));
+            ImageLibrary.getIcon("gov/nasa/worldwind/examples/worldwindow/images/safari-24x24.png"));
+//            new ImageIcon(getClass().getResource("gov/nasa/worldwind/examples/worldwindow/images/safari-24x24.png")));
         label.setOpaque(false);
         label.setToolTipText(tt);
 

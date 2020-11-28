@@ -8,13 +8,13 @@ package gov.nasa.worldwind.examples.worldwindow.features;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ogc.wms.*;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.*;
 import gov.nasa.worldwind.examples.worldwindow.features.swinglayermanager.LayerTree;
 import gov.nasa.worldwind.examples.worldwindow.features.swinglayermanager.*;
 import gov.nasa.worldwind.examples.worldwindow.util.*;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.wms.CapabilitiesRequest;
 
@@ -36,7 +36,7 @@ import java.util.logging.Level;
 @SuppressWarnings("unchecked")
 public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener, NetworkActivitySignal.NetworkUser {
     protected static final String FEATURE_TITLE = "WMS Server Panel";
-    protected static final String ICON_PATH = "gov/nasa/worldwindx/applications/worldwindow/images/wms-64x64.png";
+    protected static final String ICON_PATH = "gov/nasa/worldwind/examples/worldwindow/images/wms-64x64.png";
 //    protected static final String[] INITIAL_SERVER_LIST = new String[]
 //        {
 //            "http://neowms.sci.gsfc.nasa.gov/wms/wms",
@@ -190,9 +190,9 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
             AVList configParams = wmsInfo.getParams().copy(); // Copy to insulate changes from the caller.
 
             // Some wms servers are slow, so increase the timeouts and limits used by WorldWind's retrievers.
-            configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, 30000);
-            configParams.setValue(AVKey.URL_READ_TIMEOUT, 30000);
-            configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
+            configParams.set(AVKey.URL_CONNECT_TIMEOUT, 30000);
+            configParams.set(AVKey.URL_READ_TIMEOUT, 30000);
+            configParams.set(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
 
             Factory factory = (Factory) WorldWind.createConfigurationComponent(AVKey.LAYER_FACTORY);
             Layer layer = (Layer) factory.createFromConfigSource(wmsInfo.getCaps(), configParams);
@@ -419,7 +419,7 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
         this.nameField.setToolTipText("Enter a display name for the server");
 
         this.infoButton = new JButton(
-            ImageLibrary.getIcon("gov/nasa/worldwindx/applications/worldwindow/images/info-20x20.png"));
+            ImageLibrary.getIcon("gov/nasa/worldwind/examples/worldwindow/images/info-20x20.png"));
         this.infoButton.setOpaque(false);
         this.infoButton.setBackground(new Color(0, 0, 0, 0));
         this.infoButton.setBorderPainted(false);

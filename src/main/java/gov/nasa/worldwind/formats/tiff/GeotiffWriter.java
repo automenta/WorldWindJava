@@ -59,28 +59,28 @@ public class GeotiffWriter {
     private static boolean isElevation(AVList params) {
         return (null != params
             && params.hasKey(AVKey.PIXEL_FORMAT)
-            && AVKey.ELEVATION.equals(params.getValue(AVKey.PIXEL_FORMAT))
+            && AVKey.ELEVATION.equals(params.get(AVKey.PIXEL_FORMAT))
         );
     }
 
     private static boolean isImage(AVList params) {
         return (null != params
             && params.hasKey(AVKey.PIXEL_FORMAT)
-            && AVKey.IMAGE.equals(params.getValue(AVKey.PIXEL_FORMAT))
+            && AVKey.IMAGE.equals(params.get(AVKey.PIXEL_FORMAT))
         );
     }
 
     private static boolean isGeographic(AVList params) {
         return (null != params
             && params.hasKey(AVKey.COORDINATE_SYSTEM)
-            && AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(params.getValue(AVKey.COORDINATE_SYSTEM))
+            && AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(params.get(AVKey.COORDINATE_SYSTEM))
         );
     }
 
     private static boolean isProjected(AVList params) {
         return (null != params
             && params.hasKey(AVKey.COORDINATE_SYSTEM)
-            && AVKey.COORDINATE_SYSTEM_PROJECTED.equals(params.getValue(AVKey.COORDINATE_SYSTEM))
+            && AVKey.COORDINATE_SYSTEM_PROJECTED.equals(params.get(AVKey.COORDINATE_SYSTEM))
         );
     }
 
@@ -530,8 +530,8 @@ public class GeotiffWriter {
                 offset = this.theChannel.position();
                 double[] values = new double[]
                     {
-                        (Double) params.getValue(AVKey.PIXEL_WIDTH),
-                        (Double) params.getValue(AVKey.PIXEL_HEIGHT),
+                        (Double) params.get(AVKey.PIXEL_WIDTH),
+                        (Double) params.get(AVKey.PIXEL_HEIGHT),
                         isElevation(params) ? 1.0d : 0.0d
                     };
                 byte[] bytes = this.getBytes(values);
@@ -542,10 +542,10 @@ public class GeotiffWriter {
             if (params.hasKey(AVKey.WIDTH) && params.hasKey(AVKey.HEIGHT)) {
                 offset = this.theChannel.position();
 
-                double w = (Integer) params.getValue(AVKey.WIDTH);
-                double h = (Integer) params.getValue(AVKey.HEIGHT);
+                double w = (Integer) params.get(AVKey.WIDTH);
+                double h = (Integer) params.get(AVKey.HEIGHT);
 
-                Sector sec = (Sector) params.getValue(AVKey.SECTOR);
+                Sector sec = (Sector) params.get(AVKey.SECTOR);
 
                 double[] values = new double[]
                     { // i ,  j, k=0, x, y, z=0
@@ -566,8 +566,8 @@ public class GeotiffWriter {
                 offset = this.theChannel.position();
 
                 Object nodata = params.hasKey(AVKey.MISSING_DATA_SIGNAL)
-                    ? params.getValue(AVKey.MISSING_DATA_SIGNAL)
-                    : params.getValue(AVKey.MISSING_DATA_REPLACEMENT);
+                    ? params.get(AVKey.MISSING_DATA_SIGNAL)
+                    : params.get(AVKey.MISSING_DATA_REPLACEMENT);
 
                 String value = nodata + "\0";
                 byte[] bytes = value.getBytes();
@@ -614,7 +614,7 @@ public class GeotiffWriter {
         }
 
         if (list.hasKey(AVKey.WIDTH)) {
-            int width = (Integer) list.getValue(AVKey.WIDTH);
+            int width = (Integer) list.get(AVKey.WIDTH);
             if (width != srcWidth) {
                 String msg = Logging.getMessage("GeotiffWriter.ImageWidthMismatch", width, srcWidth);
                 Logging.logger().severe(msg);
@@ -622,10 +622,10 @@ public class GeotiffWriter {
             }
         }
         else
-            list.setValue(AVKey.WIDTH, srcWidth);
+            list.set(AVKey.WIDTH, srcWidth);
 
         if (list.hasKey(AVKey.HEIGHT)) {
-            int height = (Integer) list.getValue(AVKey.HEIGHT);
+            int height = (Integer) list.get(AVKey.HEIGHT);
             if (height != srcHeight) {
                 String msg = Logging.getMessage("GeotiffWriter.ImageHeightMismatch", height, srcHeight);
                 Logging.logger().severe(msg);
@@ -633,12 +633,12 @@ public class GeotiffWriter {
             }
         }
         else
-            list.setValue(AVKey.HEIGHT, srcHeight);
+            list.set(AVKey.HEIGHT, srcHeight);
 
         Sector sector = null;
 
         if (list.hasKey(AVKey.SECTOR))
-            sector = (Sector) list.getValue(AVKey.SECTOR);
+            sector = (Sector) list.get(AVKey.SECTOR);
 
         if (null == sector) {
             String msg = Logging.getMessage("GeotiffWriter.NoSectorSpecified");
@@ -652,13 +652,13 @@ public class GeotiffWriter {
 //            throw new IllegalArgumentException(msg);
 
             // assume Geodetic Coordinate System
-            list.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
+            list.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
         }
 
         if (!list.hasKey(AVKey.PROJECTION_EPSG_CODE)) {
             if (isGeographic(list)) {
                 // assume WGS84
-                list.setValue(AVKey.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
+                list.set(AVKey.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
             }
             else {
                 String msg = Logging.getMessage("GeotiffWriter.GeoKeysMissing", AVKey.PROJECTION_EPSG_CODE);
@@ -672,7 +672,7 @@ public class GeotiffWriter {
         if (!list.hasKey(AVKey.PIXEL_WIDTH)) {
             if (isGeographic(list)) {
                 double pixelWidth = sector.getDeltaLonDegrees() / srcWidth;
-                list.setValue(AVKey.PIXEL_WIDTH, pixelWidth);
+                list.set(AVKey.PIXEL_WIDTH, pixelWidth);
             }
             else {
                 String msg = Logging.getMessage("GeotiffWriter.GeoKeysMissing", AVKey.PIXEL_WIDTH);
@@ -686,7 +686,7 @@ public class GeotiffWriter {
         if (!list.hasKey(AVKey.PIXEL_HEIGHT)) {
             if (isGeographic(list)) {
                 double pixelHeight = sector.getDeltaLatDegrees() / srcHeight;
-                list.setValue(AVKey.PIXEL_HEIGHT, pixelHeight);
+                list.set(AVKey.PIXEL_HEIGHT, pixelHeight);
             }
             else {
                 String msg = Logging.getMessage("GeotiffWriter.GeoKeysMissing", AVKey.PIXEL_HEIGHT);
@@ -710,7 +710,7 @@ public class GeotiffWriter {
         }
 
         // validate elevation parameters
-        if (AVKey.ELEVATION.equals(list.getValue(AVKey.PIXEL_FORMAT))) {
+        if (AVKey.ELEVATION.equals(list.get(AVKey.PIXEL_FORMAT))) {
             if (!list.hasKey(AVKey.DATA_TYPE)) {
                 String msg = Logging.getMessage("GeotiffWriter.GeoKeysMissing", AVKey.DATA_TYPE);
                 Logging.logger().finest(msg);
@@ -728,7 +728,7 @@ public class GeotiffWriter {
         if (!list.hasKey(AVKey.ORIGIN)) {
             // set UpperLeft corner as the origin, if not specified
             LatLon origin = new LatLon(sector.latMax(), sector.lonMin());
-            list.setValue(AVKey.ORIGIN, origin);
+            list.set(AVKey.ORIGIN, origin);
         }
 
         if (list.hasKey(AVKey.BYTE_ORDER)
@@ -742,11 +742,11 @@ public class GeotiffWriter {
         if (!list.hasKey(AVKey.DATE_TIME)) {
             // add NUL (\0) termination as required by TIFF v6 spec (20 bytes length)
             String timestamp = String.format("%1$tY:%1$tm:%1$td %tT\0", Calendar.getInstance());
-            list.setValue(AVKey.DATE_TIME, timestamp);
+            list.set(AVKey.DATE_TIME, timestamp);
         }
 
         if (!list.hasKey(AVKey.VERSION)) {
-            list.setValue(AVKey.VERSION, Version.getVersion());
+            list.set(AVKey.VERSION, Version.getVersion());
         }
     }
 
@@ -757,7 +757,7 @@ public class GeotiffWriter {
             int epsg = GeoTiff.GCS.WGS_84;
 
             if (params.hasKey(AVKey.PROJECTION_EPSG_CODE))
-                epsg = (Integer) params.getValue(AVKey.PROJECTION_EPSG_CODE);
+                epsg = (Integer) params.get(AVKey.PROJECTION_EPSG_CODE);
 
             short[] values = new short[]
                 {
@@ -796,17 +796,17 @@ public class GeotiffWriter {
             int epsg = GeoTiff.GCS.WGS_84;
 
             if (params.hasKey(AVKey.PROJECTION_EPSG_CODE))
-                epsg = (Integer) params.getValue(AVKey.PROJECTION_EPSG_CODE);
+                epsg = (Integer) params.get(AVKey.PROJECTION_EPSG_CODE);
 
             int elevUnits = GeoTiff.Unit.Linear.Meter;
             if (params.hasKey(AVKey.ELEVATION_UNIT)) {
-                if (AVKey.UNIT_FOOT.equals(params.getValue(AVKey.ELEVATION_UNIT)))
+                if (AVKey.UNIT_FOOT.equals(params.get(AVKey.ELEVATION_UNIT)))
                     elevUnits = GeoTiff.Unit.Linear.Foot;
             }
 
             int rasterType = GeoTiff.RasterType.RasterPixelIsArea;
             if (params.hasKey(AVKey.RASTER_PIXEL)
-                && AVKey.RASTER_PIXEL_IS_POINT.equals(params.getValue(AVKey.RASTER_PIXEL)))
+                && AVKey.RASTER_PIXEL_IS_POINT.equals(params.get(AVKey.RASTER_PIXEL)))
                 rasterType = GeoTiff.RasterType.RasterPixelIsPoint;
 
             short[] values = new short[]
@@ -954,15 +954,15 @@ public class GeotiffWriter {
 
         int bitsPerSample, samplesPerPixel, sampleFormat, photometric, numBands;
 
-        if (AVKey.ELEVATION.equals(raster.getValue(AVKey.PIXEL_FORMAT))) {
-            if (AVKey.FLOAT32.equals(raster.getValue(AVKey.DATA_TYPE))) {
+        if (AVKey.ELEVATION.equals(raster.get(AVKey.PIXEL_FORMAT))) {
+            if (AVKey.FLOAT32.equals(raster.get(AVKey.DATA_TYPE))) {
                 numBands = 1;
                 samplesPerPixel = Tiff.SamplesPerPixel.MONOCHROME;
                 sampleFormat = Tiff.SampleFormat.IEEEFLOAT;
                 photometric = Tiff.Photometric.Grayscale_BlackIsZero;
                 bitsPerSample = Tiff.BitsPerSample.ELEVATIONS_FLOAT32;
             }
-            else if (AVKey.INT16.equals(raster.getValue(AVKey.DATA_TYPE))) {
+            else if (AVKey.INT16.equals(raster.get(AVKey.DATA_TYPE))) {
                 numBands = 1;
                 samplesPerPixel = Tiff.SamplesPerPixel.MONOCHROME;
                 sampleFormat = Tiff.SampleFormat.SIGNED;
@@ -970,27 +970,27 @@ public class GeotiffWriter {
                 bitsPerSample = Tiff.BitsPerSample.ELEVATIONS_INT16;
             }
             else {
-                String msg = Logging.getMessage("GeotiffWriter.UnsupportedType", raster.getValue(AVKey.DATA_TYPE));
+                String msg = Logging.getMessage("GeotiffWriter.UnsupportedType", raster.get(AVKey.DATA_TYPE));
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
         }
-        else if (AVKey.IMAGE.equals(raster.getValue(AVKey.PIXEL_FORMAT))) {
-            if (AVKey.INT8.equals(raster.getValue(AVKey.DATA_TYPE))) {
+        else if (AVKey.IMAGE.equals(raster.get(AVKey.PIXEL_FORMAT))) {
+            if (AVKey.INT8.equals(raster.get(AVKey.DATA_TYPE))) {
                 numBands = 1;
                 samplesPerPixel = Tiff.SamplesPerPixel.MONOCHROME;
                 sampleFormat = Tiff.SampleFormat.UNSIGNED;
                 photometric = Tiff.Photometric.Grayscale_BlackIsZero;
                 bitsPerSample = Tiff.BitsPerSample.MONOCHROME_UINT8;
             }
-            else if (AVKey.INT16.equals(raster.getValue(AVKey.DATA_TYPE))) {
+            else if (AVKey.INT16.equals(raster.get(AVKey.DATA_TYPE))) {
                 numBands = 1;
                 samplesPerPixel = Tiff.SamplesPerPixel.MONOCHROME;
                 sampleFormat = Tiff.SampleFormat.UNSIGNED;
                 photometric = Tiff.Photometric.Grayscale_BlackIsZero;
                 bitsPerSample = Tiff.BitsPerSample.MONOCHROME_UINT16;
             }
-            else if (AVKey.INT32.equals(raster.getValue(AVKey.DATA_TYPE))) {
+            else if (AVKey.INT32.equals(raster.get(AVKey.DATA_TYPE))) {
                 numBands = 3;
                 // TODO check ALPHA / Transparency
                 samplesPerPixel = Tiff.SamplesPerPixel.RGB;
@@ -999,13 +999,13 @@ public class GeotiffWriter {
                 bitsPerSample = Tiff.BitsPerSample.RGB;
             }
             else {
-                String msg = Logging.getMessage("GeotiffWriter.UnsupportedType", raster.getValue(AVKey.DATA_TYPE));
+                String msg = Logging.getMessage("GeotiffWriter.UnsupportedType", raster.get(AVKey.DATA_TYPE));
                 Logging.logger().severe(msg);
                 throw new IllegalArgumentException(msg);
             }
         }
         else {
-            String msg = Logging.getMessage("GeotiffWriter.UnsupportedType", raster.getValue(AVKey.PIXEL_FORMAT));
+            String msg = Logging.getMessage("GeotiffWriter.UnsupportedType", raster.get(AVKey.PIXEL_FORMAT));
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }

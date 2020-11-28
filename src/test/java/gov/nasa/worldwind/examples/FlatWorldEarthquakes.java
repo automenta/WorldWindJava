@@ -9,7 +9,7 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.formats.geojson.GeoJSONPoint;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.EarthFlat;
@@ -98,14 +98,14 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
             controls.add(makeEarthquakesPanel());
 
             // Add select listener for earthquake picking
-            this.getWwd().addSelectListener(event -> {
+            this.wwd().addSelectListener(event -> {
                 if (event.getEventAction().equals(SelectEvent.ROLLOVER))
                     highlight(event.getTopObject());
             });
 
             // Add click-and-go select listener for earthquakes
-            this.getWwd().addSelectListener(new ClickAndGoSelectListener(
-                this.getWwd(), EqAnnotation.class, 1000.0e3));
+            this.wwd().addSelectListener(new ClickAndGoSelectListener(
+                this.wwd(), EqAnnotation.class, 1000.0e3));
 
             // Add updater timer
             this.updater = new Timer(1000, event -> {
@@ -143,14 +143,14 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
                 this.tooltipAnnotation.setText(this.composeEarthquakeText(this.mouseEq));
                 this.tooltipAnnotation.setPosition(this.mouseEq.getPosition());
                 this.tooltipAnnotation.getAttributes().setVisible(true);
-                this.getWwd().redraw();
+                this.wwd().redraw();
             }
         }
 
         private void setBlinker(EqAnnotation ea) {
             if (this.blinker != null) {
                 this.blinker.stop();
-                this.getWwd().redraw();
+                this.wwd().redraw();
             }
 
             if (ea == null)
@@ -172,8 +172,8 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
             StringBuilder sb = new StringBuilder();
             sb.append("<html>");
 
-            Number magnitude = (Number) eqAnnotation.getValue(USGS_EARTHQUAKE_MAGNITUDE);
-            String place = (String) eqAnnotation.getValue(USGS_EARTHQUAKE_PLACE);
+            Number magnitude = (Number) eqAnnotation.get(USGS_EARTHQUAKE_MAGNITUDE);
+            String place = (String) eqAnnotation.get(USGS_EARTHQUAKE_PLACE);
             if (magnitude != null || !WWUtil.isEmpty(place)) {
                 sb.append("<b>");
 
@@ -187,7 +187,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
                 sb.append("<br/>");
             }
 
-            Number time = (Number) eqAnnotation.getValue(USGS_EARTHQUAKE_TIME);
+            Number time = (Number) eqAnnotation.get(USGS_EARTHQUAKE_TIME);
             if (time != null) {
                 long elapsed = this.updateTime - time.longValue();
                 sb.append(this.timePassedToString(elapsed));
@@ -232,7 +232,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
             btZoom.addActionListener(event -> {
                 if (latestEq != null) {
                     Position targetPos = latestEq.getPosition();
-                    BasicOrbitView view = (BasicOrbitView) getWwd().view();
+                    BasicOrbitView view = (BasicOrbitView) wwd().view();
                     view.addPanToAnimator(
                         // The elevation component of 'targetPos' here is not the surface elevation,
                         // so we ignore it when specifying the view center position.
@@ -252,7 +252,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
                 Double lon = Configuration.getDoubleValue(AVKey.INITIAL_LONGITUDE);
                 Double elevation = Configuration.getDoubleValue(AVKey.INITIAL_ALTITUDE);
                 Position targetPos = Position.fromDegrees(lat, lon, 0);
-                BasicOrbitView view = (BasicOrbitView) getWwd().view();
+                BasicOrbitView view = (BasicOrbitView) wwd().view();
                 view.addPanToAnimator(
                     // The elevation component of 'targetPos' here is not the surface elevation,
                     // so we ignore it when specifying the view center position.
@@ -335,12 +335,12 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
 
             RenderableLayer newLayer = (RenderableLayer) buildEarthquakeLayer(earthquakeFeedUrl);
             if (newLayer.size() > 0) {
-                LayerList layers = this.getWwd().model().getLayers();
+                LayerList layers = this.wwd().model().getLayers();
                 if (this.eqLayer != null)
                     layers.remove(this.eqLayer);
                 this.eqLayer = newLayer;
                 this.eqLayer.add(this.tooltipAnnotation);
-                insertBeforePlacenames(this.getWwd(), this.eqLayer);
+                WorldWindow.insertBeforePlacenames(this.wwd(), this.eqLayer);
                 this.applyMagnitudeFilter(Double.parseDouble((String) magnitudeCombo.getSelectedItem()));
 
                 if (this.statusLabel != null)
@@ -392,8 +392,8 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
             eq.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // GeoJON point's 3rd coordinate indicates depth
             eq.setValues(properties);
 
-            Number eqMagnitude = (Number) eq.getValue(USGS_EARTHQUAKE_MAGNITUDE);
-            Number eqTime = (Number) eq.getValue(USGS_EARTHQUAKE_TIME);
+            Number eqMagnitude = (Number) eq.get(USGS_EARTHQUAKE_MAGNITUDE);
+            Number eqTime = (Number) eq.get(USGS_EARTHQUAKE_TIME);
 
             int elapsedDays = 6;
             if (eqTime != null) {
@@ -402,7 +402,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
 
                 // Update latest earthquake event
                 if (this.latestEq != null) {
-                    Number latestEqTime = (Number) this.latestEq.getValue(USGS_EARTHQUAKE_TIME);
+                    Number latestEqTime = (Number) this.latestEq.get(USGS_EARTHQUAKE_TIME);
                     if (latestEqTime.longValue() < eqTime.longValue())
                         this.latestEq = eq;
                 }
@@ -425,14 +425,14 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
             for (Renderable r : renderables) {
                 if (r instanceof EqAnnotation) {
                     EqAnnotation eq = (EqAnnotation) r;
-                    Number eqMagnitude = (Number) eq.getValue(USGS_EARTHQUAKE_MAGNITUDE);
-                    Number eqTime = (Number) eq.getValue(USGS_EARTHQUAKE_TIME);
+                    Number eqMagnitude = (Number) eq.get(USGS_EARTHQUAKE_MAGNITUDE);
+                    Number eqTime = (Number) eq.get(USGS_EARTHQUAKE_TIME);
 
                     boolean meetsMagnitudeCriteria = eqMagnitude.doubleValue() >= minMagnitude;
                     eq.getAttributes().setVisible(meetsMagnitudeCriteria);
                     if (meetsMagnitudeCriteria) {
                         if (this.latestEq != null) {
-                            Number latestEqTime = (Number) this.latestEq.getValue(USGS_EARTHQUAKE_TIME);
+                            Number latestEqTime = (Number) this.latestEq.get(USGS_EARTHQUAKE_TIME);
                             if (latestEqTime != null && eqTime != null && latestEqTime.longValue() < eqTime.longValue())
                                 this.latestEq = eq;
                         }
@@ -444,7 +444,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
             }
             setBlinker(this.latestEq);
             setLatestLabel(this.latestEq);
-            this.getWwd().redraw();
+            this.wwd().redraw();
         }
 
         private static class EqAnnotation extends GlobeAnnotation {
@@ -498,7 +498,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
                     annotation.getAttributes().setScale(initialScale * (1.0f + 7.0f * ((float) step / steps)));
                     annotation.getAttributes().setOpacity(initialOpacity * (1.0f - ((float) step / steps)));
                     step = step == steps ? 0 : step + 1;
-                    getWwd().redraw();
+                    wwd().redraw();
                 });
                 start();
             }

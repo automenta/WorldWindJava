@@ -8,7 +8,7 @@ package gov.nasa.worldwind.formats.shapefile;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
@@ -411,19 +411,19 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
         element = WWXML.getElement(domElement, "HighlightPointAttributes", xpath);
         this.setHighlightPointAttributes(element != null ? this.collectPointAttributes(element) : null);
 
-        Double d = (Double) params.getValue(AVKey.OPACITY);
+        Double d = (Double) params.get(AVKey.OPACITY);
         if (d != null)
             layer.setOpacity(d);
 
-        d = (Double) params.getValue(AVKey.MAX_ACTIVE_ALTITUDE);
+        d = (Double) params.get(AVKey.MAX_ACTIVE_ALTITUDE);
         if (d != null)
             layer.setMaxActiveAltitude(d);
 
-        d = (Double) params.getValue(AVKey.MIN_ACTIVE_ALTITUDE);
+        d = (Double) params.get(AVKey.MIN_ACTIVE_ALTITUDE);
         if (d != null)
             layer.setMinActiveAltitude(d);
 
-        Boolean b = (Boolean) params.getValue(AVKey.PICK_ENABLED);
+        Boolean b = (Boolean) params.get(AVKey.PICK_ENABLED);
         if (b != null)
             layer.setPickEnabled(b);
 
@@ -495,7 +495,7 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
                 if (WWUtil.isEmpty(prop) || WWUtil.isEmpty(value))
                     continue;
 
-                attrMappings.setValue(prop, value);
+                attrMappings.set(prop, value);
             }
 
             return attrMappings;
@@ -707,22 +707,22 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
 
         AVList mappings = new AVListImpl();
         for (Map.Entry<String, Object> mapping : attrMappings.getEntries()) {
-            Object attrValue = attrRecord.getValue(mapping.getKey());
+            Object attrValue = attrRecord.get(mapping.getKey());
             if (attrValue != null)
-                mappings.setValue((String) mapping.getValue(), attrValue);
+                mappings.set((String) mapping.getValue(), attrValue);
         }
 
         return !mappings.getEntries().isEmpty() ? mappings : null;
     }
 
     protected void addPropertiesForShapefile(Shapefile shp, AVList layer) {
-        if (layer.getValue(AVKey.DISPLAY_NAME) == null) // use the shapefile's display name when the layer is unnamed
+        if (layer.get(AVKey.DISPLAY_NAME) == null) // use the shapefile's display name when the layer is unnamed
         {
-            layer.setValue(AVKey.DISPLAY_NAME, shp.getValue(AVKey.DISPLAY_NAME));
+            layer.set(AVKey.DISPLAY_NAME, shp.get(AVKey.DISPLAY_NAME));
         }
 
         if (shp.getBoundingRectangle() != null) {
-            layer.setValue(AVKey.SECTOR, Sector.fromDegrees(shp.getBoundingRectangle()));
+            layer.set(AVKey.SECTOR, Sector.fromDegrees(shp.getBoundingRectangle()));
         }
     }
 

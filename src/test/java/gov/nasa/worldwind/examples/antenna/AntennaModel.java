@@ -9,9 +9,10 @@ package gov.nasa.worldwind.examples.antenna;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.Logging;
 

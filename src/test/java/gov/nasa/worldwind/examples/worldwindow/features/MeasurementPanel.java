@@ -7,11 +7,12 @@ package gov.nasa.worldwind.examples.worldwindow.features;
 
 import gov.nasa.worldwind.Disposable;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.examples.worldwindow.util.*;
 import gov.nasa.worldwind.examples.worldwindow.util.measuretool.WWOMeasureTool;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.*;
 
 import javax.swing.*;
 import javax.swing.border.*;

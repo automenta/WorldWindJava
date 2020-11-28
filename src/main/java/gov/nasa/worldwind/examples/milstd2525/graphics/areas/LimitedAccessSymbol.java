@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples.milstd2525.graphics.areas;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.examples.milstd2525.*;
-import gov.nasa.worldwind.examples.render.Offset;
+import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.symbology.AbstractTacticalSymbol;
 import gov.nasa.worldwind.util.Logging;
@@ -136,7 +136,7 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol {
             if (params == null)
                 return null;
 
-            Object o = params.getValue(AVKey.COLOR);
+            Object o = params.get(AVKey.COLOR);
             return (o instanceof Color) ? (Color) o : null;
         }
 

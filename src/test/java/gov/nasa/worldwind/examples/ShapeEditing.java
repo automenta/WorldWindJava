@@ -6,15 +6,16 @@
 
 package gov.nasa.worldwind.examples;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.airspaces.Polygon;
-import gov.nasa.worldwind.examples.render.airspaces.*;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.airspaces.Polygon;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.ShapeEditor;
 
 import java.awt.*;
@@ -36,7 +37,7 @@ public class ShapeEditing extends ApplicationTemplate {
         protected ShapeAttributes lastAttrs;
 
         public AppFrame() {
-            this.getWwd().addSelectListener(this);
+            this.wwd().addSelectListener(this);
 
             RenderableLayer layer = new RenderableLayer();
 
@@ -210,7 +211,7 @@ public class ShapeEditing extends ApplicationTemplate {
             markers.add(new BasicMarker(Position.fromDegrees(90, 0), new BasicMarkerAttributes()));
             MarkerLayer markerLayer = new MarkerLayer();
             markerLayer.setMarkers(markers);
-            insertBeforeCompass(getWwd(), markerLayer);
+            WorldWindow.insertBeforeCompass(wwd(), markerLayer);
 
             List<Position> positions = new ArrayList<>(2);
             positions.add(Position.fromDegrees(-90, 180));
@@ -223,7 +224,7 @@ public class ShapeEditing extends ApplicationTemplate {
             antiMeridian.setHighlightAttributes(antiMeridianAttributes);
             layer.add(antiMeridian);
 
-            insertBeforePlacenames(getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(wwd(), layer);
         }
 
         @Override
@@ -236,7 +237,7 @@ public class ShapeEditing extends ApplicationTemplate {
                 if (topObject != null && this.isEditableShape(topObject.getObject())) {
                     if (this.editor == null) {
                         // Enable editing of the selected shape.
-                        this.editor = new ShapeEditor(getWwd(), (Renderable) topObject.getObject());
+                        this.editor = new ShapeEditor(wwd(), (Renderable) topObject.getObject());
                         this.editor.setArmed(true);
                         this.keepShapeHighlighted(true);
                         event.consume();
@@ -245,7 +246,7 @@ public class ShapeEditing extends ApplicationTemplate {
                         // Switch editor to a different shape.
                         this.keepShapeHighlighted(false);
                         this.editor.setArmed(false);
-                        this.editor = new ShapeEditor(getWwd(), (Renderable) topObject.getObject());
+                        this.editor = new ShapeEditor(wwd(), (Renderable) topObject.getObject());
                         this.editor.setArmed(true);
                         this.keepShapeHighlighted(true);
                         event.consume();

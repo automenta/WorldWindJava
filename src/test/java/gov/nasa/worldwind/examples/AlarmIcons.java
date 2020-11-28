@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.IconLayer;
 
@@ -46,7 +47,7 @@ public class AlarmIcons extends ApplicationTemplate {
                 new Position(Angle.fromDegrees(38), Angle.fromDegrees(-116), 0));
             icon.setSize(new Dimension(64, 64));
             layer.addIcon(icon);
-            ApplicationTemplate.insertAfterPlacenames(this.getWwd(), layer);
+            WorldWindow.insertAfterPlacenames(this.wwd(), layer);
 
             // Create bitmaps
             BufferedImage circleYellow = createBitmap(PatternFactory.PATTERN_CIRCLE, Color.YELLOW);
@@ -116,7 +117,7 @@ public class AlarmIcons extends ApplicationTemplate {
             public void actionPerformed(ActionEvent e) {
                 icon.setBackgroundImage(bgIconPath);
                 icon.setBackgroundScale(bgScale);
-                getWwd().redraw();
+                wwd().redraw();
             }
         }
 
@@ -143,7 +144,7 @@ public class AlarmIcons extends ApplicationTemplate {
                 if (timer == null) {
                     timer = new Timer(frequency, e12 -> {
                         icon.setBackgroundScale(scales[++scaleIndex % scales.length]);
-                        getWwd().redraw();
+                        wwd().redraw();
                     });
 
                     ((JRadioButton) e.getSource()).addItemListener(e1 -> {

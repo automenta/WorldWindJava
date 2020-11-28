@@ -41,7 +41,7 @@ public class ZeroElevationModel extends AbstractElevationModel {
         }
 
         // Mark the model as used this frame.
-        this.setValue(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
+        this.set(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
 
         return 0;
     }

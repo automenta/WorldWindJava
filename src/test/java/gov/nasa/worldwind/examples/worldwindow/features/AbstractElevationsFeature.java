@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples.worldwindow.features;
 
 import gov.nasa.worldwind.Disposable;
-import gov.nasa.worldwind.examples.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.globes.ElevationModel;

@@ -493,7 +493,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         if (unfilledIconMap.contains(maskedCode))
             return false;
 
-        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_FILL) : null;
+        Object o = params != null ? params.get(SymbologyConstants.SHOW_FILL) : null;
         return o == null || o.equals(Boolean.TRUE);
     }
 
@@ -502,13 +502,13 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         if (unframedIconMap.contains(maskedCode))
             return false;
 
-        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_FRAME) : null;
+        Object o = params != null ? params.get(SymbologyConstants.SHOW_FRAME) : null;
         return o == null || o.equals(Boolean.TRUE);
     }
 
     @SuppressWarnings("UnusedParameters")
     protected boolean mustDrawIcon(SymbolCode symbolCode, AVList params) {
-        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_ICON) : null;
+        Object o = params != null ? params.get(SymbologyConstants.SHOW_ICON) : null;
         return o == null || o.equals(Boolean.TRUE);
     }
 
@@ -687,7 +687,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         if (params == null)
             return null;
 
-        Object o = params.getValue(AVKey.COLOR);
+        Object o = params.get(AVKey.COLOR);
         return (o instanceof Color) ? (Color) o : null;
     }
 

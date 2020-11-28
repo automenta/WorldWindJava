@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
 

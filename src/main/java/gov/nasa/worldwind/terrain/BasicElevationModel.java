@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.event.BulkRetrievalListener;
-import gov.nasa.worldwind.examples.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.retrieve.*;
@@ -80,7 +80,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         if (s != null)
             this.setByteOrder(s);
 
-        Double d = (Double) params.getValue(AVKey.DETAIL_HINT);
+        Double d = (Double) params.get(AVKey.DETAIL_HINT);
         if (d != null)
             this.setDetailHint(d);
 
@@ -88,25 +88,25 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         if (s != null)
             this.setName(s);
 
-        d = (Double) params.getValue(AVKey.ELEVATION_MIN);
+        d = (Double) params.get(AVKey.ELEVATION_MIN);
         this.minElevation = d != null ? d : 0;
 
-        d = (Double) params.getValue(AVKey.ELEVATION_MAX);
+        d = (Double) params.get(AVKey.ELEVATION_MAX);
         this.maxElevation = d != null ? d : 0;
 
-        Long lo = (Long) params.getValue(AVKey.EXPIRY_TIME);
+        Long lo = (Long) params.get(AVKey.EXPIRY_TIME);
         if (lo != null)
-            params.setValue(AVKey.EXPIRY_TIME, lo);
+            params.set(AVKey.EXPIRY_TIME, lo);
 
-        d = (Double) params.getValue(AVKey.MISSING_DATA_SIGNAL);
+        d = (Double) params.get(AVKey.MISSING_DATA_SIGNAL);
         if (d != null)
             this.setMissingDataSignal(d);
 
-        d = (Double) params.getValue(AVKey.MISSING_DATA_REPLACEMENT);
+        d = (Double) params.get(AVKey.MISSING_DATA_REPLACEMENT);
         if (d != null)
             this.setMissingDataReplacement(d);
 
-        Boolean b = (Boolean) params.getValue(AVKey.NETWORK_RETRIEVAL_ENABLED);
+        Boolean b = (Boolean) params.get(AVKey.NETWORK_RETRIEVAL_ENABLED);
         if (b != null)
             this.setNetworkRetrievalEnabled(b);
 
@@ -118,20 +118,20 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         if (s != null)
             this.loadExtremeElevations(s);
 
-        b = (Boolean) params.getValue(AVKey.DELETE_CACHE_ON_EXIT);
+        b = (Boolean) params.get(AVKey.DELETE_CACHE_ON_EXIT);
         if (b != null)
-            this.setValue(AVKey.DELETE_CACHE_ON_EXIT, true);
+            this.set(AVKey.DELETE_CACHE_ON_EXIT, true);
 
         // Set some fallback values if not already set.
         setFallbacks(params);
 
         this.levels = new LevelSet(params);
-        if (this.levels.getSector() != null && this.getValue(AVKey.SECTOR) == null)
-            this.setValue(AVKey.SECTOR, this.levels.getSector());
+        if (this.levels.getSector() != null && this.get(AVKey.SECTOR) == null)
+            this.set(AVKey.SECTOR, this.levels.getSector());
 
         this.memoryCache = this.createMemoryCache(ElevationTile.class.getName());
 
-        this.setValue(AVKey.CONSTRUCTION_PARAMETERS, params.copy());
+        this.set(AVKey.CONSTRUCTION_PARAMETERS, params.copy());
 
         // If any resources should be retrieved for this ElevationModel, start a task to retrieve those resources, and
         // initialize this ElevationModel once those resources are retrieved.
@@ -166,20 +166,20 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     protected static void setFallbacks(AVList params) {
-        if (params.getValue(AVKey.TILE_WIDTH) == null)
-            params.setValue(AVKey.TILE_WIDTH, 150);
+        if (params.get(AVKey.TILE_WIDTH) == null)
+            params.set(AVKey.TILE_WIDTH, 150);
 
-        if (params.getValue(AVKey.TILE_HEIGHT) == null)
-            params.setValue(AVKey.TILE_HEIGHT, 150);
+        if (params.get(AVKey.TILE_HEIGHT) == null)
+            params.set(AVKey.TILE_HEIGHT, 150);
 
-        if (params.getValue(AVKey.FORMAT_SUFFIX) == null)
-            params.setValue(AVKey.FORMAT_SUFFIX, ".bil");
+        if (params.get(AVKey.FORMAT_SUFFIX) == null)
+            params.set(AVKey.FORMAT_SUFFIX, ".bil");
 
-        if (params.getValue(AVKey.NUM_LEVELS) == null)
-            params.setValue(AVKey.NUM_LEVELS, 2);
+        if (params.get(AVKey.NUM_LEVELS) == null)
+            params.set(AVKey.NUM_LEVELS, 2);
 
-        if (params.getValue(AVKey.NUM_EMPTY_LEVELS) == null)
-            params.setValue(AVKey.NUM_EMPTY_LEVELS, 0);
+        if (params.get(AVKey.NUM_EMPTY_LEVELS) == null)
+            params.set(AVKey.NUM_EMPTY_LEVELS, 0);
     }
 
     protected static ByteBuffer convertImageToElevations(ByteBuffer buffer, String contentType) throws IOException {
@@ -285,7 +285,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         // Image format properties.
         WWXML.checkAndAppendTextElement(params, AVKey.IMAGE_FORMAT, context, "ImageFormat");
 
-        Object o = params.getValue(AVKey.AVAILABLE_IMAGE_FORMATS);
+        Object o = params.get(AVKey.AVAILABLE_IMAGE_FORMATS);
         if (o instanceof String[]) {
             String[] strings = (String[]) o;
             if (strings.length > 0) {
@@ -299,7 +299,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         }
 
         // Data type properties.
-        if (params.getValue(AVKey.DATA_TYPE) != null || params.getValue(AVKey.BYTE_ORDER) != null) {
+        if (params.get(AVKey.DATA_TYPE) != null || params.get(AVKey.BYTE_ORDER) != null) {
             Element el = WWXML.getElement(context, "DataType", null);
             if (el == null)
                 el = WWXML.appendElementPath(context, "DataType");
@@ -387,21 +387,21 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             "AvailableImageFormats/ImageFormat", xpath);
 
         // Data type properties.
-        if (params.getValue(AVKey.DATA_TYPE) == null) {
+        if (params.get(AVKey.DATA_TYPE) == null) {
             String s = WWXML.getText(domElement, "DataType/@type", xpath);
             if (s != null && !s.isEmpty()) {
                 s = WWXML.parseDataType(s);
                 if (s != null && !s.isEmpty())
-                    params.setValue(AVKey.DATA_TYPE, s);
+                    params.set(AVKey.DATA_TYPE, s);
             }
         }
 
-        if (params.getValue(AVKey.BYTE_ORDER) == null) {
+        if (params.get(AVKey.BYTE_ORDER) == null) {
             String s = WWXML.getText(domElement, "DataType/@byteOrder", xpath);
             if (s != null && !s.isEmpty()) {
                 s = WWXML.parseByteOrder(s);
                 if (s != null && !s.isEmpty())
-                    params.setValue(AVKey.BYTE_ORDER, s);
+                    params.set(AVKey.BYTE_ORDER, s);
             }
         }
 
@@ -443,55 +443,55 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         String s = rs.getStateValueAsString(context, AVKey.DATA_CACHE_NAME);
         if (s != null)
-            params.setValue(AVKey.DATA_CACHE_NAME, s);
+            params.set(AVKey.DATA_CACHE_NAME, s);
 
         s = rs.getStateValueAsString(context, AVKey.SERVICE);
         if (s != null)
-            params.setValue(AVKey.SERVICE, s);
+            params.set(AVKey.SERVICE, s);
 
         s = rs.getStateValueAsString(context, AVKey.DATASET_NAME);
         if (s != null)
-            params.setValue(AVKey.DATASET_NAME, s);
+            params.set(AVKey.DATASET_NAME, s);
 
         s = rs.getStateValueAsString(context, AVKey.FORMAT_SUFFIX);
         if (s != null)
-            params.setValue(AVKey.FORMAT_SUFFIX, s);
+            params.set(AVKey.FORMAT_SUFFIX, s);
 
         Integer i = rs.getStateValueAsInteger(context, AVKey.NUM_EMPTY_LEVELS);
         if (i != null)
-            params.setValue(AVKey.NUM_EMPTY_LEVELS, i);
+            params.set(AVKey.NUM_EMPTY_LEVELS, i);
 
         i = rs.getStateValueAsInteger(context, AVKey.NUM_LEVELS);
         if (i != null)
-            params.setValue(AVKey.NUM_LEVELS, i);
+            params.set(AVKey.NUM_LEVELS, i);
 
         i = rs.getStateValueAsInteger(context, AVKey.TILE_WIDTH);
         if (i != null)
-            params.setValue(AVKey.TILE_WIDTH, i);
+            params.set(AVKey.TILE_WIDTH, i);
 
         i = rs.getStateValueAsInteger(context, AVKey.TILE_HEIGHT);
         if (i != null)
-            params.setValue(AVKey.TILE_HEIGHT, i);
+            params.set(AVKey.TILE_HEIGHT, i);
 
         Long lo = rs.getStateValueAsLong(context, AVKey.EXPIRY_TIME);
         if (lo != null)
-            params.setValue(AVKey.EXPIRY_TIME, lo);
+            params.set(AVKey.EXPIRY_TIME, lo);
 
         LatLon ll = rs.getStateValueAsLatLon(context, AVKey.LEVEL_ZERO_TILE_DELTA);
         if (ll != null)
-            params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
+            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
 
         ll = rs.getStateValueAsLatLon(context, AVKey.TILE_ORIGIN);
         if (ll != null)
-            params.setValue(AVKey.TILE_ORIGIN, ll);
+            params.set(AVKey.TILE_ORIGIN, ll);
 
         Sector sector = rs.getStateValueAsSector(context, AVKey.SECTOR);
         if (sector != null)
-            params.setValue(AVKey.SECTOR, sector);
+            params.set(AVKey.SECTOR, sector);
 
         Double d = rs.getStateValueAsDouble("ElevationModel.MinElevation");
         if (d != null) {
-            params.setValue(AVKey.ELEVATION_MIN, d);
+            params.set(AVKey.ELEVATION_MIN, d);
         }
         else {
             if (!sb.isEmpty())
@@ -501,7 +501,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         d = rs.getStateValueAsDouble("ElevationModel.MaxElevation");
         if (d != null) {
-            params.setValue(AVKey.ELEVATION_MAX, d);
+            params.set(AVKey.ELEVATION_MAX, d);
         }
         else {
             if (!sb.isEmpty())
@@ -517,19 +517,19 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     @Override
-    public Object setValue(String key, Object value) {
+    public Object set(String key, Object value) {
         // Offer it to the level set
         if (this.getLevels() != null)
-            this.getLevels().setValue(key, value);
+            this.getLevels().set(key, value);
 
-        return super.setValue(key, value);
+        return super.set(key, value);
     }
 
     @Override
-    public Object getValue(String key) {
-        Object value = super.getValue(key);
+    public Object get(String key) {
+        Object value = super.get(key);
 
-        return value != null ? value : this.getLevels().getValue(key); // see if the level set has it
+        return value != null ? value : this.getLevels().get(key); // see if the level set has it
     }
 
     protected MemoryCache getMemoryCache() {
@@ -778,8 +778,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         // Setup parameters to instruct BufferWrapper on how to interpret the ByteBuffer.
         AVList bufferParams = new AVListImpl();
-        bufferParams.setValue(AVKey.DATA_TYPE, this.elevationDataType);
-        bufferParams.setValue(AVKey.BYTE_ORDER, this.elevationDataByteOrder);
+        bufferParams.set(AVKey.DATA_TYPE, this.elevationDataType);
+        bufferParams.set(AVKey.BYTE_ORDER, this.elevationDataByteOrder);
         return BufferWrapper.wrap(byteBuffer, bufferParams);
     }
 
@@ -817,7 +817,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         // Determine the sector covered by the elevations. This information is in the GeoTIFF file or auxiliary
         // files associated with the elevations file.
-        final Sector sector = (Sector) raster.getValue(AVKey.SECTOR);
+        final Sector sector = (Sector) raster.get(AVKey.SECTOR);
         if (sector == null) {
             String msg = Logging.getMessage("DataRaster.MissingMetadata", AVKey.SECTOR);
             Logging.logger().severe(msg);
@@ -968,7 +968,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     }
 
     protected void retrieveElevations(final Tile tile, DownloadPostProcessor postProcessor) {
-        if (this.getValue(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
+        if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
             this.retrieveLocalElevations(tile, postProcessor);
         else
             // Assume it's remote, which handles the legacy cases.
@@ -979,15 +979,15 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         if (!WorldWind.retrieveLocal().isAvailable())
             return;
 
-        RetrieverFactory retrieverFactory = (RetrieverFactory) this.getValue(AVKey.RETRIEVER_FACTORY_LOCAL);
+        RetrieverFactory retrieverFactory = (RetrieverFactory) this.get(AVKey.RETRIEVER_FACTORY_LOCAL);
         if (retrieverFactory == null)
             return;
 
         AVList avList = new AVListImpl();
-        avList.setValue(AVKey.SECTOR, tile.sector);
-        avList.setValue(AVKey.WIDTH, tile.getWidth());
-        avList.setValue(AVKey.HEIGHT, tile.getHeight());
-        avList.setValue(AVKey.FILE_NAME, tile.getPath());
+        avList.set(AVKey.SECTOR, tile.sector);
+        avList.set(AVKey.WIDTH, tile.getWidth());
+        avList.set(AVKey.HEIGHT, tile.getHeight());
+        avList.set(AVKey.FILE_NAME, tile.getPath());
 
         Retriever retriever = retrieverFactory.createRetriever(avList, postProcessor);
 
@@ -1021,7 +1021,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         if (postProcessor == null)
             postProcessor = new DownloadPostProcessor(tile, this);
         Retriever retriever = new HTTPRetriever(url, postProcessor);
-        retriever.setValue(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy elevation models
+        retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy elevation models
 
         WorldWind.retrieveRemote().run(retriever, 0);
     }
@@ -1180,7 +1180,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             return Double.MAX_VALUE;
 
         // Mark the model as used this frame.
-        this.setValue(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
+        this.set(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
 
         for (int i = 0; i < latlons.size(); i++) {
             LatLon ll = latlons.get(i);
@@ -1373,8 +1373,8 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             }
 
             AVList bufferParams = new AVListImpl();
-            bufferParams.setValue(AVKey.DATA_TYPE, AVKey.INT16);
-            bufferParams.setValue(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN); // Extremes are always saved in JVM byte order
+            bufferParams.set(AVKey.DATA_TYPE, AVKey.INT16);
+            bufferParams.set(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN); // Extremes are always saved in JVM byte order
             this.extremes = BufferWrapper.wrap(WWIO.readStreamToBuffer(is, true),
                 bufferParams); // Read extremes to a direct ByteBuffer.
         }
@@ -1700,7 +1700,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     protected String retrieveResources() {
         // This ElevationModel has no construction parameters, so there is no description of what to retrieve. Return a
         // key indicating the resources have been successfully retrieved, though there is nothing to retrieve.
-        AVList params = (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+        AVList params = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
         if (params == null) {
             String message = Logging.getMessage("nullValue.ConstructionParametersIsNull");
             Logging.logger().warning(message);
@@ -1791,11 +1791,11 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
      * otherwise.
      */
     protected boolean isRetrieveResources() {
-        AVList params = (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+        AVList params = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
         if (params == null)
             return false;
 
-        Boolean b = (Boolean) params.getValue(AVKey.RETRIEVE_PROPERTIES_FROM_SERVICE);
+        Boolean b = (Boolean) params.get(AVKey.RETRIEVE_PROPERTIES_FROM_SERVICE);
         return b != null && b;
     }
 
@@ -1882,7 +1882,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             params = new AVListImpl();
 
         // Gather all the construction parameters if they are available.
-        AVList constructionParams = (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
         if (constructionParams != null)
             params.setValues(constructionParams);
 
@@ -1894,14 +1894,14 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         // default values when these properties are missing, a different system does not know what those default values
         // should be, and thus cannot assume anything about the value of these properties.
 
-        if (params.getValue(AVKey.BYTE_ORDER) == null)
-            params.setValue(AVKey.BYTE_ORDER, this.getElevationDataByteOrder());
+        if (params.get(AVKey.BYTE_ORDER) == null)
+            params.set(AVKey.BYTE_ORDER, this.getElevationDataByteOrder());
 
-        if (params.getValue(AVKey.DATA_TYPE) == null)
-            params.setValue(AVKey.DATA_TYPE, this.getElevationDataType());
+        if (params.get(AVKey.DATA_TYPE) == null)
+            params.set(AVKey.DATA_TYPE, this.getElevationDataType());
 
-        if (params.getValue(AVKey.MISSING_DATA_SIGNAL) == null)
-            params.setValue(AVKey.MISSING_DATA_SIGNAL, this.getMissingDataSignal());
+        if (params.get(AVKey.MISSING_DATA_SIGNAL) == null)
+            params.set(AVKey.MISSING_DATA_SIGNAL, this.getMissingDataSignal());
 
         return params;
     }
@@ -1912,7 +1912,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
     public String getRestorableState() {
         // We only create a restorable state XML if this elevation model was constructed with an AVList.
-        AVList constructionParams = (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
         if (constructionParams == null)
             return null;
 
@@ -1936,7 +1936,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     //**************************************************************//
 
     protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
-        AVList constructionParams = (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
         if (constructionParams != null) {
             for (Map.Entry<String, Object> avp : constructionParams.getEntries()) {
                 this.getRestorableStateForAVPair(avp.getKey(), avp.getValue(), rs, context);
@@ -2036,9 +2036,9 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         // Map the old PIXEL_TYPE AVKey constant to the new DATA_TYPE constant.
         if ("gov.nasa.worldwind.avkey.PixelType".equals(so.getName()))
-            this.setValue(AVKey.DATA_TYPE, so.getValue());
+            this.set(AVKey.DATA_TYPE, so.getValue());
         else
-            this.setValue(so.getName(), so.getValue());
+            this.set(so.getName(), so.getValue());
     }
 
     @Override

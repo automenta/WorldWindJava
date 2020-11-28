@@ -128,7 +128,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
 
         if (installLocation == null || !installLocation.exists()) {
             String message = Logging.getMessage("TiledRasterProducer.NoInstallLocation",
-                this.getStoreParameters().getValue(AVKey.DATASET_NAME));
+                this.getStoreParameters().get(AVKey.DATASET_NAME));
             Logging.logger().warning(message);
             return;
         }
@@ -138,7 +138,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         }
         catch (Exception e) {
             String message = Logging.getMessage("TiledRasterProducer.ExceptionRemovingProductionState",
-                this.getStoreParameters().getValue(AVKey.DATASET_NAME));
+                this.getStoreParameters().get(AVKey.DATASET_NAME));
             Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
         }
     }
@@ -184,7 +184,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         // Install the data descriptor for this tiled raster set.
         this.installConfigFile(this.productionParams);
 
-        if (AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER.equals(this.productionParams.getValue(AVKey.SERVICE_NAME))) {
+        if (AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER.equals(this.productionParams.get(AVKey.SERVICE_NAME))) {
             this.installRasterServerConfigFile(this.productionParams);
         }
     }
@@ -192,15 +192,15 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
     protected String validateProductionParameters(AVList parameters) {
         StringBuilder sb = new StringBuilder();
 
-        Object o = parameters.getValue(AVKey.FILE_STORE_LOCATION);
+        Object o = parameters.get(AVKey.FILE_STORE_LOCATION);
         if (!(o instanceof String) || ((String) o).length() < 1)
             sb.append((!sb.isEmpty() ? ", " : "")).append(Logging.getMessage("term.fileStoreLocation"));
 
-        o = parameters.getValue(AVKey.DATA_CACHE_NAME);
+        o = parameters.get(AVKey.DATA_CACHE_NAME);
         if (!(o instanceof String) || ((String) o).isEmpty())
             sb.append((!sb.isEmpty() ? ", " : "")).append(Logging.getMessage("term.fileStoreFolder"));
 
-        o = parameters.getValue(AVKey.DATASET_NAME);
+        o = parameters.get(AVKey.DATASET_NAME);
         if (!(o instanceof String) || ((String) o).length() < 1)
             sb.append((!sb.isEmpty() ? ", " : "")).append(Logging.getMessage("term.datasetName"));
 
@@ -234,71 +234,71 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
             DEFAULT_TILED_RASTER_PRODUCER_LARGE_DATASET_THRESHOLD);
         boolean isDataSetLarge = this.isDataSetLarge(this.dataRasterList, largeThreshold);
 
-        Sector sector = (Sector) params.getValue(AVKey.SECTOR);
+        Sector sector = (Sector) params.get(AVKey.SECTOR);
         if (sector == null) {
             // Compute a sector that bounds the data rasters. Make sure the sector does not exceed the limits of
             // latitude and longitude.
             sector = this.computeBoundingSector(this.dataRasterList);
             if (sector != null)
                 sector = sector.intersection(Sector.FULL_SPHERE);
-            params.setValue(AVKey.SECTOR, sector);
+            params.set(AVKey.SECTOR, sector);
         }
 
-        Integer tileWidth = (Integer) params.getValue(AVKey.TILE_WIDTH);
+        Integer tileWidth = (Integer) params.get(AVKey.TILE_WIDTH);
         if (tileWidth == null) {
             tileWidth = isDataSetLarge ? DEFAULT_TILE_WIDTH_AND_HEIGHT : DEFAULT_SINGLE_LEVEL_TILE_WIDTH_AND_HEIGHT;
-            params.setValue(AVKey.TILE_WIDTH, tileWidth);
+            params.set(AVKey.TILE_WIDTH, tileWidth);
         }
 
-        Integer tileHeight = (Integer) params.getValue(AVKey.TILE_HEIGHT);
+        Integer tileHeight = (Integer) params.get(AVKey.TILE_HEIGHT);
         if (tileHeight == null) {
             tileHeight = isDataSetLarge ? DEFAULT_TILE_WIDTH_AND_HEIGHT : DEFAULT_SINGLE_LEVEL_TILE_WIDTH_AND_HEIGHT;
-            params.setValue(AVKey.TILE_HEIGHT, tileHeight);
+            params.set(AVKey.TILE_HEIGHT, tileHeight);
         }
 
         LatLon rasterTileDelta = this.computeRasterTileDelta(tileWidth, tileHeight, this.dataRasterList);
         LatLon desiredLevelZeroDelta = this.computeDesiredTileDelta(sector);
 
-        Integer numLevels = (Integer) params.getValue(AVKey.NUM_LEVELS);
+        Integer numLevels = (Integer) params.get(AVKey.NUM_LEVELS);
         if (numLevels == null) {
             // If the data set is large, then use compute a number of levels for the full pyramid. Otherwise use a
             // single level.
             numLevels = isDataSetLarge ? this.computeNumLevels(desiredLevelZeroDelta, rasterTileDelta) : 1;
-            params.setValue(AVKey.NUM_LEVELS, numLevels);
+            params.set(AVKey.NUM_LEVELS, numLevels);
         }
 
-        Integer numEmptyLevels = (Integer) params.getValue(AVKey.NUM_EMPTY_LEVELS);
+        Integer numEmptyLevels = (Integer) params.get(AVKey.NUM_EMPTY_LEVELS);
         if (numEmptyLevels == null) {
             numEmptyLevels = 0;
-            params.setValue(AVKey.NUM_EMPTY_LEVELS, numEmptyLevels);
+            params.set(AVKey.NUM_EMPTY_LEVELS, numEmptyLevels);
         }
 
-        LatLon levelZeroTileDelta = (LatLon) params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA);
+        LatLon levelZeroTileDelta = (LatLon) params.get(AVKey.LEVEL_ZERO_TILE_DELTA);
         if (levelZeroTileDelta == null) {
             double scale = Math.pow(2.0d, numLevels - 1);
             levelZeroTileDelta = LatLon.fromDegrees(
                 scale * rasterTileDelta.getLatitude().degrees,
                 scale * rasterTileDelta.getLongitude().degrees);
-            params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, levelZeroTileDelta);
+            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, levelZeroTileDelta);
         }
 
-        LatLon tileOrigin = (LatLon) params.getValue(AVKey.TILE_ORIGIN);
+        LatLon tileOrigin = (LatLon) params.get(AVKey.TILE_ORIGIN);
         if (tileOrigin == null) {
             tileOrigin = new LatLon(sector.latMin(), sector.lonMin());
-            params.setValue(AVKey.TILE_ORIGIN, tileOrigin);
+            params.set(AVKey.TILE_ORIGIN, tileOrigin);
         }
 
         // If the default or caller-specified values define a level set that does not fit in the limits of latitude
         // and longitude, then we re-define the level set parameters using values known to fit in those limits.
         if (!this.isWithinLatLonLimits(sector, levelZeroTileDelta, tileOrigin)) {
             levelZeroTileDelta = this.computeIntegralLevelZeroTileDelta(levelZeroTileDelta);
-            params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, levelZeroTileDelta);
+            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, levelZeroTileDelta);
 
             tileOrigin = new LatLon(Angle.NEG90, Angle.NEG180);
-            params.setValue(AVKey.TILE_ORIGIN, tileOrigin);
+            params.set(AVKey.TILE_ORIGIN, tileOrigin);
 
             numLevels = this.computeNumLevels(levelZeroTileDelta, rasterTileDelta);
-            params.setValue(AVKey.NUM_LEVELS, numLevels);
+            params.set(AVKey.NUM_LEVELS, numLevels);
         }
     }
 
@@ -649,7 +649,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
      */
     protected int extractMaxLevelLimit(AVList params, int maxNumOfLevels) {
         if (null != params && params.hasKey(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL)) {
-            Object o = params.getValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL);
+            Object o = params.get(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL);
             if (o instanceof Integer) {
                 int limit = (Integer) o;
                 return Math.min(limit, maxNumOfLevels);
@@ -863,7 +863,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         File configFile = this.getConfigFileInstallLocation(params);
         if (configFile == null) {
             String message = Logging.getMessage("TiledRasterProducer.NoConfigFileInstallLocation",
-                params.getValue(AVKey.DATASET_NAME));
+                params.get(AVKey.DATASET_NAME));
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
         }
@@ -884,7 +884,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         Document configDoc = this.createConfigDoc(params);
         if (configDoc == null) {
             String message = Logging.getMessage("TiledRasterProducer.CannotCreateConfigDoc",
-                params.getValue(AVKey.DATASET_NAME));
+                params.get(AVKey.DATASET_NAME));
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
         }
@@ -945,7 +945,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
 
         Sector extent = null;
         if (productionParams.hasKey(AVKey.SECTOR)) {
-            Object o = productionParams.getValue(AVKey.SECTOR);
+            Object o = productionParams.get(AVKey.SECTOR);
             if (o instanceof Sector) {
                 extent = (Sector) o;
             }
@@ -1002,7 +1002,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         for (Map.Entry<String, Object> entry : properties.getEntries()) {
             sb.setLength(0);
             String key = entry.getKey();
-            sb.append(properties.getValue(key));
+            sb.append(properties.get(key));
             String value = sb.toString();
             if (WWUtil.isEmpty(key) || WWUtil.isEmpty(value)) {
                 continue;
@@ -1042,7 +1042,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
 
         Sector sector = raster.getSector();
         if (null == sector && params.hasKey(AVKey.SECTOR)) {
-            o = params.getValue(AVKey.SECTOR);
+            o = params.get(AVKey.SECTOR);
             if (o instanceof Sector) {
                 sector = (Sector) o;
             }

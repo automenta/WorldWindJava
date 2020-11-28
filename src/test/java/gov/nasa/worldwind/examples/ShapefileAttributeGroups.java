@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.formats.shapefile.*;
 import gov.nasa.worldwind.layers.Layer;
 
@@ -35,7 +35,7 @@ public class ShapefileAttributeGroups extends ApplicationTemplate {
 
     public static class AppFrame extends ApplicationTemplate.AppFrame
         implements ActionListener, ShapefileRenderable.AttributeDelegate {
-        protected static final String SHAPEFILE_PATH = "gov/nasa/worldwindx/examples/data/ShapefileAttributeGroups.xml";
+        protected static final String SHAPEFILE_PATH = "gov/nasa/worldwind/examples/data/ShapefileAttributeGroups.xml";
         protected final Map<Integer, AttributeGroup> groups = new LinkedHashMap<>();
 
         public AppFrame() {
@@ -80,7 +80,7 @@ public class ShapefileAttributeGroups extends ApplicationTemplate {
             JCheckBox jcb = (JCheckBox) e.getSource();
             AttributeGroup group = (AttributeGroup) jcb.getClientProperty("group");
             group.setUseGroupColor(jcb.isSelected());
-            this.getWwd().redraw();
+            this.wwd().redraw();
         }
 
         protected void loadShapefile() {
@@ -89,12 +89,12 @@ public class ShapefileAttributeGroups extends ApplicationTemplate {
             factory.setAttributeDelegate(this); // call assignAttributes for each shapefile record
 
             Layer layer = (Layer) factory.createFromConfigSource(SHAPEFILE_PATH, null);
-            this.getWwd().model().getLayers().add(layer);
+            this.wwd().model().getLayers().add(layer);
         }
 
         @Override
         public void assignAttributes(ShapefileRecord shapefileRecord, ShapefileRenderable.Record renderableRecord) {
-            Number region = (Number) shapefileRecord.getAttributes().getValue("REGION");
+            Number region = (Number) shapefileRecord.getAttributes().get("REGION");
             AttributeGroup group = this.groups.get(region.intValue());
             if (group != null) {
                 group.addRecord(renderableRecord);

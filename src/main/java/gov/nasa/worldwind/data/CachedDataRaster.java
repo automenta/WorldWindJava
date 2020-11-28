@@ -129,7 +129,7 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
 
         if (null != keys && keys.length > 0) {
             for (String key : keys) {
-                Object value = params.getValue(key);
+                Object value = params.get(key);
                 if (WWUtil.isEmpty(value)) {
                     if (throwException == ErrorHandlerMode.ALLOW_EXCEPTIONS) {
                         String message = Logging.getMessage("generic.MissingRequiredParameter", key);
@@ -146,21 +146,21 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
     }
 
     public int getWidth() {
-        Object o = this.getValue(AVKey.WIDTH);
+        Object o = this.get(AVKey.WIDTH);
         if (o instanceof Integer)
             return (Integer) o;
         throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.WIDTH));
     }
 
     public int getHeight() {
-        Object o = this.getValue(AVKey.HEIGHT);
+        Object o = this.get(AVKey.HEIGHT);
         if (o instanceof Integer)
             return (Integer) o;
         throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.HEIGHT));
     }
 
     public Sector getSector() {
-        Object o = this.getValue(AVKey.SECTOR);
+        Object o = this.get(AVKey.SECTOR);
         if (o instanceof Sector)
             return (Sector) o;
         throw new WWRuntimeException(Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR));
@@ -305,9 +305,9 @@ public class CachedDataRaster extends AVListImpl implements DataRaster {
         if (null == params)
             params = new AVListImpl();
 
-        params.setValue(AVKey.WIDTH, width);
-        params.setValue(AVKey.HEIGHT, height);
-        params.setValue(AVKey.SECTOR, sector);
+        params.set(AVKey.WIDTH, width);
+        params.set(AVKey.HEIGHT, height);
+        params.set(AVKey.SECTOR, sector);
 
         return this.getSubRaster(params);
     }

@@ -84,7 +84,7 @@ public class ElevationModelManagerPanel extends JPanel {
             CompoundElevationModel cem = (CompoundElevationModel) wwd.model().getGlobe().getElevationModel();
 
             for (ElevationModel elevationModel : cem.getElevationModels()) {
-                if (elevationModel.getValue(AVKey.IGNORE) != null)
+                if (elevationModel.get(AVKey.IGNORE) != null)
                     continue;
 
                 ElevationModelPanel elevationModelPanel = new ElevationModelPanel(wwd, this, elevationModel);

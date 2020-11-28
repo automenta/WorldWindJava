@@ -38,7 +38,7 @@ public class ViewControls extends ApplicationTemplate {
             super(true, true, false);
 
             // Find ViewControls layer and keep reference to it
-            for (Layer layer : this.getWwd().model().getLayers()) {
+            for (Layer layer : this.wwd().model().getLayers()) {
                 if (layer instanceof ViewControlsLayer) {
                     viewControlsLayer = (ViewControlsLayer) layer;
                 }
@@ -63,14 +63,14 @@ public class ViewControls extends ApplicationTemplate {
             group.add(button);
             button.addActionListener((ActionEvent actionEvent) -> {
                 viewControlsLayer.setLayout(AVKey.HORIZONTAL);
-                getWwd().redraw();
+                wwd().redraw();
             });
             layoutPanel.add(button);
             button = new JRadioButton("Vertical", false);
             group.add(button);
             button.addActionListener((ActionEvent actionEvent) -> {
                 viewControlsLayer.setLayout(AVKey.VERTICAL);
-                getWwd().redraw();
+                wwd().redraw();
             });
             layoutPanel.add(button);
 
@@ -81,7 +81,7 @@ public class ViewControls extends ApplicationTemplate {
             JSlider scaleSlider = new JSlider(1, 20, 10);
             scaleSlider.addChangeListener((ChangeEvent event) -> {
                 viewControlsLayer.setScale(((JSlider) event.getSource()).getValue() / 10.0d);
-                getWwd().redraw();
+                wwd().redraw();
             });
             scalePanel.add(scaleSlider);
 
@@ -93,7 +93,7 @@ public class ViewControls extends ApplicationTemplate {
             check.setSelected(true);
             check.addActionListener((ActionEvent actionEvent) -> {
                 viewControlsLayer.setShowPanControls(((JCheckBox) actionEvent.getSource()).isSelected());
-                getWwd().redraw();
+                wwd().redraw();
             });
             checkPanel.add(check);
 
@@ -101,7 +101,7 @@ public class ViewControls extends ApplicationTemplate {
             check.setSelected(false);
             check.addActionListener((ActionEvent actionEvent) -> {
                 viewControlsLayer.setShowLookControls(((JCheckBox) actionEvent.getSource()).isSelected());
-                getWwd().redraw();
+                wwd().redraw();
             });
             checkPanel.add(check);
 
@@ -109,7 +109,7 @@ public class ViewControls extends ApplicationTemplate {
             check.setSelected(true);
             check.addActionListener((ActionEvent actionEvent) -> {
                 viewControlsLayer.setShowZoomControls(((JCheckBox) actionEvent.getSource()).isSelected());
-                getWwd().redraw();
+                wwd().redraw();
             });
             checkPanel.add(check);
 
@@ -117,7 +117,7 @@ public class ViewControls extends ApplicationTemplate {
             check.setSelected(true);
             check.addActionListener((ActionEvent actionEvent) -> {
                 viewControlsLayer.setShowHeadingControls(((JCheckBox) actionEvent.getSource()).isSelected());
-                getWwd().redraw();
+                wwd().redraw();
             });
             checkPanel.add(check);
 
@@ -125,7 +125,7 @@ public class ViewControls extends ApplicationTemplate {
             check.setSelected(true);
             check.addActionListener((ActionEvent actionEvent) -> {
                 viewControlsLayer.setShowPitchControls(((JCheckBox) actionEvent.getSource()).isSelected());
-                getWwd().redraw();
+                wwd().redraw();
             });
             checkPanel.add(check);
 
@@ -133,7 +133,7 @@ public class ViewControls extends ApplicationTemplate {
             check.setSelected(false);
             check.addActionListener((ActionEvent actionEvent) -> {
                 viewControlsLayer.setShowFovControls(((JCheckBox) actionEvent.getSource()).isSelected());
-                getWwd().redraw();
+                wwd().redraw();
             });
             checkPanel.add(check);
 

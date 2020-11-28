@@ -74,8 +74,8 @@ public class EGM96 {
 
         try {
             AVList bufferParams = new AVListImpl();
-            bufferParams.setValue(AVKey.DATA_TYPE, AVKey.INT16);
-            bufferParams.setValue(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
+            bufferParams.set(AVKey.DATA_TYPE, AVKey.INT16);
+            bufferParams.set(AVKey.BYTE_ORDER, AVKey.BIG_ENDIAN);
             this.deltas = BufferWrapper.wrap(WWIO.readStreamToBuffer(is, true), bufferParams);
         }
         catch (IOException e) {

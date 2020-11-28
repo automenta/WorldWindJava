@@ -7,7 +7,7 @@ package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.util.*;
@@ -88,39 +88,39 @@ public class AbstractGraticuleLayer extends AbstractLayer {
         if (params != null && rs != null) {
             Boolean b = rs.getStateValueAsBoolean(context, GraticuleRenderingParams.KEY_DRAW_LINES);
             if (b != null)
-                params.setValue(GraticuleRenderingParams.KEY_DRAW_LINES, b);
+                params.set(GraticuleRenderingParams.KEY_DRAW_LINES, b);
 
             Integer red = rs.getStateValueAsInteger(context, GraticuleRenderingParams.KEY_LINE_COLOR + ".Red");
             Integer green = rs.getStateValueAsInteger(context, GraticuleRenderingParams.KEY_LINE_COLOR + ".Green");
             Integer blue = rs.getStateValueAsInteger(context, GraticuleRenderingParams.KEY_LINE_COLOR + ".Blue");
             Integer alpha = rs.getStateValueAsInteger(context, GraticuleRenderingParams.KEY_LINE_COLOR + ".Alpha");
             if (red != null && green != null && blue != null && alpha != null)
-                params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(red, green, blue, alpha));
+                params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(red, green, blue, alpha));
 
             Double d = rs.getStateValueAsDouble(context, GraticuleRenderingParams.KEY_LINE_WIDTH);
             if (d != null)
-                params.setValue(GraticuleRenderingParams.KEY_LINE_WIDTH, d);
+                params.set(GraticuleRenderingParams.KEY_LINE_WIDTH, d);
 
             String s = rs.getStateValueAsString(context, GraticuleRenderingParams.KEY_LINE_STYLE);
             if (s != null)
-                params.setValue(GraticuleRenderingParams.KEY_LINE_STYLE, s);
+                params.set(GraticuleRenderingParams.KEY_LINE_STYLE, s);
 
             b = rs.getStateValueAsBoolean(context, GraticuleRenderingParams.KEY_DRAW_LABELS);
             if (b != null)
-                params.setValue(GraticuleRenderingParams.KEY_DRAW_LABELS, b);
+                params.set(GraticuleRenderingParams.KEY_DRAW_LABELS, b);
 
             red = rs.getStateValueAsInteger(context, GraticuleRenderingParams.KEY_LABEL_COLOR + ".Red");
             green = rs.getStateValueAsInteger(context, GraticuleRenderingParams.KEY_LABEL_COLOR + ".Green");
             blue = rs.getStateValueAsInteger(context, GraticuleRenderingParams.KEY_LABEL_COLOR + ".Blue");
             alpha = rs.getStateValueAsInteger(context, GraticuleRenderingParams.KEY_LABEL_COLOR + ".Alpha");
             if (red != null && green != null && blue != null && alpha != null)
-                params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(red, green, blue, alpha));
+                params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(red, green, blue, alpha));
 
             String name = rs.getStateValueAsString(context, GraticuleRenderingParams.KEY_LABEL_FONT + ".Name");
             Integer style = rs.getStateValueAsInteger(context, GraticuleRenderingParams.KEY_LABEL_FONT + ".Style");
             Integer size = rs.getStateValueAsInteger(context, GraticuleRenderingParams.KEY_LABEL_FONT + ".Size");
             if (name != null && style != null && size != null)
-                params.setValue(GraticuleRenderingParams.KEY_LABEL_FONT, new Font(name, style, size));
+                params.set(GraticuleRenderingParams.KEY_LABEL_FONT, new Font(name, style, size));
         }
     }
 

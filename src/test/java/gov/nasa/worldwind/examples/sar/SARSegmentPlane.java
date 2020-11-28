@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.Material;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.examples.sar.segmentplane.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -76,7 +76,7 @@ public class SARSegmentPlane extends WWObjectImpl {
             throw new IllegalArgumentException(message);
         }
 
-        SectorGeometryList sgl = wwd.getSceneController().getTerrain();
+        SectorGeometryList sgl = wwd.sceneControl().getTerrain();
         if (sgl != null) {
             Vec4 point = sgl.getSurfacePoint(latitude, longitude);
             if (point != null) {

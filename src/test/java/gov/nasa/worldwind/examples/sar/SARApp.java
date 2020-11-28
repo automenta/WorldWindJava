@@ -18,7 +18,7 @@ public class SARApp {
 
     static {
         System.setProperty("gov.nasa.worldwind.config.file",
-            "gov/nasa/worldwindx/applications/sar/config/SAR.properties");
+            "gov/nasa/worldwind/examples/sar/config/SAR.properties");
         if (Configuration.isMacOS()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", APP_NAME);

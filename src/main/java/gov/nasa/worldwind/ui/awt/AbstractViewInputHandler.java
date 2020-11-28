@@ -133,14 +133,14 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
 
         if (this.wwd != null) {
             //this.wwd.removeRenderingListener(this);
-            this.wwd.getSceneController().removePropertyChangeListener(this);
+            this.wwd.sceneControl().removePropertyChangeListener(this);
         }
 
         this.wwd = newWorldWindow;
 
         if (this.wwd != null) {
             //this.wwd.addRenderingListener(this);
-            this.wwd.getSceneController().addPropertyChangeListener(this);
+            this.wwd.sceneControl().addPropertyChangeListener(this);
         }
     }
 
@@ -315,7 +315,7 @@ public abstract class AbstractViewInputHandler implements ViewInputHandler, Prop
     //**************************************************************//
 
     protected Position computeSelectedPosition() {
-        PickedObjectList pickedObjects = this.wwd.getObjectsAtCurrentPosition();
+        PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
         if (pickedObjects != null) {
             if (pickedObjects.getTerrainObject() != null) {
                 return pickedObjects.getTerrainObject().getPosition();

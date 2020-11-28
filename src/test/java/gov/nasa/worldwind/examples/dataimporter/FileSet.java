@@ -27,10 +27,10 @@ import java.util.concurrent.*;
  * @version $Id: FileSet.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
 public class FileSet extends AVListImpl {
-    public static final String FILE_SET_CODE = "gov.nasa.worldwindx.dataimport.FileSet.FileSetCode";
-    public static final String FILE_SET_ABBREVIATION = "gov.nasa.worldwindx.dataimport.FileSet.FileSetAbbreviation";
-    public static final String FILE_SET_SCALE = "gov.nasa.worldwindx.dataimport.FileSet.FileSetScale";
-    public static final String FILE_SET_GSD = "gov.nasa.worldwindx.dataimport.FileSet.FileSetGSD";
+    public static final String FILE_SET_CODE = "gov.nasa.worldwind.dataimport.FileSet.FileSetCode";
+    public static final String FILE_SET_ABBREVIATION = "gov.nasa.worldwind.dataimport.FileSet.FileSetAbbreviation";
+    public static final String FILE_SET_SCALE = "gov.nasa.worldwind.dataimport.FileSet.FileSetScale";
+    public static final String FILE_SET_GSD = "gov.nasa.worldwind.dataimport.FileSet.FileSetGSD";
     public static final String SECTOR_LIST = "SectorList";
     public static final String IMAGE_ICON = "ImageIcon";
     public static final String IMAGE_IN_PROGRESS = "ImageInProgress";
@@ -43,11 +43,11 @@ public class FileSet extends AVListImpl {
     final List<File> files = new ArrayList<>();
 
     public FileSet() {
-        this.setValue(AVKey.COLOR, ColorAllocator.getNextColor());
+        this.set(AVKey.COLOR, ColorAllocator.getNextColor());
     }
 
     public void clear() {
-        Disposable layer = (Layer) this.getValue(AVKey.LAYER);
+        Disposable layer = (Layer) this.get(AVKey.LAYER);
         if (layer != null) {
             layer.dispose();
             this.removeKey(AVKey.LAYER);
@@ -87,7 +87,7 @@ public class FileSet extends AVListImpl {
     }
 
     public void setDataType(String dataType) {
-        this.setValue(AVKey.DATA_TYPE, dataType);
+        this.set(AVKey.DATA_TYPE, dataType);
     }
 
     public String getName() {
@@ -96,7 +96,7 @@ public class FileSet extends AVListImpl {
 
     public void setName(String name) {
         if (name != null)
-            this.setValue(AVKey.DISPLAY_NAME, name);
+            this.set(AVKey.DISPLAY_NAME, name);
     }
 
     public String getDatasetType() {
@@ -105,7 +105,7 @@ public class FileSet extends AVListImpl {
 
     public void setDatasetType(String datasetType) {
         if (datasetType != null)
-            this.setValue(AVKey.DATASET_TYPE, datasetType);
+            this.set(AVKey.DATASET_TYPE, datasetType);
     }
 
     public String getScale() {
@@ -114,26 +114,26 @@ public class FileSet extends AVListImpl {
 
     public void setScale(String scale) {
         if (scale != null)
-            this.setValue(FileSet.FILE_SET_SCALE, scale);
+            this.set(FileSet.FILE_SET_SCALE, scale);
     }
 
     public Sector getSector() {
-        return (Sector) this.getValue(AVKey.SECTOR);
+        return (Sector) this.get(AVKey.SECTOR);
     }
 
     public void setSector(Sector sector) {
-        this.setValue(AVKey.SECTOR, sector);
+        this.set(AVKey.SECTOR, sector);
     }
 
     public Object[] getSectorList() {
-        return (Object[]) this.getValue(FileSet.SECTOR_LIST);
+        return (Object[]) this.get(FileSet.SECTOR_LIST);
     }
 
     public void addSectorList(Object[] sectorList) {
-        Object[] current = (Object[]) this.getValue(FileSet.SECTOR_LIST);
+        Object[] current = (Object[]) this.get(FileSet.SECTOR_LIST);
 
         if (current == null) {
-            this.setValue(FileSet.SECTOR_LIST, sectorList);
+            this.set(FileSet.SECTOR_LIST, sectorList);
             return;
         }
 
@@ -141,15 +141,15 @@ public class FileSet extends AVListImpl {
         newList.add(current);
         newList.add(sectorList);
 
-        this.setValue(FileSet.SECTOR_LIST, newList.toArray());
+        this.set(FileSet.SECTOR_LIST, newList.toArray());
     }
 
     public Color getColor() {
-        return (Color) this.getValue(AVKey.COLOR);
+        return (Color) this.get(AVKey.COLOR);
     }
 
     public void setColor(Color color) {
-        this.setValue(AVKey.COLOR, color);
+        this.set(AVKey.COLOR, color);
     }
 
     public int getMaxFilesForPreviewImage() {
@@ -157,8 +157,8 @@ public class FileSet extends AVListImpl {
     }
 
     public ImageIcon getImageIcon() {
-        if (this.getValue(IMAGE_ICON) != null)
-            return (ImageIcon) this.getValue(IMAGE_ICON);
+        if (this.get(IMAGE_ICON) != null)
+            return (ImageIcon) this.get(IMAGE_ICON);
 
         return this.makeImageIcon();
     }
@@ -167,8 +167,8 @@ public class FileSet extends AVListImpl {
         if (!this.isImagery() || this.getLength() > this.getMaxFilesForPreviewImage())
             return null;
 
-        if (this.getValue(AVKey.IMAGE) != null)
-            return (BufferedImage) this.getValue(AVKey.IMAGE);
+        if (this.get(AVKey.IMAGE) != null)
+            return (BufferedImage) this.get(AVKey.IMAGE);
 
         this.makeImage();
 
@@ -176,7 +176,7 @@ public class FileSet extends AVListImpl {
     }
 
     public void setImage(BufferedImage image) {
-        this.setValue(AVKey.IMAGE, image);
+        this.set(AVKey.IMAGE, image);
         this.removeKey(IMAGE_IN_PROGRESS);
 
         this.firePropertyChange(new PropertyChangeEvent(this, AVKey.IMAGE, false, true));
@@ -186,10 +186,10 @@ public class FileSet extends AVListImpl {
      * Causes the preview image to be built.
      */
     protected void makeImage() {
-        if (this.getValue(IMAGE_IN_PROGRESS) != null) // don't generate more than one image at a time for this data set
+        if (this.get(IMAGE_IN_PROGRESS) != null) // don't generate more than one image at a time for this data set
             return;
 
-        this.setValue(IMAGE_IN_PROGRESS, true);
+        this.set(IMAGE_IN_PROGRESS, true);
 
         Runnable tg =
             new FileSetPreviewImageGenerator(this, PREVIEW_IMAGE_SIZE, PREVIEW_IMAGE_SIZE);
@@ -220,7 +220,7 @@ public class FileSet extends AVListImpl {
 
         ImageIcon imageIcon = new ImageIcon(iconImage);
 
-        this.setValue(IMAGE_ICON, imageIcon);
+        this.set(IMAGE_ICON, imageIcon);
 
         return imageIcon;
     }

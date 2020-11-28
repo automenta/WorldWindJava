@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples.kml;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.ogc.kml.*;
+import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.tree.TreeNode;
 
@@ -60,7 +60,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
 
         this.wwd = wwd;
         this.wwd.addSelectListener(this);
-        this.wwd.getSceneController().addPropertyChangeListener(this);
+        this.wwd.sceneControl().addPropertyChangeListener(this);
     }
 
     /**
@@ -92,7 +92,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
             Object topObject = event.getTopObject();
             if (topObject instanceof TreeNode) {
                 // The KML feature should be attached to the node as the CONTEXT
-                Object context = ((TreeNode) topObject).getValue(AVKey.CONTEXT);
+                Object context = ((TreeNode) topObject).get(AVKey.CONTEXT);
                 if (context instanceof KMLAbstractFeature) {
                     this.onFeatureSelected((KMLAbstractFeature) context);
                 }
@@ -115,7 +115,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
                 // The KML feature should be attached to the node as the CONTEXT
                 TreeNode treeNode = (TreeNode) topObject;
 
-                Object context = treeNode.getValue(AVKey.CONTEXT);
+                Object context = treeNode.get(AVKey.CONTEXT);
                 if (context instanceof KMLAbstractFeature && this.canSelect((KMLAbstractFeature) context)) {
                     this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     this.highlightedNode = treeNode;

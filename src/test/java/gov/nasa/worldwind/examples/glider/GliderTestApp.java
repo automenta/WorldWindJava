@@ -31,7 +31,7 @@ public class GliderTestApp extends ApplicationTemplate {
     protected static final LatLon se = nw.add(LatLon.fromDegrees(-0.036795 * 200, 0.036795 * 250));
     protected static final LatLon sw = nw.add(LatLon.fromDegrees(-0.036795 * 200, 0));
     protected static final List<LatLon> corners = Arrays.asList(sw, se, ne, nw);
-    protected static final String cloudImagePath = "gov/nasa/worldwindx/examples/images/GLIDERTestImage-800x519.jpg";
+    protected static final String cloudImagePath = "gov/nasa/worldwind/examples/images/GLIDERTestImage-800x519.jpg";
     private static double opacityIncrement = -0.1;
 
     protected static float[][] makeField(Iterable<LatLon> corners, int width, int height, Angle angle) {
@@ -122,9 +122,9 @@ public class GliderTestApp extends ApplicationTemplate {
 
             final Timer timer = new Timer(1000, (ActionEvent evt) -> {
 //                try {
-                if (((GliderWorldWindow) frame.getWwd()).getImages().isEmpty()) {
+                if (((GliderWorldWindow) frame.wwd()).getImages().isEmpty()) {
                     System.out.println("ADDING");
-                    ((GliderWorldWindow) frame.getWwd()).addImage(image);
+                    ((GliderWorldWindow) frame.wwd()).addImage(image);
                     image.releaseImageSource();
                 }
                 else {

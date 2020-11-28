@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.terrain.HighResolutionTerrain;
@@ -108,22 +108,22 @@ public class TerrainIntersections extends ApplicationTemplate {
             this.layerPanel.add(this.progressBar, BorderLayout.SOUTH);
 
             // Be sure to re-use the Terrain object to take advantage of its caching.
-            this.terrain = new HighResolutionTerrain(getWwd().model().getGlobe(), TARGET_RESOLUTION);
+            this.terrain = new HighResolutionTerrain(wwd().model().getGlobe(), TARGET_RESOLUTION);
 
             this.gridLayer = new RenderableLayer();
             this.gridLayer.setName("Grid");
-            this.getWwd().model().getLayers().add(this.gridLayer);
+            this.wwd().model().getLayers().add(this.gridLayer);
 
             this.intersectionsLayer = new RenderableLayer();
             this.intersectionsLayer.setName("Intersections");
-            this.getWwd().model().getLayers().add(this.intersectionsLayer);
+            this.wwd().model().getLayers().add(this.intersectionsLayer);
 
             this.sightLinesLayer = new RenderableLayer();
             this.sightLinesLayer.setName("Sight Lines");
-            this.getWwd().model().getLayers().add(this.sightLinesLayer);
+            this.wwd().model().getLayers().add(this.sightLinesLayer);
 
             // Set up a mouse handler to generate a grid and start intersection calculations when the user shift-clicks.
-            this.getWwd().getInputHandler().addMouseListener(new MouseAdapter() {
+            this.wwd().input().addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent mouseEvent) {
                     // Control-Click cancels any currently running operation.
@@ -153,7 +153,7 @@ public class TerrainIntersections extends ApplicationTemplate {
 
                     mouseEvent.consume(); // tell the rest of WW that this event has been processed
 
-                    final Position pos = getWwd().getCurrentPosition();
+                    final Position pos = wwd().position();
                     if (pos == null) {
                         return;
                     }
@@ -221,7 +221,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             this.showIntersections(firstIntersectionPositions);
             this.showSightLines(sightLines);
 //            this.showIntersectingTiles(this.grid, this.referencePosition);
-            this.getWwd().redraw();
+            this.wwd().redraw();
         }
 
         protected void performIntersectionTests(final Position curPos) {
@@ -255,7 +255,7 @@ public class TerrainIntersections extends ApplicationTemplate {
                 progressBar.setString(null);
                 clearLayers();
                 showGrid(grid, referencePosition);
-                getWwd().redraw();
+                wwd().redraw();
             });
 
             // Perform the intersection calculations.
@@ -374,7 +374,7 @@ public class TerrainIntersections extends ApplicationTemplate {
                 PointPlacemark pm = new PointPlacemark(p);
                 pm.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
                 pm.setAttributes(intersectionPointAttributes);
-                pm.setValue(AVKey.DISPLAY_NAME, p.toString());
+                pm.set(AVKey.DISPLAY_NAME, p.toString());
                 this.intersectionsLayer.add(pm);
             }
         }
@@ -440,7 +440,7 @@ public class TerrainIntersections extends ApplicationTemplate {
                 pm.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
                 pm.setAttributes(gridPointAttributes);
                 pm.setLineEnabled(true);
-                pm.setValue(AVKey.DISPLAY_NAME, p.toString());
+                pm.set(AVKey.DISPLAY_NAME, p.toString());
                 this.gridLayer.add(pm);
             }
 
@@ -458,7 +458,7 @@ public class TerrainIntersections extends ApplicationTemplate {
             PointPlacemark pm = new PointPlacemark(cPos);
             pm.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             pm.setAttributes(selectedLocationAttributes);
-            pm.setValue(AVKey.DISPLAY_NAME, cPos.toString());
+            pm.set(AVKey.DISPLAY_NAME, cPos.toString());
             pm.setLineEnabled(true);
             this.gridLayer.add(pm);
         }

@@ -7,8 +7,9 @@
 package gov.nasa.worldwind.examples.sar;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.airspaces.Polygon;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.airspaces.Polygon;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.*;
 

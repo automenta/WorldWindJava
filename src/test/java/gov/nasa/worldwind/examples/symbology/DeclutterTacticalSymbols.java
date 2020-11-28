@@ -10,7 +10,7 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.examples.milstd2525.MilStd2525TacticalSymbol;
-import gov.nasa.worldwind.examples.render.Material;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.symbology.*;
@@ -97,7 +97,7 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate {
             attributes.setTextModifierMaterial(Material.RED);
             TacticalSymbol airSymbol = new MilStd2525TacticalSymbol("SFAPMFQM--GIUSA",
                 Position.fromDegrees(32.4520, 63.44553, 3000));
-            airSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly SOF Drone Aircraft"); // Tool tip text.
+            airSymbol.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly SOF Drone Aircraft"); // Tool tip text.
             airSymbol.setAttributes(attributes);
             airSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             airSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(235));
@@ -110,7 +110,7 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate {
             attributes.setTextModifierMaterial(Material.RED);
             TacticalSymbol groundSymbol = new MilStd2525TacticalSymbol("SHGXUCFRMS----G",
                 Position.fromDegrees(32.4014, 63.3894, 0));
-            groundSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Hostile Self-Propelled Rocket Launchers");
+            groundSymbol.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Hostile Self-Propelled Rocket Launchers");
             groundSymbol.setAttributes(attributes);
             groundSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             groundSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(90));
@@ -124,7 +124,7 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate {
             attributes.setTextModifierMaterial(Material.RED);
             TacticalSymbol machineGunSymbol = new MilStd2525TacticalSymbol("SFGPEWRH--MTUSG",
                 Position.fromDegrees(32.3902, 63.4161, 0));
-            machineGunSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly Heavy Machine Gun");
+            machineGunSymbol.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly Heavy Machine Gun");
             machineGunSymbol.setAttributes(attributes);
             machineGunSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             machineGunSymbol.setModifier(SymbologyConstants.QUANTITY, 200);
@@ -136,7 +136,7 @@ public class DeclutterTacticalSymbols extends ApplicationTemplate {
             this.symbolLayer.add(machineGunSymbol);
 
             // Add the symbol layer to the WorldWind model.
-            this.getWwd().model().getLayers().add(symbolLayer);
+            this.wwd().model().getLayers().add(symbolLayer);
 
             // Size the WorldWindow to provide enough screen space for the symbols and center the WorldWindow on the
             // screen.

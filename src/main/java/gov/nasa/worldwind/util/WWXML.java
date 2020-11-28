@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import org.w3c.dom.*;
@@ -1992,7 +1992,7 @@ public class WWXML {
         if (s == null) {
             s = getText(context, paramName, xpath);
             if (s != null && !s.isEmpty())
-                params.setValue(paramKey, s.trim());
+                params.set(paramKey, s.trim());
         }
     }
 
@@ -2035,11 +2035,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             String[] strings = getTextArray(context, paramName, xpath);
             if (strings != null && strings.length > 0)
-                params.setValue(paramKey, strings);
+                params.set(paramKey, strings);
         }
     }
 
@@ -2082,11 +2082,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             String[] strings = getUniqueText(context, paramName, xpath);
             if (strings != null && strings.length > 0)
-                params.setValue(paramKey, strings);
+                params.set(paramKey, strings);
         }
     }
 
@@ -2129,11 +2129,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             Double d = getDouble(context, paramName, xpath);
             if (d != null)
-                params.setValue(paramKey, d);
+                params.set(paramKey, d);
         }
     }
 
@@ -2176,11 +2176,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             Integer d = getInteger(context, paramName, xpath);
             if (d != null)
-                params.setValue(paramKey, d);
+                params.set(paramKey, d);
         }
     }
 
@@ -2223,11 +2223,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             Long d = getLong(context, paramName, xpath);
             if (d != null)
-                params.setValue(paramKey, d);
+                params.set(paramKey, d);
         }
     }
 
@@ -2270,11 +2270,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             Boolean d = getBoolean(context, paramName, xpath);
             if (d != null)
-                params.setValue(paramKey, d);
+                params.set(paramKey, d);
         }
     }
 
@@ -2317,11 +2317,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             LatLon ll = getLatLon(context, paramName, xpath);
             if (ll != null)
-                params.setValue(paramKey, ll);
+                params.set(paramKey, ll);
         }
     }
 
@@ -2364,11 +2364,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             Color color = getColor(context, paramName, xpath);
             if (color != null)
-                params.setValue(paramKey, color);
+                params.set(paramKey, color);
         }
     }
 
@@ -2398,7 +2398,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             Element[] els = getElements(context, paramName, xpath);
             if (els == null || els.length == 0)
@@ -2412,7 +2412,7 @@ public class WWXML {
                     colors[i] = color.getRGB();
             }
 
-            params.setValue(paramKey, colors);
+            params.set(paramKey, colors);
         }
     }
 
@@ -2455,11 +2455,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             Sector sector = getSector(context, paramName, xpath);
             if (sector != null)
-                params.setValue(paramKey, sector);
+                params.set(paramKey, sector);
         }
     }
 
@@ -2502,7 +2502,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             Element[] els = getElements(context, paramName, xpath);
             if (els == null || els.length == 0)
@@ -2516,7 +2516,7 @@ public class WWXML {
                     srs[i] = sr;
             }
 
-            params.setValue(paramKey, srs);
+            params.set(paramKey, srs);
         }
     }
 
@@ -2559,11 +2559,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             Long d = getTimeInMillis(context, paramName, xpath);
             if (d != null)
-                params.setValue(paramKey, d);
+                params.set(paramKey, d);
         }
     }
 
@@ -2606,11 +2606,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             Long d = WWXML.getTimeInMillis(context, paramName, xpath);
             if (d != null)
-                params.setValue(paramKey, d.intValue());
+                params.set(paramKey, d.intValue());
         }
     }
 
@@ -2661,11 +2661,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             Long d = getDateTimeInMillis(context, paramName, pattern, xpath);
             if (d != null)
-                params.setValue(paramKey, d);
+                params.set(paramKey, d);
         }
     }
 
@@ -2708,11 +2708,11 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o == null) {
             ScreenCredit sc = getScreenCredit(context, paramName, xpath);
             if (sc != null)
-                params.setValue(paramKey, sc);
+                params.set(paramKey, sc);
         }
     }
 
@@ -2780,7 +2780,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o instanceof String[]) {
             String[] strings = (String[]) o;
             if (strings.length > 0) {
@@ -2923,7 +2923,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o instanceof Boolean) {
             appendBoolean(context, path, (Boolean) o);
         }
@@ -2958,7 +2958,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o instanceof LatLon) {
             appendLatLon(context, path, (LatLon) o);
         }
@@ -2993,7 +2993,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o instanceof Sector) {
             appendSector(context, path, (Sector) o);
         }
@@ -3029,7 +3029,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o instanceof LevelSet.SectorResolution[]) {
             LevelSet.SectorResolution[] srs = (LevelSet.SectorResolution[]) o;
 
@@ -3071,7 +3071,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o instanceof Number) {
             Number num = (Number) o;
             appendTimeInMillis(context, path, num.longValue());
@@ -3107,7 +3107,7 @@ public class WWXML {
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(paramKey);
+        Object o = params.get(paramKey);
         if (o instanceof ScreenCredit) {
             appendScreenCredit(context, path, (ScreenCredit) o);
         }
@@ -3294,7 +3294,7 @@ public class WWXML {
                 if (WWUtil.isEmpty(prop) || WWUtil.isEmpty(value))
                     continue;
 
-                params.setValue(prop, value);
+                params.set(prop, value);
             }
         }
         catch (XPathExpressionException e) // should not occur, but log just if it does
@@ -3346,7 +3346,7 @@ public class WWXML {
             catch (NoSuchMethodException e) {
                 // No property method, so just add the property to the object's AVList if it has one.
                 if (parent instanceof AVList)
-                    ((AVList) parent).setValue(propertyName, propertyValue);
+                    ((AVList) parent).set(propertyName, propertyValue);
                 continue; // This is a benign exception; not all properties have set methods.
             }
             catch (InvocationTargetException | IllegalAccessException e) {

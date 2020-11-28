@@ -8,13 +8,13 @@ package gov.nasa.worldwind.formats.vpf;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.*;
 import gov.nasa.worldwind.cache.GpuResourceCache;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.nio.IntBuffer;
-import java.util.*;
 
 /**
  * @author dcollins

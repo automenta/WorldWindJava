@@ -127,7 +127,7 @@ public class BasicJSONEventParser implements JSONEventParser {
         if (this.fields == null)
             this.fields = new AVListImpl();
 
-        this.fields.setValue(ctx.getCurrentFieldName(), value);
+        this.fields.set(ctx.getCurrentFieldName(), value);
     }
 
     protected Object resolveObject(JSONEventParserContext ctx, JSONEvent event) {

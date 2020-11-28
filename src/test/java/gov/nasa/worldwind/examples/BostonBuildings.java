@@ -51,7 +51,7 @@ public class BostonBuildings extends ApplicationTemplate {
             Position eyePos = new Position(Angle.fromDegreesLatitude(42.3638), Angle.fromDegreesLongitude(-71.0607),
                 3000.0); // Boston
 //            Position eyePos = new Position(Angle.fromDegreesLatitude(2.5), Angle.fromDegreesLongitude(2.5), 25000.0);
-            this.getWwd().view().setEyePosition(eyePos);
+            this.wwd().view().setEyePosition(eyePos);
 //            factory.createFromShapefileSource("/home/mpeterson/d/temp/multi.shp",
             factory.createFromShapefileSource("/home/mpeterson/d/temp/boston/boston4236.shp",
                 new ShapefileLayerFactory.CompletionCallback() {
@@ -61,7 +61,7 @@ public class BostonBuildings extends ApplicationTemplate {
                         layer.setName(WWIO.getFilename(layer.getName()));
 
                         // Add the layer to the WorldWindow's layer list on the Event Dispatch Thread.
-                        SwingUtilities.invokeLater(() -> AppFrame.this.getWwd().model().getLayers().add(layer));
+                        SwingUtilities.invokeLater(() -> AppFrame.this.wwd().model().getLayers().add(layer));
                     }
 
                     @Override

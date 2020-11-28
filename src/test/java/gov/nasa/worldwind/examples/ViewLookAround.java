@@ -38,9 +38,9 @@ public class ViewLookAround extends ApplicationTemplate {
             super(true, true, false);
 
             // Add view control panel to the layer panel
-            this.vcp = new ViewControlPanel(getWwd());
+            this.vcp = new ViewControlPanel(wwd());
             BasicFlyView flyView = new BasicFlyView();
-            getWwd().setView(flyView);
+            wwd().setView(flyView);
             this.getControlPanel().add(this.vcp, BorderLayout.SOUTH);
             Position pos = new Position(new LatLon(Angle.fromDegrees(45), Angle.fromDegrees(-120)), 2000);
             flyView.setEyePosition(pos);
@@ -68,7 +68,7 @@ public class ViewLookAround extends ApplicationTemplate {
                 // Compose panel
                 this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-                insertBeforeCompass(getWwd(), new CrosshairLayer());
+                WorldWindow.insertBeforeCompass(wwd(), new CrosshairLayer());
 
                 // Pitch slider
                 JPanel pitchPanel = new JPanel(new GridLayout(0, 1, 5, 5));

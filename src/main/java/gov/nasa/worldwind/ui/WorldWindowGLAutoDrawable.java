@@ -61,7 +61,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
      * Construct a new <code>WorldWindowGLCanvas</code> for a specified {@link GLDrawable}.
      */
     public WorldWindowGLAutoDrawable() {
-        SceneController sc = this.getSceneController();
+        SceneController sc = this.sceneControl();
         if (sc != null)
             sc.addPropertyChangeListener(this);
     }
@@ -216,10 +216,10 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     @SuppressWarnings("UnusedParameters")
     protected void reinitialize(GLAutoDrawable glAutoDrawable) {
         // Clear the gpu resource cache if the window is reinitializing, most likely with a new gl hardware context.
-        if (this.getGpuResourceCache() != null)
-            this.getGpuResourceCache().clear();
+        if (this.resourceCache() != null)
+            this.resourceCache().clear();
 
-        this.getSceneController().reinitialize();
+        this.sceneControl().reinitialize();
     }
 
     /**
@@ -262,7 +262,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         }
 
         try {
-            SceneController sc = this.getSceneController();
+            SceneController sc = this.sceneControl();
             if (sc == null) {
                 String msg = Logging.getMessage("WorldWindowGLCanvas.ScnCntrllerNullOnRepaint");
                 Logging.logger().severe(msg);
@@ -272,7 +272,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
             // Determine if the view has changed since the last frame.
             this.checkForViewChange();
 
-            Position positionAtStart = this.getCurrentPosition();
+            Position positionAtStart = this.position();
             PickedObject selectionAtStart = this.getCurrentSelection();
             PickedObjectList boxSelectionAtStart = this.getCurrentBoxSelection();
 
@@ -307,12 +307,10 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
             this.doSwapBuffers(this.drawable);
 
             Double frameTime = sc.getFrameTime();
-            if (frameTime != null)
-                this.setValue(PerformanceStatistic.FRAME_TIME, frameTime);
+            this.set(PerformanceStatistic.FRAME_TIME, frameTime);
 
             Double frameRate = sc.getFramesPerSecond();
-            if (frameRate != null)
-                this.setValue(PerformanceStatistic.FRAME_RATE, frameRate);
+            this.set(PerformanceStatistic.FRAME_RATE, frameRate);
 
             // Dispatch the rendering exceptions accumulated by the SceneController during this frame to our
             // RenderingExceptionListeners.
@@ -333,7 +331,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
             // start != null, end != null, start != end: something new was selected -- notify
             // start != null, end != null, start == end: same thing is selected -- don't notify
 
-            Position positionAtEnd = this.getCurrentPosition();
+            Position positionAtEnd = this.position();
             if (positionAtStart != null || positionAtEnd != null) {
                 // call the listener if both are not null or positions are the same
                 if (positionAtStart != null && positionAtEnd != null) {
@@ -392,7 +390,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
      * milliseconds from this method's return.
      */
     protected int doDisplay() {
-        return this.getSceneController().repaint();
+        return this.sceneControl().repaint();
     }
 
     /**

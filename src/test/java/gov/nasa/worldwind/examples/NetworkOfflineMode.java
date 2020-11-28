@@ -46,7 +46,7 @@ public class NetworkOfflineMode extends ApplicationTemplate {
 
                     // Cause data retrieval to resume if now online
                     if (!offline)
-                        getWwd().redraw();
+                        wwd().redraw();
                 }
             });
             modeSwitch.setSelected(true); // WW starts out online

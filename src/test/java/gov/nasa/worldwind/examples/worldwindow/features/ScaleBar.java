@@ -27,7 +27,7 @@ public class ScaleBar extends AbstractFeatureLayer {
         ScalebarLayer layer = new ScalebarLayer();
 
         layer.setPosition(AVKey.SOUTHEAST);
-        layer.setValue(Constants.SCREEN_LAYER, true);
+        layer.set(Constants.SCREEN_LAYER, true);
 
         this.controller.addInternalLayer(layer);
 

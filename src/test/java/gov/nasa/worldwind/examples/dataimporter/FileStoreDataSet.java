@@ -50,7 +50,7 @@ public class FileStoreDataSet extends AVListImpl {
         this.dataSetPath = dataSetPath;
         this.configFilePath = configFilePath;
 
-        this.setValue(AVKey.COLOR, ColorAllocator.getNextColor());
+        this.set(AVKey.COLOR, ColorAllocator.getNextColor());
 
         this.attachMetadata();
     }
@@ -71,9 +71,9 @@ public class FileStoreDataSet extends AVListImpl {
         String type = DataConfigurationUtils.getDataConfigType(domElement);
         if (type.equalsIgnoreCase("ElevationModel")) {
             if (WWXML.getDouble(domElement, "ExtremeElevations/@min", xpath) == null)
-                params.setValue(AVKey.ELEVATION_MIN, Earth.ELEVATION_MIN);
+                params.set(AVKey.ELEVATION_MIN, Earth.ELEVATION_MIN);
             if (WWXML.getDouble(domElement, "ExtremeElevations/@max", xpath) == null)
-                params.setValue(AVKey.ELEVATION_MAX, Earth.ELEVATION_MAX);
+                params.set(AVKey.ELEVATION_MAX, Earth.ELEVATION_MAX);
         }
     }
 
@@ -132,11 +132,11 @@ public class FileStoreDataSet extends AVListImpl {
     }
 
     public Sector getSector() {
-        return (Sector) this.getValue(AVKey.SECTOR);
+        return (Sector) this.get(AVKey.SECTOR);
     }
 
     public Color getColor() {
-        return (Color) this.getValue(AVKey.COLOR);
+        return (Color) this.get(AVKey.COLOR);
     }
 
     public long getSize() {
@@ -192,16 +192,16 @@ public class FileStoreDataSet extends AVListImpl {
 
         Sector sector = WWXML.getSector(domElement, "Sector", null);
         if (sector != null)
-            this.setValue(AVKey.SECTOR, sector);
+            this.set(AVKey.SECTOR, sector);
 
         String name = DataConfigurationUtils.getDataConfigDisplayName(domElement);
-        this.setValue(AVKey.DISPLAY_NAME, name);
+        this.set(AVKey.DISPLAY_NAME, name);
 
         String type = DataConfigurationUtils.getDataConfigType(domElement);
         if (type.equalsIgnoreCase("Layer"))
-            this.setValue(AVKey.DATASET_TYPE, IMAGERY);
+            this.set(AVKey.DATASET_TYPE, IMAGERY);
         else if (type.equalsIgnoreCase("ElevationModel"))
-            this.setValue(AVKey.DATASET_TYPE, ELEVATION);
+            this.set(AVKey.DATASET_TYPE, ELEVATION);
     }
 
     /**

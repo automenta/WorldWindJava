@@ -34,7 +34,7 @@ public class DetailHints extends ApplicationTemplate {
         }
 
         protected void setElevationModelDetailHint(double detailHint) {
-            this.setElevationModelDetailHint(getWwd().model().getGlobe().getElevationModel(), detailHint);
+            this.setElevationModelDetailHint(wwd().model().getGlobe().getElevationModel(), detailHint);
             System.out.println("Terrain detail hint set to " + detailHint);
         }
 
@@ -50,7 +50,7 @@ public class DetailHints extends ApplicationTemplate {
         }
 
         protected void setTiledImageLayerDetailHint(double detailHint) {
-            for (Layer layer : getWwd().model().getLayers()) {
+            for (Layer layer : wwd().model().getLayers()) {
                 if (layer instanceof TiledImageLayer) {
                     ((TiledImageLayer) layer).setDetailHint(detailHint);
                 }
@@ -69,7 +69,7 @@ public class DetailHints extends ApplicationTemplate {
             labelTable.put(10, new JLabel("1.0"));
 
             JSlider elevationDetailSlider = new JSlider(-10, 10,
-                (int) (this.getWwd().model().getGlobe().getElevationModel().getDetailHint(Sector.FULL_SPHERE) * 10));
+                (int) (this.wwd().model().getGlobe().getElevationModel().getDetailHint(Sector.FULL_SPHERE) * 10));
             elevationDetailSlider.setMajorTickSpacing(5);
             elevationDetailSlider.setMinorTickSpacing(1);
             elevationDetailSlider.setPaintTicks(true);
@@ -78,7 +78,7 @@ public class DetailHints extends ApplicationTemplate {
             elevationDetailSlider.addChangeListener(e -> {
                 double newDetailHint = ((JSlider) e.getSource()).getValue() / 10.0d;
                 setElevationModelDetailHint(newDetailHint);
-                getWwd().redraw();
+                wwd().redraw();
             });
 
             JLabel label = new JLabel("Terrain Detail");
@@ -96,7 +96,7 @@ public class DetailHints extends ApplicationTemplate {
             imageDetailSlider.addChangeListener(e -> {
                 double detailHint = ((JSlider) e.getSource()).getValue() / 10.0d;
                 setTiledImageLayerDetailHint(detailHint);
-                getWwd().redraw();
+                wwd().redraw();
             });
 
             label = new JLabel("Image Detail");

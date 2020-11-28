@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples.analytics;
 
 import gov.nasa.worldwind.Exportable;
-import gov.nasa.worldwind.examples.ogc.kml.KMLConstants;
+import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;

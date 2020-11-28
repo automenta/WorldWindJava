@@ -9,7 +9,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.*;
@@ -341,7 +341,7 @@ public class CompassLayer extends AbstractLayer {
                         double py = viewport.getHeight() - dc.getPickPoint().y - center.y;
                         Angle pickHeading = Angle.fromRadians(Math.atan2(px, py));
                         pickHeading = pickHeading.degrees >= 0 ? pickHeading : pickHeading.addDegrees(360);
-                        po.setValue("Heading", pickHeading);
+                        po.set("Heading", pickHeading);
                     }
 
                     // Draw the compass in the unique pick color.

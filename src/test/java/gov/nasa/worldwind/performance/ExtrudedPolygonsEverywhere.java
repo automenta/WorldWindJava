@@ -6,9 +6,9 @@
 
 package gov.nasa.worldwind.performance;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -98,7 +98,7 @@ public class ExtrudedPolygonsEverywhere extends ApplicationTemplate {
             System.out.printf("%d ExtrudedPolygons, %d positions each, Altitude mode = %s\n", count, positions.size(),
                 altitudeMode == WorldWind.RELATIVE_TO_GROUND ? "RELATIVE_TO_GROUND" : "ABSOLUTE");
 
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
         }
     }
 }

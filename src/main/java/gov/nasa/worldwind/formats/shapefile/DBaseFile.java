@@ -47,7 +47,7 @@ public class DBaseFile extends AVListImpl {
         }
 
         try {
-            this.setValue(AVKey.DISPLAY_NAME, source.toString());
+            this.set(AVKey.DISPLAY_NAME, source.toString());
 
             if (source instanceof File)
                 this.initializeFromFile((File) source);
@@ -79,7 +79,7 @@ public class DBaseFile extends AVListImpl {
         }
 
         try {
-            this.setValue(AVKey.DISPLAY_NAME, is.toString());
+            this.set(AVKey.DISPLAY_NAME, is.toString());
             this.initializeFromStream(is);
         }
         catch (Exception e) {

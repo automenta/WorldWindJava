@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.*;
@@ -328,7 +328,7 @@ public class ViewLimits extends ApplicationTemplate {
             this.layer.setName("Sector Limits");
             this.layer.setPickEnabled(false);
             this.layer.add(this.surfaceSector);
-            insertBeforePlacenames(this.appFrame.getWwd(), this.layer);
+            WorldWindow.insertBeforePlacenames(this.appFrame.wwd(), this.layer);
 
             OrbitView view = this.getOrbitView();
             if (view != null) {
@@ -397,7 +397,7 @@ public class ViewLimits extends ApplicationTemplate {
             if (file == null)
                 return;
 
-            View view = this.appFrame.getWwd().view();
+            View view = this.appFrame.wwd().view();
             String xmlString = view.getRestorableState();
 
             WWIO.writeTextFile(xmlString, file);
@@ -417,7 +417,7 @@ public class ViewLimits extends ApplicationTemplate {
             if (file == null)
                 return;
 
-            View view = this.appFrame.getWwd().view();
+            View view = this.appFrame.wwd().view();
             String xmlString = WWIO.readTextFile(file);
             view.restoreState(xmlString);
 
@@ -425,12 +425,12 @@ public class ViewLimits extends ApplicationTemplate {
         }
 
         public OrbitView getOrbitView() {
-            View view = this.appFrame.getWwd().view();
+            View view = this.appFrame.wwd().view();
             return (view instanceof OrbitView) ? (OrbitView) view : null;
         }
 
         public void updateRenderables() {
-            View view = this.appFrame.getWwd().view();
+            View view = this.appFrame.wwd().view();
             if (!(view instanceof OrbitView)) {
                 return;
             }
@@ -440,7 +440,7 @@ public class ViewLimits extends ApplicationTemplate {
 
             this.surfaceSector.setSector(limits.getCenterLocationLimits());
 
-            this.appFrame.getWwd().redraw();
+            this.appFrame.wwd().redraw();
         }
     }
 }

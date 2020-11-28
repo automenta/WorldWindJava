@@ -8,7 +8,7 @@ package gov.nasa.worldwind;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 

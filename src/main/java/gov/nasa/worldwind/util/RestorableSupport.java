@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.OffsetsList;
+import gov.nasa.worldwind.render.OffsetsList;
 import gov.nasa.worldwind.geom.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
@@ -237,8 +237,8 @@ public class RestorableSupport {
 
     public static void adjustTitleAndDisplayName(AVList params) {
         String displayName = params.getStringValue(AVKey.DISPLAY_NAME);
-        if (displayName == null && params.getValue(AVKey.TITLE) != null)
-            params.setValue(AVKey.DISPLAY_NAME, params.getValue(AVKey.TITLE));
+        if (displayName == null && params.get(AVKey.TITLE) != null)
+            params.set(AVKey.DISPLAY_NAME, params.get(AVKey.TITLE));
     }
 
     protected Element getDocumentElement() {

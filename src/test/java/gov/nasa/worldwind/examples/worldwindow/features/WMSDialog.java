@@ -19,7 +19,7 @@ import java.net.URISyntaxException;
  */
 public class WMSDialog extends AbstractFeatureDialog {
     protected static final String FEATURE_TITLE = "WMS Servers...";
-    protected static final String ICON_PATH = "gov/nasa/worldwindx/applications/worldwindow/images/wms-64x64.png";
+    protected static final String ICON_PATH = "gov/nasa/worldwind/examples/worldwindow/images/wms-64x64.png";
 
     protected JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -66,7 +66,7 @@ public class WMSDialog extends AbstractFeatureDialog {
         this.getJDialog().setResizable(true);
 
         JButton deleteButton = new JButton(
-            ImageLibrary.getIcon("gov/nasa/worldwindx/applications/worldwindow/images/delete-20x20.png"));
+            ImageLibrary.getIcon("gov/nasa/worldwind/examples/worldwindow/images/delete-20x20.png"));
         deleteButton.setToolTipText("Remove Server");
         deleteButton.setOpaque(false);
         deleteButton.setBackground(new Color(0, 0, 0, 0));

@@ -22,6 +22,6 @@ public class GeoJSONFeatureCollection extends GeoJSONObject {
     }
 
     public GeoJSONFeature[] getFeatures() {
-        return (GeoJSONFeature[]) this.getValue(GeoJSONConstants.FIELD_FEATURES);
+        return (GeoJSONFeature[]) this.get(GeoJSONConstants.FIELD_FEATURES);
     }
 }

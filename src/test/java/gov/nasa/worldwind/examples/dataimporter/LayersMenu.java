@@ -41,7 +41,7 @@ public class LayersMenu extends JMenu {
 
         // Fill the layers panel with the titles of all layers in the WorldWindow's current model.
         for (Layer layer : wwd.model().getLayers()) {
-            if (layer.getValue(AVKey.IGNORE) != null)
+            if (layer.get(AVKey.IGNORE) != null)
                 continue;
 
             LayerAction action = new LayerAction(layer, wwd, layer.isEnabled());

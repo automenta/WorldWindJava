@@ -9,7 +9,7 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
@@ -97,7 +97,7 @@ public class Shapes {
             this.wwjPanel = new ApplicationTemplate.AppPanel(this.canvasSize, true);
             this.wwjPanel.setPreferredSize(canvasSize);
 
-            ApplicationTemplate.insertBeforePlacenames(this.wwjPanel.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwjPanel.wwd(), layer);
 
             JPanel shapesPanel = makeShapeSelectionPanel();
             shapesPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -126,7 +126,7 @@ public class Shapes {
             this.setLocation(x, y);
             this.setResizable(true);
 
-            wwjPanel.getWwd().addRenderingListener((RenderingEvent event) -> {
+            wwjPanel.wwd().addRenderingListener((RenderingEvent event) -> {
                 if (!event.getStage().equals(RenderingEvent.BEFORE_BUFFER_SWAP)) {
                     return;
                 }
@@ -281,7 +281,7 @@ public class Shapes {
             if (this.currentShape != null) {
                 this.layer.add(this.currentShape);
             }
-            this.wwjPanel.getWwd().redraw();
+            this.wwjPanel.wwd().redraw();
         }
 
         private Info[] buildSurfaceShapes() {
@@ -584,8 +584,8 @@ public class Shapes {
         }
 
         private void setupSelection() {
-            this.wwjPanel.getWwd().addSelectListener(new SelectListener() {
-                private final BasicDragger dragger = new BasicDragger(AppFrame.this.wwjPanel.getWwd());
+            this.wwjPanel.wwd().addSelectListener(new SelectListener() {
+                private final BasicDragger dragger = new BasicDragger(AppFrame.this.wwjPanel.wwd());
                 private WWIcon lastToolTipIcon = null;
 
                 @Override
@@ -596,7 +596,7 @@ public class Shapes {
                         if (lastToolTipIcon != null) {
                             lastToolTipIcon.setShowToolTip(false);
                             this.lastToolTipIcon = null;
-                            AppFrame.this.wwjPanel.getWwd().redraw();
+                            AppFrame.this.wwjPanel.wwd().redraw();
                         }
 
                         // If there's a selection, we're not dragging, and the selection is an icon, show tool tip.
@@ -604,7 +604,7 @@ public class Shapes {
                             if (event.getTopObject() instanceof WWIcon) {
                                 this.lastToolTipIcon = (WWIcon) event.getTopObject();
                                 lastToolTipIcon.setShowToolTip(true);
-                                AppFrame.this.wwjPanel.getWwd().redraw();
+                                AppFrame.this.wwjPanel.wwd().redraw();
                             }
                         }
                     } // Have rollover events highlight the rolled-over object.
@@ -619,10 +619,10 @@ public class Shapes {
                         // We missed any roll-over events while dragging, so highlight any under the cursor now,
                         // or de-highlight the dragged shape if it's no longer under the cursor.
                         if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
-                            PickedObjectList pol = wwjPanel.getWwd().getObjectsAtCurrentPosition();
+                            PickedObjectList pol = wwjPanel.wwd().objectsAtPosition();
                             if (pol != null) {
 //                                AppFrame.this.highlight(pol.getTopObject());
-                                AppFrame.this.wwjPanel.getWwd().redraw();
+                                AppFrame.this.wwjPanel.wwd().redraw();
                             }
                         }
                     }

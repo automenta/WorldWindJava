@@ -94,8 +94,8 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
     }
 
     protected void writeWorldFile(AVList values, File file) throws IOException {
-        Sector sector = (Sector) values.getValue(AVKey.SECTOR);
-        int[] size = (int[]) values.getValue(WorldFile.WORLD_FILE_IMAGE_SIZE);
+        Sector sector = (Sector) values.get(AVKey.SECTOR);
+        int[] size = (int[]) values.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
 
         double xPixelSize = sector.getDeltaLonDegrees() / (size[0] - 1);
         double yPixelSize = -sector.getDeltaLatDegrees() / (size[1] - 1);
@@ -118,9 +118,9 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
     }
 
     protected void writeHdrFile(AVList values, File file) throws IOException {
-        int[] size = (int[]) values.getValue(WorldFile.WORLD_FILE_IMAGE_SIZE);
-        Object byteOrder = values.getValue(AVKey.BYTE_ORDER);
-        Object dataType = values.getValue(AVKey.DATA_TYPE);
+        int[] size = (int[]) values.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
+        Object byteOrder = values.get(AVKey.BYTE_ORDER);
+        Object dataType = values.get(AVKey.DATA_TYPE);
 
         int nBits = 0;
         if (AVKey.INT8.equals(dataType))
@@ -145,7 +145,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
 
             // This code expects the string "gov.nasa.worldwind.avkey.MissingDataValue", which now corresponds to the
             // key MISSING_DATA_REPLACEMENT.
-            Object o = values.getValue(AVKey.MISSING_DATA_REPLACEMENT);
+            Object o = values.get(AVKey.MISSING_DATA_REPLACEMENT);
             if (o != null)
                 out.append("NODATA         ").println(o);
         }
@@ -157,38 +157,38 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
         int[] size = new int[2];
         size[0] = raster.getWidth();
         size[1] = raster.getHeight();
-        worldFileParams.setValue(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
+        worldFileParams.set(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
 
         Sector sector = raster.getSector();
-        worldFileParams.setValue(AVKey.SECTOR, sector);
+        worldFileParams.set(AVKey.SECTOR, sector);
 
-        worldFileParams.setValue(AVKey.BYTE_ORDER, getByteOrder(byteBufferRaster.getByteBuffer()));
-        worldFileParams.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
-        worldFileParams.setValue(AVKey.DATA_TYPE, getDataType(byteBufferRaster.getBuffer()));
+        worldFileParams.set(AVKey.BYTE_ORDER, getByteOrder(byteBufferRaster.getByteBuffer()));
+        worldFileParams.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+        worldFileParams.set(AVKey.DATA_TYPE, getDataType(byteBufferRaster.getBuffer()));
 
         double d = byteBufferRaster.getTransparentValue();
         if (d != Double.MAX_VALUE)
-            worldFileParams.setValue(AVKey.MISSING_DATA_REPLACEMENT, d);
+            worldFileParams.set(AVKey.MISSING_DATA_REPLACEMENT, d);
     }
 
     protected String validate(AVList worldFileParams, Object dataSource) {
         StringBuilder sb = new StringBuilder();
 
-        Object o = worldFileParams.getValue(WorldFile.WORLD_FILE_IMAGE_SIZE);
+        Object o = worldFileParams.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
         if (!(o instanceof int[]))
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoSizeSpecified", dataSource));
 
-        o = worldFileParams.getValue(AVKey.SECTOR);
+        o = worldFileParams.get(AVKey.SECTOR);
         if (!(o instanceof Sector))
             sb.append(!sb.isEmpty() ? ", " : "").append(
                 Logging.getMessage("WorldFile.NoSectorSpecified", dataSource));
 
-        o = worldFileParams.getValue(AVKey.BYTE_ORDER);
+        o = worldFileParams.get(AVKey.BYTE_ORDER);
         if (!(o instanceof String))
             sb.append(!sb.isEmpty() ? ", " : "").append(
                 Logging.getMessage("WorldFile.NoByteOrderSpecified", dataSource));
 
-        o = worldFileParams.getValue(AVKey.PIXEL_FORMAT);
+        o = worldFileParams.get(AVKey.PIXEL_FORMAT);
         if (o == null)
             sb.append(!sb.isEmpty() ? ", " : "").append(
                 Logging.getMessage("WorldFile.NoPixelFormatSpecified", dataSource));
@@ -196,7 +196,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
             sb.append(!sb.isEmpty() ? ", " : "").append(
                 Logging.getMessage("WorldFile.InvalidPixelFormat", dataSource));
 
-        o = worldFileParams.getValue(AVKey.DATA_TYPE);
+        o = worldFileParams.get(AVKey.DATA_TYPE);
         if (o == null)
             sb.append(!sb.isEmpty() ? ", " : "").append(
                 Logging.getMessage("WorldFile.NoDataTypeSpecified", dataSource));

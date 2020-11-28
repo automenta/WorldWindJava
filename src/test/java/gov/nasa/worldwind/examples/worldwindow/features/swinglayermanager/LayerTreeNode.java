@@ -43,7 +43,7 @@ public class LayerTreeNode extends DefaultMutableTreeNode implements LayerNode {
         this.id = getNewID();
         this.layer = layer;
         this.selected = layer.isEnabled();
-        this.layer.setValue(NODE_ID, this.id);
+        this.layer.set(NODE_ID, this.id);
     }
 
     public LayerTreeNode(WMSLayerInfo layerInfo) {

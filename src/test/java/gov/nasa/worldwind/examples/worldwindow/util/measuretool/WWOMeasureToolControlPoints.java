@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples.worldwindow.util.measuretool;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -111,13 +111,13 @@ public class WWOMeasureToolControlPoints implements WWOMeasureTool.ControlPointL
         }
 
         @Override
-        public Object setValue(String key, Object value) {
-            return super.setValue(key, value);
+        public Object set(String key, Object value) {
+            return super.set(key, value);
         }
 
         @Override
-        public Object getValue(String key) {
-            return super.getValue(key);
+        public Object get(String key) {
+            return super.get(key);
         }
     }
 }

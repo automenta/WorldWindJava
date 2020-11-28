@@ -9,9 +9,10 @@ package gov.nasa.worldwind.examples.milstd2525.graphics.lines;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.milstd2525.AbstractMilStd2525TacticalGraphic;
 import gov.nasa.worldwind.examples.milstd2525.graphics.TacGrpSidc;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.TacticalGraphicUtil;
 import gov.nasa.worldwind.util.*;
 

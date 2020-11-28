@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -37,7 +37,7 @@ public class SurfaceTextUsage extends ApplicationTemplate {
                 Position.fromDegrees(38.9345, -120.1670, 0));
             layer.add(surfaceText);
 
-            this.getWwd().model().getLayers().add(layer);
+            this.wwd().model().getLayers().add(layer);
         }
     }
 }

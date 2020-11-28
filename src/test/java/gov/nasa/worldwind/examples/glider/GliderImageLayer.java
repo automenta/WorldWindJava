@@ -5,8 +5,9 @@
  */
 package gov.nasa.worldwind.examples.glider;
 
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.*;
 
 import java.awt.image.*;
 import java.beans.*;

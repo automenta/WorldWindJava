@@ -47,13 +47,13 @@ class RPFGenerator {
 
         params = initParams(params.copy());
 
-        this.fileIndex = (RPFFileIndex) params.getValue(RPF_FILE_INDEX);
+        this.fileIndex = (RPFFileIndex) params.get(RPF_FILE_INDEX);
         this.frameFiles = loadFrameFiles(this.fileIndex);
         this.globalBounds = computeGlobalBounds(this.fileIndex);
         this.absentFrames = new AbsentResourceList(1, 0); // Mark frame files absent after the first failed attempt.
 
-        this.smallImageSize = (Integer) params.getValue(WAVELET_IMAGE_THRESHOLD);
-        this.preloadRes = (Integer) params.getValue(WAVELET_PRELOAD_SIZE);
+        this.smallImageSize = (Integer) params.get(WAVELET_IMAGE_THRESHOLD);
+        this.preloadRes = (Integer) params.get(WAVELET_PRELOAD_SIZE);
     }
 
     private static AVList initParams(AVList params) {
@@ -63,19 +63,19 @@ class RPFGenerator {
             throw new IllegalArgumentException(message);
         }
 
-        if (params.getValue(RPF_FILE_INDEX) == null) {
+        if (params.get(RPF_FILE_INDEX) == null) {
             String message = "RPFFileIndex is null";
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        Object o = params.getValue(WAVELET_IMAGE_THRESHOLD);
+        Object o = params.get(WAVELET_IMAGE_THRESHOLD);
         if (!(o instanceof Integer))
-            params.setValue(WAVELET_IMAGE_THRESHOLD, 256);
+            params.set(WAVELET_IMAGE_THRESHOLD, 256);
 
-        o = params.getValue(WAVELET_PRELOAD_SIZE);
+        o = params.get(WAVELET_PRELOAD_SIZE);
         if (!(o instanceof Integer) || !WWMath.isPowerOfTwo((Integer) o))
-            params.setValue(WAVELET_PRELOAD_SIZE, 32);
+            params.set(WAVELET_PRELOAD_SIZE, 32);
 
         return params;
     }
@@ -201,9 +201,9 @@ class RPFGenerator {
             }
 
             try {
-                Sector reqSector = (Sector) params.getValue(BBOX);
-                int reqWidth = (Integer) params.getValue(WIDTH);
-                int reqHeight = (Integer) params.getValue(HEIGHT);
+                Sector reqSector = (Sector) params.get(BBOX);
+                int reqWidth = (Integer) params.get(WIDTH);
+                int reqHeight = (Integer) params.get(HEIGHT);
 
                 BufferedImage reqImage = new BufferedImage(reqWidth, reqHeight, BufferedImage.TYPE_4BYTE_ABGR);
                 int numFramesInRequest = 0;
@@ -312,7 +312,7 @@ class RPFGenerator {
                 for (String s : pairs) {
                     String[] keyvalue = s.split("=", 2);
                     if (keyvalue != null && keyvalue.length == 2)
-                        params.setValue(keyvalue[0], keyvalue[1]);
+                        params.set(keyvalue[0], keyvalue[1]);
                 }
             }
             // Convert parameter values to the appropriate type.
@@ -330,15 +330,15 @@ class RPFGenerator {
         private String validate(AVList params) {
             StringBuilder sb = new StringBuilder();
 
-            Object o = params.getValue(BBOX);
+            Object o = params.get(BBOX);
             if (!(o instanceof Sector))
                 sb.append("bounding box");
 
-            o = params.getValue(WIDTH);
+            o = params.get(WIDTH);
             if (!(o instanceof Integer) || ((Integer) o) < 1)
                 sb.append("width");
 
-            o = params.getValue(HEIGHT);
+            o = params.get(HEIGHT);
             if (!(o instanceof Integer) || ((Integer) o) < 1)
                 sb.append("height");
 
@@ -359,11 +359,11 @@ class RPFGenerator {
                         double minLat = Double.parseDouble(values[1]);
                         double maxLon = Double.parseDouble(values[2]);
                         double maxLat = Double.parseDouble(values[3]);
-                        params.setValue(BBOX, Sector.fromDegrees(minLat, maxLat, minLon, maxLon));
+                        params.set(BBOX, Sector.fromDegrees(minLat, maxLat, minLon, maxLon));
                     }
                     catch (NumberFormatException e) {
                         Logging.logger().log(Level.WARNING, "Parameter conversion error", e);
-                        params.setValue(BBOX, null);
+                        params.set(BBOX, null);
                     }
                 }
             }
@@ -372,11 +372,11 @@ class RPFGenerator {
             if (s != null) {
                 try {
                     int value = Integer.parseInt(s);
-                    params.setValue(WIDTH, value);
+                    params.set(WIDTH, value);
                 }
                 catch (NumberFormatException e) {
                     Logging.logger().log(Level.WARNING, "Parameter conversion error", e);
-                    params.setValue(WIDTH, null);
+                    params.set(WIDTH, null);
                 }
             }
 
@@ -384,11 +384,11 @@ class RPFGenerator {
             if (s != null) {
                 try {
                     int value = Integer.parseInt(s);
-                    params.setValue(HEIGHT, value);
+                    params.set(HEIGHT, value);
                 }
                 catch (NumberFormatException e) {
                     Logging.logger().log(Level.WARNING, "Parameter conversion error", e);
-                    params.setValue(HEIGHT, null);
+                    params.set(HEIGHT, null);
                 }
             }
 

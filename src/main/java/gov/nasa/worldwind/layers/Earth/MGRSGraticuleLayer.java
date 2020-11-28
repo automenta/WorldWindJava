@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.layers.Earth;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -616,40 +616,40 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
         GraticuleRenderingParams params;
         // UTM graticule
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, Color.YELLOW);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.YELLOW);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-16"));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.YELLOW);
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.YELLOW);
+        params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-16"));
         setRenderingParams(GRATICULE_UTM_GRID, params);
         // 100,000 meter graticule
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, Color.GREEN);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.GREEN);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-14"));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.GREEN);
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.GREEN);
+        params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-14"));
         setRenderingParams(GRATICULE_100000M, params);
         // 10,000 meter graticule
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 102, 255));
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 102, 255));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 102, 255));
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 102, 255));
         setRenderingParams(GRATICULE_10000M, params);
         // 1,000 meter graticule
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, Color.CYAN);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.CYAN);
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.CYAN);
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.CYAN);
         setRenderingParams(GRATICULE_1000M, params);
         // 100 meter graticule
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 153, 153));
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 153, 153));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 153, 153));
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 153, 153));
         setRenderingParams(GRATICULE_100M, params);
         // 10 meter graticule
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(102, 255, 204));
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(102, 255, 204));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(102, 255, 204));
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(102, 255, 204));
         setRenderingParams(GRATICULE_10M, params);
         // 1 meter graticule
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(153, 153, 255));
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(153, 153, 255));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(153, 153, 255));
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(153, 153, 255));
         setRenderingParams(GRATICULE_1M, params);
     }
 
@@ -700,7 +700,7 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
     private void applyTerrainConformance() {
         String[] graticuleType = getOrderedTypes();
         for (String type : graticuleType) {
-            getRenderingParams(type).setValue(
+            getRenderingParams(type).set(
                 GraticuleRenderingParams.KEY_LINE_CONFORMANCE, this.terrainConformance);
         }
     }

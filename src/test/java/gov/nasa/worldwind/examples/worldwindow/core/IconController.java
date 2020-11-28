@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples.worldwindow.core;
 
 import gov.nasa.worldwind.Disposable;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.WWIcon;
+import gov.nasa.worldwind.render.WWIcon;
 import gov.nasa.worldwind.examples.worldwindow.features.AbstractFeature;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 

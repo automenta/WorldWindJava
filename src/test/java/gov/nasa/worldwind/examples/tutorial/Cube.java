@@ -10,7 +10,7 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickSupport;
@@ -255,7 +255,7 @@ public class Cube extends ApplicationTemplate implements Renderable {
             Renderable cube = new Cube(Position.fromDegrees(35.0, -120.0, 3000), 1000);
             layer.add(cube);
 
-            getWwd().model().getLayers().add(layer);
+            wwd().model().getLayers().add(layer);
         }
     }
 

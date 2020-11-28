@@ -197,7 +197,7 @@ public class SAR2 extends JFrame {
     }
 
     public void setElevationUnit(String unit) {
-        getUserPreferences().setValue(SARKey.ELEVATION_UNIT, unit);
+        getUserPreferences().set(SARKey.ELEVATION_UNIT, unit);
         this.saveUserPreferences();
         this.onUserPreferencesChanged();
     }
@@ -215,7 +215,7 @@ public class SAR2 extends JFrame {
         // Use the WorldWindow as a vehicle for communicating the value change.
         // Components that need to know the current unit will listen on this WorldWindow
         // for a change with the name ELEVATION_UNIT.
-        this.wwd.setValue(SARKey.ELEVATION_UNIT, newValue);
+        this.wwd.set(SARKey.ELEVATION_UNIT, newValue);
         this.wwd.firePropertyChange(SARKey.ELEVATION_UNIT, oldValue, newValue);
         this.wwd.redraw();
     }
@@ -225,7 +225,7 @@ public class SAR2 extends JFrame {
     }
 
     public void setAngleFormat(String format) {
-        getUserPreferences().setValue(SARKey.ANGLE_FORMAT, format);
+        getUserPreferences().set(SARKey.ANGLE_FORMAT, format);
         this.saveUserPreferences();
         this.onUserPreferencesChanged();
     }
@@ -243,7 +243,7 @@ public class SAR2 extends JFrame {
         // Use the WorldWindow as a vehicle for communicating the value change.
         // Components that need to know the current angle format will listen on this WorldWindow
         // for a change with the name ANGLE_FORMAT.
-        this.wwd.setValue(SARKey.ANGLE_FORMAT, newValue);
+        this.wwd.set(SARKey.ANGLE_FORMAT, newValue);
         this.wwd.firePropertyChange(SARKey.ANGLE_FORMAT, oldValue, newValue);
         this.wwd.redraw();
     }
@@ -356,7 +356,7 @@ public class SAR2 extends JFrame {
             return null;
 
         File file = this.openFileChooser.getCurrentDirectory();
-        getUserPreferences().setValue(SARKey.CURRENT_BROWSE_DIRECTORY, file.getPath());
+        getUserPreferences().set(SARKey.CURRENT_BROWSE_DIRECTORY, file.getPath());
         this.onUserPreferencesChanged();
         this.saveUserPreferences();
 
@@ -786,19 +786,19 @@ public class SAR2 extends JFrame {
                 JMenuItem openTrackItem = new JMenuItem();
                 openTrackItem.setText("PipeTrackTest.gpx");
                 openTrackItem.addActionListener(
-                    e -> newTrackFromPath("gov/nasa/worldwindx/applications/sar/data/PipeTrackTest.gpx", null));
+                    e -> newTrackFromPath("gov/nasa/worldwind/examples/sar/data/PipeTrackTest.gpx", null));
                 fileMenu.add(openTrackItem);
 
                 openTrackItem = new JMenuItem();
                 openTrackItem.setText("PipeTracks2.gpx");
                 openTrackItem.addActionListener(
-                    e -> newTrackFromPath("gov/nasa/worldwindx/applications/sar/data/PipeTracks2.gpx", null));
+                    e -> newTrackFromPath("gov/nasa/worldwind/examples/sar/data/PipeTracks2.gpx", null));
                 fileMenu.add(openTrackItem);
 
                 openTrackItem = new JMenuItem();
                 openTrackItem.setText("PipeTracks3.gpx");
                 openTrackItem.addActionListener(
-                    e -> newTrackFromPath("gov/nasa/worldwindx/applications/sar/data/PipeTracks3.gpx", null));
+                    e -> newTrackFromPath("gov/nasa/worldwind/examples/sar/data/PipeTracks3.gpx", null));
                 fileMenu.add(openTrackItem);
 
                 if (!Configuration.isMacOS()) {
@@ -1195,7 +1195,7 @@ public class SAR2 extends JFrame {
     }
 
     private ImageIcon getIcon(String imageName) {
-        String imagePath = "gov/nasa/worldwindx/applications/sar/images/" + imageName;
+        String imagePath = "gov/nasa/worldwind/examples/sar/images/" + imageName;
         Object o = WWIO.getFileOrResourceAsStream(imagePath, this.getClass());
         if (!(o instanceof InputStream))
             return null;

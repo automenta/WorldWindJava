@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.BasicDragger;
@@ -30,7 +30,7 @@ public class ExtrudedPolygons extends ApplicationTemplate {
             super(true, true, false);
 
             // Add a dragger to enable shape dragging
-            this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
+            this.wwd().addSelectListener(new BasicDragger(this.wwd()));
 
             RenderableLayer layer = new RenderableLayer();
 
@@ -89,7 +89,7 @@ public class ExtrudedPolygons extends ApplicationTemplate {
             layer.add(pgon);
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
         }
     }
 }

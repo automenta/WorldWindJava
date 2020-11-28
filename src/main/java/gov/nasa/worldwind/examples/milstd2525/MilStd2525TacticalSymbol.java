@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples.milstd2525;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.*;
@@ -203,7 +203,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
      * @return <code>true</code> if this symbol draws its frame, otherwise <code>false</code>.
      */
     public boolean isShowFrame() {
-        Object o = this.modifiers.getValue(SymbologyConstants.SHOW_FRAME);
+        Object o = this.modifiers.get(SymbologyConstants.SHOW_FRAME);
         return o == null || o.equals(Boolean.TRUE); // No value indicates the default of true.
     }
 
@@ -219,7 +219,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
      * @param showFrame <code>true</code> to draw this symbol's frame, otherwise <code>false</code>.
      */
     public void setShowFrame(boolean showFrame) {
-        this.modifiers.setValue(SymbologyConstants.SHOW_FRAME, showFrame);
+        this.modifiers.set(SymbologyConstants.SHOW_FRAME, showFrame);
     }
 
     /**
@@ -229,7 +229,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
      * @return <code>true</code> if this symbol draws its fill, otherwise <code>false</code>.
      */
     public boolean isShowFill() {
-        Object o = this.modifiers.getValue(SymbologyConstants.SHOW_FILL);
+        Object o = this.modifiers.get(SymbologyConstants.SHOW_FILL);
         return o == null || o.equals(Boolean.TRUE); // No value indicates the default of true.
     }
 
@@ -245,7 +245,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
      * @param showFill <code>true</code> to draw this symbol's fill, otherwise <code>false</code>.
      */
     public void setShowFill(boolean showFill) {
-        this.modifiers.setValue(SymbologyConstants.SHOW_FILL, showFill);
+        this.modifiers.set(SymbologyConstants.SHOW_FILL, showFill);
     }
 
     /**
@@ -255,7 +255,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
      * @return <code>true</code> if this symbol draws its icon, otherwise <code>false</code>.
      */
     public boolean isShowIcon() {
-        Object o = this.modifiers.getValue(SymbologyConstants.SHOW_ICON);
+        Object o = this.modifiers.get(SymbologyConstants.SHOW_ICON);
         return o == null || o.equals(Boolean.TRUE); // No value indicates the default of true.
     }
 
@@ -271,7 +271,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
      * @param showIcon <code>true</code> to draw this symbol's icon, otherwise <code>false</code>.
      */
     public void setShowIcon(boolean showIcon) {
-        this.modifiers.setValue(SymbologyConstants.SHOW_ICON, showIcon);
+        this.modifiers.set(SymbologyConstants.SHOW_ICON, showIcon);
     }
 
     protected void initIconLayout() {
@@ -299,17 +299,17 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
 
         super.assembleIconRetrieverParameters(params);
 
-        Object o = this.modifiers.getValue(SymbologyConstants.SHOW_FILL);
+        Object o = this.modifiers.get(SymbologyConstants.SHOW_FILL);
         if (o != null)
-            params.setValue(SymbologyConstants.SHOW_FILL, o);
+            params.set(SymbologyConstants.SHOW_FILL, o);
 
-        o = this.modifiers.getValue(SymbologyConstants.SHOW_FRAME);
+        o = this.modifiers.get(SymbologyConstants.SHOW_FRAME);
         if (o != null)
-            params.setValue(SymbologyConstants.SHOW_FRAME, o);
+            params.set(SymbologyConstants.SHOW_FRAME, o);
 
-        o = this.modifiers.getValue(SymbologyConstants.SHOW_ICON);
+        o = this.modifiers.get(SymbologyConstants.SHOW_ICON);
         if (o != null)
-            params.setValue(SymbologyConstants.SHOW_ICON, o);
+            params.set(SymbologyConstants.SHOW_ICON, o);
 
         return params;
     }
@@ -324,27 +324,27 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
         if (!modifiers.hasKey(SymbologyConstants.ECHELON)) {
             Object o = symbolEchelonMap.get(maskedCode);
             if (o != null)
-                modifiers.setValue(SymbologyConstants.ECHELON, o);
+                modifiers.set(SymbologyConstants.ECHELON, o);
         }
 
         // Set the Frame Shape modifier value according to the value implied by this symbol ID, if any. Give precedence to
         // the modifier value specified by the application, including null.
         if (!modifiers.hasKey(SymbologyConstants.FRAME_SHAPE)) {
             if (exerciseSymbols.contains(maskedCode)) {
-                modifiers.setValue(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_EXERCISE);
+                modifiers.set(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_EXERCISE);
             }
             else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING)
                 || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_UNKNOWN)
                 || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_FRIEND)
                 || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL)
                 || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND))) {
-                modifiers.setValue(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_EXERCISE);
+                modifiers.set(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_EXERCISE);
             }
             else if (si != null && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_JOKER)) {
-                modifiers.setValue(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_JOKER);
+                modifiers.set(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_JOKER);
             }
             else if (si != null && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FAKER)) {
-                modifiers.setValue(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_FAKER);
+                modifiers.set(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_FAKER);
             }
         }
 
@@ -355,12 +355,12 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
             || SymbologyConstants.STANDARD_IDENTITY_JOKER.equalsIgnoreCase(si)
             || SymbologyConstants.STANDARD_IDENTITY_FAKER.equalsIgnoreCase(si);
         if (!modifiers.hasKey(SymbologyConstants.HOSTILE_ENEMY) && this.isShowHostileIndicator() && isHostile) {
-            modifiers.setValue(SymbologyConstants.HOSTILE_ENEMY, SymbologyConstants.HOSTILE_ENEMY);
+            modifiers.set(SymbologyConstants.HOSTILE_ENEMY, SymbologyConstants.HOSTILE_ENEMY);
         }
 
         // Determine location, if location modifier is enabled.
         if (!modifiers.hasKey(SymbologyConstants.LOCATION) && this.isShowLocation()) {
-            modifiers.setValue(SymbologyConstants.LOCATION, this.getFormattedPosition());
+            modifiers.set(SymbologyConstants.LOCATION, this.getFormattedPosition());
         }
 
         // Determine altitude, if location modifier is enabled.
@@ -379,7 +379,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
             else
                 altitude = format.eyeAltitude(position.getElevation()) + " AMSL";
 
-            modifiers.setValue(SymbologyConstants.ALTITUDE_DEPTH, altitude);
+            modifiers.set(SymbologyConstants.ALTITUDE_DEPTH, altitude);
         }
     }
 
@@ -388,7 +388,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
         this.currentLines.clear();
 
         AVList retrieverParams = new AVListImpl();
-        retrieverParams.setValue(AVKey.WIDTH, this.iconRect.width);
+        retrieverParams.set(AVKey.WIDTH, this.iconRect.width);
 
         // Feint/Dummy Indicator modifier. Placed above the icon.
         String modifierCode = this.getModifierCode(modifiers, SymbologyConstants.FEINT_DUMMY);
@@ -645,7 +645,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
     }
 
     protected String getReinforcedReducedModifier(AVList modifiers, String modifierKey) {
-        Object o = modifiers.getValue(modifierKey);
+        Object o = modifiers.get(modifierKey);
         if (o != null && o.toString().equalsIgnoreCase(SymbologyConstants.REINFORCED))
             return "+";
         else if (o != null && o.toString().equalsIgnoreCase(SymbologyConstants.REDUCED))
@@ -657,7 +657,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
     }
 
     protected void appendTextModifier(StringBuilder sb, AVList modifiers, String modifierKey, Integer maxLength) {
-        Object modifierValue = modifiers.getValue(modifierKey);
+        Object modifierValue = modifiers.get(modifierKey);
         if (WWUtil.isEmpty(modifierValue))
             return;
 

@@ -5,9 +5,9 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -46,7 +46,7 @@ public class ContourLines extends ApplicationTemplate {
             layer.setPickEnabled(false);
 
             // Add the contour line layer to the WorldWindow and update the layer panel.
-            insertBeforePlacenames(getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(wwd(), layer);
 
             // Add a global moving contour line to the layer.
             this.contourLine = new ContourLine();
@@ -92,7 +92,7 @@ public class ContourLines extends ApplicationTemplate {
             slider.setPaintLabels(true);
             slider.addChangeListener((ChangeEvent event) -> {
                 contourLine.setElevation(slider.getValue());
-                getWwd().redraw();
+                wwd().redraw();
             });
             controlPanel.add(slider);
 

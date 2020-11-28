@@ -6,11 +6,11 @@
 
 package gov.nasa.worldwind.examples.symbology;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.examples.milstd2525.MilStd2525GraphicFactory;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.symbology.*;
@@ -84,12 +84,12 @@ public class TacticalGraphics extends ApplicationTemplate {
             this.createLineGraphics(this.lineLayer);
             this.createAreaGraphics(this.areaLayer);
 
-            insertBeforePlacenames(getWwd(), this.pointLayer);
-            insertBeforePlacenames(getWwd(), this.lineLayer);
-            insertBeforePlacenames(getWwd(), this.areaLayer);
+            WorldWindow.insertBeforePlacenames(wwd(), this.pointLayer);
+            WorldWindow.insertBeforePlacenames(wwd(), this.lineLayer);
+            WorldWindow.insertBeforePlacenames(wwd(), this.areaLayer);
 
             // Add a BasicDragger so that graphics can be moved by clicking and dragging.
-            this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
+            this.wwd().addSelectListener(new BasicDragger(this.wwd()));
 
             this.addGraphicControls();
 
@@ -110,7 +110,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             /////////////////////////////////////////////
 
             graphic = factory.createPoint("GHMPNZ--------X", Position.fromDegrees(35.2144, -117.8824), null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Nuclear Event (2.X.3.4.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Nuclear Event (2.X.3.4.2)");
             graphic.setText("X691");
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, "10095900ZJAN92");
             graphic.setModifier(SymbologyConstants.QUANTITY, "15");
@@ -122,7 +122,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             /////////////////////////////////////////////
 
             graphic = factory.createPoint("GHMPOHTH------X", Position.fromDegrees(35.2544, -117.724), null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "High Tower");
+            graphic.set(AVKey.DISPLAY_NAME, "High Tower");
             graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, "2562");
             layer.add(graphic);
 
@@ -144,7 +144,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.9843, -117.5885),
                 Position.fromDegrees(34.9961, -117.4891));
             graphic = factory.createGraphic("GFGPGLP----AUSX", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: friendly (2.X.2.2.2.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Phase line: friendly (2.X.2.2.2.2)");
             graphic.setText("A");
             layer.add(graphic);
 
@@ -154,7 +154,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.9589, -117.5618),
                 Position.fromDegrees(34.9701, -117.4798));
             graphic = factory.createGraphic("GHGPGLP----AUSX", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: hostile (2.X.2.2.2.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Phase line: hostile (2.X.2.2.2.2)");
             graphic.setText("B");
             layer.add(graphic);
 
@@ -164,7 +164,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.9367, -117.5354),
                 Position.fromDegrees(34.9480, -117.4741));
             graphic = factory.createGraphic("GHGAGLP----AUSX", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: hostile, anticipated (2.X.2.2.2.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Phase line: hostile, anticipated (2.X.2.2.2.2)");
             graphic.setText("C");
             layer.add(graphic);
 
@@ -175,7 +175,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.9238, -117.4600));
             graphic = factory.createGraphic("GFGPGLP----AUSX", positions, null);
             graphic.setText("D");
-            graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: custom color and font (2.X.2.2.2.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Phase line: custom color and font (2.X.2.2.2.2)");
 
             // Create a custom attributes bundle. Any fields set in this bundle will override the default attributes.
             TacticalGraphicAttributes attrs = new BasicTacticalGraphicAttributes();
@@ -197,7 +197,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.5360, -118.1833));
             graphic = factory.createGraphic("GHGPGLB----JUSX", positions, null);
             graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("40ID", "18ID"));
-            graphic.setValue(AVKey.DISPLAY_NAME, "Boundary (2.X.2.1.2.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Boundary (2.X.2.1.2.1)");
             layer.add(graphic);
 
             /////////////////////////////////////////////
@@ -211,7 +211,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.6602, -117.8570), // Pt. N - 1: Last path control point
                 Position.fromDegrees(34.6844, -117.7303)); // Pt. N: Width of the arrow head
             graphic = factory.createGraphic("GFGPOLAGM-----X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Main Attack (2.X.2.5.2.1.4.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Main Attack (2.X.2.5.2.1.4.1)");
             layer.add(graphic);
 
             /////////////////////////////////////////////
@@ -225,7 +225,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.6726, -117.6363),
                 Position.fromDegrees(34.7820, -117.4700));
             graphic = factory.createGraphic("GFGPOLAR------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Attack, Rotary Wing (2.X.2.5.2.1.3)");
+            graphic.set(AVKey.DISPLAY_NAME, "Attack, Rotary Wing (2.X.2.5.2.1.3)");
             layer.add(graphic);
 
             /////////////////////////////////////////////
@@ -238,7 +238,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.8051, -117.9707),
                 Position.fromDegrees(34.7643, -117.8219));
             graphic = factory.createGraphic("GFGPOLAV------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Aviation (2.X.2.5.2.1.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Aviation (2.X.2.5.2.1.1)");
             layer.add(graphic);
 
             /////////////////////////////////////////////
@@ -252,7 +252,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.6217, -117.4056),
                 Position.fromDegrees(34.6780, -117.53));
             graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Supporting Attack (2.X.2.5.2.1.4.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Supporting Attack (2.X.2.5.2.1.4.2)");
             layer.add(graphic);
 
             /////////////////////////////////////////////
@@ -265,7 +265,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.6814, -118.0522),
                 Position.fromDegrees(34.7124, -117.9284));
             graphic = factory.createGraphic("GFGPOLAA------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Airborne (2.X.2.5.2.1.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Airborne (2.X.2.5.2.1.2)");
             graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPUCI--------");
             layer.add(graphic);
 
@@ -295,7 +295,7 @@ public class TacticalGraphics extends ApplicationTemplate {
 
             // Now create the route from the control points
             TacticalRoute route = factory.createRoute("GFGPALM-------X", controlPoints, null);
-            route.setValue(AVKey.DISPLAY_NAME, "Minimum Risk Route (2.X.2.2.2.2)");
+            route.set(AVKey.DISPLAY_NAME, "Minimum Risk Route (2.X.2.2.2.2)");
             route.setText("KNIGHT");
             route.setModifier(SymbologyConstants.DISTANCE, 4000.0);
             route.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("270600Z", "271845Z"));
@@ -313,7 +313,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.0459, -117.3795),
                 Position.fromDegrees(35.0459, -117.5633));
             graphic = factory.createGraphic("GFGPOLKGM-----X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Direction of Main Attack (2.X.2.5.2.2.2.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Direction of Main Attack (2.X.2.5.2.2.2.1)");
             layer.add(graphic);
 
             ///////////////////////////////////////////////////
@@ -324,7 +324,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.8917, -117.8344),
                 Position.fromDegrees(34.8283, -117.6794));
             graphic = factory.createGraphic("GFFPLTF-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Final Protective Fire (2.X.4.2.1.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Final Protective Fire (2.X.4.2.1.2)");
             graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("AG1201", "2-22 INF MORT"));
             layer.add(graphic);
 
@@ -337,7 +337,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.5210, -117.4786),
                 Position.fromDegrees(34.5942, -117.4766));
             graphic = factory.createGraphic("GFGPSLA-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Ambush (2.X.2.6.1.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Ambush (2.X.2.6.1.1)");
             layer.add(graphic);
 
             ///////////////////////////////////////////////////
@@ -348,7 +348,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.2805, -117.5978),
                 Position.fromDegrees(35.2978, -117.3702));
             graphic = factory.createGraphic("GFGPDLF-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Forward Edge of Battle Area (2.X.2.4.2.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Forward Edge of Battle Area (2.X.2.4.2.1)");
             layer.add(graphic);
 
             ///////////////////////////////////////////////////
@@ -359,7 +359,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.2829, -117.5900),
                 Position.fromDegrees(35.2990, -117.3727));
             graphic = factory.createGraphic("GFGPGLC-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Line of Contact (2.X.2.1.2.3)");
+            graphic.set(AVKey.DISPLAY_NAME, "Line of Contact (2.X.2.1.2.3)");
             layer.add(graphic);
 
             ///////////////////////////////////////////////////
@@ -372,7 +372,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             graphic = factory.createGraphic("GFFPLCF-------X", positions, null);
             graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("X CORPS", "ALPHA"));
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("202100Z", "270800Z SEP"));
-            graphic.setValue(AVKey.DISPLAY_NAME, "Fire Support Coordination Line (2.X.4.2.2.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Fire Support Coordination Line (2.X.4.2.2.1)");
             layer.add(graphic);
 
             ///////////////////////////////////////////////////
@@ -384,7 +384,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.8542, -118.2565),
                 Position.fromDegrees(34.8515, -118.1129));
             graphic = factory.createGraphic("GFGPDLP-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Principle Direction of Fire (2.X.2.4.2.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Principle Direction of Fire (2.X.2.4.2.2)");
             graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPEWRH--MTUSG");
             layer.add(graphic);
 
@@ -397,7 +397,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.9306, -118.1597),
                 Position.fromDegrees(35.0092, -118.1717));
             graphic = factory.createGraphic("GFGPGAS-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Search Area/Reconnaissance Area (2.X.2.1.3.9)");
+            graphic.set(AVKey.DISPLAY_NAME, "Search Area/Reconnaissance Area (2.X.2.1.3.9)");
             graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPEWRH--MTUSG");
             layer.add(graphic);
 
@@ -410,7 +410,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.3723, -117.5290),
                 Position.fromDegrees(35.3776, -117.4182));
             graphic = factory.createGraphic("GFGPGLF-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Forward Line of Own Troops (2.X.2.1.2.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Forward Line of Own Troops (2.X.2.1.2.2)");
             layer.add(graphic);
 
             ///////////////////////////////////////////////////
@@ -421,7 +421,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.1143, -118.0609),
                 Position.fromDegrees(35.0765, -118.2397));
             graphic = factory.createGraphic("GHGPOLKA------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Direction of Attack, Aviation (2.X.2.5.2.2.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Direction of Attack, Aviation (2.X.2.5.2.2.1)");
             layer.add(graphic);
 
             ///////////////////////////////////////////////////
@@ -433,7 +433,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.1504, -118.1822),
                 Position.fromDegrees(35.2402, -118.0716));
             graphic = factory.createGraphic("GFGPOLI-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Infiltration Lane (2.X.2.5.2.4)");
+            graphic.set(AVKey.DISPLAY_NAME, "Infiltration Lane (2.X.2.5.2.4)");
             graphic.setText("CHARLIE");
             layer.add(graphic);
 
@@ -447,7 +447,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.6808, -118.2100),
                 Position.fromDegrees(34.6547, -118.0988));
             graphic = factory.createGraphic("GFGPPA--------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Axis of Advance for Feint (2.X.2.3.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Axis of Advance for Feint (2.X.2.3.2)");
             graphic.setText("GREEN");
             layer.add(graphic);
 
@@ -460,7 +460,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.0339, -118.4318),
                 Position.fromDegrees(35.0843, -118.3376));
             graphic = factory.createGraphic("GFGPSLH-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Holding Line (2.X.2.6.1.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Holding Line (2.X.2.6.1.2)");
             graphic.setText("ALPHA");
             layer.add(graphic);
 
@@ -472,7 +472,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.0656, -118.0508),
                 Position.fromDegrees(35.0383, -118.2275));
             graphic = factory.createGraphic("GFGPPF--------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Direction of Attack for Feint (2.X.2.3.3)");
+            graphic.set(AVKey.DISPLAY_NAME, "Direction of Attack for Feint (2.X.2.3.3)");
             graphic.setText("DAVID");
             layer.add(graphic);
 
@@ -494,7 +494,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.9706, -116.9900),
                 Position.fromDegrees(34.9188, -116.9906));
             graphic = factory.createGraphic("GHGPGAA----AUSX", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Assembly Area (2.X.2.1.3.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Assembly Area (2.X.2.1.3.2)");
             graphic.setText("Atlanta");
             layer.add(graphic);
 
@@ -510,7 +510,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.7836, -117.1010),
                 Position.fromDegrees(34.7985, -117.1938));
             graphic = factory.createGraphic("GHGPGAF----AUSX", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Fortified Area (2.X.2.1.3.4)");
+            graphic.set(AVKey.DISPLAY_NAME, "Fortified Area (2.X.2.1.3.4)");
             layer.add(graphic);
 
             /////////////////////////////////////////////
@@ -523,7 +523,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.9851, -117.2224),
                 Position.fromDegrees(34.9134, -117.2670));
             graphic = factory.createGraphic("GFGPGAZ----AUSX", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Airfield Zone (2.X.2.1.3.11)");
+            graphic.set(AVKey.DISPLAY_NAME, "Airfield Zone (2.X.2.1.3.11)");
             layer.add(graphic);
 
             /////////////////////////////////////////////
@@ -537,7 +537,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.0851, -117.3604),
                 Position.fromDegrees(35.0857, -117.6261));
             graphic = factory.createGraphic("GFGPAAR----AUSX", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Restricted Operations Zone (2.X.2.2.3.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Restricted Operations Zone (2.X.2.2.3.1)");
             graphic.setText("(Unit ID)");
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("180500Z", "180615Z"));
             graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("2000 FT AGL", "3000 FT AGL"));
@@ -554,7 +554,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.6549, -117.1448),
                 Position.fromDegrees(34.7506, -117.1436));
             graphic = factory.createGraphic("GFGPAAW----AUSX", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Weapons Free Zone (2.X.2.2.3.5)");
+            graphic.set(AVKey.DISPLAY_NAME, "Weapons Free Zone (2.X.2.2.3.5)");
             graphic.setText("(Unit ID)");
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("1000Z", "1300Z"));
             layer.add(graphic);
@@ -565,7 +565,7 @@ public class TacticalGraphics extends ApplicationTemplate {
 
             Position position = (Position.fromDegrees(35.1108, -117.0870));
             TacticalCircle circle = factory.createCircle("GHFPATC-------X", position, 5000.0, null);
-            circle.setValue(AVKey.DISPLAY_NAME, "Circular Target (2.X.4.3.1.2)");
+            circle.set(AVKey.DISPLAY_NAME, "Circular Target (2.X.4.3.1.2)");
             circle.setText("AG9999");
             layer.add(circle);
 
@@ -578,7 +578,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             quad.setLength(8000.0);
             quad.setWidth(4000.0);
             quad.setText("AB0176");
-            quad.setValue(AVKey.DISPLAY_NAME, "Rectangular Target (2.X.4.3.1.1)");
+            quad.set(AVKey.DISPLAY_NAME, "Rectangular Target (2.X.4.3.1.1)");
             layer.add(quad);
 
             /////////////////////////////////////////////
@@ -587,7 +587,7 @@ public class TacticalGraphics extends ApplicationTemplate {
 
             position = Position.fromDegrees(35.2106, -117.0092);
             circle = factory.createCircle("GFFPACPC------X", position, 5000.0, null);
-            circle.setValue(AVKey.DISPLAY_NAME, "Position Area for Artillery (2.X.4.3.2.6.2)");
+            circle.set(AVKey.DISPLAY_NAME, "Position Area for Artillery (2.X.4.3.2.6.2)");
             layer.add(circle);
 
             /////////////////////////////////////////////
@@ -599,7 +599,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.2364, -116.8063));
             quad = factory.createQuad("GFFPACPR------X", positions, null);
             quad.setWidth(5000.0);
-            quad.setValue(AVKey.DISPLAY_NAME, "Position Area for Artillery (2.X.4.3.2.6.1)");
+            quad.set(AVKey.DISPLAY_NAME, "Position Area for Artillery (2.X.4.3.2.6.1)");
             layer.add(quad);
 
             //////////////////////////////////////////////////
@@ -610,7 +610,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             graphic = factory.createGraphic("GFFPAXC-------X", Collections.singletonList(position), null);
             graphic.setModifier(SymbologyConstants.DISTANCE, Arrays.asList(1000.0, 6000.0, 11000.0));
             graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("GL", "GL", "GL"));
-            graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.1)");
 
             // Add a symbol at the center of the range fan
             graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPUCFH-------");
@@ -632,7 +632,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             graphic.setModifier(SymbologyConstants.DISTANCE, Arrays.asList(4000.0, 6000.0, 11000.0, 15000.0));
             graphic.setModifier(SymbologyConstants.AZIMUTH, azimuths);
             graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("GL", "GL", "GL", "GL"));
-            graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.2)");
 
             // Add a symbol at the center of the range fan.
             graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPUCFTR------");
@@ -647,7 +647,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.9188, -116.8205));
             graphic = factory.createGraphic("GFFPACRR------X", positions, null);
             graphic.setModifier(SymbologyConstants.DISTANCE, 5000.0);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Restrictive Fire Area (2.X.4.3.2.5.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Restrictive Fire Area (2.X.4.3.2.5.2)");
             graphic.setText("X CORPS");
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
             layer.add(graphic);
@@ -658,7 +658,7 @@ public class TacticalGraphics extends ApplicationTemplate {
 
             position = Position.fromDegrees(34.8208, -116.8284);
             graphic = factory.createCircle("GFFPACSC------X", position, 5000.0, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Fire Support Area (2.X.4.3.2.1.3)");
+            graphic.set(AVKey.DISPLAY_NAME, "Fire Support Area (2.X.4.3.2.1.3)");
             graphic.setText("GREEN");
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
             layer.add(graphic);
@@ -672,7 +672,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.0620, -117.1606));
             graphic = factory.createGraphic("GFFPACER------X", positions, null);
             graphic.setModifier(SymbologyConstants.DISTANCE, 5000.0);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Sensor Zone");
+            graphic.set(AVKey.DISPLAY_NAME, "Sensor Zone");
             graphic.setText("Q37");
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
             layer.add(graphic);
@@ -688,7 +688,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.0620, -116.8345),
                 Position.fromDegrees(35.1422, -116.8193));
             graphic = factory.createGraphic("GFFPAZXI------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Call for Fire Zone (2.X.4.3.3.2.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Call for Fire Zone (2.X.4.3.3.2.1)");
             graphic.setText("3BDE 4ID");
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
             layer.add(graphic);
@@ -703,7 +703,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.0542, -116.7611),
                 Position.fromDegrees(35.0092, -116.7790));
             graphic = factory.createGraphic("GFFPATG-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Series or Group of Targets (2.X.4.3.1.3)");
+            graphic.set(AVKey.DISPLAY_NAME, "Series or Group of Targets (2.X.4.3.1.3)");
             graphic.setText("JEFF");
             layer.add(graphic);
 
@@ -717,7 +717,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.1642, -116.7611),
                 Position.fromDegrees(35.1192, -116.7790));
             graphic = factory.createGraphic("GFGPSAA-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Airhead (2.X.2.6.2.2)");
+            graphic.set(AVKey.DISPLAY_NAME, "Airhead (2.X.2.6.2.2)");
             graphic.setText("DELTA");
             layer.add(graphic);
 
@@ -731,7 +731,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.8723, -116.6841), // Radius of ring 2
                 Position.fromDegrees(34.8870, -116.7783)); // Radius of ring 3
             graphic = factory.createGraphic("GFMPNM--------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Minimum Safe Distance Zones (2.X.3.4.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Minimum Safe Distance Zones (2.X.3.4.1)");
             layer.add(graphic);
 
             ////////////////////////////////////////////////////////////
@@ -740,7 +740,7 @@ public class TacticalGraphics extends ApplicationTemplate {
 
             position = Position.fromDegrees(35.2132, -117.8042);
             circle = factory.createCircle("GFGPAPU-------X", position, 2000.0, null);
-            circle.setValue(AVKey.DISPLAY_NAME, "Pull-Up Point (2.X.2.2.1.3)");
+            circle.set(AVKey.DISPLAY_NAME, "Pull-Up Point (2.X.2.2.1.3)");
             layer.add(circle);
 
             ///////////////////////////////////////////////////
@@ -752,7 +752,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.5807, -117.5902),
                 Position.fromDegrees(34.5344, -117.6686));
             graphic = factory.createGraphic("GFGPOAF-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Attack by Fire Position (2.X.2.5.3.3)");
+            graphic.set(AVKey.DISPLAY_NAME, "Attack by Fire Position (2.X.2.5.3.3)");
             layer.add(graphic);
 
             ///////////////////////////////////////////////////
@@ -765,7 +765,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.6308, -117.8477),
                 Position.fromDegrees(34.5837, -117.7725));
             graphic = factory.createGraphic("GFGPOAS-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Support by Fire Position (2.X.2.5.3.4)");
+            graphic.set(AVKey.DISPLAY_NAME, "Support by Fire Position (2.X.2.5.3.4)");
             layer.add(graphic);
 
             ///////////////////////////////////////////////////
@@ -780,11 +780,11 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.4570, -117.1613),
                 Position.fromDegrees(34.4508, -117.3106));
             graphic = factory.createGraphic("GFMPNB--------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Biologically Contaminated Area (2.X.3.4.5)");
+            graphic.set(AVKey.DISPLAY_NAME, "Biologically Contaminated Area (2.X.3.4.5)");
             layer.add(graphic);
 
             graphic = factory.createPoint("GFMPNEB-------X", Position.fromDegrees(34.5059, -117.2020), null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Biological Release Event (2.X.3.4.7.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Biological Release Event (2.X.3.4.7.1)");
             graphic.setShowLocation(false);
             layer.add(graphic);
 
@@ -803,7 +803,7 @@ public class TacticalGraphics extends ApplicationTemplate {
 
             graphic = factory.createGraphic("GHGPDAB----J--X", positions, null);
             graphic.setText("Blue");
-            graphic.setValue(AVKey.DISPLAY_NAME, "Battle Position, Prepared but not Occupied (2.X.2.4.3.1.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "Battle Position, Prepared but not Occupied (2.X.2.4.3.1.1)");
             layer.add(graphic);
 
             //////////////////////////////////////////////////////////////
@@ -823,7 +823,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.8211, -116.5782));
 
             graphic = factory.createGraphic("GHGPSAE-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Encirclement (2.X.2.6.2.3)");
+            graphic.set(AVKey.DISPLAY_NAME, "Encirclement (2.X.2.6.2.3)");
             layer.add(graphic);
 
             //////////////////////////////////////////////////////////////
@@ -843,7 +843,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.7330, -116.5170));
 
             graphic = factory.createGraphic("GFMPNL--------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Dose Rate Contour Line (2.X.3.4.9)");
+            graphic.set(AVKey.DISPLAY_NAME, "Dose Rate Contour Line (2.X.3.4.9)");
             graphic.setText("100 cGY");
             layer.add(graphic);
 
@@ -861,7 +861,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(34.7314, -116.4908));
 
             graphic = factory.createGraphic("GFMPNL--------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Dose Rate Contour Line (2.X.3.4.9)");
+            graphic.set(AVKey.DISPLAY_NAME, "Dose Rate Contour Line (2.X.3.4.9)");
             graphic.setText("300 cGY");
             layer.add(graphic);
 
@@ -876,7 +876,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.0934, -116.4595),
                 Position.fromDegrees(35.1570, -116.4832));
             graphic = factory.createGraphic("GFGPGAG-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "General Area (2.X.2.1.3.1)");
+            graphic.set(AVKey.DISPLAY_NAME, "General Area (2.X.2.1.3.1)");
             graphic.setText("CHEM");
             layer.add(graphic);
 
@@ -887,7 +887,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 Position.fromDegrees(35.1358, -116.4955));
 
             graphic = factory.createGraphic("GFGPGAY-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Limited Access Area (2.X.2.1.3.10)");
+            graphic.set(AVKey.DISPLAY_NAME, "Limited Access Area (2.X.2.1.3.10)");
             graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPUCI--------");
             layer.add(graphic);
 
@@ -941,7 +941,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                 sharedPointAttrs.setInteriorOpacity(opacity);
                 sharedPointAttrs.setOutlineOpacity(opacity);
 
-                getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
+                wwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
             });
             box.add(Box.createVerticalStrut(10));
             label.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -959,7 +959,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                     this.setShowModifiers(lineLayer, tf);
                     this.setShowModifiers(areaLayer, tf);
 
-                    getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
+                    wwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
                 }
 
                 protected void setShowModifiers(RenderableLayer layer, boolean show) {
@@ -983,7 +983,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                     this.setShowModifiers(lineLayer, tf);
                     this.setShowModifiers(areaLayer, tf);
 
-                    getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
+                    wwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
                 }
 
                 protected void setShowModifiers(RenderableLayer layer, boolean show) {
@@ -1007,7 +1007,7 @@ public class TacticalGraphics extends ApplicationTemplate {
                     this.setShowHostile(lineLayer, tf);
                     this.setShowHostile(areaLayer, tf);
 
-                    getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
+                    wwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
                 }
 
                 protected void setShowHostile(RenderableLayer layer, boolean show) {

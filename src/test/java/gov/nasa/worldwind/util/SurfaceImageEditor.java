@@ -7,12 +7,12 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 
 import java.awt.*;
@@ -138,7 +138,7 @@ public class SurfaceImageEditor implements SelectListener {
             }
             case SelectEvent.LEFT_PRESS -> {
                 this.active = true;
-                this.previousPosition = this.wwd.getCurrentPosition();
+                this.previousPosition = this.wwd.position();
             }
             case SelectEvent.DRAG -> {
                 if (!this.active)
@@ -209,7 +209,7 @@ public class SurfaceImageEditor implements SelectListener {
         // If the terrain beneath the control point is null, then the user is attempting to drag the handle off the
         // globe. This is not a valid state for SurfaceImage, so we will ignore this action but keep the drag operation
         // in effect.
-        PickedObject terrainObject = this.wwd.getObjectsAtCurrentPosition().getTerrainObject();
+        PickedObject terrainObject = this.wwd.objectsAtPosition().getTerrainObject();
         if (terrainObject == null)
             return;
 
@@ -250,7 +250,7 @@ public class SurfaceImageEditor implements SelectListener {
     }
 
     protected double computeSurfaceElevation(WorldWindow wwd, LatLon latLon) {
-        SectorGeometryList sgl = wwd.getSceneController().getTerrain();
+        SectorGeometryList sgl = wwd.sceneControl().getTerrain();
         if (sgl != null) {
             Vec4 point = sgl.getSurfacePoint(latLon.getLatitude(), latLon.getLongitude(), 0.0);
             if (point != null) {

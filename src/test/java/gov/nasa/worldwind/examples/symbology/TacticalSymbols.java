@@ -10,7 +10,7 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.examples.milstd2525.MilStd2525TacticalSymbol;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.symbology.*;
@@ -74,7 +74,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             // with the appropriate key and value.
             TacticalSymbol airSymbol = new MilStd2525TacticalSymbol("SFAPMFQM--GIUSA",
                 Position.fromDegrees(32.4520, 63.44553, 3000));
-            airSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly SOF Drone Aircraft"); // Tool tip text.
+            airSymbol.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly SOF Drone Aircraft"); // Tool tip text.
             airSymbol.setAttributes(this.sharedAttrs);
             airSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             airSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(235));
@@ -91,7 +91,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             // line segment. In this example, we've scaled the line to 50% of its original length.
             TacticalSymbol groundSymbol = new MilStd2525TacticalSymbol("SHGXUCFRMS----G",
                 Position.fromDegrees(32.4014, 63.3894, 0));
-            groundSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Hostile Self-Propelled Rocket Launchers");
+            groundSymbol.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Hostile Self-Propelled Rocket Launchers");
             groundSymbol.setAttributes(this.sharedAttrs);
             groundSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             groundSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(90));
@@ -107,7 +107,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             // TacticalSymbol.setModifier with the appropriate keys and values.
             TacticalSymbol machineGunSymbol = new MilStd2525TacticalSymbol("SFGPEWRH--MTUSG",
                 Position.fromDegrees(32.3902, 63.4161, 0));
-            machineGunSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly Heavy Machine Gun");
+            machineGunSymbol.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly Heavy Machine Gun");
             machineGunSymbol.setAttributes(this.sharedAttrs);
             machineGunSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             machineGunSymbol.setModifier(SymbologyConstants.QUANTITY, 200);
@@ -120,7 +120,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             // Add the same symbol at the dateline to test that all aspects display correctly there.
             TacticalSymbol machineGunSymbolAtDateline = new MilStd2525TacticalSymbol("SFGPEWRH--MTUSG",
                 Position.fromDegrees(32.3902, 180, 0));
-            machineGunSymbolAtDateline.setValue(AVKey.DISPLAY_NAME,
+            machineGunSymbolAtDateline.set(AVKey.DISPLAY_NAME,
                 "MIL-STD-2525 Friendly Heavy Machine Gun at Dateline");
             machineGunSymbolAtDateline.setAttributes(this.sharedAttrs);
             machineGunSymbolAtDateline.setHighlightAttributes(this.sharedHighlightAttrs);
@@ -132,11 +132,11 @@ public class TacticalSymbols extends ApplicationTemplate {
             this.symbolLayer.add(machineGunSymbolAtDateline);
 
             // Add the symbol layer to the WorldWind model.
-            this.getWwd().model().getLayers().add(symbolLayer);
+            this.wwd().model().getLayers().add(symbolLayer);
 
             // Add a dragging controller to enable user click-and-drag control over tactical symbols.
-            this.dragger = new BasicDragger(this.getWwd());
-            this.getWwd().addSelectListener(this.dragger);
+            this.dragger = new BasicDragger(this.wwd());
+            this.wwd().addSelectListener(this.dragger);
 
             // Create a Swing control panel that provides user control over the symbol's appearance.
             this.addSymbolControls();
@@ -164,7 +164,7 @@ public class TacticalSymbols extends ApplicationTemplate {
                 double scale = slider12.getValue() / 100.0d;
                 sharedAttrs.setScale(scale);
                 sharedHighlightAttrs.setScale(scale);
-                getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
+                wwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
             });
             label.setAlignmentX(JComponent.LEFT_ALIGNMENT);
             slider.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -180,7 +180,7 @@ public class TacticalSymbols extends ApplicationTemplate {
                 JSlider slider1 = (JSlider) changeEvent.getSource();
                 double opacity = slider1.getValue() / 100.0d;
                 sharedAttrs.setOpacity(opacity);
-                getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
+                wwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
             });
             box.add(Box.createVerticalStrut(10));
             label.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -196,7 +196,7 @@ public class TacticalSymbols extends ApplicationTemplate {
                 for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
                         ((TacticalSymbol) r).setShowGraphicModifiers(tf);
-                    getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
+                    wwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
                 }
             });
             cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -211,7 +211,7 @@ public class TacticalSymbols extends ApplicationTemplate {
                 for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
                         ((TacticalSymbol) r).setShowTextModifiers(tf);
-                    getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
+                    wwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
                 }
             });
             cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -226,7 +226,7 @@ public class TacticalSymbols extends ApplicationTemplate {
                 for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
                         ((MilStd2525TacticalSymbol) r).setShowFrame(tf);
-                    getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
+                    wwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
                 }
             });
             cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -241,7 +241,7 @@ public class TacticalSymbols extends ApplicationTemplate {
                 for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
                         ((MilStd2525TacticalSymbol) r).setShowFill(tf);
-                    getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
+                    wwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
                 }
             });
             cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -256,7 +256,7 @@ public class TacticalSymbols extends ApplicationTemplate {
                 for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
                         ((MilStd2525TacticalSymbol) r).setShowIcon(tf);
-                    getWwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
+                    wwd().redraw(); // Cause the WorldWindow to refresh in order to make these changes visible.
                 }
             });
             cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);

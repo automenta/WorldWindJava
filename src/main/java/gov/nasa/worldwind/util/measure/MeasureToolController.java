@@ -182,7 +182,7 @@ public class MeasureToolController extends MouseAdapter
                         // Set the rubber band target to the last control point or the relevant control for regular shapes.
                         if (measureTool.isRegularShape()) {
                             String initControl =
-                                measureTool.getShapeInitialControl(measureTool.getWwd().getCurrentPosition());
+                                measureTool.getShapeInitialControl(measureTool.getWwd().position());
                             rubberBandTarget = measureTool.getControlPoint(initControl);
                         }
                         else {
@@ -295,7 +295,7 @@ public class MeasureToolController extends MouseAdapter
         // We missed any roll-over events while dragging, so highlight any under the cursor now,
         // or de-highlight the dragged control point if it's no longer under the cursor.
         if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
-            PickedObjectList pol = this.measureTool.getWwd().getObjectsAtCurrentPosition();
+            PickedObjectList pol = this.measureTool.getWwd().objectsAtPosition();
             if (pol != null) {
                 this.highlight(pol.getTopObject());
                 this.measureTool.getWwd().redraw();
@@ -315,13 +315,13 @@ public class MeasureToolController extends MouseAdapter
 
     @SuppressWarnings("UnusedDeclaration")
     protected void doMoved(PositionEvent event) {
-        if (this.active && rubberBandTarget != null && this.measureTool.getWwd().getObjectsAtCurrentPosition() != null
-            && this.measureTool.getWwd().getObjectsAtCurrentPosition().getTerrainObject() != null) {
+        if (this.active && rubberBandTarget != null && this.measureTool.getWwd().objectsAtPosition() != null
+            && this.measureTool.getWwd().objectsAtPosition().getTerrainObject() != null) {
             if (!isFreeHand() || (!measureTool.getMeasureShapeType().equals(MeasureTool.SHAPE_PATH)
                 && !measureTool.getMeasureShapeType().equals(MeasureTool.SHAPE_POLYGON))) {
                 // Rubber band - Move control point and update shape
                 Position lastPosition = rubberBandTarget.getPosition();
-                PickedObjectList pol = measureTool.getWwd().getObjectsAtCurrentPosition();
+                PickedObjectList pol = measureTool.getWwd().objectsAtPosition();
                 PickedObject to = pol.getTerrainObject();
                 rubberBandTarget.setPosition(new Position(to.getPosition(), 0));
                 measureTool.moveControlPoint(rubberBandTarget);
@@ -332,7 +332,7 @@ public class MeasureToolController extends MouseAdapter
             else {
                 // Free hand - Compute distance from current control point (rubber band target)
                 Position lastPosition = rubberBandTarget.getPosition();
-                Position newPosition = measureTool.getWwd().getCurrentPosition();
+                Position newPosition = measureTool.getWwd().position();
                 double distance = LatLon.greatCircleDistance(lastPosition, newPosition).radians
                     * measureTool.getWwd().model().getGlobe().getRadius();
                 if (distance >= freeHandMinSpacing) {
@@ -345,10 +345,10 @@ public class MeasureToolController extends MouseAdapter
                 }
             }
         }
-        else if (this.moving && movingTarget != null && measureTool.getWwd().getCurrentPosition() != null) {
+        else if (this.moving && movingTarget != null && measureTool.getWwd().position() != null) {
             // Moving the whole shape
             Position lastPosition = movingTarget.getPosition();
-            Position newPosition = measureTool.getWwd().getCurrentPosition();
+            Position newPosition = measureTool.getWwd().position();
             this.moveToPosition(lastPosition, newPosition);
 
             // Update the tool tip to follow the shape as it moves.
@@ -391,9 +391,9 @@ public class MeasureToolController extends MouseAdapter
         MeasureTool.ControlPoint point = (MeasureTool.ControlPoint) event.getTopObject();
 
         LatLon lastPosition = point.getPosition();
-        if (point.getValue(MeasureTool.CONTROL_TYPE_LOCATION_INDEX) != null)
+        if (point.get(MeasureTool.CONTROL_TYPE_LOCATION_INDEX) != null)
             lastPosition = measureTool.getPositions().get(
-                (Integer) point.getValue(MeasureTool.CONTROL_TYPE_LOCATION_INDEX));
+                (Integer) point.get(MeasureTool.CONTROL_TYPE_LOCATION_INDEX));
 
         // Delegate dragging computations to a dragger.
         this.dragger.selected(event);

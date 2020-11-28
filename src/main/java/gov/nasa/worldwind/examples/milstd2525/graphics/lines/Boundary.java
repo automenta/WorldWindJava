@@ -8,8 +8,9 @@ package gov.nasa.worldwind.examples.milstd2525.graphics.lines;
 
 import gov.nasa.worldwind.examples.milstd2525.SymbolCode;
 import gov.nasa.worldwind.examples.milstd2525.graphics.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.WWUtil;
 

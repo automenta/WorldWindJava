@@ -45,7 +45,7 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
         // times to be excessive.
         if (this.canReadSuffix(source)) {
             if (null != params) {
-                params.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION); // we know that DTED is elevation data
+                params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION); // we know that DTED is elevation data
             }
 
             return true;
@@ -59,7 +59,7 @@ public class DTEDRasterReader extends AbstractDataRasterReader {
                     params.setValues(metadata);
                 }
 
-                canRead = AVKey.ELEVATION.equals(metadata.getValue(AVKey.PIXEL_FORMAT));
+                canRead = AVKey.ELEVATION.equals(metadata.get(AVKey.PIXEL_FORMAT));
             }
         }
         catch (Throwable t) {

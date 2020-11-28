@@ -2298,11 +2298,11 @@ public class Matrix {
         double heading = Math.atan2(sh, ch);
 
         AVList params = new AVListImpl();
-        params.setValue(AVKey.ORIGIN, originPos);
-        params.setValue(AVKey.RANGE, range);
-        params.setValue(AVKey.HEADING, Angle.fromRadians(heading));
-        params.setValue(AVKey.TILT, Angle.fromRadians(tilt));
-        params.setValue(AVKey.ROLL, roll);
+        params.set(AVKey.ORIGIN, originPos);
+        params.set(AVKey.RANGE, range);
+        params.set(AVKey.HEADING, Angle.fromRadians(heading));
+        params.set(AVKey.TILT, Angle.fromRadians(tilt));
+        params.set(AVKey.ROLL, roll);
 
         return params;
     }

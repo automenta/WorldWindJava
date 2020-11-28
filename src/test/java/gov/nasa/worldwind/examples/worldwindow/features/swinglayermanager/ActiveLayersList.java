@@ -79,8 +79,8 @@ public class ActiveLayersList extends JList {
 
             Layer layer = (Layer) value;
 
-            if ((layer.getValue(Constants.INTERNAL_LAYER) != null && !includeInternalLayers)
-                && layer.getValue(Constants.ACTIVE_LAYER) == null)
+            if ((layer.get(Constants.INTERNAL_LAYER) != null && !includeInternalLayers)
+                && layer.get(Constants.ACTIVE_LAYER) == null)
                 return this.zeroSizeComponent; // Do not display internal layers
 
             renderer.layerTitle.setText(layer.getName());

@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.examples.kml;
 
 import gov.nasa.worldwind.Exportable;
-import gov.nasa.worldwind.examples.ogc.kml.KMLConstants;
-import gov.nasa.worldwind.examples.ogc.kml.gx.GXConstants;
+import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
+import gov.nasa.worldwind.layers.ogc.kml.gx.GXConstants;
 
 import javax.xml.stream.*;
 import java.io.*;

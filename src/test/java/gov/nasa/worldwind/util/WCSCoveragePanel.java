@@ -8,8 +8,8 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ogc.wcs.wcs100.*;
 import gov.nasa.worldwind.globes.ElevationModel;
+import gov.nasa.worldwind.layers.ogc.wcs.wcs100.*;
 import gov.nasa.worldwind.terrain.CompoundElevationModel;
 
 import javax.swing.*;
@@ -59,16 +59,16 @@ public class WCSCoveragePanel extends JPanel {
         AVList configParams = coverageInfo.params.copy(); // Copy to insulate changes from the caller.
 
         // Some wcs servers are slow, so increase the timeouts and limits used by WorldWind's retrievers.
-        configParams.setValue(AVKey.URL_CONNECT_TIMEOUT, 30000);
-        configParams.setValue(AVKey.URL_READ_TIMEOUT, 30000);
-        configParams.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
+        configParams.set(AVKey.URL_CONNECT_TIMEOUT, 30000);
+        configParams.set(AVKey.URL_READ_TIMEOUT, 30000);
+        configParams.set(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, 60000);
 
         try {
             String describeCoverageUrlString = caps.getCapability().getGetOperationAddress("DescribeCoverage");
             URI uri = new URI(describeCoverageUrlString);
             WCS100DescribeCoverage coverageDescription = WCS100DescribeCoverage.retrieve(uri, coverageInfo.getName());
             coverageDescription.parse();
-            configParams.setValue(AVKey.DOCUMENT, coverageDescription);
+            configParams.set(AVKey.DOCUMENT, coverageDescription);
         }
         catch (URISyntaxException | XMLStreamException e) {
             e.printStackTrace();
@@ -183,8 +183,8 @@ public class WCSCoveragePanel extends JPanel {
         CoverageInfo info = new CoverageInfo();
         info.caps = caps;
         info.params = new AVListImpl();
-        info.params.setValue(AVKey.COVERAGE_IDENTIFIERS, coverage.getName());
-        info.params.setValue(AVKey.DISPLAY_NAME, coverage.getLabel());
+        info.params.set(AVKey.COVERAGE_IDENTIFIERS, coverage.getName());
+        info.params.set(AVKey.DISPLAY_NAME, coverage.getLabel());
 
         return info;
     }

@@ -5,10 +5,10 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -85,7 +85,7 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
             if (o instanceof AVList) // Uses an AVList in order to be applicable to all shapes.
             {
                 AVList params = (AVList) o;
-                ContextMenuInfo menuInfo = (ContextMenuInfo) params.getValue(ContextMenu.CONTEXT_MENU_INFO);
+                ContextMenuInfo menuInfo = (ContextMenuInfo) params.get(ContextMenu.CONTEXT_MENU_INFO);
                 if (menuInfo == null) {
                     return;
                 }
@@ -217,41 +217,41 @@ public class ContextMenusOnShapes extends ApplicationTemplate {
             pp.setAttributes(attrs);
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-            pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark A", itemActionNames));
+            pp.set(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark A", itemActionNames));
             layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(29, -104, 2.0e4));
             pp.setAttributes(attrs);
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark B", itemActionNames));
+            pp.set(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark B", itemActionNames));
             layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(30, -104.5, 2.0e4));
             pp.setAttributes(attrs);
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark C", itemActionNames));
+            pp.set(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark C", itemActionNames));
             layer.add(pp);
 
             pp = new PointPlacemark(Position.fromDegrees(28, -104.5, 2.0e4));
             pp.setAttributes(attrs);
             pp.setHighlightAttributes(highlightAttrs);
             pp.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark D", itemActionNames));
+            pp.set(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark D", itemActionNames));
             layer.add(pp);
 
             // Create a placemark that uses all default values.
             pp = new PointPlacemark(Position.fromDegrees(30, -103.5, 2.0e3));
-            pp.setValue(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark E", itemActionNames));
+            pp.set(ContextMenu.CONTEXT_MENU_INFO, new ContextMenuInfo("Placemark E", itemActionNames));
             layer.add(pp);
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
 
             // Set up the context menu
             SelectListener contextMenuController = new ContextMenuController();
-            getWwd().addSelectListener(contextMenuController);
+            wwd().addSelectListener(contextMenuController);
         }
     }
 }

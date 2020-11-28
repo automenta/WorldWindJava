@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.event.PositionEvent;
-import gov.nasa.worldwind.examples.render.Path;
+import gov.nasa.worldwind.render.Path;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -78,7 +78,7 @@ public class LineBuilder extends AVListImpl {
         this.layer.add(this.line);
         this.wwd.model().getLayers().add(this.layer);
 
-        this.wwd.getInputHandler().addMouseListener(new MouseAdapter() {
+        this.wwd.input().addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent mouseEvent) {
                 if (armed && mouseEvent.getButton() == MouseEvent.BUTTON1) {
@@ -114,7 +114,7 @@ public class LineBuilder extends AVListImpl {
             }
         });
 
-        this.wwd.getInputHandler().addMouseMotionListener(new MouseMotionAdapter() {
+        this.wwd.input().addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent mouseEvent) {
                 if (armed && (mouseEvent.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0) {
@@ -194,7 +194,7 @@ public class LineBuilder extends AVListImpl {
     }
 
     private void addPosition() {
-        Position curPos = this.wwd.getCurrentPosition();
+        Position curPos = this.wwd.position();
         if (curPos == null) {
             return;
         }
@@ -206,7 +206,7 @@ public class LineBuilder extends AVListImpl {
     }
 
     private void replacePosition() {
-        Position curPos = this.wwd.getCurrentPosition();
+        Position curPos = this.wwd.position();
         if (curPos == null) {
             return;
         }
@@ -349,8 +349,8 @@ public class LineBuilder extends AVListImpl {
         public AppFrame() {
             super(true, false, false);
 
-            LineBuilder lineBuilder = new LineBuilder(this.getWwd(), null, null);
-            this.getContentPane().add(new LinePanel(this.getWwd(), lineBuilder), BorderLayout.WEST);
+            LineBuilder lineBuilder = new LineBuilder(this.wwd(), null, null);
+            this.getContentPane().add(new LinePanel(this.wwd(), lineBuilder), BorderLayout.WEST);
         }
     }
 }

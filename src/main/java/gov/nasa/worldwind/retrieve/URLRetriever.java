@@ -341,7 +341,7 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
             // automatically unzip the content if the content type is application/zip.
             this.contentType = connection.getContentType();
             if (this.contentType != null && this.contentType.equalsIgnoreCase("application/zip")
-                && !WWUtil.isEmpty(this.getValue(EXTRACT_ZIP_ENTRY)))
+                && !WWUtil.isEmpty(this.get(EXTRACT_ZIP_ENTRY)))
                 // Assume single file in zip and decompress it
                 return this.readZipStream(inputStream, connection.getURL());
             else

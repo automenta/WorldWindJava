@@ -66,14 +66,14 @@ public class TiledElevationProducer extends TiledRasterProducer {
     protected DataRaster createDataRaster(int width, int height, Sector sector, AVList params) {
         // Create a BIL elevation raster to hold the tile's data.
         AVList bufferParams = new AVListImpl();
-        bufferParams.setValue(AVKey.DATA_TYPE, params.getValue(AVKey.DATA_TYPE));
-        bufferParams.setValue(AVKey.BYTE_ORDER, params.getValue(AVKey.BYTE_ORDER));
+        bufferParams.set(AVKey.DATA_TYPE, params.get(AVKey.DATA_TYPE));
+        bufferParams.set(AVKey.BYTE_ORDER, params.get(AVKey.BYTE_ORDER));
         ByteBufferRaster bufferRaster = new ByteBufferRaster(width, height, sector, bufferParams);
 
         // Clear the raster with the missing data replacment.
         // This code expects the string "gov.nasa.worldwind.avkey.MissingDataValue", which now corresponds to the key 
         // MISSING_DATA_REPLACEMENT.
-        Object o = params.getValue(AVKey.MISSING_DATA_REPLACEMENT);
+        Object o = params.get(AVKey.MISSING_DATA_REPLACEMENT);
         if (o instanceof Double) {
             double missingDataValue = (Double) o;
             bufferRaster.fill(missingDataValue);
@@ -138,28 +138,28 @@ public class TiledElevationProducer extends TiledRasterProducer {
     }
 
     protected String validateDataSourceParams(AVList params, String name) {
-        if (params.hasKey(AVKey.PIXEL_FORMAT) && params.getValue(AVKey.PIXEL_FORMAT) != AVKey.ELEVATION) {
+        if (params.hasKey(AVKey.PIXEL_FORMAT) && params.get(AVKey.PIXEL_FORMAT) != AVKey.ELEVATION) {
             return Logging.getMessage("TiledRasterProducer.UnrecognizedRasterType",
-                params.getValue(AVKey.PIXEL_FORMAT), name);
+                params.get(AVKey.PIXEL_FORMAT), name);
         }
 
         if (params.hasKey(AVKey.COORDINATE_SYSTEM)
-            && params.getValue(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
-            && params.getValue(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_PROJECTED
+            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
+            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_PROJECTED
         ) {
             return Logging.getMessage("TiledRasterProducer.UnrecognizedCoordinateSystem",
-                params.getValue(AVKey.COORDINATE_SYSTEM), name);
+                params.get(AVKey.COORDINATE_SYSTEM), name);
         }
 
         if (params.hasKey(AVKey.ELEVATION_UNIT)
-            && params.getValue(AVKey.ELEVATION_UNIT) != AVKey.UNIT_METER
-            && params.getValue(AVKey.ELEVATION_UNIT) != AVKey.UNIT_FOOT
+            && params.get(AVKey.ELEVATION_UNIT) != AVKey.UNIT_METER
+            && params.get(AVKey.ELEVATION_UNIT) != AVKey.UNIT_FOOT
         ) {
             return Logging.getMessage("TiledElevationProducer.UnrecognizedElevationUnit",
-                params.getValue(AVKey.ELEVATION_UNIT), name);
+                params.get(AVKey.ELEVATION_UNIT), name);
         }
 
-        if (params.getValue(AVKey.SECTOR) == null) {
+        if (params.get(AVKey.SECTOR) == null) {
             return Logging.getMessage("TiledRasterProducer.NoSector", name);
         }
 
@@ -170,57 +170,57 @@ public class TiledElevationProducer extends TiledRasterProducer {
         // Preserve backward compatibility with previous versions of TiledElevationProducer. If the caller specified a
         // format suffix parameter, use it to compute the image format properties. This gives priority to the format
         // suffix property to ensure applications which use format suffix continue to work.
-        if (params.getValue(AVKey.FORMAT_SUFFIX) != null) {
-            String s = WWIO.makeMimeTypeForSuffix(params.getValue(AVKey.FORMAT_SUFFIX).toString());
+        if (params.get(AVKey.FORMAT_SUFFIX) != null) {
+            String s = WWIO.makeMimeTypeForSuffix(params.get(AVKey.FORMAT_SUFFIX).toString());
             if (s != null) {
-                params.setValue(AVKey.IMAGE_FORMAT, s);
-                params.setValue(AVKey.AVAILABLE_IMAGE_FORMATS, new String[] {s});
+                params.set(AVKey.IMAGE_FORMAT, s);
+                params.set(AVKey.AVAILABLE_IMAGE_FORMATS, new String[] {s});
             }
         }
 
-        if (params.getValue(AVKey.PIXEL_FORMAT) == null) {
-            params.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+        if (params.get(AVKey.PIXEL_FORMAT) == null) {
+            params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
         }
 
         // Use the default image format if none exists.
-        if (params.getValue(AVKey.IMAGE_FORMAT) == null) {
-            params.setValue(AVKey.IMAGE_FORMAT, DEFAULT_IMAGE_FORMAT);
+        if (params.get(AVKey.IMAGE_FORMAT) == null) {
+            params.set(AVKey.IMAGE_FORMAT, DEFAULT_IMAGE_FORMAT);
         }
 
         // Compute the available image formats if none exists.
-        if (params.getValue(AVKey.AVAILABLE_IMAGE_FORMATS) == null) {
-            params.setValue(AVKey.AVAILABLE_IMAGE_FORMATS,
-                new String[] {params.getValue(AVKey.IMAGE_FORMAT).toString()});
+        if (params.get(AVKey.AVAILABLE_IMAGE_FORMATS) == null) {
+            params.set(AVKey.AVAILABLE_IMAGE_FORMATS,
+                new String[] {params.get(AVKey.IMAGE_FORMAT).toString()});
         }
 
         // Compute the format suffix if none exists.        
-        if (params.getValue(AVKey.FORMAT_SUFFIX) == null) {
-            params.setValue(AVKey.FORMAT_SUFFIX,
-                WWIO.makeSuffixForMimeType(params.getValue(AVKey.IMAGE_FORMAT).toString()));
+        if (params.get(AVKey.FORMAT_SUFFIX) == null) {
+            params.set(AVKey.FORMAT_SUFFIX,
+                WWIO.makeSuffixForMimeType(params.get(AVKey.IMAGE_FORMAT).toString()));
         }
 
         // Compute the data type from the image format.
-        if (params.getValue(AVKey.DATA_TYPE) == null && params.getValue(AVKey.IMAGE_FORMAT) != null) {
-            String s = WWIO.makeDataTypeForMimeType(params.getValue(AVKey.IMAGE_FORMAT).toString());
+        if (params.get(AVKey.DATA_TYPE) == null && params.get(AVKey.IMAGE_FORMAT) != null) {
+            String s = WWIO.makeDataTypeForMimeType(params.get(AVKey.IMAGE_FORMAT).toString());
             if (s != null) {
-                params.setValue(AVKey.DATA_TYPE, s);
+                params.set(AVKey.DATA_TYPE, s);
             }
         }
 
         // Use the default data type if none exists.
-        if (params.getValue(AVKey.DATA_TYPE) == null) {
-            params.setValue(AVKey.DATA_TYPE, AVKey.INT16);
+        if (params.get(AVKey.DATA_TYPE) == null) {
+            params.set(AVKey.DATA_TYPE, AVKey.INT16);
         }
 
         // Use the default byte order if none exists.
-        if (params.getValue(AVKey.BYTE_ORDER) == null) {
-            params.setValue(AVKey.BYTE_ORDER, AVKey.LITTLE_ENDIAN);
+        if (params.get(AVKey.BYTE_ORDER) == null) {
+            params.set(AVKey.BYTE_ORDER, AVKey.LITTLE_ENDIAN);
         }
 
         // This code expects the string "gov.nasa.worldwind.avkey.MissingDataValue", which now corresponds to the key
         // MISSING_DATA_REPLACEMENT.
-        if (params.getValue(AVKey.MISSING_DATA_REPLACEMENT) == null) {
-            params.setValue(AVKey.MISSING_DATA_REPLACEMENT, DEFAULT_MISSING_DATA_SIGNAL);
+        if (params.get(AVKey.MISSING_DATA_REPLACEMENT) == null) {
+            params.set(AVKey.MISSING_DATA_REPLACEMENT, DEFAULT_MISSING_DATA_SIGNAL);
         }
     }
 
@@ -276,8 +276,8 @@ public class TiledElevationProducer extends TiledRasterProducer {
         double[] tileExtremes = new double[2];
 
         if (raster.hasKey(AVKey.ELEVATION_MIN) && raster.hasKey(AVKey.ELEVATION_MAX)) {
-            tileExtremes[0] = (Double) raster.getValue(AVKey.ELEVATION_MAX);
-            tileExtremes[1] = (Double) raster.getValue(AVKey.ELEVATION_MIN);
+            tileExtremes[0] = (Double) raster.get(AVKey.ELEVATION_MAX);
+            tileExtremes[1] = (Double) raster.get(AVKey.ELEVATION_MIN);
         }
         else {
             tileExtremes = ((BufferWrapperRaster) raster).getExtremes();
@@ -308,30 +308,30 @@ public class TiledElevationProducer extends TiledRasterProducer {
         AVList configParams = params.copy();
 
         // Determine a default display name if none exists.
-        if (configParams.getValue(AVKey.DISPLAY_NAME) == null) {
-            configParams.setValue(AVKey.DISPLAY_NAME, params.getValue(AVKey.DATASET_NAME));
+        if (configParams.get(AVKey.DISPLAY_NAME) == null) {
+            configParams.set(AVKey.DISPLAY_NAME, params.get(AVKey.DATASET_NAME));
         }
 
         // Set the SERVICE_NAME and NETWORK_RETRIEVAL_ENABLED parameters to indicate this dataset is offline.
-        if (configParams.getValue(AVKey.SERVICE_NAME) == null) {
-            configParams.setValue(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_OFFLINE);
+        if (configParams.get(AVKey.SERVICE_NAME) == null) {
+            configParams.set(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_OFFLINE);
         }
 
-        configParams.setValue(AVKey.NETWORK_RETRIEVAL_ENABLED, Boolean.FALSE);
+        configParams.set(AVKey.NETWORK_RETRIEVAL_ENABLED, Boolean.FALSE);
 
         // TiledElevationProducer and the DataRaster classes use MISSING_DATA_REPLACEMENT to denote the missing data
         // value, whereas all other WWWJ code uses MISSING_DATA_SIGNAL. Replace the MISSING_DATA_REPLACEMENT with the
         // MISSING_DATA_SIGNAL here to ensure this discrapancy is limited to data installation code.
         configParams.removeKey(AVKey.MISSING_DATA_REPLACEMENT);
-        configParams.setValue(AVKey.MISSING_DATA_SIGNAL, params.getValue(AVKey.MISSING_DATA_REPLACEMENT));
+        configParams.set(AVKey.MISSING_DATA_SIGNAL, params.get(AVKey.MISSING_DATA_REPLACEMENT));
 
         // If we able to successfully compute extreme values for this elevation data, then set the extreme elevation
         // values ELEVATION_MIN and ELEVATION_MAX. If the extremes array is null or has length less than 2, the imported
         // elevations are either empty or contain only missing data values. In either case we cannot determine the
         // extreme values.
         if (this.extremes != null && this.extremes.length >= 2) {
-            configParams.setValue(AVKey.ELEVATION_MIN, this.extremes[0]);
-            configParams.setValue(AVKey.ELEVATION_MAX, this.extremes[1]);
+            configParams.set(AVKey.ELEVATION_MIN, this.extremes[0]);
+            configParams.set(AVKey.ELEVATION_MAX, this.extremes[1]);
         }
 
         // Return a configuration file for a BasicElevationModel. BasicElevationModel is the standard WWJ component

@@ -29,7 +29,7 @@ public class GeoJSONPolygon extends GeoJSONGeometry {
     }
 
     public GeoJSONPositionArray[] getCoordinates() {
-        return (GeoJSONPositionArray[]) this.getValue(GeoJSONConstants.FIELD_COORDINATES);
+        return (GeoJSONPositionArray[]) this.get(GeoJSONConstants.FIELD_COORDINATES);
     }
 
     public GeoJSONPositionArray getExteriorRing() {

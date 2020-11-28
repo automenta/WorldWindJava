@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.SurfaceImage;
+import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
@@ -63,10 +63,10 @@ public class VideoOnTerrain extends ApplicationTemplate {
 
             RenderableLayer layer = new RenderableLayer();
             layer.setName("Video on terrain");
-            insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
 
             // Set up a SelectListener to drag the SurfaceImage.
-            this.getWwd().addSelectListener(new SurfaceImageDragger(this.getWwd()));
+            this.wwd().addSelectListener(new SurfaceImageDragger(this.wwd()));
 
             final SurfaceImage surfaceImage = new SurfaceImage(makeImage(), CORNERS);
             surfaceImage.setOpacity(IMAGE_OPACITY);
@@ -75,7 +75,7 @@ public class VideoOnTerrain extends ApplicationTemplate {
             Timer timer = new Timer(50, actionEvent -> {
                 Iterable<LatLon> corners = surfaceImage.getCorners();
                 surfaceImage.setImageSource(makeImage(), corners);
-                getWwd().redraw();
+                wwd().redraw();
             });
             timer.start();
         }
@@ -128,7 +128,7 @@ public class VideoOnTerrain extends ApplicationTemplate {
 
             // We missed any roll-over events while dragging, so highlight any under the cursor now.
             if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
-                PickedObjectList pol = this.wwd.getObjectsAtCurrentPosition();
+                PickedObjectList pol = this.wwd.objectsAtPosition();
                 if (pol != null) {
                     this.highlight(pol.getTopObject());
                     this.wwd.redraw();

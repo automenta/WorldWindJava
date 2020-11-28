@@ -1,7 +1,7 @@
 package gov.nasa.worldwind.animation;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.Path;
+import gov.nasa.worldwind.render.Path;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.PropertyAccessor;

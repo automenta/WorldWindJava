@@ -41,7 +41,7 @@ public class ViewSwitch extends ApplicationTemplate {
             super(true, true, true);
             this.getControlPanel().add(makeControlPanel(), BorderLayout.SOUTH);
 
-            viewDisplay.setEventSource(this.getWwd());
+            viewDisplay.setEventSource(this.wwd());
         }
 
         public void actionPerformed(ActionEvent event) {
@@ -126,7 +126,7 @@ public class ViewSwitch extends ApplicationTemplate {
 
                 this.add(viewList);
                 try {
-                    this.add(new GazetteerPanel(getWwd(),
+                    this.add(new GazetteerPanel(wwd(),
                         "gov.nasa.worldwind.poi.YahooGazetteer"), SwingConstants.CENTER);
                 }
                 catch (Exception e) {
@@ -146,11 +146,11 @@ public class ViewSwitch extends ApplicationTemplate {
                         vc.view.getViewInputHandler();
                 }
                 if (copyValues) {
-                    View viewToCopy = getWwd().view();
+                    View viewToCopy = wwd().view();
 
                     try {
                         vc.view.copyViewState(viewToCopy);
-                        getWwd().setView(vc.view);
+                        wwd().setView(vc.view);
                     }
                     catch (IllegalArgumentException iae) {
                         JOptionPane.showMessageDialog(this,
@@ -159,7 +159,7 @@ public class ViewSwitch extends ApplicationTemplate {
                     }
                 }
                 else {
-                    getWwd().setView(vc.view);
+                    wwd().setView(vc.view);
                 }
             }
 

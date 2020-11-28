@@ -6,9 +6,9 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.*;
@@ -71,9 +71,9 @@ public class PathsOnDateline extends ApplicationTemplate {
 
             layer.add(path);
 
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
 
-            this.getWwd().addSelectListener(new BasicDragger((this.getWwd())));
+            this.wwd().addSelectListener(new BasicDragger((this.wwd())));
         }
     }
 

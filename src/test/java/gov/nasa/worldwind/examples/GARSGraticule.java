@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.layers.GARSGraticuleLayer;
 
 import java.awt.*;
@@ -37,7 +38,7 @@ public class GARSGraticule extends ApplicationTemplate {
             layer.set15MinuteThreshold(600.0e3);
             layer.set5MinuteThreshold(180.0e3);
 
-            insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
         }
     }
 }

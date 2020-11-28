@@ -50,7 +50,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
             throw new IllegalArgumentException(message);
         }
 
-        Object dataType = params.getValue(AVKey.DATA_TYPE);
+        Object dataType = params.get(AVKey.DATA_TYPE);
 
         int sizeOfDataType = 0;
         if (AVKey.INT8.equals(dataType))
@@ -79,7 +79,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
             throw new IllegalArgumentException(msg);
         }
 
-        int width = (Integer) params.getValue(AVKey.WIDTH);
+        int width = (Integer) params.get(AVKey.WIDTH);
 
         if (!(width > 0)) {
             String msg = Logging.getMessage("generic.InvalidWidth", width);
@@ -93,7 +93,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
             throw new IllegalArgumentException(msg);
         }
 
-        int height = (Integer) params.getValue(AVKey.HEIGHT);
+        int height = (Integer) params.get(AVKey.HEIGHT);
 
         if (!(height > 0)) {
             String msg = Logging.getMessage("generic.InvalidWidth", height);
@@ -107,7 +107,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
             throw new IllegalArgumentException(msg);
         }
 
-        Sector sector = (Sector) params.getValue(AVKey.SECTOR);
+        Sector sector = (Sector) params.get(AVKey.SECTOR);
         if (null == sector) {
             String msg = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(msg);
@@ -116,14 +116,14 @@ public class ByteBufferRaster extends BufferWrapperRaster {
 
         if (!params.hasKey(AVKey.COORDINATE_SYSTEM)) {
             // assume Geodetic Coordinate System
-            params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
+            params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
         }
 
         String cs = params.getStringValue(AVKey.COORDINATE_SYSTEM);
         if (!params.hasKey(AVKey.PROJECTION_EPSG_CODE)) {
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 // assume WGS84
-                params.setValue(AVKey.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
+                params.set(AVKey.PROJECTION_EPSG_CODE, GeoTiff.GCS.WGS_84);
             }
             else {
                 String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PROJECTION_EPSG_CODE);
@@ -137,7 +137,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
         if (!params.hasKey(AVKey.PIXEL_WIDTH)) {
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 double pixelWidth = sector.getDeltaLonDegrees() / width;
-                params.setValue(AVKey.PIXEL_WIDTH, pixelWidth);
+                params.set(AVKey.PIXEL_WIDTH, pixelWidth);
             }
             else {
                 String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PIXEL_WIDTH);
@@ -151,7 +151,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
         if (!params.hasKey(AVKey.PIXEL_HEIGHT)) {
             if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
                 double pixelHeight = sector.getDeltaLatDegrees() / height;
-                params.setValue(AVKey.PIXEL_HEIGHT, pixelHeight);
+                params.set(AVKey.PIXEL_HEIGHT, pixelHeight);
             }
             else {
                 String msg = Logging.getMessage("generic.MissingRequiredParameter", AVKey.PIXEL_HEIGHT);
@@ -181,7 +181,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
         }
 
         // validate elevation parameters
-        if (AVKey.ELEVATION.equals(params.getValue(AVKey.PIXEL_FORMAT))) {
+        if (AVKey.ELEVATION.equals(params.get(AVKey.PIXEL_FORMAT))) {
             String type = params.getStringValue(AVKey.DATA_TYPE);
             if (!AVKey.FLOAT32.equals(type) && !AVKey.INT16.equals(type)) {
                 String msg = Logging.getMessage("generic.UnknownValueForKey", type, AVKey.DATA_TYPE);
@@ -193,7 +193,7 @@ public class ByteBufferRaster extends BufferWrapperRaster {
         if (!params.hasKey(AVKey.ORIGIN) && AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(cs)) {
             // set UpperLeft corner as the origin, if not specified
             LatLon origin = new LatLon(sector.latMax(), sector.lonMin());
-            params.setValue(AVKey.ORIGIN, origin);
+            params.set(AVKey.ORIGIN, origin);
         }
 
         if (!params.hasKey(AVKey.BYTE_ORDER)) {
@@ -205,11 +205,11 @@ public class ByteBufferRaster extends BufferWrapperRaster {
         if (!params.hasKey(AVKey.DATE_TIME)) {
             // add NUL (\0) termination as required by TIFF v6 spec (20 bytes length)
             String timestamp = String.format("%1$tY:%1$tm:%1$td %tT\0", Calendar.getInstance());
-            params.setValue(AVKey.DATE_TIME, timestamp);
+            params.set(AVKey.DATE_TIME, timestamp);
         }
 
         if (!params.hasKey(AVKey.VERSION)) {
-            params.setValue(AVKey.VERSION, Version.getVersion());
+            params.set(AVKey.VERSION, Version.getVersion());
         }
 
         return new ByteBufferRaster(width, height, sector, params);

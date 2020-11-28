@@ -48,7 +48,7 @@ public class AVListImpl implements AVList {
      */
     public AVListImpl(Object sourceBean) {
         if (sourceBean != null)
-            this.setValue(PROPERTY_CHANGE_SUPPORT, new PropertyChangeSupport(sourceBean));
+            this.set(PROPERTY_CHANGE_SUPPORT, new PropertyChangeSupport(sourceBean));
     }
 
     // Static AVList utilities.
@@ -71,7 +71,7 @@ public class AVListImpl implements AVList {
     }
 
     public static Integer getIntegerValue(AVList avList, String key) {
-        Object o = avList.getValue(key);
+        Object o = avList.get(key);
         if (o == null)
             return null;
 
@@ -96,7 +96,7 @@ public class AVListImpl implements AVList {
     }
 
     public static Long getLongValue(AVList avList, String key) {
-        Object o = avList.getValue(key);
+        Object o = avList.get(key);
         if (o == null)
             return null;
 
@@ -121,7 +121,7 @@ public class AVListImpl implements AVList {
     }
 
     public static Double getDoubleValue(AVList avList, String key) {
-        Object o = avList.getValue(key);
+        Object o = avList.get(key);
         if (o == null)
             return null;
 
@@ -147,7 +147,7 @@ public class AVListImpl implements AVList {
     }
 
     public static Boolean getBooleanValue(AVList avList, String key) {
-        Object o = avList.getValue(key);
+        Object o = avList.get(key);
         if (o == null)
             return null;
 
@@ -186,7 +186,7 @@ public class AVListImpl implements AVList {
         return l;
     }
 
-    public Object getValue(String key) {
+    public Object get(String key) {
 //        if (key == null) {
 //            String message = Logging.getMessage("nullValue.AttributeKeyIsNull");
 //            Logging.logger().severe(message);
@@ -213,7 +213,7 @@ public class AVListImpl implements AVList {
 //            throw new IllegalStateException(msg);
 //        }
 
-        Object y = getValue(key);
+        Object y = get(key);
         return y != null ? y.toString() : null;
 
 //        try {
@@ -229,7 +229,7 @@ public class AVListImpl implements AVList {
 
     private static final Object NULLL = new Object();
 
-    public Object setValue(String key, Object value) {
+    public Object set(String key, Object value) {
 //        if (key == null) {
 //            String message = Logging.getMessage("nullValue.AttributeKeyIsNull");
 //            Logging.logger().severe(message);
@@ -258,7 +258,7 @@ public class AVListImpl implements AVList {
         //synchronized(avList) {
             Set<Map.Entry<String, Object>> entries = list.getEntries();
             for (Map.Entry<String, Object> entry : entries)
-                this.setValue(entry.getKey(), o(entry.getValue()));
+                this.set(entry.getKey(), o(entry.getValue()));
         //}
 
         return this;

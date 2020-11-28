@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.util.Logging;
 
@@ -435,7 +435,7 @@ public class ViewControlsLayer extends RenderableLayer {
         if (this.showPanControls) {
             // Pan
             controlPan = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlPan.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_PAN);
+            controlPan.set(AVKey.VIEW_OPERATION, AVKey.VIEW_PAN);
             controlPan.getAttributes().setImageSource(getImageSource(AVKey.VIEW_PAN));
             controlPan.getAttributes().setSize(new Dimension(panSize, panSize));
             this.add(controlPan);
@@ -443,7 +443,7 @@ public class ViewControlsLayer extends RenderableLayer {
         if (this.showLookControls) {
             // Look
             controlLook = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlLook.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_LOOK);
+            controlLook.set(AVKey.VIEW_OPERATION, AVKey.VIEW_LOOK);
             controlLook.getAttributes().setImageSource(getImageSource(AVKey.VIEW_LOOK));
             controlLook.getAttributes().setSize(new Dimension(panSize, panSize));
             this.add(controlLook);
@@ -451,55 +451,55 @@ public class ViewControlsLayer extends RenderableLayer {
         if (this.showZoomControls) {
             // Zoom
             controlZoomIn = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlZoomIn.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_ZOOM_IN);
+            controlZoomIn.set(AVKey.VIEW_OPERATION, AVKey.VIEW_ZOOM_IN);
             controlZoomIn.getAttributes().setImageSource(getImageSource(AVKey.VIEW_ZOOM_IN));
             this.add(controlZoomIn);
             controlZoomOut = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlZoomOut.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_ZOOM_OUT);
+            controlZoomOut.set(AVKey.VIEW_OPERATION, AVKey.VIEW_ZOOM_OUT);
             controlZoomOut.getAttributes().setImageSource(getImageSource(AVKey.VIEW_ZOOM_OUT));
             this.add(controlZoomOut);
         }
         if (this.showHeadingControls) {
             // Heading
             controlHeadingLeft = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlHeadingLeft.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_HEADING_LEFT);
+            controlHeadingLeft.set(AVKey.VIEW_OPERATION, AVKey.VIEW_HEADING_LEFT);
             controlHeadingLeft.getAttributes().setImageSource(getImageSource(AVKey.VIEW_HEADING_LEFT));
             this.add(controlHeadingLeft);
             controlHeadingRight = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlHeadingRight.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_HEADING_RIGHT);
+            controlHeadingRight.set(AVKey.VIEW_OPERATION, AVKey.VIEW_HEADING_RIGHT);
             controlHeadingRight.getAttributes().setImageSource(getImageSource(AVKey.VIEW_HEADING_RIGHT));
             this.add(controlHeadingRight);
         }
         if (this.showPitchControls) {
             // Pitch
             controlPitchUp = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlPitchUp.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_PITCH_UP);
+            controlPitchUp.set(AVKey.VIEW_OPERATION, AVKey.VIEW_PITCH_UP);
             controlPitchUp.getAttributes().setImageSource(getImageSource(AVKey.VIEW_PITCH_UP));
             this.add(controlPitchUp);
             controlPitchDown = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlPitchDown.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_PITCH_DOWN);
+            controlPitchDown.set(AVKey.VIEW_OPERATION, AVKey.VIEW_PITCH_DOWN);
             controlPitchDown.getAttributes().setImageSource(getImageSource(AVKey.VIEW_PITCH_DOWN));
             this.add(controlPitchDown);
         }
         if (this.showFovControls) {
             // Field of view FOV
             controlFovNarrow = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlFovNarrow.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_FOV_NARROW);
+            controlFovNarrow.set(AVKey.VIEW_OPERATION, AVKey.VIEW_FOV_NARROW);
             controlFovNarrow.getAttributes().setImageSource(getImageSource(AVKey.VIEW_FOV_NARROW));
             this.add(controlFovNarrow);
             controlFovWide = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlFovWide.setValue(AVKey.VIEW_OPERATION, AVKey.VIEW_FOV_WIDE);
+            controlFovWide.set(AVKey.VIEW_OPERATION, AVKey.VIEW_FOV_WIDE);
             controlFovWide.getAttributes().setImageSource(getImageSource(AVKey.VIEW_FOV_WIDE));
             this.add(controlFovWide);
         }
         if (this.showVeControls) {
             // Vertical Exaggeration
             controlVeUp = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlVeUp.setValue(AVKey.VIEW_OPERATION, AVKey.VERTICAL_EXAGGERATION_UP);
+            controlVeUp.set(AVKey.VIEW_OPERATION, AVKey.VERTICAL_EXAGGERATION_UP);
             controlVeUp.getAttributes().setImageSource(getImageSource(AVKey.VERTICAL_EXAGGERATION_UP));
             this.add(controlVeUp);
             controlVeDown = new ScreenAnnotation(NOTEXT, ORIGIN, ca);
-            controlVeDown.setValue(AVKey.VIEW_OPERATION, AVKey.VERTICAL_EXAGGERATION_DOWN);
+            controlVeDown.set(AVKey.VIEW_OPERATION, AVKey.VERTICAL_EXAGGERATION_DOWN);
             controlVeDown.getAttributes().setImageSource(getImageSource(AVKey.VERTICAL_EXAGGERATION_DOWN));
             this.add(controlVeDown);
         }

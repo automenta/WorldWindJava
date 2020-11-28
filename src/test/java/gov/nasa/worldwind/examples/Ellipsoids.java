@@ -5,9 +5,9 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 
@@ -61,7 +61,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid3.setAltitudeMode(WorldWind.ABSOLUTE);
             ellipsoid3.setAttributes(attrs);
             ellipsoid3.setVisible(true);
-            ellipsoid3.setValue(AVKey.DISPLAY_NAME, "Ellipsoid with equal axes, ABSOLUTE altitude mode");
+            ellipsoid3.set(AVKey.DISPLAY_NAME, "Ellipsoid with equal axes, ABSOLUTE altitude mode");
             layer.add(ellipsoid3);
 
             // Ellipsoid with equal axes, RELATIVE_TO_GROUND
@@ -69,7 +69,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid4.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ellipsoid4.setAttributes(attrs);
             ellipsoid4.setVisible(true);
-            ellipsoid4.setValue(AVKey.DISPLAY_NAME, "Ellipsoid with equal axes, RELATIVE_TO_GROUND altitude mode");
+            ellipsoid4.set(AVKey.DISPLAY_NAME, "Ellipsoid with equal axes, RELATIVE_TO_GROUND altitude mode");
             layer.add(ellipsoid4);
 
             // Ellipsoid with equal axes, CLAMP_TO_GROUND
@@ -77,16 +77,16 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid5.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             ellipsoid5.setAttributes(attrs);
             ellipsoid5.setVisible(true);
-            ellipsoid5.setValue(AVKey.DISPLAY_NAME, "Ellipsoid with equal axes, CLAMP_TO_GROUND altitude mode");
+            ellipsoid5.set(AVKey.DISPLAY_NAME, "Ellipsoid with equal axes, CLAMP_TO_GROUND altitude mode");
             layer.add(ellipsoid5);
 
             // Ellipsoid with a texture
             Ellipsoid ellipsoid9 = new Ellipsoid(Position.fromDegrees(0, -90, 600000), 600000, 600000, 600000);
             ellipsoid9.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            ellipsoid9.setImageSources("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            ellipsoid9.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             ellipsoid9.setAttributes(attrs);
             ellipsoid9.setVisible(true);
-            ellipsoid9.setValue(AVKey.DISPLAY_NAME, "Ellipsoid with a texture");
+            ellipsoid9.set(AVKey.DISPLAY_NAME, "Ellipsoid with a texture");
             layer.add(ellipsoid9);
 
             // Scaled Ellipsoid with default orientation
@@ -94,7 +94,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid.setAltitudeMode(WorldWind.ABSOLUTE);
             ellipsoid.setAttributes(attrs);
             ellipsoid.setVisible(true);
-            ellipsoid.setValue(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with default orientation");
+            ellipsoid.set(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with default orientation");
             layer.add(ellipsoid);
 
             // Scaled Ellipsoid with a pre-set orientation
@@ -103,17 +103,17 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ellipsoid2.setAttributes(attrs2);
             ellipsoid2.setVisible(true);
-            ellipsoid2.setValue(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with a pre-set orientation");
+            ellipsoid2.set(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with a pre-set orientation");
             layer.add(ellipsoid2);
 
             // Scaled Ellipsoid with a pre-set orientation
             Ellipsoid ellipsoid6 = new Ellipsoid(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
                 Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
             ellipsoid6.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            ellipsoid6.setImageSources("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            ellipsoid6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             ellipsoid6.setAttributes(attrs2);
             ellipsoid6.setVisible(true);
-            ellipsoid6.setValue(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with a pre-set orientation");
+            ellipsoid6.set(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with a pre-set orientation");
             layer.add(ellipsoid6);
 
             // Scaled Ellipsoid with a pre-set orientation
@@ -122,7 +122,7 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ellipsoid7.setAttributes(attrs2);
             ellipsoid7.setVisible(true);
-            ellipsoid7.setValue(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with a pre-set orientation");
+            ellipsoid7.set(AVKey.DISPLAY_NAME, "Scaled Ellipsoid with a pre-set orientation");
             layer.add(ellipsoid7);
 
             // Scaled, oriented Ellipsoid in 3rd "quadrant" (-X, -Y, -Z)
@@ -131,11 +131,11 @@ public class Ellipsoids extends ApplicationTemplate {
             ellipsoid8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ellipsoid8.setAttributes(attrs2);
             ellipsoid8.setVisible(true);
-            ellipsoid8.setValue(AVKey.DISPLAY_NAME, "Scaled, oriented Ellipsoid in the 3rd 'quadrant' (-X, -Y, -Z)");
+            ellipsoid8.set(AVKey.DISPLAY_NAME, "Scaled, oriented Ellipsoid in the 3rd 'quadrant' (-X, -Y, -Z)");
             layer.add(ellipsoid8);
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
         }
 
         protected JPanel makeDetailHintControlPanel() {
@@ -161,7 +161,7 @@ public class Ellipsoids extends ApplicationTemplate {
                 slider.addChangeListener(e -> {
                     double hint = ((JSlider) e.getSource()).getValue() / 10.0d;
                     setEllipsoidDetailHint(hint);
-                    getWwd().redraw();
+                    wwd().redraw();
                 });
                 detailHintSliderPanel.add(slider, BorderLayout.SOUTH);
             }
@@ -174,7 +174,7 @@ public class Ellipsoids extends ApplicationTemplate {
         }
 
         protected RenderableLayer getLayer() {
-            for (Layer layer : getWwd().model().getLayers()) {
+            for (Layer layer : wwd().model().getLayers()) {
                 if (layer.getName().contains("Renderable")) {
                     return (RenderableLayer) layer;
                 }

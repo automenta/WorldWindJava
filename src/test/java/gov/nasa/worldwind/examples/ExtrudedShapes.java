@@ -5,14 +5,14 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.View;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.airspaces.Polygon;
-import gov.nasa.worldwind.examples.render.airspaces.*;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.airspaces.Polygon;
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
@@ -29,8 +29,8 @@ import java.util.zip.*;
 public class ExtrudedShapes extends ApplicationTemplate {
 
     protected static final String DEMO_AIRSPACES_PATH
-        = "gov/nasa/worldwindx/examples/data/AirspaceBuilder-DemoShapes.zip";
-    protected static final String DEFAULT_IMAGE_URL = "gov/nasa/worldwindx/examples/images/build123sm.jpg";
+        = "gov/nasa/worldwind/examples/data/AirspaceBuilder-DemoShapes.zip";
+    protected static final String DEFAULT_IMAGE_URL = "gov/nasa/worldwind/examples/images/build123sm.jpg";
 
     protected static void loadAirspacesFromPath(String path, Collection<Airspace> airspaces) {
         File file = ExampleUtil.saveResourceToTempFile(path, ".zip");
@@ -64,7 +64,7 @@ public class ExtrudedShapes extends ApplicationTemplate {
                     airspaces.add(airspace);
 
                     if (tokens.length >= 2) {
-                        airspace.setValue(AVKey.DISPLAY_NAME, tokens[1]);
+                        airspace.set(AVKey.DISPLAY_NAME, tokens[1]);
                     }
                 }
                 catch (Exception ex) {
@@ -142,14 +142,14 @@ public class ExtrudedShapes extends ApplicationTemplate {
                 System.out.printf("NUM SHAPES = %d, NUM SIDES = %d\n", n, m);
 
                 // Add the layer to the model.
-                insertBeforePlacenames(this.getWwd(), layer);
+                WorldWindow.insertBeforePlacenames(this.wwd(), layer);
 
                 // Adjust the view so that it looks at the buildings.
-                View view = getWwd().view();
+                View view = wwd().view();
                 view.setEyePosition(Position.fromDegrees(47.656, -122.306, 1.0e3));
 
                 // This is how a select listener would notice that one of the shapes was picked.
-                getWwd().addSelectListener((SelectEvent event) -> {
+                wwd().addSelectListener((SelectEvent event) -> {
                     if (event.getTopObject() instanceof ExtrudedPolygon) {
                         System.out.println("EXTRUDED POLYGON");
                     }

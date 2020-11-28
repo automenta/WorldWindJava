@@ -5,9 +5,9 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.View;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -92,10 +92,10 @@ public class LineBackground extends ApplicationTemplate {
                 layer.add(path1); // Must draw the primary Path before drawing the background Path
                 layer.add(path2);
 
-                insertBeforeCompass(this.getWwd(), layer);
+                WorldWindow.insertBeforeCompass(this.wwd(), layer);
 
                 // Move the view to the line locations.
-                View view = getWwd().view();
+                View view = wwd().view();
                 view.setEyePosition(Position.fromDegrees(35.3, 124.6, 1500.0e3));
             }
             catch (Exception e) {

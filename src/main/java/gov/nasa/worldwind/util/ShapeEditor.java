@@ -9,15 +9,15 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.airspaces.Box;
-import gov.nasa.worldwind.examples.render.airspaces.Polygon;
-import gov.nasa.worldwind.examples.render.airspaces.*;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.Polygon;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.airspaces.Box;
+import gov.nasa.worldwind.render.markers.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -246,7 +246,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         // Create a layer to hold the control points.
         this.controlPointLayer = new MarkerLayer();
         this.controlPointLayer.setKeepSeparated(false);
-        this.controlPointLayer.setValue(AVKey.IGNORE, true); // means "Don't show this layer in the layer manager."
+        this.controlPointLayer.set(AVKey.IGNORE, true); // means "Don't show this layer in the layer manager."
         if (this.shape instanceof SurfaceShape
             || (this.shape instanceof Airspace && ((Airspace) this.shape).isDrawSurfaceShape())) {
             // This ensures that control points are always placed on the terrain for surface shapes.
@@ -257,7 +257,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         // Create a layer to hold the rotation line and any other affordances.
         this.accessoryLayer = new RenderableLayer();
         this.accessoryLayer.setPickEnabled(false);
-        this.accessoryLayer.setValue(AVKey.IGNORE, true);
+        this.accessoryLayer.set(AVKey.IGNORE, true);
 
         // Set up the Path for the rotation line.
         ShapeAttributes lineAttrs = new BasicShapeAttributes();
@@ -276,7 +276,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         // Create a layer to hold the editing annotations.
         this.annotationLayer = new RenderableLayer();
         this.annotationLayer.setPickEnabled(false);
-        this.annotationLayer.setValue(AVKey.IGNORE, true);
+        this.annotationLayer.set(AVKey.IGNORE, true);
 
         // Create the annotation.
         this.annotation = new EditorAnnotation("");
@@ -285,7 +285,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         // Create a layer to hold the shadow shape, the shape that shows the state before an editing operation.
         this.shadowLayer = new RenderableLayer();
         this.shadowLayer.setPickEnabled(false);
-        this.shadowLayer.setValue(AVKey.IGNORE, true);
+        this.shadowLayer.set(AVKey.IGNORE, true);
 
         // Create a units formatter for the annotations.
         this.unitsFormat = new UnitsFormat();
@@ -567,7 +567,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         this.updateControlPoints();
 
         this.getWwd().addSelectListener(this);
-        this.getWwd().getSceneController().addPropertyChangeListener(this);
+        this.getWwd().sceneControl().addPropertyChangeListener(this);
     }
 
     /**
@@ -582,7 +582,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         layers.remove(this.getShadowLayer());
 
         getWwd().removeSelectListener(this);
-        getWwd().getSceneController().removePropertyChangeListener(this);
+        getWwd().sceneControl().removePropertyChangeListener(this);
 
         ((Component) this.getWwd()).setCursor(null);
     }
@@ -658,7 +658,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             }
             case SelectEvent.LEFT_PRESS -> {
                 this.active = true;
-                PickedObjectList objectsUnderCursor = this.getWwd().getObjectsAtCurrentPosition();
+                PickedObjectList objectsUnderCursor = this.getWwd().objectsAtPosition();
                 if (objectsUnderCursor != null) {
                     PickedObject terrainObject = objectsUnderCursor.getTerrainObject();
                     if (terrainObject != null)
@@ -800,36 +800,37 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
      * @return the new shadow shape created, or null if the shape type is not recognized.
      */
     protected Renderable doMakeShadowShape() {
-        if (this.getShape() instanceof Polygon)
-            return new Polygon((Polygon) this.getShape());
-        else if (this.getShape() instanceof PartialCappedCylinder)
-            return new PartialCappedCylinder((PartialCappedCylinder) this.getShape());
-        else if (this.getShape() instanceof CappedCylinder)
-            return new CappedCylinder((CappedCylinder) this.getShape());
-        else if (this.getShape() instanceof CappedEllipticalCylinder)
-            return new CappedEllipticalCylinder((CappedEllipticalCylinder) this.getShape());
-        else if (this.getShape() instanceof Orbit)
-            return new Orbit((Orbit) this.getShape());
-        else if (this.getShape() instanceof Route)
-            return new Route((Route) this.getShape());
-        else if (this.getShape() instanceof Curtain)
-            return new Curtain((Curtain) this.getShape());
-        else if (this.getShape() instanceof SphereAirspace)
-            return new SphereAirspace((SphereAirspace) this.getShape());
-        else if (this.getShape() instanceof TrackAirspace)
-            return new TrackAirspace((TrackAirspace) this.getShape());
-        else if (this.getShape() instanceof SurfaceSquare)
-            return new SurfaceSquare((SurfaceSquare) this.getShape());
-        else if (this.getShape() instanceof SurfaceQuad)
-            return new SurfaceQuad((SurfaceQuad) this.getShape());
-        else if (this.getShape() instanceof SurfaceCircle)
-            return new SurfaceCircle((SurfaceCircle) this.getShape());
-        else if (this.getShape() instanceof SurfaceEllipse)
-            return new SurfaceEllipse((SurfaceEllipse) this.getShape());
-        else if (this.getShape() instanceof SurfacePolyline)
-            return new SurfacePolyline((SurfacePolyline) this.getShape());
-        else if (this.getShape() instanceof SurfacePolygon)
-            return new SurfacePolygon((SurfacePolygon) this.getShape());
+        final Renderable s = this.getShape();
+        if (s instanceof gov.nasa.worldwind.render.airspaces.Polygon)
+            return new gov.nasa.worldwind.render.airspaces.Polygon((gov.nasa.worldwind.render.airspaces.Polygon) s);
+        else if (s instanceof PartialCappedCylinder)
+            return new PartialCappedCylinder((PartialCappedCylinder) s);
+        else if (s instanceof CappedCylinder)
+            return new CappedCylinder((CappedCylinder) s);
+        else if (s instanceof CappedEllipticalCylinder)
+            return new CappedEllipticalCylinder((CappedEllipticalCylinder) s);
+        else if (s instanceof Orbit)
+            return new Orbit((Orbit) s);
+        else if (s instanceof Route)
+            return new Route((Route) s);
+        else if (s instanceof Curtain)
+            return new Curtain((Curtain) s);
+        else if (s instanceof SphereAirspace)
+            return new SphereAirspace((SphereAirspace) s);
+        else if (s instanceof TrackAirspace)
+            return new TrackAirspace((TrackAirspace) s);
+        else if (s instanceof SurfaceSquare)
+            return new SurfaceSquare((SurfaceSquare) s);
+        else if (s instanceof SurfaceQuad)
+            return new SurfaceQuad((SurfaceQuad) s);
+        else if (s instanceof SurfaceCircle)
+            return new SurfaceCircle((SurfaceCircle) s);
+        else if (s instanceof SurfaceEllipse)
+            return new SurfaceEllipse((SurfaceEllipse) s);
+        else if (s instanceof SurfacePolyline)
+            return new SurfacePolyline((SurfacePolyline) s);
+        else if (s instanceof SurfacePolygon)
+            return new SurfacePolygon((SurfacePolygon) s);
 
         return null;
     }
@@ -917,11 +918,11 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         // If the terrain beneath the control point is null, then the user is attempting to drag the handle off the
         // globe. This is not a valid state, so we ignore this action but keep the drag operation in effect.
-        PickedObjectList objectsUnderCursor = this.getWwd().getObjectsAtCurrentPosition();
+        PickedObjectList objectsUnderCursor = this.getWwd().objectsAtPosition();
         if (objectsUnderCursor == null)
             return;
 
-        PickedObject terrainObject = this.getWwd().getObjectsAtCurrentPosition().getTerrainObject();
+        PickedObject terrainObject = this.getWwd().objectsAtPosition().getTerrainObject();
         if (terrainObject == null)
             return;
 
@@ -1101,8 +1102,8 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             rAltitude = controlPoint.getAltitude() - this.getWwd().model().getGlobe().getElevation(
                 controlPoint.getLatitude(), controlPoint.getLongitude());
             // Path does not incorporate vertical exaggeration, but airspace shapes do. Compensate for that difference here.
-            cAltitude *= this.getWwd().getSceneController().getVerticalExaggeration();
-            rAltitude *= this.getWwd().getSceneController().getVerticalExaggeration();
+            cAltitude *= this.getWwd().sceneControl().getVerticalExaggeration();
+            rAltitude *= this.getWwd().sceneControl().getVerticalExaggeration();
             // Add a little altitude so that the line isn't lost during depth buffering.
             cAltitude += 100;
             rAltitude += 100;
@@ -1157,12 +1158,12 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
                 }
             }
         }
-        else if (shape instanceof gov.nasa.worldwind.examples.render.Polygon) {
-            for (Position position : ((gov.nasa.worldwind.examples.render.Polygon) shape).outerBoundary()) {
+        else if (shape instanceof gov.nasa.worldwind.render.Polygon) {
+            for (Position position : ((gov.nasa.worldwind.render.Polygon) shape).outerBoundary()) {
                 if (new LatLon(position).equals(location)) {
-                    if (((gov.nasa.worldwind.examples.render.Polygon) shape).getAltitudeMode() == WorldWind.ABSOLUTE)
+                    if (((gov.nasa.worldwind.render.Polygon) shape).getAltitudeMode() == WorldWind.ABSOLUTE)
                         altitude = position.getAltitude();
-                    else if (((gov.nasa.worldwind.examples.render.Polygon) shape).getAltitudeMode()
+                    else if (((gov.nasa.worldwind.render.Polygon) shape).getAltitudeMode()
                         == WorldWind.RELATIVE_TO_GROUND)
                         altitude = position.getAltitude() + this.getWwd().model().getGlobe().getElevation(
                             location.getLatitude(), location.getLongitude());
@@ -1461,7 +1462,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
     }
 
     /**
-     * Performs an edit for {@link gov.nasa.worldwind.examples.render.airspaces.Polygon} shapes.
+     * Performs an edit for {@link Polygon} shapes.
      *
      * @param controlPoint    the control point selected.
      * @param terrainPosition the terrain position under the cursor.
@@ -1469,10 +1470,11 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
     protected void reshapePolygonAirspace(Position terrainPosition, ControlPointMarker controlPoint) {
         Iterable<? extends LatLon> currentLocations = null;
 
-        if (this.getShape() instanceof Polygon)
-            currentLocations = ((Polygon) this.getShape()).getLocations();
-        else if (this.getShape() instanceof Curtain)
-            currentLocations = ((Curtain) this.getShape()).getLocations();
+        final Renderable shape = this.getShape();
+        if (shape instanceof gov.nasa.worldwind.render.airspaces.Polygon)
+            currentLocations = ((gov.nasa.worldwind.render.airspaces.Polygon) shape).getLocations();
+        else if (shape instanceof Curtain)
+            currentLocations = ((Curtain) shape).getLocations();
 
         if (currentLocations == null)
             return;
@@ -1491,7 +1493,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         {
             if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0
                 && this.isExtensionEnabled()) {
-                int minSize = this.getShape() instanceof Polygon ? 3 : 2;
+                int minSize = shape instanceof Polygon ? 3 : 2;
                 if (locations.size() > minSize) {
                     // Delete the control point.
                     locations.remove(controlPoint.getId());
@@ -1500,7 +1502,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             }
             else if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
                 && this.isExtensionEnabled()
-                && this.getShape() instanceof Curtain) {
+                && shape instanceof Curtain) {
                 // Add a new control point.
                 this.appendLocation(controlPoint, locations);
                 this.getControlPointLayer().setMarkers(null);
@@ -1513,27 +1515,28 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         else if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0
             && this.isExtensionEnabled()) {
             // Insert a new location along an edge of the polygon.
-            double altitude = ((Airspace) this.getShape()).getAltitudes()[1];
+            double altitude = ((Airspace) shape).getAltitudes()[1];
             this.addNearestLocation(terrainPosition, altitude, locations);
         }
 
         // Update the shape's locations.
-        if (this.getShape() instanceof Polygon)
-            ((Polygon) this.getShape()).setLocations(locations);
-        else if (this.getShape() instanceof Curtain)
-            ((Curtain) this.getShape()).setLocations(locations);
+        if (shape instanceof gov.nasa.worldwind.render.airspaces.Polygon)
+            ((gov.nasa.worldwind.render.airspaces.Polygon) shape).setLocations(locations);
+        else if (shape instanceof Curtain)
+            ((Curtain) shape).setLocations(locations);
     }
 
     /**
-     * Updates the control points and affordances for {@link gov.nasa.worldwind.examples.render.airspaces.Polygon} shapes.
+     * Updates the control points and affordances for {@link Polygon} shapes.
      */
     protected void updatePolygonAirspaceControlPoints() {
         Iterable<? extends LatLon> currentLocations = null;
 
-        if (this.getShape() instanceof Polygon)
-            currentLocations = ((Polygon) this.getShape()).getLocations();
-        else if (this.getShape() instanceof Curtain)
-            currentLocations = ((Curtain) this.getShape()).getLocations();
+        final Renderable shape = this.getShape();
+        if (shape instanceof gov.nasa.worldwind.render.airspaces.Polygon)
+            currentLocations = ((gov.nasa.worldwind.render.airspaces.Polygon)getShape()).getLocations();
+        else if (shape instanceof Curtain)
+            currentLocations = ((Curtain) shape).getLocations();
 
         if (currentLocations == null)
             return;

@@ -26,7 +26,7 @@ public interface AVList {
      * null values.
      * @throws NullPointerException if <code>key</code> is <code>null</code>.
      */
-    Object setValue(String key, Object value);
+    Object set(String key, Object value);
 
     /**
      * Returns the value for a specified key.
@@ -35,7 +35,7 @@ public interface AVList {
      * @return the attribute value if one exists in the collection, otherwise <code>null</code>.
      * @throws NullPointerException if <code>key</code> is <code>null</code>.
      */
-    Object getValue(String key);
+    Object get(String key);
 
     Iterable<Object> getValues();
 

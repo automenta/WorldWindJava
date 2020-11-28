@@ -6,9 +6,9 @@
 
 package gov.nasa.worldwind.performance;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.WWUtil;
@@ -43,10 +43,10 @@ public class VeryManyPaths extends ApplicationTemplate {
             this.makePaths(layer, new Position(START_LOCATION, PATH_HEIGHT), NUM_PATHS, PATH_LENGTH, NUM_POSITIONS);
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
 
             // Update layer panel
-            this.getWwd().view().setEyePosition(new Position(START_LOCATION, 3.0e6));
+            this.wwd().view().setEyePosition(new Position(START_LOCATION, 3.0e6));
         }
 
         protected void makePaths(RenderableLayer layer, Position origin, int numPaths, Angle length, int numPositions) {

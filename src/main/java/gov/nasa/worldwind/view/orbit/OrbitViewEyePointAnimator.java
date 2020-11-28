@@ -79,11 +79,11 @@ public class OrbitViewEyePointAnimator implements Animator {
 
         // Set the view's properties from the new modelview matrix.
         AVList params = modelview.extractViewingParameters(centerPoint, view.getRoll(), globe);
-        view.setCenterPosition((Position) params.getValue(AVKey.ORIGIN));
-        view.setHeading((Angle) params.getValue(AVKey.HEADING));
-        view.setPitch((Angle) params.getValue(AVKey.TILT));
-        view.setRoll((Angle) params.getValue(AVKey.ROLL));
-        view.setZoom((Double) params.getValue(AVKey.RANGE));
+        view.setCenterPosition((Position) params.get(AVKey.ORIGIN));
+        view.setHeading((Angle) params.get(AVKey.HEADING));
+        view.setPitch((Angle) params.get(AVKey.TILT));
+        view.setRoll((Angle) params.get(AVKey.ROLL));
+        view.setZoom((Double) params.get(AVKey.RANGE));
         view.setViewOutOfFocus(true);
     }
 

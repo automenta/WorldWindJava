@@ -18,15 +18,15 @@ public class GeoJSONObject extends AVListImpl {
     }
 
     public String getType() {
-        return (String) this.getValue(GeoJSONConstants.FIELD_TYPE);
+        return (String) this.get(GeoJSONConstants.FIELD_TYPE);
     }
 
     public AVList getCRS() {
-        return (AVList) this.getValue(GeoJSONConstants.FIELD_CRS);
+        return (AVList) this.get(GeoJSONConstants.FIELD_CRS);
     }
 
     public Object[] getBoundingBox() {
-        return (Object[]) this.getValue(GeoJSONConstants.FIELD_BBOX);
+        return (Object[]) this.get(GeoJSONConstants.FIELD_BBOX);
     }
 
     public boolean isGeometry() {
@@ -110,7 +110,7 @@ public class GeoJSONObject extends AVListImpl {
     }
 
     public String toString() {
-        Object o = this.getValue(GeoJSONConstants.FIELD_TYPE);
+        Object o = this.get(GeoJSONConstants.FIELD_TYPE);
         return o != null ? o.toString() : super.toString();
     }
 }

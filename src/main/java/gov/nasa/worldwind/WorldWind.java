@@ -209,15 +209,15 @@ public final class WorldWind {
     }
 
     public static void setValue(String key, Object value) {
-        instance.wwo.setValue(key, value);
+        instance.wwo.set(key, value);
     }
 
     public static void setValue(String key, String value) {
-        instance.wwo.setValue(key, value);
+        instance.wwo.set(key, value);
     }
 
     public static Object getValue(String key) {
-        return instance.wwo.getValue(key);
+        return instance.wwo.get(key);
     }
 
     public static String getStringValue(String key) {

@@ -39,7 +39,7 @@ public class InstallElevations extends ApplicationTemplate {
     // Define a subdirectory in the installed-data area to place the installed elevation tiles.
     protected static final String BASE_CACHE_PATH = "Examples/";
     // This example's elevations file is loaded from the following class-path resource.
-    protected static final String ELEVATIONS_PATH = "gov/nasa/worldwindx/examples/data/craterlake-elev-16bit-30m.tif";
+    protected static final String ELEVATIONS_PATH = "gov/nasa/worldwind/examples/data/craterlake-elev-16bit-30m.tif";
 
     public static void main(String[] args) {
         ApplicationTemplate.start("WorldWind Elevation Installation", InstallElevations.AppFrame.class);
@@ -77,14 +77,14 @@ public class InstallElevations extends ApplicationTemplate {
             // Add the new elevation model to the current (default) one. Must do it on the event dispatch thread.
             SwingUtilities.invokeLater(() -> {
                 CompoundElevationModel model
-                    = (CompoundElevationModel) AppFrame.this.getWwd().model().getGlobe().getElevationModel();
+                    = (CompoundElevationModel) AppFrame.this.wwd().model().getGlobe().getElevationModel();
                 model.addElevationModel(em);
 
                 // Set the view to look at the installed elevations. Get the location from the elevation model's
                 // construction parameters.
-                AVList params = (AVList) em.getValue(AVKey.CONSTRUCTION_PARAMETERS);
-                Sector sector = (Sector) params.getValue(AVKey.SECTOR);
-                ExampleUtil.goTo(getWwd(), sector);
+                AVList params = (AVList) em.get(AVKey.CONSTRUCTION_PARAMETERS);
+                Sector sector = (Sector) params.get(AVKey.SECTOR);
+                ExampleUtil.goTo(wwd(), sector);
             });
         }
 
@@ -98,9 +98,9 @@ public class InstallElevations extends ApplicationTemplate {
 
             // Create a parameter list specifying the install location information.
             AVList params = new AVListImpl();
-            params.setValue(AVKey.FILE_STORE_LOCATION, fileStoreLocation.getAbsolutePath());
-            params.setValue(AVKey.DATA_CACHE_NAME, cacheName);
-            params.setValue(AVKey.DATASET_NAME, displayName);
+            params.set(AVKey.FILE_STORE_LOCATION, fileStoreLocation.getAbsolutePath());
+            params.set(AVKey.DATA_CACHE_NAME, cacheName);
+            params.set(AVKey.DATASET_NAME, displayName);
 
             // Create a TiledImageProducer to install the imagery.
             TiledElevationProducer producer = new TiledElevationProducer();

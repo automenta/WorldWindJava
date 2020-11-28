@@ -5,12 +5,12 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.Cylinder;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.Cylinder;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -62,7 +62,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder3.setAltitudeMode(WorldWind.ABSOLUTE);
             cylinder3.setAttributes(attrs);
             cylinder3.setVisible(true);
-            cylinder3.setValue(AVKey.DISPLAY_NAME, "Cylinder with equal axes, ABSOLUTE altitude mode");
+            cylinder3.set(AVKey.DISPLAY_NAME, "Cylinder with equal axes, ABSOLUTE altitude mode");
             layer.add(cylinder3);
 
             // Cylinder with equal axes, RELATIVE_TO_GROUND
@@ -70,7 +70,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder4.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cylinder4.setAttributes(attrs);
             cylinder4.setVisible(true);
-            cylinder4.setValue(AVKey.DISPLAY_NAME, "Cylinder with equal axes, RELATIVE_TO_GROUND altitude mode");
+            cylinder4.set(AVKey.DISPLAY_NAME, "Cylinder with equal axes, RELATIVE_TO_GROUND altitude mode");
             layer.add(cylinder4);
 
             // Cylinder with equal axes, CLAMP_TO_GROUND
@@ -78,16 +78,16 @@ public class Cylinders extends ApplicationTemplate {
             cylinder5.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             cylinder5.setAttributes(attrs);
             cylinder5.setVisible(true);
-            cylinder5.setValue(AVKey.DISPLAY_NAME, "Cylinder with equal axes, CLAMP_TO_GROUND altitude mode");
+            cylinder5.set(AVKey.DISPLAY_NAME, "Cylinder with equal axes, CLAMP_TO_GROUND altitude mode");
             layer.add(cylinder5);
 
             // Cylinder with a texture, using Cylinder(position, height, radius) constructor
             Cylinder cylinder9 = new Cylinder(Position.fromDegrees(0, -90, 600000), 1200000, 600000);
             cylinder9.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            cylinder9.setImageSources("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            cylinder9.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             cylinder9.setAttributes(attrs);
             cylinder9.setVisible(true);
-            cylinder9.setValue(AVKey.DISPLAY_NAME, "Cylinder with a texture");
+            cylinder9.set(AVKey.DISPLAY_NAME, "Cylinder with a texture");
             layer.add(cylinder9);
 
             // Scaled Cylinder with default orientation
@@ -95,7 +95,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder.setAltitudeMode(WorldWind.ABSOLUTE);
             cylinder.setAttributes(attrs);
             cylinder.setVisible(true);
-            cylinder.setValue(AVKey.DISPLAY_NAME, "Scaled Cylinder with default orientation");
+            cylinder.set(AVKey.DISPLAY_NAME, "Scaled Cylinder with default orientation");
             layer.add(cylinder);
 
             // Scaled Cylinder with a pre-set orientation
@@ -103,7 +103,7 @@ public class Cylinders extends ApplicationTemplate {
                 Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
             cylinder2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cylinder2.setAttributes(attrs2);
-            cylinder2.setValue(AVKey.DISPLAY_NAME, "Scaled Cylinder with a pre-set orientation");
+            cylinder2.set(AVKey.DISPLAY_NAME, "Scaled Cylinder with a pre-set orientation");
             cylinder2.setVisible(true);
 
             layer.add(cylinder2);
@@ -112,10 +112,10 @@ public class Cylinders extends ApplicationTemplate {
             Cylinder cylinder6 = new Cylinder(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
                 Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
             cylinder6.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            cylinder6.setImageSources("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            cylinder6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             cylinder6.setAttributes(attrs2);
             cylinder6.setVisible(true);
-            cylinder6.setValue(AVKey.DISPLAY_NAME, "Scaled Cylinder with a pre-set orientation");
+            cylinder6.set(AVKey.DISPLAY_NAME, "Scaled Cylinder with a pre-set orientation");
             layer.add(cylinder6);
 
             // Scaled Cylinder with a pre-set orientation
@@ -124,7 +124,7 @@ public class Cylinders extends ApplicationTemplate {
             cylinder7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cylinder7.setAttributes(attrs2);
             cylinder7.setVisible(true);
-            cylinder7.setValue(AVKey.DISPLAY_NAME, "Scaled Cylinder with a pre-set orientation");
+            cylinder7.set(AVKey.DISPLAY_NAME, "Scaled Cylinder with a pre-set orientation");
             layer.add(cylinder7);
 
             // Scaled, oriented Cylinder in 3rd "quadrant" (-X, -Y, -Z)
@@ -133,11 +133,11 @@ public class Cylinders extends ApplicationTemplate {
             cylinder8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cylinder8.setAttributes(attrs2);
             cylinder8.setVisible(true);
-            cylinder8.setValue(AVKey.DISPLAY_NAME, "Scaled, oriented Cylinder in the 3rd 'quadrant' (-X, -Y, -Z)");
+            cylinder8.set(AVKey.DISPLAY_NAME, "Scaled, oriented Cylinder in the 3rd 'quadrant' (-X, -Y, -Z)");
             layer.add(cylinder8);
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
         }
 
         protected JPanel makeDetailHintControlPanel() {
@@ -163,7 +163,7 @@ public class Cylinders extends ApplicationTemplate {
                 slider.addChangeListener(e -> {
                     double hint = ((JSlider) e.getSource()).getValue() / 10.0d;
                     setCylinderDetailHint(hint);
-                    getWwd().redraw();
+                    wwd().redraw();
                 });
                 detailHintSliderPanel.add(slider, BorderLayout.SOUTH);
             }
@@ -176,7 +176,7 @@ public class Cylinders extends ApplicationTemplate {
         }
 
         protected RenderableLayer getLayer() {
-            for (Layer layer : getWwd().model().getLayers()) {
+            for (Layer layer : wwd().model().getLayers()) {
                 if (layer.getName().contains("Renderable")) {
                     return (RenderableLayer) layer;
                 }

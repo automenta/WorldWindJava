@@ -9,7 +9,7 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.event.BulkRetrievalListener;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe2D;
 import gov.nasa.worldwind.layers.AbstractLayer;
@@ -463,7 +463,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             if (postProcessor == null)
                 postProcessor = new DownloadPostProcessor(this, tile);
             retriever = new HTTPRetriever(url, postProcessor);
-            retriever.setValue(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
+            retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
         }
         else {
             Logging.logger().severe(

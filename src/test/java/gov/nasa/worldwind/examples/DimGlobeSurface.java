@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.examples.render.SurfaceImage;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -49,7 +50,7 @@ public class DimGlobeSurface extends ApplicationTemplate {
 
             layer.add(surfaceImage);
 
-            ApplicationTemplate.insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
 
             // Create an opacity control panel.
 
@@ -81,7 +82,7 @@ public class DimGlobeSurface extends ApplicationTemplate {
             this.opacitySlider.addChangeListener(event -> {
                 double value = opacitySlider.getValue();
                 surfaceImage.setOpacity(value / 100);
-                getWwd().redraw();
+                wwd().redraw();
             });
         }
     }

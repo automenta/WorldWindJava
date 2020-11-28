@@ -14,6 +14,7 @@ import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.ui.awt.AWTInputHandler;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.event.*;
@@ -29,7 +30,7 @@ import java.util.logging.Level;
  */
 public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindow {
     private static final long FALLBACK_TEXTURE_CACHE_SIZE = 60000000;
-    private final EventListenerList eventListeners = new EventListenerList();
+    private EventListenerList eventListeners = null;
     protected GpuResourceCache gpuResourceCache;
     protected SceneController sceneController;
     private InputHandler inputHandler;
@@ -84,8 +85,8 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
         }
 
         // Clear the texture cache
-        if (this.getGpuResourceCache() != null)
-            this.getGpuResourceCache().clear();
+        if (this.resourceCache() != null)
+            this.resourceCache().clear();
 
         // Dispose all the layers //  TODO: Need per-window dispose for layers
         if (this.model() != null && this.model().getLayers() != null) {
@@ -100,12 +101,12 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
             }
         }
 
-        SceneController sc = this.getSceneController();
+        SceneController sc = this.sceneControl();
         if (sc != null)
             sc.dispose();
     }
 
-    public GpuResourceCache getGpuResourceCache() {
+    public GpuResourceCache resourceCache() {
         return this.gpuResourceCache;
     }
 
@@ -135,24 +136,27 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
         this.setView(view);
     }
 
-    public SceneController getSceneController() {
+    public SceneController sceneControl() {
         return this.sceneController;
     }
 
-    public void setSceneController(SceneController sc) {
-        if (sc != null && this.getSceneController() != null) {
+    public void setSceneControl(SceneController sc) {
+        if (sc != null && this.sceneControl() != null) {
             sc.setGpuResourceCache(this.sceneController.getGpuResourceCache());
         }
 
         this.sceneController = sc;
     }
 
-    public InputHandler getInputHandler() {
+    public InputHandler input() {
         return this.inputHandler;
     }
 
-    public void setInputHandler(InputHandler inputHandler) {
+    public void setInput(InputHandler inputHandler) {
         this.inputHandler = inputHandler;
+        //HACK share eventListeners
+        this.eventListeners = (inputHandler instanceof AWTInputHandler ?
+            ((AWTInputHandler)inputHandler).eventListeners : new EventListenerList());
     }
 
     public void redraw() {
@@ -173,19 +177,19 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
         return this.sceneController.getPerFrameStatistics();
     }
 
-    public PickedObjectList getObjectsAtCurrentPosition() {
+    public PickedObjectList objectsAtPosition() {
         return null;
     }
 
-    public PickedObjectList getObjectsInSelectionBox() {
+    public PickedObjectList objectsInSelectionBox() {
         return null;
     }
 
-    public Position getCurrentPosition() {
+    public Position position() {
         if (this.sceneController == null)
             return null;
 
-        PickedObjectList pol = this.getSceneController().getPickedObjectList();
+        PickedObjectList pol = this.sceneControl().getPickedObjectList();
         if (pol == null || pol.size() < 1)
             return null;
 
@@ -203,7 +207,7 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
         if (this.sceneController == null)
             return null;
 
-        PickedObjectList pol = this.getSceneController().getPickedObjectList();
+        PickedObjectList pol = this.sceneControl().getPickedObjectList();
         if (pol == null || pol.size() < 1)
             return null;
 

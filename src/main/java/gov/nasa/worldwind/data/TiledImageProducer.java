@@ -121,20 +121,20 @@ public class TiledImageProducer extends TiledRasterProducer {
     }
 
     protected String validateDataSourceParams(AVList params, String name) {
-        if (params.hasKey(AVKey.PIXEL_FORMAT) && params.getValue(AVKey.PIXEL_FORMAT) != AVKey.IMAGE) {
+        if (params.hasKey(AVKey.PIXEL_FORMAT) && params.get(AVKey.PIXEL_FORMAT) != AVKey.IMAGE) {
             return Logging.getMessage("TiledRasterProducer.UnrecognizedRasterType",
-                params.getValue(AVKey.PIXEL_FORMAT), name);
+                params.get(AVKey.PIXEL_FORMAT), name);
         }
 
         if (params.hasKey(AVKey.COORDINATE_SYSTEM)
-            && params.getValue(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
-            && params.getValue(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_PROJECTED
+            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_GEOGRAPHIC
+            && params.get(AVKey.COORDINATE_SYSTEM) != AVKey.COORDINATE_SYSTEM_PROJECTED
         ) {
             return Logging.getMessage("TiledRasterProducer.UnrecognizedCoordinateSystem",
-                params.getValue(AVKey.COORDINATE_SYSTEM), name);
+                params.get(AVKey.COORDINATE_SYSTEM), name);
         }
 
-        if (params.getValue(AVKey.SECTOR) == null)
+        if (params.get(AVKey.SECTOR) == null)
             return Logging.getMessage("TiledRasterProducer.NoSector", name);
 
         return null;
@@ -144,33 +144,33 @@ public class TiledImageProducer extends TiledRasterProducer {
         // Preserve backward compatibility with previous versions of TiledImageProducer. If the caller specified a
         // format suffix parameter, use it to compute the image format properties. This gives priority to the format
         // suffix property to ensure applications which use format suffix continue to work.
-        if (params.getValue(AVKey.FORMAT_SUFFIX) != null) {
-            String s = WWIO.makeMimeTypeForSuffix(params.getValue(AVKey.FORMAT_SUFFIX).toString());
+        if (params.get(AVKey.FORMAT_SUFFIX) != null) {
+            String s = WWIO.makeMimeTypeForSuffix(params.get(AVKey.FORMAT_SUFFIX).toString());
             if (s != null) {
-                params.setValue(AVKey.IMAGE_FORMAT, s);
-                params.setValue(AVKey.AVAILABLE_IMAGE_FORMATS, new String[] {s});
+                params.set(AVKey.IMAGE_FORMAT, s);
+                params.set(AVKey.AVAILABLE_IMAGE_FORMATS, new String[] {s});
             }
         }
 
-        if (params.getValue(AVKey.PIXEL_FORMAT) == null) {
-            params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+        if (params.get(AVKey.PIXEL_FORMAT) == null) {
+            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
         }
 
         // Use the default image format if none exists.
-        if (params.getValue(AVKey.IMAGE_FORMAT) == null) {
-            params.setValue(AVKey.IMAGE_FORMAT, DEFAULT_IMAGE_FORMAT);
+        if (params.get(AVKey.IMAGE_FORMAT) == null) {
+            params.set(AVKey.IMAGE_FORMAT, DEFAULT_IMAGE_FORMAT);
         }
 
         // Compute the available image formats if none exists.
-        if (params.getValue(AVKey.AVAILABLE_IMAGE_FORMATS) == null) {
-            params.setValue(AVKey.AVAILABLE_IMAGE_FORMATS,
-                new String[] {params.getValue(AVKey.IMAGE_FORMAT).toString()});
+        if (params.get(AVKey.AVAILABLE_IMAGE_FORMATS) == null) {
+            params.set(AVKey.AVAILABLE_IMAGE_FORMATS,
+                new String[] {params.get(AVKey.IMAGE_FORMAT).toString()});
         }
 
         // Compute the format suffix if none exists.
-        if (params.getValue(AVKey.FORMAT_SUFFIX) == null) {
-            params.setValue(AVKey.FORMAT_SUFFIX,
-                WWIO.makeSuffixForMimeType(params.getValue(AVKey.IMAGE_FORMAT).toString()));
+        if (params.get(AVKey.FORMAT_SUFFIX) == null) {
+            params.set(AVKey.FORMAT_SUFFIX,
+                WWIO.makeSuffixForMimeType(params.get(AVKey.IMAGE_FORMAT).toString()));
         }
     }
 
@@ -188,23 +188,23 @@ public class TiledImageProducer extends TiledRasterProducer {
         AVList configParams = params.copy();
 
         // Determine a default display name if none exists.
-        if (configParams.getValue(AVKey.DISPLAY_NAME) == null)
-            configParams.setValue(AVKey.DISPLAY_NAME, params.getValue(AVKey.DATASET_NAME));
+        if (configParams.get(AVKey.DISPLAY_NAME) == null)
+            configParams.set(AVKey.DISPLAY_NAME, params.get(AVKey.DATASET_NAME));
 
         // Set the SERVICE_NAME and NETWORK_RETRIEVAL_ENABLED parameters to indicate this dataset is offline.
-        if (configParams.getValue(AVKey.SERVICE_NAME) == null)
-            configParams.setValue(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_OFFLINE);
+        if (configParams.get(AVKey.SERVICE_NAME) == null)
+            configParams.set(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_OFFLINE);
 
-        configParams.setValue(AVKey.NETWORK_RETRIEVAL_ENABLED, Boolean.FALSE);
+        configParams.set(AVKey.NETWORK_RETRIEVAL_ENABLED, Boolean.FALSE);
 
         // Set the texture format to DDS. If the texture data is already in DDS format, this parameter is benign.
-        configParams.setValue(AVKey.TEXTURE_FORMAT, DEFAULT_TEXTURE_FORMAT);
+        configParams.set(AVKey.TEXTURE_FORMAT, DEFAULT_TEXTURE_FORMAT);
 
         // Set the USE_MIP_MAPS, and USE_TRANSPARENT_TEXTURES parameters to true. The imagery produced by
         // TiledImageProducer is best viewed with mipMapping enabled, and texture transparency enabled. These parameters
         // tell the consumer of this imagery to enable these features during rendering.
-        configParams.setValue(AVKey.USE_MIP_MAPS, Boolean.TRUE);
-        configParams.setValue(AVKey.USE_TRANSPARENT_TEXTURES, Boolean.TRUE);
+        configParams.set(AVKey.USE_MIP_MAPS, Boolean.TRUE);
+        configParams.set(AVKey.USE_TRANSPARENT_TEXTURES, Boolean.TRUE);
 
         // Return a configuration file for a TiledImageLayer. TiledImageLayer is the standard WWJ component which
         // consumes and renders tiled imagery.

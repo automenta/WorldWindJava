@@ -19,11 +19,11 @@ import java.util.logging.Level;
  */
 public class WorldWindow {
     private static final String APP_CONFIGURATION
-        = "gov/nasa/worldwindx/applications/worldwindow/config/AppConfiguration.xml";
+        = "gov/nasa/worldwind/examples/worldwindow/config/AppConfiguration.xml";
 
     static {
         System.setProperty("gov.nasa.worldwind.app.config.document",
-            "gov/nasa/worldwindx/applications/worldwindow/config/worldwindow.worldwind.xml");
+            "gov/nasa/worldwind/examples/worldwindow/config/worldwindow.worldwind.xml");
         if (Configuration.isMacOS()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.growbox.intrudes", "false");

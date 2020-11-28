@@ -9,8 +9,7 @@ package gov.nasa.worldwind.examples.dataimporter;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.util.ExampleUtil;
@@ -64,7 +63,7 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
 
     protected void unHighlightSelectedSets() {
         for (FileStoreDataSet dataSet : this.currentlyHighlightedSets) {
-            Layer layer = (Layer) dataSet.getValue(SECTOR_LAYER);
+            Layer layer = (Layer) dataSet.get(SECTOR_LAYER);
             if (layer != null) {
                 this.wwd.model().getLayers().remove(layer);
             }
@@ -77,15 +76,15 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
         Sector overallSector = null;
 
         for (FileStoreDataSet dataSet : dataSets) {
-            Layer layer = (Layer) dataSet.getValue(SECTOR_LAYER);
+            Layer layer = (Layer) dataSet.get(SECTOR_LAYER);
             if (layer == null) {
                 layer = createSectorLayer(dataSet);
-                layer.setValue("FileStoreDataSet", dataSet);
-                layer.setValue(AVKey.IGNORE, true);
+                layer.set("FileStoreDataSet", dataSet);
+                layer.set(AVKey.IGNORE, true);
             }
 
             this.currentlyHighlightedSets.add(dataSet);
-            ApplicationTemplate.insertBeforePlacenames(this.wwd, layer);
+            WorldWindow.insertBeforePlacenames(this.wwd, layer);
 
             Sector sector = dataSet.getSector();
             if (sector != null)
@@ -97,7 +96,7 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
 
     protected Layer createSectorLayer(FileStoreDataSet dataSet) {
         RenderableLayer layer = new RenderableLayer();
-        dataSet.setValue(SECTOR_LAYER, layer);
+        dataSet.set(SECTOR_LAYER, layer);
 
         this.populateLayer(dataSet, layer);
 
@@ -105,7 +104,7 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
     }
 
     protected void populateLayer(FileStoreDataSet dataSet, RenderableLayer layer) {
-        Sector sector = (Sector) dataSet.getValue(AVKey.SECTOR);
+        Sector sector = (Sector) dataSet.get(AVKey.SECTOR);
         if (sector == null)
             return;
 
@@ -140,7 +139,7 @@ public class FileStoreSectorHighlighter implements ListSelectionListener, Select
         if (!(event.getTopObject() instanceof Path))
             return;
 
-        FileStoreDataSet dataSet = (FileStoreDataSet) event.getTopPickedObject().getParentLayer().getValue
+        FileStoreDataSet dataSet = (FileStoreDataSet) event.getTopPickedObject().getParentLayer().get
             ("FileStoreDataSet");
         if (dataSet == null)
             return;

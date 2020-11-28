@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -92,7 +92,7 @@ public class MultiResPath extends ApplicationTemplate {
 
             RenderableLayer rLayer = new RenderableLayer();
             rLayer.add(path);
-            insertBeforeCompass(getWwd(), rLayer);
+            WorldWindow.insertBeforeCompass(wwd(), rLayer);
         }
     }
 }

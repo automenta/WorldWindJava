@@ -6,8 +6,9 @@
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
 
@@ -16,9 +17,9 @@ import java.awt.*;
  * @version $Id: AudioPlayerAnnotation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class AudioPlayerAnnotation extends DialogAnnotation {
-    protected static final String PLAY_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/16x16-button-play.png";
-    protected static final String PAUSE_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/16x16-button-pause.png";
-    protected static final String BACK_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/16x16-button-start.png";
+    protected static final String PLAY_IMAGE_PATH = "gov/nasa/worldwind/examples/images/16x16-button-play.png";
+    protected static final String PAUSE_IMAGE_PATH = "gov/nasa/worldwind/examples/images/16x16-button-pause.png";
+    protected static final String BACK_IMAGE_PATH = "gov/nasa/worldwind/examples/images/16x16-button-start.png";
 
     protected static final String PLAY_TOOLTIP_TEXT = "Play audio clip";
     protected static final String PAUSE_TOOLTIP_TEXT = "Pause audio clip";

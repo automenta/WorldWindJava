@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.examples.render.Renderable;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.formats.georss.GeoRSSParser;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -114,7 +115,7 @@ public class GeoRSS extends ApplicationTemplate {
 
             RenderableLayer layer = this.buildGeoRSSLayer();
             layer.setName("GeoRSS Shapes");
-            insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
         }
 
         private RenderableLayer buildGeoRSSLayer() {

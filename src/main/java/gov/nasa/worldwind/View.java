@@ -7,7 +7,7 @@
 package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.animation.Animator;
-import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.ui.awt.ViewInputHandler;

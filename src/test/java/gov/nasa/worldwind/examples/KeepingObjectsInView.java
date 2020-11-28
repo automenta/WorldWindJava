@@ -9,11 +9,11 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.BasicAnimator;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.airspaces.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.view.orbit.OrbitView;
 
@@ -47,10 +47,10 @@ public class KeepingObjectsInView extends ApplicationTemplate {
 
             // Add a UserFacingIcon.
             randLocation1 = randomLocation(sector);
-            WWIcon icon = new UserFacingIcon("gov/nasa/worldwindx/examples/images/antenna.png",
+            WWIcon icon = new UserFacingIcon("gov/nasa/worldwind/examples/images/antenna.png",
                 new Position(randLocation1, 0));
             icon.setSize(new Dimension(64, 64));
-            icon.setValue(AVKey.FEEDBACK_ENABLED, Boolean.TRUE);
+            icon.set(AVKey.FEEDBACK_ENABLED, Boolean.TRUE);
             objects.add(icon);
 
             // Add a SphereAirspace.
@@ -129,7 +129,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             // Create an iterable of the objects we want to keep in view.
             this.objectsToTrack = createObjectsToTrack();
             // Set up a view controller to keep the objects in view.
-            this.viewController = new ViewController(this.getWwd());
+            this.viewController = new ViewController(this.wwd());
             this.viewController.setObjectsToTrack(this.objectsToTrack);
             // Set up a layer to render the objects we're tracking.
             this.addObjectsToWorldWindow(this.objectsToTrack);
@@ -151,8 +151,8 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             }
 
             this.helpLayer = new RenderableLayer();
-            this.helpLayer.add(createHelpAnnotation(getWwd()));
-            insertBeforePlacenames(this.getWwd(), this.helpLayer);
+            this.helpLayer.add(createHelpAnnotation(wwd()));
+            WorldWindow.insertBeforePlacenames(this.wwd(), this.helpLayer);
         }
 
         protected void disableHelpAnnotation() {
@@ -160,7 +160,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 return;
             }
 
-            this.getWwd().model().getLayers().remove(this.helpLayer);
+            this.wwd().model().getLayers().remove(this.helpLayer);
             this.helpLayer.clear();
             this.helpLayer = null;
         }
@@ -171,12 +171,12 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             IconLayer iconLayer = new IconLayer();
             iconLayer.setViewClippingEnabled(false);
             iconLayer.setName("Icons To Track");
-            insertBeforePlacenames(this.getWwd(), iconLayer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), iconLayer);
 
             // Set up a layer to render the markers.
             RenderableLayer shapesLayer = new RenderableLayer();
             shapesLayer.setName("Shapes to Track");
-            insertBeforePlacenames(this.getWwd(), shapesLayer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), shapesLayer);
 
             // Add the objects to track to the layers.
             for (Object o : objectsToTrack) {
@@ -189,8 +189,8 @@ public class KeepingObjectsInView extends ApplicationTemplate {
             }
 
             // Set up a SelectListener to drag the spheres.
-            this.getWwd().addSelectListener(new SelectListener() {
-                protected final SelectListener dragger = new BasicDragger(getWwd());
+            this.wwd().addSelectListener(new SelectListener() {
+                protected final SelectListener dragger = new BasicDragger(wwd());
 
                 @Override
                 public void selected(SelectEvent event) {
@@ -271,7 +271,7 @@ public class KeepingObjectsInView extends ApplicationTemplate {
 
         public Vec4[] computeViewLookAtForScene(View view) {
             Globe globe = this.wwd.model().getGlobe();
-            double ve = this.wwd.getSceneController().getVerticalExaggeration();
+            double ve = this.wwd.sceneControl().getVerticalExaggeration();
 
             ExtentVisibilitySupport vs = new ExtentVisibilitySupport();
             this.addExtents(vs);
@@ -338,22 +338,22 @@ public class KeepingObjectsInView extends ApplicationTemplate {
                 else if (o instanceof AVList) {
                     AVList avl = (AVList) o;
 
-                    Object b = avl.getValue(AVKey.FEEDBACK_ENABLED);
+                    Object b = avl.get(AVKey.FEEDBACK_ENABLED);
                     if (b == null || !Boolean.TRUE.equals(b)) {
                         continue;
                     }
 
-                    if (avl.getValue(AVKey.FEEDBACK_REFERENCE_POINT) != null) {
+                    if (avl.get(AVKey.FEEDBACK_REFERENCE_POINT) != null) {
                         screenExtents.add(new ExtentVisibilitySupport.ScreenExtent(
-                            (Vec4) avl.getValue(AVKey.FEEDBACK_REFERENCE_POINT),
-                            (Rectangle) avl.getValue(AVKey.FEEDBACK_SCREEN_BOUNDS)));
+                            (Vec4) avl.get(AVKey.FEEDBACK_REFERENCE_POINT),
+                            (Rectangle) avl.get(AVKey.FEEDBACK_SCREEN_BOUNDS)));
                     }
                 }
             }
 
             if (!extentHolders.isEmpty()) {
                 Globe globe = this.wwd.model().getGlobe();
-                double ve = this.wwd.getSceneController().getVerticalExaggeration();
+                double ve = this.wwd.sceneControl().getVerticalExaggeration();
                 vs.setExtents(ExtentVisibilitySupport.extentsFromExtentHolders(extentHolders, globe, ve));
             }
 

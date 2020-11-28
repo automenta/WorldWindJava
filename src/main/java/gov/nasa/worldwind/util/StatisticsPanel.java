@@ -74,11 +74,11 @@ public class StatisticsPanel extends JPanel {
     }
 
     private void fill(WorldWindow wwd) {
-        if (wwd.getSceneController().getPerFrameStatistics().size() < 1)
+        if (wwd.sceneControl().getPerFrameStatistics().size() < 1)
             return;
 
         PerformanceStatistic[] pfs = new PerformanceStatistic[wwd.getPerFrameStatistics().size()];
-        pfs = wwd.getSceneController().getPerFrameStatistics().toArray(pfs);
+        pfs = wwd.sceneControl().getPerFrameStatistics().toArray(pfs);
         Arrays.sort(pfs);
         for (PerformanceStatistic stat : pfs) {
             JLabel jcb = new JLabel(stat.toString());

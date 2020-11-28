@@ -1661,11 +1661,11 @@ public class WWIO {
      *                                  available via this exception's {@link Throwable#initCause(Throwable)} method.
      */
     public static InputStream openFileOrResourceStream(String fileName, Class c) {
-        if (fileName == null) {
-            String msg = Logging.getMessage("nullValue.FileIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (fileName == null) {
+//            String msg = Logging.getMessage("nullValue.FileIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Object streamOrException = WWIO.getFileOrResourceAsStream(fileName, c);
 

@@ -23,7 +23,7 @@ public class GeoJSONMultiPoint extends GeoJSONGeometry {
     }
 
     public GeoJSONPositionArray getCoordinates() {
-        return (GeoJSONPositionArray) this.getValue(GeoJSONConstants.FIELD_COORDINATES);
+        return (GeoJSONPositionArray) this.get(GeoJSONConstants.FIELD_COORDINATES);
     }
 
     public int getPointCount() {

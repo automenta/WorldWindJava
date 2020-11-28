@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.examples.render.SurfaceImage;
+import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.terrain.ZeroElevationModel;
 
 import javax.swing.*;
@@ -31,7 +31,7 @@ public class ElevationsAllZero {
 
             // Eliminate elevations by simply setting the globe's elevation model to ZeroElevationModel.
 
-            this.getWwd().model().getGlobe().setElevationModel(new ZeroElevationModel());
+            this.wwd().model().getGlobe().setElevationModel(new ZeroElevationModel());
         }
     }
 }

@@ -7,11 +7,11 @@ package gov.nasa.worldwind.terrain;
 
 import gov.nasa.worldwind.BasicFactory;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ogc.*;
-import gov.nasa.worldwind.examples.ogc.wcs.wcs100.WCS100Capabilities;
-import gov.nasa.worldwind.examples.ogc.wms.*;
+import gov.nasa.worldwind.layers.ogc.*;
+import gov.nasa.worldwind.layers.ogc.wcs.wcs100.WCS100Capabilities;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.globes.ElevationModel;
+import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Element;
 
@@ -80,7 +80,7 @@ public class BasicElevationModelFactory extends BasicFactory {
                 throw new IllegalStateException(message);
             }
 
-            params.setValue(AVKey.LAYER_NAMES, namedLayers.get(0).getName());
+            params.set(AVKey.LAYER_NAMES, namedLayers.get(0).getName());
         }
 
         return new WMSBasicElevationModel((WMSCapabilities) caps, params);

@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples.sar.segmentplane;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.Material;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.pick.PickedObject;
 
 import java.awt.*;
@@ -82,16 +82,16 @@ public class SegmentPlaneController implements MouseListener, MouseMotionListene
             return;
 
         if (this.wwd != null) {
-            this.wwd.getInputHandler().removeMouseListener(this);
-            this.wwd.getInputHandler().removeMouseMotionListener(this);
+            this.wwd.input().removeMouseListener(this);
+            this.wwd.input().removeMouseMotionListener(this);
             this.wwd.removePositionListener(this);
         }
 
         this.wwd = wwd;
 
         if (this.wwd != null) {
-            this.wwd.getInputHandler().addMouseListener(this);
-            this.wwd.getInputHandler().addMouseMotionListener(this);
+            this.wwd.input().addMouseListener(this);
+            this.wwd.input().addMouseMotionListener(this);
             this.wwd.addPositionListener(this);
         }
     }
@@ -105,11 +105,11 @@ public class SegmentPlaneController implements MouseListener, MouseMotionListene
             return null;
         }
 
-        if (this.getWorldWindow().getSceneController().getPickedObjectList() == null) {
+        if (this.getWorldWindow().sceneControl().getPickedObjectList() == null) {
             return null;
         }
 
-        PickedObject topObject = this.getWorldWindow().getSceneController().getPickedObjectList().getTopPickedObject();
+        PickedObject topObject = this.getWorldWindow().sceneControl().getPickedObjectList().getTopPickedObject();
         if (topObject == null || !(topObject.getObject() instanceof SegmentPlane.ControlPoint)) {
             return null;
         }

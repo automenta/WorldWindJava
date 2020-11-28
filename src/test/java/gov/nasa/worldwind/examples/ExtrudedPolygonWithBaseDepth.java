@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -75,9 +75,9 @@ public class ExtrudedPolygonWithBaseDepth extends ApplicationTemplate {
             layer.add(path);
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
 
-            getWwd().view().setEyePosition(
+            wwd().view().setEyePosition(
                 Position.fromDegrees(43.843162670564354, -114.63551647988652, 2652.865781935775));
         }
     }

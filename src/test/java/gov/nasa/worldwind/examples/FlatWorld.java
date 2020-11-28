@@ -5,9 +5,9 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.EarthFlat;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -27,7 +27,7 @@ import java.util.Arrays;
  * @see EarthFlat
  */
 public class FlatWorld extends ApplicationTemplate {
-    protected static final String SURFACE_POLYGON_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/georss.png";
+    protected static final String SURFACE_POLYGON_IMAGE_PATH = "gov/nasa/worldwind/examples/images/georss.png";
 
     public static void main(String[] args) {
         // Adjust configuration values before instantiation
@@ -105,7 +105,7 @@ public class FlatWorld extends ApplicationTemplate {
             shape.setAttributes(attrs);
             layer.add(shape);
 
-            ApplicationTemplate.insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
         }
 
         protected void makeSurfaceShapes() {
@@ -251,7 +251,7 @@ public class FlatWorld extends ApplicationTemplate {
             ((SurfacePolyline) shape).setClosed(false);
             layer.add(shape);
 
-            ApplicationTemplate.insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
         }
     }
 }

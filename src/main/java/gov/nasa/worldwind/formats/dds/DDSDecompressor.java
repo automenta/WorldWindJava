@@ -117,8 +117,8 @@ public class DDSDecompressor {
                 throw new WWRuntimeException(message);
             }
 
-            Sector sector = (Sector) params.getValue(AVKey.SECTOR);
-            params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+            Sector sector = (Sector) params.get(AVKey.SECTOR);
+            params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
 
             if (mipMapCount == 0) {
                 // read max resolution raster

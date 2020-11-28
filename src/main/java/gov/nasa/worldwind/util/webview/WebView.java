@@ -7,7 +7,8 @@ package gov.nasa.worldwind.util.webview;
 
 import gov.nasa.worldwind.Disposable;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
 import java.awt.event.*;

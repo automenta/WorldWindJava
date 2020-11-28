@@ -7,9 +7,9 @@ package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ogc.*;
-import gov.nasa.worldwind.examples.ogc.wms.*;
+import gov.nasa.worldwind.layers.ogc.*;
 import gov.nasa.worldwind.exception.*;
+import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 import org.w3c.dom.Element;
@@ -84,7 +84,7 @@ public class BasicLayerFactory extends BasicFactory {
                 throw new IllegalStateException(message);
             }
 
-            params.setValue(AVKey.LAYER_NAMES, namedLayers.get(0).getName());
+            params.set(AVKey.LAYER_NAMES, namedLayers.get(0).getName());
         }
 
         return new WMSTiledImageLayer((WMSCapabilities) caps, params);
@@ -172,7 +172,7 @@ public class BasicLayerFactory extends BasicFactory {
                     if (list != null && !list.isEmpty()) {
                         layerLists.add(list);
                         if (title != null && !title.isEmpty())
-                            list.setValue(AVKey.DISPLAY_NAME, title);
+                            list.set(AVKey.DISPLAY_NAME, title);
                     }
                 }
             }

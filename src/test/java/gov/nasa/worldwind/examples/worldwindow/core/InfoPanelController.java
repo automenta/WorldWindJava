@@ -8,10 +8,11 @@ package gov.nasa.worldwind.examples.worldwindow.core;
 
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.examples.worldwindow.features.AbstractFeature;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.layers.AnnotationLayer;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.awt.*;

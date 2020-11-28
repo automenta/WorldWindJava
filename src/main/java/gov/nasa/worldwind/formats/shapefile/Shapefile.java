@@ -9,7 +9,7 @@ package gov.nasa.worldwind.formats.shapefile;
 import com.jogamp.common.nio.Buffers;
 import gov.nasa.worldwind.Exportable;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ogc.kml.KMLConstants;
+import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
 import gov.nasa.worldwind.geom.*;
@@ -187,7 +187,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
 
         try {
-            this.setValue(AVKey.DISPLAY_NAME, source.toString());
+            this.set(AVKey.DISPLAY_NAME, source.toString());
 
             if (source instanceof File)
                 this.initializeFromFile((File) source, params);
@@ -205,7 +205,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
         catch (Exception e) {
             String message = Logging.getMessage("SHP.ExceptionAttemptingToReadShapefile",
-                this.getValue(AVKey.DISPLAY_NAME));
+                this.get(AVKey.DISPLAY_NAME));
             Logging.logger().log(Level.SEVERE, message, e);
             throw new WWRuntimeException(message, e);
         }
@@ -259,7 +259,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         }
 
         try {
-            this.setValue(AVKey.DISPLAY_NAME, shpStream.toString());
+            this.set(AVKey.DISPLAY_NAME, shpStream.toString());
             this.initializeFromStreams(shpStream, shxStream, dbfStream, prjStream, params);
         }
         catch (Exception e) {
@@ -724,7 +724,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
         // Initialize the Shapefile before opening its associated attributes file. This avoids opening the attributes
         // file if an exception is thrown while opening the Shapefile.
-        this.setValue(AVKey.DISPLAY_NAME, file.getPath());
+        this.set(AVKey.DISPLAY_NAME, file.getPath());
         this.initialize(params);
 
         // Open the shapefile attribute source as a DBaseFile. We let the DBaseFile determine how to handle source File.
@@ -781,7 +781,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
 
         // Initialize the Shapefile before opening its associated attributes file. This avoids opening the attributes
         // file if an exception is thrown while opening the Shapefile.
-        this.setValue(AVKey.DISPLAY_NAME, url.toString());
+        this.set(AVKey.DISPLAY_NAME, url.toString());
         this.initialize(params);
 
         // Open the shapefile attribute source as a DBaseFile. We let the DBaseFile determine how to handle source URL.
@@ -1160,7 +1160,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @return a non-empty string if the coordinate system parameters are invalid; null otherwise.
      */
     protected String validateCoordinateSystem(AVList params) {
-        Object o = params.getValue(AVKey.COORDINATE_SYSTEM);
+        Object o = params.get(AVKey.COORDINATE_SYSTEM);
 
         if (!this.hasKey(AVKey.COORDINATE_SYSTEM)) {
             Logging.logger().warning(
@@ -1186,20 +1186,20 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @return a non-empty string if the projection parameters are invalid; null otherwise.
      */
     protected String validateProjection(AVList params) {
-        Object proj = params.getValue(AVKey.PROJECTION_NAME);
+        Object proj = params.get(AVKey.PROJECTION_NAME);
 
         if (AVKey.PROJECTION_UTM.equals(proj)) {
             StringBuilder sb = new StringBuilder();
 
             // Validate the UTM zone.
-            Object o = params.getValue(AVKey.PROJECTION_ZONE);
+            Object o = params.get(AVKey.PROJECTION_ZONE);
             if (o == null)
                 sb.append(Logging.getMessage("generic.ZoneIsMissing"));
             else if (!(o instanceof Integer) || ((Integer) o) < 1 || ((Integer) o) > 60)
                 sb.append(Logging.getMessage("generic.ZoneIsInvalid", o));
 
             // Validate the UTM hemisphere.
-            o = params.getValue(AVKey.PROJECTION_HEMISPHERE);
+            o = params.get(AVKey.PROJECTION_HEMISPHERE);
             if (o == null)
                 sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("generic.HemisphereIsMissing"));
             else if (!o.equals(AVKey.NORTH) && !o.equals(AVKey.SOUTH))
@@ -1626,7 +1626,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         if (buffer == null || !buffer.hasRemaining())
             return null;
 
-        Object o = this.getValue(AVKey.COORDINATE_SYSTEM);
+        Object o = this.get(AVKey.COORDINATE_SYSTEM);
 
         if (!this.hasKey(AVKey.COORDINATE_SYSTEM))
             return this.readUnspecifiedPoints(record, buffer);
@@ -1697,13 +1697,13 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      */
     @SuppressWarnings("UnusedDeclaration")
     protected DoubleBuffer readProjectedPoints(ShapefileRecord record, ByteBuffer buffer) {
-        Object o = this.getValue(AVKey.PROJECTION_NAME);
+        Object o = this.get(AVKey.PROJECTION_NAME);
 
         if (AVKey.PROJECTION_UTM.equals(o)) {
             // The Shapefile's coordinate system is UTM. Convert the UTM coordinates to geographic. The zone and hemisphere
             // parameters have already been validated in validateBounds.
-            Integer zone = (Integer) this.getValue(AVKey.PROJECTION_ZONE);
-            String hemisphere = (String) this.getValue(AVKey.PROJECTION_HEMISPHERE);
+            Integer zone = (Integer) this.get(AVKey.PROJECTION_ZONE);
+            String hemisphere = (String) this.get(AVKey.PROJECTION_HEMISPHERE);
 
             // Create a view of the buffer as a doubles, and convert those coordinates from UTM to geographic.
             DoubleBuffer doubleBuffer = buffer.asDoubleBuffer();
@@ -1730,7 +1730,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @return a bounding rectangle with coordinates from the specified buffer.
      */
     protected BoundingRectangle readBoundingRectangle(ByteBuffer buffer) {
-        Object o = this.getValue(AVKey.COORDINATE_SYSTEM);
+        Object o = this.get(AVKey.COORDINATE_SYSTEM);
 
         if (!this.hasKey(AVKey.COORDINATE_SYSTEM))
             return this.readUnspecifiedBoundingRectangle(buffer);
@@ -1828,15 +1828,15 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @throws WWRuntimeException if the Shapefile's projection is unsupported.
      */
     protected BoundingRectangle readProjectedBoundingRectangle(ByteBuffer buffer) {
-        Object o = this.getValue(AVKey.PROJECTION_NAME);
+        Object o = this.get(AVKey.PROJECTION_NAME);
 
         if (AVKey.PROJECTION_UTM.equals(o)) {
             // Read the bounding rectangle coordinates in the following order: minEast, minNorth, maxEast, maxNorth.
             double[] coords = ShapefileUtils.readDoubleArray(buffer, 4);
             // Convert the UTM bounding rectangle to a geographic bounding rectangle. The zone and hemisphere parameters
             // have already been validated in validateBounds.
-            Integer zone = (Integer) this.getValue(AVKey.PROJECTION_ZONE);
-            String hemisphere = (String) this.getValue(AVKey.PROJECTION_HEMISPHERE);
+            Integer zone = (Integer) this.get(AVKey.PROJECTION_ZONE);
+            String hemisphere = (String) this.get(AVKey.PROJECTION_HEMISPHERE);
             Sector sector = Sector.fromUTMRectangle(zone, hemisphere, coords[0], coords[2], coords[1], coords[3]);
             // Return an array with bounding rectangle coordinates in the following order: minLon, maxLon, minLat, maxLat.
             BoundingRectangle rect = new BoundingRectangle();

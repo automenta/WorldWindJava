@@ -519,7 +519,7 @@ public class GDALUtils {
             int colorInt = imageBand.GetRasterColorInterpretation();
 
             if (params.hasKey(AVKey.RASTER_BAND_MAX_PIXEL_VALUE)) {
-                maxValue = (Double) params.getValue(AVKey.RASTER_BAND_MAX_PIXEL_VALUE);
+                maxValue = (Double) params.get(AVKey.RASTER_BAND_MAX_PIXEL_VALUE);
             }
             else if ((bandDataType == gdalconstConstants.GDT_UInt16 || bandDataType == gdalconstConstants.GDT_UInt32)
                 && colorInt != gdalconst.GCI_AlphaBand && colorInt != gdalconst.GCI_Undefined) {
@@ -561,7 +561,7 @@ public class GDALUtils {
         int actualBitsPerColor = gdal.GetDataTypeSize(bandDataType);
 
         if (params.hasKey(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL)) {
-            actualBitsPerColor = (Integer) params.getValue(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL);
+            actualBitsPerColor = (Integer) params.get(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL);
         }
         else if (maxValue > 0.0d) {
             actualBitsPerColor = (int) Math.ceil(Math.log(maxValue) / Math.log(2.0d));
@@ -940,7 +940,7 @@ public class GDALUtils {
         }
 
         try {
-            Object o = params.getValue(AVKey.GDAL_MASK_DATASET);
+            Object o = params.get(AVKey.GDAL_MASK_DATASET);
             if (o instanceof Dataset) {
                 Dataset maskDS = (Dataset) o;
 
@@ -1184,7 +1184,7 @@ public class GDALUtils {
             Logging.logger().finest(message);
             throw new IllegalArgumentException(message);
         }
-        params.setValue(AVKey.WIDTH, width);
+        params.set(AVKey.WIDTH, width);
 
         int height = ds.getRasterYSize();
         if (0 >= height) {
@@ -1192,7 +1192,7 @@ public class GDALUtils {
             Logging.logger().finest(message);
             throw new IllegalArgumentException(message);
         }
-        params.setValue(AVKey.HEIGHT, height);
+        params.set(AVKey.HEIGHT, height);
 
         int bandCount = ds.getRasterCount();
         if (0 >= bandCount) {
@@ -1200,51 +1200,51 @@ public class GDALUtils {
             Logging.logger().finest(message);
             throw new WWRuntimeException(message);
         }
-        params.setValue(AVKey.NUM_BANDS, bandCount);
+        params.set(AVKey.NUM_BANDS, bandCount);
 
         Band band = ds.GetRasterBand(1);
         if (null != band) {
             if (band.GetOverviewCount() > 0) {
-                params.setValue(AVKey.RASTER_HAS_OVERVIEWS, Boolean.TRUE);
+                params.set(AVKey.RASTER_HAS_OVERVIEWS, Boolean.TRUE);
             }
 
             int dataType = band.getDataType();
 
             if (dataType == gdalconst.GDT_Int16 || dataType == gdalconst.GDT_CInt16) {
-                params.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
-                params.setValue(AVKey.DATA_TYPE, AVKey.INT16);
+                params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+                params.set(AVKey.DATA_TYPE, AVKey.INT16);
             }
             else if (dataType == gdalconst.GDT_Int32 || dataType == gdalconst.GDT_CInt32) {
-                params.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
-                params.setValue(AVKey.DATA_TYPE, AVKey.INT32);
+                params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+                params.set(AVKey.DATA_TYPE, AVKey.INT32);
             }
             else if (dataType == gdalconst.GDT_Float32 || dataType == gdalconst.GDT_CFloat32) {
-                params.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
-                params.setValue(AVKey.DATA_TYPE, AVKey.FLOAT32);
+                params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+                params.set(AVKey.DATA_TYPE, AVKey.FLOAT32);
             }
             else if (dataType == gdalconst.GDT_Byte) {
                 int colorInt = band.GetColorInterpretation();
                 if (colorInt == gdalconst.GCI_GrayIndex && bandCount < 3) {
-                    params.setValue(AVKey.IMAGE_COLOR_FORMAT, AVKey.GRAYSCALE);
+                    params.set(AVKey.IMAGE_COLOR_FORMAT, AVKey.GRAYSCALE);
                 }
                 else {
                     // if has only one band => one byte index of the palette, 216 marks voids
-                    params.setValue(AVKey.IMAGE_COLOR_FORMAT, AVKey.COLOR);
+                    params.set(AVKey.IMAGE_COLOR_FORMAT, AVKey.COLOR);
                 }
-                params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-                params.setValue(AVKey.DATA_TYPE, AVKey.INT8);
+                params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+                params.set(AVKey.DATA_TYPE, AVKey.INT8);
             }
             else if (dataType == gdalconst.GDT_UInt16) {
-                params.setValue(AVKey.IMAGE_COLOR_FORMAT,
+                params.set(AVKey.IMAGE_COLOR_FORMAT,
                     ((bandCount >= 3) ? AVKey.COLOR : AVKey.GRAYSCALE));
-                params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-                params.setValue(AVKey.DATA_TYPE, AVKey.INT16);
+                params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+                params.set(AVKey.DATA_TYPE, AVKey.INT16);
             }
             else if (dataType == gdalconst.GDT_UInt32) {
-                params.setValue(AVKey.IMAGE_COLOR_FORMAT,
+                params.set(AVKey.IMAGE_COLOR_FORMAT,
                     ((bandCount >= 3) ? AVKey.COLOR : AVKey.GRAYSCALE));
-                params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-                params.setValue(AVKey.DATA_TYPE, AVKey.INT32);
+                params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+                params.set(AVKey.DATA_TYPE, AVKey.INT32);
             }
             else {
                 String msg = Logging.getMessage("generic.UnrecognizedDataType", dataType);
@@ -1256,17 +1256,17 @@ public class GDALUtils {
                 Double[] noDataVal = new Double[1];
                 band.GetNoDataValue(noDataVal);
                 if (noDataVal[0] != null) {
-                    params.setValue(AVKey.MISSING_DATA_SIGNAL, noDataVal[0]);
+                    params.set(AVKey.MISSING_DATA_SIGNAL, noDataVal[0]);
                 }
             }
 
             if ("GTiff".equalsIgnoreCase(ds.GetDriver().getShortName())
                 && params.hasKey(AVKey.FILE)
-                && AVKey.ELEVATION.equals(params.getValue(AVKey.PIXEL_FORMAT))
+                && AVKey.ELEVATION.equals(params.get(AVKey.PIXEL_FORMAT))
                 && !params.hasKey(AVKey.ELEVATION_UNIT)) {
                 GeotiffReader reader = null;
                 try {
-                    File src = (File) params.getValue(AVKey.FILE);
+                    File src = (File) params.get(AVKey.FILE);
                     AVList tiffParams = new AVListImpl();
                     reader = new GeotiffReader(src);
                     reader.copyMetadataTo(tiffParams);
@@ -1286,7 +1286,7 @@ public class GDALUtils {
 
             extractMinMaxSampleValues(ds, band, params);
 
-            if (AVKey.ELEVATION.equals(params.getValue(AVKey.PIXEL_FORMAT))
+            if (AVKey.ELEVATION.equals(params.get(AVKey.PIXEL_FORMAT))
                 && (!params.hasKey(AVKey.ELEVATION_MIN)
                 || !params.hasKey(AVKey.ELEVATION_MAX)
                 || !params.hasKey(AVKey.MISSING_DATA_SIGNAL))
@@ -1296,18 +1296,18 @@ public class GDALUtils {
                 band.ComputeRasterMinMax(minmax);
 
                 if (ElevationsUtil.isKnownMissingSignal(minmax[0])) {
-                    params.setValue(AVKey.MISSING_DATA_SIGNAL, minmax[0]);
+                    params.set(AVKey.MISSING_DATA_SIGNAL, minmax[0]);
 
                     if (setNoDataValue(band, minmax[0])) {
                         band.ComputeRasterMinMax(minmax);
 
-                        params.setValue(AVKey.ELEVATION_MIN, minmax[0]);
-                        params.setValue(AVKey.ELEVATION_MAX, minmax[1]);
+                        params.set(AVKey.ELEVATION_MIN, minmax[0]);
+                        params.set(AVKey.ELEVATION_MAX, minmax[1]);
                     }
                 }
                 else {
-                    params.setValue(AVKey.ELEVATION_MIN, minmax[0]);
-                    params.setValue(AVKey.ELEVATION_MAX, minmax[1]);
+                    params.set(AVKey.ELEVATION_MIN, minmax[0]);
+                    params.set(AVKey.ELEVATION_MAX, minmax[1]);
                 }
             }
         }
@@ -1328,7 +1328,7 @@ public class GDALUtils {
 
         SpatialReference srs = null;
         if (!WWUtil.isEmpty(proj_wkt)) {
-            params.setValue(AVKey.SPATIAL_REFERENCE_WKT, proj_wkt);
+            params.set(AVKey.SPATIAL_REFERENCE_WKT, proj_wkt);
             srs = new SpatialReference(proj_wkt);
         }
 
@@ -1352,11 +1352,11 @@ public class GDALUtils {
         double pixelWidth = gt[GDAL.GT_1_PIXEL_WIDTH];
         double pixelHeight = gt[GDAL.GT_5_PIXEL_HEIGHT];
 
-        params.setValue(AVKey.PIXEL_WIDTH, pixelWidth);
-        params.setValue(AVKey.PIXEL_HEIGHT, pixelHeight);
+        params.set(AVKey.PIXEL_WIDTH, pixelWidth);
+        params.set(AVKey.PIXEL_HEIGHT, pixelHeight);
 
         if (minX == 0.0d && pixelWidth == 1.0d && rotX == 0.0d && maxY == 0.0d && rotY == 0.0d && pixelHeight == 1.0d) {
-            params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_SCREEN);
+            params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_SCREEN);
         }
         else if (Angle.isValidLongitude(minX) && Angle.isValidLatitude(maxY)
             && Angle.isValidLongitude(maxX) && Angle.isValidLatitude(minY)) {
@@ -1372,11 +1372,11 @@ public class GDALUtils {
 
         if (null != srs) {
             if (!params.hasKey(AVKey.SPATIAL_REFERENCE_WKT)) {
-                params.setValue(AVKey.SPATIAL_REFERENCE_WKT, srs.ExportToWkt());
+                params.set(AVKey.SPATIAL_REFERENCE_WKT, srs.ExportToWkt());
             }
 
             if (srs.IsLocal() == 1) {
-                params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
+                params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
                 String msg = Logging.getMessage("generic.UnknownCoordinateSystem", proj_wkt);
                 Logging.logger().severe(msg);
                 return params;
@@ -1385,19 +1385,19 @@ public class GDALUtils {
             // save area in image's native CS and Projection
             GDAL.Area area = new GDAL.Area(srs, ds);
             Sector sector = area.getSector();
-            params.setValue(AVKey.GDAL_AREA, area);
+            params.set(AVKey.GDAL_AREA, area);
             if (null != sector) {
-                params.setValue(AVKey.SECTOR, sector);
+                params.set(AVKey.SECTOR, sector);
                 LatLon origin = new LatLon(sector.latMax(), sector.lonMin());
-                params.setValue(AVKey.ORIGIN, origin);
+                params.set(AVKey.ORIGIN, origin);
             }
 
             if (srs.IsGeographic() == 1) {
-                params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
+                params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
                 // no need to extract anything, all parameters were extracted above
             }
             else if (srs.IsProjected() == 1) {
-                params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
+                params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
 
                 // ----8><----------------------------------------------------------------------------------------
                 // Example of a non-typical GDAL projection string
@@ -1435,10 +1435,10 @@ public class GDALUtils {
                     unit = unit.toLowerCase();
                     if ("meter".equals(unit) || "meters".equals(unit) || "metre".equals(unit) || "metres".equals(
                         unit)) {
-                        params.setValue(AVKey.PROJECTION_UNITS, AVKey.UNIT_METER);
+                        params.set(AVKey.PROJECTION_UNITS, AVKey.UNIT_METER);
                     }
                     else if ("foot".equals(unit) || "feet".equals(unit)) {
-                        params.setValue(AVKey.PROJECTION_UNITS, AVKey.UNIT_FOOT);
+                        params.set(AVKey.PROJECTION_UNITS, AVKey.UNIT_FOOT);
                     }
                     else {
                         Logging.logger().warning(Logging.getMessage("generic.UnknownProjectionUnits", unit));
@@ -1446,14 +1446,14 @@ public class GDALUtils {
                 }
 
                 if (null != projection && !projection.isEmpty()) {
-                    params.setValue(AVKey.PROJECTION_NAME, projection);
+                    params.set(AVKey.PROJECTION_NAME, projection);
                 }
             }
             else if (srs.IsLocal() == 1) {
-                params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_SCREEN);
+                params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_SCREEN);
             }
             else {
-                params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
+                params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
                 String msg = Logging.getMessage("generic.UnknownCoordinateSystem", proj_wkt);
                 Logging.logger().severe(msg);
 //                throw new WWRuntimeException(msg);
@@ -1461,7 +1461,7 @@ public class GDALUtils {
         }
 
         if (!params.hasKey(AVKey.COORDINATE_SYSTEM)) {
-            params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
+            params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
         }
 
         return params;
@@ -1472,7 +1472,7 @@ public class GDALUtils {
     }
 
     protected static void extractMinMaxSampleValues(Dataset ds, Band band, AVList params) {
-        if (null != ds && null != params && AVKey.ELEVATION.equals(params.getValue(AVKey.PIXEL_FORMAT))) {
+        if (null != ds && null != params && AVKey.ELEVATION.equals(params.get(AVKey.PIXEL_FORMAT))) {
             band = (null != band) ? band : ds.GetRasterBand(1);
 
             Double[] dbls = new Double[16];
@@ -1503,15 +1503,15 @@ public class GDALUtils {
             }
 
             if (null != minValue) {
-                params.setValue(AVKey.ELEVATION_MIN, minValue);
+                params.set(AVKey.ELEVATION_MIN, minValue);
             }
 
             if (null != maxValue) {
-                params.setValue(AVKey.ELEVATION_MAX, maxValue);
+                params.set(AVKey.ELEVATION_MAX, maxValue);
             }
 
             if (null != missingSignal) {
-                params.setValue(AVKey.MISSING_DATA_SIGNAL, missingSignal);
+                params.set(AVKey.MISSING_DATA_SIGNAL, missingSignal);
             }
         }
     }
@@ -1578,7 +1578,7 @@ public class GDALUtils {
         if (params.hasKey(AVKey.BANDS_ORDER)) {
             int bandsCount = ds.getRasterCount();
 
-            Object o = params.getValue(AVKey.BANDS_ORDER);
+            Object o = params.get(AVKey.BANDS_ORDER);
 
             if (o instanceof Integer[]) {
                 Integer[] order = (Integer[]) o;
@@ -1635,7 +1635,7 @@ public class GDALUtils {
             throw new WWRuntimeException(message);
         }
 
-        Object o = params.getValue(AVKey.SECTOR);
+        Object o = params.get(AVKey.SECTOR);
         if (!(o instanceof Sector)) {
             String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR);
             Logging.logger().severe(message);
@@ -1657,7 +1657,7 @@ public class GDALUtils {
                 ? ByteOrder.LITTLE_ENDIAN : ByteOrder.BIG_ENDIAN;
         }
         else {
-            params.setValue(AVKey.BYTE_ORDER,
+            params.set(AVKey.BYTE_ORDER,
                 (byteOrder == ByteOrder.BIG_ENDIAN) ? AVKey.BIG_ENDIAN : AVKey.LITTLE_ENDIAN);
         }
 

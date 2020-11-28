@@ -34,7 +34,7 @@ public class Shapefiles extends ApplicationTemplate {
                     randomAttrs.nextAttributes().asShapeAttributes()));
 
             // Load the shapefile. Define the completion callback.
-            factory.createFromShapefileSource("shapefiles/TM_WORLD_BORDERS-0.3.shp",
+            factory.createFromShapefileSource("/shapefiles/TM_WORLD_BORDERS-0.3.shp",
                 new ShapefileLayerFactory.CompletionCallback() {
                     @Override
                     public void completion(Object result) {
@@ -42,7 +42,7 @@ public class Shapefiles extends ApplicationTemplate {
                         layer.setName(WWIO.getFilename(layer.getName()));
 
                         // Add the layer to the WorldWindow's layer list on the Event Dispatch Thread.
-                        SwingUtilities.invokeLater(() -> AppFrame.this.getWwd().model().getLayers().add(layer));
+                        SwingUtilities.invokeLater(() -> AppFrame.this.wwd().model().getLayers().add(layer));
                     }
 
                     @Override

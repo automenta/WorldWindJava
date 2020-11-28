@@ -9,7 +9,6 @@ package gov.nasa.worldwind.examples.sar;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.examples.sar.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -171,8 +170,8 @@ public class AnalysisPanel extends JPanel implements Restorable {
 //            this.wwd.getModel().getGlobe().getElevationModel().addPropertyChangeListener(this.propertyChangeListener);
             this.wwd.view().addPropertyChangeListener(this.propertyChangeListener);
             this.wwd.addRenderingListener(this.renderingListener);
-            ApplicationTemplate.insertBeforeCompass(wwd, this.trackRenderables);
-            ApplicationTemplate.insertBeforeCompass(wwd, this.crosshairLayer);
+            WorldWindow.insertBeforeCompass(wwd, this.trackRenderables);
+            WorldWindow.insertBeforeCompass(wwd, this.crosshairLayer);
             // Init cloud ceiling
             this.cloudCeilingPanel.setCloudCeiling(new CloudCeiling(this.wwd));
         }
@@ -193,7 +192,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
     public void setCurrentTrack(SARTrack currentTrack) {
         if (this.currentTrack != null) {
             this.currentTrack.removePropertyChangeListener(this.propertyChangeListener);
-            this.currentTrack.setValue(ANALYSIS_PANEL_STATE, this.getRestorableState());
+            this.currentTrack.set(ANALYSIS_PANEL_STATE, this.getRestorableState());
         }
 
         this.currentTrack = currentTrack;
@@ -204,7 +203,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
             this.currentTrack.addPropertyChangeListener(this.propertyChangeListener);
             this.terrainProfilePanel.updatePath(currentTrack.getPositions());
             this.cloudCeilingPanel.setTrack(this.currentTrack);
-            String stateInXML = (String) this.currentTrack.getValue(ANALYSIS_PANEL_STATE);
+            String stateInXML = (String) this.currentTrack.get(ANALYSIS_PANEL_STATE);
             if (stateInXML != null)
                 this.restoreState(stateInXML);
         }

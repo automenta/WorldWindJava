@@ -71,7 +71,7 @@ public class BILRasterReader extends AbstractDataRasterReader {
 
         if (null != params) {
             if (!params.hasKey(AVKey.PIXEL_FORMAT)) {
-                params.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+                params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
             }
         }
 
@@ -86,16 +86,16 @@ public class BILRasterReader extends AbstractDataRasterReader {
         if (this.validateMetadata(source, params) != null) {
             // Copy the parameter list to insulate changes from the caller.
             params = (params != null) ? params.copy() : new AVListImpl();
-            params.setValue(AVKey.FILE_SIZE, byteBuffer.capacity());
+            params.set(AVKey.FILE_SIZE, byteBuffer.capacity());
             WorldFile.readWorldFiles(source, params);
         }
 
-        int width = (Integer) params.getValue(AVKey.WIDTH);
-        int height = (Integer) params.getValue(AVKey.HEIGHT);
-        Sector sector = (Sector) params.getValue(AVKey.SECTOR);
+        int width = (Integer) params.get(AVKey.WIDTH);
+        int height = (Integer) params.get(AVKey.HEIGHT);
+        Sector sector = (Sector) params.get(AVKey.SECTOR);
 
         if (!params.hasKey(AVKey.PIXEL_FORMAT)) {
-            params.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
+            params.set(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
         }
 
         ByteBufferRaster raster = new ByteBufferRaster(width, height, sector, byteBuffer, params);
@@ -117,12 +117,12 @@ public class BILRasterReader extends AbstractDataRasterReader {
             sb.append(message);
         }
 
-        Object o = (params != null) ? params.getValue(AVKey.BYTE_ORDER) : null;
+        Object o = (params != null) ? params.get(AVKey.BYTE_ORDER) : null;
         if (!(o instanceof String)) {
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoByteOrderSpecified", source));
         }
 
-        o = (params != null) ? params.getValue(AVKey.PIXEL_FORMAT) : null;
+        o = (params != null) ? params.get(AVKey.PIXEL_FORMAT) : null;
         if (o == null) {
             sb.append(!sb.isEmpty() ? ", " : "").append(
                 Logging.getMessage("WorldFile.NoPixelFormatSpecified", source));
@@ -131,7 +131,7 @@ public class BILRasterReader extends AbstractDataRasterReader {
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.InvalidPixelFormat", source));
         }
 
-        o = (params != null) ? params.getValue(AVKey.DATA_TYPE) : null;
+        o = (params != null) ? params.get(AVKey.DATA_TYPE) : null;
         if (o == null) {
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("WorldFile.NoDataTypeSpecified", source));
         }

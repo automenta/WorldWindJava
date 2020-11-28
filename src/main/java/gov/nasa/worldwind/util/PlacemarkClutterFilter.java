@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.pick.*;
 
@@ -255,7 +255,7 @@ public class PlacemarkClutterFilter implements ClutterFilter {
                 Object delegateOwner = this.opm.getPlacemark().getDelegateOwner();
                 PickedObject po = new PickedObject(pickColor.getRGB(),
                     delegateOwner != null ? delegateOwner : this.opm.getPlacemark());
-                po.setValue(AVKey.PICKED_OBJECT_ID, AVKey.LABEL);
+                po.set(AVKey.PICKED_OBJECT_ID, AVKey.LABEL);
                 this.pickSupport.addPickableObject(po);
                 gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
 

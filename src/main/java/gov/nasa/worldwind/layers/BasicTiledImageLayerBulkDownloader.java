@@ -347,7 +347,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
     }
 
     protected long estimateAverageTileSize() {
-        Long previouslyComputedSize = (Long) this.layer.getValue(AVKey.AVERAGE_TILE_SIZE);
+        Long previouslyComputedSize = (Long) this.layer.get(AVKey.AVERAGE_TILE_SIZE);
         if (previouslyComputedSize != null)
             return previouslyComputedSize;
 
@@ -377,7 +377,7 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
         long averageTileSize = DEFAULT_AVERAGE_FILE_SIZE;
         if (count > 0 && size > 0) {
             averageTileSize = size / count;
-            this.layer.setValue(AVKey.AVERAGE_TILE_SIZE, averageTileSize);
+            this.layer.set(AVKey.AVERAGE_TILE_SIZE, averageTileSize);
         }
 
         return averageTileSize;

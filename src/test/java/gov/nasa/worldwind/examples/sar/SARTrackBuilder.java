@@ -81,14 +81,14 @@ public class SARTrackBuilder {
             return;
 
         if (this.wwd != null) {
-            this.wwd.getInputHandler().removeMouseListener(this.mouseAdapter);
-            this.wwd.getInputHandler().removeMouseMotionListener(this.mouseMotionAdapter);
+            this.wwd.input().removeMouseListener(this.mouseAdapter);
+            this.wwd.input().removeMouseMotionListener(this.mouseMotionAdapter);
             this.wwd.removePositionListener(this.positionListener);
         }
 
         this.wwd = wwd;
-        this.wwd.getInputHandler().addMouseListener(this.mouseAdapter);
-        this.wwd.getInputHandler().addMouseMotionListener(this.mouseMotionAdapter);
+        this.wwd.input().addMouseListener(this.mouseAdapter);
+        this.wwd.input().addMouseMotionListener(this.mouseMotionAdapter);
         this.wwd.addPositionListener(this.positionListener);
     }
 
@@ -118,7 +118,7 @@ public class SARTrackBuilder {
     }
 
     private void addPosition() {
-        Position curPos = this.wwd != null ? this.wwd.getCurrentPosition() : null;
+        Position curPos = this.wwd != null ? this.wwd.position() : null;
         if (curPos == null)
             return;
 
@@ -129,7 +129,7 @@ public class SARTrackBuilder {
     }
 
     private void replacePosition() {
-        Position curPos = this.wwd != null ? this.wwd.getCurrentPosition() : null;
+        Position curPos = this.wwd != null ? this.wwd.position() : null;
         if (curPos == null)
             return;
 

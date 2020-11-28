@@ -31,15 +31,15 @@ public class AnimatedGlobe extends ApplicationTemplate {
 
         public AppFrame() {
             // Reduce the frequency at which terrain is regenerated.
-            getWwd().model().getGlobe().getTessellator().setUpdateFrequency(5000);
+            wwd().model().getGlobe().getTessellator().setUpdateFrequency(5000);
 
             // Add a rendering listener to update the eye position each frame. It's implementation is the
             // stageChanged method below.
-            getWwd().addRenderingListener(this);
+            wwd().addRenderingListener(this);
 
             // Use a JOGL Animator to spin the globe
             lastTime = System.currentTimeMillis();
-            animator = new FPSAnimator((WorldWindowGLCanvas) getWwd(), 60 /*frames per second*/);
+            animator = new FPSAnimator((WorldWindowGLCanvas) wwd(), 60 /*frames per second*/);
             animator.start();
         }
 
@@ -47,7 +47,7 @@ public class AnimatedGlobe extends ApplicationTemplate {
         public void stageChanged(RenderingEvent event) {
             if (event.getStage().equals(RenderingEvent.BEFORE_RENDERING)) {
                 // The globe may not be instantiated the first time the listener is called.
-                if (getWwd().view().getGlobe() == null)
+                if (wwd().view().getGlobe() == null)
                     return;
 
                 long now = System.currentTimeMillis();
@@ -60,8 +60,8 @@ public class AnimatedGlobe extends ApplicationTemplate {
                 double alt = eyePosition.getAltitude();
 
                 eyePosition = Position.fromDegrees(lat, lon, alt);
-                getWwd().view().stopAnimations();
-                getWwd().view().setEyePosition(eyePosition);
+                wwd().view().stopAnimations();
+                wwd().view().setEyePosition(eyePosition);
             }
         }
     }

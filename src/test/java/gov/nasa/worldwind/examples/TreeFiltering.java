@@ -6,10 +6,11 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.examples.render.DrawContext;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.MarkerLayer;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.BasicQuadTree;
 
 import java.awt.*;
@@ -34,9 +35,9 @@ public class TreeFiltering extends ApplicationTemplate {
             final MyMarkerLayer layer = new MyMarkerLayer(this.makeDatabase());
             layer.setKeepSeparated(false);
             layer.setPickEnabled(true);
-            insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
 
-            this.getWwd().addPositionListener(event -> layer.setCursorLocation(event.getPosition()));
+            this.wwd().addPositionListener(event -> layer.setCursorLocation(event.getPosition()));
         }
 
         private BasicQuadTree<Marker> makeDatabase() {

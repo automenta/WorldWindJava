@@ -5,9 +5,9 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.*;
@@ -46,7 +46,7 @@ import java.io.InputStream;
 public class Balloons extends ApplicationTemplate {
 
     protected static final String BROWSER_BALLOON_CONTENT_PATH
-        = "gov/nasa/worldwindx/examples/data/BrowserBalloonExample.html";
+        = "gov/nasa/worldwind/examples/data/BrowserBalloonExample.html";
 
     public static void main(String[] args) {
         // Configure the initial view parameters so that the browser balloon is centered in the viewport.
@@ -68,14 +68,14 @@ public class Balloons extends ApplicationTemplate {
             super(true, true, false);
 
             // Add a controller to send input events to BrowserBalloons.
-            this.hotSpotController = new HotSpotController(this.getWwd());
+            this.hotSpotController = new HotSpotController(this.wwd());
             // Add a controller to handle link and navigation events in BrowserBalloons.
-            this.balloonController = new BalloonController(this.getWwd());
+            this.balloonController = new BalloonController(this.wwd());
 
             // Create a layer to display the balloons.
             this.layer = new RenderableLayer();
             this.layer.setName("Balloons");
-            insertBeforePlacenames(getWwd(), this.layer);
+            WorldWindow.insertBeforePlacenames(wwd(), this.layer);
 
             // Add an AnnotationBalloon and a BrowserBalloon to the balloon layer.
             this.makeAnnotationBalloon();
@@ -145,7 +145,7 @@ public class Balloons extends ApplicationTemplate {
             placemark.setLabelText("Click to open balloon");
             // Associate the balloon with the placemark by setting AVKey.BALLOON. The BalloonController looks for this
             // value when an object is clicked.
-            placemark.setValue(AVKey.BALLOON, balloon);
+            placemark.set(AVKey.BALLOON, balloon);
 
             this.layer.add(balloon);
             this.layer.add(placemark);

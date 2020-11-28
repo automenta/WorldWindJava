@@ -11,7 +11,7 @@ import com.jogamp.opengl.glu.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
@@ -747,7 +747,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         ShapefileGeometry geom = tile.getGeometry();
 
-        SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.getValue(AVKey.SURFACE_TILE_DRAW_CONTEXT);
+        SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.get(AVKey.SURFACE_TILE_DRAW_CONTEXT);
         Matrix modelview = sdc.getModelviewMatrix().multiply(Matrix.fromTranslation(geom.vertexOffset));
         modelview.toArray(this.matrixArray, 0, false);
         gl.glLoadMatrixd(this.matrixArray, 0);
@@ -780,7 +780,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
     }
 
     protected void applyPickColors(DrawContext dc, ShapefileGeometry geom) {
-        SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.getValue(AVKey.SURFACE_TILE_DRAW_CONTEXT);
+        SurfaceTileDrawContext sdc = (SurfaceTileDrawContext) dc.get(AVKey.SURFACE_TILE_DRAW_CONTEXT);
 
         if (this.pickColors == null || this.pickColors.capacity() < 3 * geom.vertexCount) {
             this.pickColors = Buffers.newDirectByteBuffer(3 * geom.vertexCount);

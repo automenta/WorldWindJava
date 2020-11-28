@@ -57,7 +57,7 @@ public class LocalRasterServerElevationModel extends BasicElevationModel {
     public LocalRasterServerElevationModel(Document dom, AVList params) {
         super(dom, params);
 
-        this.createRasterServer(params != null ? params : (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS));
+        this.createRasterServer(params != null ? params : (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS));
     }
 
     /**
@@ -77,7 +77,7 @@ public class LocalRasterServerElevationModel extends BasicElevationModel {
     public LocalRasterServerElevationModel(Element domElement, AVList params) {
         super(domElement, params);
 
-        this.createRasterServer(params != null ? params : (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS));
+        this.createRasterServer(params != null ? params : (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS));
     }
 
     /**
@@ -92,7 +92,7 @@ public class LocalRasterServerElevationModel extends BasicElevationModel {
     public LocalRasterServerElevationModel(String restorableStateInXml) {
         super(restorableStateInXml);
 
-        this.createRasterServer((AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS));
+        this.createRasterServer((AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS));
     }
 
     protected void createRasterServer(AVList params) {
@@ -138,7 +138,7 @@ public class LocalRasterServerElevationModel extends BasicElevationModel {
 
         final AVList rasterServerParams = params.copy();
 
-        rasterServerParams.setValue(AVKey.FILE_STORE, this.getDataFileStore());
+        rasterServerParams.set(AVKey.FILE_STORE, this.getDataFileStore());
 
         RetrieverFactory retrieverFactory = new RetrieverFactory() {
             final protected RasterServer rasterServer = new BasicRasterServer(rasterServerFileURL, rasterServerParams);
@@ -163,7 +163,7 @@ public class LocalRasterServerElevationModel extends BasicElevationModel {
             }
         };
 
-        params.setValue(AVKey.RETRIEVER_FACTORY_LOCAL, retrieverFactory);
-        this.setValue(AVKey.RETRIEVER_FACTORY_LOCAL, retrieverFactory);
+        params.set(AVKey.RETRIEVER_FACTORY_LOCAL, retrieverFactory);
+        this.set(AVKey.RETRIEVER_FACTORY_LOCAL, retrieverFactory);
     }
 }

@@ -6,10 +6,10 @@
 
 package gov.nasa.worldwind.util.xml;
 
-//import gov.nasa.worldwind.examples.ogc.collada.*;
-//import gov.nasa.worldwind.examples.ogc.kml.*;
+//import gov.nasa.worldwind.layers.ogc.collada.*;
+//import gov.nasa.worldwind.layers.ogc.kml.*;
 
-import gov.nasa.worldwind.examples.ogc.kml.*;
+import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.xml.XMLConstants;

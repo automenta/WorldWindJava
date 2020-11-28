@@ -28,7 +28,7 @@ import static java.awt.event.InputEvent.*;
  */
 public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, FocusListener, InputHandler, Disposable {
     private WorldWindow wwd = null;
-    private EventListenerList eventListeners = new EventListenerList();
+    public EventListenerList eventListeners = new EventListenerList();
     private Point mousePoint = new Point();
     private PickedObjectList hoverObjects;
     private PickedObjectList objectsAtButtonPress;
@@ -79,7 +79,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
         if (newWorldWindow == this.wwd)
             return; //same
 
-        this.eventListeners = new EventListenerList(); // make orphans of listener references
+        //this.eventListeners = new EventListenerList(); // make orphans of listener references
 
         if (wwd!=null) {
             wwd.stopEvents(this);
@@ -87,8 +87,8 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
             if (this.selectListener != null)
                 this.wwd.removeSelectListener(this.selectListener);
 
-            if (this.wwd.getSceneController() != null)
-                this.wwd.getSceneController().removePropertyChangeListener(AVKey.VIEW, this);
+            if (this.wwd.sceneControl() != null)
+                this.wwd.sceneControl().removePropertyChangeListener(AVKey.VIEW, this);
         }
 
         this.wwd = newWorldWindow;
@@ -107,8 +107,8 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
         };
         this.wwd.addSelectListener(this.selectListener);
 
-        if (this.wwd.getSceneController() != null)
-            this.wwd.getSceneController().addPropertyChangeListener(AVKey.VIEW, this);
+        if (this.wwd.sceneControl() != null)
+            this.wwd.sceneControl().addPropertyChangeListener(AVKey.VIEW, this);
     }
 
     public int getHoverDelay() {
@@ -290,7 +290,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
             return;
         }
 
-        PickedObjectList pickedObjects = this.wwd.getObjectsAtCurrentPosition();
+        PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
 
         this.callMouseClickedListeners(mouseEvent);
 
@@ -340,13 +340,13 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
 
         // If the mouse point has changed then we need to set a new pick point, and redraw the scene because the current
         // picked object list may not reflect the current mouse position.
-        if (mousePointChanged && this.wwd.getSceneController() != null)
-            this.wwd.getSceneController().setPickPoint(this.mousePoint);
+        if (mousePointChanged && this.wwd.sceneControl() != null)
+            this.wwd.sceneControl().setPickPoint(this.mousePoint);
 
         if (this.isForceRedrawOnMousePressed() || mousePointChanged)
             this.wwd.redrawNow();
 
-        this.objectsAtButtonPress = this.wwd.getObjectsAtCurrentPosition();
+        this.objectsAtButtonPress = this.wwd.objectsAtPosition();
 
         this.callMousePressedListeners(mouseEvent);
 
@@ -426,8 +426,8 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
         this.wwd.view().getViewInputHandler().mouseExited(mouseEvent);
 
         // Enqueue a redraw to update the current position and selection.
-        if (this.wwd.getSceneController() != null) {
-            this.wwd.getSceneController().setPickPoint(null);
+        if (this.wwd.sceneControl() != null) {
+            this.wwd.sceneControl().setPickPoint(null);
             this.wwd.redraw();
         }
 
@@ -461,8 +461,8 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
             this.wwd.view().getViewInputHandler().mouseDragged(mouseEvent);
 
         // Redraw to update the current position and selection.
-        if (this.wwd.getSceneController() != null) {
-            this.wwd.getSceneController().setPickPoint(mouseEvent.getPoint());
+        if (this.wwd.sceneControl() != null) {
+            this.wwd.sceneControl().setPickPoint(mouseEvent.getPoint());
             this.wwd.redraw();
         }
     }
@@ -502,8 +502,8 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
         }
 
         // Redraw to update the current position and selection.
-        if (this.wwd.getSceneController() != null) {
-            this.wwd.getSceneController().setPickPoint(mouseEvent.getPoint());
+        if (this.wwd.sceneControl() != null) {
+            this.wwd.sceneControl().setPickPoint(mouseEvent.getPoint());
             this.wwd.redraw();
         }
     }
@@ -552,7 +552,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     }
 
     private void doHover(boolean reset) {
-        PickedObjectList pickedObjects = this.wwd.getObjectsAtCurrentPosition();
+        PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
         if (!(AWTInputHandler.isPickListEmpty(this.hoverObjects) || AWTInputHandler.isPickListEmpty(pickedObjects))) {
             PickedObject hover = this.hoverObjects.getTopPickedObject();
             PickedObject last = pickedObjects.getTopPickedObject();
@@ -593,11 +593,11 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
     }
 
     private boolean pickMatches(PickedObjectList pickedObjects) {
-        if (AWTInputHandler.isPickListEmpty(this.wwd.getObjectsAtCurrentPosition()) || AWTInputHandler.isPickListEmpty(pickedObjects)) {
+        if (AWTInputHandler.isPickListEmpty(this.wwd.objectsAtPosition()) || AWTInputHandler.isPickListEmpty(pickedObjects)) {
             return false;
         }
 
-        PickedObject lastTop = this.wwd.getObjectsAtCurrentPosition().getTopPickedObject();
+        PickedObject lastTop = this.wwd.objectsAtPosition().getTopPickedObject();
 
         if (null != lastTop && lastTop.isTerrain()) {
             return false;
@@ -747,7 +747,7 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
         }
 
         if (event.getPropertyName().equals(AVKey.VIEW) &&
-            (event.getSource() == this.getWorldWindow().getSceneController())) {
+            (event.getSource() == this.getWorldWindow().sceneControl())) {
             this.wwd.view().getViewInputHandler().setWorldWindow(this.wwd);
         }
     }

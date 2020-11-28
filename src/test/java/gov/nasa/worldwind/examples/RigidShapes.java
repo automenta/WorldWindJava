@@ -6,19 +6,19 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.Box;
-import gov.nasa.worldwind.examples.render.Cylinder;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.Box;
+import gov.nasa.worldwind.render.Cylinder;
 
 import java.util.*;
 
 /**
  * This example demonstrates usage of the various Rigid Shapes: {@link Ellipsoid}, {@link
- * gov.nasa.worldwind.examples.render.Box}, {@link gov.nasa.worldwind.examples.render.Cylinder}, {@link Cone},
+ * Box}, {@link Cylinder}, {@link Cone},
  * {@link Pyramid} and {@link Wedge}. The Rigid Shapes can be
  * scaled, rotated, skewed and textured. Standard attributes and altitude modes may also be specified.
  *
@@ -62,14 +62,14 @@ public class RigidShapes extends ApplicationTemplate {
             Pyramid pyramid = new Pyramid(Position.fromDegrees(40, -120, 220000), 200000, 200000, 200000);
             pyramid.setAltitudeMode(WorldWind.ABSOLUTE);
             pyramid.setAttributes(attrs);
-            pyramid.setValue(AVKey.DISPLAY_NAME, "Pyramid with equal axes, ABSOLUTE altitude mode");
+            pyramid.set(AVKey.DISPLAY_NAME, "Pyramid with equal axes, ABSOLUTE altitude mode");
             layer.add(pyramid);
 
             // Cone with equal axes, RELATIVE_TO_GROUND.
             Cone cone = new Cone(Position.fromDegrees(37.5, -115, 200000), 200000, 200000, 200000);
             cone.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cone.setAttributes(attrs);
-            cone.setValue(AVKey.DISPLAY_NAME, "Cone with equal axes, RELATIVE_TO_GROUND altitude mode");
+            cone.set(AVKey.DISPLAY_NAME, "Cone with equal axes, RELATIVE_TO_GROUND altitude mode");
             layer.add(cone);
 
             // Wedge with equal axes, CLAMP_TO_GROUND.
@@ -77,7 +77,7 @@ public class RigidShapes extends ApplicationTemplate {
                 200000, 200000, 200000);
             wedge.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             wedge.setAttributes(attrs);
-            wedge.setValue(AVKey.DISPLAY_NAME, "Wedge with equal axes, CLAMP_TO_GROUND altitude mode");
+            wedge.set(AVKey.DISPLAY_NAME, "Wedge with equal axes, CLAMP_TO_GROUND altitude mode");
             layer.add(wedge);
 
             // Box with a texture.
@@ -86,36 +86,36 @@ public class RigidShapes extends ApplicationTemplate {
             List<Object> imageSources = new ArrayList<>();
             imageSources.add("images/32x32-icon-nasa.png");
             imageSources.add(null);
-            imageSources.add("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            imageSources.add("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             imageSources.add(null);
             imageSources.add("images/64x64-crosshair.png");
             imageSources.add(null);
             box.setImageSources(imageSources);
             box.setAttributes(attrs);
-            box.setValue(AVKey.DISPLAY_NAME, "Box with a texture");
+            box.set(AVKey.DISPLAY_NAME, "Box with a texture");
             layer.add(box);
 
             // Sphere with a texture.
             Ellipsoid sphere = new Ellipsoid(Position.fromDegrees(0, -110, 600000), 600000, 600000, 600000);
             sphere.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            sphere.setImageSources("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            sphere.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             sphere.setAttributes(attrs);
-            sphere.setValue(AVKey.DISPLAY_NAME, "Sphere with a texture");
+            sphere.set(AVKey.DISPLAY_NAME, "Sphere with a texture");
             layer.add(sphere);
 
             // Cylinder with a texture.
             Cylinder cylinder = new Cylinder(Position.fromDegrees(0, -130, 600000), 600000, 600000, 600000);
             cylinder.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            cylinder.setImageSources("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            cylinder.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             cylinder.setAttributes(attrs);
-            cylinder.setValue(AVKey.DISPLAY_NAME, "Cylinder with a texture");
+            cylinder.set(AVKey.DISPLAY_NAME, "Cylinder with a texture");
             layer.add(cylinder);
 
             // Cylinder with default orientation.
             cylinder = new Cylinder(Position.ZERO, 600000, 500000, 300000);
             cylinder.setAltitudeMode(WorldWind.ABSOLUTE);
             cylinder.setAttributes(attrs);
-            cylinder.setValue(AVKey.DISPLAY_NAME, "Cylinder with default orientation");
+            cylinder.set(AVKey.DISPLAY_NAME, "Cylinder with default orientation");
             layer.add(cylinder);
 
             // Ellipsoid with a pre-set orientation.
@@ -123,16 +123,16 @@ public class RigidShapes extends ApplicationTemplate {
                 Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
             ellipsoid.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ellipsoid.setAttributes(attrs2);
-            ellipsoid.setValue(AVKey.DISPLAY_NAME, "Ellipsoid with a pre-set orientation");
+            ellipsoid.set(AVKey.DISPLAY_NAME, "Ellipsoid with a pre-set orientation");
             layer.add(ellipsoid);
 
             // Ellipsoid with a pre-set orientation.
             ellipsoid = new Ellipsoid(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
                 Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
             ellipsoid.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            ellipsoid.setImageSources("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            ellipsoid.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             ellipsoid.setAttributes(attrs2);
-            ellipsoid.setValue(AVKey.DISPLAY_NAME, "Ellipsoid with a pre-set orientation");
+            ellipsoid.set(AVKey.DISPLAY_NAME, "Ellipsoid with a pre-set orientation");
             layer.add(ellipsoid);
 
             // Ellipsoid with a pre-set orientation.
@@ -140,7 +140,7 @@ public class RigidShapes extends ApplicationTemplate {
                 Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
             ellipsoid.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ellipsoid.setAttributes(attrs2);
-            ellipsoid.setValue(AVKey.DISPLAY_NAME, "Ellipsoid with a pre-set orientation");
+            ellipsoid.set(AVKey.DISPLAY_NAME, "Ellipsoid with a pre-set orientation");
             layer.add(ellipsoid);
 
             // Ellipsoid oriented in 3rd "quadrant" (-X, -Y, -Z).
@@ -148,11 +148,11 @@ public class RigidShapes extends ApplicationTemplate {
                 Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
             ellipsoid.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             ellipsoid.setAttributes(attrs2);
-            ellipsoid.setValue(AVKey.DISPLAY_NAME, "Ellipsoid oriented in 3rd \"quadrant\" (-X, -Y, -Z)");
+            ellipsoid.set(AVKey.DISPLAY_NAME, "Ellipsoid oriented in 3rd \"quadrant\" (-X, -Y, -Z)");
             layer.add(ellipsoid);
 
             // Add the layer to the model and update the layer panel.
-            insertBeforePlacenames(getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(wwd(), layer);
         }
     }
 }

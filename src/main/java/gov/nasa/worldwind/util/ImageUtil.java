@@ -921,20 +921,20 @@ public class ImageUtil {
             throw new FileNotFoundException(message);
         }
 
-        values.setValue(AVKey.IMAGE, image);
+        values.set(AVKey.IMAGE, image);
         WorldFile.decodeWorldFiles(worldFiles, values);
 
-        sector = (Sector) values.getValue(AVKey.SECTOR);
+        sector = (Sector) values.get(AVKey.SECTOR);
         if (sector == null)
             ImageUtil.reprojectUtmToGeographic(values, interpolation_mode);
 
-        sector = (Sector) values.getValue(AVKey.SECTOR);
+        sector = (Sector) values.get(AVKey.SECTOR);
         if (sector == null) {
             String message = "Problem generating bounding sector for the image";
             throw new WWRuntimeException(message);
         }
 
-        values.setValue(AVKey.SECTOR, sector);
+        values.set(AVKey.SECTOR, sector);
 
         return values;
     }
@@ -982,14 +982,14 @@ public class ImageUtil {
 
         AVList values = new AVListImpl();
         if (null != image) {
-            values.setValue(AVKey.IMAGE, image);
-            values.setValue(AVKey.WIDTH, image.getWidth());
-            values.setValue(AVKey.HEIGHT, image.getHeight());
+            values.set(AVKey.IMAGE, image);
+            values.set(AVKey.WIDTH, image.getWidth());
+            values.set(AVKey.HEIGHT, image.getHeight());
         }
 
         ImageUtil.readGeoKeys(reader, imageIndex, values);
 
-        if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(values.getValue(AVKey.COORDINATE_SYSTEM)))
+        if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(values.get(AVKey.COORDINATE_SYSTEM)))
             ImageUtil.reprojectUtmToGeographic(values, interpolation_mode);
 
         return values;
@@ -1050,17 +1050,17 @@ public class ImageUtil {
             throw new IOException(message);
         }
 
-        int width = (Integer) params.getValue(AVKey.WIDTH);
-        int height = (Integer) params.getValue(AVKey.HEIGHT);
+        int width = (Integer) params.get(AVKey.WIDTH);
+        int height = (Integer) params.get(AVKey.HEIGHT);
 
-        double xPixelSize = (Double) params.getValue(WorldFile.WORLD_FILE_X_PIXEL_SIZE);
-        double yPixelSize = (Double) params.getValue(WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
+        double xPixelSize = (Double) params.get(WorldFile.WORLD_FILE_X_PIXEL_SIZE);
+        double yPixelSize = (Double) params.get(WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
 
-        double xLocation = (Double) params.getValue(WorldFile.WORLD_FILE_X_LOCATION);
-        double yLocation = (Double) params.getValue(WorldFile.WORLD_FILE_Y_LOCATION);
+        double xLocation = (Double) params.get(WorldFile.WORLD_FILE_X_LOCATION);
+        double yLocation = (Double) params.get(WorldFile.WORLD_FILE_Y_LOCATION);
 
-        Integer zone = (Integer) params.getValue(AVKey.PROJECTION_ZONE);
-        String hemisphere = (String) params.getValue(AVKey.PROJECTION_HEMISPHERE);
+        Integer zone = (Integer) params.get(AVKey.PROJECTION_ZONE);
+        String hemisphere = (String) params.get(AVKey.PROJECTION_HEMISPHERE);
 
         UTMCoord upperLeft = UTMCoord.fromUTM(zone, hemisphere, xLocation, yLocation);
 
@@ -1082,8 +1082,8 @@ public class ImageUtil {
         Angle bottomExtent = Angle.min(utmLowerRight.getLatitude(), utmLowerLeft.getLatitude());
 
         Sector sector = new Sector(bottomExtent, topExtent, leftExtent, rightExtent);
-        params.setValue(AVKey.SECTOR, sector);
-        params.setValue(AVKey.ORIGIN, new LatLon(upperLeft.getLatitude(), upperLeft.getLongitude()));
+        params.set(AVKey.SECTOR, sector);
+        params.set(AVKey.ORIGIN, new LatLon(upperLeft.getLatitude(), upperLeft.getLongitude()));
 
         return sector;
     }
@@ -1108,7 +1108,7 @@ public class ImageUtil {
             throw new IllegalStateException(message);
         }
 
-        BufferedImage image = (BufferedImage) values.getValue(AVKey.IMAGE);
+        BufferedImage image = (BufferedImage) values.get(AVKey.IMAGE);
         int width = image.getWidth();
         int height = image.getHeight();
 
@@ -1125,19 +1125,19 @@ public class ImageUtil {
         double xPixelSize = 0;
         double yPixelSize = 0;
 
-        Object o = values.getValue(WorldFile.WORLD_FILE_X_PIXEL_SIZE);
+        Object o = values.get(WorldFile.WORLD_FILE_X_PIXEL_SIZE);
         if (o instanceof Double)
             xPixelSize = (Double) o;
 
-        o = values.getValue(WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
+        o = values.get(WorldFile.WORLD_FILE_Y_PIXEL_SIZE);
         if (o instanceof Double)
             yPixelSize = (Double) o;
 
         // TODO: validate that all these values exist and are valid
-        double xLocation = (Double) values.getValue(WorldFile.WORLD_FILE_X_LOCATION);
-        double yLocation = (Double) values.getValue(WorldFile.WORLD_FILE_Y_LOCATION);
-        Integer zone = (Integer) values.getValue(AVKey.PROJECTION_ZONE);
-        String hemisphere = (String) values.getValue(AVKey.PROJECTION_HEMISPHERE);
+        double xLocation = (Double) values.get(WorldFile.WORLD_FILE_X_LOCATION);
+        double yLocation = (Double) values.get(WorldFile.WORLD_FILE_Y_LOCATION);
+        Integer zone = (Integer) values.get(AVKey.PROJECTION_ZONE);
+        String hemisphere = (String) values.get(AVKey.PROJECTION_HEMISPHERE);
 
         UTMCoord upperLeft = UTMCoord.fromUTM(zone, hemisphere, xLocation, yLocation);
         UTMCoord utmUpperLeft = UTMCoord.fromUTM(zone, hemisphere, upperLeft.getEasting() - xPixelSize * 0.5,
@@ -1157,7 +1157,7 @@ public class ImageUtil {
         Angle topExtent = Angle.max(utmUpperRight.getLatitude(), utmUpperLeft.getLatitude());
         Angle bottomExtent = Angle.min(utmLowerRight.getLatitude(), utmLowerLeft.getLatitude());
         Sector sector = new Sector(bottomExtent, topExtent, leftExtent, rightExtent);
-        values.setValue(AVKey.SECTOR, sector);
+        values.set(AVKey.SECTOR, sector);
 
         //moving to center of pixel
         double yPixel = (bottomExtent.getDegrees() - topExtent.getDegrees()) / height;
@@ -1217,7 +1217,7 @@ public class ImageUtil {
             }
         }
 
-        values.setValue(AVKey.IMAGE, biOut);
+        values.set(AVKey.IMAGE, biOut);
     }
 
     /**
@@ -1796,8 +1796,8 @@ public class ImageUtil {
             (double) Short.MIN_VALUE);
         int missingDataReplacement = 0;
 
-        Double minElevation = (Double) raster.getValue(AVKey.ELEVATION_MIN);
-        Double maxElevation = (Double) raster.getValue(AVKey.ELEVATION_MAX);
+        Double minElevation = (Double) raster.get(AVKey.ELEVATION_MIN);
+        Double maxElevation = (Double) raster.get(AVKey.ELEVATION_MAX);
 
         double min = (null != minElevation && minElevation >= Earth.ELEVATION_MIN) ? minElevation : 0.0d;
         double max = (null != maxElevation && minElevation <= Earth.ELEVATION_MAX) ? maxElevation : Earth.ELEVATION_MAX;

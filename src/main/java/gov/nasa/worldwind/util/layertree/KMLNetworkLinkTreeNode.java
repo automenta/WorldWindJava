@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.util.layertree;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.ogc.kml.*;
+import gov.nasa.worldwind.layers.ogc.kml.*;
 
 import javax.swing.*;
 import java.beans.*;

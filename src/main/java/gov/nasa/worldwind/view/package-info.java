@@ -26,7 +26,7 @@
  * </ol>
  * <p>
  * A {@link gov.nasa.worldwind.View} has a reference to a {@link gov.nasa.worldwind.globes.Globe}, that it gleens from
- * the {@link gov.nasa.worldwind.examples.render.DrawContext} passed to it in its {@link gov.nasa.worldwind.View#apply} method. A
+ * the {@link gov.nasa.worldwind.render.DrawContext} passed to it in its {@link gov.nasa.worldwind.View#apply} method. A
  * single {@link gov.nasa.worldwind.View} instance may not be used simultaneously on {@link gov.nasa.worldwind.Model}s
  * with different {@link gov.nasa.worldwind.globes.Globe}s.
  * </p>

@@ -65,20 +65,20 @@ public class IconRetrieverUsage {
                 addLater(image, "Full symbol");
 
                 // Create a unframed icon.
-                params.setValue(SymbologyConstants.SHOW_FRAME, false);
+                params.set(SymbologyConstants.SHOW_FRAME, false);
                 image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
                 addLater(image, "No frame");
 
                 // Create a framed icon with no fill.
-                params.setValue(SymbologyConstants.SHOW_FRAME, true);
-                params.setValue(SymbologyConstants.SHOW_FILL, false);
+                params.set(SymbologyConstants.SHOW_FRAME, true);
+                params.set(SymbologyConstants.SHOW_FILL, false);
                 image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
                 addLater(image, "No fill");
 
                 // Create an icon with a custom color.
-                params.setValue(AVKey.COLOR, Color.GREEN);
-                params.setValue(SymbologyConstants.SHOW_FRAME, true);
-                params.setValue(SymbologyConstants.SHOW_FILL, true);
+                params.set(AVKey.COLOR, Color.GREEN);
+                params.set(SymbologyConstants.SHOW_FRAME, true);
+                params.set(SymbologyConstants.SHOW_FILL, true);
                 image = iconRetriever.createIcon("SFAPMFQM--GIUSA", params);
                 addLater(image, "Custom color");
             });

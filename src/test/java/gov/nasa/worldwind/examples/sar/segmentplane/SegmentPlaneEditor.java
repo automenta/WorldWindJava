@@ -7,8 +7,8 @@ package gov.nasa.worldwind.examples.sar.segmentplane;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.DrawContext;
-import gov.nasa.worldwind.examples.render.airspaces.editor.AirspaceEditorUtil;
+import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.airspaces.editor.AirspaceEditorUtil;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.AbstractLayer;
@@ -217,7 +217,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
 
         Position[] positions = this.getSegmentPlane().getSegmentPositions();
 
-        Object endpointId = pickedObject.getValue(AVKey.PICKED_OBJECT_ID);
+        Object endpointId = pickedObject.get(AVKey.PICKED_OBJECT_ID);
         if (endpointId.equals(SegmentPlane.SEGMENT_BEGIN)) {
             positions[0] = new Position(oldPosition, newPosition.getElevation());
         }
@@ -324,7 +324,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
         Vec4 newPoint = intersection[0].getIntersectionPoint();
         LatLon newLatLon = new LatLon(globe.computePositionFromPoint(newPoint));
 
-        Object id = pickedObject.getValue(AVKey.PICKED_OBJECT_ID);
+        Object id = pickedObject.get(AVKey.PICKED_OBJECT_ID);
         if (id.equals(SegmentPlane.CONTROL_POINT_LOWER_RIGHT)
             || id.equals(SegmentPlane.CONTROL_POINT_UPPER_RIGHT)) {
             locations[1] = newLatLon;
@@ -444,13 +444,13 @@ public class SegmentPlaneEditor extends AbstractLayer {
     }
 
     protected PickedObject getPickedSegmentPlaneObject(WorldWindow wwd, Object pickedObjectId) {
-        if (wwd.getSceneController().getPickedObjectList() == null) {
+        if (wwd.sceneControl().getPickedObjectList() == null) {
             return null;
         }
 
-        for (PickedObject po : wwd.getSceneController().getPickedObjectList()) {
+        for (PickedObject po : wwd.sceneControl().getPickedObjectList()) {
             if (po != null && po.getObject() == this.getSegmentPlane()) {
-                Object id = po.getValue(AVKey.PICKED_OBJECT_ID);
+                Object id = po.get(AVKey.PICKED_OBJECT_ID);
                 if (id == pickedObjectId) {
                     return po;
                 }
@@ -461,8 +461,8 @@ public class SegmentPlaneEditor extends AbstractLayer {
     }
 
     protected Position computePositionOnOrAboveSurface(WorldWindow wwd, Position position) {
-        if (wwd.getSceneController().getTerrain() != null) {
-            Vec4 point = wwd.getSceneController().getTerrain().getSurfacePoint(
+        if (wwd.sceneControl().getTerrain() != null) {
+            Vec4 point = wwd.sceneControl().getTerrain().getSurfacePoint(
                 position.getLatitude(), position.getLongitude());
             if (point != null) {
                 Position pos = wwd.model().getGlobe().computePositionFromPoint(point);

@@ -81,19 +81,19 @@ public class PickedObject extends AVListImpl {
     }
 
     public Layer getParentLayer() {
-        return (Layer) this.getValue(AVKey.PICKED_OBJECT_PARENT_LAYER);
+        return (Layer) this.get(AVKey.PICKED_OBJECT_PARENT_LAYER);
     }
 
     public void setParentLayer(Layer layer) {
-        this.setValue(AVKey.PICKED_OBJECT_PARENT_LAYER, layer);
+        this.set(AVKey.PICKED_OBJECT_PARENT_LAYER, layer);
     }
 
     public Position getPosition() {
-        return (Position) this.getValue(AVKey.POSITION);
+        return (Position) this.get(AVKey.POSITION);
     }
 
     public void setPosition(Position position) {
-        this.setValue(AVKey.POSITION, position);
+        this.set(AVKey.POSITION, position);
     }
 
     public boolean hasPosition() {

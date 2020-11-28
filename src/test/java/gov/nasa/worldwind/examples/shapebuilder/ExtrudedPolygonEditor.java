@@ -6,12 +6,12 @@
 package gov.nasa.worldwind.examples.shapebuilder;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.airspaces.editor.AirspaceEditorUtil;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.airspaces.editor.AirspaceEditorUtil;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.pick.PickedObjectList;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
@@ -191,7 +191,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         if (this.isArmed()) {
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
                 Object topObject = null;
-                PickedObjectList pickedObjects = this.wwd.getObjectsAtCurrentPosition();
+                PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
                 if (pickedObjects != null)
                     topObject = pickedObjects.getTopObject();
 
@@ -239,7 +239,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
         this.mousePoint = e.getPoint();
 
         Object topObject = null;
-        PickedObjectList pickedObjects = this.wwd.getObjectsAtCurrentPosition();
+        PickedObjectList pickedObjects = this.wwd.objectsAtPosition();
         if (pickedObjects != null)
             topObject = pickedObjects.getTopObject();
 
@@ -494,7 +494,7 @@ public class ExtrudedPolygonEditor extends AbstractShapeEditor {
     }
 
     protected Vec4 computeAnnotationPosition(Position pos) {
-        Vec4 surfacePoint = this.wwd.getSceneController().getTerrain().getSurfacePoint(
+        Vec4 surfacePoint = this.wwd.sceneControl().getTerrain().getSurfacePoint(
             pos.getLatitude(), pos.getLongitude());
         if (surfacePoint == null) {
             Globe globe = this.wwd.model().getGlobe();

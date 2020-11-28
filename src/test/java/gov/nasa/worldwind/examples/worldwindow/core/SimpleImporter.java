@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.examples.worldwindow.core;
 
-import gov.nasa.worldwind.examples.ogc.kml.KMLRoot;
-import gov.nasa.worldwind.examples.ogc.kml.impl.KMLController;
+import gov.nasa.worldwind.layers.ogc.kml.KMLRoot;
+import gov.nasa.worldwind.layers.ogc.kml.impl.KMLController;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.*;
 import gov.nasa.worldwind.formats.shapefile.ShapefileLayerFactory;
 import gov.nasa.worldwind.layers.*;

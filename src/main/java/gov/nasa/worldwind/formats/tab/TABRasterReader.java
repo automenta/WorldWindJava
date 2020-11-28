@@ -101,7 +101,7 @@ public class TABRasterReader {
         if (value == null || value.trim().isEmpty())
             return;
 
-        values.setValue(key, value.trim());
+        values.set(key, value.trim());
     }
 
     public boolean canRead(File file) {
@@ -277,13 +277,13 @@ public class TABRasterReader {
 
         line = this.nextLine(reader);
         if (line != null && line.startsWith(TAG_HEADER_VERSION)) {
-            if (controlPoints.getValue(VERSION) == null)
+            if (controlPoints.get(VERSION) == null)
                 setProperty(line, VERSION, controlPoints);
         }
 
         line = this.nextLine(reader);
         if (line != null && line.startsWith(TAG_HEADER_CHARSET)) {
-            if (controlPoints.getValue(CHARSET) == null)
+            if (controlPoints.get(CHARSET) == null)
                 setProperty(line, CHARSET, controlPoints);
         }
     }
@@ -312,14 +312,14 @@ public class TABRasterReader {
                 String[] tokens = line.split(" ", 2);
                 if (tokens.length >= 2 && tokens[1] != null) {
                     String pathname = stripQuotes(tokens[1].trim());
-                    controlPoints.setValue(IMAGE_PATH, WWIO.appendPathPart(workingDirectory, pathname));
+                    controlPoints.set(IMAGE_PATH, WWIO.appendPathPart(workingDirectory, pathname));
                 }
             }
         }
 
         line = this.nextLine(reader);
         if (line != null && line.startsWith(TAG_TYPE)) {
-            if (controlPoints.getValue(TYPE) == null)
+            if (controlPoints.get(TYPE) == null)
                 setProperty(line, TYPE, controlPoints);
         }
 
@@ -362,7 +362,7 @@ public class TABRasterReader {
             if (wx != null && wy != null && rx != null && ry != null) {
                 RasterControlPointList.ControlPoint controlPoint =
                     new RasterControlPointList.ControlPoint(wx, wy, rx, ry);
-                controlPoint.setValue(LABEL, label);
+                controlPoint.set(LABEL, label);
                 controlPoints.add(controlPoint);
             }
         }

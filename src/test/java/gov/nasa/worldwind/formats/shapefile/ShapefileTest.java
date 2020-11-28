@@ -16,7 +16,7 @@ import org.junit.runners.JUnit4;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 
-import static gov.nasa.worldwind.examples.ogc.kml.KMLTest.*;
+import static gov.nasa.worldwind.layers.ogc.kml.KMLTest.*;
 import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
@@ -145,7 +145,7 @@ public class ShapefileTest
     public void testUnsupportedCoordinates() throws Exception
     {
         AVList params = new AVListImpl();
-        params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
+        params.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
 
         try
         {
@@ -194,8 +194,8 @@ public class ShapefileTest
                 record.getPointBuffer(0).getLocation(0));
 
             assertNotNull("Record attributes is null", record.getAttributes());
-            assertEquals("Record attribute not as expected", 912L, record.getAttributes().getValue("ID"));
-            assertEquals("Record attribute not as expected", 0.004, record.getAttributes().getValue("LENGTH"));
+            assertEquals("Record attribute not as expected", 912L, record.getAttributes().get("ID"));
+            assertEquals("Record attribute not as expected", 0.004, record.getAttributes().get("LENGTH"));
         }
 
         shapefile.close();

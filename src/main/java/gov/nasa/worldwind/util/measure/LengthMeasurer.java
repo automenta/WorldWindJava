@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.util.measure;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.Polyline;
+import gov.nasa.worldwind.render.Polyline;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;

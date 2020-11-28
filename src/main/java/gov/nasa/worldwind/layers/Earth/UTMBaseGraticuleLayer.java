@@ -7,7 +7,7 @@ package gov.nasa.worldwind.layers.Earth;
 
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -207,10 +207,10 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer {
 
     protected void initRenderingParams() {
         GraticuleRenderingParams params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0.8f, 0.8f, 0.8f, 0.5f));
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(1.0f, 1.0f, 1.0f, 0.8f));
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-14"));
-        params.setValue(GraticuleRenderingParams.KEY_DRAW_LABELS, Boolean.TRUE);
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0.8f, 0.8f, 0.8f, 0.5f));
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(1.0f, 1.0f, 1.0f, 0.8f));
+        params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-14"));
+        params.set(GraticuleRenderingParams.KEY_DRAW_LABELS, Boolean.TRUE);
         setRenderingParams(GRATICULE_UTM, params);
     }
 

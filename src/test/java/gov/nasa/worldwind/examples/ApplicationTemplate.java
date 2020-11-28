@@ -37,43 +37,7 @@ public class ApplicationTemplate {
         }
     }
 
-    public static void insertBeforeCompass(WorldWindow wwd, Layer layer) {
-        // Insert the layer into the layer list just before the compass.
-        int compassPosition = 0;
-        LayerList layers = wwd.model().getLayers();
-        for (Layer l : layers) {
-            if (l instanceof CompassLayer) {
-                compassPosition = layers.indexOf(l);
-            }
-        }
-        layers.add(compassPosition, layer);
-    }
-
-    public static void insertBeforePlacenames(WorldWindow wwd, Layer layer) {
-        // Insert the layer into the layer list just before the placenames.
-        int compassPosition = 0;
-        LayerList layers = wwd.model().getLayers();
-        for (Layer l : layers) {
-            if (l instanceof PlaceNameLayer) {
-                compassPosition = layers.indexOf(l);
-            }
-        }
-        layers.add(compassPosition, layer);
-    }
-
-    public static void insertAfterPlacenames(WorldWindow wwd, Layer layer) {
-        // Insert the layer into the layer list just after the placenames.
-        int compassPosition = 0;
-        LayerList layers = wwd.model().getLayers();
-        for (Layer l : layers) {
-            if (l instanceof PlaceNameLayer) {
-                compassPosition = layers.indexOf(l);
-            }
-        }
-        layers.add(compassPosition + 1, layer);
-    }
-
-//    public static void insertBeforeLayerName(WorldWindow wwd, Layer layer, CharSequence targetName) {
+    //    public static void insertBeforeLayerName(WorldWindow wwd, Layer layer, CharSequence targetName) {
 //        // Insert the layer into the layer list just before the target layer.
 //        int targetPosition = 0;
 //        LayerList layers = wwd.getModel().getLayers();
@@ -127,8 +91,6 @@ public class ApplicationTemplate {
             Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
             this.wwd.setModel(m);
 
-            // Setup a select listener for the worldmap click-and-go feature
-            this.wwd.addSelectListener(new ClickAndGoSelectListener(this.getWwd(), WorldMapLayer.class));
 
             this.add((Component) this.wwd, BorderLayout.CENTER);
             if (includeStatusBar) {
@@ -136,17 +98,19 @@ public class ApplicationTemplate {
                 this.add(statusBar, BorderLayout.PAGE_END);
                 this.statusBar.setEventSource(wwd);
             }
+            // Setup a select listener for the worldmap click-and-go feature
+            this.wwd.addSelectListener(new ClickAndGoSelectListener(this.wwd(), WorldMapLayer.class));
 
             // Add controllers to manage highlighting and tool tips.
-            this.toolTipController = new ToolTipController(this.getWwd(), AVKey.DISPLAY_NAME, null);
-            this.highlightController = new HighlightController(this.getWwd(), SelectEvent.ROLLOVER);
+            this.toolTipController = new ToolTipController(this.wwd(), AVKey.DISPLAY_NAME, null);
+            this.highlightController = new HighlightController(this.wwd(), SelectEvent.ROLLOVER);
         }
 
         protected WorldWindow createWorldWindow() {
             return new WorldWindowGLCanvas();
         }
 
-        public WorldWindow getWwd() {
+        public WorldWindow wwd() {
             return wwd;
         }
 
@@ -185,24 +149,24 @@ public class ApplicationTemplate {
             this.getContentPane().add(wwjPanel, BorderLayout.CENTER);
             if (includeLayerPanel) {
                 this.controlPanel = new JPanel(new BorderLayout(10, 10));
-                this.layerPanel = new LayerPanel(this.getWwd());
+                this.layerPanel = new LayerPanel(this.wwd());
                 this.controlPanel.add(this.layerPanel, BorderLayout.CENTER);
-                this.controlPanel.add(new FlatWorldPanel(this.getWwd()), BorderLayout.NORTH);
+                this.controlPanel.add(new FlatWorldPanel(this.wwd()), BorderLayout.NORTH);
                 this.getContentPane().add(this.controlPanel, BorderLayout.WEST);
             }
 
             if (includeStatsPanel || System.getProperty("gov.nasa.worldwind.showStatistics") != null) {
-                this.statsPanel = new StatisticsPanel(this.wwjPanel.getWwd(), new Dimension(250, canvasSize.height));
+                this.statsPanel = new StatisticsPanel(this.wwjPanel.wwd(), new Dimension(250, canvasSize.height));
                 this.getContentPane().add(this.statsPanel, BorderLayout.EAST);
             }
 
             // Create and install the view controls layer and register a controller for it with the WorldWindow.
             ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
-            insertBeforeCompass(getWwd(), viewControlsLayer);
-            this.getWwd().addSelectListener(new ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
+            WorldWindow.insertBeforeCompass(wwd(), viewControlsLayer);
+            this.wwd().addSelectListener(new ViewControlsSelectListener(this.wwd(), viewControlsLayer));
 
             // Register a rendering exception listener that's notified when exceptions occur during rendering.
-            this.wwjPanel.getWwd().addRenderingExceptionListener((Throwable t) -> {
+            this.wwjPanel.wwd().addRenderingExceptionListener((Throwable t) -> {
                 if (t instanceof WWAbsentRequirementException) {
                     String message = "Computer does not meet minimum graphics requirements.\n";
                     message += "Please install up-to-date graphics driver and try again.\n";
@@ -217,9 +181,9 @@ public class ApplicationTemplate {
 
             // Search the layer list for layers that are also select listeners and register them with the World
             // Window. This enables interactive layers to be included without specific knowledge of them here.
-            for (Layer layer : this.wwjPanel.getWwd().model().getLayers()) {
+            for (Layer layer : this.wwjPanel.wwd().model().getLayers()) {
                 if (layer instanceof SelectListener) {
-                    this.getWwd().addSelectListener((SelectListener) layer);
+                    this.wwd().addSelectListener((SelectListener) layer);
                 }
             }
 
@@ -238,8 +202,8 @@ public class ApplicationTemplate {
             return wwjPanel;
         }
 
-        public WorldWindow getWwd() {
-            return this.wwjPanel.getWwd();
+        public WorldWindow wwd() {
+            return this.wwjPanel.wwd();
         }
 
         public StatusBar getStatusBar() {

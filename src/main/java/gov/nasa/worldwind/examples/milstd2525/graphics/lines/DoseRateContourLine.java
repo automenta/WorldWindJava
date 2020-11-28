@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples.milstd2525.graphics.lines;
 
 import gov.nasa.worldwind.examples.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.examples.milstd2525.graphics.areas.BasicArea;
-import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.Position;
 
 import java.util.*;

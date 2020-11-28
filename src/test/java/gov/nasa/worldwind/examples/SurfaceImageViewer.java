@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.examples;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.layers.SurfaceImageLayer;
 import gov.nasa.worldwind.terrain.*;
 
@@ -54,7 +55,7 @@ public class SurfaceImageViewer extends ApplicationTemplate {
                 Thread t = new Thread(() -> {
                     try {
                         CompoundElevationModel cem
-                            = (CompoundElevationModel) getWwd().model().getGlobe().getElevationModel();
+                            = (CompoundElevationModel) wwd().model().getGlobe().getElevationModel();
                         LocalElevationModel em = new LocalElevationModel();
                         em.addElevations(imageFile.getPath());
                         cem.addElevationModel(em);
@@ -87,7 +88,7 @@ public class SurfaceImageViewer extends ApplicationTemplate {
                         // TODO: proper threading
                         layer.addImage(imageFile.getAbsolutePath());
 
-                        getWwd().redraw();
+                        wwd().redraw();
                         statusLabel.setText("status: ready");
                     }
 //                    catch (IOException e)
@@ -109,7 +110,7 @@ public class SurfaceImageViewer extends ApplicationTemplate {
                 this.layer.setPickEnabled(false);
                 this.layer.setName("Surface Images");
 
-                insertBeforeCompass(this.getWwd(), layer);
+                WorldWindow.insertBeforeCompass(this.wwd(), layer);
 
                 this.getControlPanel().add(makeControlPanel(), BorderLayout.SOUTH);
             }
@@ -130,7 +131,7 @@ public class SurfaceImageViewer extends ApplicationTemplate {
             this.opacitySlider.addChangeListener(e -> {
                 int value = opacitySlider.getValue();
                 layer.setOpacity(value / 100.0d);
-                getWwd().redraw();
+                wwd().redraw();
             });
             JPanel opacityPanel = new JPanel(new BorderLayout(5, 5));
             opacityPanel.setBorder(new EmptyBorder(0, 10, 0, 0));

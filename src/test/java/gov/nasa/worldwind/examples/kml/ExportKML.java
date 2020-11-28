@@ -7,7 +7,7 @@ package gov.nasa.worldwind.examples.kml;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.Logging;
 
@@ -31,8 +31,8 @@ public class ExportKML {
         PointPlacemark placemark = new PointPlacemark(Position.fromDegrees(37.824713, -122.370028, 0.0));
 
         placemark.setLabelText("Treasure Island");
-        placemark.setValue(AVKey.SHORT_DESCRIPTION, "Sample placemark");
-        placemark.setValue(AVKey.BALLOON_TEXT, "This is a <b>Point Placemark</b>");
+        placemark.set(AVKey.SHORT_DESCRIPTION, "Sample placemark");
+        placemark.set(AVKey.BALLOON_TEXT, "This is a <b>Point Placemark</b>");
 
         placemark.setLineEnabled(false);
         placemark.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
@@ -54,8 +54,8 @@ public class ExportKML {
         path.setAttributes(normalShapeAttributes);
         path.setHighlightAttributes(highlightShapeAttributes);
 
-        path.setValue(AVKey.SHORT_DESCRIPTION, "Short description of Path");
-        path.setValue(AVKey.BALLOON_TEXT, "This is a Path.");
+        path.set(AVKey.SHORT_DESCRIPTION, "Short description of Path");
+        path.set(AVKey.BALLOON_TEXT, "This is a Path.");
 
         return path;
     }
@@ -105,8 +105,8 @@ public class ExportKML {
         poly.setAttributes(normalShapeAttributes);
         poly.setHighlightAttributes(highlightShapeAttributes);
 
-        poly.setValue(AVKey.SHORT_DESCRIPTION, "Short description of Polygon");
-        poly.setValue(AVKey.BALLOON_TEXT, "This is a Polygon.");
+        poly.set(AVKey.SHORT_DESCRIPTION, "Short description of Polygon");
+        poly.set(AVKey.BALLOON_TEXT, "This is a Polygon.");
 
         return poly;
     }

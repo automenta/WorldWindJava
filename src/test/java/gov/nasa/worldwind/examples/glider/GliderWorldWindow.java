@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.examples.glider;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.Logging;
@@ -45,9 +45,9 @@ public class GliderWorldWindow extends WorldWindowGLCanvas {
 
         GliderImageLayer layer = new GliderImageLayer();
 
-        image.setValue(AVKey.LAYER, layer);
+        image.set(AVKey.LAYER, layer);
         layer.setImage(image);
-        ApplicationTemplate.insertBeforeCompass(this, layer);
+        WorldWindow.insertBeforeCompass(this, layer);
 
         layer.addPropertyChangeListener(this.layerListener);
 
@@ -73,7 +73,7 @@ public class GliderWorldWindow extends WorldWindowGLCanvas {
 
         this.imageTable.remove(image);
 
-        Layer layer = (Layer) image.getValue(AVKey.LAYER);
+        Layer layer = (Layer) image.get(AVKey.LAYER);
         if (layer != null) {
             image.removeKey(AVKey.LAYER);
             layer.removePropertyChangeListener(this.layerListener);

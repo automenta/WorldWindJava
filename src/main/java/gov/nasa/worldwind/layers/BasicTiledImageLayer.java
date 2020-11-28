@@ -10,8 +10,8 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.event.BulkRetrievalListener;
-import gov.nasa.worldwind.examples.ogc.wms.WMSCapabilities;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.formats.dds.*;
 import gov.nasa.worldwind.geom.*;
@@ -47,7 +47,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (s != null)
             this.setName(s);
 
-        String[] strings = (String[]) params.getValue(AVKey.AVAILABLE_IMAGE_FORMATS);
+        String[] strings = (String[]) params.get(AVKey.AVAILABLE_IMAGE_FORMATS);
         if (strings != null && strings.length > 0)
             this.setAvailableImageFormats(strings);
 
@@ -55,70 +55,70 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (s != null)
             this.setTextureFormat(s);
 
-        Double d = (Double) params.getValue(AVKey.OPACITY);
+        Double d = (Double) params.get(AVKey.OPACITY);
         if (d != null)
             this.setOpacity(d);
 
-        d = (Double) params.getValue(AVKey.MAX_ACTIVE_ALTITUDE);
+        d = (Double) params.get(AVKey.MAX_ACTIVE_ALTITUDE);
         if (d != null)
             this.setMaxActiveAltitude(d);
 
-        d = (Double) params.getValue(AVKey.MIN_ACTIVE_ALTITUDE);
+        d = (Double) params.get(AVKey.MIN_ACTIVE_ALTITUDE);
         if (d != null)
             this.setMinActiveAltitude(d);
 
-        d = (Double) params.getValue(AVKey.MAP_SCALE);
+        d = (Double) params.get(AVKey.MAP_SCALE);
         if (d != null)
-            this.setValue(AVKey.MAP_SCALE, d);
+            this.set(AVKey.MAP_SCALE, d);
 
-        d = (Double) params.getValue(AVKey.DETAIL_HINT);
+        d = (Double) params.get(AVKey.DETAIL_HINT);
         if (d != null)
             this.setDetailHint(d);
 
-        Boolean b = (Boolean) params.getValue(AVKey.FORCE_LEVEL_ZERO_LOADS);
+        Boolean b = (Boolean) params.get(AVKey.FORCE_LEVEL_ZERO_LOADS);
         if (b != null)
             this.setForceLevelZeroLoads(b);
 
-        b = (Boolean) params.getValue(AVKey.RETAIN_LEVEL_ZERO_TILES);
+        b = (Boolean) params.get(AVKey.RETAIN_LEVEL_ZERO_TILES);
         if (b != null)
             this.setRetainLevelZeroTiles(b);
 
-        b = (Boolean) params.getValue(AVKey.NETWORK_RETRIEVAL_ENABLED);
+        b = (Boolean) params.get(AVKey.NETWORK_RETRIEVAL_ENABLED);
         if (b != null)
             this.setNetworkRetrievalEnabled(b);
 
-        b = (Boolean) params.getValue(AVKey.USE_MIP_MAPS);
+        b = (Boolean) params.get(AVKey.USE_MIP_MAPS);
         if (b != null)
             this.setUseMipMaps(b);
 
-        b = (Boolean) params.getValue(AVKey.USE_TRANSPARENT_TEXTURES);
+        b = (Boolean) params.get(AVKey.USE_TRANSPARENT_TEXTURES);
         if (b != null)
             this.setUseTransparentTextures(b);
 
-        Object o = params.getValue(AVKey.URL_CONNECT_TIMEOUT);
+        Object o = params.get(AVKey.URL_CONNECT_TIMEOUT);
         if (o != null)
-            this.setValue(AVKey.URL_CONNECT_TIMEOUT, o);
+            this.set(AVKey.URL_CONNECT_TIMEOUT, o);
 
-        o = params.getValue(AVKey.URL_READ_TIMEOUT);
+        o = params.get(AVKey.URL_READ_TIMEOUT);
         if (o != null)
-            this.setValue(AVKey.URL_READ_TIMEOUT, o);
+            this.set(AVKey.URL_READ_TIMEOUT, o);
 
-        o = params.getValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT);
+        o = params.get(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT);
         if (o != null)
-            this.setValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, o);
+            this.set(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT, o);
 
-        ScreenCredit sc = (ScreenCredit) params.getValue(AVKey.SCREEN_CREDIT);
+        ScreenCredit sc = (ScreenCredit) params.get(AVKey.SCREEN_CREDIT);
         if (sc != null)
             this.setScreenCredit(sc);
 
-        if (params.getValue(AVKey.TRANSPARENCY_COLORS) != null)
-            this.setValue(AVKey.TRANSPARENCY_COLORS, params.getValue(AVKey.TRANSPARENCY_COLORS));
+        if (params.get(AVKey.TRANSPARENCY_COLORS) != null)
+            this.set(AVKey.TRANSPARENCY_COLORS, params.get(AVKey.TRANSPARENCY_COLORS));
 
-        b = (Boolean) params.getValue(AVKey.DELETE_CACHE_ON_EXIT);
+        b = (Boolean) params.get(AVKey.DELETE_CACHE_ON_EXIT);
         if (b != null)
-            this.setValue(AVKey.DELETE_CACHE_ON_EXIT, true);
+            this.set(AVKey.DELETE_CACHE_ON_EXIT, true);
 
-        this.setValue(AVKey.CONSTRUCTION_PARAMETERS, params.copy());
+        this.set(AVKey.CONSTRUCTION_PARAMETERS, params.copy());
 
         // If any resources should be retrieved for this Layer, start a task to retrieve those resources, and initialize
         // this Layer once those resources are retrieved.
@@ -169,25 +169,25 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     }
 
     protected static void setFallbacks(AVList params) {
-        if (params.getValue(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
+        if (params.get(AVKey.LEVEL_ZERO_TILE_DELTA) == null) {
             Angle delta = Angle.fromDegrees(36);
-            params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
+            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(delta, delta));
         }
 
-        if (params.getValue(AVKey.TILE_WIDTH) == null)
-            params.setValue(AVKey.TILE_WIDTH, 512);
+        if (params.get(AVKey.TILE_WIDTH) == null)
+            params.set(AVKey.TILE_WIDTH, 512);
 
-        if (params.getValue(AVKey.TILE_HEIGHT) == null)
-            params.setValue(AVKey.TILE_HEIGHT, 512);
+        if (params.get(AVKey.TILE_HEIGHT) == null)
+            params.set(AVKey.TILE_HEIGHT, 512);
 
-        if (params.getValue(AVKey.FORMAT_SUFFIX) == null)
-            params.setValue(AVKey.FORMAT_SUFFIX, ".dds");
+        if (params.get(AVKey.FORMAT_SUFFIX) == null)
+            params.set(AVKey.FORMAT_SUFFIX, ".dds");
 
-        if (params.getValue(AVKey.NUM_LEVELS) == null)
-            params.setValue(AVKey.NUM_LEVELS, 19); // approximately 0.1 meters per pixel
+        if (params.get(AVKey.NUM_LEVELS) == null)
+            params.set(AVKey.NUM_LEVELS, 19); // approximately 0.1 meters per pixel
 
-        if (params.getValue(AVKey.NUM_EMPTY_LEVELS) == null)
-            params.setValue(AVKey.NUM_EMPTY_LEVELS, 0);
+        if (params.get(AVKey.NUM_EMPTY_LEVELS) == null)
+            params.set(AVKey.NUM_EMPTY_LEVELS, 0);
     }
 
     protected static AVList restorableStateToParams(String stateInXml) {
@@ -217,51 +217,51 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         AVList params) {
         String s = rs.getStateValueAsString(context, AVKey.DATA_CACHE_NAME);
         if (s != null)
-            params.setValue(AVKey.DATA_CACHE_NAME, s);
+            params.set(AVKey.DATA_CACHE_NAME, s);
 
         s = rs.getStateValueAsString(context, AVKey.SERVICE);
         if (s != null)
-            params.setValue(AVKey.SERVICE, s);
+            params.set(AVKey.SERVICE, s);
 
         s = rs.getStateValueAsString(context, AVKey.DATASET_NAME);
         if (s != null)
-            params.setValue(AVKey.DATASET_NAME, s);
+            params.set(AVKey.DATASET_NAME, s);
 
         s = rs.getStateValueAsString(context, AVKey.FORMAT_SUFFIX);
         if (s != null)
-            params.setValue(AVKey.FORMAT_SUFFIX, s);
+            params.set(AVKey.FORMAT_SUFFIX, s);
 
         Integer i = rs.getStateValueAsInteger(context, AVKey.NUM_EMPTY_LEVELS);
         if (i != null)
-            params.setValue(AVKey.NUM_EMPTY_LEVELS, i);
+            params.set(AVKey.NUM_EMPTY_LEVELS, i);
 
         i = rs.getStateValueAsInteger(context, AVKey.NUM_LEVELS);
         if (i != null)
-            params.setValue(AVKey.NUM_LEVELS, i);
+            params.set(AVKey.NUM_LEVELS, i);
 
         i = rs.getStateValueAsInteger(context, AVKey.TILE_WIDTH);
         if (i != null)
-            params.setValue(AVKey.TILE_WIDTH, i);
+            params.set(AVKey.TILE_WIDTH, i);
 
         i = rs.getStateValueAsInteger(context, AVKey.TILE_HEIGHT);
         if (i != null)
-            params.setValue(AVKey.TILE_HEIGHT, i);
+            params.set(AVKey.TILE_HEIGHT, i);
 
         Long lo = rs.getStateValueAsLong(context, AVKey.EXPIRY_TIME);
         if (lo != null)
-            params.setValue(AVKey.EXPIRY_TIME, lo);
+            params.set(AVKey.EXPIRY_TIME, lo);
 
         LatLon ll = rs.getStateValueAsLatLon(context, AVKey.LEVEL_ZERO_TILE_DELTA);
         if (ll != null)
-            params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
+            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, ll);
 
         ll = rs.getStateValueAsLatLon(context, AVKey.TILE_ORIGIN);
         if (ll != null)
-            params.setValue(AVKey.TILE_ORIGIN, ll);
+            params.set(AVKey.TILE_ORIGIN, ll);
 
         Sector sector = rs.getStateValueAsSector(context, AVKey.SECTOR);
         if (sector != null)
-            params.setValue(AVKey.SECTOR, sector);
+            params.set(AVKey.SECTOR, sector);
     }
 
     protected void forceTextureLoad(TextureTile tile) {
@@ -464,7 +464,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     }
 
     protected void retrieveTexture(TextureTile tile, DownloadPostProcessor postProcessor) {
-        if (this.getValue(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
+        if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
             this.retrieveLocalTexture(tile, postProcessor);
         else
             // Assume it's remote, which handles the legacy cases.
@@ -475,15 +475,15 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (!WorldWind.retrieveLocal().isAvailable())
             return;
 
-        RetrieverFactory retrieverFactory = (RetrieverFactory) this.getValue(AVKey.RETRIEVER_FACTORY_LOCAL);
+        RetrieverFactory retrieverFactory = (RetrieverFactory) this.get(AVKey.RETRIEVER_FACTORY_LOCAL);
         if (retrieverFactory == null)
             return;
 
         AVList avList = new AVListImpl();
-        avList.setValue(AVKey.SECTOR, tile.sector);
-        avList.setValue(AVKey.WIDTH, tile.getWidth());
-        avList.setValue(AVKey.HEIGHT, tile.getHeight());
-        avList.setValue(AVKey.FILE_NAME, tile.getPath());
+        avList.set(AVKey.SECTOR, tile.sector);
+        avList.set(AVKey.WIDTH, tile.getWidth());
+        avList.set(AVKey.HEIGHT, tile.getHeight());
+        avList.set(AVKey.FILE_NAME, tile.getPath());
 
         Retriever retriever = retrieverFactory.createRetriever(avList, postProcessor);
 
@@ -526,7 +526,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
                 Logging.getMessage("layers.TextureLayer.UnknownRetrievalProtocol", url.toString()));
             return;
         }
-        retriever.setValue(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
+        retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
 
         // Apply any overridden timeouts.
         Integer cto = AVListImpl.getIntegerValue(this, AVKey.URL_CONNECT_TIMEOUT);
@@ -565,7 +565,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     protected String retrieveResources() {
         // This Layer has no construction parameters, so there is no description of what to retrieve. Return a key
         // indicating the resources have been successfully retrieved, though there is nothing to retrieve.
-        AVList params = (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+        AVList params = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
         if (params == null) {
             String message = Logging.getMessage("nullValue.ConstructionParametersIsNull");
             Logging.logger().warning(message);
@@ -654,11 +654,11 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
      * @return <code>true</code> if this Layer should retrieve any non-tile resources, and <code>false</code> otherwise.
      */
     protected boolean isRetrieveResources() {
-        AVList params = (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+        AVList params = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
         if (params == null)
             return false;
 
-        Boolean b = (Boolean) params.getValue(AVKey.RETRIEVE_PROPERTIES_FROM_SERVICE);
+        Boolean b = (Boolean) params.get(AVKey.RETRIEVE_PROPERTIES_FROM_SERVICE);
         return b != null && b;
     }
 
@@ -745,7 +745,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
             params = new AVListImpl();
 
         // Gather all the construction parameters if they are available.
-        AVList constructionParams = (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
         if (constructionParams != null)
             params.setValues(constructionParams);
 
@@ -765,7 +765,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
     public String getRestorableState() {
         // We only create a restorable state XML if this elevation model was constructed with an AVList.
-        AVList constructionParams = (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
         if (constructionParams == null)
             return null;
 
@@ -785,7 +785,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
     }
 
     protected void doGetRestorableState(RestorableSupport rs, RestorableSupport.StateObject context) {
-        AVList constructionParams = (AVList) this.getValue(AVKey.CONSTRUCTION_PARAMETERS);
+        AVList constructionParams = (AVList) this.get(AVKey.CONSTRUCTION_PARAMETERS);
         if (constructionParams != null) {
             for (Map.Entry<String, Object> avp : constructionParams.getEntries()) {
                 this.getRestorableStateForAVPair(avp.getKey(), avp.getValue(), rs, context);
@@ -885,7 +885,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         if (so.getName().equals(AVKey.FRAME_TIMESTAMP))
             return; // frame timestamp is a runtime property and must not be saved/restored
 
-        this.setValue(so.getName(), so.getValue());
+        this.set(so.getName(), so.getValue());
     }
 
     protected static class RequestTask implements Runnable, Comparable<RequestTask> {

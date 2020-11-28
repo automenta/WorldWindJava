@@ -22,10 +22,10 @@ public class GeoJSONFeature extends GeoJSONObject {
     }
 
     public GeoJSONGeometry getGeometry() {
-        return (GeoJSONGeometry) this.getValue(GeoJSONConstants.FIELD_GEOMETRY);
+        return (GeoJSONGeometry) this.get(GeoJSONConstants.FIELD_GEOMETRY);
     }
 
     public AVList getProperties() {
-        return (AVList) this.getValue(GeoJSONConstants.FIELD_PROPERTIES);
+        return (AVList) this.get(GeoJSONConstants.FIELD_PROPERTIES);
     }
 }

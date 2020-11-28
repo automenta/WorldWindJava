@@ -22,7 +22,7 @@ import java.io.*;
  * @version $Id: ExportAsKMLGroundOverlay.java 1352 2013-05-20 18:41:16Z tgaskins $
  */
 public class ExportAsKMLGroundOverlay {
-    protected static final String DATA_PATH = "gov/nasa/worldwindx/examples/data/wa-precip-24hmam-5km.tif";
+    protected static final String DATA_PATH = "gov/nasa/worldwind/examples/data/wa-precip-24hmam-5km.tif";
     protected static final double HUE_BLUE = 240.0d / 360.0d;
     protected static final double HUE_RED = 0.0d / 360.0d;
 
@@ -77,7 +77,7 @@ public class ExportAsKMLGroundOverlay {
 
             // Determine the sector covered by the elevations. This information is in the GeoTIFF file or auxiliary
             // files associated with the elevations file.
-            Sector sector = (Sector) rasters[0].getValue(AVKey.SECTOR);
+            Sector sector = (Sector) rasters[0].get(AVKey.SECTOR);
             if (sector == null) {
                 String msg = Logging.getMessage("DataRaster.MissingMetadata", AVKey.SECTOR);
                 Logging.logger().severe(msg);

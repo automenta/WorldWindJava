@@ -67,13 +67,13 @@ Wedges          3 fps / 4 fps                 20 fps / 23 fps          57 fps / 
 
 package gov.nasa.worldwind.performance;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.Box;
-import gov.nasa.worldwind.examples.render.Cylinder;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.Box;
+import gov.nasa.worldwind.render.Cylinder;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -102,7 +102,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate {
 
             Layer layer = new RenderableLayer();
             //layer.setPickEnabled(true);
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
 
             makeMany();
         }
@@ -171,7 +171,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate {
                     shapeType = (String) cb.getSelectedItem();
                     getLayer().clear();
                     makeMany();
-                    getWwd().redraw();
+                    wwd().redraw();
                 });
                 shapeSelectionPanel.add(shapeList, BorderLayout.SOUTH);
             }
@@ -196,7 +196,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate {
                     getLayer().clear();
                     makeMany();
                     setDetailHint(hint);
-                    getWwd().redraw();
+                    wwd().redraw();
                 });
                 elevationSliderPanel.add(slider, BorderLayout.SOUTH);
             }
@@ -216,7 +216,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate {
         }
 
         protected RenderableLayer getLayer() {
-            for (Layer layer : getWwd().model().getLayers()) {
+            for (Layer layer : wwd().model().getLayers()) {
                 if (layer.getName().contains("Renderable")) {
                     return (RenderableLayer) layer;
                 }

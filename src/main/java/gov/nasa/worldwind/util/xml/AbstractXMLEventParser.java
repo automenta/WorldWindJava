@@ -90,7 +90,7 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
         if (this.fields == null)
             this.fields = new AVListImpl();
 
-        this.fields.setValue(keyName, value);
+        this.fields.set(keyName, value);
     }
 
     public Object getField(QName keyName) {
@@ -98,7 +98,7 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
     }
 
     public Object getField(String keyName) {
-        return this.fields != null ? this.fields.getValue(keyName) : null;
+        return this.fields != null ? this.fields.get(keyName) : null;
     }
 
     public boolean hasField(QName keyName) {

@@ -40,7 +40,7 @@ public class Navigation extends AbstractFeatureLayer {
 
     public Navigation(Registry registry) {
         super("Navigation", Constants.FEATURE_NAVIGATION,
-            "gov/nasa/worldwindx/applications/worldwindow/images/navegacion-64x64.png", true, registry);
+            "gov/nasa/worldwind/examples/worldwindow/images/navegacion-64x64.png", true, registry);
     }
 
     public void initialize(Controller controller) {
@@ -50,8 +50,8 @@ public class Navigation extends AbstractFeatureLayer {
     protected Layer doAddLayer() {
         ViewControlsLayer layer = new ViewControlsLayer();
 
-        layer.setValue(Constants.SCREEN_LAYER, true);
-        layer.setValue(Constants.INTERNAL_LAYER, true);
+        layer.set(Constants.SCREEN_LAYER, true);
+        layer.set(Constants.INTERNAL_LAYER, true);
         layer.setLayout(AVKey.VERTICAL);
 
         controller.addInternalLayer(layer);

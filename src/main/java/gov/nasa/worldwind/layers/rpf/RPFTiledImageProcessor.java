@@ -120,9 +120,9 @@ public class RPFTiledImageProcessor {
 
             // Create tiled imagery.
             AVList params = new AVListImpl();
-            params.setValue(RPFTiledImageLayer.RPF_ROOT_PATH, rootPath);
-            params.setValue(RPFTiledImageLayer.RPF_DATA_SERIES_ID, dataSeriesId);
-            params.setValue(RPFGenerator.RPF_FILE_INDEX, fileIndex);
+            params.set(RPFTiledImageLayer.RPF_ROOT_PATH, rootPath);
+            params.set(RPFTiledImageLayer.RPF_DATA_SERIES_ID, dataSeriesId);
+            params.set(RPFGenerator.RPF_FILE_INDEX, fileIndex);
             Collection<Tile> tileList = RPFTiledImageLayer.createTopLevelTiles(params);
             RPFGenerator generator = new RPFGenerator(params);
             createTiledImagery(tileList, generator);

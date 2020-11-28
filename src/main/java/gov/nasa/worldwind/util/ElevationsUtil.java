@@ -105,7 +105,7 @@ public class ElevationsUtil {
                 conversionValue = WWMath.convertFeetToMeters(1);
                 minValue = WWMath.convertFeetToMeters(minValue);
                 maxValue = WWMath.convertFeetToMeters(maxValue);
-                raster.setValue(AVKey.ELEVATION_UNIT, AVKey.UNIT_METER);
+                raster.set(AVKey.ELEVATION_UNIT, AVKey.UNIT_METER);
             }
             else {
                 needsConversion = false;
@@ -150,13 +150,13 @@ public class ElevationsUtil {
 
         if (rasterHasVoids) {
             if (missingDataSignal != null)
-                raster.setValue(AVKey.MISSING_DATA_SIGNAL, missingDataSignal);
+                raster.set(AVKey.MISSING_DATA_SIGNAL, missingDataSignal);
         }
         else {
             raster.removeKey(AVKey.MISSING_DATA_SIGNAL);
         }
 
-        raster.setValue(AVKey.ELEVATION_MIN, minValue);
-        raster.setValue(AVKey.ELEVATION_MAX, maxValue);
+        raster.set(AVKey.ELEVATION_MIN, minValue);
+        raster.set(AVKey.ELEVATION_MAX, maxValue);
     }
 }

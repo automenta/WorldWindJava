@@ -8,7 +8,7 @@ package gov.nasa.worldwind.view.firstperson;
 import com.jogamp.opengl.GL;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.view.*;

@@ -8,7 +8,7 @@ package gov.nasa.worldwind.layers;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.ScreenAnnotation;
+import gov.nasa.worldwind.render.ScreenAnnotation;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;
@@ -390,12 +390,12 @@ public class ViewControlsSelectListener implements SelectListener {
                     view.setFieldOfView(view.getFieldOfView().multiply(fovStep));
                 break;
             case AVKey.VERTICAL_EXAGGERATION_UP: {
-                SceneController sc = this.wwd.getSceneController();
+                SceneController sc = this.wwd.sceneControl();
                 sc.setVerticalExaggeration(sc.getVerticalExaggeration() + this.veStep);
                 break;
             }
             case AVKey.VERTICAL_EXAGGERATION_DOWN: {
-                SceneController sc = this.wwd.getSceneController();
+                SceneController sc = this.wwd.sceneControl();
                 sc.setVerticalExaggeration(Math.max(1.0d, sc.getVerticalExaggeration() - this.veStep));
                 break;
             }
@@ -564,7 +564,7 @@ public class ViewControlsSelectListener implements SelectListener {
         // Compute forward vector
         Vec4 forward = Vec4.UNIT_Y.transformBy4(transform);
         // Return intersection with terrain
-        Intersection[] intersections = wwd.getSceneController().getTerrain().intersect(
+        Intersection[] intersections = wwd.sceneControl().getTerrain().intersect(
             new Line(view.getEyePoint(), forward));
         return (intersections != null && intersections.length != 0) ? intersections[0].getIntersectionPoint() : null;
     }

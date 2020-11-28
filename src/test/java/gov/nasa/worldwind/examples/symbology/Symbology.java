@@ -10,7 +10,7 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.examples.milstd2525.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.symbology.*;
@@ -70,12 +70,12 @@ public class Symbology extends ApplicationTemplate {
             // at 3km above mean sea level.
             TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFAPMFQM------A",
                 Position.fromDegrees(34.4934, -117.6003, 3000));
-            symbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Symbol"); // Tool tip text.
+            symbol.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Symbol"); // Tool tip text.
             symbol.setShowLocation(false);
             layer.add(symbol);
 
             // Add the symbol layer to the WorldWind model.
-            this.getWwd().model().getLayers().add(layer);
+            this.wwd().model().getLayers().add(layer);
         }
 
         protected void addTacticalGraphics() {
@@ -96,7 +96,7 @@ public class Symbology extends ApplicationTemplate {
             // friendly Supporting Attack.
             TacticalGraphicFactory factory = new MilStd2525GraphicFactory();
             TacticalGraphic graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Graphic"); // Tool tip text.
+            graphic.set(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Graphic"); // Tool tip text.
             layer.add(graphic);
 
             // Create point placemarks to mark each of the control points used to define the tactical graphic. This
@@ -104,7 +104,7 @@ public class Symbology extends ApplicationTemplate {
             this.addControlPoints(positions, layer);
 
             // Add the graphic layer to the WorldWind model.
-            this.getWwd().model().getLayers().add(layer);
+            this.wwd().model().getLayers().add(layer);
         }
 
         /**
@@ -120,7 +120,7 @@ public class Symbology extends ApplicationTemplate {
             int i = 1;
             for (Position p : positions) {
                 PointPlacemark placemark = new PointPlacemark(p);
-                placemark.setValue(AVKey.DISPLAY_NAME, "Tactical Graphic Position " + i);
+                placemark.set(AVKey.DISPLAY_NAME, "Tactical Graphic Position " + i);
                 placemark.setAttributes(attrs);
                 placemark.setHighlightAttributes(attrs);
                 layer.add(placemark);

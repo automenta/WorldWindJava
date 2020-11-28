@@ -5,9 +5,10 @@
  */
 package gov.nasa.worldwind.terrain;
 
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
 import java.nio.DoubleBuffer;

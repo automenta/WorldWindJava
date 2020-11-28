@@ -6,8 +6,9 @@
 package gov.nasa.worldwind.examples;
 
 import com.jogamp.opengl.*;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 
@@ -142,7 +143,7 @@ public class PickFrustum extends ApplicationTemplate {
         public AppFrame() {
             super(true, false, false);
 
-            getWwd().addSelectListener(event -> {
+            wwd().addSelectListener(event -> {
                 if (isEnabled()) {
                     // Have rollover events highlight the rolled-over object.
                     if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
@@ -157,7 +158,7 @@ public class PickFrustum extends ApplicationTemplate {
 
             for (int x = -180; x < 180; x += 5) {
                 for (int y = -90; y < 90; y += 5) {
-                    WWIcon icon = new UserFacingIcon("gov/nasa/worldwindx/examples/images/georss.png",
+                    WWIcon icon = new UserFacingIcon("gov/nasa/worldwind/examples/images/georss.png",
                         new Position(Angle.fromDegrees(y), Angle
                             .fromDegrees(x), 0));
                     icon.setSize(new Dimension(32, 32));
@@ -166,10 +167,10 @@ public class PickFrustum extends ApplicationTemplate {
                 }
             }
 
-            ApplicationTemplate.insertAfterPlacenames(this.getWwd(), iconLayer);
+            WorldWindow.insertAfterPlacenames(this.wwd(), iconLayer);
 
             frustumLayer.setEnabled(false);
-            ApplicationTemplate.insertBeforeCompass(this.getWwd(), frustumLayer);
+            WorldWindow.insertBeforeCompass(this.wwd(), frustumLayer);
 
             this.getContentPane().add(this.makeControlPanel(), BorderLayout.WEST);
         }
@@ -194,7 +195,7 @@ public class PickFrustum extends ApplicationTemplate {
 
         protected JPanel makeControlPanel() {
             //Assumes square Frustum
-            Dimension dim = getWwd().getSceneController().getDrawContext().getPickPointFrustumDimension();
+            Dimension dim = wwd().sceneControl().getDrawContext().getPickPointFrustumDimension();
             int frustumWidth = dim.width;
 
             JPanel p = new JPanel();
@@ -216,7 +217,7 @@ public class PickFrustum extends ApplicationTemplate {
                     butToggleViewClipping.setText("Enable View Clipping");
                 }
 
-                getWwd().redraw();
+                wwd().redraw();
             });
             butToggleViewClipping.setSelected(true);
             butToggleViewClipping.setText("Disable View Clipping");
@@ -233,7 +234,7 @@ public class PickFrustum extends ApplicationTemplate {
                     butTogglePickingClipping.setText("Enable Picking Clipping");
                 }
 
-                getWwd().redraw();
+                wwd().redraw();
             });
             butTogglePickingClipping.setSelected(true);
             butTogglePickingClipping.setText("Disable Picking Clipping");
@@ -250,7 +251,7 @@ public class PickFrustum extends ApplicationTemplate {
                     butShowPickingFrustum.setText("Show Picking Frustum");
                 }
 
-                getWwd().redraw();
+                wwd().redraw();
             });
             butShowPickingFrustum.setText("Show Picking Frustum");
             p.add(butShowPickingFrustum);
@@ -261,9 +262,9 @@ public class PickFrustum extends ApplicationTemplate {
 
                 if (lblDimension != null) {
                     lblDimension.setText("(" + val + "," + val + ")");
-                    getWwd().getSceneController().getDrawContext().setPickPointFrustumDimension(
+                    wwd().sceneControl().getDrawContext().setPickPointFrustumDimension(
                         new Dimension(val, val));
-                    getWwd().redraw();
+                    wwd().redraw();
                 }
             });
 

@@ -16,7 +16,7 @@ import java.awt.event.*;
  */
 public class Graticule extends AbstractFeature {
     private static final String FEATURE_TITLE = "Graticule";
-    private static final String ICON_PATH = "gov/nasa/worldwindx/applications/worldwindow/images/lat-long-64x64.png";
+    private static final String ICON_PATH = "gov/nasa/worldwind/examples/worldwindow/images/lat-long-64x64.png";
     private Feature lastOneOn;
 
     public Graticule(Registry registry) {

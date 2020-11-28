@@ -232,7 +232,7 @@ public class FileStorePanel extends JPanel implements ListSelectionListener {
         if (model.getDataSets().isEmpty())
             return;
 
-        Sector visibleSector = this.wwd.getSceneController().getDrawContext().getVisibleSector();
+        Sector visibleSector = this.wwd.sceneControl().getDrawContext().getVisibleSector();
         if (this.applyVisibilityFilter && visibleSector == null) {
             for (FileStoreDataSet dataSet : model.getDataSets()) {
                 dataSet.removeKey(FileStoreTable.VISIBLE);
@@ -241,7 +241,7 @@ public class FileStorePanel extends JPanel implements ListSelectionListener {
         else {
             for (FileStoreDataSet dataSet : model.getDataSets()) {
                 if (!applyVisibilityFilter || visibleSector.contains(dataSet.getSector()))
-                    dataSet.setValue(FileStoreTable.VISIBLE, true);
+                    dataSet.set(FileStoreTable.VISIBLE, true);
                 else
                     dataSet.removeKey(FileStoreTable.VISIBLE);
             }

@@ -5,10 +5,10 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.UserFacingIcon;
+import gov.nasa.worldwind.render.UserFacingIcon;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.EarthFlat;
 import gov.nasa.worldwind.layers.IconLayer;
@@ -68,9 +68,9 @@ public class IconPicking extends ApplicationTemplate {
             icon.setSize(new Dimension(24, 24));
             layer.addIcon(icon);
 
-            ApplicationTemplate.insertAfterPlacenames(this.getWwd(), layer);
+            WorldWindow.insertAfterPlacenames(this.wwd(), layer);
 
-            this.getWwd().addSelectListener(event -> {
+            this.wwd().addSelectListener(event -> {
                 if (event.getEventAction().equals(SelectEvent.ROLLOVER)) {
                     PickedObjectList pol = event.getObjects();
                     System.out.println(" Picked Objects Size " + pol.size());
@@ -80,7 +80,7 @@ public class IconPicking extends ApplicationTemplate {
                     }
                 }
             });
-            this.getWwd().getSceneController().setDeepPickEnabled(true);
+            this.wwd().sceneControl().setDeepPickEnabled(true);
         }
     }
 }

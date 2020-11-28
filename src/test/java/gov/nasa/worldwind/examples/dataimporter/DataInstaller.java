@@ -10,8 +10,7 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.data.*;
-import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.ElevationModel;
@@ -37,8 +36,8 @@ import java.util.logging.Level;
 public class DataInstaller extends AVListImpl {
     public static final String IMAGERY = "Imagery";
     public static final String ELEVATION = "Elevation";
-    public static final String INSTALL_COMPLETE = "gov.nasa.worldwindx.dataimport.DataInstaller.InstallComplete";
-    public static final String PREVIEW_LAYER = "gov.nasa.worldwindx.dataimport.DataInstaller.PreviewLayer";
+    public static final String INSTALL_COMPLETE = "gov.nasa.worldwind.dataimport.DataInstaller.InstallComplete";
+    public static final String PREVIEW_LAYER = "gov.nasa.worldwind.dataimport.DataInstaller.PreviewLayer";
 
     public static void addToWorldWindow(WorldWindow wwd, Element domElement, AVList dataSet, boolean goTo) {
         String type = DataConfigurationUtils.getDataConfigType(domElement);
@@ -61,8 +60,8 @@ public class DataInstaller extends AVListImpl {
             layer = (Layer) factory.createFromConfigSource(domElement, null);
 
             Sector sector = WWXML.getSector(domElement, "Sector", null);
-            layer.setValue(AVKey.SECTOR, sector);
-            dataSet.setValue(AVKey.DISPLAY_NAME, layer.getName());
+            layer.set(AVKey.SECTOR, sector);
+            dataSet.set(AVKey.DISPLAY_NAME, layer.getName());
         }
         catch (Exception e) {
             String message = Logging.getMessage("generic.CreationFromConfigurationFailed",
@@ -83,9 +82,9 @@ public class DataInstaller extends AVListImpl {
 
             removeLayerPreview(wwd, dataSet);
 
-            ApplicationTemplate.insertBeforePlacenames(wwd, finalLayer);
+            WorldWindow.insertBeforePlacenames(wwd, finalLayer);
 
-            final Sector sector = (Sector) finalLayer.getValue(AVKey.SECTOR);
+            final Sector sector = (Sector) finalLayer.get(AVKey.SECTOR);
             if (goTo && sector != null && !sector.equals(Sector.FULL_SPHERE)) {
                 ExampleUtil.goTo(wwd, sector);
             }
@@ -93,8 +92,8 @@ public class DataInstaller extends AVListImpl {
     }
 
     protected static void removeLayerPreview(WorldWindow wwd, AVList dataSet) {
-        AVList layer = (Layer) dataSet.getValue(AVKey.LAYER);
-        if (layer == null || layer.getValue(PREVIEW_LAYER) == null)
+        AVList layer = (Layer) dataSet.get(AVKey.LAYER);
+        if (layer == null || layer.get(PREVIEW_LAYER) == null)
             return;
 
         if (!(layer instanceof RenderableLayer))
@@ -122,7 +121,7 @@ public class DataInstaller extends AVListImpl {
             Factory factory = (Factory) WorldWind.createConfigurationComponent(AVKey.ELEVATION_MODEL_FACTORY);
             elevationModel = (ElevationModel) factory.createFromConfigSource(domElement, null);
 //            elevationModel.setValue(AVKey.DATASET_NAME, dataSet.getStringValue(AVKey.DATASET_NAME));
-            dataSet.setValue(AVKey.DISPLAY_NAME, elevationModel.getName());
+            dataSet.set(AVKey.DISPLAY_NAME, elevationModel.getName());
 
             // TODO: set Sector as in addLayerToWorldWindow?
         }
@@ -154,7 +153,7 @@ public class DataInstaller extends AVListImpl {
                 wwd.model().getGlobe().setElevationModel(cm);
             }
 
-            Sector sector = (Sector) em.getValue(AVKey.SECTOR);
+            Sector sector = (Sector) em.get(AVKey.SECTOR);
             if (goTo && sector != null && !sector.equals(Sector.FULL_SPHERE)) {
                 ExampleUtil.goTo(wwd, sector);
             }
@@ -323,21 +322,21 @@ public class DataInstaller extends AVListImpl {
         // cached data, and what name to put in the data configuration document.
         AVList params = new AVListImpl();
 
-        params.setValue(AVKey.DATASET_NAME, datasetName);
-        params.setValue(AVKey.DATA_CACHE_NAME, datasetName);
-        params.setValue(AVKey.FILE_STORE_LOCATION, installLocation.getAbsolutePath());
+        params.set(AVKey.DATASET_NAME, datasetName);
+        params.set(AVKey.DATA_CACHE_NAME, datasetName);
+        params.set(AVKey.FILE_STORE_LOCATION, installLocation.getAbsolutePath());
 
         // These parameters define producer's behavior:
         // create a full tile cache OR generate only first two low resolution levels
         boolean enableFullPyramid = Configuration.getBooleanValue(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, false);
         if (!enableFullPyramid) {
-            params.setValue(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER);
+            params.set(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER);
             // retrieve the value of the AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, default to 1 level if missing
             String maxLevel = Configuration.getStringValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, "0");
-            params.setValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, maxLevel);
+            params.set(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, maxLevel);
         }
         else {
-            params.setValue(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, true);
+            params.set(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, true);
         }
 
         producer.setStoreParameters(params);

@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.wms;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
@@ -84,7 +84,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         DataConfigurationUtils.getWMSLayerConfigParams(domElement, params);
         BasicTiledImageLayer.getParamsFromDocument(domElement, params);
 
-        params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder(params));
+        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params));
 
         return params;
     }
@@ -126,9 +126,9 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         setFallbacks(params);
 
         // Setup WMS URL builder.
-        params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder(params));
+        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params));
         // Setup default WMS tiled image layer behaviors.
-        params.setValue(AVKey.USE_TRANSPARENT_TEXTURES, true);
+        params.set(AVKey.USE_TRANSPARENT_TEXTURES, true);
 
         return params;
     }
@@ -172,30 +172,30 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
 
         String s = rs.getStateValueAsString(context, AVKey.IMAGE_FORMAT);
         if (s != null)
-            params.setValue(AVKey.IMAGE_FORMAT, s);
+            params.set(AVKey.IMAGE_FORMAT, s);
 
         s = rs.getStateValueAsString(context, AVKey.TITLE);
         if (s != null)
-            params.setValue(AVKey.TITLE, s);
+            params.set(AVKey.TITLE, s);
 
         s = rs.getStateValueAsString(context, AVKey.DISPLAY_NAME);
         if (s != null)
-            params.setValue(AVKey.DISPLAY_NAME, s);
+            params.set(AVKey.DISPLAY_NAME, s);
 
         RestorableSupport.adjustTitleAndDisplayName(params);
 
         s = rs.getStateValueAsString(context, AVKey.LAYER_NAMES);
         if (s != null)
-            params.setValue(AVKey.LAYER_NAMES, s);
+            params.set(AVKey.LAYER_NAMES, s);
 
         s = rs.getStateValueAsString(context, AVKey.STYLE_NAMES);
         if (s != null)
-            params.setValue(AVKey.STYLE_NAMES, s);
+            params.set(AVKey.STYLE_NAMES, s);
 
         s = rs.getStateValueAsString(context, "wms.Version");
         if (s != null)
-            params.setValue(AVKey.WMS_VERSION, s);
-        params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder(params));
+            params.set(AVKey.WMS_VERSION, s);
+        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder(params));
     }
 
     protected static void legacyWmsRestoreStateToParams(RestorableSupport rs, RestorableSupport.StateObject context,
@@ -206,14 +206,14 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer {
         Double lat = rs.getStateValueAsDouble(context, AVKey.LEVEL_ZERO_TILE_DELTA + ".Latitude");
         Double lon = rs.getStateValueAsDouble(context, AVKey.LEVEL_ZERO_TILE_DELTA + ".Longitude");
         if (lat != null && lon != null)
-            params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, LatLon.fromDegrees(lat, lon));
+            params.set(AVKey.LEVEL_ZERO_TILE_DELTA, LatLon.fromDegrees(lat, lon));
 
         Double minLat = rs.getStateValueAsDouble(context, AVKey.SECTOR + ".MinLatitude");
         Double minLon = rs.getStateValueAsDouble(context, AVKey.SECTOR + ".MinLongitude");
         Double maxLat = rs.getStateValueAsDouble(context, AVKey.SECTOR + ".MaxLatitude");
         Double maxLon = rs.getStateValueAsDouble(context, AVKey.SECTOR + ".MaxLongitude");
         if (minLat != null && minLon != null && maxLat != null && maxLon != null)
-            params.setValue(AVKey.SECTOR, Sector.fromDegrees(minLat, maxLat, minLon, maxLon));
+            params.set(AVKey.SECTOR, Sector.fromDegrees(minLat, maxLat, minLon, maxLon));
     }
 
     //**************************************************************//

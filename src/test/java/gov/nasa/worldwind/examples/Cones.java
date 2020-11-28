@@ -5,9 +5,9 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 
@@ -61,7 +61,7 @@ public class Cones extends ApplicationTemplate {
             cone3.setAltitudeMode(WorldWind.ABSOLUTE);
             cone3.setAttributes(attrs);
             cone3.setVisible(true);
-            cone3.setValue(AVKey.DISPLAY_NAME, "Cone with equal axes, ABSOLUTE altitude mode");
+            cone3.set(AVKey.DISPLAY_NAME, "Cone with equal axes, ABSOLUTE altitude mode");
             layer.add(cone3);
 
             // Cone with equal axes, RELATIVE_TO_GROUND
@@ -69,7 +69,7 @@ public class Cones extends ApplicationTemplate {
             cone4.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cone4.setAttributes(attrs);
             cone4.setVisible(true);
-            cone4.setValue(AVKey.DISPLAY_NAME, "Cone with equal axes, RELATIVE_TO_GROUND altitude mode");
+            cone4.set(AVKey.DISPLAY_NAME, "Cone with equal axes, RELATIVE_TO_GROUND altitude mode");
             layer.add(cone4);
 
             // Cone with equal axes, CLAMP_TO_GROUND
@@ -77,16 +77,16 @@ public class Cones extends ApplicationTemplate {
             cone5.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
             cone5.setAttributes(attrs);
             cone5.setVisible(true);
-            cone5.setValue(AVKey.DISPLAY_NAME, "Cone with equal axes, CLAMP_TO_GROUND altitude mode");
+            cone5.set(AVKey.DISPLAY_NAME, "Cone with equal axes, CLAMP_TO_GROUND altitude mode");
             layer.add(cone5);
 
             // Cone with a texture, using Cone(position, height, radius) constructor
             Cone cone9 = new Cone(Position.fromDegrees(0, -90, 600000), 1200000, 600000);
             cone9.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            cone9.setImageSources("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            cone9.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             cone9.setAttributes(attrs);
             cone9.setVisible(true);
-            cone9.setValue(AVKey.DISPLAY_NAME, "Cone with a texture");
+            cone9.set(AVKey.DISPLAY_NAME, "Cone with a texture");
             layer.add(cone9);
 
             // Scaled Cone with default orientation
@@ -94,7 +94,7 @@ public class Cones extends ApplicationTemplate {
             cone.setAltitudeMode(WorldWind.ABSOLUTE);
             cone.setAttributes(attrs);
             cone.setVisible(true);
-            cone.setValue(AVKey.DISPLAY_NAME, "Scaled Cone with default orientation");
+            cone.set(AVKey.DISPLAY_NAME, "Scaled Cone with default orientation");
             layer.add(cone);
 
             // Scaled Cone with a pre-set orientation
@@ -102,7 +102,7 @@ public class Cones extends ApplicationTemplate {
                 Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
             cone2.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cone2.setAttributes(attrs2);
-            cone2.setValue(AVKey.DISPLAY_NAME, "Scaled Cone with a pre-set orientation");
+            cone2.set(AVKey.DISPLAY_NAME, "Scaled Cone with a pre-set orientation");
             cone2.setVisible(true);
 
             layer.add(cone2);
@@ -111,9 +111,9 @@ public class Cones extends ApplicationTemplate {
             Cone cone6 = new Cone(Position.fromDegrees(30, 30, 750000), 1000000, 500000, 100000,
                 Angle.fromDegrees(90), Angle.fromDegrees(45), Angle.fromDegrees(30));
             cone6.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-            cone6.setImageSources("gov/nasa/worldwindx/examples/images/500px-Checkerboard_pattern.png");
+            cone6.setImageSources("gov/nasa/worldwind/examples/images/500px-Checkerboard_pattern.png");
             cone6.setAttributes(attrs2);
-            cone6.setValue(AVKey.DISPLAY_NAME, "Scaled Cone with a pre-set orientation");
+            cone6.set(AVKey.DISPLAY_NAME, "Scaled Cone with a pre-set orientation");
             cone6.setVisible(true);
             layer.add(cone6);
 
@@ -123,7 +123,7 @@ public class Cones extends ApplicationTemplate {
             cone7.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cone7.setAttributes(attrs2);
             cone7.setVisible(true);
-            cone7.setValue(AVKey.DISPLAY_NAME, "Scaled Cone with a pre-set orientation");
+            cone7.set(AVKey.DISPLAY_NAME, "Scaled Cone with a pre-set orientation");
             layer.add(cone7);
 
             // Scaled, oriented Cone in 3rd "quadrant" (-X, -Y, -Z)
@@ -132,11 +132,11 @@ public class Cones extends ApplicationTemplate {
             cone8.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
             cone8.setAttributes(attrs2);
             cone8.setVisible(true);
-            cone8.setValue(AVKey.DISPLAY_NAME, "Scaled, oriented Cone in the 3rd 'quadrant' (-X, -Y, -Z)");
+            cone8.set(AVKey.DISPLAY_NAME, "Scaled, oriented Cone in the 3rd 'quadrant' (-X, -Y, -Z)");
             layer.add(cone8);
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
         }
 
         protected JPanel makeDetailHintControlPanel() {
@@ -162,7 +162,7 @@ public class Cones extends ApplicationTemplate {
                 slider.addChangeListener(e -> {
                     double hint = ((JSlider) e.getSource()).getValue() / 10.0d;
                     setConeDetailHint(hint);
-                    getWwd().redraw();
+                    wwd().redraw();
                 });
                 detailHintSliderPanel.add(slider, BorderLayout.SOUTH);
             }
@@ -175,7 +175,7 @@ public class Cones extends ApplicationTemplate {
         }
 
         protected RenderableLayer getLayer() {
-            for (Layer layer : getWwd().model().getLayers()) {
+            for (Layer layer : wwd().model().getLayers()) {
                 if (layer.getName().contains("Renderable")) {
                     return (RenderableLayer) layer;
                 }

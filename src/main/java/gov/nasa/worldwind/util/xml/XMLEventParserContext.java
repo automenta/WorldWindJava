@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.util.xml;
 
 import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.layers.ogc.kml.KMLRoot;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.*;
@@ -231,7 +232,7 @@ public interface XMLEventParserContext extends AVList {
      *                      method with the <code>fieldName</code> specified here as the name argument.
      * @param parser        the parser whose references to resolve.
      * @deprecated Reference resolution is handled by parsers specific to a certain document type. For example, {@link
-     * gov.nasa.worldwind.examples.ogc.kml.KMLRoot} handles resolution of references in KML files.
+     * KMLRoot} handles resolution of references in KML files.
      */
     @Deprecated
     void resolveInternalReferences(String referenceName, String fieldName, AbstractXMLEventParser parser);

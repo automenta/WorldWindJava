@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.TerrainProfileLayer;
 import gov.nasa.worldwind.util.measure.*;
@@ -42,10 +43,10 @@ public class MeasureToolUsage extends ApplicationTemplate {
             super(true, true, false); // no layer or statistics panel
 
             // Add terrain profile layer
-            profile.setEventSource(getWwd());
+            profile.setEventSource(wwd());
             profile.setFollow(TerrainProfileLayer.FOLLOW_PATH);
             profile.setShowProfileLine(false);
-            insertBeforePlacenames(getWwd(), profile);
+            WorldWindow.insertBeforePlacenames(wwd(), profile);
 
             // Add + tab
             tabbedPane.add(new JPanel());
@@ -53,9 +54,9 @@ public class MeasureToolUsage extends ApplicationTemplate {
             tabbedPane.addChangeListener((ChangeEvent changeEvent) -> {
                 if (tabbedPane.getSelectedIndex() == 0) {
                     // Add new measure tool in a tab when '+' selected
-                    MeasureTool measureTool = new MeasureTool(getWwd());
+                    MeasureTool measureTool = new MeasureTool(wwd());
                     measureTool.setController(new MeasureToolController());
-                    tabbedPane.add(new MeasureToolPanel(getWwd(), measureTool));
+                    tabbedPane.add(new MeasureToolPanel(wwd(), measureTool));
                     tabbedPane.setTitleAt(tabbedPane.getTabCount() - 1, String.valueOf(tabbedPane.getTabCount() - 1));
                     tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
                     switchMeasureTool();
@@ -66,9 +67,9 @@ public class MeasureToolUsage extends ApplicationTemplate {
             });
 
             // Add measure tool control panel to tabbed pane
-            MeasureTool measureTool = new MeasureTool(this.getWwd());
+            MeasureTool measureTool = new MeasureTool(this.wwd());
             measureTool.setController(new MeasureToolController());
-            tabbedPane.add(new MeasureToolPanel(this.getWwd(), measureTool));
+            tabbedPane.add(new MeasureToolPanel(this.wwd(), measureTool));
             tabbedPane.setTitleAt(1, "1");
             tabbedPane.setSelectedIndex(1);
             switchMeasureTool();
@@ -101,7 +102,7 @@ public class MeasureToolUsage extends ApplicationTemplate {
                 profile.setEnabled(false);
             }
 
-            getWwd().redraw();
+            wwd().redraw();
         }
 
         private class MeasureToolListener implements PropertyChangeListener {

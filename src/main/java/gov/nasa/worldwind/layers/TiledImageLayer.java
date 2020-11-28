@@ -8,7 +8,7 @@ package gov.nasa.worldwind.layers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
@@ -70,7 +70,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         }
 
         this.levels = new LevelSet(levelSet); // the caller's levelSet may change internally, so we copy it.
-        this.setValue(AVKey.SECTOR, this.levels.getSector());
+        this.set(AVKey.SECTOR, this.levels.getSector());
 
         this.setPickEnabled(false); // textures are assumed to be terrain unless specifically indicated otherwise.
         this.tileCountName = this.getName() + " Tiles";
@@ -160,7 +160,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
         WWXML.checkAndAppendTextElement(params, AVKey.IMAGE_FORMAT, context, "ImageFormat");
         WWXML.checkAndAppendTextElement(params, AVKey.TEXTURE_FORMAT, context, "TextureFormat");
 
-        Object o = params.getValue(AVKey.AVAILABLE_IMAGE_FORMATS);
+        Object o = params.get(AVKey.AVAILABLE_IMAGE_FORMATS);
         if (o instanceof String[]) {
             String[] strings = (String[]) o;
             if (strings.length > 0) {
@@ -181,9 +181,9 @@ public abstract class TiledImageLayer extends AbstractLayer {
         WWXML.checkAndAppendDoubleElement(params, AVKey.DETAIL_HINT, context, "DetailHint");
 
         // Retrieval properties.
-        if (params.getValue(AVKey.URL_CONNECT_TIMEOUT) != null ||
-            params.getValue(AVKey.URL_READ_TIMEOUT) != null ||
-            params.getValue(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT) != null) {
+        if (params.get(AVKey.URL_CONNECT_TIMEOUT) != null ||
+            params.get(AVKey.URL_READ_TIMEOUT) != null ||
+            params.get(AVKey.RETRIEVAL_QUEUE_STALE_REQUEST_LIMIT) != null) {
             Element el = WWXML.getElement(context, "RetrievalTimeouts", xpath);
             if (el == null)
                 el = WWXML.appendElementPath(context, "RetrievalTimeouts");
@@ -307,11 +307,11 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         XPath xpath = WWXML.makeXPath();
 
-        Object o = params.getValue(AVKey.TEXTURE_FORMAT);
+        Object o = params.get(AVKey.TEXTURE_FORMAT);
         if (o == null) {
             Boolean b = WWXML.getBoolean(domElement, "CompressTextures", xpath);
             if (b != null && b)
-                params.setValue(AVKey.TEXTURE_FORMAT, "image/dds");
+                params.set(AVKey.TEXTURE_FORMAT, "image/dds");
         }
 
         return params;
@@ -322,19 +322,19 @@ public abstract class TiledImageLayer extends AbstractLayer {
     abstract protected void forceTextureLoad(TextureTile tile);
 
     @Override
-    public Object setValue(String key, Object value) {
+    public Object set(String key, Object value) {
         // Offer it to the level set
         if (this.getLevels() != null)
-            this.getLevels().setValue(key, value);
+            this.getLevels().set(key, value);
 
-        return super.setValue(key, value);
+        return super.set(key, value);
     }
 
     @Override
-    public Object getValue(String key) {
-        Object value = super.getValue(key);
+    public Object get(String key) {
+        Object value = super.get(key);
 
-        return value != null ? value : this.getLevels().getValue(key); // see if the level set has it
+        return value != null ? value : this.getLevels().get(key); // see if the level set has it
     }
 
     @Override
@@ -786,7 +786,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         if (this.currentTiles.size() >= 1) {
             // Indicate that this layer rendered something this frame.
-            this.setValue(AVKey.FRAME_TIMESTAMP, dc.getFrameTimeStamp());
+            this.set(AVKey.FRAME_TIMESTAMP, dc.getFrameTimeStamp());
 
             if (this.getScreenCredit() != null) {
                 dc.addScreenCredit(this.getScreenCredit());
@@ -1020,7 +1020,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     protected void downloadImage(final TextureTile tile, String mimeType, int timeout) throws Exception {
-        if (this.getValue(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
+        if (this.get(AVKey.RETRIEVER_FACTORY_LOCAL) != null)
             this.retrieveLocalImage(tile, mimeType, timeout);
         else
             // Assume it's remote.
@@ -1039,7 +1039,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         if ("http".equalsIgnoreCase(protocol) || "https".equalsIgnoreCase(protocol)) {
             retriever = new HTTPRetriever(resourceURL, new CompositionRetrievalPostProcessor(tile));
-            retriever.setValue(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
+            retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
         }
         else {
             String message = Logging.getMessage("layers.TextureLayer.UnknownRetrievalProtocol", resourceURL);
@@ -1056,16 +1056,16 @@ public abstract class TiledImageLayer extends AbstractLayer {
         if (!WorldWind.retrieveLocal().isAvailable())
             return;
 
-        RetrieverFactory retrieverFactory = (RetrieverFactory) this.getValue(AVKey.RETRIEVER_FACTORY_LOCAL);
+        RetrieverFactory retrieverFactory = (RetrieverFactory) this.get(AVKey.RETRIEVER_FACTORY_LOCAL);
         if (retrieverFactory == null)
             return;
 
         AVList avList = new AVListImpl();
-        avList.setValue(AVKey.SECTOR, tile.sector);
-        avList.setValue(AVKey.WIDTH, tile.getWidth());
-        avList.setValue(AVKey.HEIGHT, tile.getHeight());
-        avList.setValue(AVKey.FILE_NAME, tile.getPath());
-        avList.setValue(AVKey.IMAGE_FORMAT, mimeType);
+        avList.set(AVKey.SECTOR, tile.sector);
+        avList.set(AVKey.WIDTH, tile.getWidth());
+        avList.set(AVKey.HEIGHT, tile.getHeight());
+        avList.set(AVKey.FILE_NAME, tile.getPath());
+        avList.set(AVKey.IMAGE_FORMAT, mimeType);
 
         Retriever retriever = retrieverFactory.createRetriever(avList, new CompositionRetrievalPostProcessor(tile));
 

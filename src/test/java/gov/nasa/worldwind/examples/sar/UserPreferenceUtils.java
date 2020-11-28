@@ -91,14 +91,14 @@ public class UserPreferenceUtils {
         }
 
         // By default, automatically save tracks every minute.
-        params.setValue(SARKey.ANGLE_FORMAT, Angle.ANGLE_FORMAT_DD);
-        params.setValue(SARKey.AUTO_SAVE_TRACKS, Boolean.toString(true));
-        params.setValue(SARKey.AUTO_SAVE_TRACKS_INTERVAL, Long.toString((long) WWMath.convertMinutesToMillis(1)));
-        params.setValue(SARKey.ELEVATION_UNIT, SAR2.UNIT_IMPERIAL);
+        params.set(SARKey.ANGLE_FORMAT, Angle.ANGLE_FORMAT_DD);
+        params.set(SARKey.AUTO_SAVE_TRACKS, Boolean.toString(true));
+        params.set(SARKey.AUTO_SAVE_TRACKS_INTERVAL, Long.toString((long) WWMath.convertMinutesToMillis(1)));
+        params.set(SARKey.ELEVATION_UNIT, SAR2.UNIT_IMPERIAL);
     }
 
     public static boolean getBooleanValue(AVList avList, String key) {
-        Object o = avList.getValue(key);
+        Object o = avList.get(key);
         if (o == null)
             return false;
 
@@ -137,7 +137,7 @@ public class UserPreferenceUtils {
         if (key == null || value == null)
             return;
 
-        params.setValue(key, value);
+        params.set(key, value);
     }
 
     protected static void createPropertyList(AVList params, Element domElement) {

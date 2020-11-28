@@ -12,6 +12,8 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
 import gov.nasa.worldwind.ui.WorldWindowGLDrawable;
 import gov.nasa.worldwind.util.*;
@@ -57,6 +59,41 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
         return new BasicGpuResourceCache((long) (0.8 * cacheSize), cacheSize);
     }
 
+    static void insertBeforeCompass(WorldWindow wwd, Layer layer) {
+        // Insert the layer into the layer list just before the compass.
+        int compassPosition = 0;
+        LayerList layers = wwd.model().getLayers();
+        for (Layer l : layers) {
+            if (l instanceof CompassLayer) {
+                compassPosition = layers.indexOf(l);
+            }
+        }
+        layers.add(compassPosition, layer);
+    }
+
+    static void insertBeforePlacenames(WorldWindow wwd, Layer layer) {
+        // Insert the layer into the layer list just before the placenames.
+        int compassPosition = 0;
+        LayerList layers = wwd.model().getLayers();
+        for (Layer l : layers) {
+            if (l instanceof PlaceNameLayer) {
+                compassPosition = layers.indexOf(l);
+            }
+        }
+        layers.add(compassPosition, layer);
+    }
+
+    static void insertAfterPlacenames(WorldWindow wwd, Layer layer) {
+        // Insert the layer into the layer list just after the placenames.
+        int compassPosition = 0;
+        LayerList layers = wwd.model().getLayers();
+        for (Layer l : layers) {
+            if (l instanceof PlaceNameLayer) {
+                compassPosition = layers.indexOf(l);
+            }
+        }
+        layers.add(compassPosition + 1, layer);
+    }
 
     /**
      * Constructs and attaches the {@link View} for this <code>WorldWindow</code>.
@@ -69,7 +106,7 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
      * Constructs and attaches the {@link InputHandler} for this <code>WorldWindow</code>.
      */
     default void createDefaultInputHandler() {
-        this.setInputHandler((InputHandler) WorldWind.createConfigurationComponent(AVKey.INPUT_HANDLER_CLASS_NAME));
+        this.setInput((InputHandler) WorldWind.createConfigurationComponent(AVKey.INPUT_HANDLER_CLASS_NAME));
     }
 
     /**
@@ -128,8 +165,8 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
         this.wwd().shutdown();
     }
 
-    default InputHandler getInputHandler() {
-        return this.wwd().getInputHandler();
+    default InputHandler input() {
+        return this.wwd().input();
     }
 
     /**
@@ -138,17 +175,17 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
      * @param inputHandler The input handler to use for this WorldWindow. May by <code>null</code> if <code>null</code>
      *                     is specified, the current input handler, if any, is disassociated with the WorldWindow.
      */
-    default void setInputHandler(InputHandler inputHandler) {
-        if (this.wwd().getInputHandler() != null)
-            this.wwd().getInputHandler().setEventSource(null); // remove this window as a source of events
+    default void setInput(InputHandler inputHandler) {
+        if (this.wwd().input() != null)
+            this.wwd().input().setEventSource(null); // remove this window as a source of events
 
-        this.wwd().setInputHandler(inputHandler != null ? inputHandler : new NoOpInputHandler());
+        this.wwd().setInput(inputHandler != null ? inputHandler : new NoOpInputHandler());
         if (inputHandler != null)
             inputHandler.setEventSource(this);
     }
 
-    default SceneController getSceneController() {
-        return this.wwd().getSceneController();
+    default SceneController sceneControl() {
+        return this.wwd().sceneControl();
     }
 
     /**
@@ -160,8 +197,8 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
      * @see SceneController#setModel(Model)
      * @see SceneController#setPerFrameStatisticsKeys(Set)
      */
-    default void setSceneController(SceneController sceneController) {
-        this.wwd().setSceneController(sceneController);
+    default void setSceneControl(SceneController sceneController) {
+        this.wwd().setSceneControl(sceneController);
     }
 
     /**
@@ -174,8 +211,8 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
      *
      * @return The GPU Resource cache used by this WorldWindow.
      */
-    default GpuResourceCache getGpuResourceCache() {
-        return this.wwd().getGpuResourceCache();
+    default GpuResourceCache resourceCache() {
+        return this.wwd().resourceCache();
     }
 
     default void redrawNow() {
@@ -216,12 +253,10 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
     }
 
     default void addSelectListener(SelectListener listener) {
-        this.wwd().getInputHandler().addSelectListener(listener);
         this.wwd().addSelectListener(listener);
     }
 
     default void removeSelectListener(SelectListener listener) {
-        this.wwd().getInputHandler().removeSelectListener(listener);
         this.wwd().removeSelectListener(listener);
     }
 
@@ -247,29 +282,29 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
         this.wwd().removeRenderingExceptionListener(listener);
     }
 
-    default Position getCurrentPosition() {
-        return this.wwd().getCurrentPosition();
+    default Position position() {
+        return this.wwd().position();
     }
 
-    default PickedObjectList getObjectsAtCurrentPosition() {
-        return this.wwd().getSceneController() != null ? this.wwd().getSceneController().getPickedObjectList() : null;
+    default PickedObjectList objectsAtPosition() {
+        return this.wwd().sceneControl() != null ? this.wwd().sceneControl().getPickedObjectList() : null;
     }
 
-    default PickedObjectList getObjectsInSelectionBox() {
-        return this.wwd().getSceneController() != null ? this.wwd().getSceneController().getObjectsInPickRectangle()
+    default PickedObjectList objectsInSelectionBox() {
+        return this.wwd().sceneControl() != null ? this.wwd().sceneControl().getObjectsInPickRectangle()
             : null;
     }
 
-    default Object setValue(String key, Object value) {
-        return this.wwd().setValue(key, value);
+    default Object set(String key, Object value) {
+        return this.wwd().set(key, value);
     }
 
     default AVList setValues(AVList avList) {
         return this.wwd().setValues(avList);
     }
 
-    default Object getValue(String key) {
-        return this.wwd().getValue(key);
+    default Object get(String key) {
+        return this.wwd().get(key);
     }
 
     default Iterable<Object> getValues() {

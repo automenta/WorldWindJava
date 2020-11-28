@@ -19,7 +19,7 @@ public class GeoJSONEventParser extends BasicJSONEventParser {
         if (this.fields == null)
             return super.resolveObject(ctx, event);
 
-        Object type = this.fields.getValue(GeoJSONConstants.FIELD_TYPE);
+        Object type = this.fields.get(GeoJSONConstants.FIELD_TYPE);
 
         if (GeoJSONConstants.TYPE_POINT.equals(type))
             return new GeoJSONPoint(this.fields);

@@ -23,18 +23,18 @@ public class OSMMapnikLayer extends BasicMercatorTiledImageLayer {
     private static LevelSet makeLevels() {
         AVList params = new AVListImpl();
 
-        params.setValue(AVKey.TILE_WIDTH, 256);
-        params.setValue(AVKey.TILE_HEIGHT, 256);
-        params.setValue(AVKey.DATA_CACHE_NAME, "Earth/OSM-Mercator/OpenStreetMap Mapnik");
-        params.setValue(AVKey.SERVICE, "http://a.tile.openstreetmap.org/");
-        params.setValue(AVKey.DATASET_NAME, "h");
-        params.setValue(AVKey.FORMAT_SUFFIX, ".png");
-        params.setValue(AVKey.NUM_LEVELS, 16);
-        params.setValue(AVKey.NUM_EMPTY_LEVELS, 0);
-        params.setValue(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(Angle
+        params.set(AVKey.TILE_WIDTH, 256);
+        params.set(AVKey.TILE_HEIGHT, 256);
+        params.set(AVKey.DATA_CACHE_NAME, "Earth/OSM-Mercator/OpenStreetMap Mapnik");
+        params.set(AVKey.SERVICE, "http://a.tile.openstreetmap.org/");
+        params.set(AVKey.DATASET_NAME, "h");
+        params.set(AVKey.FORMAT_SUFFIX, ".png");
+        params.set(AVKey.NUM_LEVELS, 16);
+        params.set(AVKey.NUM_EMPTY_LEVELS, 0);
+        params.set(AVKey.LEVEL_ZERO_TILE_DELTA, new LatLon(Angle
             .fromDegrees(22.5d), Angle.fromDegrees(45.0d)));
-        params.setValue(AVKey.SECTOR, new MercatorSector(-1.0, 1.0, Angle.NEG180, Angle.POS180));
-        params.setValue(AVKey.TILE_URL_BUILDER, new URLBuilder());
+        params.set(AVKey.SECTOR, new MercatorSector(-1.0, 1.0, Angle.NEG180, Angle.POS180));
+        params.set(AVKey.TILE_URL_BUILDER, new URLBuilder());
 
         return new LevelSet(params);
     }

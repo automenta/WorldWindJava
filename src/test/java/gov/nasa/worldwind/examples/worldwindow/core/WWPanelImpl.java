@@ -45,7 +45,7 @@ public class WWPanelImpl extends AbstractFeature implements WWPanel {
         this.wwd.setModel(m);
 
         // Disable screen credits.
-        this.wwd.getSceneController().getScreenCreditController().setEnabled(false);
+        this.wwd.sceneControl().getScreenCreditController().setEnabled(false);
 
         this.wwd.setPreferredSize(new Dimension(1024, 768));
         this.panel.add(this.wwd, BorderLayout.CENTER);

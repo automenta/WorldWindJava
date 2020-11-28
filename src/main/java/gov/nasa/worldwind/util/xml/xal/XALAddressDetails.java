@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.util.xml.xal;
 
-import gov.nasa.worldwind.examples.ogc.kml.KMLAbstractObject;
+import gov.nasa.worldwind.layers.ogc.kml.KMLAbstractObject;
 
 /**
  * @author tag

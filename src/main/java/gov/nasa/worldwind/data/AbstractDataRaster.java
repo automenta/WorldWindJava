@@ -51,11 +51,11 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         this.height = height;
 
         if (null != sector) {
-            this.setValue(AVKey.SECTOR, sector);
+            this.set(AVKey.SECTOR, sector);
         }
 
-        this.setValue(AVKey.WIDTH, width);
-        this.setValue(AVKey.HEIGHT, height);
+        this.set(AVKey.WIDTH, width);
+        this.set(AVKey.HEIGHT, height);
     }
 
     protected AbstractDataRaster(int width, int height, Sector sector, AVList list) throws IllegalArgumentException {
@@ -63,7 +63,7 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
 
         if (null != list) {
             for (Map.Entry<String, Object> entry : list.getEntries()) {
-                this.setValue(entry.getKey(), entry.getValue());
+                this.set(entry.getKey(), entry.getValue());
             }
         }
     }
@@ -78,13 +78,13 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
 
     public Sector getSector() {
         if (this.hasKey(AVKey.SECTOR)) {
-            return (Sector) this.getValue(AVKey.SECTOR);
+            return (Sector) this.get(AVKey.SECTOR);
         }
         return null;
     }
 
     @Override
-    public Object setValue(String key, Object value) {
+    public Object set(String key, Object value) {
         if (null == key) {
             String message = Logging.getMessage("nullValue.KeyIsNull");
             Logging.logger().severe(message);
@@ -108,7 +108,7 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
                 return this;
             }
         }
-        return super.setValue(key, value);
+        return super.set(key, value);
     }
 
     protected Rectangle computeClipRect(Sector clipSector, DataRaster clippedRaster) {
@@ -181,9 +181,9 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
         };
         WWUtil.copyValues(this, params, keysToCopy, false);
 
-        params.setValue(AVKey.WIDTH, width);
-        params.setValue(AVKey.HEIGHT, height);
-        params.setValue(AVKey.SECTOR, sector);
+        params.set(AVKey.WIDTH, width);
+        params.set(AVKey.HEIGHT, height);
+        params.set(AVKey.SECTOR, sector);
 
         return this.getSubRaster(params);
     }
@@ -216,7 +216,7 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
             throw new IllegalArgumentException(message);
         }
 
-        int roiWidth = (Integer) params.getValue(AVKey.WIDTH);
+        int roiWidth = (Integer) params.get(AVKey.WIDTH);
         if (roiWidth <= 0) {
             String message = Logging.getMessage("generic.InvalidWidth", roiWidth);
             Logging.logger().severe(message);
@@ -229,7 +229,7 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
             throw new IllegalArgumentException(message);
         }
 
-        int roiHeight = (Integer) params.getValue(AVKey.HEIGHT);
+        int roiHeight = (Integer) params.get(AVKey.HEIGHT);
         if (roiHeight <= 0) {
             String message = Logging.getMessage("generic.InvalidHeight", roiHeight);
             Logging.logger().severe(message);
@@ -242,7 +242,7 @@ public abstract class AbstractDataRaster extends AVListImpl implements DataRaste
             throw new IllegalArgumentException(message);
         }
 
-        Sector roiSector = (Sector) params.getValue(AVKey.SECTOR);
+        Sector roiSector = (Sector) params.get(AVKey.SECTOR);
         if (null == roiSector || Sector.EMPTY_SECTOR.equals(roiSector)) {
             String message = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(message);

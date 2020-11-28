@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples.shapebuilder;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
@@ -113,7 +113,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
         }
 
         public void setName(String name) {
-            this.setValue(AVKey.DISPLAY_NAME, name);
+            this.set(AVKey.DISPLAY_NAME, name);
         }
 
         public ExtrudedPolygon getPolygon() {
@@ -128,21 +128,21 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
             return this.getName();
         }
 
-        public Object getValue(String key) {
-            Object value = super.getValue(key);
+        public Object get(String key) {
+            Object value = super.get(key);
             if (value == null) {
-                value = this.polygon.getValue(key);
+                value = this.polygon.get(key);
             }
             return value;
         }
 
-        public Object setValue(String key, Object value) {
+        public Object set(String key, Object value) {
             //noinspection StringEquality
             if (key == AVKey.DISPLAY_NAME) {
-                return this.polygon.setValue(key, value);
+                return this.polygon.set(key, value);
             }
             else {
-                return super.setValue(key, value);
+                return super.set(key, value);
             }
         }
 
@@ -188,13 +188,13 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
 
         public Object getValueAt(int rowIndex, int columnIndex) {
             PolygonEntry entry = this.entryList.get(rowIndex);
-            return entry.getValue(columnAttribute[columnIndex]);
+            return entry.get(columnAttribute[columnIndex]);
         }
 
         public void setValueAt(Object aObject, int rowIndex, int columnIndex) {
             PolygonEntry entry = this.entryList.get(rowIndex);
             String key = columnAttribute[columnIndex];
-            entry.setValue(key, aObject);
+            entry.set(key, aObject);
         }
 
         public java.util.List<PolygonEntry> getEntries() {
@@ -255,7 +255,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
         public ExtrudedPolygon createPolygon(WorldWindow wwd, boolean fitShapeToViewport) {
             ExtrudedPolygon poly = new ExtrudedPolygon();
             poly.setAttributes(getDefaultAttributes());
-            poly.setValue(AVKey.DISPLAY_NAME, getNextName(toString()));
+            poly.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             this.initializePolygon(wwd, poly, fitShapeToViewport);
 
             return poly;
@@ -430,8 +430,8 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
             this.editor = new ExtrudedPolygonEditor();
 
             // The ordering is important here; we want first pass at mouse events.
-            this.editor.setWorldWindow(this.app.getWwd());
-            this.app.getWwd().getInputHandler().addMouseListener(this);
+            this.editor.setWorldWindow(this.app.wwd());
+            this.app.wwd().input().addMouseListener(this);
         }
 
         public AppFrame getApp() {
@@ -551,7 +551,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
             // If the picked object is null or something other than a polygon, then ignore the mouse click. If we
             // deselect the current entry at this point, the user cannot easily navigate without losing the selection.
 
-            PickedObjectList pickedObjects = this.getApp().getWwd().getObjectsAtCurrentPosition();
+            PickedObjectList pickedObjects = this.getApp().wwd().objectsAtPosition();
 
             Object topObject = pickedObjects.getTopObject();
             if (!(topObject instanceof ExtrudedPolygon))
@@ -575,7 +575,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
         }
 
         public void createNewEntry(ExtrudedPolygonFactory factory) {
-            ExtrudedPolygon polygon = factory.createPolygon(this.getApp().getWwd(), this.isResizeNewShapesToViewport());
+            ExtrudedPolygon polygon = factory.createPolygon(this.getApp().wwd(), this.isResizeNewShapesToViewport());
             PolygonEntry entry = new PolygonEntry(polygon);
 
             this.addEntry(entry);
@@ -595,7 +595,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
             this.getModel().addEntry(entry);
 
             this.getApp().getPolygonLayer().add(entry.getPolygon());
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         public void removeEntry(PolygonEntry entry) {
@@ -606,7 +606,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
             this.getModel().removeEntry(entry);
 
             this.getApp().getPolygonLayer().remove(entry.getPolygon());
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         public PolygonEntry getSelectedEntry() {
@@ -648,7 +648,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
                 }
             }
 
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         protected boolean isSelectionEditing() {
@@ -670,10 +670,10 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
             this.editor.setArmed(editing);
 
             if (editing) {
-                insertBeforePlacenames(this.getApp().getWwd(), this.editor);
+                WorldWindow.insertBeforePlacenames(this.getApp().wwd(), this.editor);
             }
             else {
-                this.getApp().getWwd().model().getLayers().remove(this.editor);
+                this.getApp().wwd().model().getLayers().remove(this.editor);
             }
 
             int index = this.getModel().getIndexForEntry(this.selectedEntry);
@@ -688,7 +688,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
                 }
             }
 
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         protected PolygonEntry[] getSelectedEntries() {
@@ -728,7 +728,7 @@ public class ExtrudedPolygonBuilder extends ApplicationTemplate {
         public AppFrame() {
             this.polygonLayer = new RenderableLayer();
             this.polygonLayer.setName(POLYGON_LAYER_NAME);
-            insertBeforePlacenames(this.getWwd(), this.polygonLayer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), this.polygonLayer);
 
             this.builderController = new PolygonBuilderController(this);
             this.builderModel = new PolygonBuilderModel();

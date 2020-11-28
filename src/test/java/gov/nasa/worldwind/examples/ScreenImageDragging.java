@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.examples.render.ScreenImage;
+import gov.nasa.worldwind.render.ScreenImage;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
 import javax.imageio.ImageIO;
@@ -37,10 +37,10 @@ public class ScreenImageDragging extends ApplicationTemplate {
             layer.setName("Screen Image");
             layer.add(screenImage);
 
-            this.getWwd().model().getLayers().add(layer);
+            this.wwd().model().getLayers().add(layer);
 
             // Tell the input handler to pass mouse events here
-            this.getWwd().getInputHandler().addMouseMotionListener(new MouseMotionAdapter() {
+            this.wwd().input().addMouseMotionListener(new MouseMotionAdapter() {
                 public void mouseDragged(MouseEvent event) {
                     // Update the layer's image location
                     screenImage.setScreenLocation(event.getPoint());

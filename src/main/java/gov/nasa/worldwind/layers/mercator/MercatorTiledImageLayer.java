@@ -7,7 +7,7 @@ package gov.nasa.worldwind.layers.mercator;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Cylinder;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -709,7 +709,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
         if ("http".equalsIgnoreCase(protocol)) {
             retriever = new HTTPRetriever(resourceURL, new HttpRetrievalPostProcessor(tile));
-            retriever.setValue(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
+            retriever.set(URLRetriever.EXTRACT_ZIP_ENTRY, "true"); // supports legacy layers
         }
         else {
             String message = Logging

@@ -42,7 +42,7 @@ public class RetrieveElevations extends ApplicationTemplate {
         public AppFrame() {
             // We add our own LayerPanel, but keep the StatusBar from ApplicationTemplate.
             super(true, false, false);
-            this.controller = new ElevationsDemoController(this.getWwd());
+            this.controller = new ElevationsDemoController(this.wwd());
             this.controller.frame = this;
             this.makeComponents();
 
@@ -50,7 +50,7 @@ public class RetrieveElevations extends ApplicationTemplate {
         }
 
         protected void makeComponents() {
-            ((Component) this.getWwd()).setPreferredSize(new Dimension(1024, 768));
+            ((Component) this.wwd()).setPreferredSize(new Dimension(1024, 768));
 
             JPanel panel = new JPanel(new BorderLayout());
             {
@@ -85,7 +85,7 @@ public class RetrieveElevations extends ApplicationTemplate {
 
                     int MIN_VE = 1;
                     int MAX_VE = 8;
-                    int curVe = (int) this.getWwd().getSceneController().getVerticalExaggeration();
+                    int curVe = (int) this.wwd().sceneControl().getVerticalExaggeration();
                     curVe = curVe < MIN_VE ? MIN_VE : (Math.min(curVe, MAX_VE));
                     JSlider slider = new JSlider(MIN_VE, MAX_VE, curVe);
                     slider.setMajorTickSpacing(1);
@@ -109,7 +109,7 @@ public class RetrieveElevations extends ApplicationTemplate {
 
                 panel.add(controlPanel, BorderLayout.SOUTH);
 
-                this.layerPanel = new LayerPanel(this.getWwd());
+                this.layerPanel = new LayerPanel(this.wwd());
                 panel.add(this.layerPanel, BorderLayout.CENTER);
             }
             getContentPane().add(panel, BorderLayout.WEST);
@@ -204,7 +204,7 @@ public class RetrieveElevations extends ApplicationTemplate {
         }
 
         public void doSetVerticalExaggeration(double ve) {
-            this.wwd.getSceneController().setVerticalExaggeration(ve);
+            this.wwd.sceneControl().setVerticalExaggeration(ve);
         }
     }
 }

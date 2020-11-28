@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples.worldwindow.util.measuretool;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -84,8 +84,8 @@ public class WWOMeasureTool extends AVListImpl
         this.measureDisplay = this.createMeasureDisplay();
         this.measureDisplay.addToLayer(this.controlPointsLayer);
 
-        this.getWwd().getInputHandler().addMouseListener(this);
-        this.getWwd().getInputHandler().addMouseMotionListener(this);
+        this.getWwd().input().addMouseListener(this);
+        this.getWwd().input().addMouseMotionListener(this);
         this.getWwd().addPositionListener(this);
         this.getWwd().addSelectListener(this);
         this.getWwd().addRenderingListener(this);
@@ -100,8 +100,8 @@ public class WWOMeasureTool extends AVListImpl
     }
 
     public void dispose() {
-        this.getWwd().getInputHandler().removeMouseListener(this);
-        this.getWwd().getInputHandler().removeMouseMotionListener(this);
+        this.getWwd().input().removeMouseListener(this);
+        this.getWwd().input().removeMouseMotionListener(this);
         this.getWwd().removePositionListener(this);
         this.getWwd().removeSelectListener(this);
         this.getWwd().removeRenderingListener(this);
@@ -344,7 +344,7 @@ public class WWOMeasureTool extends AVListImpl
      * Add a control point to the current measure shape at the cuurrent WorldWindow position.
      */
     public void addControlPoint() {
-        Position curPos = this.getWwd().getCurrentPosition();
+        Position curPos = this.getWwd().position();
         if (curPos == null) {
             return;
         }
@@ -453,15 +453,15 @@ public class WWOMeasureTool extends AVListImpl
             throw new IllegalArgumentException(msg);
         }
 
-        if (point.getValue("Control") != null) {
+        if (point.get("Control") != null) {
             // Update shape properties
-            updateShapeProperties((String) point.getValue("Control"), point.getPosition());
+            updateShapeProperties((String) point.get("Control"), point.getPosition());
             updateShapeControlPoints();
             //positions = makeShapePositions();
         }
 
-        if (point.getValue("PositionIndex") != null) {
-            int positionIndex = (Integer) point.getValue("PositionIndex");
+        if (point.get("PositionIndex") != null) {
+            int positionIndex = (Integer) point.get("PositionIndex");
             // Update positions
             Position surfacePosition = computeSurfacePosition(point.getPosition());
             positions.set(positionIndex, surfacePosition);
@@ -528,7 +528,7 @@ public class WWOMeasureTool extends AVListImpl
     }
 
     protected Position computeSurfacePosition(LatLon latLon) {
-        Vec4 surfacePoint = getWwd().getSceneController().getTerrain().getSurfacePoint(latLon.getLatitude(),
+        Vec4 surfacePoint = getWwd().sceneControl().getTerrain().getSurfacePoint(latLon.getLatitude(),
             latLon.getLongitude());
         if (surfacePoint != null) {
             return getWwd().model().getGlobe().computePositionFromPoint(surfacePoint);
@@ -680,7 +680,7 @@ public class WWOMeasureTool extends AVListImpl
 
     protected void addControlPoint(Position position, String key, Object value) {
         ControlPoint controlPoint = createControlPoint(new Position(position, 0));
-        controlPoint.setValue(key, value);
+        controlPoint.set(key, value);
         this.getControlPoints().add(controlPoint);
     }
 
@@ -832,12 +832,12 @@ public class WWOMeasureTool extends AVListImpl
     }
 
     protected void doMoved() {
-        if (this.active && rubberBandTarget != null && this.getWwd().getCurrentPosition() != null) {
+        if (this.active && rubberBandTarget != null && this.getWwd().position() != null) {
             if (!this.freeHand || (!this.getMeasureShapeType().equals(AVKey.SHAPE_PATH)
                 && !this.getMeasureShapeType().equals(AVKey.SHAPE_POLYGON))) {
                 // Rubber band - Move control point and update shape
                 Position lastPosition = rubberBandTarget.getPosition();
-                rubberBandTarget.setPosition(new Position(this.getWwd().getCurrentPosition(), 0));
+                rubberBandTarget.setPosition(new Position(this.getWwd().position(), 0));
                 this.moveControlPoint(rubberBandTarget);
                 this.firePropertyChange(WWOMeasureTool.EVENT_POSITION_REPLACE,
                     lastPosition, rubberBandTarget.getPosition());
@@ -846,7 +846,7 @@ public class WWOMeasureTool extends AVListImpl
             else {
                 // Free hand - Compute distance from current control point (rubber band target)
                 Position lastPosition = rubberBandTarget.getPosition();
-                Position newPosition = this.getWwd().getCurrentPosition();
+                Position newPosition = this.getWwd().position();
                 double distance = LatLon.greatCircleDistance(lastPosition, newPosition).radians
                     * this.getWwd().model().getGlobe().getRadius();
                 if (distance >= freeHandMinSpacing) {
@@ -858,10 +858,10 @@ public class WWOMeasureTool extends AVListImpl
                 }
             }
         }
-        else if (this.moving && movingTarget != null && this.getWwd().getCurrentPosition() != null) {
+        else if (this.moving && movingTarget != null && this.getWwd().position() != null) {
             // Moving the whole shape
             Position lastPosition = movingTarget.getPosition();
-            Position newPosition = this.getWwd().getCurrentPosition();
+            Position newPosition = this.getWwd().position();
             this.moveToPosition(lastPosition, newPosition);
             //measureTool.getWwd().redraw();
         }
@@ -940,8 +940,8 @@ public class WWOMeasureTool extends AVListImpl
         WWOMeasureTool.ControlPoint point = (WWOMeasureTool.ControlPoint) event.getTopObject();
 
         LatLon lastPosition = point.getPosition();
-        if (point.getValue("PositionIndex") != null) {
-            lastPosition = this.getPositions().get((Integer) point.getValue("PositionIndex"));
+        if (point.get("PositionIndex") != null) {
+            lastPosition = this.getPositions().get((Integer) point.get("PositionIndex"));
         }
 
         // Delegate dragging computations to a dragger.
@@ -1028,9 +1028,9 @@ public class WWOMeasureTool extends AVListImpl
 
         WWOMeasureTool getParent();
 
-        Object setValue(String key, Object value);
+        Object set(String key, Object value);
 
-        Object getValue(String key);
+        Object get(String key);
 
         Position getPosition();
 

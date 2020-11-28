@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.sar;
 
-import gov.nasa.worldwind.examples.render.PatternFactory;
+import gov.nasa.worldwind.render.PatternFactory;
 
 import javax.swing.*;
 import javax.swing.event.*;

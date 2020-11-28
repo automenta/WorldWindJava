@@ -214,6 +214,6 @@ public class LayerTreeModel extends BasicTreeModel {
      * included.
      */
     protected boolean mustIncludeLayer(AVList layer) {
-        return this.isIncludeHiddenLayers() || layer.getValue(AVKey.HIDDEN) != Boolean.TRUE;
+        return this.isIncludeHiddenLayers() || layer.get(AVKey.HIDDEN) != Boolean.TRUE;
     }
 }

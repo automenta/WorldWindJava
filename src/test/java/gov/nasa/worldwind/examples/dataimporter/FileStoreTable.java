@@ -19,7 +19,7 @@ import java.util.*;
  * @version $Id: FileStoreTable.java 1180 2013-02-15 18:40:47Z tgaskins $
  */
 public class FileStoreTable extends JTable {
-    public static final String VISIBLE = "gov.nasa.worldwindx.dataimport.FileStoreTable.Visible";
+    public static final String VISIBLE = "gov.nasa.worldwind.dataimport.FileStoreTable.Visible";
 
     public FileStoreTable() {
         super(new FileStoreTableModel());
@@ -64,7 +64,7 @@ public class FileStoreTable extends JTable {
             int modelRow = this.convertRowIndexToModel(i);
             if (modelRow < ((FileStoreTableModel) this.getModel()).dataSets.size()) {
                 // Don't add disabled (non-visible) datasets to the selection list.
-                if ((((FileStoreTableModel) this.getModel()).dataSets.get(modelRow).getValue(VISIBLE) == null))
+                if ((((FileStoreTableModel) this.getModel()).dataSets.get(modelRow).get(VISIBLE) == null))
                     continue;
 
                 selected.add(((FileStoreTableModel) this.getModel()).dataSets.get(modelRow));
@@ -135,7 +135,7 @@ public class FileStoreTable extends JTable {
             // visibility flag. The subsequent cells -- data type and data size -- inherit the enabled setting
             // determined during rendering of the name cell.
             if (dataSet != null)
-                this.enabled = dataSet.getValue(VISIBLE) != null;
+                this.enabled = dataSet.get(VISIBLE) != null;
 
             this.setEnabled(this.enabled);
 

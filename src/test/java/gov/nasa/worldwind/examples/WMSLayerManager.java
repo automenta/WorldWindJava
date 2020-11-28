@@ -73,7 +73,7 @@ public class WMSLayerManager {
         protected WMSLayersPanel addTab(int position, String server) {
             // Add a server to the tabbed dialog.
             try {
-                WMSLayersPanel layersPanel = new WMSLayersPanel(AppFrame.this.getWwd(), server, wmsPanelSize);
+                WMSLayersPanel layersPanel = new WMSLayersPanel(AppFrame.this.wwd(), server, wmsPanelSize);
                 this.tabbedPane.add(layersPanel, BorderLayout.CENTER);
                 String title = layersPanel.getServerDisplayString();
                 this.tabbedPane.setTitleAt(position, title != null && !title.isEmpty() ? title : server);

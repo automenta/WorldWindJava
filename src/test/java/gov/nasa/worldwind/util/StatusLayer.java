@@ -9,11 +9,12 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.texture.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.*;
 import gov.nasa.worldwind.layers.AbstractLayer;
+import gov.nasa.worldwind.render.*;
 
 import javax.swing.*;
 import java.awt.*;

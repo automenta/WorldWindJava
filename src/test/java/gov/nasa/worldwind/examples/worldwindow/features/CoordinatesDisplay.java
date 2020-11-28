@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples.worldwindow.features;
 
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.examples.worldwindow.core.layermanager.LayerPath;
 import gov.nasa.worldwind.examples.worldwindow.util.WWOUnitsFormat;
@@ -33,7 +33,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
 
     public CoordinatesDisplay(Registry registry) {
         super("Coordinates", Constants.FEATURE_COORDINATES_DISPLAY,
-            "gov/nasa/worldwindx/applications/worldwindow/images/coordinates-64x64.png", null, registry);
+            "gov/nasa/worldwind/examples/worldwindow/images/coordinates-64x64.png", null, registry);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
         attrs.setDrawOffset(new Point(-width / 2, -height));
 
         CoordAnnotationLayer layer = new CoordAnnotationLayer();
-        layer.setValue(Constants.SCREEN_LAYER, true);
+        layer.set(Constants.SCREEN_LAYER, true);
         layer.setPickEnabled(false);
         layer.addAnnotation(anno);
         layer.setName(this.getName());
@@ -130,7 +130,7 @@ public class CoordinatesDisplay extends AbstractOnDemandLayerFeature {
             sb.append(this.controller.getUnits().latitudeNL(currentPosition.getLatitude()));
             sb.append(this.controller.getUnits().longitudeNL(currentPosition.getLongitude()));
             sb.append(this.controller.getUnits().terrainHeightNL(currentPosition.getElevation(),
-                this.controller.getWWd().getSceneController().getVerticalExaggeration()));
+                this.controller.getWWd().sceneControl().getVerticalExaggeration()));
         }
         else {
             sb.append(this.controller.getUnits().getStringValue(UnitsFormat.LABEL_LATITUDE)).append("\n");

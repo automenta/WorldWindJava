@@ -6,9 +6,9 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.BasicDragger;
@@ -32,7 +32,7 @@ public class Polygons extends ApplicationTemplate {
             super(true, true, false);
 
             // Add a dragger to enable shape dragging
-            this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
+            this.wwd().addSelectListener(new BasicDragger(this.wwd()));
 
             RenderableLayer layer = new RenderableLayer();
             layer.setName("Polygons");
@@ -60,7 +60,7 @@ public class Polygons extends ApplicationTemplate {
             pathPositions.add(Position.fromDegrees(28, -107, 9.0e4));
             pathPositions.add(Position.fromDegrees(28, -106, 3.0e4));
             Polygon pgon = new Polygon(pathPositions);
-            pgon.setValue(AVKey.DISPLAY_NAME, "Has a hole\nRotated -170\u00b0");
+            pgon.set(AVKey.DISPLAY_NAME, "Has a hole\nRotated -170\u00b0");
 
             pathPositions.clear();
             pathPositions.add(Position.fromDegrees(29, -106.4, 4.0e4));
@@ -132,7 +132,7 @@ public class Polygons extends ApplicationTemplate {
 //            insertBeforeCompass(getWwd(), markerLayer);
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
         }
     }
 }

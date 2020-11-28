@@ -7,7 +7,7 @@ package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.*;
@@ -79,9 +79,9 @@ public class SurfaceImageLayer extends RenderableLayer {
         if (raster instanceof GDALDataRaster) {
             AVList params = new AVListImpl();
 
-            params.setValue(AVKey.WIDTH, raster.getWidth());
-            params.setValue(AVKey.HEIGHT, raster.getHeight());
-            params.setValue(AVKey.SECTOR, raster.getSector());
+            params.set(AVKey.WIDTH, raster.getWidth());
+            params.set(AVKey.HEIGHT, raster.getHeight());
+            params.set(AVKey.SECTOR, raster.getSector());
 
             raster = raster.getSubRaster(params);
         }
@@ -129,14 +129,14 @@ public class SurfaceImageLayer extends RenderableLayer {
             raster = rasters[0];
 
             if (raster.getSector() == null && params.hasKey(AVKey.SECTOR)) {
-                Object o = params.getValue(AVKey.SECTOR);
+                Object o = params.get(AVKey.SECTOR);
                 if (o instanceof Sector) {
                     Sector sector = (Sector) o;
 
                     if (raster instanceof GDALDataRaster)
                         ((GDALDataRaster) raster).setSector(sector);
                     else
-                        raster.setValue(AVKey.SECTOR, sector);
+                        raster.set(AVKey.SECTOR, sector);
                 }
             }
 
@@ -174,7 +174,7 @@ public class SurfaceImageLayer extends RenderableLayer {
         AVList params = new AVListImpl();
 
         if (null != sector)
-            params.setValue(AVKey.SECTOR, sector);
+            params.set(AVKey.SECTOR, sector);
 
         DataRaster raster = this.openDataRaster(imagePath, params);
         final BufferedImage image = this.getBufferedImage(raster);
@@ -263,7 +263,7 @@ public class SurfaceImageLayer extends RenderableLayer {
 
         if (null != corners) {
             Sector sector = Sector.boundingSector(corners);
-            params.setValue(AVKey.SECTOR, sector);
+            params.set(AVKey.SECTOR, sector);
         }
 
         DataRaster raster = this.openDataRaster(imagePath, params);

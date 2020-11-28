@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples.sar;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.Material;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.examples.sar.segmentplane.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -71,7 +71,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
             return;
 
         if (this.wwd != null) {
-            this.wwd.getInputHandler().removeMouseListener(this);
+            this.wwd.input().removeMouseListener(this);
             this.wwd.removePositionListener(this);
         }
 
@@ -79,7 +79,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         this.segmentPlane.setWorldWindow(wwd);
 
         if (this.wwd != null) {
-            this.wwd.getInputHandler().addMouseListener(this);
+            this.wwd.input().addMouseListener(this);
             this.wwd.addPositionListener(this);
         }
     }
@@ -184,8 +184,8 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
     }
 
     protected PickedObject getTopPickedObject() {
-        return (this.wwd.getSceneController().getPickedObjectList() != null) ?
-            this.wwd.getSceneController().getPickedObjectList().getTopPickedObject() : null;
+        return (this.wwd.sceneControl().getPickedObjectList() != null) ?
+            this.wwd.sceneControl().getPickedObjectList().getTopPickedObject() : null;
     }
 
     //**************************************************************//
@@ -241,7 +241,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
 
             PickedObject po = this.getTopPickedObject();
             if (po != null) {
-                Object id = po.getValue(AVKey.PICKED_OBJECT_ID);
+                Object id = po.get(AVKey.PICKED_OBJECT_ID);
                 if (id == SegmentPlane.PLANE_BACKGROUND ||
                     (this.segmentPlane.isSnapToGrid() && id == SegmentPlane.PLANE_GRID)) {
                     nextPosition = po.getPosition();

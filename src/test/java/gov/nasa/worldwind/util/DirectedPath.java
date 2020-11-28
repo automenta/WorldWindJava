@@ -9,7 +9,7 @@ package gov.nasa.worldwind.util;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.terrain.Terrain;
@@ -190,7 +190,7 @@ public class DirectedPath extends Path {
             return intersects;
         }
 
-        Extent box = (Box) this.currentData.getValue(ARROWS_EXTENT);
+        Extent box = (Box) this.currentData.get(ARROWS_EXTENT);
         return box == null || dc.getPickFrustums().intersectsAny(box);
     }
 
@@ -244,11 +244,11 @@ public class DirectedPath extends Path {
         List<Position> tessellatedPositions = pathData.getTessellatedPositions();
 
         final int FLOATS_PER_ARROWHEAD = 9; // 3 points * 3 coordinates per point
-        FloatBuffer buffer = (FloatBuffer) pathData.getValue(ARROWS_KEY);
+        FloatBuffer buffer = (FloatBuffer) pathData.get(ARROWS_KEY);
         if (buffer == null || buffer.capacity() < numPositions * FLOATS_PER_ARROWHEAD) {
             buffer = Buffers.newDirectFloatBuffer(FLOATS_PER_ARROWHEAD * numPositions);
         }
-        pathData.setValue(ARROWS_KEY, buffer);
+        pathData.set(ARROWS_KEY, buffer);
 
         buffer.clear();
 
@@ -281,10 +281,10 @@ public class DirectedPath extends Path {
             if (buffer.remaining() != 0) {
                 Box box = Box.computeBoundingBox(new BufferWrapper.FloatBufferWrapper(buffer), 3);
                 box = box.translate(pathData.getReferencePoint());
-                pathData.setValue(ARROWS_EXTENT, box);
+                pathData.set(ARROWS_EXTENT, box);
             }
             else {
-                pathData.setValue(ARROWS_EXTENT, null);
+                pathData.set(ARROWS_EXTENT, null);
             }
         }
     }
@@ -431,7 +431,7 @@ public class DirectedPath extends Path {
      * @param pathData the current globe-specific path data.
      */
     protected void drawDirectionArrows(DrawContext dc, PathData pathData) {
-        FloatBuffer points = (FloatBuffer) pathData.getValue(ARROWS_KEY);
+        FloatBuffer points = (FloatBuffer) pathData.get(ARROWS_KEY);
         if (points == null || points.remaining() == 0) {
             return;
         }

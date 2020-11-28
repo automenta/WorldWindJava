@@ -8,7 +8,7 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.formats.shapefile.ShapefileLayerFactory;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -47,7 +47,7 @@ public class ShapeClipping extends ApplicationTemplate {
         protected ShapeAttributes lastAttrs;
 
         public AppFrame() {
-            this.clippingPanel = new ShapeClippingPanel(this.getWwd());
+            this.clippingPanel = new ShapeClippingPanel(this.wwd());
             this.getControlPanel().add(this.clippingPanel, BorderLayout.SOUTH);
 
             this.createLandShape();
@@ -97,8 +97,8 @@ public class ShapeClipping extends ApplicationTemplate {
             RenderableLayer shapeLayer = new RenderableLayer();
             shapeLayer.setName("Clipping Shape");
             shapeLayer.add(circle);
-            this.getWwd().model().getLayers().add(shapeLayer);
-            this.getWwd().addSelectListener(this);
+            this.wwd().model().getLayers().add(shapeLayer);
+            this.wwd().addSelectListener(this);
         }
 
         @Override
@@ -111,7 +111,7 @@ public class ShapeClipping extends ApplicationTemplate {
                 if (topObject != null && topObject.getObject() instanceof Renderable) {
                     if (this.editor == null) {
                         // Enable editing of the selected shape.
-                        this.editor = new ShapeEditor(getWwd(), (Renderable) topObject.getObject());
+                        this.editor = new ShapeEditor(wwd(), (Renderable) topObject.getObject());
                         this.editor.setArmed(true);
                         this.keepShapeHighlighted(true);
                         event.consume();
@@ -120,7 +120,7 @@ public class ShapeClipping extends ApplicationTemplate {
                         // Switch editor to a different shape.
                         this.keepShapeHighlighted(false);
                         this.editor.setArmed(false);
-                        this.editor = new ShapeEditor(getWwd(), (Renderable) topObject.getObject());
+                        this.editor = new ShapeEditor(wwd(), (Renderable) topObject.getObject());
                         this.editor.setArmed(true);
                         this.keepShapeHighlighted(true);
                         event.consume();

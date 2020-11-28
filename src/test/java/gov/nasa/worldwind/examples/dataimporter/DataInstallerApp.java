@@ -8,7 +8,6 @@ package gov.nasa.worldwind.examples.dataimporter;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.*;
 import gov.nasa.worldwind.examples.layermanager.LayerAndElevationManagerPanel;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
@@ -123,7 +122,7 @@ public class DataInstallerApp {
 
             // Create and install the view controls layer and register a controller for it with the WorldWindow.
             ViewControlsLayer viewControlsLayer = new ViewControlsLayer();
-            ApplicationTemplate.insertBeforeCompass(getWwd(), viewControlsLayer);
+            WorldWindow.insertBeforeCompass(getWwd(), viewControlsLayer);
             this.getWwd().addSelectListener(new ViewControlsSelectListener(this.getWwd(), viewControlsLayer));
 
             // Search the layer list for layers that are also select listeners and register them with the World

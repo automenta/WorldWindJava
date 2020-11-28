@@ -6,10 +6,10 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObject;
@@ -86,20 +86,20 @@ public class PathPositionColors extends ApplicationTemplate {
             layer.add(path);
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
 
             // Establish a select listener that causes the tooltip controller to show the picked path position's
             // ordinal.
-            this.setToolTipController(new ToolTipController(this.getWwd()) {
+            this.setToolTipController(new ToolTipController(this.wwd()) {
                 @Override
                 public void selected(SelectEvent event) {
                     // Intercept the selected position and assign the selected object's display name to the picked
                     // ordinal.
                     PickedObject po = event.getTopPickedObject();
                     if (po != null && po.getObject() instanceof Path) {
-                        String name = (po.getValue(AVKey.ORDINAL) != null) ? "Position " + po.getValue(AVKey.ORDINAL)
+                        String name = (po.get(AVKey.ORDINAL) != null) ? "Position " + po.get(AVKey.ORDINAL)
                             : null;
-                        ((Path) po.getObject()).setValue(AVKey.DISPLAY_NAME, name);
+                        ((Path) po.getObject()).set(AVKey.DISPLAY_NAME, name);
                     }
 
                     super.selected(event);

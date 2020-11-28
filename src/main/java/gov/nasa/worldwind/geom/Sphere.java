@@ -8,7 +8,8 @@ package gov.nasa.worldwind.geom;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.*;
 import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 /**

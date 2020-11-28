@@ -51,7 +51,7 @@ public class GDALMetadata {
                         String key = (String) o;
                         Object value = dict.get(key);
                         if (!WWUtil.isEmpty(value)) {
-                            extParams.setValue(key, value);
+                            extParams.set(key, value);
                         }
                     }
                 }
@@ -97,25 +97,25 @@ public class GDALMetadata {
 
         // Extract Actual Bit-Per-Pixel
         if (extParams.hasKey(NITF_ABPP)) {
-            Object o = extParams.getValue(NITF_ABPP);
+            Object o = extParams.get(NITF_ABPP);
             if (!WWUtil.isEmpty(o) && o instanceof String) {
                 Integer abpp = WWUtil.convertStringToInteger((String) o);
                 if (null != abpp)
-                    params.setValue(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL, abpp);
+                    params.set(AVKey.RASTER_BAND_ACTUAL_BITS_PER_PIXEL, abpp);
             }
         }
 
         if (extParams.hasKey(NITF_DYNAMIC_RANGE)) {
-            Object o = extParams.getValue(NITF_DYNAMIC_RANGE);
+            Object o = extParams.get(NITF_DYNAMIC_RANGE);
             if (!WWUtil.isEmpty(o) && o instanceof String) {
                 Double maxPixelValue = WWUtil.convertStringToDouble((String) o);
                 if (null != maxPixelValue)
-                    params.setValue(AVKey.RASTER_BAND_MAX_PIXEL_VALUE, maxPixelValue);
+                    params.set(AVKey.RASTER_BAND_MAX_PIXEL_VALUE, maxPixelValue);
             }
         }
 
         if (extParams.hasKey(NITF_FBKGC)) {
-            Object o = extParams.getValue(NITF_FBKGC);
+            Object o = extParams.get(NITF_FBKGC);
             if (!WWUtil.isEmpty(o) && o instanceof String) {
                 try {
                     String[] s = ((String) o).split(",");
@@ -175,22 +175,22 @@ public class GDALMetadata {
         }
 
         if (null != proj && proj.contains("UTM")) {
-            destParams.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
-            destParams.setValue(AVKey.PROJECTION_NAME, AVKey.PROJECTION_UTM);
+            destParams.set(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
+            destParams.set(AVKey.PROJECTION_NAME, AVKey.PROJECTION_UTM);
 
             if (null != zone) {
                 if (!zone.isEmpty() && zone.charAt(zone.length() - 1) == 'N') {
-                    destParams.setValue(AVKey.PROJECTION_HEMISPHERE, AVKey.NORTH);
+                    destParams.set(AVKey.PROJECTION_HEMISPHERE, AVKey.NORTH);
                     zone = zone.substring(0, zone.length() - 1);
                 }
                 else if (!zone.isEmpty() && zone.charAt(zone.length() - 1) == 'S') {
-                    destParams.setValue(AVKey.PROJECTION_HEMISPHERE, AVKey.SOUTH);
+                    destParams.set(AVKey.PROJECTION_HEMISPHERE, AVKey.SOUTH);
                     zone = zone.substring(0, zone.length() - 1);
                 }
 
                 Integer i = WWUtil.makeInteger(zone.trim());
                 if (i != null && i >= 1 && i <= 60) {
-                    destParams.setValue(AVKey.PROJECTION_ZONE, i);
+                    destParams.set(AVKey.PROJECTION_ZONE, i);
                 }
             }
         }
@@ -201,7 +201,7 @@ public class GDALMetadata {
                 s = s.toUpperCase();
                 if (s.contains("WGS") && s.contains("84")) {
                     ellps = datum = "WGS84";
-                    destParams.setValue(AVKey.PROJECTION_DATUM, datum);
+                    destParams.set(AVKey.PROJECTION_DATUM, datum);
                 }
             }
         }
@@ -218,7 +218,7 @@ public class GDALMetadata {
                 }
 
                 if (null != units) {
-                    destParams.setValue(AVKey.PROJECTION_UNITS, units);
+                    destParams.set(AVKey.PROJECTION_UNITS, units);
                 }
             }
         }
@@ -238,37 +238,37 @@ public class GDALMetadata {
         }
 
         if (null != epsg) {
-            destParams.setValue(AVKey.PROJECTION_EPSG_CODE, epsg);
+            destParams.set(AVKey.PROJECTION_EPSG_CODE, epsg);
         }
 
         StringBuilder proj4 = new StringBuilder();
 
-        if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(destParams.getValue(AVKey.COORDINATE_SYSTEM))) {
+        if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(destParams.get(AVKey.COORDINATE_SYSTEM))) {
             //        +proj=utm +zone=38 +ellps=WGS84 +datum=WGS84 +units=m
 
-            if (AVKey.PROJECTION_UTM.equals(destParams.getValue(AVKey.PROJECTION_NAME))) {
+            if (AVKey.PROJECTION_UTM.equals(destParams.get(AVKey.PROJECTION_NAME))) {
                 proj4.append("+proj=utm");
             }
 
             if (destParams.hasKey(AVKey.PROJECTION_ZONE)) {
-                proj4.append(" +zone=").append(destParams.getValue(AVKey.PROJECTION_ZONE));
+                proj4.append(" +zone=").append(destParams.get(AVKey.PROJECTION_ZONE));
             }
 
             if (destParams.hasKey(AVKey.PROJECTION_DATUM)) {
-                proj4.append(" +ellps=").append(destParams.getValue(AVKey.PROJECTION_DATUM));
-                proj4.append(" +datum=").append(destParams.getValue(AVKey.PROJECTION_DATUM));
+                proj4.append(" +ellps=").append(destParams.get(AVKey.PROJECTION_DATUM));
+                proj4.append(" +datum=").append(destParams.get(AVKey.PROJECTION_DATUM));
             }
 
             if (destParams.hasKey(AVKey.PROJECTION_UNITS)) {
                 proj4.append(" +units=").append(
-                    AVKey.UNIT_METER.equals(destParams.getValue(AVKey.PROJECTION_UNITS)) ? "m" : "f"
+                    AVKey.UNIT_METER.equals(destParams.get(AVKey.PROJECTION_UNITS)) ? "m" : "f"
                 );
             }
 
             try {
                 SpatialReference srs = new SpatialReference();
                 srs.ImportFromProj4(proj4.toString());
-                destParams.setValue(AVKey.SPATIAL_REFERENCE_WKT, srs.ExportToWkt());
+                destParams.set(AVKey.SPATIAL_REFERENCE_WKT, srs.ExportToWkt());
             }
             catch (Throwable t) {
                 Logging.logger().log(Level.FINEST, t.getMessage(), t);

@@ -37,7 +37,7 @@ public class InstallImagery extends ApplicationTemplate {
     protected static final String BASE_CACHE_PATH = "Examples/"; // Define a subdirectory in the installed-data area
 
     // This example's imagery is loaded from the following class-path resource.
-    protected static final String IMAGE_PATH = "gov/nasa/worldwindx/examples/data/craterlake-imagery-30m.tif";
+    protected static final String IMAGE_PATH = "gov/nasa/worldwind/examples/data/craterlake-imagery-30m.tif";
 
     public static void main(String[] args) {
         ApplicationTemplate.start("WorldWind Imagery Installation", InstallImagery.AppFrame.class);
@@ -75,13 +75,13 @@ public class InstallImagery extends ApplicationTemplate {
             // Display a layer with the new imagery. Must do it on the event dispatch thread.
             SwingUtilities.invokeLater(() -> {
                 // Add the layer created by the install method to the layer list.
-                insertBeforePlacenames(AppFrame.this.getWwd(), layer);
+                WorldWindow.insertBeforePlacenames(AppFrame.this.wwd(), layer);
 
                 // Set the view to look at the installed image. Get the location from the layer's construction
                 // parameters.
-                AVList params = (AVList) layer.getValue(AVKey.CONSTRUCTION_PARAMETERS);
-                Sector sector = (Sector) params.getValue(AVKey.SECTOR);
-                ExampleUtil.goTo(getWwd(), sector);
+                AVList params = (AVList) layer.get(AVKey.CONSTRUCTION_PARAMETERS);
+                Sector sector = (Sector) params.get(AVKey.SECTOR);
+                ExampleUtil.goTo(wwd(), sector);
             });
         }
 
@@ -95,9 +95,9 @@ public class InstallImagery extends ApplicationTemplate {
 
             // Create a parameter list specifying the install location information.
             AVList params = new AVListImpl();
-            params.setValue(AVKey.FILE_STORE_LOCATION, fileStoreLocation.getAbsolutePath());
-            params.setValue(AVKey.DATA_CACHE_NAME, cacheName);
-            params.setValue(AVKey.DATASET_NAME, displayName);
+            params.set(AVKey.FILE_STORE_LOCATION, fileStoreLocation.getAbsolutePath());
+            params.set(AVKey.DATA_CACHE_NAME, cacheName);
+            params.set(AVKey.DATASET_NAME, displayName);
 
             // Create a TiledImageProducer to install the imagery.
             TiledImageProducer producer = new TiledImageProducer();

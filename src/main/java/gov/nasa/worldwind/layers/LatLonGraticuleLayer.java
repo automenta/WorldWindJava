@@ -7,7 +7,7 @@ package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.Logging;
@@ -82,35 +82,35 @@ public class LatLonGraticuleLayer extends AbstractGraticuleLayer {
         GraticuleRenderingParams params;
         // Ten degrees grid
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, Color.WHITE);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.WHITE);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-16"));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.WHITE);
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.WHITE);
+        params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-16"));
         setRenderingParams(GRATICULE_LATLON_LEVEL_0, params);
         // One degree
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, Color.GREEN);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.GREEN);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-14"));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.GREEN);
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.GREEN);
+        params.set(GraticuleRenderingParams.KEY_LABEL_FONT, Font.decode("Arial-Bold-14"));
         setRenderingParams(GRATICULE_LATLON_LEVEL_1, params);
         // 1/10th degree - 1/6th (10 minutes)
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 102, 255));
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 102, 255));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 102, 255));
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 102, 255));
         setRenderingParams(GRATICULE_LATLON_LEVEL_2, params);
         // 1/100th degree - 1/60th (one minutes)
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, Color.CYAN);
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.CYAN);
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, Color.CYAN);
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, Color.CYAN);
         setRenderingParams(GRATICULE_LATLON_LEVEL_3, params);
         // 1/1000 degree - 1/360th (10 seconds)
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 153, 153));
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 153, 153));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(0, 153, 153));
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(0, 153, 153));
         setRenderingParams(GRATICULE_LATLON_LEVEL_4, params);
         // 1/10000 degree - 1/3600th (one second)
         params = new GraticuleRenderingParams();
-        params.setValue(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(102, 255, 204));
-        params.setValue(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(102, 255, 204));
+        params.set(GraticuleRenderingParams.KEY_LINE_COLOR, new Color(102, 255, 204));
+        params.set(GraticuleRenderingParams.KEY_LABEL_COLOR, new Color(102, 255, 204));
         setRenderingParams(GRATICULE_LATLON_LEVEL_5, params);
     }
 
@@ -152,7 +152,7 @@ public class LatLonGraticuleLayer extends AbstractGraticuleLayer {
     private void applyTerrainConformance() {
         String[] graticuleType = getOrderedTypes();
         for (String type : graticuleType) {
-            getRenderingParams(type).setValue(
+            getRenderingParams(type).set(
                 GraticuleRenderingParams.KEY_LINE_CONFORMANCE, this.terrainConformance);
         }
     }

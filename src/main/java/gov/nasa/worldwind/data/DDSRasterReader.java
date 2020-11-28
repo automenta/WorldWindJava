@@ -33,7 +33,7 @@ public class DDSRasterReader extends AbstractDataRasterReader {
             DDSHeader header = DDSHeader.readFrom(source);
             if (null != header && header.getWidth() > 0 && header.getHeight() > 0) {
                 if (null != params && !params.hasKey(AVKey.PIXEL_FORMAT)) {
-                    params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+                    params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
                 }
 
                 return true;
@@ -61,7 +61,7 @@ public class DDSRasterReader extends AbstractDataRasterReader {
             DDSDecompressor decompressor = new DDSDecompressor();
             raster = decompressor.decompress(source, params);
             if (null != raster) {
-                raster.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+                raster.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
             }
         }
         catch (WWRuntimeException wwe) {
@@ -82,9 +82,9 @@ public class DDSRasterReader extends AbstractDataRasterReader {
         try {
             DDSHeader header = DDSHeader.readFrom(source);
             if (null != header && null != params) {
-                params.setValue(AVKey.WIDTH, header.getWidth());
-                params.setValue(AVKey.HEIGHT, header.getHeight());
-                params.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
+                params.set(AVKey.WIDTH, header.getWidth());
+                params.set(AVKey.HEIGHT, header.getHeight());
+                params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
             }
         }
         catch (Exception e) {

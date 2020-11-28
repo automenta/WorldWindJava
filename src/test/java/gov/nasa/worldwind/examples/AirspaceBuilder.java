@@ -7,14 +7,14 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.Material;
-import gov.nasa.worldwind.examples.render.airspaces.Polygon;
-import gov.nasa.worldwind.examples.render.airspaces.*;
-import gov.nasa.worldwind.examples.render.airspaces.editor.*;
+import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
+import gov.nasa.worldwind.render.airspaces.Polygon;
+import gov.nasa.worldwind.render.airspaces.editor.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.view.orbit.BasicOrbitView;
 
@@ -57,7 +57,7 @@ import java.util.zip.*;
  * <h1>Demo Shapes</h1>
  * <p>
  * Select <code>File -&gt; Load Demo Shapes</code> to display a set of polygon airspace shapes built with this editor.
- * The data for these shapes is located in the WorldWind project under src/gov/nasa/worldwindx/examples/data/AirspaceBuilder-DemoShapes.zip.
+ * The data for these shapes is located in the WorldWind project under src/gov/nasa/worldwind/examples/data/AirspaceBuilder-DemoShapes.zip.
  *
  * @author dcollins
  * @version $Id: AirspaceBuilder.java 2231 2014-08-15 19:03:12Z dcollins $
@@ -76,7 +76,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
     protected static final String SAVE = "AirspaceBuilder.Save";
     protected static final String SELECTION_CHANGED = "AirspaceBuilder.SelectionChanged";
     protected static final String DEMO_AIRSPACES_PATH
-        = "gov/nasa/worldwindx/examples/data/AirspaceBuilder-DemoShapes.zip";
+        = "gov/nasa/worldwind/examples/data/AirspaceBuilder-DemoShapes.zip";
     protected static final AirspaceFactory[] defaultAirspaceFactories = new AirspaceFactory[] {
         new PolygonAirspaceFactory(),
         new SphereAirspaceFactory()
@@ -210,7 +210,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         }
 
         public void setName(String name) {
-            this.setValue(AVKey.DISPLAY_NAME, name);
+            this.set(AVKey.DISPLAY_NAME, name);
         }
 
         public Airspace getAirspace() {
@@ -231,21 +231,21 @@ public class AirspaceBuilder extends ApplicationTemplate {
         }
 
         @Override
-        public Object getValue(String key) {
-            Object value = super.getValue(key);
+        public Object get(String key) {
+            Object value = super.get(key);
             if (value == null) {
-                value = this.airspace.getValue(key);
+                value = this.airspace.get(key);
             }
             return value;
         }
 
         @Override
-        public Object setValue(String key, Object value) {
+        public Object set(String key, Object value) {
             if (AVKey.DISPLAY_NAME.equals(key)) {
-                return this.airspace.setValue(key, value);
+                return this.airspace.set(key, value);
             }
             else {
-                return super.setValue(key, value);
+                return super.set(key, value);
             }
         }
 
@@ -304,14 +304,14 @@ public class AirspaceBuilder extends ApplicationTemplate {
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             AirspaceEntry entry = this.entryList.get(rowIndex);
-            return entry.getValue(columnAttribute[columnIndex]);
+            return entry.get(columnAttribute[columnIndex]);
         }
 
         @Override
         public void setValueAt(Object aObject, int rowIndex, int columnIndex) {
             AirspaceEntry entry = this.entryList.get(rowIndex);
             String key = columnAttribute[columnIndex];
-            entry.setValue(key, aObject);
+            entry.set(key, aObject);
         }
 
         public java.util.List<AirspaceEntry> getEntries() {
@@ -370,7 +370,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         public Airspace createAirspace(WorldWindow wwd, boolean fitShapeToViewport) {
             Polygon poly = new Polygon();
             poly.setAttributes(getDefaultAttributes());
-            poly.setValue(AVKey.DISPLAY_NAME, getNextName(toString()));
+            poly.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             poly.setAltitudes(0.0, 0.0);
             poly.setTerrainConforming(true, false);
             this.initializePolygon(wwd, poly, fitShapeToViewport);
@@ -426,7 +426,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         public Airspace createAirspace(WorldWindow wwd, boolean fitShapeToViewport) {
             SphereAirspace sphere = new SphereAirspace();
             sphere.setAttributes(getDefaultAttributes());
-            sphere.setValue(AVKey.DISPLAY_NAME, getNextName(toString()));
+            sphere.set(AVKey.DISPLAY_NAME, getNextName(toString()));
             sphere.setAltitude(0.0);
             sphere.setTerrainConforming(true);
             this.initializeSphere(wwd, sphere, fitShapeToViewport);
@@ -622,8 +622,8 @@ public class AirspaceBuilder extends ApplicationTemplate {
             this.editorController = new AirspaceEditorController();
 
             // The ordering is important here; we want first pass at mouse events.
-            this.editorController.setWorldWindow(this.app.getWwd());
-            this.app.getWwd().getInputHandler().addMouseListener(this);
+            this.editorController.setWorldWindow(this.app.wwd());
+            this.app.wwd().input().addMouseListener(this);
         }
 
         public AppFrame getApp() {
@@ -784,7 +784,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             // If the picked object is null or something other than an airspace, then ignore the mouse click. If we
             // deselect the current entry at this point, the user cannot easily navigate without loosing the selection.
 
-            PickedObjectList pickedObjects = this.getApp().getWwd().getObjectsAtCurrentPosition();
+            PickedObjectList pickedObjects = this.getApp().wwd().objectsAtPosition();
 
             Object topObject = pickedObjects.getTopObject();
             if (!(topObject instanceof Airspace)) {
@@ -867,8 +867,8 @@ public class AirspaceBuilder extends ApplicationTemplate {
         protected Vec4 getSurfacePoint(LatLon latlon, double elevation) {
             Vec4 point = null;
 
-            SceneController sc = this.getApp().getWwd().getSceneController();
-            Globe globe = this.getApp().getWwd().model().getGlobe();
+            SceneController sc = this.getApp().wwd().sceneControl();
+            Globe globe = this.getApp().wwd().model().getGlobe();
 
             if (sc.getTerrain() != null) {
                 point = sc.getTerrain().getSurfacePoint(
@@ -885,15 +885,15 @@ public class AirspaceBuilder extends ApplicationTemplate {
         }
 
         protected Vec4 getPoint(LatLon latlon, double elevation) {
-            SceneController sc = this.getApp().getWwd().getSceneController();
-            Globe globe = this.getApp().getWwd().model().getGlobe();
+            SceneController sc = this.getApp().wwd().sceneControl();
+            Globe globe = this.getApp().wwd().model().getGlobe();
             double e = globe.getElevation(latlon.getLatitude(), latlon.getLongitude());
             return globe.computePointFromPosition(
                 latlon.getLatitude(), latlon.getLongitude(), (e + elevation) * sc.getVerticalExaggeration());
         }
 
         public void createNewEntry(AirspaceFactory factory) {
-            Airspace airspace = factory.createAirspace(this.getApp().getWwd(), this.isResizeNewShapesToViewport());
+            Airspace airspace = factory.createAirspace(this.getApp().wwd(), this.isResizeNewShapesToViewport());
             AirspaceEditor editor = factory.createEditor(airspace);
             AirspaceEntry entry = new AirspaceEntry(airspace, editor);
 
@@ -916,7 +916,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             this.updateShapeIntersection();
 
             this.getApp().getAirspaceLayer().add(entry.getAirspace());
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         public void removeEntry(AirspaceEntry entry) {
@@ -930,7 +930,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             this.updateShapeIntersection();
 
             this.getApp().getAirspaceLayer().remove(entry.getAirspace());
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         public AirspaceEntry getSelectedEntry() {
@@ -973,7 +973,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
             }
 
             this.updateShapeIntersection();
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         protected boolean isSelectionEditing() {
@@ -996,11 +996,11 @@ public class AirspaceBuilder extends ApplicationTemplate {
 
             if (editing) {
                 this.editorController.setEditor(editor);
-                insertBeforePlacenames(this.getApp().getWwd(), editor);
+                WorldWindow.insertBeforePlacenames(this.getApp().wwd(), editor);
             }
             else {
                 this.editorController.setEditor(null);
-                this.getApp().getWwd().model().getLayers().remove(editor);
+                this.getApp().wwd().model().getLayers().remove(editor);
             }
 
             int index = this.getModel().getIndexForEntry(this.selectedEntry);
@@ -1015,7 +1015,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
                 }
             }
 
-            this.getApp().getWwd().redraw();
+            this.getApp().wwd().redraw();
         }
 
         protected AirspaceEntry[] getSelectedEntries() {
@@ -1045,7 +1045,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         }
 
         protected void zoomTo(LatLon latLon, Angle heading, Angle pitch, double zoom) {
-            BasicOrbitView view = (BasicOrbitView) this.getApp().getWwd().view();
+            BasicOrbitView view = (BasicOrbitView) this.getApp().wwd().view();
             view.stopMovement();
             view.addPanToAnimator(
                 new Position(latLon, 0), heading, pitch, zoom, true);
@@ -1082,7 +1082,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
                         setAirspaces(airspaces);
                         setEnabled(true);
                         getApp().setCursor(null);
-                        getApp().getWwd().redraw();
+                        getApp().wwd().redraw();
                     });
                 }
             });
@@ -1125,7 +1125,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
                         airspaces.add(airspace);
 
                         if (tokens.length >= 2) {
-                            airspace.setValue(AVKey.DISPLAY_NAME, tokens[1]);
+                            airspace.set(AVKey.DISPLAY_NAME, tokens[1]);
                         }
                     }
                     catch (Exception ex) {
@@ -1175,7 +1175,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
                             airspaces.add(airspace);
 
                             if (name.length >= 2) {
-                                airspace.setValue(AVKey.DISPLAY_NAME, name[1]);
+                                airspace.set(AVKey.DISPLAY_NAME, name[1]);
                             }
                         }
                         catch (Exception e) {
@@ -1188,7 +1188,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
                         setAirspaces(airspaces);
                         setEnabled(true);
                         getApp().setCursor(null);
-                        getApp().getWwd().redraw();
+                        getApp().wwd().redraw();
                     });
                 }
             });
@@ -1256,7 +1256,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
                     SwingUtilities.invokeLater(() -> {
                         setEnabled(true);
                         getApp().setCursor(null);
-                        getApp().getWwd().redraw();
+                        getApp().wwd().redraw();
                     });
                 }
             });
@@ -1291,7 +1291,7 @@ public class AirspaceBuilder extends ApplicationTemplate {
         public AppFrame() {
             this.airspaceLayer = new RenderableLayer();
             this.airspaceLayer.setName(AIRSPACE_LAYER_NAME);
-            insertBeforePlacenames(this.getWwd(), this.airspaceLayer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), this.airspaceLayer);
 
             this.builderController = new AirspaceBuilderController(this);
             this.builderModel = new AirspaceBuilderModel();

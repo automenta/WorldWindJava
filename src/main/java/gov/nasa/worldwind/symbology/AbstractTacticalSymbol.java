@@ -12,7 +12,7 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.drag.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
@@ -407,7 +407,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             throw new IllegalArgumentException(msg);
         }
 
-        return this.modifiers.getValue(modifier);
+        return this.modifiers.get(modifier);
     }
 
     /**
@@ -420,7 +420,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             throw new IllegalArgumentException(msg);
         }
 
-        this.modifiers.setValue(modifier, value);
+        this.modifiers.set(modifier, value);
     }
 
     /**
@@ -961,7 +961,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         Material interiorMaterial = this.getActiveAttributes().getInteriorMaterial();
         if (interiorMaterial != null)
-            params.setValue(AVKey.COLOR, interiorMaterial.getDiffuse());
+            params.set(AVKey.COLOR, interiorMaterial.getDiffuse());
 
         return params;
     }

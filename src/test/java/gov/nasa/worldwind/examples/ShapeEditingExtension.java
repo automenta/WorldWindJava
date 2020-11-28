@@ -10,9 +10,9 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.drag.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.airspaces.BasicAirspaceAttributes;
-import gov.nasa.worldwind.examples.render.markers.Marker;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.airspaces.BasicAirspaceAttributes;
+import gov.nasa.worldwind.render.markers.Marker;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -340,7 +340,7 @@ public class ShapeEditingExtension extends ApplicationTemplate {
 
         public AppFrame() {
             // Receive selection event to determine when to place the shape in editing mode.
-            this.getWwd().addSelectListener(this);
+            this.wwd().addSelectListener(this);
 
             // Create the custom shape, add it to a layer and add the layer to the WorldWindow's layer list.
             RenderableLayer layer = new RenderableLayer();
@@ -363,7 +363,7 @@ public class ShapeEditingExtension extends ApplicationTemplate {
             arrow.setHighlightAttributes(highlightAttrs);
             layer.add(arrow);
 
-            insertBeforePlacenames(getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(wwd(), layer);
         }
 
         @Override
@@ -375,7 +375,7 @@ public class ShapeEditingExtension extends ApplicationTemplate {
                 if (topObject != null && topObject.getObject() instanceof Renderable) {
                     if (this.editor == null) {
                         // Enable editing of the selected shape.
-                        this.editor = new ShapeEditorExtension(getWwd(), (Renderable) topObject.getObject());
+                        this.editor = new ShapeEditorExtension(wwd(), (Renderable) topObject.getObject());
                         this.editor.setArmed(true);
                         this.keepShapeHighlighted(true);
                         event.consume();
@@ -384,7 +384,7 @@ public class ShapeEditingExtension extends ApplicationTemplate {
                         // Switch editor to a different shape.
                         this.keepShapeHighlighted(false);
                         this.editor.setArmed(false);
-                        this.editor = new ShapeEditorExtension(getWwd(), (Renderable) topObject.getObject());
+                        this.editor = new ShapeEditorExtension(wwd(), (Renderable) topObject.getObject());
                         this.editor.setArmed(true);
                         this.keepShapeHighlighted(true);
                         event.consume();

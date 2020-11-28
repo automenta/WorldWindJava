@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples.worldwindow.util.measuretool;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -76,7 +76,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
 
     public void setLabel(String labelName, String label) {
         if (labelName != null && !labelName.isEmpty())
-            this.avList.setValue(labelName, label);
+            this.avList.set(labelName, label);
     }
 
     public String getLabel(String labelName) {
@@ -147,7 +147,7 @@ public class WWOMeasureDisplay implements WWOMeasureTool.MeasureDisplay {
     }
 
     protected Vec4 computeAnnotationPosition(Position pos, WWOMeasureTool mt) {
-        Vec4 surfacePoint = mt.getWwd().getSceneController().getTerrain().getSurfacePoint(
+        Vec4 surfacePoint = mt.getWwd().sceneControl().getTerrain().getSurfacePoint(
             pos.getLatitude(), pos.getLongitude());
         if (surfacePoint == null) {
             Globe globe = mt.getWwd().model().getGlobe();

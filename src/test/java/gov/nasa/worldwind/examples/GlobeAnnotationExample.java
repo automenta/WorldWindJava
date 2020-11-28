@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -26,7 +27,7 @@ public class GlobeAnnotationExample extends ApplicationTemplate {
         public AppFrame() {
             RenderableLayer layer = new RenderableLayer();
             layer.setName("Annotation");
-            insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
 
             Annotation ga = new GlobeAnnotation("AGL Annotation", Position.fromDegrees(20, -120.9, 1000));
             ga.setAlwaysOnTop(true);

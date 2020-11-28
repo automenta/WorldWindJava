@@ -8,10 +8,11 @@ package gov.nasa.worldwind.terrain;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;

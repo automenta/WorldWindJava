@@ -121,7 +121,7 @@ public class HTTPFileUpload {
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-        this.requestProperties.setValue(name, value);
+        this.requestProperties.set(name, value);
     }
 
     public void add(ByteBuffer bufferToUpload, String name, AVList params) {

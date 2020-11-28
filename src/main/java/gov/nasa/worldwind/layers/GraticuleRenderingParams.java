@@ -31,16 +31,16 @@ public class GraticuleRenderingParams extends AVListImpl {
     }
 
     public boolean isDrawLines() {
-        Object value = getValue(KEY_DRAW_LINES);
+        Object value = get(KEY_DRAW_LINES);
         return value instanceof Boolean ? (Boolean) value : false;
     }
 
     public void setDrawLines(boolean drawLines) {
-        setValue(KEY_DRAW_LINES, drawLines);
+        set(KEY_DRAW_LINES, drawLines);
     }
 
     public Color getLineColor() {
-        Object value = getValue(KEY_LINE_COLOR);
+        Object value = get(KEY_LINE_COLOR);
         return value instanceof Color ? (Color) value : null;
     }
 
@@ -51,21 +51,21 @@ public class GraticuleRenderingParams extends AVListImpl {
             throw new IllegalArgumentException(message);
         }
 
-        setValue(KEY_LINE_COLOR, color);
+        set(KEY_LINE_COLOR, color);
     }
 
     public double getLineWidth() {
 
-        Object value = getValue(KEY_LINE_WIDTH);
+        Object value = get(KEY_LINE_WIDTH);
         return value instanceof Double ? (Double) value : 0;
     }
 
     public void setLineWidth(double lineWidth) {
-        setValue(KEY_LINE_WIDTH, lineWidth);
+        set(KEY_LINE_WIDTH, lineWidth);
     }
 
     public String getLineStyle() {
-        Object value = getValue(KEY_LINE_STYLE);
+        Object value = get(KEY_LINE_STYLE);
         return value instanceof String ? (String) value : null;
     }
 
@@ -76,20 +76,20 @@ public class GraticuleRenderingParams extends AVListImpl {
             throw new IllegalArgumentException(message);
         }
 
-        setValue(KEY_LINE_STYLE, lineStyle);
+        set(KEY_LINE_STYLE, lineStyle);
     }
 
     public boolean isDrawLabels() {
-        Object value = getValue(KEY_DRAW_LABELS);
+        Object value = get(KEY_DRAW_LABELS);
         return value instanceof Boolean ? (Boolean) value : false;
     }
 
     public void setDrawLabels(boolean drawLabels) {
-        setValue(KEY_DRAW_LABELS, drawLabels);
+        set(KEY_DRAW_LABELS, drawLabels);
     }
 
     public Color getLabelColor() {
-        Object value = getValue(KEY_LABEL_COLOR);
+        Object value = get(KEY_LABEL_COLOR);
         return value instanceof Color ? (Color) value : null;
     }
 
@@ -100,11 +100,11 @@ public class GraticuleRenderingParams extends AVListImpl {
             throw new IllegalArgumentException(message);
         }
 
-        setValue(KEY_LABEL_COLOR, color);
+        set(KEY_LABEL_COLOR, color);
     }
 
     public Font getLabelFont() {
-        Object value = getValue(KEY_LABEL_FONT);
+        Object value = get(KEY_LABEL_FONT);
         return value instanceof Font ? (Font) value : null;
     }
 
@@ -115,6 +115,6 @@ public class GraticuleRenderingParams extends AVListImpl {
             throw new IllegalArgumentException(message);
         }
 
-        setValue(KEY_LABEL_FONT, font);
+        set(KEY_LABEL_FONT, font);
     }
 }

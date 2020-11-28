@@ -26,16 +26,16 @@ public class RasterControlPointList extends ArrayList<RasterControlPointList.Con
     public RasterControlPointList() {
     }
 
-    public Object setValue(String key, Object value) {
-        return this.avList.setValue(key, value);
+    public Object set(String key, Object value) {
+        return this.avList.set(key, value);
     }
 
     public AVList setValues(AVList avList) {
         return this.avList.setValues(avList);
     }
 
-    public Object getValue(String key) {
-        return this.avList.getValue(key);
+    public Object get(String key) {
+        return this.avList.get(key);
     }
 
     public Iterable<Object> getValues() {

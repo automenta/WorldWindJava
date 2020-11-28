@@ -5,12 +5,12 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.BasicDragger;
 
 import java.awt.*;
@@ -35,7 +35,7 @@ public class Paths extends ApplicationTemplate {
             super(true, true, false);
 
             // Add a dragger to enable shape dragging
-            this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
+            this.wwd().addSelectListener(new BasicDragger(this.wwd()));
 
             RenderableLayer layer = new RenderableLayer();
 
@@ -89,13 +89,13 @@ public class Paths extends ApplicationTemplate {
             layer.add(path);
 
             // Add the layer to the model.
-            insertBeforeCompass(getWwd(), layer);
+            WorldWindow.insertBeforeCompass(wwd(), layer);
 
             Collection<Marker> markers = new ArrayList<>(1);
             markers.add(new BasicMarker(Position.fromDegrees(90, 0), new BasicMarkerAttributes()));
             MarkerLayer markerLayer = new MarkerLayer();
             markerLayer.setMarkers(markers);
-            insertBeforeCompass(getWwd(), markerLayer);
+            WorldWindow.insertBeforeCompass(wwd(), markerLayer);
         }
     }
 }

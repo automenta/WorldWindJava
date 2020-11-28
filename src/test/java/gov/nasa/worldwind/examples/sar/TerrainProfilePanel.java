@@ -7,7 +7,6 @@ package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.util.*;
@@ -535,9 +534,9 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
         public void setWwd(WorldWindow wwd) {
             this.wwd = wwd;
             if (this.wwd != null) {
-                ApplicationTemplate.insertBeforeCompass(wwd, tpl);
+                WorldWindow.insertBeforeCompass(wwd, tpl);
                 this.tpl.setEventSource(wwd);
-                ApplicationTemplate.insertBeforeCompass(wwd, tpl2);
+                WorldWindow.insertBeforeCompass(wwd, tpl2);
                 this.tpl2.setEventSource(wwd);
                 this.tpl2.setPathType(AVKey.RHUMB_LINE);
                 // Move scalebar to north west

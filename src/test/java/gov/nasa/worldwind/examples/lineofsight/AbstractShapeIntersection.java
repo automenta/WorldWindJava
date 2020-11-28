@@ -9,10 +9,10 @@ package gov.nasa.worldwind.examples.lineofsight;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.Cylinder;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.Cylinder;
 import gov.nasa.worldwind.terrain.HighResolutionTerrain;
 
 import javax.swing.*;
@@ -61,14 +61,14 @@ public class AbstractShapeIntersection extends ApplicationTemplate {
             // Add the shape to its display layer.
             this.shapeLayer = new RenderableLayer();
             this.shapeLayer.add(this.shape);
-            insertBeforeCompass(getWwd(), this.shapeLayer);
+            WorldWindow.insertBeforeCompass(wwd(), this.shapeLayer);
 
             // Prepare the results layer.
             this.resultsLayer = new RenderableLayer();
-            insertBeforeCompass(getWwd(), this.resultsLayer);
+            WorldWindow.insertBeforeCompass(wwd(), this.resultsLayer);
 
             // Create high-resolution terrain for the intersection calculations
-            this.terrain = new HighResolutionTerrain(this.getWwd().model().getGlobe(), 20.0d);
+            this.terrain = new HighResolutionTerrain(this.wwd().model().getGlobe(), 20.0d);
 
             // Perform the intersection test within a timer callback. Intersection calculations would normally be done
             // on a separate, non-EDT thread, however.
@@ -126,7 +126,7 @@ public class AbstractShapeIntersection extends ApplicationTemplate {
             path.setAttributes(pathAttributes);
             this.resultsLayer.add(path);
 
-            this.getWwd().redraw();
+            this.wwd().redraw();
         }
 
         protected void drawIntersection(Intersection intersection) {
@@ -140,7 +140,7 @@ public class AbstractShapeIntersection extends ApplicationTemplate {
             iPoint.setAttributes(pointAttributes);
             this.resultsLayer.add(iPoint);
 
-            this.getWwd().redraw();
+            this.wwd().redraw();
         }
     }
 }

@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.drag.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.util.*;
 
@@ -153,7 +153,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
      * {@inheritDoc}
      */
     public Object getModifier(String modifier) {
-        return this.modifiers != null ? this.modifiers.getValue(modifier) : null;
+        return this.modifiers != null ? this.modifiers.get(modifier) : null;
     }
 
     /**
@@ -163,7 +163,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
         if (this.modifiers == null)
             this.modifiers = new AVListImpl();
 
-        this.modifiers.setValue(modifier, value);
+        this.modifiers.set(modifier, value);
         this.onModifierChanged();
     }
 

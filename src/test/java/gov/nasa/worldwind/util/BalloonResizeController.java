@@ -8,7 +8,7 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.pick.PickedObjectList;
 
 import java.awt.*;
@@ -51,7 +51,7 @@ public class BalloonResizeController extends AbstractResizeHotSpot {
         this.balloon = balloon;
 
         this.wwd.addSelectListener(this);
-        this.wwd.getInputHandler().addMouseMotionListener(this);
+        this.wwd.input().addMouseMotionListener(this);
     }
 
     /**
@@ -60,7 +60,7 @@ public class BalloonResizeController extends AbstractResizeHotSpot {
      */
     public void detach() {
         this.wwd.removeSelectListener(this);
-        this.wwd.getInputHandler().removeMouseMotionListener(this);
+        this.wwd.input().removeMouseMotionListener(this);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class BalloonResizeController extends AbstractResizeHotSpot {
         if (e == null || e.isConsumed())
             return;
 
-        PickedObjectList pickedObjects = wwd.getObjectsAtCurrentPosition();
+        PickedObjectList pickedObjects = wwd.objectsAtPosition();
         if (pickedObjects != null) {
             Rectangle rect = this.getBounds(pickedObjects.getTopPickedObject());
             if (rect != null) {
@@ -163,7 +163,7 @@ public class BalloonResizeController extends AbstractResizeHotSpot {
      */
     protected Rectangle getBounds(AVList pickedObject) {
         if (pickedObject != null) {
-            Object bounds = pickedObject.getValue(AVKey.BOUNDS);
+            Object bounds = pickedObject.get(AVKey.BOUNDS);
             if (bounds instanceof Rectangle) {
                 return (Rectangle) bounds;
             }

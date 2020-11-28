@@ -6,14 +6,14 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.examples.render.*;
-import gov.nasa.worldwind.examples.render.markers.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.formats.gpx.GpxReader;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.tracks.*;
 import gov.nasa.worldwind.util.*;
 import org.xml.sax.SAXException;
@@ -36,7 +36,7 @@ import java.util.*;
  * @version $Id: MarkersOrder.java 2109 2014-06-30 16:52:38Z tgaskins $
  */
 public class MarkersOrder extends ApplicationTemplate {
-    protected static final String TRACK_PATH = "gov/nasa/worldwindx/examples/data/tuolumne.gpx";
+    protected static final String TRACK_PATH = "gov/nasa/worldwind/examples/data/tuolumne.gpx";
     protected static final double TRACK_LATITUDE = 37.90;
     protected static final double TRACK_LONGITUDE = -119.52;
 
@@ -140,14 +140,14 @@ public class MarkersOrder extends ApplicationTemplate {
 
             // Add marker layer
             final TimedMarkerLayer layer = buildTracksLayer();
-            insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
 
             // Add renderable layer for legend
             this.renderableLayer = new RenderableLayer();
             this.renderableLayer.setName("Markers Legend");
             this.renderableLayer.setPickEnabled(false);
             updateScreenAnnotation(this.dayOfWeekLegend);
-            insertBeforePlacenames(getWwd(), this.renderableLayer);
+            WorldWindow.insertBeforePlacenames(wwd(), this.renderableLayer);
 
             // Add UI to control the layer color ramp type and scale
             JPanel controlPanel = new JPanel();
@@ -174,7 +174,7 @@ public class MarkersOrder extends ApplicationTemplate {
                     case 3 -> attrs = attrsRampHue;
                 }
                 updateScreenAnnotation(null);
-                getWwd().redraw();
+                wwd().redraw();
             });
             group.add(btRamp);
             radioPanel.add(btRamp);
@@ -186,7 +186,7 @@ public class MarkersOrder extends ApplicationTemplate {
                 timeScaleSlider.setEnabled(false);
                 attrs = attrsDayOfWeek;
                 updateScreenAnnotation(dayOfWeekLegend);
-                getWwd().redraw();
+                wwd().redraw();
             });
             group.add(btDow);
             radioPanel.add(btDow);
@@ -198,7 +198,7 @@ public class MarkersOrder extends ApplicationTemplate {
                 timeScaleSlider.setEnabled(false);
                 attrs = attrsHours;
                 updateScreenAnnotation(hoursLegend);
-                getWwd().redraw();
+                wwd().redraw();
             });
             group.add(btHours);
             radioPanel.add(btHours);
@@ -212,7 +212,7 @@ public class MarkersOrder extends ApplicationTemplate {
             timeScaleSlider.setToolTipText("Color ramp time scale - Minutes");
             timeScaleSlider.addChangeListener(event -> {
                 layer.setTimeScale(timeScaleSlider.getValue() * 60 * 1000 + 100);
-                getWwd().redraw();
+                wwd().redraw();
             });
             timeScaleSlider.setPaintLabels(true);
             timeScaleSlider.setPaintTicks(true);
@@ -232,14 +232,14 @@ public class MarkersOrder extends ApplicationTemplate {
                     case 2 -> attrs = attrsRampGradient;
                     case 3 -> attrs = attrsRampHue;
                 }
-                getWwd().redraw();
+                wwd().redraw();
             });
             comboPanel.add(colorRampCombo);
             controlPanel.add(comboPanel);
             this.getControlPanel().add(controlPanel, BorderLayout.SOUTH);
 
             // Setup select listener to highlight markers on rollover
-            this.getWwd().addSelectListener(event -> {
+            this.wwd().addSelectListener(event -> {
                 if (lastHighlit != null
                     && (event.getTopObject() == null || !event.getTopObject().equals(lastHighlit))) {
                     lastHighlit.setAttributes(lastAttrs);

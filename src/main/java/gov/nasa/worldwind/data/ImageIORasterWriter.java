@@ -90,8 +90,8 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
     }
 
     protected void writeImageMetadata(File file, AVList values) throws IOException {
-        Sector sector = (Sector) values.getValue(AVKey.SECTOR);
-        int[] size = (int[]) values.getValue(WorldFile.WORLD_FILE_IMAGE_SIZE);
+        Sector sector = (Sector) values.get(AVKey.SECTOR);
+        int[] size = (int[]) values.get(WorldFile.WORLD_FILE_IMAGE_SIZE);
 
         double xPixelSize = sector.getDeltaLonDegrees() / size[0];
         double yPixelSize = -sector.getDeltaLatDegrees() / size[1];
@@ -130,9 +130,9 @@ public class ImageIORasterWriter extends AbstractDataRasterWriter {
         int[] size = new int[2];
         size[0] = raster.getWidth();
         size[1] = raster.getHeight();
-        worldFileParams.setValue(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
+        worldFileParams.set(WorldFile.WORLD_FILE_IMAGE_SIZE, size);
 
         Sector sector = raster.getSector();
-        worldFileParams.setValue(AVKey.SECTOR, sector);
+        worldFileParams.set(AVKey.SECTOR, sector);
     }
 }

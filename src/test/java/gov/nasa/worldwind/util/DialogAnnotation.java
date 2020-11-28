@@ -7,8 +7,9 @@ package gov.nasa.worldwind.util;
 
 import com.jogamp.opengl.GL2;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.*;
 
 import javax.swing.event.*;
 import java.awt.*;
@@ -19,10 +20,10 @@ import java.awt.event.*;
  * @version $Id: DialogAnnotation.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public abstract class DialogAnnotation extends GlobeAnnotation implements ActionListener {
-    protected static final String CLOSE_IMAGE_PATH = "gov/nasa/worldwindx/examples/images/16x16-button-cancel.png";
+    protected static final String CLOSE_IMAGE_PATH = "gov/nasa/worldwind/examples/images/16x16-button-cancel.png";
     protected static final String BUSY_IMAGE_PATH = "images/indicator-16.gif";
     protected static final String DEPRESSED_MASK_PATH
-        = "gov/nasa/worldwindx/examples/images/16x16-button-depressed-mask.png";
+        = "gov/nasa/worldwind/examples/images/16x16-button-depressed-mask.png";
 
     protected static final String CLOSE_TOOLTIP_TEXT = "Close window";
     protected final EventListenerList listenerList = new EventListenerList();

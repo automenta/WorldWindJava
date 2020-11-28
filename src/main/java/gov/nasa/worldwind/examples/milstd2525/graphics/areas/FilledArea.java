@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples.milstd2525.graphics.areas;
 
 import gov.nasa.worldwind.examples.milstd2525.graphics.TacGrpSidc;
-import gov.nasa.worldwind.examples.render.ShapeAttributes;
+import gov.nasa.worldwind.render.ShapeAttributes;
 
 import java.util.*;
 

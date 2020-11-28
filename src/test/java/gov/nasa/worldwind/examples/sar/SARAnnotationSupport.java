@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples.sar;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.AnnotationLayer;
@@ -87,7 +87,7 @@ public class SARAnnotationSupport {
                         if (event.getTopObject() instanceof Annotation) {
                             // Check for text or url
                             PickedObject po = event.getTopPickedObject();
-                            if (po.getValue(AVKey.TEXT) != null) {
+                            if (po.get(AVKey.TEXT) != null) {
                                 //System.out.println("Text: \"" + po.getValue(AVKey.TEXT) + "\" Hyperlink: "  + po.getValue(AVKey.URL));
                                 //if(SARAnnotationSupport.this.currentAnnotation == event.getTopObject())
                                 //    return;
@@ -127,7 +127,7 @@ public class SARAnnotationSupport {
                     // We missed any roll-over events while dragging, so highlight any under the cursor now,
                     // or de-highlight the dragged shape if it's no longer under the cursor.
                     if (event.getEventAction().equals(SelectEvent.DRAG_END)) {
-                        PickedObjectList pol = SARAnnotationSupport.this.wwd.getObjectsAtCurrentPosition();
+                        PickedObjectList pol = SARAnnotationSupport.this.wwd.objectsAtPosition();
                         if (pol != null) {
                             highlight(pol.getTopObject());
                             SARAnnotationSupport.this.wwd.redraw();
@@ -138,7 +138,7 @@ public class SARAnnotationSupport {
         });
 
         // Add a mouse listener to deselect annotation on click anywhere - including terrain
-        this.wwd.getInputHandler().addMouseListener(new MouseAdapter() {
+        this.wwd.input().addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent mouseEvent) {
                 if (currentAnnotation != null && mouseEvent.getButton() == MouseEvent.BUTTON1) {
                     select(null);
@@ -212,7 +212,7 @@ public class SARAnnotationSupport {
                 SAR2.formatAngle(angleFormat, pos.getLatitude()),
                 SAR2.formatAngle(angleFormat, pos.getLongitude())));
             // set help message screen position - follow annotation
-            Vec4 surfacePoint = this.getWwd().getSceneController().getTerrain().getSurfacePoint(
+            Vec4 surfacePoint = this.getWwd().sceneControl().getTerrain().getSurfacePoint(
                 pos.getLatitude(), pos.getLongitude());
             if (surfacePoint == null) {
                 Globe globe = this.getWwd().model().getGlobe();

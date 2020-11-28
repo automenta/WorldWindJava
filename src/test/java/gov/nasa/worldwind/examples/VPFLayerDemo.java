@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.formats.vpf.*;
 import gov.nasa.worldwind.util.*;
@@ -41,12 +41,12 @@ public class VPFLayerDemo extends ApplicationTemplate {
         protected void addVPFLayer(File file) {
             VPFDatabase db = VPFUtils.readDatabase(file);
             VPFLayer layer = new VPFLayer(db);
-            insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
             this.openVPFCoveragePanel(db, layer);
         }
 
         protected void openVPFCoveragePanel(VPFDatabase db, VPFLayer layer) {
-            VPFCoveragePanel panel = new VPFCoveragePanel(getWwd(), db);
+            VPFCoveragePanel panel = new VPFCoveragePanel(wwd(), db);
             panel.setLayer(layer);
             JFrame frame = new JFrame(db.getName());
             frame.setResizable(true);

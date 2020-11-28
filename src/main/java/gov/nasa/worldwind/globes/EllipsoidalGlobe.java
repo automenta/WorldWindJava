@@ -7,7 +7,7 @@ package gov.nasa.worldwind.globes;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.DrawContext;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;

@@ -23,7 +23,7 @@ public class ShapeUtils {
 
     public static Position getNewShapePosition(WorldWindow wwd) {
         Line ray = new Line(wwd.view().getEyePoint(), wwd.view().getForwardVector());
-        Intersection[] intersection = wwd.getSceneController().getTerrain().intersect(ray);
+        Intersection[] intersection = wwd.sceneControl().getTerrain().intersect(ray);
 
         if (intersection != null && intersection.length != 0) {
             return wwd.model().getGlobe().computePositionFromPoint(intersection[0].getIntersectionPoint());

@@ -128,7 +128,7 @@ public class ViewIteration extends ApplicationTemplate {
 
             public void actionPerformed(ActionEvent actionEvent) {
                 if (pathPosition < path.size() - 1) {
-                    BasicOrbitView view = (BasicOrbitView) wwjPanel.getWwd().view();
+                    BasicOrbitView view = (BasicOrbitView) wwjPanel.wwd().view();
                     view.setHeading(Angle.fromDegrees(90));
                     view.addEyePositionAnimator(4000, view.getEyePosition(), path.get(++pathPosition));
                 }
@@ -142,7 +142,7 @@ public class ViewIteration extends ApplicationTemplate {
 
             public void actionPerformed(ActionEvent actionEvent) {
                 if (pathPosition > 0) {
-                    BasicOrbitView view = (BasicOrbitView) wwjPanel.getWwd().view();
+                    BasicOrbitView view = (BasicOrbitView) wwjPanel.wwd().view();
 
                     view.addEyePositionAnimator(4000, view.getEyePosition(), path.get(--pathPosition));
                 }
@@ -161,7 +161,7 @@ public class ViewIteration extends ApplicationTemplate {
                 else
                     heading = computeHeading(path.get(pathPosition - 1), path.get(pathPosition));
 
-                BasicOrbitView view = (BasicOrbitView) wwjPanel.getWwd().view();
+                BasicOrbitView view = (BasicOrbitView) wwjPanel.wwd().view();
                 view.addHeadingAnimator(view.getHeading(), heading);
             }
         }
@@ -175,7 +175,7 @@ public class ViewIteration extends ApplicationTemplate {
             }
 
             public void actionPerformed(ActionEvent actionEvent) {
-                BasicOrbitView view = (BasicOrbitView) wwjPanel.getWwd().view();
+                BasicOrbitView view = (BasicOrbitView) wwjPanel.wwd().view();
                 view.addEyePositionAnimator(
                     4000, view.getEyePosition(), new Position(this.latlon, view.getEyePosition().getElevation()));
             }
@@ -194,7 +194,7 @@ public class ViewIteration extends ApplicationTemplate {
 
             public void actionPerformed(ActionEvent actionEvent) {
                 for (Position p : path) {
-                    final BasicOrbitView view = (BasicOrbitView) wwjPanel.getWwd().view();
+                    final BasicOrbitView view = (BasicOrbitView) wwjPanel.wwd().view();
                     view.addEyePositionAnimator(4000,
                         view.getEyePosition(), new Position(p, view.getEyePosition().getElevation()));
                 }

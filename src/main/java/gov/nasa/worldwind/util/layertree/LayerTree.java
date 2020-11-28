@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.util.layertree;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.examples.render.Offset;
+import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.tree.*;
 

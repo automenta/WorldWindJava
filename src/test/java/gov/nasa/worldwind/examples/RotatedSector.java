@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.examples.render.SurfaceQuad;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.render.SurfaceQuad;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -35,7 +36,7 @@ public class RotatedSector extends ApplicationTemplate {
 
             try {
                 // Create the Quad from a Sector
-                Globe globe = this.getWwd().model().getGlobe();
+                Globe globe = this.wwd().model().getGlobe();
                 double radius = globe.getRadiusAt(sector.getCentroid());
                 double quadWidth = sector.getDeltaLonRadians() * radius;
                 double quadHeight = sector.getDeltaLatRadians() * radius;
@@ -47,14 +48,14 @@ public class RotatedSector extends ApplicationTemplate {
                 layer.add(quad);
 
                 // Add the layer to the model and update the ApplicationTemplate's layer manager
-                insertBeforeCompass(this.getWwd(), layer);
+                WorldWindow.insertBeforeCompass(this.wwd(), layer);
 
                 // Rotate the quad continuously
                 Timer timer = new Timer(50, actionEvent -> {
                     // Increment the current heading if the layer is visible
                     if (layer.isEnabled()) {
                         quad.setHeading(Angle.fromDegrees((quad.getHeading().getDegrees() + 1) % 360));
-                        getWwd().redraw();
+                        wwd().redraw();
                     }
                 });
                 timer.start();

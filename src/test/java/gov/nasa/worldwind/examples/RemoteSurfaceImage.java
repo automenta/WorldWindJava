@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.WorldWindow;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.RenderableLayer;
 
@@ -35,7 +36,7 @@ public class RemoteSurfaceImage extends ApplicationTemplate {
             // Disable picking for the layer because it covers the full sphere and will override a terrain pick.
             layer.setPickEnabled(false);
 
-            insertBeforePlacenames(this.getWwd(), layer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), layer);
         }
     }
 }

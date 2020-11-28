@@ -11,8 +11,9 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.event.InputHandler;
-import gov.nasa.worldwind.examples.render.ScreenCreditController;
+import gov.nasa.worldwind.render.ScreenCreditController;
 import gov.nasa.worldwind.exception.WWRuntimeException;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.ui.WorldWindowGLDrawable;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.dashboard.DashboardController;
@@ -44,7 +45,7 @@ import java.beans.PropertyChangeListener;
  * the new context. WorldWind does this automatically by clearing the associated {@link GpuResourceCache}. Objects
  * subsequently rendered automatically re-create those resources. If an application creates its own graphics resources,
  * including textures, vertex buffer objects and display lists, it must store them in the <code>GpuResourceCache</code>
- * associated with the current {@link gov.nasa.worldwind.examples.render.DrawContext} so that they are automatically
+ * associated with the current {@link DrawContext} so that they are automatically
  * cleared, and be prepared to re-create them if they do not exist in the <code>DrawContext</code>'s current
  * <code>GpuResourceCache</code> when needed. Examples of doing this can be found by searching for usages of the method
  * {@link GpuResourceCache#get(Object)} and {@link GpuResourceCache#getTexture(Object)}.
@@ -101,7 +102,7 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, Proper
             this.wwd().initDrawable(this);
             this.wwd().addPropertyChangeListener(this);
             if (shareWith != null)
-                this.wwd().initGpuResourceCache(shareWith.getGpuResourceCache());
+                this.wwd().initGpuResourceCache(shareWith.resourceCache());
             else
                 this.wwd().initGpuResourceCache(WorldWindow.createGpuResourceCache());
             this.createView();

@@ -19,7 +19,7 @@ import java.awt.*;
  */
 public class LayerManagerDialog extends AbstractFeature {
     private static final String ICON_PATH
-        = "gov/nasa/worldwindx/applications/worldwindow/images/layer-manager-64x64.png";
+        = "gov/nasa/worldwind/examples/worldwindow/images/layer-manager-64x64.png";
 
     protected JDialog dialog;
     protected boolean positionInitialized = false;

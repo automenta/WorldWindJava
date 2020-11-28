@@ -28,7 +28,7 @@ public class PlaceNames extends ApplicationTemplate {
         }
 
         private JPanel makeControlPanel() {
-            return new PlaceNamesPanel(this.getWwd());
+            return new PlaceNamesPanel(this.wwd());
         }
     }
 }

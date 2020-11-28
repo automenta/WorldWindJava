@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.examples.milstd2525;
 
-import gov.nasa.worldwind.examples.render.Material;
+import gov.nasa.worldwind.render.Material;
 
 import java.awt.*;
 

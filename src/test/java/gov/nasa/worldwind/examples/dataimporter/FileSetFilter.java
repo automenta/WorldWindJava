@@ -84,6 +84,6 @@ public class FileSetFilter extends FileFilter implements java.io.FileFilter {
             return false;
 
         // Verify that it's a fully defined raster.
-        return params.getValue(AVKey.SECTOR) != null;
+        return params.get(AVKey.SECTOR) != null;
     }
 }

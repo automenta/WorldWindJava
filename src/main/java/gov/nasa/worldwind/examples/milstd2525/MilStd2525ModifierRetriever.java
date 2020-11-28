@@ -118,7 +118,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
     }
 
     protected Integer chooseBestFittingWidth(AVList params) {
-        Object o = params.getValue(AVKey.WIDTH);
+        Object o = params.get(AVKey.WIDTH);
         if (!(o instanceof Number))
             return null;
 
@@ -148,7 +148,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
         if (params == null)
             return null;
 
-        Object o = params.getValue(AVKey.COLOR);
+        Object o = params.get(AVKey.COLOR);
         return (o instanceof Color) ? (Color) o : null;
     }
 }

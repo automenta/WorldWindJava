@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.View;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.TerrainProfileLayer;
 
@@ -53,10 +53,10 @@ public class TerrainProfiler extends ApplicationTemplate {
             try {
                 // Add TerrainProfileLayer
                 this.tpl = new TerrainProfileLayer();
-                this.tpl.setEventSource(this.getWwd());
+                this.tpl.setEventSource(this.wwd());
                 this.tpl.setStartLatLon(LatLon.fromDegrees(0, -10));
                 this.tpl.setEndLatLon(LatLon.fromDegrees(0, 65));
-                insertBeforeCompass(this.getWwd(), tpl);
+                WorldWindow.insertBeforeCompass(this.wwd(), tpl);
 
                 // retreive default values
                 this.follow = this.tpl.getFollow();
@@ -192,8 +192,8 @@ public class TerrainProfiler extends ApplicationTemplate {
                         helpLabel.setEnabled(true);
                         showEyeCheck.setEnabled(true);
                         lengthSlider.setEnabled(true);
-                        View view = getWwd().view();
-                        tpl.setObjectPosition(getWwd().view().getEyePosition());
+                        View view = wwd().view();
+                        tpl.setObjectPosition(wwd().view().getEyePosition());
                         tpl.setObjectHeading(view.getHeading());
                         break;
                     default:
@@ -225,7 +225,7 @@ public class TerrainProfiler extends ApplicationTemplate {
             this.tpl.setSize(this.graphDimension);
             this.tpl.setShowEyePosition(this.showEyePosition);
             this.tpl.setProfileLengthFactor(this.profileLengthFactor);
-            this.getWwd().redraw();
+            this.wwd().redraw();
         }
     }
 }

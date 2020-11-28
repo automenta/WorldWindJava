@@ -7,10 +7,10 @@
 /**
  * <p>
  * The shapebuilder package contains shape building applications for 3D shapes, including the rigid shapes ({@link
- * gov.nasa.worldwind.examples.render.Ellipsoid}, {@link gov.nasa.worldwind.examples.render.Box}, {@link
- * gov.nasa.worldwind.examples.render.Cylinder}, {@link gov.nasa.worldwind.examples.render.Cone}, {@link
- * gov.nasa.worldwind.examples.render.Pyramid}, {@link gov.nasa.worldwind.examples.render.Wedge}) and {@link
- * gov.nasa.worldwind.examples.render.ExtrudedPolygon}. </p>
+ * gov.nasa.worldwind.render.Ellipsoid}, {@link gov.nasa.worldwind.render.Box}, {@link
+ * gov.nasa.worldwind.render.Cylinder}, {@link gov.nasa.worldwind.render.Cone}, {@link
+ * gov.nasa.worldwind.render.Pyramid}, {@link gov.nasa.worldwind.render.Wedge}) and {@link
+ * gov.nasa.worldwind.render.ExtrudedPolygon}. </p>
  *
  * <p>
  * These shape builders rely on a set of editor classes to provide specific editing functionality for each particular
@@ -34,7 +34,7 @@
  * and {@link gov.nasa.worldwind.examples.shapebuilder.ExtrudedPolygonEditor}. </p>
  *
  * <p>
- * The following actions can be performed on all shapes except {@link gov.nasa.worldwind.examples.render.ExtrudedPolygon}: </p>
+ * The following actions can be performed on all shapes except {@link gov.nasa.worldwind.render.ExtrudedPolygon}: </p>
  *
  * <p>
  * <b>Move:</b> Select and drag the arrows to constrain movement to latitude, longitude, or altitude only. Select the

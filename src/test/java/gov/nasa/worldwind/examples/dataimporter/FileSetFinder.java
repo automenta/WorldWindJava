@@ -125,7 +125,7 @@ public class FileSetFinder {
             // Set the file set's pixel format and data type.
             if (fileSet.getDataType() == null) {
                 String pixelFormat = params.getStringValue(AVKey.PIXEL_FORMAT);
-                fileSet.setValue(AVKey.PIXEL_FORMAT, pixelFormat);
+                fileSet.set(AVKey.PIXEL_FORMAT, pixelFormat);
 
                 if (AVKey.IMAGE.equals(pixelFormat))
                     fileSet.setDataType(DataInstaller.IMAGERY);
@@ -133,7 +133,7 @@ public class FileSetFinder {
                     fileSet.setDataType(DataInstaller.ELEVATION);
             }
 
-            Sector fileSector = (Sector) params.getValue(AVKey.SECTOR);
+            Sector fileSector = (Sector) params.get(AVKey.SECTOR);
             if (fileSector == null) {
                 Logging.logger().fine("No sector for " + file.getPath());
                 continue;
@@ -147,7 +147,7 @@ public class FileSetFinder {
         }
 
         if (sector != null) {
-            fileSet.setValue(AVKey.SECTOR, sector);
+            fileSet.set(AVKey.SECTOR, sector);
 //            fileSet.setValue(FileSet.SECTOR_LIST, fileSectors.toArray());
             fileSet.addSectorList(fileSectors.toArray());
         }
@@ -175,7 +175,7 @@ public class FileSetFinder {
                 consolidatedFileSet = new FileSet();
                 map.put(key, consolidatedFileSet);
                 consolidatedFileSet.setDataType(fs.getDataType());
-                consolidatedFileSet.setValue(AVKey.PIXEL_FORMAT, fs.getValue(AVKey.PIXEL_FORMAT));
+                consolidatedFileSet.set(AVKey.PIXEL_FORMAT, fs.get(AVKey.PIXEL_FORMAT));
                 consolidatedFileSet.setSector(fs.getSector());
                 commonFilesets.add(consolidatedFileSet);
             }

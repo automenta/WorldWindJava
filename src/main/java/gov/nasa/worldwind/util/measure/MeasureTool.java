@@ -7,7 +7,7 @@ package gov.nasa.worldwind.util.measure;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -325,7 +325,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     public void setLabel(String labelName, String label) {
         if (labelName != null && !labelName.isEmpty()) {
-            this.setValue(labelName, label);
+            this.set(labelName, label);
         }
     }
 
@@ -357,8 +357,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
      */
     public void setController(MeasureToolController controller) {
         if (this.controller != null) {
-            this.wwd.getInputHandler().removeMouseListener(this.controller);
-            this.wwd.getInputHandler().removeMouseMotionListener(this.controller);
+            this.wwd.input().removeMouseListener(this.controller);
+            this.wwd.input().removeMouseMotionListener(this.controller);
             this.wwd.removePositionListener(this.controller);
             this.wwd.removeSelectListener(this.controller);
             this.wwd.removeRenderingListener(this.controller);
@@ -367,8 +367,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
         if (controller != null) {
             this.controller = controller;
             this.controller.setMeasureTool(this);
-            this.wwd.getInputHandler().addMouseListener(this.controller);
-            this.wwd.getInputHandler().addMouseMotionListener(this.controller);
+            this.wwd.input().addMouseListener(this.controller);
+            this.wwd.input().addMouseMotionListener(this.controller);
             this.wwd.addPositionListener(this.controller);
             this.wwd.addSelectListener(this.controller);
             this.wwd.addRenderingListener(this.controller);
@@ -952,7 +952,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
      * @return The position of the new control point, or null if the control point could not be added.
      */
     public Position addControlPoint() {
-        Position curPos = this.wwd.getCurrentPosition();
+        Position curPos = this.wwd.position();
         if (curPos == null) {
             return null;
         }
@@ -1072,15 +1072,15 @@ public class MeasureTool extends AVListImpl implements Disposable {
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        if (point.getValue(CONTROL_TYPE_REGULAR_SHAPE) != null) {
+        if (point.get(CONTROL_TYPE_REGULAR_SHAPE) != null) {
             // Update shape properties
-            updateShapeProperties((String) point.getValue(CONTROL_TYPE_REGULAR_SHAPE), point.getPosition(), mode);
+            updateShapeProperties((String) point.get(CONTROL_TYPE_REGULAR_SHAPE), point.getPosition(), mode);
             updateShapeControlPoints();
             //positions = makeShapePositions();
         }
 
-        if (point.getValue(CONTROL_TYPE_LOCATION_INDEX) != null) {
-            int positionIndex = (Integer) point.getValue(CONTROL_TYPE_LOCATION_INDEX);
+        if (point.get(CONTROL_TYPE_LOCATION_INDEX) != null) {
+            int positionIndex = (Integer) point.get(CONTROL_TYPE_LOCATION_INDEX);
             // Update positions
             Position surfacePosition = computeSurfacePosition(point.getPosition());
             surfacePosition = new Position(point.getPosition(), surfacePosition.getAltitude());
@@ -1147,7 +1147,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
     }
 
     protected Position computeSurfacePosition(LatLon latLon) {
-        Vec4 surfacePoint = wwd.getSceneController().getTerrain().getSurfacePoint(latLon.getLatitude(),
+        Vec4 surfacePoint = wwd.sceneControl().getTerrain().getSurfacePoint(latLon.getLatitude(),
             latLon.getLongitude());
         if (surfacePoint != null) {
             return wwd.model().getGlobe().computePositionFromPoint(surfacePoint);
@@ -1456,10 +1456,10 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 }
 
                 if (c.equals(NORTH)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTH);
+                    cp.set(CONTROL_TYPE_REGULAR_SHAPE, SOUTH);
                 }
                 else if (c.equals(SOUTH)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTH);
+                    cp.set(CONTROL_TYPE_REGULAR_SHAPE, NORTH);
                 }
             }
         }
@@ -1474,10 +1474,10 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 }
 
                 if (c.equals(EAST)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, WEST);
+                    cp.set(CONTROL_TYPE_REGULAR_SHAPE, WEST);
                 }
                 else if (c.equals(WEST)) {
-                    cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, EAST);
+                    cp.set(CONTROL_TYPE_REGULAR_SHAPE, EAST);
                 }
             }
         }
@@ -1506,10 +1506,10 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 }
 
                 switch (c) {
-                    case NORTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHEAST);
-                    case SOUTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHEAST);
-                    case SOUTHWEST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHWEST);
-                    case NORTHWEST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHWEST);
+                    case NORTHEAST -> cp.set(CONTROL_TYPE_REGULAR_SHAPE, SOUTHEAST);
+                    case SOUTHEAST -> cp.set(CONTROL_TYPE_REGULAR_SHAPE, NORTHEAST);
+                    case SOUTHWEST -> cp.set(CONTROL_TYPE_REGULAR_SHAPE, NORTHWEST);
+                    case NORTHWEST -> cp.set(CONTROL_TYPE_REGULAR_SHAPE, SOUTHWEST);
                 }
             }
         }
@@ -1522,10 +1522,10 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 }
 
                 switch (c) {
-                    case NORTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHWEST);
-                    case SOUTHEAST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHWEST);
-                    case SOUTHWEST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, SOUTHEAST);
-                    case NORTHWEST -> cp.setValue(CONTROL_TYPE_REGULAR_SHAPE, NORTHEAST);
+                    case NORTHEAST -> cp.set(CONTROL_TYPE_REGULAR_SHAPE, NORTHWEST);
+                    case SOUTHEAST -> cp.set(CONTROL_TYPE_REGULAR_SHAPE, SOUTHWEST);
+                    case SOUTHWEST -> cp.set(CONTROL_TYPE_REGULAR_SHAPE, SOUTHEAST);
+                    case NORTHWEST -> cp.set(CONTROL_TYPE_REGULAR_SHAPE, NORTHEAST);
                 }
             }
         }
@@ -1891,7 +1891,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     protected void addControlPoint(Position position, String key, Object value) {
         ControlPoint controlPoint = new ControlPoint(new Position(position, 0), this.controlPointsAttributes, this);
-        controlPoint.setValue(key, value);
+        controlPoint.set(key, value);
         this.doAddControlPoint(controlPoint);
     }
 
@@ -1899,8 +1899,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
         Object leader) {
         ControlPointWithLeader controlPoint = new ControlPointWithLeader(new Position(position, 0),
             this.controlPointWithLeaderAttributes, this.leaderAttributes, this);
-        controlPoint.setValue(controlKey, control);
-        controlPoint.setValue(leaderKey, leader);
+        controlPoint.set(controlKey, control);
+        controlPoint.set(leaderKey, leader);
         this.doAddControlPoint(controlPoint);
     }
 

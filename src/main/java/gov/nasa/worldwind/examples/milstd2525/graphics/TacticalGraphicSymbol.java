@@ -9,7 +9,7 @@ package gov.nasa.worldwind.examples.milstd2525.graphics;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.examples.milstd2525.*;
-import gov.nasa.worldwind.examples.render.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.*;
@@ -185,12 +185,12 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
             || SymbologyConstants.STANDARD_IDENTITY_JOKER.equalsIgnoreCase(si)
             || SymbologyConstants.STANDARD_IDENTITY_FAKER.equalsIgnoreCase(si);
         if (!modifiers.hasKey(SymbologyConstants.HOSTILE_ENEMY) && this.isShowHostileIndicator() && isHostile) {
-            modifiers.setValue(SymbologyConstants.HOSTILE_ENEMY, SymbologyConstants.HOSTILE_ENEMY);
+            modifiers.set(SymbologyConstants.HOSTILE_ENEMY, SymbologyConstants.HOSTILE_ENEMY);
         }
 
         // Determine location, if location modifier is enabled.
         if (!modifiers.hasKey(SymbologyConstants.LOCATION) && this.isShowLocation()) {
-            modifiers.setValue(SymbologyConstants.LOCATION, this.getFormattedPosition());
+            modifiers.set(SymbologyConstants.LOCATION, this.getFormattedPosition());
         }
 
         // Determine altitude, if location modifier is enabled.
@@ -209,14 +209,14 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
             else
                 altitude = format.eyeAltitude(position.getElevation()) + " AMSL";
 
-            modifiers.setValue(SymbologyConstants.ALTITUDE_DEPTH, altitude);
+            modifiers.set(SymbologyConstants.ALTITUDE_DEPTH, altitude);
         }
 
         if (!modifiers.hasKey(SymbologyConstants.TYPE)) {
             if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equalsIgnoreCase(this.maskedSymbolCode))
-                modifiers.setValue(SymbologyConstants.TYPE, "BIO");
+                modifiers.set(SymbologyConstants.TYPE, "BIO");
             else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equalsIgnoreCase(this.maskedSymbolCode))
-                modifiers.setValue(SymbologyConstants.TYPE, "CML");
+                modifiers.set(SymbologyConstants.TYPE, "CML");
         }
     }
 
@@ -239,7 +239,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
             if (WWUtil.isEmpty(offsets))
                 continue;
 
-            Object value = modifiers.getValue(layout.modifier);
+            Object value = modifiers.get(layout.modifier);
             if (WWUtil.isEmpty(value))
                 continue;
 
@@ -280,7 +280,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
 
         // Direction of Movement indicator. Placed at the bottom of the symbol layout. Direction of Movement applies
         // only to CBRN graphics (see MIL-STD-2525C table XI, pg. 38).
-        Object o = modifiers.getValue(SymbologyConstants.DIRECTION_OF_MOVEMENT);
+        Object o = modifiers.get(SymbologyConstants.DIRECTION_OF_MOVEMENT);
         if (this.isShowDirectionOfMovement() && o instanceof Angle) {
             // The length of the direction of movement line is equal to the height of the symbol frame. See
             // MIL-STD-2525C section 5.3.4.1.c, page 33.

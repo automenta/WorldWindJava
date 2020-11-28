@@ -5,11 +5,11 @@
  */
 package gov.nasa.worldwind.examples.analytics;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.examples.render.Renderable;
+import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -38,7 +38,7 @@ import java.util.*;
  * @version $Id: AnalyticSurfaceDemo.java 2425 2014-11-13 19:44:19Z dcollins $
  */
 public class AnalyticSurfaceDemo extends ApplicationTemplate {
-    protected static final String DATA_PATH = "gov/nasa/worldwindx/examples/data/wa-precip-24hmam-5km.tif";
+    protected static final String DATA_PATH = "gov/nasa/worldwind/examples/data/wa-precip-24hmam-5km.tif";
     protected static final int DEFAULT_RANDOM_ITERATIONS = 1000;
     protected static final double DEFAULT_RANDOM_SMOOTHING = 0.5d;
 
@@ -245,7 +245,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate {
 
             // Determine the sector covered by the elevations. This information is in the GeoTIFF file or auxiliary
             // files associated with the elevations file.
-            Sector sector = (Sector) rasters[0].getValue(AVKey.SECTOR);
+            Sector sector = (Sector) rasters[0].get(AVKey.SECTOR);
             if (sector == null) {
                 String msg = Logging.getMessage("DataRaster.MissingMetadata", AVKey.SECTOR);
                 Logging.logger().severe(msg);
@@ -305,7 +305,7 @@ public class AnalyticSurfaceDemo extends ApplicationTemplate {
             this.analyticSurfaceLayer = new RenderableLayer();
             this.analyticSurfaceLayer.setPickEnabled(false);
             this.analyticSurfaceLayer.setName("Analytic Surfaces");
-            insertBeforePlacenames(this.getWwd(), this.analyticSurfaceLayer);
+            WorldWindow.insertBeforePlacenames(this.wwd(), this.analyticSurfaceLayer);
 
             createRandomAltitudeSurface(HUE_BLUE, HUE_RED, 40, 40, this.analyticSurfaceLayer);
             createRandomColorSurface(HUE_BLUE, HUE_RED, 40, 40, this.analyticSurfaceLayer);

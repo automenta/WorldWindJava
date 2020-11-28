@@ -217,7 +217,7 @@ public class BasicModel extends WWObjectImpl implements Model {
         if (layers != null) {
             for (Object layer1 : layers) {
                 Layer layer = (Layer) layer1;
-                Extent e = (Extent) layer.getValue(AVKey.EXTENT);
+                Extent e = (Extent) layer.get(AVKey.EXTENT);
                 if (e != null)
                     return e;
             }

@@ -10,7 +10,7 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.WorldMapLayer;
 import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.util.StatusBar;
+import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
