@@ -107,11 +107,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
     }
 
     public Position getReferencePosition() {
-        Iterator<? extends LatLon> iterator = this.getLocations().iterator();
-        if (iterator.hasNext())
-            return new Position(iterator.next(), 0);
-
-        return null;
+        return buffer.getReferencePosition();
     }
 
     /**
@@ -123,10 +119,12 @@ public class SurfacePolylines extends AbstractSurfaceShape {
     }
 
     protected void doMoveTo(Position oldReferencePosition, Position newReferencePosition) {
-        for (int i = 0; i < this.buffer.size(); i++) {
+        final int n = this.buffer.size();
+        for (int i = 0; i < n; i++) {
             VecBuffer vb = this.buffer.subBuffer(i);
 
-            for (int pos = 0; pos < vb.getSize(); pos++) {
+            final int v = vb.getSize();
+            for (int pos = 0; pos < v; pos++) {
                 LatLon ll = vb.getLocation(pos);
                 Angle heading = LatLon.greatCircleAzimuth(oldReferencePosition, ll);
                 Angle pathLength = LatLon.greatCircleDistance(oldReferencePosition, ll);
@@ -138,13 +136,15 @@ public class SurfacePolylines extends AbstractSurfaceShape {
     }
 
     protected void doMoveTo(Globe globe, Position oldReferencePosition, Position newReferencePosition) {
-        for (int i = 0; i < this.buffer.size(); i++) {
+        final int n = this.buffer.size();
+        for (int i = 0; i < n; i++) {
             VecBuffer vb = this.buffer.subBuffer(i);
 
             List<LatLon> newLocations = LatLon.computeShiftedLocations(globe, oldReferencePosition,
                 newReferencePosition, vb.getLocations());
 
-            for (int pos = 0; pos < vb.getSize(); pos++) {
+            final int v = vb.getSize();
+            for (int pos = 0; pos < v; pos++) {
                 vb.putLocation(pos, newLocations.get(i));
             }
         }
@@ -198,8 +198,7 @@ public class SurfacePolylines extends AbstractSurfaceShape {
                 // Apply hemisphere offset and draw again
                 gl.glTranslated(360 * hemisphereSign, 0, 0);
                 gl.glCallList(dlResource[0]);
-            }
-            finally {
+            } finally {
                 gl.glPopMatrix();
             }
         }
@@ -212,9 +211,10 @@ public class SurfacePolylines extends AbstractSurfaceShape {
         int[] dlResource = new int[] {gl.glGenLists(1), 1};
 
         gl.glNewList(dlResource[0], GL2.GL_COMPILE);
+        final int n = this.buffer.size();
         try {
             // Tessellate each part, note if crossing date line
-            for (int i = 0; i < this.buffer.size(); i++) {
+            for (int i = 0; i < n; i++) {
                 VecBuffer subBuffer = this.buffer.subBuffer(i);
                 if (this.tessellatePart(gl, subBuffer, referenceLocation))
                     this.crossesDateLine = true;
@@ -226,33 +226,36 @@ public class SurfacePolylines extends AbstractSurfaceShape {
 
         this.needsOutlineTessellation = false;
 
-        int numBytes = this.buffer.size() * 3 * 4; // 3 float coords
+        int numBytes = n * 3 * 4; // 3 float coords
         dc.getGpuResourceCache().put(this.outlineDisplayListCacheKey, dlResource, GpuResourceCache.DISPLAY_LISTS,
             numBytes);
 
         return dlResource;
     }
 
-    protected boolean tessellatePart(GL2 gl, VecBuffer vecBuffer, LatLon referenceLocation) {
+    protected boolean tessellatePart(GL2 gl, VecBuffer vecBuffer, final LatLon referenceLocation) {
         Iterable<double[]> iterable = vecBuffer.getCoords(3);
         boolean dateLineCrossed = false;
+
+        final Angle rLon = referenceLocation.getLongitude();
+        final Angle rLat = referenceLocation.getLatitude();
 
         gl.glBegin(GL2.GL_LINE_STRIP);
         try {
             int sign = 0; // hemisphere offset direction
-            double previousLongitude = 0;
+            double lonPrev = 0;
 
             for (double[] coords : iterable) {
-                if (Math.abs(previousLongitude - coords[0]) > 180) {
+                if (Math.abs(lonPrev - coords[0]) > 180) {
                     // Crossing date line, sum departure point longitude sign for hemisphere offset
-                    sign += (int) Math.signum(previousLongitude);
+                    sign += (int) Math.signum(lonPrev);
                     dateLineCrossed = true;
                 }
 
-                previousLongitude = coords[0];
+                lonPrev = coords[0];
 
-                double lonDegrees = coords[0] - referenceLocation.getLongitude().degrees;
-                double latDegrees = coords[1] - referenceLocation.getLatitude().degrees;
+                double lonDegrees = coords[0] - rLon.degrees;
+                double latDegrees = coords[1] - rLat.degrees;
                 lonDegrees += sign * 360; // apply hemisphere offset
                 gl.glVertex3f((float) lonDegrees, (float) latDegrees, 0);
             }
