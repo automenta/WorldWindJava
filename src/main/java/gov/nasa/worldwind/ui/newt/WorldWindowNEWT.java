@@ -11,6 +11,7 @@ import gov.nasa.worldwind.ui.WorldWindowGLAutoDrawable;
 import gov.nasa.worldwind.util.*;
 
 import java.beans.PropertyChangeListener;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WorldWindowNEWT implements WorldWindow, GLEventListener {
 
@@ -85,9 +86,10 @@ public class WorldWindowNEWT implements WorldWindow, GLEventListener {
         window.setPosition(x, y);
     }
 
+
     @Override
     public void redraw() {
-//        wwd().redraw();
+        wwd.redraw();
     }
 
     @Override

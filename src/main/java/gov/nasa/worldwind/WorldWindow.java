@@ -215,9 +215,9 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
         return this.wwd().resourceCache();
     }
 
-    default void redrawNow() {
-        this.wwd().redrawNow();
-    }
+//    default void redrawNow() {
+//        this.wwd().redrawNow();
+//    }
 
     default Model model() {
         return this.wwd().model();

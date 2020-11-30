@@ -343,8 +343,8 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
         if (mousePointChanged && this.wwd.sceneControl() != null)
             this.wwd.sceneControl().setPickPoint(this.mousePoint);
 
-        if (this.isForceRedrawOnMousePressed() || mousePointChanged)
-            this.wwd.redrawNow();
+        if (mousePointChanged || this.isForceRedrawOnMousePressed())
+            this.wwd.redraw();
 
         this.objectsAtButtonPress = this.wwd.objectsAtPosition();
 

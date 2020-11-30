@@ -28,52 +28,46 @@ public class LayerTreeUsage extends ApplicationTemplate {
     }
     public static void main(String[] args) {
         final BasicModel m = new BasicModel();
+        WorldWindowNEWT w = new WorldWindowNEWT(m, 1024, 800);
+
         LayerTree layerTree = new LayerTree();
-
-        // Set up a layer to display the on-screen layer tree in the WorldWindow.
-        RenderableLayer l = new RenderableLayer();
-//        l.set(AVKey.HIDDEN, true);
-        l.add(layerTree);
-
-
-        // Refresh the tree model with the WorldWindow's current layer list.
         layerTree.getModel().refresh(m.getLayers());
 
 
-
-        WorldWindowNEWT w = new WorldWindowNEWT(m, 1024, 800);
-
-        WorldWindow.insertBeforeCompass(w.wwd(), l);
+        // Set up a layer to display the on-screen layer tree in the WorldWindow.
+        RenderableLayer ui = new RenderableLayer();
+        ui.set(AVKey.HIDDEN, true);
+        ui.add(layerTree);
 
         // Add a controller to handle input events on the layer tree.
         HotSpotController controller = new HotSpotController(w.wwd());
+
+        //WorldWindow.insertBeforeCompass(w.wwd(), ui);
+        m.getLayers().add(ui);
     }
 
     public static class AppFrame extends ApplicationTemplate.AppFrame {
-        protected final LayerTree layerTree;
-        protected final RenderableLayer hiddenLayer;
-
-        protected final HotSpotController controller;
 
         public AppFrame() {
             super(true, false, false); // Don't include the layer panel; we're using the on-screen layer tree.
 
-            this.layerTree = new LayerTree();
+            final WorldWindow wwd = this.wwd();
+
+            var layerTree = new LayerTree();
+            layerTree.getModel().refresh(wwd.model().getLayers());
 
             // Set up a layer to display the on-screen layer tree in the WorldWindow.
-            this.hiddenLayer = new RenderableLayer();
-            this.hiddenLayer.add(this.layerTree);
-            this.wwd().model().getLayers().add(this.hiddenLayer);
+            var ui = new RenderableLayer();
+            ui.add(layerTree);
+            wwd.model().getLayers().add(ui);
 
             // Mark the layer as hidden to prevent it being included in the layer tree's model. Including the layer in
             // the tree would enable the user to hide the layer tree display with no way of bringing it back.
-            this.hiddenLayer.set(AVKey.HIDDEN, true);
+            ui.set(AVKey.HIDDEN, true);
 
-            // Refresh the tree model with the WorldWindow's current layer list.
-            this.layerTree.getModel().refresh(this.wwd().model().getLayers());
 
             // Add a controller to handle input events on the layer tree.
-            this.controller = new HotSpotController(this.wwd());
+            var controller = new HotSpotController(wwd);
 
             // Size the WorldWindow to take up the space typically used by the layer panel. This illustrates the
             // screen space gained by using the on-screen layer tree.

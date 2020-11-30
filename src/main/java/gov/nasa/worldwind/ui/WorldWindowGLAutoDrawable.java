@@ -21,6 +21,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
 /**
@@ -127,7 +128,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     @Override
     public void shutdown() {
         this.shuttingDown = true;
-        this.redrawNow(); // Invokes a repaint, where the rest of the shutdown work is done.
+        this.redraw(); // Invokes a repaint, where the rest of the shutdown work is done.
     }
 
     protected void doShutdown() {
@@ -243,12 +244,6 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     public void dispose(GLAutoDrawable glAutoDrawable) {
     }
 
-    /**
-     * See {@link GLEventListener#display(GLAutoDrawable)}.
-     *
-     * @param glAutoDrawable the drawable
-     * @throws IllegalStateException if no {@link SceneController} exists for this canvas
-     */
     public void display(GLAutoDrawable glAutoDrawable) {
         // Performing shutdown here in order to do so with a current GL context for GL resource disposal.
         if (this.shuttingDown) {
@@ -258,6 +253,9 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
                 Logging.logger().log(Level.SEVERE, Logging.getMessage(
                     "WorldWindowGLCanvas.ExceptionWhileShuttingDownWorldWindow"), e);
             }
+            return;
+        }
+        if (!redrawNecessary.getAndSet(false)) {
             return;
         }
 
@@ -278,8 +276,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
 
             try {
                 this.callRenderingListeners(new RenderingEvent(this.drawable, RenderingEvent.BEFORE_RENDERING));
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Logging.logger().log(Level.SEVERE,
                     Logging.getMessage("WorldWindowGLAutoDrawable.ExceptionDuringGLEventListenerDisplay"), e);
             }
@@ -298,8 +295,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
 
             try {
                 this.callRenderingListeners(new RenderingEvent(this.drawable, RenderingEvent.BEFORE_BUFFER_SWAP));
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Logging.logger().log(Level.SEVERE,
                     Logging.getMessage("WorldWindowGLAutoDrawable.ExceptionDuringGLEventListenerDisplay"), e);
             }
@@ -414,16 +410,19 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         }
     }
 
+    final AtomicBoolean redrawNecessary = new AtomicBoolean(true);
+
     @Override
     public void redraw() {
+        redrawNecessary.setOpaque(true);
         if (this.drawable instanceof AWTGLAutoDrawable)
             ((AWTGLAutoDrawable) this.drawable).repaint();
     }
 
-    public void redrawNow() {
-        if (this.drawable != null)
-            this.drawable.display();
-    }
+//    public void redrawNow() {
+//        if (this.drawable != null)
+//            this.drawable.display();
+//    }
 
     private final Message viewStopMsg = new Message(View.VIEW_STOPPED, WorldWindowGLAutoDrawable.this);
 

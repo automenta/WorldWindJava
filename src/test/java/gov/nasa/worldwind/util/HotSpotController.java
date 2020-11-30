@@ -65,8 +65,7 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
 
         try {
             this.doSelected(event);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Wrap the handler in a try/catch to keep exceptions from bubbling up.
             Logging.logger().warning(e.getMessage() != null ? e.getMessage() : e.toString());
         }
@@ -223,6 +222,7 @@ public class HotSpotController implements SelectListener, MouseMotionListener {
         this.activeHotSpot = hotSpot;
 
         if (this.activeHotSpot != null) {
+            //System.out.println("active hotspot: " + activeHotSpot);
             this.activeHotSpot.setActive(true);
             this.wwd.input().addKeyListener(this.activeHotSpot);
             this.wwd.input().addMouseListener(this.activeHotSpot);

@@ -131,10 +131,10 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
             this.sceneController.setView(view);
     }
 
-    public void setModelAndView(Model model, View view) {
-        this.setModel(model);
-        this.setView(view);
-    }
+//    public void setModelAndView(Model model, View view) {
+//        this.setModel(model);
+//        this.setView(view);
+//    }
 
     public SceneController sceneControl() {
         return this.sceneController;
@@ -159,11 +159,11 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
             ((AWTInputHandler)inputHandler).eventListeners : new EventListenerList());
     }
 
-    public void redraw() {
+    @Override public void redraw() {
     }
 
-    public void redrawNow() {
-    }
+//    public void redrawNow() {
+//    }
 
     public void setPerFrameStatisticsKeys(Set<String> keys) {
         if (this.sceneController != null)
