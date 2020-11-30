@@ -281,11 +281,11 @@ public final class Sphere implements Extent, Renderable {
      * @throws IllegalArgumentException if the frustum is null.
      */
     public final boolean intersects(Frustum frustum) {
-        if (frustum == null) {
-            String message = Logging.getMessage("nullValue.FrustumIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (frustum == null) {
+//            String message = Logging.getMessage("nullValue.FrustumIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // See if the extent's bounding sphere is within or intersects the frustum. The dot product of the extent's
         // center point with each plane's vector provides a distance to each plane. If this distance is less than

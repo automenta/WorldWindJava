@@ -272,9 +272,18 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 //            throw new IllegalArgumentException(message);
 //        }
 
-        return this.sectorCache.computeIfAbsent(
-            dc.getGlobe().getGlobeStateKey(/*dc*/ /* shared should be ok if draw context is 1:1 with a globe*/),
-            K -> WWUtil.arrayList(computeSectors(dc)));
+        final GlobeStateKey key = dc.getGlobe().getGlobeStateKey(/*dc*/ /* shared should be ok if draw context is 1:1 with a globe*/);
+
+        List<Sector> s = sectorCache.get(key);
+        if (s == null) {
+            s = WWUtil.arrayList(computeSectors(dc));
+            sectorCache.put(key, s);
+        }
+        return s;
+//        return this.sectorCache.computeIfAbsent(
+//            key,
+//            K -> WWUtil.arrayList(computeSectors(dc)));
+
     }
 
     /**
@@ -843,9 +852,11 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             vertexBuffer = Buffers.newDirectFloatBuffer(2 * locations.size());
         vertexBuffer.clear();
 
+        final double refLon = refPos.getLongitude().degrees;
+        final double refLat = refPos.getLatitude().degrees;
         for (LatLon ll : locations) {
-            vertexBuffer.put((float) (ll.getLongitude().degrees - refPos.getLongitude().degrees));
-            vertexBuffer.put((float) (ll.getLatitude().degrees - refPos.getLatitude().degrees));
+            vertexBuffer.put((float) (ll.getLongitude().degrees - refLon));
+            vertexBuffer.put((float) (ll.getLatitude().degrees - refLat));
         }
         vertexBuffer.flip();
 
@@ -857,9 +868,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     protected WWTexture getInteriorTexture() {
         if (this.getActiveAttributes().getImageSource() == null) {
             this.texture = null;
-        }
-        else if (this.texture == null
-            || this.texture.getImageSource() != this.getActiveAttributes().getImageSource()) {
+        }else if (this.texture == null || this.texture.getImageSource() != this.getActiveAttributes().getImageSource()) {
             this.texture = new BasicWWTexture(this.getActiveAttributes().getImageSource(), true);
         }
 
@@ -890,18 +899,19 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     protected double computeEdgeIntervalsPerDegree(SurfaceTileDrawContext sdc) {
+        final Rectangle viewport = sdc.getViewport();
+        final Sector sector = sdc.getSector();
         double texelsPerDegree = Math.max(
-            sdc.getViewport().width / sdc.getSector().getDeltaLonDegrees(),
-            sdc.getViewport().getHeight() / sdc.getSector().getDeltaLatDegrees());
+            viewport.width / sector.getDeltaLonDegrees(),
+            viewport.getHeight() / sector.getDeltaLatDegrees());
         double intervalsPerTexel = 1.0 / this.getTexelsPerEdgeInterval();
-
         return intervalsPerTexel * texelsPerDegree;
     }
 
     @SuppressWarnings("UnnecessaryLocalVariable")
     protected double computeEdgeIntervalsPerDegree(double resolution) {
-        double degreesPerInterval = resolution * 180.0 / Math.PI;
-        return 1.0 / degreesPerInterval;
+        //return 1.0 / (resolution * WWMath.OneEightyOverPI);
+        return WWMath.PiOverOneEighty / resolution;
     }
 
     //**************************************************************//
@@ -958,8 +968,11 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         try {
             GLU.gluTessBeginContour(tess);
 
+            double[] vertex = new double[3];
             for (LatLon location : contour) {
-                double[] vertex = {location.longitude.degrees, location.latitude.degrees, 0};
+                //double[] vertex = {location.longitude.degrees, location.latitude.degrees, 0};
+                vertex[0] = location.longitude.degrees;
+                vertex[1] = location.latitude.degrees;
                 GLU.gluTessVertex(tess, vertex, 0, vertex);
             }
         }

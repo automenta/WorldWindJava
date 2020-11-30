@@ -44,6 +44,8 @@ public class WWMath {
     public static final double SQUARE_METERS_TO_ACRES = 0.000247105381;
 
     public static final LatLon LONGITUDE_OFFSET_180 = LatLon.fromDegrees(0, 180);
+    public static final double OneEightyOverPi = 180.0 / Math.PI;
+    public static final double PiOverOneEighty = Math.PI / 180.0;
 
     /**
      * Convenience method to compute the log base 2 of a value.

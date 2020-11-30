@@ -8,7 +8,7 @@ package gov.nasa.worldwind.render;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.util.texture.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.cache.Cacheable;
+import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe2D;
 import gov.nasa.worldwind.layers.TextureTile;
@@ -809,6 +809,9 @@ public class SurfaceObjectTileBuilder {
         // and add object to those tiles. This has the effect of quickly sorting the objects into the top level tiles.
         // We collect the top level tiles in a HashSet to ensure there are no duplicates when multiple objects intersect
         // the same top level tiles.
+
+        final MemoryCache memoryCache = TextureTile.getMemoryCache();
+
         for (SurfaceRenderable so : this.currentSurfaceObjects) {
             List<Sector> sectors = so.getSectors(dc);
             if (sectors == null)
@@ -837,18 +840,18 @@ public class SurfaceObjectTileBuilder {
 
                         // Ignore this tile if the surface renderable has already been added to it. This handles
                         // dateline spanning surface renderables which have two sectors that share a common boundary.
-                        if (intersectingTileKeys.contains(tileKey))
+                        if (!intersectingTileKeys.add(tileKey))
                             continue;
 
-                        SurfaceObjectTile tile = (SurfaceObjectTile) TextureTile.getMemoryCache().getObject(tileKey);
+                        SurfaceObjectTile tile = (SurfaceObjectTile) memoryCache.getObject(tileKey);
                         if (tile == null) {
                             tile = this.createTile(new Sector(p1, p2, t1, t2), level, row, col, tileCacheName);
-                            TextureTile.getMemoryCache().add(tileKey, tile);
+                            memoryCache.add(tileKey, tile);
                         }
 
-                        intersectingTileKeys.add(tileKey); // Set of intersecting tile keys ensure no duplicate objects.
                         topLevelTiles.add(tile); // Set of top level tiles ensures no duplicates tiles.
-                        tile.addSurfaceObject(so, s);
+                        tile.intersectingObjects.add(so);
+                        tile.objectSector = (tile.objectSector != null) ? tile.objectSector.union(s) : s;
 
                         t1 = t2;
                     }
@@ -860,9 +863,12 @@ public class SurfaceObjectTileBuilder {
         }
 
         // Add each top level tile or its descendants to the current tile list.
-        for (SurfaceObjectTile tile : topLevelTiles) {
-            this.addTileOrDescendants(dc, levelSet, null, tile);
-        }
+//        for (SurfaceObjectTile tile : topLevelTiles)
+//            this.addTileOrDescendants(dc, levelSet, null, tile);
+        topLevelTiles.forEach(
+        //topLevelTiles.parallelStream().forEach(
+            tile -> this.addTileOrDescendants(dc, levelSet, null, tile));
+
     }
 
     /**
@@ -883,7 +889,6 @@ public class SurfaceObjectTileBuilder {
     protected void addTileOrDescendants(DrawContext dc, LevelSet levelSet, SurfaceObjectTile parent, SurfaceObjectTile tile) {
 
         if (!this.intersectsVisibleSector(dc, tile) || !this.intersectsFrustum(dc, tile)) {
-            tile.clearObjectList();
             return;
         }
 
@@ -892,24 +897,25 @@ public class SurfaceObjectTileBuilder {
             this.addIntersectingObjects(dc, parent, tile);
 
         // Ignore tiles that do not intersect any surface renderables.
-        if (!tile.hasObjects())
-            return;
+        if (tile.hasObjects()) {
 
-        // If this tile meets the current rendering criteria, add it to the current tile list. This tile's object list
-        // is cleared after the tile update operation.
-        if (this.meetsRenderCriteria(dc, levelSet, tile)) {
-            this.addTile(tile);
-            return;
+            // If this tile meets the current rendering criteria, add it to the current tile list. This tile's object list
+            // is cleared after the tile update operation.
+            if (this.meetsRenderCriteria(dc, levelSet, tile)) {
+                this.addTile(tile);
+            } else {
+
+                Level nextLevel = levelSet.getLevel(tile.getLevelNumber() + 1);
+                for (TextureTile subTile : tile.createSubTiles(nextLevel)) {
+                    this.addTileOrDescendants(dc, levelSet, tile, (SurfaceObjectTile) subTile);
+                }
+
+                // This tile is not added to the current tile list, so we clear it's object list to prepare it for use during
+                // the next frame.
+                tile.clearObjectList();
+            }
+
         }
-
-        Level nextLevel = levelSet.getLevel(tile.getLevelNumber() + 1);
-        for (TextureTile subTile : tile.createSubTiles(nextLevel)) {
-            this.addTileOrDescendants(dc, levelSet, tile, (SurfaceObjectTile) subTile);
-        }
-
-        // This tile is not added to the current tile list, so we clear it's object list to prepare it for use during
-        // the next frame.
-        tile.clearObjectList();
     }
 
     /**
@@ -939,12 +945,13 @@ public class SurfaceObjectTileBuilder {
         // bounding sector becomes this tile's object bounding sector.
         final List<SurfaceRenderable> parentObjs = parent.getObjectList();
 
+        final Sector to = tile.objectSector;
         if (tileSector.contains(parentSector)) {
-            tile.addAllSurfaceObjects(parentObjs, parentSector);
-        }
-        // Otherwise, the tile may intersect some of the parent's object list. Compute which objects intersect this
-        // tile, and compute this tile's bounding sector as the union of those object's sectors.
-        else {
+            tile.intersectingObjects.addAll(parentObjs);
+            tile.objectSector = (to != null) ? tile.objectSector.union(parentSector) : parentSector;
+        }else {
+            // Otherwise, the tile may intersect some of the parent's object list. Compute which objects intersect this
+            // tile, and compute this tile's bounding sector as the union of those object's sectors.
             for (SurfaceRenderable so : parentObjs) {
                 List<Sector> sectors = so.getSectors(dc);
                 if (sectors == null)
@@ -954,7 +961,8 @@ public class SurfaceObjectTileBuilder {
                 // intersection to avoid adding the same object to the tile more than once.
                 for (Sector s : sectors) {
                     if (tileSector.intersects(s)) {
-                        tile.addSurfaceObject(so, s);
+                        tile.intersectingObjects.add(so);
+                        tile.objectSector = (tile.objectSector != null) ? tile.objectSector.union(s) : s;
                         break;
                     }
                 }
@@ -1235,7 +1243,7 @@ public class SurfaceObjectTileBuilder {
         /**
          * List of surface renderables intersecting the tile.
          */
-        protected List<SurfaceRenderable> intersectingObjects;
+        protected final List<SurfaceRenderable> intersectingObjects = new ArrayList();
         /**
          * The state key that was valid when the tile was last updated.
          */
@@ -1320,36 +1328,8 @@ public class SurfaceObjectTileBuilder {
          * method.
          */
         public void clearObjectList() {
-            this.intersectingObjects = null;
+            this.intersectingObjects.clear();
             this.objectSector = null;
-        }
-
-        /**
-         * Adds the specified surface renderable to the tile's list of intersecting objects.
-         *
-         * @param so     the surface renderable to add.
-         * @param sector the sector bounding the specified surface renderable.
-         */
-        public void addSurfaceObject(SurfaceRenderable so, Sector sector) {
-            if (this.intersectingObjects == null)
-                this.intersectingObjects = new ArrayList<>();
-
-            this.intersectingObjects.add(so);
-            this.objectSector = (this.objectSector != null) ? this.objectSector.union(sector) : sector;
-        }
-
-        /**
-         * Adds the specified collection of surface renderables to the tile's list of intersecting objects.
-         *
-         * @param c      the collection of surface renderables to add.
-         * @param sector the sector bounding the specified surface renderable collection.
-         */
-        public void addAllSurfaceObjects(Collection<SurfaceRenderable> c, Sector sector) {
-            if (this.intersectingObjects == null)
-                this.intersectingObjects = new ArrayList<>();
-
-            this.intersectingObjects.addAll(c);
-            this.objectSector = (this.objectSector != null) ? this.objectSector.union(sector) : sector;
         }
 
         /**

@@ -467,7 +467,14 @@ public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseL
         }
     }
 
-    private static final Component dummySource = new JButton();
+    private static final Component dummySource = new JButton() {
+        private final Point ZERO = new Point(0,0);
+
+        @Override
+        public Point getLocationOnScreen() {
+            return ZERO;
+        }
+    };
 
     @Override
     public void mouseDragged(com.jogamp.newt.event.MouseEvent e) {

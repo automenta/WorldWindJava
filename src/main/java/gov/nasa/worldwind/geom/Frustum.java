@@ -376,11 +376,11 @@ public class Frustum {
      * @throws IllegalArgumentException if the extent is null.
      */
     public boolean intersects(Extent extent) {
-        if (extent == null) {
-            String msg = Logging.getMessage("nullValue.ExtentIsNull");
-            Logging.logger().fine(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (extent == null) {
+//            String msg = Logging.getMessage("nullValue.ExtentIsNull");
+//            Logging.logger().fine(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         return extent.intersects(this);
     }

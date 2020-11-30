@@ -654,12 +654,12 @@ public class Box implements Extent, Renderable {
     public boolean intersects(Frustum frustum) {
         // FYI: this code is identical to that in Cylinder.intersects.
 
-        if (frustum == null) {
-            String message = Logging.getMessage("nullValue.FrustumIsNull");
-
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (frustum == null) {
+//            String message = Logging.getMessage("nullValue.FrustumIsNull");
+//
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         double intersectionPoint;
         Vec4[] endPoints = new Vec4[] {this.bottomCenter, this.topCenter};

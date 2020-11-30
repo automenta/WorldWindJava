@@ -52,11 +52,11 @@ public class OGLUtil {
      * @throws IllegalArgumentException if the GL is null.
      */
     public static void applyBlending(GL2ES1 gl, boolean havePremultipliedColors) {
-        if (gl == null) {
-            String message = Logging.getMessage("nullValue.GLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (gl == null) {
+//            String message = Logging.getMessage("nullValue.GLIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         gl.glEnable(GL2.GL_ALPHA_TEST);
         gl.glAlphaFunc(GL2.GL_GREATER, 0.0f);
@@ -97,17 +97,17 @@ public class OGLUtil {
      *                                  the opacity is greater than 1.
      */
     public static void applyColor(GL2 gl, Color color, double opacity, boolean premultiplyColors) {
-        if (gl == null) {
-            String message = Logging.getMessage("nullValue.GLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (color == null) {
-            String message = Logging.getMessage("nullValue.ColorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (gl == null) {
+//            String message = Logging.getMessage("nullValue.GLIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (color == null) {
+//            String message = Logging.getMessage("nullValue.ColorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (opacity < 0.0d || opacity > 1.0d) {
             String message = Logging.getMessage("generic.OpacityOutOfRange", opacity);
@@ -141,17 +141,17 @@ public class OGLUtil {
      *                                  the opacity is greater than 1.
      */
     public static void applyColor(GL2 gl, Color color, boolean premultiplyColors) {
-        if (gl == null) {
-            String message = Logging.getMessage("nullValue.GLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (color == null) {
-            String message = Logging.getMessage("nullValue.ColorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (gl == null) {
+//            String message = Logging.getMessage("nullValue.GLIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//
+//        if (color == null) {
+//            String message = Logging.getMessage("nullValue.ColorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         float[] compArray = new float[4];
         color.getRGBComponents(compArray);
@@ -177,11 +177,11 @@ public class OGLUtil {
      * @throws IllegalArgumentException if the GL is null.
      */
     public static void applyLightingDirectionalFromViewer(GL2 gl, int light, Vec4 direction) {
-        if (gl == null) {
-            String message = Logging.getMessage("nullValue.GLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (gl == null) {
+//            String message = Logging.getMessage("nullValue.GLIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         if (direction == null)
             direction = DEFAULT_LIGHT_DIRECTION;

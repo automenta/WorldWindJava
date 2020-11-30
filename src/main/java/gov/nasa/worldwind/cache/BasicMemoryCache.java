@@ -196,20 +196,23 @@ public class BasicMemoryCache implements MemoryCache {
 
         BasicMemoryCache.CacheEntry entry = new BasicMemoryCache.CacheEntry(key, clientObject, clientObjectSize);
 
-        synchronized (this.lock) {
-            CacheEntry existing = this.entries.get(key);
-            if (existing != null) // replacing
-            {
-                this.removeEntry(existing);
-            }
+        //synchronized (this.lock) {
+        CacheEntry existing = this.entries.put(key, entry);
+        if (existing != null && existing!=entry) { // replacing
+            this.removeEntry(existing);
+            this.entries.put(entry.key, entry);
+        }
+        if (existing == null || existing!=entry) {
+            this.currentUsedCapacity.addAndGet(clientObjectSize);
 
             if (this.currentUsedCapacity.get() + clientObjectSize > cap) {
-                this.makeSpace(clientObjectSize);
+                synchronized (this.lock) {
+                    this.makeSpace(clientObjectSize);
+                }
             }
-
-            this.currentUsedCapacity.addAndGet(clientObjectSize);
-            this.entries.putIfAbsent(entry.key, entry);
         }
+
+        //}
 
         return true;
     }
@@ -290,15 +293,14 @@ public class BasicMemoryCache implements MemoryCache {
         // all removal passes through this function,
         // so the reduction in "currentUsedCapacity" and listener notification is done here
 
-        if (this.entries.remove(entry.key) != null) // returns null if entry does not exist
-        {
+        if (this.entries.remove(entry.key) != null) { // returns null if entry does not exist
+
             this.currentUsedCapacity.addAndGet(-entry.clientObjectSize);
 
             for (MemoryCache.CacheListener listener : this.listeners) {
                 try {
                     listener.entryRemoved(entry.key, entry.clientObject);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     listener.removalException(e, entry.key, entry.clientObject);
                 }
             }
