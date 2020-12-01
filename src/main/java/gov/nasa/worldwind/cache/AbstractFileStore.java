@@ -642,8 +642,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
 
             if (childFile.isDirectory()) {
                 subDirs.add(childFile);
-            }
-            else {
+            }else {
                 if (this.listFile(location, childFile, filter, names) && exitBranchOnFirstMatch)
                     return;
             }
@@ -665,8 +664,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         if (fileName == null)
             return false;
 
-        String normalizedName = normalizeFileStoreName(fileName);
-        return this.listFileName(location, normalizedName, filter, names);
+        return this.listFileName(location, normalizeFileStoreName(fileName), filter, names);
     }
 
     @SuppressWarnings("UnusedDeclaration")

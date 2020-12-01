@@ -10,8 +10,8 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.examples.worldwindow.core.Controller;
 import gov.nasa.worldwind.layers.TiledImageLayer;
 import gov.nasa.worldwind.layers.ogc.wms.*;
+import gov.nasa.worldwind.layers.wms.WMSTiledImageLayer;
 import gov.nasa.worldwind.util.WWUtil;
-import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
 import java.util.List;
 

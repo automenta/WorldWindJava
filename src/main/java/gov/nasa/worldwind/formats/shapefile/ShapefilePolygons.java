@@ -270,7 +270,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         }
 
         // Send requests for tile geometry.
-        WorldWind.tasks().addAll(requestQueue);
+        WorldWind.tasks().drain(requestQueue);
     }
 
     @Override

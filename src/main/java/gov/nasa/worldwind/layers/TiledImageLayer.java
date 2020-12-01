@@ -829,7 +829,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
             this.currentTiles.clear();
         }
 
-        WorldWind.tasks().addAll(requestQ);
+        WorldWind.tasks().drain(requestQ);
         //this.requestQ.clear();
     }
 

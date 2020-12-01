@@ -53,7 +53,7 @@ public class Polygon extends AbstractShape {
      * This static hash map holds the vertex indices that define the shape's visual outline. The contents depend only on
      * the number of locations in the source polygon, so they can be reused by all shapes with the same location count.
      */
-    protected static HashMap<Integer, IntBuffer> edgeIndexBuffers = new HashMap<>();
+//    protected static HashMap<Integer, IntBuffer> edgeIndexBuffers = new HashMap<>();
     /**
      * The location of each vertex in this shape's boundaries. There is one list per boundary. There is always an entry
      * for the outer boundary, but its list is empty if an outer boundary has not been specified.
@@ -92,7 +92,7 @@ public class Polygon extends AbstractShape {
      * Construct a polygon with an empty outer boundary.
      */
     public Polygon() {
-        this.boundaries = new ArrayList<>();
+        this.boundaries = new ArrayList<>(1);
         this.boundaries.add(new ArrayList<>()); // placeholder for outer boundary
     }
 

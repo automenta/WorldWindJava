@@ -6,8 +6,8 @@
 package gov.nasa.worldwind.layers.Earth;
 
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.layers.wms.WMSTiledImageLayer;
 import gov.nasa.worldwind.util.WWXML;
-import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 import org.w3c.dom.Document;
 
 /**

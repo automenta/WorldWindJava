@@ -113,7 +113,7 @@ public class Box extends RigidShape {
 
     @Override
     public int getFaceCount() {
-        return this.faceCount;
+        return faceCount;
     }
 
     public int getSubdivisions() {

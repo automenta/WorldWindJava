@@ -13,6 +13,8 @@ import gov.nasa.worldwind.util.*;
 
 import java.util.*;
 
+import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
+
 /**
  * An arbitrarily oriented box, typically used as a oriented bounding volume for a collection of points or shapes. A
  * <code>Box</code> is defined by three orthogonal axes and two positions along each of those axes. Each of the
@@ -393,13 +395,13 @@ public class Box implements Extent, Renderable {
      * @throws IllegalArgumentException if the <code>iterable</code> is null.
      */
     public static Box union(Iterable<? extends Box> iterable) {
-        if (iterable == null) {
-            String msg = Logging.getMessage("nullValue.IterableIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (iterable == null) {
+//            String msg = Logging.getMessage("nullValue.IterableIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        ArrayList<Box> boxes = new ArrayList<>();
+        ArrayList<Box> boxes = new ArrayList<>(sizeEstimate(iterable));
 
         for (Box box : iterable) {
             if (box == null)

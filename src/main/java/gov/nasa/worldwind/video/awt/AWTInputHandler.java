@@ -28,7 +28,7 @@ import static java.awt.event.InputEvent.*;
  */
 public class AWTInputHandler extends WWObjectImpl implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, FocusListener, InputHandler, Disposable {
     private WorldWindow wwd = null;
-    public EventListenerList eventListeners = new EventListenerList();
+    public final EventListenerList eventListeners = new EventListenerList();
     private Point mousePoint = new Point();
     private PickedObjectList hoverObjects;
     private PickedObjectList objectsAtButtonPress;

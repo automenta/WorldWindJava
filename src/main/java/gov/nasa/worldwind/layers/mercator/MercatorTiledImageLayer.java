@@ -13,6 +13,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.AbstractLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.retrieve.*;
+import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;
@@ -183,8 +184,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         int nLatTiles = lastRow - firstRow + 1;
         int nLonTiles = lastCol - firstCol + 1;
 
-        this.topLevels = new ArrayList<>(nLatTiles
-            * nLonTiles);
+        this.topLevels = new ArrayList<>(nLatTiles * nLonTiles);
 
         //Angle p1 = Tile.computeRowLatitude(firstRow, dLat);
         double deltaLat = dLat.degrees / 90;
@@ -196,8 +196,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
             Angle t1 = Tile.computeColumnLongitude(firstCol, dLon, lonOrigin);
             for (int col = firstCol; col <= lastCol; col++) {
-                Angle t2;
-                t2 = t1.add(dLon);
+                Angle t2 = t1.add(dLon);
 
                 this.topLevels.add(new MercatorTextureTile(new MercatorSector(
                     d1, d2, t1, t2), level, row, col));
@@ -215,10 +214,6 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
         this.levelZeroLoaded = true;
     }
-
-    // ============== Tile Assembly ======================= //
-    // ============== Tile Assembly ======================= //
-    // ============== Tile Assembly ======================= //
 
     private void assembleTiles(DrawContext dc) {
         this.currentTiles.clear();
@@ -416,11 +411,12 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         Vec4 centerPoint = sector.computeCenterPoint(dc.getGlobe(), dc.getVerticalExaggeration());
 
         View view = dc.getView();
-        double d1 = view.getEyePoint().distanceTo3(corners[0]);
-        double d2 = view.getEyePoint().distanceTo3(corners[1]);
-        double d3 = view.getEyePoint().distanceTo3(corners[2]);
-        double d4 = view.getEyePoint().distanceTo3(corners[3]);
-        double d5 = view.getEyePoint().distanceTo3(centerPoint);
+        final Vec4 eye = view.getEyePoint();
+        double d1 = eye.distanceTo3(corners[0]);
+        double d2 = eye.distanceTo3(corners[1]);
+        double d3 = eye.distanceTo3(corners[2]);
+        double d4 = eye.distanceTo3(corners[3]);
+        double d5 = eye.distanceTo3(centerPoint);
 
         double minDistance = d1;
         if (d2 < minDistance)
@@ -435,24 +431,27 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         double cellSize = (Math.PI * sector.getDeltaLatRadians() * dc
             .getGlobe().getRadius()) / 20; // TODO
 
-        return !(Math.log10(cellSize) <= (Math.log10(minDistance) - this.splitScale));
+        return Math.log10(cellSize) > (Math.log10(minDistance) - this.splitScale);
     }
 
     private boolean atMaxLevel(DrawContext dc) {
-        Position vpc = dc.getViewportCenterPosition();
-        if (dc.getView() == null || this.getLevels() == null || vpc == null)
+        final LevelSet levels = this.getLevels();
+        if (levels == null || dc.getView() == null)
             return false;
 
-        if (!this.getLevels().getSector().contains(vpc.getLatitude(),
-            vpc.getLongitude()))
+        Position vpc = dc.getViewportCenterPosition();
+        if (vpc == null)
+            return false;
+
+        if (!levels.getSector().contains(vpc.getLatitude(), vpc.getLongitude()))
             return true;
 
-        Level nextToLast = this.getLevels().getNextToLastLevel();
+        Level nextToLast = levels.getNextToLastLevel();
         if (nextToLast == null)
             return true;
 
         Sector centerSector = nextToLast.computeSectorForPosition(vpc.getLatitude(), vpc.getLongitude(),
-            this.getLevels().getTileOrigin());
+            levels.getTileOrigin());
         return this.needToSplit(dc, centerSector);
     }
 
@@ -470,12 +469,12 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     protected final void doRender(DrawContext dc) {
         if (this.forceLevelZeroLoads && !this.levelZeroLoaded)
             this.loadAllTopLevelTextures(dc);
-        if (dc.getSurfaceGeometry() == null
-            || dc.getSurfaceGeometry().size() < 1)
+
+        final SectorGeometryList surfaceGeometry = dc.getSurfaceGeometry();
+        if (surfaceGeometry == null || surfaceGeometry.size() < 1)
             return;
 
-        dc.getGeographicSurfaceTileRenderer().setShowImageTileOutlines(
-            this.showImageTileOutlines);
+        dc.getGeographicSurfaceTileRenderer().setShowImageTileOutlines(this.showImageTileOutlines);
 
         draw(dc);
     }
@@ -524,26 +523,15 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             this.currentTiles.clear();
         }
 
-        this.sendRequests();
-        this.requestQ.clear();
-    }
-
-    private void sendRequests() {
-        Runnable task = this.requestQ.poll();
-        while (task != null) {
-            if (!WorldWind.tasks().isFull()) {
-                WorldWind.tasks().addTask(task);
-            }
-            task = this.requestQ.poll();
-        }
+        WorldWind.tasks().drain(requestQ);
     }
 
     public boolean isLayerInView(DrawContext dc) {
-        if (dc == null) {
-            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (dc == null) {
+//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         if (dc.getView() == null) {
             String message = Logging
@@ -561,15 +549,14 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             return dc.getGlobe().computePointFromPosition(
                 dc.getViewportCenterPosition());
 
-        Rectangle2D viewport = dc.getView().getViewport();
+        final View view = dc.getView();
+        Rectangle2D viewport = view.getViewport();
         int x = (int) viewport.getWidth() / 2;
         for (int y = (int) (0.5 * viewport.getHeight()); y >= 0; y--) {
-            Position pos = dc.getView().computePositionFromScreenPoint(x, y);
-            if (pos == null)
-                continue;
-
-            return dc.getGlobe().computePointFromPosition(pos.getLatitude(),
-                pos.getLongitude(), 0.0d);
+            Position pos = view.computePositionFromScreenPoint(x, y);
+            if (pos != null)
+                return dc.getGlobe().computePointFromPosition(pos.getLatitude(),
+                    pos.getLongitude(), 0);
         }
 
         return null;
@@ -672,8 +659,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             this.getDataFileStore().removeFile(url);
             String message = Logging.getMessage("generic.DataFileExpired", url);
             Logging.logger().fine(message);
-        }
-        else {
+        }else {
             try {
                 File imageFile = new File(url.toURI());
                 BufferedImage image = ImageIO.read(imageFile);
@@ -725,17 +711,17 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
     public int computeLevelForResolution(Sector sector, Globe globe,
         double resolution) {
-        if (sector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
-
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (sector == null) {
+//            String message = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
+//
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         double texelSize = 0;
         Level targetLevel = this.levels.getLastLevel();
@@ -760,11 +746,11 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     public BufferedImage composeImageForSector(Sector sector, int imageWidth,
         int imageHeight, int levelNumber, String mimeType,
         boolean abortOnError, BufferedImage image) {
-        if (sector == null) {
-            String message = Logging.getMessage("nullValue.SectorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalStateException(message);
-        }
+//        if (sector == null) {
+//            String message = Logging.getMessage("nullValue.SectorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalStateException(message);
+//        }
 
         if (levelNumber < 0) {
             levelNumber = this.levels.getLastLevel().getLevelNumber();

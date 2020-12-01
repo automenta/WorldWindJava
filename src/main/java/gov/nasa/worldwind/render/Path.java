@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.*;
 
 import static gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil.kmlBoolean;
+import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
 
 // TODO: Texture, lighting
 
@@ -144,10 +145,10 @@ public class Path extends AbstractShape {
     public Path(Path source) {
         super(source);
 
-        Collection<Position> copiedPositions = new ArrayList<>();
-        for (Position position : source.positions) {
+        Collection<Position> copiedPositions = new ArrayList<>(sizeEstimate(source.positions));
+        for (Position position : source.positions)
             copiedPositions.add(position);
-        }
+
         this.setPositions(copiedPositions);
         this.positionColors = source.positionColors;
         this.pathType = source.pathType;
@@ -306,11 +307,11 @@ public class Path extends AbstractShape {
      * @throws IllegalArgumentException if positions is null.
      */
     public void setPositions(Iterable<? extends Position> positions) {
-        if (positions == null) {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (positions == null) {
+//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.positions = positions;
         this.computePositionCount();

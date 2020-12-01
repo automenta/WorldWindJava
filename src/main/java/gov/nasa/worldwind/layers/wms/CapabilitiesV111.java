@@ -3,7 +3,7 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
-package gov.nasa.worldwind.wms;
+package gov.nasa.worldwind.layers.wms;
 
 import org.w3c.dom.*;
 
@@ -14,21 +14,21 @@ import java.util.*;
  * Version-dependent class for gathering information from a wms capabilities document.
  *
  * @author Tom Gaskins
- * @version $Id: CapabilitiesV130.java 1171 2013-02-11 21:45:02Z dcollins $
+ * @version $Id: CapabilitiesV111.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 
-public class CapabilitiesV130 extends Capabilities {
-    public CapabilitiesV130(Document doc, XPath xpath) {
+public class CapabilitiesV111 extends Capabilities {
+    public CapabilitiesV111(Document doc, XPath xpath) {
         super(doc, xpath);
     }
 
     @Override
     public BoundingBox getLayerGeographicBoundingBox(Element layer) {
-        Element e = this.getElement(layer, "ancestor-or-self::wms:Layer/wms:EX_GeographicBoundingBox");
+        Element e = this.getElement(layer, "ancestor-or-self::wms:Layer/wms:LatLonBoundingBox");
 
         return e == null ? null : BoundingBox.createFromStrings("CRS:84",
-            this.getWestBoundLongitude(e), this.getEastBoundLongitude(e),
-            this.getSouthBoundLatitude(e), this.getNorthBoundLatitude(e),
+            this.getText(e, "@wms:minx"), this.getText(e, "@wms:maxx"),
+            this.getText(e, "@wms:miny"), this.getText(e, "@wms:maxy"),
             null, null);
     }
 
@@ -44,7 +44,7 @@ public class CapabilitiesV130 extends Capabilities {
             if (e == null)
                 continue;
 
-            BoundingBox bb = BoundingBox.createFromStrings(this.getBoundingBoxCRS(e),
+            BoundingBox bb = BoundingBox.createFromStrings(this.getBoundingBoxSRS(e),
                 this.getBoundingBoxMinx(e), this.getBoundingBoxMaxx(e),
                 this.getBoundingBoxMiny(e), this.getBoundingBoxMaxy(e),
                 this.getBoundingBoxResx(e), this.getBoundingBoxResy(e));
@@ -61,11 +61,11 @@ public class CapabilitiesV130 extends Capabilities {
 
     @Override
     public String getLayerMaxScaleDenominator(Element layer) {
-        return this.getText(layer, "ancestor-or-self::wms:Layer/wms:MaxScaleDenominator");
+        return this.getText(layer, "ancestor-or-self::wms:Layer/wms:ScaleHint/@wms:max");
     }
 
     @Override
     public String getLayerMinScaleDenominator(Element layer) {
-        return this.getText(layer, "ancestor-or-self::wms:Layer/wms:MinScaleDenominator");
+        return this.getText(layer, "ancestor-or-self::wms:Layer/wms:ScaleHint/@wms:min");
     }
 }

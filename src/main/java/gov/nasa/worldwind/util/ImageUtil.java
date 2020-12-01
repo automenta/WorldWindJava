@@ -414,7 +414,7 @@ public class ImageUtil {
             throw new IllegalArgumentException(message);
         }
 
-        List<LatLon> corners = new ArrayList<>();
+        List<LatLon> corners = new ArrayList<>(4);
 
         // Lower left corner.
         Vec4 vec = new Vec4(0, imageHeight, 1).transformBy3(imageToGeographic);

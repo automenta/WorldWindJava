@@ -13,6 +13,8 @@ import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
+import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
+
 /**
  * Utility class to measure length along a path on a globe.
  * <p>
@@ -193,31 +195,30 @@ public class LengthMeasurer implements MeasurableLength {
     }
 
     public void setPositions(Iterable<? extends Position> positions) {
-        if (positions == null) {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (positions == null) {
+//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        ArrayList<Position> newPositions = new ArrayList<>();
-        for (Position p : positions) {
+        ArrayList<Position> newPositions = new ArrayList<>(sizeEstimate(positions));
+        for (Position p : positions)
             newPositions.add(p);
-        }
+
         setPositions(newPositions);
     }
 
     public void setPositions(ArrayList<? extends Position> positions) {
-        if (positions == null) {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (positions == null) {
+//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.positions = positions;
         if (this.positions.size() > 2) {
             this.sector = Sector.boundingSector(this.positions);
-        }
-        else {
+        }else {
             this.sector = null;
         }
 
@@ -225,14 +226,14 @@ public class LengthMeasurer implements MeasurableLength {
     }
 
     public void setPositions(Iterable<? extends LatLon> positions, double elevation) {
-        if (positions == null) {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (positions == null) {
+//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
-        ArrayList<Position> newPositions = new ArrayList<>();
-        positions.forEach((pos) -> newPositions.add(new Position(pos, elevation)));
+        ArrayList<Position> newPositions = new ArrayList<>(sizeEstimate(positions));
+        positions.forEach(pos -> newPositions.add(new Position(pos, elevation)));
 
         setPositions(newPositions);
     }
@@ -417,11 +418,11 @@ public class LengthMeasurer implements MeasurableLength {
      */
     @Override
     public double getLength(Globe globe) {
-        if (globe == null) {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (globe == null) {
+//            String message = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.length = this.computeLength(globe, this.followTerrain);
 
@@ -453,7 +454,8 @@ public class LengthMeasurer implements MeasurableLength {
         // Sum each segment length
         double length = 0;
         Vec4 p1 = globe.computeEllipsoidalPointFromPosition(this.subdividedPositions.get(0));
-        for (int i = 1; i < subdividedPositions.size(); i++) {
+        final int sps = subdividedPositions.size();
+        for (int i = 1; i < sps; i++) {
             Vec4 p2 = globe.computeEllipsoidalPointFromPosition(this.subdividedPositions.get(i));
             length += p1.distanceTo3(p2);
             p1 = p2;

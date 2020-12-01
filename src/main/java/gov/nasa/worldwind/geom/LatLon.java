@@ -11,6 +11,8 @@ import gov.nasa.worldwind.util.*;
 
 import java.util.*;
 
+import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
+
 /**
  * Represents a point on the two-dimensional surface of a globe. Latitude is the degrees North and ranges between [-90,
  * 90], while longitude refers to degrees East, and ranges between (-180, 180].
@@ -1112,13 +1114,13 @@ public class LatLon {
             throw new IllegalArgumentException(msg);
         }
 
-        List<List<LatLon>> list = new ArrayList<>();
+        List<List<LatLon>> list = new ArrayList<>(2);
 
         LatLon prev = null;
         double lonOffset = 0;
         boolean applyLonOffset = false;
 
-        List<LatLon> locationsA = new ArrayList<>();
+        List<LatLon> locationsA = new ArrayList<>(2);
         list.add(locationsA);
 
         for (LatLon cur : locations) {
@@ -1141,7 +1143,7 @@ public class LatLon {
 
         if (lonOffset != 0) // longitude offset is non-zero when the locations cross the dateline
         {
-            List<LatLon> locationsB = new ArrayList<>();
+            List<LatLon> locationsB = new ArrayList<>(1+locationsA.size());
             list.add(locationsB);
 
             for (LatLon cur : locationsA) {
@@ -1546,19 +1548,19 @@ public class LatLon {
     public static List<LatLon> computeShiftedLocations(Position oldLocation, Position newLocation,
         Iterable<? extends LatLon> locations) {
         // TODO: Account for dateline spanning
-        if (oldLocation == null || newLocation == null) {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (oldLocation == null || newLocation == null) {
+//            String msg = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (locations == null) {
+//            String msg = Logging.getMessage("nullValue.PositionsListIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        if (locations == null) {
-            String msg = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        List<LatLon> newPositions = new ArrayList<>();
+        List<LatLon> newPositions = new ArrayList<>(sizeEstimate(locations));
 
         for (LatLon location : locations) {
             Angle distance = LatLon.greatCircleDistance(oldLocation, location);
@@ -1571,34 +1573,33 @@ public class LatLon {
 
     public static List<LatLon> computeShiftedLocations(Globe globe, LatLon oldLocation, LatLon newLocation,
         Iterable<? extends LatLon> locations) {
-        if (globe == null) {
-            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (globe == null) {
+//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (oldLocation == null || newLocation == null) {
+//            String msg = Logging.getMessage("nullValue.LocationIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (locations == null) {
+//            String msg = Logging.getMessage("nullValue.LocationsListIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
-        if (oldLocation == null || newLocation == null) {
-            String msg = Logging.getMessage("nullValue.LocationIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (locations == null) {
-            String msg = Logging.getMessage("nullValue.LocationsListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        List<LatLon> newLocations = new ArrayList<>();
+        List<LatLon> newLocations = new ArrayList<>(sizeEstimate(locations));
 
         Vec4 oldPoint = globe.computeEllipsoidalPointFromLocation(oldLocation);
         Vec4 newPoint = globe.computeEllipsoidalPointFromLocation(newLocation);
         Vec4 delta = newPoint.subtract3(oldPoint);
 
         for (LatLon latLon : locations) {
-            Vec4 point = globe.computeEllipsoidalPointFromLocation(latLon);
-            point = point.add3(delta);
-            Position newPos = globe.computePositionFromEllipsoidalPoint(point);
+            Position newPos = globe.computePositionFromEllipsoidalPoint(
+                globe.computeEllipsoidalPointFromLocation(latLon).add3(delta));
 
             newLocations.add(newPos);
         }
@@ -1643,11 +1644,11 @@ public class LatLon {
     }
 
     public LatLon add(LatLon that) {
-        if (that == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (that == null) {
+//            String msg = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Angle lat = Angle.normalizedLatitude(this.latitude.add(that.latitude));
         Angle lon = Angle.normalizedLongitude(this.longitude.add(that.longitude));
@@ -1656,11 +1657,11 @@ public class LatLon {
     }
 
     public LatLon subtract(LatLon that) {
-        if (that == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (that == null) {
+//            String msg = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Angle lat = Angle.normalizedLatitude(this.latitude.subtract(that.latitude));
         Angle lon = Angle.normalizedLongitude(this.longitude.subtract(that.longitude));
@@ -1669,11 +1670,11 @@ public class LatLon {
     }
 
     public LatLon add(Position that) {
-        if (that == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (that == null) {
+//            String msg = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Angle lat = Angle.normalizedLatitude(this.latitude.add(that.getLatitude()));
         Angle lon = Angle.normalizedLongitude(this.longitude.add(that.getLongitude()));
@@ -1682,11 +1683,11 @@ public class LatLon {
     }
 
     public LatLon subtract(Position that) {
-        if (that == null) {
-            String msg = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (that == null) {
+//            String msg = Logging.getMessage("nullValue.AngleIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Angle lat = Angle.normalizedLatitude(this.latitude.subtract(that.getLatitude()));
         Angle lon = Angle.normalizedLongitude(this.longitude.subtract(that.getLongitude()));
@@ -1706,11 +1707,11 @@ public class LatLon {
      */
     public static LatLon parseLatLon(String latLonString) // TODO
     {
-        if (latLonString == null) {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (latLonString == null) {
+//            String msg = Logging.getMessage("nullValue.StringIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         throw new UnsupportedOperationException(); // TODO: remove when implemented
     }
@@ -1734,13 +1735,7 @@ public class LatLon {
 
         final LatLon latLon = (LatLon) o;
 
-        if (!latitude.equals(latLon.latitude))
-            return false;
-        //noinspection RedundantIfStatement
-        if (!longitude.equals(latLon.longitude))
-            return false;
-
-        return true;
+        return latitude.equals(latLon.latitude) && longitude.equals(latLon.longitude);
     }
 
     @Override

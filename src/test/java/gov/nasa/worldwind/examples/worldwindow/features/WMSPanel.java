@@ -15,8 +15,8 @@ import gov.nasa.worldwind.examples.worldwindow.features.swinglayermanager.*;
 import gov.nasa.worldwind.examples.worldwindow.util.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.layers.ogc.wms.*;
+import gov.nasa.worldwind.layers.wms.CapabilitiesRequest;
 import gov.nasa.worldwind.util.WWUtil;
-import gov.nasa.worldwind.wms.CapabilitiesRequest;
 
 import javax.swing.*;
 import javax.swing.border.*;

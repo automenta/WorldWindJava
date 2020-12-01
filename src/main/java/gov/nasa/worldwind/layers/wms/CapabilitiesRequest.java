@@ -3,7 +3,7 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
-package gov.nasa.worldwind.wms;
+package gov.nasa.worldwind.layers.wms;
 
 import gov.nasa.worldwind.util.Logging;
 

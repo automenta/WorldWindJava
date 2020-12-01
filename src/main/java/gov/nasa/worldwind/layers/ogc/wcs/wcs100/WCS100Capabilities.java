@@ -9,9 +9,9 @@ package gov.nasa.worldwind.layers.ogc.wcs.wcs100;
 import gov.nasa.worldwind.layers.ogc.OGCConstants;
 import gov.nasa.worldwind.layers.ogc.gml.GMLPos;
 import gov.nasa.worldwind.layers.ogc.ows.*;
+import gov.nasa.worldwind.layers.wms.CapabilitiesRequest;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.*;
-import gov.nasa.worldwind.wms.CapabilitiesRequest;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.*;

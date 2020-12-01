@@ -6,10 +6,7 @@
 
 package gov.nasa.worldwind.geom;
 
-import gov.nasa.worldwind.util.Logging;
-
 import java.util.Iterator;
-import java.util.logging.Level;
 
 /**
  * @author tag
@@ -29,31 +26,31 @@ public class GeoQuad {
     private final Line northEdge, southEdge, eastEdge, westEdge;
 
     public GeoQuad(Iterable<? extends LatLon> corners) {
-        if (corners == null) {
-            String message = Logging.getMessage("nullValue.LocationsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (corners == null) {
+//            String message = Logging.getMessage("nullValue.LocationsListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Count the corners and check for nulls
         Iterator<? extends LatLon> iter = corners.iterator();
-        int numCorners = 0;
-        for (LatLon c : corners) {
-            if (c == null) {
-                String message = Logging.getMessage("nullValue.LocationInListIsNull");
-                Logging.logger().log(Level.SEVERE, message);
-                throw new IllegalArgumentException(message);
-            }
+//        int numCorners = 0;
+//        for (LatLon c : corners) {
+////            if (c == null) {
+////                String message = Logging.getMessage("nullValue.LocationInListIsNull");
+////                Logging.logger().log(Level.SEVERE, message);
+////                throw new IllegalArgumentException(message);
+////            }
+//
+//            if (++numCorners > 3)
+//                break;
+//        }
 
-            if (++numCorners > 3)
-                break;
-        }
-
-        if (numCorners < 4) {
-            String message = Logging.getMessage("nullValue.LocationInListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (numCorners < 4) {
+//            String message = Logging.getMessage("nullValue.LocationInListIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.sw = iter.next();
         this.se = iter.next();
@@ -127,11 +124,11 @@ public class GeoQuad {
     }
 
     public LatLon interpolate(double t, double s) {
-        Vec4 top = this.northEdge.getPointAt(s);
-        Vec4 bot = this.southEdge.getPointAt(s);
-        Line topToBot = Line.fromSegment(bot, top);
-        Vec4 point = topToBot.getPointAt(t);
+        Line topToBot = Line.fromSegment(
+            this.southEdge.getPointAt(s),
+            this.northEdge.getPointAt(s));
 
+        Vec4 point = topToBot.getPointAt(t);
         return LatLon.fromDegrees(point.y, point.x);
     }
 }

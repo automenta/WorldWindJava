@@ -31,7 +31,7 @@ import java.awt.event.*;
  * @version $Id: HotSpotController.java 1534 2013-08-07 04:32:22Z pabercrombie $
  */
 public class HotSpotController implements SelectListener, MouseMotionListener {
-    protected WorldWindow wwd;
+    protected final WorldWindow wwd;
     protected HotSpot activeHotSpot;
     protected boolean dragging = false;
     /**

@@ -120,9 +120,8 @@ public class GDALDataRasterReader extends AbstractDataRasterReader {
         }
 
         try {
-            GDALDataRaster raster = new GDALDataRaster(source, quickReadingMode);
 
-            return raster;
+            return new GDALDataRaster(source, quickReadingMode);
         }
         catch (WWRuntimeException wwre) {
             throw wwre;

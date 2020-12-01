@@ -70,7 +70,7 @@ public class TaskService extends WWObjectImpl implements Thread.UncaughtExceptio
         return this.executor.getQueue().remainingCapacity() == 0;
     }
 
-    public void addAll(Queue<Runnable> requestQueue) {
+    public void drain(Queue<Runnable> requestQueue) {
         Runnable request;
         while (!isFull() && (request = requestQueue.poll()) != null) {
             addTask(request);

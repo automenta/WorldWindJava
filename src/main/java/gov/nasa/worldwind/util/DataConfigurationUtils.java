@@ -13,8 +13,8 @@ import gov.nasa.worldwind.layers.AbstractLayer;
 import gov.nasa.worldwind.layers.ogc.OGCConstants;
 import gov.nasa.worldwind.layers.ogc.wcs.wcs100.*;
 import gov.nasa.worldwind.layers.ogc.wms.*;
+import gov.nasa.worldwind.layers.wms.CapabilitiesRequest;
 import gov.nasa.worldwind.terrain.AbstractElevationModel;
-import gov.nasa.worldwind.wms.CapabilitiesRequest;
 import org.w3c.dom.*;
 
 import javax.xml.stream.events.XMLEvent;
