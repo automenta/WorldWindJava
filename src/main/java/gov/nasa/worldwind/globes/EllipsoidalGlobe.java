@@ -7,13 +7,13 @@ package gov.nasa.worldwind.globes;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 import static gov.nasa.worldwind.util.WWMath.sqr;
 

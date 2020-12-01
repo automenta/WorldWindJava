@@ -89,7 +89,6 @@ public class FileSetFinder {
                 fileSet.addFile(file);
             }
             catch (Exception e) {
-                continue;
             }
         }
 

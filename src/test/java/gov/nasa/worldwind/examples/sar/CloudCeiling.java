@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.examples.sar.render.ScreenElevationLine;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -438,8 +437,6 @@ public class CloudCeiling implements Restorable {
     public String getRestorableState() {
         RestorableSupport restorableSupport = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (restorableSupport == null)
-            return null;
 
         restorableSupport.addStateValueAsString("name", this.name);
 

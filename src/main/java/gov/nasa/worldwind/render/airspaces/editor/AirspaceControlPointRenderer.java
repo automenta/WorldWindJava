@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.render.airspaces.editor;
 
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.render.DrawContext;
 
 import java.awt.*;
 

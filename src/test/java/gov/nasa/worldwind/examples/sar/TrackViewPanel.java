@@ -156,7 +156,7 @@ public class TrackViewPanel extends JPanel {
         this.speedSpinner.setEnabled(state);
         this.speedFactorSpinner.setEnabled(state);
 
-        this.updateReadout(this.sarTrack != null && sarTrack.size() > 0 ? sarTrack.get(0) : null);
+        this.updateReadout(this.sarTrack != null && !sarTrack.isEmpty() ? sarTrack.get(0) : null);
     }
 
     private void positionSpinnerStateChanged() {
@@ -199,7 +199,7 @@ public class TrackViewPanel extends JPanel {
     }
 
     public void gotoTrackEnd() {
-        if (this.sarTrack != null && this.sarTrack.size() > 0) {
+        if (this.sarTrack != null && !this.sarTrack.isEmpty()) {
             this.setPositionDelta(this.sarTrack.size() - 1, 0);
             this.firePropertyChange(POSITION_CHANGE, -1, 0);
         }

@@ -34,8 +34,8 @@ public class HighResolutionTerrainTest
         ArrayList<Position> referencePositions = generateReferenceLocations(sector, GRID_SIZE, GRID_SIZE);
 
         final ConcurrentHashMap<Position, Intersection[]> currentIntersections
-            = new ConcurrentHashMap<Position, Intersection[]>();
-        final HashMap<Position, Intersection[]> previousIntersections = new HashMap<Position, Intersection[]>();
+            = new ConcurrentHashMap<>();
+        final HashMap<Position, Intersection[]> previousIntersections = new HashMap<>();
 
         Globe globe = new Earth();
         CompoundElevationModel cem = (CompoundElevationModel) globe.getElevationModel();
@@ -65,19 +65,22 @@ public class HighResolutionTerrainTest
                 e.printStackTrace();
             }
 
-            if (previousIntersections.size() > 0)
+            if (!previousIntersections.isEmpty())
             {
                 if (currentIntersections.size() != previousIntersections.size())
                 {
                     String msg = "Different intersection counts: current %d, previous %d\n";
-                    assertTrue(msg, currentIntersections.size() == previousIntersections.size());
+                    currentIntersections.size();
+                    previousIntersections.size();
+                    fail(msg);
                 }
 
                 int item = -1;
-                for (Position position : currentIntersections.keySet())
+                for (Map.Entry<Position, Intersection[]> entry : currentIntersections.entrySet())
                 {
+                    Position position = entry.getKey();
                     ++item;
-                    Intersection[] currentIntersection = currentIntersections.get(position);
+                    Intersection[] currentIntersection = entry.getValue();
                     Intersection[] previousIntersection = previousIntersections.get(position);
 
                     if (previousIntersection == null)
@@ -97,7 +100,7 @@ public class HighResolutionTerrainTest
                         {
                             String msg = "Different intersection points: " + j + ", "
                                 + currentIntersection[j] + ", " + previousIntersection[j] + ", " + position;
-                            assertTrue(msg, currentIntersection[j].equals(previousIntersection[j]));
+                            assertEquals(msg, currentIntersection[j], previousIntersection[j]);
                         }
                     }
                 }
@@ -120,8 +123,8 @@ public class HighResolutionTerrainTest
         ArrayList<Position> referencePositions = generateReferenceLocations(sector, GRID_SIZE, GRID_SIZE);
 
         final ConcurrentHashMap<Position, Intersection[]> currentIntersections
-            = new ConcurrentHashMap<Position, Intersection[]>();
-        final HashMap<Position, Intersection[]> previousIntersections = new HashMap<Position, Intersection[]>();
+            = new ConcurrentHashMap<>();
+        final HashMap<Position, Intersection[]> previousIntersections = new HashMap<>();
 
         Globe globe = new Earth();
 //            CompoundElevationModel cem = (CompoundElevationModel) globe.getElevationModel();
@@ -131,7 +134,7 @@ public class HighResolutionTerrainTest
         for (int i = 0; i < 5; i++)
         {
             ThreadPoolExecutor threadPool = new ThreadPoolExecutor(10, 10, 200,
-                TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+                TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
 
             try
             {
@@ -142,16 +145,11 @@ public class HighResolutionTerrainTest
                     final Position pA = referencePositions.get(j);
                     final Position pB = referencePositions.get(j + 1);
 
-                    threadPool.execute(new Runnable()
-                    {
-                        @Override
-                        public void run()
+                    threadPool.execute(() -> {
+                        Intersection[] intersections = hrt.intersect(pA, pB);
+                        if (intersections != null && intersections.length > 0)
                         {
-                            Intersection[] intersections = hrt.intersect(pA, pB);
-                            if (intersections != null && intersections.length > 0)
-                            {
-                                currentIntersections.put(pB, intersections);
-                            }
+                            currentIntersections.put(pB, intersections);
                         }
                     });
                 }
@@ -164,19 +162,22 @@ public class HighResolutionTerrainTest
                 e.printStackTrace();
             }
 
-            if (previousIntersections.size() > 0)
+            if (!previousIntersections.isEmpty())
             {
                 if (currentIntersections.size() != previousIntersections.size())
                 {
                     String msg = "Different intersection counts: current %d, previous %d\n";
-                    assertTrue(msg, currentIntersections.size() == previousIntersections.size());
+                    currentIntersections.size();
+                    previousIntersections.size();
+                    fail(msg);
                 }
 
                 int item = -1;
-                for (Position position : currentIntersections.keySet())
+                for (Map.Entry<Position, Intersection[]> entry : currentIntersections.entrySet())
                 {
+                    Position position = entry.getKey();
                     ++item;
-                    Intersection[] currentIntersection = currentIntersections.get(position);
+                    Intersection[] currentIntersection = entry.getValue();
                     Intersection[] previousIntersection = previousIntersections.get(position);
 
                     if (previousIntersection == null)
@@ -196,7 +197,7 @@ public class HighResolutionTerrainTest
                         {
                             String msg = "Different intersection points: " + j + ", "
                                 + currentIntersection[j] + ", " + previousIntersection[j] + ", " + position;
-                            assertTrue(msg, currentIntersection[j].equals(previousIntersection[j]));
+                            assertEquals(msg, currentIntersection[j], previousIntersection[j]);
                         }
                     }
                 }
@@ -212,7 +213,7 @@ public class HighResolutionTerrainTest
     private static ArrayList<Position> generateReferenceLocations(Sector sector, int numLats, int numLons)
     {
         int decimalPlaces = 5;
-        ArrayList<Position> locations = new ArrayList<Position>();
+        ArrayList<Position> locations = new ArrayList<>();
         double dLat = (sector.latMax().degrees - sector.latMin().degrees) / (numLats - 1);
         double dLon = (sector.lonMax().degrees - sector.lonMin().degrees) / (numLons - 1);
 

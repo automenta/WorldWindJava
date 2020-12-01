@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.examples.lineofsight;
 
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.Terrain;
@@ -85,7 +84,7 @@ public class ShapeLineIntersector extends LineIntersector {
         List<Intersection> intersections = null;
 
         if (renderable instanceof ExtrudedPolygon)
-            intersections = ((ExtrudedPolygon) renderable).intersect(line, this.terrain);
+            intersections = ((AbstractShape) renderable).intersect(line, this.terrain);
 
         return intersections;
     }

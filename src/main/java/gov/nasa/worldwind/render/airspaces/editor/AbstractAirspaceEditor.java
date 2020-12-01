@@ -6,11 +6,11 @@
 package gov.nasa.worldwind.render.airspaces.editor;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.render.airspaces.Airspace;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.AbstractLayer;
+import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.airspaces.Airspace;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.swing.event.*;

@@ -9,10 +9,9 @@ package gov.nasa.worldwind.layers.ogc.kml;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.Message;
-import gov.nasa.worldwind.layers.ogc.kml.impl.*;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.ogc.kml.impl.*;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 

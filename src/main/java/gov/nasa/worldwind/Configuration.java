@@ -9,8 +9,8 @@ package gov.nasa.worldwind;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 import org.w3c.dom.*;
 
 import javax.xml.xpath.*;
@@ -281,10 +281,10 @@ public class Configuration // Singleton
         if (v == null)
             return null;
 
-        if (!v.trim().toUpperCase().isEmpty() && v.trim().toUpperCase().charAt(0) == 'T' || v.trim().equals("1")) {
+        if (!v.trim().isEmpty() && v.trim().toUpperCase().charAt(0) == 'T' || v.trim().equals("1")) {
             return true;
         }
-        else if (!v.trim().toUpperCase().isEmpty() && v.trim().toUpperCase().charAt(0) == 'F' || v.trim().equals("0")) {
+        else if (!v.trim().isEmpty() && v.trim().toUpperCase().charAt(0) == 'F' || v.trim().equals("0")) {
             return false;
         }
         else {

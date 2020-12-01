@@ -90,7 +90,7 @@ public class BILRasterWriter extends AbstractDataRasterWriter {
 
         // Do not force changes to the underlying storage device.
         boolean forceFilesystemWrite = false;
-        WWIO.saveBuffer(byteBuffer, file, forceFilesystemWrite);
+        WWIO.saveBuffer(byteBuffer, file, false);
     }
 
     protected void writeWorldFile(AVList values, File file) throws IOException {

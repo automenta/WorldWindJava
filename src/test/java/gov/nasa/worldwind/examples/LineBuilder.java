@@ -8,9 +8,9 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.event.PositionEvent;
-import gov.nasa.worldwind.render.Path;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.Path;
 
 import javax.swing.*;
 import javax.swing.border.*;

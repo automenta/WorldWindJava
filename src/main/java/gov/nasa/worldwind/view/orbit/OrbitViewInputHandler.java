@@ -10,8 +10,8 @@ import gov.nasa.worldwind.animation.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
-import gov.nasa.worldwind.ui.awt.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.awt.*;
 import gov.nasa.worldwind.view.*;
 
 import java.awt.*;

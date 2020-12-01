@@ -25,12 +25,12 @@ public class SizeTest
         // Test with native width and fractional height
         Size size = new Size(Size.NATIVE_DIMENSION, 0, AVKey.PIXELS, Size.EXPLICIT_DIMENSION, 0.5, AVKey.FRACTION);
         Dimension dim = size.compute(70, 10, 100, 100);
-        assertTrue("Dimension should be 70 x 50", dim.equals(new Dimension(70, 50)));
+        assertEquals("Dimension should be 70 x 50", dim, new Dimension(70, 50));
 
         // Test with maintain aspect ratio
         size = new Size(Size.MAINTAIN_ASPECT_RATIO, 0, AVKey.PIXELS, Size.EXPLICIT_DIMENSION, 50, AVKey.PIXELS);
         dim = size.compute(20, 10, 100, 100);
-        assertTrue("Dimension should be 100 x 50", dim.equals(new Dimension(100, 50)));
+        assertEquals("Dimension should be 100 x 50", dim, new Dimension(100, 50));
     }
 
     @Test
@@ -41,8 +41,8 @@ public class SizeTest
 
         Dimension dim = size.compute(100, 100, 0, 0);
 
-        assertTrue("Dimension != null", dim != null);
-        assertTrue("Dimension should be zero", dim.equals(new Dimension(0, 0)));
+        assertNotNull("Dimension != null", dim);
+        assertEquals("Dimension should be zero", dim, new Dimension(0, 0));
     }
 
     @Test
@@ -52,22 +52,22 @@ public class SizeTest
         Size size = new Size(Size.EXPLICIT_DIMENSION, 0.5, AVKey.FRACTION, Size.EXPLICIT_DIMENSION, 0.5,
             AVKey.FRACTION);
         Dimension dim = size.compute(0, 0, 100, 100);
-        assertTrue("Dimension should be 50 x 50", dim.equals(new Dimension(50, 50)));
+        assertEquals("Dimension should be 50 x 50", dim, new Dimension(50, 50));
 
         // Test with pixel dimensions
         size = new Size(Size.EXPLICIT_DIMENSION, 50, AVKey.PIXELS, Size.EXPLICIT_DIMENSION, 50, AVKey.PIXELS);
         dim = size.compute(0, 0, 100, 100);
-        assertTrue("Dimension should be 50 x 50", dim.equals(new Dimension(50, 50)));
+        assertEquals("Dimension should be 50 x 50", dim, new Dimension(50, 50));
 
         // Test with maintain aspect radio 
         size = new Size(Size.MAINTAIN_ASPECT_RATIO, 0, AVKey.PIXELS, Size.MAINTAIN_ASPECT_RATIO, 0, AVKey.PIXELS);
         dim = size.compute(0, 0, 100, 100);
-        assertTrue("Dimension should be 0 x 0", dim.equals(new Dimension(0, 0)));
+        assertEquals("Dimension should be 0 x 0", dim, new Dimension(0, 0));
 
         // Test with native dimension
         size = new Size(Size.NATIVE_DIMENSION, 0, AVKey.PIXELS, Size.NATIVE_DIMENSION, 0, AVKey.PIXELS);
         dim = size.compute(0, 0, 100, 100);
-        assertTrue("Dimension should be 0 x 0", dim.equals(new Dimension(0, 0)));
+        assertEquals("Dimension should be 0 x 0", dim, new Dimension(0, 0));
     }
 
     @Test

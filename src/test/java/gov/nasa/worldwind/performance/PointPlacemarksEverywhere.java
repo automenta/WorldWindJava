@@ -8,9 +8,9 @@ package gov.nasa.worldwind.performance;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.render.PointPlacemark;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.PointPlacemark;
 
 import java.util.ArrayList;
 
@@ -44,7 +44,6 @@ public class PointPlacemarksEverywhere extends ApplicationTemplate {
             int count = 0;
             for (double lat = minLat; lat <= maxLat; lat += delta) {
                 for (double lon = minLon; lon <= maxLon; lon += delta) {
-                    positions.clear();
 
                     PointPlacemark pm = new PointPlacemark(Position.fromDegrees(lat, lon, 5.0e4));
                     pm.setAltitudeMode(altitudeMode);
@@ -55,7 +54,7 @@ public class PointPlacemarksEverywhere extends ApplicationTemplate {
                 }
             }
             System.out.printf("%d Placemarks, Altitude mode = %s\n", count, positions.size(),
-                altitudeMode == WorldWind.RELATIVE_TO_GROUND ? "RELATIVE_TO_GROUND" : "ABSOLUTE");
+                "RELATIVE_TO_GROUND");
 
             WorldWindow.insertBeforeCompass(wwd(), layer);
         }

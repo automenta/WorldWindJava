@@ -16,8 +16,8 @@ import java.util.Objects;
  * @version $Id: Level.java 1171 2013-02-11 21:45:02Z dcollins $
  */
 public class Level extends AVListImpl implements Comparable<Level> {
-    final int DEFAULT_MAX_ABSENT_TILE_ATTEMPTS = 2;
-    final int DEFAULT_MIN_ABSENT_TILE_CHECK_INTERVAL = 10000; // milliseconds
+    static final int DEFAULT_MAX_ABSENT_TILE_ATTEMPTS = 2;
+    static final int DEFAULT_MIN_ABSENT_TILE_CHECK_INTERVAL = 10000; // milliseconds
     protected AVList params;
     protected int levelNumber;
     protected String levelName; // null or empty level name signifies no data resources associated with this level
@@ -114,7 +114,7 @@ public class Level extends AVListImpl implements Comparable<Level> {
             sb.append(Logging.getMessage("term.tileDelta")).append(" ");
 
         o = params.get(AVKey.DATA_CACHE_NAME);
-        if (!(o instanceof String) || ((String) o).length() < 1)
+        if (!(o instanceof String) || ((CharSequence) o).length() < 1)
             sb.append(Logging.getMessage("term.fileStoreFolder")).append(" ");
 
         o = params.get(AVKey.TILE_URL_BUILDER);
@@ -127,11 +127,11 @@ public class Level extends AVListImpl implements Comparable<Level> {
 
         if (!params.getStringValue(AVKey.LEVEL_NAME).isEmpty()) {
             o = params.get(AVKey.DATASET_NAME);
-            if (!(o instanceof String) || ((String) o).length() < 1)
+            if (!(o instanceof String) || ((CharSequence) o).length() < 1)
                 sb.append(Logging.getMessage("term.datasetName")).append(" ");
 
             o = params.get(AVKey.FORMAT_SUFFIX);
-            if (!(o instanceof String) || ((String) o).length() < 1)
+            if (!(o instanceof String) || ((CharSequence) o).length() < 1)
                 sb.append(Logging.getMessage("term.formatSuffix")).append(" ");
         }
 

@@ -611,7 +611,7 @@ public class WWUtil {
      * @return true if the reference is null or is a zero-length {@link String}.
      */
     public static boolean isEmpty(Object s) {
-        return s == null || (s instanceof String && ((String) s).isEmpty());
+        return s == null || (s instanceof String && ((CharSequence) s).isEmpty());
     }
 
     /**
@@ -758,7 +758,7 @@ public class WWUtil {
         try // String arg
         {
             Method method = parent.getClass().getMethod(methodName, String.class);
-            return method != null ? method.invoke(parent, propertyValue) : null;
+            return method.invoke(parent, propertyValue);
         }
         catch (NoSuchMethodException e) {
             // skip to next arg type
@@ -769,7 +769,7 @@ public class WWUtil {
             Double d = WWUtil.makeDouble(propertyValue);
             if (d != null) {
                 Method method = parent.getClass().getMethod(methodName, double.class);
-                return method != null ? method.invoke(parent, d) : null;
+                return method.invoke(parent, d);
             }
         }
         catch (NoSuchMethodException e) {
@@ -781,7 +781,7 @@ public class WWUtil {
             Integer i = WWUtil.makeInteger(propertyValue);
             if (i != null) {
                 Method method = parent.getClass().getMethod(methodName, int.class);
-                return method != null ? method.invoke(parent, i) : null;
+                return method.invoke(parent, i);
             }
         }
         catch (NoSuchMethodException e) {
@@ -793,7 +793,7 @@ public class WWUtil {
             Boolean b = WWUtil.convertStringToBoolean(propertyValue);
             if (b != null) {
                 Method method = parent.getClass().getMethod(methodName, boolean.class);
-                return method != null ? method.invoke(parent, b) : null;
+                return method.invoke(parent, b);
             }
         }
         catch (NoSuchMethodException e) {
@@ -805,7 +805,7 @@ public class WWUtil {
             Long l = WWUtil.makeLong(propertyValue);
             if (l != null) {
                 Method method = parent.getClass().getMethod(methodName, long.class);
-                return method != null ? method.invoke(parent, l) : null;
+                return method.invoke(parent, l);
             }
         }
         catch (NoSuchMethodException e) {
@@ -1094,6 +1094,7 @@ public class WWUtil {
         return x instanceof Collection ? ((Collection) x).size() : 8;
     }
 
+    @SafeVarargs
     public static <X> java.util.List<X> arrayList(X... array) {
 //        java.util.List<X> l = new ArrayList<>(array.length);
 //        Collections.addAll(l, array);

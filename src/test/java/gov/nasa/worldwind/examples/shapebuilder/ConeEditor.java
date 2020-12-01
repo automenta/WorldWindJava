@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.examples.shapebuilder;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.ShapeUtils;
 
 import java.awt.*;

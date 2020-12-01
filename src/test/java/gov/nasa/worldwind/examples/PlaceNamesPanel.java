@@ -61,7 +61,7 @@ public class PlaceNamesPanel extends JPanel implements ItemListener {
     public void itemStateChanged(ItemEvent e) {
 
         for (PlaceNameService s : nameServices) {
-            if (s.getDataset().equalsIgnoreCase(((JCheckBox) e.getSource()).getText())) {
+            if (s.getDataset().equalsIgnoreCase(((AbstractButton) e.getSource()).getText())) {
                 s.setEnabled(!s.isEnabled());
                 break;
             }

@@ -104,12 +104,12 @@ public class GeoSymTableReader {
 
         // Read the file name.
         String s = tokens[0].trim();
-        if (s != null && !isEmpty(s))
+        if (!isEmpty(s))
             header.setFileName(s);
 
         // Read the description.
         s = tokens[1].trim();
-        if (s != null && !isEmpty(s))
+        if (!isEmpty(s))
             header.setDescription(s);
 
         while (!(string = scanner.nextLine()).equals(";")) {
@@ -122,28 +122,20 @@ public class GeoSymTableReader {
         String[] tokens = string.split("[=,:]");
 
         String s = tokens[0].trim();
-        if (s == null) {
-            String message = Logging.getMessage("VPF.MissingColumnName");
-            Logging.logger().severe(message);
-            throw new WWRuntimeException(message);
-        }
 
         GeoSymColumn col = new GeoSymColumn(s);
 
         s = tokens[1].trim();
-        if (s != null)
-            col.setDataType(s);
+        col.setDataType(s);
 
         s = tokens[2].trim();
-        if (s != null)
-            col.setDataSize(s);
+        col.setDataSize(s);
 
         s = tokens[3].trim();
-        if (s != null)
-            col.setDescription(s);
+        col.setDescription(s);
 
         s = tokens[4].trim();
-        if (s != null && !isEmpty(s))
+        if (!isEmpty(s))
             col.setCodeRef(s);
 
         return col;

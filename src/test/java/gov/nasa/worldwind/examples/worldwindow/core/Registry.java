@@ -63,7 +63,7 @@ public class Registry {
             throw new IllegalArgumentException(msg);
         }
 
-        if (classOrName instanceof String && ((String) classOrName).isEmpty()) {
+        if (classOrName instanceof String && ((CharSequence) classOrName).isEmpty()) {
             String msg = "Class name is null or zero length";
             Util.getLogger().severe(msg);
             throw new IllegalArgumentException(msg);

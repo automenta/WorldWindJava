@@ -8,9 +8,9 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -1471,7 +1471,7 @@ public class WWXML {
         }
 
         String[] names = path.split("/");
-        if (names == null || names.length == 0) {
+        if (names.length == 0) {
             return context;
         }
 
@@ -1800,7 +1800,7 @@ public class WWXML {
             if (link != null && !link.isEmpty())
                 WWXML.appendText(el, "Link", link);
 
-            Object imageSource = ((ScreenCreditImage) screenCredit).getImageSource();
+            Object imageSource = ((ScreenImage) screenCredit).getImageSource();
             if (imageSource instanceof String) {
                 WWXML.appendText(el, "FileName", (String) imageSource);
             }
@@ -3347,7 +3347,7 @@ public class WWXML {
                 // No property method, so just add the property to the object's AVList if it has one.
                 if (parent instanceof AVList)
                     ((AVList) parent).set(propertyName, propertyValue);
-                continue; // This is a benign exception; not all properties have set methods.
+                // This is a benign exception; not all properties have set methods.
             }
             catch (InvocationTargetException | IllegalAccessException e) {
                 String message = Logging.getMessage("generic.ExceptionInvokingPropertyMethod", propertyName, e);

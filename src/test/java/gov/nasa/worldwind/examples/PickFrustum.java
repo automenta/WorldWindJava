@@ -8,9 +8,9 @@ package gov.nasa.worldwind.examples;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.*;
 
 import javax.swing.*;
 import javax.swing.border.*;

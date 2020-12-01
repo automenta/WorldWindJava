@@ -8,10 +8,10 @@ package gov.nasa.worldwind.view.orbit;
 import com.jogamp.opengl.GL;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.ui.awt.ViewInputHandler;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.awt.ViewInputHandler;
 import gov.nasa.worldwind.view.BasicView;
 
 import java.awt.*;
@@ -361,23 +361,21 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         if (viewportCenterPoint != null) {
             Matrix modelview = OrbitViewInputSupport.computeTransformMatrix(this.globe,
                 this.center, this.heading, this.pitch, this.roll, this.zoom);
-            if (modelview != null) {
-                Matrix modelviewInv = modelview.getInverse();
-                if (modelviewInv != null) {
-                    // The change in focus must happen seamlessly; we can't move the eye or the forward vector
-                    // (only the center position and zoom should change). Therefore we pick a point along the
-                    // forward vector, and *near* the viewportCenterPoint, but not necessarily at the
-                    // viewportCenterPoint itself.
-                    Vec4 eyePoint = Vec4.UNIT_W.transformBy4(modelviewInv);
-                    Vec4 forward = Vec4.UNIT_NEGATIVE_Z.transformBy4(modelviewInv);
-                    double distance = eyePoint.distanceTo3(viewportCenterPoint);
-                    Vec4 newCenterPoint = Vec4.fromLine3(eyePoint, distance, forward);
+            Matrix modelviewInv = modelview.getInverse();
+            if (modelviewInv != null) {
+                // The change in focus must happen seamlessly; we can't move the eye or the forward vector
+                // (only the center position and zoom should change). Therefore we pick a point along the
+                // forward vector, and *near* the viewportCenterPoint, but not necessarily at the
+                // viewportCenterPoint itself.
+                Vec4 eyePoint = Vec4.UNIT_W.transformBy4(modelviewInv);
+                Vec4 forward = Vec4.UNIT_NEGATIVE_Z.transformBy4(modelviewInv);
+                double distance = eyePoint.distanceTo3(viewportCenterPoint);
+                Vec4 newCenterPoint = Vec4.fromLine3(eyePoint, distance, forward);
 
-                    OrbitViewInputSupport.OrbitViewState modelCoords = OrbitViewInputSupport.computeOrbitViewState(
-                        this.globe, modelview, newCenterPoint);
-                    if (validateModelCoordinates(modelCoords)) {
-                        setModelCoordinates(modelCoords);
-                    }
+                OrbitViewInputSupport.OrbitViewState modelCoords = OrbitViewInputSupport.computeOrbitViewState(
+                    this.globe, modelview, newCenterPoint);
+                if (validateModelCoordinates(modelCoords)) {
+                    setModelCoordinates(modelCoords);
                 }
             }
         }
@@ -409,22 +407,20 @@ public class BasicOrbitView extends BasicView implements OrbitView {
 
         Matrix modelview = OrbitViewInputSupport.computeTransformMatrix(this.globe,
             this.center, this.heading, this.pitch, this.roll, this.zoom);
-        if (modelview != null) {
-            Matrix modelviewInv = modelview.getInverse();
-            if (modelviewInv != null) {
-                // The change in focus must happen seamlessly; we can't move the eye or the forward vector
-                // (only the center position and zoom should change). 
+        Matrix modelviewInv = modelview.getInverse();
+        if (modelviewInv != null) {
+            // The change in focus must happen seamlessly; we can't move the eye or the forward vector
+            // (only the center position and zoom should change).
 
-                Vec4 eyePoint = Vec4.UNIT_W.transformBy4(modelviewInv);
-                Vec4 forward = Vec4.UNIT_NEGATIVE_Z.transformBy4(modelviewInv);
-                Intersection[] intersections = this.dc.getSurfaceGeometry().intersect(new Line(eyePoint, forward));
-                if (intersections != null && intersections.length > 0) {
-                    Vec4 viewportCenterPoint = intersections[0].getIntersectionPoint();
-                    OrbitViewInputSupport.OrbitViewState modelCoords = OrbitViewInputSupport.computeOrbitViewState(
-                        this.globe, modelview, viewportCenterPoint);
-                    if (validateModelCoordinates(modelCoords)) {
-                        setModelCoordinates(modelCoords);
-                    }
+            Vec4 eyePoint = Vec4.UNIT_W.transformBy4(modelviewInv);
+            Vec4 forward = Vec4.UNIT_NEGATIVE_Z.transformBy4(modelviewInv);
+            Intersection[] intersections = this.dc.getSurfaceGeometry().intersect(new Line(eyePoint, forward));
+            if (intersections != null && intersections.length > 0) {
+                Vec4 viewportCenterPoint = intersections[0].getIntersectionPoint();
+                OrbitViewInputSupport.OrbitViewState modelCoords = OrbitViewInputSupport.computeOrbitViewState(
+                    this.globe, modelview, viewportCenterPoint);
+                if (validateModelCoordinates(modelCoords)) {
+                    setModelCoordinates(modelCoords);
                 }
             }
         }
@@ -456,11 +452,9 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         if (this.globe != null) {
             Matrix modelview = OrbitViewInputSupport.computeTransformMatrix(this.globe, this.center,
                 this.heading, this.pitch, this.roll, this.zoom);
-            if (modelview != null) {
-                Matrix modelviewInv = modelview.getInverse();
-                if (modelviewInv != null) {
-                    return Vec4.UNIT_W.transformBy4(modelviewInv);
-                }
+            Matrix modelviewInv = modelview.getInverse();
+            if (modelviewInv != null) {
+                return Vec4.UNIT_W.transformBy4(modelviewInv);
             }
         }
 
@@ -471,12 +465,10 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         if (this.globe != null) {
             Matrix modelview = OrbitViewInputSupport.computeTransformMatrix(this.globe, this.center,
                 this.heading, this.pitch, this.roll, this.zoom);
-            if (modelview != null) {
-                Matrix modelviewInv = modelview.getInverse();
-                if (modelviewInv != null) {
-                    Vec4 eyePoint = Vec4.UNIT_W.transformBy4(modelviewInv);
-                    return this.globe.computePositionFromPoint(eyePoint);
-                }
+            Matrix modelviewInv = modelview.getInverse();
+            if (modelviewInv != null) {
+                Vec4 eyePoint = Vec4.UNIT_W.transformBy4(modelviewInv);
+                return this.globe.computePositionFromPoint(eyePoint);
             }
         }
 
@@ -512,11 +504,9 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         if (forward.cross3(up).getLength3() < 0.001) {
             Matrix modelview = OrbitViewInputSupport.computeTransformMatrix(
                 this.globe, centerPosition, this.heading, Angle.ZERO, Angle.ZERO, 1);
-            if (modelview != null) {
-                Matrix modelviewInv = modelview.getInverse();
-                if (modelviewInv != null) {
-                    up = Vec4.UNIT_Y.transformBy4(modelviewInv);
-                }
+            Matrix modelviewInv = modelview.getInverse();
+            if (modelviewInv != null) {
+                up = Vec4.UNIT_Y.transformBy4(modelviewInv);
             }
         }
 
@@ -568,8 +558,6 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         // Compute the current modelview matrix.
         this.modelview = OrbitViewInputSupport.computeTransformMatrix(this.globe, this.center,
             this.heading, this.pitch, this.roll, this.zoom);
-        if (this.modelview == null)
-            this.modelview = Matrix.IDENTITY;
         // Compute the current inverse-modelview matrix.
         this.modelviewInv = this.modelview.getInverse();
         if (this.modelviewInv == null)

@@ -7,7 +7,6 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.UnitsFormat;
@@ -229,7 +228,7 @@ public class MeasureToolPanel extends JPanel {
         anglesCombo.setSelectedItem("DD");
         anglesCombo.addActionListener((ActionEvent event) -> {
             String item = (String) ((JComboBox) event.getSource()).getSelectedItem();
-            measureTool.getUnitsFormat().setShowDMS(item.equals("DMS"));
+            measureTool.getUnitsFormat().setShowDMS(Objects.equals(item, "DMS"));
         });
         anglesPanel.add(anglesCombo);
 
@@ -289,9 +288,9 @@ public class MeasureToolPanel extends JPanel {
         lineColorButton = new JButton("Line");
         lineColorButton.addActionListener((ActionEvent event) -> {
             Color c = JColorChooser.showDialog(colorPanel,
-                "Choose a color...", ((JButton) event.getSource()).getBackground());
+                "Choose a color...", ((Component) event.getSource()).getBackground());
             if (c != null) {
-                ((JButton) event.getSource()).setBackground(c);
+                ((Component) event.getSource()).setBackground(c);
                 measureTool.setLineColor(c);
                 Color fill = new Color(c.getRed() / 255.0f * 0.5f,
                     c.getGreen() / 255.0f * 0.5f, c.getBlue() / 255.0f * 0.5f, 0.5f);
@@ -304,9 +303,9 @@ public class MeasureToolPanel extends JPanel {
         pointColorButton = new JButton("Points");
         pointColorButton.addActionListener((ActionEvent event) -> {
             Color c = JColorChooser.showDialog(colorPanel,
-                "Choose a color...", ((JButton) event.getSource()).getBackground());
+                "Choose a color...", ((Component) event.getSource()).getBackground());
             if (c != null) {
-                ((JButton) event.getSource()).setBackground(c);
+                ((Component) event.getSource()).setBackground(c);
                 measureTool.getControlPointsAttributes().setBackgroundColor(c);
             }
         });
@@ -316,9 +315,9 @@ public class MeasureToolPanel extends JPanel {
         annotationColorButton = new JButton("Tooltip");
         annotationColorButton.addActionListener((ActionEvent event) -> {
             Color c = JColorChooser.showDialog(colorPanel,
-                "Choose a color...", ((JButton) event.getSource()).getBackground());
+                "Choose a color...", ((Component) event.getSource()).getBackground());
             if (c != null) {
-                ((JButton) event.getSource()).setBackground(c);
+                ((Component) event.getSource()).setBackground(c);
                 measureTool.getAnnotationAttributes().setTextColor(c);
             }
         });

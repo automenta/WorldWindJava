@@ -7,7 +7,6 @@
 package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.cache.GpuResourceCache;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.pick.PickedObjectList;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;

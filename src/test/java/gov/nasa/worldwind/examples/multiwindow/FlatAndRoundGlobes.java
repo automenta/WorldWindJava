@@ -9,15 +9,15 @@ package gov.nasa.worldwind.examples.multiwindow;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.globes.projections.ProjectionSinusoidal;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.Earth.BMNGOneImage;
 import gov.nasa.worldwind.render.Polygon;
-import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,7 +54,7 @@ public class FlatAndRoundGlobes {
 
         Model roundModel = this.makeModel(new Earth(), layers);
         Model flatModel = this.makeModel(new EarthFlat(), layers);
-        ((EarthFlat) flatModel.getGlobe()).setProjection(new ProjectionSinusoidal());
+        ((Globe2D) flatModel.getGlobe()).setProjection(new ProjectionSinusoidal());
 
         WWFrame roundFrame = new WWFrame(null, roundModel, "Round Globe", AVKey.LEFT_OF_CENTER);
 //        WWFrame flatFrame = new WWFrame(null, flatModel, "Flat Globe", AVKey.RIGHT_OF_CENTER);

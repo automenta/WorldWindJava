@@ -104,11 +104,9 @@ public class GDAL {
         }
 
         AffineTransform atx = getAffineTransform(ds);
-        if (null != atx) {
-            double sy = ((double) ds.getRasterYSize() / newHeight);
-            double sx = ((double) ds.getRasterXSize() / newWidth);
-            atx.scale(sx, sy);
-        }
+        double sy = ((double) ds.getRasterYSize() / newHeight);
+        double sx = ((double) ds.getRasterXSize() / newWidth);
+        atx.scale(sx, sy);
 
         return atx;
 

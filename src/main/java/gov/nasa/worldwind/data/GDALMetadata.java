@@ -119,8 +119,7 @@ public class GDALMetadata {
             if (!WWUtil.isEmpty(o) && o instanceof String) {
                 try {
                     String[] s = ((String) o).split(",");
-                    if (null != s) {
-//                        if( s.length == 3 )
+                    //                        if( s.length == 3 )
 //                        {
 //                            Color bgc = new Color( Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]), 0xFF );
 //                            long color = 0xFFFFFFFFL & bgc.getRGB();
@@ -131,7 +130,6 @@ public class GDALMetadata {
 //                            int color = Integer.parseInt(s[0]);
 //                            params.setValue(AVKey.MISSING_DATA_SIGNAL, (double)color );
 //                        }
-                    }
                 }
                 catch (Exception e) {
                     String msg = Logging.getMessage("generic.CannotCreateColor", o);
@@ -160,7 +158,7 @@ public class GDALMetadata {
             int idx = (null != proj) ? proj.indexOf("ZONE_") : -1;
             if (idx != -1) {
                 zone = proj.substring(idx + 5);
-                zone = (null != zone) ? zone.toUpperCase() : null;
+                zone = zone.toUpperCase();
             }
         }
 

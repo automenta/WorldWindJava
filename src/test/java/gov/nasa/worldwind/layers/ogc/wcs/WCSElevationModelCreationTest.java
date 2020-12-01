@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.layers.ogc.wcs;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.layers.ogc.wcs.wcs100.*;
 import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.layers.ogc.wcs.wcs100.*;
 import gov.nasa.worldwind.terrain.WCSElevationModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -310,7 +310,7 @@ public class SAR2 extends JFrame {
         try {
             // Load annotations if any
             File annotationFile = getAnnotationsPath(filePath);
-            if (annotationFile != null && annotationFile.exists())
+            if (annotationFile.exists())
                 this.annotationSupport.readAnnotations(annotationFile.getPath(), track);
             // Restore track state
             this.restoreTrackState(new File(filePath));
@@ -1268,11 +1268,6 @@ public class SAR2 extends JFrame {
         }
 
         Document doc = UserPreferenceUtils.createUserPreferencesDocument(getUserPreferences());
-        if (doc == null) {
-            String message = Logging.getMessage("nullValue.DocumentIsNull");
-            Logging.logger().severe(message);
-            return;
-        }
 
         try {
             WWXML.saveDocumentToFile(doc, file.getPath());

@@ -6,10 +6,10 @@
 
 package gov.nasa.worldwind.render.airspaces;
 
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;

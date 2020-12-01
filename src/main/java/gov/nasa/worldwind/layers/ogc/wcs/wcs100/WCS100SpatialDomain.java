@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.layers.ogc.wcs.wcs100;
 
 import gov.nasa.worldwind.layers.ogc.gml.*;
-import gov.nasa.worldwind.layers.ogc.gml.*;
 import gov.nasa.worldwind.util.xml.*;
 
 import javax.xml.stream.XMLStreamException;

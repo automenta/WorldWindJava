@@ -44,14 +44,11 @@ public class StatusPanelImpl extends AbstractFeature implements StatusPanel, Sel
         JPanel centerPanel = createCenterComponents();
         JPanel rightPanel = createRightComponents();
 
-        if (leftPanel != null)
-            this.panel.add(leftPanel, BorderLayout.WEST);
+        this.panel.add(leftPanel, BorderLayout.WEST);
 
-        if (centerPanel != null)
-            this.panel.add(centerPanel, BorderLayout.CENTER);
+        this.panel.add(centerPanel, BorderLayout.CENTER);
 
-        if (rightPanel != null)
-            this.panel.add(rightPanel, BorderLayout.EAST);
+        this.panel.add(rightPanel, BorderLayout.EAST);
 
         this.controller.getWWd().addSelectListener(this); // to handle status bar messages for picked items
     }
@@ -82,7 +79,7 @@ public class StatusPanelImpl extends AbstractFeature implements StatusPanel, Sel
 
         Object o = this.controller.getRegisteredObject(Constants.FEATURE_GAZETTEER_PANEL);
         if (o instanceof FeaturePanel)
-            p.add(((FeaturePanel) o).getJPanel(), BorderLayout.WEST);
+            p.add(((WWOPanel) o).getJPanel(), BorderLayout.WEST);
 
         return p;
     }

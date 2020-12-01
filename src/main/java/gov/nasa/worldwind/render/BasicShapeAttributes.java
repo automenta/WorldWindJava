@@ -666,11 +666,9 @@ public class BasicShapeAttributes implements ShapeAttributes {
         }
 
         final Double lineWidth = this.getOutlineWidth();
-        if (lineWidth != null) {
-            xmlWriter.writeStartElement("width");
-            xmlWriter.writeCharacters(Double.toString(lineWidth));
-            xmlWriter.writeEndElement();
-        }
+        xmlWriter.writeStartElement("width");
+        xmlWriter.writeCharacters(Double.toString(lineWidth));
+        xmlWriter.writeEndElement();
 
         xmlWriter.writeEndElement(); // LineStyle
 

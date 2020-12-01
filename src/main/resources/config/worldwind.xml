@@ -27,10 +27,10 @@
     <Property name="gov.nasa.worldwind.avkey.ViewClassName" value="gov.nasa.worldwind.view.orbit.BasicOrbitView"/>
     <Property name="gov.nasa.worldwind.avkey.ViewInputHandlerClassName"
               value="gov.nasa.worldwind.view.orbit.OrbitViewInputHandler"/>
-    <Property name="gov.nasa.worldwind.avkey.InputHandlerClassName" value="gov.nasa.worldwind.ui.awt.AWTInputHandler"/>
+    <Property name="gov.nasa.worldwind.avkey.InputHandlerClassName" value="gov.nasa.worldwind.video.awt.AWTInputHandler"/>
     <Property name="gov.nasa.worldwind.avkey.LoggerName" value="gov.nasa.worldwind"/>
     <Property name="gov.nasa.worldwind.avkey.WorldWindowClassName"
-              value="gov.nasa.worldwind.ui.WorldWindowGLAutoDrawable"/>
+              value="gov.nasa.worldwind.video.WorldWindowGLAutoDrawable"/>
     <Property name="gov.nasa.worldwind.avkey.ElevationModelFactory"
               value="gov.nasa.worldwind.terrain.BasicElevationModelFactory"/>
     <Property name="gov.nasa.worldwind.avkey.LayerFactory" value="gov.nasa.worldwind.layers.BasicLayerFactory"/>

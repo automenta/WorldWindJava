@@ -10,9 +10,9 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.examples.milstd2525.MilStd2525TacticalSymbol;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.*;
 
@@ -191,7 +191,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             // Create a check box that toggles the visibility of graphic modifiers for all symbols.
             JCheckBox cb = new JCheckBox("Graphic Modifiers", true);
             cb.addActionListener(actionEvent -> {
-                boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+                boolean tf = ((AbstractButton) actionEvent.getSource()).isSelected();
 
                 for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
@@ -206,7 +206,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             // Create a check box that toggles the visibility of text modifiers for all symbols.
             cb = new JCheckBox("Text Modifiers", true);
             cb.addActionListener(actionEvent -> {
-                boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+                boolean tf = ((AbstractButton) actionEvent.getSource()).isSelected();
 
                 for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
@@ -221,7 +221,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             // Create a check box that toggles the frame visibility for all symbols.
             cb = new JCheckBox("Show Frame", true);
             cb.addActionListener(actionEvent -> {
-                boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+                boolean tf = ((AbstractButton) actionEvent.getSource()).isSelected();
 
                 for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
@@ -236,7 +236,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             // Create a check box that toggles the fill visibility for all symbols.
             cb = new JCheckBox("Show Fill", true);
             cb.addActionListener(actionEvent -> {
-                boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+                boolean tf = ((AbstractButton) actionEvent.getSource()).isSelected();
 
                 for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)
@@ -251,7 +251,7 @@ public class TacticalSymbols extends ApplicationTemplate {
             // Create a check box that toggles the icon visibility for all symbols.
             cb = new JCheckBox("Show Icon", true);
             cb.addActionListener(actionEvent -> {
-                boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+                boolean tf = ((AbstractButton) actionEvent.getSource()).isSelected();
 
                 for (Renderable r : symbolLayer.all()) {
                     if (r instanceof TacticalSymbol)

@@ -10,8 +10,6 @@ import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.render.Highlightable;
 
-import java.util.logging.Logger;
-
 /**
  * Controls highlighting of shapes implementing {@link Highlightable} in response to pick events. Monitors a specified
  * WorldWindow for an indicated {@link SelectEvent} type and turns highlighting on and off in

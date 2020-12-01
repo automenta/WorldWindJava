@@ -11,10 +11,10 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.render.airspaces.Geometry;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.airspaces.Geometry;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
@@ -673,7 +673,7 @@ public abstract class RigidShape extends AbstractShape {
 
         // render extent if specified
         if (this.renderExtent) {
-            Renderable extent = (Box) this.getCurrentShapeData().getExtent();
+            Renderable extent = (Renderable) this.getCurrentShapeData().getExtent();
             extent.render(dc);
         }
 
@@ -767,7 +767,7 @@ public abstract class RigidShape extends AbstractShape {
 
         Vec4 centerPoint = getCurrentData().getReferencePoint();
 
-        return boundingBox != null ? boundingBox.translate(centerPoint) : null;
+        return boundingBox.translate(centerPoint);
     }
 
     /**
@@ -809,7 +809,7 @@ public abstract class RigidShape extends AbstractShape {
         Vec4 centerPoint = this.computeReferencePoint(globe, verticalExaggeration);
 
         // translate the bounding box to its correct location
-        return boundingBox != null ? boundingBox.translate(centerPoint) : null;
+        return boundingBox.translate(centerPoint);
     }
 
     /**

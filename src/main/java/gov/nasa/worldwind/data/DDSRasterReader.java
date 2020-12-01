@@ -31,7 +31,7 @@ public class DDSRasterReader extends AbstractDataRasterReader {
     protected boolean doCanRead(Object source, AVList params) {
         try {
             DDSHeader header = DDSHeader.readFrom(source);
-            if (null != header && header.getWidth() > 0 && header.getHeight() > 0) {
+            if (header.getWidth() > 0 && header.getHeight() > 0) {
                 if (null != params && !params.hasKey(AVKey.PIXEL_FORMAT)) {
                     params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
                 }
@@ -81,7 +81,7 @@ public class DDSRasterReader extends AbstractDataRasterReader {
     protected void doReadMetadata(Object source, AVList params) throws IOException {
         try {
             DDSHeader header = DDSHeader.readFrom(source);
-            if (null != header && null != params) {
+            if (null != params) {
                 params.set(AVKey.WIDTH, header.getWidth());
                 params.set(AVKey.HEIGHT, header.getHeight());
                 params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);

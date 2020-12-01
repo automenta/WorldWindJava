@@ -9,8 +9,8 @@ package gov.nasa.worldwind.symbology;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.drag.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -387,8 +387,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
 
         List<Position> newPositions = Position.computeShiftedPositions(oldPosition, position, this.getPositions());
 
-        if (newPositions != null)
-            this.setPositions(newPositions);
+        this.setPositions(newPositions);
     }
 
     @Override

@@ -262,8 +262,6 @@ public class ScreenAnnotation extends AbstractAnnotation {
         if (restorableSupport == null)
             restorableSupport = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (restorableSupport == null)
-            return null;
 
         if (this.screenPoint != null) {
             RestorableSupport.StateObject screenPointStateObj = restorableSupport.addStateObject("screenPoint");

@@ -9,13 +9,13 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.formats.gcps.GCPSReader;
 import gov.nasa.worldwind.formats.tab.TABRasterReader;
 import gov.nasa.worldwind.formats.worldfile.WorldFile;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;

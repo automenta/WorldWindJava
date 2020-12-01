@@ -79,7 +79,7 @@ class TIFFIFDFactory {
             Logging.logger().finest(e.getMessage());
         }
         finally {
-            if (savedPosition != 0 && fc != null) {
+            if (savedPosition != 0) {
                 try {
                     fc.position(savedPosition);
                 }

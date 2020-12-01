@@ -189,14 +189,13 @@ public class Geometry extends AVListImpl implements Cacheable {
     }
 
     private long sizeOf(int glType) {
-        long size = switch (glType) {
+        return switch (glType) {
             case GL2.GL_BYTE -> 1L;
             case GL2.GL_SHORT, GL2.GL_UNSIGNED_SHORT -> 2L;
             case GL2.GL_INT, GL2.GL_UNSIGNED_INT, GL2.GL_FLOAT -> 4L;
             case GL2.GL_DOUBLE -> 8L;
             default -> 0L;
         };
-        return size;
     }
 
     private void bufferCopy(int[] src, int srcPos, IntBuffer dest, int destPos, int length) {

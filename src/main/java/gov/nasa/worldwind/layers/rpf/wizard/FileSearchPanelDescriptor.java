@@ -248,7 +248,7 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
 
             // Sort on the order the data series appears in the NITFS specification table,
             // or if the data series cannot be identified, sort alphabetically.
-            return (ds1 != null && ds2 != null) ? ds1.compareTo(ds2) : id1.compareTo(id2);
+            return ds1 != null ? ds1.compareTo(ds2) : id1.compareTo(id2);
         };
         fileSetList.sort(comparator);
     }
@@ -291,7 +291,8 @@ public class FileSearchPanelDescriptor extends DefaultPanelDescriptor {
 
     private static class AcceptRPFFilter implements FileFilter {
         public boolean accept(File pathname) {
-            if (pathname != null && pathname.getName() != null) {
+            if (pathname != null) {
+                pathname.getName();
                 String filename = pathname.getName().toUpperCase();
                 return RPFFrameFilename.isFilename(filename);
             }

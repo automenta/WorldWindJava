@@ -9,10 +9,10 @@ package gov.nasa.worldwind.examples.lineofsight;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.formats.shapefile.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.VecBuffer;
 
@@ -238,7 +238,7 @@ public class LinesOfSight extends ApplicationTemplate {
             this.terrainIntersector.setPositions(this.grid);
 
             // Add the renderables, if any, to the shape intersector.
-            if (this.renderableLayer.size() > 0) {
+            if (!this.renderableLayer.isEmpty()) {
                 this.shapeIntersector.setReferencePosition(this.referencePosition);
                 this.shapeIntersector.setPositions(this.grid);
                 this.shapeIntersector.setRenderables(this.renderableLayer.all());
@@ -318,7 +318,7 @@ public class LinesOfSight extends ApplicationTemplate {
             int totalNum = this.grid.size();
             int numPositionsProcessed = this.terrainIntersector.getNumProcessedPositions();
 
-            if (this.renderableLayer.size() > 0) {
+            if (!this.renderableLayer.isEmpty()) {
                 totalNum += this.grid.size();
                 numPositionsProcessed += this.shapeIntersector.getNumProcessedPositions();
             }

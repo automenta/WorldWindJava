@@ -9,10 +9,10 @@ package gov.nasa.worldwind;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.GpuResourceCache;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;
 
@@ -607,7 +607,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
                 }
                 catch (Exception e) {
                     String message = Logging.getMessage("SceneController.ExceptionWhilePickingInLayer",
-                        (layer != null ? layer.getClass().getName() : Logging.getMessage("term.unknown")));
+                        layer.getClass().getName());
                     Logging.logger().log(Level.SEVERE, message, e);
                     // Don't abort; continue on to the next layer.
                 }
@@ -812,7 +812,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
                     }
                     catch (Exception e) {
                         String message = Logging.getMessage("SceneController.ExceptionWhileRenderingLayer",
-                            (layer != null ? layer.getClass().getName() : Logging.getMessage("term.unknown")));
+                            layer.getClass().getName());
                         Logging.logger().log(Level.SEVERE, message, e);
                         // Don't abort; continue on to the next layer.
                     }

@@ -8,8 +8,8 @@ package gov.nasa.worldwind.view.firstperson;
 import com.jogamp.opengl.GL;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.view.*;
 
@@ -123,11 +123,9 @@ public class BasicFlyView extends BasicView {
         if (forward.cross3(up).getLength3() < 0.001) {
             Matrix modelview = ViewUtil.computeTransformMatrix(this.globe, eyePosition, this.heading, Angle.ZERO,
                 Angle.ZERO);
-            if (modelview != null) {
-                Matrix modelviewInv = modelview.getInverse();
-                if (modelviewInv != null) {
-                    up = Vec4.UNIT_Y.transformBy4(modelviewInv);
-                }
+            Matrix modelviewInv = modelview.getInverse();
+            if (modelviewInv != null) {
+                up = Vec4.UNIT_Y.transformBy4(modelviewInv);
             }
         }
 
@@ -170,11 +168,9 @@ public class BasicFlyView extends BasicView {
         if (forward.cross3(up).getLength3() < 0.001) {
             Matrix modelview = ViewUtil.computeTransformMatrix(this.globe, eyePosition, this.heading, Angle.ZERO,
                 Angle.ZERO);
-            if (modelview != null) {
-                Matrix modelviewInv = modelview.getInverse();
-                if (modelviewInv != null) {
-                    up = Vec4.UNIT_Y.transformBy4(modelviewInv);
-                }
+            Matrix modelviewInv = modelview.getInverse();
+            if (modelviewInv != null) {
+                up = Vec4.UNIT_Y.transformBy4(modelviewInv);
             }
         }
 
@@ -215,9 +211,6 @@ public class BasicFlyView extends BasicView {
         // Compute the current modelview matrix.
         this.modelview = ViewUtil.computeTransformMatrix(this.globe, this.eyePosition, this.heading, this.pitch,
             this.roll);
-        if (this.modelview == null) {
-            this.modelview = Matrix.IDENTITY;
-        }
 
         // Compute the current inverse-modelview matrix.
         this.modelviewInv = this.modelview.getInverse();

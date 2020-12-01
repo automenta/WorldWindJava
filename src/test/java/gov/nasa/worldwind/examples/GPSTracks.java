@@ -7,11 +7,11 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.formats.gpx.GpxReader;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.MarkerLayer;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.WWIO;
 import org.xml.sax.SAXException;

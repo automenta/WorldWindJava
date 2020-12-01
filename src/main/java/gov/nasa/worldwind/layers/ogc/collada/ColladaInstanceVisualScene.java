@@ -6,10 +6,9 @@
 
 package gov.nasa.worldwind.layers.ogc.collada;
 
-import gov.nasa.worldwind.layers.ogc.collada.impl.*;
+import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.layers.ogc.collada.impl.*;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.geom.Box;
 
 /**
  * Represents the COLLADA <i>instance_visual_scene</i> element and provides access to its contents.

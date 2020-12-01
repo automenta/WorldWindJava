@@ -24,8 +24,7 @@ public class MatrixTest
     private Random random;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() {
         // Use a random initialized with a constant seed to ensure that subsequent test executes get the same
         // pseudorandom values. Using Math.random may results in tests failing unpredictably, and prevents debugging
         // since the random seed is not known.

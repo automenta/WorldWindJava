@@ -8,10 +8,10 @@ package gov.nasa.worldwind.layers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
@@ -41,10 +41,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     protected final ArrayList<TextureTile> currentTiles = new ArrayList<>();
 
     private static final int QUEUE_SIZE = 2048;
-    protected final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(QUEUE_SIZE);;
-
-
-
+    protected final PriorityBlockingQueue<Runnable> requestQ = new PriorityBlockingQueue<>(QUEUE_SIZE);
 
     protected ArrayList<TextureTile> topLevels;
     protected boolean forceLevelZeroLoads = false;
@@ -1334,11 +1331,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
 
         protected File doGetOutputFile() {
             String suffix = WWIO.makeSuffixForMimeType(this.getRetriever().getContentType());
-            if (suffix == null) {
-                Logging.logger().severe(
-                    Logging.getMessage("generic.UnknownContentType", this.getRetriever().getContentType()));
-                return null;
-            }
 
             String path = this.tile.getPathBase();
             path += suffix;

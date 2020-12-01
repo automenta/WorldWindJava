@@ -6,10 +6,10 @@
 package gov.nasa.worldwind.render.airspaces;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Cylinder;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -294,7 +294,7 @@ public class SphereAirspace extends AbstractAirspace {
 
     @Override
     protected void regenerateSurfaceShape(DrawContext dc, SurfaceShape shape) {
-        ((SurfaceCircle) shape).setCenter(this.location);
+        ((SurfaceEllipse) shape).setCenter(this.location);
         ((SurfaceCircle) shape).setRadius(this.radius);
     }
 

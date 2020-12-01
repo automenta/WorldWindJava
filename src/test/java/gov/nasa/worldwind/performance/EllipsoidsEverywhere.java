@@ -69,11 +69,11 @@ package gov.nasa.worldwind.performance;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.Box;
 import gov.nasa.worldwind.render.Cylinder;
+import gov.nasa.worldwind.render.*;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -150,7 +150,7 @@ public class EllipsoidsEverywhere extends ApplicationTemplate {
                 }
             }
             System.out.printf("%d %s, Altitude mode = %s\n", count, shapeType,
-                altitudeMode == WorldWind.RELATIVE_TO_GROUND ? "RELATIVE_TO_GROUND" : "ABSOLUTE");
+                "ABSOLUTE");
         }
 
         protected JPanel makeShapesControlPanel() {

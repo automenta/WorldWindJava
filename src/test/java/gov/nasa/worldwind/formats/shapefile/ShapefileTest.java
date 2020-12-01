@@ -13,9 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.net.URISyntaxException;
-import java.util.Arrays;
-
 import static gov.nasa.worldwind.layers.ogc.kml.KMLTest.*;
 import static org.junit.Assert.*;
 
@@ -87,8 +84,7 @@ public class ShapefileTest
 //    }
 
     @Test
-    public void testOpenSingleInputStream() throws Exception
-    {
+    public void testOpenSingleInputStream() {
         Shapefile shapefile = new Shapefile(testResourceStream(STATE_BOUNDS_PATH));
         assertEquals("Shape type is not as expected", Shapefile.SHAPE_POLYLINE, shapefile.getShapeType());
 
@@ -101,8 +97,7 @@ public class ShapefileTest
     }
 
     @Test
-    public void testOpenMultipleInputStreams() throws Exception
-    {
+    public void testOpenMultipleInputStreams() {
         Shapefile shapefile = new Shapefile(
             testResourceStream(STATE_BOUNDS_PATH),
             testResourceStream(WWIO.replaceSuffix(STATE_BOUNDS_PATH, ".shx")),
@@ -140,7 +135,7 @@ public class ShapefileTest
         shapefile.close();
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings("UnusedDeclaration")
     @Test
     public void testUnsupportedCoordinates() throws Exception
     {
@@ -163,16 +158,14 @@ public class ShapefileTest
     //////////////////////////////////////////////////////////
 
     @Test
-    public void testExpectedValuesForStateBounds() throws URISyntaxException
-    {
+    public void testExpectedValuesForStateBounds() {
         Shapefile shapefile = new Shapefile(testResourceFile(STATE_BOUNDS_PATH));
         assertEquals("Version not as expected", 1000, shapefile.getVersion());
         assertEquals("Length not as expected", 2750692, shapefile.getLength());
         assertEquals("Shape type not as expected", Shapefile.SHAPE_POLYLINE, shapefile.getShapeType());
         assertEquals("Number of records not as expected", 19, shapefile.getNumberOfRecords());
-        assertTrue("Bounds not as expected", Arrays.equals(
-            new double[] {25.837377, 49.384359, -124.211606, -67.158958},
-            shapefile.getBoundingRectangle()));
+        assertArrayEquals("Bounds not as expected", new double[] {25.837377, 49.384359, -124.211606, -67.158958},
+            shapefile.getBoundingRectangle(), 0.0);
 
         while (shapefile.hasNext())
         {
@@ -186,9 +179,8 @@ public class ShapefileTest
             assertEquals("Record number of parts not as expected", 1, record.getNumberOfParts());
             assertEquals("Record number of points not as expected", 10, record.getNumberOfPoints());
             assertEquals("Record first part number not as expected", 64, record.getFirstPartNumber());
-            assertTrue("Record bounds not as expected", Arrays.equals(
-                new double[] {39.5345, 39.53649, -75.530616, -75.527447},
-                record.getBoundingRectangle()));
+            assertArrayEquals("Record bounds not as expected", new double[] {39.5345, 39.53649, -75.530616, -75.527447},
+                record.getBoundingRectangle(), 0.0);
 
             assertEquals("Record point not as expected", LatLon.fromDegrees(39.53649, -75.530616),
                 record.getPointBuffer(0).getLocation(0));

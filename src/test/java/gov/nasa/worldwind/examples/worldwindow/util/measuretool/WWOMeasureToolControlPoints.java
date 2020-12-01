@@ -7,9 +7,9 @@
 package gov.nasa.worldwind.examples.worldwindow.util.measuretool;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
 import java.util.ArrayList;

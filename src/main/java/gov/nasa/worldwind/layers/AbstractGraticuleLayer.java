@@ -7,9 +7,9 @@ package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.view.orbit.OrbitView;
 
@@ -376,8 +376,6 @@ public class AbstractGraticuleLayer extends AbstractLayer {
     public String getRestorableState() {
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (rs == null)
-            return null;
 
         RestorableSupport.StateObject so = rs.addStateObject("renderingParams");
         for (Map.Entry<String, GraticuleRenderingParams> entry : this.graticuleSupport.getAllRenderingParams()) {

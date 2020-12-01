@@ -9,8 +9,8 @@ package gov.nasa.worldwind.examples.glider;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.Layer;
-import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 import java.beans.*;
 import java.util.*;

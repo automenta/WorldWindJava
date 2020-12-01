@@ -82,7 +82,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
 
         this.srcFile = file;
         String name = this.srcFile.getName();
-        if (null != name && !name.isEmpty()) {
+        if (!name.isEmpty()) {
             this.set(AVKey.DATASET_NAME, name);
             this.set(AVKey.DISPLAY_NAME, name);
             this.set(AVKey.FILE, this.srcFile);
@@ -572,7 +572,6 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                 bestOverviewIdx = i;
                 srcWidth = w;
                 srcHeight = h;
-                continue;
             }
             else {
                 break;
@@ -596,7 +595,6 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                     if (ovHeightRes <= reqHeightRes && ovWidthRes <= reqWidthRes) {
                         srcWidth = (int) w;
                         srcHeight = (int) h;
-                        continue;
                     }
                     else {
                         break;

@@ -8,7 +8,6 @@ package gov.nasa.worldwind.examples.worldwindow.core;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
 

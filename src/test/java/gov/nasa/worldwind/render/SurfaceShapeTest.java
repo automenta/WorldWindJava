@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 public class SurfaceShapeTest
 {
-    private static final ArrayList<LatLon> emptyLocations = new ArrayList<LatLon>();
+    private static final ArrayList<LatLon> emptyLocations = new ArrayList<>();
     private static final List<LatLon> sampleLocations = Arrays.asList(
         LatLon.fromDegrees(2, 3),
         LatLon.fromDegrees(4, 9),
@@ -227,7 +227,7 @@ public class SurfaceShapeTest
     // Helper Methods
     //////////////////////////////////////////////////////////
 
-    @SuppressWarnings({"JavaDoc"})
+    @SuppressWarnings("JavaDoc")
     private static void assignExampleValues(AbstractSurfaceShape shape)
     {
         shape.setVisible(true);
@@ -286,7 +286,7 @@ public class SurfaceShapeTest
 
         if (shape instanceof SurfacePolygon) // Includes SurfacePolyline
         {
-            ((SurfacePolygon) shape).setLocations(new ArrayList<LatLon>());
+            ((SurfacePolygon) shape).setLocations(new ArrayList<>());
         }
         else if (shape instanceof SurfaceSector)
         {

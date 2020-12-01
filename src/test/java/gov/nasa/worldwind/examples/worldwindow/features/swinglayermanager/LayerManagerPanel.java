@@ -69,7 +69,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         layerList.addPropertyChangeListener(event -> {
             if (event.getSource() instanceof LayerList) // the layer list lost, gained or swapped layers
             {
-                ((LayerTreeModel) layerTree.getModel()).refresh((LayerList) event.getSource());
+                ((LayerTreeModel) layerTree.getModel()).refresh((List<Layer>) event.getSource());
                 controller.redraw();
             }
             else if (event.getSource() instanceof Layer) {
@@ -156,7 +156,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
                     continue;
 
                 if (o instanceof LayerTreeGroupNode)
-                    this.handleGroupSelection((LayerTreeGroupNode) o, layerList);
+                    this.handleGroupSelection((LayerTreeNode) o, layerList);
                 else {
                     this.handleLayerSelection((LayerTreeNode) o, layerList);
                 }
@@ -347,7 +347,7 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         layerNode.setAllowsChildren(false); // marks the layer node as a leaf
 
         // Append the layer to the parent's list of children.
-        this.getModel().insertNodeInto((LayerTreeNode) layerNode, parent, parent.getChildCount());
+        this.getModel().insertNodeInto((MutableTreeNode) layerNode, parent, parent.getChildCount());
     }
 
     // Ensure that each group in a specified path exists.
@@ -394,13 +394,13 @@ public class LayerManagerPanel extends AbstractFeaturePanel implements LayerMana
         if (layerNode == null)
             return;
 
-        TreeNode[] pathFromRoot = ((LayerTreeNode) layerNode).getPath();
-        this.getModel().removeNodeFromParent((LayerTreeNode) layerNode);
+        TreeNode[] pathFromRoot = ((DefaultMutableTreeNode) layerNode).getPath();
+        this.getModel().removeNodeFromParent((MutableTreeNode) layerNode);
 
         // Remove any ancestors whose descendants have no leaf node but the one removed.
         for (int i = pathFromRoot.length - 2; i >= 1; i--) // length - 2 ==> don't remove root node
         {
-            MutableTreeNode groupNode = (LayerTreeNode) pathFromRoot[i];
+            MutableTreeNode groupNode = (MutableTreeNode) pathFromRoot[i];
 
             // Don't delete the default group node (or its ancestors).
             if (groupNode == this.getModel().getDefaultGroupNode())

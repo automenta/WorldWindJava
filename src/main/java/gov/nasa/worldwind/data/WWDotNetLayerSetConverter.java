@@ -39,7 +39,7 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer {
     private static File makeWWJavaFile(File dir, String filename, String installMimeType) {
         // If the filename does not match the standard pattern, then return a file with that name.
         String[] tokens = filename.split("[._]");
-        if (tokens == null || tokens.length < 3 || tokens[0].length() < 1 || tokens[1].length() < 1)
+        if (tokens.length < 3 || tokens[0].length() < 1 || tokens[1].length() < 1)
             return new File(dir, filename);
 
         // If an installation type is specified, override the file extension with the new type.
@@ -143,7 +143,7 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer {
         StringBuilder sb = new StringBuilder();
 
         Object o = parameters.get(AVKey.FILE_STORE_LOCATION);
-        if (!(o instanceof String) || ((String) o).length() < 1)
+        if (!(o instanceof String) || ((CharSequence) o).length() < 1)
             sb.append((!sb.isEmpty() ? ", " : "")).append(Logging.getMessage("term.fileStoreLocation"));
 
         o = parameters.get(AVKey.DATA_CACHE_NAME);

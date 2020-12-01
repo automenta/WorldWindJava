@@ -655,7 +655,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         // Recursively search each sub-directory. If exitBranchOnFirstMatch is true, then we did not find a match under
         // this directory.
         for (File childDir : subDirs) {
-            this.doListFileNames(location, childDir, filter, recurse, exitBranchOnFirstMatch, names);
+            this.doListFileNames(location, childDir, filter, true, exitBranchOnFirstMatch, names);
         }
     }
 

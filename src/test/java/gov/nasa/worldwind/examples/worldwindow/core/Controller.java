@@ -115,7 +115,7 @@ public class Controller {
         if (appFrame != null)
             return appFrame.getFrame();
 
-        return Util.findParentFrame((Container) getRegisteredObject(Constants.APP_PANEL));
+        return Util.findParentFrame((Component) getRegisteredObject(Constants.APP_PANEL));
     }
 
     public StatusPanel getStatusPanel() {

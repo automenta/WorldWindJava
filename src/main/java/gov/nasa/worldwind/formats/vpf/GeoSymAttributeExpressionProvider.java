@@ -154,8 +154,7 @@ public class GeoSymAttributeExpressionProvider {
             }
             else {
                 // When value contains a text string, it has a leading and trailing double-quotation character.
-                if (!value.isEmpty() && value.charAt(0) == '\"' && !value.isEmpty()
-                    && value.charAt(value.length() - 1) == '\"')
+                if (!value.isEmpty() && value.charAt(0) == '\"' && value.charAt(value.length() - 1) == '\"')
                     value = value.substring(1, value.length() - 1);
 
                 return String.CASE_INSENSITIVE_ORDER.compare(o.toString(), value);
@@ -227,7 +226,7 @@ public class GeoSymAttributeExpressionProvider {
         }
 
         public Expression parse() {
-            return (this.queue.peek() instanceof Comparison) ? (Comparison) this.queue.poll() : null;
+            return (this.queue.peek() instanceof Comparison) ? (Expression) this.queue.poll() : null;
         }
     }
 

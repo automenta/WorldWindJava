@@ -9,7 +9,6 @@ package gov.nasa.worldwind.examples.dataimporter;
 import gov.nasa.worldwind.Disposable;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.Sector;
-import gov.nasa.worldwind.layers.Layer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +46,7 @@ public class FileSet extends AVListImpl {
     }
 
     public void clear() {
-        Disposable layer = (Layer) this.get(AVKey.LAYER);
+        Disposable layer = (Disposable) this.get(AVKey.LAYER);
         if (layer != null) {
             layer.dispose();
             this.removeKey(AVKey.LAYER);
@@ -213,7 +212,6 @@ public class FileSet extends AVListImpl {
         Graphics2D g = (Graphics2D) iconImage.getGraphics();
 
         while (!g.drawImage(image, 0, 0, ICON_IMAGE_SIZE, ICON_IMAGE_SIZE, null)) {
-            continue;
         }
 
         g.dispose();

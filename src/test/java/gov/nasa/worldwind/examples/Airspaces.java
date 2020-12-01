@@ -7,10 +7,10 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.airspaces.Box;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.util.*;
 
 import java.util.Arrays;

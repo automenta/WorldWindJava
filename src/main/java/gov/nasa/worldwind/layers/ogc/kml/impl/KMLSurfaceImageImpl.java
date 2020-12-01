@@ -5,11 +5,9 @@
  */
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
-import gov.nasa.worldwind.layers.ogc.kml.*;
-import gov.nasa.worldwind.layers.ogc.kml.gx.GXLatLongQuad;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.ogc.kml.*;
+import gov.nasa.worldwind.layers.ogc.kml.gx.GXLatLongQuad;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 

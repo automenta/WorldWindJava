@@ -7,9 +7,6 @@ package gov.nasa.worldwind.layers.ogc.collada;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.animation.Animatable;
-import gov.nasa.worldwind.layers.ogc.collada.impl.*;
-import gov.nasa.worldwind.layers.ogc.collada.io.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;

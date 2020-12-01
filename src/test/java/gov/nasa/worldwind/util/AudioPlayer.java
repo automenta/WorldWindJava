@@ -40,17 +40,13 @@ public class AudioPlayer {
             return;
 
         if (this.clip != null) {
-            if (this.lineListener != null) {
-                this.clip.removeLineListener(this.lineListener);
-            }
+            this.clip.removeLineListener(this.lineListener);
         }
 
         this.clip = clip;
 
         if (this.clip != null) {
-            if (this.lineListener != null) {
-                this.clip.addLineListener(this.lineListener);
-            }
+            this.clip.addLineListener(this.lineListener);
         }
     }
 

@@ -9,8 +9,8 @@ package gov.nasa.worldwind.layers.ogc.kml;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.Message;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 
@@ -195,7 +195,7 @@ public class KMLLink extends KMLAbstractObject {
         KMLNetworkLinkControl linkControl = this.getRoot().getNetworkLinkControl();
         if (linkControl != null) {
             Long minRefresh = (long) (linkControl.getMinRefreshPeriod() * 1000.0d);
-            if (minRefresh != null && minRefresh > refreshTime)
+            if (minRefresh > refreshTime)
                 refreshTime = minRefresh;
         }
 

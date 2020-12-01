@@ -433,12 +433,6 @@ public class GeotiffReader implements Disposable {
 
             colorImage = new BufferedImage(colorModel, raster, false, null);
 
-            if (null == colorImage) {
-                String message = Logging.getMessage("Geotiff.UnsupportedDataTypeRaster", tiff.toString());
-                Logging.logger().severe(message);
-                throw new IOException(message);
-            }
-
             colorImage = ImageUtil.toCompatibleImage(colorImage);
             return BufferedImageRaster.wrap(colorImage, values);
         }
@@ -642,10 +636,7 @@ public class GeotiffReader implements Disposable {
 
         AVList values = this.metadata.get(imageIndex);
 
-        if (null == values
-            || null == this.gc
-            || !this.gc.hasGeoKey(GeoTiff.GeoKey.ModelType)
-            || !values.hasKey(AVKey.WIDTH)
+        if (null == values || !this.gc.hasGeoKey(GeoTiff.GeoKey.ModelType) || !values.hasKey(AVKey.WIDTH)
             || !values.hasKey(AVKey.HEIGHT)) {
             return;
         }

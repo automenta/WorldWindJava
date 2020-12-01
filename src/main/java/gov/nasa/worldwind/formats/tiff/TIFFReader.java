@@ -475,7 +475,7 @@ class TIFFReader {
             if (atEof)
                 return -1; //end of file
             int returnCode = 0;
-            while (numBitsToRead != 0 && !atEof) {
+            while (numBitsToRead != 0) {
                 if (numBitsToRead >= 8 - currentBit) {
                     if (currentBit == 0) //get first
                     {

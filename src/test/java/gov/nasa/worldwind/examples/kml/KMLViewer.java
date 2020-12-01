@@ -9,12 +9,13 @@ package gov.nasa.worldwind.examples.kml;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
+import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.layers.ogc.kml.impl.KMLController;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.ui.HotSpotController;
+import gov.nasa.worldwind.ui.tree.layer.*;
 import gov.nasa.worldwind.util.*;
-import gov.nasa.worldwind.util.layertree.*;
 
 import javax.swing.*;
 import javax.swing.filechooser.*;
@@ -200,7 +201,7 @@ public class KMLViewer extends ApplicationTemplate {
                 if (event.getSource() instanceof KMLNetworkLinkTreeNode) {
                     // Manipulate the tree on the EDT.
                     SwingUtilities.invokeLater(() -> {
-                        ((KMLNetworkLinkTreeNode) event.getSource()).expandOpenContainers(layerTree);
+                        ((KMLFeatureTreeNode) event.getSource()).expandOpenContainers(layerTree);
                         wwd().redraw();
                     });
                 }

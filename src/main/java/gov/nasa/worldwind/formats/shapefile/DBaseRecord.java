@@ -81,16 +81,17 @@ public class DBaseRecord extends AVListImpl {
             String value = dbaseFile.decodeString(bytes, numRead).trim();
 
             try {
-                if (field.getType() == DBaseField.TYPE_BOOLEAN) {
+                final String fieldType = field.getType();
+                if (fieldType == DBaseField.TYPE_BOOLEAN) {
                     this.set(field.getName(), value.equalsIgnoreCase("T") || value.equalsIgnoreCase("Y"));
                 }
-                else if (field.getType() == DBaseField.TYPE_CHAR) {
+                else if (fieldType == DBaseField.TYPE_CHAR) {
                     this.set(field.getName(), value);
                 }
-                else if (field.getType() == DBaseField.TYPE_DATE) {
+                else if (fieldType == DBaseField.TYPE_DATE) {
                     this.set(field.getName(), dateformat.parse(value));
                 }
-                else if (field.getType() == DBaseField.TYPE_NUMBER) {
+                else if (fieldType == DBaseField.TYPE_NUMBER) {
                     // Parse the field value as a decimal number. Double.parseDouble ignores any leading or trailing
                     // whitespace.
                     if (field.getDecimals() > 0)

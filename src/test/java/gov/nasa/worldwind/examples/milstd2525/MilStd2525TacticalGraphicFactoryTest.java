@@ -52,7 +52,7 @@ public class MilStd2525TacticalGraphicFactoryTest
                         sidc.setCharAt(3, status);
                         sidc.setCharAt(11, echelon);
 
-                        assertTrue("Missing graphic: " + sidc.toString(),
+                        assertTrue("Missing graphic: " + sidc,
                             factory.isSupported(sidc.toString()));
                     }
                 }
@@ -76,7 +76,7 @@ public class MilStd2525TacticalGraphicFactoryTest
                     sidc.setCharAt(1, stdId);
                     sidc.setCharAt(3, status);
 
-                    assertTrue("Missing graphic: " + sidc.toString(), factory.isSupported(sidc.toString()));
+                    assertTrue("Missing graphic: " + sidc, factory.isSupported(sidc.toString()));
                 }
             }
         }

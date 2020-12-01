@@ -8,8 +8,6 @@ package gov.nasa.worldwind.layers.ogc.wcs;
 
 import gov.nasa.worldwind.layers.ogc.gml.*;
 import gov.nasa.worldwind.layers.ogc.wcs.wcs100.*;
-import gov.nasa.worldwind.layers.ogc.gml.*;
-import gov.nasa.worldwind.layers.ogc.wcs.wcs100.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -58,7 +56,7 @@ public class WCSDescribeCoverageParsingTest
             lonLatEnvelope.getPositions().get(1).getPosString());
 
         List<String> keywords = coverage.getKeywords();
-        assertTrue("Keywords is null", keywords != null);
+        assertNotNull("Keywords is null", keywords);
         assertEquals("Incorrect keyword count", 3, keywords.size());
         assertTrue("Missing keyword", keywords.contains("WCS"));
         assertTrue("Missing keyword", keywords.contains("ImageMosaic"));

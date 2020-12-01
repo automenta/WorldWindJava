@@ -436,72 +436,70 @@ class MGRSCoordConverter {
         if (MGRS == null)
             error_code |= MGRS_STRING_ERROR;
         else {
-            if (error_code == MGRS_NO_ERROR) {
-                if ((MGRS.latitudeBand == LETTER_X) && ((MGRS.zone == 32) || (MGRS.zone == 34) || (MGRS.zone == 36)))
+            if ((MGRS.latitudeBand == LETTER_X) && ((MGRS.zone == 32) || (MGRS.zone == 34) || (MGRS.zone == 36)))
+                error_code |= MGRS_STRING_ERROR;
+            else {
+                if (MGRS.latitudeBand < LETTER_N)
+                    hemisphere = AVKey.SOUTH;
+                else
+                    hemisphere = AVKey.NORTH;
+
+                getGridValues(MGRS.zone);
+
+                // Check that the second letter of the MGRS string is within
+                // the range of valid second letter values
+                // Also check that the third letter is valid
+                if ((MGRS.squareLetter1 < ltr2_low_value) || (MGRS.squareLetter1 > ltr2_high_value) ||
+                    (MGRS.squareLetter2 > LETTER_V))
                     error_code |= MGRS_STRING_ERROR;
-                else {
-                    if (MGRS.latitudeBand < LETTER_N)
-                        hemisphere = AVKey.SOUTH;
-                    else
-                        hemisphere = AVKey.NORTH;
 
-                    getGridValues(MGRS.zone);
+                if (error_code == MGRS_NO_ERROR) {
+                    grid_northing =
+                        (MGRS.squareLetter2) * ONEHT;  //   smithjl  commented out + false_northing;
+                    grid_easting = ((MGRS.squareLetter1) - ltr2_low_value + 1) * ONEHT;
+                    if ((ltr2_low_value == LETTER_J) && (MGRS.squareLetter1 > LETTER_O))
+                        grid_easting = grid_easting - ONEHT;
 
-                    // Check that the second letter of the MGRS string is within
-                    // the range of valid second letter values
-                    // Also check that the third letter is valid
-                    if ((MGRS.squareLetter1 < ltr2_low_value) || (MGRS.squareLetter1 > ltr2_high_value) ||
-                        (MGRS.squareLetter2 > LETTER_V))
-                        error_code |= MGRS_STRING_ERROR;
+                    if (MGRS.squareLetter2 > LETTER_O)
+                        grid_northing = grid_northing - ONEHT;
 
+                    if (MGRS.squareLetter2 > LETTER_I)
+                        grid_northing = grid_northing - ONEHT;
+
+                    if (grid_northing >= TWOMIL)
+                        grid_northing = grid_northing - TWOMIL;
+
+                    error_code = getLatitudeBandMinNorthing(MGRS.latitudeBand);
                     if (error_code == MGRS_NO_ERROR) {
-                        grid_northing =
-                            (MGRS.squareLetter2) * ONEHT;  //   smithjl  commented out + false_northing;
-                        grid_easting = ((MGRS.squareLetter1) - ltr2_low_value + 1) * ONEHT;
-                        if ((ltr2_low_value == LETTER_J) && (MGRS.squareLetter1 > LETTER_O))
-                            grid_easting = grid_easting - ONEHT;
+                        /*smithjl Deleted code here and added this*/
+                        grid_northing = grid_northing - false_northing;
 
-                        if (MGRS.squareLetter2 > LETTER_O)
-                            grid_northing = grid_northing - ONEHT;
+                        if (grid_northing < 0.0)
+                            grid_northing += TWOMIL;
 
-                        if (MGRS.squareLetter2 > LETTER_I)
-                            grid_northing = grid_northing - ONEHT;
+                        grid_northing += northing_offset;
 
-                        if (grid_northing >= TWOMIL)
-                            grid_northing = grid_northing - TWOMIL;
+                        if (grid_northing < min_northing)
+                            grid_northing += TWOMIL;
 
-                        error_code = getLatitudeBandMinNorthing(MGRS.latitudeBand);
-                        if (error_code == MGRS_NO_ERROR) {
-                            /*smithjl Deleted code here and added this*/
-                            grid_northing = grid_northing - false_northing;
+                        /* smithjl End of added code */
 
-                            if (grid_northing < 0.0)
-                                grid_northing += TWOMIL;
+                        easting = grid_easting + MGRS.easting;
+                        northing = grid_northing + MGRS.northing;
 
-                            grid_northing += northing_offset;
-
-                            if (grid_northing < min_northing)
-                                grid_northing += TWOMIL;
-
-                            /* smithjl End of added code */
-
-                            easting = grid_easting + MGRS.easting;
-                            northing = grid_northing + MGRS.northing;
-
-                            try {
-                                UTM = UTMCoord.fromUTM(MGRS.zone, hemisphere, easting, northing, globe);
-                                latitude = UTM.getLatitude().radians;
-                                divisor = Math.pow(10.0, MGRS.precision);
-                                error_code = getLatitudeRange(MGRS.latitudeBand);
-                                if (error_code == MGRS_NO_ERROR) {
-                                    if (!(((south - DEG_TO_RAD / divisor) <= latitude)
-                                        && (latitude <= (north + DEG_TO_RAD / divisor))))
-                                        error_code |= MGRS_LAT_WARNING;
-                                }
+                        try {
+                            UTM = UTMCoord.fromUTM(MGRS.zone, hemisphere, easting, northing, globe);
+                            latitude = UTM.getLatitude().radians;
+                            divisor = Math.pow(10.0, MGRS.precision);
+                            error_code = getLatitudeRange(MGRS.latitudeBand);
+                            if (error_code == MGRS_NO_ERROR) {
+                                if (!(((south - DEG_TO_RAD / divisor) <= latitude)
+                                    && (latitude <= (north + DEG_TO_RAD / divisor))))
+                                    error_code |= MGRS_LAT_WARNING;
                             }
-                            catch (Exception e) {
-                                error_code = MGRS_UTM_ERROR;
-                            }
+                        }
+                        catch (Exception e) {
+                            error_code = MGRS_UTM_ERROR;
                         }
                     }
                 }

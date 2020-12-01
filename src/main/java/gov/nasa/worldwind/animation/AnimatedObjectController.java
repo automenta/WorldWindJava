@@ -3,7 +3,6 @@ package gov.nasa.worldwind.animation;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
@@ -74,7 +73,7 @@ public class AnimatedObjectController implements RenderingListener, SelectListen
             this.selectedObject = (Animatable) o;
             Object prevNote = this.selectedObject.getField(AVKey.ANIMATION_ANNOTATION);
             if (prevNote != null) {
-                ((GlobeAnnotation) prevNote).getAttributes().setVisible(true);
+                ((Annotation) prevNote).getAttributes().setVisible(true);
             }
             else {
                 String metadata = this.selectedObject.getField(AVKey.ANIMATION_META_DATA).toString();

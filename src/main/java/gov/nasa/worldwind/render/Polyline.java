@@ -1102,8 +1102,6 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     public String getRestorableState() {
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (rs == null)
-            return null;
 
         if (this.color != null) {
             String encodedColor = RestorableSupport.encodeColor(this.color);

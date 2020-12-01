@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.formats.vpf;
 
-import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.exception.WWRuntimeException;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -58,14 +58,13 @@ public class GeoSymStyleProvider {
         Scanner scanner = new Scanner(inputStream);
         while (scanner.hasNextLine()) {
             String s = scanner.nextLine().trim();
-            if (s.isEmpty() || !s.isEmpty() && s.charAt(0) == '#')
+            if (s.isEmpty() || s.charAt(0) == '#')
                 continue;
 
             String[] tokens = s.split(",");
             String code = tokens[0];
             VPFSymbolAttributes attr = getAttributes(tokens);
-            if (attr != null)
-                this.attributes.put(code, attr);
+            this.attributes.put(code, attr);
         }
 
         inputStream.close();

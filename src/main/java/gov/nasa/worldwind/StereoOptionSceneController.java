@@ -8,9 +8,9 @@ package gov.nasa.worldwind;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 /**
  * TODO: This file needs to be updated to implement "correct" stereo, as described at:

@@ -5,7 +5,6 @@
  */
 package gov.nasa.worldwind.layers;
 
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.GlobeStateKey;
 import gov.nasa.worldwind.render.*;

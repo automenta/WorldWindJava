@@ -9,11 +9,11 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -9,12 +9,12 @@ package gov.nasa.worldwind.examples.shapebuilder;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
 import gov.nasa.worldwind.render.Box;
 import gov.nasa.worldwind.render.Cylinder;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;
@@ -1494,7 +1494,7 @@ public class RigidShapeBuilder extends ApplicationTemplate {
                 if (getSelectedEntry() != null)
                     shape = getSelectedEntry().getShape();
 
-                if (filename != null && shape != null) {
+                if (shape != null) {
                     setImageSource(filename);
                     view.textureBox.setText(filename);
                 }

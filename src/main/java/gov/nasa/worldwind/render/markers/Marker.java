@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.render.markers;
 
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.DrawContext;
 
 /**
  * A visual marker with position and orientation. The marker can be oriented in 3D space with a heading, pitch, and

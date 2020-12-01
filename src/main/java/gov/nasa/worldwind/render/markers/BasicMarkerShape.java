@@ -11,9 +11,9 @@ import com.jogamp.opengl.glu.*;
 import com.jogamp.opengl.glu.gl2.GLUgl2;
 import gov.nasa.worldwind.Disposable;
 import gov.nasa.worldwind.cache.GpuResourceCache;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;

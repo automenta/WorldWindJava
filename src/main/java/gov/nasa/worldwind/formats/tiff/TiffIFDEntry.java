@@ -164,7 +164,7 @@ public class TiffIFDEntry implements Comparable<TiffIFDEntry> {
                     array[i++] = 0xFFFFL & sb.get();
                 }
             }
-            else if (this.type == Tiff.Type.LONG) {
+            else {
                 IntBuffer sb = this.data.rewind().asIntBuffer();
                 this.data.rewind();
                 int i = 0;

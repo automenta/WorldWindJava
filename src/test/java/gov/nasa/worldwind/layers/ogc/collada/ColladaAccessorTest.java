@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 public class ColladaAccessorTest
 {
     @Test
-    public void testFloatAccessor() throws IllegalAccessException, IOException, XMLStreamException
+    public void testFloatAccessor() throws IOException, XMLStreamException
     {
         final String doc =
             "<COLLADA>"
@@ -44,7 +44,7 @@ public class ColladaAccessorTest
     }
 
     @Test
-    public void testOffset() throws IllegalAccessException, IOException, XMLStreamException
+    public void testOffset() throws IOException, XMLStreamException
     {
         final String doc =
             "<COLLADA>"
@@ -68,7 +68,7 @@ public class ColladaAccessorTest
     }
 
     @Test
-    public void testUnnamedParam() throws IllegalAccessException, IOException, XMLStreamException
+    public void testUnnamedParam() throws IOException, XMLStreamException
     {
         final String doc =
             "<COLLADA>"
@@ -92,7 +92,7 @@ public class ColladaAccessorTest
     }
 
     @Test
-    public void testStride() throws IllegalAccessException, IOException, XMLStreamException
+    public void testStride() throws IOException, XMLStreamException
     {
         final String doc =
             "<COLLADA>"
@@ -114,7 +114,7 @@ public class ColladaAccessorTest
     }
 
     @Test
-    public void testTooFewElements() throws IllegalAccessException, IOException, XMLStreamException
+    public void testTooFewElements() throws IOException, XMLStreamException
     {
         final String doc =
             "<COLLADA>"

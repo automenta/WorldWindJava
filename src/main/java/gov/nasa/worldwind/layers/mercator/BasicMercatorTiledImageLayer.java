@@ -10,8 +10,8 @@ import com.jogamp.opengl.util.texture.TextureData;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 
@@ -327,8 +327,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
                     Retriever.RETRIEVER_STATE_SUCCESSFUL))
                     return null;
 
-                Retriever r = retriever;
-                ByteBuffer buffer = r.getBuffer();
+                ByteBuffer buffer = retriever.getBuffer();
 
                 if (retriever instanceof HTTPRetriever) {
                     HTTPRetriever htr = (HTTPRetriever) retriever;
@@ -354,7 +353,7 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
 
                 // TODO: Better, more generic and flexible handling of file-format type
                 if (buffer != null) {
-                    String contentType = r.getContentType();
+                    String contentType = retriever.getContentType();
                     if (contentType == null) {
                         // TODO: logger message
                         return null;

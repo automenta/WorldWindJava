@@ -127,8 +127,7 @@ public class NITFSUtil {
             }
         }
 
-        if (buffer != null)
-            buffer.flip();
+        buffer.flip();
 
         return buffer;
     }

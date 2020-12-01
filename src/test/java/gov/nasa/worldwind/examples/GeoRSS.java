@@ -6,9 +6,9 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.formats.georss.GeoRSSParser;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.Renderable;
 
 import java.util.List;
 

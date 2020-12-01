@@ -10,8 +10,8 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.util.packrect.*;
 import com.jogamp.opengl.util.texture.*;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.exception.WWRuntimeException;
+import gov.nasa.worldwind.render.DrawContext;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -206,7 +206,7 @@ public class TextureAtlas {
      * @return this texture atlas' current width.
      */
     public int getWidth() {
-        return ((BufferedImage) this.rectPacker.getBackingStore()).getWidth();
+        return ((RenderedImage) this.rectPacker.getBackingStore()).getWidth();
     }
 
     /**
@@ -215,7 +215,7 @@ public class TextureAtlas {
      * @return this texture atlas' current height.
      */
     public int getHeight() {
-        return ((BufferedImage) this.rectPacker.getBackingStore()).getHeight();
+        return ((RenderedImage) this.rectPacker.getBackingStore()).getHeight();
     }
 
     /**
@@ -537,7 +537,7 @@ public class TextureAtlas {
 
         // We've removed all entries from this texture atlas, so mark the entire backing image as dirty so the OpenGL
         // texture is synchronized with the backing image during the next call to bind.
-        RenderedImage backingImage = (BufferedImage) this.rectPacker.getBackingStore();
+        RenderedImage backingImage = (RenderedImage) this.rectPacker.getBackingStore();
         this.markDirty(0, 0, backingImage.getWidth(), backingImage.getHeight());
     }
 
@@ -1173,7 +1173,7 @@ public class TextureAtlas {
          * casting the specified backing stores to BufferedImages.
          */
         public void endMovement(Object oldBackingStore, Object newBackingStore) {
-            endMoveEntries((BufferedImage) oldBackingStore, (BufferedImage) newBackingStore);
+            endMoveEntries((BufferedImage) oldBackingStore, (RenderedImage) newBackingStore);
         }
     }
 }

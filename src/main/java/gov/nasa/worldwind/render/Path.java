@@ -2030,9 +2030,7 @@ public class Path extends AbstractShape {
 
         List<Position> newPositions = Position.computeShiftedPositions(oldPosition, position, this.positions);
 
-        if (newPositions != null) {
-            this.setPositions(newPositions);
-        }
+        this.setPositions(newPositions);
     }
 
     @Override
@@ -2058,9 +2056,7 @@ public class Path extends AbstractShape {
 
         List<Position> newPositions = Position.computeShiftedPositions(globe, oldPosition, position, this.positions);
 
-        if (newPositions != null) {
-            this.setPositions(newPositions);
-        }
+        this.setPositions(newPositions);
     }
 
     protected boolean isSmall(DrawContext dc, Vec4 ptA, Vec4 ptB, int numPixels) {
@@ -2585,7 +2581,7 @@ public class Path extends AbstractShape {
                             int ordinal = path.getOrdinal(colorCode - positions.minColorCode);
 
                             // Add the ordinal to the list of picked ordinals on the path's picked object.
-                            Collection ordinalList = (List) po.get(AVKey.ORDINAL_LIST);
+                            Collection ordinalList = (Collection) po.get(AVKey.ORDINAL_LIST);
                             if (ordinalList == null) {
                                 po.set(AVKey.ORDINAL_LIST, ordinalList = new ArrayList<Integer>());
                             }

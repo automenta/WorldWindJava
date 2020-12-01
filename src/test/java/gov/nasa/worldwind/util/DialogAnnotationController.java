@@ -118,7 +118,7 @@ public abstract class DialogAnnotationController implements ActionListener, Sele
 
     protected void forwardToButtonAnnotations(Annotation annotation, SelectEvent e) {
         if (annotation instanceof ButtonAnnotation) {
-            ((ButtonAnnotation) annotation).selected(e);
+            ((SelectListener) annotation).selected(e);
         }
 
         for (Annotation child : annotation.getChildren()) {

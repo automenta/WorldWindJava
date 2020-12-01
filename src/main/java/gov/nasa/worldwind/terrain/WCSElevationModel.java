@@ -7,9 +7,9 @@
 package gov.nasa.worldwind.terrain;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.layers.ogc.gml.GMLRectifiedGrid;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.layers.ogc.gml.GMLRectifiedGrid;
 import gov.nasa.worldwind.layers.ogc.wcs.wcs100.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;

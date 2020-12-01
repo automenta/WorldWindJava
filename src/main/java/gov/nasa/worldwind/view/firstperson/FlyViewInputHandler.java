@@ -10,7 +10,7 @@ import gov.nasa.worldwind.animation.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.ui.awt.*;
+import gov.nasa.worldwind.video.awt.*;
 import gov.nasa.worldwind.view.*;
 import gov.nasa.worldwind.view.orbit.OrbitViewPropertyAccessor;
 
@@ -362,10 +362,9 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         }
 
         if (view instanceof BasicFlyView) {
-            View flyView = view;
-            this.setPitch(flyView, this.uiAnimControl, flyView.getPitch().add(pitchChange),
+            this.setPitch(view, this.uiAnimControl, view.getPitch().add(pitchChange),
                 actionAttribs);
-            this.setHeading(flyView, this.uiAnimControl, flyView.getHeading().add(headingChange),
+            this.setHeading(view, this.uiAnimControl, view.getHeading().add(headingChange),
                 actionAttribs);
             view.firePropertyChange(AVKey.VIEW, null, view);
         }
@@ -402,8 +401,7 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         }
 
         if (view instanceof BasicFlyView) {
-            View flyView = view;
-            this.setRoll(flyView, this.uiAnimControl, flyView.getRoll().add(rollChange), actionAttribs);
+            this.setRoll(view, this.uiAnimControl, view.getRoll().add(rollChange), actionAttribs);
 
             view.firePropertyChange(AVKey.VIEW, null, view);
         }

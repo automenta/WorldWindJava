@@ -6,8 +6,8 @@
 package gov.nasa.worldwind.render.airspaces.editor;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.render.airspaces.Airspace;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.airspaces.Airspace;
 
 import java.util.*;
 

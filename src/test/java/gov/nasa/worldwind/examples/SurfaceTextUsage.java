@@ -8,9 +8,9 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.*;
 
 /**
  * Example of using the {@link SurfaceText} class. SurfaceText draws text on the surface of the globe.

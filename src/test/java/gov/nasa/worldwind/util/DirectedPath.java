@@ -9,9 +9,9 @@ package gov.nasa.worldwind.util;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.Terrain;
 
 import java.nio.*;
@@ -190,7 +190,7 @@ public class DirectedPath extends Path {
             return intersects;
         }
 
-        Extent box = (Box) this.currentData.get(ARROWS_EXTENT);
+        Extent box = (Extent) this.currentData.get(ARROWS_EXTENT);
         return box == null || dc.getPickFrustums().intersectsAny(box);
     }
 

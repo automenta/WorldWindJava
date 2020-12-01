@@ -41,21 +41,21 @@ class RPFRetriever extends WWObjectImpl implements Retriever {
     private int responseCode;
 
     public RPFRetriever(RPFGenerator.RPFServiceInstance service, URL url, RetrievalPostProcessor postProcessor) {
-        if (service == null) {
-            String message = "Service is null";
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (url == null) {
-            String message = Logging.getMessage("nullValue.URLIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (postProcessor == null) {
-            String message = Logging.getMessage("nullValue.PostProcessorIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (service == null) {
+//            String message = "Service is null";
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (url == null) {
+//            String message = Logging.getMessage("nullValue.URLIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
+//        if (postProcessor == null) {
+//            String message = Logging.getMessage("nullValue.PostProcessorIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         this.service = service;
         this.url = url;

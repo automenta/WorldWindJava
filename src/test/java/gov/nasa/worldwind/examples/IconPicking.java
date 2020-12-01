@@ -8,11 +8,11 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.render.UserFacingIcon;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.EarthFlat;
 import gov.nasa.worldwind.layers.IconLayer;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.UserFacingIcon;
 
 import java.awt.*;
 

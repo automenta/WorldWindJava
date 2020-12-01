@@ -321,8 +321,8 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
     protected LayerTreeGroupNode getTopGroup() {
         Object root = this.layerTree.getModel().getRoot();
         return root instanceof LayerTreeGroupNode
-            && ((LayerTreeGroupNode) root).getChildCount() > 0 ?
-            (LayerTreeGroupNode) ((LayerTreeGroupNode) root).getFirstChild() : null;
+            && ((TreeNode) root).getChildCount() > 0 ?
+            (LayerTreeGroupNode) ((DefaultMutableTreeNode) root).getFirstChild() : null;
     }
 
     protected LayerNode getLayerManagerGroupNode() {
@@ -369,8 +369,8 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
             LayerTreeGroupNode subGroupNode = new LayerTreeGroupNode(new WMSLayerInfo(caps, layerCaps, null));
 
             if (groupNode == null)
-                model.insertNodeInto(subGroupNode, (LayerTreeGroupNode) model.getRoot(),
-                    ((LayerTreeGroupNode) model.getRoot()).getChildCount());
+                model.insertNodeInto(subGroupNode, (MutableTreeNode) model.getRoot(),
+                    ((TreeNode) model.getRoot()).getChildCount());
             else
                 model.insertNodeInto(subGroupNode, groupNode, groupNode.getChildCount());
 
@@ -390,8 +390,8 @@ public class WMSPanel extends AbstractFeaturePanel implements TreeModelListener,
                 layerNode.setSelected(false);
                 layerNode.setAllowsChildren(false); // indicates that the node is a leaf
                 if (groupNode == null)
-                    model.insertNodeInto(layerNode, (LayerTreeNode) model.getRoot(),
-                        ((DefaultMutableTreeNode) model.getRoot()).getChildCount());
+                    model.insertNodeInto(layerNode, (MutableTreeNode) model.getRoot(),
+                        ((TreeNode) model.getRoot()).getChildCount());
                 else
                     model.insertNodeInto(layerNode, groupNode, groupNode.getChildCount());
 

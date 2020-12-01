@@ -12,11 +12,11 @@ import com.jogamp.opengl.glu.GLU;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.ShapeDataCache;
-import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
@@ -440,7 +440,7 @@ public class ExtrudedPolygon extends AbstractShape {
         }
 
         // Close the list if not already closed.
-        if (!list.isEmpty() && !list.get(0).equals(list.get(list.size() - 1)))
+        if (!list.get(0).equals(list.get(list.size() - 1)))
             list.add(list.get(0));
 
         list.trimToSize();
@@ -1000,7 +1000,7 @@ public class ExtrudedPolygon extends AbstractShape {
 
         // The bounding box is computed relative to the polygon's reference point, so it needs to be translated to
         // model coordinates in order to indicate its model-coordinate extent.
-        return boundingBox != null ? boundingBox.translate(refPoint) : null;
+        return boundingBox.translate(refPoint);
     }
 
     protected void determineActiveAttributes() {
@@ -2084,8 +2084,6 @@ public class ExtrudedPolygon extends AbstractShape {
                 continue;
 
             List<LatLon> newList = LatLon.computeShiftedLocations(oldPosition, position, boundary);
-            if (newList == null)
-                continue;
 
             // Must convert the new locations to positions if the old ones were positions.
             for (int i = 0; i < boundary.size(); i++) {

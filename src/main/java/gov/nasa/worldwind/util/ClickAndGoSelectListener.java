@@ -8,7 +8,6 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.util.Logging;
 
 /**
  * Handles view 'fly to' on left clicked picked objects with a position.

@@ -7,9 +7,9 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.MarkerLayer;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.BasicQuadTree;
 

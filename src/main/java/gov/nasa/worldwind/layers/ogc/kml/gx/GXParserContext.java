@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.layers.ogc.kml.gx;
 
 import gov.nasa.worldwind.layers.ogc.kml.*;
-import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.util.xml.*;
 
 import javax.xml.namespace.QName;

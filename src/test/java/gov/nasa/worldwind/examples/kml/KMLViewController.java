@@ -7,10 +7,10 @@
 package gov.nasa.worldwind.examples.kml;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.layers.ogc.kml.*;
-import gov.nasa.worldwind.layers.ogc.kml.impl.KMLUtil;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.layers.ogc.kml.*;
+import gov.nasa.worldwind.layers.ogc.kml.impl.KMLUtil;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.view.firstperson.BasicFlyView;
 import gov.nasa.worldwind.view.orbit.OrbitView;
@@ -221,11 +221,6 @@ public abstract class KMLViewController {
             double maxElevation = Math.max(minAndMaxElevations[1], maxAltitude);
 
             Extent extent = Sector.computeBoundingCylinder(globe, ve, sector, minElevation, maxElevation);
-            if (extent == null) {
-                String message = Logging.getMessage("nullValue.SectorIsNull");
-                Logging.logger().warning(message);
-                return;
-            }
             Angle fov = view.getFieldOfView();
 
             Position centerPos = new Position(sector.getCentroid(), maxAltitude);

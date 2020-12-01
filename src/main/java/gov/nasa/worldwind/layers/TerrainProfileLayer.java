@@ -9,9 +9,9 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.PickSupport;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.view.orbit.OrbitView;
 
@@ -1502,8 +1502,7 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
                 double distance = Math.abs((i - ((this.samples - 1) / 2.0d)) * step);
                 latLon = LatLon.greatCircleEndPosition(centerLatLon, azimuth, distance);
             }
-            else if (this.follow.equals(FOLLOW_NONE) && this.startLatLon != null
-                && this.endLatLon != null) {
+            else if (this.startLatLon != null && this.endLatLon != null) {
                 // Compute segments between start and end positions latlon
                 latLon = LatLon.interpolate((double) i / (this.samples - 1), this.startLatLon, this.endLatLon);
             }

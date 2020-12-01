@@ -9,10 +9,10 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.BasicDragger;
 
 import javax.swing.*;
@@ -149,7 +149,7 @@ public class Shapes {
             offTerrainOnlyItems.forEach((c) -> c.setEnabled(!currentFollowTerrain));
 
             if (this.currentShape instanceof SurfaceShape) {
-                Attributable shape = (SurfaceShape) currentShape;
+                Attributable shape = (Attributable) currentShape;
                 ShapeAttributes attr = shape.getAttributes();
 
                 if (attr == null) {
@@ -409,7 +409,7 @@ public class Shapes {
             JCheckBox ckb = new JCheckBox();
             ckb.setSelected(currentFollowTerrain);
             ckb.addActionListener((ActionEvent actionEvent) -> {
-                currentFollowTerrain = ((JCheckBox) actionEvent.getSource()).isSelected();
+                currentFollowTerrain = ((AbstractButton) actionEvent.getSource()).isSelected();
                 update();
             });
             valuePanel.add(ckb);

@@ -87,7 +87,6 @@ public class FileSetPreviewImageGenerator extends AVListImpl implements Runnable
             }
             catch (Exception e) {
                 Logging.logger().log(Level.SEVERE, "Exception composing preview image", e);
-                continue;
             }
             finally {
                 raster.dispose();

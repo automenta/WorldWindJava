@@ -10,7 +10,6 @@ import com.jogamp.opengl.util.texture.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
@@ -494,7 +493,7 @@ public class TextureTile extends Tile implements SurfaceTile {
         if (o == null || getClass() != o.getClass())
             return false;
 
-        return Objects.equals(this.tileKey, ((TextureTile) o).tileKey);
+        return Objects.equals(this.tileKey, ((Tile) o).tileKey);
     }
 
     @Override

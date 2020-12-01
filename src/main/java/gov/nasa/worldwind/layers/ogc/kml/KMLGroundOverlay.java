@@ -7,11 +7,10 @@
 package gov.nasa.worldwind.layers.ogc.kml;
 
 import gov.nasa.worldwind.event.Message;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.ogc.kml.gx.GXLatLongQuad;
 import gov.nasa.worldwind.layers.ogc.kml.impl.*;
-import gov.nasa.worldwind.layers.ogc.kml.impl.*;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;

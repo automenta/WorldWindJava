@@ -6,11 +6,11 @@
 package gov.nasa.worldwind.layers.Earth;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.GraticuleRenderingParams;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -666,7 +666,8 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
     }
 
     protected String getTypeFor(int resolution) {
-        String graticuleType = switch (resolution) {
+
+        return switch (resolution) {
 // 100,000 meters
             case 100000 -> GRATICULE_100000M;
 // 10,000 meters
@@ -681,8 +682,6 @@ public class MGRSGraticuleLayer extends UTMBaseGraticuleLayer {
             case 1 -> GRATICULE_1M;
             default -> null;
         };
-
-        return graticuleType;
     }
 
     // --- Renderable layer --------------------------------------------------------------

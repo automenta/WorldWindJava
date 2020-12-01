@@ -12,11 +12,11 @@ import com.jogamp.opengl.glu.GLU;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.GpuResourceCache;
-import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
@@ -258,7 +258,7 @@ public class Polygon extends AbstractShape {
         }
 
         // Close the list if not already closed.
-        if (!list.isEmpty() && !list.get(0).equals(list.get(list.size() - 1)))
+        if (!list.get(0).equals(list.get(list.size() - 1)))
             list.add(list.get(0));
 
         list.trimToSize();
@@ -477,7 +477,7 @@ public class Polygon extends AbstractShape {
         // model coordinates in order to indicate its model-coordinate extent.
         Box boundingBox = Box.computeBoundingBox(Arrays.asList(boundary.vertices));
 
-        return boundingBox != null ? boundingBox.translate(refPoint) : null;
+        return boundingBox.translate(refPoint);
     }
 
     public Sector getSector() {
@@ -1216,8 +1216,7 @@ public class Polygon extends AbstractShape {
                 continue;
 
             List<Position> newList = Position.computeShiftedPositions(oldPosition, position, boundary);
-            if (newList != null)
-                newBoundaries.add(newList);
+            newBoundaries.add(newList);
         }
 
         this.boundaries = newBoundaries;
@@ -1262,8 +1261,7 @@ public class Polygon extends AbstractShape {
                 continue;
 
             List<Position> newList = Position.computeShiftedPositions(globe, oldPosition, position, boundary);
-            if (newList != null)
-                newBoundaries.add(newList);
+            newBoundaries.add(newList);
         }
 
         this.boundaries = newBoundaries;

@@ -132,10 +132,8 @@ public class FileSetTableModel extends AbstractTableModel implements PropertyCha
     }
 
     protected void clearFileSets() {
-        if (this.fileSets != null) {
-            for (FileSet fileSet : this.fileSets) {
-                fileSet.clear();
-            }
+        for (FileSet fileSet : this.fileSets) {
+            fileSet.clear();
         }
 
         this.fileSets.clear();

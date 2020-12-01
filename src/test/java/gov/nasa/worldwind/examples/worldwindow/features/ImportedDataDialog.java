@@ -213,10 +213,13 @@ public class ImportedDataDialog extends AbstractFeatureDialog implements Network
         // DataStoreProducer should contain a DataConfiguration in the production results. We test the production
         // results anyway.
         Iterable results = producer.getProductionResults();
-        if (results != null && results.iterator() != null && results.iterator().hasNext()) {
-            Object o = results.iterator().next();
-            if (o instanceof Document) {
-                return (Document) o;
+        if (results != null) {
+            results.iterator();
+            if (results.iterator().hasNext()) {
+                Object o = results.iterator().next();
+                if (o instanceof Document) {
+                    return (Document) o;
+                }
             }
         }
 

@@ -9,14 +9,14 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.Polygon;
-import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.Polygon;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.airspaces.Box;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.render.markers.*;
 
 import java.awt.*;
@@ -782,7 +782,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
     protected void removeShadowShape() {
         this.getShadowLayer().clear();
         if (this.getShape() instanceof AbstractAirspace)
-            ((AbstractAirspace) this.getShape()).setAlwaysOnTop(false);
+            ((Airspace) this.getShape()).setAlwaysOnTop(false);
 
         // Restore the original attributes.
         if (this.getOriginalAttributes() != null) {
@@ -1150,9 +1150,9 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         else if (shape instanceof Path) {
             for (Position position : ((Path) shape).getPositions()) {
                 if (new LatLon(position).equals(location)) {
-                    if (((Path) shape).getAltitudeMode() == WorldWind.ABSOLUTE)
+                    if (((AbstractShape) shape).getAltitudeMode() == WorldWind.ABSOLUTE)
                         altitude = position.getAltitude();
-                    else if (((Path) shape).getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
+                    else if (((AbstractShape) shape).getAltitudeMode() == WorldWind.RELATIVE_TO_GROUND)
                         altitude = position.getAltitude() + this.getWwd().model().getGlobe().getElevation(
                             location.getLatitude(), location.getLongitude());
                 }
@@ -1161,9 +1161,9 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         else if (shape instanceof gov.nasa.worldwind.render.Polygon) {
             for (Position position : ((gov.nasa.worldwind.render.Polygon) shape).outerBoundary()) {
                 if (new LatLon(position).equals(location)) {
-                    if (((gov.nasa.worldwind.render.Polygon) shape).getAltitudeMode() == WorldWind.ABSOLUTE)
+                    if (((AbstractShape) shape).getAltitudeMode() == WorldWind.ABSOLUTE)
                         altitude = position.getAltitude();
-                    else if (((gov.nasa.worldwind.render.Polygon) shape).getAltitudeMode()
+                    else if (((AbstractShape) shape).getAltitudeMode()
                         == WorldWind.RELATIVE_TO_GROUND)
                         altitude = position.getAltitude() + this.getWwd().model().getGlobe().getElevation(
                             location.getLatitude(), location.getLongitude());
@@ -1493,7 +1493,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         {
             if ((this.getCurrentEvent().getMouseEvent().getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0
                 && this.isExtensionEnabled()) {
-                int minSize = shape instanceof Polygon ? 3 : 2;
+                int minSize = 2;
                 if (locations.size() > minSize) {
                     // Delete the control point.
                     locations.remove(controlPoint.getId());
@@ -1522,7 +1522,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         // Update the shape's locations.
         if (shape instanceof gov.nasa.worldwind.render.airspaces.Polygon)
             ((gov.nasa.worldwind.render.airspaces.Polygon) shape).setLocations(locations);
-        else if (shape instanceof Curtain)
+        else
             ((Curtain) shape).setLocations(locations);
     }
 

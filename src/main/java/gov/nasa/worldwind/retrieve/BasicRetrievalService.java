@@ -98,7 +98,8 @@ public final class BasicRetrievalService extends WWObjectImpl
         }
 
         RetrievalTask x = new RetrievalTask(retrieval, priority);
-        RetrievalTask y = activeTasks.compute(x.name, (n,p) -> {
+
+        return activeTasks.compute(x.name, (n,p) -> {
             if (p!=null) {
                 if (p!=x) {
                     p.priority = Math.max(p.priority, x.priority);
@@ -112,8 +113,6 @@ public final class BasicRetrievalService extends WWObjectImpl
                 return x;
             }
         });
-
-        return y;
     }
 
     public int getRetrieverPoolSize() {
@@ -183,7 +182,7 @@ public final class BasicRetrievalService extends WWObjectImpl
 
         for (Runnable runnable : this.executor.getQueue()) {
             RetrievalFuture task =
-                (RetrievalTask) runnable;
+                (RetrievalFuture) runnable;
 
             Retriever retriever = task.getRetriever();
             try {
@@ -303,7 +302,7 @@ public final class BasicRetrievalService extends WWObjectImpl
                     public void rejectedExecution(Runnable runnable, ThreadPoolExecutor threadPoolExecutor) {
                         // Interposes logging for rejected execution
                         Logging.logger().finer(Logging.getMessage("BasicRetrievalService.ResourceRejected",
-                            ((RetrievalTask) runnable).getRetriever().getName()));
+                            ((RetrievalFuture) runnable).getRetriever().getName()));
 
                         super.rejectedExecution(runnable, threadPoolExecutor);
                     }

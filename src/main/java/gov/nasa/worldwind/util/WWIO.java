@@ -1082,7 +1082,7 @@ public class WWIO {
 
         String fs = File.separator;
         String[] pathParts = path.split(
-            "[/" + (fs.equals("/") ? "" : (fs.equals("\\") ? "\\\\" : fs)) + "missingValuemisngValue]");
+            "[/" + (fs.equals("/") ? "" : (fs.equals("\\") ? "\\\\" : fs)) + "misngValue]");
         if (pathParts.length <= 1)
             return true;
 
@@ -1169,7 +1169,7 @@ public class WWIO {
             String proxyType = Configuration.getStringValue(AVKey.URL_PROXY_TYPE);
 
             SocketAddress addr = new InetSocketAddress(proxyHost, proxyPort);
-            if (proxyType.equals("Proxy.Type.Http"))
+            if (Objects.equals(proxyType, "Proxy.Type.Http"))
                 proxy = new Proxy(Proxy.Type.HTTP, addr);
             else if (proxyType.equals("Proxy.Type.SOCKS"))
                 proxy = new Proxy(Proxy.Type.SOCKS, addr);
@@ -1231,7 +1231,7 @@ public class WWIO {
             throw new IllegalStateException(message);
         }
 
-        if (!mimeType.contains("/") || !mimeType.isEmpty() && mimeType.charAt(mimeType.length() - 1) == '/') {
+        if (!mimeType.contains("/") || mimeType.charAt(mimeType.length() - 1) == '/') {
             String message = Logging.getMessage("generic.InvalidImageFormat");
             Logging.logger().severe(message);
             throw new IllegalStateException(message);
@@ -1295,7 +1295,7 @@ public class WWIO {
             throw new IllegalArgumentException(message);
         }
 
-        if (!mimeType.contains("/") || !mimeType.isEmpty() && mimeType.charAt(mimeType.length() - 1) == '/') {
+        if (!mimeType.contains("/") || mimeType.charAt(mimeType.length() - 1) == '/') {
             String message = Logging.getMessage("generic.InvalidImageFormat");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1671,7 +1671,7 @@ public class WWIO {
 
         if (streamOrException instanceof Exception) {
             String msg = Logging.getMessage("generic.CannotOpenFile", fileName);
-            throw new WWRuntimeException(msg, (Exception) streamOrException);
+            throw new WWRuntimeException(msg, (Throwable) streamOrException);
         }
 
         return (InputStream) streamOrException;

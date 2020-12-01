@@ -174,7 +174,7 @@ public class AnnotationAttributesTest
     // Helper Methods
     //////////////////////////////////////////////////////////
 
-    @SuppressWarnings({"JavaDoc"})
+    @SuppressWarnings("JavaDoc")
     private static void assignExampleValues(AnnotationAttributes attrib)
     {
         attrib.setFrameShape(AVKey.SHAPE_ELLIPSE);

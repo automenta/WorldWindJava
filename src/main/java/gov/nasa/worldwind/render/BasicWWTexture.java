@@ -290,14 +290,6 @@ public class BasicWWTexture implements WWTexture {
             return null;
         }
 
-        if (t == null) // In case JOGL TextureIO returned null
-        {
-            Logging.logger().log(Level.SEVERE, "generic.TextureUnreadable",
-                imageSource instanceof String ? imageSource : imageSource.getClass().getName());
-            this.textureInitializationFailed = true;
-            return null;
-        }
-
         // Textures with the same path are assumed to be identical textures, so key the texture id off the
         // image source.
         dc.getTextureCache().put(imageSource, t);

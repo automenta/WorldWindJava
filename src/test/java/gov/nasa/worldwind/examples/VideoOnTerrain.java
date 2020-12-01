@@ -9,10 +9,10 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
+import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.util.BasicDragger;
 
 import javax.swing.Timer;

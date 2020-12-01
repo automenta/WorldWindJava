@@ -130,7 +130,7 @@ public class StarsConvertor {
             while ((line = starsReader.readLine()) != null) {
                 if (line.length() < 3)
                     continue;
-                if (!line.isEmpty() && line.charAt(0) == '#')
+                if (line.charAt(0) == '#')
                     continue;
                 if (isData) // Star data here
                 {

@@ -9,11 +9,11 @@ package gov.nasa.worldwind.render.airspaces;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.Cacheable;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -876,9 +876,9 @@ public class Polygon extends AbstractAirspace {
 
         public long getSizeInBytes() {
             long sizeInBytes = 0L;
-            sizeInBytes += (this.fillIndexGeometry != null) ? this.fillIndexGeometry.getSizeInBytes() : 0L;
-            sizeInBytes += (this.outlineIndexGeometry != null) ? this.outlineIndexGeometry.getSizeInBytes() : 0L;
-            sizeInBytes += (this.vertexGeometry != null) ? this.vertexGeometry.getSizeInBytes() : 0L;
+            sizeInBytes += this.fillIndexGeometry.getSizeInBytes();
+            sizeInBytes += this.outlineIndexGeometry.getSizeInBytes();
+            sizeInBytes += this.vertexGeometry.getSizeInBytes();
 
             return sizeInBytes;
         }

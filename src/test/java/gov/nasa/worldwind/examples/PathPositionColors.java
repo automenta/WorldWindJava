@@ -7,12 +7,12 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.ToolTipController;
 
 import java.awt.*;
@@ -99,7 +99,7 @@ public class PathPositionColors extends ApplicationTemplate {
                     if (po != null && po.getObject() instanceof Path) {
                         String name = (po.get(AVKey.ORDINAL) != null) ? "Position " + po.get(AVKey.ORDINAL)
                             : null;
-                        ((Path) po.getObject()).set(AVKey.DISPLAY_NAME, name);
+                        ((AVList) po.getObject()).set(AVKey.DISPLAY_NAME, name);
                     }
 
                     super.selected(event);

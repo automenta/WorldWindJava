@@ -6,11 +6,10 @@
 
 package gov.nasa.worldwind.examples;
 
-import com.jogamp.opengl.GLAnimatorControl;
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.FPSAnimator;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 
 /**
  * Shows how to use a JOGL Animator to animate in WorldWind
@@ -39,7 +38,7 @@ public class AnimatedGlobe extends ApplicationTemplate {
 
             // Use a JOGL Animator to spin the globe
             lastTime = System.currentTimeMillis();
-            animator = new FPSAnimator((WorldWindowGLCanvas) wwd(), 60 /*frames per second*/);
+            animator = new FPSAnimator((GLAutoDrawable) wwd(), 60 /*frames per second*/);
             animator.start();
         }
 

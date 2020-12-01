@@ -8,7 +8,6 @@ package gov.nasa.worldwind.layers.ogc.wcs.wcs100;
 
 import gov.nasa.worldwind.layers.ogc.OGCConstants;
 import gov.nasa.worldwind.layers.ogc.gml.*;
-import gov.nasa.worldwind.layers.ogc.gml.*;
 import gov.nasa.worldwind.util.WWXML;
 import gov.nasa.worldwind.util.xml.*;
 import gov.nasa.worldwind.wms.Request;

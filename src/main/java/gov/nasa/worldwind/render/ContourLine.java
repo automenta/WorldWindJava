@@ -132,7 +132,7 @@ public class ContourLine implements Renderable {
             this.color = color;
             for (Renderable r : this.getRenderables()) {
                 if (r instanceof Path) {
-                    ((Path) r).getActiveAttributes().setOutlineMaterial(new Material(color));
+                    ((AbstractShape) r).getActiveAttributes().setOutlineMaterial(new Material(color));
                 }
             }
         }
@@ -157,7 +157,7 @@ public class ContourLine implements Renderable {
             this.lineWidth = width;
             for (Renderable r : this.getRenderables()) {
                 if (r instanceof Path) {
-                    ((Path) r).getActiveAttributes().setOutlineWidth(width);
+                    ((AbstractShape) r).getActiveAttributes().setOutlineWidth(width);
                 }
             }
         }

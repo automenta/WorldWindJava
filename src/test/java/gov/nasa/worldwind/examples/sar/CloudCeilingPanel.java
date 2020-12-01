@@ -6,8 +6,8 @@
 package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.Restorable;
-import gov.nasa.worldwind.render.PatternFactory;
 import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.render.PatternFactory;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
@@ -152,7 +152,7 @@ public class CloudCeilingPanel extends JPanel implements Restorable {
     }
 
     private int clampTrackCurrentPosition(int position, SARTrack track) {
-        if (track.size() == 0)
+        if (track.isEmpty())
             return 0;
 
         return WWMath.clamp(position, 0, track.size() - 1);
@@ -220,7 +220,7 @@ public class CloudCeilingPanel extends JPanel implements Restorable {
     private void wholeTrackCheckBoxActionPerformed(ActionEvent event) {
         if (this.wholeTrackCheckBox.isSelected()) {
             this.currentSegmentCheckBox.setSelected(false);
-            if (this.track != null && this.track.size() > 0) {
+            if (this.track != null && !this.track.isEmpty()) {
                 this.suspendEvents = true;
                 setSegmentSpinnerValue(this.segmentStartSpinner, 0);
                 setSegmentSpinnerValue(this.segmentEndSpinner, this.track.size() - 1);
@@ -233,7 +233,7 @@ public class CloudCeilingPanel extends JPanel implements Restorable {
     private void currentSegmentCheckBoxActionPerformed(ActionEvent event) {
         if (this.currentSegmentCheckBox.isSelected()) {
             this.wholeTrackCheckBox.setSelected(false);
-            if (this.track != null && this.track.size() > 0) {
+            if (this.track != null && !this.track.isEmpty()) {
                 this.suspendEvents = true;
                 setSegmentSpinnerValue(this.segmentStartSpinner, this.trackCurrentPositionNumber);
                 setSegmentSpinnerValue(this.segmentEndSpinner, this.trackCurrentPositionNumber);
@@ -261,9 +261,9 @@ public class CloudCeilingPanel extends JPanel implements Restorable {
     }
 
     private void colorButtonActionPerformed(ActionEvent event) {
-        Color c = JColorChooser.showDialog(this, "Choose a color...", ((JButton) event.getSource()).getBackground());
+        Color c = JColorChooser.showDialog(this, "Choose a color...", ((Component) event.getSource()).getBackground());
         if (c != null) {
-            ((JButton) event.getSource()).setBackground(c);
+            ((Component) event.getSource()).setBackground(c);
             updateCloudCeiling();
         }
     }

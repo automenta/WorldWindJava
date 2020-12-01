@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.worldwindow.features;
 
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;

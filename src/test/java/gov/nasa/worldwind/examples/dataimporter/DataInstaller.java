@@ -10,11 +10,11 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.data.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.CompoundElevationModel;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
@@ -92,7 +92,7 @@ public class DataInstaller extends AVListImpl {
     }
 
     protected static void removeLayerPreview(WorldWindow wwd, AVList dataSet) {
-        AVList layer = (Layer) dataSet.get(AVKey.LAYER);
+        AVList layer = (AVList) dataSet.get(AVKey.LAYER);
         if (layer == null || layer.get(PREVIEW_LAYER) == null)
             return;
 
@@ -295,7 +295,7 @@ public class DataInstaller extends AVListImpl {
                         commonPixelFormat = pixelFormat;
                     }
                 }
-                else if (commonPixelFormat != null && !commonPixelFormat.equals(pixelFormat)) {
+                else if (!commonPixelFormat.equals(pixelFormat)) {
                     if (WWUtil.isEmpty(pixelFormat)) {
                         String message = Logging.getMessage("generic.UnrecognizedSourceType",
                             file.getAbsolutePath());
@@ -367,10 +367,13 @@ public class DataInstaller extends AVListImpl {
         // DataStoreProducer should contain a DataConfiguration in the production results. We test the production
         // results anyway.
         Iterable results = producer.getProductionResults();
-        if (results != null && results.iterator() != null && results.iterator().hasNext()) {
-            Object o = results.iterator().next();
-            if (o instanceof Document) {
-                return (Document) o;
+        if (results != null) {
+            results.iterator();
+            if (results.iterator().hasNext()) {
+                Object o = results.iterator().next();
+                if (o instanceof Document) {
+                    return (Document) o;
+                }
             }
         }
 
@@ -416,7 +419,6 @@ public class DataInstaller extends AVListImpl {
 
             if (sb.isEmpty()) {
                 sb.append(name);
-                continue;
             }
             else {
                 int size = Math.min(name.length(), sb.length());

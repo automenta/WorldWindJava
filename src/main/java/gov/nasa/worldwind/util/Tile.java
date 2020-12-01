@@ -397,10 +397,7 @@ public class Tile implements Comparable<Tile>, Cacheable {
         if (this.row > tile.row)
             return 1;
 
-        if (this.column < tile.column) return -1;
-        if (this.column > tile.column) return +1;
-
-        return 0;
+        return Integer.compare(this.column, tile.column);
     }
 
     @Override

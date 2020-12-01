@@ -37,11 +37,11 @@ public class KMLUpdate extends KMLAbstractObject {
     protected void doAddEventContent(Object o, XMLEventParserContext ctx, XMLEvent event, Object... args)
         throws XMLStreamException {
         if (o instanceof KMLChange)
-            this.addChange((KMLChange) o);
+            this.addChange((KMLUpdateOperation) o);
         else if (o instanceof KMLCreate)
-            this.addCreate((KMLCreate) o);
+            this.addCreate((KMLUpdateOperation) o);
         else if (o instanceof KMLDelete)
-            this.addDelete((KMLDelete) o);
+            this.addDelete((KMLUpdateOperation) o);
         else
             super.doAddEventContent(o, ctx, event, args);
     }

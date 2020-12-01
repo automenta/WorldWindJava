@@ -10,9 +10,10 @@ import com.jogamp.opengl.GLAutoDrawable;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.ui.WorldWindowGLAutoDrawable;
-import gov.nasa.worldwind.ui.newt.WorldWindowNEWT;
-import gov.nasa.worldwind.util.tree.*;
+import gov.nasa.worldwind.ui.HotSpotController;
+import gov.nasa.worldwind.ui.tree.*;
+import gov.nasa.worldwind.video.WorldWindowGLAutoDrawable;
+import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 
 /**
  * This example demonstrates the use of the on-screen tree control using {@link BasicTree}.

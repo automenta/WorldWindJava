@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.layers.ogc.wms;
 
-import gov.nasa.worldwind.layers.ogc.OGCBoundingBox;
 import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.layers.ogc.OGCBoundingBox;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.util.xml.*;
 

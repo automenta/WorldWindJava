@@ -9,8 +9,6 @@ package gov.nasa.worldwind.layers.ogc.collada.impl;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.cache.GpuResourceCache;
-import gov.nasa.worldwind.layers.ogc.collada.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;

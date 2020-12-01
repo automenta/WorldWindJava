@@ -10,7 +10,6 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
@@ -96,8 +95,7 @@ public class KMLReferenceTest
     }
 
     @Test
-    public void testKMZReference() throws IOException, XMLStreamException
-    {
+    public void testKMZReference() throws IOException {
         KMLRoot root = new KMLRoot(KMLTest.testResourceFile("KML/PointPlacemarkLocalImage.kmz"));
 
         Object o = root.resolveReference("icon21.png");

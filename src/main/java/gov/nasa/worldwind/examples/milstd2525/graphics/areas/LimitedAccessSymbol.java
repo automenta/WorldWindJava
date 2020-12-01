@@ -9,8 +9,8 @@ package gov.nasa.worldwind.examples.milstd2525.graphics.areas;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.examples.milstd2525.*;
-import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.symbology.AbstractTacticalSymbol;
 import gov.nasa.worldwind.util.Logging;
 

@@ -10,7 +10,6 @@ import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.layers.ogc.kml.KMLRoot;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.*;
 
 /**
  * Executes the mapping from KML to WorldWind. Traverses a parsed KML document and creates the appropriate WorldWind

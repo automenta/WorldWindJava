@@ -8,6 +8,7 @@ package gov.nasa.worldwind.layers.ogc.kml;
 
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.xml.AbstractXMLEventParser;
 
 import java.util.Map;
 
@@ -91,7 +92,7 @@ public class KMLStyle extends KMLAbstractStyleSelector {
         Class subStyleClass = subStyle.getClass();
         for (Map.Entry<String, Object> field : this.getFields().getEntries()) {
             if (field.getValue() != null && field.getValue().getClass().equals(subStyleClass)) {
-                this.overrideFields(subStyle, (KMLAbstractSubStyle) field.getValue());
+                this.overrideFields(subStyle, (AbstractXMLEventParser) field.getValue());
             }
         }
 

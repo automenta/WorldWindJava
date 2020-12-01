@@ -9,8 +9,8 @@ package gov.nasa.worldwind.render;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.Exportable;
-import gov.nasa.worldwind.render.airspaces.Geometry;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.airspaces.Geometry;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 

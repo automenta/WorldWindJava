@@ -14,8 +14,8 @@ import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
 import gov.nasa.worldwind.terrain.WMSBasicElevationModel;
-import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
 
 import javax.swing.*;

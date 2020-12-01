@@ -47,7 +47,7 @@ public class SessionState {
         String filenameWithoutSuffix = WWIO.replaceSuffix(filename, "");
         String[] tokens = filenameWithoutSuffix.split(LAYER_STATE_FILENAME_DELIMITER);
 
-        if (tokens == null || tokens.length < 2)
+        if (tokens.length < 2)
             return null;
 
         Integer index = WWUtil.makeInteger(tokens[0]);
@@ -260,7 +260,7 @@ public class SessionState {
             Constructor constructor = c.getConstructor(String.class);
             Object o = constructor.newInstance(stateInXml);
 
-            return (o != null && o instanceof Layer) ? (Layer) o : null;
+            return o instanceof Layer ? (Layer) o : null;
         }
         catch (Exception e) {
             Logging.logger().log(Level.SEVERE, "Unable to restore layer state: " + stateFile, e);
@@ -270,8 +270,7 @@ public class SessionState {
 
     protected boolean isLayerRestorable(Layer layer) {
         try {
-            if (layer.getClass().getConstructor(String.class) != null)
-                return true;
+            return true;
         }
         catch (Exception e) {
             // Intentionally left blank. Class.getConstructor throws a NoSuchMethodError if the constructor does not

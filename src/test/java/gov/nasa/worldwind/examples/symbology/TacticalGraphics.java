@@ -10,9 +10,9 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.examples.milstd2525.MilStd2525GraphicFactory;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.*;
 
@@ -953,7 +953,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             JCheckBox cb = new JCheckBox("Text Modifiers", true);
             cb.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent actionEvent) {
-                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+                    boolean tf = ((AbstractButton) actionEvent.getSource()).isSelected();
 
                     this.setShowModifiers(pointLayer, tf);
                     this.setShowModifiers(lineLayer, tf);
@@ -977,7 +977,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             cb = new JCheckBox("Graphic Modifiers", true);
             cb.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent actionEvent) {
-                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+                    boolean tf = ((AbstractButton) actionEvent.getSource()).isSelected();
 
                     this.setShowModifiers(pointLayer, tf);
                     this.setShowModifiers(lineLayer, tf);
@@ -1001,7 +1001,7 @@ public class TacticalGraphics extends ApplicationTemplate {
             cb = new JCheckBox("Hostile indicator", true);
             cb.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent actionEvent) {
-                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+                    boolean tf = ((AbstractButton) actionEvent.getSource()).isSelected();
 
                     this.setShowHostile(pointLayer, tf);
                     this.setShowHostile(lineLayer, tf);

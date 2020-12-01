@@ -117,7 +117,7 @@ public class PolylineTest
     // Helper Methods
     //////////////////////////////////////////////////////////
 
-    @SuppressWarnings({"JavaDoc"})
+    @SuppressWarnings("JavaDoc")
     private static void assignExampleValues(Polyline polyline)
     {
         polyline.setColor(Color.MAGENTA);
@@ -154,7 +154,7 @@ public class PolylineTest
         polyline.setStipplePattern((short) 0xffff);
         polyline.setStippleFactor(1);
         polyline.setNumSubsegments(1);
-        polyline.setPositions(new ArrayList<Position>());
+        polyline.setPositions(new ArrayList<>());
     }
 
     private static void assertPolylineEquals(Polyline expected, Polyline actual)

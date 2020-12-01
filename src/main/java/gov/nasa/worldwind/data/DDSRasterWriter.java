@@ -35,6 +35,6 @@ public class DDSRasterWriter extends AbstractDataRasterWriter {
         ByteBuffer byteBuffer = DDSCompressor.compressImage(image);
         // Do not force changes to the underlying filesystem. This drastically improves write performance.
         boolean forceFilesystemWrite = false;
-        WWIO.saveBuffer(byteBuffer, file, forceFilesystemWrite);
+        WWIO.saveBuffer(byteBuffer, file, false);
     }
 }

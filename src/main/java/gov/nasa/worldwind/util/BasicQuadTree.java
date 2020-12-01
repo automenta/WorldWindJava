@@ -329,10 +329,9 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
                 // Find the next map entry with a non-null item list. Use the first item in that list.
                 this.listIterator = null;
                 while (this.mapIterator.hasNext()) {
-                    if (this.mapIterator.hasNext())
-                        this.listIterator = this.mapIterator.next().iterator();
+                    this.listIterator = this.mapIterator.next().iterator();
 
-                    if (this.listIterator != null && this.listIterator.hasNext()) {
+                    if (this.listIterator.hasNext()) {
                         this.nextItem = this.listIterator.next();
                         return;
                     }

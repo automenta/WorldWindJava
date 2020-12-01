@@ -8,13 +8,13 @@ package gov.nasa.worldwind.examples.multiwindow;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.RenderingEvent;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.terrain.*;
-import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 import javax.swing.*;
 import java.awt.*;

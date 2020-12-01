@@ -8,12 +8,12 @@ package gov.nasa.worldwind.examples.kml;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.animation.*;
-import gov.nasa.worldwind.layers.ogc.kml.*;
-import gov.nasa.worldwind.layers.ogc.kml.impl.KMLUtil;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.ui.awt.ViewInputHandler;
+import gov.nasa.worldwind.layers.ogc.kml.*;
+import gov.nasa.worldwind.layers.ogc.kml.impl.KMLUtil;
 import gov.nasa.worldwind.util.PropertyAccessor;
+import gov.nasa.worldwind.video.awt.ViewInputHandler;
 import gov.nasa.worldwind.view.*;
 import gov.nasa.worldwind.view.firstperson.BasicFlyView;
 import gov.nasa.worldwind.view.orbit.*;

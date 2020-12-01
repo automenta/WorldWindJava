@@ -81,7 +81,7 @@ public class TerrainProfiler extends ApplicationTemplate {
             JPanel buttonsPanel = new JPanel(new GridLayout(0, 2, 0, 0));
             this.showEyeCheck = new JCheckBox("Show eye");
             this.showEyeCheck.addActionListener((ActionEvent actionEvent) -> {
-                showEyePosition = ((JCheckBox) actionEvent.getSource()).isSelected();
+                showEyePosition = ((AbstractButton) actionEvent.getSource()).isSelected();
                 update();
             });
             this.showEyeCheck.setSelected(this.showEyePosition);
@@ -90,7 +90,7 @@ public class TerrainProfiler extends ApplicationTemplate {
             // Keep proportions check box
             JCheckBox cbKeepProportions = new JCheckBox("Keep proportions");
             cbKeepProportions.addActionListener((ActionEvent actionEvent) -> {
-                keepProportions = ((JCheckBox) actionEvent.getSource()).isSelected();
+                keepProportions = ((AbstractButton) actionEvent.getSource()).isSelected();
                 update();
             });
             cbKeepProportions.setSelected(this.keepProportions);
@@ -100,7 +100,7 @@ public class TerrainProfiler extends ApplicationTemplate {
             JPanel buttonsPanel2 = new JPanel(new GridLayout(0, 2, 0, 0));
             JCheckBox cb = new JCheckBox("Zero based");
             cb.addActionListener((ActionEvent actionEvent) -> {
-                zeroBased = ((JCheckBox) actionEvent.getSource()).isSelected();
+                zeroBased = ((AbstractButton) actionEvent.getSource()).isSelected();
                 update();
             });
             cb.setSelected(this.zeroBased);

@@ -9,8 +9,8 @@ package gov.nasa.worldwind.render;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.Exportable;
-import gov.nasa.worldwind.render.airspaces.Geometry;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.airspaces.Geometry;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
@@ -28,7 +28,7 @@ public class Box extends RigidShape {
     protected static final int DEFAULT_SUBDIVISIONS = 0;
 
     @SuppressWarnings("FieldCanBeLocal")
-    protected final int faceCount = 6;   // number of separate geometric faces that comprise this Box
+    protected static final int faceCount = 6;   // number of separate geometric faces that comprise this Box
     // The faces are numbered as follows:
     // face 0: right face
     // face 1: front face

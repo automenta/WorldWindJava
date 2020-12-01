@@ -1134,8 +1134,6 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         if (restorableSupport == null)
             restorableSupport = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (restorableSupport == null)
-            return null;
 
         // Escape the text property when saving it to preserve markup characters.
         if (this.text != null)

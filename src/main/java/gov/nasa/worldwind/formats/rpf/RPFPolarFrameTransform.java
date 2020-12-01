@@ -432,7 +432,7 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
             if (x == 0 && y > 0)
                 return 180.0;
 
-            if (x == 0 && y <= 0)
+            if (x == 0)
                 return 0.0;
 
             double lambda = Math.acos(-y / Math.sqrt(x * x + y * y)) * 180 / Math.PI;
@@ -459,7 +459,7 @@ class RPFPolarFrameTransform extends RPFFrameTransform {
             if (x == 0 && y > 0)
                 return 0.0;
 
-            if (x == 0 && y <= 0)
+            if (x == 0)
                 return 180.0;
 
             double lambda = Math.acos(y / Math.sqrt(x * x + y * y)) * 180 / Math.PI;

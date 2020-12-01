@@ -6,11 +6,11 @@
 
 package gov.nasa.worldwind.layers.ogc.kml;
 
-import gov.nasa.worldwind.layers.ogc.kml.gx.GXConstants;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.layers.ogc.kml.gx.GXConstants;
 import gov.nasa.worldwind.util.WWIO;
-import gov.nasa.worldwind.util.xml.*;
+import gov.nasa.worldwind.util.xml.UnrecognizedXMLEventParser;
 import gov.nasa.worldwind.util.xml.atom.AtomConstants;
 import gov.nasa.worldwind.util.xml.xal.XALConstants;
 import org.junit.Test;
@@ -114,7 +114,7 @@ public class KMLTest
         assertNull("Target ID not null", feature.getTargetId());
     }
 
-    @SuppressWarnings({"ConstantConditions"})
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testAbstractFeatureAttributes()
     {
@@ -207,7 +207,7 @@ public class KMLTest
         assertEquals("Author URI not as expected", feature.getAuthor().getUri(), authorUri);
     }
 
-    @SuppressWarnings({"ConstantConditions"})
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testUnassignedAbstractFeatureAttributes()
     {
@@ -240,7 +240,7 @@ public class KMLTest
         assertNull("Extended data not null", feature.getExtendedData());
     }
 
-    @SuppressWarnings({"ConstantConditions"})
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testPrefixUsage()
     {
@@ -277,7 +277,7 @@ public class KMLTest
         assertEquals("Coordinates not as expected", point.getCoordinates(), coords);
     }
 
-    @SuppressWarnings({"ConstantConditions"})
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testNoDefaultNamespace()
     {
@@ -315,7 +315,7 @@ public class KMLTest
         assertEquals("Coordinates not as expected", point.getCoordinates(), coords);
     }
 
-    @SuppressWarnings({"ConstantConditions"})
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testPoint()
     {
@@ -352,7 +352,7 @@ public class KMLTest
         assertEquals("Coordinates not as expected", point.getCoordinates(), coords);
     }
 
-    @SuppressWarnings({"ConstantConditions"})
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testLinearRing()
     {
@@ -360,7 +360,7 @@ public class KMLTest
         boolean extrude = true;
         boolean tessellate = false;
 
-        List<Position> coords = new ArrayList<Position>();
+        List<Position> coords = new ArrayList<>();
         coords.add(Position.fromDegrees(23.56, -18.3, 9));
         coords.add(Position.fromDegrees(24.56, -19.3, 8));
         coords.add(Position.fromDegrees(25.56, -17.3, 99));
@@ -399,7 +399,7 @@ public class KMLTest
         assertEquals("Coordinates not as expected", ring.getCoordinates().list, coords);
     }
 
-    @SuppressWarnings({"ConstantConditions"})
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testLineString()
     {
@@ -407,7 +407,7 @@ public class KMLTest
         boolean extrude = false;
         boolean tessellate = true;
 
-        List<Position> coords = new ArrayList<Position>();
+        List<Position> coords = new ArrayList<>();
         coords.add(Position.fromDegrees(23.56, -18.3, 9));
         coords.add(Position.fromDegrees(24.56, -19.3, 8));
         coords.add(Position.fromDegrees(25.56, -17.3, 99));
@@ -446,7 +446,7 @@ public class KMLTest
         assertEquals("Coordinates not as expected", ring.getCoordinates().list, coords);
     }
 
-    @SuppressWarnings({"ConstantConditions"})
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testPolygon()
     {
@@ -462,12 +462,12 @@ public class KMLTest
         boolean innerExtrude = true;
         boolean innerTessellate = true;
 
-        List<Position> outerCoords = new ArrayList<Position>();
+        List<Position> outerCoords = new ArrayList<>();
         outerCoords.add(Position.fromDegrees(23.56, -18.3, 9));
         outerCoords.add(Position.fromDegrees(24.56, -19.3, 8));
         outerCoords.add(Position.fromDegrees(25.56, -17.3, 99));
 
-        List<Position> innerCoords = new ArrayList<Position>();
+        List<Position> innerCoords = new ArrayList<>();
         innerCoords.add(Position.fromDegrees(22.56, -18.3, 1));
         innerCoords.add(Position.fromDegrees(21.56, -19.3, 2));
         innerCoords.add(Position.fromDegrees(20.56, -17.3, 3));
@@ -612,14 +612,14 @@ public class KMLTest
         assertTrue("Unrecognized element not found", true);
     }
 
-    @SuppressWarnings({"ConstantConditions"})
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testCoordinatesParser()
     {
         // Test parsing coordinates separated by newline and tab characters instead of just spaces
         List<String> separators = Arrays.asList("\n", "\n\r", "\t");
 
-        List<Position> coords = new ArrayList<Position>();
+        List<Position> coords = new ArrayList<>();
         coords.add(Position.fromDegrees(23.56, -18.3, 9));
         coords.add(Position.fromDegrees(24.56, -19.3, 8));
         coords.add(Position.fromDegrees(25.56, -17.3, 99));
@@ -661,7 +661,7 @@ public class KMLTest
     @Test
     public void testCoordinatesTokenizer()
     {
-        List<Position> coords = new ArrayList<Position>();
+        List<Position> coords = new ArrayList<>();
         coords.add(Position.fromDegrees(23.56, -18.3, 9));
         coords.add(Position.fromDegrees(56.0, 34.9, 2));
         coords.add(Position.fromDegrees(19, 56.9));
@@ -677,7 +677,7 @@ public class KMLTest
 
         KMLCoordinateTokenizer tokenizer = new KMLCoordinateTokenizer(coordString);
 
-        List<Position> positions = new ArrayList<Position>();
+        List<Position> positions = new ArrayList<>();
         while (tokenizer.hasMoreTokens())
         {
             positions.add(tokenizer.nextPosition());
@@ -759,7 +759,7 @@ public class KMLTest
         KMLAbstractFeature document = root.getFeature();
         assertTrue("Root feature is not as expected", document instanceof KMLDocument);
 
-        List<KMLAbstractFeature> features = ((KMLDocument) document).getFeatures();
+        List<KMLAbstractFeature> features = ((KMLAbstractContainer) document).getFeatures();
         assertEquals("Incorrect number of features", 1, features.size());
         assertTrue("Root feature is not as expected", features.get(0) instanceof KMLPlacemark);
 
@@ -772,7 +772,7 @@ public class KMLTest
                 + "          <b>easier to write</b> when you can avoid using entity\n"
                 + "          references.</font></p>\n"
                 + "        ";
-        assertFalse("Description string not trimmed", s.equals(placemark.getDescription()));
+        assertNotEquals("Description string not trimmed", s, placemark.getDescription());
         assertEquals("Incorrect description", s.trim(), placemark.getDescription());
 
         KMLAbstractGeometry geometry = placemark.getGeometry();
@@ -792,7 +792,7 @@ public class KMLTest
         KMLAbstractFeature document = root.getFeature();
         assertTrue("Root feature is not as expected", document instanceof KMLDocument);
 
-        List<KMLAbstractFeature> features = ((KMLDocument) document).getFeatures();
+        List<KMLAbstractFeature> features = ((KMLAbstractContainer) document).getFeatures();
         assertEquals("Incorrect number of features", 1, features.size());
         assertTrue("Root feature is not as expected", features.get(0) instanceof KMLPlacemark);
 
@@ -823,7 +823,7 @@ public class KMLTest
         assertEquals("Incorrect name", "Ground Overlays", document.getName());
         assertEquals("Incorrect description", "Examples of ground overlays", document.getDescription());
 
-        List<KMLAbstractFeature> features = ((KMLFolder) document).getFeatures();
+        List<KMLAbstractFeature> features = ((KMLAbstractContainer) document).getFeatures();
         assertEquals("Incorrect number of features", 1, features.size());
         assertTrue("Root feature is not as expected", features.get(0) instanceof KMLGroundOverlay);
 
@@ -854,7 +854,7 @@ public class KMLTest
         KMLAbstractFeature document = root.getFeature();
         assertTrue("Root feature is not as expected", document instanceof KMLDocument);
 
-        List<KMLAbstractFeature> features = ((KMLDocument) document).getFeatures();
+        List<KMLAbstractFeature> features = ((KMLAbstractContainer) document).getFeatures();
         assertEquals("Incorrect number of features", 1, features.size());
         assertTrue("Document feature is not as expected", features.get(0) instanceof KMLPlacemark);
 
@@ -978,12 +978,8 @@ public class KMLTest
 
             if (suppressLogging)
             {
-                root.setNotificationListener(new XMLParserNotificationListener()
-                {
-                    public void notify(XMLParserNotification notification)
-                    {
-                        // Do nothing. This prevents logging of notification messages.
-                    }
+                root.setNotificationListener(notification -> {
+                    // Do nothing. This prevents logging of notification messages.
                 });
             }
 
@@ -1005,7 +1001,7 @@ public class KMLTest
         {
             root = KMLRoot.create(testResourceStream(sourceDoc));
             root.setNotificationListener(notificationEvent -> {
-                if (parserMessage.length() != 0)
+                if (!parserMessage.isEmpty())
                     parserMessage.append(", ");
 
                 parserMessage.append(notificationEvent.toString());
@@ -1014,7 +1010,7 @@ public class KMLTest
 
             assertNotNull("KML root is null", root);
             assertTrue("Parser notification occurred\n" + sourceDoc + ":" + parserMessage,
-                parserMessage.length() == 0);
+                parserMessage.isEmpty());
         }
         catch (Exception e)
         {

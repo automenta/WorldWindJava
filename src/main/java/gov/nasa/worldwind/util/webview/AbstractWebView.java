@@ -8,7 +8,6 @@ package gov.nasa.worldwind.util.webview;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.swing.*;

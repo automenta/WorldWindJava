@@ -193,15 +193,15 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         StringBuilder sb = new StringBuilder();
 
         Object o = parameters.get(AVKey.FILE_STORE_LOCATION);
-        if (!(o instanceof String) || ((String) o).length() < 1)
+        if (!(o instanceof String) || ((CharSequence) o).length() < 1)
             sb.append((!sb.isEmpty() ? ", " : "")).append(Logging.getMessage("term.fileStoreLocation"));
 
         o = parameters.get(AVKey.DATA_CACHE_NAME);
-        if (!(o instanceof String) || ((String) o).isEmpty())
+        if (!(o instanceof String) || ((CharSequence) o).isEmpty())
             sb.append((!sb.isEmpty() ? ", " : "")).append(Logging.getMessage("term.fileStoreFolder"));
 
         o = parameters.get(AVKey.DATASET_NAME);
-        if (!(o instanceof String) || ((String) o).length() < 1)
+        if (!(o instanceof String) || ((CharSequence) o).length() < 1)
             sb.append((!sb.isEmpty() ? ", " : "")).append(Logging.getMessage("term.datasetName"));
 
         if (sb.isEmpty())

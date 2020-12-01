@@ -7,7 +7,6 @@ package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.view.orbit.BasicOrbitView;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -66,7 +65,7 @@ public class RenderableLayerTest
     {
         Iterable<Renderable> source = createExampleIterable();
 
-        List<Renderable> renderables = new ArrayList<Renderable>();
+        List<Renderable> renderables = new ArrayList<>();
         RenderableLayer layer = new RenderableLayer();
 
         for (Renderable renderable : source)
@@ -83,9 +82,8 @@ public class RenderableLayerTest
     {
         Collection<Renderable> source = createExampleIterable();
 
-        List<Renderable> renderables = new ArrayList<Renderable>();
         RenderableLayer layer = new RenderableLayer();
-        renderables.addAll(source);
+        List<Renderable> renderables = new ArrayList<>(source);
         layer.addAll(source);
 
         Path inserted = new Path();
@@ -100,9 +98,8 @@ public class RenderableLayerTest
     {
         Collection<Renderable> source = createExampleIterable();
 
-        List<Renderable> renderables = new ArrayList<Renderable>();
         RenderableLayer layer = new RenderableLayer();
-        renderables.addAll(source);
+        List<Renderable> renderables = new ArrayList<>(source);
         layer.addAll(source);
 
         Path inserted = new Path();
@@ -117,9 +114,8 @@ public class RenderableLayerTest
     {
         Collection<Renderable> source = createExampleIterable();
 
-        List<Renderable> renderables = new ArrayList<Renderable>();
         RenderableLayer layer = new RenderableLayer();
-        renderables.addAll(source);
+        List<Renderable> renderables = new ArrayList<>(source);
         layer.addAll(source);
 
         Path inserted = new Path();
@@ -250,7 +246,7 @@ public class RenderableLayerTest
     public void testMaliciousSetRenderables()
     {
         // Create an Iterable with null elements.
-        java.util.List<Renderable> list = new java.util.ArrayList<Renderable>();
+        java.util.List<Renderable> list = new java.util.ArrayList<>();
         list.add(null);
 
         RenderableLayer layer = new RenderableLayer();
@@ -275,7 +271,7 @@ public class RenderableLayerTest
     public void testDisposeDoesNotClearRenderables()
     {
         Iterable<Renderable> renderables = createExampleIterable();
-        Iterable<Renderable> emptyRenderables = new ArrayList<Renderable>();
+        Iterable<Renderable> emptyRenderables = new ArrayList<>();
 
         RenderableLayer layer = new RenderableLayer();
         layer.addAll(renderables);

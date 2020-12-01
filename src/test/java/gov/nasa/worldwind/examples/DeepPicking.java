@@ -6,10 +6,10 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.render.Renderable;
-import gov.nasa.worldwind.render.airspaces.Airspace;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.Renderable;
+import gov.nasa.worldwind.render.airspaces.Airspace;
 
 /**
  * Illustrates how to cause all elements under the cursor in a WorldWindow to be reported in <code>{@link

@@ -556,8 +556,6 @@ public class LatLon {
         for (LatLon ll : locations) {
             if (lastLocation != null) {
                 LatLon[] extremes = LatLon.greatCircleArcExtremeLocations(lastLocation, ll);
-                if (extremes == null)
-                    continue;
 
                 if (minLatLocation == null || minLatLocation.getLatitude().degrees > extremes[0].getLatitude().degrees)
                     minLatLocation = extremes[0];

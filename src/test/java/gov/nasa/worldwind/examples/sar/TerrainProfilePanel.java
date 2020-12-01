@@ -163,15 +163,15 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
     }
 
     private void proportionalCheckBoxItemStateChanged(ItemEvent e) {
-        this.controller.setKeepProportions(((JCheckBox) e.getSource()).isSelected());
+        this.controller.setKeepProportions(((AbstractButton) e.getSource()).isSelected());
     }
 
     private void showEyeCheckBoxItemStateChanged(ItemEvent e) {
-        this.controller.setShowEyePosition(((JCheckBox) e.getSource()).isSelected());
+        this.controller.setShowEyePosition(((AbstractButton) e.getSource()).isSelected());
     }
 
     private void zeroBaseCheckBoxItemStateChanged(ItemEvent e) {
-        this.controller.setZeroBased(((JCheckBox) e.getSource()).isSelected());
+        this.controller.setZeroBased(((AbstractButton) e.getSource()).isSelected());
     }
 
     private void profileWidthSpinnerStateChanged(ChangeEvent e) {
@@ -193,13 +193,13 @@ public class TerrainProfilePanel extends JPanel implements Restorable {
     }
 
     public void profilesSameSizeStateChanged(ChangeEvent e) {
-        if (((JCheckBox) e.getSource()).isSelected()) {
+        if (((AbstractButton) e.getSource()).isSelected()) {
             this.profileLengthSpinner.setValue(this.profileWidthSpinner.getValue());
         }
     }
 
     public void profileFollowPathStateChanged(ChangeEvent e) {
-        this.controller.setWholeTrackLength(((JCheckBox) e.getSource()).isSelected());
+        this.controller.setWholeTrackLength(((AbstractButton) e.getSource()).isSelected());
     }
 
     public void updatePosition(Position position, Angle heading) {

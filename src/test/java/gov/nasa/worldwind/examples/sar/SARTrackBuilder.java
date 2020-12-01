@@ -122,7 +122,7 @@ public class SARTrackBuilder {
         if (curPos == null)
             return;
 
-        if (this.useTrackElevation && this.sarTrack.size() > 0)
+        if (this.useTrackElevation && !this.sarTrack.isEmpty())
             curPos = new Position(curPos, this.sarTrack.get(this.sarTrack.size() - 1).getElevation());
 
         this.sarTrack.appendPosition(new SARPosition(curPos));
@@ -133,7 +133,7 @@ public class SARTrackBuilder {
         if (curPos == null)
             return;
 
-        if (this.useTrackElevation && this.sarTrack.size() > 0)
+        if (this.useTrackElevation && !this.sarTrack.isEmpty())
             curPos = new Position(curPos, this.sarTrack.get(this.sarTrack.size() - 1).getElevation());
 
         int index = this.sarTrack.size() - 1;
@@ -144,11 +144,11 @@ public class SARTrackBuilder {
     }
 
     public boolean canRemoveLastTrackPoint() {
-        return this.sarTrack != null && this.sarTrack.size() != 0;
+        return this.sarTrack != null && !this.sarTrack.isEmpty();
     }
 
     public void removeLastTrackPoint() {
-        if (this.sarTrack == null || this.sarTrack.size() == 0)
+        if (this.sarTrack == null || this.sarTrack.isEmpty())
             return;
 
         this.sarTrack.removePosition(this.sarTrack.size() - 1);

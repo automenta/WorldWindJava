@@ -402,8 +402,6 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
         try {
             TextureData td = AWTTextureIO.newTextureData(Configuration.getMaxCompatibleGLProfile(),
                 (BufferedImage) this.getImageSource(), this.isUseMipMaps());
-            if (td == null)
-                return null;
 
             this.setTextureData(td);
 
@@ -440,10 +438,6 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
 
         try {
             Texture texture = TextureIO.newTexture(this.getTextureData());
-            if (texture == null) {
-                this.textureInitializationFailed = true;
-                return null;
-            }
 
             this.width = texture.getWidth();
             this.height = texture.getHeight();

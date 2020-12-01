@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.layers.ogc.wms;
 
 import gov.nasa.worldwind.layers.ogc.*;
-import gov.nasa.worldwind.layers.ogc.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.*;
 import gov.nasa.worldwind.wms.CapabilitiesRequest;

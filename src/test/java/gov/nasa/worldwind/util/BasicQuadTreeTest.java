@@ -23,7 +23,7 @@ public class BasicQuadTreeTest
     public void testFullRemoval()
     {
         int numItems = 1000;
-        BasicQuadTree<Integer> tree = new BasicQuadTree<Integer>(5, Sector.FULL_SPHERE, null);
+        BasicQuadTree<Integer> tree = new BasicQuadTree<>(5, Sector.FULL_SPHERE, null);
 
         for (int i = 1; i <= numItems; i++)
         {
@@ -44,7 +44,7 @@ public class BasicQuadTreeTest
     public void testIndividualRemoval()
     {
         int numItems = 1000;
-        BasicQuadTree<Integer> tree = new BasicQuadTree<Integer>(5, Sector.FULL_SPHERE, null);
+        BasicQuadTree<Integer> tree = new BasicQuadTree<>(5, Sector.FULL_SPHERE, null);
 
         for (int i = 1; i <= numItems; i++)
         {
@@ -63,7 +63,7 @@ public class BasicQuadTreeTest
     private static int countItemsInTree(BasicQuadTree<Integer> tree)
     {
         // Counts only unique items.
-        Set<Integer> map = new HashSet<Integer>();
+        Set<Integer> map = new HashSet<>();
 
         for (Integer i : tree)
         {

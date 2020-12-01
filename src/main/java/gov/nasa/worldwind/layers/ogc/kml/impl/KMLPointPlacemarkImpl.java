@@ -10,8 +10,8 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.layers.ogc.kml.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -312,8 +312,11 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
             attrs.setImageAddress((localAddress != null ? localAddress : href));
         }
         // If the Icon element is present, but there is no href, draw a point instead of the default icon.
-        else if (icon != null && WWUtil.isEmpty(icon.getHref())) {
-            attrs.setUsePointAsDefaultImage(true);
+        else {
+            if (icon != null) {
+                WWUtil.isEmpty(icon.getHref());
+                attrs.setUsePointAsDefaultImage(true);
+            }
         }
 
         // Assign the other attributes defined in the KML Feature element.

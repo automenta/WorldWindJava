@@ -8,10 +8,10 @@ package gov.nasa.worldwind.render;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.drag.*;
-import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
-import gov.nasa.worldwind.layers.ogc.kml.gx.GXConstants;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
+import gov.nasa.worldwind.layers.ogc.kml.gx.GXConstants;
 import gov.nasa.worldwind.pick.PickSupport;
 import gov.nasa.worldwind.util.Logging;
 

@@ -9,10 +9,10 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.Box;
@@ -1060,9 +1060,9 @@ public class Annotations extends ApplicationTemplate {
             this.btTextColor = new JButton("");
             this.btTextColor.addActionListener(event -> {
                 Color c = JColorChooser.showDialog(colorPanel,
-                    "Choose a color...", ((JButton) event.getSource()).getBackground());
+                    "Choose a color...", ((Component) event.getSource()).getBackground());
                 if (c != null) {
-                    ((JButton) event.getSource()).setBackground(c);
+                    ((Component) event.getSource()).setBackground(c);
                     if (currentAnnotation != null)
                         updateAnnotation();
                 }
@@ -1081,9 +1081,9 @@ public class Annotations extends ApplicationTemplate {
             this.btBackColor = new JButton("");
             this.btBackColor.addActionListener(event -> {
                 Color c = JColorChooser.showDialog(colorPanel,
-                    "Choose a color...", ((JButton) event.getSource()).getBackground());
+                    "Choose a color...", ((Component) event.getSource()).getBackground());
                 if (c != null) {
-                    ((JButton) event.getSource()).setBackground(c);
+                    ((Component) event.getSource()).setBackground(c);
                     if (currentAnnotation != null)
                         updateAnnotation();
                 }
@@ -1102,9 +1102,9 @@ public class Annotations extends ApplicationTemplate {
             this.btBorderColor = new JButton("");
             this.btBorderColor.addActionListener(event -> {
                 Color c = JColorChooser.showDialog(colorPanel,
-                    "Choose a color...", ((JButton) event.getSource()).getBackground());
+                    "Choose a color...", ((Component) event.getSource()).getBackground());
                 if (c != null) {
-                    ((JButton) event.getSource()).setBackground(c);
+                    ((Component) event.getSource()).setBackground(c);
                     if (currentAnnotation != null)
                         updateAnnotation();
                 }
@@ -1433,74 +1433,52 @@ public class Annotations extends ApplicationTemplate {
         private void updateAnnotation() {
             if (this.currentAnnotation != null && !this.suspendUpdate) {
                 this.currentAnnotation.setText(this.inputTextArea.getText());
-                this.currentAnnotation.getAttributes().setSize(
+                final AnnotationAttributes a = this.currentAnnotation.getAttributes();
+                a.setSize(
                     new Dimension(this.widthSlider.getValue(), this.heightSlider.getValue()));
-                this.currentAnnotation.getAttributes().setScale((double) this.scaleSlider.getValue() / 10);
-                this.currentAnnotation.getAttributes().setOpacity((double) this.opacitySlider.getValue() / 10);
-                this.currentAnnotation.getAttributes().setAdjustWidthToText(this.cbAdjustWidth.isSelected() ?
+                a.setScale((double) this.scaleSlider.getValue() / 10);
+                a.setOpacity((double) this.opacitySlider.getValue() / 10);
+                a.setAdjustWidthToText(this.cbAdjustWidth.isSelected() ?
                     AVKey.SIZE_FIT_TEXT : AVKey.SIZE_FIXED);
 
                 String fontString = this.cbFontName.getSelectedItem() + "-"
                     + this.cbFontStyle.getSelectedItem().toString().toUpperCase() + "-"
                     + this.cbFontSize.getSelectedItem();
-                this.currentAnnotation.getAttributes().setFont(Font.decode(fontString));
+                a.setFont(Font.decode(fontString));
 
                 Color color = this.btTextColor.getBackground();
                 int alpha = (int) (Float.parseFloat((String) this.cbTextColorAlpha.getSelectedItem()) * 25.5f);
-                this.currentAnnotation.getAttributes().setTextColor(
+                a.setTextColor(
                     new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
 
                 color = this.btBackColor.getBackground();
                 alpha = (int) (Float.parseFloat((String) this.cbBackColorAlpha.getSelectedItem()) * 25.5f);
-                this.currentAnnotation.getAttributes().setBackgroundColor(
+                a.setBackgroundColor(
                     new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
 
                 color = this.btBorderColor.getBackground();
                 alpha = (int) (Float.parseFloat((String) this.cbBorderColorAlpha.getSelectedItem()) * 25.5f);
-                this.currentAnnotation.getAttributes().setBorderColor(
-                    new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
-                this.savedBorderColor = this.currentAnnotation.getAttributes().getBorderColor();
+                a.setBorderColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha));
+                this.savedBorderColor = a.getBorderColor();
 
                 switch (cbTextAlign.getSelectedIndex()) {
-                    case 0 -> {
-                        this.currentAnnotation.getAttributes().setTextAlign(AVKey.LEFT);
-                    }
-                    case 1 -> {
-                        this.currentAnnotation.getAttributes().setTextAlign(AVKey.CENTER);
-                    }
-                    case 2 -> {
-                        this.currentAnnotation.getAttributes().setTextAlign(AVKey.RIGHT);
-                    }
+                    case 0 -> a.setTextAlign(AVKey.LEFT);
+                    case 1 -> a.setTextAlign(AVKey.CENTER);
+                    case 2 -> a.setTextAlign(AVKey.RIGHT);
                 }
                 switch (cbTextEffect.getSelectedIndex()) {
-                    case 0 -> {
-                        this.currentAnnotation.getAttributes().setEffect(AVKey.TEXT_EFFECT_NONE);
-                    }
-                    case 1 -> {
-                        this.currentAnnotation.getAttributes().setEffect(AVKey.TEXT_EFFECT_SHADOW);
-                    }
-                    case 2 -> {
-                        this.currentAnnotation.getAttributes().setEffect(AVKey.TEXT_EFFECT_OUTLINE);
-                    }
+                    case 0 -> a.setEffect(AVKey.TEXT_EFFECT_NONE);
+                    case 1 -> a.setEffect(AVKey.TEXT_EFFECT_SHADOW);
+                    case 2 -> a.setEffect(AVKey.TEXT_EFFECT_OUTLINE);
                 }
                 switch (cbShape.getSelectedIndex()) {
-                    case 0 -> {
-                        this.currentAnnotation.getAttributes().setFrameShape(AVKey.SHAPE_RECTANGLE);
-                    }
-                    case 1 -> {
-                        this.currentAnnotation.getAttributes().setFrameShape(AVKey.SHAPE_ELLIPSE);
-                    }
-                    case 2 -> {
-                        this.currentAnnotation.getAttributes().setFrameShape(AVKey.SHAPE_NONE);
-                    }
+                    case 0 -> a.setFrameShape(AVKey.SHAPE_RECTANGLE);
+                    case 1 -> a.setFrameShape(AVKey.SHAPE_ELLIPSE);
+                    case 2 -> a.setFrameShape(AVKey.SHAPE_NONE);
                 }
                 switch (cbLeader.getSelectedIndex()) {
-                    case 0 -> {
-                        this.currentAnnotation.getAttributes().setLeader(AVKey.SHAPE_TRIANGLE);
-                    }
-                    case 1 -> {
-                        this.currentAnnotation.getAttributes().setLeader(AVKey.SHAPE_NONE);
-                    }
+                    case 0 -> a.setLeader(AVKey.SHAPE_TRIANGLE);
+                    case 1 -> a.setLeader(AVKey.SHAPE_NONE);
                 }
                 currentAnnotation.getAttributes().setLeaderGapWidth(this.leaderGapWidthSlider.getValue());
                 currentAnnotation.getAttributes().setCornerRadius(this.cornerRadiusSlider.getValue());
@@ -1527,22 +1505,22 @@ public class Annotations extends ApplicationTemplate {
                     case 3 -> currentAnnotation.getAttributes().setImageRepeat(AVKey.REPEAT_XY);
                 }
 
-                this.currentAnnotation.getAttributes().setImageScale((double) this.imageScaleSlider.getValue() / 10);
-                this.currentAnnotation.getAttributes().setImageOpacity(
+                a.setImageScale((double) this.imageScaleSlider.getValue() / 10);
+                a.setImageOpacity(
                     (double) this.imageOpacitySlider.getValue() / 10);
-                this.currentAnnotation.getAttributes().setImageOffset(new Point(imageOffsetXSlider.getValue(),
+                a.setImageOffset(new Point(imageOffsetXSlider.getValue(),
                     imageOffsetYSlider.getValue()));
 
-                this.currentAnnotation.getAttributes().setDrawOffset(
+                a.setDrawOffset(
                     new Point(offsetXSlider.getValue(), offsetYSlider.getValue()));
 
-                this.currentAnnotation.getAttributes().setDistanceMinScale(
+                a.setDistanceMinScale(
                     (double) this.distanceMinScaleSlider.getValue() / 10);
-                this.currentAnnotation.getAttributes().setDistanceMaxScale(
+                a.setDistanceMaxScale(
                     (double) this.distanceMaxScaleSlider.getValue() / 10);
-                this.currentAnnotation.getAttributes().setDistanceMinOpacity(
+                a.setDistanceMinOpacity(
                     (double) this.distanceMinOpacitySlider.getValue() / 10);
-                this.currentAnnotation.getAttributes().setHighlightScale(
+                a.setHighlightScale(
                     (double) this.highlightScaleSlider.getValue() / 10);
 
                 wwd().redraw();
@@ -1551,12 +1529,11 @@ public class Annotations extends ApplicationTemplate {
 
         private Position computeGroundPosition(WorldWindow wwd) {
             View view = wwd.view();
-
             if (view == null)
                 return null;
 
-            return view.computePositionFromScreenPoint(view.getViewport().getWidth() / 2,
-                view.getViewport().getHeight() / 2);
+            final Rectangle viewport = view.getViewport();
+            return view.computePositionFromScreenPoint(viewport.getWidth() / 2, viewport.getHeight() / 2);
         }
 
         // Above mean sea level globe annotation
@@ -1566,9 +1543,11 @@ public class Annotations extends ApplicationTemplate {
             }
 
             public Vec4 getAnnotationDrawPoint(DrawContext dc) {
-                return dc.getGlobe().computePointFromPosition(this.getPosition().getLatitude(),
-                    this.getPosition().getLongitude(),
-                    this.getPosition().getElevation() * dc.getVerticalExaggeration());
+                final Position pos = this.getPosition();
+                return dc.getGlobe().computePointFromPosition(
+                    pos.getLatitude(),
+                    pos.getLongitude(),
+                    pos.getElevation() * dc.getVerticalExaggeration());
             }
         }
     }

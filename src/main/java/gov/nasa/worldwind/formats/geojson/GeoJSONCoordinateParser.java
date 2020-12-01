@@ -257,7 +257,7 @@ public class GeoJSONCoordinateParser extends GeoJSONEventParser {
         else if (list.get(0) instanceof List) {
             GeoJSONPositionArray[][] a = new GeoJSONPositionArray[list.size()][];
             for (int i = 0; i < list.size(); i++) {
-                for (int j = 0; j < ((List) list.get(i)).size(); j++) {
+                for (int j = 0; j < ((Collection) list.get(i)).size(); j++) {
                     a[i][j] = (GeoJSONPositionArray) ((List) list.get(i)).get(j);
                 }
             }

@@ -9,11 +9,11 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.formats.tiff.GeotiffWriter;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
@@ -427,7 +427,7 @@ public class ExportImageOrElevations extends ApplicationTemplate {
             }
 
             public void actionPerformed(ActionEvent e) {
-                ((JButton) e.getSource()).setAction(new DisableSelectorAction());
+                ((AbstractButton) e.getSource()).setAction(new DisableSelectorAction());
                 selector.enable();
             }
         }
@@ -442,7 +442,7 @@ public class ExportImageOrElevations extends ApplicationTemplate {
                 btnSaveElevations.setEnabled(false);
                 btnSaveImage.setEnabled(false);
                 selectedSector = null;
-                ((JButton) e.getSource()).setAction(new EnableSelectorAction());
+                ((AbstractButton) e.getSource()).setAction(new EnableSelectorAction());
             }
         }
     }

@@ -240,10 +240,13 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate {
         // DataStoreProducer should contain a DataConfiguration in the production results. We test the production
         // results anyway.
         Iterable results = producer.getProductionResults();
-        if (results != null && results.iterator() != null && results.iterator().hasNext()) {
-            Object o = results.iterator().next();
-            if (o instanceof Document) {
-                return (Document) o;
+        if (results != null) {
+            results.iterator();
+            if (results.iterator().hasNext()) {
+                Object o = results.iterator().next();
+                if (o instanceof Document) {
+                    return (Document) o;
+                }
             }
         }
 
@@ -324,7 +327,6 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate {
 
             if (sb.isEmpty()) {
                 sb.append(name);
-                continue;
             }
             else {
                 int size = Math.min(name.length(), sb.length());
@@ -399,7 +401,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate {
                         commonPixelFormat = pixelFormat;
                     }
                 }
-                else if (commonPixelFormat != null && !commonPixelFormat.equals(pixelFormat)) {
+                else if (!commonPixelFormat.equals(pixelFormat)) {
                     if (WWUtil.isEmpty(pixelFormat)) {
                         String message = Logging.getMessage("generic.UnrecognizedSourceType", file.getAbsolutePath());
                         Logging.logger().severe(message);

@@ -11,9 +11,9 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.event.BulkRetrievalListener;
-import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
@@ -201,9 +201,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             return byteBuffer;
         }
         finally {
-            if (tempFile != null)
-                //noinspection ResultOfMethodCallIgnored
-                tempFile.delete();
+            tempFile.delete();
         }
     }
 
@@ -1918,8 +1916,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (rs == null)
-            return null;
 
         this.doGetRestorableState(rs, null);
         return rs.getStateAsXml();

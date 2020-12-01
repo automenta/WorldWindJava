@@ -7,9 +7,9 @@
 package gov.nasa.worldwind.terrain;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
@@ -186,7 +186,7 @@ public class WMSBasicElevationModel extends BasicElevationModel {
         }
 
         String[] names = layerNames.split(",");
-        if (names == null || names.length == 0) {
+        if (names.length == 0) {
             String message = Logging.getMessage("nullValue.WMSLayerNames");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);

@@ -143,7 +143,7 @@ public class ElevationModelPanel extends JPanel {
 
         public void actionPerformed(ActionEvent actionEvent) {
             // Simply enable or disable the model based on its toggle button.
-            this.elevationModel.setEnabled(((JCheckBox) actionEvent.getSource()).isSelected());
+            this.elevationModel.setEnabled(((AbstractButton) actionEvent.getSource()).isSelected());
 
             wwd.redraw();
         }

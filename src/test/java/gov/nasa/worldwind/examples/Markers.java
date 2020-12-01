@@ -8,9 +8,9 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.MarkerLayer;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.markers.*;
 
 import java.util.*;

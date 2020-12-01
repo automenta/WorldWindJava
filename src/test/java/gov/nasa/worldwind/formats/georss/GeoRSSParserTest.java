@@ -5,7 +5,6 @@
  */
 package gov.nasa.worldwind.formats.georss;
 
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import org.junit.Test;
@@ -50,7 +49,7 @@ public class GeoRSSParserTest {
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
-        assertTrue("", shapes.size() != 0);
+        assertTrue("", !shapes.isEmpty());
         assertNotNull("", shapes.get(0));
         // <georss:line> is translated to a WWJ Path.
         assertTrue("", shapes.get(0) instanceof Path);
@@ -73,7 +72,7 @@ public class GeoRSSParserTest {
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
-        assertTrue("", shapes.size() != 0);
+        assertTrue("", !shapes.isEmpty());
         assertNotNull("", shapes.get(0));
         // <georss:line> is translated to a WWJ Path.
         assertTrue("", shapes.get(0) instanceof Path);
@@ -95,7 +94,7 @@ public class GeoRSSParserTest {
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
-        assertTrue("", shapes.size() != 0);
+        assertTrue("", !shapes.isEmpty());
         assertNotNull("", shapes.get(0));
         // <georss:polygon> is translated to a WWJ SurfacePolygon when no elevation is specified.
         assertTrue("", shapes.get(0) instanceof SurfacePolygon);
@@ -119,7 +118,7 @@ public class GeoRSSParserTest {
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
-        assertTrue("", shapes.size() != 0);
+        assertTrue("", !shapes.isEmpty());
         assertNotNull("", shapes.get(0));
         // <georss:polygon> is translated to a WWJ Path when an elevation is specified.
         assertTrue("", shapes.get(0) instanceof Path);
@@ -142,7 +141,7 @@ public class GeoRSSParserTest {
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
-        assertTrue("", shapes.size() != 0);
+        assertTrue("", !shapes.isEmpty());
         assertNotNull("", shapes.get(0));
         // <georss:box> is translated to a WWJ SurfaceSector when no elevation is specified.
         assertTrue("", shapes.get(0) instanceof SurfaceSector);
@@ -166,7 +165,7 @@ public class GeoRSSParserTest {
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
-        assertTrue("", shapes.size() != 0);
+        assertTrue("", !shapes.isEmpty());
         assertNotNull("", shapes.get(0));
         // <georss:box> is translated to a WWJ Quadrilateral when an elevation is specified.
         assertTrue("", shapes.get(0) instanceof Quadrilateral);
@@ -211,7 +210,7 @@ public class GeoRSSParserTest {
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
-        assertTrue("", shapes.size() != 0);
+        assertTrue("", !shapes.isEmpty());
         assertNotNull("", shapes.get(0));
         // <gml:LineString> is translated to a WWJ Path.
         assertTrue("", shapes.get(0) instanceof Path);
@@ -243,7 +242,7 @@ public class GeoRSSParserTest {
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
-        assertTrue("", shapes.size() != 0);
+        assertTrue("", !shapes.isEmpty());
         assertNotNull("", shapes.get(0));
         // <gml:Polygon> is translated to a WWJ SurfacePolygon.
         assertTrue("", shapes.get(0) instanceof SurfacePolygon);
@@ -271,7 +270,7 @@ public class GeoRSSParserTest {
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
-        assertTrue("", shapes.size() != 0);
+        assertTrue("", !shapes.isEmpty());
         assertNotNull("", shapes.get(0));
         // <georss:box> is translated to a WWJ SurfaceSector when no elevation is specified.
         assertTrue("", shapes.get(0) instanceof SurfaceSector);
@@ -446,7 +445,7 @@ public class GeoRSSParserTest {
 
         // Parsed shapes list should have at least one non-null element.
         assertNotNull("", shapes);
-        assertTrue("", shapes.size() != 0);
+        assertTrue("", !shapes.isEmpty());
         assertNotNull("", shapes.get(0));
         // <georss:line> is translated to a WWJ Path.
         assertTrue("", shapes.get(0) instanceof Path);

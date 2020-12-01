@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.Model;
-import gov.nasa.worldwind.globes.Earth;
+import gov.nasa.worldwind.globes.EllipsoidalGlobe;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ public class EGM96Offsets extends ApplicationTemplate {
         public AppFrame() {
             Model m = this.wwjPanel.wwd().model();
             try {
-                ((Earth) m.getGlobe()).applyEGMA96Offsets("config/EGM96.dat");
+                ((EllipsoidalGlobe) m.getGlobe()).applyEGMA96Offsets("config/EGM96.dat");
             }
             catch (IOException e) {
                 e.printStackTrace();

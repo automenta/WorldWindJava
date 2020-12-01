@@ -25,8 +25,6 @@ public class OWSHTTP extends AbstractXMLEventParser {
     }
 
     public List<String> getGetAddresses() {
-        if (this.gets == null)
-            return null;
 
         List<String> addresses = new ArrayList<>(this.gets.size());
         for (AttributesOnlyXMLEventParser parser : this.gets) {
@@ -38,8 +36,6 @@ public class OWSHTTP extends AbstractXMLEventParser {
     }
 
     public List<String> getPostAddresses() {
-        if (this.posts == null)
-            return null;
 
         List<String> addresses = new ArrayList<>(this.posts.size());
         for (AttributesOnlyXMLEventParser parser : this.posts) {

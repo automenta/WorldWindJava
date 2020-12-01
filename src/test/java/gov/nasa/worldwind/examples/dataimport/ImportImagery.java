@@ -9,9 +9,9 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.data.*;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.SurfaceImageLayer;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.ExampleUtil;
 
 import javax.swing.*;

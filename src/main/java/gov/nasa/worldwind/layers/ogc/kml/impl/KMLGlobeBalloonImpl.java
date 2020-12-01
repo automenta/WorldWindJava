@@ -6,9 +6,9 @@
 
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.ogc.kml.KMLAbstractFeature;
 import gov.nasa.worldwind.render.GlobeBalloon;
-import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.util.Logging;
 
 /**

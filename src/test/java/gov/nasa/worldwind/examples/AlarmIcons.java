@@ -6,9 +6,9 @@
 package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.IconLayer;
+import gov.nasa.worldwind.render.*;
 
 import javax.swing.Timer;
 import javax.swing.*;
@@ -147,7 +147,7 @@ public class AlarmIcons extends ApplicationTemplate {
                         wwd().redraw();
                     });
 
-                    ((JRadioButton) e.getSource()).addItemListener(e1 -> {
+                    ((ItemSelectable) e.getSource()).addItemListener(e1 -> {
                         if (e1.getStateChange() == ItemEvent.DESELECTED)
                             timer.stop();
                     });

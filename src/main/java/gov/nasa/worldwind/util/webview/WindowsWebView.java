@@ -9,7 +9,6 @@ package gov.nasa.worldwind.util.webview;
 import com.jogamp.opengl.util.texture.Texture;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;

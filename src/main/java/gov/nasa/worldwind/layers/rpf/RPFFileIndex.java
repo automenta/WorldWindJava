@@ -56,9 +56,7 @@ public class RPFFileIndex {
             byte[] src = new byte[len];
             if (s != null) {
                 byte[] utfBytes = s.getBytes(CHARACTER_ENCODING);
-                if (utfBytes != null) {
-                    System.arraycopy(utfBytes, 0, src, 0, utfBytes.length);
-                }
+                System.arraycopy(utfBytes, 0, src, 0, utfBytes.length);
             }
             buffer.put(src, 0, len);
         }

@@ -29,7 +29,7 @@ import java.util.logging.Level;
  */
 public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
     protected static final long AVG_TILE_SIZE = 8 * 1024;
-    protected final int MAX_TILE_COUNT_PER_REGION = 200;
+    protected static final int MAX_TILE_COUNT_PER_REGION = 200;
 
     protected final PlaceNameLayer layer;
     protected final long pollDelay = RETRIEVAL_SERVICE_POLL_DELAY;

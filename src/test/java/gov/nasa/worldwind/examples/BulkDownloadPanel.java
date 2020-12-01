@@ -411,7 +411,7 @@ public class BulkDownloadPanel extends JPanel {
             // Check + name
             this.selectCheckBox = new JCheckBox(this.retrievable.getName());
             this.selectCheckBox.addActionListener(e -> {
-                if (((JCheckBox) e.getSource()).isSelected() && sector != null)
+                if (((AbstractButton) e.getSource()).isSelected() && sector != null)
                     updateDescription(sector);
             });
             this.add(this.selectCheckBox, BorderLayout.WEST);

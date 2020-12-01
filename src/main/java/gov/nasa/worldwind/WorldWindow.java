@@ -15,8 +15,8 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
-import gov.nasa.worldwind.ui.WorldWindowGLDrawable;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.PerformanceStatistic;
+import gov.nasa.worldwind.video.WorldWindowGLDrawable;
 
 import java.beans.*;
 import java.util.*;
@@ -44,11 +44,11 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
      * @param surface The surface to configure.
      */
     static void configureIdentityPixelScale(ScalableSurface surface) {
-        if (surface == null) {
-            String message = Logging.getMessage("nullValue.SurfaceIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (surface == null) {
+//            String message = Logging.getMessage("nullValue.SurfaceIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         float[] identityScale = new float[] {ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE};
         surface.setSurfaceScale(identityScale);

@@ -7,10 +7,10 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.examples.worldwindow.util.Util;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import javax.swing.*;
@@ -85,7 +85,7 @@ public class ScreenSelection extends ApplicationTemplate {
             }
 
             public void actionPerformed(ActionEvent actionEvent) {
-                ((JButton) actionEvent.getSource()).setAction(new DisableSelectorAction());
+                ((AbstractButton) actionEvent.getSource()).setAction(new DisableSelectorAction());
                 screenSelector.enable();
             }
         }
@@ -96,7 +96,7 @@ public class ScreenSelection extends ApplicationTemplate {
             }
 
             public void actionPerformed(ActionEvent actionEvent) {
-                ((JButton) actionEvent.getSource()).setAction(new EnableSelectorAction());
+                ((AbstractButton) actionEvent.getSource()).setAction(new EnableSelectorAction());
                 screenSelector.disable();
             }
         }

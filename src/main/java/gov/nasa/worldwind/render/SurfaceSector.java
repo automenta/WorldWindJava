@@ -7,10 +7,10 @@ package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.Exportable;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
-import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.layers.ogc.kml.KMLConstants;
+import gov.nasa.worldwind.layers.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.*;

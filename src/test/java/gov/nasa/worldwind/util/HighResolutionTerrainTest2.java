@@ -74,7 +74,7 @@ public class HighResolutionTerrainTest2
     private static ArrayList<Position> generateReferenceLocations(Sector sector, int numLats, int numLons)
     {
         int decimalPlaces = 5;
-        ArrayList<Position> locations = new ArrayList<Position>();
+        ArrayList<Position> locations = new ArrayList<>();
         double dLat = (sector.latMax().degrees - sector.latMin().degrees) / (numLats - 1);
         double dLon = (sector.lonMax().degrees - sector.lonMin().degrees) / (numLons - 1);
 

@@ -225,8 +225,6 @@ public class ScreenRelativeAnnotation extends ScreenAnnotation {
         if (restorableSupport == null)
             restorableSupport = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (restorableSupport == null)
-            return null;
 
         restorableSupport.addStateValueAsDouble("xFraction", this.getXFraction());
         restorableSupport.addStateValueAsDouble("yFraction", this.getYFraction());

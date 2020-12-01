@@ -10,11 +10,11 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.event.BulkRetrievalListener;
-import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.formats.dds.*;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.layers.ogc.wms.WMSCapabilities;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.*;
@@ -771,8 +771,6 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (rs == null)
-            return null;
 
         this.doGetRestorableState(rs, null);
         return rs.getStateAsXml();

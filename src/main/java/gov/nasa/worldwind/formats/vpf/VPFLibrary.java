@@ -106,8 +106,7 @@ public class VPFLibrary extends AVListImpl {
 
         // Library Coverages.
         Collection<VPFCoverage> col = createCoverages(library, cat);
-        if (col != null)
-            library.setCoverages(col);
+        library.setCoverages(col);
 
         // Library tiles.
         VPFCoverage cov = library.getCoverage(VPFConstants.TILE_REFERENCE_COVERAGE);
@@ -135,10 +134,10 @@ public class VPFLibrary extends AVListImpl {
         if (WWUtil.isEmpty(value))
             return null;
 
-        if (!value.toLowerCase().isEmpty() && value.toLowerCase().charAt(0) == 'f') {
+        if (!value.isEmpty() && value.toLowerCase().charAt(0) == 'f') {
             return 1.0d / WWMath.METERS_TO_FEET;
         }
-        else if (!value.toLowerCase().isEmpty() && value.toLowerCase().charAt(0) == 'm') {
+        else if (!value.isEmpty() && value.toLowerCase().charAt(0) == 'm') {
             return 1.0d;
         }
         else {

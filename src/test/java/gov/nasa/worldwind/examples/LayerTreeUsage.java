@@ -9,10 +9,11 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.ui.newt.WorldWindowNEWT;
-import gov.nasa.worldwind.util.*;
-import gov.nasa.worldwind.util.layertree.LayerTree;
-import gov.nasa.worldwind.util.tree.BasicTree;
+import gov.nasa.worldwind.ui.HotSpotController;
+import gov.nasa.worldwind.ui.tree.BasicTree;
+import gov.nasa.worldwind.ui.tree.layer.LayerTree;
+import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.video.newt.WorldWindowNEWT;
 
 import java.awt.*;
 

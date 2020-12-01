@@ -6,11 +6,11 @@
 package gov.nasa.worldwind.examples.shapebuilder;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.airspaces.editor.AirspaceEditorUtil;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.pick.PickedObjectList;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.airspaces.editor.AirspaceEditorUtil;
 import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;

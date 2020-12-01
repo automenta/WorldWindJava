@@ -9,7 +9,6 @@ import com.jogamp.opengl.util.texture.Texture;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;

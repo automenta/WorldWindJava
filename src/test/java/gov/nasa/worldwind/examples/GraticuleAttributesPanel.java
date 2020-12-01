@@ -453,9 +453,7 @@ public class GraticuleAttributesPanel extends JPanel {
                 this.lastSelectedColor = null;
                 Color color = makeColorFromControls();
                 setColorLabel(color);
-                if (color != null) {
-                    fireColorChanged();
-                }
+                fireColorChanged();
             }
         }
 
@@ -473,9 +471,7 @@ public class GraticuleAttributesPanel extends JPanel {
             if (event != null) {
                 Color color = makeColorFromControls();
                 setColorLabel(color);
-                if (color != null) {
-                    fireColorChanged();
-                }
+                fireColorChanged();
             }
         }
 
@@ -483,9 +479,7 @@ public class GraticuleAttributesPanel extends JPanel {
             if (event != null) {
                 Color color = makeColorFromControls();
                 setColorLabel(color);
-                if (color != null) {
-                    fireColorChanged();
-                }
+                fireColorChanged();
             }
         }
 

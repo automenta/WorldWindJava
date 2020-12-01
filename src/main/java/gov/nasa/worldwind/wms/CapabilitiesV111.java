@@ -49,12 +49,10 @@ public class CapabilitiesV111 extends Capabilities {
                 this.getBoundingBoxMiny(e), this.getBoundingBoxMaxy(e),
                 this.getBoundingBoxResx(e), this.getBoundingBoxResy(e));
 
-            if (bb != null) {
-                // Add the bbox only if the ancestor's crs is not one of those in the node's crs.
-                if (bb.getCrs() != null && !crses.contains(bb.getCrs())) {
-                    crses.add(bb.getCrs());
-                    bboxes.add(bb);
-                }
+            // Add the bbox only if the ancestor's crs is not one of those in the node's crs.
+            if (bb.getCrs() != null && !crses.contains(bb.getCrs())) {
+                crses.add(bb.getCrs());
+                bboxes.add(bb);
             }
         }
 

@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.examples.lineofsight;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.Position;
@@ -85,7 +85,7 @@ public class GridOfPoints extends ApplicationTemplate {
                 public void selected(SelectEvent event) {
                     // Intercept the selected position and assign its display name the position's data value.
                     if (event.getTopObject() instanceof PointGrid)
-                        ((PointGrid) event.getTopObject()).set(AVKey.DISPLAY_NAME,
+                        ((AVList) event.getTopObject()).set(AVKey.DISPLAY_NAME,
                             positionInfo.get(event.getTopPickedObject().getPosition()).toString());
 
                     super.selected(event);

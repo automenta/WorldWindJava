@@ -115,7 +115,7 @@ public class UserFacingIconTest
     // Helper Methods
     //////////////////////////////////////////////////////////
 
-    @SuppressWarnings({"JavaDoc"})
+    @SuppressWarnings("JavaDoc")
     private static void assignExampleValues(WWIcon icon)
     {
         icon.setImageSource("path/to/image.ext");

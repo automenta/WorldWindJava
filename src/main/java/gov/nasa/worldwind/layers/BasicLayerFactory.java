@@ -7,8 +7,8 @@ package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.layers.ogc.*;
 import gov.nasa.worldwind.exception.*;
+import gov.nasa.worldwind.layers.ogc.*;
 import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.wms.WMSTiledImageLayer;
@@ -149,12 +149,12 @@ public class BasicLayerFactory extends BasicFactory {
 
                     if (o instanceof LayerList) {
                         LayerList list = (LayerList) o;
-                        if (list != null && !list.isEmpty())
+                        if (!list.isEmpty())
                             layerLists.add(list);
                     }
                     else if (o instanceof LayerList[]) {
                         LayerList[] lists = (LayerList[]) o;
-                        if (lists != null && lists.length > 0)
+                        if (lists.length > 0)
                             layerLists.addAll(Arrays.asList(lists));
                     }
                     else {

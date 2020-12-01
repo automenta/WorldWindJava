@@ -12,6 +12,7 @@ import gov.nasa.worldwind.event.SelectEvent;
 import gov.nasa.worldwind.globes.GlobeStateKey;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.ui.HotSpot;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.webview.*;
 

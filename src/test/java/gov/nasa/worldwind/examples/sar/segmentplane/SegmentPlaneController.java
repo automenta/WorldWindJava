@@ -7,8 +7,8 @@ package gov.nasa.worldwind.examples.sar.segmentplane;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.Material;
 
 import java.awt.*;
 import java.awt.event.*;

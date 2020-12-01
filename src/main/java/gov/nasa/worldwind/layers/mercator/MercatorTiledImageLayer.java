@@ -7,11 +7,11 @@ package gov.nasa.worldwind.layers.mercator;
 
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Cylinder;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.AbstractLayer;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.retrieve.*;
 import gov.nasa.worldwind.util.*;
 
@@ -618,7 +618,7 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         gl.glColor3d(0, 1, 0);
 
         for (MercatorTextureTile tile : tiles) {
-            ((Cylinder) tile.getExtent(dc)).render(dc);
+            ((Renderable) tile.getExtent(dc)).render(dc);
         }
 
         Cylinder c = Sector.computeBoundingCylinder(dc.getGlobe(), dc.getVerticalExaggeration(),
@@ -989,13 +989,9 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
             if (htr.getResponseCode() != HttpURLConnection.HTTP_OK)
                 return null;
 
-            Retriever r = retriever;
-            ByteBuffer buffer = r.getBuffer();
+            ByteBuffer buffer = retriever.getBuffer();
 
             String suffix = WWIO.makeSuffixForMimeType(htr.getContentType());
-            if (suffix == null) {
-                return null; // TODO: log error
-            }
 
             String path = tile.getPath().substring(0,
                 tile.getPath().lastIndexOf('.'));

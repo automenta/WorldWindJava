@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.examples;
 
-import gov.nasa.worldwind.render.ScreenImage;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.ScreenImage;
 
 import javax.imageio.ImageIO;
 import java.awt.event.*;

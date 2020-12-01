@@ -122,7 +122,7 @@ public class InstallElevations extends ApplicationTemplate {
             // completed, the TiledElevationProducer should always contain a document in the production results, but
             // test the results anyway.
             Iterable<?> results = producer.getProductionResults();
-            if (results == null || results.iterator() == null || !results.iterator().hasNext())
+            if (results == null || !results.iterator().hasNext())
                 return null;
 
             Object o = results.iterator().next();

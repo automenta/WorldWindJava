@@ -7,8 +7,7 @@ package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.render.SurfaceImage;
+import gov.nasa.worldwind.render.*;
 
 import java.awt.*;
 

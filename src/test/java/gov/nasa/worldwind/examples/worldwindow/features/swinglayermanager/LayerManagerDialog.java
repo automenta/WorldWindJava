@@ -39,7 +39,7 @@ public class LayerManagerDialog extends AbstractFeature {
         this.dialog.setModal(false);
         this.dialog.setTitle("Layer Manager");
 
-        WWOPanel controlsPanel = (ControlsPanel) controller.getRegisteredObject(Constants.CONTROLS_PANEL);
+        WWOPanel controlsPanel = (WWOPanel) controller.getRegisteredObject(Constants.CONTROLS_PANEL);
         if (controlsPanel != null)
             this.dialog.getContentPane().add(controlsPanel.getJPanel(), BorderLayout.CENTER);
         else

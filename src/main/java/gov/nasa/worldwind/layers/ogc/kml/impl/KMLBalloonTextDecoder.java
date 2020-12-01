@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
 import gov.nasa.worldwind.layers.ogc.kml.*;
-import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.xml.AbstractXMLEventParser;
 
 import java.util.*;
 import java.util.regex.*;
@@ -140,7 +140,7 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder {
         // First look for a field in the Feature
         Object replacement = feature.getField(pattern);
         if (replacement instanceof KMLAbstractObject)
-            return ((KMLAbstractObject) replacement).getCharacters();
+            return ((AbstractXMLEventParser) replacement).getCharacters();
         else if (replacement != null)
             return replacement.toString();
 

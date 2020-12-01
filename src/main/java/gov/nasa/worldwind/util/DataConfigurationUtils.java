@@ -7,10 +7,10 @@ package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.FileStore;
-import gov.nasa.worldwind.layers.ogc.OGCConstants;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.AbstractLayer;
+import gov.nasa.worldwind.layers.ogc.OGCConstants;
 import gov.nasa.worldwind.layers.ogc.wcs.wcs100.*;
 import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.terrain.AbstractElevationModel;
@@ -637,7 +637,7 @@ public class DataConfigurationUtils {
         }
 
         String[] names = layerNames.split(",");
-        if (names == null || names.length == 0) {
+        if (names.length == 0) {
             String message = Logging.getMessage("nullValue.WMSLayerNames");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
@@ -1747,7 +1747,7 @@ public class DataConfigurationUtils {
         if (params.get(AVKey.FORMAT_SUFFIX) == null) {
             String s = WWXML.getText(el, "ImageAccessor/ImageFileExtension", xpath);
             if (s != null && !s.isEmpty()) {
-                if (!(!s.isEmpty() && s.charAt(0) == '.')) {
+                if (!(s.charAt(0) == '.')) {
                     s = "." + s;
                 }
                 params.set(AVKey.FORMAT_SUFFIX, s);
@@ -1883,7 +1883,7 @@ public class DataConfigurationUtils {
         // Image format properties.
         s = WWXML.getText(context, "ImageAccessor/ImageFileExtension", xpath);
         if (s != null && !s.isEmpty()) {
-            if (!(!s.isEmpty() && s.charAt(0) == '.')) {
+            if (!(s.charAt(0) == '.')) {
                 s = "." + s;
             }
             WWXML.appendText(outElem, "FormatSuffix", s);

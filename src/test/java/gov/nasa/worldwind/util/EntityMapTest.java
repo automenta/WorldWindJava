@@ -27,8 +27,7 @@ public class EntityMapTest
 
     /** Test replacement of each entity in EntityMap. */
     @Test
-    public void testAllReplacements() throws IllegalAccessException
-    {
+    public void testAllReplacements() {
         for (int i = 0; i < EntityMap.entityKeys.length; i++)
         {
             String expected = EntityMap.entityReplacements[i];

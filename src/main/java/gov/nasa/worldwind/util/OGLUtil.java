@@ -83,6 +83,10 @@ public class OGLUtil {
         }
     }
 
+    public static void applyColor(GL2 gl, Color color, double opacity, boolean premultiplyColors) {
+        applyColor(gl, color, (float)opacity, premultiplyColors);
+    }
+
     /**
      * Sets the GL color state to the specified {@link Color} and opacity, and with the specified color mode.
      * If <code>premultiplyColors</code> is true, this premultipies the Red, Green, and Blue color values by the opacity
@@ -96,7 +100,7 @@ public class OGLUtil {
      * @throws IllegalArgumentException if the GL is null, if the Color is null, if the opacity is less than 0, or if
      *                                  the opacity is greater than 1.
      */
-    public static void applyColor(GL2 gl, Color color, double opacity, boolean premultiplyColors) {
+    public static void applyColor(GL2 gl, Color color, float opacity, boolean premultiplyColors) {
 //        if (gl == null) {
 //            String message = Logging.getMessage("nullValue.GLIsNull");
 //            Logging.logger().severe(message);
@@ -109,23 +113,23 @@ public class OGLUtil {
 //            throw new IllegalArgumentException(message);
 //        }
 
-        if (opacity < 0.0d || opacity > 1.0d) {
+        if (opacity < 0.0 || opacity > 1.0f) {
             String message = Logging.getMessage("generic.OpacityOutOfRange", opacity);
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        float[] compArray = new float[4];
-        color.getRGBComponents(compArray);
-        compArray[3] = (float) opacity;
+        float[] rgba = new float[4];
+        color.getRGBComponents(rgba);
+        rgba[3] = opacity;
 
         if (premultiplyColors) {
-            compArray[0] *= compArray[3];
-            compArray[1] *= compArray[3];
-            compArray[2] *= compArray[3];
+            rgba[0] *= opacity;
+            rgba[1] *= opacity;
+            rgba[2] *= opacity;
         }
 
-        gl.glColor4fv(compArray, 0);
+        gl.glColor4fv(rgba, 0);
     }
 
     /**

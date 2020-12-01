@@ -187,7 +187,7 @@ public class OrbitViewInputSupport {
         }
 
         Vec4 v = headingPitchZoomTransform.getTranslation();
-        return v != null ? v.getLength3() : 0.0;
+        return v.getLength3();
     }
 
     public static OrbitViewState getSurfaceIntersection(Globe globe, SectorGeometryList terrain,
@@ -196,18 +196,16 @@ public class OrbitViewInputSupport {
         if (globe != null) {
             Matrix modelview = OrbitViewInputSupport.computeTransformMatrix(globe, centerPosition,
                 heading, pitch, Angle.ZERO, zoom);
-            if (modelview != null) {
-                Matrix modelviewInv = modelview.getInverse();
-                if (modelviewInv != null) {
-                    Vec4 eyePoint = Vec4.UNIT_W.transformBy4(modelviewInv);
-                    Vec4 centerPoint = globe.computePointFromPosition(centerPosition);
-                    Vec4 eyeToCenter = eyePoint.subtract3(centerPoint);
-                    Intersection[] intersections = terrain.intersect(
-                        new Line(eyePoint, eyeToCenter.normalize3().multiply3(-1)));
-                    if (intersections != null && intersections.length >= 0) {
-                        Position newCenter = globe.computePositionFromPoint(intersections[0].getIntersectionPoint());
-                        return (new OrbitViewState(newCenter, heading, pitch, zoom));
-                    }
+            Matrix modelviewInv = modelview.getInverse();
+            if (modelviewInv != null) {
+                Vec4 eyePoint = Vec4.UNIT_W.transformBy4(modelviewInv);
+                Vec4 centerPoint = globe.computePointFromPosition(centerPosition);
+                Vec4 eyeToCenter = eyePoint.subtract3(centerPoint);
+                Intersection[] intersections = terrain.intersect(
+                    new Line(eyePoint, eyeToCenter.normalize3().multiply3(-1)));
+                if (intersections != null) {
+                    Position newCenter = globe.computePositionFromPoint(intersections[0].getIntersectionPoint());
+                    return (new OrbitViewState(newCenter, heading, pitch, zoom));
                 }
             }
         }

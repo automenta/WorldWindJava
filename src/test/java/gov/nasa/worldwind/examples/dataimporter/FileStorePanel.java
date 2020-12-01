@@ -197,8 +197,8 @@ public class FileStorePanel extends JPanel implements ListSelectionListener {
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
             if (status == 0)
                 this.deleteDataSet(dataSet); // "Yes" selected
-            else if (status == 1)
-                continue; // "No" selected
+            else if (status == 1) {
+            } // "No" selected
             else
                 return; // "Cancel" selected
         }

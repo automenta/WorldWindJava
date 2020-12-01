@@ -6,8 +6,8 @@
 package gov.nasa.worldwind.util;
 
 import com.jogamp.opengl.GL2;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.DrawContext;
 
 import java.nio.Buffer;
 import java.util.*;

@@ -7,13 +7,13 @@ package gov.nasa.worldwind.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.Material;
-import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObjectList;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.airspaces.Polygon;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.render.airspaces.editor.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.view.orbit.BasicOrbitView;

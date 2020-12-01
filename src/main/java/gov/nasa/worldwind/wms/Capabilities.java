@@ -398,7 +398,7 @@ public abstract class Capabilities {
             }
             catch (NumberFormatException e) {
                 String message = Logging.getMessage("generic.ConversionError",
-                    extremeMin != null ? extremeMin : extremeMax != null ? extremeMax : "");
+                    extremeMin != null ? extremeMin : extremeMax);
                 Logging.logger().severe(message);
             }
         }

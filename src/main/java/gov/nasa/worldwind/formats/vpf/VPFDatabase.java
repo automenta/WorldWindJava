@@ -85,8 +85,7 @@ public class VPFDatabase extends AVListImpl {
 
         // Database Libraries.
         Collection<VPFLibrary> col = createLibraries(database, lat);
-        if (col != null)
-            database.setLibraries(col);
+        database.setLibraries(col);
 
         return database;
     }

@@ -8,9 +8,9 @@ package gov.nasa.worldwind.performance;
 
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.LatLon;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.*;
 
 import java.util.ArrayList;
 

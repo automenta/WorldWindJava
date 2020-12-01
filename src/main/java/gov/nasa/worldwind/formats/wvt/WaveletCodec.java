@@ -79,13 +79,12 @@ public class WaveletCodec {
             throw new IllegalArgumentException(message);
         }
 
-        int biType = switch (codec.type) {
+        return switch (codec.type) {
             case TYPE_BYTE_GRAY -> BufferedImage.TYPE_BYTE_GRAY;
             case TYPE_3BYTE_BGR -> BufferedImage.TYPE_3BYTE_BGR;
             case TYPE_4BYTE_ARGB -> BufferedImage.TYPE_4BYTE_ABGR;
             default -> -1;
         };
-        return biType;
     }
 
     private static int getWaveletType(BufferedImage image) {
@@ -95,13 +94,12 @@ public class WaveletCodec {
             throw new IllegalArgumentException(message);
         }
 
-        int type = switch (image.getType()) {
+        return switch (image.getType()) {
             case BufferedImage.TYPE_BYTE_GRAY -> TYPE_BYTE_GRAY;
             case BufferedImage.TYPE_3BYTE_BGR -> TYPE_3BYTE_BGR;
             case BufferedImage.TYPE_4BYTE_ABGR -> TYPE_4BYTE_ARGB;
             default -> -1;
         };
-        return type;
     }
 
     public static WaveletCodec load(ByteBuffer buffer) {

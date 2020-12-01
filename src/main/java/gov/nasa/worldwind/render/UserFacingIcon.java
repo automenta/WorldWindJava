@@ -260,8 +260,6 @@ public class UserFacingIcon extends AVListImpl implements WWIcon, Movable, Dragg
     public String getRestorableState() {
         RestorableSupport rs = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (rs == null)
-            return null;
 
         // Save the imagePath property only when the imageSource property is a simple String path. If the imageSource
         // property is a BufferedImage (or some other object), we make no effort to save that state. We save under

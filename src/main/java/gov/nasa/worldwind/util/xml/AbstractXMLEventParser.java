@@ -241,7 +241,7 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
 
             if (ctx.isEndElement(event, inputEvent)) {
                 if (this.hasField(CHARACTERS_CONTENT)) {
-                    CharSequence sb = (StringBuilder) this.getField(CHARACTERS_CONTENT);
+                    CharSequence sb = (CharSequence) this.getField(CHARACTERS_CONTENT);
                     if (sb != null && !sb.isEmpty())
                         this.setField(CHARACTERS_CONTENT, sb.toString());
                     else
@@ -314,13 +314,11 @@ abstract public class AbstractXMLEventParser implements XMLEventParser {
                     ctx.registerParser(elementName, parser);
             }
 
-            if (parser != null) {
-                Object o = parser.parse(ctx, event, args);
-                if (o == null)
-                    return;
+            Object o = parser.parse(ctx, event, args);
+            if (o == null)
+                return;
 
-                this.doAddEventContent(o, ctx, event, args);
-            }
+            this.doAddEventContent(o, ctx, event, args);
         }
     }
 

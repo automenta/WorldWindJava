@@ -5,7 +5,6 @@
  */
 package gov.nasa.worldwind.terrain;
 
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;

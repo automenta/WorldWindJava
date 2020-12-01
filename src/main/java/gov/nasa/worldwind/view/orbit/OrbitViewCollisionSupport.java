@@ -5,9 +5,9 @@
  */
 package gov.nasa.worldwind.view.orbit;
 
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -171,7 +171,7 @@ public class OrbitViewCollisionSupport {
                 if (adjustedHeight < 0) {
                     Vec4 eyePoint = getEyePoint(modelviewInv);
                     Vec4 centerPoint = globe.computePointFromPosition(orbitView.getCenterPosition());
-                    if (eyePoint != null && centerPoint != null) {
+                    if (centerPoint != null) {
                         Position eyePos = globe.computePositionFromPoint(eyePoint);
                         // Compute the eye point required to resolve the collision.
                         Vec4 newEyePoint = globe.computePointFromPosition(eyePos.getLatitude(), eyePos.getLongitude(),
@@ -198,11 +198,9 @@ public class OrbitViewCollisionSupport {
         double height = Double.POSITIVE_INFINITY;
         if (dc != null && modelviewInv != null && fieldOfView != null && viewport != null && nearDistance >= 0) {
             Vec4 eyePoint = getEyePoint(modelviewInv);
-            if (eyePoint != null) {
-                double eyeHeight = computePointHeightAboveSurface(dc, eyePoint);
-                if (eyeHeight < height)
-                    height = eyeHeight;
-            }
+            double eyeHeight = computePointHeightAboveSurface(dc, eyePoint);
+            if (eyeHeight < height)
+                height = eyeHeight;
 
             Vec4 nearPoint = getPointOnNearPlane(modelviewInv, fieldOfView, viewport, nearDistance);
             if (nearPoint != null) {
@@ -238,8 +236,7 @@ public class OrbitViewCollisionSupport {
         if (globe != null && centerPosition != null && heading != null && pitch != null) {
             Matrix modelview = OrbitViewInputSupport.computeTransformMatrix(globe,
                 centerPosition, heading, pitch, roll, zoom);
-            if (modelview != null)
-                return modelview.getInverse();
+            return modelview.getInverse();
         }
 
         return null;

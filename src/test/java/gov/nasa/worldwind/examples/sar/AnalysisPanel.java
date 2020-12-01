@@ -396,7 +396,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
     }
 
     public Position getSegmentStartPosition(int startPositionNumber) {
-        if (this.currentTrack == null || this.currentTrack.size() == 0)
+        if (this.currentTrack == null || this.currentTrack.isEmpty())
             return null;
 
         Position pos;
@@ -414,7 +414,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
     }
 
     public Position getSegmentEndPosition(int startPositionNumber) {
-        if (this.currentTrack == null || this.currentTrack.size() == 0)
+        if (this.currentTrack == null || this.currentTrack.isEmpty())
             return null;
 
         Position pos;
@@ -511,7 +511,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
 
     // TODO: weighted average should be over actual polyline track points
     private Position getSmoothedGroundPositionAlongSegment() {
-        if (this.currentTrack == null || this.currentTrack.size() == 0)
+        if (this.currentTrack == null || this.currentTrack.isEmpty())
             return null;
 
         Position start = getCurrentSegmentStartPosition();

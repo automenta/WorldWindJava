@@ -39,16 +39,16 @@ public class GDALUtils {
 
     protected static final byte ALPHA_TRANSPARENT = 0x00;
     protected static final String JAVA_LIBRARY_PATH = "java.library.path";
-    protected static final String GDAL_DRIVER_PATH = "GDAL_DRIVER_PATH";
-    protected static final String OGR_DRIVER_PATH = "OGR_DRIVER_PATH";
+//    protected static final String GDAL_DRIVER_PATH = "GDAL_DRIVER_PATH";
+//    protected static final String OGR_DRIVER_PATH = "OGR_DRIVER_PATH";
     protected static final String GDAL_DATA_PATH = "GDAL_DATA";
     protected static final AtomicBoolean gdalIsAvailable = new AtomicBoolean(false);
     // This is an OLD default libname request by WW build of GDAL
     protected static final String gdalalljni = Configuration.isMacOS()
         ? "gdalalljni" : (is32bitArchitecture() ? "gdalalljni32" : "gdalalljni64");
     protected static final Set<String> loadedLibraries = new CopyOnWriteArraySet<>();
-    protected static final CopyOnWriteArraySet<String> failedLibraries = new CopyOnWriteArraySet<>();
-    protected static byte ALPHA_OPAQUE = (byte) 0xFF;
+//    protected static final CopyOnWriteArraySet<String> failedLibraries = new CopyOnWriteArraySet<>();
+//    protected static byte ALPHA_OPAQUE = (byte) 0xFF;
     private static Class newClassLoader = null;
 
     //    private static class GDALLibraryLoader implements gdal.LibraryLoader {
@@ -119,10 +119,8 @@ public class GDALUtils {
 //                }
 //            }
 
-            if (!isKnownBuild) {
-                String message = Logging.getMessage("gdal.UnknownBuild", gdal.VersionInfo());
-                Logging.logger().finest(message);
-            }
+            String message = Logging.getMessage("gdal.UnknownBuild", gdal.VersionInfo());
+            Logging.logger().finest(message);
         }
         catch (Throwable cnf) {
             Logging.logger().finest(cnf.getMessage());
@@ -168,15 +166,13 @@ public class GDALUtils {
                 // if we are here, library is not in any default place, so we will search in sub-folders
                 String[] folders = findGdalFolders();
                 String newJavaLibraryPath = buildPathString(folders, true);
-                if (newJavaLibraryPath != null) {
-                    try {
-                        alterJavaLibraryPath(newJavaLibraryPath);
+                try {
+                    alterJavaLibraryPath(newJavaLibraryPath);
 //                    gdalNativeLibraryLoaded = gdalLoadNativeLibrary(true);
-                    }
-                    catch (Exception e) {
-                        String message = Logging.getMessage("gdal.UnableToAlterLibraryPath");
-                        Logging.logger().log(Level.WARNING, message, e);
-                    }
+                }
+                catch (Exception e) {
+                    String message = Logging.getMessage("gdal.UnableToAlterLibraryPath");
+                    Logging.logger().log(Level.WARNING, message, e);
                 }
             }
 
@@ -1705,20 +1701,18 @@ public class GDALUtils {
 
         newClassLoader = ClassLoader.class;
         fieldSysPaths = newClassLoader.getDeclaredField("sys_paths");
-        if (null != fieldSysPaths) {
-            try {
-                fieldSysPaths.setAccessible(true);
-                fieldSysPaths_accessible = true;
-            }
-            catch (InaccessibleObjectException ioex) {
-                fieldSysPaths_accessible = false;
-            }
-            originalClassLoader = fieldSysPaths.get(newClassLoader);
-
-            // Reset it to null so that whenever "System.loadLibrary" is called,
-            // it will be reconstructed with the changed value.
-            fieldSysPaths.set(newClassLoader, null);
+        try {
+            fieldSysPaths.setAccessible(true);
+            fieldSysPaths_accessible = true;
         }
+        catch (InaccessibleObjectException ioex) {
+            fieldSysPaths_accessible = false;
+        }
+        originalClassLoader = fieldSysPaths.get(newClassLoader);
+
+        // Reset it to null so that whenever "System.loadLibrary" is called,
+        // it will be reconstructed with the changed value.
+        fieldSysPaths.set(newClassLoader, null);
     }
 
     protected static void restoreJavaLibraryPath() {

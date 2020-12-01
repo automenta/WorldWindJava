@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.layers.ogc.collada.impl;
 
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.Box;
+import gov.nasa.worldwind.render.DrawContext;
 
 /**
  * Interface for rendering COLLADA elements.

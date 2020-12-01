@@ -7,7 +7,6 @@ package gov.nasa.worldwind.examples.worldwindow.features;
 
 import gov.nasa.worldwind.Disposable;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.examples.worldwindow.core.*;
 import gov.nasa.worldwind.examples.worldwindow.util.*;
 import gov.nasa.worldwind.examples.worldwindow.util.measuretool.WWOMeasureTool;
@@ -131,7 +130,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
 
     public void setShapeColor(Renderable shape, Color lineColor, Color fillColor) {
         if (shape instanceof Path) {
-            Attributable path = (Path) shape;
+            Attributable path = (Attributable) shape;
             if (path.getAttributes() == null) {
                 path.setAttributes(new BasicShapeAttributes());
             }
@@ -139,7 +138,7 @@ public class MeasurementPanel extends AbstractFeaturePanel {
         }
 
         if (shape instanceof SurfaceShape) {
-            Attributable sShape = (SurfaceShape) shape;
+            Attributable sShape = (Attributable) shape;
             ShapeAttributes attrs = sShape.getAttributes();
             if (attrs == null) {
                 attrs = new BasicShapeAttributes();

@@ -28,7 +28,7 @@ public class AppendPositionAction extends AbstractAction {
         if (st == null)
             return;
 
-        if (st.size() != 0)
+        if (!st.isEmpty())
             st.appendPosition(st.get(st.size() - 1));
         else
             st.appendPosition(new SARPosition());

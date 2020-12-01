@@ -311,7 +311,7 @@ class RPFGenerator {
                 String[] pairs = query.split("&");
                 for (String s : pairs) {
                     String[] keyvalue = s.split("=", 2);
-                    if (keyvalue != null && keyvalue.length == 2)
+                    if (keyvalue.length == 2)
                         params.set(keyvalue[0], keyvalue[1]);
                 }
             }
@@ -352,7 +352,7 @@ class RPFGenerator {
             String s = params.getStringValue(BBOX);
             if (s != null) {
                 String[] values = s.split(",");
-                if (values != null && values.length == 4) {
+                if (values.length == 4) {
                     try {
                         // Bounding box string is expected in WMS format: "minlon,minlat,maxlon,maxlat"
                         double minLon = Double.parseDouble(values[0]);
@@ -438,8 +438,7 @@ class RPFGenerator {
                 }
 
                 BufferedImage sourceImage = null;
-                if (codec != null)
-                    sourceImage = codec.reconstruct(resolution);
+                sourceImage = codec.reconstruct(resolution);
 
                 return sourceImage;
             }

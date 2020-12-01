@@ -1132,8 +1132,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
             //Transform the frustum to Model Coordinates
             Matrix modelviewTranspose = getView().getModelviewMatrix().getTranspose();
-            if (modelviewTranspose != null)
-                frustum = frustum.transformBy(modelviewTranspose);
+            frustum = frustum.transformBy(modelviewTranspose);
 
             this.pickFrustumList.add(new PickPointFrustum(frustum, rectScreen));
         }
@@ -1170,8 +1169,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
         // Transform the frustum from eye coordinates to model coordinates.
         Matrix modelviewTranspose = view.getModelviewMatrix().getTranspose();
-        if (modelviewTranspose != null)
-            frustum = frustum.transformBy(modelviewTranspose);
+        frustum = frustum.transformBy(modelviewTranspose);
 
         // Create the screen rectangle in OpenGL screen coordinates associated with this frustum. We translate the
         // specified pick rectangle from AWT coordinates to GL coordinates by inverting the y axis.
@@ -1270,7 +1268,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
             // If the outline and interior are enabled, then draw the outline but do not affect the depth buffer. The
             // fill pixels contribute the depth values. When the interior is drawn, it draws on top of these colors, and
             // the outline is be visible behind the potentially transparent interior.
-            if (out && in) {
+            if (out) {
                 gl.glColorMask(true, true, true, true);
                 gl.glDepthMask(false);
 

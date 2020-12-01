@@ -58,7 +58,7 @@ public class GeoSymAbbreviationProvider {
             if (s.isEmpty())
                 continue;
 
-            if (!s.isEmpty() && s.charAt(s.length() - 1) == ':') {
+            if (s.charAt(s.length() - 1) == ':') {
                 // Table ID
                 Integer id = Integer.parseInt(s.split(":")[0]);
                 table = new HashMap<>();

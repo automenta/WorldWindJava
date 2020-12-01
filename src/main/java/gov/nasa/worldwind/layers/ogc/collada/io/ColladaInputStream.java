@@ -69,8 +69,7 @@ public class ColladaInputStream extends XMLDoc {
 
         if (this.uri != null) {
             URI remoteFile = uri.resolve(path);
-            if (remoteFile != null)
-                return remoteFile.toString();
+            return remoteFile.toString();
         }
         return null;
     }

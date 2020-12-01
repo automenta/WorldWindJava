@@ -9,11 +9,11 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.formats.geojson.GeoJSONPoint;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.EarthFlat;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.view.orbit.BasicOrbitView;
 
@@ -334,7 +334,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate {
                 this.statusLabel.setText("Updating earthquakes...");
 
             RenderableLayer newLayer = (RenderableLayer) buildEarthquakeLayer(earthquakeFeedUrl);
-            if (newLayer.size() > 0) {
+            if (!newLayer.isEmpty()) {
                 LayerList layers = this.wwd().model().getLayers();
                 if (this.eqLayer != null)
                     layers.remove(this.eqLayer);

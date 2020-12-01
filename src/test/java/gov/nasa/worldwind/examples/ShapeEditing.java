@@ -9,12 +9,12 @@ package gov.nasa.worldwind.examples;
 import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.airspaces.Polygon;
+import gov.nasa.worldwind.render.airspaces.*;
 import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.ShapeEditor;
 
@@ -61,7 +61,7 @@ public class ShapeEditing extends ApplicationTemplate {
             locations.add(LatLon.fromDegrees(41, -120));
             locations.add(LatLon.fromDegrees(41, -121));
             Airspace polygon = new Polygon(locations);
-            polygon.setDrawSurfaceShape(useSurfaceAirspaces);
+            polygon.setDrawSurfaceShape(false);
             polygon.setAttributes(attrs);
             polygon.setHighlightAttributes(highlightAttrs);
             polygon.setAltitudes(1.0e4, 2.0e4);
@@ -69,7 +69,7 @@ public class ShapeEditing extends ApplicationTemplate {
             layer.add(polygon);
 
             CappedCylinder cylinder = new CappedCylinder(LatLon.fromDegrees(40.5, -118), 5.0e4);
-            cylinder.setDrawSurfaceShape(useSurfaceAirspaces);
+            cylinder.setDrawSurfaceShape(false);
             cylinder.setAttributes(attrs);
             cylinder.setHighlightAttributes(highlightAttrs);
             cylinder.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
@@ -78,7 +78,7 @@ public class ShapeEditing extends ApplicationTemplate {
 
             cylinder = new CappedCylinder(LatLon.fromDegrees(40.5, -116), 5.0e4);
             cylinder.setRadii(3.0e4, 5.0e4);
-            cylinder.setDrawSurfaceShape(useSurfaceAirspaces);
+            cylinder.setDrawSurfaceShape(false);
             cylinder.setAttributes(attrs);
             cylinder.setHighlightAttributes(highlightAttrs);
             cylinder.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
@@ -88,7 +88,7 @@ public class ShapeEditing extends ApplicationTemplate {
             Airspace orbit = new Orbit(LatLon.fromDegrees(40, -114), LatLon.fromDegrees(41, -114),
                 Orbit.OrbitType.CENTER,
                 4.0e4);
-            orbit.setDrawSurfaceShape(useSurfaceAirspaces);
+            orbit.setDrawSurfaceShape(false);
             orbit.setAttributes(attrs);
             orbit.setHighlightAttributes(highlightAttrs);
             orbit.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
@@ -101,7 +101,7 @@ public class ShapeEditing extends ApplicationTemplate {
             locations.add(LatLon.fromDegrees(41, -111));
             locations.add(LatLon.fromDegrees(40, -112));
             Route route = new Route(locations, 4.0e4);
-            route.setDrawSurfaceShape(useSurfaceAirspaces);
+            route.setDrawSurfaceShape(false);
             route.setAttributes(attrs);
             route.setHighlightAttributes(highlightAttrs);
             route.setAltitudes(1.0e4, 2.0e4);
@@ -114,7 +114,7 @@ public class ShapeEditing extends ApplicationTemplate {
             locations.add(LatLon.fromDegrees(41, -109));
             locations.add(LatLon.fromDegrees(40, -109));
             Airspace curtain = new Curtain(locations);
-            curtain.setDrawSurfaceShape(useSurfaceAirspaces);
+            curtain.setDrawSurfaceShape(false);
             curtain.setAttributes(attrs);
             curtain.setHighlightAttributes(highlightAttrs);
             curtain.setAltitudes(1.0e4, 2.0e4);
@@ -122,7 +122,7 @@ public class ShapeEditing extends ApplicationTemplate {
             layer.add(curtain);
 
             Airspace sphere = new SphereAirspace(LatLon.fromDegrees(40.5, -107), 5.0e4);
-            sphere.setDrawSurfaceShape(useSurfaceAirspaces);
+            sphere.setDrawSurfaceShape(false);
             sphere.setAttributes(attrs);
             sphere.setHighlightAttributes(highlightAttrs);
             sphere.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
@@ -132,7 +132,7 @@ public class ShapeEditing extends ApplicationTemplate {
             PartialCappedCylinder partialCylinder = new PartialCappedCylinder(LatLon.fromDegrees(40.5, -105), 5.0e4);
             partialCylinder.setAzimuths(Angle.fromDegrees(270), Angle.fromDegrees(90));
             partialCylinder.setRadii(3.0e4, 5.0e4);
-            partialCylinder.setDrawSurfaceShape(useSurfaceAirspaces);
+            partialCylinder.setDrawSurfaceShape(false);
             partialCylinder.setAttributes(attrs);
             partialCylinder.setHighlightAttributes(highlightAttrs);
             partialCylinder.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
@@ -144,7 +144,7 @@ public class ShapeEditing extends ApplicationTemplate {
             track.addLeg(LatLon.fromDegrees(41, -103), LatLon.fromDegrees(41, -102), 1.0e4, 2.0e4, 2.0e4, 2.0e4);
             track.addLeg(LatLon.fromDegrees(41, -102), LatLon.fromDegrees(40, -102), 1.0e4, 2.0e4, 2.0e4, 2.0e4);
 //            track.addLeg(LatLon.fromDegrees(39.5, -102), LatLon.fromDegrees(39.5, -103), 1e4, 2e4, 2e4, 2e4);
-            track.setDrawSurfaceShape(useSurfaceAirspaces);
+            track.setDrawSurfaceShape(false);
             track.setAttributes(attrs);
             track.setHighlightAttributes(highlightAttrs);
             track.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);
@@ -154,7 +154,7 @@ public class ShapeEditing extends ApplicationTemplate {
             CappedEllipticalCylinder cec = new CappedEllipticalCylinder(LatLon.fromDegrees(40.5, -100), 5.0e4, 6.0e4,
                 Angle.fromDegrees(0));
             cec.setRadii(3.0e4, 4.0e4, 5.0e4, 6.0e4);
-            cec.setDrawSurfaceShape(useSurfaceAirspaces);
+            cec.setDrawSurfaceShape(false);
             cec.setAttributes(attrs);
             cec.setHighlightAttributes(highlightAttrs);
             cec.setAltitudeDatum(AVKey.ABOVE_GROUND_LEVEL, AVKey.ABOVE_GROUND_LEVEL);

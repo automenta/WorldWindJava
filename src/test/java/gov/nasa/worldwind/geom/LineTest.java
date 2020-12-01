@@ -50,7 +50,7 @@ public class LineTest
         pa = new Vec4(2, 2, 2);
         pb = new Vec4(4, 4, 4);
         clipped = Line.clipToFrustum(pa, pb, f);
-        assertTrue("Segment not in frustum", clipped == null);
+        assertNull("Segment not in frustum", clipped);
     }
 
     @Test

@@ -48,12 +48,6 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
     public ProjectionTransverseMercator(Angle centralMeridian) {
         super(makeProjectionLimits(centralMeridian, DEFAULT_WIDTH));
 
-        if (centralMeridian == null) {
-            String message = Logging.getMessage("nullValue.CentralMeridianIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
         this.centralMeridian = centralMeridian;
     }
 
@@ -65,12 +59,6 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
      */
     public ProjectionTransverseMercator(Angle centralMeridian, Angle centralLatitude) {
         super(makeProjectionLimits(centralMeridian, DEFAULT_WIDTH));
-
-        if (centralMeridian == null) {
-            String message = Logging.getMessage("nullValue.CentralMeridianIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
 
         if (centralLatitude == null) {
             String message = Logging.getMessage("nullValue.CentralLatitudeIsNull");

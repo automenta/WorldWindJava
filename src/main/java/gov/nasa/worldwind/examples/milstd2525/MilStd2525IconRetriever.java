@@ -865,11 +865,11 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
 
         if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
             && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)) {
-            if (fid != null && !fid.toLowerCase().isEmpty() && fid.toLowerCase().charAt(0) == 'u')
+            if (fid != null && !fid.isEmpty() && fid.toLowerCase().charAt(0) == 'u')
                 return "u-----";
-            else if (fid != null && !fid.toLowerCase().isEmpty() && fid.toLowerCase().charAt(0) == 'e')
+            else if (fid != null && !fid.isEmpty() && fid.toLowerCase().charAt(0) == 'e')
                 return "e-----";
-            else if (fid != null && !fid.toLowerCase().isEmpty() && fid.toLowerCase().charAt(0) == 'i')
+            else if (fid != null && !fid.isEmpty() && fid.toLowerCase().charAt(0) == 'i')
                 return "i-----";
         }
 

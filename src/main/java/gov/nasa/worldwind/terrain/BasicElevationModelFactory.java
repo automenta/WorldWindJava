@@ -7,10 +7,10 @@ package gov.nasa.worldwind.terrain;
 
 import gov.nasa.worldwind.BasicFactory;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.layers.ogc.*;
-import gov.nasa.worldwind.layers.ogc.wcs.wcs100.WCS100Capabilities;
 import gov.nasa.worldwind.exception.*;
 import gov.nasa.worldwind.globes.ElevationModel;
+import gov.nasa.worldwind.layers.ogc.*;
+import gov.nasa.worldwind.layers.ogc.wcs.wcs100.WCS100Capabilities;
 import gov.nasa.worldwind.layers.ogc.wms.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Element;

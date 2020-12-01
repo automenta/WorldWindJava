@@ -121,11 +121,6 @@ public class GDALDataRasterReader extends AbstractDataRasterReader {
 
         try {
             GDALDataRaster raster = new GDALDataRaster(source, quickReadingMode);
-            if (null == raster) {
-                String message = Logging.getMessage("generic.CannotOpenFile", GDALUtils.getErrorMessage());
-                Logging.logger().severe(message);
-                throw new WWRuntimeException(message);
-            }
 
             return raster;
         }

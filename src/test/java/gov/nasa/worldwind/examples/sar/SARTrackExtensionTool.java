@@ -8,11 +8,11 @@ package gov.nasa.worldwind.examples.sar;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.examples.sar.segmentplane.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.awt.*;
@@ -116,11 +116,11 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
     }
 
     public boolean canRemoveLastTrackPoint() {
-        return this.track != null && this.track.size() != 0;
+        return this.track != null && !this.track.isEmpty();
     }
 
     public void removeLastTrackPoint() {
-        if (this.track == null || this.track.size() == 0)
+        if (this.track == null || this.track.isEmpty())
             return;
 
         int lastIndex = this.track.size() - 1;
@@ -289,7 +289,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         if (this.track == null)
             return;
 
-        if (this.track.size() == 0)
+        if (this.track.isEmpty())
             return;
 
         if (this.waitingForNextPosition && planePoint == SegmentPlane.SEGMENT_END)
@@ -314,7 +314,7 @@ public class SARTrackExtensionTool implements MouseListener, PositionListener, P
         if (this.track == null)
             return;
 
-        if (this.track.size() == 0)
+        if (this.track.isEmpty())
             return;
 
         int lastIndex = this.track.size() - 1;

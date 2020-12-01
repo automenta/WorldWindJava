@@ -6,8 +6,6 @@
 package gov.nasa.worldwind.render.airspaces.editor;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;

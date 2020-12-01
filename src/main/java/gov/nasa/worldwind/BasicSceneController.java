@@ -5,9 +5,9 @@
  */
 package gov.nasa.worldwind;
 
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.Globe2D;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 
 /**

@@ -44,15 +44,15 @@ public final class WorldWind {
 
     private static WorldWind instance = new WorldWind();
 
-    private WWObjectImpl wwo;
-    private MemoryCacheSet memoryCacheSet;
-    private FileStore dataFileStore;
-    private RetrievalService remoteRetrievalService;
-    private RetrievalService localRetrievalService;
-    private TaskService taskService;
-    private ScheduledTaskService scheduledTaskService;
-    private NetworkStatus networkStatus;
-    private SessionCache sessionCache;
+    private final WWObjectImpl wwo;
+    private final MemoryCacheSet memoryCacheSet;
+    private final FileStore dataFileStore;
+    private final RetrievalService remoteRetrievalService;
+    private final RetrievalService localRetrievalService;
+    private final TaskService taskService;
+    private final ScheduledTaskService scheduledTaskService;
+    private final NetworkStatus networkStatus;
+    private final SessionCache sessionCache;
 
     private WorldWind() // Singleton, prevent public instantiation.
     {

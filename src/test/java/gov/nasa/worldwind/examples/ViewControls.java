@@ -92,7 +92,7 @@ public class ViewControls extends ApplicationTemplate {
             JCheckBox check = new JCheckBox("Pan");
             check.setSelected(true);
             check.addActionListener((ActionEvent actionEvent) -> {
-                viewControlsLayer.setShowPanControls(((JCheckBox) actionEvent.getSource()).isSelected());
+                viewControlsLayer.setShowPanControls(((AbstractButton) actionEvent.getSource()).isSelected());
                 wwd().redraw();
             });
             checkPanel.add(check);
@@ -100,7 +100,7 @@ public class ViewControls extends ApplicationTemplate {
             check = new JCheckBox("Look");
             check.setSelected(false);
             check.addActionListener((ActionEvent actionEvent) -> {
-                viewControlsLayer.setShowLookControls(((JCheckBox) actionEvent.getSource()).isSelected());
+                viewControlsLayer.setShowLookControls(((AbstractButton) actionEvent.getSource()).isSelected());
                 wwd().redraw();
             });
             checkPanel.add(check);
@@ -108,7 +108,7 @@ public class ViewControls extends ApplicationTemplate {
             check = new JCheckBox("Zoom");
             check.setSelected(true);
             check.addActionListener((ActionEvent actionEvent) -> {
-                viewControlsLayer.setShowZoomControls(((JCheckBox) actionEvent.getSource()).isSelected());
+                viewControlsLayer.setShowZoomControls(((AbstractButton) actionEvent.getSource()).isSelected());
                 wwd().redraw();
             });
             checkPanel.add(check);
@@ -116,7 +116,7 @@ public class ViewControls extends ApplicationTemplate {
             check = new JCheckBox("Heading");
             check.setSelected(true);
             check.addActionListener((ActionEvent actionEvent) -> {
-                viewControlsLayer.setShowHeadingControls(((JCheckBox) actionEvent.getSource()).isSelected());
+                viewControlsLayer.setShowHeadingControls(((AbstractButton) actionEvent.getSource()).isSelected());
                 wwd().redraw();
             });
             checkPanel.add(check);
@@ -124,7 +124,7 @@ public class ViewControls extends ApplicationTemplate {
             check = new JCheckBox("Pitch");
             check.setSelected(true);
             check.addActionListener((ActionEvent actionEvent) -> {
-                viewControlsLayer.setShowPitchControls(((JCheckBox) actionEvent.getSource()).isSelected());
+                viewControlsLayer.setShowPitchControls(((AbstractButton) actionEvent.getSource()).isSelected());
                 wwd().redraw();
             });
             checkPanel.add(check);
@@ -132,7 +132,7 @@ public class ViewControls extends ApplicationTemplate {
             check = new JCheckBox("Field of view");
             check.setSelected(false);
             check.addActionListener((ActionEvent actionEvent) -> {
-                viewControlsLayer.setShowFovControls(((JCheckBox) actionEvent.getSource()).isSelected());
+                viewControlsLayer.setShowFovControls(((AbstractButton) actionEvent.getSource()).isSelected());
                 wwd().redraw();
             });
             checkPanel.add(check);

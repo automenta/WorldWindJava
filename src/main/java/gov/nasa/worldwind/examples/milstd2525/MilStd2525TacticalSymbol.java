@@ -8,8 +8,8 @@ package gov.nasa.worldwind.examples.milstd2525;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.*;
 
@@ -276,8 +276,6 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
 
     protected void initIconLayout() {
         MilStd2525Util.SymbolInfo info = MilStd2525Util.computeTacticalSymbolInfo(this.getIdentifier());
-        if (info == null)
-            return;
 
         this.iconOffset = info.iconOffset;
         this.iconSize = info.iconSize;

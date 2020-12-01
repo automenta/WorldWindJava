@@ -40,11 +40,7 @@ public class HTTPRetriever extends URLRetriever {
 //        }
 
         HttpURLConnection htpc = (HttpURLConnection) connection;
-        try {
-            this.responseCode = htpc.getResponseCode();
-        } catch (SocketTimeoutException e) {
-            throw e;
-        }
+        this.responseCode = htpc.getResponseCode();
         this.responseMessage = htpc.getResponseMessage();
         String contentType = connection.getContentType();
 

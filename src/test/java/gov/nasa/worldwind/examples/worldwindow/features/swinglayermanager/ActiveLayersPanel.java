@@ -96,7 +96,7 @@ public class ActiveLayersPanel extends AbstractFeaturePanel implements ActiveLay
         JCheckBoxMenuItem showInternal = new JCheckBoxMenuItem("Show Internal Layers");
         showInternal.setSelected(false);
         showInternal.addActionListener(
-            event -> setIncludeInternalLayers(((JCheckBoxMenuItem) event.getSource()).isSelected()));
+            event -> setIncludeInternalLayers(((AbstractButton) event.getSource()).isSelected()));
 
         JPopupMenu pm = new JPopupMenu();
         pm.add(showInternal);
@@ -143,14 +143,14 @@ public class ActiveLayersPanel extends AbstractFeaturePanel implements ActiveLay
     protected void refresh(PropertyChangeEvent event) {
         // update the model
         if (event.getNewValue() instanceof LayerList)
-            this.fillModel((LayerList) event.getNewValue());
+            this.fillModel((Iterable<Layer>) event.getNewValue());
 
         // scroll list to changed layer
         if (event.getOldValue() instanceof LayerList && event.getNewValue() instanceof LayerList) {
             java.util.List<Layer> delta = LayerList.getLayersAdded((LayerList) event.getOldValue(),
                 (LayerList) event.getNewValue());
             if (!delta.isEmpty())
-                this.jlist.ensureIndexIsVisible(((LayerList) event.getNewValue()).indexOf(delta.get(delta.size() - 1)));
+                this.jlist.ensureIndexIsVisible(((List<Layer>) event.getNewValue()).indexOf(delta.get(delta.size() - 1)));
         }
     }
 

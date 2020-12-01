@@ -74,7 +74,7 @@ public class WorldFile {
             if (!name.startsWith(base) || name.length() != length)
                 return false;
 
-            if (!name.toLowerCase().isEmpty() && name.toLowerCase().charAt(name.toLowerCase().length() - 1) == 'w') {
+            if (!name.isEmpty() && name.toLowerCase().charAt(name.toLowerCase().length() - 1) == 'w') {
                 // Match world file to the corresponding image file: certain chars of suffixes must match
                 String nameSuffix = WWIO.getSuffix(name);
                 if (imageSuffix != null && nameSuffix != null) {
@@ -118,7 +118,7 @@ public class WorldFile {
 
         //File transformFile = null;
         for (File file : worldFiles) {
-            if (!file.getName().toLowerCase().isEmpty()
+            if (!file.getName().isEmpty()
                 && file.getName().toLowerCase().charAt(file.getName().toLowerCase().length() - 1) == 'w') {
                 scanWorldFile(file, values);
                 //transformFile = file;
@@ -167,7 +167,7 @@ public class WorldFile {
                 sector = WorldFile.parseDegrees(values, size[0], size[1]);
             }
             else {
-                RenderedImage image = (BufferedImage) values.get(AVKey.IMAGE);
+                RenderedImage image = (RenderedImage) values.get(AVKey.IMAGE);
                 if (image != null) {
                     sector = WorldFile.parseDegrees(values, image.getWidth(), image.getHeight());
                 }

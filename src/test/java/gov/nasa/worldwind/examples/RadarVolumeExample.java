@@ -10,10 +10,10 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.*;
@@ -1107,7 +1107,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
 
                             this.setTriangleNormals(null, triIndices);
                         }
-                        else if (ul && !ur && ll && lr) // case 5
+                        else if (ul && !ur && ll) // case 5
                         {
                             // Draw the ul to lr diagonal of the cell.
 
@@ -1267,7 +1267,7 @@ public class RadarVolumeExample extends ApplicationTemplate {
 
                             this.setTriangleNormals(null, triIndices);
                         }
-                        else if (ul && ur && !ll && !lr) // case 13
+                        else if (ul && ur && !ll) // case 13
                         {
                             // Draw the cell top.
 

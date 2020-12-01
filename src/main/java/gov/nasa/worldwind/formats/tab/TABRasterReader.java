@@ -94,7 +94,7 @@ public class TABRasterReader {
 
     private static void setProperty(String line, String key, AVList values) {
         String[] tokens = line.split(" ", 2);
-        if (tokens == null || tokens.length < 2)
+        if (tokens.length < 2)
             return;
 
         String value = tokens[1];

@@ -6,8 +6,8 @@
 package gov.nasa.worldwind.globes;
 
 import gov.nasa.worldwind.WWObject;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.terrain.*;
 
 import java.util.List;

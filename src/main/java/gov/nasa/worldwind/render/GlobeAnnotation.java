@@ -469,8 +469,6 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
         if (restorableSupport == null)
             restorableSupport = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (restorableSupport == null)
-            return null;
 
         // Save the position property only if all parts (latitude, longitude, and elevation) can be saved.
         // We will not save a partial position (for example, just the elevation).

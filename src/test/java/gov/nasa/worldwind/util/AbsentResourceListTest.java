@@ -10,15 +10,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(JUnit4.class)
 public class AbsentResourceListTest
 {
     /** Tests addition of resources to the list. */
     @Test
-    public void testResourceAddition() throws InterruptedException
-    {
+    public void testResourceAddition() {
         int numResources = 100;
         int checkInterval = 250;
         AbsentResourceList list = new AbsentResourceList(numResources, 2, checkInterval, 60000);
@@ -114,7 +113,7 @@ public class AbsentResourceListTest
         AbsentResourceList list = new AbsentResourceList(maxListSize, 2, 250, 60000);
 
         markResourcesAbsent(list, maxListSize + 1); // should eject first resource, 0, from list
-        assertTrue("Oldest resource not considered absent ", !list.isResourceAbsent(0));
+        assertFalse("Oldest resource not considered absent ", list.isResourceAbsent(0));
     }
 
     private static void addResources(AbsentResourceList list, int numResources)
@@ -142,7 +141,7 @@ public class AbsentResourceListTest
     {
         for (int i = 0; i < numResources; i++)
         {
-            assertTrue("Resource " + i + " considered absent ", !list.isResourceAbsent(i));
+            assertFalse("Resource " + i + " considered absent ", list.isResourceAbsent(i));
         }
     }
 }

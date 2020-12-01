@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.render.markers;
 
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.*;
 
 /**
  * @author tag

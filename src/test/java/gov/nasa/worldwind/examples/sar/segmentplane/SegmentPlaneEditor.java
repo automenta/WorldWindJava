@@ -7,12 +7,12 @@ package gov.nasa.worldwind.examples.sar.segmentplane;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.render.airspaces.editor.AirspaceEditorUtil;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.AbstractLayer;
 import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.airspaces.editor.AirspaceEditorUtil;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -318,7 +318,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
         Position pos = pickedObject.getPosition();
         Line ray = view.computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Intersection[] intersection = globe.intersect(ray, pos.getElevation());
-        if (intersection == null || intersection.length < 0)
+        if (intersection == null)
             return;
 
         Vec4 newPoint = intersection[0].getIntersectionPoint();
@@ -384,7 +384,7 @@ public class SegmentPlaneEditor extends AbstractLayer {
         Position pos = pickedObject.getPosition();
         Line ray = view.computeRayFromScreenPoint(mousePoint.getX(), mousePoint.getY());
         Intersection[] intersection = globe.intersect(ray, pos.getElevation());
-        if (intersection == null || intersection.length < 0)
+        if (intersection == null)
             return;
 
         Vec4 newPoint = intersection[0].getIntersectionPoint();

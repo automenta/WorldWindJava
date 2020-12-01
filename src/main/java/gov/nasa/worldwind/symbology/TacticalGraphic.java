@@ -8,7 +8,6 @@ package gov.nasa.worldwind.symbology;
 
 import gov.nasa.worldwind.Movable;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.UnitsFormat;

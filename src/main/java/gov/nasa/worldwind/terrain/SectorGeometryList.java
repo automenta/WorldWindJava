@@ -6,9 +6,9 @@
 package gov.nasa.worldwind.terrain;
 
 import com.jogamp.opengl.*;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;

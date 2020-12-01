@@ -7,7 +7,7 @@
 package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.ui.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.video.awt.WorldWindowGLCanvas;
 
 /**
  * An interface for scene controllers that provide stereo.

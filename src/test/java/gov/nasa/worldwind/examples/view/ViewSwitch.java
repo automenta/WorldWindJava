@@ -9,8 +9,8 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.*;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.ui.awt.ViewInputHandler;
 import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.video.awt.ViewInputHandler;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -193,19 +193,13 @@ public class ViewSwitch extends ApplicationTemplate {
             protected String makeEyeAltitudeDescription(double metersAltitude) {
                 String s;
                 String altitude = Logging.getMessage("term.Altitude");
-                if (UNIT_IMPERIAL.equals(elevationUnit))
-                    s = String.format(altitude + " %,7d mi", (int) Math.round(metersAltitude * METER_TO_MILE));
-                else // Default to metric units.
-                    s = String.format(altitude + " %,7d m", (int) Math.round(metersAltitude));
+                s = String.format(altitude + " %,7d m", (int) Math.round(metersAltitude));
                 return s;
             }
 
             protected String makeAngleDescription(String label, Angle angle) {
                 String s;
-                if (Angle.ANGLE_FORMAT_DMS.equals(angleFormat))
-                    s = String.format("%s %s", label, angle.toDMSString());
-                else
-                    s = String.format("%s %7.4f\u00B0", label, angle.degrees);
+                s = String.format("%s %7.4f\u00B0", label, angle.degrees);
                 return s;
             }
 

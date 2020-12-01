@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.BasicModel;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.view.orbit.BasicOrbitView;
@@ -183,7 +182,7 @@ public class AnnotationLayerTest
     public void testMaliciousSetAnnotations()
     {
         // Create an Iterable with null elements.
-        java.util.List<Annotation> list = new java.util.ArrayList<Annotation>();
+        java.util.List<Annotation> list = new java.util.ArrayList<>();
         list.add(null);
 
         AnnotationLayer layer = new AnnotationLayer();
@@ -292,7 +291,7 @@ public class AnnotationLayerTest
     // Helper Methods
     //////////////////////////////////////////////////////////
 
-    @SuppressWarnings({"JavaDoc"})
+    @SuppressWarnings("JavaDoc")
     private static void assertEquals(String message, Iterable<Annotation> expected, Iterable<Annotation> actual)
     {
         if (expected == null)

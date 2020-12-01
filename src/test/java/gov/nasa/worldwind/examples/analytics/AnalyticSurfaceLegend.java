@@ -7,7 +7,6 @@ package gov.nasa.worldwind.examples.analytics;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -228,8 +227,6 @@ public class AnalyticSurfaceLegend implements Renderable {
         }
 
         TextRenderer tr = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
-        if (tr == null)
-            return;
 
         Rectangle2D bounds = tr.getBounds(text);
         if (bounds != null) {

@@ -159,7 +159,7 @@ public class DDSDecompressor {
             return raster;
         }
         finally {
-            String name = (null != file) ? file.getAbsolutePath() : ((null != source) ? source.toString() : "unknown");
+            String name = file.getAbsolutePath();
             WWIO.closeStream(channel, name);
             WWIO.closeStream(raf, name);
         }

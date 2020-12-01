@@ -7,12 +7,12 @@
 package gov.nasa.worldwind.examples.shapebuilder;
 
 import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.airspaces.editor.AirspaceEditorUtil;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.pick.PickedObjectList;
+import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.airspaces.editor.AirspaceEditorUtil;
 import gov.nasa.worldwind.render.markers.*;
 import gov.nasa.worldwind.util.*;
 
@@ -914,7 +914,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             }
             e.consume();
         }
-        else if (topObject instanceof RigidShape && ((RigidShape) topObject).get(AVKey.ACTION) != null) {
+        else if (topObject instanceof RigidShape && ((AVList) topObject).get(AVKey.ACTION) != null) {
             this.activeControlPoint = (RigidShape) topObject;
             this.activeAction = (String) this.activeControlPoint.get(AVKey.ACTION);
 
@@ -1299,14 +1299,11 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
         Matrix M = Matrix.IDENTITY;
         // roll
-        if (roll != null)
-            M = M.multiply(Matrix.fromRotationY(roll));
+        M = M.multiply(Matrix.fromRotationY(roll));
         // tilt
-        if (tilt != null)
-            M = M.multiply(Matrix.fromRotationX(tilt));
+        M = M.multiply(Matrix.fromRotationX(tilt));
         // heading
-        if (heading != null)
-            M = M.multiply(Matrix.fromRotationZ(heading));
+        M = M.multiply(Matrix.fromRotationZ(heading));
 
         Vec4 unitVec = new Vec4(0, 0, -1);                          // use -1 so rotation will be CW
         Vec4 rotVector = unitVec.transformBy4(M).normalize3();      // this is what we will rotate around
@@ -1378,14 +1375,11 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
         Matrix M = Matrix.IDENTITY;
         // roll
-        if (roll != null)
-            M = M.multiply(Matrix.fromRotationY(roll));
+        M = M.multiply(Matrix.fromRotationY(roll));
         // tilt
-        if (tilt != null)
-            M = M.multiply(Matrix.fromRotationX(tilt));
+        M = M.multiply(Matrix.fromRotationX(tilt));
         // heading
-        if (heading != null)
-            M = M.multiply(Matrix.fromRotationZ(heading));
+        M = M.multiply(Matrix.fromRotationZ(heading));
 
         Vec4 unitVec = new Vec4(0, -1, 0);                          // use -1 so rotation will be CW
         Vec4 rotVector = unitVec.transformBy4(M).normalize3();      // this is what we will rotate around
@@ -1457,14 +1451,11 @@ public class RigidShapeEditor extends AbstractShapeEditor {
 
         Matrix M = Matrix.IDENTITY;
         // roll
-        if (roll != null)
-            M = M.multiply(Matrix.fromRotationY(roll));
+        M = M.multiply(Matrix.fromRotationY(roll));
         // tilt
-        if (tilt != null)
-            M = M.multiply(Matrix.fromRotationX(tilt));
+        M = M.multiply(Matrix.fromRotationX(tilt));
         // heading
-        if (heading != null)
-            M = M.multiply(Matrix.fromRotationZ(heading));
+        M = M.multiply(Matrix.fromRotationZ(heading));
 
         Vec4 unitVec = new Vec4(-1, 0, 0);                          // use -1 so rotation will be CW
         Vec4 rotVector = unitVec.transformBy4(M).normalize3();      // this is what we will rotate around
@@ -1732,7 +1723,7 @@ public class RigidShapeEditor extends AbstractShapeEditor {
             if (closestFace != null && closestFace.equals(getSelectedFace())) {
                 moveTexture(previousMousePoint, mousePoint);
             }
-            else if (closestFace != null && closestFace >= 0)   // the closest intersected piece to the eye
+            else if (closestFace != null)   // the closest intersected piece to the eye
             {
                 setSelectedFace(closestFace);
             }

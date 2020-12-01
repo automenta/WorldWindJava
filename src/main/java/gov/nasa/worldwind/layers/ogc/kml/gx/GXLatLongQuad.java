@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.layers.ogc.kml.gx;
 
-import gov.nasa.worldwind.layers.ogc.kml.KMLAbstractObject;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.layers.ogc.kml.KMLAbstractObject;
 
 /**
  * @author tag

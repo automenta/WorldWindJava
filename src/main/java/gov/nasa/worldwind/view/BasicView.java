@@ -12,8 +12,8 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.ui.awt.ViewInputHandler;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.video.awt.ViewInputHandler;
 
 import java.awt.*;
 
@@ -241,10 +241,7 @@ public class BasicView extends WWObjectImpl implements View {
     public Frustum getFrustumInModelCoordinates() {
         if (this.lastFrustumInModelCoords == null) {
             Matrix modelviewTranspose = this.modelview.getTranspose();
-            if (modelviewTranspose != null)
-                this.lastFrustumInModelCoords = this.frustum.transformBy(modelviewTranspose);
-            else
-                this.lastFrustumInModelCoords = this.frustum;
+            this.lastFrustumInModelCoords = this.frustum.transformBy(modelviewTranspose);
         }
         return this.lastFrustumInModelCoords;
     }

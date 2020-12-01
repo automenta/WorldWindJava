@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.examples.milstd2525.graphics.areas;
 
 import gov.nasa.worldwind.examples.milstd2525.graphics.TacGrpSidc;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.util.*;
 

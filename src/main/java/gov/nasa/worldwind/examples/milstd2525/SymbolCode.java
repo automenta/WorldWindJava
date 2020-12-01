@@ -691,7 +691,7 @@ public class SymbolCode extends AVListImpl {
 
         // Coding Scheme (position 1).
         String s = symCode.substring(0, 1);
-        if (s != null && s.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING))
+        if (s.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING))
             this.setScheme(s);
         else
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("term.scheme"));
@@ -767,7 +767,7 @@ public class SymbolCode extends AVListImpl {
 
         // Coding Scheme (position 1).
         String s = symCode.substring(0, 1);
-        if (s != null && s.equalsIgnoreCase(SymbologyConstants.SCHEME_TACTICAL_GRAPHICS))
+        if (s.equalsIgnoreCase(SymbologyConstants.SCHEME_TACTICAL_GRAPHICS))
             this.setScheme(s);
         else
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("term.scheme"));
@@ -888,7 +888,7 @@ public class SymbolCode extends AVListImpl {
 
         // Coding Scheme (position 1).
         String s = symCode.substring(0, 1);
-        if (s != null && s.equalsIgnoreCase(SymbologyConstants.SCHEME_INTELLIGENCE))
+        if (s.equalsIgnoreCase(SymbologyConstants.SCHEME_INTELLIGENCE))
             this.setScheme(s);
         else
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("term.scheme"));
@@ -958,7 +958,7 @@ public class SymbolCode extends AVListImpl {
 
         // Coding Scheme (position 1).
         String s = symCode.substring(0, 1);
-        if (s != null && s.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS))
+        if (s.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS))
             this.setScheme(s);
         else
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("term.scheme"));
@@ -1030,7 +1030,7 @@ public class SymbolCode extends AVListImpl {
 
         // Coding Scheme (position 1).
         String s = symCode.substring(0, 1);
-        if (s != null && s.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT))
+        if (s.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT))
             this.setScheme(s);
         else
             sb.append(!sb.isEmpty() ? ", " : "").append(Logging.getMessage("term.scheme"));

@@ -5,9 +5,9 @@
  */
 package gov.nasa.worldwind.render.airspaces;
 
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -272,13 +272,10 @@ public class TrackAirspace extends AbstractAirspace {
         if (trackLegs == null || trackLegs.isEmpty()) {
             return null;
         }
-        else if (trackLegs.isEmpty()) {
-            return trackLegs.get(0).computeExtent(globe, verticalExaggeration);
-        }
         else {
             List<gov.nasa.worldwind.geom.Box> extents = new ArrayList<>();
 
-            for (gov.nasa.worldwind.render.airspaces.Box leg : trackLegs) {
+            for (Box leg : trackLegs) {
                 extents.add(leg.computeExtent(globe, verticalExaggeration));
             }
 

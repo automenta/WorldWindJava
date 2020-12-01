@@ -1176,8 +1176,6 @@ public class AnnotationAttributes implements Restorable {
     public String getRestorableState() {
         RestorableSupport restorableSupport = RestorableSupport.newRestorableSupport();
         // Creating a new RestorableSupport failed. RestorableSupport logged the problem, so just return null.
-        if (restorableSupport == null)
-            return null;
 
         // Save application set attributes to the document root.
         saveAttributes(this, restorableSupport, null);

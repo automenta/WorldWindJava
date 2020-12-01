@@ -7,11 +7,11 @@ package gov.nasa.worldwind.layers.Earth;
 
 import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.GraticuleRenderingParams;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -181,18 +181,16 @@ public class UTMGraticuleLayer extends UTMBaseGraticuleLayer {
         Sector vs = dc.getVisibleSector();
         if (vs != null) {
             Rectangle2D gridRectangle = getGridRectangleForSector(vs);
-            if (gridRectangle != null) {
-                for (int row = (int) gridRectangle.getY(); row <= gridRectangle.getY() + gridRectangle.getHeight();
-                    row++) {
-                    for (int col = (int) gridRectangle.getX(); col <= gridRectangle.getX() + gridRectangle.getWidth();
-                        col++) {
-                        if (gridTiles[row][col] == null)
-                            gridTiles[row][col] = new GraticuleTile(getGridSector(row, col));
-                        if (gridTiles[row][col].isInView(dc))
-                            tileList.add(gridTiles[row][col]);
-                        else
-                            gridTiles[row][col].clearRenderables();
-                    }
+            for (int row = (int) gridRectangle.getY(); row <= gridRectangle.getY() + gridRectangle.getHeight();
+                row++) {
+                for (int col = (int) gridRectangle.getX(); col <= gridRectangle.getX() + gridRectangle.getWidth();
+                    col++) {
+                    if (gridTiles[row][col] == null)
+                        gridTiles[row][col] = new GraticuleTile(getGridSector(row, col));
+                    if (gridTiles[row][col].isInView(dc))
+                        tileList.add(gridTiles[row][col]);
+                    else
+                        gridTiles[row][col].clearRenderables();
                 }
             }
         }

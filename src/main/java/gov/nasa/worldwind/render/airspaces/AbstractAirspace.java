@@ -10,11 +10,11 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.drag.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -118,7 +118,7 @@ public abstract class AbstractAirspace extends WWObjectImpl
         }
 
         public boolean isEnableDepthOffset(DrawContext dc, Object shape) {
-            return ((AbstractAirspace) shape).isEnableDepthOffset();
+            return ((Airspace) shape).isEnableDepthOffset();
         }
 
         public Double getDepthOffsetFactor(DrawContext dc, Object shape) {

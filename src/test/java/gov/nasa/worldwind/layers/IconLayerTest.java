@@ -6,11 +6,10 @@
 package gov.nasa.worldwind.layers;
 
 import gov.nasa.worldwind.BasicModel;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.view.orbit.BasicOrbitView;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -183,7 +182,7 @@ public class IconLayerTest
     public void testMaliciousSetIcons()
     {
         // Create an Iterable with null elements.
-        java.util.List<WWIcon> list = new java.util.ArrayList<WWIcon>();
+        java.util.List<WWIcon> list = new java.util.ArrayList<>();
         list.add(null);
 
         IconLayer layer = new IconLayer();
@@ -292,7 +291,7 @@ public class IconLayerTest
     // Helper Methods
     //////////////////////////////////////////////////////////
 
-    @SuppressWarnings({"JavaDoc"})
+    @SuppressWarnings("JavaDoc")
     private static void assertEquals(String message, Iterable<WWIcon> expected, Iterable<WWIcon> actual)
     {
         if (expected == null)
@@ -302,7 +301,7 @@ public class IconLayerTest
         else
         {
             // Since actual may contain duplicates, make a Set that eliminates duplicates.
-            Set<WWIcon> actualSet = new HashSet<WWIcon>();
+            Set<WWIcon> actualSet = new HashSet<>();
             for (WWIcon wwIcon : actual)
             {
                 actualSet.add(wwIcon);
@@ -317,7 +316,7 @@ public class IconLayerTest
             }
 
             // Test that actual and expected contain the same number of icons.
-            assertTrue(actualSet.size() == count);
+            Assert.assertEquals(actualSet.size(), count);
         }
     }
 

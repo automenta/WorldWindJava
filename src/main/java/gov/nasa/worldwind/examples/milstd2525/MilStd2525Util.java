@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.milstd2525;
 
 import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;

@@ -263,7 +263,7 @@ public class WCSCoveragePanel extends JPanel {
 
         public void actionPerformed(ActionEvent actionEvent) {
             // If the coverage is selected, add it to the WorldWindow's current model, else remove it from the model.
-            if (((JCheckBox) actionEvent.getSource()).isSelected()) {
+            if (((AbstractButton) actionEvent.getSource()).isSelected()) {
                 if (this.component == null)
                     this.component = createComponent(coverageInfo.caps, coverageInfo);
 

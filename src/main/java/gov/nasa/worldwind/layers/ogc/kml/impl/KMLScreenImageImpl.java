@@ -7,8 +7,6 @@ package gov.nasa.worldwind.layers.ogc.kml.impl;
 
 import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.layers.ogc.kml.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;

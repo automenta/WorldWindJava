@@ -6,9 +6,9 @@
 package gov.nasa.worldwind.examples.sar;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.examples.sar.render.PlaneModel;
 import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.Renderable;
 
 import javax.swing.*;
 import java.awt.*;

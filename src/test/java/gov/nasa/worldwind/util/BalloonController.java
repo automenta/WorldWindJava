@@ -10,14 +10,15 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.examples.kml.KMLViewController;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.exception.WWTimeoutException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.layers.ogc.kml.impl.*;
 import gov.nasa.worldwind.pick.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.Terrain;
+import gov.nasa.worldwind.ui.BalloonResizeController;
 
 import javax.swing.*;
 import java.awt.*;

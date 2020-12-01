@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.formats.vpf;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -766,7 +766,7 @@ public class GeoSymSupport {
         String s = (String) labelRow.get("labatt");
         if (s != null && !s.isEmpty()) {
             String[] array = s.split(",");
-            if (array != null && array.length > 0) {
+            if (array.length > 0) {
                 attributeNames = array;
             }
         }
@@ -774,7 +774,7 @@ public class GeoSymSupport {
         s = (String) labelRow.get("txrowid");
         if (s != null && !s.isEmpty()) {
             String[] array = s.split(",");
-            if (array != null && array.length > 0) {
+            if (array.length > 0) {
                 txtRowIds = array;
             }
         }

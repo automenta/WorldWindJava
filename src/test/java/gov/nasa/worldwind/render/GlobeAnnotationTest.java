@@ -146,7 +146,7 @@ public class GlobeAnnotationTest
     // Helper Methods
     //////////////////////////////////////////////////////////
 
-    @SuppressWarnings({"JavaDoc"})
+    @SuppressWarnings("JavaDoc")
     private static void assignExampleValues(GlobeAnnotation annotation)
     {
         annotation.setText(

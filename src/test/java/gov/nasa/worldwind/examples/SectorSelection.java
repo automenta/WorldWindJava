@@ -57,7 +57,7 @@ public class SectorSelection extends ApplicationTemplate {
             }
 
             public void actionPerformed(ActionEvent e) {
-                ((JButton) e.getSource()).setAction(new DisableSelectorAction());
+                ((AbstractButton) e.getSource()).setAction(new DisableSelectorAction());
                 selector.enable();
             }
         }
@@ -69,7 +69,7 @@ public class SectorSelection extends ApplicationTemplate {
 
             public void actionPerformed(ActionEvent e) {
                 selector.disable();
-                ((JButton) e.getSource()).setAction(new EnableSelectorAction());
+                ((AbstractButton) e.getSource()).setAction(new EnableSelectorAction());
             }
         }
     }

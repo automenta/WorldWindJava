@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.render.markers;
 
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.Vec4;
+import gov.nasa.worldwind.render.DrawContext;
 
 /**
  * @author tag

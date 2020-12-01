@@ -102,7 +102,7 @@ public class TextRenderer {
 
     static {
         String arg = System.getProperty("gov.nasa.worldwind.textrender.useglyphcache");
-        DISABLE_GLYPH_CACHE = (arg != null && !arg.toLowerCase().isEmpty() && arg.toLowerCase().charAt(0) == 'f');
+        DISABLE_GLYPH_CACHE = (arg != null && !arg.isEmpty() && arg.toLowerCase().charAt(0) == 'f');
     }
 
     private final Font font;
@@ -1619,7 +1619,7 @@ public class TextRenderer {
     }
 
     class GlyphProducer {
-        final int undefined = -2;
+        static final int undefined = -2;
         final List<Glyph> glyphsOutput = new ArrayList<>();
         final HashMap<String, GlyphVector> fullGlyphVectorCache = new HashMap<>();
         final HashMap<Character, GlyphMetrics> glyphMetricsCache = new HashMap<>();

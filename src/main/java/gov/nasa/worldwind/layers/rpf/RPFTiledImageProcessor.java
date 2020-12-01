@@ -264,11 +264,9 @@ public class RPFTiledImageProcessor {
             // then write the wavelet to file.
             if (wavelet != null) {
                 ByteBuffer buffer = WaveletCodec.save(wavelet);
-                if (buffer != null) {
-                    WWIO.saveBuffer(buffer, waveletFile);
-                    //noinspection UnusedAssignment
-                    buffer = null;
-                }
+                WWIO.saveBuffer(buffer, waveletFile);
+                //noinspection UnusedAssignment
+                buffer = null;
                 //noinspection UnusedAssignment
                 wavelet = null;
             }
@@ -342,7 +340,7 @@ public class RPFTiledImageProcessor {
             // Computing the file's coverage failed. Log the condition and return null.
             // This at allows the coverage to be re-computed at a later time.
             String message = String.format("Exception while getting file sector: %s",
-                rpfFile != null ? rpfFile.getFile() : "");
+                rpfFile.getFile());
             Logging.logger().log(Level.SEVERE, message, e);
             sector = null;
         }
@@ -352,7 +350,8 @@ public class RPFTiledImageProcessor {
     private Sector sectorFromFilename(File file) {
         Sector sector = null;
         try {
-            if (file != null && file.getName() != null) {
+            if (file != null) {
+                file.getName();
                 // Parse the filename, using the conventions for CADRG and CIB filenames.
                 RPFFrameFilename rpfFilename = RPFFrameFilename.parseFilename(file.getName().toUpperCase());
                 // Get the dataseries associated with that code.

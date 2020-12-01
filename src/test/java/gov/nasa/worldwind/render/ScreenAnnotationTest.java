@@ -147,7 +147,7 @@ public class ScreenAnnotationTest
     // Helper Methods
     //////////////////////////////////////////////////////////
 
-    @SuppressWarnings({"JavaDoc"})
+    @SuppressWarnings("JavaDoc")
     private static void assignExampleValues(ScreenAnnotation annotation)
     {
         annotation.setText(
@@ -163,7 +163,7 @@ public class ScreenAnnotationTest
         assignNullValues(annotation.getAttributes());
     }
 
-    @SuppressWarnings({"JavaDoc"})
+    @SuppressWarnings("JavaDoc")
     private static void assignExampleValues(AnnotationAttributes attrib)
     {
         attrib.setFrameShape(AVKey.SHAPE_ELLIPSE);

@@ -80,7 +80,7 @@ public class LayerTreeModel extends DefaultTreeModel {
             parent = this.getRootNode();
 
         for (int i = 0; i < parent.getChildCount(); i++) {
-            if (((LayerTreeNode) parent.getChildAt(i)).getTitle().equals(childName))
+            if (((LayerNode) parent.getChildAt(i)).getTitle().equals(childName))
                 return (LayerTreeNode) parent.getChildAt(i);
         }
 
@@ -179,7 +179,7 @@ public class LayerTreeModel extends DefaultTreeModel {
         if (o instanceof Layer)
             layerNode = this.findLayer((Layer) o, null);
         else if (o instanceof LayerNode)
-            layerNode = this.find((LayerTreeNode) o);
+            layerNode = this.find((LayerNode) o);
 
         if (layerNode != null)
             removeNodeFromParent(layerNode);

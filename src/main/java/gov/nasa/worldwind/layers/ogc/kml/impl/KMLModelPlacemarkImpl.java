@@ -7,13 +7,11 @@
 package gov.nasa.worldwind.layers.ogc.kml.impl;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.layers.ogc.collada.*;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.ogc.collada.*;
 import gov.nasa.worldwind.layers.ogc.collada.impl.ColladaTraversalContext;
 import gov.nasa.worldwind.layers.ogc.kml.*;
-import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.*;
 
 import javax.xml.stream.XMLStreamException;
@@ -300,8 +298,6 @@ public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
             return;
 
         ColladaRoot root = ColladaRoot.createAndParse(o);
-        if (root == null)
-            return;
 
         this.setColladaRoot(root);
         this.resourceRetrievalTime.set(System.currentTimeMillis());

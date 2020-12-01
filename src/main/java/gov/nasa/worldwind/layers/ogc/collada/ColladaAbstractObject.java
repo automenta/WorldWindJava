@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.layers.ogc.collada;
 
-import gov.nasa.worldwind.layers.ogc.collada.impl.ColladaTraversalContext;
 import gov.nasa.worldwind.geom.Box;
+import gov.nasa.worldwind.layers.ogc.collada.impl.ColladaTraversalContext;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.xml.*;
 

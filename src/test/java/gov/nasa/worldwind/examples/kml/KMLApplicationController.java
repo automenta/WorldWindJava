@@ -7,11 +7,11 @@
 package gov.nasa.worldwind.examples.kml;
 
 import gov.nasa.worldwind.WorldWindow;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.layers.ogc.kml.*;
+import gov.nasa.worldwind.ui.tree.TreeNode;
 import gov.nasa.worldwind.util.*;
-import gov.nasa.worldwind.util.tree.TreeNode;
 
 import java.awt.*;
 import java.beans.*;
@@ -92,7 +92,7 @@ public class KMLApplicationController implements SelectListener, PropertyChangeL
             Object topObject = event.getTopObject();
             if (topObject instanceof TreeNode) {
                 // The KML feature should be attached to the node as the CONTEXT
-                Object context = ((TreeNode) topObject).get(AVKey.CONTEXT);
+                Object context = ((AVList) topObject).get(AVKey.CONTEXT);
                 if (context instanceof KMLAbstractFeature) {
                     this.onFeatureSelected((KMLAbstractFeature) context);
                 }

@@ -7,7 +7,6 @@ package gov.nasa.worldwind.render.airspaces;
 
 import gov.nasa.worldwind.Restorable;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;

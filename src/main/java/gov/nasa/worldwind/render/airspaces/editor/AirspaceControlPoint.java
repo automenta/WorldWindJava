@@ -5,8 +5,8 @@
  */
 package gov.nasa.worldwind.render.airspaces.editor;
 
-import gov.nasa.worldwind.render.airspaces.Airspace;
 import gov.nasa.worldwind.geom.Vec4;
+import gov.nasa.worldwind.render.airspaces.Airspace;
 
 /**
  * @author dcollins

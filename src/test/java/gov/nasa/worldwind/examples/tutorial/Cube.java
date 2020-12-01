@@ -10,10 +10,10 @@ import com.jogamp.opengl.*;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.examples.ApplicationTemplate;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickSupport;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.OGLUtil;
 
 import java.awt.*;

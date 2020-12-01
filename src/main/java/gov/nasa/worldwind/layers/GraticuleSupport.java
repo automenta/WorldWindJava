@@ -69,8 +69,8 @@ public class GraticuleSupport {
 
             if (renderable instanceof Path) {
                 if (renderingParams == null || renderingParams.isDrawLines()) {
-                    applyRenderingParams(paramsKey, renderingParams, (Path) renderable, opacity);
-                    ((Path) renderable).render(dc);
+                    applyRenderingParams(paramsKey, renderingParams, (Attributable) renderable, opacity);
+                    ((Renderable) renderable).render(dc);
                 }
             }
             else if (renderable instanceof GeographicText) {

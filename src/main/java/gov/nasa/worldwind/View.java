@@ -7,10 +7,10 @@
 package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.animation.Animator;
-import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.ui.awt.ViewInputHandler;
+import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.video.awt.ViewInputHandler;
 import gov.nasa.worldwind.view.ViewPropertyLimits;
 
 import java.awt.*;

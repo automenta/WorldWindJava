@@ -7,10 +7,10 @@ package gov.nasa.worldwind.util.measure;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -1134,7 +1134,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
                     LatLon.greatCircleEndPosition(positions.get(i), azimuth, distance));
                 positions.set(i, newPos);
                 if (!this.measureShapeType.equals(SHAPE_POLYGON) || i < positions.size() - 1) {
-                    ((ControlPoint) controlPoints.get(i)).setPosition(new Position(newPos, 0));
+                    ((GlobeAnnotation) controlPoints.get(i)).setPosition(new Position(newPos, 0));
                 }
             }
             // Update heading for simple line
@@ -1331,7 +1331,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     public ControlPoint getControlPoint(String control) {
         for (Renderable cp : this.controlPoints) {
-            String value = ((ControlPoint) cp).getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
+            String value = ((AVList) cp).getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
             if (value != null && value.equals(control)) {
                 return (ControlPoint) cp;
             }
@@ -1449,7 +1449,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         if ((control.equals(NORTH) && azimuth.degrees < 270 && azimuth.degrees > 90)
             || (control.equals(SOUTH) && (azimuth.degrees > 270 || azimuth.degrees < 90))) {
             for (Renderable r : this.controlPoints) {
-                AVList cp = (ControlPoint) r;
+                AVList cp = (AVList) r;
                 String c = cp.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;
@@ -1467,7 +1467,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         if ((control.equals(EAST) && (azimuth.degrees < 360 && azimuth.degrees > 180))
             || (control.equals(WEST) && (azimuth.degrees < 180 && azimuth.degrees > 0))) {
             for (Renderable r : this.controlPoints) {
-                AVList cp = (ControlPoint) r;
+                AVList cp = (AVList) r;
                 String c = cp.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;
@@ -1499,7 +1499,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
         if (control.charAt(0) != newControl.charAt(0)) {
             for (Renderable r : this.controlPoints) {
-                AVList cp = (ControlPoint) r;
+                AVList cp = (AVList) r;
                 String c = cp.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;
@@ -1515,7 +1515,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         }
         if (control.charAt(1) != newControl.charAt(1)) {
             for (Renderable r : this.controlPoints) {
-                AVList cp = (ControlPoint) r;
+                AVList cp = (AVList) r;
                 String c = cp.getStringValue(CONTROL_TYPE_REGULAR_SHAPE);
                 if (c == null) {
                     continue;
@@ -1661,7 +1661,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
             }
 
             // Update center control point position
-            ((ControlPoint) this.controlPoints.get(0)).setPosition(new Position(this.shapeCenterPosition, 0));
+            ((GlobeAnnotation) this.controlPoints.get(0)).setPosition(new Position(this.shapeCenterPosition, 0));
         }
 
         if (this.shapeRectangle != null) {

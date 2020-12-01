@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.examples.milstd2525.graphics.areas;
 
 import gov.nasa.worldwind.examples.milstd2525.AbstractMilStd2525TacticalGraphic;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;

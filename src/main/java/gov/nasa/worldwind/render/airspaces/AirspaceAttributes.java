@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.render.airspaces;
 
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.render.*;
 
 /**
  * Holds common attributes for WorldWind {@link Airspace} shapes. AirspaceAttributes was originally designed as a
