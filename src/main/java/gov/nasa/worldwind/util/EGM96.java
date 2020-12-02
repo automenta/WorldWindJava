@@ -147,15 +147,4 @@ public class EGM96 {
 
         return this.deltas.getInt(k);
     }
-//
-//    public static void main(String[] args)
-//    {
-//        EGM96 egm96 = new EGM96("config/EGM96.dat");
-//
-//        LatLon latLon = LatLon.fromDegrees(46.166195, -94.405447);
-////        double offset = egm96.getOffset(latLon.getLatitude(), latLon.getLongitude());
-////        double offset = egm96.getOffset(Angle.NEG90, Angle.POS360);
-//        double offset = egm96.getOffset(Angle.fromDegrees(-89.9), Angle.fromDegrees(359.9));
-//        System.out.println(offset / 100);
-//    }
 }

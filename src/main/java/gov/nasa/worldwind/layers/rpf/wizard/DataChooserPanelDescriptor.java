@@ -123,12 +123,10 @@ public class DataChooserPanelDescriptor extends DefaultPanelDescriptor {
                 long estimatedMillis = selectedFiles * WAVELET_TIME_EST;
                 sb.append("Selected files: ");
                 sb.append(String.format("%,d", selectedFiles));
-                SizeFormatter sf = new SizeFormatter();
                 if (!sb.isEmpty())
                     sb.append(" - ");
                 sb.append("Disk space required: ~");
                 sb.append(SizeFormatter.formatEstimate(estimatedBytes));
-                TimeFormatter tf = new TimeFormatter();
                 if (!sb.isEmpty())
                     sb.append(" - ");
                 sb.append("Processing time: ");

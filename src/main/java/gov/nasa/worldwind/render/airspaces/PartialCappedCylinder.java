@@ -102,7 +102,7 @@ public class PartialCappedCylinder extends CappedCylinder {
             return super.computeMinimalGeometry(globe, verticalExaggeration);
 
         GeometryBuilder gb = this.getGeometryBuilder();
-        LatLon[] locations = gb.makePartialDiskLocations(globe, this.getCenter(), this.getRadii()[0],
+        LatLon[] locations = GeometryBuilder.makePartialDiskLocations(globe, this.getCenter(), this.getRadii()[0],
             this.getRadii()[1], MINIMAL_GEOMETRY_SLICES, MINIMAL_GEOMETRY_LOOPS, angles[0], angles[2]);
 
         List<Vec4> points = new ArrayList<>();
@@ -162,9 +162,9 @@ public class PartialCappedCylinder extends CappedCylinder {
             return null;
 
         if (i < 0)
-            sweepAngle = stopAngle.subtract(startAngle);
+            sweepAngle = stopAngle.sub(startAngle);
         else // (i > 0)
-            sweepAngle = Angle.POS360.subtract(startAngle).add(stopAngle);
+            sweepAngle = Angle.POS360.sub(startAngle).add(stopAngle);
 
         double[] array = new double[3];
         array[0] = startAngle.radians;
@@ -373,7 +373,7 @@ public class PartialCappedCylinder extends CappedCylinder {
         int count = GeometryBuilder.getPartialCylinderVertexCount(slices, stacks);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        gb.makePartialCylinderVertices(dc.getTerrain(), center, radius, altitudes, terrainConformant, slices, stacks,
+        GeometryBuilder.makePartialCylinderVertices(dc.getTerrain(), center, radius, altitudes, terrainConformant, slices, stacks,
             start, sweep, referenceCenter, verts);
         gb.makePartialCylinderNormals((float) radius, height, slices, stacks, (float) start, (float) sweep, norms);
 
@@ -400,7 +400,7 @@ public class PartialCappedCylinder extends CappedCylinder {
         int mode = GeometryBuilder.getPartialCylinderOutlineDrawMode();
         int count = GeometryBuilder.getPartialCylinderOutlineIndexCount(slices, stacks);
         int[] indices = new int[count];
-        gb.makePartialCylinderOutlineIndices(slices, stacks, indices);
+        GeometryBuilder.makePartialCylinderOutlineIndices(slices, stacks, indices);
 
         dest.setElementData(mode, count, indices);
     }
@@ -444,7 +444,7 @@ public class PartialCappedCylinder extends CappedCylinder {
         int count = GeometryBuilder.getPartialDiskIndexCount(slices, loops);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        gb.makePartialDiskVertices(dc.getTerrain(), center, radii[0], radii[1], altitude, terrainConformant, slices,
+        GeometryBuilder.makePartialDiskVertices(dc.getTerrain(), center, radii[0], radii[1], altitude, terrainConformant, slices,
             loops, start, sweep, referenceCenter, verts);
         gb.makePartialDiskVertexNormals((float) radii[0], (float) radii[1], slices, loops, (float) start, (float) sweep,
             verts, norms);
@@ -530,7 +530,7 @@ public class PartialCappedCylinder extends CappedCylinder {
         int count = GeometryBuilder.getRadialWallVertexCount(pillars, stacks);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        gb.makeRadialWallVertices(dc.getTerrain(), center, radii[0], radii[1], angle, altitudes, terrainConformant,
+        GeometryBuilder.makeRadialWallVertices(dc.getTerrain(), center, radii[0], radii[1], angle, altitudes, terrainConformant,
             pillars, stacks, referenceCenter, verts);
         gb.makeRadialWallNormals((float) radii[0], (float) radii[1], height, (float) angle, pillars, stacks, norms);
 
@@ -557,7 +557,7 @@ public class PartialCappedCylinder extends CappedCylinder {
         int mode = GeometryBuilder.getRadialWallOutlineDrawMode();
         int count = GeometryBuilder.getRadialWallOutlineIndexCount(pillars, stacks);
         int[] indices = new int[count];
-        gb.makeRadialWallOutlineIndices(pillars, stacks, indices);
+        GeometryBuilder.makeRadialWallOutlineIndices(pillars, stacks, indices);
 
         dest.setElementData(mode, count, indices);
     }

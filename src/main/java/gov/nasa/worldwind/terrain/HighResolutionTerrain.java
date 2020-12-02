@@ -94,16 +94,6 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain {
         this.computeDimensions();
 
         this.geometryCache = new BasicMemoryCache((long) (0.85 * DEFAULT_CACHE_CAPACITY), DEFAULT_CACHE_CAPACITY);
-//        this.geometryCache.addCacheListener(new MemoryCache.CacheListener()
-//        {
-//            public void entryRemoved(Object key, Object clientObject)
-//            {
-//                long cap = geometryCache.getCapacity();
-//                long cs = geometryCache.getUsedCapacity();
-//                long no = geometryCache.getNumObjects();
-//                System.out.printf("CACHE CLEAN capacity %d, used %d, num entries %d\n", cap, cs, no);
-//            }
-//        });
     }
 
     protected static double createPosition(int start, double decimal, int density) {

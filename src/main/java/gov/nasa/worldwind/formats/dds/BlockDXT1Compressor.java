@@ -378,21 +378,6 @@ public class BlockDXT1Compressor {
      * @throws IllegalArgumentException if either <code>colorBlock</code> or <code>dxtBlock</code> are null.
      */
     public void compressBlockDXT1(ColorBlock4x4 colorBlock, DXTCompressionAttributes attributes, BlockDXT1 dxtBlock) {
-//        if (colorBlock == null) {
-//            String message = Logging.getMessage("nullValue.ColorBlockIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (attributes == null) {
-//            String message = Logging.getMessage("nullValue.AttributesIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (dxtBlock == null) {
-//            String message = Logging.getMessage("nullValue.DXTBlockIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         BlockDXT1Compressor.chooseMinMaxColors(colorBlock, attributes, this.minColor, this.maxColor);
         int color0 = short565FromColor32(this.maxColor);

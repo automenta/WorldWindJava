@@ -266,11 +266,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
     @SuppressWarnings("unchecked")
     public List<Sector> getSectors(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         final GlobeStateKey key = dc.getGlobe().getGlobeStateKey(/*dc*/ /* shared should be ok if draw context is 1:1 with a globe*/);
 
@@ -280,10 +275,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             sectorCache.put(key, s);
         }
         return s;
-//        return this.sectorCache.computeIfAbsent(
-//            key,
-//            K -> WWUtil.arrayList(computeSectors(dc)));
-
     }
 
     /**
@@ -397,11 +388,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     public void restoreState(String stateInXml) {
-//        if (stateInXml == null) {
-//            String message = Logging.getMessage("nullValue.StringIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         RestorableSupport rs;
         try {
@@ -418,21 +404,11 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     public double getArea(Globe globe) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.setupAreaMeasurer(globe).getArea(globe);
     }
 
     public double getArea(Globe globe, boolean terrainConformant) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         AreaMeasurer areaMeasurer = this.setupAreaMeasurer(globe);
         areaMeasurer.setFollowTerrain(terrainConformant);
@@ -440,51 +416,26 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     public double getPerimeter(Globe globe) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.setupAreaMeasurer(globe).getPerimeter(globe);
     }
 
     public double getWidth(Globe globe) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.setupAreaMeasurer(globe).getWidth(globe);
     }
 
     public double getHeight(Globe globe) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.setupAreaMeasurer(globe).getHeight(globe);
     }
 
     public double getLength(Globe globe) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.setupAreaMeasurer(globe).getLength(globe);
     }
 
     public void move(Position position) {
-//        if (position == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Position referencePosition = this.getReferencePosition();
         if (referencePosition == null)
@@ -494,11 +445,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     public void moveTo(Position position) {
-//        if (position == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Position oldReferencePosition = this.getReferencePosition();
         if (oldReferencePosition == null)
@@ -508,11 +454,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     public void moveTo(Globe globe, Position position) {
-//        if (position == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Position oldReferencePosition = this.getReferencePosition();
         if (oldReferencePosition == null)
@@ -551,11 +492,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      */
     @Override
     public void combine(CombineContext cc) {
-//        if (cc == null) {
-//            String msg = Logging.getMessage("nullValue.CombineContextIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (cc.isBoundingSectorMode())
             this.combineBounds(cc);
@@ -598,17 +534,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     }
 
     protected void drawGeographic(DrawContext dc, SurfaceTileDrawContext sdc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (sdc == null) {
-//            String message = Logging.getMessage("nullValue.SurfaceTileDrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.beginDrawing(dc, sdc);
         try {
@@ -877,11 +802,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
     @SuppressWarnings("unchecked")
     protected List<List<LatLon>> getCachedGeometry(DrawContext dc, SurfaceTileDrawContext sdc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.geometryCache.computeIfAbsent(
             createGeometryKey(dc, sdc),
@@ -1270,11 +1190,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     //**************************************************************//
 
     protected AreaMeasurer setupAreaMeasurer(Globe globe) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (this.areaMeasurer == null) {
             this.areaMeasurer = new AreaMeasurer();
@@ -1419,11 +1334,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
     protected void legacyRestoreState(RestorableSupport rs, RestorableSupport.StateObject context) {
         // Ignore texture width and height parameters, they're no longer used.
 
-        //Integer width = rs.getStateValueAsInteger(context, "textureWidth");
-        //Integer height = rs.getStateValueAsInteger(context, "textureHeight");
-        //if (width != null && height != null)
-        //    this.setTextureSize(new Dimension(width, height));
-
         ShapeAttributes attrs = this.getAttributes();
 
         Color color = rs.getStateValueAsColor(context, "color");
@@ -1439,9 +1349,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             (attrs != null ? attrs : (attrs = new BasicShapeAttributes())).setOutlineWidth(dub);
 
         // Ignore numEdgeIntervalsPerDegree, since it's no longer used.
-        //Double intervals = rs.getStateValueAsDouble(context, "numEdgeIntervalsPerDegree");
-        //if (intervals != null)
-        //    this.setEdgeIntervalsPerDegree(intervals.intValue());
 
         Boolean booleanState = rs.getStateValueAsBoolean(context, "drawBorder");
         if (booleanState != null)
@@ -1461,9 +1368,6 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         // Positions data is a per object property now. This value is recognized by SurfacePolygon, SurfacePolyline, and
         // SurfaceSector. Other shapes ignore this property.
 
-        //ArrayList<LatLon> locations = rs.getStateValueAsLatLonList(context, "locations");
-        //if (locations != null)
-        //    this.positions = locations;
     }
 
     protected static String pathTypeFromString(String s) {

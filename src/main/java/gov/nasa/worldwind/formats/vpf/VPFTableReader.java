@@ -52,7 +52,7 @@ public class VPFTableReader {
         return sb.toString();
     }
 
-    public VPFBufferedRecordData read(File file) {
+    public static VPFBufferedRecordData read(File file) {
         if (file == null) {
             String message = Logging.getMessage("nullValue.FileIsNull");
             Logging.logger().severe(message);
@@ -61,7 +61,7 @@ public class VPFTableReader {
 
         try {
             ByteBuffer buffer = VPFTableReader.readFileToBuffer(file);
-            return this.doRead(file, buffer);
+            return VPFTableReader.doRead(file, buffer);
         }
         catch (Exception e) {
             String message = Logging.getMessage("VPF.ExceptionAttemptingToReadTable", file.getPath());
@@ -80,9 +80,9 @@ public class VPFTableReader {
         return buffer;
     }
 
-    protected VPFBufferedRecordData doRead(File file, ByteBuffer buffer) {
+    protected static VPFBufferedRecordData doRead(File file, ByteBuffer buffer) {
         // Read the table header.
-        Header header = this.readHeader(buffer);
+        Header header = VPFTableReader.readHeader(buffer);
         // Set the byte ordering to the ordering specified by the table header.
         buffer.order(header.byteOrder);
 
@@ -91,7 +91,7 @@ public class VPFTableReader {
         // DIGEST Part 2 Annex C.2.3.1.2
         File recordIndexFile = new File(file.getParent(), getRecordIndexFilename(file.getName()));
         if (recordIndexFile.exists())
-            recordIndex = this.readRecordIndex(recordIndexFile);
+            recordIndex = VPFTableReader.readRecordIndex(recordIndexFile);
         // If the record index is null, then attempt to compute it from the header's column definitions.
         if (recordIndex == null)
             recordIndex = VPFTableReader.computeRecordIndex(buffer, header);
@@ -107,7 +107,7 @@ public class VPFTableReader {
         return VPFTableReader.readRecordData(buffer, header.columns, recordIndex);
     }
 
-    protected Header readHeader(ByteBuffer buffer) {
+    protected static Header readHeader(ByteBuffer buffer) {
         int offset = buffer.position();
         int length = buffer.getInt();
 
@@ -243,7 +243,7 @@ public class VPFTableReader {
     //********************  Record Data  ***************************//
     //**************************************************************//
 
-    protected RecordIndex readRecordIndex(File file) {
+    protected static RecordIndex readRecordIndex(File file) {
         try {
             ByteBuffer buffer = VPFTableReader.readFileToBuffer(file);
             buffer.order(ByteOrder.LITTLE_ENDIAN); // Default to least significant byte first order.

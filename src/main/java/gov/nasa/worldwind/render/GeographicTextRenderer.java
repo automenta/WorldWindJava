@@ -502,39 +502,37 @@ public class GeographicTextRenderer {
             textBounds = GeographicTextRenderer.computeScaledBounds(textBounds, scale);
             Point.Float drawPoint = computeDrawPoint(dc, textBounds, screenPoint);
 
-            if (drawPoint != null) {
-                if (scale != 1.0d) {
-                    gl.glScaled(scale, scale, 1.0d);
-                    drawPoint.setLocation(drawPoint.x / (float) scale, drawPoint.y / (float) scale);
-                }
-
-                Color color = geographicText.getColor();
-                if (color == null)
-                    color = DEFAULT_COLOR;
-                color = GeographicTextRenderer.applyOpacity(color, opacity);
-
-                Color background = geographicText.getBackgroundColor();
-                if (background != null) {
-                    background = GeographicTextRenderer.applyOpacity(background, opacity);
-                    textRenderer.setColor(background);
-                    if (this.effect.equals(AVKey.TEXT_EFFECT_SHADOW)) {
-                        textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
-                    }
-                    else if (this.effect.equals(AVKey.TEXT_EFFECT_OUTLINE)) {
-                        textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
-                        textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y + 1, 0, 1);
-                        textRenderer.draw3D(charSequence, drawPoint.x - 1, drawPoint.y - 1, 0, 1);
-                        textRenderer.draw3D(charSequence, drawPoint.x - 1, drawPoint.y + 1, 0, 1);
-                    }
-                }
-
-                textRenderer.setColor(color);
-                textRenderer.draw3D(charSequence, drawPoint.x, drawPoint.y, 0, 1);
-                textRenderer.flush();
-
-                if (scale != 1.0d)
-                    gl.glLoadIdentity();
+            if (scale != 1.0d) {
+                gl.glScaled(scale, scale, 1.0d);
+                drawPoint.setLocation(drawPoint.x / (float) scale, drawPoint.y / (float) scale);
             }
+
+            Color color = geographicText.getColor();
+            if (color == null)
+                color = DEFAULT_COLOR;
+            color = GeographicTextRenderer.applyOpacity(color, opacity);
+
+            Color background = geographicText.getBackgroundColor();
+            if (background != null) {
+                background = GeographicTextRenderer.applyOpacity(background, opacity);
+                textRenderer.setColor(background);
+                if (this.effect.equals(AVKey.TEXT_EFFECT_SHADOW)) {
+                    textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
+                }
+                else if (this.effect.equals(AVKey.TEXT_EFFECT_OUTLINE)) {
+                    textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
+                    textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y + 1, 0, 1);
+                    textRenderer.draw3D(charSequence, drawPoint.x - 1, drawPoint.y - 1, 0, 1);
+                    textRenderer.draw3D(charSequence, drawPoint.x - 1, drawPoint.y + 1, 0, 1);
+                }
+            }
+
+            textRenderer.setColor(color);
+            textRenderer.draw3D(charSequence, drawPoint.x, drawPoint.y, 0, 1);
+            textRenderer.flush();
+
+            if (scale != 1.0d)
+                gl.glLoadIdentity();
         }
         catch (Exception e) {
             handleTextRendererExceptions(e);
@@ -583,12 +581,6 @@ public class GeographicTextRenderer {
     protected void setDepthFunc(DrawContext dc, OrderedText uText, Vec4 screenPoint) {
         GL gl = dc.getGL();
 
-        //if (uText.text.isAlwaysOnTop())
-        //{
-        //    gl.glDepthFunc(GL.GL_ALWAYS);
-        //    return;
-        //}
-
         Position eyePos = dc.getView().getEyePosition();
         if (eyePos == null) {
             gl.glDepthFunc(GL.GL_ALWAYS);
@@ -603,10 +595,6 @@ public class GeographicTextRenderer {
             gl.glDepthRange(depth, depth);
         }
         //else if (screenPoint.z >= 1d)
-        //{
-        //    gl.glDepthFunc(GL.GL_EQUAL);
-        //    gl.glDepthRange(1d, 1d);
-        //}
         else {
             gl.glDepthFunc(GL.GL_ALWAYS);
         }

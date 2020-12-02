@@ -518,7 +518,7 @@ public class RPFTiledImageLayer extends TiledImageLayer {
 
     protected void requestTexture(DrawContext dc, TextureTile tile) {
         Vec4 centroid = tile.getCentroidPoint(dc.getGlobe());
-        Vec4 referencePoint = this.getReferencePoint(dc);
+        Vec4 referencePoint = TiledImageLayer.getReferencePoint(dc);
         if (referencePoint != null)
             tile.setPriorityDistance(centroid.distanceTo3(referencePoint));
 
@@ -764,11 +764,6 @@ public class RPFTiledImageLayer extends TiledImageLayer {
          */
         @Override public int compareTo(TileTask that) {
             if (this==that) return 0;
-//            if (that == null) {
-//                String msg = Logging.getMessage("nullValue.RequestTaskIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
             return Double.compare(that.tile.getPriority(), this.tile.getPriority());
         }
 

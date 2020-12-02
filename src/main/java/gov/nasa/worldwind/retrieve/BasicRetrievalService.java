@@ -29,9 +29,7 @@ public final class BasicRetrievalService extends WWObjectImpl
     private static final long DEFAULT_STALE_REQUEST_LIMIT = 30000; // milliseconds
     static final int DEFAULT_TIME_PRIORITY_GRANULARITY = 500; // milliseconds
 
-//    private static final String RUNNING_THREAD_NAME_PREFIX = Logging.getMessage(
-//        "BasicRetrievalService.RunningThreadNamePrefix");
-    private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
+private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
         "BasicRetrievalService.IdleThreadNamePrefix");
 
     private final RetrievalExecutor executor; // thread pool for running retrievers
@@ -80,17 +78,6 @@ public final class BasicRetrievalService extends WWObjectImpl
      * @throws IllegalArgumentException if <code>retriever</code> is null or has no name
      */
     public synchronized RetrievalFuture run(Retriever retrieval, double priority) {
-//        if (retriever == null) {
-//            String message = Logging.getMessage("nullValue.RetrieverIsNull");
-//            Logging.logger().fine(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (retriever.getName() == null) {
-//            String message = Logging.getMessage("nullValue.RetrieverNameIsNull");
-//            Logging.logger().fine(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (!this.isAvailable()) {
             Logging.logger().finer(Logging.getMessage("BasicRetrievalService.ResourceRejected", retrieval.getName()));
@@ -133,17 +120,6 @@ public final class BasicRetrievalService extends WWObjectImpl
         this.executor.setCorePoolSize(poolSize);
         this.executor.setMaximumPoolSize(poolSize);
     }
-
-//    private boolean hasRetrievers() {
-//        return hasActiveTasks();
-////        Thread[] threads = new Thread[Thread.activeCount()];
-////        int numThreads = Thread.enumerate(threads);
-////        for (int i = 0; i < numThreads; i++) {
-////            if (threads[i].getName().startsWith(RUNNING_THREAD_NAME_PREFIX))
-////                return true;
-////        }
-////        return false;
-//    }
 
     public boolean hasActiveTasks() {
         return executor.getActiveCount()>0;
@@ -318,16 +294,6 @@ public final class BasicRetrievalService extends WWObjectImpl
          * @throws IllegalArgumentException if either <code>thread</code> or <code>runnable</code> is null
          */
         protected void beforeExecute(Thread thread, Runnable runnable) {
-//            if (thread == null) {
-//                String msg = Logging.getMessage("nullValue.ThreadIsNull");
-//                Logging.logger().fine(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
-//            if (runnable == null) {
-//                String msg = Logging.getMessage("nullValue.RunnableIsNull");
-//                Logging.logger().fine(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
 
             RetrievalTask task = (RetrievalTask) runnable;
 //

@@ -47,7 +47,7 @@ public abstract class AbstractMilStd2525TacticalGraphic extends AbstractTactical
 
     protected AbstractMilStd2525TacticalGraphic(String symbolCode) {
         this.symbolCode = new SymbolCode(symbolCode);
-        this.maskedSymbolCode = SymbolCode.toMaskedString();
+        this.maskedSymbolCode = this.symbolCode.toMaskedString();
 
         // Use the same default units format as 2525 tactical symbols.
         this.setUnitsFormat(MilStd2525TacticalSymbol.DEFAULT_UNITS_FORMAT);

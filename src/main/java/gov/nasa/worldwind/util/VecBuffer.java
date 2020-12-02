@@ -97,17 +97,6 @@ public class VecBuffer {
      * @throws IllegalArgumentException if the position is out of range, or if the array is null.
      */
     public double[] get(int position, double[] array) {
-//        if (position < 0 || position >= this.getSize()) {
-//            String message = Logging.getMessage("generic.ArgumentOutOfRange", "position < 0 or position >= size");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (array == null) {
-//            String message = Logging.getMessage("nullValue.ArrayIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         buffer.getDouble(indexFromVectorPosition(position), array, 0, Math.min(array.length, coordsPerVec));
 

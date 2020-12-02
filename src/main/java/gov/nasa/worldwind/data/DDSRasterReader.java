@@ -59,7 +59,7 @@ public class DDSRasterReader extends AbstractDataRasterReader {
 
         try {
             DDSDecompressor decompressor = new DDSDecompressor();
-            raster = decompressor.decompress(source, params);
+            raster = DDSDecompressor.decompress(source, params);
             if (null != raster) {
                 raster.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
             }

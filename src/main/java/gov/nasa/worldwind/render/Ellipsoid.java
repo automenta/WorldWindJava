@@ -239,7 +239,7 @@ public class Ellipsoid extends RigidShape {
         gb.makeEllipsoidNormals(itb, normalBuffer);
 
         FloatBuffer textureCoordBuffer = Buffers.newDirectFloatBuffer(2 * itb.getVertexCount());
-        gb.makeUnitSphereTextureCoordinates(itb, textureCoordBuffer, seamVerticesIndex);
+        GeometryBuilder.makeUnitSphereTextureCoordinates(itb, textureCoordBuffer, seamVerticesIndex);
 
         dest.setElementData(GL.GL_TRIANGLES, itb.getIndexCount(), itb.getIndices());
         dest.setVertexData(itb.getVertexCount(), itb.getVertices());

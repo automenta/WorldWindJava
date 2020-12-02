@@ -349,10 +349,6 @@ public class SphereAirspace extends AbstractAirspace {
             Object o = level.get(SUBDIVISIONS);
             if (o instanceof Integer)
                 subdivisions = (Integer) o;
-
-            //o = level.getValue(DISABLE_TERRAIN_CONFORMANCE);
-            //if (o != null && o instanceof Boolean && (Boolean) o)
-            //    terrainConformant[0] = terrainConformant[1] = false;
         }
 
         Vec4 centerPoint = this.computePointFromPosition(dc,

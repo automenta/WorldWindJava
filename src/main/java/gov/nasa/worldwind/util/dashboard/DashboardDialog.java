@@ -130,19 +130,6 @@ public class DashboardDialog extends JDialog {
         };
         triangleButton.addActionListener(listener);
         skirtsButton.addActionListener(listener);
-//
-//        skirtsButton.addActionListener(new ActionListener()
-//        {
-//            public void actionPerformed(ActionEvent e)
-//            {
-//                boolean tf = ((JRadioButton)e.getSource()).isSelected();
-//                if (tf)
-//                    triangleButton.setSelected(false);
-//                wwd.getModel().setShowWireframeInterior(tf);
-//                wwd.getModel().getGlobe().getTessellator().setMakeTileSkirts(true);
-//                wwd.redraw();
-//            }
-//        });
 
         tileButton.addActionListener(e -> {
             wwd.model().setShowWireframeExterior(!wwd.model().isShowWireframeExterior());

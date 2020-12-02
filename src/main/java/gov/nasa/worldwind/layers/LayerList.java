@@ -80,11 +80,11 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject {
         return list;
     }
 
-    public static List<Layer> getLayersAdded(List<Layer> oldList, Iterable<Layer> newList) {
+    public static List<Layer> getLayersAdded(Collection<Layer> oldList, Iterable<Layer> newList) {
         return getListDifference(oldList, newList);
     }
 
-    public static List<Layer> getLayersRemoved(Iterable<Layer> oldList, List<Layer> newList) {
+    public static List<Layer> getLayersRemoved(Iterable<Layer> oldList, Collection<Layer> newList) {
         return getListDifference(newList, oldList);
     }
 

@@ -102,7 +102,7 @@ public class LineOfContact extends ForwardLineOfOwnTroops {
         // Generate lines that parallel the control line.
         List<Position> leftPositions = new ArrayList<>();
         List<Position> rightPositions = new ArrayList<>();
-        this.generateParallelLines(positions.iterator(), leftPositions, rightPositions, waveLength / 2.0, globe);
+        LineOfContact.generateParallelLines(positions.iterator(), leftPositions, rightPositions, waveLength / 2.0, globe);
 
         if (useDefaultWaveLength)
             waveLength = ForwardLineOfOwnTroops.computeDefaultWavelength(leftPositions, globe);
@@ -131,7 +131,7 @@ public class LineOfContact extends ForwardLineOfOwnTroops {
      * @param halfWidth      Distance from the center line to the left or right lines.
      * @param globe          Current globe.
      */
-    public void generateParallelLines(Iterator<? extends Position> iterator, Collection<Position> leftPositions,
+    public static void generateParallelLines(Iterator<? extends Position> iterator, Collection<Position> leftPositions,
         Collection<Position> rightPositions, double halfWidth, Globe globe) {
         // Starting at the start of the line, take points three at a time. B is the current control point, A is the next
         // point in the line, and C is the previous point. We need to a find a vector that bisects angle ABC.

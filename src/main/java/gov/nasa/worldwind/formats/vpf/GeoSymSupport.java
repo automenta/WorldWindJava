@@ -419,7 +419,7 @@ public class GeoSymSupport {
     }
 
     protected void loadStyleProvider() {
-        String path = this.getPathForAssignmentFile(this.filePath, GeoSymConstants.LINE_AREA_ATTRIBUTES_FILE);
+        String path = GeoSymSupport.getPathForAssignmentFile(this.filePath, GeoSymConstants.LINE_AREA_ATTRIBUTES_FILE);
         try {
             this.styleProvider = new GeoSymStyleProvider(path);
         }
@@ -430,7 +430,7 @@ public class GeoSymSupport {
     }
 
     protected void loadAbbreviationProvider() {
-        String path = this.getPathForAssignmentFile(this.filePath, GeoSymConstants.TEXT_ABBREVIATIONS_ASSIGNMENT_FILE);
+        String path = GeoSymSupport.getPathForAssignmentFile(this.filePath, GeoSymConstants.TEXT_ABBREVIATIONS_ASSIGNMENT_FILE);
         try {
             this.abbreviationProvider = new GeoSymAbbreviationProvider(path);
         }
@@ -497,7 +497,7 @@ public class GeoSymSupport {
 
     protected void loadProductTypes() {
         GeoSymTable codeTable = this.getAssignment().getTable(GeoSymConstants.CODE_VALUE_DESCRIPTION_FILE);
-        Collection<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
+        Iterable<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingRows("file", GeoSymConstants.FULL_SYMBOL_ASSIGNMENT_FILE, false, rows);
         GeoSymTable.selectMatchingRows("attribute", "pid", false, rows);
 
@@ -512,7 +512,7 @@ public class GeoSymSupport {
 
     protected void loadFeatureTypes() {
         GeoSymTable codeTable = this.getAssignment().getTable(GeoSymConstants.CODE_VALUE_DESCRIPTION_FILE);
-        Collection<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
+        Iterable<AVList> rows = new ArrayList<>(Arrays.asList(codeTable.getRecords()));
         GeoSymTable.selectMatchingRows("file", GeoSymConstants.FULL_SYMBOL_ASSIGNMENT_FILE, false, rows);
         GeoSymTable.selectMatchingRows("attribute", "delin", false, rows);
 
@@ -541,7 +541,7 @@ public class GeoSymSupport {
         return sb.toString();
     }
 
-    protected String getPathForAssignmentFile(String filePath, String fileName) {
+    protected static String getPathForAssignmentFile(String filePath, String fileName) {
         StringBuilder sb = new StringBuilder();
         sb.append(GeoSymSupport.getAssignmentPath(filePath));
         sb.append("/");

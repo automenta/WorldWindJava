@@ -54,12 +54,6 @@ public class GeoJSONLoader {
             throw new IllegalArgumentException(message);
         }
 
-//        if (layer == null) {
-//            String message = Logging.getMessage("nullValue.LayerIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
         GeoJSONDoc doc = null;
         try {
             doc = new GeoJSONDoc(docSource);

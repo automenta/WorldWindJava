@@ -1435,7 +1435,7 @@ public class SegmentPlaneRenderer {
         renderInfo.borderCapIndices.rewind();
 
         float[] vertices = new float[cylinderCoordCount];
-        gb.makeCylinderVertices(1.0f, 1.0f, slices, stacks, vertices);
+        GeometryBuilder.makeCylinderVertices(1.0f, 1.0f, slices, stacks, vertices);
         renderInfo.borderCylinderVertices.put(vertices);
         renderInfo.borderCylinderVertices.rewind();
 
@@ -1445,7 +1445,7 @@ public class SegmentPlaneRenderer {
         renderInfo.borderCylinderNormals.rewind();
 
         vertices = new float[capCoordCount];
-        gb.makeDiskVertices(0.0f, 1.0f, slices, loops, vertices);
+        GeometryBuilder.makeDiskVertices(0.0f, 1.0f, slices, loops, vertices);
         renderInfo.borderCapVertices.put(vertices);
         renderInfo.borderCapVertices.rewind();
 

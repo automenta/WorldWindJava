@@ -82,15 +82,6 @@ import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
  * @version $Id: Path.java 3032 2015-04-17 17:53:35Z dcollins $
  */
 public class Path extends AbstractShape {
-//
-//    /**
-//     * The default interior color.
-//     */
-//    protected static final Material DEFAULT_PATH_INTERIOR_MATERIAL = Material.PINK;
-//    /**
-//     * The default outline color.
-//     */
-//    protected static final Material DEFAULT_PATH_OUTLINE_MATERIAL = Material.RED;
     /**
      * The default path type.
      */
@@ -307,11 +298,6 @@ public class Path extends AbstractShape {
      * @throws IllegalArgumentException if positions is null.
      */
     public void setPositions(Iterable<? extends Position> positions) {
-//        if (positions == null) {
-//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.positions = positions;
         this.computePositionCount();

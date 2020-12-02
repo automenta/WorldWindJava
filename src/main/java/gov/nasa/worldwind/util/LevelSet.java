@@ -304,11 +304,6 @@ public class LevelSet extends WWObjectImpl {
      * @throws IllegalArgumentException if <code>tile</code> is null
      */
     public final void miss(Tile tile) {
-//        if (tile == null) {
-//            String msg = Logging.getMessage("nullValue.TileIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         tile.level.markResourceAbsent(this.getTileNumber(tile));
     }
@@ -321,11 +316,6 @@ public class LevelSet extends WWObjectImpl {
      * @throws IllegalArgumentException if <code>tile</code> is null
      */
     public final boolean missing(TileKey tileKey) {
-//        if (tileKey == null) {
-//            String msg = Logging.getMessage("nullValue.TileKeyIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Level level = this.getLevel(tileKey.getLevelNumber());
         return level.isEmpty() || level.isResourceAbsent(this.getTileNumber(tileKey));
@@ -339,11 +329,6 @@ public class LevelSet extends WWObjectImpl {
      * @throws IllegalArgumentException if <code>tile</code> is null
      */
     public final boolean missing(Tile tile) {
-//        if (tile == null) {
-//            String msg = Logging.getMessage("nullValue.TileIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return tile.level.isEmpty() || tile.level.isResourceAbsent(this.getTileNumber(tile));
     }
@@ -355,22 +340,12 @@ public class LevelSet extends WWObjectImpl {
      * @throws IllegalArgumentException if <code>tile</code> is null
      */
     public final void has(Tile tile) {
-//        if (tile == null) {
-//            String msg = Logging.getMessage("nullValue.TileIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         tile.level.unmarkResourceAbsent(this.getTileNumber(tile));
     }
 
     // Create the tile corresponding to a specified key.
     public Sector computeSectorForKey(TileKey key) {
-//        if (key == null) {
-//            String msg = Logging.getMessage("nullValue.KeyIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Level level = this.getLevel(key.getLevelNumber());
 

@@ -336,13 +336,6 @@ public class DTED {
         String classLevel = readClassLevel(new String(uhl, 32, 3));
         if (null != classLevel)
             metadata.set(AVKey.CLASS_LEVEL, classLevel);
-
-//        String sLonInterval = new String(uhl, 20, 4);
-//        String sLatInterval = new String(uhl, 24, 4);
-//        String sVerticalAccuracyInMeters = new String(uhl, 28, 4);
-//        String sMultipleAccuracy = new String( uhl, 55, 1 );
-//        String sUniqueRef = new String( uhl, 35, 12 );
-//        String sReserved = new String( uhl, 56, 24 );
     }
 
     protected static void readDSI(SeekableByteChannel theChannel, long offset, AVList metadata) throws IOException {
@@ -378,32 +371,5 @@ public class DTED {
         // Technically, there is no need to read next parameters because:
         // they are redundant (same data we get from UHL), and WW has no use for them 
 
-//        String uniqueRef = new String(dsi, 64, 15);
-//        String reserved = new String(dsi, 79, 8);
-//        String verticalDatum = new String(dsi, 141, 3);
-//        String horizontalDatum = new String(dsi, 144, 5); // expected WGS84
-//        String digitizingSystem = new String(dsi, 149, 10); // free text
-//        String compilationDate = new String(dsi, 159, 4); // YYMM Most descriptive year/month
-//        Angle latOrigin = this.readAngle( new String(dsi, 185, 9 ));  //  DDMMSS.SH
-//        Angle lonOrigin = this.readAngle( new String(dsi, 194, 10 )); // DDDMMSS.SH
-//        Angle latSW = this.readAngle( new String(dsi, 204, 7 )); // DDMMSSH
-//        Angle lonSW = this.readAngle( new String(dsi, 211, 8 )); // DDDMMSSH
-//        Angle latNW = this.readAngle( new String(dsi, 219, 7 )); // DDMMSSH
-//        Angle lonNW = this.readAngle( new String(dsi, 226, 8 )); // DDDMMSSH
-//        Angle latNE = this.readAngle( new String(dsi, 234, 7 )); // DDMMSSH
-//        Angle lonNE = this.readAngle( new String(dsi, 241, 8 )); // DDDMMSSH
-//        Angle latSE = this.readAngle( new String(dsi, 249, 7 )); //
-//        Angle lonSE = this.readAngle( new String(dsi, 256, 8 )); //
-//
-//        // Clockwise orientation angle of data with respect to true North
-//        // Usually be all zeros
-//        String orientationAngle = new String(dsi, 264, 9 ); // DDDMMSS.S  (note absence of Hemisphere)
-//
-//        // Latitude interval in tenths of seconds between rows of elevation values.
-//        String latInterval = new String(dsi, 273, 4 ); //
-//        String lonInterval = new String(dsi, 277, 4 ); //
-//
-//        String latLines = new String(dsi, 281, 4 ); //
-//        String lonLines = new String(dsi, 285, 4 ); //
     }
 }

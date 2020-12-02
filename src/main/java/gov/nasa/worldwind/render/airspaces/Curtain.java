@@ -158,7 +158,7 @@ public class Curtain extends AbstractAirspace {
 
     @Override
     protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration) {
-        List<LatLon> tessellatedLocations = new ArrayList<>();
+        Collection<LatLon> tessellatedLocations = new ArrayList<>();
         this.makeTessellatedLocations(globe, tessellatedLocations);
 
         if (tessellatedLocations.isEmpty())
@@ -373,7 +373,7 @@ public class Curtain extends AbstractAirspace {
         int sections = count - 1;
         int[] counts = new int[3];
         SectionRenderInfo[] ri = new SectionRenderInfo[sections];
-        this.makeSectionInfo(dc, count, locations, pathType, splitThreshold, ri, counts);
+        Curtain.makeSectionInfo(dc, count, locations, pathType, splitThreshold, ri, counts);
 
         int fillDrawMode = Curtain.getSectionFillDrawMode();
         int outlineDrawMode = Curtain.getSectionOutlineDrawMode();
@@ -399,7 +399,7 @@ public class Curtain extends AbstractAirspace {
         dest.getVertexGeometry().setNormalData(counts[2], norms);
     }
 
-    protected void makeSectionInfo(DrawContext dc, int count, LatLon[] locations, String pathType,
+    protected static void makeSectionInfo(DrawContext dc, int count, LatLon[] locations, String pathType,
         double splitThreshold,
         SectionRenderInfo[] ri, int[] counts) {
         int sectionCount = count - 1;

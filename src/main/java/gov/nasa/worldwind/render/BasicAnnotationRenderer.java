@@ -267,7 +267,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
         return drawPoint;
     }
 
-    protected void beginDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
+    protected static void beginDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         int attributeMask = GL2.GL_COLOR_BUFFER_BIT // for alpha test func and ref, blend func
@@ -311,7 +311,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
         }
     }
 
-    protected void endDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
+    protected static void endDrawAnnotations(DrawContext dc, OGLStackHandler stackHandler) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         if (dc.isPickingMode()) {
@@ -343,7 +343,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
 
         public void render(DrawContext dc) {
             OGLStackHandler stackHandler = new OGLStackHandler();
-            BasicAnnotationRenderer.this.beginDrawAnnotations(dc, stackHandler);
+            BasicAnnotationRenderer.beginDrawAnnotations(dc, stackHandler);
             try {
                 this.doRender(dc, this);
                 // Draw as many as we can in a batch to save ogl state switching.
@@ -356,14 +356,14 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
                 Logging.logger().log(Level.SEVERE, "generic.ExceptionWhileRenderingAnnotation", e);
             }
             finally {
-                BasicAnnotationRenderer.this.endDrawAnnotations(dc, stackHandler);
+                BasicAnnotationRenderer.endDrawAnnotations(dc, stackHandler);
             }
         }
 
         public void pick(DrawContext dc, Point pickPoint) {
             OGLStackHandler stackHandler = new OGLStackHandler();
             BasicAnnotationRenderer.this.pickSupport.clearPickList();
-            BasicAnnotationRenderer.this.beginDrawAnnotations(dc, stackHandler);
+            BasicAnnotationRenderer.beginDrawAnnotations(dc, stackHandler);
             try {
                 this.annotation.setPickSupport(BasicAnnotationRenderer.this.pickSupport);
                 this.doRender(dc, this);
@@ -378,7 +378,7 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
                 Logging.logger().log(Level.SEVERE, "generic.ExceptionWhilePickingAnnotation", e);
             }
             finally {
-                BasicAnnotationRenderer.this.endDrawAnnotations(dc, stackHandler);
+                BasicAnnotationRenderer.endDrawAnnotations(dc, stackHandler);
                 BasicAnnotationRenderer.this.pickSupport.resolvePick(dc, pickPoint, this.layer);
                 BasicAnnotationRenderer.this.pickSupport.clearPickList(); // to ensure entries can be garbage collected
             }
@@ -396,64 +396,4 @@ public class BasicAnnotationRenderer implements AnnotationRenderer {
             }
         }
     }
-//
-//
-//    //-- Collision avoidance ---------------------------------------------------
-//    ArrayList<Rectangle> usedRectangles = new ArrayList<Rectangle>();
-//    Point defaultDrawOffset = new Point(-10, 20);
-//
-//    // Try to find a free rectangular space around a point
-//    // TODO: Fix me
-//    private Point computeOffset(Point point, Dimension dimension)
-//    {
-//        Point offset = this.defaultDrawOffset;
-//        Rectangle r = new Rectangle(point.x + offset.x - dimension.width / 2,
-//                point.y + offset.y + dimension.height,
-//                dimension.width, dimension.height);
-//        double radius = 20;
-//        Angle angle = Angle.ZERO;
-//        int step = 0;
-//        int angleStep = 1;
-//        while(rectangleIntersectsUsed(r))
-//        {
-//            // Give up after some number of tries
-//            if(step++ > 100)
-//            {
-//                usedRectangles.clear();
-//                return this.defaultDrawOffset;
-//            }
-//
-//            // Increment angle and radius
-//            int a = 90 + (10 * (angleStep / 2) * (angleStep % 2 == 0 ? 1 : -1));
-//            if(Math.abs(a) <= 10)
-//            {
-//                angleStep = 1;
-//                radius += 50;
-//            }
-//            else
-//                angleStep++;
-//
-//            // Compute new rectangle
-//            angle = Angle.fromDegrees(a);
-//            offset.x = (int)(radius * angle.cos());
-//            offset.y = (int)(radius * angle.sin());
-//            r.setBounds(point.x + offset.x - dimension.width / 2,
-//                    point.y + offset.y + dimension.height,
-//                    dimension.width, dimension.height);
-//        }
-//
-//        // Keep track of used rectangle
-//        this.usedRectangles.add(r);
-//
-//        return offset;
-//    }
-//
-//    // Test if a rectangle intersects one of the previously used rectangles
-//    private boolean rectangleIntersectsUsed(Rectangle r)
-//    {
-//        for(Rectangle ur : this.usedRectangles)
-//            if(r.intersects(ur))
-//                return true;
-//        return false;
-//    }
 }

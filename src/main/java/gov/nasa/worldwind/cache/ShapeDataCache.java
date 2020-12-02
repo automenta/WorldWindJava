@@ -312,25 +312,4 @@ public class ShapeDataCache implements Iterable<ShapeDataCache.ShapeDataCacheEnt
             this.verticalExaggeration = verticalExaggeration;
         }
     }
-//
-//    /**
-//     * Remove entries from the cache that have not been used within this cache's maximum unused time.
-//     *
-//     * @param now the time to compare with entries' last-used time.
-//     */
-//    protected void removeDeadEntries(long now)
-//    {
-//        List<Globe> deadEntries = new ArrayList<Globe>();
-//
-//        for (Map.Entry<Globe, ShapeDataCacheEntry> mapEntry : this.entries.entrySet())
-//        {
-//            if (mapEntry.getValue().lastUsed + this.maxTimeSinceLastUsed < now)
-//                deadEntries.add(mapEntry.getKey());
-//        }
-//
-//        for (Globe key : deadEntries)
-//        {
-//            this.entries.remove(key);
-//        }
-//    }
 }

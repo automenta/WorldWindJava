@@ -323,7 +323,7 @@ public class BasicDataFileStore extends AbstractFileStore {
         // Look for the file in the WorldWind disk cache by creating a cache path from the file's address. We ignore this
         // step if searchLocalCache is false.
         if (cacheFileUrl == null && retrievalUrl != null && searchLocalCache) {
-            String cachePath = this.makeCachePath(retrievalUrl, null);
+            String cachePath = BasicDataFileStore.makeCachePath(retrievalUrl, null);
             cacheFileUrl = WorldWind.store().findFile(cachePath, true);
 
             // If a address is requested that does not have a format suffix, then any previous call to makeLocal for the
@@ -427,11 +427,11 @@ public class BasicDataFileStore extends AbstractFileStore {
      * @param contentType the mime type of the file's contents.
      * @return a path name.
      */
-    protected String makeCachePath(URL url, String contentType) {
+    protected static String makeCachePath(URL url, String contentType) {
         if ("jar".equals(url.getProtocol()))
-            return this.makeJarURLCachePath(url, contentType);
+            return BasicDataFileStore.makeJarURLCachePath(url, contentType);
 
-        return this.makeGenericURLCachePath(url, contentType);
+        return BasicDataFileStore.makeGenericURLCachePath(url, contentType);
     }
 
     /**
@@ -464,7 +464,7 @@ public class BasicDataFileStore extends AbstractFileStore {
      * @param contentType the mime type of the file's contents.
      * @return a path name.
      */
-    protected String makeGenericURLCachePath(URL url, String contentType) {
+    protected static String makeGenericURLCachePath(URL url, String contentType) {
         String host = WWIO.replaceIllegalFileNameCharacters(url.getHost());
         String path = WWIO.replaceIllegalFileNameCharacters(url.getPath());
         String filename = path;
@@ -518,7 +518,7 @@ public class BasicDataFileStore extends AbstractFileStore {
      * @param contentType the mime type of the file's contents.
      * @return a path name.
      */
-    protected String makeJarURLCachePath(URL jarURL, String contentType) {
+    protected static String makeJarURLCachePath(URL jarURL, String contentType) {
         String innerAddress = jarURL.getPath();
         URL innerUrl = WWIO.makeURL(innerAddress);
         String host = WWIO.replaceIllegalFileNameCharacters(innerUrl.getHost());
@@ -545,7 +545,7 @@ public class BasicDataFileStore extends AbstractFileStore {
      * @param contentType the mime type of the file contents. Used to determine the file's suffix.
      * @return a temporary file, or null if a file could not be created.
      */
-    protected File makeTempFile(URL url, String contentType) {
+    protected static File makeTempFile(URL url, String contentType) {
         // Use a suffix based on the content type if the content type and the URL's suffix do not match. Otherwise
         // attempt to use the URL's suffix. If neither of these attempts produce a non-null suffix, File.createTmpFile
         // uses the default suffix ".tmp".
@@ -692,7 +692,7 @@ public class BasicDataFileStore extends AbstractFileStore {
             if (this.saveInLocalCache && path.length() <= WWIO.MAX_FILE_PATH_LENGTH)
                 file = WorldWind.store().newFile(path);
             else
-                file = BasicDataFileStore.this.makeTempFile(this.retrievalUrl, this.getRetriever().getContentType());
+                file = BasicDataFileStore.makeTempFile(this.retrievalUrl, this.getRetriever().getContentType());
 
             if (file == null)
                 return null;

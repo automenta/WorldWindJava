@@ -106,7 +106,7 @@ public class PlaceNameService {
     private int numColumnsInLevel() {
         int firstCol = Tile.computeColumn(this.tileDelta.getLongitude(), TILING_SECTOR.lonMin(), Angle.NEG180);
         int lastCol = Tile.computeColumn(this.tileDelta.getLongitude(),
-            TILING_SECTOR.lonMax().subtract(this.tileDelta.getLongitude()), Angle.NEG180);
+            TILING_SECTOR.lonMax().sub(this.tileDelta.getLongitude()), Angle.NEG180);
 
         return lastCol - firstCol + 1;
     }

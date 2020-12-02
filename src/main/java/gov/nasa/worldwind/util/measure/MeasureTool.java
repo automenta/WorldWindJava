@@ -1196,7 +1196,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         // Compute the shape's new azimuth as the difference between the great arc azimuth from the shape's
         // center position and the new corner position, and the corner's azimuth in shape local coordinates.
         Angle newShapeAzimuth = LatLon.greatCircleAzimuth(this.shapeCenterPosition, newPosition);
-        newShapeAzimuth = newShapeAzimuth.subtract(controlAzimuth);
+        newShapeAzimuth = newShapeAzimuth.sub(controlAzimuth);
 
         // Set the shape's new orientation.
         this.shapeOrientation = computeNormalizedHeading(newShapeAzimuth);
@@ -1309,7 +1309,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 // Forcing the square to have equivalent width and height causes the opposite control point to move
                 // from its current location. Move the square's opposite control point back to its original location
                 // so that the square drags from a fixed corner out to the current control point.
-                LatLon location = this.moveShapeByControlPoint(oppositeControlPoint, this.wwd.model().getGlobe(),
+                LatLon location = MeasureTool.moveShapeByControlPoint(oppositeControlPoint, this.wwd.model().getGlobe(),
                     this.shapeOrientation, newCenterLocation, widthMeters, heightMeters);
                 if (location != null) {
                     newCenterLocation = location;
@@ -1344,7 +1344,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
             return null;
         }
 
-        Angle azimuth = LatLon.greatCircleAzimuth(this.shapeCenterPosition, position).subtract(this.shapeOrientation);
+        Angle azimuth = LatLon.greatCircleAzimuth(this.shapeCenterPosition, position).sub(this.shapeOrientation);
         azimuth = computeNormalizedHeading(azimuth);
 
         if (azimuth.degrees < 90) {
@@ -1395,7 +1395,8 @@ public class MeasureTool extends AVListImpl implements Disposable {
         return null;
     }
 
-    protected LatLon moveShapeByControlPoint(ControlPoint controlPoint, Globe globe, Angle heading, LatLon center,
+    protected static LatLon moveShapeByControlPoint(ControlPoint controlPoint, Globe globe, Angle heading,
+        LatLon center,
         double width, double height) {
         double globeRadius = globe.getRadiusAt(center);
 
@@ -1413,7 +1414,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         // a corner until it converges at the desired location.
         for (int i = 0; i < MAX_SHAPE_MOVE_ITERATIONS; i++) {
             // Compute the control point's corresponding location on the shape.
-            LatLon shapeControlLocation = this.computeControlPointLocation(control, globe, heading, newCenterLocation,
+            LatLon shapeControlLocation = MeasureTool.computeControlPointLocation(control, globe, heading, newCenterLocation,
                 width, height);
             // Compute a great arc spanning the control point's location, and its corresponding location on the shape.
             Angle azimuth = LatLon.greatCircleAzimuth(shapeControlLocation, controlPoint.getPosition());
@@ -1443,7 +1444,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
             return;
         }
 
-        Angle azimuth = LatLon.greatCircleAzimuth(this.shapeCenterPosition, position).subtract(this.shapeOrientation);
+        Angle azimuth = LatLon.greatCircleAzimuth(this.shapeCenterPosition, position).sub(this.shapeOrientation);
         azimuth = computeNormalizedHeading(azimuth);
 
         if ((control.equals(NORTH) && azimuth.degrees < 270 && azimuth.degrees > 90)
@@ -1531,7 +1532,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
         }
     }
 
-    protected LatLon computeControlPointLocation(String control, Globe globe, Angle heading, LatLon center,
+    protected static LatLon computeControlPointLocation(String control, Globe globe, Angle heading, LatLon center,
         double width, double height) {
         Angle azimuth = MeasureTool.computeControlPointAzimuth(control, width, height);
         Angle pathLength = MeasureTool.computeControlPointPathLength(control, width, height, globe.getRadiusAt(center));
@@ -1549,10 +1550,10 @@ public class MeasureTool extends AVListImpl implements Disposable {
 
     protected LatLon computeQuadEdgeMidpointLocation(String control, Globe globe, Angle heading, LatLon center,
         double width, double height) {
-        LatLon ne = this.computeControlPointLocation(NORTHEAST, globe, heading, center, width, height);
-        LatLon se = this.computeControlPointLocation(SOUTHEAST, globe, heading, center, width, height);
-        LatLon sw = this.computeControlPointLocation(SOUTHWEST, globe, heading, center, width, height);
-        LatLon nw = this.computeControlPointLocation(NORTHWEST, globe, heading, center, width, height);
+        LatLon ne = MeasureTool.computeControlPointLocation(NORTHEAST, globe, heading, center, width, height);
+        LatLon se = MeasureTool.computeControlPointLocation(SOUTHEAST, globe, heading, center, width, height);
+        LatLon sw = MeasureTool.computeControlPointLocation(SOUTHWEST, globe, heading, center, width, height);
+        LatLon nw = MeasureTool.computeControlPointLocation(NORTHWEST, globe, heading, center, width, height);
 
         switch (control) {
             case NORTH:
@@ -1610,13 +1611,13 @@ public class MeasureTool extends AVListImpl implements Disposable {
     protected Angle computeControlPointAzimuthInShapeCoordinates(String control, Angle azimuth) {
         switch (control) {
             case NORTHEAST:
-                return azimuth.subtract(this.shapeOrientation);
+                return azimuth.sub(this.shapeOrientation);
             case SOUTHEAST:
-                return this.shapeOrientation.addDegrees(180).subtract(azimuth);
+                return this.shapeOrientation.addDegrees(180).sub(azimuth);
             case SOUTHWEST:
-                return azimuth.subtract(this.shapeOrientation.addDegrees(180));
+                return azimuth.sub(this.shapeOrientation.addDegrees(180));
             case NORTHWEST:
-                return this.shapeOrientation.subtract(azimuth);
+                return this.shapeOrientation.sub(azimuth);
             default:
                 break;
         }
@@ -1697,7 +1698,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
                     continue;
                 }
 
-                LatLon controlLocation = this.computeControlPointLocation(control, globe, this.shapeOrientation,
+                LatLon controlLocation = MeasureTool.computeControlPointLocation(control, globe, this.shapeOrientation,
                     this.shapeCenterPosition, this.shapeRectangle.getWidth(), this.shapeRectangle.getHeight());
                 if (controlLocation == null) {
                     continue;
@@ -1728,7 +1729,7 @@ public class MeasureTool extends AVListImpl implements Disposable {
                 this.shapeRectangle.getHeight());
         }
         else {
-            leaderBegin = this.computeControlPointLocation(leaderControl, globe,
+            leaderBegin = MeasureTool.computeControlPointLocation(leaderControl, globe,
                 this.shapeOrientation, this.shapeCenterPosition, this.shapeRectangle.getWidth(),
                 this.shapeRectangle.getHeight());
         }

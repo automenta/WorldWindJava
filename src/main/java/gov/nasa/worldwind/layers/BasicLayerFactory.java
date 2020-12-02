@@ -306,9 +306,6 @@ public class BasicLayerFactory extends BasicFactory {
             String msg = Logging.getMessage("generic.UnrecognizedServiceName", serviceName);
             throw new WWUnrecognizedException(msg);
         }
-//
-//        String name = layer.getStringValue(AVKey.DISPLAY_NAME);
-//        System.out.println(name);
 
         String actuate = WWXML.getText(domElement, "@actuate");
         layer.setEnabled(actuate != null && actuate.equals("onLoad"));

@@ -238,9 +238,9 @@ public class UTMBaseGraticuleLayer extends AbstractGraticuleLayer {
         double labelOffsetDegrees = pixelSizeDegrees * view.getViewport().getWidth() / 4;
         Position labelPos = Position.fromDegrees(centerPos.getLatitude().degrees - labelOffsetDegrees,
             centerPos.getLongitude().degrees - labelOffsetDegrees, 0);
-        double labelLatDegrees = labelPos.getLatitude().normalizedLatitude().degrees;
+        double labelLatDegrees = labelPos.getLatitude().latNorm().degrees;
         labelLatDegrees = Math.min(Math.max(labelLatDegrees, -76), 78);
-        labelPos = new Position(Angle.fromDegrees(labelLatDegrees), labelPos.getLongitude().normalizedLongitude(), 0);
+        labelPos = new Position(Angle.fromDegrees(labelLatDegrees), labelPos.getLongitude().lonNorm(), 0);
 
         if (vs != null) {
             for (GridElement ge : this.gridElements) {

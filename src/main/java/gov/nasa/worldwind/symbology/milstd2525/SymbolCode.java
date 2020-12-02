@@ -611,16 +611,16 @@ public class SymbolCode extends AVListImpl {
      *
      * @return String representation of the symbol code with some fields replaced with hyphens.
      */
-    public static String toMaskedString() {
+    public String toMaskedString() {
         SymbolCode masked = new SymbolCode();
-//        masked.setValues(this);
-//
-//        masked.setStandardIdentity(null);
-//        masked.setStatus(null);
-//        masked.setEchelon(null);
-//        masked.setSymbolModifier(null);
-//        masked.setCountryCode(null);
-//        masked.setOrderOfBattle(null);
+        masked.setValues(this);
+
+        masked.setStandardIdentity(null);
+        masked.setStatus(null);
+        masked.setEchelon(null);
+        masked.setSymbolModifier(null);
+        masked.setCountryCode(null);
+        masked.setOrderOfBattle(null);
 
         return masked.toString();
     }

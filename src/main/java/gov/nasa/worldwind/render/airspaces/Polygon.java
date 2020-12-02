@@ -500,7 +500,7 @@ public class Polygon extends AbstractAirspace {
 
         // Compute the winding order of the planar cartesian points. If the order is not counter-clockwise, then
         // reverse the locations and points ordering.
-        int winding = gb.computePolygonWindingOrder2(0, polyCount, polyPoints);
+        int winding = GeometryBuilder.computePolygonWindingOrder2(0, polyCount, polyPoints);
         if (winding != GeometryBuilder.COUNTER_CLOCKWISE) {
             GeometryBuilder.reversePoints(0, polyCount, polyPoints);
             GeometryBuilder.reversePoints(0, polyCount, polyEdgeFlags);
@@ -525,7 +525,7 @@ public class Polygon extends AbstractAirspace {
         if (enableCaps) {
             ita = gb.tessellatePolygon2(0, polyCount, polyVertices);
             for (int i = 0; i < subdivisions; i++) {
-                gb.subdivideIndexedTriangleArray(ita);
+                GeometryBuilder.subdivideIndexedTriangleArray(ita);
             }
 
             fillIndexCount += ita.getIndexCount();
@@ -599,7 +599,7 @@ public class Polygon extends AbstractAirspace {
             surfaceNormal);
 
         for (int i = 0; i < subdivisions; i++) {
-            gb.subdivideIndexedTriangleArray(tessellatedPoints);
+            GeometryBuilder.subdivideIndexedTriangleArray(tessellatedPoints);
         }
 
         for (int i = 0; i < tessellatedPoints.getVertexCount(); i++) {

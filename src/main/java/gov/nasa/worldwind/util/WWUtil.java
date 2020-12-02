@@ -718,8 +718,8 @@ public class WWUtil {
             Angle lat = Angle.fromDegrees(buffer.get());
 
             buffer.reset();
-            buffer.put(Angle.normalizedLongitude(lon).degrees);
-            buffer.put(Angle.normalizedLatitude(lat).degrees);
+            buffer.put(Angle.lonNorm(lon).degrees);
+            buffer.put(Angle.latNorm(lat).degrees);
         }
     }
 
@@ -1096,9 +1096,6 @@ public class WWUtil {
 
     @SafeVarargs
     public static <X> java.util.List<X> arrayList(X... array) {
-//        java.util.List<X> l = new ArrayList<>(array.length);
-//        Collections.addAll(l, array);
-//        return l;
         return /*array!=null && */array.length > 0 ? new DirectArrayList<>(array) : EMPTY_LIST;
     }
 

@@ -622,7 +622,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
         int count = GeometryBuilder.getCylinderVertexCount(slices, stacks);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        gb.makeCylinderVertices(dc.getTerrain(), center, minorRadius, majorRadius, heading, altitudes,
+        GeometryBuilder.makeCylinderVertices(dc.getTerrain(), center, minorRadius, majorRadius, heading, altitudes,
             terrainConformant, slices, stacks, referenceCenter, verts);
         gb.makeEllipticalCylinderNormals(slices, stacks, minorRadius, majorRadius, heading, norms);
 
@@ -649,7 +649,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
         int mode = GeometryBuilder.getCylinderOutlineDrawMode();
         int count = GeometryBuilder.getCylinderOutlineIndexCount(slices, stacks);
         int[] indices = new int[count];
-        gb.makeCylinderOutlineIndices(slices, stacks, indices);
+        GeometryBuilder.makeCylinderOutlineIndices(slices, stacks, indices);
 
         dest.setElementData(mode, count, indices);
     }
@@ -692,7 +692,7 @@ public class CappedEllipticalCylinder extends AbstractAirspace {
         int count = GeometryBuilder.getDiskVertexCount(slices, loops);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        gb.makeDiskVertices(dc.getTerrain(), center, radii, heading, altitude, terrainConformant, slices, loops,
+        GeometryBuilder.makeDiskVertices(dc.getTerrain(), center, radii, heading, altitude, terrainConformant, slices, loops,
             referenceCenter, verts);
         gb.makeDiskVertexNormals(radii[0], radii[2], slices, loops, verts, norms);
 

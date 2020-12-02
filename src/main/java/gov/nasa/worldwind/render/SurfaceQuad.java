@@ -378,9 +378,6 @@ public class SurfaceQuad extends AbstractSurfaceShape implements Exportable {
             this.setSize(2 * width, 2 * height);
 
         // This property has not changed since the previos version, but it's shown here for reference.
-        //LatLon center = rs.getStateValueAsLatLon(context, "center");
-        //if (center != null)
-        //    this.setCenter(center);
 
         Double od = rs.getStateValueAsDouble(context, "orientationDegrees");
         if (od != null)

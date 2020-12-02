@@ -18,9 +18,7 @@ import java.util.concurrent.*;
 public class TaskService extends WWObjectImpl implements Thread.UncaughtExceptionHandler {
     static final private int DEFAULT_CORE_POOL_SIZE = 1;
     static final private int DEFAULT_QUEUE_SIZE = 10;
-//    private static final String RUNNING_THREAD_NAME_PREFIX = Logging.getMessage(
-//        "ThreadedTaskService.RunningThreadNamePrefix");
-    private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
+private static final String IDLE_THREAD_NAME_PREFIX = Logging.getMessage(
         "ThreadedTaskService.IdleThreadNamePrefix");
     private final Set<Runnable> activeTasks; // tasks currently allocated a thread
     private final TaskExecutor executor; // thread pool for running retrievers
@@ -77,16 +75,6 @@ public class TaskService extends WWObjectImpl implements Thread.UncaughtExceptio
         }
     }
 
-//    public boolean hasActiveTasks() {
-//        Thread[] threads = new Thread[Thread.activeCount()];
-//        int numThreads = Thread.enumerate(threads);
-//        for (int i = 0; i < numThreads; i++) {
-//            if (threads[i].getName().startsWith(RUNNING_THREAD_NAME_PREFIX))
-//                return true;
-//        }
-//        return false;
-//    }
-
     private class TaskExecutor extends ThreadPoolExecutor {
         private static final long THREAD_TIMEOUT = 2; // keep idle threads alive this many seconds
 
@@ -113,29 +101,6 @@ public class TaskService extends WWObjectImpl implements Thread.UncaughtExceptio
         }
 
         protected void beforeExecute(Thread thread, Runnable runnable) {
-//            if (thread == null) {
-//                String msg = Logging.getMessage("nullValue.ThreadIsNull");
-//                Logging.logger().fine(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
-//
-//            if (runnable == null) {
-//                String msg = Logging.getMessage("nullValue.RunnableIsNull");
-//                Logging.logger().fine(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
-////
-//            if (ThreadedTaskService.this.activeTasks.contains(runnable)) {
-//                // Duplicate requests are simply interrupted here. The task itself must check the thread's isInterrupted
-//                // flag and actually terminate the task.
-//                String message = Logging.getMessage("ThreadedTaskService.CancellingDuplicateTask", runnable);
-//                Logging.logger().finer(message);
-//                thread.interrupt();
-//                return;
-//            }
-//
-//            ThreadedTaskService.this.activeTasks.add(runnable);
-
 
             thread.setName(runnable.toString());
             thread.setPriority(Thread.MIN_PRIORITY);

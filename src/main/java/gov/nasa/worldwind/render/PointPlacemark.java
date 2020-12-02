@@ -859,9 +859,6 @@ public class PointPlacemark extends WWObjectImpl
                 dc.drawUnitQuad(activeTexture.getTexCoords());
 
             gl.glDepthRange(0, 1); // reset depth range to the OGL default
-//
-//            gl.glDisable(GL.GL_TEXTURE_2D);
-//            dc.drawUnitQuadOutline(); // for debugging label placement
 
             if (this.mustDrawLabel()) {
                 if (!dc.isPickingMode() || this.isEnableLabelPicking())

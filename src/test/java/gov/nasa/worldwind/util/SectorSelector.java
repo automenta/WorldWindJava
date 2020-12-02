@@ -385,10 +385,10 @@ public class SectorSelector extends WWObjectImpl
                 return NONE;
             }
 
-            double dN = abs(s.latMax().subtract(p.getLatitude()).degrees);
-            double dS = abs(s.latMin().subtract(p.getLatitude()).degrees);
-            double dW = abs(s.lonMin().subtract(p.getLongitude()).degrees);
-            double dE = abs(s.lonMax().subtract(p.getLongitude()).degrees);
+            double dN = abs(s.latMax().sub(p.getLatitude()).degrees);
+            double dS = abs(s.latMin().sub(p.getLatitude()).degrees);
+            double dW = abs(s.lonMin().sub(p.getLongitude()).degrees);
+            double dE = abs(s.lonMax().sub(p.getLongitude()).degrees);
 
             double sLat = factor * s.getDeltaLatDegrees();
             double sLon = factor * s.getDeltaLonDegrees();
@@ -424,8 +424,8 @@ public class SectorSelector extends WWObjectImpl
                 return null;
             }
 
-            Angle dLat = p.getLatitude().subtract(this.getPreviousPosition().getLatitude());
-            Angle dLon = p.getLongitude().subtract(this.getPreviousPosition().getLongitude());
+            Angle dLat = p.getLatitude().sub(this.getPreviousPosition().getLatitude());
+            Angle dLon = p.getLongitude().sub(this.getPreviousPosition().getLongitude());
 
             Angle newMinLat = s.latMin();
             Angle newMinLon = s.lonMin();

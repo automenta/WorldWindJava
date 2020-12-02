@@ -23,10 +23,6 @@ public interface RetrievalService extends WWObject {
 
     boolean isAvailable();
 
-//    boolean contains(Retriever retriever);
-
-//    int getNumRetrieversPending();
-
     void shutdown(boolean immediately);
 
     /**

@@ -829,7 +829,7 @@ public class LatLonTest
         LatLon end = LatLon.fromDegrees(48.0000, -122.0000);
         Angle theta = LatLon.ellipsoidalForwardAzimuth(begin, end, globe.getEquatorialRadius(),
             globe.getPolarRadius());
-        assertEquals("Known ellipsoidal Azimuth B", Angle.normalizedLongitude(Angle.fromDegrees(325.10111)).degrees,
+        assertEquals("Known ellipsoidal Azimuth B", Angle.lonNorm(Angle.fromDegrees(325.10111)).degrees,
             theta.degrees, TOLERANCE);
     }
 
@@ -850,7 +850,7 @@ public class LatLonTest
         LatLon end = LatLon.fromDegrees(42.0000, -71.0000);
         Angle theta = LatLon.ellipsoidalForwardAzimuth(begin, end, globe.getEquatorialRadius(),
             globe.getPolarRadius());
-        assertEquals("Known ellipsoidal Azimuth D", Angle.normalizedLongitude(Angle.fromDegrees(287.95372)).degrees,
+        assertEquals("Known ellipsoidal Azimuth D", Angle.lonNorm(Angle.fromDegrees(287.95372)).degrees,
             theta.degrees, TOLERANCE);
     }
 }

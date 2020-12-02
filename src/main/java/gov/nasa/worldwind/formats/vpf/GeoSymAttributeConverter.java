@@ -308,10 +308,6 @@ public class GeoSymAttributeConverter {
             this.stipplePattern = (short) Integer.parseInt(bitMask, 2);
             this.stippleFactor = (int) Math.max(1, Math.min(3, Math.ceil(totalLength / 6)));
             // Trace
-            //System.out.print(this.file.getName() + ", bitmask: " + bitMask + " (" + bitMask.length() + ")" + ", pattern length: " + totalLength + ", num segements: " + lengths.size() + " - ");
-            //for (Double d : lengths)
-            //    System.out.print(d + ", ");
-            //System.out.println("");
         }
 
         protected static String getLastValue(String line) {

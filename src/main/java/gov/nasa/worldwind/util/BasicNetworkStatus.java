@@ -216,12 +216,6 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
     public void logUnavailableHost(URL url) {
         if (this.offlineMode)
             return;
-//
-//        if (url == null) {
-//            String message = Logging.getMessage("nullValue.URLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         String hostName = url.getHost();
         HostInfo hi = this.hostMap.get(hostName);
@@ -251,12 +245,6 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
         if (this.offlineMode)
             return;
 
-//        if (url == null) {
-//            String message = Logging.getMessage("nullValue.URLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
         String hostName = url.getHost();
         HostInfo hi = this.hostMap.remove(hostName);
         if (hi != null) {
@@ -272,12 +260,6 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus {
     public boolean isHostUnavailable(URL url) {
         if (this.offlineMode)
             return true;
-
-//        if (url == null) {
-//            String message = Logging.getMessage("nullValue.URLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         String hostName = url.getHost();
         HostInfo hi = this.hostMap.get(hostName);

@@ -72,7 +72,7 @@ public class BasicGpuResourceCache implements GpuResourceCache {
     }
 
     public void put(Object key, Texture texture) {
-        CacheEntry te = this.createCacheEntry(texture, TEXTURE);
+        CacheEntry te = BasicGpuResourceCache.createCacheEntry(texture, TEXTURE);
         this.resources.add(key, te);
     }
 
@@ -81,9 +81,9 @@ public class BasicGpuResourceCache implements GpuResourceCache {
         this.resources.add(key, te);
     }
 
-    protected CacheEntry createCacheEntry(Object resource, String resourceType) {
+    protected static CacheEntry createCacheEntry(Object resource, String resourceType) {
         CacheEntry entry = new CacheEntry(resource, resourceType);
-        entry.resourceSize = this.computeEntrySize(entry);
+        entry.resourceSize = BasicGpuResourceCache.computeEntrySize(entry);
 
         return entry;
     }
@@ -170,7 +170,7 @@ public class BasicGpuResourceCache implements GpuResourceCache {
         this.resources.setLowWater(loWater);
     }
 
-    protected long computeEntrySize(CacheEntry entry) {
+    protected static long computeEntrySize(CacheEntry entry) {
         if (entry.resourceType == TEXTURE)
             return BasicGpuResourceCache.computeTextureSize(entry);
 

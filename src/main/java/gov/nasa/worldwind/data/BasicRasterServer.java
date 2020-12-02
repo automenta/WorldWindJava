@@ -88,21 +88,6 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer {
             throw new IllegalArgumentException(message);
         }
 
-//        if (null == rootElement)
-//        {
-//            String message = Logging.getMessage("generic.UnexpectedObjectType", o.getClass().getName());
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        String rootElementName = rootElement.getNodeName();
-//        if (!"RasterServer".equals(rootElementName))
-//        {
-//            String message = Logging.getMessage("generic.InvalidDataSource", rootElementName);
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
         RasterServerConfiguration config = new RasterServerConfiguration(o);
         try {
             config.parse();

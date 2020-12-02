@@ -587,11 +587,6 @@ public abstract class BufferWrapper {
 
 
         public void getDouble(int index, double[] array, int offset, int length) {
-//            if (array == null) {
-//                String message = Logging.getMessage("nullValue.ArrayIsNull");
-//                Logging.logger().severe(message);
-//                throw new IllegalArgumentException(message);
-//            }
 
             if (length <= 0)
                 return;

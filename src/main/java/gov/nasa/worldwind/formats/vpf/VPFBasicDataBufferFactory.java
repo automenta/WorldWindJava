@@ -299,18 +299,6 @@ public abstract class VPFBasicDataBufferFactory implements VPFDataBufferFactory 
             CharBuffer buffer = this.textReader.read(byteBuffer, 20);
             buffer.length();
 
-            //try
-            //{
-            //    String pattern = makeDatePattern(s);
-            //    DateFormat format = new SimpleDateFormat(pattern);
-            //    return format.parse(s);
-            //}
-            //catch (ParseException e)
-            //{
-            //    String message = Logging.getMessage("generic.ConversionError", s);
-            //    Logging.logger().severe(message);
-            //}
-
             return null;
         }
     }

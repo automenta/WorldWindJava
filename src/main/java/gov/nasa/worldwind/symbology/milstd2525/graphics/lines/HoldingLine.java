@@ -243,13 +243,13 @@ public class HoldingLine extends AbstractMilStd2525TacticalGraphic {
         Vec4 ptCorner2 = pt2.add3(offset);
 
         // Create list to hold the path positions, and start populating.
-        List<Position> positions = new ArrayList<>();
+        Collection<Position> positions = new ArrayList<>();
         int intervals = this.getIntervals();
 
         positions.add(this.position1); // Line starts at Pt. 1.
-        this.computeRoundCorner(globe, positions, pt1, ptCorner1, pt3, distance, intervals);
+        HoldingLine.computeRoundCorner(globe, positions, pt1, ptCorner1, pt3, distance, intervals);
         positions.add(this.position3); // Pt. 3 is the top of the graphic.
-        this.computeRoundCorner(globe, positions, pt3, ptCorner2, pt2, distance, intervals);
+        HoldingLine.computeRoundCorner(globe, positions, pt3, ptCorner2, pt2, distance, intervals);
         positions.add(this.position2); // The line ends at Pt. 2.
 
         this.path = this.createPath();
@@ -267,7 +267,8 @@ public class HoldingLine extends AbstractMilStd2525TacticalGraphic {
      * @param distance  Distance from the vertex at which the arc should begin and end.
      * @param intervals Number of intervals to use to generate the arc.
      */
-    protected void computeRoundCorner(Globe globe, Collection<Position> positions, Vec4 ptLeg1, Vec4 ptVertex, Vec4 ptLeg2,
+    protected static void computeRoundCorner(Globe globe, Collection<Position> positions, Vec4 ptLeg1, Vec4 ptVertex,
+        Vec4 ptLeg2,
         double distance, int intervals) {
         Vec4 vertexTo1 = ptLeg1.subtract3(ptVertex);
         Vec4 vertexTo2 = ptLeg2.subtract3(ptVertex);
@@ -336,7 +337,7 @@ public class HoldingLine extends AbstractMilStd2525TacticalGraphic {
     protected static void computeArc(Globe globe, Collection<Position> positions, Position center, Angle startAzimuth,
         Angle endAzimuth, double radius, int intervals) {
         // Compute the sweep between the start and end positions, and normalize to the range [-180, 180].
-        Angle sweep = endAzimuth.subtract(startAzimuth).normalizedLongitude();
+        Angle sweep = endAzimuth.sub(startAzimuth).lonNorm();
 
         Angle da = sweep.divide(intervals);
         double globeRadius = globe.getRadiusAt(center.getLatitude(), center.getLongitude());

@@ -38,11 +38,11 @@ public class DDSDecompressor {
      * @return MipMappedBufferedImageRaster if the DDS source contains mipmaps, otherwise returns a BufferedImageRaster
      * @throws Exception when source or params is null
      */
-    public DataRaster decompress(Object source, AVList params) throws Exception {
-        return this.doDecompress(source, params);
+    public static DataRaster decompress(Object source, AVList params) throws Exception {
+        return DDSDecompressor.doDecompress(source, params);
     }
 
-    protected DataRaster doDecompress(Object source, AVList params) throws Exception {
+    protected static DataRaster doDecompress(Object source, AVList params) throws Exception {
         if (null == params || !params.hasKey(AVKey.SECTOR)) {
             String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.SECTOR);
             Logging.logger().severe(message);

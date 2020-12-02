@@ -387,23 +387,19 @@ public class WMSLayerCapabilities extends AbstractXMLEventParser {
             Attribute attr = (Attribute) iter.next();
             if (attr.getName().getLocalPart().equals("queryable") && attr.getValue() != null) {
                 Boolean b = WMSLayerCapabilities.parseBooleanLayerAttribute(attr.getValue());
-                if (b != null)
-                    this.setQueryable(b);
+                this.setQueryable(b);
             }
             else if (attr.getName().getLocalPart().equals("cascaded") && attr.getValue() != null) {
                 Boolean b = WMSLayerCapabilities.parseBooleanLayerAttribute(attr.getValue());
-                if (b != null)
-                    this.setCascaded(b);
+                this.setCascaded(b);
             }
             else if (attr.getName().getLocalPart().equals("opaque") && attr.getValue() != null) {
                 Boolean b = WMSLayerCapabilities.parseBooleanLayerAttribute(attr.getValue());
-                if (b != null)
-                    this.setOpaque(b);
+                this.setOpaque(b);
             }
             else if (attr.getName().getLocalPart().equals("noSubsets") && attr.getValue() != null) {
                 Boolean b = WMSLayerCapabilities.parseBooleanLayerAttribute(attr.getValue());
-                if (b != null)
-                    this.setNoSubsets(b);
+                this.setNoSubsets(b);
             }
             else if (attr.getName().getLocalPart().equals("fixedWidth") && attr.getValue() != null) {
                 Double d = WWUtil.convertStringToDouble(attr.getValue());

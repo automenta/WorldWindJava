@@ -508,10 +508,10 @@ public class ImageUtil {
             * (imageSector.getDeltaLon().divide(canvasSector.getDeltaLon()));
 
         double dh = subHeight *
-            (-imageSector.latMax().subtract(canvasSector.latMax()).degrees
+            (-imageSector.latMax().sub(canvasSector.latMax()).degrees
                 / canvasSector.getDeltaLat().degrees);
         double dw = subWidth *
-            (imageSector.lonMin().subtract(canvasSector.lonMin()).degrees
+            (imageSector.lonMin().sub(canvasSector.lonMin()).degrees
                 / canvasSector.getDeltaLon().degrees);
 
         Graphics2D g = canvas.createGraphics();
@@ -1515,9 +1515,6 @@ public class ImageUtil {
                 (transparency == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB
             );
         }
-//
-//        java.awt.GraphicsConfiguration gc = getDefaultGraphicsConfiguration();
-//        return gc.createCompatibleImage(width, height, transparency);
     }
 
     protected static boolean isCompatibleImage(BufferedImage image) {
@@ -1868,76 +1865,4 @@ public class ImageUtil {
             this.sector = sector;
         }
     }
-
-//
-//    public static void main(String[] args)
-//    {
-//        // Test alignImage(...)
-//        try
-//        {
-//            BufferedImage sourceImage = ImageIO.read(
-//                new File("src/images/BMNG_world.topo.bathy.200405.3.2048x1024.jpg"));
-//
-//            int width = sourceImage.getWidth();
-//            int height = sourceImage.getHeight();
-//
-//            float[] xs = new float[width * height];
-//            float[] ys = new float[xs.length];
-//
-//            double dx = 360d / (width - 1);
-//            double dy = 180d / (height - 1);
-//
-//            for (int j = 0; j < height; j++)
-//            {
-//                for (int i = 0; i < width; i++)
-//                {
-//                    xs[j * width + i] = -180 + i * (float) dx;
-//                    ys[j * width + i] = -90 + j * (float) dy;
-//                }
-//            }
-//            xs[xs.length - 1] = 180;
-//            ys[ys.length - 1] = 90;
-//
-//            long start = System.currentTimeMillis();
-//            AlignedImage destImage = alignImage(sourceImage, ys, xs, Sector.fromDegrees(-90, 90, -180, 180));
-//
-//            System.out.println(System.currentTimeMillis() - start);
-////            int[] src = sourceImage.getRGB(0, 0, width, height, null, 0, width);
-////            int[] dest = destImage.image.getRGB(0, 0, width, height, null, 0, width);
-////
-////            ColorModel cm = destImage.getColorModel();
-////            double count = 0;
-////            for (int i = 0; i < src.length; i++)
-////            {
-////                if (src[i] != dest[i])
-////                {
-////                    ++count;
-////                    int s = src[i];
-////                    int d = dest[i];
-////                    int sr = cm.getRed(s);
-////                    int sg = cm.getGreen(s);
-////                    int sb = cm.getBlue(s);
-////                    int sa = cm.getAlpha(s);
-////                    int dr = cm.getRed(d);
-////                    int dg = cm.getGreen(d);
-////                    int db = cm.getBlue(d);
-////                    int da = cm.getAlpha(d);
-////
-////                    if (Math.abs(dr - sr) > 1 || Math.abs(dg - sg) > 1 || Math.abs(db - sb) > 1
-////                        || Math.abs(da - sa) > 1)
-////                        System.out.printf("%d: (%d, %d, %d, %d) : (%d, %d, %d, %d) delta: (%d, %d, %d, %d) (%f, %f)\n",
-////                            i,
-////                            sr, sg, sb, sa, dr, dg, db, da,
-////                            dr - sr, dg - sg, db - sb, da - sa,
-////                            xs[i], ys[i]);
-////                }
-////            }
-////
-////            System.out.println(count + " of " + src.length + " (" + 100d * count / src.length + "%)");
-//        }
-//        catch (IOException e)
-//        {
-//            e.printStackTrace();
-//        }
-//    }
 }

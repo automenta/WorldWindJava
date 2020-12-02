@@ -225,14 +225,14 @@ public class IconRenderer {
             if (!isIconValid(icon, true)) {
                 // Record feedback data for this WWIcon if feedback is enabled.
                 if (icon != null)
-                    this.recordFeedback(dc, icon, null, null);
+                    IconRenderer.recordFeedback(dc, icon, null, null);
 
                 continue;
             }
 
             if (!icon.isVisible()) {
                 // Record feedback data for this WWIcon if feedback is enabled.
-                this.recordFeedback(dc, icon, null, null);
+                IconRenderer.recordFeedback(dc, icon, null, null);
 
                 continue;
             }
@@ -261,7 +261,7 @@ public class IconRenderer {
 
             if (this.isHorizonClippingEnabled() && !dc.is2DGlobe() && eyeDistance > horizon) {
                 // Record feedback data for this WWIcon if feedback is enabled.
-                this.recordFeedback(dc, icon, iconPoint, null);
+                IconRenderer.recordFeedback(dc, icon, iconPoint, null);
 
                 continue; // don't render horizon-clipped icons
             }
@@ -270,7 +270,7 @@ public class IconRenderer {
             // the view volume's far clipping plane.
             if (this.isViewClippingEnabled() && !dc.getView().getFrustumInModelCoordinates().contains(iconPoint)) {
                 // Record feedback data for this WWIcon if feedback is enabled.
-                this.recordFeedback(dc, icon, iconPoint, null);
+                IconRenderer.recordFeedback(dc, icon, iconPoint, null);
 
                 continue; // don't render frustum-clipped icons
             }
@@ -408,7 +408,7 @@ public class IconRenderer {
 
             // Record feedback data for this WWIcon if feedback is enabled.
             if (uIcon.icon != null)
-                this.recordFeedback(dc, uIcon.icon, null, null);
+                IconRenderer.recordFeedback(dc, uIcon.icon, null, null);
 
             return null;
         }
@@ -416,7 +416,7 @@ public class IconRenderer {
         WWIcon icon = uIcon.icon;
         if (dc.getView().getFrustumInModelCoordinates().getNear().distanceTo(uIcon.point) < 0) {
             // Record feedback data for this WWIcon if feedback is enabled.
-            this.recordFeedback(dc, icon, uIcon.point, null);
+            IconRenderer.recordFeedback(dc, icon, uIcon.point, null);
 
             return null;
         }
@@ -424,7 +424,7 @@ public class IconRenderer {
         final Vec4 screenPoint = dc.getView().project(uIcon.point);
         if (screenPoint == null) {
             // Record feedback data for this WWIcon if feedback is enabled.
-            this.recordFeedback(dc, icon, uIcon.point, null);
+            IconRenderer.recordFeedback(dc, icon, uIcon.point, null);
 
             return null;
         }
@@ -466,7 +466,7 @@ public class IconRenderer {
             //If in picking mode and pick clipping is enabled, check to see if the icon is within the pick volume.
             if (this.isPickFrustumClippingEnabled() && !dc.getPickFrustums().intersectsAny(rect)) {
                 // Record feedback data for this WWIcon if feedback is enabled.
-                this.recordFeedback(dc, icon, uIcon.point, rect);
+                IconRenderer.recordFeedback(dc, icon, uIcon.point, rect);
 
                 return screenPoint;
             }
@@ -499,7 +499,7 @@ public class IconRenderer {
         }
 
         // Record feedback data for this WWIcon if feedback is enabled.
-        this.recordFeedback(dc, icon, uIcon.point, rect);
+        IconRenderer.recordFeedback(dc, icon, uIcon.point, rect);
 
         return screenPoint;
     }
@@ -594,7 +594,7 @@ public class IconRenderer {
      * @param modelPoint the icon's reference point in model coordinates.
      * @param screenRect the icon's bounding rectangle in screen coordinates.
      */
-    protected void recordFeedback(DrawContext dc, WWIcon icon, Vec4 modelPoint, Rectangle screenRect) {
+    protected static void recordFeedback(DrawContext dc, WWIcon icon, Vec4 modelPoint, Rectangle screenRect) {
         if (!IconRenderer.isFeedbackEnabled(dc, icon))
             return;
 

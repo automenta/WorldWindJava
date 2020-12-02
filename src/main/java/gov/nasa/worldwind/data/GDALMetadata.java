@@ -119,17 +119,6 @@ public class GDALMetadata {
             if (!WWUtil.isEmpty(o) && o instanceof String) {
                 try {
                     String[] s = ((String) o).split(",");
-                    //                        if( s.length == 3 )
-//                        {
-//                            Color bgc = new Color( Integer.parseInt(s[0]), Integer.parseInt(s[1]), Integer.parseInt(s[2]), 0xFF );
-//                            long color = 0xFFFFFFFFL & bgc.getRGB();
-//                            params.setValue(AVKey.MISSING_DATA_SIGNAL, (double)color );
-//                        }
-//                        else if( s.length == 1 )
-//                        {
-//                            int color = Integer.parseInt(s[0]);
-//                            params.setValue(AVKey.MISSING_DATA_SIGNAL, (double)color );
-//                        }
                 }
                 catch (Exception e) {
                     String msg = Logging.getMessage("generic.CannotCreateColor", o);

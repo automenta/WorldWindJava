@@ -46,7 +46,7 @@ public class RotateToAngleAnimator extends AngleAnimator {
         Angle nextAngle = this.end;
         Angle curAngle = this.propertyAccessor.getAngle();
 
-        double difference = Math.abs(nextAngle.subtract(curAngle).degrees);
+        double difference = Math.abs(nextAngle.sub(curAngle).degrees);
         boolean stopMoving = difference < this.minEpsilon;
 
         if (stopMoving) {

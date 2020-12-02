@@ -40,8 +40,8 @@ public class FileSetHighlighter implements ListSelectionListener, SelectListener
     }
 
     protected static Sector normalizeSector(Sector sector) {
-        return new Sector(sector.latMin().normalizedLatitude(), sector.latMax().normalizedLatitude(),
-            sector.lonMin().normalizedLongitude(), sector.lonMax().normalizedLongitude());
+        return new Sector(sector.latMin().latNorm(), sector.latMax().latNorm(),
+            sector.lonMin().lonNorm(), sector.lonMax().lonNorm());
     }
 
     @Override

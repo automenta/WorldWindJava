@@ -94,18 +94,18 @@ public class GDALDataRasterReader extends AbstractDataRasterReader {
     @Override
     protected DataRaster[] doRead(Object source, AVList params) {
         GDALDataRaster raster = GDALDataRasterReader.readDataRaster(source, false);
-        if (null != raster && null != params) {
+        if (null != params) {
             params.setValues(raster.getMetadata());
             WWUtil.copyValues(params, raster, new String[] {AVKey.SECTOR}, false);
         }
 
-        return (null == raster) ? null : new DataRaster[] {raster};
+        return new DataRaster[] {raster};
     }
 
     @Override
     protected void doReadMetadata(Object source, AVList params) {
         GDALDataRaster raster = GDALDataRasterReader.readDataRaster(source, true);
-        if (null != raster && null != params) {
+        if (null != params) {
             params.setValues(raster.getMetadata());
             WWUtil.copyValues(params, raster, new String[] {AVKey.SECTOR}, false);
             raster.dispose();

@@ -44,11 +44,6 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
      * @param surface The surface to configure.
      */
     static void configureIdentityPixelScale(ScalableSurface surface) {
-//        if (surface == null) {
-//            String message = Logging.getMessage("nullValue.SurfaceIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         float[] identityScale = new float[] {ScalableSurface.IDENTITY_PIXELSCALE, ScalableSurface.IDENTITY_PIXELSCALE};
         surface.setSurfaceScale(identityScale);
@@ -214,10 +209,6 @@ public interface WorldWindow extends AVList, PropertyChangeListener {
     default GpuResourceCache resourceCache() {
         return this.wwd().resourceCache();
     }
-
-//    default void redrawNow() {
-//        this.wwd().redrawNow();
-//    }
 
     default Model model() {
         return this.wwd().model();

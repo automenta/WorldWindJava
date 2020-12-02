@@ -485,7 +485,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable {
 
         List<Vertex> mirror = new ArrayList<>();
         for (Vertex cur : result) {
-            mirror.add(new Vertex(cur.latitude, cur.longitude.subtract(offset), cur.u, cur.v));
+            mirror.add(new Vertex(cur.latitude, cur.longitude.sub(offset), cur.u, cur.v));
         }
 
         return Arrays.asList(result, mirror);

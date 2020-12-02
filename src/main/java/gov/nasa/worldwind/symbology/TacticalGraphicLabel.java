@@ -1082,7 +1082,7 @@ public class TacticalGraphicLabel {
         int y = olbl.screenPoint.y;
 
         float[] compArray = new float[3];
-        if (AVKey.TEXT_EFFECT_SHADOW.equals(this.effect) && backgroundColor != null) {
+        if (AVKey.TEXT_EFFECT_SHADOW.equals(this.effect)) {
             backgroundColor.getRGBColorComponents(compArray);
 
             textRenderer.setColor(compArray[0], compArray[1], compArray[2], opacity);

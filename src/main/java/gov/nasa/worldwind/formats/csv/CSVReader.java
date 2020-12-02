@@ -136,9 +136,5 @@ public class CSVReader implements Track, TrackSegment {
         }
 //        }
 //        catch (Exception e)
-//        {
-//            System.out.printf("Exception %s at sentence number %d for %s\n",
-//                e.getMessage(), this.lineNumber, this.name);
-//        }
     }
 }

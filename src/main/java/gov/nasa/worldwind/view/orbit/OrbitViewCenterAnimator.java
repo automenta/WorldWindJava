@@ -41,27 +41,6 @@ public class OrbitViewCenterAnimator extends MoveToPositionAnimator {
                 (1 - interpolant) * curCenter.getElevation() + interpolant * this.end.getElevation());
         }
         //TODO: What do we do about collisions?
-        /*
-        try
-        {
-            // Clear any previous collision state the view may have.
-            view.hadCollisions();
-            view.setEyePosition(nextCenter);
-            // If the change caused a collision, update the target center position with the
-            // elevation that resolved the collision.
-            if (view.hadCollisions())
-                this.eyePositionTarget = new Position(
-                        this.eyePositionTarget, view.getEyePosition().getElevation());
-            flagViewChanged();
-            setViewOutOfFocus(true);
-        }
-        catch (Exception e)
-        {
-            String message = Logging.getMessage("generic.ExceptionWhileChangingView");
-            Logging.logger().log(java.util.logging.Level.SEVERE, message, e);
-            stopMoving = true;
-        }
-        */
 
         // If target is close, cancel future value changes.
         if (stopMoving) {

@@ -45,10 +45,6 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
     protected int readTimeout = Configuration.getIntegerValue(AVKey.URL_READ_TIMEOUT, 5000);
     protected int staleRequestLimit = -1;
     protected long submitEpoch;
-//    protected long beginTime;
-//    protected long endTime;
-//    private final String urlString;
-//    private int hash;
 
     /**
      * @param url           the URL of the resource to retrieve.
@@ -56,15 +52,8 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
      * @throws IllegalArgumentException if <code>url</code>.
      */
     public URLRetriever(URL url, RetrievalPostProcessor postProcessor) {
-//        if (url == null) {
-//            String message = Logging.getMessage("nullValue.URLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.url = url;
-//        this.urlString = url.toString();
-//        this.hash = urlString.hashCode();
         this.postProcessor = postProcessor;
     }
 
@@ -77,11 +66,6 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
      * @throws IllegalArgumentException if the url is null.
      */
     public static URLRetriever createRetriever(URL url, RetrievalPostProcessor postProcessor) {
-//        if (url == null) {
-//            String message = Logging.getMessage("nullValue.URLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         String protocol = url.getProtocol();
 
@@ -178,22 +162,6 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
     public void setSubmitEpoch(long e) {
         this.submitEpoch = e;
     }
-
-//    public long getBeginTime() {
-//        return beginTime;
-//    }
-//
-//    public void setBeginTime(long beginTime) {
-//        this.beginTime = beginTime;
-//    }
-//
-//    public long getEndTime() {
-//        return endTime;
-//    }
-//
-//    public void setEndTime(long endTime) {
-//        this.endTime = endTime;
-//    }
 
     public final Retriever call() throws Exception {
 
@@ -320,11 +288,6 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
      * @throws IllegalArgumentException if <code>connection</code> is null
      */
     protected ByteBuffer doRead(URLConnection connection) throws Exception {
-//        if (connection == null) {
-//            String msg = Logging.getMessage("nullValue.ConnectionIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         InputStream inputStream = this.connection.getInputStream();
         if (inputStream == null) {
@@ -352,37 +315,12 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever {
     }
 
     protected ByteBuffer readStream(InputStream inputStream, URLConnection connection) throws IOException {
-//        if (inputStream == null) {
-//            String message = Logging.getMessage("URLRetriever.InputStreamNullFor", connection.getURL());
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (this.contentLength < 1) {
             return readNonSpecificStreamUnknownLength(inputStream);
         }
 
         return ByteBuffer.wrap(inputStream.readNBytes(contentLength));
-//
-//        ByteBuffer buffer = ByteBuffer.allocate(this.contentLength);
-//
-//        ReadableByteChannel channel = Channels.newChannel(inputStream);
-////        System.out.println(this.contentLength + " bytes to read");
-//
-//        int numBytesRead = 0;
-//        while (!this.interrupted() && numBytesRead >= 0 && numBytesRead < buffer.limit()) {
-//            int count = channel.read(buffer);
-//            if (count > 0) {
-//                numBytesRead += count;
-//                this.contentLengthRead.getAndAdd(count);
-//            }
-//            else if (count < 0)
-//                throw new WWRuntimeException("Premature end of stream from server.");
-//        }
-//
-//        buffer.flip();
-//
-//        return buffer;
     }
 
     protected ByteBuffer readNonSpecificStreamUnknownLength(InputStream inputStream) throws IOException {

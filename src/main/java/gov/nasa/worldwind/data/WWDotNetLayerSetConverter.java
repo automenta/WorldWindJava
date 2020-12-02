@@ -78,7 +78,7 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer {
         AVList params = this.getStoreParameters();
 
         for (SourceInfo info : dataSources) {
-            this.removeLayerSet(info.source, params);
+            WWDotNetLayerSetConverter.removeLayerSet(info.source, params);
         }
     }
 
@@ -531,7 +531,7 @@ public class WWDotNetLayerSetConverter extends AbstractDataStoreProducer {
         return progress;
     }
 
-    protected void removeLayerSet(Object source, AVList params) {
+    protected static void removeLayerSet(Object source, AVList params) {
         File sourceConfigFile = WWDotNetLayerSetConverter.getSourceConfigFile(source);
         if (sourceConfigFile == null) {
             String message = Logging.getMessage("WWDotNetLayerSetConverter.NoSourceLocation");

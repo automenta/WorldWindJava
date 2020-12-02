@@ -85,7 +85,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
 
         // Retrieve desired symbol and convert to BufferedImage
         SymbolCode symbolCode = new SymbolCode(sidc);
-        String filename = this.composeFilename(symbolCode);
+        String filename = MilStd2525PointGraphicRetriever.composeFilename(symbolCode);
         BufferedImage srcImg = this.readImage(filename);
 
         if (srcImg == null) {
@@ -132,7 +132,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
      * @return A new image with the {@code srcImg} drawn over the appropriate fill.
      */
     protected BufferedImage composeFilledImage(BufferedImage srcImg, SymbolCode symbolCode) {
-        String fillPath = this.composeFillPath(symbolCode);
+        String fillPath = MilStd2525PointGraphicRetriever.composeFillPath(symbolCode);
         BufferedImage fill = this.readImage(fillPath);
 
         if (fill == null) {
@@ -161,7 +161,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
      * Release Event (2.X.3.4.7.2).
      */
     protected static boolean mustDrawFill(SymbolCode code) {
-        String masked = SymbolCode.toMaskedString();
+        String masked = code.toMaskedString();
 
         return TacGrpSidc.MOBSU_CBRN_NDGZ.equalsIgnoreCase(masked)
             || TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equalsIgnoreCase(masked)
@@ -199,7 +199,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
      * @param code Code the identifies the graphic.
      * @return Path to the appropriate fill image.
      */
-    protected String composeFillPath(SymbolCode code) {
+    protected static String composeFillPath(SymbolCode code) {
         // Note: Metoc symbols currently do not use fill, so only handle tactical graphics here.
         return MilStd2525PointGraphicRetriever.composeFilenameTacticalGraphic(code, DIR_FILL_TACGRP);
     }
@@ -211,7 +211,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever {
      * @return The file name of the image file that corresponds to the specified graphic, or null if the graphic's
      * scheme is not recognized.
      */
-    protected String composeFilename(SymbolCode code) {
+    protected static String composeFilename(SymbolCode code) {
         String scheme = code.getScheme();
 
         if (SymbologyConstants.SCHEME_TACTICAL_GRAPHICS.equalsIgnoreCase(scheme))

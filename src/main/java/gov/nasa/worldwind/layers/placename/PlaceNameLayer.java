@@ -273,8 +273,8 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
         // Determine the row and column offset from the global tiling origin for the southwest tile corner
         int firstRow = Tile.computeRow(dLat, navTile.navSector.latMin());
         int firstCol = Tile.computeColumn(dLon, navTile.navSector.lonMin());
-        int lastRow = Tile.computeRow(dLat, navTile.navSector.latMax().subtract(dLat));
-        int lastCol = Tile.computeColumn(dLon, navTile.navSector.lonMax().subtract(dLon));
+        int lastRow = Tile.computeRow(dLat, navTile.navSector.latMax().sub(dLat));
+        int lastCol = Tile.computeColumn(dLon, navTile.navSector.lonMax().sub(dLon));
 
         int nLatTiles = lastRow - firstRow + 1;
         int nLonTiles = lastCol - firstCol + 1;
@@ -887,9 +887,9 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             double lat = GMLPlaceNameSAXHandler.parseDouble(this.latBuffer);
             double lon = GMLPlaceNameSAXHandler.parseDouble(this.lonBuffer);
             int numLatLon = 2 * this.numEntries;
-            this.latlonArray = this.append(this.latlonArray, numLatLon, lat);
+            this.latlonArray = GMLPlaceNameSAXHandler.append(this.latlonArray, numLatLon, lat);
             numLatLon++;
-            this.latlonArray = this.append(this.latlonArray, numLatLon, lon);
+            this.latlonArray = GMLPlaceNameSAXHandler.append(this.latlonArray, numLatLon, lon);
 
             this.latBuffer.delete(0, this.latBuffer.length());
             this.lonBuffer.delete(0, this.lonBuffer.length());
@@ -909,7 +909,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             return value;
         }
 
-        protected int[] append(int[] array, int index, int value) {
+        protected static int[] append(int[] array, int index, int value) {
             if (index >= array.length)
                 array = GMLPlaceNameSAXHandler.resizeArray(array);
             array[index] = value;
@@ -923,7 +923,7 @@ public class PlaceNameLayer extends AbstractLayer implements BulkRetrievable {
             return newArray;
         }
 
-        protected double[] append(double[] array, int index, double value) {
+        protected static double[] append(double[] array, int index, double value) {
             if (index >= array.length)
                 array = GMLPlaceNameSAXHandler.resizeArray(array);
             array[index] = value;

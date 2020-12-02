@@ -121,20 +121,6 @@ public class BasicTiledImageLayerBulkDownloader extends BulkRetrievalThread {
         }
     }
 
-//    protected int countMissingTiles() throws InterruptedException
-//    {
-//        int count = 0;
-//        for (int levelNumber = 0; levelNumber <= this.level; levelNumber++)
-//        {
-//            if (this.layer.getLevels().isLevelEmpty(levelNumber))
-//                continue;
-//
-//            count += getMissingTilesInSector(this.sector, levelNumber).size();
-//        }
-//
-//        return count;
-//    }
-
     protected synchronized void submitMissingTilesRequests() throws InterruptedException {
         RetrievalService rs = WorldWind.retrieveRemote();
         int i = 0;

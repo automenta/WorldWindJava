@@ -219,7 +219,7 @@ public class HTTPFileUpload {
 
             dos = new DataOutputStream(conn.getOutputStream());
 
-            this.writeProperties(dos, params);
+            HTTPFileUpload.writeProperties(dos, params);
 
             HTTPFileUpload.writeContentDisposition(dos, uploadName);
 
@@ -319,7 +319,7 @@ public class HTTPFileUpload {
 
             dos = new DataOutputStream(conn.getOutputStream());
 
-            this.writeProperties(dos, params);
+            HTTPFileUpload.writeProperties(dos, params);
 
             HTTPFileUpload.writeContentDisposition(dos, fileName);
 
@@ -381,7 +381,7 @@ public class HTTPFileUpload {
 
             dos = new DataOutputStream(conn.getOutputStream());
 
-            this.writeProperties(dos, params);
+            HTTPFileUpload.writeProperties(dos, params);
 
             HTTPFileUpload.writeContentDisposition(dos, fileName);
 
@@ -401,7 +401,7 @@ public class HTTPFileUpload {
         }
     }
 
-    protected void writeProperties(DataOutput dos, AVList params) throws IOException {
+    protected static void writeProperties(DataOutput dos, AVList params) throws IOException {
         if (null != dos && null != params) {
             for (Map.Entry<String, Object> param : params.getEntries()) {
                 String name = param.getKey();

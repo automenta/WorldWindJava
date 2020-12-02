@@ -799,7 +799,7 @@ public class AnalysisPanel extends JPanel implements Restorable {
 
         public ViewState(OrbitView view, Angle referenceHeading, Position referencePosition) {
             this.pitch = view.getPitch();
-            this.relativeHeading = view.getHeading().subtract(referenceHeading);
+            this.relativeHeading = view.getHeading().sub(referenceHeading);
             this.zoom = view.getZoom();
             this.relativeCenterLocation = view.getCenterPosition().subtract(referencePosition);
         }

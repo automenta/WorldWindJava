@@ -95,8 +95,6 @@ public class NITFSUtil {
 
     public static ByteBuffer readEntireFile(File file) throws IOException {
         return readFileToBuffer(file);
-//        return memoryMapFile(file);
-//        return readFile(file);
     }
 
     private static ByteBuffer readFileToBuffer(File file) throws IOException {

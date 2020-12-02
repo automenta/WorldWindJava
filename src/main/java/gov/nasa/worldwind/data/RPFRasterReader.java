@@ -62,7 +62,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
             return RPFRasterReader.readPolarImage(source, filename);
         }
         else {
-            return this.readNonPolarImage(source, params);
+            return RPFRasterReader.readNonPolarImage(source, params);
         }
     }
 
@@ -85,13 +85,13 @@ public class RPFRasterReader extends AbstractDataRasterReader {
 
         Object sector = params.get(AVKey.SECTOR);
         if (!(sector instanceof Sector))
-            this.readFileSector(file, rpfFile, params);
+            RPFRasterReader.readFileSector(file, rpfFile, params);
 
         if (!params.hasKey(AVKey.PIXEL_FORMAT))
             params.set(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
     }
 
-    private DataRaster[] readNonPolarImage(Object source, AVList params) throws IOException {
+    private static DataRaster[] readNonPolarImage(Object source, AVList params) throws IOException {
         // TODO: break the raster along the international dateline, if necessary
         // Nonpolar images need no special processing. We convert it to a compatible image type to improve performance.
 
@@ -105,7 +105,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         Object o = (params != null) ? params.get(AVKey.SECTOR) : null;
         if (!(o instanceof Sector)) {
             AVList values = new AVListImpl();
-            this.readFileSector(file, rpfFile, values);
+            RPFRasterReader.readFileSector(file, rpfFile, values);
             o = values.get(AVKey.SECTOR);
         }
 
@@ -140,7 +140,7 @@ public class RPFRasterReader extends AbstractDataRasterReader {
         values.set(AVKey.HEIGHT, height);
     }
 
-    private void readFileSector(File file, RPFImageFile rpfFile, AVList values) {
+    private static void readFileSector(File file, RPFImageFile rpfFile, AVList values) {
         // We'll first attempt to compute the Sector, if possible, from the filename (if it exists) by using
         // the conventions for CADRG and CIB filenames. It has been observed that for polar frame files in
         // particular that coverage information in the file itself is sometimes unreliable.

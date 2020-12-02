@@ -1613,74 +1613,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
     @SuppressWarnings("UnusedDeclaration")
     public static ByteBuffer generateExtremeElevations(int levelNumber) {
         return null;
-        //Level level = this.levels.getLevel(levelNumber);
-        //Sector sector = this.levels.getSector();
-        //Angle latDelta = level.getTileDelta().getLatitude();
-        //Angle lonDelta = level.getTileDelta().getLongitude();
-        //Angle latOrigin = this.levels.getTileOrigin().getLatitude();
-        //Angle lonOrigin = this.levels.getTileOrigin().getLongitude();
-        //
-        //int firstRow = Tile.computeRow(latDelta, sector.getMinLatitude(), latOrigin);
-        //int lastRow = Tile.computeRow(latDelta, sector.getMaxLatitude(), latOrigin);
-        //int firstCol = Tile.computeColumn(lonDelta, sector.getMinLongitude(), lonOrigin);
-        //int lastCol = Tile.computeColumn(lonDelta, sector.getMaxLongitude(), lonOrigin);
-        //
-        //int tileCount = (lastRow - firstRow + 1) * (lastCol - firstCol + 1);
-        //ByteBuffer byteBuffer = ByteBuffer.allocate(2 * 2 * tileCount);
-        //ShortBuffer buffer = byteBuffer.asShortBuffer();
-        //
-        //final Object condition = new Object();
-        //final PropertyChangeListener changeListener = new PropertyChangeListener()
-        //{
-        //    @Override
-        //    public void propertyChange(PropertyChangeEvent evt)
-        //    {
-        //        synchronized (condition)
-        //        {
-        //            condition.notifyAll();
-        //        }
-        //    }
-        //};
-        //this.addPropertyChangeListener(AVKey.ELEVATION_MODEL, changeListener);
-        //
-        //for (int row = firstRow; row <= lastRow; row++)
-        //{
-        //    System.out.printf("row %d/%d", row - firstRow, lastRow - firstRow);
-        //
-        //    for (int col = firstCol; col <= lastCol; col++)
-        //    {
-        //        TileKey key = new TileKey(levelNumber, row, col, level.getCacheName());
-        //        ElevationTile tile;
-        //
-        //        while ((tile = this.getTileFromMemory(key)) == null)
-        //        {
-        //            try
-        //            {
-        //                this.requestTile(key);
-        //
-        //                synchronized (condition)
-        //                {
-        //                    condition.wait(1000);
-        //                }
-        //            }
-        //            catch (InterruptedException e)
-        //            {
-        //                e.printStackTrace();
-        //            }
-        //        }
-        //
-        //        short min = (short) tile.extremes[0];
-        //        short max = (short) tile.extremes[1];
-        //        buffer.put(min).put(max);
-        //    }
-        //
-        //    System.out.println(" Done");
-        //}
-        //
-        //System.out.println("All rows Done");
-        //this.removePropertyChangeListener(AVKey.ELEVATION_MODEL, changeListener);
-        //
-        //return (ByteBuffer) byteBuffer.rewind();
     }
 
     /**
@@ -2220,46 +2152,6 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
 
             return super.handleTextContent();
         }
-//
-//        @Override
-//        protected ByteBuffer handleImageContent() throws IOException
-//        {
-//            if (!this.getRetriever().getContentType().contains("tiff"))
-//                return super.handleImageContent();
-//
-//            File tmpFile = WWIO.saveBufferToTempFile(this.getRetriever().getBuffer(), ".tif");
-//
-//            DataRasterReaderFactory readerFactory = (DataRasterReaderFactory) WorldWind.createConfigurationComponent(
-//                AVKey.DATA_RASTER_READER_FACTORY_CLASS_NAME);
-//            DataRasterReader reader = readerFactory.findReaderFor(tmpFile, null);
-//
-//            // Before reading the raster, verify that the file contains elevations.
-//            AVList metadata = reader.readMetadata(tmpFile, null);
-//            if (metadata == null || !AVKey.ELEVATION.equals(metadata.getStringValue(AVKey.PIXEL_FORMAT)))
-//            {
-//                String msg = Logging.getMessage("ElevationModel.SourceNotElevations", tmpFile.getAbsolutePath());
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
-//
-//            // Read the file into the raster.
-//            DataRaster[] rasters = reader.read(tmpFile, null);
-//            if (rasters == null || rasters.length == 0)
-//            {
-//                String msg = Logging.getMessage("ElevationModel.CannotReadElevations", tmpFile.getAbsolutePath());
-//                Logging.logger().severe(msg);
-//                throw new WWRuntimeException(msg);
-//            }
-//
-//            DataRaster raster = rasters[0];
-//
-//            ByteBuffer byteBuffer =
-//                ((BufferWrapper.ByteBufferWrapper)((BufferWrapperRaster) raster).getBuffer()).getBackingByteBuffer();
-//
-//            WWIO.saveBuffer(byteBuffer, this.getOutputFile());
-//
-//            return byteBuffer;
-//        }
     }
 
     /**

@@ -102,13 +102,6 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         else if (Configuration.isWindowsOS()) {
             // This produces an incorrect path with duplicate parts,
             // like "C:\Users\PatC:\Users\Pat\Application Data".
-            //path = System.getenv("USERPROFILE");
-            //if (path == null)
-            //{
-            //    Logging.logger().fine("generic.UsersWindowsProfileNotKnown");
-            //    return null;
-            //}
-            //path += "\\Application Data";
 
             path = "\\Application Data";
         }

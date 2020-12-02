@@ -1491,9 +1491,9 @@ public class TerrainProfileLayer extends AbstractLayer implements PositionListen
             LatLon latLon = null;
             if (!this.follow.equals(FOLLOW_NONE)) {
                 // Compute segments perpendicular to view or object heading
-                double azimuth = view.getHeading().subtract(Angle.POS90).radians;
+                double azimuth = view.getHeading().sub(Angle.POS90).radians;
                 if (this.follow.equals(FOLLOW_OBJECT)) {
-                    azimuth = this.objectHeading.subtract(Angle.POS90).radians;
+                    azimuth = this.objectHeading.sub(Angle.POS90).radians;
                 }
                 if (i > (this.samples - 1) / 2.0f) {
                     //azimuth = view.getHeading().subtract(Angle.NEG90).radians;

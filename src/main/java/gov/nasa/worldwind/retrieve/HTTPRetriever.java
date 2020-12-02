@@ -33,11 +33,6 @@ public class HTTPRetriever extends URLRetriever {
     }
 
     protected ByteBuffer doRead(URLConnection connection) throws Exception {
-//        if (connection == null) {
-//            String msg = Logging.getMessage("nullValue.ConnectionIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         HttpURLConnection htpc = (HttpURLConnection) connection;
         this.responseCode = htpc.getResponseCode();

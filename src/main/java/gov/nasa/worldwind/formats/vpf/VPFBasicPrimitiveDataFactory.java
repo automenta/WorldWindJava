@@ -102,15 +102,15 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory {
 
     protected VPFPrimitiveData doCreatePrimitives(VPFCoverage coverage) {
         VPFPrimitiveData primitiveData = new VPFPrimitiveData();
-        this.buildNodePrimitives(coverage, this.tile, primitiveData);
-        this.buildEdgePrimitives(coverage, this.tile, primitiveData);
-        this.buildFacePrimitives(coverage, this.tile, primitiveData);
-        this.buildTextPrimitives(coverage, this.tile, primitiveData);
+        VPFBasicPrimitiveDataFactory.buildNodePrimitives(coverage, this.tile, primitiveData);
+        VPFBasicPrimitiveDataFactory.buildEdgePrimitives(coverage, this.tile, primitiveData);
+        VPFBasicPrimitiveDataFactory.buildFacePrimitives(coverage, this.tile, primitiveData);
+        VPFBasicPrimitiveDataFactory.buildTextPrimitives(coverage, this.tile, primitiveData);
 
         return primitiveData;
     }
 
-    protected void buildNodePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
+    protected static void buildNodePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
         VPFBufferedRecordData nodeTable = VPFBasicPrimitiveDataFactory.createPrimitiveTable(coverage, tile, VPFConstants.NODE_PRIMITIVE_TABLE);
         if (nodeTable != null && nodeTable.getNumRecords() > 0)
             VPFBasicPrimitiveDataFactory.buildNodePrimitives(nodeTable, VPFConstants.NODE_PRIMITIVE_TABLE, primitiveData);
@@ -152,7 +152,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory {
     //********************  Utility Methods  ***********************//
     //**************************************************************//
 
-    protected void buildEdgePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
+    protected static void buildEdgePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
         VPFBufferedRecordData edgeTable = VPFBasicPrimitiveDataFactory.createPrimitiveTable(coverage, tile, VPFConstants.EDGE_PRIMITIVE_TABLE);
         if (edgeTable == null || edgeTable.getNumRecords() == 0)
             return;
@@ -184,7 +184,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory {
         primitiveData.setPrimitiveCoords(VPFConstants.EDGE_PRIMITIVE_TABLE, coords);
     }
 
-    protected void buildFacePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
+    protected static void buildFacePrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
         VPFBufferedRecordData faceTable = VPFBasicPrimitiveDataFactory.createPrimitiveTable(coverage, tile, VPFConstants.FACE_PRIMITIVE_TABLE);
         if (faceTable == null)
             return;
@@ -233,8 +233,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory {
                     break;
 
                 VPFPrimitiveData.Ring innerRing = VPFBasicPrimitiveDataFactory.buildRing(ringRow, edgeInfo);
-                if (innerRing != null)
-                    innerRingList.add(innerRing);
+                innerRingList.add(innerRing);
             }
 
             VPFPrimitiveData.Ring[] innerRings = new VPFPrimitiveData.Ring[innerRingList.size()];
@@ -247,7 +246,7 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory {
         primitiveData.setPrimitiveInfo(VPFConstants.FACE_PRIMITIVE_TABLE, faceInfo);
     }
 
-    protected void buildTextPrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
+    protected static void buildTextPrimitives(VPFCoverage coverage, VPFTile tile, VPFPrimitiveData primitiveData) {
         VPFBufferedRecordData textTable = VPFBasicPrimitiveDataFactory.createPrimitiveTable(coverage, tile, VPFConstants.TEXT_PRIMITIVE_TABLE);
         if (textTable == null || textTable.getNumRecords() == 0)
             return;
@@ -283,13 +282,13 @@ public class VPFBasicPrimitiveDataFactory implements VPFPrimitiveDataFactory {
         VPFWingedEdgeTraverser traverser = new VPFWingedEdgeTraverser();
 
         // Traverse the ring to collect the number of edges which define the ring.
-        final int numEdges = traverser.traverseRing(faceId, startEdgeId, edgeInfoArray, null);
+        final int numEdges = VPFWingedEdgeTraverser.traverseRing(faceId, startEdgeId, edgeInfoArray, null);
         final int[] idArray = new int[numEdges];
         final int[] orientationArray = new int[numEdges];
 
         // Traverse the ring again, but this time populate an entry for the primitiveID and orientation data stuctures
         // for each edge.
-        traverser.traverseRing(faceId, startEdgeId, edgeInfoArray, (index, primitiveId, reverseCoordinates) -> {
+        VPFWingedEdgeTraverser.traverseRing(faceId, startEdgeId, edgeInfoArray, (index, primitiveId, reverseCoordinates) -> {
             idArray[index] = primitiveId;
             orientationArray[index] = reverseCoordinates ? -1 : 1;
         });

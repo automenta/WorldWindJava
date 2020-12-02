@@ -54,7 +54,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
         }
 
         // Compose a path from the modifier code and value.
-        String path = this.composePath(symbolId, params);
+        String path = MilStd2525ModifierRetriever.composePath(symbolId, params);
         if (path == null) {
             String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolId);
             Logging.logger().severe(msg);
@@ -79,7 +79,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever {
         return image;
     }
 
-    protected String composePath(String symbolModifierCode, AVList params) {
+    protected static String composePath(String symbolModifierCode, AVList params) {
         AVList modifierParams = SymbolCode.parseSymbolModifierCode(symbolModifierCode, null);
         if (modifierParams == null)
             return null;

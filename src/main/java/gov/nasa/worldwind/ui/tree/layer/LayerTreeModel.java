@@ -56,7 +56,7 @@ public class LayerTreeModel extends BasicTreeModel {
      * @param layerList the list of <code>Layer</code> objects to the new model represents.
      * @throws IllegalArgumentException if the <code>layerList</code> is <code>null</code>.
      */
-    public LayerTreeModel(LayerList layerList) {
+    public LayerTreeModel(Iterable<Layer> layerList) {
         this(layerList, false);
     }
 
@@ -154,8 +154,6 @@ public class LayerTreeModel extends BasicTreeModel {
         }
 
         LayerTreeNode layerNode = LayerTreeModel.createLayerNode(layer);
-        if (layerNode == null)
-            return layerNode;
 
         this.addLayer(layerNode);
         return layerNode;

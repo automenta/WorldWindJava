@@ -314,8 +314,8 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol {
 
     @Override
     protected void applyImplicitModifiers(AVList modifiers) {
-        String maskedCode = SymbolCode.toMaskedString().toLowerCase();
-        String si = this.symbolCode.getStandardIdentity();
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
+        String si = symbolCode.getStandardIdentity();
 
         // Set the Echelon modifier value according to the value implied by this symbol ID, if any. Give precedence to
         // the modifier value specified by the application, including null.

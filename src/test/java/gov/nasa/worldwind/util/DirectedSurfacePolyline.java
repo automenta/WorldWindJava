@@ -299,7 +299,7 @@ public class DirectedSurfacePolyline extends SurfacePolyline {
         Angle halfBaseLength = Angle.fromDegrees(arrowLength * this.arrowAngle.tanHalfAngle());
         Angle azimuth = LatLon.greatCircleAzimuth(base, tip);
         LatLon left = LatLon.greatCircleEndPosition(base, azimuth.add(Angle.NEG90), halfBaseLength);
-        LatLon right = LatLon.greatCircleEndPosition(base, azimuth.subtract(Angle.NEG90), halfBaseLength);
+        LatLon right = LatLon.greatCircleEndPosition(base, azimuth.sub(Angle.NEG90), halfBaseLength);
 
         // Add the arrowhead's geometry to the global surface shape vertex buffer, compensating for arrowheads that span
         // the anti-meridian

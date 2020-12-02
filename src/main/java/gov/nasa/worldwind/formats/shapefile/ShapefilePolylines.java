@@ -324,7 +324,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
             }
 
             if (ShapefilePolylines.mustAssembleTileAttributeGroups(tile)) {
-                this.assembleTileAttributeGroups(tile);
+                ShapefilePolylines.assembleTileAttributeGroups(tile);
             }
 
             this.currentTiles.add(tile);
@@ -435,7 +435,7 @@ public class ShapefilePolylines extends ShapefileRenderable implements OrderedRe
         return tile.attributeGroups.isEmpty();
     }
 
-    protected void assembleTileAttributeGroups(Tile tile) {
+    protected static void assembleTileAttributeGroups(Tile tile) {
         tile.attributeGroups.clear();
         tile.attributeStateID++;
 

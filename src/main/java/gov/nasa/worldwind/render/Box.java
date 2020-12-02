@@ -174,30 +174,6 @@ public class Box extends RigidShape {
      * @param subdivisions the number of times to subdivide the unit box geometry
      * @param dest         the Geometry container to hold the computed points, etc.
      */
-    /*
-    protected void makeUnitBox(int subdivisions, Geometry dest)
-    {
-        float radius = 1.0f;
-
-        GeometryBuilder gb = this.getGeometryBuilder();
-        gb.setOrientation(GeometryBuilder.OUTSIDE);
-
-        // create box in model space
-        GeometryBuilder.IndexedTriangleBuffer itb =
-            gb.tessellateBoxBuffer(radius, subdivisions);
-
-        FloatBuffer normalBuffer = Buffers.newDirectFloatBuffer(3 * itb.getVertexCount());
-        gb.makeIndexedTriangleBufferNormals(itb, normalBuffer);
-
-        FloatBuffer textureCoordBuffer = Buffers.newDirectFloatBuffer(2 * itb.getVertexCount());
-        gb.makeUnitBoxTextureCoordinates(textureCoordBuffer, itb.getVertexCount());
-
-        dest.setElementData(GL.GL_TRIANGLES, itb.getIndexCount(), itb.getIndices());
-        dest.setVertexData(itb.getVertexCount(), itb.getVertices());
-        dest.setNormalData(normalBuffer.limit(), normalBuffer);
-        dest.setTextureCoordData(textureCoordBuffer.limit(), textureCoordBuffer);
-    }
-    */
 
     /**
      * Generates a unit box geometry, including the vertices, indices, normals and texture coordinates, tessellated with

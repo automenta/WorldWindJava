@@ -372,37 +372,6 @@ public class Wedge extends RigidShape {
      *
      * @throws IllegalArgumentException if the wedgeAngle is null
      */
-    /*
-    protected void makeUnitWedge(int subdivisions, Geometry dest)
-    {
-        if (this.wedgeAngle == null)
-        {
-            String message = Logging.getMessage("nullValue.AngleIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        float radius = 1.0f;
-
-        GeometryBuilder gb = this.getGeometryBuilder();
-        gb.setOrientation(GeometryBuilder.OUTSIDE);
-
-        // create wedge in model space
-        GeometryBuilder.IndexedTriangleBuffer itb =
-            gb.tessellateWedgeBuffer(radius, subdivisions, this.wedgeAngle);
-
-        FloatBuffer normalBuffer = Buffers.newDirectFloatBuffer(3 * itb.getVertexCount());
-        gb.makeIndexedTriangleBufferNormals(itb, normalBuffer);
-
-        FloatBuffer textureCoordBuffer = Buffers.newDirectFloatBuffer(2 * itb.getVertexCount());
-        gb.makeWedgeTextureCoordinates(textureCoordBuffer, subdivisions, this.wedgeAngle);
-
-        dest.setElementData(GL.GL_TRIANGLES, itb.getIndexCount(), itb.getIndices());
-        dest.setVertexData(itb.getVertexCount(), itb.getVertices());
-        dest.setNormalData(normalBuffer.limit(), normalBuffer);
-        dest.setTextureCoordData(textureCoordBuffer.limit(), textureCoordBuffer);
-    }
-    */
 
     /**
      * Generates a unit wedge geometry, including the vertices, indices, normals and texture coordinates, tessellated

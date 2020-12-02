@@ -205,7 +205,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
 
         // Move the view to the right eye
         Angle viewHeading = dcView.getHeading();
-        dcView.setHeading(dcView.getHeading().subtract(this.getFocusAngle()));
+        dcView.setHeading(dcView.getHeading().sub(this.getFocusAngle()));
         dcView.apply(dc);
 
         // Draw the right eye frame green and blue only
@@ -255,7 +255,7 @@ public class StereoOptionSceneController extends BasicSceneController implements
 
         // Move the view to the right eye
         Angle viewHeading = dcView.getHeading();
-        dcView.setHeading(dcView.getHeading().subtract(this.getFocusAngle()));
+        dcView.setHeading(dcView.getHeading().sub(this.getFocusAngle()));
         dcView.apply(dc);
 
         // Draw the right eye

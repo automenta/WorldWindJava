@@ -1630,8 +1630,6 @@ public class Matrix {
 
     private static boolean isZero(double value) {
         return Math.abs(value) <= Double.MIN_NORMAL;
-//        return (POSITIVE_ZERO.compareTo(value) == 0)
-//            || (NEGATIVE_ZERO.compareTo(value) == 0);
     }
 
     public final boolean equals(Object obj) {
@@ -1689,11 +1687,6 @@ public class Matrix {
     }
 
     public final double[] toArray(double[] compArray, int offset, boolean rowMajor) {
-//        if (compArray == null) {
-//            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         if ((compArray.length - offset) < NUM_ELEMENTS) {
             String msg = Logging.getMessage("generic.ArrayInvalidLength", compArray.length);
             Logging.logger().severe(msg);

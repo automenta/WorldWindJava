@@ -382,8 +382,8 @@ public class LatLon {
             return p;
 
         return new LatLon(
-            Angle.fromRadians(endLatRadians).normalizedLatitude(),
-            Angle.fromRadians(endLonRadians).normalizedLongitude());
+            Angle.fromRadians(endLatRadians).latNorm(),
+            Angle.fromRadians(endLonRadians).lonNorm());
     }
 
     /**
@@ -707,8 +707,8 @@ public class LatLon {
             return p;
 
         return new LatLon(
-            Angle.fromRadians(lat2).normalizedLatitude(),
-            Angle.fromRadians(lon2).normalizedLongitude());
+            Angle.fromRadians(lat2).latNorm(),
+            Angle.fromRadians(lon2).lonNorm());
     }
 
     /**
@@ -845,8 +845,8 @@ public class LatLon {
             return p;
 
         return new LatLon(
-            Angle.fromRadians(lat2).normalizedLatitude(),
-            Angle.fromRadians(lon2).normalizedLongitude());
+            Angle.fromRadians(lat2).latNorm(),
+            Angle.fromRadians(lon2).lonNorm());
     }
 
     /**
@@ -1168,17 +1168,17 @@ public class LatLon {
      */
     public static List<LatLon> cutLocationsAlongDateLine(Iterable<? extends LatLon> locations, String pole,
         Globe globe) {
-        if (locations == null) {
-            String msg = Logging.getMessage("nullValue.LocationsListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (pole == null) {
-            String msg = Logging.getMessage("nullValue.PoleIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (locations == null) {
+//            String msg = Logging.getMessage("nullValue.LocationsListIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (pole == null) {
+//            String msg = Logging.getMessage("nullValue.PoleIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         List<LatLon> newLocations = new ArrayList<>();
 
@@ -1228,11 +1228,11 @@ public class LatLon {
      * @throws IllegalArgumentException if the location list is null.
      */
     public static List<LatLon> makeDatelineCrossingLocationsPositive(Iterable<? extends LatLon> locations) {
-        if (locations == null) {
-            String msg = Logging.getMessage("nullValue.LocationsListIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (locations == null) {
+//            String msg = Logging.getMessage("nullValue.LocationsListIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         Iterator iter = locations.iterator();
         if (!iter.hasNext())
@@ -1271,17 +1271,17 @@ public class LatLon {
      * @throws IllegalArgumentException if either location is null, or if the meridian is null.
      */
     public static LatLon intersectionWithMeridian(LatLon p1, LatLon p2, Angle meridian, Globe globe) {
-        if (p1 == null || p2 == null) {
-            String msg = Logging.getMessage("nullValue.LocationIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (meridian == null) {
-            String msg = Logging.getMessage("nullValue.MeridianIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (p1 == null || p2 == null) {
+//            String msg = Logging.getMessage("nullValue.LocationIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (meridian == null) {
+//            String msg = Logging.getMessage("nullValue.MeridianIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         if (globe == null || globe instanceof Globe2D) {
             return intersectionWithMeridian(p1, p2, meridian);
@@ -1318,17 +1318,17 @@ public class LatLon {
      * @throws IllegalArgumentException if either location is null, or if the meridian is null.
      */
     public static LatLon intersectionWithMeridian(LatLon p1, LatLon p2, Angle meridian) {
-        if (p1 == null || p2 == null) {
-            String msg = Logging.getMessage("nullValue.LocationIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (meridian == null) {
-            String msg = Logging.getMessage("nullValue.MeridianIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (p1 == null || p2 == null) {
+//            String msg = Logging.getMessage("nullValue.LocationIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
+//
+//        if (meridian == null) {
+//            String msg = Logging.getMessage("nullValue.MeridianIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         // y = mx + b case after normalizing negative angles.
         double lon1 = p1.getLongitude().degrees < 0 ? p1.getLongitude().degrees + 360 : p1.getLongitude().degrees;
@@ -1357,11 +1357,11 @@ public class LatLon {
      * @return the azimuth
      */
     public static Angle ellipsoidalForwardAzimuth(LatLon p1, LatLon p2, double equatorialRadius, double polarRadius) {
-        if (p1 == null || p2 == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (p1 == null || p2 == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // TODO: What if polar radius is larger than equatorial radius?
         // Calculate flattening
@@ -1377,7 +1377,7 @@ public class LatLon {
         final double sU2 = Math.sin(U2);
 
         // Calculate difference in longitude
-        final double L = p2.longitude.subtract(p1.longitude).radians;
+        final double L = p2.longitude.sub(p1.longitude).radians;
 
         // Vincenty's Formula for Forward Azimuth
         // iterate until change in lambda is negligible (e.g. 1e-12 ~= 0.06mm)
@@ -1447,11 +1447,11 @@ public class LatLon {
         final double R = 1.0 - F;
         final double EPS = 0.5E-13;
 
-        if (p1 == null || p2 == null) {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
+//        if (p1 == null || p2 == null) {
+//            String message = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(message);
+//            throw new IllegalArgumentException(message);
+//        }
 
         // Algorithm from National Geodetic Survey, FORTRAN program "inverse,"
         // subroutine "INVER1," by L. PFEIFER and JOHN G. GERGEN.
@@ -1548,17 +1548,6 @@ public class LatLon {
     public static List<LatLon> computeShiftedLocations(Position oldLocation, Position newLocation,
         Iterable<? extends LatLon> locations) {
         // TODO: Account for dateline spanning
-//        if (oldLocation == null || newLocation == null) {
-//            String msg = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (locations == null) {
-//            String msg = Logging.getMessage("nullValue.PositionsListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         List<LatLon> newPositions = new ArrayList<>(sizeEstimate(locations));
 
@@ -1573,23 +1562,6 @@ public class LatLon {
 
     public static List<LatLon> computeShiftedLocations(Globe globe, LatLon oldLocation, LatLon newLocation,
         Iterable<? extends LatLon> locations) {
-//        if (globe == null) {
-//            String msg = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (oldLocation == null || newLocation == null) {
-//            String msg = Logging.getMessage("nullValue.LocationIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (locations == null) {
-//            String msg = Logging.getMessage("nullValue.LocationsListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         List<LatLon> newLocations = new ArrayList<>(sizeEstimate(locations));
 
@@ -1598,10 +1570,8 @@ public class LatLon {
         Vec4 delta = newPoint.subtract3(oldPoint);
 
         for (LatLon latLon : locations) {
-            Position newPos = globe.computePositionFromEllipsoidalPoint(
-                globe.computeEllipsoidalPointFromLocation(latLon).add3(delta));
-
-            newLocations.add(newPos);
+            newLocations.add(globe.computePositionFromEllipsoidalPoint(
+                globe.computeEllipsoidalPointFromLocation(latLon).add3(delta)));
         }
 
         return newLocations;
@@ -1644,55 +1614,30 @@ public class LatLon {
     }
 
     public LatLon add(LatLon that) {
-//        if (that == null) {
-//            String msg = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
-        Angle lat = Angle.normalizedLatitude(this.latitude.add(that.latitude));
-        Angle lon = Angle.normalizedLongitude(this.longitude.add(that.longitude));
+        Angle lat = Angle.latNorm(this.latitude.add(that.latitude));
+        Angle lon = Angle.lonNorm(this.longitude.add(that.longitude));
 
         return new LatLon(lat, lon);
     }
 
     public LatLon subtract(LatLon that) {
-//        if (that == null) {
-//            String msg = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
-        Angle lat = Angle.normalizedLatitude(this.latitude.subtract(that.latitude));
-        Angle lon = Angle.normalizedLongitude(this.longitude.subtract(that.longitude));
-
-        return new LatLon(lat, lon);
+        return new LatLon(
+            Angle.latNorm(this.latitude.sub(that.latitude)),
+            Angle.lonNorm(this.longitude.sub(that.longitude)));
     }
 
     public LatLon add(Position that) {
-//        if (that == null) {
-//            String msg = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-
-        Angle lat = Angle.normalizedLatitude(this.latitude.add(that.getLatitude()));
-        Angle lon = Angle.normalizedLongitude(this.longitude.add(that.getLongitude()));
-
-        return new LatLon(lat, lon);
+        return new LatLon(
+            Angle.latNorm(this.latitude.add(that.getLatitude())),
+            Angle.lonNorm(this.longitude.add(that.getLongitude())));
     }
 
     public LatLon subtract(Position that) {
-//        if (that == null) {
-//            String msg = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-
-        Angle lat = Angle.normalizedLatitude(this.latitude.subtract(that.getLatitude()));
-        Angle lon = Angle.normalizedLongitude(this.longitude.subtract(that.getLongitude()));
-
-        return new LatLon(lat, lon);
+        return new LatLon(
+            Angle.latNorm(this.latitude.sub(that.getLatitude())),
+            Angle.lonNorm(this.longitude.sub(that.getLongitude())));
     }
 
     /**
@@ -1707,12 +1652,6 @@ public class LatLon {
      */
     public static LatLon parseLatLon(String latLonString) // TODO
     {
-//        if (latLonString == null) {
-//            String msg = Logging.getMessage("nullValue.StringIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-
         throw new UnsupportedOperationException(); // TODO: remove when implemented
     }
 

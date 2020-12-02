@@ -259,7 +259,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
      */
     public boolean isSupported(String sidc) {
         SymbolCode symbolCode = new SymbolCode(sidc);
-        String key = SymbolCode.toMaskedString();
+        String key = symbolCode.toMaskedString();
         return key!=null && this.classMap.containsKey(key);
     }
 
@@ -276,7 +276,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory {
      * @return The implementation class for the specified SIDC, or {@code null} if no implementation class is found.
      */
     protected Class getClassForCode(SymbolCode symbolCode) {
-        String key = SymbolCode.toMaskedString();
+        String key = symbolCode.toMaskedString();
         return key != null ? this.classMap.get(key) : null;
     }
 }

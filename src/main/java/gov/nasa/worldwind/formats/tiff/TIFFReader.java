@@ -412,42 +412,6 @@ class TIFFReader {
     /*
      * Utility method intended to read the array of StripOffsets or StripByteCounts.
      */
-//    public long[] readOffsetsAsLongs(TiffIFDEntry entry) throws IOException
-//    {
-//        long[] offsets = new long[(int) entry.count];
-//        if (entry.count == 1)
-//        {
-//            // this is a special case, and it *does* happen!
-//            offsets[0] = entry.asLong();
-//        }
-//        else
-//        {
-//            long fileOffset = entry.asLong();
-//            this.theChannel.position(fileOffset);
-//            if (entry.type == Tiff.Type.SHORT)
-//            {
-//                ByteBuffer buff = ByteBuffer.allocateDirect(offsets.length * SHORT_SIZEOF);
-//                this.theChannel.read(buff);
-//                buff.order(this.getByteOrder()).flip();
-//                for (int i = 0; i < entry.count; i++)
-//                {
-//                    offsets[i] = getUnsignedShort(buff);
-//                }
-//            }
-//            else
-//            {
-//                ByteBuffer buff = ByteBuffer.allocateDirect(offsets.length * INTEGER_SIZEOF);
-//                this.theChannel.read(buff);
-//                buff.order(this.getByteOrder()).flip();
-//                for (int i = 0; i < entry.count; i++)
-//                {
-//                    offsets[i] = getUnsignedInt(buff);
-//                }
-//            }
-//        }
-//
-//        return offsets;
-//    }
 
     //Inner class for reading individual codes during decompression
     private static class CodeReader {

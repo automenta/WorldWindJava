@@ -141,8 +141,8 @@ public class GeoRSSParser {
             throw new IllegalArgumentException(message);
         }
 
-        List<Node> shapeNodes = new ArrayList<>();
-        List<Node> attributeNodes = new ArrayList<>();
+        Collection<Node> shapeNodes = new ArrayList<>();
+        Collection<Node> attributeNodes = new ArrayList<>();
 
         // Shapes
         NodeList nodes = xmlDoc.getElementsByTagNameNS(GEORSS_URI, "where");

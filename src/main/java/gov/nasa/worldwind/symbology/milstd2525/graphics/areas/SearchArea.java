@@ -329,7 +329,7 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
         Angle azimuth1 = LatLon.greatCircleAzimuth(this.position1, this.position2);
         Angle azimuth2 = LatLon.greatCircleAzimuth(this.position1, this.position3);
 
-        Angle delta = azimuth2.subtract(azimuth1);
+        Angle delta = azimuth2.sub(azimuth1);
         int sign = delta.degrees > 0 ? 1 : -1;
 
         delta = Angle.fromDegrees(sign * 5.0);
@@ -363,7 +363,7 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
         LatLon locA = LatLon.greatCircleEndPosition(startPosition, azimuth.add(delta), dist);
 
         dist = dist.multiply(0.9);
-        LatLon locB = LatLon.greatCircleEndPosition(startPosition, azimuth.subtract(delta), dist);
+        LatLon locB = LatLon.greatCircleEndPosition(startPosition, azimuth.sub(delta), dist);
 
         return Arrays.asList(startPosition, new Position(locA, 0), new Position(locB, 0), endPosition);
     }

@@ -1624,17 +1624,6 @@ public abstract class AbstractShape extends WWObjectImpl
             attrs.restoreState(rs, so);
             this.setAttributes(attrs);
         }
-
-        /*
-        so = rs.getStateObject(context, "highlightAttrs");
-        if (so != null)
-        {
-            ShapeAttributes attrs = (this.getHighlightAttributes() != null) ? this.getHighlightAttributes()
-                : new BasicShapeAttributes();
-            attrs.restoreState(rs, so);
-            this.setHighlightAttributes(attrs);
-        }
-        */
     }
 
     /**

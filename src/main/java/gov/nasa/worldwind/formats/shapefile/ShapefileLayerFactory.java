@@ -587,17 +587,6 @@ public class ShapefileLayerFactory implements Factory, ShapefileRenderable.Attri
     }
 
     protected void addRenderablesForShapefile(Shapefile shp, RenderableLayer layer) {
-//        boolean showRenderable=false;
-//        for (int idx:showRenderables) {
-//            if (idx==this.renderableIndex) {
-//                showRenderable=true;
-//                break;
-//            }
-//        }
-//        this.renderableIndex++;
-//        if (!showRenderable) {
-//            return;
-//        }
 
         if (Shapefile.isPointType(shp.getShapeType())) {
             this.addRenderablesForPoints(shp, layer);

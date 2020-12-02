@@ -190,8 +190,6 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         double deltaLat = dLat.degrees / 90;
         double d1 = -1.0 + deltaLat * firstRow;
         for (int row = firstRow; row <= lastRow; row++) {
-            //Angle p2;
-            //p2 = p1.add(dLat);
             double d2 = d1 + deltaLat;
 
             Angle t1 = Tile.computeColumnLongitude(firstCol, dLon, lonOrigin);
@@ -292,8 +290,6 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
         tile.setFallbackTile(null);
 
         if (tile.isTextureInMemory(dc.getTextureCache())) {
-            //            System.out.printf("Sector %s, min = %f, max = %f\n", tile.getSector(),
-            //                dc.getGlobe().getMinElevation(tile.getSector()), dc.getGlobe().getMaxElevation(tile.getSector()));
             this.addTileToCurrent(tile);
             return;
         }
@@ -338,68 +334,11 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     }
 
     private static boolean isTileVisible(DrawContext dc, MercatorTextureTile tile) {
-        //        if (!(tile.getExtent(dc).intersects(dc.getView().getFrustumInModelCoordinates())
-        //            && (dc.getVisibleSector() == null || dc.getVisibleSector().intersects(tile.getSector()))))
-        //            return false;
-        //
-        //        Position eyePos = dc.getView().getEyePosition();
-        //        LatLon centroid = tile.getSector().getCentroid();
-        //        Angle d = LatLon.greatCircleDistance(eyePos.getLatLon(), centroid);
-        //        if ((!tile.getLevelName().equals("0")) && d.compareTo(tile.getSector().getDeltaLat().multiply(2.5)) == 1)
-        //            return false;
-        //
-        //        return true;
-        //
         return tile.getExtent(dc).intersects(
             dc.getView().getFrustumInModelCoordinates())
             && (dc.getVisibleSector() == null || dc.getVisibleSector()
             .intersects(tile.sector));
     }
-
-    //
-    //    private boolean meetsRenderCriteria2(DrawContext dc, TextureTile tile)
-    //    {
-    //        if (this.levels.isFinalLevel(tile.getLevelNumber()))
-    //            return true;
-    //
-    //        Sector sector = tile.getSector();
-    //        Vec4[] corners = sector.computeCornerPoints(dc.getGlobe());
-    //        Vec4 centerPoint = sector.computeCenterPoint(dc.getGlobe());
-    //
-    //        View view = dc.getView();
-    //        double d1 = view.getEyePoint().distanceTo3(corners[0]);
-    //        double d2 = view.getEyePoint().distanceTo3(corners[1]);
-    //        double d3 = view.getEyePoint().distanceTo3(corners[2]);
-    //        double d4 = view.getEyePoint().distanceTo3(corners[3]);
-    //        double d5 = view.getEyePoint().distanceTo3(centerPoint);
-    //
-    //        double minDistance = d1;
-    //        if (d2 < minDistance)
-    //            minDistance = d2;
-    //        if (d3 < minDistance)
-    //            minDistance = d3;
-    //        if (d4 < minDistance)
-    //            minDistance = d4;
-    //        if (d5 < minDistance)
-    //            minDistance = d5;
-    //
-    //        double r = 0;
-    //        if (minDistance == d1)
-    //            r = corners[0].getLength3();
-    //        if (minDistance == d2)
-    //            r = corners[1].getLength3();
-    //        if (minDistance == d3)
-    //            r = corners[2].getLength3();
-    //        if (minDistance == d4)
-    //            r = corners[3].getLength3();
-    //        if (minDistance == d5)
-    //            r = centerPoint.getLength3();
-    //
-    //        double texelSize = tile.getLevel().getTexelSize(r);
-    //        double pixelSize = dc.getView().computePixelSizeAtDistance(minDistance);
-    //
-    //        return 2 * pixelSize >= texelSize;
-    //    }
 
     private boolean meetsRenderCriteria(DrawContext dc, MercatorTextureTile tile) {
         return this.levels.isFinalLevel(tile.getLevelNumber())
@@ -527,11 +466,6 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     }
 
     public boolean isLayerInView(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         if (dc.getView() == null) {
             String message = Logging
@@ -711,17 +645,6 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
 
     public int computeLevelForResolution(Sector sector, Globe globe,
         double resolution) {
-//        if (sector == null) {
-//            String message = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         double texelSize = 0;
         Level targetLevel = this.levels.getLastLevel();
@@ -746,11 +669,6 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
     public BufferedImage composeImageForSector(Sector sector, int imageWidth,
         int imageHeight, int levelNumber, String mimeType,
         boolean abortOnError, BufferedImage image) {
-//        if (sector == null) {
-//            String message = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         if (levelNumber < 0) {
             levelNumber = this.levels.getLastLevel().getLevelNumber();
@@ -801,11 +719,11 @@ public abstract class MercatorTiledImageLayer extends AbstractLayer {
                         .getDeltaLon()));
 
                     double dh = imageHeight
-                        * (-tile.sector.latMax().subtract(
+                        * (-tile.sector.latMax().sub(
                         sector.latMax()).degrees / sector
                         .getDeltaLat().degrees);
                     double dw = imageWidth
-                        * (tile.sector.lonMin().subtract(
+                        * (tile.sector.lonMin().sub(
                         sector.lonMin()).degrees / sector
                         .getDeltaLon().degrees);
 

@@ -343,11 +343,6 @@ public class SurfaceIcon extends AbstractSurfaceRenderable implements Movable, D
     }
 
     public List<Sector> getSectors(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.computeSectors(dc);
     }

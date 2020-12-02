@@ -30,7 +30,7 @@ public class VPFUtils {
 
         try {
             VPFTableReader tableReader = new VPFTableReader();
-            return tableReader.read(file);
+            return VPFTableReader.read(file);
         }
         catch (WWRuntimeException e) {
             // Exception already logged by VPFTableReader.

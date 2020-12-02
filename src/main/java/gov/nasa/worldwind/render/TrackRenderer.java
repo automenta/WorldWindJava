@@ -112,7 +112,7 @@ public class TrackRenderer implements Disposable {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         Vec4 lastPointDrawn = null;
 
-        this.begin(dc);
+        TrackRenderer.begin(dc);
         {
             if (!dc.isPickingMode())
                 this.material.apply(gl, GL2.GL_FRONT);
@@ -168,7 +168,7 @@ public class TrackRenderer implements Disposable {
                 }
             }
         }
-        this.end(dc);
+        TrackRenderer.end(dc);
 
         return lastPointDrawn;
     }
@@ -237,7 +237,7 @@ public class TrackRenderer implements Disposable {
         return dc.getGlobe().computePointFromPosition(pos.getLatitude(), pos.getLongitude(), this.elevation);
     }
 
-    protected void begin(DrawContext dc) {
+    protected static void begin(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
         Vec4 cameraPosition = dc.getView().getEyePoint();
 
@@ -275,7 +275,7 @@ public class TrackRenderer implements Disposable {
         gl.glPushMatrix();
     }
 
-    protected void end(DrawContext dc) {
+    protected static void end(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);

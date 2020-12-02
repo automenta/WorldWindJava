@@ -283,7 +283,7 @@ public class Wizard {
         }
     }
 
-    static class FinishIdentifier {
+    final static class FinishIdentifier {
         public static final String IDENTIFIER = "wizard.FinishIdentifier";
     }
 

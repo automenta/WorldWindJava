@@ -96,8 +96,6 @@ public class RPFFrameFileComponents {
 
     private void parseColorConverterSubsection(ByteBuffer buffer) {
         buffer.position(this.componentLocationTable.getColorConverterSubsectionLocation());
-//        if (0 < this.numOfColorConverterOffsetRecords)
-//            throw new NITFSRuntimeException("NITFSReader.NotImplemented.ColorConvertorSubsectionReader");
     }
 
     private void parseColormapSubSection(ByteBuffer buffer) {

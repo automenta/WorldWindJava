@@ -225,31 +225,29 @@ public class DeclutteringTextRenderer {
 
             Point.Float drawPoint = DeclutteringTextRenderer.computeDrawPoint(textBounds, screenPoint);
 
-            if (drawPoint != null) {
-                if (scale != 1.0d) {
-                    gl.glScaled(scale, scale, 1.0d);
-                    drawPoint.setLocation(drawPoint.x / (float) scale, drawPoint.y / (float) scale);
-                }
-
-                Color color = geographicText.getColor();
-                if (color == null)
-                    color = DEFAULT_COLOR;
-                color = DeclutteringTextRenderer.applyOpacity(color, opacity);
-
-                Color background = geographicText.getBackgroundColor();
-                if (background != null) {
-                    background = DeclutteringTextRenderer.applyOpacity(background, opacity);
-                    textRenderer.setColor(background);
-                    textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
-                }
-
-                textRenderer.setColor(color);
-                textRenderer.draw3D(charSequence, drawPoint.x, drawPoint.y, 0, 1);
-                textRenderer.flush();
-
-                if (scale != 1.0d)
-                    gl.glLoadIdentity();
+            if (scale != 1.0d) {
+                gl.glScaled(scale, scale, 1.0d);
+                drawPoint.setLocation(drawPoint.x / (float) scale, drawPoint.y / (float) scale);
             }
+
+            Color color = geographicText.getColor();
+            if (color == null)
+                color = DEFAULT_COLOR;
+            color = DeclutteringTextRenderer.applyOpacity(color, opacity);
+
+            Color background = geographicText.getBackgroundColor();
+            if (background != null) {
+                background = DeclutteringTextRenderer.applyOpacity(background, opacity);
+                textRenderer.setColor(background);
+                textRenderer.draw3D(charSequence, drawPoint.x + 1, drawPoint.y - 1, 0, 1);
+            }
+
+            textRenderer.setColor(color);
+            textRenderer.draw3D(charSequence, drawPoint.x, drawPoint.y, 0, 1);
+            textRenderer.flush();
+
+            if (scale != 1.0d)
+                gl.glLoadIdentity();
         }
         catch (Exception e) {
             handleTextRendererExceptions(e);

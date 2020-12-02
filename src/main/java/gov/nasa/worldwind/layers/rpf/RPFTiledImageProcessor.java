@@ -373,30 +373,6 @@ public class RPFTiledImageProcessor {
         return sector;
     }
 
-    //private boolean isPolarFile(File file)
-    //{
-    //    boolean isPolar = false;
-    //    try
-    //    {
-    //        if (file != null && file.getName() != null)
-    //        {
-    //            // Parse the filename, using the conventions for CADRG and CIB filenames.
-    //            RPFFrameFilename rpfFilename = RPFFrameFilename.parseFilename(file.getName().toUpperCase());
-    //            // Get the dataseries associated with that code.
-    //            char zoneCode = rpfFilename.getZoneCode();
-    //            // Ignore polar zones.
-    //            if (zoneCode == '9' || zoneCode == 'J')
-    //                isPolar = true;
-    //        }
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        // Computing the file's zone failed.
-    //        isPolar = false;
-    //    }
-    //    return isPolar;
-    //}
-
     private void createTiledImagery(Collection<Tile> tileList, RPFGenerator generator) {
         firePropertyChange(BEGIN_SUB_TASK, null, null);
         firePropertyChange(SUB_TASK_NUM_STEPS, null, tileList.size());

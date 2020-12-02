@@ -211,23 +211,6 @@ public class SkyGradientLayer extends AbstractLayer {
      * @param dc     the current DrawContext
      * @param length the lenght of the axes lines
      */
-//    private static void DrawAxis(DrawContext dc, float length) {
-//        GL gl = dc.getGL();
-//        gl.glBegin(GL.GL_LINES);
-//
-//        // Draw 3 axis
-//        gl.glColor3f(0f, 0f, 1f);  // Z Blue
-//        gl.glVertex3d(0d, 0d, 0d);
-//        gl.glVertex3d(0d, 0d, length);
-//        gl.glColor3f(0f, 1f, 0f);  // Y Green
-//        gl.glVertex3d(0d, 0d, 0d);
-//        gl.glVertex3d(0d, length, 0d);
-//        gl.glColor3f(1f, 0f, 0f);  // X Red
-//        gl.glVertex3d(0d, 0d, 0d);
-//        gl.glVertex3d(length, 0d, 0d);
-//
-//        gl.glEnd();
-//    }
     protected void updateSkyDome(DrawContext dc) {
         View view = dc.getView();
 

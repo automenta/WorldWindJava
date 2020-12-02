@@ -274,7 +274,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
     protected void requestTexture(DrawContext dc, TextureTile tile) {
         Vec4 centroid = tile.getCentroidPoint(dc.getGlobe());
-        Vec4 referencePoint = this.getReferencePoint(dc);
+        Vec4 referencePoint = TiledImageLayer.getReferencePoint(dc);
         if (referencePoint != null)
             tile.setPriorityDistance(centroid.distanceTo3(referencePoint));
 
@@ -925,11 +925,6 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
          */
         @Override public int compareTo(RequestTask that) {
             if (this==that) return 0;
-//            if (that == null) {
-//                String msg = Logging.getMessage("nullValue.RequestTaskIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
             return Double.compare(this.tile.getPriority(), that.tile.getPriority());
         }
 

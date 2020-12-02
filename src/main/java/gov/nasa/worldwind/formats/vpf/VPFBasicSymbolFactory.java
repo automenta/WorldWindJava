@@ -285,7 +285,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
                 // Construct a renderable object for each label symbol.
                 switch (attr.getFeatureType()) {
                     case AREA, LINE -> this.addAreaSymbol(feature, attr, outCollection);
-                    case POINT -> this.addPointLabel(feature, attr, outCollection);
+                    case POINT -> VPFBasicSymbolFactory.addPointLabel(feature, attr, outCollection);
                     case LABEL -> this.addTextLabel((VPFFeature) feature, attr, outCollection);
                 }
             }
@@ -417,7 +417,7 @@ public class VPFBasicSymbolFactory implements VPFSymbolFactory {
         }
     }
 
-    protected void addPointLabel(CombinedFeature feature, VPFSymbolAttributes attr,
+    protected static void addPointLabel(CombinedFeature feature, VPFSymbolAttributes attr,
         Collection<VPFSymbol> outCollection) {
         // Build the list of point symbol locations associated with each sub-feature.
         ArrayList<LatLon> locations = new ArrayList<>();

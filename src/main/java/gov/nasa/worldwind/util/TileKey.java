@@ -35,18 +35,6 @@ public class TileKey implements Comparable<TileKey> {
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-//        if (row < 0)
-//        {
-//            String msg = Logging.getMessage("generic.RowIndexOutOfRange", row);
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//        if (col < 0)
-//        {
-//            String msg = Logging.getMessage("generic.ColumnIndexOutOfRange", col);
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         if (cacheName == null || cacheName.length() < 1) {
             String msg = Logging.getMessage("TileKey.cacheNameIsNullOrEmpty");
             Logging.logger().severe(msg);

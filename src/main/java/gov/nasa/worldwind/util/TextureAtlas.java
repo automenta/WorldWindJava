@@ -517,7 +517,7 @@ public class TextureAtlas {
 
         // Compute the lower-left and upper-right OpenGL texture coordinates corresponding to the element's image. This
         // step converts pixel locations in the range [0, width] or [0, height] to the range [0, 1].
-        RenderedImage backingImage = (BufferedImage) this.rectPacker.getBackingStore();
+        RenderedImage backingImage = (RenderedImage) this.rectPacker.getBackingStore();
         float tx1 = x1 / backingImage.getWidth();
         float tx2 = x2 / backingImage.getWidth();
         float ty1 = y1 / backingImage.getHeight();

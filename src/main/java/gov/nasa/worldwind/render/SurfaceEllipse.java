@@ -475,9 +475,6 @@ public class SurfaceEllipse extends AbstractSurfaceShape {
         //    this.setCenter(center);
 
         // This property has not changed since the last version, but it's shown here for reference.
-        //Integer intervals = rs.getStateValueAsInteger(context, "intervals");
-        //if (intervals != null)
-        //    this.setIntervals(intervals);
 
         Double od = rs.getStateValueAsDouble(context, "orientationDegrees");
         if (od != null)

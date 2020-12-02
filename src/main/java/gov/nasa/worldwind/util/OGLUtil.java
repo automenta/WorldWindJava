@@ -52,11 +52,6 @@ public class OGLUtil {
      * @throws IllegalArgumentException if the GL is null.
      */
     public static void applyBlending(GL2ES1 gl, boolean havePremultipliedColors) {
-//        if (gl == null) {
-//            String message = Logging.getMessage("nullValue.GLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         gl.glEnable(GL2.GL_ALPHA_TEST);
         gl.glAlphaFunc(GL2.GL_GREATER, 0.0f);
@@ -101,17 +96,6 @@ public class OGLUtil {
      *                                  the opacity is greater than 1.
      */
     public static void applyColor(GL2 gl, Color color, float opacity, boolean premultiplyColors) {
-//        if (gl == null) {
-//            String message = Logging.getMessage("nullValue.GLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (color == null) {
-//            String message = Logging.getMessage("nullValue.ColorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (opacity < 0.0 || opacity > 1.0f) {
             String message = Logging.getMessage("generic.OpacityOutOfRange", opacity);
@@ -145,17 +129,6 @@ public class OGLUtil {
      *                                  the opacity is greater than 1.
      */
     public static void applyColor(GL2 gl, Color color, boolean premultiplyColors) {
-//        if (gl == null) {
-//            String message = Logging.getMessage("nullValue.GLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (color == null) {
-//            String message = Logging.getMessage("nullValue.ColorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         float[] compArray = new float[4];
         color.getRGBComponents(compArray);
@@ -181,11 +154,6 @@ public class OGLUtil {
      * @throws IllegalArgumentException if the GL is null.
      */
     public static void applyLightingDirectionalFromViewer(GL2 gl, int light, Vec4 direction) {
-//        if (gl == null) {
-//            String message = Logging.getMessage("nullValue.GLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (direction == null)
             direction = DEFAULT_LIGHT_DIRECTION;
@@ -397,10 +365,6 @@ public class OGLUtil {
      * @throws IOException if an error occurred while reading the URL
      */
     public static TextureData newTextureData(GLProfile glp, InputStream stream, boolean useMipMaps) throws IOException {
-//        // Wrap stream in BufferedInputStream so that DDS detection will work. This is a work around for JOGL issue 4764639/4892246.
-//        if (!(stream instanceof BufferedInputStream)) {
-//            stream = new BufferedInputStream(stream);
-//        }
 
         String fileSuffix = ImageType.Util.getFileSuffix(stream);
         boolean ddsFormat = fileSuffix != null && fileSuffix.equalsIgnoreCase(ImageType.T_DDS);

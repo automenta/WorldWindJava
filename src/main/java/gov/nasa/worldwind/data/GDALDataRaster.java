@@ -1012,18 +1012,14 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
                     projTime = System.currentTimeMillis() - start;
 
                     start = System.currentTimeMillis();
-                    if (null != maskDS) {
-                        gdal.ReprojectImage(srcDS, maskDS, s_srs_wkt, t_srs_wkt, gdalconst.GRA_NearestNeighbour);
-                    }
+                    gdal.ReprojectImage(srcDS, maskDS, s_srs_wkt, t_srs_wkt, gdalconst.GRA_NearestNeighbour);
                 }
                 else {
                     gdal.ReprojectImage(srcDS, destDS);
                     projTime = System.currentTimeMillis() - start;
 
                     start = System.currentTimeMillis();
-                    if (null != maskDS) {
-                        gdal.ReprojectImage(srcDS, maskDS);
-                    }
+                    gdal.ReprojectImage(srcDS, maskDS);
                 }
                 maskTime = System.currentTimeMillis() - start;
 
@@ -1034,9 +1030,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable {
 //            throw new WWRuntimeException( message );
                 }
 
-                if (null != maskDS) {
-                    roiParams.set(AVKey.GDAL_MASK_DATASET, maskDS);
-                }
+                roiParams.set(AVKey.GDAL_MASK_DATASET, maskDS);
 
                 start = System.currentTimeMillis();
                 raster = GDALUtils.composeDataRaster(destDS, roiParams);

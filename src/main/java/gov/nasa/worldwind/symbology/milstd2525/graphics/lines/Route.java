@@ -19,6 +19,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
+import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
+
 /**
  * Implementation of the aviation route graphics. This class implements the following graphics: <ul> <li>Air Corridor
  * (2.X.2.2.2.1)</li> <li>Minimum Risk Route (2.X.2.2.2.2)</li> <li>Standard Flight Route (2.X.2.2.2.3)</li>
@@ -96,7 +98,7 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
     public void setControlPoints(Iterable<? extends TacticalPoint> points) {
         this.children = points;
 
-        Collection<Position> newPositions = new ArrayList<>();
+        Collection<Position> newPositions = new ArrayList<>(sizeEstimate(points));
 
         double radius = this.getWidth() / 2.0;
 

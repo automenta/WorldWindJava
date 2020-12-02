@@ -55,16 +55,7 @@ public class RPFImageFile extends RPFFile {
                 "NITFSReader.RPFFrameFileComponentsWereNotFoundInUserDefinedImageSubheader");
     }
 
-    //public IntBuffer getImagePixelsAsBuffer(IntBuffer dest, RPFImageType imageType)
-    //{
-    //    if (null != this.imageSegment)
-    //        this.imageSegment.getImagePixelsAsArray(dest, imageType);
-    //    return dest;
-    //}
-
     public int[] getImagePixelsAsArray(int[] dest, RPFImageType imageType) {
-        //IntBuffer buffer = IntBuffer.wrap(dest);
-        //this.getImagePixelsAsBuffer(buffer, imageType);
         this.getImageSegment().getImagePixelsAsArray(dest, imageType);
         return dest;
     }

@@ -278,31 +278,16 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public void setFieldOfView(Angle fieldOfView) {
-//        if (fieldOfView == null) {
-//            String message = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.fieldOfView = fieldOfView;
     }
 
     public Vec4 project(Vec4 modelPoint) {
-//        if (modelPoint == null) {
-//            String message = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.project(modelPoint, this.modelview, this.projection, this.viewport);
     }
 
     public Vec4 unProject(Vec4 windowPoint) {
-//        if (windowPoint == null) {
-//            String message = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return unProject(windowPoint, this.modelview, this.projection, this.viewport);
     }
@@ -360,11 +345,6 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public void setEyePosition(Position eyePosition) {
-//        if (eyePosition == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.eyePosition = eyePosition;
         this.updateModelViewStateID();
@@ -377,11 +357,6 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public void setHeading(Angle heading) {
-//        if (heading == null) {
-//            String message = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.heading = ViewUtil.normalizedHeading(heading);
         this.heading = heading;
@@ -394,11 +369,6 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public void setPitch(Angle pitch) {
-//        if (pitch == null) {
-//            String message = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.pitch = pitch;
         this.updateModelViewStateID();
@@ -410,11 +380,6 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public void setRoll(Angle roll) {
-//        if (roll == null) {
-//            String message = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.roll = ViewUtil.normalizedRoll(roll);
         this.updateModelViewStateID();
@@ -469,16 +434,6 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public void setOrientation(Position eyePosition, Position centerPosition) {
-//        if (eyePosition == null || centerPosition == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (this.globe == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         Vec4 newEyePoint = this.globe.computePointFromPosition(eyePosition);
         Vec4 newCenterPoint = this.globe.computePointFromPosition(centerPosition);
@@ -502,12 +457,6 @@ public class BasicView extends WWObjectImpl implements View {
                 up = Vec4.UNIT_Y.transformBy4(modelviewInv);
             }
         }
-
-//        if (up == null) {
-//            String message = Logging.getMessage("View.ErrorSettingOrientation", eyePosition, centerPosition);
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         ViewUtil.ViewState modelCoords = ViewUtil.computeViewState(
             this.globe, newEyePoint, newCenterPoint, up);
@@ -640,11 +589,6 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public void restoreState(String stateInXml) {
-//        if (stateInXml == null) {
-//            String message = Logging.getMessage("nullValue.StringIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         RestorableSupport rs;
         try {
@@ -732,21 +676,6 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public Matrix pushReferenceCenter(DrawContext dc, Vec4 referenceCenter) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (dc.getGL() == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//        if (referenceCenter == null) {
-//            String message = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Matrix modelview = getModelviewMatrix();
 
@@ -781,21 +710,6 @@ public class BasicView extends WWObjectImpl implements View {
     }
 
     public Matrix setReferenceCenter(DrawContext dc, Vec4 referenceCenter) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (dc.getGL() == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//        if (referenceCenter == null) {
-//            String message = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Matrix modelview = getModelviewMatrix();
 
@@ -825,16 +739,6 @@ public class BasicView extends WWObjectImpl implements View {
      *                                  instances in <code>dc</code> are null.
      */
     public void popReferenceCenter(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//        if (dc.getGL() == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 

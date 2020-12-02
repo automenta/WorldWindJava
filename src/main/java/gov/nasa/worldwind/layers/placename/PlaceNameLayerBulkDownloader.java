@@ -237,8 +237,8 @@ public class PlaceNameLayerBulkDownloader extends BulkRetrievalThread {
         // Determine the row and column offset from the global tiling origin for the southwest tile corner
         int firstRow = PlaceNameLayer.Tile.computeRow(dLat, tile.navSector.latMin());
         int firstCol = PlaceNameLayer.Tile.computeColumn(dLon, tile.navSector.lonMin());
-        int lastRow = PlaceNameLayer.Tile.computeRow(dLat, tile.navSector.latMax().subtract(dLat));
-        int lastCol = PlaceNameLayer.Tile.computeColumn(dLon, tile.navSector.lonMax().subtract(dLon));
+        int lastRow = PlaceNameLayer.Tile.computeRow(dLat, tile.navSector.latMax().sub(dLat));
+        int lastCol = PlaceNameLayer.Tile.computeColumn(dLon, tile.navSector.lonMax().sub(dLon));
 
         int tileCount = 0;
         Angle p1 = PlaceNameLayer.Tile.computeRowLatitude(firstRow, dLat);

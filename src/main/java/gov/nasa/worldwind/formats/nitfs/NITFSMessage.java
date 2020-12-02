@@ -94,9 +94,6 @@ public class NITFSMessage {
         // let's read each header
         for (NITFSSegment segment : segments) {
 
-//
-//            String segId = NITFSUtil.getString(buffer, segment.headerStartOffset, 2);
-//            System.out.println("Segment type=" + segment.segmentType + ", id=" + segId);
         }
     }
 

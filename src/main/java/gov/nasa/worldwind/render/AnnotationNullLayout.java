@@ -61,7 +61,7 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout {
         Rectangle annotationBounds = new Rectangle();
 
         for (Annotation annotation : annotations) {
-            Rectangle b = this.getAnnotationBounds(dc, annotation);
+            Rectangle b = AnnotationNullLayout.getAnnotationBounds(dc, annotation);
             if (b != null) {
                 annotationBounds = annotationBounds.union(b);
             }
@@ -94,7 +94,7 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout {
         OGLStackHandler stackHandler = new OGLStackHandler();
 
         for (Annotation annotation : annotations) {
-            Rectangle annotationBounds = this.getAnnotationBounds(dc, annotation);
+            Rectangle annotationBounds = AnnotationNullLayout.getAnnotationBounds(dc, annotation);
             annotationBounds = this.adjustAnnotationBounds(dc, bounds, annotation, annotationBounds);
 
             stackHandler.pushModelview(gl);
@@ -107,7 +107,7 @@ public class AnnotationNullLayout extends AbstractAnnotationLayout {
         }
     }
 
-    protected Rectangle getAnnotationBounds(DrawContext dc, Annotation annotation) {
+    protected static Rectangle getAnnotationBounds(DrawContext dc, Annotation annotation) {
         Dimension size = AbstractAnnotationLayout.getAnnotationSize(dc, annotation);
         if (size == null)
             return null;

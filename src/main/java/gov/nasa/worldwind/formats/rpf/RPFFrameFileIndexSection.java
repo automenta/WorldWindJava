@@ -61,11 +61,6 @@ public class RPFFrameFileIndexSection {
         return frameFileIndexRecordLength;
     }
 
-//    public ArrayList<String> getPathnameTable()
-//    {
-//        return pathnameTable;
-//    }
-
     public List<RPFFrameFileIndexRecord> getFrameFileIndexTable() {
         return frameFileIndexTable;
     }

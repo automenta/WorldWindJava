@@ -395,11 +395,6 @@ public class Box implements Extent, Renderable {
      * @throws IllegalArgumentException if the <code>iterable</code> is null.
      */
     public static Box union(Iterable<? extends Box> iterable) {
-//        if (iterable == null) {
-//            String msg = Logging.getMessage("nullValue.IterableIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         ArrayList<Box> boxes = new ArrayList<>(sizeEstimate(iterable));
 
@@ -654,13 +649,6 @@ public class Box implements Extent, Renderable {
      */
     public boolean intersects(Frustum frustum) {
         // FYI: this code is identical to that in Cylinder.intersects.
-
-//        if (frustum == null) {
-//            String message = Logging.getMessage("nullValue.FrustumIsNull");
-//
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         double intersectionPoint;
         Vec4[] endPoints = new Vec4[] {this.bottomCenter, this.topCenter};

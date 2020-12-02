@@ -303,7 +303,7 @@ public class MarkerRenderer {
         this.previousAttributes = null;
     }
 
-    protected void end(DrawContext dc) {
+    protected static void end(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -431,7 +431,7 @@ public class MarkerRenderer {
                     e);
             }
             finally {
-                MarkerRenderer.this.end(dc); // Calls pickSupport.endPicking when in picking mode.
+                MarkerRenderer.end(dc); // Calls pickSupport.endPicking when in picking mode.
                 MarkerRenderer.this.pickSupport.resolvePick(dc, pickPoint, this.layer); // Also clears the pick list.
             }
         }
@@ -446,7 +446,7 @@ public class MarkerRenderer {
                     e);
             }
             finally {
-                MarkerRenderer.this.end(dc);
+                MarkerRenderer.end(dc);
             }
         }
     }

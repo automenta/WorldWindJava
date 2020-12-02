@@ -109,17 +109,6 @@ public class GDAL {
         atx.scale(sx, sy);
 
         return atx;
-
-//        double[] gt = new double[6];
-//        ds.GetGeoTransform( gt );
-//
-//        double dx = gt[GDAL.GT_1_PIXEL_WIDTH] * ((double)ds.getRasterXSize()) / ((double)newWidth);
-//        double dy = gt[GDAL.GT_5_PIXEL_HEIGHT] * ((double)ds.getRasterYSize()) / ((double)newHeight);
-//        dy = ( dy > 0d ) ? -dy : dy; // make sure DY is always negative
-//
-//        return new AffineTransform(
-//            dx,  gt[GDAL.GT_4_ROTATION_Y], gt[GDAL.GT_2_ROTATION_X],
-//            dy, gt[GDAL.GT_0_ORIGIN_LON], gt[GDAL.GT_3_ORIGIN_LAT] );
     }
 
     public static double getMinX(Point2D[] points) throws IllegalArgumentException {

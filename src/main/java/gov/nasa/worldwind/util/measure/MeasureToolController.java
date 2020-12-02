@@ -446,7 +446,7 @@ public class MeasureToolController extends MouseAdapter
                     Angle azimuth = LatLon.greatCircleAzimuth(controlPoint.getPosition(),
                         this.measureTool.getCenterPosition());
                     // Account for view heading in cursor selection
-                    azimuth = azimuth.subtract(this.measureTool.getWwd().view().getHeading());
+                    azimuth = azimuth.sub(this.measureTool.getWwd().view().getHeading());
                     setComponentCursor(selectResizeCursor(azimuth));
                 }
                 else if (MeasureTool.isCenterControl(controlPoint)) {

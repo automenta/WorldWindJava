@@ -767,12 +767,6 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         if (this.getShape() instanceof Airspace) {
             double[] altitudes = ((Airspace) shadowShape).getAltitudes();
             ((Airspace) shadowShape).setAltitudes(altitudes[0], 0.95 * altitudes[1]);
-//
-//            // Show only the outline of the shadow shape.
-//            AirspaceAttributes shadowAttributes = new BasicAirspaceAttributes(this.originalAttributes);
-//            shadowAttributes.setDrawInterior(false);
-//            ((Airspace)shadowShape).setAttributes(shadowAttributes);
-//            ((Airspace)shadowShape).setHighlightAttributes(shadowAttributes);
         }
     }
 
@@ -1447,7 +1441,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         // Rotate the positions.
         LatLon center = LatLon.getCenter(this.getWwd().model().getGlobe(), locations); // rotation axis
         Angle previousHeading = LatLon.greatCircleAzimuth(center, this.getPreviousPosition());
-        Angle deltaHeading = LatLon.greatCircleAzimuth(center, terrainPosition).subtract(previousHeading);
+        Angle deltaHeading = LatLon.greatCircleAzimuth(center, terrainPosition).sub(previousHeading);
         this.currentHeading = ShapeEditor.normalizedHeading(this.getCurrentHeading(), deltaHeading);
 
         // Rotate the polygon's locations by the heading delta angle.
@@ -1633,7 +1627,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
 
         if (this.getShape() instanceof PartialCappedCylinder) {
             Angle oldHeading = LatLon.greatCircleAzimuth(cylinder.getCenter(), this.getPreviousPosition());
-            Angle deltaHeading = LatLon.greatCircleAzimuth(cylinder.getCenter(), terrainPosition).subtract(oldHeading);
+            Angle deltaHeading = LatLon.greatCircleAzimuth(cylinder.getCenter(), terrainPosition).sub(oldHeading);
 
             Angle[] azimuths = ((PartialCappedCylinder) cylinder).getAzimuths();
             switch (controlPoint.getPurpose()) {
@@ -1802,7 +1796,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             case OUTER_MAJOR_RADIUS -> radii[3] += delta.dot3(vMarker);
             case ROTATION -> {
                 Angle oldHeading = LatLon.greatCircleAzimuth(cylinder.getCenter(), this.getPreviousPosition());
-                Angle deltaHeading = LatLon.greatCircleAzimuth(cylinder.getCenter(), terrainPosition).subtract(
+                Angle deltaHeading = LatLon.greatCircleAzimuth(cylinder.getCenter(), terrainPosition).sub(
                     oldHeading);
                 cylinder.setHeading(ShapeEditor.normalizedHeading(cylinder.getHeading(), deltaHeading));
                 this.currentHeading = ShapeEditor.normalizedHeading(this.getCurrentHeading(), deltaHeading);
@@ -1982,7 +1976,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         }
         else if (controlPoint.getPurpose().equals(ROTATION)) {
             Angle oldHeading = LatLon.greatCircleAzimuth(center, this.getPreviousPosition());
-            Angle deltaHeading = LatLon.greatCircleAzimuth(center, terrainPosition).subtract(oldHeading);
+            Angle deltaHeading = LatLon.greatCircleAzimuth(center, terrainPosition).sub(oldHeading);
 
             for (int i = 0; i < 2; i++) {
                 Angle heading = LatLon.greatCircleAzimuth(center, locations[i]);
@@ -2223,7 +2217,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
             }
             LatLon center = LatLon.getCenter(this.getWwd().model().getGlobe(), trackLocations);
             Angle previousHeading = LatLon.greatCircleAzimuth(center, this.getPreviousPosition());
-            Angle deltaHeading = LatLon.greatCircleAzimuth(center, terrainPosition).subtract(previousHeading);
+            Angle deltaHeading = LatLon.greatCircleAzimuth(center, terrainPosition).sub(previousHeading);
             this.currentHeading = ShapeEditor.normalizedHeading(this.getCurrentHeading(), deltaHeading);
 
             // Rotate all the legs.
@@ -2684,7 +2678,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         else // rotation
         {
             Angle oldHeading = LatLon.greatCircleAzimuth(square.getCenter(), this.getPreviousPosition());
-            Angle deltaHeading = LatLon.greatCircleAzimuth(square.getCenter(), terrainPosition).subtract(oldHeading);
+            Angle deltaHeading = LatLon.greatCircleAzimuth(square.getCenter(), terrainPosition).sub(oldHeading);
             square.setHeading(ShapeEditor.normalizedHeading(square.getHeading(), deltaHeading));
         }
     }
@@ -2748,7 +2742,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         }
         else {
             Angle oldHeading = LatLon.greatCircleAzimuth(quad.getCenter(), this.getPreviousPosition());
-            Angle deltaHeading = LatLon.greatCircleAzimuth(quad.getCenter(), terrainPosition).subtract(oldHeading);
+            Angle deltaHeading = LatLon.greatCircleAzimuth(quad.getCenter(), terrainPosition).sub(oldHeading);
             quad.setHeading(ShapeEditor.normalizedHeading(quad.getHeading(), deltaHeading));
         }
     }
@@ -2820,7 +2814,7 @@ public class ShapeEditor implements SelectListener, PropertyChangeListener {
         }
         else {
             Angle oldHeading = LatLon.greatCircleAzimuth(ellipse.getCenter(), this.getPreviousPosition());
-            Angle deltaHeading = LatLon.greatCircleAzimuth(ellipse.getCenter(), terrainPosition).subtract(oldHeading);
+            Angle deltaHeading = LatLon.greatCircleAzimuth(ellipse.getCenter(), terrainPosition).sub(oldHeading);
             ellipse.setHeading(ShapeEditor.normalizedHeading(ellipse.getHeading(), deltaHeading));
         }
 

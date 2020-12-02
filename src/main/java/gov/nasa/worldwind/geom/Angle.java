@@ -385,12 +385,12 @@ public class Angle implements Comparable<Angle> {
         return Angle.fromDegrees(normalizedDegrees(unnormalizedAngle.degrees));
     }
 
-    public static Angle normalizedLatitude(Angle unnormalizedAngle) {
+    public static Angle latNorm(Angle unnormalizedAngle) {
 
         return Angle.fromDegrees(normalizedDegreesLatitude(unnormalizedAngle.degrees));
     }
 
-    public static Angle normalizedLongitude(Angle unnormalizedAngle) {
+    public static Angle lonNorm(Angle unnormalizedAngle) {
 
         return Angle.fromDegrees(normalizedDegreesLongitude(unnormalizedAngle.degrees));
     }
@@ -476,7 +476,7 @@ public class Angle implements Comparable<Angle> {
      * @return a new angle corresponding to this angle's size minus angle's size.
      * @throws IllegalArgumentException if angle is null.
      */
-    public final Angle subtract(Angle angle) {
+    public final Angle sub(Angle angle) {
 
         return Angle.fromDegrees(this.degrees - angle.degrees);
     }
@@ -545,7 +545,7 @@ public class Angle implements Comparable<Angle> {
      */
     public Angle angularDistanceTo(Angle angle) {
 
-        double differenceDegrees = angle.subtract(this).degrees;
+        double differenceDegrees = angle.sub(this).degrees;
         if (differenceDegrees < -180)
             differenceDegrees += 360;
         else if (differenceDegrees > 180)
@@ -606,12 +606,12 @@ public class Angle implements Comparable<Angle> {
         return normalizedAngle(this);
     }
 
-    public Angle normalizedLatitude() {
-        return normalizedLatitude(this);
+    public Angle latNorm() {
+        return latNorm(this);
     }
 
-    public Angle normalizedLongitude() {
-        return normalizedLongitude(this);
+    public Angle lonNorm() {
+        return lonNorm(this);
     }
 
     /**

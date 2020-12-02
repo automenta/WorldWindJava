@@ -160,36 +160,6 @@ public class AirspaceEditorController implements KeyListener, MouseListener, Mou
         return (AirspaceControlPoint) obj;
     }
 
-    //protected AirspaceControlPoint getFirstOwnedControlPointAtCurrentPosition()
-    //{
-    //    // Without an editor, we cannot know if the control point belongs to us.
-    //    if (this.getEditor() == null)
-    //        return null;
-    //
-    //    PickedObjectList pickedObjects = this.getWorldWindow().getObjectsAtCurrentPosition();
-    //    if (pickedObjects == null)
-    //        return null;
-    //
-    //    AirspaceControlPoint controlPoint = null;
-    //
-    //    for (int i = 0; i < pickedObjects.size() && controlPoint == null; i++)
-    //    {
-    //        PickedObject po = pickedObjects.get(i);
-    //        if (!po.isTerrain() && po.getObject() instanceof AirspaceControlPoint)
-    //        {
-    //            AirspaceControlPoint pickedPoint = (AirspaceControlPoint) po.getObject();
-    //            // Editor is compared by reference, because we're only concerned about the exact reference
-    //            // a control point refers to, rather than an equivalent object.
-    //            if (this.getEditor() == pickedPoint.getEditor())
-    //            {
-    //                controlPoint = pickedPoint;
-    //            }
-    //        }
-    //    }
-    //
-    //    return controlPoint;
-    //}
-
     protected Object getTopPickedObject() {
         if (this.getWorldWindow() == null)
             return null;
@@ -267,12 +237,6 @@ public class AirspaceEditorController implements KeyListener, MouseListener, Mou
                 }
                 e.consume();
             }
-            //else if (e.isAltDown())
-            //{
-            //    // Actual logic is handled in mousePressed, but we consume the event here to keep the any other
-            //    // system from receiving it.
-            //    e.consume();
-            //}
         }
     }
 

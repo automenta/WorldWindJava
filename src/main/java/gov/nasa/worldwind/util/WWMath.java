@@ -922,15 +922,6 @@ public class WWMath {
             LatLon p2 = iter.next();
 
 // Developped for clarity
-//            double lat = location.getLatitude().degrees;
-//            double lon = location.getLongitude().degrees;
-//            double lat1 = p1.getLatitude().degrees;
-//            double lon1 = p1.getLongitude().degrees;
-//            double lat2 = p2.getLatitude().degrees;
-//            double lon2 = p2.getLongitude().degrees;
-//            if ( ((lat2 <= lat && lat < lat1) || (lat1 <= lat && lat < lat2))
-//                    && (lon < (lon1 - lon2) * (lat - lat2) / (lat1 - lat2) + lon2) )
-//                result = !result;
 
             if (((p2.getLatitude().degrees <= location.getLatitude().degrees
                 && location.getLatitude().degrees < p1.getLatitude().degrees) ||

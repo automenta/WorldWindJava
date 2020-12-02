@@ -66,9 +66,6 @@ public class Level extends AVListImpl implements Comparable<Level> {
         this.urlBuilder = (TileUrlBuilder) this.params.get(AVKey.TILE_URL_BUILDER);
         this.expiryTime = AVListImpl.getLongValue(params, AVKey.EXPIRY_TIME, 0L);
 
-//        double averageTileSize = 0.5 * (this.tileWidth + this.tileHeight);
-//        double averageTileDelta =
-//            0.5 * (this.tileDelta.getLatitude().getRadians() + this.tileDelta.getLongitude().getRadians());
         this.texelSize = this.tileDelta.getLatitude().getRadians() / this.tileHeight;
 
         this.path = this.cacheName + "/" + this.levelName;
@@ -257,11 +254,6 @@ public class Level extends AVListImpl implements Comparable<Level> {
      * @throws IllegalArgumentException       if <code>tile</code> is null.
      */
     public URL getTileResourceURL(Tile tile, String imageFormat) throws MalformedURLException {
-//        if (tile == null) {
-//            String msg = Logging.getMessage("nullValue.TileIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return this.urlBuilder.getURL(tile, imageFormat);
     }

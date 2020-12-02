@@ -605,9 +605,9 @@ public class AbstractGraticuleLayer extends AbstractLayer {
             double labelOffsetDegrees = pixelSizeDegrees * view.getViewport().getWidth() / 4;
             labelPos = LatLon.fromDegrees(centerPos.getLatitude().degrees - labelOffsetDegrees,
                 centerPos.getLongitude().degrees - labelOffsetDegrees);
-            double labelLatDegrees = labelPos.getLatitude().normalizedLatitude().degrees;
+            double labelLatDegrees = labelPos.getLatitude().latNorm().degrees;
             labelLatDegrees = Math.min(Math.max(labelLatDegrees, -70), 70);
-            labelPos = new LatLon(Angle.fromDegrees(labelLatDegrees), labelPos.getLongitude().normalizedLongitude());
+            labelPos = new LatLon(Angle.fromDegrees(labelLatDegrees), labelPos.getLongitude().lonNorm());
         }
         else
             labelPos = dc.getView().getEyePosition(); // fall back if no orbit view
@@ -642,7 +642,8 @@ public class AbstractGraticuleLayer extends AbstractLayer {
         return view.getEyePoint().distanceTo3(surfacePoint);
     }
 
-    protected void computeTruncatedSegment(Position p1, Position p2, Sector sector, Collection<Position> positions) {
+    protected static void computeTruncatedSegment(Position p1, Position p2, Sector sector,
+        Collection<Position> positions) {
         if (p1 == null || p2 == null)
             return;
 
@@ -727,8 +728,6 @@ public class AbstractGraticuleLayer extends AbstractLayer {
                 midPoint = greatCircleMidPoint(a, b);
             }
             pos = midPoint;
-            //if (count >= 20)
-            //    System.out.println("Warning dichotomy loop aborted: " + p1 + " - " + p2 + " for lon " + longitude + " = " + pos);
         }
         // Adjust final longitude for an exact match
         if (pos != null)
@@ -763,8 +762,6 @@ public class AbstractGraticuleLayer extends AbstractLayer {
                 midPoint = greatCircleMidPoint(a, b);
             }
             pos = midPoint;
-            //if (count >= 20)
-            //    System.out.println("Warning dichotomy loop aborted: " + p1 + " - " + p2 + " for lat " + latitude + " = " + pos);
         }
         // Adjust final latitude for an exact match
         if (pos != null)

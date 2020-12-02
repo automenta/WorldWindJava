@@ -281,7 +281,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
             }
 
             if (ShapefileExtrudedPolygons.mustAssembleTileAttributeGroups(tile)) {
-                this.assembleTileAttributeGroups(tile);
+                ShapefileExtrudedPolygons.assembleTileAttributeGroups(tile);
             }
 
             this.currentTiles.add(tile);
@@ -513,7 +513,7 @@ public class ShapefileExtrudedPolygons extends ShapefileRenderable implements Or
         tile.attributeGroups.clear();
     }
 
-    protected void assembleTileAttributeGroups(Tile tile) {
+    protected static void assembleTileAttributeGroups(Tile tile) {
         tile.attributeGroups.clear();
 
         // Assemble the tile's records into groups with common attributes. Attributes are grouped by reference using an

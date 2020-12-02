@@ -381,12 +381,6 @@ public class BasicMercatorTiledImageLayer extends MercatorTiledImageLayer {
                         this.layer.saveBuffer(buffer, outFile);
                     }
 //                    else if (outFile.getName().endsWith(".dds"))
-//                    {
-//                        // Convert to DDS and save the result.
-//                        buffer = DDSConverter.convertToDDS(buffer, contentType);
-//                        if (buffer != null)
-//                            this.layer.saveBuffer(buffer, outFile);
-//                    }
                     else if (contentType.contains("image")) {
                         BufferedImage image = BasicMercatorTiledImageLayer.convertBufferToImage(buffer);
                         if (image != null) {

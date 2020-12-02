@@ -97,7 +97,7 @@ public class AbstractRectangularGraphic extends AbstractMilStd2525TacticalGraphi
             this.quad.setCenter(center);
 
             Angle heading = LatLon.greatCircleAzimuth(pos2, pos1);
-            this.quad.setHeading(heading.subtract(Angle.POS90));
+            this.quad.setHeading(heading.sub(Angle.POS90));
 
             this.positions = positions;
             this.shapeInvalid = true; // Need to recompute quad size

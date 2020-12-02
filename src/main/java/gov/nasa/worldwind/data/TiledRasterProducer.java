@@ -497,7 +497,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         DataRaster tileRaster;
 
         // If we have reached the final level, then create a tile raster from the original data sources.
-        if (this.isFinalLevel(levelSet, tile.getLevelNumber(), params)) {
+        if (TiledRasterProducer.isFinalLevel(levelSet, tile.getLevelNumber(), params)) {
             tileRaster = this.drawDataSources(levelSet, tile, this.dataRasterList, params);
         }
         // Otherwise, recursively create a tile raster from the next level's tile rasters.
@@ -613,7 +613,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
         return subTiles;
     }
 
-    protected boolean isFinalLevel(LevelSet levelSet, int levelNumber, AVList params) {
+    protected static boolean isFinalLevel(LevelSet levelSet, int levelNumber, AVList params) {
         if (levelSet.isFinalLevel(levelNumber))
             return true;
 
@@ -1072,7 +1072,7 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer {
             int lastCol = Tile.computeColumn(dLon, sector.lonMax(), lonOrigin);
             this.tileCount += (lastRow - firstRow + 1) * (lastCol - firstCol + 1);
 
-            if (this.isFinalLevel(levelSet, level.getLevelNumber(), params))
+            if (TiledRasterProducer.isFinalLevel(levelSet, level.getLevelNumber(), params))
                 break;
         }
     }

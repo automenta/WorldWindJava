@@ -73,7 +73,7 @@ public class GeoSymTableReader {
 
         try {
             inputStream = WWIO.openFileOrResourceStream(filePath, this.getClass());
-            result = this.readTable(filePath, inputStream);
+            result = GeoSymTableReader.readTable(filePath, inputStream);
         }
         finally {
             WWIO.closeStream(inputStream, filePath);
@@ -83,20 +83,20 @@ public class GeoSymTableReader {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected GeoSymTable readTable(String filePath, InputStream inputStream) {
+    protected static GeoSymTable readTable(String filePath, InputStream inputStream) {
         Scanner scanner = new Scanner(inputStream);
 
         // Read the table header.
         GeoSymTableHeader header = new GeoSymTableHeader();
-        this.readHeader(scanner, header);
+        GeoSymTableReader.readHeader(scanner, header);
 
         GeoSymTable table = new GeoSymTable(header);
-        this.readRecords(scanner, table);
+        GeoSymTableReader.readRecords(scanner, table);
 
         return table;
     }
 
-    protected void readHeader(Scanner scanner, GeoSymTableHeader header) {
+    protected static void readHeader(Scanner scanner, GeoSymTableHeader header) {
         header.removeAllColumns();
 
         String string = scanner.nextLine();
@@ -141,7 +141,7 @@ public class GeoSymTableReader {
         return col;
     }
 
-    protected void readRecords(Scanner scanner, GeoSymTable table) {
+    protected static void readRecords(Scanner scanner, GeoSymTable table) {
         Collection<AVList> list = new ArrayList<>();
 
         while (scanner.hasNextLine()) {

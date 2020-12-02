@@ -334,7 +334,7 @@ public class ViewControlsSelectListener implements SelectListener {
                     heading, distance);
                 // Turn around if passing by a pole - TODO: better handling of the pole crossing situation
                 if (ViewControlsSelectListener.isPathCrossingAPole(newViewCenter, view.getCenterPosition()))
-                    view.setHeading(Angle.POS180.subtract(view.getHeading()));
+                    view.setHeading(Angle.POS180.sub(view.getHeading()));
                 // Set new center pos
                 view.setCenterPosition(new Position(newViewCenter, view.getCenterPosition().getElevation()));
                 break;
@@ -502,7 +502,7 @@ public class ViewControlsSelectListener implements SelectListener {
             Vec4 north = wwd.model().getGlobe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
                 centerPosition.getLongitude());
             // Pitch
-            view.setPitch(Angle.POS180.subtract(view.getForwardVector().angleBetween3(normal)));
+            view.setPitch(Angle.POS180.sub(view.getForwardVector().angleBetween3(normal)));
             // Heading
             Vec4 perpendicular = view.getForwardVector().perpendicularTo3(normal);
             Angle heading = perpendicular.angleBetween3(north);
@@ -533,7 +533,7 @@ public class ViewControlsSelectListener implements SelectListener {
         Vec4 north = wwd.model().getGlobe().computeNorthPointingTangentAtLocation(centerPosition.getLatitude(),
             centerPosition.getLongitude());
         // Pitch
-        view.setPitch(Angle.POS180.subtract(view.getForwardVector().angleBetween3(normal)));
+        view.setPitch(Angle.POS180.sub(view.getForwardVector().angleBetween3(normal)));
         // Heading
         Vec4 perpendicular = view.getForwardVector().perpendicularTo3(normal);
         Angle heading = perpendicular.angleBetween3(north);

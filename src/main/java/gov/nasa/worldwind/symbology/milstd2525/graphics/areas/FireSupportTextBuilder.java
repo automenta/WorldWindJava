@@ -31,7 +31,7 @@ public class FireSupportTextBuilder {
      * include a second element. The second element (if present) is text for a label that must be placed at the left
      * side of the area.
      */
-    public String[] createText(TacticalGraphic graphic) {
+    public static String[] createText(TacticalGraphic graphic) {
         if (graphic == null) {
             String message = Logging.getMessage("nullValue.GraphicIsNull");
             Logging.logger().severe(message);
@@ -42,7 +42,7 @@ public class FireSupportTextBuilder {
 
         // Compute the masked SIDC for this graphic.
         SymbolCode symCode = new SymbolCode(graphic.getIdentifier());
-        String maskedSidc = SymbolCode.toMaskedString();
+        String maskedSidc = symCode.toMaskedString();
 
         if (TacGrpSidc.FSUPP_ARS_ARATGT_CIRTGT.equalsIgnoreCase(maskedSidc)) {
             // Circular Target just uses the Unique Designation as a label.
@@ -67,7 +67,7 @@ public class FireSupportTextBuilder {
             else {
                 boolean includeTime = !useSeparateTimeLabel;
                 boolean includeAltitude = FireSupportTextBuilder.isShowAltitude(maskedSidc);
-                mainText = this.createMainText(graphic, maskedSidc, includeTime, includeAltitude);
+                mainText = FireSupportTextBuilder.createMainText(graphic, maskedSidc, includeTime, includeAltitude);
             }
 
             if (useSeparateTimeLabel) {
@@ -99,7 +99,7 @@ public class FireSupportTextBuilder {
             || TacGrpSidc.FSUPP_ARS_C2ARS_ACA_CIRCLR.equalsIgnoreCase(functionId);
     }
 
-    protected String createMainText(TacticalGraphic graphic, String functionId, boolean includeTime,
+    protected static String createMainText(TacticalGraphic graphic, String functionId, boolean includeTime,
         boolean includeAltitude) {
         StringBuilder sb = new StringBuilder();
         sb.append(FireSupportTextBuilder.getGraphicLabel(functionId)).append("\n");

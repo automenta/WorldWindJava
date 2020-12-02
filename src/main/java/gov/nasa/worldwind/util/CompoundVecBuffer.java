@@ -404,11 +404,6 @@ public abstract class CompoundVecBuffer {
     }
 
     public Position getReferencePosition() {
-//                Iterator<? extends LatLon> iterator = this.getLocations().iterator();
-//        if (iterator.hasNext())
-//            return new Position(iterator.next(), 0);
-//
-//        return null;
         return subBuffer(0).getPosition(0);
     }
 

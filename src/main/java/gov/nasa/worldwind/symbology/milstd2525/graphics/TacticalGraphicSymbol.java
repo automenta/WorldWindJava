@@ -137,7 +137,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
      */
     protected void init(String sidc) {
         this.symbolCode = new SymbolCode(sidc);
-        this.maskedSymbolCode = SymbolCode.toMaskedString();
+        this.maskedSymbolCode = this.symbolCode.toMaskedString();
 
         this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
 
@@ -147,7 +147,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
             MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
         this.setIconRetriever(new MilStd2525PointGraphicRetriever(iconRetrieverPath));
 
-        Offset offset = defaultOffsets.get(SymbolCode.toMaskedString());
+        Offset offset = defaultOffsets.get(symbolCode.toMaskedString());
         this.setOffset(offset);
 
         // By default, show the hostile indicator (the letters "ENY"). Note that this default is different from
@@ -231,7 +231,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol {
         this.currentLabels.clear();
 
         Font font = this.getActiveAttributes().getTextModifierFont();
-        List<LabelLayout> allLayouts = TacticalGraphicSymbol.getLayouts(SymbolCode.toMaskedString());
+        List<LabelLayout> allLayouts = TacticalGraphicSymbol.getLayouts(symbolCode.toMaskedString());
 
         for (LabelLayout layout : allLayouts) {
             java.util.List<OffsetPair> offsets = layout.offsets;

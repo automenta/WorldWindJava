@@ -327,11 +327,11 @@ public class RubberSheetImage extends ApplicationTemplate {
             }
         }
 
-        public File getAssociatedTABFile(File file) {
+        public static File getAssociatedTABFile(File file) {
             File tabFile = TABRasterReader.getTABFileFor(file);
             if (tabFile != null && tabFile.exists()) {
                 TABRasterReader reader = new TABRasterReader();
-                if (reader.canRead(tabFile))
+                if (TABRasterReader.canRead(tabFile))
                     return tabFile;
             }
 
@@ -375,7 +375,7 @@ public class RubberSheetImage extends ApplicationTemplate {
         protected SurfaceImage createSurfaceImageFromTABFile(BufferedImage image, File tabFile)
             throws IOException {
             TABRasterReader reader = new TABRasterReader();
-            RasterControlPointList controlPoints = reader.read(tabFile);
+            RasterControlPointList controlPoints = TABRasterReader.read(tabFile);
 
             return this.createSurfaceImageFromControlPoints(image, controlPoints);
         }

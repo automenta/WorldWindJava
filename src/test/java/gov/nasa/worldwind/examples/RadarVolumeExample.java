@@ -170,10 +170,10 @@ public class RadarVolumeExample extends ApplicationTemplate {
             vertices.add(Vec4.ZERO); // the first vertex is the radar position.
 
             // Rotate both grids around the Y axis to the specified elevation.
-            Matrix elevationMatrix = Matrix.fromAxisAngle(Angle.NEG90.subtract(elevation), 0, 1, 0);
+            Matrix elevationMatrix = Matrix.fromAxisAngle(Angle.NEG90.sub(elevation), 0, 1, 0);
 
             // Rotate both grids around the Z axis to the specified azimuth.
-            Matrix azimuthMatrix = Matrix.fromAxisAngle(Angle.POS90.subtract(azimuth), 0, 0, 1);
+            Matrix azimuthMatrix = Matrix.fromAxisAngle(Angle.POS90.sub(azimuth), 0, 0, 1);
 
             // Combine the rotations and build the full vertex list.
             Matrix combined = azimuthMatrix.multiply(elevationMatrix);
@@ -239,10 +239,10 @@ public class RadarVolumeExample extends ApplicationTemplate {
             vertices.add(Vec4.ZERO); // the first vertex is the radar position.
 
             // Rotate both grids around the Y axis to the specified elevation.
-            Matrix elevationMatrix = Matrix.fromAxisAngle(Angle.NEG90.subtract(elevation), 0, 1, 0);
+            Matrix elevationMatrix = Matrix.fromAxisAngle(Angle.NEG90.sub(elevation), 0, 1, 0);
 
             // Rotate both grids around the Z axis to the specified azimuth.
-            Matrix azimuthMatrix = Matrix.fromAxisAngle(Angle.POS90.subtract(azimuth), 0, 0, 1);
+            Matrix azimuthMatrix = Matrix.fromAxisAngle(Angle.POS90.sub(azimuth), 0, 0, 1);
 
             // Combine the rotations and build the full vertex list.
             Matrix combined = azimuthMatrix.multiply(elevationMatrix);

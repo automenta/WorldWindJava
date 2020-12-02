@@ -39,11 +39,6 @@ public class Triangle {
      * @throws IllegalArgumentException if any vertex is null.
      */
     public Triangle(Vec4 a, Vec4 b, Vec4 c) {
-//        if (a == null || b == null || c == null) {
-//            String msg = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.a = a;
         this.b = b;
@@ -155,17 +150,6 @@ public class Triangle {
      * @throws IllegalArgumentException if the line, vertex buffer or index buffer is null.
      */
     public static List<Intersection> intersectTriStrip(final Line line, FloatBuffer vertices, IntBuffer indices) {
-//        if (line == null) {
-//            String msg = Logging.getMessage("nullValue.LineIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (vertices == null || indices == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         List<Intersection> intersections = null;
 
@@ -203,23 +187,6 @@ public class Triangle {
      * @throws IllegalArgumentException if the line, vertex array or index buffer is null.
      */
     public static List<Intersection> intersectTriStrip(final Line line, Vec4[] vertices, IntBuffer indices) {
-//        if (line == null) {
-//            String msg = Logging.getMessage("nullValue.LineIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (vertices == null) {
-//            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (indices == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         List<Intersection> intersections = null;
 
@@ -255,17 +222,6 @@ public class Triangle {
      * @throws IllegalArgumentException if the line, vertex buffer or index buffer is null.
      */
     public static List<Intersection> intersectTriFan(final Line line, FloatBuffer vertices, IntBuffer indices) {
-//        if (line == null) {
-//            String msg = Logging.getMessage("nullValue.LineIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (vertices == null || indices == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         List<Intersection> intersections = null;
 
@@ -310,23 +266,6 @@ public class Triangle {
      * @throws IllegalArgumentException if the line, vertex array or index buffer is null.
      */
     public static List<Intersection> intersectTriFan(final Line line, Vec4[] vertices, IntBuffer indices) {
-//        if (line == null) {
-//            String msg = Logging.getMessage("nullValue.LineIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (vertices == null) {
-//            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (indices == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         List<Intersection> intersections = null;
 
@@ -360,17 +299,6 @@ public class Triangle {
      * @throws IllegalArgumentException if the line or vertex buffer is null.
      */
     public static List<Intersection> intersectTriangles(final Line line, FloatBuffer vertices) {
-//        if (line == null) {
-//            String msg = Logging.getMessage("nullValue.LineIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (vertices == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         List<Intersection> intersections = null;
 
@@ -402,17 +330,6 @@ public class Triangle {
      * @throws IllegalArgumentException if the line, vertex buffer or index buffer is null.
      */
     public static List<Intersection> intersectTriangles(final Line line, FloatBuffer vertices, IntBuffer indices) {
-//        if (line == null) {
-//            String msg = Logging.getMessage("nullValue.LineIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (vertices == null || indices == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         List<Intersection> intersections = null;
 
@@ -468,17 +385,6 @@ public class Triangle {
      *                                  size is insufficient.
      */
     public static void expandTriangles(List<Integer> indices, FloatBuffer inBuf, FloatBuffer outBuf) {
-//        if (indices == null) {
-//            String msg = Logging.getMessage("nullValue.ListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (inBuf == null || outBuf == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         final int n = indices.size();
         int nunTriangles = n / 3;
@@ -517,17 +423,6 @@ public class Triangle {
      *                                  size is insufficient.
      */
     public static void expandTriangleFan(List<Integer> indices, FloatBuffer inBuf, FloatBuffer outBuf) {
-//        if (indices == null) {
-//            String msg = Logging.getMessage("nullValue.ListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (inBuf == null || outBuf == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         int nunTriangles = indices.size() - 2;
         if (nunTriangles * 3 * 3 > outBuf.limit() - outBuf.position()) {
@@ -563,17 +458,6 @@ public class Triangle {
      *                                  size is insufficient.
      */
     public static void expandTriangleStrip(List<Integer> indices, FloatBuffer inBuf, FloatBuffer outBuf) {
-//        if (indices == null) {
-//            String msg = Logging.getMessage("nullValue.ListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (inBuf == null || outBuf == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         int nunTriangles = indices.size() - 2;
         if (nunTriangles * 3 * 3 > outBuf.limit() - outBuf.position()) {
@@ -595,17 +479,6 @@ public class Triangle {
     }
 
     public static void expandTriangles(Collection<Integer> indices, IntBuffer outBuf) {
-//        if (indices == null) {
-//            String msg = Logging.getMessage("nullValue.ListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (outBuf == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         int numTriangles = indices.size() / 3;
         if (numTriangles * 3 > outBuf.limit() - outBuf.position()) {
@@ -620,17 +493,6 @@ public class Triangle {
     }
 
     public static void expandTriangleFan(List<Integer> indices, IntBuffer outBuf) {
-//        if (indices == null) {
-//            String msg = Logging.getMessage("nullValue.ListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (outBuf == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         int nunTriangles = indices.size() - 2;
         if (nunTriangles * 3 > outBuf.limit() - outBuf.position()) {
@@ -649,17 +511,6 @@ public class Triangle {
     }
 
     public static void expandTriangleStrip(List<Integer> indices, IntBuffer outBuf) {
-//        if (indices == null) {
-//            String msg = Logging.getMessage("nullValue.ListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (outBuf == null) {
-//            String msg = Logging.getMessage("nullValue.BufferIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         int nunTriangles = indices.size() - 2;
         if (nunTriangles * 3 > outBuf.limit() - outBuf.position()) {

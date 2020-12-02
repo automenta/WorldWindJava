@@ -79,11 +79,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         }
 
         public Vec4 getSurfacePoint(Position position) {
-//            if (position == null) {
-//                String msg = Logging.getMessage("nullValue.PositionIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
 
             SectorGeometryList sectorGeometry = DrawContextImpl.this.getSurfaceGeometry();
             if (sectorGeometry == null)
@@ -100,11 +95,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
         }
 
         public Vec4 getSurfacePoint(Angle latitude, Angle longitude, double metersOffset) {
-//            if (latitude == null || longitude == null) {
-//                String msg = Logging.getMessage("nullValue.LatLonIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
 
             SectorGeometryList sectorGeometry = DrawContextImpl.this.getSurfaceGeometry();
             if (sectorGeometry == null)
@@ -235,11 +225,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public final void setGLContext(GLContext glContext) {
-//        if (glContext == null) {
-//            String message = Logging.getMessage("nullValue.GLContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.glContext = glContext;
     }
@@ -261,21 +246,11 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setGLRuntimeCapabilities(GLRuntimeCapabilities capabilities) {
-//        if (capabilities == null) {
-//            String message = Logging.getMessage("nullValue.GLRuntimeCapabilitiesIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.glRuntimeCaps = capabilities;
     }
 
     public final void initialize(GLContext glContext) {
-//        if (glContext == null) {
-//            String message = Logging.getMessage("nullValue.GLContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.glContext = glContext;
 
@@ -361,11 +336,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setGpuResourceCache(GpuResourceCache gpuResourceCache) {
-//        if (gpuResourceCache == null) {
-//            String msg = Logging.getMessage("nullValue.GpuResourceCacheIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.gpuResourceCache = gpuResourceCache;
     }
@@ -375,11 +345,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setTextRendererCache(TextRendererCache textRendererCache) {
-//        if (textRendererCache == null) {
-//            String msg = Logging.getMessage("nullValue.TextRendererCacheIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.textRendererCache = textRendererCache;
     }
@@ -389,11 +354,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void setAnnotationRenderer(AnnotationRenderer ar) {
-//        if (ar == null) {
-//            String msg = Logging.getMessage("nullValue.RendererIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         annotationRenderer = ar;
     }
 
@@ -438,11 +398,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void addPickedObjects(PickedObjectList pickedObjects) {
-//        if (pickedObjects == null) {
-//            String msg = Logging.getMessage("nullValue.PickedObjectList");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (this.pickedObjects == null) {
             this.pickedObjects = pickedObjects;
@@ -453,11 +408,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void addPickedObject(PickedObject pickedObject) {
-//        if (null == pickedObject) {
-//            String msg = Logging.getMessage("nullValue.PickedObject");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (null == this.pickedObjects)
             this.pickedObjects = new PickedObjectList();
@@ -474,11 +424,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     }
 
     public void addObjectInPickRectangle(PickedObject pickedObject) {
-//        if (pickedObject == null) {
-//            String msg = Logging.getMessage("nullValue.PickedObject");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.objectsInPickRect.add(pickedObject);
     }
@@ -554,11 +499,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
      * {@inheritDoc}
      */
     public int[] getPickColorsInRectangle(Rectangle rectangle, int[] minAndMaxColorCodes) {
-//        if (rectangle == null) {
-//            String msg = Logging.getMessage("nullValue.RectangleIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Rectangle viewport = this.getView().getViewport();
 
@@ -681,50 +621,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
 
         this.orderedRenderables.add(new OrderedRenderableEntry(orderedRenderable, System.nanoTime(), this));
     }
-//
-//    public void applyDeclutterFilter2()
-//    {
-//        // Collect all the active declutterables.
-//        ArrayList<OrderedRenderableEntry> declutterableArray = new ArrayList<OrderedRenderableEntry>();
-//        for (OrderedRenderableEntry ore : this.orderedRenderables)
-//        {
-//            if (ore.or instanceof Declutterable && ((Declutterable) ore.or).isEnableDecluttering())
-//                declutterableArray.add(ore);
-//        }
-//
-//        // Sort the declutterables front-to-back.
-//        Collections.sort(declutterableArray, new Comparator<OrderedRenderableEntry>()
-//        {
-//            public int compare(OrderedRenderableEntry orA, OrderedRenderableEntry orB)
-//            {
-//                double eA = orA.distanceFromEye;
-//                double eB = orB.distanceFromEye;
-//
-//                return eA < eB ? -1 : eA == eB ? (orA.time < orB.time ? -1 : orA.time == orB.time ? 0 : 1) : 1;
-//            }
-//        });
-//
-//        if (declutterableArray.size() == 0)
-//            return;
-//
-//        // Remove eliminated ordered renderables from the priority queue.
-//        ClutterFilter clutterFilter = new ClutterFilter();
-//
-//        for (OrderedRenderableEntry ore : declutterableArray)
-//        {
-//            Rectangle2D bounds = ((Declutterable) ore.or).getBounds(this);
-//
-//            Rectangle2D intersectingRegion = clutterFilter.intersects(bounds);
-//            if (intersectingRegion != null)
-//                clutterFilter.addShape(intersectingRegion, (Declutterable) ore.or);
-//            else if (bounds != null)
-//                clutterFilter.addShape(bounds, (Declutterable) ore.or);
-//
-//            orderedRenderables.remove(ore);
-//        }
-//
-//        clutterFilter.render(this);
-//    }
 
     /**
      * {@inheritDoc}
@@ -771,37 +667,6 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext {
     public void setClutterFilter(ClutterFilter filter) {
         this.clutterFilter = filter;
     }
-//
-//    @Override
-//    public void setGroupingFilters(Map<String, GroupingFilter> filters)
-//    {
-//        this.groupingFilters = filters;
-//    }
-//
-//    protected static final String DEFAULT_GROUPING_FILTER_NAME = "Default";
-//
-//    @Override
-//    public GroupingFilter getGroupingFilter(String filterName)
-//    {
-//        if (filterName == null)
-//        {
-//            GroupingFilter filter = this.groupingFilters.get(DEFAULT_GROUPING_FILTER_NAME);
-//            if (filter == null)
-//                this.groupingFilters.put(DEFAULT_GROUPING_FILTER_NAME, new GroupingFilter());
-//
-//            return filter;
-//        }
-//
-//        return this.groupingFilters.get(filterName);
-//    }
-//
-//    public void applyGroupingFilters()
-//    {
-//        for (GroupingFilter filter : this.groupingFilters.values())
-//        {
-//            filter.apply(this);
-//        }
-//    }
 
     public void applyClutterFilter() {
         if (this.getClutterFilter() == null)

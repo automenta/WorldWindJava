@@ -339,56 +339,6 @@ public class FlatGlobe extends EllipsoidalGlobe implements Globe2D {
         return point.z() > elevation;
     }
 
-//
-//    /**
-//     * Returns a cylinder that minimally surrounds the specified minimum and maximum elevations in the sector at a
-//     * specified vertical exaggeration.
-//     *
-//     * @param verticalExaggeration the vertical exaggeration to apply to the minimum and maximum elevations when
-//     *                             computing the cylinder.
-//     * @param sector               the sector to return the bounding cylinder for.
-//     * @param minElevation         the minimum elevation of the bounding cylinder.
-//     * @param maxElevation         the maximum elevation of the bounding cylinder.
-//     *
-//     * @return The minimal bounding cylinder in Cartesian coordinates.
-//     * @throws IllegalArgumentException if <code>sector</code> is null
-//     */
-//    @Override
-//    public Cylinder computeBoundingCylinder(double verticalExaggeration, Sector sector,
-//                                            double minElevation, double maxElevation)
-//    {
-//        if (sector == null)
-//        {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        // Compute the center points of the bounding cylinder's top and bottom planes.
-//        LatLon center = sector.getCentroid();
-//        double minHeight = minElevation * verticalExaggeration;
-//        double maxHeight = maxElevation * verticalExaggeration;
-//
-//        if (minHeight == maxHeight)
-//            maxHeight = minHeight + 1; // ensure the top and bottom of the cylinder won't be coincident
-//
-//        Vec4 centroidTop = this.computePointFromPosition(center.getLatitude(), center.getLongitude(), maxHeight);
-//        Vec4 centroidBot = this.computePointFromPosition(center.getLatitude(), center.getLongitude(), minHeight);
-//
-//        // Compute radius of circumscribing circle using largest distance from center to corners.
-//        Vec4 northwest = this.computePointFromPosition(sector.getMaxLatitude(), sector.getMinLongitude(), maxHeight);
-//        Vec4 southeast = this.computePointFromPosition(sector.getMinLatitude(), sector.getMaxLongitude(), maxHeight);
-//        Vec4 southwest = this.computePointFromPosition(sector.getMinLatitude(), sector.getMinLongitude(), maxHeight);
-//        Vec4 northeast = this.computePointFromPosition(sector.getMaxLatitude(), sector.getMaxLongitude(), maxHeight);
-//        double a = southwest.distanceTo3(centroidBot);
-//        double b = southeast.distanceTo3(centroidBot);
-//        double c = northeast.distanceTo3(centroidBot);
-//        double d = northwest.distanceTo3(centroidBot);
-//        double radius = Math.max(Math.max(a, b), Math.max(c, d));
-//
-//        return new Cylinder(centroidBot, centroidTop, radius);
-//    }
-
     private class FlatStateKey extends StateKey {
         protected final GeographicProjection projection;
         protected final int offset;

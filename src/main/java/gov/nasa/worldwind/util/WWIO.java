@@ -1387,12 +1387,6 @@ public class WWIO {
         }
 
         return new ByteBufferInputStream(buffer);
-//        if (buffer.hasArray() && buffer.limit() == buffer.capacity()) // otherwise bytes beyond the limit are included
-//            return new ByteArrayInputStream(buffer.array());
-//
-//        byte[] byteArray = new byte[buffer.limit()];
-//        buffer.get(byteArray);
-//        return new ByteArrayInputStream(byteArray);
     }
 
     /**
@@ -1661,11 +1655,6 @@ public class WWIO {
      *                                  available via this exception's {@link Throwable#initCause(Throwable)} method.
      */
     public static InputStream openFileOrResourceStream(String fileName, Class c) {
-//        if (fileName == null) {
-//            String msg = Logging.getMessage("nullValue.FileIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Object streamOrException = WWIO.getFileOrResourceAsStream(fileName, c);
 

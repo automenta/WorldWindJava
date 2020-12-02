@@ -9,13 +9,10 @@ package gov.nasa.worldwind.layers.rpf.wizard;
  * @author dcollins
  * @version $Id: TimeFormatter.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class TimeFormatter {
+public enum TimeFormatter { ;
     private static final long ONE_HOUR = 60L * 60L * 1000L;
     private static final long ONE_MINUTE = 60L * 1000L;
     private static final long ONE_SECOND = 1000L;
-
-    public TimeFormatter() {
-    }
 
     private static long[] millisToHMS(long millis) {
         return new long[] {

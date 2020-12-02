@@ -93,24 +93,4 @@ public class OrbitViewPropertyAccessor extends ViewPropertyAccessor {
             }
         }
     }
-
-    //private static class RotationAccessor implements QuaternionAccessor
-    //{
-    //    public final Quaternion getQuaternion(OrbitView orbitView)
-    //    {
-    //        if (orbitView == null)
-    //            return null;
-    //
-    //        return orbitView.getRotation();
-    //    }
-    //
-    //    public final boolean setQuaternion(OrbitView orbitView, Quaternion value)
-    //    {
-    //        if (orbitView == null || value == null)
-    //            return false;
-    //
-    //        orbitView.setRotation(value);
-    //        return true;
-    //    }
-    //}
 }

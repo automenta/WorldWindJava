@@ -34,23 +34,6 @@ public class GeoQuad {
 
         // Count the corners and check for nulls
         Iterator<? extends LatLon> iter = corners.iterator();
-//        int numCorners = 0;
-//        for (LatLon c : corners) {
-////            if (c == null) {
-////                String message = Logging.getMessage("nullValue.LocationInListIsNull");
-////                Logging.logger().log(Level.SEVERE, message);
-////                throw new IllegalArgumentException(message);
-////            }
-//
-//            if (++numCorners > 3)
-//                break;
-//        }
-
-//        if (numCorners < 4) {
-//            String message = Logging.getMessage("nullValue.LocationInListIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.sw = iter.next();
         this.se = iter.next();

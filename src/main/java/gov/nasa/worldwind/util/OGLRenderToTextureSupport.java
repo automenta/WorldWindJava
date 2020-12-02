@@ -144,7 +144,7 @@ public class OGLRenderToTextureSupport {
         // the windowing system's write buffer (likely the onscreen back buffer), and are explicitly copied to the
         // texture in flush() or endRendering().
         if (this.useFramebufferObject(dc)) {
-            this.bindFramebufferColorAttachment(dc, texture);
+            OGLRenderToTextureSupport.bindFramebufferColorAttachment(dc, texture);
         }
 
         this.colorTarget = texture;
@@ -282,7 +282,7 @@ public class OGLRenderToTextureSupport {
 
         if (this.useFramebufferObject(dc)) {
             if (this.colorTarget != null) {
-                this.bindFramebufferColorAttachment(dc, null);
+                OGLRenderToTextureSupport.bindFramebufferColorAttachment(dc, null);
             }
 
             this.endFramebufferObjectRendering(dc);
@@ -402,7 +402,7 @@ public class OGLRenderToTextureSupport {
         this.framebufferObject = 0;
     }
 
-    protected void bindFramebufferColorAttachment(DrawContext dc, Texture texture) {
+    protected static void bindFramebufferColorAttachment(DrawContext dc, Texture texture) {
         GL gl = dc.getGL();
 
         // Attach the texture as color attachment 0 to the framebuffer.

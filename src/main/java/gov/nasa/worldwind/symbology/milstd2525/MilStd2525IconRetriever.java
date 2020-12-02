@@ -489,7 +489,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
     }
 
     protected static boolean mustDrawFill(SymbolCode symbolCode, AVList params) {
-        String maskedCode = SymbolCode.toMaskedString().toLowerCase();
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
         if (unfilledIconMap.contains(maskedCode))
             return false;
 
@@ -498,7 +498,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
     }
 
     protected static boolean mustDrawFrame(SymbolCode symbolCode, AVList params) {
-        String maskedCode = SymbolCode.toMaskedString().toLowerCase();
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
         if (unframedIconMap.contains(maskedCode))
             return false;
 
@@ -513,21 +513,21 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
     }
 
     protected BufferedImage drawFill(SymbolCode symbolCode, AVList params, BufferedImage dest) {
-        String path = this.composeFillPath(symbolCode);
+        String path = MilStd2525IconRetriever.composeFillPath(symbolCode);
         Color color = this.getFillColor(symbolCode, params);
 
         return path != null ? this.drawIconComponent(path, color, dest) : dest;
     }
 
     protected BufferedImage drawFrame(SymbolCode symbolCode, AVList params, BufferedImage dest) {
-        String path = this.composeFramePath(symbolCode);
+        String path = MilStd2525IconRetriever.composeFramePath(symbolCode);
         Color color = this.getFrameColor(symbolCode, params);
 
         return path != null ? this.drawIconComponent(path, color, dest) : dest;
     }
 
     protected BufferedImage drawIcon(SymbolCode symbolCode, AVList params, BufferedImage dest) {
-        String path = this.composeIconPath(symbolCode, params);
+        String path = MilStd2525IconRetriever.composeIconPath(symbolCode, params);
         Color color = this.getIconColor(symbolCode, params);
 
         return path != null ? this.drawIconComponent(path, color, dest) : dest;
@@ -588,8 +588,8 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return image;
     }
 
-    protected String composeFillPath(SymbolCode symbolCode) {
-        String maskedCode = this.getMaskedFillCode(symbolCode);
+    protected static String composeFillPath(SymbolCode symbolCode) {
+        String maskedCode = MilStd2525IconRetriever.getMaskedFillCode(symbolCode);
 
         StringBuilder sb = new StringBuilder();
         sb.append(FILLS_PATH).append("/");
@@ -600,8 +600,8 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return sb.toString();
     }
 
-    protected String composeFramePath(SymbolCode symbolCode) {
-        String maskedCode = this.getMaskedFrameCode(symbolCode);
+    protected static String composeFramePath(SymbolCode symbolCode) {
+        String maskedCode = MilStd2525IconRetriever.getMaskedFrameCode(symbolCode);
 
         StringBuilder sb = new StringBuilder();
         sb.append(FRAMES_PATH).append("/");
@@ -612,12 +612,12 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return sb.toString();
     }
 
-    protected String composeIconPath(SymbolCode symbolCode, AVList params) {
+    protected static String composeIconPath(SymbolCode symbolCode, AVList params) {
         String scheme = symbolCode.getScheme();
         String bd = symbolCode.getBattleDimension();
 
         if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN)) {
-            String maskedCode = this.getMaskedUnknownIconCode(symbolCode, params);
+            String maskedCode = MilStd2525IconRetriever.getMaskedUnknownIconCode(symbolCode, params);
             StringBuilder sb = new StringBuilder();
             sb.append(ICONS_PATH).append("/");
             sb.append(UNKNOWN_PATH).append("/");
@@ -629,7 +629,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
             if (SymbolCode.isFieldEmpty(symbolCode.getFunctionId()))
                 return null; // Don't draw an icon if the function ID is empty.
 
-            String maskedCode = this.getMaskedIconCode(symbolCode, params);
+            String maskedCode = MilStd2525IconRetriever.getMaskedIconCode(symbolCode, params);
             StringBuilder sb = new StringBuilder();
             sb.append(ICONS_PATH).append("/");
             sb.append(schemePathMap.get(scheme.toLowerCase())).append("/");
@@ -656,7 +656,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
     }
 
     protected Color getIconColor(SymbolCode symbolCode, AVList params) {
-        String maskedCode = SymbolCode.toMaskedString().toLowerCase();
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
 
         if (MilStd2525IconRetriever.mustDrawFrame(symbolCode, params)) {
             // When the frame is enabled, we draw the icon in either its specified custom color or the default color. In
@@ -691,7 +691,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return (o instanceof Color) ? (Color) o : null;
     }
 
-    protected String getMaskedFillCode(SymbolCode symbolCode) {
+    protected static String getMaskedFillCode(SymbolCode symbolCode) {
         // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
         // the generic fill shape lookup logic used by Warfighting symbols.
         symbolCode = MilStd2525IconRetriever.transformToWarfightingScheme(symbolCode);
@@ -713,7 +713,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return sb.toString();
     }
 
-    protected String getMaskedFrameCode(SymbolCode symbolCode) {
+    protected static String getMaskedFrameCode(SymbolCode symbolCode) {
         // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
         // the generic fill shape lookup logic used by Warfighting symbols.
         symbolCode = MilStd2525IconRetriever.transformToWarfightingScheme(symbolCode);
@@ -737,7 +737,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
     }
 
     protected static SymbolCode transformToWarfightingScheme(SymbolCode symbolCode) {
-        String maskedCode = SymbolCode.toMaskedString().toLowerCase();
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
         String scheme = symbolCode.getScheme();
         String bd = symbolCode.getBattleDimension();
 
@@ -774,7 +774,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         }
     }
 
-    protected String getMaskedIconCode(SymbolCode symbolCode, AVList params) {
+    protected static String getMaskedIconCode(SymbolCode symbolCode, AVList params) {
         String si = MilStd2525IconRetriever.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
         String status = MilStd2525IconRetriever.getSimpleStatus(symbolCode); // Either Present or Anticipated.
 
@@ -791,7 +791,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever {
         return maskedCode.toString();
     }
 
-    protected String getMaskedUnknownIconCode(SymbolCode symbolCode, AVList params) {
+    protected static String getMaskedUnknownIconCode(SymbolCode symbolCode, AVList params) {
         String si = MilStd2525IconRetriever.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile.
         String bd = symbolCode.getBattleDimension();
         String status = MilStd2525IconRetriever.getSimpleStatus(symbolCode); // Either Present or Anticipated.

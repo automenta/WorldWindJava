@@ -91,7 +91,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic {
     @Override
     protected void createLabels() {
         FireSupportTextBuilder textBuilder = CircularFireSupportArea.createTextBuilder();
-        String[] allText = textBuilder.createText(this);
+        String[] allText = FireSupportTextBuilder.createText(this);
 
         String text = allText[0];
         if (!WWUtil.isEmpty(text)) {

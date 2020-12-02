@@ -1326,7 +1326,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * record's shape type is not one of the recognized types.
      */
     protected ShapefileRecord createRecord(ByteBuffer buffer) {
-        String shapeType = this.readRecordShapeType(buffer);
+        String shapeType = Shapefile.readRecordShapeType(buffer);
 
         // Select proper record class
         if (isPointType(shapeType)) {
@@ -1441,7 +1441,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @param buffer the record buffer to read from.
      * @return the record's shape type.
      */
-    protected String readRecordShapeType(ByteBuffer buffer) {
+    protected static String readRecordShapeType(ByteBuffer buffer) {
         // Read shape type - little endian
         buffer.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -1733,10 +1733,10 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         Object o = this.get(AVKey.COORDINATE_SYSTEM);
 
         if (!this.hasKey(AVKey.COORDINATE_SYSTEM))
-            return this.readUnspecifiedBoundingRectangle(buffer);
+            return Shapefile.readUnspecifiedBoundingRectangle(buffer);
 
         else if (AVKey.COORDINATE_SYSTEM_GEOGRAPHIC.equals(o))
-            return this.readGeographicBoundingRectangle(buffer);
+            return Shapefile.readGeographicBoundingRectangle(buffer);
 
         else if (AVKey.COORDINATE_SYSTEM_PROJECTED.equals(o))
             return this.readProjectedBoundingRectangle(buffer);
@@ -1757,7 +1757,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @return a bounding rectangle with coordinates from the specified buffer. The rectangle's coordinates are ordered
      * as follows: (minY, maxY, minX, maxX).
      */
-    protected BoundingRectangle readUnspecifiedBoundingRectangle(ByteBuffer buffer) {
+    protected static BoundingRectangle readUnspecifiedBoundingRectangle(ByteBuffer buffer) {
         // Read the bounding rectangle coordinates in the following order: minY, maxY, minX, maxX.
         BoundingRectangle rect = new BoundingRectangle();
         rect.coords = Shapefile.readBoundingRectangleCoordinates(buffer);
@@ -1775,7 +1775,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
      * @return a bounding rectangle with coordinates from the specified buffer. The rectangle's coordinates are ordered
      * as follows: (minLat, maxLat, minLon, maxLon).
      */
-    protected BoundingRectangle readGeographicBoundingRectangle(ByteBuffer buffer) {
+    protected static BoundingRectangle readGeographicBoundingRectangle(ByteBuffer buffer) {
         // Read the bounding rectangle coordinates in the following order: minLat, maxLat, minLon, maxLon.
         BoundingRectangle rect = new BoundingRectangle();
         rect.coords = Shapefile.readBoundingRectangleCoordinates(buffer);
@@ -1783,7 +1783,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         // The bounding rectangle's min latitude exceeds -90. Set the min latitude to -90. Correct the max latitude if
         // the normalized min latitude is greater than the max latitude.
         if (rect.coords[0] < -90) {
-            double normalizedLat = Angle.normalizedLatitude(Angle.fromDegrees(rect.coords[0])).degrees;
+            double normalizedLat = Angle.latNorm(Angle.fromDegrees(rect.coords[0])).degrees;
 
             rect.coords[0] = -90;
             rect.isNormalized = true;
@@ -1795,7 +1795,7 @@ public class Shapefile extends AVListImpl implements Closeable, Exportable {
         // The bounding rectangle's max latitude exceeds +90. Set the max latitude to +90. Correct the min latitude if
         // the normalized max latitude is less than the min latitude.
         if (rect.coords[1] > 90) {
-            double normalizedLat = Angle.normalizedLatitude(Angle.fromDegrees(rect.coords[1])).degrees;
+            double normalizedLat = Angle.latNorm(Angle.fromDegrees(rect.coords[1])).degrees;
 
             rect.coords[1] = 90;
             rect.isNormalized = true;

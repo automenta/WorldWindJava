@@ -625,16 +625,6 @@ public class BasicTreeLayout extends WWObjectImpl implements TreeLayout, Scrolla
 
             if (BasicTreeLayout.intersectsFrustum(dc, layout, clipBounds))
                 visibleNodes.add(layout);
-
-//            // Draw a box around the node bounds. Useful for debugging node layout
-//
-//            GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
-//            gl.glBegin(GL2.GL_LINE_LOOP);
-//            gl.glVertex2d(layout.screenBounds.getMinX(), layout.screenBounds.getMinY());
-//            gl.glVertex2d(layout.screenBounds.getMaxX(), layout.screenBounds.getMinY());
-//            gl.glVertex2d(layout.screenBounds.getMaxX(), layout.screenBounds.getMaxY());
-//            gl.glVertex2d(layout.screenBounds.getMinX(), layout.screenBounds.getMaxY());
-//            gl.glEnd();
         }
 
         if (this.isDrawNodeStateSymbol())

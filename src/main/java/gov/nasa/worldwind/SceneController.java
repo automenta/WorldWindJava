@@ -248,14 +248,6 @@ public interface SceneController extends WWObject, Disposable {
      * @throws IllegalArgumentException if the capabilities are null.
      */
     void setGLRuntimeCapabilities(GLRuntimeCapabilities capabilities);
-//
-//    GroupingFilter getGroupingFilter(String filterName);
-//
-//    void addGroupingFilter(String filterName, GroupingFilter filter);
-//
-//    void removeGroupingFilter(String filterName);
-//
-//    void removeAllGroupingFilters();
 
     /**
      * Returns the current clutter filter.

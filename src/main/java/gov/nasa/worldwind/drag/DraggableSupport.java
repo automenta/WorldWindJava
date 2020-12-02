@@ -526,9 +526,6 @@ public class DraggableSupport {
             // convergence steps by 25%-30% but resulted in greater incidents of search failure, especially in
             // dynamic terrain change regions (mountains). Without the initial approximation, an average number of
             // solver steps was approximately 15.
-            // double mixPoint = altitude / maxDifference;
-            // double mixLow = Math.max(0.0, mixPoint - 0.1);
-            // double mixHigh = Math.min(1.0, mixPoint + 0.1);
             double mixPoint = 0.5;
             double mixLow = 0.0;
             double mixHigh = 1.0;

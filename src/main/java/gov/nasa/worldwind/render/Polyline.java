@@ -21,6 +21,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
+import static gov.nasa.worldwind.util.WWUtil.sizeEstimate;
+
 /**
  * @author tag
  * @version $Id: Polyline.java 2188 2014-07-30 15:01:16Z tgaskins $
@@ -372,7 +374,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      */
     public void setPositions(Iterable<? extends LatLon> inPositions, double altitude) {
         this.reset();
-        this.positions = new ArrayList<>();
+        this.positions = new ArrayList<>(sizeEstimate(inPositions));
         this.extents.clear();
         if (inPositions != null) {
             for (LatLon position : inPositions) {
@@ -384,7 +386,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
                 this.setSurfaceShapeLocations();
         }
 
-        if (this.filled && this.positions.size() < 3) {
+        if (this.filled && positionCount() < 3) {
             String msg = Logging.getMessage("generic.InsufficientPositions");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -402,8 +404,8 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
      */
     public void setPositions(Iterable<? extends Position> inPositions) {
         this.reset();
-        this.positions = new ArrayList<>();
         this.extents.clear();
+        this.positions = new ArrayList<>(sizeEstimate(inPositions));
         if (inPositions != null) {
             for (Position position : inPositions) {
                 this.positions.add(position);
@@ -414,7 +416,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
                 this.setSurfaceShapeLocations();
         }
 
-        if ((this.filled && this.positions.size() < 3)) {
+        if ((this.filled && positionCount() < 3)) {
             String msg = Logging.getMessage("generic.InsufficientPositions");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
@@ -556,7 +558,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
             locations = this.getPositions();
         }
         else {
-            Collection<Position> temp = new ArrayList<>();
+            Collection<Position> temp = new ArrayList<>(positionCount());
             Position firstPosition = null;
             for (Position pos : this.getPositions()) {
                 temp.add(pos);
@@ -653,7 +655,7 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
 
         // The rest of the code in this method determines whether to queue an ordered renderable for the polyline.
 
-        if (this.positions.size() < 2)
+        if (positionCount() < 2)
             return;
 
         // vertices potentially computed every frame to follow terrain changes
@@ -809,14 +811,15 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
         else
             this.currentSpans.clear();
 
-        if (this.positions.size() < 1)
+        final int n = positionCount();
+        if (n < 1)
             return;
 
         Position posA = this.positions.get(0);
         Vec4 ptA = this.computePoint(dc, posA, true);
-        for (int i = 1; i <= this.positions.size(); i++) {
+        for (int i = 1; i <= n; i++) {
             Position posB;
-            if (i < this.positions.size())
+            if (i < n)
                 posB = this.positions.get(i);
             else if (this.closed)
                 posB = this.positions.get(0);
@@ -969,15 +972,6 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     protected ArrayList<Vec4> clipAndAdd(DrawContext dc, Vec4 ptA, Vec4 ptB, ArrayList<Vec4> span) {
         // Line clipping appears to be useful only for long lines with few segments. It's costly otherwise.
         // TODO: Investigate trade-off of line clipping.
-//        if (Line.clipToFrustum(ptA, ptB, dc.getView().getFrustumInModelCoordinates()) == null)
-//        {
-//            if (span != null)
-//            {
-//                this.addSpan(span);
-//                span = null;
-//            }
-//            return span;
-//        }
 
         if (span == null)
             span = this.addPointToSpan(ptA, span);
@@ -1007,15 +1001,19 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     }
 
     public Position getReferencePosition() {
-        if (this.positions.size() < 1) {
+        if (positionCount() < 1) {
             return null;
         }
-        else if (this.positions.size() < 3) {
+        else if (positionCount() < 3) {
             return this.positions.get(0);
         }
         else {
-            return this.positions.get(this.positions.size() / 2);
+            return this.positions.get(positionCount() / 2);
         }
+    }
+
+    private int positionCount() {
+        return this.positions.size();
     }
 
     public void move(Position delta) {
@@ -1037,11 +1035,11 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
     }
 
     public void moveTo(Position position) {
-        if (position == null) {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (position == null) {
+//            String msg = Logging.getMessage("nullValue.PositionIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.reset();
         this.extents.clear();
@@ -1056,7 +1054,8 @@ public class Polyline extends AVListImpl implements Renderable, OrderedRenderabl
 
         double elevDelta = position.getElevation() - oldRef.getElevation();
 
-        for (int i = 0; i < this.positions.size(); i++) {
+        final int n = positionCount();
+        for (int i = 0; i < n; i++) {
             Position pos = this.positions.get(i);
 
             Angle distance = LatLon.greatCircleDistance(oldRef, pos);

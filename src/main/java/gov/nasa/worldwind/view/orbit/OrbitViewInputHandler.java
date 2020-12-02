@@ -48,7 +48,7 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
 
     protected static Position computeNewPosition(OrbitView view, Position position) {
         Angle newLat = Angle.fromDegrees(WWMath.clamp(position.latitude.degrees, -90, 90));
-        Angle newLon = Angle.normalizedLongitude(position.longitude);
+        Angle newLon = Angle.lonNorm(position.longitude);
         Position newPosition = new Position(newLat, newLon, position.elevation);
         return view.getOrbitViewLimits().limitCenterPosition(view, newPosition);
     }
@@ -559,36 +559,11 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
         this.stopAllAnimators();
     }
 
-    //protected void setHeading(BasicOrbitView view,
-    //    AnimationController animControl,
-    //    Angle heading)
-    //{
-    //    view.computeAndSetViewCenterIfNeeded();
-    //    RotateToAngleAnimator angleAnimator = new RotateToAngleAnimator(
-    //        view.getHeading(), heading, .95,
-    //        ViewPropertyAccessor.createHeadingAccessor(view));
-    //    animControl.put(VIEW_ANIM_HEADING, angleAnimator);
-    //
-    //    view.firePropertyChange(AVKey.VIEW, null, view);
-    //}
-
     protected void handleOrbitViewCenterStopped() {
         // The "center stopped" message instructs components to stop modifying the OrbitView's center position.
         // Therefore we stop any center position animations started by this view controller.
         this.stopUserInputAnimators(VIEW_ANIM_CENTER, VIEW_ANIM_EYE);
     }
-
-    //protected void setPitch(BasicOrbitView view,
-    //    AnimationController animControl,
-    //    Angle pitch)
-    //{
-    //    view.computeAndSetViewCenterIfNeeded();
-    //    RotateToAngleAnimator angleAnimator = new RotateToAngleAnimator(
-    //        view.getPitch(), pitch, .95,
-    //        ViewPropertyAccessor.createPitchAccessor(view));
-    //    animControl.put(VIEW_ANIM_PITCH, angleAnimator);
-    //    view.firePropertyChange(AVKey.VIEW, null, view);
-    //}
 
     protected void setEyePoint(Vec4 eyePoint, ViewInputAttributes.ActionAttributes attrib) {
         Globe globe = this.getWorldWindow().model().getGlobe();
@@ -632,9 +607,9 @@ public class OrbitViewInputHandler extends BasicViewInputHandler {
             else {
                 Position newPosition = new Position(
                     centerAnimator.getEnd().getLatitude().add(
-                        position.getLatitude()).subtract(cur.getLatitude()),
+                        position.getLatitude()).sub(cur.getLatitude()),
                     centerAnimator.getEnd().getLongitude().add(
-                        position.getLongitude()).subtract(cur.getLongitude()),
+                        position.getLongitude()).sub(cur.getLongitude()),
                     centerAnimator.getEnd().getElevation() +
                         position.getElevation() - cur.getElevation());
                 newPosition = computeNewPosition(view, newPosition);

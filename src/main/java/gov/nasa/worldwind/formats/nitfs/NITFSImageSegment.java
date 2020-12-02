@@ -231,10 +231,6 @@ public class NITFSImageSegment extends NITFSSegment {
                                 }
 
                                 rgbColor = imageBand.lookupRGB(colorCode);
-                                //case IMAGE_TYPE_GRAY:
-                                //    break;
-                                //case IMAGE_TYPE_RGB:
-                                //    break;
                                 rgbColor = switch (imageType) {
                                     case IMAGE_TYPE_ALPHA_RGB -> 0xFF000000 + rgbColor;
                                     case IMAGE_TYPE_GRAY_ALPHA, IMAGE_TYPE_RGB_ALPHA -> (rgbColor << 8) + 0xFF;

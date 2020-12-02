@@ -359,9 +359,6 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture {
         if (this.getTextureData() != null && this.getTexture(dc) == null)
             return this.makeTextureFromTextureData(dc);
 
-//        if (WorldWind.tasks().isFull())
-//            return null;
-
         Runnable task = this.createRequestTask();
 //        if (WorldWind.tasks().contains(task))
 //            return null;

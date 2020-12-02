@@ -863,8 +863,6 @@ public class SurfaceObjectTileBuilder {
         }
 
         // Add each top level tile or its descendants to the current tile list.
-//        for (SurfaceObjectTile tile : topLevelTiles)
-//            this.addTileOrDescendants(dc, levelSet, null, tile);
         topLevelTiles.forEach(
         //topLevelTiles.parallelStream().forEach(
             tile -> this.addTileOrDescendants(dc, levelSet, null, tile));

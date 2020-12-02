@@ -9,13 +9,10 @@ package gov.nasa.worldwind.layers.rpf.wizard;
  * @author dcollins
  * @version $Id: SizeFormatter.java 1171 2013-02-11 21:45:02Z dcollins $
  */
-public class SizeFormatter {
+public enum SizeFormatter { ;
     private static final long ONE_GIGABYTE = 1L << 30L;
     private static final long ONE_MEGABYTE = 1L << 20L;
     private static final long ONE_KILOBYTE = 1L << 10L;
-
-    public SizeFormatter() {
-    }
 
     private static long[] bytesToGbMbKbB(long bytes) {
         return new long[] {

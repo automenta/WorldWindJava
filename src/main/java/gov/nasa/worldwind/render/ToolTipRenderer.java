@@ -262,7 +262,7 @@ public class ToolTipRenderer {
 
     protected void drawToolTip(DrawContext dc, Rectangle viewport, String text, int x, int y,
         ToolTipAttributes attributes) {
-        Rectangle2D textBounds = this.computeTextBounds(dc, text, attributes.getFont());
+        Rectangle2D textBounds = ToolTipRenderer.computeTextBounds(dc, text, attributes.getFont());
         Rectangle2D bgBounds = ToolTipRenderer.computeBackgroundBounds(dc,
             textBounds.getWidth(), textBounds.getHeight(), attributes.getInsets());
 
@@ -275,11 +275,11 @@ public class ToolTipRenderer {
         stackHandler.pushModelview(gl);
         try {
             gl.glTranslated(screenPoint.getX() + bgBounds.getX(), screenPoint.getY() + bgBounds.getY(), 0);
-            this.drawToolTipInterior(dc, bgBounds.getWidth(), bgBounds.getHeight(), attributes);
+            ToolTipRenderer.drawToolTipInterior(dc, bgBounds.getWidth(), bgBounds.getHeight(), attributes);
             this.drawToolTipOutline(dc, bgBounds.getWidth(), bgBounds.getHeight(), attributes);
 
             gl.glTranslated(textTranslation.getX(), textTranslation.getY(), 0);
-            this.drawToolTipText(dc, text, 0, 0, attributes);
+            ToolTipRenderer.drawToolTipText(dc, text, 0, 0, attributes);
         }
         finally {
             stackHandler.pop(gl);
@@ -338,7 +338,7 @@ public class ToolTipRenderer {
     //********************  Background Rendering  ******************//
     //**************************************************************//
 
-    protected void drawToolTipInterior(DrawContext dc, double width, double height, ToolTipAttributes attributes) {
+    protected static void drawToolTipInterior(DrawContext dc, double width, double height, ToolTipAttributes attributes) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         ToolTipRenderer.applyColor(dc, attributes.getInteriorColor(), attributes.getInteriorOpacity());
@@ -368,7 +368,7 @@ public class ToolTipRenderer {
     //********************  Text Rendering  ************************//
     //**************************************************************//
 
-    protected void drawToolTipText(DrawContext dc, String text, int x, int y, ToolTipAttributes attributes) {
+    protected static void drawToolTipText(DrawContext dc, CharSequence text, int x, int y, ToolTipAttributes attributes) {
         Color textColor = ToolTipRenderer.modulateColorOpacity(attributes.getTextColor(),
             attributes.getTextOpacity());
 
@@ -408,7 +408,7 @@ public class ToolTipRenderer {
     //********************  Bounds Computation  ********************//
     //**************************************************************//
 
-    protected Rectangle2D computeTextBounds(DrawContext dc, String text, Font font) {
+    protected static Rectangle2D computeTextBounds(DrawContext dc, String text, Font font) {
         TextRenderer textRenderer = ToolTipRenderer.getTextRenderer(dc, font);
         return textRenderer.getBounds(text);
     }

@@ -596,12 +596,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
 //                return;
 
                 // Issue a request for the parent before descending to the children.
-//                if (tile.getLevelNumber() < this.levels.getNumLevels())
-//                {
-//                    // Request only tiles with data associated at this level
-//                    if (!this.levels.isResourceAbsent(tile))
-//                        this.requestTexture(dc, tile);
-//                }
             }
 
             TextureTile[] subTiles = tile.createSubTiles(this.levels.getLevel(tile.getLevelNumber() + 1));
@@ -855,17 +849,6 @@ public abstract class TiledImageLayer extends AbstractLayer {
     }
 
     public boolean isLayerInView(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
-//
-//        if (dc.getView() == null) {
-//            String message = Logging.getMessage("layers.AbstractLayer.NoViewSpecifiedInDrawingContext");
-//            Logging.logger().severe(message);
-//            throw new IllegalStateException(message);
-//        }
 
         final Sector visibleSector = dc.getVisibleSector();
         return !(visibleSector != null && !this.levels.getSector().intersects(visibleSector));
@@ -892,7 +875,7 @@ public abstract class TiledImageLayer extends AbstractLayer {
     //********************  Configuration  *************************//
     //**************************************************************//
 
-    protected Vec4 getReferencePoint(DrawContext dc) {
+    protected static Vec4 getReferencePoint(DrawContext dc) {
         return TiledImageLayer.computeReferencePoint(dc);
     }
 

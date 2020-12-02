@@ -129,9 +129,6 @@ public class BasicRasterServerCache extends BasicMemoryCache {
                         ref.clear();  // clear the soft reference
 
                         clear(); // drop entire cache
-
-//                    System.runFinalization();
-//                    System.gc();
                     }
                 }
             }

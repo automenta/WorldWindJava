@@ -252,11 +252,6 @@ public class Vec4 {
     }
 
     public static Vec4 min3(Vec4 value1, Vec4 value2) {
-//        if ((value1 == null) || (value2 == null)) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return new Vec4(
             Math.min(value1.x, value2.x),
@@ -265,11 +260,6 @@ public class Vec4 {
     }
 
     public static Vec4 max3(Vec4 value1, Vec4 value2) {
-//        if ((value1 == null) || (value2 == null)) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return new Vec4(
             Math.max(value1.x, value2.x),
@@ -286,11 +276,6 @@ public class Vec4 {
     }
 
     public static Vec4 mix3(double amount, Vec4 value1, Vec4 value2) {
-//        if ((value1 == null) || (value2 == null)) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (amount < 0.0)
             return value1;
@@ -314,11 +299,6 @@ public class Vec4 {
      * @throws IllegalArgumentException if the Iterable is null.
      */
     public static Vec4 computeAveragePoint(Iterable<? extends Vec4> points) {
-//        if (points == null) {
-//            String msg = Logging.getMessage("nullValue.PointListIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         int count = 0;
         double x = 0.00d;
@@ -814,11 +794,6 @@ public class Vec4 {
     }
 
     public final Vec4 add3(Vec4 vec4) {
-//        if (vec4 == null) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return new Vec4(
             this.x + vec4.x,
@@ -832,11 +807,6 @@ public class Vec4 {
     }
 
     public final Vec4 subtract3(Vec4 vec4) {
-//        if (vec4 == null) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return new Vec4(
             this.x - vec4.x,
@@ -858,11 +828,6 @@ public class Vec4 {
     }
 
     public final Vec4 multiply3(Vec4 vec4) {
-//        if (vec4 == null) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return new Vec4(
             this.x * vec4.x,
@@ -886,11 +851,6 @@ public class Vec4 {
     }
 
     public final Vec4 divide3(Vec4 vec4) {
-//        if (vec4 == null) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return new Vec4(
             this.x / vec4.x,
@@ -935,11 +895,6 @@ public class Vec4 {
     }
 
     public final double distanceTo2(Vec4 vec4) {
-//        if (vec4 == null) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         double dx = vec4.x - this.x;
         double dy = vec4.y - this.y;
@@ -947,21 +902,11 @@ public class Vec4 {
     }
 
     public final double distanceTo3(Vec4 vec4) {
-//        if (vec4 == null) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return Math.sqrt(this.distanceToSquared3(vec4));
     }
 
     public final double distanceToSquared3(Vec4 vec4) {
-//        if (vec4 == null) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         double tmp;
         double result = 0.0;
@@ -975,21 +920,11 @@ public class Vec4 {
     }
 
     public final double dot3(Vec4 vec4) {
-//        if (vec4 == null) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return (this.x * vec4.x) + (this.y * vec4.y) + (this.z * vec4.z);
     }
 
     public final double dot4(Vec4 vec4) {
-//        if (vec4 == null) {
-//            String msg = Logging.getMessage("nullValue.Vec4IsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return (this.x * vec4.x) + (this.y * vec4.y) + (this.z * vec4.z) + (this.w * vec4.w);
     }

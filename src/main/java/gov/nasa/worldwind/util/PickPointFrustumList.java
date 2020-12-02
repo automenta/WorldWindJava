@@ -164,11 +164,6 @@ public class PickPointFrustumList extends ArrayList<PickPointFrustum> {
      * @throws IllegalArgumentException if the extent is null.
      */
     public final boolean intersectsAny(Extent extent) {
-//        if (extent == null) {
-//            String msg = Logging.getMessage("nullValue.ExtentIsNull");
-//            Logging.logger().fine(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         for (PickPointFrustum frustum : this) {
             if (frustum.intersects(extent)) {

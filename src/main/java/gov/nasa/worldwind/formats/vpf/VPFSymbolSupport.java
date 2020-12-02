@@ -27,7 +27,7 @@ public class VPFSymbolSupport {
     public Iterable<? extends VPFSymbolKey> getSymbolKeys(VPFFeatureClass featureClass, String featureCode,
         AVList featureAttributes) {
         if (featureCode != null) {
-            Iterable<? extends VPFSymbolKey> keys = this.doGetSymbolKeys(featureClass, featureCode, featureAttributes);
+            Iterable<? extends VPFSymbolKey> keys = VPFSymbolSupport.doGetSymbolKeys(featureClass, featureCode, featureAttributes);
             if (keys != null)
                 return keys;
 
@@ -40,7 +40,7 @@ public class VPFSymbolSupport {
     }
 
     public Iterable<? extends VPFSymbolAttributes> getSymbolAttributes(VPFFeatureClass featureClass, VPFSymbolKey key) {
-        Iterable<? extends VPFSymbolAttributes> attr = this.doGetAttributes(featureClass, key);
+        Iterable<? extends VPFSymbolAttributes> attr = VPFSymbolSupport.doGetAttributes(featureClass, key);
         if (attr != null)
             return attr;
 
@@ -108,7 +108,7 @@ public class VPFSymbolSupport {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    protected Iterable<? extends VPFSymbolKey> doGetSymbolKeys(VPFFeatureClass featureClass, String featureCode,
+    protected static Iterable<? extends VPFSymbolKey> doGetSymbolKeys(VPFFeatureClass featureClass, String featureCode,
         AVList featureAttributes) {
         if (featureClass.getType() == VPFFeatureType.TEXT) {
             Integer i = VPFSymbolSupport.getSymbolId(featureAttributes);
@@ -120,7 +120,8 @@ public class VPFSymbolSupport {
         return null;
     }
 
-    protected Iterable<? extends VPFSymbolAttributes> doGetAttributes(VPFFeatureClass featureClass, VPFSymbolKey key) {
+    protected static Iterable<? extends VPFSymbolAttributes> doGetAttributes(VPFFeatureClass featureClass,
+        VPFSymbolKey key) {
         if (featureClass.getType() == VPFFeatureType.TEXT) {
             return VPFSymbolSupport.assembleTextAttributes(featureClass, key);
         }

@@ -112,40 +112,6 @@ public class ImageIORasterReader extends AbstractDataRasterReader {
         this.generateMipMaps = generateMipMaps;
     }
 
-    //private boolean canReadImage(DataSource source)
-    //{
-    //    javax.imageio.stream.ImageInputStream iis = null;
-    //    javax.imageio.ImageReader reader = null;
-    //    try
-    //    {
-    //        iis = createInputStream(source);
-    //        reader = readerFor(iis);
-    //        if (reader == null)
-    //            return false;
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        // Not interested in logging the exception, we only want to report the failure to read.
-    //        return false;
-    //    }
-    //    finally
-    //    {
-    //        if (reader != null)
-    //            reader.dispose();
-    //        try
-    //        {
-    //            if (iis != null)
-    //                iis.close();
-    //        }
-    //        catch (Exception e)
-    //        {
-    //            // Not interested in logging the exception.
-    //        }
-    //    }
-    //
-    //    return true;
-    //}
-
     protected boolean doCanRead(Object source, AVList params) {
         // Determine whether or not the data source can be read.
         //if (!this.canReadImage(source))

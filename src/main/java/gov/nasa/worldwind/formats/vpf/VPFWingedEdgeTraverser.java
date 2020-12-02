@@ -32,7 +32,7 @@ public class VPFWingedEdgeTraverser {
      * @param listener      the ring edge listener, may be null.
      * @return the number of edges composing the specified ring.
      */
-    public int traverseRing(int faceId, int startEdgeId, VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray,
+    public static int traverseRing(int faceId, int startEdgeId, VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray,
         EdgeTraversalListener listener) {
         // 1. Determine which face primitive to construct.
         // The face is determined for us by the selection of a row in the face primitive table.
@@ -57,19 +57,19 @@ public class VPFWingedEdgeTraverser {
             curEdgeId = nextEdgeId;
 
             if (listener != null) {
-                listener.nextEdge(count, curEdgeId, this.getMustReverseCoordinates(faceId, prevEdgeId, curEdgeId,
+                listener.nextEdge(count, curEdgeId, VPFWingedEdgeTraverser.getMustReverseCoordinates(faceId, prevEdgeId, curEdgeId,
                     edgeInfoArray));
             }
 
             count++;
         }
-        while ((nextEdgeId = this.nextEdgeId(faceId, prevEdgeId, curEdgeId, edgeInfoArray)) > 0
+        while ((nextEdgeId = VPFWingedEdgeTraverser.nextEdgeId(faceId, prevEdgeId, curEdgeId, edgeInfoArray)) > 0
             && (nextEdgeId != startEdgeId));
 
         return count;
     }
 
-    protected int nextEdgeId(int faceId, int prevEdgeId, int curEdgeId,
+    protected static int nextEdgeId(int faceId, int prevEdgeId, int curEdgeId,
         VPFPrimitiveData.PrimitiveInfo[] edgeInfoArray) {
         // The next edge depends on which side of this edge (left or right) the face belongs to. If the face is on
         // the left side of this edge, we travel to the left edge, and visa versa. However if this is an auxiliary
@@ -108,7 +108,7 @@ public class VPFWingedEdgeTraverser {
         return null;
     }
 
-    protected boolean getMustReverseCoordinates(int faceId, int prevEdgeId, int curEdgeId,
+    protected static boolean getMustReverseCoordinates(int faceId, int prevEdgeId, int curEdgeId,
         VPFPrimitiveData.PrimitiveInfo[] edgeInfo) {
         // Determine whether or not this edge's coordinate array must be reversed to provide a consistent ordering
         // of ring coordinates. There are two cases which cause the coordinates to need reversal:

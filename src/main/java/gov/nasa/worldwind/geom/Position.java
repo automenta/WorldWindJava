@@ -208,15 +208,15 @@ public class Position extends LatLon {
     }
 
     public Position add(Position that) {
-        Angle lat = Angle.normalizedLatitude(this.latitude.add(that.latitude));
-        Angle lon = Angle.normalizedLongitude(this.longitude.add(that.longitude));
+        Angle lat = Angle.latNorm(this.latitude.add(that.latitude));
+        Angle lon = Angle.lonNorm(this.longitude.add(that.longitude));
 
         return new Position(lat, lon, this.elevation + that.elevation);
     }
 
     public Position subtract(Position that) {
-        Angle lat = Angle.normalizedLatitude(this.latitude.subtract(that.latitude));
-        Angle lon = Angle.normalizedLongitude(this.longitude.subtract(that.longitude));
+        Angle lat = Angle.latNorm(this.latitude.sub(that.latitude));
+        Angle lon = Angle.lonNorm(this.longitude.sub(that.longitude));
 
         return new Position(lat, lon, this.elevation - that.elevation);
     }

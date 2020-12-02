@@ -432,7 +432,7 @@ public class Ambush extends AbstractMilStd2525TacticalGraphic {
 
         // Compute the angle between the start and end points. Note that we cannot use Angle.angularDistance because
         // we need a signed distance here.
-        double diffDegrees = endAngle.subtract(arcData.startAngle).degrees;
+        double diffDegrees = endAngle.sub(arcData.startAngle).degrees;
         if (diffDegrees < -180)
             diffDegrees += 360;
         else if (diffDegrees > 180)

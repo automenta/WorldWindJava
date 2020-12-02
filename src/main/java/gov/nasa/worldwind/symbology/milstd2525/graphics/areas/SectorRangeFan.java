@@ -643,7 +643,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
 
         // Create the Center of Sector arrow if the fan is less than a full circle. If the fan is a full circle then it
         // doesn't make sense to draw an arbitrary arrow.
-        boolean fullCircle = Math.abs(prevLeftAzimuth.subtract(prevRightAzimuth).degrees) >= 360;
+        boolean fullCircle = Math.abs(prevLeftAzimuth.sub(prevRightAzimuth).degrees) >= 360;
         if (!fullCircle) {
             this.centerAzimuth = SectorRangeFan.computeCenterSectorAngle(prevLeftAzimuth, prevRightAzimuth);
             this.createCenterOfSectorArrow(dc, centerAzimuth, prevRadius);
@@ -726,7 +726,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
             return;
         }
 
-        Angle arcAngle = rightAzimuth.subtract(leftAzimuth);
+        Angle arcAngle = rightAzimuth.sub(leftAzimuth);
 
         Angle da = arcAngle.divide(intervals);
 
@@ -957,8 +957,8 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
         rightAzimuth = (rightAzimuth != null) ? rightAzimuth : centerAzimuth;
 
         // Determine the angular distance between the Center Of Sector line and the left and right sides of the fan.
-        double deltaLeft = Math.abs(centerAzimuth.subtract(leftAzimuth).degrees);
-        double deltaRight = Math.abs(centerAzimuth.subtract(rightAzimuth).degrees);
+        double deltaLeft = Math.abs(centerAzimuth.sub(leftAzimuth).degrees);
+        double deltaRight = Math.abs(centerAzimuth.sub(rightAzimuth).degrees);
 
         // Place the range label in the larger wedge.
         Angle labelAzimuth = (deltaLeft > deltaRight) ? leftAzimuth : rightAzimuth;
@@ -979,7 +979,7 @@ public class SectorRangeFan extends AbstractMilStd2525TacticalGraphic implements
     protected static Angle normalizeAzimuth(Angle azimuth) {
         // The azimuth is not actually a longitude, but the normalization formula is the same as for longitude.
         if (azimuth != null)
-            return Angle.normalizedLongitude(azimuth);
+            return Angle.lonNorm(azimuth);
         return null;
     }
 

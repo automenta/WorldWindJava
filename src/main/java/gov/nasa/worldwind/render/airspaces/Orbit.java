@@ -585,7 +585,7 @@ public class Orbit extends AbstractAirspace {
         int count = GeometryBuilder.getLongCylinderVertexCount(arcSlices, lengthSlices, stacks);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        gb.makeLongCylinderVertices(dc.getTerrain(), center1, center2, radius, altitudes, terrainConformant, arcSlices,
+        GeometryBuilder.makeLongCylinderVertices(dc.getTerrain(), center1, center2, radius, altitudes, terrainConformant, arcSlices,
             lengthSlices, stacks, referenceCenter, verts);
         gb.makeLongCylinderNormals(arcSlices, lengthSlices, stacks, norms);
 
@@ -613,7 +613,7 @@ public class Orbit extends AbstractAirspace {
         int mode = GeometryBuilder.getLongCylinderOutlineDrawMode();
         int count = GeometryBuilder.getLongCylinderOutlineIndexCount(arcSlices, lengthSlices, stacks);
         int[] indices = new int[count];
-        gb.makeLongCylinderOutlineIndices(arcSlices, lengthSlices, stacks, indices);
+        GeometryBuilder.makeLongCylinderOutlineIndices(arcSlices, lengthSlices, stacks, indices);
 
         dest.setElementData(mode, count, indices);
     }
@@ -658,7 +658,7 @@ public class Orbit extends AbstractAirspace {
         int count = GeometryBuilder.getLongDiskVertexCount(arcSlices, lengthSlices, loops);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        gb.makeLongDiskVertices(dc.getTerrain(), center1, center2, radii[0], radii[1], altitude, terrainConformant,
+        GeometryBuilder.makeLongDiskVertices(dc.getTerrain(), center1, center2, radii[0], radii[1], altitude, terrainConformant,
             arcSlices, lengthSlices, loops, referenceCenter, verts);
         gb.makeLongDiskVertexNormals((float) radii[0], (float) radii[1], 0, arcSlices, lengthSlices, loops, verts,
             norms);

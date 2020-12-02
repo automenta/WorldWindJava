@@ -74,7 +74,7 @@ public class WorldFile {
             if (!name.startsWith(base) || name.length() != length)
                 return false;
 
-            if (!name.isEmpty() && name.toLowerCase().charAt(name.toLowerCase().length() - 1) == 'w') {
+            if (name.toLowerCase().charAt(name.toLowerCase().length() - 1) == 'w') {
                 // Match world file to the corresponding image file: certain chars of suffixes must match
                 String nameSuffix = WWIO.getSuffix(name);
                 if (imageSuffix != null && nameSuffix != null) {

@@ -184,11 +184,6 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * {@inheritDoc}
      */
     public Extent getExtent(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.extentCache.computeIfAbsent(
             dc.getGlobe().getGlobeStateKey(),
@@ -199,11 +194,6 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * {@inheritDoc}
      */
     public void preRender(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (!this.isVisible())
             return;
@@ -251,11 +241,6 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
      * {@inheritDoc}
      */
     public void render(DrawContext dc) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (!this.isVisible())
             return;
@@ -794,21 +779,4 @@ public abstract class AbstractSurfaceObject extends WWObjectImpl implements Surf
     //**************************************************************//
     //********************  Cache Entry  ***************************//
     //**************************************************************//
-
-//    /**
-//     * Represents a globe dependent cache entry.
-//     */
-//    protected static class CacheEntry<X> {
-//        public final X object;
-//        protected final Object globeStateKey;
-//
-//        public CacheEntry(X object, DrawContext dc) {
-//            this((GlobeStateKey) dc.getGlobe().getStateKey(dc), object);
-//        }
-//
-//        public CacheEntry(GlobeStateKey key, X object) {
-//            this.object = object;
-//            this.globeStateKey = key;
-//        }
-//    }
 }

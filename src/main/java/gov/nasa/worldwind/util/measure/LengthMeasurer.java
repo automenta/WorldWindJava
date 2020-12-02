@@ -195,11 +195,6 @@ public class LengthMeasurer implements MeasurableLength {
     }
 
     public void setPositions(Iterable<? extends Position> positions) {
-//        if (positions == null) {
-//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         ArrayList<Position> newPositions = new ArrayList<>(sizeEstimate(positions));
         for (Position p : positions)
@@ -209,11 +204,6 @@ public class LengthMeasurer implements MeasurableLength {
     }
 
     public void setPositions(ArrayList<? extends Position> positions) {
-//        if (positions == null) {
-//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.positions = positions;
         if (this.positions.size() > 2) {
@@ -226,11 +216,6 @@ public class LengthMeasurer implements MeasurableLength {
     }
 
     public void setPositions(Iterable<? extends LatLon> positions, double elevation) {
-//        if (positions == null) {
-//            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         ArrayList<Position> newPositions = new ArrayList<>(sizeEstimate(positions));
         positions.forEach(pos -> newPositions.add(new Position(pos, elevation)));
@@ -418,11 +403,6 @@ public class LengthMeasurer implements MeasurableLength {
      */
     @Override
     public double getLength(Globe globe) {
-//        if (globe == null) {
-//            String message = Logging.getMessage("nullValue.GlobeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.length = this.computeLength(globe, this.followTerrain);
 

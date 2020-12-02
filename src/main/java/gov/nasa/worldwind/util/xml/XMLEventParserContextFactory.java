@@ -6,9 +6,6 @@
 
 package gov.nasa.worldwind.util.xml;
 
-//import gov.nasa.worldwind.layers.ogc.collada.*;
-//import gov.nasa.worldwind.layers.ogc.kml.*;
-
 import gov.nasa.worldwind.layers.ogc.kml.*;
 import gov.nasa.worldwind.util.Logging;
 
@@ -38,11 +35,6 @@ public class XMLEventParserContextFactory {
         String[] mimeTypes = new String[] {KMLConstants.KML_MIME_TYPE, KMLConstants.KMZ_MIME_TYPE};
         parsers.add(new ParserTableEntry(mimeTypes, new KMLParserContext(KMLConstants.KML_NAMESPACE)));
         parsers.add(new ParserTableEntry(mimeTypes, new KMLParserContext(XMLConstants.NULL_NS_URI)));
-//
-//        // Register a Collada parser context for the default Collada namespace and one for the empty namespace.
-//        mimeTypes = new String[] {KMLConstants.COLLADA_MIME_TYPE};
-//        parsers.add(new ParserTableEntry(mimeTypes, new ColladaParserContext(ColladaConstants.COLLADA_NAMESPACE)));
-//        parsers.add(new ParserTableEntry(mimeTypes, new ColladaParserContext(XMLConstants.NULL_NS_URI)));
     }
 
     /**

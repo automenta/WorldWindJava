@@ -73,11 +73,11 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
      * @throws IllegalArgumentException if the shapefile is null.
      */
     public ShapefilePolygons(Shapefile shapefile) {
-        if (shapefile == null) {
-            String msg = Logging.getMessage("nullValue.ShapefileIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (shapefile == null) {
+//            String msg = Logging.getMessage("nullValue.ShapefileIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.init(shapefile, null, null, null);
     }
@@ -100,11 +100,11 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
      */
     public ShapefilePolygons(Shapefile shapefile, ShapeAttributes normalAttrs, ShapeAttributes highlightAttrs,
         AttributeDelegate attributeDelegate) {
-        if (shapefile == null) {
-            String msg = Logging.getMessage("nullValue.ShapefileIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
+//        if (shapefile == null) {
+//            String msg = Logging.getMessage("nullValue.ShapefileIsNull");
+//            Logging.logger().severe(msg);
+//            throw new IllegalArgumentException(msg);
+//        }
 
         this.init(shapefile, normalAttrs, highlightAttrs, attributeDelegate);
     }
@@ -219,11 +219,6 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
 
     @Override
     public void preRender(DrawContext dc) {
-//        if (dc == null) {
-//            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (!this.visible)
             return;
@@ -538,7 +533,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
                 continue;  // ignore records that don't meet the resolution criteria
 
             ShapefilePolygons.computeRecordMetrics(record, generalizer);
-            this.tessellateRecord(geom, record, tess);
+            ShapefilePolygons.tessellateRecord(geom, record, tess);
         }
 
         if (tess.getVertexCount() == 0 || geom.recordIndices.isEmpty())
@@ -589,7 +584,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         }
     }
 
-    protected void tessellateRecord(ShapefileGeometry geom, Record record, final PolygonTessellator2 tess) {
+    protected static void tessellateRecord(ShapefileGeometry geom, Record record, final PolygonTessellator2 tess) {
         // Compute the minimum effective area for a vertex based on the geometry resolution. We convert the resolution
         // from radians to square degrees. This ensures the units are consistent with the vertex effective area computed
         // by PolylineGeneralizer, which adopts the units of the source data (degrees).
@@ -902,7 +897,7 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
                     continue; // ignore records that don't meet the resolution criteria
 
                 ShapefilePolygons.computeRecordMetrics(record, generalizer);
-                this.doCombineRecord(tess, cc.getSector(), minEffectiveArea, record);
+                ShapefilePolygons.doCombineRecord(tess, cc.getSector(), minEffectiveArea, record);
             }
         }
         finally {
@@ -911,13 +906,13 @@ public class ShapefilePolygons extends ShapefileRenderable implements OrderedRen
         }
     }
 
-    protected void doCombineRecord(GLUtessellator tess, Sector sector, double minEffectiveArea, Record record) {
+    protected static void doCombineRecord(GLUtessellator tess, Sector sector, double minEffectiveArea, Record record) {
         for (int i = 0; i < record.getBoundaryCount(); i++) {
-            this.doCombineBoundary(tess, sector, minEffectiveArea, record, i);
+            ShapefilePolygons.doCombineBoundary(tess, sector, minEffectiveArea, record, i);
         }
     }
 
-    protected void doCombineBoundary(GLUtessellator tess, Sector sector, double minEffectiveArea, Record record,
+    protected static void doCombineBoundary(GLUtessellator tess, Sector sector, double minEffectiveArea, Record record,
         int boundaryIndex) {
         final ClippingTessellator clipTess = new ClippingTessellator(tess, sector);
 

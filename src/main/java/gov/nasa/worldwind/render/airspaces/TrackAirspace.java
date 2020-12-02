@@ -419,7 +419,7 @@ public class TrackAirspace extends AbstractAirspace {
         Angle azimuth1 = LatLon.greatCircleAzimuth(locations1[1], locations1[0]);
         Angle azimuth2 = LatLon.greatCircleAzimuth(locations2[0], locations2[1]);
         Angle angularDistance = azimuth1.angularDistanceTo(azimuth2);
-        Angle signedDistance = azimuth2.subtract(azimuth1).normalize();
+        Angle signedDistance = azimuth2.sub(azimuth1).normalize();
         Angle shortAngle = Angle.mix(0.5, azimuth1, azimuth2);
         Angle longAngle = shortAngle.add(Angle.POS180).normalize();
         boolean isLeftTurn = signedDistance.compareTo(Angle.ZERO) > 0;

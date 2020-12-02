@@ -36,7 +36,7 @@ public class BasicWebViewFactory implements WebViewFactory {
         }
 
         if (Configuration.isLinuxOS())
-            return this.createLinuxWebView(frameSize);
+            return BasicWebViewFactory.createLinuxWebView(frameSize);
 
         else if (Configuration.isMacOS())
             return BasicWebViewFactory.createMacWebView(frameSize);
@@ -55,7 +55,7 @@ public class BasicWebViewFactory implements WebViewFactory {
      * @return WebView for Linux.
      * @throws UnsupportedOperationException Linux WebView is not supported at this time.
      */
-    protected WebView createLinuxWebView(Dimension frameSize) {
+    protected static WebView createLinuxWebView(Dimension frameSize) {
         return BasicWebViewFactory.createUnknownOSWebView(frameSize); // TODO: implement native WebView for Linux.
     }
 

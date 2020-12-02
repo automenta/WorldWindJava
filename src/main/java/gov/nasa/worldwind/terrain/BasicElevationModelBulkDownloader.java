@@ -100,20 +100,6 @@ public class BasicElevationModelBulkDownloader extends BulkRetrievalThread {
         return count > 0 ? size / count : 0;
     }
 
-//    protected int countMissingTiles() throws InterruptedException
-//    {
-//        int count = 0;
-//        for (int levelNumber = 0; levelNumber <= this.level; levelNumber++)
-//        {
-//            if (this.elevationModel.getLevels().isLevelEmpty(levelNumber))
-//                continue;
-//
-//            count += getMissingTilesInSector(this.sector, levelNumber).size();
-//        }
-//
-//        return count;
-//    }
-
     public void run() {
         try {
             // Init progress with missing tiles count estimate

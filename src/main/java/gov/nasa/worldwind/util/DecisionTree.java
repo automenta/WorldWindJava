@@ -92,31 +92,4 @@ public class DecisionTree<T, C> // T = type being managed. C = traversal context
          */
         T[] split(T o, C context);
     }
-//
-//    public static void main(String[] args)
-//    {
-//        DecisionTree<Sector, Sector> tree = new DecisionTree<Sector, Sector>(new Controller<Sector, Sector>()
-//        {
-//            public boolean isVisible(Sector s, Sector context)
-//            {
-//                return s.intersects(context);
-//            }
-//
-//            public boolean isTerminal(Sector s, Sector context)
-//            {
-//                return s.getDeltaLat().degrees < 1d;
-//            }
-//
-//            public Sector[] split(Sector s, Sector context)
-//            {
-//                return s.subdivide();
-//            }
-//        });
-//
-//        int N = 10000;
-//        long start = System.currentTimeMillis();
-//        for (int i = 0; i < N; i++)
-//            tree.traverse(Sector.FULL_SPHERE, Sector.fromDegrees(0, 40, 0, 40));
-//        System.out.println((System.currentTimeMillis() - start) / (double) N + " ms");
-//    }
 }

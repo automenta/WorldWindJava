@@ -258,19 +258,6 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
         return this.bufferedImage;
     }
 
-//    public void finalize()
-//    {
-//        try
-//        {
-//            super.finalize();
-//            this.dispose();
-//        }
-//        catch (Throwable t)
-//        {
-//            Logging.logger().log(java.util.logging.Level.FINEST, t.getMessage(), t);
-//        }
-//    }
-
     public Graphics2D getGraphics() {
         if (this.g2d == null) {
             this.g2d = this.bufferedImage.createGraphics();
@@ -280,103 +267,6 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
         }
         return g2d;
     }
-
-//    protected void doDrawOnTo(BufferedImageRaster canvas)
-//    {
-//        Sector sector = this.getSector();
-//        if (null == sector)
-//        {
-//            String message = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (!sector.intersects(canvas.getSector()))
-//        {
-//            return;
-//        }
-//
-//        BufferedImage transformedImage = null;
-//        java.awt.Graphics2D g2d = null;
-//        java.awt.Shape prevClip = null;
-//        java.awt.Composite prevComposite = null;
-//
-//        try
-//        {
-//            int canvasWidth = canvas.getWidth();
-//            int canvasHeight = canvas.getHeight();
-//
-//            // Apply the transform that correctly maps the image onto the canvas.
-//            java.awt.geom.AffineTransform transform = this.computeSourceToDestTransform(
-//                this.getWidth(), this.getHeight(), this.getSector(), canvasWidth, canvasHeight, canvas.getSector());
-//
-//            AffineTransformOp op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
-//            Rectangle2D rect = op.getBounds2D(this.getBufferedImage());
-//
-//            int clipWidth = (int) Math.ceil((rect.getMaxX() >= canvasWidth) ? canvasWidth : rect.getMaxX());
-//            int clipHeight = (int) Math.ceil((rect.getMaxY() >= canvasHeight) ? canvasHeight : rect.getMaxY());
-//
-//            if (clipWidth <= 0 || clipHeight <= 0)
-//            {
-//                return;
-//            }
-//
-//            int transformedImageType = (BufferedImage.TYPE_CUSTOM != this.getBufferedImage().getType())
-//                ? this.getBufferedImage().getType() : BufferedImage.TYPE_INT_ARGB;
-//
-//            transformedImage = new BufferedImage(clipWidth, clipHeight, transformedImageType);
-//            op.filter(this.getBufferedImage(), transformedImage);
-//
-//            g2d = canvas.getGraphics();
-//
-//            prevClip = g2d.getClip();
-//            prevComposite = g2d.getComposite();
-//
-//            // Set the alpha composite for appropriate alpha blending.
-//            g2d.setComposite(java.awt.AlphaComposite.SrcOver);
-//            g2d.drawImage(transformedImage, 0, 0, null);
-//        }
-//        catch (java.awt.image.ImagingOpException ioe)
-//        {
-//            // If we catch a ImagingOpException, then the transformed image has a width or height of 0.
-//            // This indicates that there is no intersection between the source image and the canvas,
-//            // or the intersection is smaller than one pixel.
-//        }
-//        catch (java.awt.image.RasterFormatException rfe)
-//        {
-//            // If we catch a RasterFormatException, then the transformed image has a width or height of 0.
-//            // This indicates that there is no intersection between the source image and the canvas,
-//            // or the intersection is smaller than one pixel.
-//        }
-//        finally
-//        {
-//            // Restore the previous clip, composite, and transform.
-//            try
-//            {
-//                if (null != transformedImage)
-//                {
-//                    transformedImage.flush();
-//                }
-//
-//                if (null != g2d)
-//                {
-//                    if (null != prevClip)
-//                    {
-//                        g2d.setClip(prevClip);
-//                    }
-//
-//                    if (null != prevComposite)
-//                    {
-//                        g2d.setComposite(prevComposite);
-//                    }
-//                }
-//            }
-//            catch (Throwable t)
-//            {
-//                Logging.logger().log(java.util.logging.Level.FINEST, WWUtil.extractExceptionReason(t), t);
-//            }
-//        }
-//    }
 
     public void drawOnTo(DataRaster canvas) {
         if (canvas == null) {
@@ -495,11 +385,6 @@ public class BufferedImageRaster extends AbstractDataRaster implements Cacheable
 //            // or the intersection is smaller than one pixel.
 //        }
 //        catch (java.awt.image.RasterFormatException rfe)
-//        {
-//            // If we catch a RasterFormatException, then the transformed image has a width or height of 0.
-//            // This indicates that there is no intersection between the source image and the canvas,
-//            // or the intersection is smaller than one pixel.
-//        }
         catch (Throwable t) {
             String reason = WWUtil.extractExceptionReason(t);
             Logging.logger().log(Level.SEVERE, reason, t);

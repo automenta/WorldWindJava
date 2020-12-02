@@ -163,27 +163,6 @@ public class Material {
         gl.glMaterialfv(face, name, compArray, 0);
     }
 
-    //protected void glMaterialPremult(GL2 gl, int face, int name, Color color)
-    //{
-    //    float[] compArray = new float[4];
-    //    color.getRGBComponents(compArray);
-    //    compArray[0] = compArray[0] * compArray[3];
-    //    compArray[1] = compArray[1] * compArray[3];
-    //    compArray[2] = compArray[2] * compArray[3];
-    //    gl.glMaterialfv(face, name, compArray, 0);
-    //}
-
-    //protected void glMaterialfvPremult(GL2 gl, int face, int name, Color color, float alpha)
-    //{
-    //    float[] compArray = new float[4];
-    //    color.getRGBColorComponents(compArray);
-    //    compArray[0] = compArray[0] * alpha;
-    //    compArray[1] = compArray[1] * alpha;
-    //    compArray[2] = compArray[2] * alpha;
-    //    compArray[3] = alpha;
-    //    gl.glMaterialfv(face, name, compArray, 0);
-    //}
-
     protected static Color makeDarker(Color color) {
         if (color == null) {
             String msg = Logging.getMessage("nullValue.ColorIsNull");

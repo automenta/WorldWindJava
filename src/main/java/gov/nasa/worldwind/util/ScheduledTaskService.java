@@ -75,11 +75,6 @@ public class ScheduledTaskService extends WWObjectImpl implements Thread.Uncaugh
      * {@inheritDoc}
      */
     public void addTask(Runnable runnable) {
-//        if (runnable == null) {
-//            String message = Logging.getMessage("nullValue.RunnableIsNull");
-//            Logging.logger().fine(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (!this.activeTasks.add(runnable))
             return;
@@ -91,11 +86,6 @@ public class ScheduledTaskService extends WWObjectImpl implements Thread.Uncaugh
      * {@inheritDoc}
      */
     public ScheduledFuture<?> addScheduledTask(Runnable runnable, long delay, TimeUnit timeunit) {
-//        if (runnable == null) {
-//            String message = Logging.getMessage("nullValue.RunnableIsNull");
-//            Logging.logger().fine(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (!this.activeTasks.add(runnable))
             return null;

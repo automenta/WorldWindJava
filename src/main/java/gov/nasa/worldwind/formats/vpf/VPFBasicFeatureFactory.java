@@ -145,7 +145,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
     }
 
     protected VPFFeature doCreateSimpleFeature(VPFFeatureClass featureClass, VPFRecord featureRow,
-        VPFBufferedRecordData joinTable, Iterable<String> attributeKeys) {
+        Iterable<VPFRecord> joinTable, Iterable<String> attributeKeys) {
         if (joinTable != null) {
             return this.createCompoundSimpleFeature(featureClass, featureRow, joinTable, attributeKeys);
         }
@@ -173,7 +173,7 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
         VPFPrimitiveData.PrimitiveInfo primitiveInfo = this.primitiveData.getPrimitiveInfo(
             featureToPrimitive.getTable2(), primitiveId);
 
-        return this.createFeature(featureClass, featureRow, attributeKeys, primitiveInfo.getBounds(),
+        return VPFBasicFeatureFactory.createFeature(featureClass, featureRow, attributeKeys, primitiveInfo.getBounds(),
             new int[] {primitiveId});
     }
 
@@ -199,10 +199,10 @@ public class VPFBasicFeatureFactory implements VPFFeatureFactory {
         VPFBoundingBox bounds = (VPFBoundingBox) this.getPrimitiveIds(featureClass, featureRow, joinTable, primitiveIds,
             false);
 
-        return this.createFeature(featureClass, featureRow, attributeKeys, bounds, primitiveIds);
+        return VPFBasicFeatureFactory.createFeature(featureClass, featureRow, attributeKeys, bounds, primitiveIds);
     }
 
-    protected VPFFeature createFeature(VPFFeatureClass featureClass, VPFRecord featureRow,
+    protected static VPFFeature createFeature(VPFFeatureClass featureClass, VPFRecord featureRow,
         Iterable<String> attributeKeys,
         VPFBoundingBox bounds, int[] primitiveIds) {
         VPFFeature feature = new VPFFeature(featureClass, featureRow.getId(), bounds, primitiveIds);

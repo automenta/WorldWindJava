@@ -348,7 +348,7 @@ public class AntennaAxes extends AbstractShape {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         // Compute the positioning transform.
-        Matrix lat = Matrix.fromAxisAngle(Angle.POS90.subtract(this.position.getLatitude()), Vec4.UNIT_X);
+        Matrix lat = Matrix.fromAxisAngle(Angle.POS90.sub(this.position.getLatitude()), Vec4.UNIT_X);
         Matrix lon = Matrix.fromAxisAngle(this.position.getLongitude(), Vec4.UNIT_Y);
         Matrix baseM = lon.multiply(lat);
         if (this.getAzimuth() != null)

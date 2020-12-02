@@ -6,10 +6,11 @@
 package gov.nasa.worldwind.formats.gcps;
 
 ////.*;
+
 import gov.nasa.worldwind.util.*;
 
 import java.io.*;
-import java.util.*;
+import java.util.Collection;
 import java.util.regex.*;
 
 /**
@@ -212,7 +213,7 @@ public class GCPSReader {
         }
     }
 
-    protected void doRead(Reader reader, List<RasterControlPointList.ControlPoint> controlPoints) throws IOException {
+    protected void doRead(Reader reader, Collection<RasterControlPointList.ControlPoint> controlPoints) throws IOException {
         if (reader == null) {
             String message = Logging.getMessage("nullValue.ReaderIsNull");
             Logging.logger().severe(message);

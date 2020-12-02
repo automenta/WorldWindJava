@@ -118,11 +118,6 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     }
 
     public void initGpuResourceCache(GpuResourceCache cache) {
-//        if (cache == null) {
-//            String msg = Logging.getMessage("nullValue.GpuResourceCacheIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.setGpuResourceCache(cache);
     }
@@ -148,11 +143,6 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
 
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-//        if (propertyChangeEvent == null) {
-//            String msg = Logging.getMessage("nullValue.PropertyChangeEventIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.redraw(); // Queue a JOGL display request.
     }
@@ -305,11 +295,6 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
             WorldWindowGLAutoDrawable.doSwapBuffers(this.drawable);
 
             SceneController sc = this.sceneControl();
-//            if (sc == null) {
-//                String msg = Logging.getMessage("WorldWindowGLCanvas.ScnCntrllerNullOnRepaint");
-//                Logging.logger().severe(msg);
-//                throw new IllegalStateException(msg);
-//            }
 
             Double frameTime = sc.getFrameTime();
             this.set(PerformanceStatistic.FRAME_TIME, frameTime);
@@ -422,11 +407,6 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
         if (this.drawable instanceof AWTGLAutoDrawable)
             ((AWTGLAutoDrawable) this.drawable).repaint();
     }
-
-//    public void redrawNow() {
-//        if (this.drawable != null)
-//            this.drawable.display();
-//    }
 
     private final Message viewStopMsg = new Message(View.VIEW_STOPPED, WorldWindowGLAutoDrawable.this);
 

@@ -116,7 +116,7 @@ public class WindowsWebView extends AbstractWebView {
         catch (RuntimeException | Error e) {
             // If the WebView was not created successfully do not increment the instance counter.
             instances.decrementAndGet();
-            this.handleWebViewCreationError();
+            WindowsWebView.handleWebViewCreationError();
             throw e;
         }
     }
@@ -125,7 +125,7 @@ public class WindowsWebView extends AbstractWebView {
      * This method is called by the constructor if an exception is thrown creating the WebView. It gives the WebView a
      * change to cleanup static state that may have been set during the failed WebView construction.
      */
-    protected void handleWebViewCreationError() {
+    protected static void handleWebViewCreationError() {
         try {
             WindowsWebView.stopMessageLoopIfNoInstances();
         }

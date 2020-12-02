@@ -71,7 +71,7 @@ public class ShapeCombiner {
             if (shapes.length == 1)
                 ShapeCombiner.union(cc, shapes); // equivalent to the identity of the first shape
             else if (shapes.length > 1)
-                this.intersection(cc, shapes);
+                ShapeCombiner.intersection(cc, shapes);
         }
         finally {
             cc.dispose(); // releases GLU tessellator resources
@@ -92,7 +92,7 @@ public class ShapeCombiner {
             if (shapes.length == 1)
                 ShapeCombiner.union(cc, shapes); // equivalent to the identity of the first shape
             else if (shapes.length > 1)
-                this.difference(cc, shapes);
+                ShapeCombiner.difference(cc, shapes);
         }
         finally {
             cc.dispose(); // releases GLU tessellator resources
@@ -138,7 +138,7 @@ public class ShapeCombiner {
         }
     }
 
-    protected void intersection(CombineContext cc, Combinable... shapes) {
+    protected static void intersection(CombineContext cc, Combinable... shapes) {
         // Limit this operation to the intersection of the bounding regions. Since this is an intersection operation,
         // shapes outside of this region can be ignored or simplified.
         ShapeCombiner.assembleBoundingSectors(cc, shapes);
@@ -180,7 +180,7 @@ public class ShapeCombiner {
         }
     }
 
-    protected void difference(CombineContext cc, Combinable... shapes) {
+    protected static void difference(CombineContext cc, Combinable... shapes) {
         // Limit this operation to the region bounding the shape that we're subtracting from. Since this is a difference
         // operation, shapes outside of this region can be ignored or simplified.
         Combinable a = shapes[0];

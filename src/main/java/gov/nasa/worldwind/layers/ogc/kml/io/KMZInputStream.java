@@ -232,30 +232,4 @@ public class KMZInputStream extends XMLDoc {
         // Increment the stream to the next entry.
         this.moveToNextEntry();
     }
-//
-//    public static void main(String[] args)
-//    {
-//        try
-//        {
-//            InputStream is = new FileInputStream(new File("/Users/tag/NoBackup/kml/ocean_model_locations.kmz"));
-//            KMZInputStream zStream = new KMZInputStream(is);
-//            InputStream kmlStream = zStream.getKMLStream();
-//            is = zStream.getSupportFileStream("files/camera_mode.png");
-//            is = zStream.getSupportFileStream("files/3DBuildingsLayer3.png");
-//            is = zStream.getSupportFileStream("files/camera_mode.png");
-//            if (kmlStream != null)
-//            {
-//                KMLRoot root = KMLRoot.create(kmlStream);
-//                root.parse();
-//            }
-//        }
-//        catch (IOException e)
-//        {
-//            e.printStackTrace();
-//        }
-//        catch (XMLStreamException e)
-//        {
-//            e.printStackTrace();
-//        }
-//    }
 }

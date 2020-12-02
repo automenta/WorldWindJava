@@ -54,11 +54,6 @@ public class RenderableLayer extends AbstractLayer {
      * @throws IllegalStateException    If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
     public void add(Renderable renderable) {
-//        if (renderable == null) {
-//            String msg = Logging.getMessage("nullValue.RenderableIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (this.renderablesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
@@ -92,11 +87,6 @@ public class RenderableLayer extends AbstractLayer {
      * @throws IllegalStateException    If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
     public void add(int index, Renderable renderable) {
-//        if (renderable == null) {
-//            String msg = Logging.getMessage("nullValue.RenderableIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (this.renderablesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
@@ -139,11 +129,6 @@ public class RenderableLayer extends AbstractLayer {
      * @throws IllegalStateException    If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
     public void addAll(Iterable<? extends Renderable> renderables) {
-//        if (renderables == null) {
-//            String msg = Logging.getMessage("nullValue.IterableIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (this.renderablesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
@@ -178,11 +163,6 @@ public class RenderableLayer extends AbstractLayer {
      * @throws IllegalStateException    If a custom Iterable has been specified by a call to <code>setRenderables</code>.
      */
     public void remove(Renderable renderable) {
-//        if (renderable == null) {
-//            String msg = Logging.getMessage("nullValue.RenderableIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         if (this.renderablesOverride != null) {
             String msg = Logging.getMessage("generic.LayerIsUsingCustomIterable");
@@ -409,8 +389,6 @@ public class RenderableLayer extends AbstractLayer {
                 // If the caller has specified their own Iterable,
                 // then we cannot make any guarantees about its contents.
                 if (renderable != null) {
-//                    float[] inColor = new float[4];
-//                    gl.glGetFloatv(GL.GL_CURRENT_COLOR, inColor, 0);
                     Color color = dc.getUniquePickColor();
                     gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
 

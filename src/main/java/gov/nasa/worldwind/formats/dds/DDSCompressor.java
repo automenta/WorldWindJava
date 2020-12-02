@@ -69,7 +69,7 @@ public class DDSCompressor {
         }
 
         DDSCompressor compressor = new DDSCompressor();
-        return compressor.compressImage(image, attributes);
+        return DDSCompressor.compressImage(image, attributes);
     }
 
     /**
@@ -199,7 +199,7 @@ public class DDSCompressor {
         }
 
         DDSCompressor compressor = new DDSCompressor();
-        return compressor.compressImage(image, attributes);
+        return DDSCompressor.compressImage(image, attributes);
     }
 
     /**
@@ -268,7 +268,7 @@ public class DDSCompressor {
         }
 
         DDSCompressor compressor = new DDSCompressor();
-        return compressor.compressImage(image, attributes);
+        return DDSCompressor.compressImage(image, attributes);
     }
 
     /**
@@ -318,7 +318,7 @@ public class DDSCompressor {
 
         DDSCompressor compressor = new DDSCompressor();
         DXTCompressionAttributes attributes = getDefaultCompressionAttributes();
-        return compressor.compressImage(image, attributes);
+        return DDSCompressor.compressImage(image, attributes);
     }
 
     /**
@@ -350,7 +350,7 @@ public class DDSCompressor {
      * @throws IllegalArgumentException if either <code>image</code> or <code>attributes</code> are null, or if
      *                                  <code>image</code> has non power of two dimensions.
      */
-    public ByteBuffer compressImage(BufferedImage image, DXTCompressionAttributes attributes) {
+    public static ByteBuffer compressImage(BufferedImage image, DXTCompressionAttributes attributes) {
         if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
             Logging.logger().severe(message);
@@ -368,7 +368,7 @@ public class DDSCompressor {
         }
 
         DXTCompressor compressor = DDSCompressor.getDXTCompressor(image, attributes);
-        return this.doCompressImage(compressor, image, attributes);
+        return DDSCompressor.doCompressImage(compressor, image, attributes);
     }
 
     /**
@@ -381,7 +381,7 @@ public class DDSCompressor {
      * @throws IllegalArgumentException if either <code>image</code> or <code>attributes</code> are null, or if
      *                                  <code>image</code> has non power of two dimensions.
      */
-    public ByteBuffer compressImageDXT1(BufferedImage image,
+    public static ByteBuffer compressImageDXT1(BufferedImage image,
         DXTCompressionAttributes attributes) {
         if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
@@ -400,7 +400,7 @@ public class DDSCompressor {
         }
 
         DXTCompressor compressor = new DXT1Compressor();
-        return this.doCompressImage(compressor, image, attributes);
+        return DDSCompressor.doCompressImage(compressor, image, attributes);
     }
 
     /**
@@ -413,7 +413,7 @@ public class DDSCompressor {
      * @throws IllegalArgumentException if either <code>image</code> or <code>attributes</code> are null, or if
      *                                  <code>image</code> has non power of two dimensions.
      */
-    public ByteBuffer compressImageDXT3(BufferedImage image,
+    public static ByteBuffer compressImageDXT3(BufferedImage image,
         DXTCompressionAttributes attributes) {
         if (image == null) {
             String message = Logging.getMessage("nullValue.ImageIsNull");
@@ -432,10 +432,10 @@ public class DDSCompressor {
         }
 
         DXTCompressor compressor = new DXT3Compressor();
-        return this.doCompressImage(compressor, image, attributes);
+        return DDSCompressor.doCompressImage(compressor, image, attributes);
     }
 
-    protected ByteBuffer doCompressImage(DXTCompressor compressor, BufferedImage image,
+    protected static ByteBuffer doCompressImage(DXTCompressor compressor, BufferedImage image,
         DXTCompressionAttributes attributes) {
         // Create the DDS header structure that describes the specified image, compressor, and compression attributes.
         DDSHeader header = DDSCompressor.createDDSHeader(compressor, image, attributes);
@@ -467,7 +467,7 @@ public class DDSCompressor {
 
         // Write the DDS magic number and DDS header to the file.
         buffer.putInt(DDSConstants.MAGIC);
-        this.writeDDSHeader(header, buffer);
+        DDSCompressor.writeDDSHeader(header, buffer);
 
         // Write the compressed DXT blocks to the DDS file. If the attributes specify to build mip maps, then we write
         // each mip map level to the DDS file, starting with level 0 and ending with level N. Otherwise, we write a
@@ -558,7 +558,7 @@ public class DDSCompressor {
      * @param header header structure to write.
      * @param buffer buffer that receives the header structure bytes.
      */
-    protected void writeDDSHeader(DDSHeader header, ByteBuffer buffer) {
+    protected static void writeDDSHeader(DDSHeader header, ByteBuffer buffer) {
         int pos = buffer.position();
 
         buffer.putInt(header.getSize());            // dwSize

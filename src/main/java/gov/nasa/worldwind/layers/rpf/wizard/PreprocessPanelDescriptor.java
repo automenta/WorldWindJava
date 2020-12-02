@@ -222,7 +222,6 @@ public class PreprocessPanelDescriptor extends DefaultPanelDescriptor {
             StringBuilder sb = new StringBuilder();
             sb.append(String.format("%,d of %,d", progressValue, progressRange));
             if (remainingMillis > 0) {
-                TimeFormatter tf = new TimeFormatter();
                 if (!sb.isEmpty())
                     sb.append(" - ");
                 sb.append(TimeFormatter.formatEstimate(remainingMillis));

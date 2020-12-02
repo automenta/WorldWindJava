@@ -913,13 +913,13 @@ public abstract class RigidShape extends AbstractShape {
 
         // roll
         if (roll != null)
-            matrix = matrix.multiply(Matrix.fromRotationY(Angle.POS360.subtract(this.roll)));
+            matrix = matrix.multiply(Matrix.fromRotationY(Angle.POS360.sub(this.roll)));
         // tilt
         if (tilt != null)
-            matrix = matrix.multiply(Matrix.fromRotationX(Angle.POS360.subtract(this.tilt)));
+            matrix = matrix.multiply(Matrix.fromRotationX(Angle.POS360.sub(this.tilt)));
         // heading
         if (heading != null)
-            matrix = matrix.multiply(Matrix.fromRotationZ(Angle.POS360.subtract(this.heading)));
+            matrix = matrix.multiply(Matrix.fromRotationZ(Angle.POS360.sub(this.heading)));
         //matrix = matrix.multiply(Matrix.fromRotationZ(this.heading));
 
         // apply skew (aka shear) matrix
@@ -952,13 +952,13 @@ public abstract class RigidShape extends AbstractShape {
 
         // roll
         if (roll != null)
-            matrix = matrix.multiply(Matrix.fromRotationY(Angle.POS360.subtract(this.roll)));
+            matrix = matrix.multiply(Matrix.fromRotationY(Angle.POS360.sub(this.roll)));
         // tilt
         if (tilt != null)
-            matrix = matrix.multiply(Matrix.fromRotationX(Angle.POS360.subtract(this.tilt)));
+            matrix = matrix.multiply(Matrix.fromRotationX(Angle.POS360.sub(this.tilt)));
         // heading
         if (heading != null)
-            matrix = matrix.multiply(Matrix.fromRotationZ(Angle.POS360.subtract(this.heading)));
+            matrix = matrix.multiply(Matrix.fromRotationZ(Angle.POS360.sub(this.heading)));
         //matrix = matrix.multiply(Matrix.fromRotationZ(this.heading));
 
         // apply skew (aka shear) matrix
@@ -995,8 +995,8 @@ public abstract class RigidShape extends AbstractShape {
             1 / this.getNorthSouthRadius(), 1 / this.getVerticalRadius()));
 
         // apply inverse skew (aka shear) matrix
-        matrix = matrix.multiply(Matrix.fromSkew(Angle.POS180.subtract(this.skewEastWest),
-            Angle.POS180.subtract(this.skewNorthSouth)));
+        matrix = matrix.multiply(Matrix.fromSkew(Angle.POS180.sub(this.skewEastWest),
+            Angle.POS180.sub(this.skewNorthSouth)));
 
         // inverse heading
         if (heading != null)
@@ -1012,21 +1012,6 @@ public abstract class RigidShape extends AbstractShape {
         // translate and orient
         Position refPosition = globe.computePositionFromPoint(this.computeReferencePoint(globe, verticalExaggeration));
         matrix = matrix.multiply(globe.computeSurfaceOrientationAtPosition(refPosition).getInverse());
-
-        /*
-        Vec4 point = ellipsoidalGlobe.geodeticToCartesian(refPosition.getLatitude(), refPosition.getLongitude(),
-                                                            refPosition.getElevation());
-        // Rotate the coordinate system to match the latitude.
-        // Latitude is treated clockwise as rotation about the X-axis. We don't flip the latitude value so as
-        // to get the inverse
-        matrix = matrix.multiply(Matrix.fromRotationX(refPosition.getLatitude()));
-
-        // Rotate the coordinate system to match the longitude.
-        // Longitude is treated as counter-clockwise rotation about the Y-axis.
-        matrix = matrix.multiply(Matrix.fromRotationY(refPosition.getLongitude().multiply(-1.0)));
-        // Transform to the cartesian coordinates of (latitude, longitude, metersElevation).
-        matrix = matrix.multiply(Matrix.fromTranslation(point.multiply3(-1.0)));
-        */
 
         return matrix;
     }

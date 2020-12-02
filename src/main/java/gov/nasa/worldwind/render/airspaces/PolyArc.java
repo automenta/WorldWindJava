@@ -195,9 +195,9 @@ public class PolyArc extends Polygon {
         Angle stopAngle = PolyArc.normalizedAzimuth(this.rightAzimuth);
         Angle sweepAngle;
         if (startAngle.compareTo(stopAngle) <= 0)
-            sweepAngle = stopAngle.subtract(startAngle);
+            sweepAngle = stopAngle.sub(startAngle);
         else
-            sweepAngle = Angle.POS360.subtract(startAngle).add(stopAngle);
+            sweepAngle = Angle.POS360.sub(startAngle).add(stopAngle);
 
         double[] array = new double[3];
         array[0] = startAngle.radians;
@@ -252,7 +252,7 @@ public class PolyArc extends Polygon {
                 Vec4[] polyPoints = new Vec4[locationCount + 1];
                 Matrix[] polyTransform = new Matrix[1];
                 int polyCount = Polygon.computeEllipsoidalPolygon(globe, locations, null, polyPoints, null, polyTransform);
-                int polyWinding = gb.computePolygonWindingOrder2(0, polyCount, polyPoints);
+                int polyWinding = GeometryBuilder.computePolygonWindingOrder2(0, polyCount, polyPoints);
 
                 if (polyWinding == GeometryBuilder.COUNTER_CLOCKWISE) {
                     for (int i = 1; i < locationCount; i++) {

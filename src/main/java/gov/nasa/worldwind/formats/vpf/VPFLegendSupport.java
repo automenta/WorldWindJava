@@ -27,7 +27,7 @@ public class VPFLegendSupport {
 
         switch (attr.getFeatureType()) {
             case POINT -> this.drawPointLegend(attr, g2, width, height, margin);
-            case LINE -> this.drawLineLegend(attr, g2, width, height, margin);
+            case LINE -> VPFLegendSupport.drawLineLegend(attr, g2, width, height, margin);
             case AREA -> this.drawAreaLegend(attr, g2, width, height, margin);
         }
 
@@ -60,7 +60,7 @@ public class VPFLegendSupport {
         }
     }
 
-    protected void drawLineLegend(VPFSymbolAttributes attr, Graphics2D g2, int width, int height, int margin) {
+    protected static void drawLineLegend(VPFSymbolAttributes attr, Graphics2D g2, int width, int height, int margin) {
         g2.setStroke(VPFLegendSupport.getStroke(attr));
         g2.setPaint(attr.getOutlineMaterial().getDiffuse());
         g2.drawLine(margin, height / 2, width - margin, height / 2);

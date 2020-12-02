@@ -50,8 +50,8 @@ public class BasicOrbitView extends BasicView implements OrbitView {
         }
 
         return new Position(
-            Angle.normalizedLatitude(unnormalizedPosition.getLatitude()),
-            Angle.normalizedLongitude(unnormalizedPosition.getLongitude()),
+            Angle.latNorm(unnormalizedPosition.getLatitude()),
+            Angle.lonNorm(unnormalizedPosition.getLongitude()),
             unnormalizedPosition.getElevation());
     }
 

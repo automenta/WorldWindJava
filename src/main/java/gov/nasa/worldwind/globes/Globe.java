@@ -468,13 +468,6 @@ public interface Globe extends WWObject, Extent {
      */
     Tessellator getTessellator();
 
-//    /**
-//     * Specifies this globe's tessellator.
-//     *
-//     * @param tessellator the new tessellator. Specify null to use the default tessellator.
-//     */
-//    void setTessellator(Tessellator tessellator);
-
     /**
      * Tessellate this globe for the currently visible region.
      *

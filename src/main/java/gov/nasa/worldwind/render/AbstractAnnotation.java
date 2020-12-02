@@ -768,7 +768,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
     protected void drawPlainText(DrawContext dc, int x, int y, int lineHeight, double opacity, Object pickObject,
         Position pickPosition, String text) {
         AnnotationAttributes attribs = this.getAttributes();
-        MultiLineTextRenderer mltr = this.getMultiLineTextRenderer(dc, attribs.getFont(), attribs.getTextAlign());
+        MultiLineTextRenderer mltr = AbstractAnnotation.getMultiLineTextRenderer(dc, attribs.getFont(), attribs.getTextAlign());
 
         Color textColor = AbstractAnnotation.modulateColorOpacity(attribs.getTextColor(), opacity);
         Color backColor = AbstractAnnotation.modulateColorOpacity(attribs.getBackgroundColor(), opacity);
@@ -793,7 +793,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
     protected void drawHTML(DrawContext dc, int x, int y, int lineHeight, double opacity, Object pickObject,
         Position pickPosition, String text) {
         AnnotationAttributes attribs = this.getAttributes();
-        MultiLineTextRenderer mltr = this.getMultiLineTextRenderer(dc, attribs.getFont(), attribs.getTextAlign());
+        MultiLineTextRenderer mltr = AbstractAnnotation.getMultiLineTextRenderer(dc, attribs.getFont(), attribs.getTextAlign());
 
         Color textColor = AbstractAnnotation.modulateColorOpacity(attribs.getTextColor(), opacity);
         Color backColor = AbstractAnnotation.modulateColorOpacity(attribs.getBackgroundColor(), opacity);
@@ -941,7 +941,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         return OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
     }
 
-    protected MultiLineTextRenderer getMultiLineTextRenderer(DrawContext dc, Font font, String align) {
+    protected static MultiLineTextRenderer getMultiLineTextRenderer(DrawContext dc, Font font, String align) {
         TextRenderer tr = AbstractAnnotation.getTextRenderer(dc, font);
 
         MultiLineTextRenderer mltr = new MultiLineTextRenderer(tr);
@@ -957,7 +957,7 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         Object key = new TextCacheKey(width, height, text, font, align);
         String wrappedText = this.wrappedTextMap.get(key);
         if (wrappedText == null) {
-            wrappedText = this.wrapText(dc, width, height, text, font, align);
+            wrappedText = AbstractAnnotation.wrapText(dc, width, height, text, font, align);
             this.wrappedTextMap.put(key, wrappedText);
         }
 
@@ -968,16 +968,16 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         Object key = new TextCacheKey(0, 0, text, font, align);
         Rectangle bounds = this.textBoundsMap.get(key);
         if (bounds == null) {
-            bounds = this.computeTextBounds(dc, text, font, align);
+            bounds = AbstractAnnotation.computeTextBounds(dc, text, font, align);
             this.textBoundsMap.put(key, bounds);
         }
 
         return new Rectangle(bounds);
     }
 
-    protected String wrapText(DrawContext dc, int width, int height, String text, Font font, String align) {
+    protected static String wrapText(DrawContext dc, int width, int height, String text, Font font, String align) {
         if (!text.isEmpty()) {
-            MultiLineTextRenderer mltr = this.getMultiLineTextRenderer(dc, font, align);
+            MultiLineTextRenderer mltr = AbstractAnnotation.getMultiLineTextRenderer(dc, font, align);
 
             if (MultiLineTextRenderer.containsHTML(text)) {
                 text = MultiLineTextRenderer.processLineBreaksHTML(text);
@@ -991,9 +991,9 @@ public abstract class AbstractAnnotation extends AVListImpl implements Annotatio
         return text;
     }
 
-    protected Rectangle computeTextBounds(DrawContext dc, String text, Font font, String align) {
+    protected static Rectangle computeTextBounds(DrawContext dc, String text, Font font, String align) {
         if (!text.isEmpty()) {
-            MultiLineTextRenderer mltr = this.getMultiLineTextRenderer(dc, font, align);
+            MultiLineTextRenderer mltr = AbstractAnnotation.getMultiLineTextRenderer(dc, font, align);
 
             if (MultiLineTextRenderer.containsHTML(text)) {
                 return mltr.getBoundsHTML(text, dc.getTextRendererCache());

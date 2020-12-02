@@ -39,58 +39,14 @@ public class GDALUtils {
 
     protected static final byte ALPHA_TRANSPARENT = 0x00;
     protected static final String JAVA_LIBRARY_PATH = "java.library.path";
-//    protected static final String GDAL_DRIVER_PATH = "GDAL_DRIVER_PATH";
-//    protected static final String OGR_DRIVER_PATH = "OGR_DRIVER_PATH";
-    protected static final String GDAL_DATA_PATH = "GDAL_DATA";
+protected static final String GDAL_DATA_PATH = "GDAL_DATA";
     protected static final AtomicBoolean gdalIsAvailable = new AtomicBoolean(false);
     // This is an OLD default libname request by WW build of GDAL
     protected static final String gdalalljni = Configuration.isMacOS()
         ? "gdalalljni" : (is32bitArchitecture() ? "gdalalljni32" : "gdalalljni64");
     protected static final Collection<String> loadedLibraries = new CopyOnWriteArraySet<>();
-//    protected static final CopyOnWriteArraySet<String> failedLibraries = new CopyOnWriteArraySet<>();
-//    protected static byte ALPHA_OPAQUE = (byte) 0xFF;
-    private static Class newClassLoader = null;
+private static Class newClassLoader = null;
 
-    //    private static class GDALLibraryLoader implements gdal.LibraryLoader {
-//
-//        @Override
-//        public void load(String libName) throws UnsatisfiedLinkError {
-//            if (WWUtil.isEmpty(libName)) {
-//                String message = Logging.getMessage("nullValue.LibraryIsNull");
-//                Logging.logger().severe(message);
-//                throw new java.lang.UnsatisfiedLinkError(message);
-//            }
-//
-//            // check if the library is already loaded
-//            if (loadedLibraries.contains(libName)) {
-//                return;
-//            }
-//
-//            String message;
-//
-//            // check if the library is already know (from previous attempts) to fail to load
-//            if (!failedLibraries.contains(libName)) {
-//                try {
-//                    NativeLibraryLoader.loadLibrary(libName);
-//                    loadedLibraries.add(libName);
-//                    Logging.logger().info(Logging.getMessage("generic.LibraryLoadedOK", libName));
-//
-//                    return; // GOOD! Leaving now
-//                } catch (Throwable t) {
-//                    String reason = WWUtil.extractExceptionReason(t);
-//                    message = Logging.getMessage("generic.LibraryNotLoaded", libName, reason);
-//                    Logging.logger().finest(message);
-//
-//                    failedLibraries.add(libName);
-//                }
-//            } else {
-//                String reason = Logging.getMessage("generic.LibraryNotFound", libName);
-//                message = Logging.getMessage("generic.LibraryNotLoaded", libName, reason);
-//            }
-//
-//            throw new UnsatisfiedLinkError(message);
-//        }
-//    }
     private static Object originalClassLoader = null;
     private static Field fieldSysPaths = null;
     private static boolean fieldSysPaths_accessible = false;
@@ -109,15 +65,6 @@ public class GDALUtils {
             Class gdalClass = cl.loadClass("org.gdal.gdal.gdal");
 
             boolean isKnownBuild = false;
-//            Method[] methods = gdalClass.getDeclaredMethods();
-//            for (Method m : methods) {
-//                if ("setLibraryLoader".equals(m.getName())) {
-//                    gdal.setLibraryLoader(new GDALLibraryLoader());
-////                    Logging.logger().finest(Logging.getMessage("gdal.LibraryLoaderReplacedOK"));
-//                    isKnownBuild = true;
-//                    break;
-//                }
-//            }
 
             String message = Logging.getMessage("gdal.UnknownBuild", gdal.VersionInfo());
             Logging.logger().finest(message);
@@ -180,8 +127,6 @@ public class GDALUtils {
                 if (!runningAsJavaWebStart) {
                     // No need, because we are build one dynamic library that contains ALL  drivers
                     // and dependant libraries
-                    // gdal.SetConfigOption(GDAL_DRIVER_PATH, pathToLibs);
-                    // gdal.SetConfigOption(OGR_DRIVER_PATH, pathToLibs);
                     String dataFolder = findGdalDataFolder();
                     if (null != dataFolder) {
                         String msg = Logging.getMessage("gdal.SharedDataFolderFound", dataFolder);
@@ -1015,10 +960,6 @@ public class GDALUtils {
         gx[GDAL.GT_5_PIXEL_HEIGHT] = -Math.abs(sector.getDeltaLatDegrees() / height);
 
 //      correct for center of pixel vs. top left of pixel
-//      GeoTransform[0] -= 0.5 * GeoTransform[1];
-//      GeoTransform[0] -= 0.5 * GeoTransform[2];
-//      GeoTransform[3] -= 0.5 * GeoTransform[4];
-//      GeoTransform[3] -= 0.5 * GeoTransform[5];
         return gx;
     }
 

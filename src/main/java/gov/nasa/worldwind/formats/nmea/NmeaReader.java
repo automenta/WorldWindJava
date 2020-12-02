@@ -75,8 +75,6 @@ public class NmeaReader implements Track, TrackSegment {
 
         if (this.tracks.isEmpty() || this.tracks.get(0).getNumPoints() == 0)
             throw new IllegalArgumentException(Logging.getMessage("formats.notNMEA", path));
-//        java.nio.ByteBuffer buffer = this.doReadFile(fis);
-//        this.parseBuffer(buffer);
     }
 
     /**
@@ -134,47 +132,6 @@ public class NmeaReader implements Track, TrackSegment {
             e.printStackTrace();
         }
     }
-//
-//    private static final int PAGE_SIZE = 4096;
-//
-//    private java.nio.ByteBuffer doReadFile(java.io.FileInputStream fis) throws java.io.IOException
-//    {
-//        java.nio.channels.ReadableByteChannel channel = java.nio.channels.Channels.newChannel(fis);
-//        java.nio.ByteBuffer buffer = java.nio.ByteBuffer.allocate(PAGE_SIZE);
-//
-//        int count = 0;
-//        while (count >= 0)
-//        {
-//            count = channel.read(buffer);
-//            if (count > 0 && !buffer.hasRemaining())
-//            {
-//                java.nio.ByteBuffer biggerBuffer = java.nio.ByteBuffer.allocate(buffer.limit() + PAGE_SIZE);
-//                biggerBuffer.put((java.nio.ByteBuffer) buffer.rewind());
-//                buffer = biggerBuffer;
-//            }
-//        }
-//
-//        if (buffer != null)
-//            buffer.flip();
-//
-//        return buffer;
-//    }
-//
-//    private void parseBuffer(java.nio.ByteBuffer buffer)
-//    {
-//        while (buffer.hasRemaining())
-//        {
-//            byte b = buffer.get();
-//            if (b == '$')
-//            {
-//                String sentence = this.readSentence(buffer);
-//                if (sentence.length() > 0)
-//                {
-//                    this.parseSentence(sentence);
-//                }
-//            }
-//        }
-//    }
 
     private static String readSentence(InputStream stream) throws IOException, InterruptedException {
         StringBuilder sb = null;
@@ -218,8 +175,6 @@ public class NmeaReader implements Track, TrackSegment {
 
         if (words[0].equalsIgnoreCase("GPGGA"))
             this.doTrackPoint(words);
-//        else if (words[0].equalsIgnoreCase("GPRMC"))
-//            this.doTrackPoint(words);
     }
 
     private void doTrackPoint(String[] words) {

@@ -783,7 +783,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             // The balloon's leader location is equivalent to its screen offset because the screen offset specifies the
             // location of the screen reference point relative to the frame, and the leader points from the frame to the
             // screen reference point.
-            return gb.makeRectangleWithLeader(x, y, obb.webViewRect.width, obb.webViewRect.height,
+            return GeometryBuilder.makeRectangleWithLeader(x, y, obb.webViewRect.width, obb.webViewRect.height,
                 this.screenOffset.x, this.screenOffset.y, activeAttrs.getLeaderWidth());
         }
         else // Default to AVKey.SHAPE_NONE
@@ -808,7 +808,7 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             // The balloon's leader location is equivalent to its screen offset because the screen offset specifies the
             // location of the screen reference point relative to the frame, and the leader points from the frame to the
             // screen reference point.
-            return gb.makeEllipseWithLeader(x, y, majorRadius, minorRadius, FRAME_GEOMETRY_ELLIPSE_SLICES,
+            return GeometryBuilder.makeEllipseWithLeader(x, y, majorRadius, minorRadius, FRAME_GEOMETRY_ELLIPSE_SLICES,
                 this.screenOffset.x, this.screenOffset.y, activeAttrs.getLeaderWidth());
         }
         else // Default to AVKey.SHAPE_NONE
@@ -826,13 +826,13 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
             // The balloon's leader location is equivalent to its screen offset because the screen offset specifies the
             // location of the screen reference point relative to the frame, and the leader points from the frame to the
             // screen reference point.
-            return gb.makeRectangleWithLeader(0, 0, obb.screenRect.width, obb.screenRect.height,
+            return GeometryBuilder.makeRectangleWithLeader(0, 0, obb.screenRect.width, obb.screenRect.height,
                 activeAttrs.getCornerRadius(), FRAME_GEOMETRY_RECTANGLE_CORNER_SLICES, this.screenOffset.x,
                 this.screenOffset.y, activeAttrs.getLeaderWidth());
         }
         else // Default to AVKey.SHAPE_NONE
         {
-            return gb.makeRectangle(0, 0, obb.screenRect.width, obb.screenRect.height, activeAttrs.getCornerRadius(),
+            return GeometryBuilder.makeRectangle(0, 0, obb.screenRect.width, obb.screenRect.height, activeAttrs.getCornerRadius(),
                 FRAME_GEOMETRY_RECTANGLE_CORNER_SLICES);
         }
     }

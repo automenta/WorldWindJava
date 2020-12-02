@@ -48,14 +48,6 @@ public interface Retriever extends WWObject, Callable<Retriever> {
     long getSubmitEpoch();
 
     void setSubmitEpoch(long submitTime);
-//
-//    long getBeginTime();
-//
-//    void setBeginTime(long beginTime);
-//
-//    long getEndTime();
-//
-//    void setEndTime(long endTime);
 
     int getConnectTimeout();
 

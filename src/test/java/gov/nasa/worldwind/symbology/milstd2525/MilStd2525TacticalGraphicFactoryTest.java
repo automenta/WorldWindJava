@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
-import org.junit.*;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 @RunWith(JUnit4.class)
 public class MilStd2525TacticalGraphicFactoryTest
 {
-    @Ignore
     @Test
     public void testGraphicSupported() {
         MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();
@@ -33,7 +32,7 @@ public class MilStd2525TacticalGraphicFactoryTest
         assertFalse(factory.isSupported("GFGPXXX----AUSX")); // Non-existent function ID.
     }
 
-    @Ignore@Test
+    @Test
     public void testTacGrp()
     {
         MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();
@@ -60,7 +59,7 @@ public class MilStd2525TacticalGraphicFactoryTest
         }
     }
 
-    @Ignore @Test
+    @Test
     public void testEms()
     {
         MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();
@@ -82,7 +81,7 @@ public class MilStd2525TacticalGraphicFactoryTest
         }
     }
 
-    @Ignore @Test
+    @Test
     public void testMetoc()
     {
         MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();

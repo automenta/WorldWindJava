@@ -54,7 +54,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
             // be opened as an XML document.
         }
 
-        return (doc != null) && (doc.getDocumentElement() != null) && this.accept(doc);
+        return (doc != null) && (doc.getDocumentElement() != null) && DataConfigurationFilter.accept(doc);
     }
 
     /**
@@ -65,7 +65,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
      * @return true if the URL should be accepted; false otherwise.
      * @throws IllegalArgumentException if the url is null.
      */
-    public boolean accept(URL url) {
+    public static boolean accept(URL url) {
         if (url == null) {
             String msg = Logging.getMessage("nullValue.URLIsNull");
             Logging.logger().severe(msg);
@@ -81,7 +81,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
             // be opened as an XML document.
         }
 
-        return (doc != null) && (doc.getDocumentElement() != null) && this.accept(doc);
+        return (doc != null) && (doc.getDocumentElement() != null) && DataConfigurationFilter.accept(doc);
     }
 
     /**
@@ -92,7 +92,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
      * @return true if the input stream should be accepted; false otherwise.
      * @throws IllegalArgumentException if the input stream is null.
      */
-    public boolean accept(InputStream inputStream) {
+    public static boolean accept(InputStream inputStream) {
         if (inputStream == null) {
             String msg = Logging.getMessage("nullValue.InputStreamIsNull");
             Logging.logger().severe(msg);
@@ -108,7 +108,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
             // cannot be opened as an XML document.
         }
 
-        return (doc != null) && (doc.getDocumentElement() != null) && this.accept(doc);
+        return (doc != null) && (doc.getDocumentElement() != null) && DataConfigurationFilter.accept(doc);
     }
 
     /**
@@ -145,7 +145,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
         if (file != null)
             return this.accept(file);
 
-        return this.accept(url);
+        return DataConfigurationFilter.accept(url);
     }
 
     /**
@@ -155,7 +155,7 @@ public class DataConfigurationFilter implements FileFilter, FileStoreFilter {
      * @return true if the Document should be accepted; false otherwise.
      * @throws IllegalArgumentException if the document is null.
      */
-    public boolean accept(Document doc) {
+    public static boolean accept(Document doc) {
         if (doc == null) {
             String message = Logging.getMessage("nullValue.DocumentIsNull");
             Logging.logger().severe(message);

@@ -113,10 +113,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
         return tessellator;
     }
 
-//    public void setTessellator(Tessellator tessellator) {
-//        this.tessellator = tessellator;
-//    }
-
     public ElevationModel getElevationModel() {
         return elevationModel;
     }
@@ -160,11 +156,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     }
 
     public double getRadiusAt(LatLon location) {
-//        if (location == null) {
-//            String msg = Logging.getMessage("nullValue.LocationIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return this.getRadiusAt(location.latitude, location.longitude);
     }
@@ -192,22 +183,12 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     }
 
     public double[] getMinAndMaxElevations(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String msg = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         return this.elevationModel != null ? this.elevationModel.getExtremeElevations(latitude, longitude)
             : new double[] {0, 0};
     }
 
     public double[] getMinAndMaxElevations(Sector sector) {
-//        if (sector == null) {
-//            String message = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.elevationModel != null ? this.elevationModel.getExtremeElevations(sector) : new double[] {0, 0};
     }
@@ -221,11 +202,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     }
 
     public boolean intersects(Frustum frustum) {
-//        if (frustum == null) {
-//            String message = Logging.getMessage("nullValue.FrustumIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return frustum.intersects(new Sphere(Vec4.ZERO, this.getRadius()));
     }
@@ -332,11 +308,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      * {@inheritDoc}
      */
     public double getProjectedArea(View view) {
-//        if (view == null) {
-//            String message = Logging.getMessage("nullValue.ViewIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return WWMath.computeSphereProjectedArea(view, this.getCenter(), this.getRadius());
     }
@@ -382,11 +353,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     }
 
     public double getElevation(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (this.elevationModel == null)
             return 0;
@@ -400,51 +366,26 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     }
 
     public Vec4 computePointFromPosition(Position position) {
-//        if (position == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.geodeticToCartesian(position.getLatitude(), position.getLongitude(), position.getElevation());
     }
 
     public Vec4 computePointFromLocation(LatLon location) {
-//        if (location == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.geodeticToCartesian(location.getLatitude(), location.getLongitude(), 0);
     }
 
     public Vec4 computePointFromPosition(LatLon latLon, double metersElevation) {
-//        if (latLon == null) {
-//            String message = Logging.getMessage("nullValue.LatLonIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.geodeticToCartesian(latLon.getLatitude(), latLon.getLongitude(), metersElevation);
     }
 
     public Vec4 computePointFromPosition(Angle latitude, Angle longitude, double metersElevation) {
-//        if (latitude == null || longitude == null) {
-//            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.geodeticToCartesian(latitude, longitude, metersElevation);
     }
 
     public Position computePositionFromPoint(Vec4 point) {
-//        if (point == null) {
-//            String message = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.cartesianToGeodetic(point);
     }
@@ -455,29 +396,12 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     @Override
     public void computePointsFromPositions(Sector sector, int numLat, int numLon, double[] metersElevation,
         Vec4[] out) {
-//        if (sector == null) {
-//            String message = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (numLat <= 0 || numLon <= 0) {
             String message = Logging.getMessage("generic.ArgumentOutOfRange", "numLat <= 0 or numLon <= 0");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
-
-//        if (metersElevation == null) {
-//            String message = Logging.getMessage("nullValue.ElevationsIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-
-//        if (out == null) {
-//            String message = Logging.getMessage("nullValue.OutputIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         this.geodeticToCartesian(sector, numLat, numLon, metersElevation, out);
     }
@@ -490,11 +414,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      * @return the Globe normal at the specified position.
      */
     public Vec4 computeSurfaceNormalAtLocation(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.computeEllipsoidalNormalAtLocation(latitude, longitude);
     }
@@ -506,11 +425,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      * @return the Globe normal at the specified point.
      */
     public Vec4 computeSurfaceNormalAtPoint(Vec4 point) {
-//        if (point == null) {
-//            String msg = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         double eqSquared = this.equatorialRadius * this.equatorialRadius;
         double polSquared = this.polarRadius * this.polarRadius;
@@ -567,11 +481,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      * {@inheritDoc}
      */
     public Matrix computeSurfaceOrientationAtPosition(Angle latitude, Angle longitude, double metersElevation) {
-//        if (latitude == null || longitude == null) {
-//            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.computeEllipsoidalOrientationAtPosition(latitude, longitude, metersElevation);
     }
@@ -580,11 +489,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      * {@inheritDoc}
      */
     public Matrix computeSurfaceOrientationAtPosition(Position position) {
-//        if (position == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.computeSurfaceOrientationAtPosition(position.getLatitude(), position.getLongitude(),
             position.getElevation());
@@ -595,11 +499,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      */
     @Override
     public Vec4 computeEllipsoidalPointFromPosition(Angle latitude, Angle longitude, double metersElevation) {
-//        if (latitude == null || longitude == null) {
-//            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.geodeticToEllipsoidal(latitude, longitude, metersElevation);
     }
@@ -609,11 +508,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      */
     @Override
     public Vec4 computeEllipsoidalPointFromPosition(Position position) {
-//        if (position == null) {
-//            String message = Logging.getMessage("nullValue.PositionIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.computeEllipsoidalPointFromPosition(position.getLatitude(), position.getLongitude(),
             position.getAltitude());
@@ -624,11 +518,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      */
     @Override
     public Vec4 computeEllipsoidalPointFromLocation(LatLon location) {
-//        if (location == null) {
-//            String message = Logging.getMessage("nullValue.LocationIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.geodeticToEllipsoidal(location.getLatitude(), location.getLongitude(), 0);
     }
@@ -638,11 +527,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      */
     @Override
     public Position computePositionFromEllipsoidalPoint(Vec4 ellipsoidalPoint) {
-//        if (ellipsoidalPoint == null) {
-//            String message = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.ellipsoidalToGeodetic(ellipsoidalPoint);
     }
@@ -652,11 +536,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      */
     @Override
     public Vec4 computeEllipsoidalNormalAtLocation(Angle latitude, Angle longitude) {
-//        if (latitude == null || longitude == null) {
-//            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         double cosLat = latitude.cos();
         double cosLon = longitude.cos();
@@ -676,11 +555,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     @Override
     public Matrix computeEllipsoidalOrientationAtPosition(Angle latitude, Angle longitude,
         double metersElevation) {
-//        if (latitude == null || longitude == null) {
-//            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Vec4 point = this.computeEllipsoidalPointFromPosition(latitude, longitude, metersElevation);
         // Transform to the cartesian coordinates of (latitude, longitude, metersElevation).
@@ -696,11 +570,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
     }
 
     public Position getIntersectionPosition(Line line) {
-//        if (line == null) {
-//            String msg = Logging.getMessage("nullValue.LineIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         Intersection[] intersections = this.intersect(line);
         return intersections == null ? null : this.computePositionFromPoint(intersections[0].getIntersectionPoint());
@@ -734,11 +603,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
      * @see #ellipsoidalToGeodetic(Vec4)
      */
     protected Vec4 geodeticToEllipsoidal(Angle latitude, Angle longitude, double metersElevation) {
-//        if (latitude == null || longitude == null) {
-//            String message = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         double cosLat = Math.cos(latitude.radians);
         double sinLat = Math.sin(latitude.radians);
@@ -824,48 +688,6 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
             }
         }
     }
-
-//    protected Position cartesianToGeodeticOriginal(Vec4 cart)
-//    {
-//        if (cart == null)
-//        {
-//            String message = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        // according to
-//        // H. Vermeille,
-//        // Direct transformation from geocentric to geodetic ccordinates,
-//        // Journal of Geodesy (2002) 76:451-454
-//        double ra2 = 1 / (this.equatorialRadius * equatorialRadius);
-//
-//        double X = cart.z;
-//        //noinspection SuspiciousNameCombination
-//        double Y = cart.x;
-//        double Z = cart.y;
-//        double e2 = this.es;
-//        double e4 = e2 * e2;
-//
-//        double XXpYY = X * X + Y * Y;
-//        double sqrtXXpYY = Math.sqrt(XXpYY);
-//        double p = XXpYY * ra2;
-//        double q = Z * Z * (1 - e2) * ra2;
-//        double r = 1 / 6.0 * (p + q - e4);
-//        double s = e4 * p * q / (4 * r * r * r);
-//        double t = Math.pow(1 + s + Math.sqrt(s * (2 + s)), 1 / 3.0);
-//        double u = r * (1 + t + 1 / t);
-//        double v = Math.sqrt(u * u + e4 * q);
-//        double w = e2 * (u + v - q) / (2 * v);
-//        double k = Math.sqrt(u + v + w * w) - w;
-//        double D = k * sqrtXXpYY / (k + e2);
-//        double lon = 2 * Math.atan2(Y, X + sqrtXXpYY);
-//        double sqrtDDpZZ = Math.sqrt(D * D + Z * Z);
-//        double lat = 2 * Math.atan2(Z, D + sqrtDDpZZ);
-//        double elevation = (k + e2 - 1) * sqrtDDpZZ / k;
-//
-//        return Position.fromRadians(lat, lon, elevation);
-//    }
 
     /**
      * Compute the geographic position to corresponds to a Cartesian point.
@@ -987,159 +809,8 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
 
         return Position.fromRadians(phi, lambda, h);
     }
-//
-//    /**
-//     * Returns a cylinder that minimally surrounds the sector at a specified vertical exaggeration.
-//     *
-//     * @param verticalExaggeration the vertical exaggeration to apply to the globe's elevations when computing the
-//     *                             cylinder.
-//     * @param sector               the sector to return the bounding cylinder for.
-//     *
-//     * @return The minimal bounding cylinder in Cartesian coordinates.
-//     *
-//     * @throws IllegalArgumentException if <code>sector</code> is null
-//     */
-//    public Cylinder computeBoundingCylinder(double verticalExaggeration, Sector sector)
-//    {
-//        if (sector == null)
-//        {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        return Sector.computeBoundingCylinder(this, verticalExaggeration, sector);
-//    }
-//
-//    /**
-//     * Returns a cylinder that minimally surrounds the specified minimum and maximum elevations in the sector at a
-//     * specified vertical exaggeration.
-//     *
-//     * @param verticalExaggeration the vertical exaggeration to apply to the minimum and maximum elevations when
-//     *                             computing the cylinder.
-//     * @param sector               the sector to return the bounding cylinder for.
-//     * @param minElevation         the minimum elevation of the bounding cylinder.
-//     * @param maxElevation         the maximum elevation of the bounding cylinder.
-//     *
-//     * @return The minimal bounding cylinder in Cartesian coordinates.
-//     *
-//     * @throws IllegalArgumentException if <code>sector</code> is null
-//     */
-//    public Cylinder computeBoundingCylinder(double verticalExaggeration, Sector sector,
-//        double minElevation, double maxElevation)
-//    {
-//        if (sector == null)
-//        {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        // Compute the exaggerated minimum and maximum heights.
-//        double minHeight = minElevation * verticalExaggeration;
-//        double maxHeight = maxElevation * verticalExaggeration;
-//
-//        if (minHeight == maxHeight)
-//            maxHeight = minHeight + 1; // ensure the top and bottom of the cylinder won't be coincident
-//
-//        // If the sector spans both poles in latitude, or spans greater than 180 degrees in longitude, we cannot use the
-//        // sector's Cartesian quadrilateral to compute a bounding cylinde. This is because the quadrilateral is either
-//        // smaller than the geometry defined by the sector (when deltaLon >= 180), or the quadrilateral degenerates to
-//        // two points (when deltaLat >= 180). So we compute a bounging cylinder that spans the equator and covers the
-//        // sector's latitude range. In some cases this cylinder may be too large, but we're typically not interested
-//        // in culling these cylinders since the sector will span most of the globe.
-//        if (sector.getDeltaLatDegrees() >= 180d || sector.getDeltaLonDegrees() >= 180d)
-//        {
-//            return this.computeBoundsFromSectorLatitudeRange(sector, minHeight, maxHeight);
-//        }
-//        // Otherwise, create a standard bounding cylinder that minimally surrounds the specified sector and elevations.
-//        else
-//        {
-//            return this.computeBoundsFromSectorQuadrilateral(sector, minHeight, maxHeight);
-//        }
-//    }
-//
-//    public Cylinder computeBoundingCylinderNew(double verticalExaggeration, Sector sector, double minElevation,
-//        double maxElevation)
-//    {
-//        if (sector == null)
-//        {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        // Compute the exaggerated minimum and maximum heights.
-//        double minHeight = minElevation * verticalExaggeration;
-//        double maxHeight = maxElevation * verticalExaggeration;
-//
-//        if (minHeight == maxHeight)
-//            maxHeight = minHeight + 1; // ensure the top and bottom of the cylinder won't be coincident
-//
-//        List<Vec4> points = new ArrayList<Vec4>();
-//        for (LatLon ll : sector)
-//        {
-//            points.add(this.computePointFromPosition(ll, minHeight));
-//            points.add(this.computePointFromPosition(ll, maxHeight));
-//        }
-//        if (sector.getDeltaLatDegrees() >= 180d || sector.getDeltaLonDegrees() >= 180d)
-//            points.add(this.computePointFromPosition(sector.getCentroid(), maxHeight));
-//
-//        try
-//        {
-//            return Cylinder.compute(points);
-//        }
-//        catch (Exception e)
-//        {
-//            return new Cylinder(points.get(0), points.get(0).add3(Vec4.UNIT_Y), 1);
-//        }
-//    }
-//
-//    public static void main(String[] args)
-//    {
-//        EllipsoidalGlobe globe = new Earth();
-//        Sector sector = Sector.fromDegrees(0, 1, 0, 1);
-//
-//        int n = 1000000;
-//
-//        long start = System.currentTimeMillis();
-//        for (int i = 0; i < n; i++)
-//        {
-//            Extent cyl1 = globe.computeBoundingVolume(1d, sector, 0, 100);
-//        }
-//        System.out.println(System.currentTimeMillis() - start);
-//
-//        start = System.currentTimeMillis();
-//        for (int i = 0; i < n; i++)
-//        {
-//            Cylinder cyl2 = globe.computeBoundingCylinder2(1d, sector, 0, 100);
-//        }
-//        System.out.println(System.currentTimeMillis() - start);
-//    }
-//
-//    public Cylinder computeBoundingCylinder(double verticalExaggeration, Iterable<? extends Position> positions)
-//    {
-//        List<Vec4> points = new ArrayList<Vec4>();
-//
-//        for (Position pos : positions)
-//        {
-//            if (pos != null)
-//                points.add(this.computePointFromPosition(pos, pos.elevation * verticalExaggeration));
-//        }
-//
-//        return Cylinder.compute(points);
-//    }
 
     public SectorGeometryList tessellate(DrawContext dc) {
-//        if (this.tessellator == null) {
-//            this.tessellator = (Tessellator) WorldWind.createConfigurationComponent(AVKey.TESSELLATOR_CLASS_NAME);
-
-//            if (this.tessellator == null) {
-//                String msg = Logging.getMessage("Tessellator.TessellatorUnavailable");
-//                Logging.logger().severe(msg);
-//                throw new IllegalStateException(msg);
-//            }
-//        }
 
         return this.tessellator.tessellate(dc);
     }
@@ -1164,29 +835,14 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
 
     protected class StateKey implements GlobeStateKey {
         final int dcID;
-//        protected final Tessellator tessellator;
-        //protected double verticalExaggeration;
-        //protected ElevationModel elevationModel;
 
         public StateKey(DrawContext dc) {
             final int x = System.identityHashCode(dc);
             this.dcID = x!=0 ? x : 1;
-//            if (dc == null) {
-//                String msg = Logging.getMessage("nullValue.DrawContextIsNull");
-//                Logging.logger().severe(msg);
-//                throw new IllegalArgumentException(msg);
-//            }
-
-//            this.tessellator = EllipsoidalGlobe.this.tessellator;
-//            this.verticalExaggeration = dc.getVerticalExaggeration();
-            //this.elevationModel = dc.getGlobe().getElevationModel();
         }
 
         public StateKey() {
             dcID = 0;
-//            this.tessellator = EllipsoidalGlobe.this.tessellator;
-            //this.verticalExaggeration = 1;
-//            this.elevationModel = this.globe.getElevationModel();
         }
 
         public Globe getGlobe() {
@@ -1204,29 +860,11 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe {
             StateKey stateKey = (StateKey) o;
 
             return stateKey.dcID == dcID;
-//            if (getGlobe()!=stateKey.getGlobe())
-//                return false;
-//            if (stateKey.verticalExaggeration != verticalExaggeration)
-//                return false;
-//            if (!Objects.equals(elevationModel, stateKey.elevationModel))
-//                return false;
-//            if (!Objects.equals(globe, stateKey.globe))
-//                return false;
-//            if (!Objects.equals(tessellator, stateKey.tessellator))
-//                return false;
-
-//            return true;
         }
 
         @Override
         public int hashCode() {
             return dcID;
-//            int result;
-//            result = EllipsoidalGlobe.this.hashCode();
-////            result = 31 * result + (tessellator != null ? tessellator.hashCode() : 0);;
-//            result = 31 * result + Double.hashCode(verticalExaggeration);
-////            result = 31 * result + (elevationModel != null ? elevationModel.hashCode() : 0);
-//            return result;
         }
     }
 }

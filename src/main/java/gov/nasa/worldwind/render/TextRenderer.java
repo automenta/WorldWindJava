@@ -445,20 +445,6 @@ public class TextRenderer {
         float scaleFactor) {
         internal_draw3D(str, x, y, z, scaleFactor);
     }
-//
-//    /**
-//     * * Draws the supplied String at the desired 3D location using the renderer's current color.See {@link
-//     * #draw3D(CharSequence, float, float, float, float) draw3D(CharSequence, float, float, float, float)}.
-//     *
-//     * @param str         The string to draw.
-//     * @param x           The x location.
-//     * @param y           The y location.
-//     * @param z           The z location.
-//     * @param scaleFactor The scale factor.
-//     */
-//    public void draw3D(CharSequence str, float x, float y, float z, float scaleFactor) {
-//        internal_draw3D(str, x, y, z, scaleFactor);
-//    }
 
     /**
      * Returns the pixel width of the given character.
@@ -704,13 +690,6 @@ public class TextRenderer {
             if (unicodeToClearFromCache > 0) {
                 mGlyphProducer.clearCacheEntry(unicodeToClearFromCache);
             }
-
-            //      if (DEBUG) {
-            //        Graphics2D g = getGraphics2D();
-            //        g.setComposite(AlphaComposite.Clear);
-            //        g.fillRect(r.x(), r.y(), r.w(), r.h());
-            //        g.setComposite(AlphaComposite.Src);
-            //      }
         }
 
         // If we removed dead rectangles this cycle, try to do a compaction

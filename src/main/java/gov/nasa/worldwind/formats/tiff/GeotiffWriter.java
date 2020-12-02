@@ -332,7 +332,7 @@ public class GeotiffWriter {
 
         // write out values for the tiff tags and build up the IFD. These are supposed to be sorted; for now
         // do this manually here.
-        ArrayList<TiffIFDEntry> ifds = new ArrayList<>(10);
+        List<TiffIFDEntry> ifds = new ArrayList<>(10);
 
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_WIDTH, Tiff.Type.LONG, 1, numCols));
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_LENGTH, Tiff.Type.LONG, 1, numRows));
@@ -421,7 +421,7 @@ public class GeotiffWriter {
 
         // write out values for the tiff tags and build up the IFD. These are supposed to be sorted; for now
         // do this manually here.
-        ArrayList<TiffIFDEntry> ifds = new ArrayList<>(10);
+        List<TiffIFDEntry> ifds = new ArrayList<>(10);
 
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_WIDTH, Tiff.Type.LONG, 1, numCols));
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_LENGTH, Tiff.Type.LONG, 1, numRows));
@@ -475,7 +475,7 @@ public class GeotiffWriter {
         this.theChannel.write(ByteBuffer.wrap(tiffHeader));
     }
 
-    private void appendGeoTiff(List<TiffIFDEntry> ifds, AVList params)
+    private void appendGeoTiff(Collection<TiffIFDEntry> ifds, AVList params)
         throws IOException, IllegalArgumentException {
         if (null == params || params.getEntries().isEmpty()) {
             String reason = Logging.getMessage("nullValue.AVListIsNull");
@@ -1024,8 +1024,6 @@ public class GeotiffWriter {
 
         ByteBuffer dataBuff = ByteBuffer.allocateDirect(numCols * bytesPerSample);
 
-        //            case Tiff.BitsPerSample.MONOCHROME_BYTE:
-        //            case Tiff.BitsPerSample.MONOCHROME_UINT16:
         switch (bitsPerSample) {
             case Tiff.BitsPerSample.MONOCHROME_UINT8 -> {
                 for (int y = 0; y < numRows; y++) {
@@ -1096,7 +1094,7 @@ public class GeotiffWriter {
 
         // write out values for the tiff tags and build up the IFD. These are supposed to be sorted; for now
         // do this manually here.
-        ArrayList<TiffIFDEntry> ifds = new ArrayList<>(10);
+        List<TiffIFDEntry> ifds = new ArrayList<>(10);
 
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_WIDTH, Tiff.Type.LONG, 1, numCols));
         ifds.add(new TiffIFDEntry(Tiff.Tag.IMAGE_LENGTH, Tiff.Type.LONG, 1, numRows));

@@ -107,7 +107,7 @@ public class BasicJSONEventParser implements JSONEventParser {
             JSONEvent valueEvent = ctx.nextEvent();
 
             if (valueEvent.isStartObject() || valueEvent.isStartArray())
-                this.addFieldContent(ctx, this.parseComplexContent(ctx, valueEvent));
+                this.addFieldContent(ctx, BasicJSONEventParser.parseComplexContent(ctx, valueEvent));
 
             else if (valueEvent.isScalarValue())
                 this.addFieldContent(ctx, BasicJSONEventParser.parseScalarContent(ctx, valueEvent));
@@ -160,7 +160,7 @@ public class BasicJSONEventParser implements JSONEventParser {
 
     protected void parseArrayEntry(JSONEventParserContext ctx, JSONEvent event) throws IOException {
         if (event.isStartObject() || event.isStartArray())
-            this.addArrayEntry(this.parseComplexContent(ctx, event));
+            this.addArrayEntry(BasicJSONEventParser.parseComplexContent(ctx, event));
 
         else if (event.isScalarValue())
             this.addArrayEntry(BasicJSONEventParser.parseScalarContent(ctx, event));
@@ -185,7 +185,7 @@ public class BasicJSONEventParser implements JSONEventParser {
     //********************  Content Parsing  ************************//
     //**************************************************************//
 
-    protected Object parseComplexContent(JSONEventParserContext ctx, JSONEvent event) throws IOException {
+    protected static Object parseComplexContent(JSONEventParserContext ctx, JSONEvent event) throws IOException {
         JSONEventParser parser = BasicJSONEventParser.allocate(ctx, event);
 
         if (parser == null)

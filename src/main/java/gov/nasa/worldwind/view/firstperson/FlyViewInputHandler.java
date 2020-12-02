@@ -127,11 +127,6 @@ public class FlyViewInputHandler extends BasicViewInputHandler {
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_KEYBOARD,
             ViewInputAttributes.VIEW_HORIZONTAL_TRANSLATE_SLOW,
             DEFAULT_KEY_HORIZONTAL_TRANSLATE_MIN_VALUE_SLOW, DEFAULT_KEY_HORIZONTAL_TRANSLATE_MAX_VALUE_SLOW);
-        /*
-        this.getAttributes().setActionTrigger(ViewInputAttributes.DEVICE_KEYBOARD,
-            ViewInputAttributes.VIEW_HORIZONTAL_TRANSLATE_SLOW,
-            ViewInputAttributes.ActionAttributes.ActionTrigger.ON_KEY_DOWN);
-        */
 
         // +- Keys vertical translate
         this.getAttributes().setValues(ViewInputAttributes.DEVICE_KEYBOARD,

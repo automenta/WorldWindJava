@@ -162,7 +162,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
             this.drawControlPoints(dc, controlPoints);
         }
         finally {
-            this.end(dc);
+            BasicAirspaceControlPointRenderer.end(dc);
         }
     }
 
@@ -210,7 +210,7 @@ public class BasicAirspaceControlPointRenderer implements AirspaceControlPointRe
         gl.glPushMatrix();
     }
 
-    protected void end(DrawContext dc) {
+    protected static void end(DrawContext dc) {
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
         gl.glPopMatrix();

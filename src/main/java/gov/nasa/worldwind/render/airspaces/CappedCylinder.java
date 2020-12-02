@@ -555,7 +555,7 @@ public class CappedCylinder extends AbstractAirspace {
         int count = GeometryBuilder.getCylinderVertexCount(slices, stacks);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        gb.makeCylinderVertices(dc.getTerrain(), center, radius, altitudes, terrainConformant, slices, stacks,
+        GeometryBuilder.makeCylinderVertices(dc.getTerrain(), center, radius, altitudes, terrainConformant, slices, stacks,
             referenceCenter, verts);
         gb.makeCylinderNormals(slices, stacks, norms);
 
@@ -582,7 +582,7 @@ public class CappedCylinder extends AbstractAirspace {
         int mode = GeometryBuilder.getCylinderOutlineDrawMode();
         int count = GeometryBuilder.getCylinderOutlineIndexCount(slices, stacks);
         int[] indices = new int[count];
-        gb.makeCylinderOutlineIndices(slices, stacks, indices);
+        GeometryBuilder.makeCylinderOutlineIndices(slices, stacks, indices);
 
         dest.setElementData(mode, count, indices);
     }
@@ -625,7 +625,7 @@ public class CappedCylinder extends AbstractAirspace {
         int count = GeometryBuilder.getDiskVertexCount(slices, loops);
         float[] verts = new float[3 * count];
         float[] norms = new float[3 * count];
-        gb.makeDiskVertices(dc.getTerrain(), center, radii[0], radii[1], altitude, terrainConformant, slices, loops,
+        GeometryBuilder.makeDiskVertices(dc.getTerrain(), center, radii[0], radii[1], altitude, terrainConformant, slices, loops,
             referenceCenter, verts);
         gb.makeDiskVertexNormals((float) radii[0], (float) radii[1], slices, loops, verts, norms);
 

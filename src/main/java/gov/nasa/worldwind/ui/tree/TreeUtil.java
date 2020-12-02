@@ -31,11 +31,6 @@ public class TreeUtil {
      */
     public static void drawPickableRect(DrawContext dc, PickSupport pickSupport, Object pickedObject,
         Rectangle bounds) {
-//        if (dc == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         GL2 gl = dc.getGL().getGL2(); // GL initialization checks for GL2 compatibility.
 
@@ -54,34 +49,12 @@ public class TreeUtil {
      * @param bounds Bounds of the rectangle, in GL coordinates.
      */
     public static void drawRect(GL2 gl, Rectangle bounds) {
-//        if (gl == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (bounds == null) {
-//            String message = Logging.getMessage("nullValue.BoundingBoxIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         gl.glRecti(bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height);
     }
 
     public static void drawRectWithGradient(GL2 gl, Rectangle bounds, Color color1, Color color2, double opacity,
         String gradientDirection) {
-//        if (gl == null) {
-//            String message = Logging.getMessage("nullValue.DrawingContextGLIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        if (bounds == null) {
-//            String message = Logging.getMessage("nullValue.BoundingBoxIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         gl.glBegin(GL2.GL_QUADS);
 

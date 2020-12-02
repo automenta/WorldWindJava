@@ -111,8 +111,8 @@ public class ImageTiler {
 
             double t0 = (double) (y + this.getTileHeight()) / N;
             double t1 = (double) y / N;
-            Angle minLat = baseSector.latMax().subtract(baseSector.getDeltaLat().multiply(t0));
-            Angle maxLat = baseSector.latMax().subtract(baseSector.getDeltaLat().multiply(t1));
+            Angle minLat = baseSector.latMax().sub(baseSector.getDeltaLat().multiply(t0));
+            Angle maxLat = baseSector.latMax().sub(baseSector.getDeltaLat().multiply(t1));
 
             for (int i = 0; i < cols; i++) {
                 int x = i * a;
@@ -172,7 +172,7 @@ public class ImageTiler {
 
                     // Must recalculate t0 to account for short tile height.
                     double t00 = (double) (y + image.getHeight()) / N;
-                    Angle minLat0 = baseSector.latMax().subtract(baseSector.getDeltaLat().multiply(t00));
+                    Angle minLat0 = baseSector.latMax().sub(baseSector.getDeltaLat().multiply(t00));
 
 //                    System.out.println(new Sector(minLat0, maxLat, minLon, maxLon));
                     listener.newTile(image, new Sector(minLat0, maxLat, minLon, maxLon));
@@ -309,9 +309,6 @@ public class ImageTiler {
                     ne = geoQuad.interpolate(t1, s1);
                     nw = geoQuad.interpolate(t1, s0);
                 }
-
-//                System.out.printf("%d: (%d, %d) : SW %s; SE %s; NE %s; NW %s\n",
-//                    System.currentTimeMillis(), x, y, sw, se, ne, nw);
 
                 listener.newTile(subImage, Arrays.asList(sw, se, ne, nw));
             }

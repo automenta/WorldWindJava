@@ -229,7 +229,7 @@ public class ExtrudedPolygon extends AbstractShape {
 
         if (imageSources != null) {
             this.sideTextures = new ArrayList<>();
-            this.sideTextures.add(this.fillImageList(imageSources));
+            this.sideTextures.add(ExtrudedPolygon.fillImageList(imageSources));
         }
     }
 
@@ -272,7 +272,7 @@ public class ExtrudedPolygon extends AbstractShape {
 
         if (imageSources != null) {
             this.sideTextures = new ArrayList<>();
-            this.sideTextures.add(this.fillImageList(imageSources));
+            this.sideTextures.add(ExtrudedPolygon.fillImageList(imageSources));
         }
     }
 
@@ -391,7 +391,7 @@ public class ExtrudedPolygon extends AbstractShape {
             this.sideTextures = new ArrayList<>();
 
         // Add or replace the first element, the outer boundary's element, in the list of side textures.
-        List<WWTexture> textures = this.fillImageList(imageSources);
+        List<WWTexture> textures = ExtrudedPolygon.fillImageList(imageSources);
         this.sideTextures.set(0, textures);
 
         // Update the shape cache
@@ -490,7 +490,7 @@ public class ExtrudedPolygon extends AbstractShape {
                 this.sideTextures.add(new ArrayList<>()); // placeholder for outer boundary
             }
 
-            this.sideTextures.add(this.fillImageList(imageSources));
+            this.sideTextures.add(ExtrudedPolygon.fillImageList(imageSources));
         }
 
         this.reset();
@@ -511,7 +511,7 @@ public class ExtrudedPolygon extends AbstractShape {
      * @param imageSources the images to apply for this boundary.
      * @return the list of texture objects, or null if the <code>imageSources</code> argument is null.
      */
-    protected List<WWTexture> fillImageList(Iterable<?> imageSources) {
+    protected static List<WWTexture> fillImageList(Iterable<?> imageSources) {
         if (imageSources == null)
             return null;
 
@@ -1142,10 +1142,6 @@ public class ExtrudedPolygon extends AbstractShape {
             gl.glVertexPointer(3, GL.GL_FLOAT, 0, boundary.capVertexBuffer.rewind());
             gl.glDrawElements(GL.GL_LINES, indices.limit(), GL.GL_UNSIGNED_INT, indices.rewind());
         }
-//
-//        // Diagnostic to show the normal vectors.
-//        if (this.mustApplyLighting(dc))
-//            dc.drawNormals(1000, this.vertexBuffer, this.normalBuffer);
     }
 
     /**

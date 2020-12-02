@@ -233,38 +233,6 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
         return new Position(tm.getLatitude(), tm.getLongitude(), cart.z);
     }
 // These are spherical forms from Map Projections -- A Working Manual, but I can't get them to fully work. -- tag 6/25/14
-//    @Override
-//    public Vec4 geographicToCartesian(Globe globe, Angle latitude, Angle longitude, double metersElevation, Vec4 offset)
-//    {
-//        double B = Math.cos(latitude.radians) * Math.sin(longitude.radians - this.getCentralMeridian().radians);
-//        if (B == 1)
-//            B = 0.9999; // TODO
-//
-//        double x = globe.getEquatorialRadius() * this.getScale() * 0.5 * Math.log((1 + B) / (1 - B));
-//        double y;
-//        if (Math.abs(latitude.degrees) == 90 || Math.abs(longitude.degrees - this.centralMeridian.degrees) == 90)
-//            y = globe.getEquatorialRadius() * this.getScale() * (Math.signum(latitude.degrees) * Math.PI/2);
-//        else
-//        {
-//            double s = Math.tan(latitude.radians) / Math.cos(longitude.radians - this.getCentralMeridian().radians);
-//            y = globe.getEquatorialRadius() * this.getScale() * Math.atan(s);
-//        }
-//
-//        return new Vec4(x + offset.x, y, metersElevation);
-//    }
-//
-//    @Override
-//    public Position cartesianToGeographic(Globe globe, Vec4 cart, Vec4 offset)
-//    {
-//        double rk0 = globe.getEquatorialRadius() * this.getScale();
-//        double D = cart.y / rk0;
-//
-//        double lat = Math.asin(
-//            Math.sin(D) / Math.cosh((cart.x - offset.x) / rk0));
-//        double lon = Math.atan(Math.sinh((cart.x() - offset.x) / rk0) / Math.cos(D));
-//
-//        return Position.fromRadians(lat, lon + this.getCentralMeridian().radians, cart.z);
-//    }
 
     @Override
     public Vec4 northPointingTangent(Globe globe, Angle latitude, Angle longitude) {
@@ -277,7 +245,7 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
         if (latitude.degrees + deltaLat.degrees >= 86) // compute the incremental vector below the location
         {
             Vec4 p1 = this.geographicToCartesian(globe, latitude, longitude, 0, null);
-            Vec4 p2 = this.geographicToCartesian(globe, latitude.subtract(deltaLat), longitude, 0, null);
+            Vec4 p2 = this.geographicToCartesian(globe, latitude.sub(deltaLat), longitude, 0, null);
             return p1.subtract3(p2).normalize3();
         }
         else if (latitude.degrees - deltaLat.degrees <= -82) // compute the incremental vector above the location
@@ -289,7 +257,7 @@ public class ProjectionTransverseMercator extends AbstractGeographicProjection {
         else // compute the average of the incremental vector above and below the location
         {
             Vec4 p1 = this.geographicToCartesian(globe, latitude.add(deltaLat), longitude, 0, null);
-            Vec4 p2 = this.geographicToCartesian(globe, latitude.subtract(deltaLat), longitude, 0, null);
+            Vec4 p2 = this.geographicToCartesian(globe, latitude.sub(deltaLat), longitude, 0, null);
             return p1.subtract3(p2).normalize3();
         }
     }

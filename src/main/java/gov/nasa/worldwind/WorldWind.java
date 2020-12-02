@@ -160,10 +160,6 @@ public final class WorldWind {
      * @throws IllegalArgumentException if <code>className</code> is null or zero length
      */
     public static Object createComponent(String className) throws WWRuntimeException {
-//        if (className == null || className.isEmpty()) {
-//            Logging.logger().severe("nullValue.ClassNameIsNull");
-//            throw new IllegalArgumentException(Logging.getMessage("nullValue.ClassNameIsNull"));
-//        }
 
         try {
             Class<?> c = Class.forName(className.trim());

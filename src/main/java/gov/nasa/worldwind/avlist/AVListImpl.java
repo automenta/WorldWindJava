@@ -187,11 +187,6 @@ public class AVListImpl implements AVList {
     }
 
     public Object get(String key) {
-//        if (key == null) {
-//            String message = Logging.getMessage("nullValue.AttributeKeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
         Map<String, Object> l = this.avList;
         return l!=null ? o(l.get(key)) : null;
     }
@@ -207,34 +202,14 @@ public class AVListImpl implements AVList {
     }
 
     public String getStringValue(String key) {
-//        if (key == null) {
-//            String msg = Logging.getMessage("nullValue.AttributeKeyIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalStateException(msg);
-//        }
 
         Object y = get(key);
         return y != null ? y.toString() : null;
-
-//        try {
-//            Object value = this.getValue(key);
-//            return value != null ? value.toString() : null;
-//        }
-//        catch (ClassCastException e) {
-//            String msg = Logging.getMessage("AVAAccessibleImpl.AttributeValueForKeyIsNotAString", key);
-//            Logging.logger().severe(msg);
-//            throw new WWRuntimeException(msg, e);
-//        }
     }
 
     private static final Object NULLL = new Object();
 
     public Object set(String key, Object value) {
-//        if (key == null) {
-//            String message = Logging.getMessage("nullValue.AttributeKeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         return this.avList(true).put(key, i(value));
     }
@@ -265,22 +240,12 @@ public class AVListImpl implements AVList {
     }
 
     public boolean hasKey(String key) {
-//        if (key == null) {
-//            String message = Logging.getMessage("nullValue.KeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Map<String, Object> l = avList;
         return l!=null && l.containsKey(key);
     }
 
     public Object removeKey(String key) {
-//        if (key == null) {
-//            String message = Logging.getMessage("nullValue.KeyIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         Map<String, Object> l = avList;
         return l!=null ? l.remove(key) : null;
@@ -307,66 +272,26 @@ public class AVListImpl implements AVList {
     }
 
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-//        if (propertyName == null) {
-//            String msg = Logging.getMessage("nullValue.PropertyNameIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//        if (listener == null) {
-//            String msg = Logging.getMessage("nullValue.ListenerIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         this.getChangeSupport().addPropertyChangeListener(propertyName, listener);
     }
 
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-//        if (propertyName == null) {
-//            String msg = Logging.getMessage("nullValue.PropertyNameIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//        if (listener == null) {
-//            String msg = Logging.getMessage("nullValue.ListenerIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         this.getChangeSupport().removePropertyChangeListener(propertyName, listener);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-//        if (listener == null) {
-//            String msg = Logging.getMessage("nullValue.ListenerIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         this.getChangeSupport().addPropertyChangeListener(listener);
     }
 
     public void removePropertyChangeListener(PropertyChangeListener listener) {
-//        if (listener == null) {
-//            String msg = Logging.getMessage("nullValue.ListenerIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         this.getChangeSupport().removePropertyChangeListener(listener);
     }
 
     public void firePropertyChange(PropertyChangeEvent propertyChangeEvent) {
-//        if (propertyChangeEvent == null) {
-//            String msg = Logging.getMessage("nullValue.PropertyChangeEventIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         this.getChangeSupport().firePropertyChange(propertyChangeEvent);
     }
 
     public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-//        if (propertyName == null) {
-//            String msg = Logging.getMessage("nullValue.PropertyNameIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
         this.getChangeSupport().firePropertyChange(propertyName, oldValue, newValue);
     }
 
@@ -377,12 +302,6 @@ public class AVListImpl implements AVList {
 
         if (key.equals(PROPERTY_CHANGE_SUPPORT))
             return;
-
-//        if (rs == null) {
-//            String message = Logging.getMessage("nullValue.RestorableStateIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         rs.addStateValueAsString(context, key, value.toString());
     }

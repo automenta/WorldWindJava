@@ -272,30 +272,6 @@ public class Cylinder extends RigidShape {
      * @param subdivisions the number of times to subdivide the unit cylinder geometry
      * @param dest         the Geometry container to hold the computed points, etc.
      */
-    /*
-    protected void makeUnitCylinder(int subdivisions, Geometry dest)
-    {
-        float radius = 1.0f;
-
-        GeometryBuilder gb = this.getGeometryBuilder();
-        gb.setOrientation(GeometryBuilder.OUTSIDE);
-
-        // create cylinder in model space
-        GeometryBuilder.IndexedTriangleBuffer itb =
-            gb.tessellateCylinderBuffer(radius, subdivisions);
-
-        FloatBuffer normalBuffer = Buffers.newDirectFloatBuffer(3 * itb.getVertexCount());
-        gb.makeIndexedTriangleBufferNormals(itb, normalBuffer);
-
-        FloatBuffer textureCoordBuffer = Buffers.newDirectFloatBuffer(2 * itb.getVertexCount());
-        gb.makeUnitCylinderTextureCoordinates(textureCoordBuffer, subdivisions);
-
-        dest.setElementData(GL.GL_TRIANGLES, itb.getIndexCount(), itb.getIndices());
-        dest.setVertexData(itb.getVertexCount(), itb.getVertices());
-        dest.setNormalData(normalBuffer.limit(), normalBuffer);
-        dest.setTextureCoordData(textureCoordBuffer.limit(), textureCoordBuffer);
-    }
-    */
 
     /**
      * Generates a unit cylinder geometry, including the vertices, indices, normals and texture coordinates, tessellated

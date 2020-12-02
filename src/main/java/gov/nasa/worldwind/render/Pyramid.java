@@ -253,30 +253,6 @@ public class Pyramid extends RigidShape {
      * @param subdivisions the number of times to subdivide the unit pyramid geometry
      * @param dest         the Geometry container to hold the computed points, etc.
      */
-    /*
-    protected void makeUnitPyramid(int subdivisions, Geometry dest)
-    {
-        float radius = 1.0f;
-
-        GeometryBuilder gb = this.getGeometryBuilder();
-        gb.setOrientation(GeometryBuilder.OUTSIDE);
-
-        // create pyramid in model space
-        GeometryBuilder.IndexedTriangleBuffer itb =
-            gb.tessellatePyramidBuffer(radius, subdivisions);
-
-        FloatBuffer normalBuffer = Buffers.newDirectFloatBuffer(3 * itb.getVertexCount());
-        gb.makeIndexedTriangleBufferNormals(itb, normalBuffer);
-
-        FloatBuffer textureCoordBuffer = Buffers.newDirectFloatBuffer(2 * itb.getVertexCount());
-        gb.makeUnitPyramidTextureCoordinates(textureCoordBuffer, itb.getVertexCount());
-
-        dest.setElementData(GL.GL_TRIANGLES, itb.getIndexCount(), itb.getIndices());
-        dest.setVertexData(itb.getVertexCount(), itb.getVertices());
-        dest.setNormalData(normalBuffer.limit(), normalBuffer);
-        dest.setTextureCoordData(textureCoordBuffer.limit(), textureCoordBuffer);
-    }
-    */
 
     /**
      * Generates a unit pyramid geometry, including the vertices, indices, normals and texture coordinates, tessellated

@@ -58,24 +58,6 @@ public class Tile implements Comparable<Tile>, Cacheable {
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-//        // Allow negative row/col IDs to be used as a signal to prevent their use for non-arranged tiles
-//        if (row < 0)
-//        {
-//            String msg = Logging.getMessage("generic.RowIndexOutOfRange", row);
-//            msg += String.valueOf(row);
-//
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (column < 0)
-//        {
-//            String msg = Logging.getMessage("generic.ColumnIndexOutOfRange", column);
-//            msg += String.valueOf(row);
-//
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.sector = sector;
         this.level = level;
@@ -99,17 +81,6 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @throws IllegalArgumentException if <code>sector</code> or <code>level</code> is null.
      */
     public Tile(Sector sector, Level level, int row, int column, String cacheName) {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//
-//        if (level == null) {
-//            String msg = Logging.getMessage("nullValue.LevelIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.sector = sector;
         this.level = level;
@@ -128,16 +99,6 @@ public class Tile implements Comparable<Tile>, Cacheable {
      * @throws IllegalArgumentException if sector or level are null.
      */
     public Tile(Sector sector, Level level) {
-//        if (sector == null) {
-//            String msg = Logging.getMessage("nullValue.SectorIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
-//        if (level == null) {
-//            String msg = Logging.getMessage("nullValue.LevelIsNull");
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.sector = sector;
         this.level = level;
@@ -159,11 +120,6 @@ public class Tile implements Comparable<Tile>, Cacheable {
      *                                  greater than positive 90 degrees, or less than  negative 90 degrees
      */
     public static int computeRow(Angle delta, Angle latitude, Angle origin) {
-//        if (delta == null || latitude == null || origin == null) {
-//            String message = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (delta.degrees <= 0.0d) {
             String message = Logging.getMessage("generic.DeltaAngleOutOfRange", delta);
@@ -196,11 +152,6 @@ public class Tile implements Comparable<Tile>, Cacheable {
      *                                  null, greater than positive 180 degrees, or less than  negative 180 degrees
      */
     public static int computeColumn(Angle delta, Angle longitude, Angle origin) {
-//        if (delta == null || longitude == null || origin == null) {
-//            String message = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
 
         if (delta.degrees <= 0.0d) {
             String message = Logging.getMessage("generic.DeltaAngleOutOfRange", delta);
@@ -239,11 +190,6 @@ public class Tile implements Comparable<Tile>, Cacheable {
      *                                  negative.
      */
     public static Angle computeRowLatitude(int row, Angle delta, Angle origin) {
-//        if (delta == null || origin == null) {
-//            String message = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
         if (row < 0) {
             String msg = Logging.getMessage("generic.RowIndexOutOfRange", row);
             Logging.logger().severe(msg);
@@ -271,11 +217,6 @@ public class Tile implements Comparable<Tile>, Cacheable {
      *                                  negative.
      */
     public static Angle computeColumnLongitude(int column, Angle delta, Angle origin) {
-//        if (delta == null || origin == null) {
-//            String message = Logging.getMessage("nullValue.AngleIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
         if (column < 0) {
             String msg = Logging.getMessage("generic.ColumnIndexOutOfRange", column);
             Logging.logger().severe(msg);

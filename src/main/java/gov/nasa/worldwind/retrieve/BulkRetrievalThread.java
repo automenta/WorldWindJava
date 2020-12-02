@@ -66,13 +66,6 @@ public abstract class BulkRetrievalThread extends Thread {
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-//
-//        if (resolution <= 0)
-//        {
-//            String msg = Logging.getMessage("generic.ResolutionInvalid", resolution);
-//            Logging.logger().severe(msg);
-//            throw new IllegalArgumentException(msg);
-//        }
 
         this.retrievable = retrievable;
         this.sector = sector;

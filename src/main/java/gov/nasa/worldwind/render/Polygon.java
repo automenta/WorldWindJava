@@ -584,10 +584,6 @@ public class Polygon extends AbstractShape {
             gl.glDrawArrays(GL.GL_LINE_STRIP, k, boundary.vertices.length);
             k += boundary.vertices.length;
         }
-
-//        // Diagnostic to show the normal vectors.
-//        if (this.mustApplyLighting(dc))
-//            dc.drawNormals(1000, this.boundarySet.coordBuffer, this.boundarySet.normalBuffer);
     }
 
     protected void doDrawOutlineVBO(DrawContext dc, int[] vboIds, ShapeData shapeData) {
@@ -772,7 +768,7 @@ public class Polygon extends AbstractShape {
         this.createGeometry(dc, shapeData);
 
         if (this.mustApplyLighting(dc, null))
-            this.createNormals(shapeData);
+            Polygon.createNormals(shapeData);
         else
             shapeData.normalBuffer = null;
     }
@@ -848,7 +844,7 @@ public class Polygon extends AbstractShape {
             this.createTessllationGeometry(dc, shapeData);
 
         if (shapeData.refillIndexBuffer)
-            this.generateInteriorIndices(shapeData);
+            Polygon.generateInteriorIndices(shapeData);
     }
 
     /**
@@ -858,7 +854,7 @@ public class Polygon extends AbstractShape {
      *                  The normal vectors are appended to the vertex coordinates in the same buffer. The shape data's
      *                  coordinate buffer must have sufficient capacity to hold the vertex normals.
      */
-    protected void createNormals(ShapeData shapeData) {
+    protected static void createNormals(ShapeData shapeData) {
         shapeData.coordBuffer.position(shapeData.normalBufferPosition);
         shapeData.normalBuffer = shapeData.coordBuffer.slice();
 
@@ -1052,7 +1048,7 @@ public class Polygon extends AbstractShape {
         }
     }
 
-    protected void generateInteriorIndices(ShapeData shapeData) {
+    protected static void generateInteriorIndices(ShapeData shapeData) {
         GLUTessellatorSupport.CollectIndexListsCallback cb = shapeData.cb;
         int size = AbstractShape.countTriangleVertices(cb.getPrims(), cb.getPrimTypes());
 

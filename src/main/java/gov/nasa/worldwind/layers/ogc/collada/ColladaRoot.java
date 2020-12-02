@@ -791,7 +791,7 @@ public class ColladaRoot extends ColladaAbstractObject
         Matrix m = Matrix.IDENTITY;
 
         if (this.heading != null) {
-            m = m.multiply(Matrix.fromRotationZ(Angle.POS360.subtract(this.heading)));
+            m = m.multiply(Matrix.fromRotationZ(Angle.POS360.sub(this.heading)));
         }
 
         if (this.pitch != null) {
